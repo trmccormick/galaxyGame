@@ -52,58 +52,58 @@ public map run(String savFile) {
 				 i++;
 				 a_char = line.charAt(i);
 			  }
-              i = i+2;
+                          i = i+2;
 			  a_char = line.charAt(i);
 			 
-		      col = 0; //set column	
+		          col = 0; //set column	
 			 
    			  while (a_char != '"')
 			  { // start while
-				//mapArray.add(a_char);
+			    //mapArray.add(a_char);
 			    switch (a_char) {
-		        case 'a':  mapList.add(Tile.ARTIC);
-                           biomesCount.incArtic();
-                           break;
-	            case ':':  mapList.add(Tile.DEEP_SEA);
-		          		   biomesCount.incDeep_Sea();
-		           		   break;
-		        case 'd':  mapList.add(Tile.DESERT);
-	                       biomesCount.incDesert();
-                           break;
-	            case 'f':  mapList.add(Tile.FOREST);
+				case 'a':  mapList.add(Tile.ARTIC);
+				   biomesCount.incArtic();
+				   break;
+				case ':':  mapList.add(Tile.DEEP_SEA);
+				   biomesCount.incDeep_Sea();
+				   break;
+		                case 'd':  mapList.add(Tile.DESERT);
+	                       	   biomesCount.incDesert();
+                                   break;
+	            		case 'f':  mapList.add(Tile.FOREST);
 		                   biomesCount.incForest();
-		           		   break;
-		        case 'p':  mapList.add(Tile.PLAINS);
-		                   biomesCount.incPlains();
-		          		   break;
-	            case 'g':  mapList.add(Tile.GRASSLANDS);
-		                   biomesCount.incGrasslands();
-                           break;
-		        case 'h':  mapList.add(Tile.BOREAL); //map.add(Tile.HILLS); //increase height to create hills
-		           		   biomesCount.incForest();
 		                   break;
-		        case 'j':  mapList.add(Tile.JUNGLE);
-		           		   biomesCount.incJungle();
-                           break;
-		        case '+':  mapList.add(Tile.OCEAN); //map.add(Tile.LAKE); //decrease height to create lake
-		          		   biomesCount.incOcean();
-		           		   break;
-		        case 'm':  mapList.add(Tile.BOREAL); //increase height to create mountain
+		        	case 'p':  mapList.add(Tile.PLAINS);
+		                   biomesCount.incPlains();
+		          	   break;
+	                        case 'g':  mapList.add(Tile.GRASSLANDS);
+		                   biomesCount.incGrasslands();
+                            	   break;
+		                case 'h':  mapList.add(Tile.BOREAL); //map.add(Tile.HILLS); //increase height to create hills
+		                   biomesCount.incForest();
+		                   break;
+		                case 'j':  mapList.add(Tile.JUNGLE);
+		           	   biomesCount.incJungle();
+                           	   break;
+		        	case '+':  mapList.add(Tile.OCEAN); //map.add(Tile.LAKE); //decrease height to create lake
+		          	   biomesCount.incOcean();
+		                   break;
+		        	case 'm':  mapList.add(Tile.BOREAL); //increase height to create mountain
 		                   biomesCount.incBoreal();
-		          		   break;
-		        case ' ':  mapList.add(Tile.OCEAN);
+		          	   break;
+		        	case ' ':  mapList.add(Tile.OCEAN);
 		                   biomesCount.incOcean();
-		           		   break;
-		        case 's':  mapList.add(Tile.SWAMP);
+		                   break;
+		        	case 's':  mapList.add(Tile.SWAMP);
 		                   biomesCount.incSwamp();
-		          		   break;
-		        case 't':  mapList.add(Tile.TUNDRA);
-		           		   biomesCount.incTundra();
+		          	   break;
+		        	case 't':  mapList.add(Tile.TUNDRA);
+		           	   biomesCount.incTundra();
                    		   break;
-                default:   mapList.add(Tile.ROCK);
-                           biomesCount.incRock();
-         	   			   break;
-		       } // end switch
+                		default:   mapList.add(Tile.ROCK);
+                           	   biomesCount.incRock();
+         	   	           break;
+		       	   } // end switch
 			   i++;
 			   col++;			  
 			   a_char = line.charAt(i);
