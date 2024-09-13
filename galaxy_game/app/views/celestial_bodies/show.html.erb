@@ -1,0 +1,43 @@
+<h1><%= @celestial_body.name %></h1>
+
+<h2>Atmospheric Composition</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Gas</th>
+      <th>Percentage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @celestial_body.atmospheric_composition.each do |gas, percentage| %>
+      <tr>
+        <td><%= gas_name_and_formula(gas) %></td>
+        <td><%= percentage %>%</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Air Pressure</h2>
+<p>Air Pressure: <%= format("%.3f", @celestial_body.total_pressure) %> ATMs</p>
+
+<h2>Material Composition</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Material</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @celestial_body.available_materials.each do |material, amount| %>
+      <tr>
+        <td><%= material %></td>
+        <td><%= format("%.2e", amount) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+

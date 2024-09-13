@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tile-Based Game with Sidebar</title>
+  <style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  
+  #menuBar {
+    background-color: #444;
+    color: white;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10; /* Ensure the menu bar is above other elements */
+  }
+  
+  #menuBar .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  #menuBar .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 11; /* Ensure dropdown is above other content */
+  }
+  
+  #menuBar .dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  #menuBar .dropdown-content a:hover {
+    background-color: #555;
+  }
+  
+  #menuBar .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  #menuBar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+  }
+  
+  #menuBar a:hover {
+    background-color: #666;
+  }
+  
+  #sidebar {
+    width: 250px;
+    background-color: #333;
+    color: white;
+    height: calc(100vh - 50px); /* Adjust height below the menu bar */
+    position: fixed;
+    top: 50px; /* Below the menu bar */
+    left: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 1; /* Sidebar should be below the menu bar */
+  }
+  
+  #sidebar a {
+    color: white;
+    padding: 15px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  #sidebar a:hover {
+    background-color: #555;
+  }
+  
+  #main-content {
+    margin-left: 250px;
+    margin-top: 50px; /* Below the menu bar */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #gameCanvas {
+    border: 1px solid black;
+    flex: 1;
+    width: 100%;
+    height: calc(100vh - 50px);
+  }
+  
+  /* Ensure modals are initially hidden */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000; /* Ensure modals are above everything else */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+  }
+  
+  /* Modal content styling */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    position: relative; /* Ensure it stays within the viewport */
+  }
+  
+  /* Close button styling */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer; /* Ensure it's clickable */
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+  }  
+  
+  </style>
+</head>
+<body>
+  <!-- Top Menu Bar -->
+  <div id="menuBar">
+    <div class="dropdown">
+      <a href="#">File</a>
+      <div class="dropdown-content">
+        <a href="#" id="newPlanet">New Planet</a>
+        <a href="#" id="loadPlanet">Load Planet</a>
+        <a href="#" id="savePlanet">Save Planet</a>
+        <a href="#" id="saveAs">Save As...</a>
+        <a href="#" id="snapshot">Snapshot</a>
+        <a href="#" id="quit">Quit</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Window</a>
+      <div class="dropdown-content">
+        <a href="#" id="edit">Edit</a>
+        <a href="#" id="map">Map</a>
+        <a href="#" id="globe">Globe</a>
+        <a href="#" id="gaia">Gaia</a>
+        <a href="#" id="history">History</a>
+        <a href="#" id="report">Report</a>
+        <a href="#" id="tutorial">Tutorial</a>
+        <a href="#" id="glossary">Glossary</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Model</a>
+      <div class="dropdown-content">
+        <a href="#" id="geosphere">Geosphere</a>
+        <a href="#" id="atmosphere">Atmosphere</a>
+        <a href="#" id="biosphere">Biosphere</a>
+        <a href="#" id="civilization">Civilization</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Graph</a>
+      <div class="dropdown-content">
+        <a href="#" id="airSample">Air Sample</a>
+        <a href="#" id="biomes">Biomes</a>
+        <a href="#" id="lifeForms">Life-Forms</a>
+        <a href="#" id="technology">Technology</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Options</a>
+      <div class="dropdown-content">
+        <a href="#" id="events">Go to Events</a>
+        <a href="#" id="updateBackground">Update Background</a>
+        <a href="#" id="compressEditScreen">Compress Edit Screen</a>
+        <a href="#" id="music">Music</a>
+        <a href="#" id="soundEffects">Sound Effects</a>
+        <a href="#" id="messages">Messages</a>
+        <a href="#" id="autoscroll">Autoscroll</a>
+        <a href="#" id="saveOptions">Save Options & Windows</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Speed</a>
+      <div class="dropdown-content">
+        <a href="#" id="fast">Fast</a>
+        <a href="#" id="moderate">Moderate</a>
+        <a href="#" id="slow">Slow</a>
+        <a href="#" id="pause">Pause</a>
+        <a href="#" id="relativeDate">Relative Date</a>
+        <a href="#" id="absoluteDate">Absolute Date</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Datasound</a>
+      <div class="dropdown-content">
+        <a href="#" id="toneMonitor">Tone Monitor</a>
+        <a href="#" id="playDataSong">Play Data Song</a>
+        <a href="#" id="altitude">Altitude</a>
+        <a href="#" id="airTemperature">Air Temperature</a>
+        <a href="#" id="rainfall">Rainfall</a>
+        <a href="#" id="seaTemperature">Sea Temperature</a>
+        <a href="#" id="biomes">Biomes</a>
+        <a href="#" id="life">Life</a>
+        <a href="#" id="civilization">Civilization</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <div id="sidebar">
+    <a href="#" id="homeSidebar">Home</a>
+    <a href="#" id="settings">Settings</a>
+    <a href="#" id="help">Help</a>
+    <!-- Add more sidebar links as needed -->
+  </div>
+
+  <!-- Main Content Area -->
+  <div id="main-content">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+  </div>
+
+  <!-- Modal for New Planet -->
+  <div id="newPlanetModal" class="modal">
+    <div class="modal-content">
+      <span class="close" data-modal="newPlanetModal">&times;</span>
+      <h2>New Planet</h2>
+      <!-- Modal content here -->
+    </div>
+  </div>
+  
+  <!-- Modal for Load Planet -->
+  <div id="loadPlanetModal" class="modal">
+    <div class="modal-content">
+      <span class="close" data-modal="loadPlanetModal">&times;</span>
+      <h2>Load Planet</h2>
+      <!-- Modal content here -->
+    </div>
+  </div>
+
+  <!-- Add more modals as needed -->
+
+  <%= javascript_include_tag 'game' %>
+</body>
+</html>

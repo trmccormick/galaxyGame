@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  unit_type: MyString
+  capacity: 1
+  energy_cost: 1
+  production_rate: 1
+  gas_type: MyString
+  resource_requirements: 
+
+two:
+  name: MyString
+  unit_type: MyString
+  capacity: 1
+  energy_cost: 1
+  production_rate: 1
+  gas_type: MyString
+  resource_requirements: 
