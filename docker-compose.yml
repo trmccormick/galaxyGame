@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: web
+    command: bash -c "rm -f tmp/pids/server.pid && rails server -b '0.0.0.0'"
+    volumes:
+      - ./scripts:/home/galaxy_game/scripts
+      - ./galaxy_game:/home/galaxy_game
+      - ./old_galaxy_game:/home/old_galaxy_game
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/galaxy_game_development
+
+volumes:
+  postgres_data:
