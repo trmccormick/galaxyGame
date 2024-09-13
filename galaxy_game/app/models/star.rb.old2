@@ -1,0 +1,16 @@
+class Star < ApplicationRecord
+  attr_accessor :name, :type_of_star, :age, :mass, :radius, :temperature, :luminosity
+
+  validates :name, presence: true
+  validates :type_of_star, presence: true
+  validates :age, presence: true
+  validates :mass, presence: true, numericality: { greater_than: 0 }
+  validates :radius, presence: true
+  validates :temperature, presence: true, numericality: { greater_than: 0 }
+
+  def initialize(attributes = {})
+    super
+    # Set default values or calculations if needed
+    self.luminosity ||= 3.828e26 # Default solar luminosity in watts
+  end
+end

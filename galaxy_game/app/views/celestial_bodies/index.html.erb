@@ -1,0 +1,40 @@
+<h1>Celestial Bodies</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Size</th>
+      <th>Gravity</th>
+      <th>Density</th>
+      <th>Orbital Period</th>
+      <th>Atmosphere Composition</th>
+      <th>Available Materials</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @celestial_bodies.each do |celestial| %>
+      <tr>
+        <td><%= link_to celestial.name, celestial_body_path(celestial) %></td>
+        <td><%= celestial.size %></td>
+        <td><%= format("%.2e", celestial.gravity) %></td>
+        <td><%= format("%.2e", celestial.density) %></td>
+        <td><%= format("%.2e", celestial.orbital_period) %></td>
+        <td>
+          <% if celestial.atmospheric_composition %>
+            <% celestial.atmospheric_composition.each do |gas, percentage| %>
+              <p><%= gas %>: <%= percentage %>%</p>
+            <% end %>
+          <% end %>
+        </td>
+        <td>
+          <% if celestial.available_materials %>
+            <% celestial.available_materials.each do |material, amount| %>
+              <p><%= material %>: <%= format("%.2e", amount) %></p>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

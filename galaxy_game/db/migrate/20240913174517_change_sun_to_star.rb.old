@@ -1,0 +1,17 @@
+class ChangeSunToStar < ActiveRecord::Migration[6.0]
+  def change
+    rename_table :suns, :stars
+
+    change_table :stars, bulk: true do |t|
+      # Add column only if it does not exist
+      unless column_exists?(:stars, :type_of_star)
+        t.integer :type_of_star, default: 0
+      end
+      
+      # Ensure luminosity column is added only if not present
+      unless column_exists?(:stars, :luminosity)
+        t.float :luminosity, default: 3.828e26
+      end
+    end
+  end
+end
