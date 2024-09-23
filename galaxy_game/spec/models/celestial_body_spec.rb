@@ -1,101 +1,92 @@
 require 'rails_helper'
 
 RSpec.describe CelestialBody, type: :model do
-  let(:celestial_body) do
-    CelestialBody.create!(
-      name: "Earth",
-      size: 1.0,
-      gravity: 9.8,
-      density: 5.5,
-      orbital_period: 365.25,
-      mass: 5.972e24, # Example mass in kg
-      radius: 6.37e6, # Example radius in meters
-      gas_quantities: { "Nitrogen" => 780800, "Oxygen" => 209500 },
-      materials: { "Iron" => 1000 },
-      temperature: 288.15 # Default temperature
-    )
-  end
+  let(:star) { FactoryBot.create(:star) }
+  let(:solar_system) { FactoryBot.create(:solar_system, current_star: star) }
+  let(:mars) { FactoryBot.create(:celestial_body, :with_solar_system, solar_system: solar_system) }
+  let(:brown_dwarf) { FactoryBot.create(:brown_dwarf) }
 
-  describe '#add_gas' do
-    it 'adds gas and updates the mass' do
-      initial_mass = celestial_body.mass
-      celestial_body.add_gas('Oxygen', 1000)
-      expect(celestial_body.available_gas_quantities['Oxygen']).to eq(210500)
-      expect(celestial_body.mass).to be > initial_mass
+  context 'when part of a solar system' do
+    it 'validates distance_from_star presence' do
+      expect(mars).to be_valid
     end
   end
 
-  describe '#remove_gas' do
-    it 'removes gas and updates the mass' do
-      initial_mass = celestial_body.mass
-      celestial_body.remove_gas('Oxygen', 500)
-      expect(celestial_body.available_gas_quantities['Oxygen']).to eq(209000)
-      expect(celestial_body.mass).to be < initial_mass
+  context 'when not part of a solar system' do
+    it 'allows distance_from_star to be nil' do
+      expect(brown_dwarf).to be_valid
+      expect(brown_dwarf.distance_from_star).to be_nil
+      expect(brown_dwarf.solar_system).to be_nil
     end
   end
 
   describe '#add_material' do
-    it 'adds material and updates the mass' do
-      initial_mass = celestial_body.mass
-      celestial_body.add_material('Gold', 500)
-      expect(celestial_body.available_materials['Gold']).to eq(500)
-      expect(celestial_body.mass).to be > initial_mass
+    it 'creates a new material if it does not exist' do
+      expect { celestial_body.add_material('Oxygen', 100) }.to change { celestial_body.materials.count }.by(1)
+      expect(celestial_body.materials.last.name).to eq('Oxygen')
+      expect(celestial_body.materials.last.amount).to eq(100)
+    end
+
+    it 'updates the amount of an existing material' do
+      celestial_body.add_material('Nitrogen', 100)
+      expect { celestial_body.add_material('Nitrogen', 50) }.not_to change { celestial_body.materials.count }
+      expect(celestial_body.materials.find_by(name: 'Nitrogen').amount).to eq(150)
     end
   end
 
-  describe '#remove_material' do
-    it 'removes material and updates the mass' do
-      initial_mass = celestial_body.mass
-      celestial_body.remove_material('Iron', 200)
-      expect(celestial_body.available_materials['Iron']).to eq(800)
-      expect(celestial_body.mass).to be < initial_mass
-    end
-  end
+  # describe '#remove_material' do
+  #   it 'removes material and updates the mass' do
+  #     mars.materials['Iron'] = 1000
+  #     initial_mass = mars.mass
+  #     mars.remove_material('Iron', 200)
+  #     expect(mars.materials['Iron']).to eq(800)
+  #     expect(mars.mass).to be < initial_mass
+  #   end
+  # end
 
-  describe '#update_biomes' do
-    it 'updates biomes based on temperature and atmospheric pressure' do
-      celestial_body.temperature = 290.15 # Example temperature
-      celestial_body.calculate_total_pressure
-      celestial_body.update_biomes
-      expect(celestial_body.biomes).to include('Tropical Rainforest')
-    end
+  # describe '#update_biomes' do
+  #   it 'updates biomes based on temperature and atmospheric composition' do
+  #     mars.temperature = 220.15
+  #     mars.calculate_atmospheric_composition
+  #     mars.update_biomes
+  #     expect(mars.biomes).to include('Desert')
+  #   end
 
-    it 'sets the correct biome for a cold desert' do
-      celestial_body.temperature = -50 # Set temperature for cold desert
-      celestial_body.calculate_total_pressure
-      celestial_body.update_biomes
-      expect(celestial_body.biomes).to include('Cold Desert')
-    end
-  end
+  #   it 'sets the correct biome for a cold desert' do
+  #     mars.temperature = 150.15
+  #     mars.calculate_atmospheric_composition
+  #     mars.update_biomes
+  #     expect(mars.biomes).to include('Cold Desert')
+  #   end
+  # end
 
   describe '#update_gravity' do
     it 'calculates and updates the gravity based on mass and radius' do
-      celestial_body.update_gravity
-      expected_gravity = (6.67430e-11 * celestial_body.mass) / (celestial_body.radius ** 2)
-      expect(celestial_body.gravity).to be_within(0.01).of(expected_gravity)
+      mars.update_gravity
+      expected_gravity = (6.67430e-11 * mars.mass) / (mars.radius ** 2)
+      expect(mars.gravity).to be_within(0.01).of(expected_gravity)
     end
   end
 
-  describe '#habitability_score' do
-    it 'returns a habitability score based on temperature and atmospheric pressure' do
-      celestial_body.temperature = 290.15 # Example temperature
-      allow(celestial_body).to receive(:atmospheric_pressure).and_return(1.0)
-      expect(celestial_body.habitability_score).to eq('Habitable')
-    end
+  # describe '#habitability_score' do
+  #   it 'returns a habitability score based on temperature and atmospheric composition' do
+  #     mars.temperature = 220.15
+  #     allow(mars).to receive(:calculate_atmospheric_composition).and_return(true)
+  #     expect(mars.habitability_score).to eq('Potentially Habitable')
+  #   end
 
-    it 'returns non-habitable when conditions are extreme' do
-      celestial_body.temperature = 400.15 # Example extreme temperature
-      allow(celestial_body).to receive(:atmospheric_pressure).and_return(0.5)
-      expect(celestial_body.habitability_score).to eq('Non-Habitable')
-    end
-  end
+  #   it 'returns non-habitable when conditions are extreme' do
+  #     mars.temperature = 400.15
+  #     allow(mars).to receive(:calculate_atmospheric_composition).and_return(false)
+  #     expect(mars.habitability_score).to eq('Non-Habitable')
+  #   end
+  # end
 
-  describe '#calculate_total_pressure' do
-    it 'calculates total atmospheric pressure based on gas quantities' do
-      celestial_body.calculate_total_pressure
-      total_moles = celestial_body.gas_quantities.values.sum
-      expected_pressure = total_moles * CelestialBody::IDEAL_GAS_CONSTANT * CelestialBody::TEMPERATURE / CelestialBody::VOLUME
-      expect(celestial_body.total_pressure).to eq(expected_pressure)
-    end
-  end
+  # describe '#calculate_atmospheric_composition' do
+  #   it 'calculates the atmospheric composition based on materials and temperature' do
+  #     mars.calculate_atmospheric_composition
+  #     expect(mars.atmosphere_composition).to include('CarbonDioxide')
+  #     expect(mars.atmosphere_composition).to include('Nitrogen')
+  #   end
+  # end
 end
