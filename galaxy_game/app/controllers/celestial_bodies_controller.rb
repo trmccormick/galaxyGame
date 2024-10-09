@@ -2,20 +2,22 @@ class CelestialBodiesController < ApplicationController
   # GET /celestial_bodies
   def index
     @celestial_bodies = CelestialBody.all
+    render json: @celestial_bodies
   end
 
   # GET /celestial_bodies/:id
   def show
     @celestial_body = CelestialBody.find(params[:id])
+    render json: @celestial_body
   end
 
   # POST /celestial_bodies
   def create
     @celestial_body = CelestialBody.new(celestial_body_params)
     if @celestial_body.save
-      redirect_to @celestial_body, notice: 'Celestial body was successfully created.'
+      render json: @celestial_body, status: :created
     else
-      render :new
+      render json: @celestial_body.errors, status: :unprocessable_entity
     end
   end
 
@@ -23,9 +25,9 @@ class CelestialBodiesController < ApplicationController
   def update
     @celestial_body = CelestialBody.find(params[:id])
     if @celestial_body.update(celestial_body_params)
-      redirect_to @celestial_body, notice: 'Celestial body was successfully updated.'
+      render json: @celestial_body
     else
-      render :edit
+      render json: @celestial_body.errors, status: :unprocessable_entity
     end
   end
 
@@ -33,7 +35,7 @@ class CelestialBodiesController < ApplicationController
   def destroy
     @celestial_body = CelestialBody.find(params[:id])
     @celestial_body.destroy
-    redirect_to celestial_bodies_url, notice: 'Celestial body was successfully destroyed.'
+    head :no_content
   end
 
   private
@@ -43,4 +45,3 @@ class CelestialBodiesController < ApplicationController
     params.require(:celestial_body).permit(:name, :size, :gravity, :density, :radius, :orbital_period, :mass, :known_pressure, :temperature, :biomes, :status, :gas_quantities, :materials)
   end
 end
-  

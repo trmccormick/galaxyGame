@@ -1,0 +1,223 @@
+meteorites:
+  - name: "Ordinary Chondrites"
+    type: "Stony Meteorite"
+    subtype: "Chondrite"
+    description: "The most common type, made of silicate minerals and chondrules."
+    smelting_output:
+      - material: "Iron"
+        percentage: 15.0
+      - material: "Silicon"
+        percentage: 30.0
+      - material: "Magnesium"
+        percentage: 10.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 45.0
+
+  - name: "Carbonaceous Chondrites"
+    type: "Stony Meteorite"
+    subtype: "Chondrite"
+    description: "Rich in carbon and organic compounds."
+    smelting_output:
+      - material: "Carbon"
+        percentage: 20.0
+      - material: "Silicon"
+        percentage: 25.0
+      - material: "Magnesium"
+        percentage: 15.0
+      - material: "Nickel"
+        percentage: 5.0
+    waste_material:
+      - type: "Organic Residue"
+        percentage: 35.0
+
+  - name: "Howardites"
+    type: "Stony-A Metallic Meteorite"
+    subtype: "Achondrite"
+    description: "Lack chondrules and composed of differentiated materials."
+    smelting_output:
+      - material: "Calcium"
+        percentage: 20.0
+      - material: "Aluminum"
+        percentage: 10.0
+      - material: "Magnesium"
+        percentage: 10.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 60.0
+
+  - name: "Eucrites"
+    type: "Stony-A Metallic Meteorite"
+    subtype: "Achondrite"
+    description: "Lack chondrules and composed of differentiated materials."
+    smelting_output:
+      - material: "Calcium"
+        percentage: 25.0
+      - material: "Silicon"
+        percentage: 20.0
+      - material: "Iron"
+        percentage: 15.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 40.0
+
+  - name: "Diogenites"
+    type: "Stony-A Metallic Meteorite"
+    subtype: "Achondrite"
+    description: "Lack chondrules and composed of differentiated materials."
+    smelting_output:
+      - material: "Calcium"
+        percentage: 15.0
+      - material: "Magnesium"
+        percentage: 15.0
+      - material: "Nickel"
+        percentage: 5.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 65.0
+
+  - name: "Octahedrites"
+    type: "Iron Meteorite"
+    description: "Primarily composed of iron and nickel."
+    smelting_output:
+      - material: "Iron"
+        percentage: 85.0
+      - material: "Nickel"
+        percentage: 10.0
+    waste_material:
+      - type: "Impurities"
+        percentage: 5.0
+
+  - name: "Hexahedrites"
+    type: "Iron Meteorite"
+    description: "Primarily composed of iron with little to no nickel."
+    smelting_output:
+      - material: "Iron"
+        percentage: 90.0
+    waste_material:
+      - type: "Impurities"
+        percentage: 10.0
+
+  - name: "Ataxites"
+    type: "Iron Meteorite"
+    description: "High in nickel content and lacking in structure."
+    smelting_output:
+      - material: "Nickel"
+        percentage: 60.0
+      - material: "Iron"
+        percentage: 30.0
+    waste_material:
+      - type: "Impurities"
+        percentage: 10.0
+
+  - name: "Pallasites"
+    type: "Stony-Iron Meteorite"
+    description: "Contain roughly equal parts of metal and silicate minerals, often with olivine crystals."
+    smelting_output:
+      - material: "Iron"
+        percentage: 30.0
+      - material: "Nickel"
+        percentage: 10.0
+      - material: "Magnesium"
+        percentage: 15.0
+    waste_material:
+      - type: "Olivine Crystal Residue"
+        percentage: 45.0
+
+  - name: "Mesosiderites"
+    type: "Stony-Iron Meteorite"
+    description: "Contain both silicate rock and metal."
+    smelting_output:
+      - material: "Iron"
+        percentage: 35.0
+      - material: "Silicon"
+        percentage: 20.0
+      - material: "Nickel"
+        percentage: 10.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 35.0
+
+  - name: "Allende"
+    type: "Carbonaceous Chondrite"
+    description: "Rich in carbon and organic compounds, provides insights into the early solar system."
+    smelting_output:
+      - material: "Carbon"
+        percentage: 30.0
+      - material: "Nickel"
+        percentage: 5.0
+      - material: "Magnesium"
+        percentage: 10.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 55.0
+
+  - name: "Murchison"
+    type: "Carbonaceous Chondrite"
+    description: "Contains amino acids and complex organic compounds."
+    smelting_output:
+      - material: "Carbon"
+        percentage: 25.0
+      - material: "Magnesium"
+        percentage: 15.0
+      - material: "Silicon"
+        percentage: 10.0
+    waste_material:
+      - type: "Organic Residue"
+        percentage: 50.0
+
+  - name: "NWA 7034"
+    type: "Lunar Meteorite"
+    description: "A meteorite originating from the Moon, nicknamed 'Black Beauty.'"
+    smelting_output:
+      - material: "Calcium"
+        percentage: 20.0
+      - material: "Silicon"
+        percentage: 15.0
+      - material: "Iron"
+        percentage: 10.0
+    waste_material:
+      - type: "Basaltic Residue"
+        percentage: 55.0
+
+  - name: "Khujerab"
+    type: "Lunar Meteorite"
+    description: "A meteorite from the Moon, containing basaltic materials."
+    smelting_output:
+      - material: "Calcium"
+        percentage: 25.0
+      - material: "Iron"
+        percentage: 15.0
+      - material: "Magnesium"
+        percentage: 10.0
+    waste_material:
+      - type: "Basaltic Residue"
+        percentage: 50.0
+
+  - name: "ALH84001"
+    type: "Martian Meteorite"
+    description: "A meteorite from Mars, famous for possible signs of past life."
+    smelting_output:
+      - material: "Calcium"
+        percentage: 20.0
+      - material: "Iron"
+        percentage: 20.0
+      - material: "Magnesium"
+        percentage: 10.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 50.0
+
+  - name: "NWA 7533"
+    type: "Martian Meteorite"
+    description: "A brecciated meteorite from Mars containing ancient crustal material."
+    smelting_output:
+      - material: "Silicon"
+        percentage: 25.0
+      - material: "Iron"
+        percentage: 20.0
+      - material: "Magnesium"
+        percentage: 15.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 40.0

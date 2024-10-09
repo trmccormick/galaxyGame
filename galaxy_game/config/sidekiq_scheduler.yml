@@ -1,0 +1,4 @@
+# sidekiq_scheduler.yml
+mine_gcc:
+  cron: "0 0 * * *" # Every day at midnight
+  class: "MineGccJob"

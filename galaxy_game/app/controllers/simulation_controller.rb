@@ -1,14 +1,9 @@
-class SimulationController < ApplicationController
-    def index
-      @plants = Plant.all
-      @environments = Environment.all
-    end
-  
-    def run_simulation
-      Environment.all.each(&:simulate_environmental_changes)
-      Plant.all.each(&:simulate_growth_and_death)
-  
-      redirect_to simulation_index_path, notice: 'Simulation run completed.'
-    end
+class SimulationsController < ApplicationController
+  def run
+    celestial_body = CelestialBody.find(params[:id])
+    terra_sim = TerraSim.new(celestial_body)
+    terra_sim.run_simulation
+
+    redirect_to celestial_body_path(celestial_body), notice: "Simulation completed!"
   end
-  
+end

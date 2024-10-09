@@ -1,0 +1,170 @@
+raw_ores:
+  - name: "Hematite"
+    type: "Iron Ore"
+    description: "An iron ore with a high iron content, often reddish-brown."
+    smelting_output:
+      - material: "Iron"
+        percentage: 70.0
+      - material: "Aluminum"
+        percentage: 5.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 25.0
+
+  - name: "Magnetite"
+    type: "Iron Ore"
+    description: "An iron ore containing both ferrous and ferric iron, magnetic in nature."
+    smelting_output:
+      - material: "Iron"
+        percentage: 72.0
+      - material: "Nickel"
+        percentage: 2.0
+    waste_material:
+      - type: "Gangue Minerals"
+        percentage: 26.0
+
+  - name: "Bauxite"
+    type: "Aluminum Ore"
+    description: "The primary source of aluminum, usually consisting of a mix of aluminum oxides."
+    smelting_output:
+      - material: "Aluminum"
+        percentage: 50.0
+      - material: "Iron"
+        percentage: 5.0
+    waste_material:
+      - type: "Red Mud"
+        percentage: 45.0
+
+  - name: "Chalcopyrite"
+    type: "Copper Ore"
+    description: "A common copper ore, often found in sulfide deposits."
+    smelting_output:
+      - material: "Copper"
+        percentage: 35.0
+      - material: "Iron"
+        percentage: 10.0
+    waste_material:
+      - type: "Sulfur Dioxide"
+        percentage: 55.0
+
+  - name: "Galena"
+    type: "Lead Ore"
+    description: "The primary ore for lead, often with silver as a byproduct."
+    smelting_output:
+      - material: "Lead"
+        percentage: 85.0
+      - material: "Silver"
+        percentage: 5.0
+    waste_material:
+      - type: "Sulfur Residue"
+        percentage: 10.0
+
+  - name: "Sphalerite"
+    type: "Zinc Ore"
+    description: "The primary source of zinc, often found with galena in sulfide deposits."
+    smelting_output:
+      - material: "Zinc"
+        percentage: 60.0
+      - material: "Iron"
+        percentage: 10.0
+    waste_material:
+      - type: "Sulfur Residue"
+        percentage: 30.0
+
+  - name: "Cassiterite"
+    type: "Tin Ore"
+    description: "The primary ore for tin, often black or brown in color."
+    smelting_output:
+      - material: "Tin"
+        percentage: 70.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 30.0
+
+  - name: "Cinnabar"
+    type: "Mercury Ore"
+    description: "A mercury ore with a bright red color."
+    smelting_output:
+      - material: "Mercury"
+        percentage: 85.0
+    waste_material:
+      - type: "Sulfur Residue"
+        percentage: 15.0
+
+  - name: "Bornite"
+    type: "Copper Ore"
+    description: "An important copper ore, also known as peacock ore due to its iridescent colors."
+    smelting_output:
+      - material: "Copper"
+        percentage: 63.0
+      - material: "Iron"
+        percentage: 12.0
+    waste_material:
+      - type: "Sulfur Residue"
+        percentage: 25.0
+
+  - name: "Pentlandite"
+    type: "Nickel Ore"
+    description: "A major source of nickel, often found with pyrrhotite and chalcopyrite."
+    smelting_output:
+      - material: "Nickel"
+        percentage: 45.0
+      - material: "Iron"
+        percentage: 20.0
+    waste_material:
+      - type: "Sulfur Residue"
+        percentage: 35.0
+
+  - name: "Ilmenite"
+    type: "Titanium Ore"
+    description: "A primary source of titanium, often used in aerospace and pigments."
+    smelting_output:
+      - material: "Titanium"
+        percentage: 50.0
+      - material: "Iron"
+        percentage: 15.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 35.0
+
+  - name: "Rutile"
+    type: "Titanium Ore"
+    description: "Another important titanium ore, often found in beach sands."
+    smelting_output:
+      - material: "Titanium"
+        percentage: 80.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 20.0
+
+  - name: "Uraninite"
+    type: "Uranium Ore"
+    description: "A uranium-rich mineral used as fuel in nuclear reactors."
+    smelting_output:
+      - material: "Uranium"
+        percentage: 65.0
+    waste_material:
+      - type: "Radioactive Waste"
+        percentage: 35.0
+
+  - name: "Monazite"
+    type: "Rare Earth Ore"
+    description: "A source of rare earth elements like cerium and lanthanum."
+    smelting_output:
+      - material: "Cerium"
+        percentage: 20.0
+      - material: "Lanthanum"
+        percentage: 15.0
+    waste_material:
+      - type: "Silicate Residue"
+        percentage: 65.0
+
+  - name: "Spodumene"
+    type: "Lithium Ore"
+    description: "An important source of lithium, used in batteries."
+    smelting_output:
+      - material: "Lithium"
+        percentage: 40.0
+    waste_material:
+      - type: "Silicate Dust"
+        percentage: 60.0

@@ -1,0 +1,79 @@
+# app/services/terra_sim.rb
+class TerraSim
+  attr_reader :celestial_body
+
+  def initialize(celestial_body)
+    @celestial_body = celestial_body
+  end
+
+  def run_simulation
+    adjust_material_states
+    # Further simulation logic...
+  end
+
+  private
+
+  def adjust_material_states
+    materials = celestial_body.materials
+
+    materials.each do |material, properties|
+      temperature = current_temperature(material)
+      pressure = current_pressure(material)
+
+      case properties[:state]
+      when "solid"
+        if temperature > properties[:melting_point]
+          change_material_state(material, properties, "liquid")
+        end
+      when "liquid"
+        if temperature < properties[:melting_point]
+          change_material_state(material, properties, "solid")
+        elsif temperature > properties[:boiling_point]
+          change_material_state(material, properties, "gas")
+        end
+      when "gas"
+        if temperature < properties[:boiling_point]
+          change_material_state(material, properties, "liquid")
+        end
+      end
+    end
+
+    celestial_body.update(materials: materials)
+  end
+
+  def change_material_state(material, properties, new_state)
+    materials = celestial_body.materials
+    amount = materials[material][:amount]
+
+    # Logic for transferring material amounts between states
+    case new_state
+    when "liquid"
+      # Adjust amounts accordingly
+      # Assume some amount transitions from solid to liquid
+      transition_amount = [amount * 0.1, amount].min # Example transition
+      materials[material][:amount] -= transition_amount
+      materials[material][:state] = "liquid"
+      materials[new_state] ||= { amount: 0.0, state: new_state }
+      materials[new_state][:amount] += transition_amount
+    when "gas"
+      # Logic for solid or liquid to gas transitions
+      transition_amount = [amount * 0.1, amount].min
+      materials[material][:amount] -= transition_amount
+      materials[material][:state] = "gas"
+      materials[new_state] ||= { amount: 0.0, state: new_state }
+      materials[new_state][:amount] += transition_amount
+    end
+  end
+
+  def current_temperature(material)
+    # Logic to get the current temperature based on simulation factors
+    # For example, you can return a static value for testing:
+    25.0
+  end
+
+  def current_pressure(material)
+    # Logic to get the current pressure based on simulation factors
+    # For example, you can return a static value for testing:
+    1.0
+  end
+end

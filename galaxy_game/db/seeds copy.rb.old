@@ -1,0 +1,104 @@
+# Create Celestial Bodies with total atmospheric mass estimation
+celestial_bodies = [
+  { model_class: TerrestrialPlanet, name: 'Mercury', mass: 3.30e23, radius: 2.44e6, density: 5.427, distance_from_star: 5.79e7, size: 0.3829, orbital_period: 87.97, atmosphere_composition: {}, crust_composition: { iron: 35.0, nickel: 10.0 }, crust_mass: 1.0e22, surface_temperature: 440 },
+  { model_class: TerrestrialPlanet, name: 'Venus', mass: 4.87e24, radius: 6.05e6, density: 5.243, distance_from_star: 1.08e8, size: 0.9499, orbital_period: 224.7, atmosphere_composition: { CO2: 96.5, N2: 3.5 }, known_pressure: 92.0, crust_composition: { sulfur: 15.0, carbon: 30.0 }, crust_mass: 4.8e23, total_atmospheric_mass: 4.8e20, surface_temperature: 737 },
+  { model_class: TerrestrialPlanet, name: 'Earth', mass: 5.97e24, radius: 6.37e6, density: 5.514, distance_from_star: 1.496e8, size: 1.0, orbital_period: 365.25, atmosphere_composition: { N2: 78.08, O2: 20.95, Ar: 0.93, CO2: 0.04 }, known_pressure: 1.000, crust_composition: { iron: 5.0, aluminum: 8.0, silicon: 28.0 }, crust_mass: 2.7e22, total_atmospheric_mass: 5.1e18, surface_temperature: 288, hydrosphere: { water: 100.0 } },
+  { model_class: TerrestrialPlanet, name: 'Mars', mass: 6.42e23, radius: 3.39e6, density: 3.9335, distance_from_star: 2.279e8, size: 0.5320, orbital_period: 686.98, atmosphere_composition: { CO2: 95.32, N2: 2.7, Ar: 1.6, O2: 0.13 }, known_pressure: 0.006, crust_composition: { iron: 14.0, silicon: 21.0, magnesium: 8.0 }, crust_mass: 1.0e21, total_atmospheric_mass: 2.5e16, surface_temperature: 210 },
+  { model_class: GasGiant, name: 'Jupiter', mass: 1.90e27, radius: 6.99e7, density: 1.326, distance_from_star: 7.785e8, size: 11.209, orbital_period: 4331, atmosphere_composition: { H2: 89.8, He: 10.2 }, crust_composition: { hydrogen: 70.0, helium: 28.0 }, crust_mass: 1.9e26, total_atmospheric_mass: 1.9e27, surface_temperature: 165 },
+  { model_class: GasGiant, name: 'Saturn', mass: 5.68e26, radius: 5.82e7, density: 0.687, distance_from_star: 1.433e9, size: 9.449, orbital_period: 10747, atmosphere_composition: { H2: 96.3, He: 3.7 }, crust_composition: { hydrogen: 75.0, helium: 24.0 }, crust_mass: 1.2e26, total_atmospheric_mass: 1.2e27, surface_temperature: 134 },
+  { model_class: IceGiant, name: 'Uranus', mass: 8.68e25, radius: 2.54e7, density: 1.27, distance_from_star: 2.872e9, size: 4.007, orbital_period: 30589, atmosphere_composition: { H2: 82.5, He: 15.2, CH4: 2.3 }, crust_composition: { methane: 1.5, ammonia: 0.1 }, crust_mass: 8.0e24, total_atmospheric_mass: 8.0e24, surface_temperature: 76 },
+  { model_class: IceGiant, name: 'Neptune', mass: 1.02e26, radius: 2.46e7, density: 1.638, distance_from_star: 4.495e9, size: 3.883, orbital_period: 59800, atmosphere_composition: { H2: 80.0, He: 19.0, CH4: 1.5 }, crust_composition: { methane: 2.0, ammonia: 0.5 }, crust_mass: 7.6e24, total_atmospheric_mass: 7.6e24, surface_temperature: 72 },
+  { model_class: DwarfPlanet, name: 'Pluto', mass: 1.31e22, radius: 1.19e6, density: 1.854, distance_from_star: 5.906e9, size: 0.1868, orbital_period: 90560, atmosphere_composition: { N2: 90.0, CH4: 9.0, CO: 1.0 }, crust_composition: { nitrogen: 30.0, methane: 50.0 }, crust_mass: 1.3e15, total_atmospheric_mass: 1.3e15, surface_temperature: 44 },
+  { model_class: DwarfPlanet, name: 'Charon', mass: 1.52e21, radius: 6.07e5, density: 1.702, distance_from_star: 5.906e9, size: 0.095, orbital_period: 90560, atmosphere_composition: {}, crust_composition: { water_ice: 100.0 }, crust_mass: 1.0e20, surface_temperature: 53, hydrosphere: { water_ice: 100.0 } },
+  { model_class: DwarfPlanet, name: 'Ceres', mass: 9.39e20, radius: 4.73e5, density: 2.09, distance_from_star: 4.14e8, size: 0.148, orbital_period: 1680, atmosphere_composition: {}, crust_composition: { water_ice: 30.0, silicate_rock: 70.0 }, crust_mass: 9.0e19, surface_temperature: 167, hydrosphere: { water_ice: 30.0 } },
+  { model_class: Moon, name: 'Moon', mass: 7.35e22, radius: 1.74e6, density: 3.344, distance_from_star: 1.496e8, size: 0.273, orbital_period: 27.32, atmosphere_composition: {}, crust_composition: { silicon: 22.0, iron: 13.0 }, crust_mass: 7.0e21, surface_temperature: 220 },
+  { model_class: Moon, name: 'Europa', mass: 4.8e22, radius: 1.56e6, density: 3.013, distance_from_star: 7.785e8, size: 0.245, orbital_period: 3.55, atmosphere_composition: {}, crust_composition: { water_ice: 100.0, silicate_rock: 30.0 }, crust_mass: 4.0e21, surface_temperature: 102, hydrosphere: { water_ice: 100.0 } },
+  { model_class: Moon, name: 'Titan', mass: 1.345e23, radius: 2.575e6, density: 1.88, distance_from_star: 1.433e9, size: 0.400, orbital_period: 15.95, atmosphere_composition: { N2: 95.0, CH4: 5.0 }, known_pressure: 1.5, crust_composition: { methane: 95.0, ethane: 5.0 }, crust_mass: 1.0e22, surface_temperature: 94 },
+  { model_class: Moon, name: 'Ganymede', mass: 1.48e23, radius: 2.63e6, density: 1.936, distance_from_star: 7.785e8, size: 0.413, orbital_period: 7.15, atmosphere_composition: {}, crust_composition: { water_ice: 50.0, silicate_rock: 50.0 }, crust_mass: 1.5e22, surface_temperature: 110, hydrosphere: { water_ice: 50.0 } },
+  { model_class: Moon, name: 'Callisto', mass: 1.08e23, radius: 2.41e6, density: 1.834, distance_from_star: 7.785e8, size: 0.378, orbital_period: 16.69, atmosphere_composition: {}, crust_composition: { water_ice: 40.0, silicate_rock: 60.0 }, crust_mass: 1.0e22, surface_temperature: 134, hydrosphere: { water_ice: 40.0 } },
+  { model_class: Moon, name: 'Io', mass: 8.93e22, radius: 1.82e6, density: 3.528, distance_from_star: 7.785e8, size: 0.286, orbital_period: 1.77, atmosphere_composition: { SO2: 90.0, SO: 10.0 }, crust_composition: { sulfur: 50.0, silicate_rock: 50.0 }, crust_mass: 8.0e21, surface_temperature: 130 },
+  { model_class: Moon, name: 'Triton', mass: 2.14e22, radius: 1.35e6, density: 2.061, distance_from_star: 4.495e9, size: 0.212, orbital_period: 5.88, atmosphere_composition: { N2: 99.0, CH4: 1.0 }, crust_composition: { nitrogen: 70.0, methane: 30.0 }, crust_mass: 2.0e21, surface_temperature: 38, hydrosphere: { nitrogen: 70.0, methane: 30.0 } }
+]
+
+# Iterate through each celestial body and create the appropriate records
+# celestial_bodies.each do |body|
+#   create_celestial_body(**body)
+# end
+
+# Method to calculate gravity based on mass and radius
+def calculate_gravity(mass, radius)
+  gravitational_constant = 6.67430e-11 # in m^3 kg^-1 s^-2
+  radius_in_meters = radius * 1000 # Convert km to meters
+  (gravitational_constant * mass) / (radius_in_meters ** 2)
+end
+
+# Method to calculate total atmospheric pressure based on gas quantities
+def calculate_total_pressure(gas_quantities)
+  gas_quantities.values.sum
+end
+
+# Method to calculate gas mass based on percentage and total atmospheric mass
+def calculate_gas_mass(percentage, total_atmospheric_mass)
+  return 0 if total_atmospheric_mass.nil? # Handle nil case
+  (percentage / 100.0) * total_atmospheric_mass
+end
+
+# Helper method to create celestial body data
+def create_celestial_body(model_class:, **attributes)
+  # Handle model-specific logic
+  case model_class.name
+  when 'DwarfPlanet'
+    attributes[:mass] = attributes[:mass].to_f
+    attributes[:radius] = attributes[:radius].to_f
+    attributes[:density] = attributes[:density].to_f
+    attributes[:distance_from_star] = attributes[:distance_from_star].to_f
+    attributes[:size] = attributes[:size].to_f
+    attributes[:orbital_period] = attributes[:orbital_period].to_f
+    attributes[:gravity] ||= calculate_gravity(attributes[:mass], attributes[:radius])
+    attributes[:total_atmospheric_mass] ||= 0
+    model_class.create!(attributes)
+  else
+    # Default handling for other celestial bodies
+    model_class.create!(attributes)
+  end
+end
+
+# Iterate through each celestial body and create the appropriate records
+celestial_bodies.each do |body|
+  celestial_body = create_celestial_body(**body)
+
+  # Initialize the atmosphere for celestial bodies with atmosphere_composition
+  if body[:atmosphere_composition] && !body[:atmosphere_composition].empty?
+    Atmosphere.create!(
+      celestial_body: celestial_body,
+      temperature: body[:surface_temperature],
+      pressure: body[:known_pressure] || calculate_total_pressure(body[:atmosphere_composition]),
+      atmosphere_composition: body[:atmosphere_composition],
+      total_atmospheric_mass: body[:total_atmospheric_mass]
+    )
+  end
+
+  # Initialize the materials for celestial bodies with materials
+  # if body[:crust_composition] && !body[:crust_composition].empty?
+  #   Geosphere.create!(
+  #     celestial_body: celestial_body,
+  #     materials: body[:crust_composition]
+  #   )
+  # end
+
+  # Initialize the hydrosphere for celestial bodies with water_ice
+  # if body[:crust_composition] && body[:crust_composition].key?(:water_ice)
+  #   Hydrosphere.create!(
+  #     celestial_body: celestial_body,
+  #     water_ice: body[:crust_composition][:water_ice]
+  #   )
+  # end
+
+  # Initialize the biosphere for celestial bodies with known biosphere data
+  # if body[:biosphere_data]
+  #   Biosphere.create!(
+  #     celestial_body: celestial_body,
+  #     **body[:biosphere_data]
+  #   )
+  # end
+end
