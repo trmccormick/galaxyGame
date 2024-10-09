@@ -289,6 +289,7 @@ atmospheres.each do |atmosphere|
     atmosphere_composition: atmosphere[:atmosphere_composition],
     pressure: atmosphere[:pressure],
     total_atmospheric_mass: atmosphere[:total_atmospheric_mass],
+    dust: atmosphere[:dust] || {},
     pollution: atmosphere[:pollution] || 'None'
   )
 
