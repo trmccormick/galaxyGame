@@ -5,6 +5,6 @@ class CreatePlayers < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-    add_reference :colonies, :player, foreign_key: true
+    add_reference :settlements, :player, foreign_key: true
   end
 end

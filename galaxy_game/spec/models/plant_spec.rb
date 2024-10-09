@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Plant, type: :model do
-  let(:plant) { Plant.create(name: "Cactus", growth_temperature_range: "20..30", growth_humidity_range: "10..30", description: "A hardy plant adapted to dry environments") }
+  let(:plant) { Plant.create(name: "Cactus", growth_temperature_range: 20..30, growth_humidity_range: 10..30, description: "A hardy plant adapted to dry environments") }
 
   describe 'validations' do
     it 'is valid with valid attributes' do

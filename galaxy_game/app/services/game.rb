@@ -1,10 +1,10 @@
 module Game
     class << self
-      attr_accessor :current_celestial_body, :current_sun, :current_system, :current_galaxy
+      attr_accessor :current_celestial_body, :current_star, :current_system, :current_galaxy
   
-      def setup(celestial_body, sun)
+      def setup(celestial_body, star)
         @current_celestial_body = celestial_body
-        @current_sun = sun
+        @current_star = star
         @current_system = celestial_body&.solar_system
         @current_galaxy = fetch_galaxy_data
       end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CelestialBody, type: :model do
+RSpec.describe CelestialBodies::CelestialBody, type: :model do
   let(:star) { FactoryBot.create(:star) }
   let(:solar_system) { FactoryBot.create(:solar_system, current_star: star) }
   let(:mars) { FactoryBot.create(:celestial_body, :with_solar_system, solar_system: solar_system) }
@@ -22,15 +22,18 @@ RSpec.describe CelestialBody, type: :model do
 
   describe '#add_material' do
     it 'creates a new material if it does not exist' do
-      expect { celestial_body.add_material('Oxygen', 100) }.to change { celestial_body.materials.count }.by(1)
-      expect(celestial_body.materials.last.name).to eq('Oxygen')
-      expect(celestial_body.materials.last.amount).to eq(100)
+      expect { mars.add_material('Oxygen', 100) }.to change { mars.materials.count }.by(1)
+      expect(mars.materials.last.name).to eq('Oxygen')
+      expect(mars.materials.last.amount).to eq(100)
     end
 
     it 'updates the amount of an existing material' do
-      celestial_body.add_material('Nitrogen', 100)
-      expect { celestial_body.add_material('Nitrogen', 50) }.not_to change { celestial_body.materials.count }
-      expect(celestial_body.materials.find_by(name: 'Nitrogen').amount).to eq(150)
+      mars.add_material('Nitrogen', 100)
+
+      puts mars.materials.inspect
+
+      expect { mars.add_material('Nitrogen', 50) }.not_to change { mars.materials.count }
+      expect(mars.materials.find_by(name: 'Nitrogen').amount).to eq(150)
     end
   end
 

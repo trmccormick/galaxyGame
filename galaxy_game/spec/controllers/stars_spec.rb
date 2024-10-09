@@ -3,12 +3,14 @@ require 'rails_helper'
 RSpec.describe StarsController, type: :controller do
   let(:valid_attributes) {
     {
-      name: "Alpha Centauri",
-      type_of_star: "red_dwarf",
-      age: 5.0,
-      mass: 1.0e30,
-      radius: 1.0e8,
-      temperature: 3000
+      name: "Sol",
+      type_of_star: "sun",
+      age: 4.6e9,
+      mass: 1.989e30,
+      radius: 6.963e8,
+      temperature: 5778,
+      life: 10.0,
+      r_ecosphere: 0.8
     }
   }
 
@@ -19,7 +21,9 @@ RSpec.describe StarsController, type: :controller do
       age: nil,
       mass: nil,
       radius: nil,
-      temperature: nil
+      temperature: nil,
+      life: nil,
+      r_ecosphere: nil
     }
   }
 
@@ -51,6 +55,9 @@ RSpec.describe StarsController, type: :controller do
         post :create, params: { star: valid_attributes }
         expect(response).to have_http_status(:created)
         expect(response.content_type).to include('application/json')
+        json_response = JSON.parse(response.body)
+        expect(json_response['name']).to eq('Sol')
+        expect(json_response['type_of_star']).to eq('sun')
       end
     end
 
@@ -72,7 +79,9 @@ RSpec.describe StarsController, type: :controller do
           age: 8.0,
           mass: 2.0e30,
           radius: 1.5e8,
-          temperature: 3500
+          temperature: 3500,
+          life: 12.0,
+          r_ecosphere: 1.0
         }
       }
 
@@ -80,8 +89,15 @@ RSpec.describe StarsController, type: :controller do
         star = Star.create!(valid_attributes)
         patch :update, params: { id: star.to_param, star: new_attributes }
         star.reload
+        puts star.inspect  # Print updated star for debugging
         expect(star.name).to eq("Betelgeuse")
         expect(star.type_of_star).to eq("supergiant")
+        expect(star.age).to eq(8.0)
+        expect(star.mass).to eq(2.0e30)
+        expect(star.radius).to eq(1.5e8)
+        expect(star.temperature).to eq(3500)
+        expect(star.life).to eq(12.0)
+        expect(star.r_ecosphere).to eq(1.0)
       end
 
       it "renders a JSON response with the star" do
@@ -89,6 +105,9 @@ RSpec.describe StarsController, type: :controller do
         patch :update, params: { id: star.to_param, star: new_attributes }
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')
+        json_response = JSON.parse(response.body)
+        expect(json_response['name']).to eq('Betelgeuse')
+        expect(json_response['type_of_star']).to eq('supergiant')
       end
     end
 

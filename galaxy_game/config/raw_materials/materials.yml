@@ -1,0 +1,220 @@
+
+materials:
+  - name: "Water"
+    chemical_formula: "H2O"
+    aliases: 
+    - "Steam"
+    - "Water Vapor"
+    description: "Essential for all known forms of life, found in solid, liquid, and gas states."
+    boiling_point: 100.0 # Celsius
+    freezing_point: 0.0 # Celsius
+    vapor_point: 100.0 # Celsius
+    melting_point: 0.0 # Celsius
+
+  - name: "Carbon Dioxide"
+    chemical_formula: "CO2"
+    description: "A gas found in planetary atmospheres, critical for photosynthesis and greenhouse effects."
+    boiling_point: -78.5 # Celsius (sublimation point)
+    freezing_point: -56.6 # Celsius
+    vapor_point: -78.5 # Celsius
+    melting_point: -56.6 # Celsius
+
+  - name: "Nitrogen"
+    chemical_formula: "N2"
+    description: "A major component of Earth's atmosphere, inert in most reactions."
+    boiling_point: -195.8 # Celsius
+    freezing_point: -210.0 # Celsius
+    vapor_point: -195.8 # Celsius
+    melting_point: -210.0 # Celsius
+
+  - name: "Oxygen"
+    chemical_formula: "O2"
+    description: "Essential for aerobic life, highly reactive and found in Earth's atmosphere."
+    boiling_point: -183.0 # Celsius
+    freezing_point: -218.8 # Celsius
+    vapor_point: -183.0 # Celsius
+    melting_point: -218.8 # Celsius
+
+  - name: "Methane"
+    chemical_formula: "CH4"
+    description: "A greenhouse gas, often found in atmospheres of planets and moons, also used as a fuel."
+    boiling_point: -161.5 # Celsius
+    freezing_point: -182.5 # Celsius
+    vapor_point: -161.5 # Celsius
+    melting_point: -182.5 # Celsius
+
+  - name: "Hydrogen"
+    chemical_formula: "H2"
+    description: "The most abundant element in the universe, found in gas giants and used for fusion energy."
+    boiling_point: -252.9 # Celsius
+    freezing_point: -259.2 # Celsius
+    vapor_point: -252.9 # Celsius
+    melting_point: -259.2 # Celsius
+
+  - name: "Helium"
+    chemical_formula: "He"
+    description: "A noble gas, second most abundant element, found in gas giants and stars."
+    boiling_point: -268.9 # Celsius
+    freezing_point: -272.2 # Celsius
+    vapor_point: -268.9 # Celsius
+    melting_point: -272.2 # Celsius
+
+  - name: "Sulfur Dioxide"
+    chemical_formula: "SO2"
+    description: "A toxic gas often associated with volcanic activity."
+    boiling_point: -10.0 # Celsius
+    freezing_point: -72.7 # Celsius
+    vapor_point: -10.0 # Celsius
+    melting_point: -72.7 # Celsius
+
+  - name: "Ammonia"
+    chemical_formula: "NH3"
+    description: "A compound of nitrogen and hydrogen, common in the atmospheres of gas giants."
+    boiling_point: -33.3 # Celsius
+    freezing_point: -77.7 # Celsius
+    vapor_point: -33.3 # Celsius
+    melting_point: -77.7 # Celsius
+
+  - name: "Argon"
+    chemical_formula: "Ar"
+    description: "A noble gas present in Earth's atmosphere in small quantities, chemically inert."
+    boiling_point: -185.8 # Celsius
+    freezing_point: -189.3 # Celsius
+    vapor_point: -185.8 # Celsius
+    melting_point: -189.3 # Celsius
+
+  - name: "Neon"
+    chemical_formula: "Ne"
+    description: "A noble gas found in small quantities in planetary atmospheres, used in neon lighting."
+    boiling_point: -246.0 # Celsius
+    freezing_point: -248.6 # Celsius
+    vapor_point: -246.0 # Celsius
+    melting_point: -248.6 # Celsius
+
+  - name: "Carbon Monoxide"
+    chemical_formula: "CO"
+    description: "A toxic gas formed by incomplete combustion of carbon-containing materials."
+    boiling_point: -191.5 # Celsius
+    freezing_point: -205.0 # Celsius
+    vapor_point: -191.5 # Celsius
+    melting_point: -205.0 # Celsius
+
+  - name: "Hydrogen Sulfide"
+    chemical_formula: "H2S"
+    description: "A toxic gas often associated with volcanic activity, has a characteristic 'rotten egg' smell."
+    boiling_point: -60.3 # Celsius
+    freezing_point: -85.5 # Celsius
+    vapor_point: -60.3 # Celsius
+    melting_point: -85.5 # Celsius
+
+  - name: "Sulfuric Acid"
+    chemical_formula: "H2SO4"
+    description: "A highly corrosive acid, found in Venus' atmosphere in aerosol form."
+    boiling_point: 337.0 # Celsius
+    freezing_point: 10.0 # Celsius
+    vapor_point: 337.0 # Celsius
+    melting_point: 10.0 # Celsius
+
+  - name: "Sulfur Hexafluoride"
+    chemical_formula: "SF6"
+    description: "A potent greenhouse gas, used in electrical insulation."
+    boiling_point: -64.0 # Celsius
+    freezing_point: -50.8 # Celsius
+    vapor_point: -64.0 # Celsius
+    melting_point: -50.8 # Celsius
+
+  - name: "Nitrous Oxide"
+    chemical_formula: "N2O"
+    description: "A greenhouse gas, also used in medical applications as an anesthetic."
+    boiling_point: -88.5 # Celsius
+    freezing_point: -90.8 # Celsius
+    vapor_point: -88.5 # Celsius
+    melting_point: -90.8 # Celsius
+
+  - name: "Ozone"
+    chemical_formula: "O3"
+    description: "A gas that protects the Earth from ultraviolet radiation."
+    boiling_point: -112.0 # Celsius
+    freezing_point: -192.2 # Celsius
+    vapor_point: -112.0 # Celsius
+    melting_point: -192.2 # Celsius
+
+  - name: "Acetylene"
+    chemical_formula: "C2H2"
+    description: "A flammable gas used in welding and cutting."
+    boiling_point: -84.0 # Celsius
+    freezing_point: -80.8 # Celsius
+    vapor_point: -84.0 # Celsius
+    melting_point: -80.8 # Celsius
+
+  - name: "Ethanol"
+    chemical_formula: "C2H5OH"
+    description: "A volatile and flammable liquid, used as a solvent and in beverages."
+    boiling_point: 78.37 # Celsius
+    freezing_point: -114.1 # Celsius
+    vapor_point: 78.37 # Celsius
+    melting_point: -114.1 # Celsius
+
+  - name: "Mercury"
+    chemical_formula: "Hg"
+    description: "A liquid metal used in thermometers and barometers."
+    boiling_point: 356.73 # Celsius
+    freezing_point: -38.83 # Celsius
+    vapor_point: 356.73 # Celsius
+    melting_point: -38.83 # Celsius
+
+  - name: "Glycerol"
+    chemical_formula: "C3H8O3"
+    description: "A viscous liquid used in pharmaceuticals and cosmetics."
+    boiling_point: 290.0 # Celsius
+    freezing_point: 18.2 # Celsius
+    vapor_point: 290.0 # Celsius
+    melting_point: 18.2 # Celsius
+
+  - name: "Sodium Bicarbonate"
+    chemical_formula: "NaHCO3"
+    description: "Commonly known as baking soda, used in cooking and as a buffer."
+    boiling_point: 1000.0 # Celsius (decomposes)
+    freezing_point: 50.0 # Celsius (decomposes)
+    vapor_point: 1000.0 # Celsius
+    melting_point: 50.0 # Celsius (decomposes)
+
+  - name: "Calcium Sulfate"
+    chemical_formula: "CaSO4"
+    description: "Used in plaster and as a drying agent."
+    boiling_point: 1460.0 # Celsius (decomposes)
+    freezing_point: 1450.0 # Celsius (decomposes)
+    vapor_point: 1460.0 # Celsius
+    melting_point: 1450.0 # Celsius (decomposes)
+
+  - name: "Graphite"
+    chemical_formula: "C"
+    description: "A form of carbon used in batteries and lubricants."
+    boiling_point: 4200.0 # Celsius (sublimes)
+    freezing_point: 3652.0 # Celsius
+    vapor_point: 4200.0 # Celsius
+    melting_point: 3652.0 # Celsius
+
+  - name: "Diamond"
+    chemical_formula: "C"
+    description: "Another form of carbon, known for its hardness and use in jewelry."
+    boiling_point: N/A # Celsius (sublimes)
+    freezing_point: 3550.0 # Celsius
+    vapor_point: N/A # Celsius
+    melting_point: 3550.0 # Celsius
+
+  - name: "Silicon"
+    chemical_formula: "Si"
+    description: "A semiconductor used in electronics."
+    boiling_point: 2900.0 # Celsius
+    freezing_point: 1414.0 # Celsius
+    vapor_point: 2900.0 # Celsius
+    melting_point: 1414.0 # Celsius
+
+  - name: "Sodium Phosphate"
+    chemical_formula: "Na3PO4"
+    description: "Used in detergents and as a food additive."
+    boiling_point: 1600.0 # Celsius (decomposes)
+    freezing_point: 1583.0 # Celsius (decomposes)
+    vapor_point: 1600.0 # Celsius
+    melting_point: 1583.0 # Celsius (decomposes)

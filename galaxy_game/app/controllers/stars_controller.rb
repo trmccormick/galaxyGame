@@ -38,7 +38,7 @@ class StarsController < ApplicationController
   end
 
   def star_params
-    params.require(:star).permit(:name, :type_of_star, :age, :mass, :radius, :temperature, :luminosity)
+    params.require(:star).permit(:name, :type_of_star, :age, :mass, :radius, :temperature, :luminosity, :life, :r_ecosphere)
   end
 end
 

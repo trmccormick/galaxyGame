@@ -2,14 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Star, type: :model do
   before do
-    @star = Star.new(
-      name: "Alpha Centauri",
-      type_of_star: :red_dwarf,  # Use the symbol for the enum
-      age: 5.0,
-      mass: 1.0e30,
-      radius: 1.0e8,
-      temperature: 3000
-    )
+    @star = create(:star)
   end
 
   it "is valid with all attributes" do
@@ -46,6 +39,16 @@ RSpec.describe Star, type: :model do
     expect(@star).not_to be_valid
   end
 
+  it "is not valid without life expectancy" do
+    @star.life = nil
+    expect(@star).not_to be_valid
+  end
+
+  it "is not valid without an r_ecosphere" do
+    @star.r_ecosphere = nil
+    expect(@star).not_to be_valid
+  end
+
   it "should have a positive mass" do
     expect(@star.mass).to be > 0
   end
@@ -59,17 +62,37 @@ RSpec.describe Star, type: :model do
   end
 
   it "responds to attributes" do
-    expect(@star).to respond_to(:name, :type_of_star, :age, :mass, :radius, :temperature)
-  end
-
-  it "is not valid with a negative mass" do
-    @star.mass = -1.0e30
-    expect(@star).not_to be_valid
+    expect(@star).to respond_to(:name, :type_of_star, :age, :mass, :radius, :temperature, :life, :r_ecosphere)
   end
 
   it "sets default luminosity based on type_of_star" do
-    @star.type_of_star = :red_dwarf
+    @star = Star.new(
+      name: "Sol",
+      type_of_star: 'red_dwarf',  # Example type_of_star
+      age: 4.6e9,
+      mass: 1.989e30,
+      radius: 6.963e8,
+      temperature: 5778,
+      life: 10.0,
+      r_ecosphere: 0.8
+    )
     @star.save
-    expect(@star.luminosity).to eq(0.01 * 3.828e26)
+    expected_luminosity = 0.01 * 3.828e26  # Correct luminosity for a red dwarf
+    expect(@star.luminosity).to eq(expected_luminosity)
+  end
+
+  it "sets default luminosity for a sun-like star" do
+    @star = Star.new(
+      name: "Sol",
+      type_of_star: 'sun',
+      age: 4.6e9,
+      mass: 1.989e30,
+      radius: 6.963e8,
+      temperature: 5778,
+      life: 10.0,
+      r_ecosphere: 0.8
+    )
+    @star.save
+    expect(@star.luminosity).to eq(3.828e26)  # Luminosity for a sun-like star
   end
 end

@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+  redis:
+    image: redis:alpine
+    container_name: mfcs_redis
+    command: redis-server 
+    volumes:
+      - redis:/var/lib/redis/data
+    restart: unless-stopped
+    healthcheck:
+      test: redis-cli -h redis ping
+      interval: 30s
+      timeout: 3s
+      retries: 3 
+
   db:
     image: postgres:16
     container_name: db
@@ -8,6 +21,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # sidekiq:
+  #   build: .
+  #   container_name: sidekiq
+  #   command: bundle exec sidekiq -C config/sidekiq.yml
+  #   restart: unless-stopped 
+  #   environment:
+  #     DATABASE_URL: postgres://postgres:password@db:5432/galaxy_game_development
+  #     REDIS_URL: redis://redis:6379/1      
+   
   web:
     build: .
     container_name: web
@@ -22,6 +44,10 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/galaxy_game_development
+      REDIS_URL: redis://redis:6379/1
+      RAILS_ENV: development
+      RAKE_ENV: development
 
 volumes:
+  redis:
   postgres_data:

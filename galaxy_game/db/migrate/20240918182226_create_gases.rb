@@ -4,6 +4,8 @@ class CreateGases < ActiveRecord::Migration[7.0]
       t.string :name
       t.float :percentage
       t.float :ppm
+      t.float :mass
+      t.float :molar_mass
       t.references :celestial_body, null: false, foreign_key: true
 
       t.timestamps
