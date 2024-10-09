@@ -38,11 +38,8 @@ module CelestialBodies
         material = material_lookup.find_material(name)
   
         # Check if material is found and retrieve properties
-        if material
+        if material.present?
           molar_mass = material['molar_mass']
-          melting_point = material['melting_point']
-          boiling_point = material['boiling_point']
-          vapor_pressure = material['vapor_pressure']
   
           ppm = (percentage / 100.0) * 1_000_000
           mass = (percentage / 100.0) * total_atmospheric_mass
@@ -111,12 +108,7 @@ module CelestialBodies
         # Create Material Object in the parent Celestial Body
         celestial_body.materials.create!(
           name: name,
-          melting_point: melting_point,
-          boiling_point: boiling_point,
-          vapor_pressure: vapor_pressure,
-          amount: mass,
-          molar_mass: molar_mass,
-          state: 'gas'
+          amount: mass
         )        
       end
 
@@ -191,6 +183,29 @@ module CelestialBodies
     # Run the simulation service after gases are updated
     def run_terrasim_service
       AtmosphereSimulationService.new(self.celestial_body).simulate
+    end
+
+    def increase_dust(amount = 0, properties = "Mainly composed of silicates and sulfates.")
+      return unless amount > 0
+
+      self.dust ||= { 'concentration' => 0.0, 'properties' => "Mainly composed of silicates and sulfates." }
+      self.dust['concentration'] += amount
+      save!
+    end
+
+    def decrease_dust(amount)
+      return unless self.dust.present? && self.dust.is_a?(Hash) && self.dust.any?
+
+      self.dust['concentration'] ||= 0.0
+      self.dust['concentration'] -= amount
+      self.dust['concentration'] = 0.0 if self.dust['concentration'] < 0.0
+        
+      save!
+    end    
+
+    def increase_pollution(amount)
+      self.pollution += amount
+      save!
     end
 
   end

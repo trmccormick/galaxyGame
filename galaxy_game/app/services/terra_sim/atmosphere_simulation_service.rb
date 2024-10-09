@@ -96,11 +96,11 @@ module TerraSim
     end
 
     def decrease_dust(amount)
-      atmosphere = @celestial_body.atmosphere
-      atmosphere.dust ||= { concentration: 0.0, properties: "Mainly composed of silicates and sulfates." }
-      atmosphere.dust['concentration'] -= amount
-      atmosphere.dust['concentration'] = 0.0 if atmosphere.dust['concentration'] < 0.0
-      atmosphere.save!
+      @celestial_body.atmosphere.decrease_dust(amount)
+    end
+
+    def increase_dust(amount)
+      @celestial_body.atmosphere.increase_dust(amount)
     end
   end
 end

@@ -104,15 +104,7 @@ module TerraSim
       @atmosphere.remove_gas('Water', precipitation_amount)
 
       # Decrease dust concentration in the atmosphere due to precipitation
-      decrease_dust(precipitation_amount * 0.05) # Example factor for dust reduction
-    end
-
-    def decrease_dust(amount)
-      atmosphere = @celestial_body.atmosphere
-      atmosphere.dust ||= { concentration: 0.0, properties: "Mainly composed of silicates and sulfates." }
-      atmosphere.dust['concentration'] -= amount
-      atmosphere.dust['concentration'] = 0.0 if atmosphere.dust['concentration'] < 0.0
-      atmosphere.save!
+      @atmosphere.decrease_dust(precipitation_amount * 0.05) # Example factor for dust reduction
     end
 
     def calculate_precipitation_rate(water_vapor, temperature)
