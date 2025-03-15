@@ -1,70 +1,95 @@
 require 'rails_helper'
 
 RSpec.describe Inventory, type: :model do
-  let(:colony) { create(:colony) }
-  let(:inventory) { create(:inventory, name: 'Iron', quantity: 500, material_type: 'raw_material', colony: colony) }
-  let(:buyer_colony) { create(:colony) }
+  let(:celestial_body) { create(:celestial_body, :luna) }
+  let(:location) { 
+    create(:celestial_location, 
+      name: "Shackleton Crater Base", 
+      coordinates: "89.90°S 0.00°E",
+      celestial_body: celestial_body
+    ) 
+  }
+  let(:player) { create(:player, active_location: "Shackleton Crater Base") }
+  let(:settlement) { 
+    create(:base_settlement, 
+      owner: player, 
+      location: location
+    ) 
+  }
+  let(:inventory) { settlement.inventory }
+  let(:item) { 
+    create(:item, 
+      name: "Battery Pack",  # Changed to match our JSON data
+      amount: 500, 
+      storage_method: "bulk_storage",
+      inventory: inventory,
+      owner: player
+    )
+  }
 
   describe 'validations' do
     it 'is valid with valid attributes' do
       expect(inventory).to be_valid
     end
 
-    it 'is invalid without a name' do
-      inventory.name = nil
-      expect(inventory).to_not be_valid
+    it 'requires an inventoryable' do
+      inventory.inventoryable = nil
+      expect(inventory).not_to be_valid
     end
 
-    it 'is invalid with a negative quantity' do
-      inventory.quantity = -10
-      expect(inventory).to_not be_valid
-    end
-  end
-
-  describe '#tradeable?' do
-    it 'returns true when quantity is greater than 0' do
-      expect(inventory.tradeable?).to be_truthy
-    end
-
-    it 'returns false when quantity is 0' do
-      inventory.quantity = 0
-      expect(inventory.tradeable?).to be_falsey
+    it 'requires non-negative capacity' do
+      inventory.capacity = -10
+      expect(inventory).not_to be_valid
+      expect(inventory.errors[:capacity]).to include("must be greater than or equal to 0")
     end
   end
 
-  describe '#add_quantity' do
-    it 'increases the quantity by the given amount' do
-      inventory.add_quantity(100)
-      expect(inventory.quantity).to eq(600)
+  describe '#add_item' do
+    context 'when capacity is not exceeded' do
+      before do
+        allow(inventory).to receive(:capacity_exceeded?).and_return(false)
+        # Ensure base storage capability
+        allow(settlement).to receive(:base_units).and_return([])
+      end
+
+      it 'stores item in inventory' do
+        # Debug output
+        puts "Inventory before: #{inventory.items.count}"
+        
+        expect {
+          result = inventory.add_item("Battery Pack", 100, player)
+          # More debug output
+          puts "Add item result: #{result}"
+          puts "Inventory after: #{inventory.items.count}"
+          puts "Last error: #{inventory.errors.full_messages.join(', ')}" if inventory.errors.any?
+        }.to change { inventory.items.count }.by(1)
+      end
+    end
+
+    context 'when capacity is exceeded' do
+      before do 
+        allow(inventory).to receive(:capacity_exceeded?).and_return(true)
+        # Add surface storage capability to settlement
+        allow(settlement).to receive(:surface_storage?).and_return(true)
+        allow(settlement).to receive(:surface_storage_capacity).and_return(1000)
+        # Use the delegated celestial_body from location
+        allow(settlement.location).to receive(:celestial_body).and_return(celestial_body)
+      end
+      
+      it 'uses surface storage' do
+        expect(inventory).to receive(:handle_surface_storage)
+        inventory.add_item("Battery Pack", 100, player)
+      end
     end
   end
 
-  describe '#remove_quantity' do
-    it 'decreases the quantity by the given amount if enough inventory is available' do
-      expect(inventory.remove_quantity(100)).to be_truthy
-      expect(inventory.quantity).to eq(400)
-    end
+  describe '#remove_item' do
+    before { item }
 
-    it 'does not decrease quantity if not enough inventory is available' do
-      expect(inventory.remove_quantity(600)).to be_falsey
-      expect(inventory.quantity).to eq(500)
-    end
-  end
-
-  describe '#dynamic_price' do
-    it 'returns a price using the TradeService' do
-      trade_service = instance_double('TradeService')
-      allow(TradeService).to receive(:new).with(inventory, buyer_colony).and_return(trade_service)
-      allow(trade_service).to receive(:dynamic_price).and_return(100.0)
-
-      expect(inventory.dynamic_price(buyer_colony)).to eq(100.0)
-    end
-
-    it 'handles errors when TradeService is unavailable' do
-      allow(TradeService).to receive(:new).with(inventory, buyer_colony).and_raise(StandardError.new('Service unavailable'))
-
-      expect { inventory.dynamic_price(buyer_colony) }.to raise_error(StandardError, 'Service unavailable')
+    it 'removes items from storage' do
+      expect {
+        inventory.remove_item("Battery Pack", 100, player)
+      }.to change { item.reload.amount }.by(-100)
     end
   end
 end
-
