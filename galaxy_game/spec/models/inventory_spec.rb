@@ -36,11 +36,47 @@ RSpec.describe Inventory, type: :model do
       inventory.inventoryable = nil
       expect(inventory).not_to be_valid
     end
+  end
 
-    it 'requires non-negative capacity' do
-      inventory.capacity = -10
-      expect(inventory).not_to be_valid
-      expect(inventory.errors[:capacity]).to include("must be greater than or equal to 0")
+  describe '#available_capacity' do
+    let(:storage_unit) do
+      create(:base_unit, :storage,
+        owner: settlement,
+        attachable: settlement,
+        operational_data: {
+          'capacity' => 1000,
+          'storage' => {
+            'general' => 1000
+          }
+        }
+      )
+    end
+
+    context 'when surface storage is available' do
+      before do
+        allow(settlement).to receive(:surface_storage?).and_return(true)
+      end
+
+      it 'returns infinity' do
+        expect(inventory.available_capacity).to eq(Float::INFINITY)
+      end
+    end
+
+    context 'when using unit storage' do
+      before do
+        storage_unit
+        settlement.reload
+        allow(settlement).to receive(:surface_storage?).and_return(false)
+      end
+
+      it 'returns remaining capacity from units' do
+        expect(inventory.available_capacity).to eq(1000)
+      end
+
+      it 'subtracts stored items from capacity' do
+        create(:item, inventory: inventory, amount: 300)
+        expect(inventory.available_capacity).to eq(700)
+      end
     end
   end
 

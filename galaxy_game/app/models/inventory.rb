@@ -3,7 +3,8 @@ class Inventory < ApplicationRecord
   has_many :items, dependent: :destroy
   has_one :surface_storage, class_name: 'Storage::SurfaceStorage', dependent: :destroy
 
-  validates :capacity, numericality: { greater_than_or_equal_to: 0 }
+  # Remove capacity validation since it comes from units
+  # validates :capacity, numericality: { greater_than_or_equal_to: 0 }
 
   def add_item(name, amount, owner = nil)
     return false unless can_store?(name, amount)
@@ -38,6 +39,12 @@ class Inventory < ApplicationRecord
     else
       available_general_storage
     end
+  end
+
+  def available_capacity
+    return Float::INFINITY if inventoryable.respond_to?(:surface_storage?) && inventoryable.surface_storage?
+    
+    inventoryable.capacity - total_stored
   end
 
   private
@@ -158,6 +165,8 @@ class Inventory < ApplicationRecord
   end
 
   def capacity_exceeded?(amount)
-    total_stored + amount > capacity
+    return false if inventoryable.respond_to?(:surface_storage?) && inventoryable.surface_storage?
+    
+    (total_stored + amount) > inventoryable.capacity
   end
 end
