@@ -1,18 +1,14 @@
 module Lookup
   class BaseLookupService
-    BASE_PATH = Rails.root.join('app', 'data')
-    attr_reader :cache
+    attr_reader :cache, :data_path
 
     def initialize
       @cache = {}
-      validate_directory_structure if self.class.const_defined?('CATEGORIES')
+      @data_path = Rails.root.join('app', 'data')
+      validate_directory_structure unless Rails.env.test?
     end
 
     protected
-
-    def data_path
-      BASE_PATH
-    end
 
     def search_in_path(path, search_term)
       Rails.logger.debug("Searching in path: #{path}")
