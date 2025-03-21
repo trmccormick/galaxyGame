@@ -20,6 +20,8 @@ module Lookup
       return @cache[unit_id] if @cache[unit_id]
 
       Rails.logger.debug("Looking for unit: #{unit_id}")
+      
+      # First try direct lookup
       UNIT_PATHS.each do |category, path|
         file_path = path.join("#{unit_id}_data.json")
         Rails.logger.debug("Checking path: #{file_path}")
@@ -30,6 +32,21 @@ module Lookup
           return data
         end
       end
+
+      # If not found, search through all files checking aliases
+      UNIT_PATHS.each do |category, path|
+        Dir.glob(File.join(path, "*.json")).each do |file_path|
+          data = load_json_file(file_path)
+          next unless data
+          
+          if data['aliases']&.include?(unit_id)
+            Rails.logger.debug("Found unit data via alias: #{data.inspect}")
+            @cache[unit_id] = data
+            return data
+          end
+        end
+      end
+
       Rails.logger.debug("Unit not found: #{unit_id}")
       nil
     end

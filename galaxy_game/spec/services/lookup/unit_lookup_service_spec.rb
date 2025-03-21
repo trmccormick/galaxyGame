@@ -6,8 +6,21 @@ RSpec.describe Lookup::UnitLookupService do
   describe '#find_unit' do
     it 'finds unit by id' do
       result = service.find_unit('lox_storage_tank')
-      expect(result['name']).to eq('LOX Storage Tank')
+      expect(result['name']). to eq('LOX Storage Tank')
       expect(result['capacity']).to eq(150000)
+    end
+
+    it 'finds unit by alias' do
+      result = service.find_unit('lox_tank')
+      expect(result['name']).to eq('LOX Storage Tank')
+      expect(result['aliases']).to include('lox_tank')
+      expect(result['capacity']).to eq(150000)
+    end
+
+    it 'caches results when found by alias' do
+      first_result = service.find_unit('lox_tank')
+      second_result = service.find_unit('lox_tank')
+      expect(first_result.object_id).to eq(second_result.object_id)
     end
 
     it 'returns nil when unit does not exist' do
