@@ -9,7 +9,7 @@ RSpec.describe CryptocurrencyMining do
         @balance = balance
       end
       
-      def update!(attrs)
+      def update(attrs)
         @balance = attrs[:balance] if attrs[:balance]
         true
       end
@@ -34,13 +34,13 @@ RSpec.describe CryptocurrencyMining do
 
   let(:owner) do
     Class.new do
-      attr_accessor :funds, :account, :computers_for_mining, :satellites_for_mining
+      attr_accessor :funds, :account, :ground_computers, :satellite_computers
       
       def initialize(account)
         @funds = 100
         @account = account
-        @computers_for_mining = []
-        @satellites_for_mining = []
+        @ground_computers = []
+        @satellite_computers = []
       end
 
       def update!(attrs)
@@ -51,19 +51,10 @@ RSpec.describe CryptocurrencyMining do
       def available_power; 1000; end
       def mining_difficulty; 1.0; end
       def unit_efficiency; 1.0; end
-
-      # Mock base_units association
-      def base_units
-        OpenStruct.new(
-          where: ->(type: nil, craft_type: nil) {
-            type == 'Units::Computer' ? computers_for_mining : satellites_for_mining
-          }
-        )
-      end
     end.new(account).tap do |owner|
       owner.extend(CryptocurrencyMining)
-      owner.computers_for_mining = [computer_unit]
-      owner.satellites_for_mining = [satellite_computer_unit]
+      owner.ground_computers = [computer_unit]
+      owner.satellite_computers = [satellite_computer_unit]
     end
   end
 
