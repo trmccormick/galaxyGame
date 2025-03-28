@@ -1,12 +1,16 @@
 # spec/factories/inventory.rb
 FactoryBot.define do
   factory :inventory do
-    capacity { 1000 } # Set a default capacity
-    association :inventoryable, factory: :base_craft
+    association :inventoryable, factory: :base_settlement
 
     trait :with_items do
       after(:create) do |inventory|
-        create(:item, inventory: inventory)
+        create(:item, 
+          inventory: inventory,
+          name: "Battery Pack",
+          amount: 500,
+          storage_method: "bulk_storage"
+        )
       end
     end
   end

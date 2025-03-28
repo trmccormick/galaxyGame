@@ -63,10 +63,26 @@ RSpec.describe Inventory, type: :model do
     end
 
     context 'when using unit storage' do
+      let(:storage_unit) do
+        create(:base_unit, :storage,
+          owner: settlement,
+          attachable: settlement,
+          operational_data: {
+            'storage' => {
+              'type' => 'general',
+              'capacity' => 1000,
+              'current_level' => 0
+            }
+          }
+        )
+      end
+
       before do
         storage_unit
         settlement.reload
         allow(settlement).to receive(:surface_storage?).and_return(false)
+        # Mock the capacity calculation
+        allow(settlement).to receive(:capacity).and_return(1000)
       end
 
       it 'returns remaining capacity from units' do
