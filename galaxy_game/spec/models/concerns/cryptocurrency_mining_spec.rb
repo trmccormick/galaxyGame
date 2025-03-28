@@ -13,34 +13,29 @@ RSpec.describe CryptocurrencyMining do
         @balance = attrs[:balance] if attrs[:balance]
         true
       end
+
+      def deposit(amount, description)
+        update(balance: balance + amount)
+        true
+      end
     end.new
   end
 
   let(:computer_unit) do 
     obj = Object.new
-    def obj.type; 'Units::Computer'; end
-    def obj.mining_power; 10; end
+    def obj.is_a?(klass); klass == Units::Computer; end
     def obj.mine(difficulty, efficiency); 50; end
-    obj
-  end
-
-  let(:satellite_computer_unit) do
-    obj = Object.new
-    def obj.type; 'Units::Computer'; end
-    def obj.mining_power; 5; end
-    def obj.mine(difficulty, efficiency); 30; end
     obj
   end
 
   let(:owner) do
     Class.new do
-      attr_accessor :funds, :account, :ground_computers, :satellite_computers
+      attr_accessor :funds, :account, :base_units
       
       def initialize(account)
         @funds = 100
         @account = account
-        @ground_computers = []
-        @satellite_computers = []
+        @base_units = []
       end
 
       def update!(attrs)
@@ -53,22 +48,17 @@ RSpec.describe CryptocurrencyMining do
       def unit_efficiency; 1.0; end
     end.new(account).tap do |owner|
       owner.extend(CryptocurrencyMining)
-      owner.ground_computers = [computer_unit]
-      owner.satellite_computers = [satellite_computer_unit]
+      owner.base_units = [computer_unit]
     end
   end
 
   describe '#mine_gcc' do
     it 'correctly updates the account balance with mined GCC' do
-      expect { owner.mine_gcc }.to change { owner.account.balance }.by(80)
+      expect { owner.mine_gcc }.to change { owner.account.balance }.by(50)
     end
 
     it 'updates internal funds after mining' do
-      expect { owner.mine_gcc }.to change { owner.funds }.by(80)
+      expect { owner.mine_gcc }.to change { owner.funds }.by(50)
     end
   end
 end
-
-
-
-
