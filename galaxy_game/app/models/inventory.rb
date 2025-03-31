@@ -6,7 +6,13 @@ class Inventory < ApplicationRecord
   # Remove capacity validation since it comes from units
   # validates :capacity, numericality: { greater_than_or_equal_to: 0 }
 
+  def current_storage_of(resource_name)
+    items.where(name: resource_name).sum(:amount)
+  end
+
   def add_item(name, amount, owner = nil)
+    Rails.logger.debug "Inventory#add_item: name=#{name}, amount=#{amount}, owner=#{owner}"
+
     return false unless can_store?(name, amount)
     owner ||= determine_default_owner
 
@@ -20,6 +26,8 @@ class Inventory < ApplicationRecord
   end
 
   def remove_item(name, amount, owner)
+    Rails.logger.debug "Inventory#remove_item: name=#{name}, amount=#{amount}, owner=#{owner}"
+
     item = items.find_by(name: name, owner: owner)
     return false unless item && item.amount >= amount
 
