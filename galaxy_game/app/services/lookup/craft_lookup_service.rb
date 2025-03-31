@@ -29,17 +29,19 @@ module Lookup
 
       Rails.logger.debug("Looking for craft: #{craft_name}")
       
-      path = CRAFT_PATHS[craft_type]
-
-      # Check if directory structure exists
+      # Check directory structure before proceeding
       unless self.class.craft_path_exists?(craft_type, craft_sub_type)
         raise StandardError, "Invalid craft directory structure"
       end
-      
+
+      path = CRAFT_PATHS[craft_type]
+
       # If sub_type is provided, only look in that directory
       if craft_sub_type
         pluralized_sub_type = craft_sub_type.pluralize
-        file_path = path.join(pluralized_sub_type, "#{craft_name}_data.json")
+        sub_type_path = path.join(pluralized_sub_type)
+        
+        file_path = sub_type_path.join("#{craft_name}_data.json")
         Rails.logger.debug("Checking path: #{file_path}")
         data = load_json_file(file_path)
         if data
@@ -69,11 +71,11 @@ module Lookup
       return false unless CRAFT_PATHS.key?(craft_type)
       
       path = CRAFT_PATHS[craft_type]
-      return File.directory?(path) unless craft_sub_type
+      return Dir.exist?(path) unless craft_sub_type
       
-      # Convert singular to plural for directory lookup
+      # Check with pluralized sub_type
       pluralized_sub_type = craft_sub_type.to_s.pluralize
-      File.directory?(path.join(pluralized_sub_type))
+      Dir.exist?(path.join(pluralized_sub_type))
     rescue StandardError => e
       Rails.logger.error("Error checking craft path: #{e.message}")
       false

@@ -94,12 +94,8 @@ RSpec.describe Lookup::CraftLookupService do
 
     context 'with directory errors' do
       it 'raises error for missing directory' do
-        # Temporarily stub Dir.exist? to return false for the specific directory
-        allow(Dir).to receive(:exist?).and_call_original # allow original calls
-        allow(Dir).to receive(:exist?).with(Rails.root.join('app', 'data', 'crafts', 'transport', 'spaceship')).and_return(false) # Corrected line
-
         expect {
-          service.find_craft('falcon', 'transport', 'spaceship')
+          service.find_craft('falcon', 'transport', 'nonexistent_directory')
         }.to raise_error(/Invalid craft directory structure/)
       end
     end
