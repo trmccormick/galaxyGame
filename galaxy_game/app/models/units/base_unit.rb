@@ -4,7 +4,6 @@ module Units
   class BaseUnit < ApplicationRecord
     include HasModules
     include HasRigs
-    include HasStorage
     include Housing
 
     belongs_to :owner, polymorphic: true
@@ -19,8 +18,15 @@ module Units
 
     after_initialize :load_unit_info
     after_create :initialize_unit
+    after_create :create_inventory
 
     attr_accessor :internal_modules, :external_modules, :rigs
+
+    delegate :storage_capacity, :storage_capacity_by_type, to: :storage_manager
+
+    def storage_manager
+      @storage_manager ||= Storage::StorageManager.new(self)
+    end
 
     def population_capacity
       operational_data&.dig('capacity') || 0
@@ -488,13 +494,11 @@ module Units
       end
   
       def ensure_inventory
-        return if inventory
+        return if inventory.present?
   
         build_inventory(
-          capacity: operational_data.dig('storage', 'capacity'),
-          storage_type: operational_data.dig('storage', 'type'),
-          owner: owner
-        )
+          capacity: storage_capacity
+        ).save!
       end
   
       def update_storage_levels(resource_name, amount)
@@ -544,6 +548,10 @@ module Units
         else
           'general'
         end
+      end
+
+      def create_inventory
+        ensure_inventory
       end
     end
   end
