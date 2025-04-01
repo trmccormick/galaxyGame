@@ -25,6 +25,28 @@ FactoryBot.define do
       unit_type { "storage_unit" }
     end    
 
+    trait :lox_tank do
+      unit_type { "lox_tank" }
+      operational_data do
+        {
+          'capacity' => 150000,
+          'type' => 'liquid',
+          'current_level' => 0
+        }
+      end
+    end
+
+    trait :methane_tank do
+      unit_type { "methane_tank" }
+      operational_data do
+        {
+          'capacity' => 100000,
+          'type' => 'liquid',
+          'current_level' => 0
+        }
+      end
+    end
+
     trait :with_location do
       association :location, factory: :celestial_location
     end
