@@ -44,12 +44,85 @@ module Units
       @unit_info['output_resources']
     end
 
-    def collect_materials(amount)
-      # Implement the logic to collect materials
+    def collect_materials
+      ensure_inventory
+      
+      collected_count = 0
+      
+      base_units.each do |unit|
+        next unless unit.operational_data&.dig('resources', 'stored')
+        stored = unit.operational_data['resources']['stored']
+        next unless stored.present? && stored.any?
+        
+        Rails.logger.debug "Processing stored items: #{stored.inspect}"
+        
+        stored.each do |item_id, amount|
+          next if amount <= 0
+          
+          # Create inventory item and track what was collected
+          inventory.items.create!(
+            name: item_id,
+            amount: amount
+          )
+          collected_count += 1
+          
+          # Clear storage
+          stored[item_id] = 0
+        end
+        
+        # Reset storage level since we collected everything
+        unit.operational_data['storage']['current_level'] = 0
+        unit.save!
+      end
+      
+      inventory.reload
+      collected_count > 0
     end
 
-    def process_materials(inventory)
-      # Implement the logic to process materials
+    def process_materials(craft_inventory)
+      return unless @unit_info&.dig('input_resources') && @unit_info&.dig('output_resources')
+      
+      Rails.logger.debug("Processing materials for unit: #{name}")
+      Rails.logger.debug("Input resources required: #{@unit_info['input_resources'].inspect}")
+      
+      # Check if we have required input resources
+      inputs = {}
+      @unit_info['input_resources'].each do |input|
+        resource_id = input['id']
+        required = input['amount']
+        available = craft_inventory.items.find_by(name: resource_id)&.amount || 0
+        
+        if available >= required
+          inputs[resource_id] = required
+        else
+          Rails.logger.debug("Insufficient #{resource_id}: need #{required}, have #{available}")
+          return false # Can't process without all inputs
+        end
+      end
+      
+      # Process inputs into outputs
+      @unit_info['output_resources'].each do |output|
+        amount = output['amount']
+        
+        # Store output in unit's inventory or buffers based on type
+        case get_material_type(output['id'])
+        when 'gas'
+          store_in_buffer('gas_buffer', output['id'], amount)
+        when 'liquid'
+          store_in_buffer('liquid_buffer', output['id'], amount)
+        else
+          store_resource(output['id'], amount)
+        end
+      end
+      
+      # Consume input resources from craft inventory
+      inputs.each do |resource_id, amount|
+        item = craft_inventory.items.find_by(name: resource_id)
+        item.decrement!(:amount, amount)
+        item.destroy if item.amount <= 0
+      end
+      
+      true
     end
 
     def operate(resources)
@@ -239,99 +312,83 @@ module Units
       true
     end
 
-    private
+    def store_item(item_id, amount)
+      Rails.logger.debug("store_item called with: item_id=#{item_id}, amount=#{amount}")
     
+      # Initialize storage structure if needed
+      self.operational_data ||= {}
+      self.operational_data['storage'] ||= {
+        'type' => 'general',
+        'capacity' => storage_capacity || 1000,
+        'current_level' => 0
+      }
+      self.operational_data['resources'] ||= { 'stored' => {} }
+    
+      Rails.logger.debug("Operational data before save: #{operational_data.inspect}")
+    
+      # Check capacity
+      current_level = operational_data['storage']['current_level'] || 0
+      capacity = operational_data['storage']['capacity'] || 1000
+      return false if current_level + amount > capacity
+    
+      # Initialize inventory
+      ensure_inventory
+    
+      # Update or create inventory item
+      item = inventory.items.find_or_initialize_by(name: item_id)
+      existing_amount = item.amount || 0
+      item.amount = existing_amount + amount
+      item.owner = owner
+    
+      Rails.logger.debug("Inventory item before save: #{item.inspect}")
+    
+      if item.save
+        Rails.logger.debug("Inventory item saved successfully.")
+    
+        # Update storage data
+        self.operational_data = operational_data.deep_dup # Create a new hash
+        self.operational_data['resources']['stored'][item_id] = (self.operational_data['resources']['stored'][item_id] || 0) + amount
+        self.operational_data['storage']['current_level'] = (self.operational_data['storage']['current_level'] || 0) + amount
+        self.operational_data_will_change! # Mark operational_data as changed
+    
+        Rails.logger.debug("Operational data before final save: #{operational_data.inspect}")
+    
+        begin
+          save!
+          Rails.logger.debug("Unit saved successfully.")
+          true
+        rescue StandardError => e
+          Rails.logger.error("Error saving unit: #{e.message}")
+          false
+        end
+      else
+        Rails.logger.debug("Inventory item save failed.")
+        false
+      end
+    end
+
+    private
+
     def load_unit_info
       return if unit_type.blank?
-      
+    
       @lookup_service ||= ::Lookup::UnitLookupService.new
       @unit_info = @lookup_service.find_unit(unit_type)
-      
-      Rails.logger.debug("Loading unit info for #{unit_type}")
-      Rails.logger.debug("Found unit data: #{@unit_info.inspect}")
-      
+    
       return unless @unit_info.present?
-      
-      initialize_operational_data  # Initialize base structure
-      initialize_storage          # Add storage configuration
-      save! if persisted?
-    end
+    
+      # Check if operational_data is already set
+      if operational_data.blank?
+        # Only overwrite if operational_data is empty
+        self.operational_data = @unit_info.deep_dup
+        save! if persisted?
+      end
+    end  
 
     def initialize_unit
       return unless @unit_info.present?
-      
-      # Update production/consumption rates
-      if @unit_info['generated'].present?
-        self.operational_data['resources']['production_rate'] = @unit_info['generated']
-      end
-      
-      if @unit_info['consumables'].present?
-        self.operational_data['resources']['consumption_rate'] = @unit_info['consumables']
-      end
-      
       ensure_inventory
       save!
-    end
-
-    def initialize_operational_data
-      self.operational_data = {  # Use = instead of ||=
-        'modules' => { 'internal' => [], 'external' => [] },
-        'rigs' => [],
-        'resources' => {
-          'stored' => {},
-          'production_rate' => nil,
-          'consumption_rate' => nil
-        },
-        'efficiency' => 1.0,
-        'temperature' => 20,
-        'maintenance_cycle' => 0,
-        'storage' => {
-          'type' => nil,
-          'capacity' => 0,
-          'current_level' => 0
-        }
-      }
-    end
-
-    def initialize_storage
-      return unless @unit_info.present?
-    
-      Rails.logger.debug("=== Initialize Storage ===")
-      Rails.logger.debug("Unit info: #{@unit_info.inspect}")
-    
-      if @unit_info['unit_type'] == 'storage' && @unit_info['capacity']
-        self.operational_data['storage'] = {
-          'type' => 'storage', # or maybe specify a type from the subtype
-          'capacity' => @unit_info['capacity'].to_i
-        }
-      elsif @unit_info['type'] == 'container' && @unit_info['properties'] && @unit_info['properties']['capacity'] && @unit_info['properties']['capacity']['value']
-          self.operational_data['storage'] = {
-            'type' => 'container', # or maybe specify a type from the subtype
-            'capacity' => @unit_info['properties']['capacity']['value'].to_i
-          }
-      else
-        self.operational_data['storage'] = {
-          'type' => nil,
-          'capacity' => 0
-        }
-      end
-    
-      # Then add any specific storage buffers from unit info
-      if @unit_info['storage'].is_a?(Hash)
-        @unit_info['storage'].each do |buffer_name, buffer_config|
-          Rails.logger.debug("Setting up buffer: #{buffer_name}")
-          Rails.logger.debug("Buffer config: #{buffer_config.inspect}")
-    
-          self.operational_data['storage'][buffer_name] = {
-            'type' => buffer_config['type'],
-            'capacity' => buffer_config['capacity'],
-            'current_level' => 0
-          }
-        end
-      end
-    
-      Rails.logger.debug("Final storage config: #{operational_data['storage'].inspect}")
-      save! if persisted?
     end
 
     def capacity
@@ -500,12 +557,12 @@ module Units
           capacity: storage_capacity
         ).save!
       end
-  
+
       def update_storage_levels(resource_name, amount)
         operational_data['storage']['current_level'] = (operational_data['storage']['current_level'] || 0) + amount
         operational_data['resources']['stored'][resource_name] = (operational_data['resources']['stored'][resource_name] || 0) + amount
         save!
-      end
+      end  
 
       def transfer_buffers_if_needed
         gas_buffer = operational_data.dig('storage', 'gas_buffer')
@@ -548,7 +605,7 @@ module Units
         else
           'general'
         end
-      end
+      end     
 
       def create_inventory
         ensure_inventory
