@@ -51,9 +51,8 @@ module Storage
     end
 
     def storage_capacity
-      # For backward compatibility, only count liquid and gas
-      capacities = storage_capacity_by_type
-      capacities[:liquid].to_i + capacities[:gas].to_i
+      # Simply return total capacity across all storage types
+      storage_capacity_by_type.values.sum
     end
 
     def total_storage_capacity
