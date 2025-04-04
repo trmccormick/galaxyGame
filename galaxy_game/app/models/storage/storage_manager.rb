@@ -31,27 +31,34 @@ module Storage
       end
     end
 
-    def storage_capacity
-      @owner.base_units.sum do |unit|
-        next 0 unless unit.operational_data.present? && unit.operational_data['storage'].present?
-        unit.operational_data['storage']['capacity'] || 0
-      end
-    end
-
     def storage_capacity_by_type
-      capacities = { liquid: 0, solid: 0, gas: 0, multi: 0 }
+      capacities = Hash.new(0)
       
       @owner.base_units.each do |unit|
-        next unless unit.operational_data.present? && unit.operational_data['storage'].present?
-        
+        next unless unit.operational_data&.dig('storage')
         storage_data = unit.operational_data['storage']
-        type = storage_data['type']&.to_sym || :solid
-        capacity = storage_data['capacity'] || 0
         
-        capacities[type] += capacity if capacities.key?(type)
+        # Handle each storage type directly defined in the storage hash
+        storage_data.each do |type, value|
+          # Skip special keys
+          next if ['type', 'capacity', 'current_level', 'current_contents'].include?(type)
+          capacities[type.to_sym] += value.to_i
+        end
       end
       
+      Rails.logger.debug "Final capacities: #{capacities.inspect}"
       capacities
+    end
+
+    def storage_capacity
+      # For backward compatibility, only count liquid and gas
+      capacities = storage_capacity_by_type
+      capacities[:liquid].to_i + capacities[:gas].to_i
+    end
+
+    def total_storage_capacity
+      # Sum all storage types
+      storage_capacity_by_type.values.sum
     end
 
     private

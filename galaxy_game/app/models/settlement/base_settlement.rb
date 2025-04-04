@@ -3,20 +3,14 @@ module Settlement
     include Housing
     include GameConstants
     include LifeSupport
-    include HasStorage
+    include CryptocurrencyMining
+    include HasUnitStorage # Add the new concern
 
     belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
-    belongs_to :owner, polymorphic: true, optional: true  # Polymorphic association for ownership
+    belongs_to :owner, polymorphic: true, optional: true
     has_one :account, as: :accountable, dependent: :destroy
-    has_one :ai_manager, dependent: :destroy # Add AI manager association
+    has_one :ai_manager, dependent: :destroy
 
-    has_many :base_units, 
-             class_name: 'Units::BaseUnit',
-             as: :attachable,
-             dependent: :destroy
-
-    has_one :inventory, as: :inventoryable, dependent: :destroy
-    has_many :items, through: :inventory
     has_one :location, 
             as: :locationable, 
             class_name: 'Location::CelestialLocation',
@@ -27,6 +21,8 @@ module Settlement
              class_name: 'Craft::BaseCraft',
              foreign_key: :docked_at_id,
              inverse_of: :docked_at
+
+    delegate :surface_storage, to: :inventory, allow_nil: true
 
     # planned adjustment for location of settlements
     # Change single location to boundary locations
@@ -72,20 +68,6 @@ module Settlement
       storage_capacity_by_type.values.sum
     end
 
-    def storage_capacity_by_type
-      capacities = Hash.new(0)
-      
-      base_units.each do |unit|
-        next unless unit.operational_data&.dig('storage')
-        
-        unit.operational_data['storage'].each do |type, capacity|
-          next if type == 'capacity' || type == 'current_contents'
-          capacities[type.to_sym] += capacity.to_i
-        end
-      end
-      
-      capacities
-    end
 
     def capacity
       base_units.sum do |unit|
@@ -93,34 +75,9 @@ module Settlement
       end
     end
 
-    # Collect materials from base units and update the settlement's inventory
-    def collect_materials(amount)
-      collected_materials = base_units.sum do |unit|
-        unit.collect_materials(amount)
-      end
-
-      update_inventory(collected_materials)
-    end
-
-    # Process materials using the base units
-    def process_materials
-      base_units.each do |unit|
-        unit.process_materials(inventory)
-      end
-    end
-
     # Allocate space for population (related to housing management)
     def allocate_space(num_people)
       super(num_people)
-    end
-
-    # Update inventory with collected materials
-    def update_inventory(collected_materials)
-      collected_materials.each do |material, amount|
-        item = inventory.items.find_or_initialize_by(name: material)
-        item.amount += amount
-        item.save!
-      end
     end
 
     # Initialize inventory if it doesn't exist
@@ -169,6 +126,21 @@ module Settlement
     def surface_storage_capacity
       Float::INFINITY  # Surface storage is effectively unlimited
     end
+
+    def available_power
+      # Placeholder: Implement actual power logic later
+      1000
+    end
+
+    def mining_difficulty
+      # Placeholder: Implement actual difficulty logic later
+      1.0
+    end
+
+    def unit_efficiency
+      # Placeholder: Implement actual efficiency logic later
+      1.0
+    end  
 
     private
 
