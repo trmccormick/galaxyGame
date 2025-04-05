@@ -3,6 +3,12 @@ module Lookup
   class CraftLookupService < BaseLookupService
     BASE_PATH = Rails.root.join('app', 'data', 'crafts').freeze
 
+    CATEGORIES = {
+      'deployable' => 'deployable',
+      'surface' => 'surface',
+      'transport' => 'transport'
+    }.freeze
+
     CRAFT_PATHS = {
       'deployable' => BASE_PATH.join('deployable'),
       'surface' => BASE_PATH.join('surface'),
@@ -22,7 +28,7 @@ module Lookup
 
       # Add validation checks
       raise ArgumentError, "Invalid craft name" if craft_name.empty?
-      raise ArgumentError, "Invalid craft type: #{craft_type}" unless CRAFT_PATHS.key?(craft_type)
+      raise ArgumentError, "Invalid craft type: #{craft_type}" unless CATEGORIES.key?(craft_type)
 
       cache_key = "#{craft_name}_#{craft_type}_#{craft_sub_type}"
       return @cache[cache_key] if @cache[cache_key]
