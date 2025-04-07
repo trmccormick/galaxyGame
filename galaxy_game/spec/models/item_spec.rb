@@ -33,6 +33,71 @@ RSpec.describe Item, type: :model do
            inventory: inventory) 
   }
 
+  before(:each) do
+    # First stub a default response for any item lookup
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .and_return(nil)
+
+    # Then stub specific items
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .with('Battery Pack')
+      .and_return({
+        'id' => 'battery_pack',
+        'type' => 'consumable',
+        'name' => 'Battery Pack',
+        'category' => 'consumable',
+        'storage' => { 'method' => 'bulk_storage' },
+        'weight' => { 'amount' => 5, 'unit' => 'kg' }
+      })
+
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .with('Large Plastic Crate')
+      .and_return({
+        'id' => 'large_plastic_crate',
+        'type' => 'container',
+        'name' => 'Large Plastic Crate',
+        'category' => 'container',
+        'capacity_kg' => 100,
+        'storage' => { 'method' => 'container' }
+      })
+
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .with('Lunar Regolith')
+      .and_return({
+        'id' => 'lunar_regolith',
+        'type' => 'raw_material',
+        'name' => 'Lunar Regolith',
+        'category' => 'geological',
+        'storage' => { 'method' => 'bulk_storage' }
+      })
+
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .with('Regolith')
+      .and_return({
+        'id' => 'regolith',
+        'type' => 'raw_material',
+        'name' => 'Regolith',
+        'category' => 'geological',
+        'storage' => { 'method' => 'bulk_storage' }
+      })
+
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .with('Processed Regolith')
+      .and_return({
+        'id' => 'processed_regolith',
+        'type' => 'processed_material',
+        'name' => 'Processed Regolith',
+        'category' => 'material',
+        'storage' => { 'method' => 'bulk_storage' }
+      })
+  end
+
   describe 'associations' do
     it { is_expected.to belong_to(:inventory).optional }
     it { is_expected.to belong_to(:container).class_name('Item').optional }
@@ -48,13 +113,29 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'lookup service integration' do
-    it 'loads properties from item lookup service' do
+    it 'loads properties from item lookup service with category' do
       expect(item.properties).to include(
-        "id" => "battery_pack",
-        "type" => "consumable",
         "name" => "Battery Pack",
-        "description" => "A rechargeable battery pack for portable devices."
+        "category" => "consumable"
       )
+    end
+
+    it 'handles processed materials' do
+      processed = create(:item, 
+        name: "Processed Regolith",
+        material_type: :processed_material,
+        metadata: {
+          'composition' => {
+            'oxides' => { 'SiO2' => 45.0 }
+          }
+        }
+      )
+      
+      expect(processed.properties).to include(
+        "name" => "Processed Regolith",
+        "category" => "material"
+      )
+      expect(processed.metadata['composition']).to include('oxides')
     end
 
     it 'loads material properties for raw materials' do
@@ -182,6 +263,26 @@ RSpec.describe Item, type: :model do
 
     it 'returns true for empty containers' do
       expect(container).to be_tradeable
+    end
+  end
+
+  describe 'regolith handling' do
+    let!(:luna) do
+      FactoryBot.create(:celestial_body, :luna) # Explicitly use FactoryBot.create
+    end
+
+    let(:regolith) { create(:item, :regolith) }
+
+    it 'gets composition from celestial body geosphere' do
+      # Reload luna to ensure it's in the database
+      luna.reload
+      expect(CelestialBodies::CelestialBody.find_by(identifier: 'LUNA-01')).to eq(luna) # Verify luna exists
+
+      expect(regolith.material_properties["composition"]).to eq(luna.geosphere.crust_composition)
+    end
+
+    it 'includes source body in properties' do
+      expect(regolith.material_properties["source"]).to eq('Luna')
     end
   end
 end
