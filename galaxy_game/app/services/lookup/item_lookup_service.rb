@@ -22,42 +22,58 @@ module Lookup
       @cache = {}
     end
 
-    def find_item(item_name, category = nil)
-      item_name = item_name.to_s.downcase
-      category = category.to_s.downcase if category
+    def base_path
+      @base_path ||= Rails.env.test? ? 
+        Rails.root.join('spec/support/test_data/items') :
+        Rails.root.join('data/json-data/items')
+    end
 
+    def find_item(item_name, category = nil)
+      item_name = normalize_name(item_name)
       return nil if item_name.empty?
 
       cache_key = "#{item_name}_#{category}"
       return @cache[cache_key] if @cache[cache_key]
 
-      Rails.logger.debug("Looking for item: #{item_name}")
-
       if category
-        raise ArgumentError, "Invalid category: #{category}" unless CATEGORIES.key?(category)
-        path = File.join(BASE_PATH, CATEGORIES[category], "#{item_name}_data.json")
-        data = load_json_file(path)
-        if data
-          data['category'] = category
-          @cache[cache_key] = data
-          return data
-        end
+        find_in_category(item_name, category)
       else
-        CATEGORIES.each do |cat, folder|
-          path = File.join(BASE_PATH, folder, "#{item_name}_data.json")
-          data = load_json_file(path)
-          if data
-            data['category'] = cat
-            @cache[cache_key] = data
-            return data
-          end
-        end
+        find_across_categories(item_name)
       end
-
-      nil
     end
 
     private
+
+    def normalize_name(name)
+      name.to_s.downcase.gsub(/\s+/, '_')
+    end
+
+    def find_in_category(name, category)
+      category = category.to_s.downcase
+      raise ArgumentError, "Invalid category: #{category}" unless CATEGORIES.key?(category)
+      
+      path = base_path.join(CATEGORIES[category], "#{name}_data.json")
+      load_and_cache(path, category)
+    end
+
+    def find_across_categories(name)
+      CATEGORIES.each do |category, folder|
+        path = base_path.join(folder, "#{name}_data.json")
+        data = load_and_cache(path, category)
+        return data if data
+      end
+      nil
+    end
+
+    def load_and_cache(path, category)
+      data = load_json_file(path)
+      return nil unless data
+
+      data['category'] = category
+      cache_key = "#{data['name'].downcase}_#{category}"
+      @cache[cache_key] = data
+      data
+    end
 
     def load_items
       ITEM_PATHS.flat_map do |category, path|
