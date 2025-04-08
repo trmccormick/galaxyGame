@@ -12,13 +12,17 @@ module Location
               numericality: { greater_than_or_equal_to: -Float::INFINITY,
                             less_than_or_equal_to: Float::INFINITY }
 
-    validates :name, presence: true # Removed global uniqueness on name
+    validates :name, presence: true
+    validates :x_coordinate, presence: true, numericality: true
+    validates :y_coordinate, presence: true, numericality: true
+    validates :z_coordinate, presence: true, numericality: true
+
     validate :unique_3d_position_within_context
 
-    # Add uniqueness validation for 3D position
+    # Add scope to uniqueness validation
     validates :x_coordinate, uniqueness: { 
-      scope: [:y_coordinate, :z_coordinate, :spatial_context_id, :spatial_context_type],
-      message: 'coordinates must be unique within the same spatial context' 
+      scope: [:y_coordinate, :z_coordinate, :spatial_context_type, :spatial_context_id],
+      message: 'position must be unique within the spatial context' 
     }
 
     def distance_to(other_location)

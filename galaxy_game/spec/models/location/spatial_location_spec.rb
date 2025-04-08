@@ -24,6 +24,43 @@ RSpec.describe Location::SpatialLocation, type: :model do
       duplicate = build(:spatial_location, x_coordinate: 1, y_coordinate: 2, z_coordinate: 3)
       expect(duplicate).not_to be_valid
     end
+
+    it 'validates uniqueness of 3D position within same spatial context' do
+      solar_system = create(:solar_system)
+      create(:spatial_location, 
+             x_coordinate: 1, 
+             y_coordinate: 2, 
+             z_coordinate: 3,
+             spatial_context: solar_system)
+      
+      duplicate = build(:spatial_location,
+                       x_coordinate: 1,
+                       y_coordinate: 2,
+                       z_coordinate: 3,
+                       spatial_context: solar_system)
+                       
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:x_coordinate]).to include('position must be unique within the spatial context')
+    end
+
+    it 'allows same coordinates in different spatial contexts' do
+      system1 = create(:solar_system)
+      system2 = create(:solar_system)
+      
+      create(:spatial_location,
+             x_coordinate: 1,
+             y_coordinate: 2,
+             z_coordinate: 3,
+             spatial_context: system1)
+             
+      location2 = build(:spatial_location,
+                       x_coordinate: 1,
+                       y_coordinate: 2,
+                       z_coordinate: 3,
+                       spatial_context: system2)
+                       
+      expect(location2).to be_valid
+    end
   end
 
   describe '#update_location' do
