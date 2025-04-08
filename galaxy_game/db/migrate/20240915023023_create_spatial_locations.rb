@@ -12,7 +12,7 @@ class CreateSpatialLocations < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :spatial_locations, [:x_coordinate, :y_coordinate, :z_coordinate], unique: true, name: "index_spatial_locations_on_xyz"
+    add_index :spatial_locations, [:spatial_context_type, :spatial_context_id, :x_coordinate, :y_coordinate, :z_coordinate], unique: true, name: 'unique_3d_position_per_context'
     add_index :spatial_locations, :name
   end
 end
