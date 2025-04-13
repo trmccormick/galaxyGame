@@ -1,13 +1,15 @@
 module Lookup
   class UnitLookupService < BaseLookupService
     UNIT_PATHS = {
-      'computers' => Rails.root.join('app', 'data', 'units', 'computers'),
+      'computer' => Rails.root.join('app', 'data', 'units', 'computer'),
+      'droid' => Rails.root.join('app', 'data', 'units', 'droid'),
       'energy' => Rails.root.join('app', 'data', 'units', 'energy'),
       'housing' => Rails.root.join('app', 'data', 'units', 'housing'),
       'life_support' => Rails.root.join('app', 'data', 'units', 'life_support'),
       'production' => Rails.root.join('app', 'data', 'units', 'production'),
       'propulsion' => Rails.root.join('app', 'data', 'units', 'propulsion'),
       'storage' => Rails.root.join('app', 'data', 'units', 'storage'),
+      'structure' => Rails.root.join('app', 'data', 'units', 'structure'), # New folder
       'various' => Rails.root.join('app', 'data', 'units', 'various')
     }.freeze
 
