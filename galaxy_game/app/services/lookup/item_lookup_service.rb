@@ -9,11 +9,12 @@ module Lookup
       'material' => 'materials'
     }.freeze
 
+    # Use the same directory structure as UnitLookupService
     ITEM_PATHS = {
-      'consumable' => BASE_PATH.join('consumables'),
-      'container' => BASE_PATH.join('containers'),
-      'equipment' => BASE_PATH.join('equipment'),
-      'material' => BASE_PATH.join('materials')
+      'consumable' => Rails.root.join('app', 'data', 'items', 'consumable'),
+      'container' => Rails.root.join('app', 'data', 'items', 'container'),
+      'equipment' => Rails.root.join('app', 'data', 'items', 'equipment'),
+      'material' => Rails.root.join('app', 'data', 'items', 'material')
     }.freeze
 
     def initialize
@@ -28,65 +29,72 @@ module Lookup
         Rails.root.join('data/json-data/items')
     end
 
-    def find_item(item_name, category = nil)
-      item_name = normalize_name(item_name)
-      return nil if item_name.empty?
+    def find_item(item_id, category = nil)
+      # Check cache first
+      cache_key = "#{item_id}_#{category}"
+      return @cache[cache_key] if @cache.key?(cache_key)
 
-      cache_key = "#{item_name}_#{category}"
-      return @cache[cache_key] if @cache[cache_key]
-
+      Rails.logger.debug("Looking for item: #{item_id} in category: #{category}")
+      
+      # Find by specific category if provided
       if category
-        find_in_category(item_name, category)
+        category = category.to_s.downcase
+        raise ArgumentError, "Invalid category: #{category}" unless ITEM_PATHS.key?(category)
+        
+        file_path = ITEM_PATHS[category].join("#{item_id}.json")
+        Rails.logger.debug("Checking path: #{file_path}")
+        
+        data = load_json_file(file_path)
+        if data
+          data['category'] = category unless data.key?('category')
+          @cache[cache_key] = data
+          return data
+        end
       else
-        find_across_categories(item_name)
+        # Try all categories if none specified
+        ITEM_PATHS.each do |cat, path|
+          file_path = path.join("#{item_id}.json")
+          Rails.logger.debug("Checking path: #{file_path}")
+          
+          data = load_json_file(file_path)
+          if data
+            data['category'] = cat unless data.key?('category')
+            key = "#{item_id}_#{cat}"
+            @cache[key] = data
+            return data
+          end
+        end
       end
+      
+      nil
+    end
+
+    def items
+      @items ||= load_items
     end
 
     private
 
-    def normalize_name(name)
-      name.to_s.downcase.gsub(/\s+/, '_')
-    end
-
-    def find_in_category(name, category)
-      category = category.to_s.downcase
-      raise ArgumentError, "Invalid category: #{category}" unless CATEGORIES.key?(category)
-      
-      path = base_path.join(CATEGORIES[category], "#{name}_data.json")
-      load_and_cache(path, category)
-    end
-
-    def find_across_categories(name)
-      CATEGORIES.each do |category, folder|
-        path = base_path.join(folder, "#{name}_data.json")
-        data = load_and_cache(path, category)
-        return data if data
-      end
-      nil
-    end
-
-    def load_and_cache(path, category)
-      data = load_json_file(path)
-      return nil unless data
-
-      data['category'] = category
-      cache_key = "#{data['name'].downcase}_#{category}"
-      @cache[cache_key] = data
-      data
-    end
-
     def load_items
-      ITEM_PATHS.flat_map do |category, path|
-        Dir.glob(File.join(path, "*.json")).map do |file|
+      result = {}
+      
+      ITEM_PATHS.each do |category, path|
+        result[category] = []
+        Dir.glob(File.join(path, "*.json")).each do |file|
           data = load_json_file(file)
-          data['category'] = category if data
-          data
-        end.compact
+          if data
+            data['category'] = category unless data.key?('category')
+            result[category] << data
+          end
+        end
       end
+      
+      result
     end
 
     def load_json_file(file_path)
       return nil unless File.exist?(file_path)
+      
       Rails.logger.debug("Loading JSON from: #{file_path}")
       data = JSON.parse(File.read(file_path))
       Rails.logger.debug("Loaded data: #{data.inspect}")
