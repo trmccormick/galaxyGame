@@ -1,14 +1,11 @@
+# app/models/transaction.rb
 class Transaction < ApplicationRecord
-    belongs_to :buyer, class_name: 'Colony'
-    belongs_to :seller, class_name: 'Colony'
+  belongs_to :account
+  belongs_to :recipient, polymorphic: true
   
-    validates :amount, numericality: { greater_than: 0 }
+  validates :amount, presence: true
+  validates :transaction_type, inclusion: { in: %w[deposit withdraw transfer] }
   
-    after_create :finalize_transaction
-  
-    # Adjust accounts after a transaction
-    def finalize_transaction
-      buyer.account.update(balance: buyer.account.balance - amount)
-      seller.account.update(balance: seller.account.balance + amount)
-    end
+  # Transactions can be positive (deposits) or negative (withdrawals)
+  validates :amount, numericality: true
 end
