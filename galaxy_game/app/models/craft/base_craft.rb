@@ -5,7 +5,8 @@ module Craft
     include HasUnits
     include Housing
     include GameConstants
-    include HasUnitStorage # Add the new concern
+    include HasUnitStorage
+    include HasExternalConnections
 
     belongs_to :player, optional: true # if the player is controlling the craft directly
     belongs_to :owner, polymorphic: true
@@ -26,21 +27,18 @@ module Craft
 
     has_many :rigs, as: :attachable, class_name: 'Rigs::BaseRig', dependent: :destroy
 
-    validates :name, presence: true, uniqueness: true # name is unique across all crafts
+    validates :name, presence: true, uniqueness: true
     validates :craft_name, :craft_type, presence: true
     validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :operational_data, presence: true
 
-    before_validation :load_craft_info, on: :create
-
-    after_save :load_craft_info, if: -> { craft_name.present? && craft_type.present? }
+    before_validation :load_craft_info
     after_save :reload_associations, if: :saved_change_to_docked_at_id?
-    # after_create :build_recommended_units
     after_create :build_units_and_modules
     after_create :create_inventory
 
     def power_usage
-      craft_info['consumables']['energy']
+      operational_data&.dig('consumables', 'energy') || 0
     end
 
     def input_resources
@@ -106,6 +104,7 @@ module Craft
 
     # Make craft_info public
     def craft_info
+      return {} if operational_data.blank?
       operational_data
     end
 
@@ -150,16 +149,27 @@ module Craft
 
     def build_units_and_modules
       Rails.logger.debug "Starting build_units_and_modules"
-      return unless operational_data&.dig('recommended_units')
-
-      operational_data['recommended_units'].each do |unit_info|
-        # Create each unit through proper factory method
-        unit_info['count'].times do |i|
-          attach_unit(
-            create_unit_from_type(
-              unit_type: unit_info['id'],
-              name_suffix: (i + 1).to_s
+      
+      # Build units
+      if operational_data&.dig('recommended_units')
+        operational_data['recommended_units'].each do |unit_info|
+          unit_info['count'].times do |i|
+            attach_unit(
+              create_unit_from_type(
+                unit_type: unit_info['id'],
+                name_suffix: (i + 1).to_s
+              )
             )
+          end
+        end
+      end
+
+      # Build modules
+      if operational_data&.dig('recommended_modules')
+        operational_data['recommended_modules'].each do |module_info|
+          Rails.logger.debug "Creating module: #{module_info['id']}"
+          create_module_from_type(
+            module_type: module_info['id']
           )
         end
       end
@@ -172,19 +182,20 @@ module Craft
     end
 
     def load_craft_info
+      return if operational_data.present? && !operational_data.empty?
       return if craft_name.blank? || craft_type.blank?
       
       Rails.logger.debug("Loading craft info for: #{craft_name}, #{craft_type}")
       @lookup_service ||= Lookup::CraftLookupService.new
       craft_data = @lookup_service.find_craft(craft_name, craft_type)
       
-      Rails.logger.debug("Found craft data: #{craft_data.inspect}")
-      
-      if craft_data.present?
-        self.operational_data = craft_data
-        self.name ||= craft_data['name']
-        Rails.logger.debug("Set operational_data: #{operational_data.inspect}")
+      unless craft_data
+        errors.add(:base, "Could not find craft data for #{craft_name} of type #{craft_type}")
+        return
       end
+      
+      self.operational_data = craft_data
+      self.name ||= craft_data['name']
     end
 
     def has_compatible_storage_unit?(material_type)
@@ -225,6 +236,24 @@ module Craft
     def attach_unit(unit)
       return unless unit
       unit.update!(attachable: self)
+    end
+
+    def create_module_from_type(module_type:)
+      module_data = Lookup::ModuleLookupService.new.find_module(module_type)
+      return unless module_data
+
+      # Create module with basic attributes
+      mod = Modules::BaseModule.create!(
+        identifier: "#{module_type}_#{SecureRandom.hex(4)}",
+        name: module_data['name'],
+        module_type: module_type,
+        owner: owner,
+        attachable: self,
+        operational_data: module_data
+      )
+
+      # Let BaseModule handle its own initialization through callbacks
+      mod
     end
 
   end
