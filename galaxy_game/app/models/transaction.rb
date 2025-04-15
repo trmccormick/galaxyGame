@@ -3,9 +3,6 @@ class Transaction < ApplicationRecord
   belongs_to :account
   belongs_to :recipient, polymorphic: true
   
-  validates :amount, presence: true
-  validates :transaction_type, inclusion: { in: %w[deposit withdraw transfer] }
-  
-  # Transactions can be positive (deposits) or negative (withdrawals)
-  validates :amount, numericality: true
+  validates :amount, presence: true, numericality: true
+  validates :transaction_type, presence: true, inclusion: { in: %w[deposit withdraw transfer] }
 end
