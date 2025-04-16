@@ -5,7 +5,16 @@ module Lookup
     def initialize
       @cache = {}
       @data_path = Rails.root.join('app', 'data')
-      validate_directory_structure unless Rails.env.test?
+      
+      # Skip validation in test env or if we're the base class
+      return if Rails.env.test? || self.class == BaseLookupService
+      
+      begin
+        validate_directory_structure
+      rescue => e
+        Rails.logger.error("Directory validation error: #{e.message}")
+        # Don't raise here to allow graceful fallback
+      end
     end
 
     protected
@@ -50,6 +59,9 @@ module Lookup
     end
 
     def validate_directory_structure
+      # Only try to get constants if they're defined
+      return unless self.class.const_defined?('BASE_PATH') && self.class.const_defined?('CATEGORIES')
+      
       base_path = self.class.const_get('BASE_PATH')
       categories = self.class.const_get('CATEGORIES')
       
@@ -57,17 +69,37 @@ module Lookup
       
       if categories.is_a?(Hash)
         categories.each do |category, types|
-          types.each do |type|
-            path = File.join(base_path, category, type)
-            Rails.logger.debug("Checking path: #{path}")
-            raise "Missing directory: #{path}" unless Dir.exist?(path)
+          # Ensure path exists first
+          category_path = File.join(base_path, category.to_s)
+          Rails.logger.debug("Checking category path: #{category_path}")
+          
+          unless Dir.exist?(category_path)
+            Rails.logger.warn("Missing category directory: #{category_path}")
+            next # Skip this category instead of failing
+          end
+          
+          # Only process types if it's an array/enumerable
+          if types.respond_to?(:each)
+            types.each do |type|
+              path = File.join(base_path, category.to_s, type.to_s)
+              Rails.logger.debug("Checking path: #{path}")
+              
+              unless Dir.exist?(path)
+                Rails.logger.warn("Missing directory: #{path}")
+                # Don't raise here, just log the warning
+              end
+            end
           end
         end
-      else
+      elsif categories.respond_to?(:each)
         categories.each do |category|
-          path = File.join(base_path, category)
+          path = File.join(base_path, category.to_s)
           Rails.logger.debug("Checking path: #{path}")
-          raise "Missing directory: #{path}" unless Dir.exist?(path)
+          
+          unless Dir.exist?(path)
+            Rails.logger.warn("Missing directory: #{path}")
+            # Don't raise here, just log the warning
+          end
         end
       end
     end

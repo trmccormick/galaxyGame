@@ -1,0 +1,254 @@
+require 'rails_helper'
+
+RSpec.describe Item, type: :model do
+  let(:inventory) { create(:inventory) }
+  let(:item) { create(:item, inventory: inventory, amount: 10) }
+  
+  before(:each) do
+    # Mock item lookup service
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
+      .with("Basic Supplies")
+      .and_return({
+        "type" => "consumable",
+        "weight" => { "amount" => 5, "unit" => "kg" },
+        "storage" => { "method" => "bulk_storage" }
+      })
+  end
+
+  describe 'associations' do
+    it { is_expected.to belong_to(:inventory).optional }
+    it { is_expected.to belong_to(:container).class_name('Item').optional }
+    it { is_expected.to belong_to(:owner) }
+    it { is_expected.to belong_to(:storage_unit).optional }
+    it { is_expected.to have_many(:contained_items).class_name('Item').dependent(:destroy) }
+  end
+
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_presence_of(:storage_method) }
+  end
+
+  # describe 'lookup service integration' do
+  #   it 'loads properties from item lookup service' do
+  #     expect(item.properties).to include(
+  #       "type" => "consumable",
+  #       "weight" => { "amount" => 5, "unit" => "kg" }
+  #     )
+  #   end
+
+  #   it 'loads material properties for raw materials' do
+  #     allow_any_instance_of(Lookup::MaterialLookupService)
+  #       .to receive(:find_material)
+  #       .with("Iron Ore")
+  #       .and_return({
+  #         "type" => "raw_material",
+  #         "chemical_formula" => "Fe2O3"
+  #       })
+
+  #     raw_item = create(:item, name: "Iron Ore")
+  #     expect(raw_item.material_properties).to include("chemical_formula" => "Fe2O3")
+  #   end
+  # end
+
+  # describe '#tradeable?' do
+  #   it 'returns true for normal items with positive amount' do
+  #     item.amount = 10
+  #     expect(item).to be_tradeable
+  #   end
+
+  #   it 'returns false for items with zero amount' do
+  #     item.amount = 0
+  #     expect(item).not_to be_tradeable
+  #   end
+
+  #   it 'returns false for quest items' do
+  #     quest_item = create(:item, :quest_item)
+  #     expect(quest_item).not_to be_tradeable
+  #   end
+
+  #   it 'returns false for containers with items' do
+  #     container = create(:item, :container)
+  #     create(:item, container: container)
+  #     expect(container).not_to be_tradeable
+  #   end
+
+  #   it 'returns true for empty containers' do
+  #     container = create(:item, :container)
+  #     expect(container).to be_tradeable
+  #   end
+  # end
+
+  # describe '#dynamic_price' do
+  #   let(:buyer_colony) { double('Colony') }
+  #   let(:trade_service) { instance_double('TradeService', dynamic_price: 150.0) }
+
+  #   before do
+  #     allow(TradeService).to receive(:new).with(item, buyer_colony).and_return(trade_service)
+  #   end
+
+  #   it 'returns the dynamic price from TradeService' do
+  #     if item.respond_to?(:dynamic_price)
+  #       expect(item.dynamic_price(buyer_colony)).to eq(150.0)
+  #     else
+  #       skip 'dynamic_price method is not defined on Item'
+  #     end
+  #   end
+  # end
+
+  # describe '#add_quantity' do
+  #   it 'increases the amount by the specified value' do
+  #     allow(item).to receive(:can_store?).with(5).and_return(true)
+  #     item.amount = 10
+  #     item.add_quantity(5)
+  #     expect(item.amount).to eq(15)
+  #   end
+
+  #   it 'does not increase amount if storage capacity is insufficient' do
+  #     allow(item).to receive(:can_store?).with(5).and_return(false)
+  #     item.amount = 10
+  #     expect { item.add_quantity(5) }.not_to change(item, :amount)
+  #   end
+  # end
+
+  # describe '#remove_quantity' do
+  #   it 'decreases the amount by the specified value when enough is available' do
+  #     item.amount = 10
+  #     expect(item.remove_quantity(5)).to be true
+  #     expect(item.amount).to eq(5)
+  #   end
+
+  #   it 'does not decrease amount when there is insufficient quantity' do
+  #     item.amount = 3
+  #     expect(item.remove_quantity(5)).to be false
+  #     expect(item.amount).to eq(3)
+  #   end
+  # end
+
+  # describe '#available?' do
+  #   it 'returns true when the requested amount is available' do
+  #     item.amount = 10
+  #     expect(item.available?(5)).to be true
+  #   end
+
+  #   it 'returns false when the requested amount is not available' do
+  #     item.amount = 3
+  #     expect(item.available?(5)).to be false
+  #   end
+  # end
+
+  # describe '#total_weight' do
+  #   it 'returns the base weight when there are no contained items' do
+  #     item.weight = 5
+  #     expect(item.total_weight).to eq(5)
+  #   end
+
+  #   it 'returns the sum of base weight and contained item weights' do
+  #     container = create(:item, weight: 10)
+  #     contained_item = create(:item, weight: 5, container: container)
+  #     expect(container.total_weight).to eq(15)
+  #   end
+
+  #   it 'calculates weight from properties' do
+  #     expect(item.total_weight).to eq(5)
+  #   end
+
+  #   it 'includes contained items weight' do
+  #     container = create(:item, name: "Storage Crate")
+  #     allow_any_instance_of(Lookup::ItemLookupService)
+  #       .to receive(:find_item)
+  #       .with("Storage Crate")
+  #       .and_return({
+  #         "type" => "container",
+  #         "weight" => { "amount" => 10, "unit" => "kg" },
+  #         "capacity" => { "amount" => 100, "unit" => "kg" }
+  #       })
+
+  #     contained_item = create(:item, container: container)
+  #     expect(container.total_weight).to eq(15) # 10 + 5
+  #   end
+
+  #   it 'calculates weight from item properties' do
+  #     expect(item.total_weight).to eq(5) # Weight comes from ItemLookupService mock
+  #   end
+
+  #   it 'calculates container weight including contents' do
+  #     # Setup container lookup
+  #     allow_any_instance_of(Lookup::ItemLookupService)
+  #       .to receive(:find_item)
+  #       .with("Storage Crate")
+  #       .and_return({
+  #         "type" => "container",
+  #         "weight" => { "amount" => 10, "unit" => "kg" },
+  #         "capacity" => { "amount" => 100, "unit" => "kg" }
+  #       })
+
+  #     container = create(:item, name: "Storage Crate")
+  #     contained_item = create(:item, container: container)
+      
+  #     # Container (10kg) + Basic Supplies (5kg from mock)
+  #     expect(container.total_weight).to eq(15)
+  #   end
+
+  #   it 'calculates raw material weight from material properties' do
+  #     allow_any_instance_of(Lookup::MaterialLookupService)
+  #       .to receive(:find_material)
+  #       .with("Hematite")
+  #       .and_return({
+  #         "type" => "raw_material",
+  #         "weight_per_unit" => { "amount" => 2, "unit" => "kg" }
+  #       })
+
+  #     raw_item = create(:item, name: "Hematite", amount: 10)
+  #     expect(raw_item.total_weight).to eq(20) # 2kg * 10 units
+  #   end
+  # end
+
+  # describe '#is_container?' do
+  #   it 'returns true if item has contained items' do
+  #     container = create(:item)
+  #     create(:item, container: container)
+  #     expect(container.is_container?).to be true
+  #   end
+
+  #   it 'returns false if item does not have contained items' do
+  #     expect(item.is_container?).to be false
+  #   end
+  # end
+
+  # describe '#add_item' do
+  #   let(:container) { create(:item) }
+  #   let(:small_item) { create(:item) }
+
+  #   it 'adds an item to the container' do
+  #     container.add_item(small_item)
+  #     expect(container.contained_items).to include(small_item)
+  #   end
+
+  #   it 'raises an error when trying to add an item to a non-container' do
+  #     expect { item.add_item(small_item) }.to raise_error("Cannot add items to a non-container item.")
+  #   end
+  # end
+
+  # describe '#remove_item' do
+  #   let(:container) { create(:item) }
+  #   let(:small_item) { create(:item, container: container) }
+
+  #   it 'removes an item from the container' do
+  #     expect(container.contained_items).to include(small_item)
+  #     container.remove_item(small_item)
+  #     expect(container.contained_items).not_to include(small_item)
+  #   end
+
+  #   it 'raises an error if item is not in the container' do
+  #     other_item = create(:item)
+  #     expect { container.remove_item(other_item) }.to raise_error("Item not found in this container.")
+  #   end
+  # end
+end
+
+
+
+
+
