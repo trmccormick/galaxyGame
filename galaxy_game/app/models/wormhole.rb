@@ -32,28 +32,41 @@ class Wormhole < ApplicationRecord
 
   # --- Satellite logic ---
   def stabilization_satellites
-    # Could consider using a join with a distance calculation in the database
-    # for better performance with large numbers of satellites
-    
     # Current approach is fine for small to medium datasets
     satellites = Craft::BaseCraft.where(
       deployed: true, 
       craft_name: "Wormhole Stabilization Satellite"
     ).where.not(
       stabilizing_wormhole_id: id
-    ).includes(:location)
+    )
+    
+    # Debug information
+    Rails.logger.debug "Found #{satellites.count} satellites with name 'Wormhole Stabilization Satellite'"
+    satellites.each do |s|
+      Rails.logger.debug "  Satellite #{s.id}: deployed=#{s.deployed}, craft_name=#{s.craft_name}"
+    end
     
     # Filter satellites that are within range
     in_range = satellites.select do |satellite|
-      next false unless satellite.location
+      # Use either spatial_location or celestial_location (location is a helper method)
+      satellite_location = satellite.spatial_location
+      next false unless satellite_location
+      
+      # Debug information
+      Rails.logger.debug "  Checking satellite #{satellite.id} with location #{satellite_location.inspect}"
       
       # Check each endpoint for distance
-      endpoints.any? do |endpoint|
-        distance = satellite.location.distance_to(endpoint)
+      any_in_range = endpoints.any? do |endpoint|
+        distance = calculate_distance(satellite_location, endpoint)
+        Rails.logger.debug "    Distance to endpoint #{endpoint.id}: #{distance}, threshold: #{GameConstants::STABILIZER_EFFECTIVE_RANGE}"
         distance <= GameConstants::STABILIZER_EFFECTIVE_RANGE
       end
+      
+      Rails.logger.debug "  Satellite #{satellite.id} in range? #{any_in_range}"
+      any_in_range
     end
     
+    Rails.logger.debug "Returning #{in_range.count} satellites in range"
     in_range
   end
 
