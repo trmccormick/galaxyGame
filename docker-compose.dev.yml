@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/galaxy_game_development
+      REDIS_URL: redis://redis:6379/1
+      RAILS_ENV: development
+      RAKE_ENV: development
+    volumes:
+      - ./scripts:/home/galaxy_game/scripts
+      - ./galaxy_game:/home/galaxy_game
+      # - ./old_galaxy_game:/home/old_galaxy_game
+      # map in various persistent directories in the data folder
+      - ./data/json-data:/home/galaxy_game/app/data
+      - ./data/bundle:/usr/local/bundle # cache bundle install
+      - ./data/node_modules:/home/hydra/node_modules
+      - ./data/logs:/home/galaxy_game/log
+      # don't mount tmp directory
+      - /home/hydra/tmp
+
+  web:
+    extends: app
+    container_name: web
+    command: bash -c "rm -f tmp/pids/server.pid && rails server -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
+      workers:
+        condition: service_started
+
+  workers:
+    extends: app
+    container_name: sidekiq
+    command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
+    stdin_open: true
+    tty: true 
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: redis-server 
+    volumes:
+      - redis:/var/lib/redis/data
+    restart: unless-stopped
+    healthcheck:
+      test: redis-cli -h redis ping
+      interval: 30s
+      timeout: 3s
+      retries: 3 
+
+  db:
+    image: postgres:16
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  memcached:
+    image: bitnami/memcached
+    container_name: memcached
+    ports:
+      - "11211"
+
+volumes:
+  redis:
+  postgres:
