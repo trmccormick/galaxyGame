@@ -18,6 +18,9 @@ class CreateBaseCrafts < ActiveRecord::Migration[7.0]
           # Settlement reference
           t.references :docked_at, foreign_key: { to_table: :base_settlements }
 
+          # Wormhole reference
+          t.references :stabilizing_wormhole, foreign_key: { to_table: :wormholes }          
+
           t.timestamps
       end
 

@@ -1,7 +1,9 @@
 class CreatePlanets < ActiveRecord::Migration[7.0]
   def change
     create_table :planets do |t|
+      t.string :identifier, null: false, index: { unique: true }
       t.string :name
+      t.string :type
       t.decimal :size
       t.decimal :gravity, precision: 10, scale: 2
       t.decimal :density, precision: 10, scale: 2
@@ -10,7 +12,9 @@ class CreatePlanets < ActiveRecord::Migration[7.0]
       t.float :total_pressure
       t.jsonb :gas_quantities, default: {}
       t.jsonb :materials, default: {}
-      t.float :water_volume
+
+      # for moons
+      t.string :parent_body
 
       t.timestamps
     end
