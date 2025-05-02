@@ -1,6 +1,6 @@
 # app/models/gas.rb
 class Gas < ApplicationRecord
-  belongs_to :atmosphere, class_name: 'CelestialBodies::Atmosphere'
+  belongs_to :atmosphere, class_name: 'CelestialBodies::Spheres::Atmosphere'
 
   # Explicitly specify the table name if necessary
   self.table_name = 'gases'
