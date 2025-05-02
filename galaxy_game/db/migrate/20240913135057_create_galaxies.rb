@@ -9,7 +9,7 @@ class CreateGalaxies < ActiveRecord::Migration[7.0]
       t.decimal :diameter, precision: 20, scale: 2
       t.string :galaxy_type
       t.integer :age_in_billions
-      t.integer :star_count
+      t.bigint :star_count
 
       t.timestamps
     end
