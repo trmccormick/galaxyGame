@@ -7,7 +7,7 @@ module CelestialBodies
       
       belongs_to :celestial_body, class_name: 'CelestialBodies::CelestialBody'
       has_many :materials, as: :materializable, dependent: :destroy
-      has_many :gases, class_name: 'Gas', dependent: :destroy
+      has_many :gases, class_name: 'CelestialBodies::Materials::Gas', dependent: :destroy
       
       # store :composition, accessors: [:gas_ratios]
       store :dust, accessors: [:concentration, :particle_size]
