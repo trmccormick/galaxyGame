@@ -5,7 +5,7 @@ module CelestialBodies
       include HydrosphereConcern
       
       belongs_to :celestial_body, class_name: 'CelestialBodies::CelestialBody'
-      has_many :liquid_materials, dependent: :destroy
+      has_many :liquid_materials, class_name: 'CelestialBodies::Materials::Liquid', dependent: :destroy
       has_many :materials, as: :materializable, dependent: :destroy
       
       attr_accessor :simulation_running
