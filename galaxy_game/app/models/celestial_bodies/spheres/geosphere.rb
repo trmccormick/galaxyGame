@@ -5,7 +5,7 @@ module CelestialBodies
       include GeosphereConcern
       
       belongs_to :celestial_body, class_name: 'CelestialBodies::CelestialBody'
-      has_many :geological_materials, dependent: :destroy
+      has_many :geological_materials, class_name: 'CelestialBodies::Materials::GeologicalMaterial', dependent: :destroy
       has_many :materials, as: :materializable, dependent: :destroy
       
       # Make skip_simulation accessible
