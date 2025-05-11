@@ -135,4 +135,54 @@ RSpec.describe Galaxy, type: :model do
       expect(galaxy.spatial_location).to eq(spatial_location)
     end
   end
+
+  describe '.create_with_random_properties' do
+    it 'creates a galaxy with the given identifier' do
+      identifier = 'TEST-GALAXY-123'
+      galaxy = Galaxy.create_with_random_properties(identifier)
+      
+      expect(galaxy).to be_persisted
+      expect(galaxy.identifier).to eq(identifier)
+    end
+    
+    it 'uses provided options when given' do
+      galaxy = Galaxy.create_with_random_properties(
+        'CUSTOM-GALAXY', 
+        name: 'My Custom Galaxy',
+        type: 'elliptical',
+        mass: 3.5e12
+      )
+      
+      expect(galaxy.name).to eq('My Custom Galaxy')
+      expect(galaxy.galaxy_type).to eq('elliptical')
+      expect(galaxy.mass).to eq(3.5e12)
+    end
+    
+    it 'generates random properties when not specified' do
+      galaxy1 = Galaxy.create_with_random_properties('RANDOM-1')
+      galaxy2 = Galaxy.create_with_random_properties('RANDOM-2')
+      
+      # Both should have valid values
+      expect(galaxy1.mass).to be_between(1.0e11, 5.0e12)
+      expect(galaxy2.mass).to be_between(1.0e11, 5.0e12)
+      
+      # They should likely be different (not guaranteed but highly probable)
+      all_same = galaxy1.mass == galaxy2.mass && 
+                galaxy1.galaxy_type == galaxy2.galaxy_type
+                
+      expect(all_same).to be_falsey, "Expected randomly generated galaxies to have different properties"
+    end
+    
+    it 'handles a mix of specified and random properties' do
+      galaxy = Galaxy.create_with_random_properties(
+        'MIXED-PROPS',
+        name: 'Partially Random',
+        # type not specified - should be random
+      )
+      
+      expect(galaxy.name).to eq('Partially Random')
+      expect(galaxy.galaxy_type).to be_present # Should have a random type
+      expect(galaxy.mass).to be_between(1.0e11, 5.0e12) # Should have a random mass
+    end
+  end
 end

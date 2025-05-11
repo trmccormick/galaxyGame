@@ -30,6 +30,17 @@ class Galaxy < ApplicationRecord
     base_mass * 6.0
   end
   
+  # Class methods for special creation patterns if needed
+  def self.create_with_random_properties(identifier, options = {})
+    create!(
+      identifier: identifier,
+      name: options[:name],
+      galaxy_type: options[:type] || galaxy_types.keys.sample,
+      mass: options[:mass] || rand(1.0e11..5.0e12),
+      # Other random properties
+    )
+  end
+
   private
 
   # Generate a unique name only if none is provided
