@@ -160,5 +160,73 @@ RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
       expect(atmosphere.total_atmospheric_mass).to eq(70.0)
     end
   end
+
+  # Add new tests for the temperature methods
+  describe 'temperature management' do
+    let(:earth_like_body) { create(:celestial_body, surface_temperature: 288) }
+    subject(:atmosphere) { create(:atmosphere, celestial_body: earth_like_body) }
+    
+    it 'stores various temperature types in temperature_data' do
+      # Set temperature values
+      atmosphere.set_effective_temp(255)
+      atmosphere.set_greenhouse_temp(288)
+      atmosphere.set_polar_temp(248)
+      atmosphere.set_tropic_temp(298)
+      
+      # Reload to ensure persistence
+      atmosphere.reload
+      
+      # Check stored values
+      expect(atmosphere.effective_temperature).to eq(255)
+      expect(atmosphere.greenhouse_temperature).to eq(288)
+      expect(atmosphere.polar_temperature).to eq(248)
+      expect(atmosphere.tropical_temperature).to eq(298)
+      
+      # Check temperature was updated to match greenhouse temp
+      expect(atmosphere.temperature).to eq(288)
+    end
+    
+    it 'provides default values for temperature getters' do
+      # With no specific values set
+      atmosphere.update(temperature: 288)
+      
+      # Check the getter methods provide reasonable defaults
+      expect(atmosphere.effective_temp).to eq(288)
+      expect(atmosphere.greenhouse_temp).to eq(288)
+      expect(atmosphere.polar_temp).to eq(248) # temperature - 40
+      expect(atmosphere.tropic_temp).to eq(298) # temperature + 10
+    end
+    
+    it 'updates main temperature when greenhouse temperature changes' do
+      # Initial state
+      expect(atmosphere.temperature).to eq(288)
+      
+      # Set greenhouse temperature
+      atmosphere.set_greenhouse_temp(293)
+      
+      # Both values should be updated
+      expect(atmosphere.greenhouse_temperature).to eq(293)
+      expect(atmosphere.temperature).to eq(293)
+    end
+    
+    it 'persists temperature data across reloads' do
+      # Set values and save
+      atmosphere.update(temperature_data: {
+        'effective_temperature' => 250,
+        'greenhouse_temperature' => 290,
+        'polar_temperature' => 245,
+        'tropical_temperature' => 305
+      })
+      
+      # Reload from database
+      reloaded = CelestialBodies::Spheres::Atmosphere.find(atmosphere.id)
+      
+      # Check values persisted
+      expect(reloaded.effective_temperature).to eq(250)
+      expect(reloaded.greenhouse_temperature).to eq(290)
+      expect(reloaded.polar_temperature).to eq(245)
+      expect(reloaded.tropical_temperature).to eq(305)
+    end
+  end
 end
 

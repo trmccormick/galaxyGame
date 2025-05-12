@@ -1,111 +1,123 @@
 module TerraSim
   class AtmosphereSimulationService
-    GREENHOUSE_GASES = %w[CO2 CH4 N2O Water].freeze # Consistent naming of water vapor
+    GREENHOUSE_GASES = %w[CO2 CH4 N2O H2O].freeze # Use 'H2O' consistently for clarity
 
     def initialize(celestial_body)
       @celestial_body = celestial_body
-      @sigma = 0.0000000567  # Stefan-Boltzmann constant
-      @material_lookup = MaterialLookupService.new # Initialize the lookup service
+      @sigma = 5.67e-8 # Stefan-Boltzmann constant
+      @material_lookup = Lookup::MaterialLookupService.new
     end
 
     def simulate
       update_pressure
       calculate_greenhouse_effect
       update_temperatures
-      # Call the biosphere simulation here if needed, but keeping them separate
-
-      decrease_dust(0.1) # Decrease dust concentration by a fixed amount
+      simulate_atmospheric_loss
+      decrease_dust(0.1)
     end
 
     private
 
     def update_pressure
-      return unless @celestial_body.atmosphere.present? && @celestial_body.surface_temperature.present?
+      return unless @celestial_body.atmosphere.present?
 
       atmosphere = @celestial_body.atmosphere
-      new_pressure = atmosphere.calculate_pressure(@celestial_body.surface_temperature)
-      atmosphere.update(pressure: new_pressure)
+      atmosphere.update_pressure_from_mass!
     end
 
     def calculate_greenhouse_effect
-      @a = @celestial_body.albedo.to_f
-      @sm = @celestial_body.solar_constant.to_f
+      @albedo = @celestial_body.albedo.to_f
+      @solar_input = @celestial_body.solar_constant.to_f
+      @base_temp = stefan_boltzmann_temp
 
-      # Retrieve gas quantities from atmosphere
-      atmosphere = @celestial_body.atmosphere
-      gas_values = {}
-      GREENHOUSE_GASES.each do |gas|
-        gas_info = @material_lookup.find_material(gas) # Look up gas material info
-        gas_values[gas] = @atmosphere.gases[gas] || 0 # Use 0 if the gas is not present
-        gas_values["#{gas}_molar_mass"] = gas_info ? gas_info['molar_mass'] : 0 # Fetch molar mass
-      end
+      gather_gas_data
 
-      @p_co2 = gas_values['CO2']
-      @p_ch4 = gas_values['CH4']
-      @p_water_vapor = gas_values['Water'] # Using 'water_vapor' consistently
-      @pr = gas_values['N2']
+      @surface_temp = @base_temp
+      @polar_temp = @surface_temp - 75
+      @tropic_temp = @surface_temp
 
-      # Calculate the greenhouse effect
-      @tb = ((1 - @a) * @sm / (4 * @sigma))**0.25 # Blackbody temperature
-      @ts = @tb # Initial surface temperature
-      @tp = @ts - 75 # Initial atmospheric temperature profile
-      @tt = @ts # Initialize temperature state
-
-      # Iterate to simulate greenhouse warming effects
       100.times do
-        t_water_vapor = p_h2o**0.3 # Water vapor effect
-        t_co2 = @p_co2**0.3 # CO2 effect
-        t_ch4 = @p_ch4**0.3 # Methane effect
-        p_tot_value = p_tot # Total pressure from all gases
-
-        # Recalculate surface temperature based on gas effects
-        @ts = (((1 - @a) * @sm) / (4 * @sigma))**0.25 * 
-              ((1 + t_co2 + t_water_vapor + t_ch4)**0.25)
-
-        # Update atmospheric temperature based on surface temp and total gas pressure
-        @tp = @ts - (75 / (1 + p_tot_value))
+        @surface_temp = greenhouse_adjusted_temp
+        @polar_temp = @surface_temp - (75 / (1 + total_pressure))
       end
 
-      # Log or update the celestial body with the new temperature
-      @celestial_body.update(surface_temperature: @ts)
+      @celestial_body.update(surface_temperature: @surface_temp)
     end
 
-    def p_h2o
+    def stefan_boltzmann_temp
+      ((1 - @albedo) * @solar_input / (4 * @sigma))**0.25
+    end
+
+    def gather_gas_data
+      atmosphere = @celestial_body.atmosphere
+      @gases = {}
+
+      GREENHOUSE_GASES.each do |gas|
+        material = @material_lookup.find_material(gas)
+        gas_mass = atmosphere.gases.find_by(name: gas)&.mass || 0
+        molar_mass = material ? material["molar_mass"] : 0
+
+        @gases[gas] = { mass: gas_mass, molar_mass: molar_mass }
+      end
+    end
+
+    def greenhouse_adjusted_temp
+      water_effect = water_vapor_pressure**0.3
+      co2_effect   = @gases['CO2'][:mass]**0.3
+      ch4_effect   = @gases['CH4'][:mass]**0.3
+
+      (@base_temp * (1 + co2_effect + water_effect + ch4_effect)**0.25)
+    end
+
+    def water_vapor_pressure
       rh = 0.7
-      rgas = 8.314
-      lheat = 43655.0
-      p0 = 1.4E6
-      rh * p0 * Math.exp(-lheat / (rgas * @ts)) # Water vapor pressure calculation
+      r = 8.314
+      l_heat = 43655.0
+      p0 = 1.4e6
+      rh * p0 * Math.exp(-l_heat / (r * @surface_temp))
     end
 
-    def p_tot
-      @p_co2 + @pr + @p_ch4 + p_h2o # Total pressure including calculated water vapor pressure
-    end
-
-    def t_co2
-      0.9 * p_tot**0.45 * @p_co2**0.11
+    def total_pressure
+      # Get the actual pressure from the atmosphere model
+      @celestial_body.atmosphere.pressure
     end
 
     def update_temperatures
-      # Any additional temperature updates that may be necessary
-      # This can be called after greenhouse effect calculations if needed
-      @celestial_body.set_effective_temp(@tb)
-      @celestial_body.set_greenhouse_temp(@ts)
-      @celestial_body.set_polar_temp(@tp)
-      @celestial_body.set_tropic_temp(@tt)
+      atmosphere = @celestial_body.atmosphere
+      return unless atmosphere
+      
+      # Update the various temperature types using our new methods
+      atmosphere.set_effective_temp(@base_temp)
+      atmosphere.set_greenhouse_temp(@surface_temp)
+      atmosphere.set_polar_temp(@polar_temp)
+      atmosphere.set_tropic_temp(@tropic_temp)
+      
+      # Also update the celestial body's surface temperature
+      @celestial_body.update(surface_temperature: @surface_temp)
+    end
+
+    def simulate_atmospheric_loss
+      atmosphere = @celestial_body.atmosphere
+      return unless atmosphere.present?
+
+      loss_factor = calculate_solar_wind_factor
+
+      atmosphere.gases.each do |gas|
+        new_mass = [gas.mass - gas.mass * loss_factor, 0].max
+        gas.update(mass: new_mass)
+      end
+
+      atmosphere.recalculate_mass!
+      atmosphere.update_pressure_from_mass!
+    end
+
+    def calculate_solar_wind_factor
+      # Placeholder for future magnetic field-based formula
+      0.0001
     end
 
     def decrease_dust(amount)
       @celestial_body.atmosphere.decrease_dust(amount)
     end
-
-    def increase_dust(amount)
-      @celestial_body.atmosphere.increase_dust(amount)
-    end
   end
 end
-
-
-
-
-  

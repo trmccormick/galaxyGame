@@ -9,7 +9,14 @@ module CelestialBodies
       has_many :materials, as: :materializable, dependent: :destroy
       has_many :gases, class_name: 'CelestialBodies::Materials::Gas', dependent: :destroy
       
-      # store :composition, accessors: [:gas_ratios]
+      # Use the new temperature_data field for temperature measurements
+      store_accessor :temperature_data, :effective_temperature, 
+                                       :greenhouse_temperature, 
+                                       :polar_temperature, 
+                                       :tropical_temperature
+      
+      # Existing code for composition and dust
+      store :composition, accessors: [:gas_ratios]
       store :dust, accessors: [:concentration, :particle_size]
 
       validates :pressure, :temperature, presence: true
@@ -19,6 +26,46 @@ module CelestialBodies
 
       after_create :initialize_gases
 
+      # Temperature-related methods
+      def set_effective_temp(temp)
+        self.effective_temperature = temp
+        save!
+      end
+      
+      def set_greenhouse_temp(temp)
+        self.greenhouse_temperature = temp
+        # Also update the main temperature since greenhouse effect determines actual temperature
+        self.temperature = temp
+        save!
+      end
+      
+      def set_polar_temp(temp)
+        self.polar_temperature = temp
+        save!
+      end
+      
+      def set_tropic_temp(temp)
+        self.tropical_temperature = temp
+        save!
+      end
+      
+      # Temperature getters with reasonable defaults
+      def effective_temp
+        effective_temperature || temperature
+      end
+      
+      def greenhouse_temp
+        greenhouse_temperature || temperature
+      end
+      
+      def polar_temp
+        polar_temperature || (temperature - 40)
+      end
+      
+      def tropic_temp
+        tropical_temperature || (temperature + 10)
+      end
+      
       # This is the key method that converts composition to actual Gas records
       def initialize_gases
         return unless composition.present?
@@ -89,10 +136,19 @@ module CelestialBodies
         GameFormatters::AtmosphericData.format_mass(total_atmospheric_mass)
       end
 
+      # Add this public method to call the private one
+      def recalculate_mass!
+        update_total_atmospheric_mass
+      end
+
       private
 
       def default_temperature
         celestial_body.surface_temperature
+      end
+
+      def update_total_atmospheric_mass
+        # existing implementation
       end     
     end
   end
