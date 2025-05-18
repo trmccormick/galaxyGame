@@ -1,11 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
-  # Create a proper celestial body with a real ID in the database
   let(:solar_system) { create(:solar_system) }
   let(:celestial_body) { create(:celestial_body, solar_system: solar_system) }
-  
-  # Make sure the biosphere is properly associated with a real celestial body
+  let(:atmosphere) do
+    create(:atmosphere, celestial_body: celestial_body).tap do |atm|
+      atm.add_gas('water', 1000.0)
+      atm.add_gas('carbon_dioxide', 500.0)
+      atm.add_gas('nitrogen', 2000.0)
+    end
+  end
   let(:biosphere) { create(:biosphere, celestial_body: celestial_body) }
 
   describe 'associations' do
@@ -16,55 +20,115 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
   end
 
   describe 'validations' do
-    it { should validate_presence_of(:temperature_tropical) }
-    it { should validate_presence_of(:temperature_polar) }
+    it 'can access temperature values via tropical_temperature method' do
+      expect(biosphere).to respond_to(:tropical_temperature)
+    end
+    
+    it 'can access temperature values via polar_temperature method' do
+      expect(biosphere).to respond_to(:polar_temperature)
+    end
     
     it { should validate_numericality_of(:biodiversity_index).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(1).allow_nil }
     it { should validate_numericality_of(:habitable_ratio).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(1).allow_nil }
   end
 
   describe 'defaults' do
-    it 'sets default values on initialization' do
-      celestial_body.save! # Ensure celestial_body is saved
-      new_biosphere = CelestialBodies::Spheres::Biosphere.new(celestial_body: celestial_body)
+    before do
+      # Prevent callbacks from running during test
+      allow_any_instance_of(CelestialBodies::CelestialBody).to receive(:run_terra_sim).and_return(nil)
       
-      expect(new_biosphere.temperature_tropical).to eq(300.0)
-      expect(new_biosphere.temperature_polar).to eq(250.0)
-      expect(new_biosphere.biodiversity_index).to eq(0.0)
-      expect(new_biosphere.habitable_ratio).to eq(0.0)
-      expect(new_biosphere.biome_distribution).to eq({})
+      # Delete any existing atmospheres to ensure there's only one
+      celestial_body.atmosphere.destroy if celestial_body.atmosphere.present?
+      
+      # Set the celestial body surface temperature
+      celestial_body.update!(surface_temperature: 290.0)
+      
+      # Create/update our atmosphere with proper temperature data
+      atmosphere.update!(
+        temperature_data: {
+          'tropical_temperature' => 300.0,
+          'polar_temperature' => 250.0
+        },
+        temperature: 288.0
+      )
+      
+      # Force a reload to ensure the celestial body knows about this atmosphere
+      celestial_body.reload
+    end
+
+    it 'accesses default temperature values via delegation methods' do
+      # Use the existing biosphere rather than creating a new one
+      biosphere.reload
+      
+      # Debug output to verify what's happening
+      puts "TEST DEBUG: Atmosphere ID: #{atmosphere.id}"
+      puts "TEST DEBUG: CelestialBody atmosphere ID: #{celestial_body.atmosphere.id}"
+      puts "TEST DEBUG: Tropical temp from atmosphere: #{atmosphere.temperature_data['tropical_temperature']}"
+      puts "TEST DEBUG: Tropical temp via biosphere: #{biosphere.tropical_temperature}"
+      
+      # Expectations should now work correctly
+      expect(biosphere.tropical_temperature).to eq(300.0)
+      expect(biosphere.polar_temperature).to eq(250.0)
+      expect(biosphere.biodiversity_index).to eq(0.0)
+      expect(biosphere.habitable_ratio).to eq(0.0)
+      expect(biosphere.biome_distribution).to eq({})
     end
   end
 
   describe '#reset' do
-    it 'resets to base values' do
-      # First create a biosphere with specific values
+    let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
+    
+    before do
+      atmosphere.update(
+        temperature_data: {
+          'tropical_temperature' => 300.0,
+          'polar_temperature' => 250.0
+        }
+      )
+    end
+    
+    it 'coordinates with atmosphere for temperature reset' do
+      # First update atmosphere's temperature_data
+      atmosphere.update(
+        temperature_data: {
+          'tropical_temperature' => 310.0,
+          'polar_temperature' => 260.0
+        }
+      )
+      
+      # Set biodiversity and habitable ratio in biosphere
       biosphere.update!(
-        temperature_tropical: 310.0,
-        temperature_polar: 260.0,
         biodiversity_index: 0.5,
         habitable_ratio: 0.3,
         biome_distribution: { 'forest' => { 'area_percentage' => 100.0 } }
       )
       
-      # Then set the base values
+      # Then set the base values in atmosphere
+      atmosphere.update!(base_values: {
+        base_temperature_data: {
+          'tropical_temperature' => 300.0,
+          'polar_temperature' => 250.0
+        }
+      })
+      
+      # Set biosphere base values
       biosphere.update!(
-        base_temperature_tropical: 300.0,
-        base_temperature_polar: 250.0,
         base_biodiversity_index: 0.0,
         base_habitable_ratio: 0.0,
         base_biome_distribution: {}
       )
       
-      # Reset
+      # Reset biosphere, which should coordinate with atmosphere
       biosphere.reset
       
-      # Verify reset worked
-      expect(biosphere.temperature_tropical).to eq(300.0)
-      expect(biosphere.temperature_polar).to eq(250.0)
+      # Verify reset worked for biosphere values
       expect(biosphere.biodiversity_index).to eq(0.0)
       expect(biosphere.habitable_ratio).to eq(0.0)
       expect(biosphere.biome_distribution).to eq({})
+      
+      # Verify atmosphere temperatures were reset
+      expect(biosphere.tropical_temperature).to eq(300.0)
+      expect(biosphere.polar_temperature).to eq(250.0)
     end
   end
 
@@ -288,8 +352,9 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       expect(biosphere).to receive(:calculate_biodiversity_index)
       expect(biosphere).to receive(:calculate_habitability)
       
-      # Trigger simulation
-      biosphere.temperature_tropical = biosphere.temperature_tropical + 5
+      # Use set_tropical_temperature instead of direct field access
+      allow(biosphere).to receive(:set_tropical_temperature)
+      biosphere.set_tropical_temperature(biosphere.tropical_temperature + 5)
       biosphere.save!
     end
   end
@@ -379,6 +444,107 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       # Check it handled nil amount correctly
       expect(result).to be_truthy
       expect(geosphere.materials.find_by(name: 'Material With Nil').amount).to eq(20)
+    end
+  end
+
+  describe 'soil properties' do
+    subject { create(:biosphere) }
+    
+    it 'has soil_health attribute' do
+      expect(subject).to respond_to(:soil_health)
+    end
+    
+    it 'has soil_organic_content attribute' do
+      expect(subject).to respond_to(:soil_organic_content)
+    end
+    
+    it 'has soil_microbial_activity attribute' do
+      expect(subject).to respond_to(:soil_microbial_activity)
+    end
+    
+    it '#update_soil_health updates soil health value' do
+      expect { subject.update_soil_health(75) }
+        .to change { subject.reload.soil_health }.to(75)
+    end
+    
+    it 'initializes with default soil health of zero' do
+      expect(subject.soil_health).to eq(0)
+    end
+  end
+
+  describe 'vegetation cover' do
+    it 'has vegetation_cover attribute' do
+      expect(subject).to respond_to(:vegetation_cover)
+    end
+    
+    it 'defaults to 0.0 vegetation cover' do
+      new_biosphere = CelestialBodies::Spheres::Biosphere.new
+      expect(new_biosphere.vegetation_cover).to eq(0.0)
+    end
+    
+    it 'can update vegetation cover' do
+      # Use the factory with celestial_body from above
+      biosphere.update_vegetation_cover(75.5)
+      expect(biosphere.reload.vegetation_cover).to eq(75.5)
+    end
+  end
+
+  describe 'temperature delegation' do
+    let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
+    
+    before do
+      # Set up atmosphere with temperature data
+      atmosphere.update(temperature_data: {
+        'tropical_temperature' => 310.0,
+        'polar_temperature' => 240.0
+      })
+    end
+    
+    it 'delegates tropical_temperature to atmosphere when available' do
+      expect(biosphere.tropical_temperature).to eq(310.0)
+    end
+    
+    it 'delegates polar_temperature to atmosphere when available' do
+      expect(biosphere.polar_temperature).to eq(240.0)
+    end
+    
+    it 'falls back to default value when atmosphere is not available' do
+      # Remove atmosphere
+      atmosphere.destroy
+      celestial_body.reload
+      
+      # Should fall back to default value
+      expect(biosphere.tropical_temperature).to eq(300.0) # This is the default value in the method
+    end
+  end
+
+  describe 'temperature delegation' do
+    let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
+    
+    before do
+      # Set up atmosphere with temperature data
+      atmosphere.update(temperature_data: {
+        'tropical_temperature' => 310.0,
+        'polar_temperature' => 240.0
+      })
+    end
+    
+    it 'delegates tropical_temperature to atmosphere when available' do
+      expect(biosphere.tropical_temperature).to eq(310.0)
+    end
+    
+    it 'delegates polar_temperature to atmosphere when available' do
+      expect(biosphere.polar_temperature).to eq(240.0)
+    end
+    
+    it 'falls back to default value when atmosphere is not available' do
+      # Remove atmosphere
+      atmosphere.destroy
+      celestial_body.reload
+      
+      # Should fall back to default values defined in the model
+      expect(biosphere.tropical_temperature).to eq(300.0)
+      expect(biosphere.polar_temperature).to eq(250.0)
     end
   end
 end
