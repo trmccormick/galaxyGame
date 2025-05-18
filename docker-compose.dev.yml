@@ -4,22 +4,22 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgres://postgres:password@db:5432/galaxy_game_development
-      REDIS_URL: redis://redis:6379/1
-      RAILS_ENV: development
-      RAKE_ENV: development
+    container_name: app # Explicitly name the app container
+    env_file:
+      - './env/.env.dev.local.app'
     volumes:
       - ./scripts:/home/galaxy_game/scripts
       - ./galaxy_game:/home/galaxy_game
-      # - ./old_galaxy_game:/home/old_galaxy_game
-      # map in various persistent directories in the data folder
       - ./data/json-data:/home/galaxy_game/app/data
       - ./data/bundle:/usr/local/bundle # cache bundle install
-      - ./data/node_modules:/home/hydra/node_modules
+      - ./data/node_modules:/home/hydra/node_modules # Assuming you might have Node.js assets
       - ./data/logs:/home/galaxy_game/log
-      # don't mount tmp directory
       - /home/hydra/tmp
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
 
   web:
     extends: app
@@ -27,46 +27,44 @@ services:
     command: bash -c "rm -f tmp/pids/server.pid && rails server -b '0.0.0.0'"
     ports:
       - "3000:3000"
-    depends_on:
-      redis:
-        condition: service_started
-      db:
-        condition: service_started
-      workers:
-        condition: service_started
 
   workers:
     extends: app
     container_name: sidekiq
-    command:  bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
-    depends_on:
-      redis:
-        condition: service_started
-      db:
-        condition: service_started
+    command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
     stdin_open: true
-    tty: true 
+    tty: true
 
   redis:
     image: redis:alpine
     container_name: redis
-    command: redis-server 
+    command: redis-server
     volumes:
-      - redis:/var/lib/redis/data
+      - redis_data:/var/lib/redis/data
     restart: unless-stopped
     healthcheck:
       test: redis-cli -h redis ping
       interval: 30s
       timeout: 3s
-      retries: 3 
+      retries: 3
+    env_file:
+      - './env/.env.redis' # Load Redis env vars
 
   db:
     image: postgres:16
     container_name: db
     environment:
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: password # Keep this here as well for simplicity
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "postgres", "-U", "postgres"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    env_file:
+      - './env/.env.db' # Load DB env vars
 
   memcached:
     image: bitnami/memcached
@@ -75,5 +73,5 @@ services:
       - "11211"
 
 volumes:
-  redis:
-  postgres:
+  redis_data:
+  postgres_data:
