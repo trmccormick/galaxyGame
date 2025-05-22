@@ -1,4 +1,4 @@
-# This is for planetary/natural atmospheres
+# app/models/celestial_bodies/spheres/atmosphere.rb
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
@@ -26,7 +26,7 @@ module CelestialBodies
 
       after_create :initialize_gases
 
-      # Temperature-related methods
+      # Temperature-related methods - RESTORED FROM OLD3
       def set_effective_temp(temp)
         self.effective_temperature = temp
         save!
@@ -49,7 +49,7 @@ module CelestialBodies
         save!
       end
       
-      # Temperature getters with reasonable defaults
+      # Temperature getters with reasonable defaults - RESTORED FROM OLD3
       def effective_temp
         effective_temperature || temperature
       end
@@ -66,74 +66,39 @@ module CelestialBodies
         tropical_temperature || (temperature + 10)
       end
       
-      # This is the key method that converts composition to actual Gas records
-      def initialize_gases
-        return unless composition.present?
+      # Gas percentage lookup method that checks multiple sources in order:
+      # 1. First checks the actual Gas records in the database
+      # 2. Then falls back to the composition hash
+      # 3. Then checks gas_ratios from the store accessor
+      # 4. Returns 0.0 if not found anywhere
+      def gas_percentage(formula_or_name)
+        # First try by name (most common case)
+        gas = gases.find_by(name: formula_or_name)
+        return gas.percentage if gas
         
-        # Delete existing gases to avoid duplicates
-        gases.destroy_all
-        
-        # Calculate the total atmospheric mass
-        total_mass = total_atmospheric_mass || 0
-        
-        # Create gases
-        composition.each do |name, percentage|
-          # Skip if percentage is zero
-          next if percentage.to_f <= 0
-          
-          # Get molar mass using lookup service
-          lookup_service = Lookup::MaterialLookupService.new
-          material_data = lookup_service.find_material(name)
-          molar_mass = material_data&.dig('properties', 'molar_mass') || 29.0 # Default molar mass
-          
-          # Calculate mass based on percentage
-          mass = (percentage.to_f / 100) * total_mass
-          
-          # Create the gas record with molar_mass included
-          gas = gases.create!(
-            name: name,
-            percentage: percentage.to_f,
-            mass: mass,
-            molar_mass: molar_mass  # Add this line - this was missing!
-          )
-          
-          # Create Material record (handled by Gas model after_create)
-          # This ensures each Gas has a corresponding Material
+        # Fallback to composition hash
+        if composition.present?
+          return composition[formula_or_name].to_f if composition[formula_or_name]
         end
         
-        # Return true if gases were created
-        gases.any?
-      end
-
-      def transfer_material(material_name, amount, target_sphere)
-        gas = gases.find_by(name: material_name)
-
-        Rails.logger.warn "[Atmosphere] Transfer failed: #{material_name} has insufficient mass (#{gas&.mass || 0})" if gas.nil? || gas.mass < amount
+        # Check in gas_ratios if it exists
+        return gas_ratios[formula_or_name].to_f if gas_ratios.present? && gas_ratios[formula_or_name]
         
-        return false unless gas && gas.mass >= amount
-
-        Material.transaction do
-          remove_gas(material_name, amount)
-          
-          target_sphere.materials.create!(
-            name: material_name,
-            amount: amount
-          )
-        end
+        # Default if not found anywhere
+        0.0
       end
 
-      def decrease_dust(amount)
-        return unless dust.present?
-        self.dust['concentration'] = [dust['concentration'].to_f - amount, 0.0].max
-        save!
+      # Convenience methods for common gases
+      def o2_percentage
+        gas_percentage('O2')
       end
 
-      def formatted_pressure
-        GameFormatters::AtmosphericData.format_pressure(pressure)
+      def co2_percentage
+        gas_percentage('CO2')
       end
 
-      def formatted_mass
-        GameFormatters::AtmosphericData.format_mass(total_atmospheric_mass)
+      def ch4_percentage
+        gas_percentage('CH4')
       end
 
       # Add this public method to call the private one
@@ -146,10 +111,6 @@ module CelestialBodies
       def default_temperature
         celestial_body.surface_temperature
       end
-
-      def update_total_atmospheric_mass
-        # existing implementation
-      end     
     end
   end
 end
