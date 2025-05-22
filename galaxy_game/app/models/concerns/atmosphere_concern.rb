@@ -59,109 +59,110 @@ module AtmosphereConcern
     gases.any?
   end
 
+  # Replace the existing duplicate normalization logic
   def add_gas(name, mass)
+    # Validate inputs properly
     raise InvalidGasError, "Invalid mass value" if mass <= 0
     raise InvalidGasError, "Gas name required" if name.blank?
-
-    # Format the mass for display using our formatter
-    formatted_mass = GameFormatters::AtmosphericData.format_mass(mass)
-    puts "Adding #{formatted_mass} of #{name} to the atmosphere."
-
-    # Find the material properties using lookup service
+    
+    # Debug logging
+    puts "ADD_GAS CALLED: '#{name}' (#{mass} kg) - Caller: #{caller[0]}"
+    
+    # Use the material lookup service
     material_lookup = Lookup::MaterialLookupService.new
     material_data = material_lookup.find_material(name)
     
-    # Handle chemical formula mapping
-    if material_data.nil?
-      formula_to_id = {
-        'CO2' => 'carbon_dioxide',
-        'N2' => 'nitrogen',
-        'O2' => 'oxygen',
-        'Ar' => 'argon',
-        'Water' => 'water',
-        'H2O' => 'water',
-        'CH4' => 'methane'
-      }
-      
-      if formula_to_id[name]
-        material_data = material_lookup.find_material(formula_to_id[name])
-      end
+    # Ensure material was found
+    unless material_data
+      raise InvalidGasError, "Gas name '#{name}' not found in materials database"
     end
+    
+    # FIX 1: Use name if ID is not available
+    standardized_name = material_data['id'] || name
     
     # Extract molar mass
-    molar_mass = material_data&.dig('properties', 'molar_mass')
+    molar_mass = material_data.dig('properties', 'molar_mass')
     
-    if molar_mass.nil?
-      # Default values based on common gases
-      default_molar_masses = {
-        'CO2' => 44.01, 'N2' => 28.01, 'O2' => 32.0, 
-        'CO' => 28.01, 'Ar' => 39.95, 'He' => 4.00,
-        'H2O' => 18.02, 'Water' => 18.02, 'CH4' => 16.04
-      }
-      molar_mass = default_molar_masses[name] || 29.0
-      puts "Warning: Molar mass not found for #{name}, using default value: #{molar_mass}"
+    # Calculate percentages
+    current_total_gas_mass = gases.sum(:mass) || 0
+    total_mass = current_total_gas_mass + mass
+    percentage = (mass / total_mass.to_f) * 100.0
+    
+    # Update percentages of existing gases
+    gases.each do |existing_gas|
+      new_percentage = (existing_gas.mass / total_mass.to_f) * 100.0
+      existing_gas.update!(percentage: new_percentage)
     end
     
-    # Now update or create the gas in the database
-    gas = gases.find_or_initialize_by(name: name)
-    
-    # If gas is new (mass = 0) set its molar mass
-    if gas.new_record? || gas.mass == 0
-      gas.molar_mass = molar_mass
-    end
-    
-    # Update the gas mass
-    old_mass = gas.mass || 0
-    gas.mass = old_mass + mass
-    
-    # Recalculate total mass
-    old_total = total_atmospheric_mass || 0
-    new_total = old_total + mass
-    
-    # Update the atmosphere total mass
-    self.total_atmospheric_mass = new_total
-    
-    # Save the gas
+    # Add or update this gas
+    gas = gases.find_or_initialize_by(name: standardized_name)
+    gas.mass ||= 0
+    gas.mass += mass
+    gas.molar_mass = molar_mass if molar_mass
+    gas.percentage = percentage
     gas.save!
     
-    # Update gas percentages
-    update_gas_percentages
+    # FIX 2: Update total atmospheric mass
+    update_total_atmospheric_mass
     
-    # Update pressure
-    update_pressure_from_mass!
-    
+    # Return the gas record
     gas
   end
 
+  # Also update remove_gas to use the lookup service
   def remove_gas(gas_name, mass_to_remove)
-    gas = gases.find_by(name: gas_name)
+    # Validate inputs
+    raise InvalidGasError, "Invalid mass to remove" if mass_to_remove <= 0
+    raise InvalidGasError, "Gas name required" if gas_name.blank?
     
-    raise InvalidGasError, "Gas #{gas_name} not found in atmosphere" unless gas
-    raise InvalidGasError, "Cannot remove more than exists (#{gas.mass} kg)" if mass_to_remove > gas.mass
+    # Debug logging
+    puts "REMOVE_GAS CALLED: '#{gas_name}' (#{mass_to_remove} kg) - Caller: #{caller[0]}"
     
-    # Format mass for output
-    formatted_mass = GameFormatters::AtmosphericData.format_mass(mass_to_remove)
-    puts "Removing #{formatted_mass} of #{gas_name} from the atmosphere."
+    # Use the material lookup service
+    material_lookup = Lookup::MaterialLookupService.new
+    material_data = material_lookup.find_material(gas_name)
     
-    # Update gas
+    # FIX 3: Raise error if material not found
+    unless material_data
+      puts "WARNING: Unknown gas: '#{gas_name}' - cannot remove - Material lookup failed"
+      raise InvalidGasError, "Gas name '#{gas_name}' not found in materials database"
+    end
+    
+    # FIX 4: Use name if ID is not available
+    standardized_name = material_data['id'] || gas_name
+    
+    # Find gas
+    gas = gases.find_by(name: standardized_name)
+    
+    # FIX 5: Raise error if gas not found
+    unless gas
+      puts "WARNING: Gas '#{standardized_name}' not found in atmosphere - gases available: #{gases.pluck(:name).join(', ')}"
+      raise InvalidGasError, "Gas '#{standardized_name}' not found in atmosphere"
+    end
+    
+    # FIX 6: Raise error if trying to remove more than exists
+    if mass_to_remove > gas.mass
+      puts "WARNING: Attempting to remove #{mass_to_remove} kg of #{standardized_name}, but only #{gas.mass} kg available"
+      raise InvalidGasError, "Cannot remove more gas than exists (have: #{gas.mass}, trying to remove: #{mass_to_remove})"
+    end
+    
+    # Update the gas
     gas.mass -= mass_to_remove
     
-    # Update total
-    self.total_atmospheric_mass -= mass_to_remove
-    
-    # If mass is practically zero, destroy the gas
-    if gas.mass < 0.001
+    if gas.mass <= 0
+      puts "  → Gas '#{standardized_name}' fully removed from atmosphere"
       gas.destroy
     else
       gas.save!
     end
     
-    # Update gas percentages
-    update_gas_percentages
+    # FIX 7: Update total atmospheric mass
+    update_total_atmospheric_mass
     
-    # Update pressure
-    update_pressure_from_mass!
+    # Recalculate percentages for all remaining gases
+    recalculate_gas_percentages
     
+    # Return the amount removed
     mass_to_remove
   end
 

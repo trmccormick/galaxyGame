@@ -228,5 +228,64 @@ RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
       expect(reloaded.tropical_temperature).to eq(305)
     end
   end
+
+  describe 'gas percentage methods' do
+    before do
+      # Set up atmosphere with gases
+      atmosphere.update!(
+        total_atmospheric_mass: 100.0,
+        pressure: 0.001,
+        composition: {
+          "CO2" => 95.32,
+          "N2" => 2.7,
+          "Ar" => 1.6,
+          "O2" => 0.13
+        }
+      )
+      
+      # Create gases directly
+      atmosphere.gases.create!(name: "CO2", percentage: 95.32, mass: 95.32, molar_mass: 44.01)
+      atmosphere.gases.create!(name: "N2", percentage: 2.7, mass: 2.7, molar_mass: 28.01)
+      # Note: We deliberately don't create O2 as a gas to test fallback to composition
+    end
+
+    describe '#gas_percentage' do
+      it 'returns percentage of existing gas in gases collection' do
+        expect(atmosphere.gas_percentage('CO2')).to eq(95.32)
+        expect(atmosphere.gas_percentage('N2')).to eq(2.7)
+      end
+
+      it 'falls back to composition data when gas not found in gases collection' do
+        expect(atmosphere.gas_percentage('O2')).to eq(0.13)
+      end
+
+      it 'returns 0.0 for non-existent gases' do
+        expect(atmosphere.gas_percentage('H2')).to eq(0.0)
+      end
+    end
+
+    describe 'convenience gas percentage methods' do
+      it 'returns O2 percentage via o2_percentage' do
+        # O2 exists in composition but not as a gas record
+        expect(atmosphere.o2_percentage).to eq(0.13)
+      end
+
+      it 'returns CO2 percentage via co2_percentage' do
+        # CO2 exists as a gas record
+        expect(atmosphere.co2_percentage).to eq(95.32)
+      end
+
+      it 'returns CH4 percentage via ch4_percentage' do
+        # CH4 doesn't exist at all
+        expect(atmosphere.ch4_percentage).to eq(0.0)
+      end
+      
+      it 'correctly uses the gas_percentage method' do
+        # Test that convenience methods use the gas_percentage method
+        allow(atmosphere).to receive(:gas_percentage).with('O2').and_return(21.0)
+        expect(atmosphere.o2_percentage).to eq(21.0)
+      end
+    end
+  end
 end
 
