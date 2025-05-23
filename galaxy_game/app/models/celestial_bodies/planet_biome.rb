@@ -6,6 +6,7 @@ module CelestialBodies
     belongs_to :biome
     # Biosphere is namespaced, so class_name is required
     belongs_to :biosphere, class_name: 'CelestialBodies::Spheres::Biosphere'
+    has_one :celestial_body, through: :biosphere
 
     # Use store_accessor for flexible properties stored in the 'properties' JSONB column
     store_accessor :properties, :area_percentage, :vegetation_cover, :moisture_level, :latitude, :optimal_temperature, :biodiversity
