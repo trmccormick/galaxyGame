@@ -6,6 +6,40 @@ module AtmosphereConcern
   class AtmosphereError < StandardError; end
   class InvalidGasError < AtmosphereError; end
   class PressureError < AtmosphereError; end
+  
+  # Gas percentage lookup method that checks multiple sources in order:
+  # 1. First checks the actual Gas records in the database (with fresh reload)
+  # 2. Then falls back to the composition hash
+  # 3. Returns 0.0 if not found anywhere
+  def gas_percentage(formula_or_name)
+    # Force a fresh gases collection to avoid stale data
+    gases.reset if gases.loaded?
+    
+    # First try by name (most common case)
+    gas = gases.find_by(name: formula_or_name)
+    return gas.percentage if gas
+    
+    # Fallback to composition hash
+    if composition.present?
+      return composition[formula_or_name].to_f if composition[formula_or_name]
+    end
+    
+    # Default if not found anywhere
+    0.0
+  end
+
+  # Convenience methods for common gases
+  def o2_percentage
+    gas_percentage('O2')
+  end
+
+  def co2_percentage
+    gas_percentage('CO2')
+  end
+
+  def ch4_percentage
+    gas_percentage('CH4')
+  end
 
   included do
     before_validation :set_default_values, if: :new_record?
