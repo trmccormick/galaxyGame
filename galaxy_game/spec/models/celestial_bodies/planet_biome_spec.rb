@@ -129,5 +129,10 @@ module CelestialBodies # Wrap the RSpec.describe in the module
         planet_biome.destroy
       end
     end
+
+    it "has access to celestial_body through biosphere" do
+      planet_biome = create(:celestial_bodies_planet_biome, biosphere: biosphere)
+      expect(planet_biome.celestial_body).to eq(biosphere.celestial_body)
+    end
   end
 end
