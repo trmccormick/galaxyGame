@@ -10,7 +10,7 @@ module GameConstants
   DEATH_RATE = 0.1
 
   # Physics constants
-  IDEAL_GAS_CONSTANT = 8.314 # J/(mol·K) - SI units for scientific calculations
+  IDEAL_GAS_CONSTANT = 8.31446 # J/(mol·K) - SI units for scientific calculations
   IDEAL_GAS_CONSTANT_L_ATM = 0.0821 # L·atm/(mol·K) - Alternative units for some calculations
   STEFAN_BOLTZMANN_CONSTANT = 5.67e-8 # W/(m²·K⁴)
   GRAVITATIONAL_CONSTANT = 6.674e-11 # N·m²/kg²
@@ -85,7 +85,10 @@ module GameConstants
     # Physical parameters
     pressure: 101325, # Pa
     mass: 5.15e18,    # kg
-    scale_height: 8.5  # km
+    scale_height: 8.5,  # km
+    
+    # Average gas constant for Earth's atmosphere
+    average_gas_constant: 287.05 # J/(kg·K)
   }.freeze
 
   # Greenhouse gas factors (only special properties not in material data)
@@ -116,7 +119,16 @@ module GameConstants
   STORAGE_WORKERS_RATIO = 0.1  # 10% of population can work on storage
   STORAGE_CAPACITY_PER_WORKER = 1000  # kg per worker  
 
-  # BiosphereSimulation constants
+  # Earth reference values
+  module Earth
+    RADIUS = 6371.0  # km
+    GRAVITY = 9.8    # m/s²
+    MASS = 5.972e24  # kg
+    ATMOSPHERIC_DENSITY = 1.0  # relative value
+    AXIAL_TILT = 23.5  # degrees
+  end
+  
+  # BiosphereSimulation constants - now baseline values
   BIOSPHERE_SIMULATION = {
     plant_growth_factor: 0.1,               # Base growth rate for plants
     biome_moisture_adjustment_rate: 0.01,   # How quickly moisture levels change
