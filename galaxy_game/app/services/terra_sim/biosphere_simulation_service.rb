@@ -1,20 +1,21 @@
 module TerraSim
-  class BiosphereSimulationService    
-    # Class method to configure the service
-    def self.configure(config = {})
-      @@config.merge!(config)
-    end
-    
-    # Public API methods
+  class BiosphereSimulationService
+    # Remove the class-level configuration method as we'll use planet-specific configs
     def initialize(celestial_body, config = {})
       @celestial_body = celestial_body
       @biosphere = celestial_body.biosphere
       @simulation_in_progress = false
       
-      # Use GameConstants as defaults, but allow overrides per instance
-      @config = GameConstants::BIOSPHERE_SIMULATION.dup.merge(config)
+      # Start with base defaults from GameConstants
+      @config = GameConstants::BIOSPHERE_SIMULATION.dup
+      
+      # Then adjust based on planet properties
+      configure_for_planet
+      
+      # Finally, allow any explicit overrides
+      @config.merge!(config)
     end
-
+    
     def simulate
       return if @simulation_in_progress
       @simulation_in_progress = true
@@ -558,6 +559,52 @@ module TerraSim
         puts "Warning: AlienLifeForm table check failed: #{e.message}"
         false
       end
+    end
+    
+    # Configure simulation parameters based on planet properties
+    def configure_for_planet
+      # Get planet properties
+      gravity = @celestial_body.gravity || 1.0
+      radius = @celestial_body.radius || 6371000.0 # Default in meters
+      atmospheric_density = @celestial_body.atmosphere&.density || 1.0
+      
+      # Get Earth reference values
+      earth_reference = Lookup::EarthReferenceService.new
+      earth_radius = earth_reference.radius * 1000.0 # Convert to meters to match your DB
+      
+      # 1. Plant growth factor calculation
+      @config[:plant_growth_factor] = base_value(:plant_growth_factor) * 
+                                   (0.8 + (0.4 * (1.0 - gravity.clamp(0.2, 2.0) / 2.0))) *
+                                   (0.5 + (0.5 * atmospheric_density.clamp(0.1, 2.0)))
+      
+      # 2. Biome moisture adjustment
+      size_factor = (earth_radius / radius.to_f).clamp(0.1, 10.0)
+      @config[:biome_moisture_adjustment_rate] = base_value(:biome_moisture_adjustment_rate) * 
+                                               (0.5 + (0.5 * size_factor))
+      
+      # 3. Temperature adjustment - affected by planet mass and atmospheric density
+      # FIXED: Use earth_radius instead of Earth::RADIUS
+      thermal_inertia = (radius / earth_radius) * atmospheric_density
+      @config[:temperature_adjustment_rate] = base_value(:temperature_adjustment_rate) / 
+                                              thermal_inertia.clamp(0.2, 5.0)
+      
+      # 4. Polar adjustment factor - affected by axial tilt
+      # More tilt = less difference between poles and tropics
+      axial_tilt = @celestial_body.axial_tilt || earth_reference.axial_tilt # Use reference service instead of hardcoded value
+      @config[:polar_adjustment_factor] = base_value(:polar_adjustment_factor) * 
+                                          (1.0 + (axial_tilt / 90.0))
+      
+      # Keep the debugging output
+      puts "Planet-specific simulation configuration:"
+      puts "  Plant growth factor: #{@config[:plant_growth_factor].round(4)}"
+      puts "  Moisture adjustment rate: #{@config[:biome_moisture_adjustment_rate].round(4)}"
+      puts "  Temperature adjustment rate: #{@config[:temperature_adjustment_rate].round(4)}"
+      puts "  Polar adjustment factor: #{@config[:polar_adjustment_factor].round(4)}"
+    end
+    
+    # Helper to get base value from GameConstants
+    def base_value(key)
+      GameConstants::BIOSPHERE_SIMULATION[key]
     end
   end
 end
