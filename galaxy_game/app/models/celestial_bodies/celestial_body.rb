@@ -4,6 +4,7 @@
 module CelestialBodies
   class CelestialBody < ApplicationRecord
     include OrbitalMechanics
+    include MaterialManagementConcern  # Add this line
 
     belongs_to :solar_system, optional: true
     before_save :run_terra_sim, if: :simulation_relevant_changes?
@@ -103,35 +104,6 @@ module CelestialBodies
       # Used when conditions change or for generated planets
     end
 
-    # def initialize_attributes
-    #   # @geosphere ||= Geosphere.new
-    #   # @hydrosphere ||= Hydrosphere.new(celestial_body: self)
-    #   @atmosphere ||= Atmosphere.new(
-    #     celestial_body: self,
-    #     temperature: surface_temperature, # Use surface_temperature instead
-    #     pressure: default_pressure,
-    #     atmosphere_composition: default_composition,
-    #     total_atmospheric_mass: default_mass
-    #   )
-    #   # @biosphere ||= Biosphere.new
-    # end
-
-
-    # def update_environment
-    #   @geosphere.geological_activity
-    #   @hydrosphere.update_water_cycle
-    #   @atmosphere.update_gas_quantities
-    # end
-
-    # def manage_biomes
-    #   biosphere.manage_biomes(temperature, humidity)
-    # end
-
-    # def update_conditions(new_temperature, new_humidity)
-    #   self.temperature = new_temperature
-    #   manage_biomes
-    # end 
-
     def in_solar_system?
       solar_system.present?
     end
@@ -172,49 +144,6 @@ module CelestialBodies
 
     # def material_composition
     #   available_materials
-    # end
-
-    # def atmospheric_pressure
-    #   return nil unless total_pressure.present? && radius.present?
-    #   total_pressure / (2 * radius)
-    # end
-
-    # def total_pressure
-    #   @atmosphere.calculate_pressure
-    # end
-
-    # def add_material(name, amount)
-    #   material = materials.find_or_initialize_by(name: name)
-    #   material.amount ||= 0
-    #   material.amount += amount
-    #   material.save
-    # end
-
-    # def remove_material(name, amount)
-    #   material_data = available_materials
-    #   if material_data[name].nil? || material_data[name] < amount
-    #     raise ActiveRecord::RecordInvalid.new(self), "Not enough #{name} available."
-    #   end
-
-    #   material_data[name] -= amount
-    #   update(materials: material_data.to_json)
-    #   update_mass(-amount)
-    #   update_related_models(name)
-    # end
-
-    # def update_mass(amount, material_type: :solid)
-    #   density_factors = { gas: 0.001, liquid: 1.0, solid: 1.0 }
-    #   density_factor = density_factors[material_type] || 1.0
-    #   additional_mass = amount * density_factor
-    #   mass_float = mass.to_f
-    #   mass_float += additional_mass
-    #   self.mass = mass_float.to_s
-
-    #   if material_type == :gas
-    #     update_atmosphere_mass(additional_mass)
-    #   else
-    #     save!
-    #   end
     # end
 
     accepts_nested_attributes_for :geosphere
@@ -444,46 +373,6 @@ module CelestialBodies
       self.escape_velocity = calculate_escape_velocity if mass && radius && !escape_velocity
     end
 
-    # def default_pressure
-    #   # Define logic to calculate default pressure if needed
-    #   101325 # Standard atmospheric pressure in Pascals
-    # end
-
-    # def default_composition
-    #   # Define logic to calculate default atmosphere composition if needed
-    #   {}
-    # end
-
-    # def default_mass
-    #   # Define logic to calculate default atmospheric mass if needed
-    #   "0.0"
-    # end
-
-    # def update_material_data(name, amount)
-    #   material_data = available_materials
-    #   material_data[name] ||= 0
-    #   material_data[name] += amount
-    #   update(materials: material_data.to_json)
-    # end
-
-    # def update_related_models(name)
-    #   update_atmosphere if atmosphere_material?(name)
-    #   update_geosphere if geosphere_material?(name)
-    #   update_hydrosphere if hydrosphere_material?(name)
-    # end
-
-    # def atmosphere_material?(name)
-    #   %w[CO2 O2 N2].include?(name)
-    # end
-
-    # def geosphere_material?(name)
-    #   %w[iron ore sulfur].include?(name)
-    # end
-
-    # def hydrosphere_material?(name)
-    #   %w[water].include?(name)
-    # end
-
     # def update_atmosphere(gas, amount)
     #   self.atmosphere ||= Atmosphere.new(temperature: default_temperature)
 
@@ -494,11 +383,6 @@ module CelestialBodies
     #   end
 
     #   run_terra_simulation
-    # end
-
-    # def run_terra_simulation
-    #   TerraSim.update_environment(self, atmosphere)
-    #   save!
     # end
 
     # def update_geosphere
