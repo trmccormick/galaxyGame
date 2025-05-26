@@ -23,9 +23,11 @@ module CelestialBodies
     validates :r_ecosphere, presence: true
     validates :luminosity, presence: true, numericality: { greater_than: 0 }
     
-    # Associations
+    # Associations - CRITICAL: Use the correct namespaced class
     belongs_to :solar_system, optional: true
-    has_many :star_distances, dependent: :destroy
+    
+    # Use the correct namespace for StarDistance
+    has_many :star_distances, class_name: 'CelestialBodies::StarDistance', foreign_key: 'star_id', dependent: :destroy
     has_many :celestial_bodies, through: :star_distances
     
     # Minimal callback to ensure properties is never null
