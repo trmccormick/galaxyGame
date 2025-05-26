@@ -12,5 +12,7 @@ class AddFieldsToStars < ActiveRecord::Migration[6.0]
     change_column_null :stars, :age, false
     change_column_null :stars, :mass, false
     change_column_null :stars, :radius, false
+
+    add_index :stars, :solar_system_id
   end
 end
