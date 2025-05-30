@@ -8,13 +8,15 @@ class CreateCelestialBodies < ActiveRecord::Migration[7.0]
       t.decimal :gravity, precision: 10, scale: 2
       t.decimal :density, precision: 10, scale: 2
       t.decimal :orbital_period, precision: 10, scale: 2
-      t.float :total_pressure
       t.jsonb :gas_quantities, default: {}
       t.jsonb :materials, default: {}
       t.decimal :mass, precision: 38, scale: 10
       t.float :radius   
       t.float :axial_tilt
-      t.float :escape_velocity   
+      t.float :escape_velocity  
+      t.integer :status, default: 0, null: false  # Default status for celestial bodies
+      t.float :known_pressure, default: 0.0, null: false  # Default pressure value
+      t.jsonb :properties, default: {}, null: false  # Add this flexible properties field
 
       # for moons
       t.string :parent_body
