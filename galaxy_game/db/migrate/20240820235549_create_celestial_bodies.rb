@@ -16,6 +16,9 @@ class CreateCelestialBodies < ActiveRecord::Migration[7.0]
       t.float :escape_velocity  
       t.integer :status, default: 0, null: false  # Default status for celestial bodies
       t.float :known_pressure, default: 0.0, null: false  # Default pressure value
+      t.float :surface_area
+      t.float :volume
+
       t.jsonb :properties, default: {}, null: false  # Add this flexible properties field
 
       # for moons
