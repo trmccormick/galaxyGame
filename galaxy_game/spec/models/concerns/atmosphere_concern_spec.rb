@@ -5,34 +5,9 @@ RSpec.describe AtmosphereConcern do
   let(:celestial_body) { create(:celestial_body) }
   let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
   
-  # Use real services with proper formatters mocked
+  # Remove the mocks and use the real lookup service
   before do
-    # Mock the lookup service to return known molar masses
-    lookup_service = instance_double("Lookup::MaterialLookupService")
-    allow(Lookup::MaterialLookupService).to receive(:new).and_return(lookup_service)
-    
-    # Mock different responses for different gases
-    allow(lookup_service).to receive(:find_material).with('CO2').and_return({
-      'properties' => { 'molar_mass' => 44.01 }
-    })
-    allow(lookup_service).to receive(:find_material).with('N2').and_return({
-      'properties' => { 'molar_mass' => 28.01 }
-    })
-    allow(lookup_service).to receive(:find_material).with('O2').and_return({
-      'properties' => { 'molar_mass' => 32.0 }
-    })
-    allow(lookup_service).to receive(:find_material).with('H2').and_return({
-      'properties' => { 'molar_mass' => 2.02 }
-    })
-    allow(lookup_service).to receive(:find_material).with('Test Gas').and_return({
-      'properties' => { 'molar_mass' => 28.0 }
-    })
-    # Default response for any other gas
-    allow(lookup_service).to receive(:find_material).and_return({
-      'properties' => { 'molar_mass' => 29.0 }
-    })
-    
-    # Mock GameFormatters to avoid display formatting issues
+    # Only mock formatting and logging to keep tests clean
     allow(GameFormatters::AtmosphericData).to receive(:format_mass).and_return("100 kg")
     allow(GameFormatters::AtmosphericData).to receive(:format_pressure).and_return("1.0 atm")
     allow(GameFormatters::AtmosphericData).to receive(:format_ratio).and_return("+10%")
@@ -43,6 +18,15 @@ RSpec.describe AtmosphereConcern do
     # Mock logger calls to avoid noise
     allow(Rails.logger).to receive(:debug)
     allow(Rails.logger).to receive(:warn)
+    
+    # Get the actual material lookup service
+    @material_lookup = Lookup::MaterialLookupService.new
+  end
+  
+  # Helper method to get material ID from formula
+  def material_id_for(formula)
+    material = @material_lookup.find_material(formula)
+    material['id']
   end
   
   describe '#reset' do
@@ -110,12 +94,15 @@ RSpec.describe AtmosphereConcern do
       # Start with empty atmosphere
       expect(atmosphere.gases.count).to eq(0)
       
+      # Get the expected name
+      expected_name = material_id_for('N2')
+      
       # Add a gas
       gas = atmosphere.add_gas('N2', 1000)
       
       # Should have created a gas record
       expect(atmosphere.gases.count).to eq(1)
-      expect(gas.name).to eq('N2')
+      expect(gas.name).to eq(expected_name)
       expect(gas.mass).to eq(1000)
       
       # Should have updated total mass
@@ -123,9 +110,12 @@ RSpec.describe AtmosphereConcern do
     end
     
     it 'updates existing gas' do
-      # Create an existing gas with molar_mass
+      # Get the expected name
+      expected_name = material_id_for('O2')
+      
+      # Create an existing gas with the correct name from lookup
       existing_gas = atmosphere.gases.create!(
-        name: 'O2', 
+        name: expected_name, 
         percentage: 100, 
         mass: 500,
         molar_mass: 32.0
@@ -152,9 +142,12 @@ RSpec.describe AtmosphereConcern do
   
   describe '#remove_gas' do
     it 'removes gas from the atmosphere' do
-      # Create a gas to remove with molar_mass
+      # Get the expected name
+      expected_name = material_id_for('O2')
+      
+      # Create a gas to remove with the correct name
       atmosphere.gases.create!(
-        name: 'O2', 
+        name: expected_name, 
         percentage: 100, 
         mass: 1000,
         molar_mass: 32.0
@@ -173,9 +166,12 @@ RSpec.describe AtmosphereConcern do
     end
     
     it 'deletes gas when amount becomes zero' do
-      # Create a gas to remove completely with molar_mass
+      # Get the expected name
+      expected_name = material_id_for('H2')
+      
+      # Create a gas to remove completely
       atmosphere.gases.create!(
-        name: 'H2', 
+        name: expected_name, 
         percentage: 100, 
         mass: 10,
         molar_mass: 2.02
@@ -187,7 +183,7 @@ RSpec.describe AtmosphereConcern do
       atmosphere.remove_gas('H2', 10)
       
       # Gas should be gone
-      expect(atmosphere.gases.where(name: 'H2').exists?).to be_falsey
+      expect(atmosphere.gases.where(name: expected_name).exists?).to be_falsey
       
       # Total mass should be zero
       expect(atmosphere.reload.total_atmospheric_mass).to eq(0)
