@@ -20,21 +20,23 @@ module GeosphereConcern
   def reset
     return false unless base_values.present?
     
-    # Restore from base values
-    update!(
-      crust_composition: base_values['crust_composition'],
-      mantle_composition: base_values['mantle_composition'],
-      core_composition: base_values['core_composition'],
-      total_crust_mass: base_values['total_crust_mass'],
-      total_mantle_mass: base_values['total_mantle_mass'],
-      total_core_mass: base_values['total_core_mass'],
-      geological_activity: base_values['geological_activity'],
-      tectonic_activity: base_values['tectonic_activity'],
-      temperature: base_values['temperature'],
-      pressure: base_values['pressure']
-    )
+    # Use base_values with correct keys
+    update_attrs = {
+      crust_composition: base_values['base_crust_composition'] || {},
+      mantle_composition: base_values['base_mantle_composition'] || {},
+      core_composition: base_values['base_core_composition'] || {},
+      total_crust_mass: base_values['base_total_crust_mass'],
+      total_mantle_mass: base_values['base_total_mantle_mass'],
+      total_core_mass: base_values['base_total_core_mass'],
+      geological_activity: base_values['base_geological_activity'],
+      tectonic_activity: base_values['base_tectonic_activity'],
+      stored_volatiles: base_values['base_stored_volatiles'] || {}
+    }
     
-    true
+    self.assign_attributes(update_attrs)
+    saved = save
+    update_material_records if saved
+    true  # Return true on success
   end
   
   # Extract volatiles based on temperature
@@ -150,6 +152,8 @@ module GeosphereConcern
   
   # Remove material from a specific layer
   def remove_material(name, amount, layer = :crust)
+    puts "DEBUG: Called remove_material(#{name}, #{amount}, #{layer})"
+    
     return false if amount <= 0
     
     # Validate layer
@@ -238,6 +242,78 @@ module GeosphereConcern
     true
   end
   
+  def update_material_records
+    LAYERS.each do |layer|
+      composition = send("#{layer}_composition")
+      layer_mass = send("total_#{layer}_mass")
+      
+      next if layer_mass.to_f <= 0 || composition.blank?
+      
+      # Process flat composition keys
+      composition.each do |material_name, value|
+        # Skip the volatiles key itself, we'll process it separately
+        next if material_name == 'volatiles'
+        
+        # If value is a hash, it's a nested structure - skip it for now
+        next if value.is_a?(Hash)
+        
+        percentage = value.to_f
+        next if percentage <= 0
+        
+        # Calculate mass based on percentage
+        mass = (percentage / 100.0) * layer_mass.to_f
+        
+        # Create/update the material
+        material = materials.find_or_initialize_by(name: material_name)
+        material.amount = mass
+        material.location = 'geosphere'  # Changed from 'geosphere_#{layer}'
+        material.layer = layer.to_s      # Set layer explicitly
+        material.celestial_body = celestial_body
+        material.save!
+      end
+      
+      # Process volatiles separately if present
+      if composition['volatiles'].is_a?(Hash)
+        composition['volatiles'].each do |volatile_name, percentage|
+          next if percentage.to_f <= 0
+          
+          # Calculate mass based on percentage
+          mass = (percentage.to_f / 100.0) * layer_mass.to_f
+          
+          # Create/update the material
+          material = materials.find_or_initialize_by(name: volatile_name)
+          material.amount = mass
+          material.location = 'geosphere'
+          material.layer = layer.to_s
+          material.is_volatile = true
+          material.celestial_body = celestial_body
+          material.save!
+        end
+      end
+      
+      # Same for oxides, minerals, etc. if needed
+      ['oxides', 'minerals'].each do |category|
+        if composition[category].is_a?(Hash)
+          composition[category].each do |material_name, percentage|
+            next if percentage.to_f <= 0
+            
+            # Calculate mass based on percentage
+            mass = (percentage.to_f / 100.0) * layer_mass.to_f
+            
+            # Create/update the material
+            material = materials.find_or_initialize_by(name: material_name)
+            material.amount = mass
+            material.location = 'geosphere'
+            material.layer = layer.to_s
+            material.celestial_body = celestial_body
+            material.properties = {'category' => category}
+            material.save!
+          end
+        end
+      end
+    end
+  end
+
   def physical_state(material_name, temp)
     # Get material properties from lookup
     lookup_service = Lookup::MaterialLookupService.new
@@ -257,44 +333,7 @@ module GeosphereConcern
     else
       'solid'
     end
-  end
-  
-  def update_material_records
-    LAYERS.each do |layer|
-      # Fix the method call - should be total_layer_mass, not layer_mass
-      layer_mass = send("total_#{layer}_mass")
-      layer_composition = send("#{layer}_composition")
-      
-      next if layer_mass.nil? || layer_mass <= 0 || layer_composition.nil? || layer_composition.empty?
-      
-      # Process regular materials in composition
-      layer_composition.each do |name, percentage|
-        next if name.to_s == 'volatiles' || percentage.is_a?(Hash)
-        
-        material_amount = (percentage.to_f / 100.0) * layer_mass
-        
-        # Find or create material
-        material = materials.find_or_initialize_by(name: name.to_s)
-        material.location = 'geosphere'  # Add explicit assignment
-        material.amount = material_amount
-        material.state = physical_state(name.to_s, temperature)
-        material.save!
-      end
-      
-      # Process volatiles separately if they exist
-      volatiles = layer_composition.dig('volatiles') || {}
-      volatiles.each do |name, percentage|
-        material_amount = (percentage.to_f / 100.0) * layer_mass
-        
-        # Find or create volatile material
-        material = materials.find_or_initialize_by(name: name.to_s)
-        material.location = 'geosphere'  # Add explicit assignment
-        material.amount = material_amount
-        material.state = physical_state(name.to_s, temperature)
-        material.save!
-      end
-    end
-  end
+  end  
   
   private
   
@@ -324,21 +363,18 @@ module GeosphereConcern
   def store_base_values
     return if self.base_values.present? && !self.base_values.empty?
     
-    # Store all current values without triggering callbacks
+    # Store with keys matching what's used in reset
     self.base_values = {
-      'crust_composition' => crust_composition,
-      'mantle_composition' => mantle_composition,
-      'core_composition' => core_composition,
-      'total_crust_mass' => total_crust_mass,
-      'total_mantle_mass' => total_mantle_mass,
-      'total_core_mass' => total_core_mass,
-      'geological_activity' => geological_activity,
-      'tectonic_activity' => tectonic_activity,
-      'temperature' => temperature,
-      'pressure' => pressure
+      'base_crust_composition' => crust_composition,
+      'base_mantle_composition' => mantle_composition,
+      'base_core_composition' => core_composition,
+      'base_total_crust_mass' => total_crust_mass,
+      'base_total_mantle_mass' => total_mantle_mass,
+      'base_total_core_mass' => total_core_mass,
+      'base_geological_activity' => geological_activity,
+      'base_tectonic_activity' => tectonic_activity
     }
     
-    # IMPORTANT: Do not call save! here - instead update without callbacks
     update_column(:base_values, self.base_values) if persisted?
   end
   
