@@ -4,21 +4,37 @@ require 'json' # Ensure JSON is required
 module Lookup
   class MaterialLookupService < BaseLookupService
     MATERIAL_PATHS = {
-      # This should match where your gas files are located in Docker
-      gases: Rails.root.join("app", "data", "materials", "gases"),
-      
-      # Original paths
-      byproducts: Rails.root.join("app", "data", "materials", "byproducts"),
+      building: {
+        path: Rails.root.join("app", "data", "resources", "materials", "building"),
+        recursive_scan: true
+      },
+      byproducts: { 
+        path: Rails.root.join("app", "data", "resources", "materials", "byproducts"),
+        recursive_scan: true
+      },
+      chemicals: { 
+        path: Rails.root.join("app", "data", "resources", "materials", "chemicals"),
+        recursive_scan: true
+      },
+      gases: {
+        path: Rails.root.join("app", "data", "resources", "materials", "gases"),
+        recursive_scan: true
+      },
+      liquids: {
+        path: Rails.root.join("app", "data", "resources", "materials", "liquids"),
+        recursive_scan: true
+      },
       processed: {
-        path: Rails.root.join("app", "data", "materials", "processed"),
+        path: Rails.root.join("app", "data", "resources", "materials", "processed"),
         direct_files: true,
         recursive_scan: true
       },
       raw: {
-        path: Rails.root.join("app", "data", "materials", "raw"),
+        path: Rails.root.join("app", "data", "resources", "materials", "raw"),
         recursive_scan: true
-      },
-      solids: Rails.root.join("app", "data", "materials", "solids")
+      }
+      
+      #solids: Rails.root.join("app", "data", "resources", "materials", "solids")
     }
 
     def initialize
