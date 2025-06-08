@@ -4,8 +4,9 @@ module Settlement
     include GameConstants
     include LifeSupport
     include CryptocurrencyMining
-    include HasUnitStorage # Add the new concern
-
+    include HasUnitStorage
+    include EnergyManagement
+    
     belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
     belongs_to :owner, polymorphic: true, optional: true
     has_one :account, as: :accountable, dependent: :destroy
@@ -21,6 +22,11 @@ module Settlement
              class_name: 'Craft::BaseCraft',
              foreign_key: :docked_at_id,
              inverse_of: :docked_at
+
+    # Add base units association
+    has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
+
+    has_many :structures, class_name: 'Structures::BaseStructure', foreign_key: 'settlement_id'
 
     delegate :surface_storage, to: :inventory, allow_nil: true
 
@@ -42,6 +48,7 @@ module Settlement
 
     after_create :create_account_and_inventory
     after_update :adjust_settlement_type_based_on_population, if: :saved_change_to_current_population?
+    after_create :build_units_and_modules
 
     # def central_location
     #   locations.find_by(location_type: 'center')
@@ -128,22 +135,20 @@ module Settlement
     end
 
     def available_power
-      # Placeholder: Implement actual power logic later
-      1000
+      power_generation
     end
-
-    def mining_difficulty
-      # Placeholder: Implement actual difficulty logic later
-      1.0
+    
+    # For compatibility with the concern if no operational_data column
+    def operational_data
+      @virtual_operational_data ||= virtual_operational_data
     end
-
-    def unit_efficiency
-      # Placeholder: Implement actual efficiency logic later
-      1.0
-    end  
-
+    
     private
-
+    
+    def initialize_operational_data
+      self.operational_data ||= {}
+    end
+    
     def deploy_unit(settlement, inventory, unit_data)
       # Remove from starship inventory
       inventory.remove_item(unit_data['id'], 1)
@@ -302,6 +307,12 @@ module Settlement
 
     def meets_environmental_requirements?(item_name)
       true # For now, assume all environmental requirements are met
+    end
+
+    # Add this method if it doesn't exist
+    def build_units_and_modules
+      # Just do nothing in the base implementation
+      true
     end
   end
 end
