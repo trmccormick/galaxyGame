@@ -11,6 +11,7 @@ module Structures
     include GameConstants
     include HasUnitStorage
     include HasExternalConnections
+    include EnergyManagement  # Add this line to include the concern
 
     belongs_to :settlement, class_name: 'Settlement::BaseSettlement'
     belongs_to :owner, polymorphic: true
@@ -34,10 +35,6 @@ module Structures
     after_create :build_structure_shell # Only build empty shell initially
 
     # Core functionality methods
-    def power_usage
-      operational_data&.dig('consumables', 'energy_kwh') || 0
-    end
-
     def input_resources
       operational_data&.dig('resource_management', 'consumables') || {}
     end
@@ -132,7 +129,7 @@ module Structures
     def module_slots
       module_slots = {}
       operational_data&.dig('module_slots')&.each do |slot|
-        module_slots[slot['type']] = slot['count']
+        module_slots[slot['type']] = slot['count']  # Add missing closing bracket
       end
       module_slots
     end
@@ -276,7 +273,6 @@ module Structures
     end
 
     # Constants for unit categories
-    POWER_UNIT_TYPES = ['power_generator', 'solar_array', 'nuclear_generator'].freeze
     CONTROL_UNIT_TYPES = ['control_computer', 'facility_controller'].freeze
 
     private
