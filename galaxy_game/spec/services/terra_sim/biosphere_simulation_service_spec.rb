@@ -245,7 +245,7 @@ module TerraSim
         end
         
         # Check for oxygen gas with the correct name from material lookup
-        o2_gas = atmosphere.gases.find_by(name: 'oxygen')
+        o2_gas = atmosphere.gases.find_by(name: 'O2')
         
         # Verify this gas exists and has the right percentage
         expect(o2_gas).to be_present, "Expected to find oxygen gas but none found"

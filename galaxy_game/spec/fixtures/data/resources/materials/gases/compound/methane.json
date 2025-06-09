@@ -1,0 +1,36 @@
+{
+  "template": "material",
+  "category": "gas",
+  "id": "methane",
+  "name": "Methane",
+  "chemical_formula": "CH4",
+  "description": "A greenhouse gas, often found in atmospheres of planets and moons, also used as a fuel.",
+  "molar_mass": 16.04,
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": true,
+    "radioactive": false
+  }
+}
