@@ -14,12 +14,11 @@ module EnergyManagement
 
   # Get total power usage - combines data from operational_data and units
   def power_usage
-    return 0 unless respond_to?(:operational_data)
-    
     # First check direct operational_data values
     if operational_data.is_a?(Hash)
       if operational_data['resource_management']&.dig('consumables', 'energy_kwh', 'rate')
-        return operational_data['resource_management']['consumables']['energy_kwh']['rate'].to_f
+        # Return the operational data only if we don't have units to aggregate
+        return operational_data['resource_management']['consumables']['energy_kwh']['rate'].to_f unless respond_to?(:base_units) && base_units.any?
       elsif operational_data['consumables']&.dig('energy')
         return operational_data['consumables']['energy'].to_f
       elsif operational_data['power_usage']
@@ -27,7 +26,7 @@ module EnergyManagement
       end
     end
     
-    # If not found in operational_data, calculate from structures and units
+    # Calculate from structures and units
     total_usage = 0
     
     # Add structure usage if applicable
@@ -58,7 +57,8 @@ module EnergyManagement
     # First check direct operational_data values
     if operational_data.is_a?(Hash)
       if operational_data['resource_management']&.dig('generated', 'energy_kwh', 'rate')
-        return operational_data['resource_management']['generated']['energy_kwh']['rate'].to_f
+        # Return the operational data only if we don't have units to aggregate
+        return operational_data['resource_management']['generated']['energy_kwh']['rate'].to_f unless respond_to?(:base_units) && base_units.any?
       elsif operational_data['generated']&.dig('energy')
         return operational_data['generated']['energy'].to_f
       elsif operational_data['power_generation']
@@ -76,7 +76,7 @@ module EnergyManagement
     
     # Add unit generation if applicable
     if respond_to?(:base_units) && base_units.any?
-      total_generation += power_generating_units.sum do |unit|
+      total_generation += base_units.sum do |unit|
         if unit.respond_to?(:power_generation)
           unit.power_generation
         elsif unit.operational_data&.dig('generated', 'energy')
@@ -249,18 +249,47 @@ module EnergyManagement
   
   # Create a virtual operational_data for models that don't have it in the database
   def virtual_operational_data
-    return operational_data if respond_to?(:operational_data) && !operational_data.nil?
-    
+    # Don't call operational_data - that's creating the recursion
+    # Instead, build the power data directly
     {
       'resource_management' => {
         'consumables' => {
-          'energy_kwh' => {'rate' => power_usage, 'current_usage' => power_usage}
+          'energy_kwh' => {'rate' => calculate_power_usage, 'current_usage' => calculate_power_usage}
         },
         'generated' => {
-          'energy_kwh' => {'rate' => power_generation, 'current_output' => power_generation}
+          'energy_kwh' => {'rate' => calculate_power_generation, 'current_output' => calculate_power_generation}
         }
       },
-      'power_grid' => power_grid_status
+      'power_grid' => calculate_power_grid_status
     }
+  end
+
+  private
+
+  def calculate_power_generation
+    # Get power generation directly from units
+    base_units.sum do |unit|
+      unit.operational_data&.dig('power', 'generation')&.to_f || 0.0
+    end
+  end
+
+  def calculate_power_usage
+    # Get power usage directly from units
+    base_units.sum do |unit|
+      unit.operational_data&.dig('power', 'consumption')&.to_f || 0.0
+    end
+  end
+
+  def calculate_power_grid_status
+    gen = calculate_power_generation
+    usage = calculate_power_usage
+    
+    if gen == 0
+      {'status' => 'offline', 'efficiency' => 0.0}
+    elsif gen >= usage
+      {'status' => 'online', 'efficiency' => 1.0}
+    else
+      {'status' => 'overloaded', 'efficiency' => gen / usage}
+    end
   end
 end
