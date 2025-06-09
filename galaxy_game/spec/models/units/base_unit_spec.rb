@@ -227,7 +227,10 @@ RSpec.describe Units::BaseUnit, type: :model do
 
     it 'returns false if no surface storage available' do
       base_unit = create(:base_unit)
-      allow(base_unit.attachable).to receive(:surface_storage).and_return(nil)
+      # The mock will prevent get_or_create_surface_storage from succeeding
+      allow(base_unit.attachable).to receive(:surface_storage?).and_return(true)
+      allow(base_unit.attachable).to receive(:inventory).and_return(nil)
+      
       expect(base_unit.send(:store_on_surface, 'processed_regolith', 100)).to be false
     end
   end

@@ -5,6 +5,7 @@ module Units
     include HasModules
     include HasRigs
     include Housing
+    include EnergyManagement
 
     belongs_to :owner, polymorphic: true
     belongs_to :attachable, polymorphic: true, optional: true
@@ -32,8 +33,9 @@ module Units
       operational_data&.dig('capacity') || 0
     end
 
+    # Update energy_usage to delegate to the concern
     def energy_usage
-      @unit_info['consumables']['energy']
+      power_usage
     end
 
     def input_resources
@@ -184,7 +186,7 @@ module Units
 
     def celestial_body
       return location.celestial_body if location.present?
-      return attachable&.location.celestial_body if attachable&.location.present?
+      return attachable&.location&.celestial_body if attachable&.location.present?
       nil
     end
 
@@ -367,6 +369,25 @@ module Units
       end
     end
 
+    # This method should be public or at the same visibility level as store_resource
+    def update_storage_levels(resource_name, amount)
+      # Initialize if needed
+      self.operational_data ||= {}
+      self.operational_data['resources'] ||= { 'stored' => {} }
+      self.operational_data['storage'] ||= { 'current_level' => 0 }
+      
+      # Update the stored resources
+      current = self.operational_data['resources']['stored'][resource_name] || 0
+      self.operational_data['resources']['stored'][resource_name] = current + amount
+      
+      # Update the current storage level
+      current_level = self.operational_data['storage']['current_level'] || 0
+      self.operational_data['storage']['current_level'] = current_level + amount
+      
+      # Save the changes
+      save!
+    end
+
     private
 
     def load_unit_info
@@ -497,118 +518,94 @@ module Units
     end
 
     def store_on_surface(resource_name, amount)
+      # First check if attachable has a surface_storage method and it returns something
       return false unless attachable&.respond_to?(:surface_storage)
-      return false unless attachable.surface_storage
-
-      attachable.surface_storage.add_pile(
+      
+      # Get the surface storage (might be nil)
+      surface_store = attachable.surface_storage
+      return false unless surface_store
+      
+      # Call add_pile on the surface storage
+      surface_store.add_pile(
         material_name: resource_name,
         amount: amount,
         source_unit: self
-        )
-      end
-  
-      def store_in_unit(resource_name, amount)
-        return false unless operational_data['resources']
-  
-        ensure_inventory
-  
-        item = inventory.items.find_or_initialize_by(
-          name: resource_name,
-          storage_method: storage_type || 'general_storage'
-        )
-        item.owner = owner
-        item.amount = (item.amount || 0) + amount
-  
-        if item.save
-          update_storage_levels(resource_name, amount)
-          true
-        else
-          false
-        end
-      end
-  
-      def remove_from_unit(resource_name, amount)
-        return false unless operational_data['resources']
-  
-        stored = operational_data['resources']['stored']
-        current = stored[resource_name].to_i
-        return false if current < amount
-  
-        stored[resource_name] = current - amount
-  
-        item = inventory.items.find_by(name: resource_name)
-        return false unless item
-  
-        if item.amount == amount
-          item.destroy
-        else
-          item.amount -= amount
-          item.save!
-        end
-  
-        save!
-        true
-      end
-  
-      def ensure_inventory
-        return if inventory.present?
-  
-        build_inventory(
-          capacity: storage_capacity
-        ).save!
-      end
+      )
+    end
 
-      def update_storage_levels(resource_name, amount)
-        operational_data['storage']['current_level'] = (operational_data['storage']['current_level'] || 0) + amount
-        operational_data['resources']['stored'][resource_name] = (operational_data['resources']['stored'][resource_name] || 0) + amount
-        save!
-      end  
+    private
 
-      def transfer_buffers_if_needed
-        gas_buffer = operational_data.dig('storage', 'gas_buffer')
-        water_buffer = operational_data.dig('storage', 'water_buffer')
-        
-        if gas_buffer && gas_buffer['current_level'] && gas_buffer['current_level'] >= 15
-          transfer_buffer_to_settlement('gas_buffer')
-        end
-        
-        if water_buffer && water_buffer['current_level'] && water_buffer['current_level'] >= 20
-          transfer_buffer_to_settlement('water_buffer')
-        end
-      end
-  
-      def transfer_buffer_to_settlement(buffer_name)
-        buffer = operational_data['storage'][buffer_name]
-        return unless buffer && buffer['current_level'] > 0
-        
-        # Transfer to settlement inventory
-        amount = buffer['current_level']
-        if attachable.is_a?(BaseSettlement)
-          attachable.store_resource(buffer_name == 'gas_buffer' ? 'oxygen' : 'lunar_water', amount)
-        end
-        
-        # Reset buffer
-        buffer['current_level'] = 0
-        save!
-      end
-
-      def get_material_type(resource_id)
-        material = Lookup::MaterialLookupService.new.find_material(resource_id)
-        return nil unless material
+    def get_or_create_surface_storage
+      # First try to get existing surface storage
+      return attachable.inventory.surface_storage if attachable.inventory&.surface_storage
       
-        if material['properties']&.dig('state_at_room_temp') == 'Gas'
-          'gas'
-        elsif material['properties']&.dig('state_at_room_temp') == 'Liquid'
-          'liquid'
-        elsif material['storage_requirements']&.include?('surface_storage')
-          'waste'
-        else
-          'general'
+      # If it doesn't exist but should, create it
+      if attachable.respond_to?(:inventory) && attachable.inventory.present?
+        # Get celestial body from settlement or location
+        celestial_body = if attachable.respond_to?(:celestial_body) && attachable.celestial_body
+                           attachable.celestial_body
+                         elsif attachable.respond_to?(:location) && attachable.location&.celestial_body
+                           attachable.location.celestial_body
+                         end
+                         
+        # Create surface storage if we have the needed data
+        if celestial_body
+          attachable.inventory.create_surface_storage!(
+            celestial_body: celestial_body,
+            settlement: attachable.is_a?(Settlement::BaseSettlement) ? attachable : nil
+          )
+          return attachable.inventory.surface_storage
         end
-      end     
-
-      def create_inventory
-        ensure_inventory
       end
+      
+      # If we can't create it, return nil
+      nil
+    end
+
+    def ensure_inventory
+      return inventory if inventory.present?
+      
+      # Create a new inventory if one doesn't exist
+      inv = build_inventory
+      inv.save!
+      reload # Make sure we get the latest state
+      inventory
+    end
+
+    def remove_from_unit(resource_name, amount)
+      # Find the item in inventory
+      item = inventory.items.find_by(name: resource_name)
+      return false unless item
+      
+      # Update the inventory item
+      item.amount -= amount
+      if item.amount <= 0
+        item.destroy
+      else
+        item.save!
+      end
+      
+      # Update operational data stored resources
+      stored = operational_data['resources']['stored']
+      stored[resource_name] = (stored[resource_name] || 0) - amount
+      
+      # Update current storage level
+      current_level = operational_data['storage']['current_level'] || 0
+      operational_data['storage']['current_level'] = [current_level - amount, 0].max
+      
+      save!
+      true
+    end
+
+    def remove_from_surface(resource_name, amount)
+      return false unless attachable&.respond_to?(:surface_storage)
+      return false unless attachable.surface_storage
+      
+      # Remove from surface storage
+      attachable.surface_storage.remove_from_pile(
+        material_name: resource_name,
+        amount: amount
+      )
     end
   end
+end
