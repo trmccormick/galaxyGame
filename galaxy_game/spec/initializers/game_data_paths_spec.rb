@@ -7,4 +7,5 @@ RSpec.describe 'GameDataPaths', type: :initializer do
     
     # Verify the path exists
     expect(File.directory?(GalaxyGame::Paths::GAME_DATA)).to be true
-  e
+  end
+end
