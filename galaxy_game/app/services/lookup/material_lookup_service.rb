@@ -1,46 +1,55 @@
 require 'yaml'
-require 'json' # Ensure JSON is required
+require 'json'
 
 module Lookup
   class MaterialLookupService < BaseLookupService
+    # Use the GalaxyGame::Paths module for consistent path handling
+    def self.base_materials_path
+      GalaxyGame::Paths::GAME_DATA.join("resources", "materials")
+    end
+    
     MATERIAL_PATHS = {
       building: {
-        path: Rails.root.join("app", "data", "resources", "materials", "building"),
+        path: -> { base_materials_path.join("building") },
         recursive_scan: true
       },
       byproducts: { 
-        path: Rails.root.join("app", "data", "resources", "materials", "byproducts"),
+        path: -> { base_materials_path.join("byproducts") },
         recursive_scan: true
       },
       chemicals: { 
-        path: Rails.root.join("app", "data", "resources", "materials", "chemicals"),
+        path: -> { base_materials_path.join("chemicals") },
         recursive_scan: true
       },
       gases: {
-        path: Rails.root.join("app", "data", "resources", "materials", "gases"),
+        path: -> { base_materials_path.join("gases") },
         recursive_scan: true
       },
       liquids: {
-        path: Rails.root.join("app", "data", "resources", "materials", "liquids"),
+        path: -> { base_materials_path.join("liquids") },
         recursive_scan: true
       },
       processed: {
-        path: Rails.root.join("app", "data", "resources", "materials", "processed"),
+        path: -> { base_materials_path.join("processed") },
         direct_files: true,
         recursive_scan: true
       },
       raw: {
-        path: Rails.root.join("app", "data", "resources", "materials", "raw"),
+        path: -> { base_materials_path.join("raw") },
         recursive_scan: true
       }
-      
-      #solids: Rails.root.join("app", "data", "resources", "materials", "solids")
     }
 
     def initialize
       super
-      Rails.logger.debug "Material paths: #{MATERIAL_PATHS.inspect}"
+      debug_material_paths
       @materials = load_materials
+      
+      # Debug what was loaded
+      Rails.logger.debug "Loaded #{@materials.size} materials:"
+      @materials.each do |m|
+        Rails.logger.debug "- #{m['id']} (#{m['chemical_formula']})"
+      end
     end
 
     def find_material(query)
@@ -81,28 +90,61 @@ module Lookup
 
     # Add this class method
     def self.locate_gases_path
-      # Check both paths that might exist
-      standard_path = Rails.root.join("app", "data", "materials", "gases")
-      alt_path = Rails.root.join("app", "data", "gases")
+      # Always use the path system from GalaxyGame::Paths - the same one used in production
+      primary_path = GalaxyGame::Paths::GAME_DATA.join("resources", "materials", "gases")
       
-      # Return the path that exists, or the standard path if neither exists
-      if File.directory?(standard_path)
-        standard_path
-      elsif File.directory?(alt_path)
-        alt_path
-      else
-        standard_path # Return standard path as a fallback
+      if File.directory?(primary_path)
+        Rails.logger.debug "Using gases path: #{primary_path}"
+        return primary_path
       end
+      
+      # If path doesn't exist, log a warning but return the path anyway
+      Rails.logger.warn "Gases path not found at: #{primary_path}"
+      primary_path
     end
 
-    private
+    def atmospheric_components(components)
+      # Convert chemical formulas to standardized material data
+      components.map do |component|
+        chemical = component[:chemical]
+        percentage = component[:percentage]
+        
+        material = find_material(chemical)
+        
+        # Skip components where we can't find the material
+        next unless material
+        
+        # Return the standardized component with material data
+        {
+          material: material,
+          percentage: percentage
+        }
+      end.compact
+    end    
 
+    private
+    
+    def debug_material_paths
+      Rails.logger.debug "Material paths configuration:"
+      MATERIAL_PATHS.each do |type, config|
+        path = config.is_a?(Hash) ? config[:path].call : config
+        exists = File.directory?(path) ? "EXISTS" : "MISSING"
+        Rails.logger.debug "  #{type}: #{path} (#{exists})"
+        
+        if File.directory?(path)
+          files = Dir.glob(File.join(path, "**", "*.json"))
+          Rails.logger.debug "    Contains #{files.size} JSON files"
+          files.each { |f| Rails.logger.debug "    - #{f}" }
+        end
+      end
+    end
+    
     def load_materials
       materials = []
       
       MATERIAL_PATHS.each do |type, config|
         if config.is_a?(Hash)
-          base_path = config[:path]
+          base_path = config[:path].call
           Rails.logger.debug "Checking base path: #{base_path}"
           
           # Process direct files in this path if configured
@@ -116,8 +158,9 @@ module Lookup
           end
         else
           # Direct path (e.g., byproducts, solids)
-          Rails.logger.debug "Checking direct path: #{config}"
-          materials.concat(load_json_files(config))
+          path = config.respond_to?(:call) ? config.call : config
+          Rails.logger.debug "Checking direct path: #{path}"
+          materials.concat(load_json_files(path))
         end
       end
 
@@ -173,17 +216,51 @@ module Lookup
 
     def match_material?(material, query)
       return false unless material && query
-      query = query.downcase.gsub(/[_\s-]/, ' ') # Normalize spaces, underscores, and hyphens
-    
+      
+      # Normalize query
+      query_normalized = query.to_s.downcase
+      
+      # First check direct case-insensitive formula match
+      if material['chemical_formula']&.downcase == query_normalized
+        Rails.logger.debug "Matched '#{query}' to formula '#{material['chemical_formula']}'"
+        return true
+      end
+      
+      # Try simple case variations for chemical formulas like N2, O2, etc.
+      if material['chemical_formula']&.downcase&.gsub(/\d/, '') == query_normalized&.gsub(/\d/, '')
+        # Matches like "n2" to "N2" by comparing just the letters
+        num = material['chemical_formula'].scan(/\d+/).first || ""
+        if query_normalized.include?(num)
+          Rails.logger.debug "Matched '#{query}' to formula '#{material['chemical_formula']}' by letter-number pattern"
+          return true
+        end
+      end
+      
+      # Then check other searchable terms
       searchable_terms = [
-        material['id']&.downcase&.gsub(/[_\s-]/, ' '),
-        material['name']&.downcase&.gsub(/[_\s-]/, ' '),
-        material['chemical_formula']&.downcase,
-        material['chemical_formula']&.gsub(/[^a-zA-Z0-9]/, '')&.downcase,
-        *(material['aliases']&.map { |a| a.downcase.gsub(/[_\s-]/, ' ') } || [])
+        material['id']&.downcase,
+        material['name']&.downcase
       ].compact
-    
-      searchable_terms.any? { |term| term == query }
+      
+      # Check for matches in any terms
+      searchable_terms.any? { |term| term == query_normalized || term.include?(query_normalized) }
+    end
+
+    # Add this method to get a property regardless of where it's stored
+    def get_material_property(material, property_name)
+      # Check top-level property first
+      return material[property_name] if material.key?(property_name)
+      
+      # Then check in properties hash
+      material.dig('properties', property_name)
+    end
+
+    # Then use this in your access methods, for example:
+    def get_molar_mass(material_id)
+      material = find_material(material_id)
+      return nil unless material
+      
+      get_material_property(material, 'molar_mass')
     end
   end
 end

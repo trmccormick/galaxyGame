@@ -1,0 +1,36 @@
+{
+  "template": "material",
+  "category": "gas",
+  "id": "argon",
+  "name": "Argon",
+  "chemical_formula": "Ar",
+  "description": "A noble gas present in Earth's atmosphere in small quantities, chemically inert.",
+  "molar_mass": 39.948,
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": false,
+    "radioactive": false
+  }
+}

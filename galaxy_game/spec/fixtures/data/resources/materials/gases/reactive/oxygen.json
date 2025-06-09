@@ -1,0 +1,36 @@
+{
+  "template": "material",
+  "category": "gas",
+  "id": "oxygen",
+  "name": "Oxygen",
+  "chemical_formula": "O2",
+  "description": "Essential for aerobic life, highly reactive and found in Earth's atmosphere.",
+  "molar_mass": 31.9988,
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": true,
+    "radioactive": false
+  }
+}
