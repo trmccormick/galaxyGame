@@ -133,21 +133,16 @@ module Settlement
     def surface_storage_capacity
       Float::INFINITY  # Surface storage is effectively unlimited
     end
-
-    def available_power
-      power_generation
-    end
     
-    # For compatibility with the concern if no operational_data column
     def operational_data
-      @virtual_operational_data ||= virtual_operational_data
+      self[:operational_data] ||= {}
+    end
+
+    def operational_data=(value)
+      self[:operational_data] = value
     end
     
     private
-    
-    def initialize_operational_data
-      self.operational_data ||= {}
-    end
     
     def deploy_unit(settlement, inventory, unit_data)
       # Remove from starship inventory
