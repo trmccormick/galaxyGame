@@ -1,0 +1,36 @@
+{
+  "template": "material",
+  "category": "gas",
+  "id": "water",
+  "name": "Water",
+  "chemical_formula": "H2O",
+  "description": "Essential for all known forms of life, found in solid, liquid, and gas states.",
+  "molar_mass": 40.0,
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": true,
+    "radioactive": false
+  }
+}
