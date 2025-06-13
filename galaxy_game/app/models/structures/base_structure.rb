@@ -2,6 +2,8 @@ module Structures
   class BaseStructure < ApplicationRecord
     # Tell Rails to use the 'structures' table instead of 'base_structures'
     self.table_name = 'structures'
+    # Tell Rails not to use 'structure_type' for STI
+    self.inheritance_column = :_type_disabled
     
     # Include the HasModules concern for module effects
     include HasModules
@@ -13,13 +15,11 @@ module Structures
     include HasExternalConnections
     include EnergyManagement  # Add this line to include the concern
 
-    belongs_to :settlement, class_name: 'Settlement::BaseSettlement'
+    belongs_to :settlement, class_name: 'Settlement::BaseSettlement', optional: true
     belongs_to :owner, polymorphic: true
-
-    has_one :inventory, as: :inventoryable, dependent: :destroy
-    has_many :items, through: :inventory
-    
-    has_one :celestial_location, as: :locationable, class_name: 'Location::CelestialLocation'
+    belongs_to :location, polymorphic: true, optional: true
+    belongs_to :container_structure, class_name: 'Structures::BaseStructure', optional: true
+    has_many :contained_structures, class_name: 'Structures::BaseStructure', foreign_key: 'container_structure_id'
 
     has_many :modules, as: :attachable, class_name: 'Modules::BaseModule', dependent: :destroy
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable

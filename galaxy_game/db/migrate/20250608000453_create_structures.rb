@@ -6,6 +6,8 @@ class CreateStructures < ActiveRecord::Migration[7.0]
       t.string :structure_type, null: false
       t.references :settlement, foreign_key: { to_table: :base_settlements }
       t.references :owner, polymorphic: true, null: false
+      t.references :container_structure, foreign_key: { to_table: :structures }, null: true
+      t.references :location, polymorphic: true, null: true
       t.integer :current_population, default: 0
       t.jsonb :operational_data, default: {}
       
