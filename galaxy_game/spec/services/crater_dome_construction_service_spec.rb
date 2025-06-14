@@ -129,10 +129,11 @@ RSpec.describe CraterDomeConstructionService, type: :service do
         
         result = service.construct
         
-        # Debug output if the test fails
+        # Debug output if the test fails - FIX THE DIG METHOD
         if !result[:success]
           puts "Failure message: #{result[:message]}"
-          puts "Construction job target_values: #{result.dig(:construction_job, :target_values)}"
+          # CHANGE THIS LINE - don't use dig on ConstructionJob object
+          puts "Construction job target_values: #{result[:construction_job]&.target_values}"
         end
         
         # Verify the transaction was processed

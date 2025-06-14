@@ -93,7 +93,7 @@ class CraterDomeConstructionService
             materials_status: 'provided_by_contractor',
             equipment_status: 'provided_by_contractor'
           }),
-          status: 'ready_to_start'  # Skip materials/equipment pending states
+          status: 'materials_pending'  # Use a valid status instead
         )
       rescue StandardError => e
         # Handle payment failure
