@@ -21,6 +21,9 @@ module MaterialManagementConcern
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(name)
     
+    # ✅ ADD DEBUG OUTPUT
+    Rails.logger.debug "MaterialManagementConcern#add_material: name=#{name}, material_data=#{material_data.inspect}"
+    
     unless material_data
       raise InvalidMaterialError, "Material '#{name}' not found in materials database"
     end
@@ -28,13 +31,20 @@ module MaterialManagementConcern
     # Use the material ID for consistency in general materials
     material_id = material_data['id']
     
+    # ✅ ADD DEBUG OUTPUT
+    Rails.logger.debug "MaterialManagementConcern#add_material: material_id=#{material_id.inspect}"
+    
     # Find or create the material with standardized ID
     material = materials.find_or_initialize_by(name: material_id)
     
     # ✅ CRITICAL FIX: Ensure name is set for new materials
     if material.new_record?
       material.name = material_id  # Make sure name field is populated
+      Rails.logger.debug "MaterialManagementConcern#add_material: Set name to #{material_id} for new material"
     end
+    
+    # ✅ ADD DEBUG OUTPUT
+    Rails.logger.debug "MaterialManagementConcern#add_material: material.name=#{material.name.inspect}, new_record?=#{material.new_record?}"
     
     material.amount ||= 0
     material.amount += amount
@@ -102,10 +112,11 @@ module MaterialManagementConcern
     material_service = Lookup::MaterialLookupService.new
     material_data = material_service.find_material(name)
     
-    material_data && 
-    material_data['properties'] && 
-    material_data['properties']['state_at_room_temp'] &&
-    material_data['properties']['state_at_room_temp'].downcase == 'gas'
+    return false unless material_data
+    
+    # ✅ Simple fix - check the properties that actually exist in your fixture
+    state = material_data['state_at_stp'] || material_data['category']
+    state && state.downcase == 'gas'
   end
 
   # This is the key fix - handle gas updates explicitly
