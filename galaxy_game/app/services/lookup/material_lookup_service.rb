@@ -1,11 +1,13 @@
 require 'yaml'
 require 'json'
+require 'pathname'  # Add this to ensure Pathname is available
 
 module Lookup
   class MaterialLookupService < BaseLookupService
     # Use the GalaxyGame::Paths module for consistent path handling
     def self.base_materials_path
-      GalaxyGame::Paths::GAME_DATA.join("resources", "materials")
+      # Return a Pathname object, not a String
+      Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "resources", "materials")
     end
     
     MATERIAL_PATHS = {
@@ -91,7 +93,7 @@ module Lookup
     # Add this class method
     def self.locate_gases_path
       # Always use the path system from GalaxyGame::Paths - the same one used in production
-      primary_path = GalaxyGame::Paths::GAME_DATA.join("resources", "materials", "gases")
+      primary_path = File.join(Rails.root, GalaxyGame::Paths::JSON_DATA, "resources", "materials", "gases")
       
       if File.directory?(primary_path)
         Rails.logger.debug "Using gases path: #{primary_path}"
@@ -142,33 +144,36 @@ module Lookup
     def load_materials
       materials = []
       
-      MATERIAL_PATHS.each do |type, config|
-        if config.is_a?(Hash)
-          base_path = config[:path].call
-          Rails.logger.debug "Checking base path: #{base_path}"
-          
-          # Process direct files in this path if configured
-          if config[:direct_files] && File.directory?(base_path)
-            materials.concat(load_json_files(base_path))
+      begin
+        MATERIAL_PATHS.each do |type, config|
+          if config.is_a?(Hash)
+            base_path = config[:path].call
+            Rails.logger.debug "Checking base path: #{base_path}"
+            
+            # Process direct files in this path if configured
+            if config[:direct_files] && File.directory?(base_path)
+              materials.concat(load_json_files(base_path))
+            end
+            
+            # Process subfolders recursively if configured
+            if config[:recursive_scan] && File.directory?(base_path)
+              materials.concat(load_json_files_recursively(base_path))
+            end
+          else
+            # Direct path (e.g., byproducts, solids)
+            path = config.respond_to?(:call) ? config.call : config
+            Rails.logger.debug "Checking direct path: #{path}"
+            materials.concat(load_json_files(path))
           end
-          
-          # Process subfolders recursively if configured
-          if config[:recursive_scan] && File.directory?(base_path)
-            materials.concat(load_json_files_recursively(base_path))
-          end
-        else
-          # Direct path (e.g., byproducts, solids)
-          path = config.respond_to?(:call) ? config.call : config
-          Rails.logger.debug "Checking direct path: #{path}"
-          materials.concat(load_json_files(path))
         end
+      rescue => e
+        Rails.logger.error "Fatal error loading materials: #{e.message}\n#{e.backtrace.join("\n")}"
+        # Return an empty array but log the error
+        return []
       end
 
       Rails.logger.debug "Loaded #{materials.size} materials in total"
       materials
-    rescue => e
-      Rails.logger.error "Error loading materials: #{e.message}"
-      []
     end
 
     def load_json_files(path)
