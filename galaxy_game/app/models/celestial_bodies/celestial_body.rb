@@ -8,7 +8,7 @@ module CelestialBodies
 
     belongs_to :solar_system, optional: true
     before_save :run_terra_sim, if: :simulation_relevant_changes?
-    before_create :set_calculated_values
+    # before_create :set_calculated_values
 
     # Add this callback after the existing callbacks
     after_create :ensure_spatial_location
@@ -63,39 +63,43 @@ module CelestialBodies
     after_create :ensure_spatial_location
     
     def name
-      super.presence || identifier
+      self[:name] || identifier
     end
 
+    # Methods that should delegate to SolidBodyConcern for solid bodies
+    # but still work for gas giants
+    
     def surface_area
-      return 0 unless radius.present?
-      4 * Math::PI * (radius ** 2)
+      return 4 * Math::PI * (radius ** 2) if radius.present?
+      0
     end
-
+    
     def volume
-      return 0 unless radius.present?
-      (4.0 / 3) * Math::PI * (radius ** 3)
+      return (4.0 / 3) * Math::PI * (radius ** 3) if radius.present?
+      0
     end
-
+    
     def density
       return nil if mass.nil? || volume.nil?
-      mass_float = mass.to_f
-      mass_float / volume
+      mass.to_f / volume
     end
-
+    
     def calculate_gravity
       return nil unless radius.present? && mass.present?
-      mass_float = mass.to_f
-      (GameConstants::GRAVITATIONAL_CONSTANT * mass_float) / (radius ** 2)
+      (GameConstants::GRAVITATIONAL_CONSTANT * mass.to_f) / (radius ** 2)
     end
-
-    def update_gravity
-      return if new_record? # Don't calculate for new records - use seeded value
-      
-      # Only calculate if mass or radius changed
-      if (saved_changes.keys & ['mass', 'radius']).any?
-        self.gravity = calculate_gravity
-        save!
-      end
+    
+    def calculate_escape_velocity
+      return 0 unless mass.present? && radius.present?
+      Math.sqrt(2 * GameConstants::GRAVITATIONAL_CONSTANT * mass.to_f / radius)
+    end
+    
+    def has_solid_surface?
+      false # Default to false, overridden in SolidBodyConcern
+    end
+    
+    def surface_composition
+      {} # Default empty, overridden in SolidBodyConcern
     end
 
     def calculate_pressure
@@ -222,7 +226,7 @@ module CelestialBodies
       atmo_mass = atmosphere&.total_atmospheric_mass || 0
       
       # Add hydrosphere mass if present
-      hydro_mass = hydrosphere&.total_water_mass || 0
+      hydro_mass = hydrosphere&.total_hydrosphere_mass || 0
       
       # Add geosphere mass if present
       geo_mass = 0
@@ -257,22 +261,21 @@ module CelestialBodies
       end
     end    
 
-    # Add this method to bridge the gap during refactoring
+    # Update the planet_type method
     def planet_type
       case self
       # New planet types
-      # when CelestialBodies::Planets::Rocky::CarbonPlanet then 'carbon_planet'
-      # when CelestialBodies::Planets::Rocky::LavaWorld then 'lava_world'  
-      # when CelestialBodies::Planets::Rocky::SuperEarth then 'super_earth'
+      when CelestialBodies::Planets::Rocky::CarbonPlanet then 'carbon_planet'
+      when CelestialBodies::Planets::Rocky::LavaWorld then 'lava_world'  
+      when CelestialBodies::Planets::Rocky::SuperEarth then 'super_earth'
       when CelestialBodies::Planets::Rocky::TerrestrialPlanet then 'terrestrial'
       when CelestialBodies::Planets::Gaseous::GasGiant then 'gas_giant'
-      # when CelestialBodies::Planets::Gaseous::HotJupiter then 'hot_jupiter'
-      # when CelestialBodies::Planets::Gaseous::IceGiant then 'ice_giant'
-      # when CelestialBodies::Planets::Ocean::HyceanPlanet then 'hycean'
-      # when CelestialBodies::Planets::Ocean::OceanWorld then 'ocean_world'
-      # when CelestialBodies::Planets::Ocean::WaterWorld then 'water_world'
-      # when CelestialBodies::Planets::Other::DwarfPlanet then 'dwarf_planet'
-      # when CelestialBodies::Planets::Other::RoguePlanet then 'rogue_planet'
+      when CelestialBodies::Planets::Gaseous::HotJupiter then 'hot_jupiter'
+      when CelestialBodies::Planets::Gaseous::IceGiant then 'ice_giant'
+      when CelestialBodies::Planets::Ocean::HyceanPlanet then 'hycean'
+      when CelestialBodies::Planets::Ocean::OceanPlanet then 'ocean_planet'
+      when CelestialBodies::Planets::Ocean::WaterWorld then 'water_world'
+      when CelestialBodies::MinorBodies::DwarfPlanet then 'dwarf_planet'
       
       # Legacy types for compatibility
       when CelestialBodies::TerrestrialPlanet then 'terrestrial'
@@ -280,12 +283,19 @@ module CelestialBodies
       when CelestialBodies::IceGiant then 'ice_giant'
       when CelestialBodies::Moon then 'moon'
       when CelestialBodies::DwarfPlanet then 'dwarf_planet'
+      
+      # Satellite types
+      when CelestialBodies::Satellites::Satellite then 'satellite'
+      when CelestialBodies::Satellites::Moon then 'moon'
+      when CelestialBodies::Satellites::LargeMoon then 'large_moon'
+      when CelestialBodies::Satellites::SmallMoon then 'small_moon'
+      when CelestialBodies::Satellites::IceMoon then 'ice_moon'
       else
         'celestial_body'  # Default
       end
     end    
 
-    # Add this method to the CelestialBody class
+    # Add this method to bridge the gap during refactoring
     def luminosity
       properties.try(:[], 'luminosity') || 1.0
     end
@@ -317,6 +327,28 @@ module CelestialBodies
       self.properties ||= {}
       self.properties['body_type'] = value
     end    
+
+    # Planets can be flagged as rogue (not bound to a star)
+    def rogue?
+      solar_system_id.nil? && planet_class?
+    end
+
+    # Helper to identify if this is any type of planet
+    def planet_class?
+      type.include?('::Planets::') || type.include?('::MinorBodies::DwarfPlanet')
+    end
+
+    # Method to handle ejection events
+    def ejection_event!(velocity_factor = 1.0)
+      previous_system = solar_system
+      update(solar_system_id: nil)
+      
+      if respond_to?(:cool_from_ejection)
+        cool_from_ejection(previous_system)
+      end
+      
+      Rails.logger.info "#{name} has been ejected from #{previous_system&.name || 'its system'}"
+    end
 
     private
 
@@ -476,6 +508,18 @@ module CelestialBodies
       
       gas_giant.update!(params)
       gas_giant
+    end
+
+    def validate_mass_conservation
+      total_component_mass = 0
+      total_component_mass += geosphere.total_geosphere_mass if geosphere
+      total_component_mass += atmosphere.total_atmospheric_mass if atmosphere
+      total_component_mass += hydrosphere.total_hydrosphere_mass if hydrosphere
+      
+      # Allow for small rounding errors (0.1% difference)
+      unless (total_component_mass - mass).abs / mass < 0.001
+        errors.add(:mass, "Total sphere masses (#{total_component_mass}) must equal celestial body mass (#{mass})")
+      end
     end
   end
 end
