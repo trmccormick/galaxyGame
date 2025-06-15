@@ -62,7 +62,16 @@ RSpec.describe MaterialManagementConcern, type: :concern do
   end
 
   describe '#add_material' do
-    let(:mock_material) { double('Material', amount: 0, 'amount=': nil, 'save!': true) }
+    # ✅ Fixed: Add new_record? and name= methods to the mock
+    let(:mock_material) { 
+      double('Material', 
+        amount: 0, 
+        'amount=': nil, 
+        'save!': true,
+        'new_record?': true,  # ✅ Add this
+        'name=': nil          # ✅ Add this (the concern sets material.name = material_id)
+      ) 
+    }
     
     before do
       allow(mock_materials_association).to receive(:find_or_initialize_by).and_return(mock_material)
@@ -103,6 +112,8 @@ RSpec.describe MaterialManagementConcern, type: :concern do
       it 'creates material with standardized ID' do
         expect(mock_materials_association).to receive(:find_or_initialize_by).with(name: 'oxygen')
         expect(mock_material).to receive(:amount=).with(100)
+        # ✅ Now also expect name= to be called for new records
+        expect(mock_material).to receive(:name=).with('oxygen')
         expect(mock_material).to receive(:save!)
         
         result = test_object.add_material('oxygen', 100)
@@ -110,8 +121,12 @@ RSpec.describe MaterialManagementConcern, type: :concern do
       end
 
       it 'adds to existing material amount' do
+        # ✅ For existing materials, new_record? should return false
+        allow(mock_material).to receive(:new_record?).and_return(false)
         allow(mock_material).to receive(:amount).and_return(50)
         expect(mock_material).to receive(:amount=).with(150)
+        # ✅ Should NOT call name= for existing records
+        expect(mock_material).not_to receive(:name=)
         
         test_object.add_material('oxygen', 100)
       end

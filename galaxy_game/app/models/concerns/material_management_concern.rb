@@ -30,14 +30,21 @@ module MaterialManagementConcern
     
     # Find or create the material with standardized ID
     material = materials.find_or_initialize_by(name: material_id)
+    
+    # ✅ CRITICAL FIX: Ensure name is set for new materials
+    if material.new_record?
+      material.name = material_id  # Make sure name field is populated
+    end
+    
     material.amount ||= 0
     material.amount += amount
-    material.save!
+    
+    material.save!  # This should now work since name is set
     
     # Only update atmosphere for gases, and only in a controlled way
-    if has_gas_properties?(material_id)
+    if has_gas_properties?(name)
       # For atmosphere, use chemical formula
-      chemical_formula = material_data['chemical_formula']
+      chemical_formula = material_data['chemical_formula'] || material_id
       update_atmosphere_for_gas(chemical_formula, amount)
     end
     
