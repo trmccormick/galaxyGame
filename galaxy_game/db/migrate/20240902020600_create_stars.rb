@@ -1,6 +1,6 @@
-class CreateSuns < ActiveRecord::Migration[7.0]
+class CreateStars < ActiveRecord::Migration[7.0]  # ✅ This should match filename
   def change
-    create_table :suns do |t|
+    create_table :stars do |t|
       t.string :identifier, null: false, index: { unique: true }
       t.string :name
       t.string :type_of_star
@@ -8,8 +8,8 @@ class CreateSuns < ActiveRecord::Migration[7.0]
       t.float :mass
       t.float :radius
       t.integer :discovery_state
-      t.jsonb :properties, default: {}, null: false  # Add this flexible properties field
-
+      t.jsonb :properties, default: {}, null: false
+      
       t.timestamps
     end
   end

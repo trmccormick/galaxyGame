@@ -160,10 +160,34 @@ module CelestialBodies
         (r_universal * temperature.to_f) / (molar_mass * gravity) / 1000.0
       end
       
+      #---------------------------------------------------------------------------
+      # Dust Management Methods
+      #---------------------------------------------------------------------------
+      def decrease_dust(amount)
+        # Simple implementation to make test pass
+        dust_hash = self.dust || {}
+        dust_hash.transform_values! { |v| [0, v - amount].max }
+        self.dust = dust_hash
+        save
+      end
+      
       private
 
       def default_temperature
         celestial_body.surface_temperature
+      end
+
+      # Add a callback that runs after gas changes
+      after_save :update_celestial_body_material_tracking, if: :total_atmospheric_mass_changed?
+      
+      # Only update material tracking for celestial body atmospheres
+      def update_celestial_body_material_tracking
+        return unless celestial_body.present?
+        
+        # Trigger material validation at celestial body level
+        if celestial_body.respond_to?(:validate_mass_conservation)
+          celestial_body.validate_mass_conservation
+        end
       end
     end
   end

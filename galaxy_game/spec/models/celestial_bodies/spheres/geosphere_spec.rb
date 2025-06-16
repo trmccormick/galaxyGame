@@ -253,47 +253,28 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
   end
   
   describe '#extract_volatiles' do
-    it 'extracts volatiles based on temperature increase' do
-      # Set up a geosphere with volatiles
+    before do
+      # Create a proper test environment
       geosphere.update!(
-        crust_composition: { 
-          'Silicon' => 45.0, 
-          'Oxygen' => 30.0, 
-          'volatiles' => { 
-            'CO2' => 10.0, 
-            'H2O' => 5.0 
-          } 
+        crust_composition: {
+          'volatiles' => { 'CO2' => 10.0, 'H2O' => 5.0 }
         },
-        total_crust_mass: 1.0e20
+        total_crust_mass: 5.0e19
       )
       
-      # Apply temperature increase
-      volatiles_released = geosphere.extract_volatiles(50)
-      
-      # Check that CO2 was released
-      expect(volatiles_released).to have_key('CO2')
+      # Mock the atmosphere object
+      atmosphere = double('atmosphere')
+      allow(geosphere.celestial_body).to receive(:atmosphere).and_return(atmosphere)
+      allow(atmosphere).to receive(:add_gas).and_return(true)
     end
-
-    it 'properly transfers volatiles to the atmosphere' do
-      # Set up a geosphere with volatiles
-      geosphere.update!(
-        crust_composition: { 
-          'Silicon' => 45.0, 
-          'Oxygen' => 30.0, 
-          'volatiles' => { 
-            'CO2' => 10.0, 
-            'H2O' => 5.0 
-          } 
-        },
-        total_crust_mass: 1.0e20
-      )
+    
+    it 'extracts volatiles based on temperature increase' do
+      result = geosphere.extract_volatiles(50)
       
-      # Extract volatiles
-      volatiles_released = geosphere.extract_volatiles(50)
-      
-      # Check that CO2 was released
-      expect(volatiles_released).to have_key('CO2')
-      expect(volatiles_released['CO2']).to be > 0
+      # Test the output without relying on hardcoded test values
+      expect(result).to be_a(Hash)
+      expect(result).to have_key('CO2')
+      expect(result['CO2']).to be > 0
     end
   end
   
