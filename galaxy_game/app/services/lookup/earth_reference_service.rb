@@ -49,7 +49,7 @@ module Lookup
     def load_earth_data
       # Try multiple possible paths
       potential_paths = [
-        GalaxyGame::Paths::GAME_DATA.join("star_systems", "sol.json"),
+        GalaxyGame::Paths::JSON_DATA.join("star_systems", "sol.json"),
         Rails.root.join("app", "data", "star_systems", "sol.json"),
         Rails.root.join("data", "json-data", "star_systems", "sol.json")
       ]
