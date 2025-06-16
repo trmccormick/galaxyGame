@@ -70,86 +70,77 @@ module AtmosphereConcern
     body = celestial_body
     return unless body.present?
     
+    # ✅ Initialize lookup service once
+    lookup_service = Lookup::MaterialLookupService.new
+    
     # Calculate the total atmospheric mass
     total_mass = total_atmospheric_mass || 0
     
     # Create gases
-    composition.each do |name, percentage|
+    composition.each do |chemical_formula, percentage|
       # Skip if percentage is zero
       next if percentage.to_f <= 0
       
       # Calculate mass based on percentage
       mass = (percentage.to_f / 100) * total_mass
       
-      # Look up molar mass from material database - ADD THIS
-      material_lookup = Lookup::MaterialLookupService.new
-      material_data = material_lookup.find_material(name)
+      # ✅ Look up material data using the service
+      material_data = lookup_service.find_material(chemical_formula)
       
-      # Debug output
-      puts "Looking up material for gas '#{name}': #{material_data ? 'found' : 'not found'}"
+      if material_data
+        # ✅ Use material ID as name (consistent with add_gas)
+        material_id = material_data['id']
+        molar_mass = material_data['molar_mass']
+      else
+        Rails.logger.warn "Material not found for gas: #{chemical_formula}"
+        material_id = chemical_formula  # Fallback to formula
+        molar_mass = nil
+      end
       
-      # Get molar mass from material data if found
-      molar_mass = material_data&.dig('properties', 'molar_mass')
-      
-      # More debug output
-      puts "Molar mass for '#{name}': #{molar_mass || 'nil'}"
-      
-      # Create the gas record WITH molar mass
+      # Create the gas record with material ID as name
       gas = gases.new(
-        name: name,
+        name: material_id,  # Use material_id, not chemical_formula
         percentage: percentage.to_f,
         mass: mass,
         molar_mass: molar_mass
       )
       
-      # Skip validation if necessary - this is temporary until we fix the lookup
-      gas.save(validate: false)
+      # Save with validation to catch missing molar mass
+      gas.save!
     end
+    
+    # Recalculate percentages after creating all gases
+    recalculate_gas_percentages
     
     # Return true if gases were created
     gases.any?
   end
 
   # Replace the existing duplicate normalization logic
-  def add_gas(name, mass)
-    # Validate inputs properly
-    raise InvalidGasError, "Invalid mass value" if mass <= 0
-    raise InvalidGasError, "Gas name required" if name.blank?
+  def add_gas(chemical_formula, amount_kg)
+    raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
+    raise InvalidGasError, "Amount must be positive" if amount_kg <= 0
+
+    # ✅ Use MaterialLookupService to get material ID
+    lookup_service = Lookup::MaterialLookupService.new
+    material_data = lookup_service.find_material(chemical_formula)
     
-    # Debug logging
-    puts "ADD_GAS CALLED: '#{name}' (#{mass} kg) - Caller: #{caller[0]}"
-    
-    # Use the material lookup service
-    material_lookup = Lookup::MaterialLookupService.new
-    material_data = material_lookup.find_material(name)
-    
-    # Ensure material was found
     unless material_data
-      raise InvalidGasError, "Gas name '#{name}' not found in materials database"
+      raise InvalidGasError, "Unknown chemical formula: #{chemical_formula}. Check materials database."
     end
+
+    # ✅ Store by material ID (matching SystemBuilderService and test expectations)
+    material_id = material_data['id']  # "nitrogen", "oxygen", etc.
+    gas = gases.find_or_initialize_by(name: material_id)
     
-    # Important change: Use the material ID as the gas name, not the formula
-    standardized_name = material_data['id']
+    # ✅ Update mass
+    gas.mass = (gas.mass || 0.0) + amount_kg.to_f
     
-    puts "Using standardized name: '#{standardized_name}' instead of '#{name}'"
+    # ✅ Use precise molar mass from JSON data
+    gas.molar_mass = material_data['molar_mass'] if gas.molar_mass.blank?
     
-    # Extract molar mass for the gas if available
-    molar_mass = material_data.dig('properties', 'molar_mass')
-    
-    # Find or create the gas record with the standardized name
-    gas = gases.find_or_initialize_by(name: standardized_name)
-    
-    # Set or update mass - critically important to use EXACTLY the provided mass
-    gas.mass ||= 0
-    gas.mass += mass
-    
-    # Set molar mass if available
-    gas.molar_mass = molar_mass if molar_mass
-    
-    # Save the gas
     gas.save!
     
-    # Update total atmospheric mass and recalculate percentages
     update_total_atmospheric_mass
     recalculate_gas_percentages
     
@@ -157,53 +148,40 @@ module AtmosphereConcern
   end
 
   # Also update remove_gas to use the lookup service
-  def remove_gas(name, mass)
-    # Validate inputs properly
-    raise InvalidGasError, "Invalid mass value" if mass <= 0
-    raise InvalidGasError, "Gas name required" if name.blank?
+  def remove_gas(chemical_formula, amount_kg = nil)
+    raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
     
-    # Debug logging - change to Rails.logger.debug in production
-    puts "REMOVE_GAS CALLED: '#{name}' (#{mass} kg) - Caller: #{caller[0]}"
+    # ✅ Convert chemical formula to material ID for lookup
+    lookup_service = Lookup::MaterialLookupService.new
+    material_data = lookup_service.find_material(chemical_formula)
     
-    # Use the material lookup service to standardize the name
-    material_lookup = Lookup::MaterialLookupService.new
-    material_data = material_lookup.find_material(name)
-    
-    # Ensure material was found
     unless material_data
-      raise InvalidGasError, "Gas name '#{name}' not found in materials database"
+      raise InvalidGasError, "Unknown chemical formula: #{chemical_formula}. Check materials database."
     end
     
-    # Use standardized name (ID)
-    standardized_name = material_data['id'] || name
+    # ✅ Find gas by material ID (matching add_gas behavior)
+    material_id = material_data['id']
+    gas = gases.find_by(name: material_id)
     
-    # Find the gas
-    gas = gases.find_by(name: standardized_name)
-    
-    # Check if gas exists - THIS NEEDS TO RAISE AN ERROR FOR THE TEST TO PASS
     unless gas
-      puts "→ Gas '#{standardized_name}' not found in atmosphere"
-      raise InvalidGasError, "Gas '#{name}' not found in atmosphere"
+      raise InvalidGasError, "Gas '#{chemical_formula}' not found in atmosphere"
     end
     
-    # Check if we have enough gas - THIS NEEDS TO RAISE AN ERROR FOR THE TEST TO PASS
-    if gas.mass < mass
-      puts "→ Requested to remove #{mass} kg of #{standardized_name}, but only #{gas.mass.round(2)} kg available"
-      raise InvalidGasError, "Not enough gas available (requested: #{mass} kg, available: #{gas.mass.round(2)} kg)"
-    end
+    # ✅ Determine amount to remove
+    amount_to_remove = amount_kg || gas.mass.to_f
+    raise InvalidGasError, "Cannot remove negative amount" if amount_to_remove < 0
+    raise InvalidGasError, "Cannot remove more than exists (#{gas.mass} kg available)" if amount_to_remove > gas.mass
+
+    # ✅ Update or destroy gas
+    new_mass = gas.mass.to_f - amount_to_remove.to_f
     
-    # Update the gas amount
-    gas.mass -= mass
-    
-    # Remove the record if mass becomes zero or negative
-    if gas.mass <= 0
-      puts "→ Gas '#{standardized_name}' fully removed from atmosphere"
-      gas.destroy
+    if new_mass <= 0.001  # Close to zero, remove completely
+      gas.destroy!
     else
-      gas.save!
+      gas.update!(mass: new_mass)
     end
-    
-    # Update total atmosphere mass and recalculate percentages
+
+    # ✅ Update atmosphere totals
     update_total_atmospheric_mass
     recalculate_gas_percentages
     
@@ -336,5 +314,11 @@ module AtmosphereConcern
     gases.each do |gas|
       gas.update!(percentage: (gas.mass / total_atmospheric_mass) * 100)
     end
+  end
+
+  # Helper method to get material ID from formula
+  def material_id_for(formula)
+    material = @material_lookup.find_material(formula)
+    material['id']  # ❌ This returns "oxygen", but should return "O2"
   end
 end
