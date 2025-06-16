@@ -19,6 +19,26 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
     it { should have_many(:biomes).through(:planet_biomes) }
   end
 
+  describe 'life form associations' do
+    it { should have_many(:life_forms).dependent(:destroy) }
+    
+    it 'uses the Biology::LifeForm class for the association' do
+      association = CelestialBodies::Spheres::Biosphere.reflect_on_association(:life_forms)
+      expect(association.options[:class_name]).to eq('Biology::LifeForm')
+    end
+    
+    it 'can create life forms' do
+      expect {
+        biosphere.life_forms.create!(
+          name: "Test Life Form",
+          complexity: :simple,
+          domain: :terrestrial,
+          population: 1000
+        )
+      }.to change { Biology::LifeForm.count }.by(1)
+    end
+  end
+
   describe 'validations' do
     it 'can access temperature values via tropical_temperature method' do
       expect(biosphere).to respond_to(:tropical_temperature)
@@ -336,13 +356,13 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       # Set up conditions where life should be discovered (mocked rand < chance)
       allow(biosphere).to receive(:biodiversity_index).and_return(0.7)
       
-      # Mock the alien life form creation to avoid database operations
-      alien_life = double('AlienLifeForm')
-      allow(CelestialBodies::AlienLifeForm).to receive(:create!).and_return(alien_life)
+      # Mock the life form creation using the new Biology namespace
+      life_form = double('LifeForm')
+      allow(Biology::LifeForm).to receive(:create!).and_return(life_form)
       
       # Should discover life
       result = biosphere.discover_life
-      expect(result).to include(alien_life)
+      expect(result).to include(life_form)
     end
   end
   
@@ -545,6 +565,84 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       # Should fall back to default values defined in the model
       expect(biosphere.tropical_temperature).to eq(300.0)
       expect(biosphere.polar_temperature).to eq(250.0)
+    end
+  end
+
+  describe 'ecological simulation' do
+    let(:life_form) { 
+      create(:life_form,
+        biosphere: biosphere,
+        name: "Test Organism",
+        complexity: :simple,
+        domain: :terrestrial,
+        population: 1000
+      )
+    }
+    
+    it 'calculates total biomass' do
+      # Create multiple life forms of different complexities
+      create(:life_form, biosphere: biosphere, complexity: :microbial, population: 10000)
+      create(:life_form, biosphere: biosphere, complexity: :complex, population: 100)
+      
+      # Total biomass should be the sum of all life form biomasses
+      expect(biosphere.total_biomass).to be > 0
+    end
+    
+    it 'calculates expanded biodiversity including life forms' do
+      # Add some biomes and life forms
+      biome = create(:biome, name: 'Forest')
+      biosphere.introduce_biome(biome)
+      
+      # Create life forms of different complexities
+      create(:life_form, biosphere: biosphere, complexity: :microbial, population: 10000)
+      create(:life_form, biosphere: biosphere, complexity: :complex, population: 100)
+      
+      # Calculate expanded biodiversity
+      biodiversity = biosphere.expanded_biodiversity_index
+      
+      # Should be higher than regular biodiversity
+      expect(biodiversity).to be > biosphere.biodiversity_index
+    end
+    
+    it 'simulates life cycle' do
+      # Create a life form
+      life_form = create(:life_form, biosphere: biosphere)
+      initial_population = life_form.population
+      
+      # Mock environment factors and growth logic
+      allow(biosphere).to receive(:temperature_habitability).and_return(0.8)
+      allow(biosphere).to receive(:oxygen_habitability).and_return(0.9)
+      allow_any_instance_of(Biology::LifeForm).to receive(:adapt_to_environment).and_call_original
+      allow_any_instance_of(Biology::LifeForm).to receive(:simulate_growth).and_call_original
+      
+      # Run the simulation
+      biosphere.simulate_life_cycle
+      
+      # Population should change
+      expect(life_form.reload.population).not_to eq(initial_population)
+    end
+    
+    it 'can occasionally create new derived life forms' do
+      # Create an initial life form
+      parent_life_form = create(:life_form, biosphere: biosphere, name: "Parent Organism")
+      
+      # Force random to return value that will trigger new life form creation
+      allow(biosphere).to receive(:rand).and_return(0.01)
+      allow(biosphere).to receive(:biodiversity_index).and_return(0.8)
+      
+      # Set up mock for random selection
+      allow(biosphere.life_forms).to receive(:order).with('RANDOM()').and_return(
+        double('ActiveRecord::Relation', first: parent_life_form)
+      )
+      
+      # Check if a new life form is created
+      expect {
+        biosphere.simulate_life_cycle
+      }.to change { biosphere.life_forms.count }.by(1)
+      
+      # New life form should reference parent
+      new_life_form = biosphere.life_forms.where("name LIKE ?", "%Variant%").first
+      expect(new_life_form.properties['derived_from']).to eq(parent_life_form.name)
     end
   end
 end

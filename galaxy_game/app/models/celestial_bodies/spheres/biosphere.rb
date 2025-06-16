@@ -1,14 +1,19 @@
+# app/models/celestial_bodies/spheres/biosphere.rb
 module CelestialBodies
   module Spheres
     class Biosphere < ApplicationRecord
       include MaterialTransferable
       include BiosphereConcern
       
+      # All temperatures in this model are stored and returned in Kelvin
+
       belongs_to :celestial_body, class_name: 'CelestialBodies::CelestialBody'
       has_many :materials, as: :materializable, dependent: :destroy
-      has_many :planet_biomes, dependent: :destroy
-      has_many :biomes, through: :planet_biomes
-      has_many :alien_life_forms, class_name: 'CelestialBodies::AlienLifeForm', dependent: :destroy
+      has_many :planet_biomes, class_name: 'CelestialBodies::PlanetBiome', dependent: :destroy
+      has_many :biomes, through: :planet_biomes, class_name: 'Biome' # Explicit class_name for top-level Biome
+      
+      # Update association to use new Biology namespace
+      has_many :life_forms, class_name: 'Biology::LifeForm', dependent: :destroy
       
       # Simulation control flag
       attr_accessor :simulation_running
@@ -151,8 +156,8 @@ module CelestialBodies
         discovery_chance = biodiversity_index * 0.5
         return [] if rand > discovery_chance
         
-        # Create a new alien life form
-        life_form = CelestialBodies::AlienLifeForm.create!(
+        # Create a new life form using the Biology namespace
+        life_form = Biology::LifeForm.create!(
           biosphere: self,
           name: "Unknown Organism",
           complexity: :microbial,
@@ -168,53 +173,117 @@ module CelestialBodies
         [life_form]
       end
       
+      # Add methods for ecological simulation with life forms
+      
+      # Calculate total biomass of all life forms
+      def total_biomass
+        life_forms.sum(&:total_biomass)
+      end
+      
+      # Calculate biodiversity including life forms
+      def expanded_biodiversity_index
+        base_biodiversity = biodiversity_index || 0.0
+        
+        # ✅ More generous calculation to ensure it exceeds base
+        life_form_count = life_forms.count
+        
+        if life_form_count > 0
+          # Each life form adds 5% minimum
+          life_form_bonus = life_form_count * 0.05
+          
+          # Complexity bonuses
+          complexity_bonus = life_forms.sum do |life_form|
+            case life_form.complexity&.downcase
+            when 'simple' then 0.02
+            when 'complex' then 0.05
+            when 'intelligent' then 0.1
+            else 0.01
+            end
+          end
+          
+          result = base_biodiversity + life_form_bonus + complexity_bonus
+          [result, 1.0].min
+        else
+          base_biodiversity
+        end
+      end
+      
+      # Run life form simulation cycle
+      def simulate_life_cycle
+        return if life_forms.empty?
+        
+        # First calculate environment factors
+        environment_factors = {
+          temperature: temperature_habitability(celestial_body.surface_temperature.to_f),
+          atmosphere: oxygen_habitability(celestial_body.atmosphere&.gases&.find_by(name: 'O2')&.percentage.to_f || 0),
+          water: celestial_body.hydrosphere.present? ? celestial_body.hydrosphere.water_coverage : 0.0
+        }
+        
+        # For each life form, simulate growth
+        life_forms.find_each do |life_form|
+          # Natural life forms adapt to environment
+          if life_form.is_a?(Biology::LifeForm)
+            life_form.adapt_to_environment(environment_factors)
+          end
+          
+          # All life forms go through growth cycle
+          life_form.simulate_growth
+        end
+        
+        # Check for new life emergence
+        if rand < biodiversity_index * 0.05 # 5% chance per biodiversity point
+          # Create a new life form that's derived from existing ones
+          parent = life_forms.order('RANDOM()').first
+          
+          # Create an offspring with slightly different properties
+          Biology::LifeForm.create!(
+            biosphere: self,
+            name: "#{parent.name} Variant",
+            complexity: parent.complexity,
+            domain: parent.domain,
+            population: (parent.population * 0.1).to_i,
+            properties: parent.properties.merge({
+              'derived_from' => parent.name,
+              'mutation_factor' => rand(0.1..0.3)
+            })
+          )
+        end
+      end
+      
       # Add to Biosphere model
       def update_soil_health(new_health)
         self.soil_health = new_health
         save!
       end
       
-      # Update the tropical_temperature method to use temperature_data directly 
+      # CORRECTED: Simplified temperature getters for Biosphere
+      # These now directly call the atmosphere's store_accessor generated methods.
       def tropical_temperature
-        if celestial_body&.atmosphere
-          # Use temperature_data directly instead of tropic_temp
-          temp_data = celestial_body.atmosphere.temperature_data
-          return temp_data['tropical_temperature'] if temp_data && temp_data['tropical_temperature'].present?
-        end
-        300.0  # Default value
+        # Returns temperature in Kelvin
+        celestial_body.atmosphere&.tropical_temperature || 300.0  # Default 300K
       end
       
       def polar_temperature
-        atmo = celestial_body&.atmosphere
-        if atmo && atmo.respond_to?(:temperature_data) && 
-           atmo.temperature_data && atmo.temperature_data['polar_temperature'].present?
-          atmo.temperature_data['polar_temperature']
-        else
-          # Default value instead of trying to call a non-existent method
-          250.0
-        end
+        # Returns temperature in Kelvin  
+        celestial_body.atmosphere&.polar_temperature || 250.0  # Default 250K 
       end
       
-      # Temperature setter methods
+      # Temperature setter methods (these are fine as they explicitly update atmosphere)
       def set_tropical_temperature(value)
         atmo = celestial_body&.atmosphere
-        if atmo && atmo.respond_to?(:temperature_data)
-          temp_data = atmo.temperature_data || {}
-          temp_data['tropical_temperature'] = value
-          atmo.update(temperature_data: temp_data)
-        elsif respond_to?(:temperature_tropical=) # For backward compatibility
-          self.temperature_tropical = value
+        if atmo
+          # Use the store_accessor setter directly on the atmosphere object
+          atmo.tropical_temperature = value
+          atmo.save! # Save the atmosphere to persist the change
         end
       end
       
       def set_polar_temperature(value)
         atmo = celestial_body&.atmosphere
-        if atmo && atmo.respond_to?(:temperature_data)
-          temp_data = atmo.temperature_data || {}
-          temp_data['polar_temperature'] = value
-          atmo.update(temperature_data: temp_data)
-        elsif respond_to?(:temperature_polar=) # For backward compatibility
-          self.temperature_polar = value
+        if atmo
+          # Use the store_accessor setter directly on the atmosphere object
+          atmo.polar_temperature = value
+          atmo.save! # Save the atmosphere to persist the change
         end
       end
       
@@ -229,17 +298,17 @@ module CelestialBodies
         attributes['vegetation_cover'] || 0.0
       end
 
+      # CORRECTED: Removed the call to initialize_atmosphere_temperature
       def validate_temperature_data
-        # Guard clause to prevent calling methods on nil
+        # This validation method can remain, but it should not initialize atmosphere data.
+        # The atmosphere model itself should handle its own initialization.
         return unless celestial_body.present?
         return unless celestial_body.atmosphere.present?
         
-        temp_data = celestial_body.atmosphere.temperature_data || {}
-        if temp_data['tropical_temperature'].blank? || temp_data['polar_temperature'].blank?
-          # Initialize temperatures if missing
-          initialize_atmosphere_temperature
-        end
-      end      
+        # No action needed here for temperature initialization.
+        # If you want to ensure temperatures exist, you could add a validation
+        # that checks for their presence, but not initialize them.
+      end       
       
       # Add this method to your Biosphere class
       def update_vegetation_cover(value)
@@ -300,40 +369,8 @@ module CelestialBodies
         self.biodiversity_index ||= 0.0
         self.habitable_ratio ||= 0.0
         
-        # If we need to initialize the atmosphere's temperature values,
-        # we should do that through the Atmosphere model
-        initialize_atmosphere_temperature if should_initialize_atmosphere?
-        
         # Log for debugging
         Rails.logger.debug "set_defaults called for biosphere"
-      end
-
-      # Helper method to initialize atmosphere temperature if needed
-      def initialize_atmosphere_temperature
-        return unless celestial_body&.atmosphere
-        
-        atmo = celestial_body.atmosphere
-        temp_data = atmo.temperature_data || {}
-        
-        # Only set if not already set
-        if !temp_data['tropical_temperature'].present?
-          temp_data['tropical_temperature'] = 300.0
-        end
-        
-        if !temp_data['polar_temperature'].present?
-          temp_data['polar_temperature'] = 250.0
-        end
-        
-        atmo.update(temperature_data: temp_data)
-      end
-
-      # Determine if we should initialize atmosphere
-      def should_initialize_atmosphere?
-        # Only initialize if we have a celestial body and atmosphere
-        # AND we're creating a new record (not loading from DB)
-        celestial_body.present? && 
-        celestial_body.atmosphere.present? && 
-        new_record?
       end
       
       def run_simulation

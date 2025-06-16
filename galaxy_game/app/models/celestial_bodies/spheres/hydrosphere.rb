@@ -17,9 +17,9 @@ module CelestialBodies
       
       # Base values for reset functionality
       store_accessor :base_values, :base_water_bodies, :base_composition, :base_state_distribution,
-                    :base_temperature, :base_pressure, :base_total_water_mass
+                    :base_temperature, :base_pressure, :base_total_hydrosphere_mass
 
-      validates :total_water_mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+      validates :total_hydrosphere_mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
       validates :temperature, :pressure, presence: true
 
       after_initialize :set_defaults
@@ -32,20 +32,22 @@ module CelestialBodies
         self.state_distribution = base_state_distribution.deep_dup if base_state_distribution
         self.temperature = base_temperature
         self.pressure = base_pressure
-        self.total_water_mass = base_total_water_mass
+        self.total_hydrosphere_mass = base_total_hydrosphere_mass
         save!
       end
       
-      # Add liquid material to the hydrosphere
-      def add_liquid(name, amount)
-        return if amount <= 0
+      # Add liquid to hydrosphere
+      def add_liquid(name, amount, state = 'liquid')
+        # Validate inputs
+        raise ArgumentError, "Invalid amount" if amount <= 0
+        raise ArgumentError, "Name required" if name.blank?
         
-        # Look up material properties
+        # Get material data
         lookup_service = Lookup::MaterialLookupService.new
         material_data = lookup_service.find_material(name)
         
         unless material_data
-          raise ArgumentError, "Material '#{name}' not found in lookup service"
+          raise ArgumentError, "Material '#{name}' not found in the lookup service."
         end
         
         # Create or update liquid material record
@@ -58,27 +60,35 @@ module CelestialBodies
         update_water_distribution(name, amount)
         
         # Update total water mass
-        self.total_water_mass ||= 0
-        self.total_water_mass += amount
+        self.total_hydrosphere_mass ||= 0
+        self.total_hydrosphere_mass += amount
         save!
       end
       
-      # Remove liquid material from the hydrosphere
+      # Remove liquid from hydrosphere
       def remove_liquid(name, amount)
-        liquid_material = liquid_materials.find_by(name: name)
-        return false unless liquid_material && liquid_material.amount >= amount
+        # Validate inputs
+        raise ArgumentError, "Invalid amount" if amount <= 0
+        raise ArgumentError, "Name required" if name.blank?
+        
+        # Find material
+        material = materials.find_by(name: name.to_s, location: 'hydrosphere')
+        
+        unless material
+          raise ArgumentError, "Material '#{name}' not found in hydrosphere"
+        end
         
         # Update liquid material
-        liquid_material.amount -= amount
+        material.amount -= amount
         
-        if liquid_material.amount <= 0
-          liquid_material.destroy
+        if material.amount <= 0
+          material.destroy
         else
-          liquid_material.save!
+          material.save!
         end
         
         # Update total water mass
-        self.total_water_mass -= amount
+        self.total_hydrosphere_mass -= amount
         save!
         
         true
@@ -89,30 +99,86 @@ module CelestialBodies
         material = materials.find_by(name: material_name)
         liquid_material = liquid_materials.find_by(name: material_name) if respond_to?(:liquid_materials)
         
-        # For the test cases, prioritize the material over liquid_material
         selected_material = material || liquid_material
         return false unless selected_material && selected_material.amount >= amount
 
-        target_material = target_sphere.materials.find_or_create_by(name: material_name) do |m|
-          m.state = 'liquid'
-        end
-
-        Material.transaction do
-          # Update the source material
-          if selected_material.respond_to?(:amount=)
+        # ✅ Use proper transaction and validation
+        begin
+          Material.transaction do
+            # Update source material
             selected_material.amount -= amount
-            selected_material.destroy if selected_material.amount <= 0
-            selected_material.save! if selected_material.persisted?
+            if selected_material.amount <= 0
+              selected_material.destroy!
+            else
+              selected_material.save!
+            end
+            
+            # Create target material with proper associations
+            target_material = target_sphere.materials.find_or_initialize_by(name: material_name)
+            
+            # ✅ Ensure all required associations are set
+            target_material.celestial_body = target_sphere.celestial_body
+            target_material.materializable = target_sphere
+            target_material.state = 'liquid'
+            target_material.location = target_sphere.class.name.demodulize.downcase
+            
+            target_material.amount ||= 0
+            target_material.amount += amount
+            target_material.save!
           end
           
-          # Update the target material
-          target_material.amount ||= 0
-          target_material.amount += amount
-          target_material.save!
+          true
+        rescue ActiveRecord::RecordInvalid => e
+          Rails.logger.error "Material transfer failed: #{e.message}"
+          false
+        end
+      end
+
+      def in_ocean?
+        # Check if the celestial body is in an ocean by examining water bodies
+        return false unless water_bodies
+        
+        # Either the water_bodies has oceans defined with significant volume
+        # or water_bodies has a high percentage of liquid water covering the surface
+        if water_bodies['oceans'].present? && water_bodies['oceans'].to_f > 1.0e15
+          return true
         end
         
-        true
+        # Check state_distribution if no oceans defined
+        if state_distribution && state_distribution['liquid'].to_f > 70
+          return true
+        end
+        
+        false
       end
+
+      def ice
+        # Get ice_caps from water_bodies hash
+        water_bodies&.dig('ice_caps').to_f || 0.0
+      end
+
+      def ice=(value)
+        self.water_bodies ||= {}
+        self.water_bodies['ice_caps'] = value
+        save! if persisted?
+      end
+
+      def update_hydrosphere_volume
+        # Use self instead of @hydrosphere since this is an instance method
+        total_volume = 0
+        total_volume += water_bodies&.dig('oceans').to_f || 0
+        total_volume += water_bodies&.dig('lakes').to_f || 0
+        total_volume += water_bodies&.dig('rivers').to_f || 0
+        total_volume += water_bodies&.dig('ice_caps').to_f || 0
+        
+        update(total_hydrosphere_mass: total_volume)
+      end
+
+      def water_coverage
+        return 0.0 unless celestial_body&.surface_area&.positive?
+        total_water_area = (oceans || 0) + (lakes || 0) + (rivers || 0)
+        (total_water_area / celestial_body.surface_area) * 100.0
+      end      
 
       private
       
@@ -140,7 +206,7 @@ module CelestialBodies
           self.base_state_distribution = state_distribution.deep_dup
           self.base_temperature = temperature
           self.base_pressure = pressure
-          self.base_total_water_mass = total_water_mass
+          self.base_total_hydrosphere_mass = total_hydrosphere_mass
         end
       end
 
