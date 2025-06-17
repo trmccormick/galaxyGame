@@ -3,6 +3,6 @@
 # Exclude root-level data directory (production/development data)
 /data/
 
-# But include fixture data for tests
+# ✅ FIX: Include fixture data with correct path
 !/galaxy_game/spec/fixtures/
-!/galaxy_game/spec/fixtures/**
+!/galaxy_game/spec/fixtures/**/*
