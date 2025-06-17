@@ -225,35 +225,47 @@ module Lookup
     end
 
     def match_material?(material, query)
-      return false unless material && query
-      
-      # Normalize query
-      query_normalized = query.to_s.downcase
-      
-      # First check direct case-insensitive formula match
-      if material['chemical_formula']&.downcase == query_normalized
-        Rails.logger.debug "Matched '#{query}' to formula '#{material['chemical_formula']}'"
+      return false unless material.is_a?(Hash)
+
+      query_normalized = query.to_s.downcase.strip
+
+      # ✅ PRIORITY 1: Exact chemical formula match (case sensitive for chemistry)
+      if material['chemical_formula'] == query.to_s.strip
+        Rails.logger.debug "Matched by exact formula: #{material['chemical_formula']} == #{query}"
         return true
       end
-      
-      # Try simple case variations for chemical formulas like N2, O2, etc.
-      if material['chemical_formula']&.downcase&.gsub(/\d/, '') == query_normalized&.gsub(/\d/, '')
-        # Matches like "n2" to "N2" by comparing just the letters
-        num = material['chemical_formula'].scan(/\d+/).first || ""
-        if query_normalized.include?(num)
-          Rails.logger.debug "Matched '#{query}' to formula '#{material['chemical_formula']}' by letter-number pattern"
-          return true
-        end
+
+      # ✅ PRIORITY 2: Exact chemical formula match (case insensitive)
+      if material['chemical_formula']&.downcase == query_normalized
+        Rails.logger.debug "Matched by formula: #{material['chemical_formula']} == #{query}"
+        return true
       end
-      
-      # Then check other searchable terms
-      searchable_terms = [
-        material['id']&.downcase,
-        material['name']&.downcase
-      ].compact
-      
-      # Check for matches in any terms
-      searchable_terms.any? { |term| term == query_normalized || term.include?(query_normalized) }
+
+      # ✅ PRIORITY 3: Exact ID match
+      if material['id']&.downcase == query_normalized
+        Rails.logger.debug "Matched by ID: #{material['id']} == #{query}"
+        return true
+      end
+
+      # ✅ PRIORITY 4: Exact name match  
+      if material['name']&.downcase == query_normalized
+        Rails.logger.debug "Matched by name: #{material['name']} == #{query}"
+        return true
+      end
+
+      # ✅ PRIORITY 5: Partial ID match (SAFE - only for long queries)
+      if query_normalized.length >= 3 && material['id']&.downcase&.include?(query_normalized)
+        Rails.logger.debug "Matched by partial ID: #{material['id']} contains #{query}"
+        return true
+      end
+
+      # ✅ PRIORITY 6: Partial name match (SAFE - only for long queries) 
+      if query_normalized.length >= 3 && material['name']&.downcase&.include?(query_normalized)
+        Rails.logger.debug "Matched by partial name: #{material['name']} contains #{query}"
+        return true
+      end
+
+      false
     end
 
     # Keep other methods in private section
