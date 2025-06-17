@@ -43,14 +43,12 @@ module Lookup
     }
 
     def initialize
-      super
-      debug_material_paths
-      @materials = load_materials
-      
-      # Debug what was loaded
-      Rails.logger.debug "Loaded #{@materials.size} materials:"
-      @materials.each do |m|
-        Rails.logger.debug "- #{m['id']} (#{m['chemical_formula']})"
+      begin
+        @materials = load_materials
+      rescue StandardError => e
+        Rails.logger.error "Fatal error loading materials: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        @materials = []  # ✅ FIX: Initialize empty array instead of failing
       end
     end
 
@@ -65,29 +63,12 @@ module Lookup
     end
 
     def debug_paths
-      puts "\nDEBUG: Material Lookup Paths"
+      puts "DEBUG: Material Lookup Paths"
       MATERIAL_PATHS.each do |type, config|
-        if config.is_a?(Hash)
-          puts "#{type}: #{config[:path]} (exists: #{Dir.exist?(config[:path])})"
-          
-          # Check for direct files if configured
-          if config[:direct_files]
-            direct_files = Dir.glob(File.join(config[:path], "*.json"))
-            puts "  - Direct files: #{direct_files.size} found"
-          end
-          
-          # If recursive scan is enabled, indicate it
-          if config[:recursive_scan]
-            puts "  - Recursive scan enabled for subfolders"
-          end
-        else
-          puts "#{type}: #{config} (exists: #{Dir.exist?(config)})"
-          if Dir.exist?(config)
-            puts "  Files: #{Dir.glob(File.join(config, '*.json')).size}"
-          end
-        end
+        # ✅ FIX: Call the proc to get the actual path
+        path = config[:path].call
+        puts "#{type}: #{path} (exists: #{Dir.exist?(path)})"
       end
-      puts
     end
 
     # Add this class method
@@ -122,7 +103,31 @@ module Lookup
           percentage: percentage
         }
       end.compact
+    end  
+    
+    # Add this method to get a property regardless of where it's stored
+    def get_material_property(material, property_name)
+      # ✅ FIX: Handle nil material gracefully
+      return nil if material.nil? || property_name.nil?
+      
+      # Check top-level properties first
+      return material[property_name] if material.key?(property_name)
+      
+      # Check nested properties
+      if material['properties'] && material['properties'].key?(property_name)
+        return material['properties'][property_name]
+      end
+      
+      nil
     end    
+
+    # ✅ MOVE: From private to public section
+    def get_molar_mass(material_id)
+      material = find_material(material_id)
+      return nil unless material
+      
+      get_material_property(material, 'molar_mass')
+    end
 
     private
     
@@ -251,21 +256,6 @@ module Lookup
       searchable_terms.any? { |term| term == query_normalized || term.include?(query_normalized) }
     end
 
-    # Add this method to get a property regardless of where it's stored
-    def get_material_property(material, property_name)
-      # Check top-level property first
-      return material[property_name] if material.key?(property_name)
-      
-      # Then check in properties hash
-      material.dig('properties', property_name)
-    end
-
-    # Then use this in your access methods, for example:
-    def get_molar_mass(material_id)
-      material = find_material(material_id)
-      return nil unless material
-      
-      get_material_property(material, 'molar_mass')
-    end
+    # Keep other methods in private section
   end
 end
