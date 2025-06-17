@@ -1,2 +1,8 @@
 .DS_Store
-old_galaxy_game
+
+# Exclude root-level data directory (production/development data)
+/data/
+
+# But include fixture data for tests
+!/galaxy_game/spec/fixtures/
+!/galaxy_game/spec/fixtures/**
