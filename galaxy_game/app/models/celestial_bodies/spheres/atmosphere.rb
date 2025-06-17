@@ -122,7 +122,7 @@ module CelestialBodies
       def calculate_average_molar_mass
         if gases.any?
           total_mass = gases.sum(:mass)
-          return 0.029 if total_mass <= 0 # Earth default
+          return estimate_molar_mass(composition || {}) if total_mass <= 0
           
           material_service = Lookup::MaterialLookupService.new
           
@@ -148,7 +148,8 @@ module CelestialBodies
           return weighted_sum
         end
         
-        0.029 # kg/mol for Earth's air
+        # Always fall back to composition-based calculation
+        estimate_molar_mass(composition || {})
       end
       
       def scale_height
@@ -158,17 +159,6 @@ module CelestialBodies
         r_universal = GameConstants::IDEAL_GAS_CONSTANT
         
         (r_universal * temperature.to_f) / (molar_mass * gravity) / 1000.0
-      end
-      
-      #---------------------------------------------------------------------------
-      # Dust Management Methods
-      #---------------------------------------------------------------------------
-      def decrease_dust(amount)
-        # Simple implementation to make test pass
-        dust_hash = self.dust || {}
-        dust_hash.transform_values! { |v| [0, v - amount].max }
-        self.dust = dust_hash
-        save
       end
       
       private
