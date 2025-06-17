@@ -1,0 +1,36 @@
+{
+  "template": "material",
+  "category": "gas",
+  "id": "helium",
+  "name": "Helium",
+  "chemical_formula": "He",
+  "description": "A noble gas, second most abundant element, found in gas giants and stars.",
+  "molar_mass": 4.0026,
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": true,
+    "radioactive": false
+  }
+}
