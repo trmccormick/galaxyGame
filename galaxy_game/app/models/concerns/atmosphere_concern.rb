@@ -234,7 +234,176 @@ module AtmosphereConcern
     Rails.logger.debug "Total atmospheric mass calculation:"
     Rails.logger.debug "Individual gas masses: #{gases.pluck(:name, :mass)}"
     Rails.logger.debug "Sum result: #{total}"
-  end   
+  end  
+  
+  def estimate_molar_mass(composition)
+    return 0.029 if composition.empty? # Default to air-like (29 g/mol)
+
+    material_service = Lookup::MaterialLookupService.new
+    
+    total_weight = 0
+    total_percentage = 0
+    unknown_gases = []
+    
+    composition.each do |gas_name, percentage|
+      gas_material = material_service.find_material(gas_name)
+      
+      if gas_material
+        # ✅ Get molar_mass property (matches JSON field name)
+        molar_mass_g_mol = material_service.get_material_property(gas_material, 'molar_mass')
+        
+        if molar_mass_g_mol
+          molar_mass_kg_mol = molar_mass_g_mol / 1000.0  # Convert g/mol to kg/mol
+          total_weight += molar_mass_kg_mol * percentage
+          total_percentage += percentage
+          
+          Rails.logger.debug "Found gas #{gas_name}: #{molar_mass_g_mol} g/mol (#{molar_mass_kg_mol} kg/mol)"
+        else
+          unknown_gases << gas_name
+          Rails.logger.warn "Gas #{gas_name} found but no molar_mass property"
+        end
+      else
+        unknown_gases << gas_name
+        Rails.logger.warn "Gas #{gas_name} not found in material database"
+      end
+    end
+    
+    # Log any unknown gases for debugging
+    if unknown_gases.any?
+      Rails.logger.warn "Unknown gases in composition: #{unknown_gases.join(', ')}"
+    end
+    
+    # If we found some valid gases, use weighted average
+    # If no valid gases found, fall back to air-like composition
+    if total_percentage > 0
+      weighted_average = total_weight / total_percentage
+      Rails.logger.debug "Calculated molar mass: #{weighted_average} kg/mol from #{total_percentage}% of composition"
+      weighted_average
+    else
+      Rails.logger.debug "No valid gases found, using air default: 0.029 kg/mol"
+      0.029  # Air-like fallback
+    end
+  end
+
+  def calculate_atmospheric_mass_for_volume(volume_m3, pressure_kpa, temperature_k, composition)
+    return 0 if volume_m3 <= 0 || pressure_kpa <= 0
+    
+    pressure_pa = pressure_kpa * 1000  # Convert kPa to Pa
+    
+    # Use molar mass estimation from composition
+    avg_molar_mass = estimate_molar_mass(composition)
+    
+    # Calculate density using ideal gas law: PV = nRT, density = PM/RT
+    density = (pressure_pa * avg_molar_mass) / (8314 * temperature_k)  # kg/m³
+    
+    total_mass = volume_m3 * density
+    
+    Rails.logger.debug "Atmospheric mass calculation:"
+    Rails.logger.debug "  volume: #{volume_m3} m³"
+    Rails.logger.debug "  pressure: #{pressure_kpa} kPa (#{pressure_pa} Pa)"
+    Rails.logger.debug "  temperature: #{temperature_k} K"
+    Rails.logger.debug "  avg_molar_mass: #{avg_molar_mass} kg/mol"
+    Rails.logger.debug "  density: #{density} kg/m³"
+    Rails.logger.debug "  total_mass: #{total_mass} kg"
+    
+    total_mass
+  end
+
+  def get_celestial_atmosphere_data
+    # Try different ways to get celestial body based on container type
+    celestial_body = case container
+    when responds_to?(:location)
+      # For structures: container.location.celestial_body
+      container.location&.celestial_body
+    when responds_to?(:celestial_body)
+      # For planetary atmospheres: container.celestial_body (direct)
+      container.celestial_body
+    when responds_to?(:current_location)
+      # For craft: container.current_location.celestial_body
+      container.current_location&.celestial_body
+    else
+      # Try location as fallback
+      container.try(:location)&.celestial_body
+    end
+    
+    if celestial_body&.atmosphere
+      # Use planetary atmosphere data
+      {
+        temperature: celestial_body.atmosphere.temperature || 273.15, # 0°C in Kelvin if missing
+        pressure: celestial_body.atmosphere.pressure || 0.0,          # Vacuum if missing (in kPa)
+        composition: celestial_body.atmosphere.composition || {}      # Empty if missing
+      }
+    else
+      # Fallback defaults (space/vacuum conditions)
+      {
+        temperature: 273.15,  # 0°C in Kelvin (reasonable default)
+        pressure: 0.0,        # Vacuum (kPa)
+        composition: {}       # No gases
+      }
+    end
+  end
+
+  def habitable?
+    return false unless sealed? if respond_to?(:sealed?)  # ❌ This fails for planetary atmospheres
+    return false if pressure < 60.0   # Minimum pressure for human survival (kPa)
+    return false if o2_percentage < 16.0
+    return false if co2_percentage > 0.5
+    return false if temperature < 273.15 || temperature > 313.15  # 0°C to 40°C
+    true
+  end
+
+  def pressure_in_atm
+    (pressure || 0) / 101.325  # Convert kPa to atmospheres
+  end
+
+  def temperature_in_celsius
+    (temperature || 0) - 273.15
+  end
+
+  def sealed?
+    # Default implementation - override in specific atmosphere types
+    sealing_status if respond_to?(:sealing_status)
+  end  
+
+  def pressure_in_psi
+    (pressure || 0) * 0.145038  # Convert kPa to PSI
+  end
+
+  def pressure_in_mmhg
+    (pressure || 0) * 7.50062   # Convert kPa to mmHg
+  end
+
+  def temperature_in_fahrenheit
+    ((temperature || 0) - 273.15) * 9/5 + 32
+  end
+
+
+  def recalculate_gas_percentages
+    # Don't recalculate if there are no gases
+    return if gases.empty?
+    
+    # Get total atmosphere mass
+    total_atmospheric_mass = gases.sum(:mass)
+    
+    # Update percentages for each gas
+    gases.each do |gas|
+      # Calculate percentage based on mass
+      percentage = total_atmospheric_mass > 0 ? 
+                   (gas.mass / total_atmospheric_mass) * 100 : 0
+      
+      # Ensure percentage is valid (between 0 and 100)
+      percentage = percentage.clamp(0, 100)
+      
+      # Calculate PPM from percentage (1% = 10,000 ppm)
+      ppm = percentage * 10_000
+      
+      # Update the gas record with both percentage and PPM
+      gas.update!(
+        percentage: percentage,
+        ppm: ppm
+      )
+    end
+  end  
 
   private
 
@@ -275,33 +444,6 @@ module AtmosphereConcern
       material&.destroy
     end
     gases.destroy_all
-  end
-
-  def recalculate_gas_percentages
-    # Don't recalculate if there are no gases
-    return if gases.empty?
-    
-    # Get total atmosphere mass
-    total_atmospheric_mass = gases.sum(:mass)
-    
-    # Update percentages for each gas
-    gases.each do |gas|
-      # Calculate percentage based on mass
-      percentage = total_atmospheric_mass > 0 ? 
-                   (gas.mass / total_atmospheric_mass) * 100 : 0
-      
-      # Ensure percentage is valid (between 0 and 100)
-      percentage = percentage.clamp(0, 100)
-      
-      # Calculate PPM from percentage (1% = 10,000 ppm)
-      ppm = percentage * 10_000
-      
-      # Update the gas record with both percentage and PPM
-      gas.update!(
-        percentage: percentage,
-        ppm: ppm
-      )
-    end
   end
 
   def trigger_simulation
