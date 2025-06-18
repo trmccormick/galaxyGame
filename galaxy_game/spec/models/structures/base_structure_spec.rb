@@ -7,58 +7,10 @@ RSpec.describe Structures::BaseStructure, type: :model do
   
   # Define a minimal structure directly in the test
   let(:structure) do
-    # Create without callbacks to avoid automatic unit building
-    structure = build(:base_structure, 
-      name: "Test Nuclear Facility",
-      structure_name: "nuclear_fuel_reprocessing_facility",
-      structure_type: "resource_processing",
+    create(:base_structure, :test_nuclear_facility,
       settlement: settlement,
       owner: player
     )
-    
-    # Set operational data directly
-    structure.operational_data = {
-      "template" => "structure_operational_data",
-      "id" => "nuclear_fuel_reprocessing_facility",
-      "name" => "Nuclear Fuel Reprocessing Facility",
-      "category" => "structure",
-      "subcategory" => "resource_processing",
-      "operational_status" => { "status" => "offline", "condition" => 100, "degradation_rate" => 0.05 },
-      "resource_management" => {
-        "consumables" => {
-          "energy_kwh" => {"rate" => 2500.0, "current_usage" => 0},
-          "uranium_ore_kg" => {"rate" => 100.0, "current_usage" => 0}
-        },
-        "generated" => {
-          "liquid_uranium_fuel_kg" => {"rate" => 10.0, "current_output" => 0}
-        }
-      },
-      "systems" => {
-        "uranium_enrichment" => {"status" => "not_installed", "efficiency_percent" => 0},
-        "fuel_liquefaction" => {"status" => "not_installed", "efficiency_percent" => 0},
-        "power_distribution" => {"status" => "offline", "efficiency_percent" => 0}
-      },
-      "unit_slots" => [
-        {"type" => "production/refineries", "count" => 4},
-        {"type" => "energy", "count" => 2},
-        {"type" => "computers", "count" => 1}
-      ],
-      "module_slots" => [
-        {"type" => "power", "count" => 1},
-        {"type" => "computer", "count" => 1}
-      ],
-      "operational_modes" => {
-        "current_mode" => "standby",
-        "available_modes" => [
-          {"name" => "standby", "power_draw" => 250.0, "staff_required" => 2},
-          {"name" => "production", "power_draw" => 2500.0, "staff_required" => 10}
-        ]
-      }
-    }
-    
-    # Save and return
-    structure.save!
-    structure
   end
 
   # Set up common mocks
@@ -359,17 +311,17 @@ RSpec.describe Structures::BaseStructure, type: :model do
     end
     
     it "supports adding and removing module effects via HasModules concern" do
-      # Set initial efficiency
-      structure.operational_data["systems"]["power_distribution"]["efficiency_percent"] = 80
+      # ✅ FIX: Use connection_systems instead of systems
+      structure.operational_data["connection_systems"]["power_distribution"]["efficiency"] = 80
       structure.save!
       
       # Verify module effect is applied
       expect(structure.add_module_effect(efficiency_module)).to be true
-      expect(structure.operational_data["systems"]["power_distribution"]["efficiency_percent"]).to be > 80
+      expect(structure.operational_data["connection_systems"]["power_distribution"]["efficiency"]).to be > 80
       
       # Verify module effect is removed
       expect(structure.remove_module_effect(efficiency_module)).to be true
-      expect(structure.operational_data["systems"]["power_distribution"]["efficiency_percent"]).to eq(80)
+      expect(structure.operational_data["connection_systems"]["power_distribution"]["efficiency"]).to eq(80)
     end
   end
 end
