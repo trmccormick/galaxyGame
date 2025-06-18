@@ -13,7 +13,7 @@ module Structures
     include GameConstants
     include HasUnitStorage
     include HasExternalConnections
-    include EnergyManagement  # Add this line to include the concern
+    include EnergyManagement
 
     belongs_to :settlement, class_name: 'Settlement::BaseSettlement', optional: true
     belongs_to :owner, polymorphic: true
@@ -22,9 +22,12 @@ module Structures
     has_many :contained_structures, class_name: 'Structures::BaseStructure', foreign_key: 'container_structure_id'
 
     has_many :modules, as: :attachable, class_name: 'Modules::BaseModule', dependent: :destroy
-    has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
+    has_many :units, class_name: 'Units::BaseUnit', as: :attachable
     has_many :rigs, as: :attachable, class_name: 'Rigs::BaseRig', dependent: :destroy
 
+    # ✅ CHANGE: Atmosphere association updated
+    has_one :atmosphere, foreign_key: :structure_id, dependent: :destroy
+    
     validates :name, presence: true, uniqueness: true
     validates :structure_name, :structure_type, presence: true
     validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
@@ -33,6 +36,8 @@ module Structures
     before_validation :load_structure_info
     after_create :create_inventory
     after_create :build_structure_shell # Only build empty shell initially
+    # ✅ Add callback to create atmosphere after structure creation
+    after_create :initialize_atmosphere, if: :needs_atmosphere?
 
     # Core functionality methods
     def input_resources
@@ -91,13 +96,15 @@ module Structures
 
     # System operational status
     def system_status(system_name)
-      operational_data&.dig('systems', system_name, 'status')
+      # ✅ FIX: Use connection_systems instead of systems
+      operational_data&.dig('connection_systems', system_name, 'status')
     end
 
     def set_system_status(system_name, status)
-      return false unless operational_data&.dig('systems', system_name)
+      # ✅ FIX: Use connection_systems instead of systems
+      return false unless operational_data&.dig('connection_systems', system_name)
       
-      operational_data['systems'][system_name]['status'] = status
+      operational_data['connection_systems'][system_name]['status'] = status
       save
     end
 
@@ -120,7 +127,7 @@ module Structures
     # Unit and module slot management
     def unit_slots
       unit_slots = {}
-      operational_data&.dig('unit_slots')&.each do |slot|
+      operational_data&.dig('container_capacity', 'unit_slots')&.each do |slot|
         unit_slots[slot['type']] = slot['count']
       end
       unit_slots
@@ -128,8 +135,8 @@ module Structures
 
     def module_slots
       module_slots = {}
-      operational_data&.dig('module_slots')&.each do |slot|
-        module_slots[slot['type']] = slot['count']  # Add missing closing bracket
+      operational_data&.dig('container_capacity', 'module_slots')&.each do |slot|
+        module_slots[slot['type']] = slot['count']
       end
       module_slots
     end
@@ -273,6 +280,7 @@ module Structures
     end
 
     # Constants for unit categories
+    POWER_UNIT_TYPES = ['power_generator', 'solar_panel', 'nuclear_reactor', 'fuel_cell'].freeze
     CONTROL_UNIT_TYPES = ['control_computer', 'facility_controller'].freeze
 
     private
@@ -280,27 +288,28 @@ module Structures
     # Add these private helper methods at the end of the private section
     
     def apply_efficiency_boost(system_name, boost_value)
-      return unless operational_data&.dig('systems', system_name)
+      # ✅ FIX: Use connection_systems instead of systems
+      return unless operational_data&.dig('connection_systems', system_name)
       
       # Get the current efficiency value
-      current_efficiency = operational_data['systems'][system_name]['efficiency_percent'] || 0
+      current_efficiency = operational_data['connection_systems'][system_name]['efficiency'] || 0
       
-      # Important: Store the original value BEFORE applying the boost
-      # Only store it if it hasn't been stored yet (first application)
-      operational_data['systems'][system_name]['original_efficiency'] = current_efficiency unless operational_data['systems'][system_name].key?('original_efficiency')
+      # Store the original value BEFORE applying the boost
+      operational_data['connection_systems'][system_name]['original_efficiency'] = current_efficiency unless operational_data['connection_systems'][system_name].key?('original_efficiency')
       
       # Then apply the boost
-      operational_data['systems'][system_name]['efficiency_percent'] = current_efficiency + boost_value
+      operational_data['connection_systems'][system_name]['efficiency'] = current_efficiency + boost_value
     end
     
     def remove_efficiency_boost(system_name, boost_value)
-      return unless operational_data&.dig('systems', system_name)
+      # ✅ FIX: Use connection_systems instead of systems
+      return unless operational_data&.dig('connection_systems', system_name)
       
-      original_efficiency = operational_data['systems'][system_name]['original_efficiency'] || 0
-      operational_data['systems'][system_name]['efficiency_percent'] = original_efficiency
+      original_efficiency = operational_data['connection_systems'][system_name]['original_efficiency'] || 0
+      operational_data['connection_systems'][system_name]['efficiency'] = original_efficiency
       
       # Clean up tracking
-      operational_data['systems'][system_name].delete('original_efficiency')
+      operational_data['connection_systems'][system_name].delete('original_efficiency')
     end
     
     def apply_power_consumption_reduction(reduction_percent)
@@ -396,27 +405,29 @@ module Structures
     end
     
     def apply_system_upgrade(system_name, properties)
-      return unless operational_data&.dig('systems', system_name)
+      # ✅ FIX: Use connection_systems instead of systems
+      return unless operational_data&.dig('connection_systems', system_name)
       
       # Store original properties for later restoration
-      operational_data['systems'][system_name]['original_properties'] ||= 
-        operational_data['systems'][system_name].except('original_properties').deep_dup
+      operational_data['connection_systems'][system_name]['original_properties'] ||= 
+        operational_data['connection_systems'][system_name].except('original_properties').deep_dup
       
       # Apply each property upgrade
       properties.each do |property, value|
-        operational_data['systems'][system_name][property] = value if property != 'original_properties'
+        operational_data['connection_systems'][system_name][property] = value if property != 'original_properties'
       end
     end
     
     def remove_system_upgrade(system_name, properties)
-      return unless operational_data&.dig('systems', system_name, 'original_properties')
+      # ✅ FIX: Use connection_systems instead of systems
+      return unless operational_data&.dig('connection_systems', system_name, 'original_properties')
       
       # Restore original properties
-      original = operational_data['systems'][system_name]['original_properties']
-      operational_data['systems'][system_name] = original.deep_dup
+      original = operational_data['connection_systems'][system_name]['original_properties']
+      operational_data['connection_systems'][system_name] = original.deep_dup
       
       # Clean up tracking
-      operational_data['systems'][system_name].delete('original_properties')
+      operational_data['connection_systems'][system_name].delete('original_properties')
     end
 
     private
@@ -483,6 +494,193 @@ module Structures
       end
       
       save
+    end
+
+    # ✅ Delegate atmospheric methods (all structures get these)
+    delegate :pressure, :temperature, :gases, :add_gas, :remove_gas, :habitable?,
+             :sealed?, :seal!, :o2_percentage, :co2_percentage,
+             to: :atmosphere, allow_nil: true
+    
+    private
+
+    def initialize_atmosphere
+      return if atmosphere.present? # Don't create if already exists
+      
+      # Get basic atmospheric data
+      atmospheric_data = get_location_atmosphere_data
+      
+      # Create atmosphere with minimal required fields
+      create_atmosphere!(
+        environment_type: atmosphere_type,
+        temperature: atmospheric_data[:temperature] || 273.15,
+        pressure: atmospheric_data[:pressure] || 0.0,
+        composition: atmospheric_data[:composition] || {},
+        sealing_status: default_sealing_status,
+        total_atmospheric_mass: calculate_basic_atmospheric_mass(atmospheric_data)
+      )
+    rescue => e
+      Rails.logger.error "Failed to create atmosphere for structure #{id}: #{e.message}"
+      # Don't let atmosphere creation failure break structure creation
+    end
+
+    def calculate_basic_atmospheric_mass(atmospheric_data)
+      # Simple calculation for testing
+      pressure = atmospheric_data[:pressure] || 0.0
+      temperature = atmospheric_data[:temperature] || 273.15
+      structure_volume = volume
+      
+      return 0 if pressure <= 0 || temperature <= 0 || structure_volume <= 0
+      
+      # Basic approximation: 1.225 kg/m³ at sea level
+      density_factor = (pressure / 101.325) * (273.15 / temperature)
+      structure_volume * 1.225 * density_factor
+    end
+
+    # Structure-specific overrides
+    def default_temperature
+      nil # Will use celestial body temperature
+    end
+
+    def default_pressure  
+      nil # Will use celestial body pressure
+    end
+
+    private
+
+    def get_location_atmosphere_data
+      # Get atmosphere from the celestial body where this structure is located
+      if location&.respond_to?(:atmosphere)
+        planetary_atm = location.atmosphere
+        {
+          temperature: planetary_atm.temperature || 273.15,
+          pressure: planetary_atm.pressure || 0.0,
+          composition: planetary_atm.composition || {}
+        }
+      elsif owner&.respond_to?(:current_celestial_body) 
+        # Fallback: get from owner's location
+        celestial_body = owner.current_celestial_body
+        if celestial_body&.atmosphere
+          {
+            temperature: celestial_body.atmosphere.temperature || 273.15,
+            pressure: celestial_body.atmosphere.pressure || 0.0,
+            composition: celestial_body.atmosphere.composition || {}
+          }
+        else
+          # Default space conditions
+          { temperature: 2.7, pressure: 0.0, composition: {} }
+        end
+      else
+        # Default space conditions if no location found
+        { temperature: 2.7, pressure: 0.0, composition: {} }
+      end
+    end
+
+    def calculate_initial_atmospheric_mass(celestial_atmosphere)
+      return 0 unless respond_to?(:volume)
+      
+      structure_volume = volume || 0
+      return 0 if structure_volume <= 0
+      
+      # Calculate mass based on volume and atmospheric conditions
+      pressure_pa = celestial_atmosphere[:pressure] * 1000  # Convert kPa to Pa
+      temperature_k = celestial_atmosphere[:temperature]
+      
+      # Ideal gas law: PV = nRT, so n = PV/RT
+      # Mass = n * molar_mass (approximating air as 29 g/mol)
+      gas_constant = 8.314  # J/(mol·K)
+      molar_mass = 0.029    # kg/mol (approximate for air)
+      
+      if pressure_pa > 0 && temperature_k > 0
+        moles = (pressure_pa * structure_volume) / (gas_constant * temperature_k)
+        moles * molar_mass
+      else
+        0
+      end
+    end
+
+    # Add this method to BaseStructure:
+    def volume
+      # Calculate volume based on structure type and operational data
+      if operational_data&.dig('physical_properties', 'volume')
+        operational_data['physical_properties']['volume']
+      elsif operational_data&.dig('dimensions')
+        # Calculate from dimensions if available
+        dims = operational_data['dimensions']
+        (dims['length'] || 10) * (dims['width'] || 10) * (dims['height'] || 3)
+      else
+        # Default volume based on structure type
+        case structure_type
+        when 'habitat', 'laboratory', 'workshop'
+          1000 # 1000 m³ default
+        when 'storage', 'warehouse'
+          2000 # 2000 m³ default
+        when 'small_facility'
+          500  # 500 m³ default
+        else
+          100  # 100 m³ default
+        end
+      end
+    end
+
+    def needs_atmosphere?
+      # Determine if this structure type needs an atmosphere
+      case structure_type
+      when 'habitat', 'laboratory', 'workshop', 'greenhouse', 'medical_facility'
+        true  # Living/working spaces need atmosphere
+      when 'storage', 'power_station', 'mining_facility', 'landing_pad'
+        false # Industrial/outdoor facilities don't need atmosphere
+      else
+        false # Default to false for unknown types
+      end
+    end
+
+    def atmospheric_capabilities
+      capabilities = {
+        co2_to_o2: false,
+        co2_scrubbing: false,
+        air_filtration: false,
+        oxygen_production: false
+      }
+      
+      # ✅ Check units for atmospheric capabilities
+      base_units.each do |unit|
+        if unit.respond_to?(:atmospheric_capabilities)
+          unit_caps = unit.atmospheric_capabilities
+          capabilities.merge!(unit_caps) { |key, old_val, new_val| old_val || new_val }
+        end
+      end
+      
+      # ✅ Check modules for atmospheric capabilities  
+      base_modules.each do |module_obj|
+        if module_obj.respond_to?(:atmospheric_capabilities)
+          module_caps = module_obj.atmospheric_capabilities
+          capabilities.merge!(module_caps) { |key, old_val, new_val| old_val || new_val }
+        end
+      end
+      
+      capabilities
+    end
+    
+    def process_atmosphere!(processing_type, target_parameters = {})
+      # ✅ Try units first
+      atmospheric_units = base_units.select { |unit| 
+        unit.respond_to?(:can_process_atmosphere?) && unit.can_process_atmosphere? 
+      }
+      
+      units_success = atmospheric_units.any? do |unit|
+        unit.process_atmosphere!(processing_type, target_parameters)
+      end
+      
+      # ✅ Try modules if units didn't handle it
+      atmospheric_modules = base_modules.select { |mod| 
+        mod.respond_to?(:can_process_atmosphere?) && mod.can_process_atmosphere? 
+      }
+      
+      modules_success = atmospheric_modules.any? do |mod|
+        mod.process_atmosphere!(processing_type, target_parameters)
+      end
+      
+      units_success || modules_success
     end
   end
 end
