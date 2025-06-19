@@ -7,6 +7,8 @@ module Craft
     include GameConstants
     include HasUnitStorage
     include HasExternalConnections
+    include EnergyManagement
+    include AtmosphericProcessing
 
     belongs_to :player, optional: true # if the player is controlling the craft directly
     belongs_to :owner, polymorphic: true
@@ -34,6 +36,14 @@ module Craft
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
     has_many :rigs, as: :attachable, class_name: 'Rigs::BaseRig', dependent: :destroy
 
+    # ✅ Add atmosphere for life support
+    has_one :atmosphere, foreign_key: :craft_id, dependent: :destroy
+
+    # ✅ Delegate atmospheric methods
+    delegate :pressure, :temperature, :gases, :add_gas, :remove_gas, :habitable?,
+             :sealed?, :seal!, :o2_percentage, :co2_percentage,
+             to: :atmosphere, allow_nil: true
+
     validates :name, presence: true, uniqueness: true
     validates :craft_name, :craft_type, presence: true
     validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
@@ -43,9 +53,126 @@ module Craft
     after_save :reload_associations, if: :saved_change_to_docked_at_id?
     after_create :build_units_and_modules
     after_create :create_inventory
+    after_create :initialize_atmosphere
+    
+    def initialize_atmosphere
+      # Craft inherit atmosphere from where they were built
+      inherited_atmosphere = get_construction_atmosphere_data
+  
+      create_atmosphere!(
+        environment_type: 'artificial',
+        temperature: inherited_atmosphere[:temperature],
+        pressure: inherited_atmosphere[:pressure],
+        composition: inherited_atmosphere[:composition].dup,
+        sealing_status: true,  # Craft are always sealed
+        total_atmospheric_mass: calculate_atmospheric_mass_for_craft(inherited_atmosphere),
+        base_values: {
+          'original_pressure' => inherited_atmosphere[:pressure],
+          'original_temperature' => inherited_atmosphere[:temperature], 
+          'source' => inherited_atmosphere[:source]
+        }
+      )
+    end
 
-    def power_usage
-      operational_data&.dig('consumables', 'energy') || 0
+    def needs_atmosphere?
+      # Determine if this craft type needs an atmosphere
+      case craft_type
+      when 'habitat_ship', 'passenger_transport', 'medical_ship', 'research_vessel'
+        true  # Crewed vessels need atmosphere
+      when 'cargo_ship', 'mining_drone', 'probe', 'satellite'
+        false # Unmanned or cargo vessels don't need atmosphere
+      else
+        false # Default to false for unknown types
+      end
+    end
+    
+    def get_construction_atmosphere_data
+      # Priority order for atmosphere inheritance:
+      # 1. Built in a structure (factory/hangar) -> inherit structure atmosphere
+      # 2. Built by player in space -> inherit current location atmosphere  
+      # 3. Built on planetary surface -> inherit planetary atmosphere
+      # 4. Default -> Earth-like conditions
+  
+      if docked_at&.respond_to?(:atmosphere) && docked_at.atmosphere
+        # Built in a hangar or factory
+        factory_atm = docked_at.atmosphere
+        {
+          temperature: factory_atm.temperature,
+          pressure: factory_atm.pressure,
+          composition: factory_atm.composition || default_craft_composition,
+          source: 'factory_inheritance'
+        }
+      elsif owner&.respond_to?(:current_location) && owner.current_location
+        # Built at player's current location
+        get_location_based_atmosphere
+      elsif location&.respond_to?(:atmosphere)
+        # Built at specific celestial location
+        celestial_atm = location.atmosphere
+        {
+          temperature: celestial_atm.temperature || 293.15,
+          pressure: celestial_atm.pressure || 101.325,
+          composition: celestial_atm.composition || default_craft_composition,
+          source: 'planetary_inheritance'
+        }
+      else
+        # Default: Earth-like factory conditions
+        {
+          temperature: 293.15,  # 20°C
+          pressure: 101.325,    # 1 atm
+          composition: default_craft_composition,
+          source: 'default_factory'
+        }
+      end
+    end
+
+    def get_location_based_atmosphere
+      # Try to determine atmosphere based on owner's location
+      if owner.respond_to?(:current_celestial_body) && owner.current_celestial_body&.atmosphere
+        planetary_atm = owner.current_celestial_body.atmosphere
+        {
+          temperature: planetary_atm.temperature,
+          pressure: planetary_atm.pressure,
+          composition: planetary_atm.composition || default_craft_composition,
+          source: 'location_inheritance'
+        }
+      else
+        # Space construction - use life support defaults
+        {
+          temperature: 293.15,
+          pressure: 101.325,
+          composition: default_craft_composition,
+          source: 'space_construction'
+        }
+      end
+    end
+
+    def default_craft_composition
+      # Earth-like atmosphere suitable for human crew
+      {
+        "N2" => 78.0,
+        "O2" => 21.0,
+        "Ar" => 0.9,
+        "CO2" => 0.04
+      }
+    end
+
+    def calculate_atmospheric_mass_for_craft(inherited_atmosphere)
+      crew_capacity = operational_data&.dig('crew_capacity') || 1
+      volume_estimate = crew_capacity * 50  # 50 m³ per crew member estimate
+  
+      pressure_pa = inherited_atmosphere[:pressure] * 1000  # Convert kPa to Pa
+      temperature_k = inherited_atmosphere[:temperature]
+  
+      # Same ideal gas calculation as structures
+      gas_constant = 8.314  # J/(mol·K)
+      molar_mass = 0.029    # kg/mol
+  
+      if pressure_pa > 0 && temperature_k > 0 && volume_estimate > 0
+        moles = (pressure_pa * volume_estimate) / (gas_constant * temperature_k)
+        moles * molar_mass
+      else
+        crew_capacity * 1.2  # Fallback: ~1.2 kg of air per crew member
+      end
     end
 
     def input_resources
@@ -65,14 +192,6 @@ module Craft
     def deploy(location)
       raise 'Invalid deployment location' unless valid_deployment_location?(location)
       update!(current_location: location, deployed: true)
-    end
-
-    def add_module_effect(mod)
-      # Implement the logic to add the module's effect to the craft
-    end
-
-    def remove_module_effect(mod)
-      # Implement the logic to remove the module's effect from the craft
     end
 
     def build_recommended_units
@@ -152,13 +271,6 @@ module Craft
       return true if location == 'starship' # Special case for testing
       
       craft_info&.dig('deployment', 'deployment_locations')&.include?(location) || false
-    end
-
-    def build_units_and_modules
-      Rails.logger.debug "Delegating unit/module building to UnitModuleAssemblyService for #{craft_name} (#{id})"
-      
-      # Use the new service
-      UnitModuleAssemblyService.new(self).build_units_and_modules
     end
 
     def operational?
@@ -337,7 +449,7 @@ module Craft
     end
 
     # Constants for unit categories - using only existing unit types
-    POWER_UNIT_TYPES = ['solar_panel'].freeze
+    POWER_UNIT_TYPES = EnergyManagement::POWER_UNIT_TYPES
     NAVIGATION_UNIT_TYPES = ['raptor_engine'].freeze  # Using engines for navigation as a simplification
     CONTROL_UNIT_TYPES = ['life_support'].freeze      # Using life support as control for now
 
@@ -359,16 +471,7 @@ module Craft
       return false unless has_minimum_required_units?
       
       # Make sure we have enough power for all systems
-      total_power_required = base_units.sum { |unit| unit.operational_data&.dig('power_required').to_f }
-      total_power_available = base_units.where(unit_type: POWER_UNIT_TYPES).sum { |unit| unit.operational_data&.dig('power_output').to_f }
-      
-      has_sufficient_power = total_power_available >= total_power_required
-      
-      # Check CPU/control capacity if you have such a mechanic
-      # has_sufficient_cpu = ...
-      
-      # Return final operational status
-      has_minimum_required_units? && has_sufficient_power # && has_sufficient_cpu
+      has_minimum_required_units? && has_sufficient_power?
     end
 
     def load_variant_configuration(variant_id = nil)
@@ -402,6 +505,13 @@ module Craft
     def available_variants
       Craft::VariantManager.new(craft_type).available_variants
     end
+
+    def build_units_and_modules
+      Rails.logger.debug "Delegating unit/module building to UnitModuleAssemblyService for #{craft_name} (#{id})"
+      
+      # Use the new service
+      UnitModuleAssemblyService.new(self).build_units_and_modules
+    end    
 
     private
 
