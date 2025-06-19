@@ -1,100 +1,216 @@
+require 'yaml'
+require 'json'
+require 'pathname'
+
 module Lookup
   class UnitLookupService < BaseLookupService
+    # ✅ FIX: Use GalaxyGame::Paths like MaterialLookupService
+    def self.base_units_path
+      Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "operational_data", "units")
+    end
+    
+    # ✅ FIX: Use UNIT_PATHS configuration like MATERIAL_PATHS
     UNIT_PATHS = {
-      'computer' => Rails.root.join('app', 'data', 'units', 'computer'),
-      'droid' => Rails.root.join('app', 'data', 'units', 'droid'),
-      'energy' => Rails.root.join('app', 'data', 'units', 'energy'),
-      'housing' => Rails.root.join('app', 'data', 'units', 'housing'),
-      'life_support' => Rails.root.join('app', 'data', 'units', 'life_support'),
-      'production' => Rails.root.join('app', 'data', 'units', 'production'),
-      'propulsion' => Rails.root.join('app', 'data', 'units', 'propulsion'),
-      'storage' => Rails.root.join('app', 'data', 'units', 'storage'),
-      'structure' => Rails.root.join('app', 'data', 'units', 'structure'), # New folder
-      'various' => Rails.root.join('app', 'data', 'units', 'various')
-    }.freeze
+      computer: {
+        path: -> { base_units_path.join("computer") },
+        recursive_scan: true
+      },
+      droid: {
+        path: -> { base_units_path.join("droid") },
+        recursive_scan: true
+      },
+      energy: {
+        path: -> { base_units_path.join("energy") },
+        recursive_scan: true
+      },
+      habitat: {
+        path: -> { base_units_path.join("habitat") },
+        recursive_scan: true
+      },
+      life_support: {
+        path: -> { base_units_path.join("life_support") },
+        recursive_scan: true
+      },
+      processing: {
+        path: -> { base_units_path.join("processing") },
+        recursive_scan: true
+      },
+      production: {
+        path: -> { base_units_path.join("production") },
+        recursive_scan: true
+      },
+      propulsion: {
+        path: -> { base_units_path.join("propulsion") },
+        recursive_scan: true
+      },
+      storage: {
+        path: -> { base_units_path.join("storage") },
+        recursive_scan: true
+      },
+      structure: {
+        path: -> { base_units_path.join("structure") },
+        recursive_scan: true
+      },
+      various: {
+        path: -> { base_units_path.join("various") },
+        recursive_scan: true
+      }
+    }
 
     def initialize
-      super
-      @units = load_units unless Rails.env.test?
-      @cache = {}
+      begin
+        @units = load_units
+      rescue StandardError => e
+        Rails.logger.error "Fatal error loading units: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        @units = []  # ✅ FIX: Initialize empty array instead of failing
+      end
     end
 
-    def find_unit(unit_id)
-      return @cache[unit_id] if @cache[unit_id]
-
-      Rails.logger.debug("Looking for unit: #{unit_id}")
+    def find_unit(unit_type)
+      Rails.logger.debug("Finding unit: #{unit_type}")
+      return nil unless unit_type.present?
       
-      # First try direct lookup
-      UNIT_PATHS.each do |category, path|
-        file_path = path.join("#{unit_id}_data.json")
-        Rails.logger.debug("Checking path: #{file_path}")
-        data = load_json_file(file_path)
-        if data
-          @cache[unit_id] = data
-          return data
-        end
-      end
-
-      # Then try finding by alias if direct lookup failed
-      UNIT_PATHS.each do |category, path|
-        Dir.glob(path.join("*_data.json")).each do |file_path|
-          data = load_json_file(file_path)
-          if data && data['aliases']&.include?(unit_id)
-            @cache[unit_id] = data
-            return data
-          end
-        end
-      end
-
+      query = unit_type.to_s.downcase
+      found = @units.find { |unit| match_unit?(unit, query) }
+      Rails.logger.debug "Unit lookup for '#{query}': #{found ? 'found' : 'not found'}"
+      found
+    rescue => e
+      Rails.logger.error "Error finding unit: #{e.message}"
       nil
     end
 
-    def units
-      return @units if @units
-
-      @units = {}
-      UNIT_PATHS.each do |category, path|
-        next unless Dir.exist?(path)
-
-        @units[category] = load_json_files(path)
+    def debug_paths
+      puts "DEBUG: Unit Lookup Paths"
+      UNIT_PATHS.each do |type, config|
+        path = config[:path].call
+        puts "#{type}: #{path} (exists: #{Dir.exist?(path)})"
       end
-      @units
     end
 
     private
 
-    def validate_directory_structure
-      Rails.logger.debug("Validating directory structure")
-      UNIT_PATHS.each do |category, path|
-        Rails.logger.debug("Checking path: #{path}")
-        raise "Missing directory: #{path}" unless Dir.exist?(path)
+    def load_units
+      units = []
+      
+      begin
+        UNIT_PATHS.each do |type, config|
+          if config.is_a?(Hash)
+            base_path = config[:path].call
+            Rails.logger.debug "Checking base path: #{base_path}"
+            
+            # Process direct files in this path if configured
+            if config[:direct_files] && File.directory?(base_path)
+              units.concat(load_json_files(base_path))
+            end
+            
+            # Process subfolders recursively if configured
+            if config[:recursive_scan] && File.directory?(base_path)
+              units.concat(load_json_files_recursively(base_path))
+            end
+          else
+            # Direct path
+            path = config.respond_to?(:call) ? config.call : config
+            Rails.logger.debug "Checking direct path: #{path}"
+            units.concat(load_json_files(path))
+          end
+        end
+      rescue => e
+        Rails.logger.error "Fatal error loading units: #{e.message}\n#{e.backtrace.join("\n")}"
+        return []
       end
-    end
 
-    def load_json_file(file_path)
-      return nil unless File.exist?(file_path)
-      Rails.logger.debug("Loading JSON from: #{file_path}")
-      data = JSON.parse(File.read(file_path))
-      Rails.logger.debug("Loaded data: #{data.inspect}")
-      data
-    rescue JSON::ParserError => e
-      Rails.logger.error("Error parsing JSON from #{file_path}: #{e.message}")
-      nil
-    rescue StandardError => e
-      Rails.logger.error("Error loading file #{file_path}: #{e.message}")
-      nil
+      Rails.logger.debug "Loaded #{units.size} units in total"
+      units
     end
 
     def load_json_files(path)
-      Dir.glob(File.join(path, "*.json")).map do |file|
-        load_json_file(file)
+      return [] unless File.directory?(path)
+
+      files = Dir.glob(File.join(path, "*.json"))
+      Rails.logger.debug "Found #{files.size} JSON files in #{path}"
+      
+      files.map do |file|
+        begin
+          data = JSON.parse(File.read(file))
+          Rails.logger.debug "Loaded unit from #{file}"
+          data
+        rescue JSON::ParserError => e
+          Rails.logger.error "Error parsing #{file}: #{e.message}"
+          nil
+        rescue StandardError => e
+          Rails.logger.error "Error loading #{file}: #{e.message}"
+          nil
+        end
       end.compact
     end
 
-    def load_units
-      UNIT_PATHS.flat_map do |category, path|
-        load_json_files(path)
+    def load_json_files_recursively(base_path)
+      return [] unless File.directory?(base_path)
+
+      files = Dir.glob(File.join(base_path, "**", "*.json"))
+      Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
+
+      files.map do |file|
+        begin
+          data = JSON.parse(File.read(file))
+          Rails.logger.debug "Loaded unit from #{file}"
+          data
+        rescue JSON::ParserError => e
+          Rails.logger.error "Error parsing #{file}: #{e.message}"
+          nil
+        rescue StandardError => e
+          Rails.logger.error "Error loading #{file}: #{e.message}"
+          nil
+        end
+      end.compact
+    end
+
+    def match_unit?(unit_data, query)
+      return false unless unit_data.is_a?(Hash)
+
+      query_normalized = query.to_s.downcase.strip
+
+      # ✅ PRIORITY 1: Exact unit_type match
+      if unit_data['unit_type']&.downcase == query_normalized
+        Rails.logger.debug "Matched by unit_type: #{unit_data['unit_type']} == #{query}"
+        return true
       end
+
+      # ✅ PRIORITY 2: Exact ID match
+      if unit_data['id']&.downcase == query_normalized
+        Rails.logger.debug "Matched by ID: #{unit_data['id']} == #{query}"
+        return true
+      end
+
+      # ✅ PRIORITY 3: Exact name match  
+      if unit_data['name']&.downcase == query_normalized
+        Rails.logger.debug "Matched by name: #{unit_data['name']} == #{query}"
+        return true
+      end
+
+      # ✅ PRIORITY 4: Alias match
+      if unit_data['aliases'].is_a?(Array)
+        aliases = unit_data['aliases'].map(&:downcase)
+        if aliases.include?(query_normalized)
+          Rails.logger.debug "Matched by alias: #{unit_data['aliases']} contains #{query}"
+          return true
+        end
+      end
+
+      # ✅ PRIORITY 5: Partial ID match (SAFE - only for long queries)
+      if query_normalized.length >= 3 && unit_data['id']&.downcase&.include?(query_normalized)
+        Rails.logger.debug "Matched by partial ID: #{unit_data['id']} contains #{query}"
+        return true
+      end
+
+      # ✅ PRIORITY 6: Partial name match (SAFE - only for long queries) 
+      if query_normalized.length >= 3 && unit_data['name']&.downcase&.include?(query_normalized)
+        Rails.logger.debug "Matched by partial name: #{unit_data['name']} contains #{query}"
+        return true
+      end
+
+      false
     end
   end
 end
