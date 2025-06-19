@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Craft::BaseCraft, type: :model do
-  let!(:celestial_body) { create(:celestial_body, :luna) }
+  # ✅ FIX: Use the large_moon factory with luna trait
+  let!(:celestial_body) { create(:large_moon, :luna) }
+  
   let!(:location) { 
     create(:celestial_location, 
            name: "Shackleton Crater Base", 
@@ -91,6 +93,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
     it { is_expected.to have_one(:spatial_location) }
     it { is_expected.to have_one(:celestial_location) }
     it { is_expected.to belong_to(:owner) }
+    it { should have_one(:atmosphere).with_foreign_key(:craft_id).dependent(:destroy) }
   end
 
   describe 'location handling' do
@@ -282,6 +285,16 @@ RSpec.describe Craft::BaseCraft, type: :model do
       expect(test_craft.load_variant_configuration('non_existent')).to be false
       # Original operational data should remain unchanged
       expect(test_craft.operational_data).not_to be_nil
+    end
+  end
+
+  describe "atmosphere creation" do
+    let(:craft) { create(:base_craft, craft_name: "Explorer", craft_type: "science") }
+    
+    it "creates an atmosphere after creation" do
+      expect(craft.atmosphere).to be_present
+      expect(craft.atmosphere.craft_id).to eq(craft.id)
+      expect(craft.atmosphere.environment_type).to eq('artificial')
     end
   end
 end
