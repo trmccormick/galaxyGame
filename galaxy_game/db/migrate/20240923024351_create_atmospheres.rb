@@ -2,6 +2,7 @@ class CreateAtmospheres < ActiveRecord::Migration[7.0]
   def change
     create_table :atmospheres do |t|
       t.references :celestial_body, null: false, foreign_key: true
+
       t.float :temperature, default: 0
       t.float :pressure, default: 0
       t.json :composition, default: {}
@@ -15,6 +16,9 @@ class CreateAtmospheres < ActiveRecord::Migration[7.0]
       t.json :gas_changes, default: {} # Track dynamic changes in composition (terraformed gases, etc.)
       t.float :dynamic_pressure, default: nil # Temporary adjustment for enclosed environments
       t.jsonb :base_values, default: {}, null: false  # Initial/reference values      
+      
+      # Add the temperature_data field for storing various temperature measurements
+      t.jsonb :temperature_data, default: {}, null: false  # Various temperature measurements
 
       t.timestamps
     end
