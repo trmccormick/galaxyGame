@@ -268,7 +268,7 @@ RSpec.describe Item, type: :model do
 
   describe 'regolith handling' do
     let!(:luna) do
-      FactoryBot.create(:celestial_body, :luna) # Explicitly use FactoryBot.create
+      FactoryBot.create(:large_moon, :luna) # Explicitly use FactoryBot.create
     end
 
     let(:regolith) { create(:item, :regolith) }

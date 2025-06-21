@@ -19,7 +19,7 @@ class Item < ApplicationRecord
   validates :durability, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   before_validation :set_item_attributes, on: :create
-  
+
   def degrade(amount)
     return if durability.nil?
     self.durability -= amount
@@ -266,7 +266,7 @@ class Item < ApplicationRecord
   end
 
   def set_item_attributes
-    self.material_type ||= properties&.dig('type') || material_properties['type']
+    self.material_type ||= properties&.dig('type') || material_properties['type'] || 'unknown'
     self.storage_method ||= properties.dig('storage', 'method') || :bulk_storage
   end
 
