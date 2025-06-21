@@ -6,6 +6,7 @@ module Settlement
     include CryptocurrencyMining
     include HasUnitStorage
     include EnergyManagement
+    include FinancialManagement
     
     belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
     belongs_to :owner, polymorphic: true, optional: true
@@ -62,7 +63,15 @@ module Settlement
     #   # Calculate area based on boundary locations
     #   return 0 unless boundary_locations.count >= 3
     #   # Use surveyor's formula or similar for area calculation
-    # end   
+    # end  
+    
+    def accessible_by?(player)
+      # Define access rules - owner always has access
+      return true if owner == player
+      
+      # Add other access rules (permissions, alliances, etc.)
+      false
+    end    
 
     def storage_capacity
       # For backward compatibility, only count liquid and gas
@@ -140,6 +149,40 @@ module Settlement
 
     def operational_data=(value)
       self[:operational_data] = value
+    end
+    
+    def construction_cost_percentage
+      # Handle nil operational_data case explicitly
+      return DEFAULT_CONSTRUCTION_PERCENTAGE if operational_data.nil?
+      
+      # Then continue with normal logic
+      operational_data.dig('manufacturing', 'construction_cost_percentage') || DEFAULT_CONSTRUCTION_PERCENTAGE
+    end
+    
+    def construction_cost_percentage=(value)
+      self.operational_data ||= {}
+      self.operational_data['manufacturing'] ||= {}
+      self.operational_data['manufacturing']['construction_cost_percentage'] = value.to_f
+    end
+    
+    def calculate_construction_cost(purchase_cost)
+      # Handle nil or invalid input
+      return 0.0 if purchase_cost.nil?
+      
+      # Convert to float if string or other numeric type
+      purchase_cost = purchase_cost.to_f
+      
+      # Calculate and round to 2 decimal places
+      (purchase_cost * construction_cost_percentage / 100.0).round(2)
+    end
+    
+    # Optional: Add other manufacturing settings
+    def manufacturing_efficiency
+      operational_data.dig('manufacturing', 'efficiency_bonus') || 1.0
+    end
+    
+    def required_equipment_check_enabled?
+      operational_data.dig('manufacturing', 'check_equipment') != false  # Default true
     end
     
     private
