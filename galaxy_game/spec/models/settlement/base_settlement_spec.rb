@@ -2,15 +2,22 @@ require 'rails_helper'
 
 RSpec.describe Settlement::BaseSettlement, type: :model do
   let(:player) { create(:player) }
-  let(:celestial_body) { create(:celestial_body, :luna) }
-  let(:shackleton_crater) { create(:celestial_location, celestial_body: celestial_body) }
+  
+  let!(:celestial_body) { create(:large_moon, :luna) }
+  let(:location) { 
+    create(:celestial_location, 
+           name: "Test Location", 
+           coordinates: "0.00°N 0.00°E",
+           celestial_body: celestial_body) 
+  }
+  
   let(:base_settlement) do
-    create(:base_settlement,
+    create(:base_settlement, :independent,
            name: "Test Base",
            settlement_type: :base,
            current_population: 1,
            owner: player,
-           location: shackleton_crater)
+           location: location)
   end
 
   describe 'validations' do
@@ -20,7 +27,7 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
 
     it 'is not valid without a name' do
       base_settlement.name = nil
-      expect(base_settlement).not_to be_valid  # Fix: not_to instead of not.to
+      expect(base_settlement).not_to be_valid
     end
 
     it 'is not valid with a negative current population' do
@@ -36,11 +43,10 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
 
   describe 'associations' do
     let(:docked_craft) do
-      create(:base_craft,
-             name: "Test Craft",
-             craft_type: "transport", # Changed from "spaceships" to "transport"
-             owner: player,
-             current_location: base_settlement)
+      craft = create(:base_craft, owner: player)
+      craft.celestial_location = location
+      craft.save!
+      craft
     end
 
     let(:storage_unit) do
@@ -78,7 +84,7 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
   end
 
   describe 'storage capacity' do
-    let(:base_settlement) { create(:base_settlement) } # Create without default storage units
+    let(:base_settlement) { create(:base_settlement, :independent, owner: player, location: location) }
 
     before(:each) do
       base_settlement.base_units.destroy_all # Clear any existing units
@@ -110,10 +116,6 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
     end
 
     it 'calculates storage capacity by type' do
-      puts "Debug: Base units count: #{base_settlement.base_units.count}"
-      puts "Debug: Storage unit data: #{@storage_unit.operational_data.inspect}"
-      puts "Debug: Housing unit data: #{@housing_unit.operational_data.inspect}"
-      
       capacities = base_settlement.storage_capacity_by_type
       expect(capacities[:liquid]).to eq(250000)
       expect(capacities[:gas]).to eq(200000)
@@ -156,7 +158,7 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
   end
 
   describe 'operational_data' do
-    let(:base_settlement) { create(:base_settlement) }
+    let(:base_settlement) { create(:base_settlement, :independent, owner: player, location: location) }
     
     it 'can store and retrieve operational data' do
       # Set operational data
@@ -178,16 +180,18 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
       expect(reloaded.operational_data['power_management']['current_usage']).to eq(2500)
     end
     
-    it 'provides default empty hash if operational_data is nil' do
-      # Create with empty hash and then test the getter still works with nil
+    it 'provides default empty hash if operational_data is nil in memory' do
+      # Create with empty hash
       settlement = Settlement::BaseSettlement.create!(
         name: 'Test Settlement',
         settlement_type: :base,
         current_population: 1,
-        operational_data: {}  # Change from nil to empty hash
+        location: location,
+        owner: player,
+        operational_data: {}
       )
       
-      # Force the attribute to nil to test the getter method (this won't save to DB)
+      # Force the attribute to nil in memory (not in database)
       settlement.instance_variable_set(:@operational_data, nil)
       
       # Should return empty hash, not nil
@@ -209,8 +213,301 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
       base_settlement.save!
       
       # Test power-related methods
-      expect(base_settlement.power_generation).to eq(5000.0)  # Changed from 4500
-      expect(base_settlement.power_usage).to eq(3000.0)  # Changed from 2800
+      expect(base_settlement.power_generation).to eq(5000.0)
+      expect(base_settlement.power_usage).to eq(3000.0)
+    end
+  end
+
+  describe 'construction cost management' do
+    let(:base_settlement) { create(:base_settlement, :independent, owner: player, location: location) }
+    
+    describe '#construction_cost_percentage' do
+      it 'returns default percentage when not set' do
+        expect(base_settlement.construction_cost_percentage).to eq(GameConstants::DEFAULT_CONSTRUCTION_PERCENTAGE)
+      end
+      
+      it 'returns custom percentage when set in operational_data' do
+        base_settlement.operational_data = {
+          'manufacturing' => {
+            'construction_cost_percentage' => 10.5
+          }
+        }
+        base_settlement.save!
+        
+        expect(base_settlement.construction_cost_percentage).to eq(10.5)
+      end
+      
+      it 'handles empty operational_data gracefully' do
+        base_settlement.update!(operational_data: {})
+        expect(base_settlement.construction_cost_percentage).to eq(GameConstants::DEFAULT_CONSTRUCTION_PERCENTAGE)
+      end
+      
+      it 'handles missing manufacturing section gracefully' do
+        base_settlement.operational_data = {
+          'power_management' => {
+            'grid_status' => 'online'
+          }
+        }
+        base_settlement.save!
+        
+        expect(base_settlement.construction_cost_percentage).to eq(GameConstants::DEFAULT_CONSTRUCTION_PERCENTAGE)
+      end
+      
+      it 'handles nil operational_data in memory gracefully' do
+        # First save with empty hash (database compatible)
+        base_settlement.update!(operational_data: {})
+        
+        # Then test the method's behavior with nil by stubbing the accessor
+        allow(base_settlement).to receive(:operational_data).and_return(nil)
+        
+        # Now test the method that should handle nil gracefully
+        expect(base_settlement.construction_cost_percentage).to eq(GameConstants::DEFAULT_CONSTRUCTION_PERCENTAGE)
+      end
+    end
+    
+    describe '#construction_cost_percentage=' do
+      it 'sets the construction cost percentage in operational_data' do
+        base_settlement.construction_cost_percentage = 15.0
+        base_settlement.save!
+        
+        reloaded = Settlement::BaseSettlement.find(base_settlement.id)
+        expect(reloaded.operational_data['manufacturing']['construction_cost_percentage']).to eq(15.0)
+      end
+      
+      it 'initializes operational_data manufacturing section if empty' do
+        base_settlement.update!(operational_data: {})
+        base_settlement.construction_cost_percentage = 8.5
+        base_settlement.save!
+        
+        expect(base_settlement.operational_data['manufacturing']['construction_cost_percentage']).to eq(8.5)
+      end
+      
+      it 'preserves existing operational_data when setting percentage' do
+        base_settlement.operational_data = {
+          'power_management' => {
+            'grid_status' => 'online',
+            'total_capacity' => 5000
+          }
+        }
+        base_settlement.save!
+        
+        base_settlement.construction_cost_percentage = 12.0
+        base_settlement.save!
+        
+        expect(base_settlement.operational_data['manufacturing']['construction_cost_percentage']).to eq(12.0)
+        expect(base_settlement.operational_data['power_management']['grid_status']).to eq('online')
+        expect(base_settlement.operational_data['power_management']['total_capacity']).to eq(5000)
+      end
+    end
+    
+    describe '#calculate_construction_cost' do
+      before do
+        base_settlement.construction_cost_percentage = 5.0  # 5%
+        base_settlement.save!
+      end
+      
+      it 'calculates construction cost as percentage of purchase cost' do
+        purchase_cost = 100_000
+        expected_cost = 5_000  # 5% of 100,000
+        
+        expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+      end
+      
+      it 'rounds to 2 decimal places' do
+        purchase_cost = 12_345
+        expected_cost = 617.25  # 5% of 12,345
+        
+        expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+      end
+      
+      it 'handles zero purchase cost' do
+        expect(base_settlement.calculate_construction_cost(0)).to eq(0.0)
+      end
+      
+      it 'uses different percentages correctly' do
+        base_settlement.construction_cost_percentage = 2.5
+        purchase_cost = 200_000
+        expected_cost = 5_000  # 2.5% of 200,000
+        
+        expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+      end
+      
+      it 'handles negative purchase costs' do
+        purchase_cost = -50_000
+        expected_cost = -2_500  # 5% of -50,000
+        
+        expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+      end
+      
+      it 'handles floating point purchase costs' do
+        purchase_cost = 12_345.67
+        expected_cost = 617.28  # 5% of 12,345.67 rounded to 2 decimal places
+        
+        expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+      end
+      
+      it 'handles string input by converting to float' do
+        purchase_cost = "50000"
+        expected_cost = 2_500.0  # 5% of 50,000
+        
+        expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+      end
+      
+      it 'handles nil input gracefully' do
+        expect(base_settlement.calculate_construction_cost(nil)).to eq(0.0)
+      end
+    end
+    
+    describe 'manufacturing settings' do
+      it 'supports manufacturing efficiency setting' do
+        base_settlement.operational_data = {
+          'manufacturing' => {
+            'efficiency_bonus' => 1.25
+          }
+        }
+        base_settlement.save!
+        
+        expect(base_settlement.manufacturing_efficiency).to eq(1.25)
+      end
+      
+      it 'defaults manufacturing efficiency to 1.0' do
+        expect(base_settlement.manufacturing_efficiency).to eq(1.0)
+      end
+      
+      it 'supports equipment check setting' do
+        base_settlement.operational_data = {
+          'manufacturing' => {
+            'check_equipment' => false
+          }
+        }
+        base_settlement.save!
+        
+        expect(base_settlement.required_equipment_check_enabled?).to be false
+      end
+      
+      it 'defaults equipment check to true' do
+        expect(base_settlement.required_equipment_check_enabled?).to be true
+      end
+      
+      it 'handles missing manufacturing section for efficiency' do
+        base_settlement.operational_data = {
+          'power_management' => {
+            'grid_status' => 'online'
+          }
+        }
+        base_settlement.save!
+        
+        expect(base_settlement.manufacturing_efficiency).to eq(1.0)
+      end
+      
+      it 'handles missing manufacturing section for equipment check' do
+        base_settlement.operational_data = {
+          'power_management' => {
+            'grid_status' => 'online'
+          }
+        }
+        base_settlement.save!
+        
+        expect(base_settlement.required_equipment_check_enabled?).to be true
+      end
+    end
+  end
+
+  describe 'construction cost integration' do
+    let(:base_settlement) { create(:base_settlement, :independent, owner: player, location: location) }
+    
+    it 'integrates construction cost calculations with settlement manufacturing data' do
+      # Set up a settlement with specific manufacturing configuration
+      base_settlement.operational_data = {
+        'manufacturing' => {
+          'construction_cost_percentage' => 7.5,
+          'efficiency_bonus' => 1.15,
+          'check_equipment' => true
+        }
+      }
+      base_settlement.save!
+      
+      # Test that all methods work together
+      expect(base_settlement.construction_cost_percentage).to eq(7.5)
+      expect(base_settlement.manufacturing_efficiency).to eq(1.15)
+      expect(base_settlement.required_equipment_check_enabled?).to be true
+      
+      # Test cost calculation with this configuration
+      purchase_cost = 80_000
+      expected_cost = 6_000.0  # 7.5% of 80,000
+      
+      expect(base_settlement.calculate_construction_cost(purchase_cost)).to eq(expected_cost)
+    end
+    
+    it 'preserves other operational_data when updating construction settings' do
+      # Set up initial operational data with various settings
+      base_settlement.operational_data = {
+        'power_management' => {
+          'grid_status' => 'online',
+          'total_capacity' => 5000
+        },
+        'life_support' => {
+          'atmosphere_pressure' => 101325
+        }
+      }
+      base_settlement.save!
+      
+      # Update construction cost percentage
+      base_settlement.construction_cost_percentage = 6.0
+      base_settlement.save!
+      
+      # Verify construction setting was added without overwriting other data
+      expect(base_settlement.operational_data['manufacturing']['construction_cost_percentage']).to eq(6.0)
+      expect(base_settlement.operational_data['power_management']['grid_status']).to eq('online')
+      expect(base_settlement.operational_data['life_support']['atmosphere_pressure']).to eq(101325)
+    end
+    
+    it 'works correctly when operational_data starts empty' do
+      # Start with minimal operational_data
+      base_settlement.update!(operational_data: {})
+      
+      # Set multiple manufacturing settings
+      base_settlement.construction_cost_percentage = 8.0
+      base_settlement.operational_data['manufacturing']['efficiency_bonus'] = 1.3
+      base_settlement.operational_data['manufacturing']['check_equipment'] = false
+      base_settlement.save!
+      
+      # Verify all settings are preserved
+      expect(base_settlement.construction_cost_percentage).to eq(8.0)
+      expect(base_settlement.manufacturing_efficiency).to eq(1.3)
+      expect(base_settlement.required_equipment_check_enabled?).to be false
+    end
+    
+    it 'handles complex operational_data structures' do
+      base_settlement.operational_data = {
+        'power_management' => {
+          'grid_status' => 'online',
+          'generators' => [
+            {'type' => 'solar', 'capacity' => 1000},
+            {'type' => 'nuclear', 'capacity' => 5000}
+          ]
+        },
+        'life_support' => {
+          'atmosphere' => {
+            'pressure' => 101325,
+            'composition' => {
+              'nitrogen' => 78,
+              'oxygen' => 21,
+              'other' => 1
+            }
+          }
+        }
+      }
+      base_settlement.save!
+      
+      # Add manufacturing settings
+      base_settlement.construction_cost_percentage = 4.5
+      base_settlement.save!
+      
+      # Verify complex structure is preserved
+      expect(base_settlement.operational_data['power_management']['generators'].length).to eq(2)
+      expect(base_settlement.operational_data['life_support']['atmosphere']['composition']['oxygen']).to eq(21)
+      expect(base_settlement.construction_cost_percentage).to eq(4.5)
     end
   end
 end
