@@ -6,21 +6,21 @@ module Lookup
   class UnitLookupService < BaseLookupService
     # ✅ FIX: Use GalaxyGame::Paths like MaterialLookupService
     def self.base_units_path
-      Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "operational_data", "units")
+      Pathname.new(GalaxyGame::Paths::UNITS_PATH)
     end
     
     # ✅ FIX: Use UNIT_PATHS configuration like MATERIAL_PATHS
     UNIT_PATHS = {
       computer: {
-        path: -> { base_units_path.join("computer") },
+        path: -> { Pathname.new(GalaxyGame::Paths::COMPUTER_UNITS_PATH) },
         recursive_scan: true
       },
       droid: {
-        path: -> { base_units_path.join("droid") },
+        path: -> { Pathname.new(GalaxyGame::Paths::DROID_UNITS_PATH) },
         recursive_scan: true
       },
       energy: {
-        path: -> { base_units_path.join("energy") },
+        path: -> { Pathname.new(GalaxyGame::Paths::ENERGY_UNITS_PATH) },
         recursive_scan: true
       },
       habitat: {
