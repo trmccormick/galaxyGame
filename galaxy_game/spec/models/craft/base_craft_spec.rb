@@ -11,46 +11,67 @@ RSpec.describe Craft::BaseCraft, type: :model do
            celestial_body: celestial_body) 
   }
 
-  # Modify the craft setup in the spec
+  # This creates a NEW craft for EACH example using let!
   let!(:craft) do
-    c = create(:base_craft)  # Create a basic craft without the trait
-    
-    # Set the location using our new method
+    # Create the craft first
+    c = create(:base_craft)
+
+    # Set location (as before)
     c.celestial_location = location
-    c.current_location = "Shackleton Crater Base"  # Explicitly set this
-    
-    # Set up recommended units directly in operational_data
+    c.current_location = "Shackleton Crater Base"
+
+    # Crucial: Ensure the craft's inventory is present BEFORE adding items to it.
+    # The `create_inventory!` call likely handles setting `c.inventory`.
+    # It's possible an `after_create` hook on `Craft::BaseCraft` handles this,
+    # but explicitly calling it here ensures it for the test's timing.
+    c.create_inventory! unless c.inventory.present? # Ensure it has an inventory now
+
+    # Set up recommended units in operational_data
+    recommended_units_spec = [
+      {'id' => 'raptor_engine', 'count' => 6},
+      {'id' => 'lox_tank', 'count' => 1},
+      {'id' => 'methane_tank', 'count' => 1},
+      {'id' => 'storage_unit', 'count' => 1},
+      {'id' => 'starship_habitat_unit', 'count' => 1},
+      {'id' => 'waste_management_unit', 'count' => 1},
+      {'id' => 'co2_oxygen_production_unit', 'count' => 1},
+      {'id' => 'water_recycling_unit', 'count' => 1},
+      {'id' => 'retractable_landing_legs', 'count' => 2}
+    ]
+
     c.operational_data = c.operational_data.merge({
-      'recommended_units' => [
-        {'id' => 'raptor_engine', 'count' => 6},
-        {'id' => 'lox_tank', 'count' => 1},
-        {'id' => 'methane_tank', 'count' => 1},
-        {'id' => 'storage_unit', 'count' => 1},
-        {'id' => 'starship_habitat_unit', 'count' => 1},
-        {'id' => 'waste_management_unit', 'count' => 1},
-        {'id' => 'co2_oxygen_production_unit', 'count' => 1},
-        {'id' => 'water_recycling_unit', 'count' => 1},
-        {'id' => 'retractable_landing_legs', 'count' => 1}
-      ]
+      'recommended_units' => recommended_units_spec
     })
-    c.save!
-    
-    # Mock the unit lookup service to return test data
-    allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit)
-      .and_return({
-        'name' => 'Test Unit',
+    c.save! # Save operational data and ensure inventory association is stable
+
+    # Populate the craft's inventory with the recommended unit items
+    recommended_units_spec.each do |unit_info|
+      # VERIFY: c.inventory is the correct Inventory object created for this 'c' craft
+      create(:item,
+             inventory: c.inventory, # This *must* be the correct inventory
+             amount: unit_info['count'],
+             name: "#{unit_info['id'].humanize} Item",
+             metadata: { 'unit_type' => unit_info['id'] }
+            )
+    end
+
+    # Mock the unit lookup service (this seems fine as is)
+    allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit) do |_, unit_id|
+      {
+        'id' => unit_id,
+        'name' => unit_id.humanize,
         'mass' => 100,
         'power_required' => 10
-      })
-      
-    # Call build_units_and_modules after all the setup is done
+      }
+    end
+
+    # Now, trigger the unit/module building.
+    # This should find the items we just added to c.inventory.
     c.build_units_and_modules
-    
-    # Force reload to ensure we get the latest data
+
+    # Reload the craft to ensure base_units association is refreshed
     c.reload
-    
-    # Return the craft
-    c
+    c # Return the craft instance for the test
   end
   
   let(:inventory) { craft.inventory }
@@ -63,7 +84,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
   before do
     # Instead of trying to stub lookup_paths, mock the actual lookup methods
     allow_any_instance_of(Lookup::CraftLookupService).to receive(:find_craft)
-      .with('Starship (Lunar Variant)', 'transport')
+      .with('transport')
       .and_return({
         'name' => 'Starship (Lunar Variant)',
         'craft_type' => 'transport',
@@ -76,7 +97,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
           {'id' => 'waste_management_unit', 'count' => 1},
           {'id' => 'co2_oxygen_production_unit', 'count' => 1},
           {'id' => 'water_recycling_unit', 'count' => 1},
-          {'id' => 'retractable_landing_legs', 'count' => 1}
+          {'id' => 'retractable_landing_legs', 'count' => 2}
         ]
       })
     
@@ -138,13 +159,17 @@ RSpec.describe Craft::BaseCraft, type: :model do
       craft.base_units.reload
       
       # Count based on items in the mocked JSON data (9 different types, total of 14 units)
-      expect(craft.base_units.count).to eq(14)  
+      expect(craft.base_units.count).to eq(15)  
+
       expect(craft.base_units.where(unit_type: 'raptor_engine').count).to eq(6)
       expect(craft.base_units.where(unit_type: 'lox_tank').count).to eq(1)
       expect(craft.base_units.where(unit_type: 'methane_tank').count).to eq(1)
       expect(craft.base_units.where(unit_type: 'storage_unit').count).to eq(1)
       expect(craft.base_units.where(unit_type: 'starship_habitat_unit').count).to eq(1)
-      # etc.
+      expect(craft.base_units.where(unit_type: 'waste_management_unit').count).to eq(1)
+      expect(craft.base_units.where(unit_type: 'co2_oxygen_production_unit').count).to eq(1)
+      expect(craft.base_units.where(unit_type: 'water_recycling_unit').count).to eq(1)
+      expect(craft.base_units.where(unit_type: 'retractable_landing_legs').count).to eq(2)
     end
   end
 
