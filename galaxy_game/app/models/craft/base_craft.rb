@@ -32,7 +32,7 @@ module Craft
                inverse_of: :stabilizers,
                optional: true               
 
-    has_many :modules, as: :attachable, class_name: 'Modules::BaseModule', dependent: :destroy
+    has_many :modules, class_name: 'Modules::BaseModule', as: :attachable, dependent: :destroy
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
     has_many :rigs, as: :attachable, class_name: 'Rigs::BaseRig', dependent: :destroy
 
@@ -526,7 +526,10 @@ module Craft
       
       Rails.logger.debug("Loading craft info for: #{craft_name}, #{craft_type}")
       @lookup_service ||= Lookup::CraftLookupService.new
-      craft_data = @lookup_service.find_craft(craft_name, craft_type)
+
+      # *** THIS IS THE CRITICAL CHANGE ***
+      # Pass only craft_type, as per Lookup::CraftLookupService#find_craft definition
+      craft_data = @lookup_service.find_craft(craft_type) 
       
       unless craft_data
         errors.add(:base, "Could not find craft data for #{craft_name} of type #{craft_type}")
@@ -534,7 +537,7 @@ module Craft
       end
       
       self.operational_data = craft_data
-      self.name ||= craft_data['name']
+      self.name ||= craft_data['name'] # Ensure 'name' is pulled from craft_data
     end
 
     def has_compatible_storage_unit?(material_type)
@@ -603,5 +606,36 @@ module Craft
       end
     end
 
+    def install_module(mod)
+      return false unless mod.is_a?(Modules::BaseModule)
+      
+      # Set the module's attachable to this craft
+      mod.update(attachable: self)
+      
+      # Reload to ensure associations are updated
+      reload
+      
+      # Return success
+      true
+    rescue => e
+      Rails.logger.error "Failed to install module: #{e.message}"
+      false
+    end
+
+    def uninstall_module(mod)
+      return false unless mod.is_a?(Modules::BaseModule) && mod.attachable == self
+      
+      # Detach the module
+      mod.update(attachable: nil)
+      
+      # Reload to ensure associations are updated
+      reload
+      
+      # Return success
+      true
+    rescue => e
+      Rails.logger.error "Failed to uninstall module: #{e.message}"
+      false
+    end
   end
 end

@@ -5,13 +5,22 @@ FactoryBot.define do
     craft_type { 'transport' }
     current_location { 'Shackleton Crater Base' }
     
-    # Provide minimal operational_data to pass validation
-    # This ensures the factory works even if mocking isn't set up
+    # Provide operational_data including a comprehensive ports definition
     operational_data do
       {
         'name' => 'Starship (Lunar Variant)',
         'craft_type' => 'transport',
-        'systems' => {}
+        'systems' => {}, # Keep existing systems hash
+        
+        "ports": {
+          "internal_module_ports": 8,
+          "external_module_ports": 2,
+          "fuel_storage_ports": 2,
+          "unit_ports": 4,
+          "external_ports": 2,
+          "propulsion_ports": 6,
+          "storage_ports": 3
+        }
       }
     end
     
