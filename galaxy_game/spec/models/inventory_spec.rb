@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Inventory, type: :model do
-  let(:celestial_body) { create(:celestial_body, :luna) }
+  let!(:celestial_body) { create(:large_moon, :luna) }
   let(:location) { 
     create(:celestial_location, 
       name: "Shackleton Crater Base", 
