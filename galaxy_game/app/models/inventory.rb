@@ -10,30 +10,31 @@ class Inventory < ApplicationRecord
     items.where(name: resource_name).sum(:amount)
   end
 
-  def add_item(name, amount, owner = nil)
-    Rails.logger.debug "Inventory#add_item: name=#{name}, amount=#{amount}, owner=#{owner}"
+  def add_item(name, amount, owner = nil, metadata = {}) # <--- ADDED metadata = {}
+    Rails.logger.debug "Inventory#add_item: name=#{name}, amount=#{amount}, owner=#{owner}, metadata=#{metadata}" # <--- ADDED metadata
 
     return false unless can_store?(name, amount)
     owner ||= determine_default_owner
 
     if specialized_storage_required?(name)
-      store_in_specialized_unit(name, amount, owner)
+      store_in_specialized_unit(name, amount, owner, metadata) # <--- ADDED metadata
     elsif capacity_exceeded?(amount + total_stored)
-      handle_surface_storage(name, amount, owner)
+      handle_surface_storage(name, amount, owner, metadata) # <--- ADDED metadata
     else
-      store_in_inventory(name, amount, owner)
+      store_in_inventory(name, amount, owner, metadata) # <--- ADDED metadata
     end
   end
 
-  def remove_item(name, amount, owner)
-    Rails.logger.debug "Inventory#remove_item: name=#{name}, amount=#{amount}, owner=#{owner}"
+  def remove_item(name, amount, owner = nil, metadata = {}) # <--- ADDED owner=nil (optional) and metadata = {}
+    Rails.logger.debug "Inventory#remove_item: name=#{name}, amount=#{amount}, owner=#{owner}, metadata=#{metadata}" # <--- ADDED metadata
 
-    item = items.find_by(name: name, owner: owner)
+    # <--- MODIFIED lookup to include metadata. IMPORTANT: This requires 'metadata' column to be jsonb.
+    item = items.find_by("name = ? AND metadata @> ?", name, metadata.to_json)
     return false unless item && item.amount >= amount
 
     storage_unit = find_storage_unit_for(name)
     if storage_unit
-      remove_from_unit(storage_unit, name, amount)
+      remove_from_unit(storage_unit, name, amount, metadata) # <--- ADDED metadata
     end
 
     item.amount -= amount
@@ -88,21 +89,22 @@ class Inventory < ApplicationRecord
 
   alias_method :find_storage_unit_for, :find_storage_unit
 
-  def store_in_specialized_unit(item)
-    unit = find_storage_unit(item.name)
+  def store_in_specialized_unit(name, amount, owner, metadata) # <--- MODIFIED SIGNATURE to match add_item's call
+    unit = find_storage_unit(name)
     unit.operational_data['resources'] ||= { 'stored' => {} }
-    unit.operational_data['resources']['stored'][item.name] ||= 0
-    unit.operational_data['resources']['stored'][item.name] += item.amount
+    unit.operational_data['resources']['stored'][name] ||= 0 # <--- Changed item.name to name
+    unit.operational_data['resources']['stored'][name] += amount # <--- Changed item.amount to amount
     unit.save!
   end
 
-  def store_in_inventory(name, amount, owner)
+  def store_in_inventory(name, amount, owner, metadata) # <--- ADDED metadata
     # Debug output
-    Rails.logger.debug "Storing in inventory: #{name}, amount: #{amount}, owner: #{owner.inspect}"
-    
+    Rails.logger.debug "Storing in inventory: #{name}, amount: #{amount}, owner: #{owner.inspect}, metadata: #{metadata.inspect}" # <--- ADDED metadata
+
     item = items.find_or_initialize_by(
       name: name,
-      owner: owner
+      owner: owner,
+      metadata: metadata # <--- ADDED metadata to lookup
     )
     
     item.storage_method = 'bulk_storage'  # Default for tests
@@ -144,7 +146,7 @@ class Inventory < ApplicationRecord
     Lookup::MaterialLookupService.new.find_material(name)&.dig('type') || 'general'
   end
 
-  def handle_surface_storage(name, amount, owner)
+  def handle_surface_storage(name, amount, owner, metadata)
     return false unless inventoryable.respond_to?(:surface_storage?)
     return false unless inventoryable.surface_storage?
 
@@ -158,9 +160,9 @@ class Inventory < ApplicationRecord
     end
 
     # Check surface conditions and store
-    item = Item.new(name: name, amount: amount)
+    item = Item.new(name: name, amount: amount, metadata: metadata) # <--- ADDED metadata
     if surface_storage.check_item_conditions(item)
-      store_in_inventory(name, amount, owner)
+      store_in_inventory(name, amount, owner, metadata) # <--- ADDED metadata
       true
     else
       false
