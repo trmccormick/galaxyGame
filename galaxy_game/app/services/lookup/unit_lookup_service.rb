@@ -4,55 +4,88 @@ require 'pathname'
 
 module Lookup
   class UnitLookupService < BaseLookupService
-    # ✅ FIX: Use GalaxyGame::Paths like MaterialLookupService
-    def self.base_units_path
-      Pathname.new(GalaxyGame::Paths::UNITS_PATH)
-    end
+    # ✅ REMOVED: base_units_path is no longer needed as UNIT_PATHS will directly reference specific GalaxyGame::Paths.
+    # This removes a layer of indirection and makes paths explicit.
+    # (Confirm this method is physically removed from your file)
+    # def self.base_units_path
+    #   Pathname.new(GalaxyGame::Paths::UNITS_PATH)
+    # end
     
-    # ✅ FIX: Use UNIT_PATHS configuration like MATERIAL_PATHS
     UNIT_PATHS = {
+      # All paths now directly reference the specific GalaxyGame::Paths constants.
+      # Removed redundant Pathname.new() wrapper as GalaxyGame::Paths constants are already Pathname objects.
       computer: {
-        path: -> { Pathname.new(GalaxyGame::Paths::COMPUTER_UNITS_PATH) },
+        path: -> { GalaxyGame::Paths::COMPUTER_UNITS_PATH },
         recursive_scan: true
       },
       droid: {
-        path: -> { Pathname.new(GalaxyGame::Paths::DROID_UNITS_PATH) },
+        path: -> { GalaxyGame::Paths::DROID_UNITS_PATH },
         recursive_scan: true
       },
       energy: {
-        path: -> { Pathname.new(GalaxyGame::Paths::ENERGY_UNITS_PATH) },
+        path: -> { GalaxyGame::Paths::ENERGY_UNITS_PATH },
         recursive_scan: true
       },
-      habitat: {
-        path: -> { base_units_path.join("habitat") },
+      # ✅ FIX: Changed key from 'habitat' to 'habitats' to match folder name and path constant.
+      habitats: { # Key matches the folder and the constant
+        path: -> { GalaxyGame::Paths::HABITATS_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
       life_support: {
-        path: -> { base_units_path.join("life_support") },
+        path: -> { GalaxyGame::Paths::LIFE_SUPPORT_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
       processing: {
-        path: -> { base_units_path.join("processing") },
+        path: -> { GalaxyGame::Paths::PROCESSING_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
       production: {
-        path: -> { base_units_path.join("production") },
+        path: -> { GalaxyGame::Paths::PRODUCTION_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
       propulsion: {
-        path: -> { base_units_path.join("propulsion") },
+        path: -> { GalaxyGame::Paths::PROPULSION_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
       storage: {
-        path: -> { base_units_path.join("storage") },
+        path: -> { GalaxyGame::Paths::STORAGE_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
       structure: {
-        path: -> { base_units_path.join("structure") },
+        path: -> { GalaxyGame::Paths::STRUCTURE_UNITS_PATH }, # Direct constant usage
         recursive_scan: true
       },
-      various: {
-        path: -> { base_units_path.join("various") },
+      specialized: {
+        path: -> { GalaxyGame::Paths::SPECIALIZED_UNITS_PATH }, # Direct constant usage
+        recursive_scan: true
+      },
+      # Robot units categories - already correctly using direct constants.
+      robots_deployment: {
+        path: -> { GalaxyGame::Paths::ROBOTS_DEPLOYMENT_UNITS_PATH },
+        recursive_scan: true
+      },
+      robots_construction: {
+        path: -> { GalaxyGame::Paths::ROBOTS_CONSTRUCTION_UNITS_PATH },
+        recursive_scan: true
+      },
+      robots_maintenance: {
+        path: -> { GalaxyGame::Paths::ROBOTS_MAINTENANCE_UNITS_PATH },
+        recursive_scan: true
+      },
+      robots_exploration: {
+        path: -> { GalaxyGame::Paths::ROBOTS_EXPLORATION_UNITS_PATH },
+        recursive_scan: true
+      },
+      robots_life_support: {
+        path: -> { GalaxyGame::Paths::ROBOTS_LIFE_SUPPORT_UNITS_PATH },
+        recursive_scan: true
+      },
+      robots_logistics: {
+        path: -> { GalaxyGame::Paths::ROBOTS_LOGISTICS_UNITS_PATH },
+        recursive_scan: true
+      },
+      robots_resource: {
+        path: -> { GalaxyGame::Paths::ROBOTS_RESOURCE_UNITS_PATH },
         recursive_scan: true
       }
     }
@@ -63,7 +96,7 @@ module Lookup
       rescue StandardError => e
         Rails.logger.error "Fatal error loading units: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
-        @units = []  # ✅ FIX: Initialize empty array instead of failing
+        @units = []
       end
     end
 
@@ -95,24 +128,15 @@ module Lookup
       
       begin
         UNIT_PATHS.each do |type, config|
-          if config.is_a?(Hash)
-            base_path = config[:path].call
-            Rails.logger.debug "Checking base path: #{base_path}"
-            
-            # Process direct files in this path if configured
-            if config[:direct_files] && File.directory?(base_path)
-              units.concat(load_json_files(base_path))
-            end
-            
-            # Process subfolders recursively if configured
-            if config[:recursive_scan] && File.directory?(base_path)
-              units.concat(load_json_files_recursively(base_path))
-            end
-          else
-            # Direct path
-            path = config.respond_to?(:call) ? config.call : config
-            Rails.logger.debug "Checking direct path: #{path}"
-            units.concat(load_json_files(path))
+          base_path = config[:path].call
+          Rails.logger.debug "Checking base path: #{base_path}"
+          
+          if config[:direct_files] && File.directory?(base_path)
+            units.concat(load_json_files(base_path))
+          end
+          
+          if config[:recursive_scan] && File.directory?(base_path)
+            units.concat(load_json_files_recursively(base_path))
           end
         end
       rescue => e
@@ -127,7 +151,7 @@ module Lookup
     def load_json_files(path)
       return [] unless File.directory?(path)
 
-      files = Dir.glob(File.join(path, "*.json"))
+      files = Dir.glob(path.join("*.json")) # Using Pathname#join
       Rails.logger.debug "Found #{files.size} JSON files in #{path}"
       
       files.map do |file|
@@ -148,7 +172,7 @@ module Lookup
     def load_json_files_recursively(base_path)
       return [] unless File.directory?(base_path)
 
-      files = Dir.glob(File.join(base_path, "**", "*.json"))
+      files = Dir.glob(base_path.join("**", "*.json")) # Using Pathname#join
       Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
 
       files.map do |file|
@@ -171,25 +195,25 @@ module Lookup
 
       query_normalized = query.to_s.downcase.strip
 
-      # ✅ PRIORITY 1: Exact unit_type match
+      # PRIORITY 1: Exact unit_type match
       if unit_data['unit_type']&.downcase == query_normalized
         Rails.logger.debug "Matched by unit_type: #{unit_data['unit_type']} == #{query}"
         return true
       end
 
-      # ✅ PRIORITY 2: Exact ID match
+      # PRIORITY 2: Exact ID match
       if unit_data['id']&.downcase == query_normalized
         Rails.logger.debug "Matched by ID: #{unit_data['id']} == #{query}"
         return true
       end
 
-      # ✅ PRIORITY 3: Exact name match  
+      # PRIORITY 3: Exact name match  
       if unit_data['name']&.downcase == query_normalized
         Rails.logger.debug "Matched by name: #{unit_data['name']} == #{query}"
         return true
       end
 
-      # ✅ PRIORITY 4: Alias match
+      # PRIORITY 4: Alias match
       if unit_data['aliases'].is_a?(Array)
         aliases = unit_data['aliases'].map(&:downcase)
         if aliases.include?(query_normalized)
@@ -198,13 +222,13 @@ module Lookup
         end
       end
 
-      # ✅ PRIORITY 5: Partial ID match (SAFE - only for long queries)
+      # PRIORITY 5: Partial ID match (SAFE - only for long queries)
       if query_normalized.length >= 3 && unit_data['id']&.downcase&.include?(query_normalized)
         Rails.logger.debug "Matched by partial ID: #{unit_data['id']} contains #{query}"
         return true
       end
 
-      # ✅ PRIORITY 6: Partial name match (SAFE - only for long queries) 
+      # PRIORITY 6: Partial name match (SAFE - only for long queries) 
       if query_normalized.length >= 3 && unit_data['name']&.downcase&.include?(query_normalized)
         Rails.logger.debug "Matched by partial name: #{unit_data['name']} contains #{query}"
         return true
