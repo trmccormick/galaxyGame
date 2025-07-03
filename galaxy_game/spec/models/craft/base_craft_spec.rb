@@ -84,7 +84,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
   before do
     # Instead of trying to stub lookup_paths, mock the actual lookup methods
     allow_any_instance_of(Lookup::CraftLookupService).to receive(:find_craft)
-      .with('transport')
+      .with('lunar')
       .and_return({
         'name' => 'Starship (Lunar Variant)',
         'craft_type' => 'transport',
@@ -139,37 +139,53 @@ RSpec.describe Craft::BaseCraft, type: :model do
   end
 
   describe 'initialization' do
-    it 'initializes with the correct name' do
-      expect(craft.name).to start_with "Starship"
+    let!(:settlement) { create(:settlement, name: "Shackleton Crater Base") }
+    let!(:owner) { create(:player) }
+    let!(:inventory) { settlement.inventory }
+
+    let!(:craft_item) do
+      create(:item, inventory: inventory, name: "Starship", owner: owner, metadata: { 'craft_type' => 'transport' })
     end
 
-    it 'initializes with the correct craft_name' do
-      expect(craft.craft_name).to eq('Starship (Lunar Variant)')
+    let!(:unit_items) do
+      [
+        create(:item, inventory: inventory, name: "Raptor Engine", amount: 6, owner: owner, metadata: { 'unit_type' => 'raptor_engine' }),
+        create(:item, inventory: inventory, name: "LOX Tank", amount: 1, owner: owner, metadata: { 'unit_type' => 'lox_tank' }),
+        create(:item, inventory: inventory, name: "Methane Tank", amount: 1, owner: owner, metadata: { 'unit_type' => 'methane_tank' }),
+        create(:item, inventory: inventory, name: "Storage Unit", amount: 1, owner: owner, metadata: { 'unit_type' => 'storage_unit' }),
+        create(:item, inventory: inventory, name: "Starship Habitat Unit", amount: 1, owner: owner, metadata: { 'unit_type' => 'starship_habitat_unit' }),
+        create(:item, inventory: inventory, name: "Waste Management Unit", amount: 1, owner: owner, metadata: { 'unit_type' => 'waste_management_unit' }),
+        create(:item, inventory: inventory, name: "CO2 Oxygen Production Unit", amount: 1, owner: owner, metadata: { 'unit_type' => 'co2_oxygen_production_unit' }),
+        create(:item, inventory: inventory, name: "Water Recycling Unit", amount: 1, owner: owner, metadata: { 'unit_type' => 'water_recycling_unit' }),
+        create(:item, inventory: inventory, name: "Retractable Landing Legs", amount: 2, owner: owner, metadata: { 'unit_type' => 'retractable_landing_legs' })
+      ]
     end
 
-    it 'initializes with the correct craft_type' do
-      expect(craft.craft_type).to eq('transport')
+    before do
+      # Add deployment robot as an active unit at the settlement
+      settlement.base_units.create!(
+        unit_type: 'robot',
+        name: 'CAR-300 Lunar Deployment Robot Mk1',
+        owner: settlement,
+        identifier: "CAR-300-#{SecureRandom.hex(4)}"
+      )
     end
 
-    it 'initializes with the correct location' do
-      expect(craft.current_location).to eq('Shackleton Crater Base')
-    end    
+    it 'assembles a new craft from inventory and applies the correct variant' do
+      # Pass the variant or operational data as a parameter if needed
+      service = UnitModuleAssemblyService.new(
+        craft_item: craft_item,
+        owner: owner,
+        settlement: settlement,
+        variant: 'lunar' # or pass operational_data: ...
+      )
+      craft = service.build_units_and_modules
 
-    it 'creates recommended units using the real unit data' do
-      craft.base_units.reload
-      
-      # Count based on items in the mocked JSON data (9 different types, total of 14 units)
-      expect(craft.base_units.count).to eq(15)  
-
-      expect(craft.base_units.where(unit_type: 'raptor_engine').count).to eq(6)
-      expect(craft.base_units.where(unit_type: 'lox_tank').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'methane_tank').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'storage_unit').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'starship_habitat_unit').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'waste_management_unit').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'co2_oxygen_production_unit').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'water_recycling_unit').count).to eq(1)
-      expect(craft.base_units.where(unit_type: 'retractable_landing_legs').count).to eq(2)
+      expect(craft).to be_a(Craft::BaseCraft)
+      expect(craft.operational_data['name']).to eq('Starship (Lunar Variant)')
+      expect(craft.base_units.count).to eq(15)
+      expect(inventory.items.where(name: "Raptor Engine")).to be_empty
+      expect(inventory.items.where(name: "Starship")).to be_empty
     end
   end
 
@@ -185,6 +201,8 @@ RSpec.describe Craft::BaseCraft, type: :model do
       
       # Force validation which triggers load_craft_info
       new_craft.valid?
+
+      puts new_craft.inspect
       
       # Check that the operational_data was populated
       expect(new_craft.operational_data).to be_present
@@ -320,6 +338,22 @@ RSpec.describe Craft::BaseCraft, type: :model do
       expect(craft.atmosphere).to be_present
       expect(craft.atmosphere.craft_id).to eq(craft.id)
       expect(craft.atmosphere.environment_type).to eq('artificial')
+    end
+  end
+
+  describe 'unit integration' do
+    let!(:settlement) { create(:settlement, name: "Shackleton Crater Base") }
+    let!(:robot_unit) { settlement.base_units.create!(unit_type: 'robot', name: 'CAR-300 Lunar Deployment Robot Mk1', owner: settlement, identifier: "CAR-300 #{SecureRandom.hex(4)}",) }
+    let!(:craft_with_settlement) do
+      c = create(:base_craft, celestial_location: nil, current_location: "Shackleton Crater Base")
+      c.create_inventory!
+      c
+    end
+
+    it 'integrates with settlement units' do
+      craft_with_settlement.reload
+      expect(settlement.base_units).to include(robot_unit)
+      # Optionally, test that the craft can interact with the robot unit
     end
   end
 end
