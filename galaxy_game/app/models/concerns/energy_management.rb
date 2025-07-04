@@ -1,256 +1,75 @@
-# app/models/concerns/energy_management.rb
+# app/models/concerns/energy_management.rb (STREAMLINED VERSION)
 module EnergyManagement
   extend ActiveSupport::Concern
-  
-  # Define the constant at the module level, not inside included block
+
+  # Define constants at the module level for unit types that generate power.
+  # These are examples; adjust based on your actual unit types.
   POWER_UNIT_TYPES = [
-    'power_generator', 'solar_array', 'nuclear_generator', 
-    'solar_panel', 'fusion_reactor', 'fission_reactor'
+    'power_generator', 'solar_array', 'nuclear_generator',
+    'solar_panel', 'fusion_reactor', 'fission_reactor', 'power_plant'
   ].freeze
-  
+
   included do
-    # No need to redefine it here - it will be inherited properly
+    # Ensure the including model has an `operational_data` attribute (jsonb type recommended in DB)
+    attribute :operational_data, :jsonb, default: -> { {} } unless method_defined?(:operational_data)
+
+    # Define delegates for methods that exist on the `owner` (e.g., User, Faction)
+    delegate :account, to: :owner, allow_nil: true
+    delegate :under_sanction?, to: :owner, allow_nil: true
   end
 
-  # Get total power usage - combines data from operational_data and units
+  # --- Core Power Calculation Methods ---
+
+  # Calculates the total power usage (consumption) of the craft/unit and its attached components.
+  # This sums up power_consumption_kw from its own operational_data and that of its units.
   def power_usage
-    # First check direct operational_data values
-    if operational_data.is_a?(Hash)
-      if operational_data['resource_management']&.dig('consumables', 'energy_kwh', 'rate')
-        # Return the operational data only if we don't have units to aggregate
-        return operational_data['resource_management']['consumables']['energy_kwh']['rate'].to_f unless respond_to?(:base_units) && base_units.any?
-      elsif operational_data['consumables']&.dig('energy')
-        return operational_data['consumables']['energy'].to_f
-      elsif operational_data['power_usage']
-        return operational_data['power_usage'].to_f
-      end
-    end
-    
-    # Calculate from structures and units
-    total_usage = 0
-    
-    # Add structure usage if applicable
-    if respond_to?(:structures) && structures.any?
-      total_usage += structures.sum { |s| s.respond_to?(:power_usage) ? s.power_usage : 0 }
-    end
-    
-    # Add unit usage if applicable
-    if respond_to?(:base_units) && base_units.any?
-      total_usage += base_units.sum do |unit|
-        if unit.respond_to?(:power_usage)
-          unit.power_usage
-        elsif unit.operational_data&.dig('consumables', 'energy')
-          unit.operational_data['consumables']['energy'].to_f
-        else
-          0
-        end
-      end
-    end
-    
-    total_usage
+    # First try the resource_management path used in the test
+    resource_usage = operational_data.dig('resource_management', 'consumables', 'energy_kwh', 'rate')
+    return resource_usage.to_f if resource_usage
+
+    # Fall back to the path used in the concern implementation
+    calculate_power_usage
   end
-  
-  # Get power generation - combines data from operational_data and units
+
+  # Calculates the total power generation of the craft/unit and its attached components.
+  # Sums up power_generation_kw from its own operational_data and power-generating units.
   def power_generation
-    return 0 unless respond_to?(:operational_data)
-    
-    # First check direct operational_data values
-    if operational_data.is_a?(Hash)
-      if operational_data['resource_management']&.dig('generated', 'energy_kwh', 'rate')
-        # Return the operational data only if we don't have units to aggregate
-        return operational_data['resource_management']['generated']['energy_kwh']['rate'].to_f unless respond_to?(:base_units) && base_units.any?
-      elsif operational_data['generated']&.dig('energy')
-        return operational_data['generated']['energy'].to_f
-      elsif operational_data['power_generation']
-        return operational_data['power_generation'].to_f
-      end
-    end
-    
-    # If not found in operational_data, calculate from structures and units
-    total_generation = 0
-    
-    # Add structure generation if applicable
-    if respond_to?(:structures) && structures.any?
-      total_generation += structures.sum { |s| s.respond_to?(:power_generation) ? s.power_generation : 0 }
-    end
-    
-    # Add unit generation if applicable
-    if respond_to?(:base_units) && base_units.any?
-      total_generation += base_units.sum do |unit|
-        if unit.respond_to?(:power_generation)
-          unit.power_generation
-        elsif unit.operational_data&.dig('generated', 'energy')
-          unit.operational_data['generated']['energy'].to_f
-        else
-          0
-        end
-      end
-    end
-    
-    total_generation
+    # First try the resource_management path used in the test
+    resource_rate = operational_data.dig('resource_management', 'generated', 'energy_kwh', 'rate')
+    return resource_rate.to_f if resource_rate
+
+    # Fall back to the path used in the concern implementation
+    calculate_power_generation
   end
-  
-  # Check if there's enough power for current operations
+
+  # Checks if the craft/unit has enough power to meet its current demands.
   def has_sufficient_power?
     power_generation >= power_usage
   end
-  
-  # Calculate energy surplus or deficit
+
+  # Calculates the energy balance (surplus or deficit) in kW.
   def energy_balance
     power_generation - power_usage
   end
-  
-  # Get power generating units (if units association exists)
+
+  # Returns an array of attached units that are power generators.
+  # Assumes a `base_units` or `units` association on the including model.
   def power_generating_units
-    return [] unless respond_to?(:base_units) && base_units.any?
-    
-    # Use the POWER_UNIT_TYPES constant from the class
-    power_types = self.class::POWER_UNIT_TYPES
-    
-    base_units.select do |unit| 
-      unit.operational_data&.dig('generated', 'energy').to_f > 0 || 
-      power_types.include?(unit.unit_type.to_s)
+    return [] unless respond_to?(:base_units) # Or :units, depending on your association name
+    base_units.select do |unit|
+      unit.operational_data.dig('category') == 'energy' &&
+      POWER_UNIT_TYPES.include?(unit.operational_data.dig('subcategory'))
     end
   end
-  
-  # Calculate power distribution to all consumers
-  def distribute_power
-    return false unless has_sufficient_power?
-    
-    available = power_generation
-    
-    # Only applicable if we have base_units
-    return true unless respond_to?(:base_units) && base_units.any?
-    
-    # Prioritize critical systems first
-    critical_units = base_units.select { |u| u.operational_data&.dig('power_priority') == 'critical' }
-    critical_usage = critical_units.sum do |unit|
-      unit.respond_to?(:power_usage) ? unit.power_usage : unit.operational_data&.dig('consumables', 'energy').to_f || 0
-    end
-    
-    available -= critical_usage
-    return false if available < 0
-    
-    # Then allocate to structures if applicable
-    if respond_to?(:structures) && structures.any?
-      structure_usage = structures.sum(&:power_usage)
-      available -= structure_usage
-      return false if available < 0
-    end
-    
-    # Finally allocate to non-critical units
-    non_critical_units = base_units.reject { |u| u.operational_data&.dig('power_priority') == 'critical' }
-    non_critical_usage = non_critical_units.sum do |unit|
-      unit.respond_to?(:power_usage) ? unit.power_usage : unit.operational_data&.dig('consumables', 'energy').to_f || 0
-    end
-    
-    available -= non_critical_usage
-    
-    # Return surplus power
-    available >= 0
-  end
-  
-  # Power distribution grid status
+
+  # Provides a snapshot of the current power grid status.
   def power_grid_status
-    return {} unless respond_to?(:base_units)
-    
-    status = if has_sufficient_power?
-      "optimal"
-    elsif power_generation >= power_usage * 0.8
-      "strained"
-    elsif power_generation >= power_usage * 0.5
-      "critical"
-    else
-      "failing"
-    end
-    
-    distribution = {}
-    
-    # Add structure distribution if applicable
-    if respond_to?(:structures) && structures.any?
-      distribution[:structures] = structures.sum(&:power_usage)
-    end
-    
-    # Add unit distributions
-    if respond_to?(:base_units) && base_units.any?
-      distribution[:critical_units] = base_units
-        .select { |u| u.operational_data&.dig('power_priority') == 'critical' }
-        .sum { |u| u.operational_data&.dig('consumables', 'energy').to_f || 0 }
-      
-      distribution[:standard_units] = base_units
-        .reject { |u| u.operational_data&.dig('power_priority') == 'critical' }
-        .sum { |u| u.operational_data&.dig('consumables', 'energy').to_f || 0 }
-    end
-    
-    {
-      status: status,
-      total_generation: power_generation,
-      total_usage: power_usage,
-      surplus: energy_balance,
-      distribution: distribution
-    }
+    calculate_power_grid_status
   end
-  
-  # Optimize power usage by adjusting operational modes
-  def optimize_power_usage
-    return true if has_sufficient_power?
-    
-    # First try to increase generation if possible
-    if respond_to?(:power_generating_units) && power_generating_units.any?
-      # Implement logic to boost generation if possible
-      # This would be game-specific logic
-    end
-    
-    return true if has_sufficient_power?
-    
-    # If still insufficient, reduce consumption by changing modes
-    if respond_to?(:structures) && structures.any?
-      structures.each do |structure|
-        structure.update_power_usage('standby') if structure.respond_to?(:update_power_usage)
-      end
-    end
-    
-    # If still insufficient, shut down non-critical systems
-    if !has_sufficient_power? && respond_to?(:base_units) && base_units.any?
-      non_critical_units = base_units.reject { |u| u.operational_data&.dig('power_priority') == 'critical' }
-      non_critical_units.each do |unit|
-        unit.deactivate if unit.respond_to?(:deactivate)
-      end
-    end
-    
-    has_sufficient_power?
-  end
-  
-  # Update power usage based on operational mode
-  def update_power_usage(mode = nil)
-    return unless operational_data && operational_data['operational_modes']
-    
-    # If no mode specified, use current mode
-    mode ||= operational_data['operational_modes']['current_mode']
-    
-    # Find the specified mode in available modes
-    mode_data = operational_data['operational_modes']['available_modes'].find { |m| m['name'] == mode }
-    return unless mode_data
-    
-    # Update power usage based on mode
-    if operational_data['resource_management'] && operational_data['resource_management']['consumables'] && 
-       operational_data['resource_management']['consumables']['energy_kwh']
-      operational_data['resource_management']['consumables']['energy_kwh']['rate'] = mode_data['power_draw']
-    else
-      # Create the structure if it doesn't exist
-      operational_data['resource_management'] ||= {}
-      operational_data['resource_management']['consumables'] ||= {}
-      operational_data['resource_management']['consumables']['energy_kwh'] ||= {}
-      operational_data['resource_management']['consumables']['energy_kwh']['rate'] = mode_data['power_draw']
-    end
-    
-    save if respond_to?(:save)
-  end
-  
-  # Create a virtual operational_data for models that don't have it in the database
+
+  # Creates a virtual hash of operational data for external consumption or debugging.
+  # This represents current calculated states related to power flow.
   def virtual_operational_data
-    # Don't call operational_data - that's creating the recursion
-    # Instead, build the power data directly
     {
       'resource_management' => {
         'consumables' => {
@@ -260,36 +79,179 @@ module EnergyManagement
           'energy_kwh' => {'rate' => calculate_power_generation, 'current_output' => calculate_power_generation}
         }
       },
-      'power_grid' => calculate_power_grid_status
+      'power_grid' => power_grid_status # Use the public method
     }
   end
 
+  # --- Private Helper Methods ---
+
   private
 
-  def calculate_power_generation
-    # Get power generation directly from units
-    base_units.sum do |unit|
-      unit.operational_data&.dig('power', 'generation')&.to_f || 0.0
-    end
-  end
-
+  # Calculates total power usage by summing this model's and its units' consumption.
+  # Assumes models can have a `power_consumption_kw` in operational_data
+  # and units can have a `power_usage` method (e.g., from EnergyManagement if they also include it,
+  # or a direct attribute/method from their own operational_data mapping).
   def calculate_power_usage
-    # Get power usage directly from units
-    base_units.sum do |unit|
-      unit.operational_data&.dig('power', 'consumption')&.to_f || 0.0
+    total_usage = operational_data.dig('operational_properties', 'power_consumption_kw') || 0.0
+
+    if respond_to?(:base_units) # Check if the model has associated units
+      base_units.each do |unit|
+        total_usage += unit.power_usage if unit.respond_to?(:power_usage)
+      end
+    end
+    total_usage
+  end
+
+  # Calculates total power generation by summing this model's and its units' generation.
+  # Assumes models can have a `power_generation_kw` in operational_data
+  # and units can have a `power_generation` method.
+  def calculate_power_generation
+    total_generation = operational_data.dig('operational_properties', 'power_generation_kw') || 0.0
+
+    if respond_to?(:base_units) # Check if the model has associated units
+      base_units.each do |unit|
+        total_generation += unit.power_generation if unit.respond_to?(:power_generation)
+      end
+    end
+    total_generation
+  end
+
+  # Calculates the current status of the power grid (e.g., 'online', 'offline', 'low_power').
+  # Note: If battery support is desired here, the including model would need to
+  # `respond_to?(:battery_level)` (i.e., include `BatteryManagement`).
+  def calculate_power_grid_status
+    if power_generation > 0 && power_usage > 0
+      if power_generation >= power_usage
+        'online'
+      elsif respond_to?(:battery_level) && battery_level > 0 # Check for battery support if BatteryManagement is included
+        'low_power_battery_support'
+      else
+        'critical_power_deficit'
+      end
+    elsif power_generation > 0
+      'online_idle'
+    else
+      'offline'
     end
   end
 
-  def calculate_power_grid_status
-    gen = calculate_power_generation
-    usage = calculate_power_usage
-    
-    if gen == 0
-      {'status' => 'offline', 'efficiency' => 0.0}
-    elsif gen >= usage
-      {'status' => 'online', 'efficiency' => 1.0}
-    else
-      {'status' => 'overloaded', 'efficiency' => gen / usage}
+  # During power shortage detection
+  def handle_power_shortage(shortage_amount)
+    # First try battery backup
+    if activate_emergency_power_backup
+      # Recalculate shortage after backup power
+      remaining_shortage = power_usage - power_generation
+      return 0 if remaining_shortage <= 0
     end
+    
+    # If still in shortage, try biogas generators
+    if activate_biogas_generators
+      # Recalculate shortage after generators
+      remaining_shortage = power_usage - power_generation
+      return 0 if remaining_shortage <= 0
+    end
+    
+    # If still in shortage, start powering down systems
+    # Continue with the power-down logic we discussed
+    # ...
+  end
+
+  def activate_emergency_power_backup
+    backup_modules = find_modules_by_type('emergency_power_backup')
+    return false if backup_modules.empty?
+    
+    activated = false
+    backup_modules.each do |module_unit|
+      next if module_unit.current_mode == 'generation' || 
+              module_unit.current_mode == 'battery_supply' ||
+              module_unit.current_mode == 'emergency'
+              
+      # Check battery level
+      battery_level = module_unit.operational_data.dig('resource_management', 'storage', 'energy_kwh', 'current_level').to_f
+      
+      if battery_level > 0
+        # Use battery supply if we have charge
+        module_unit.set_operational_mode('battery_supply')
+        activated = true
+      elsif module_unit.fuel_remaining > 0
+        # Use generator if we have fuel
+        module_unit.set_operational_mode('generation')
+        activated = true
+      end
+    end
+    
+    activated
+  end
+
+  def activate_biogas_generators
+    generators = find_units_by_type('biogas_generator')
+    return false if generators.empty?
+    
+    # Check biogas storage
+    biogas_storage = resource_storage.get_resource_amount('biogas')
+    return false if biogas_storage <= 0
+    
+    # Calculate how many generators we can run
+    max_generators = (biogas_storage / 20).floor # Assuming 20 biogas per generator cycle
+    active_count = 0
+    
+    generators.each do |generator|
+      break if active_count >= max_generators
+      
+      if !generator.is_active?
+        generator.activate!
+        active_count += 1
+      end
+    end
+    
+    active_count > 0
+  end
+
+  def activate_backup_power_systems(shortage_amount)
+    # Find biogas generators in standby mode
+    generators = power_generating_units.select do |unit|
+      unit.unit_type == 'generator' && 
+      unit.subcategory == 'backup_power' &&
+      unit.operational_data.dig('operational_modes', 'current_mode') == 'standby'
+    end
+    
+    return false if generators.empty?
+    
+    # Check biogas availability
+    biogas_available = total_resource_amount('biogas_m3')
+    return false if biogas_available <= 0
+    
+    activated_power = 0
+    
+    # Activate generators
+    generators.each do |generator|
+      # Check if we have enough biogas for this generator
+      biogas_rate = generator.operational_data.dig('resource_management', 'consumables', 'biogas_m3', 'rate').to_f
+      break if biogas_available < biogas_rate
+      
+      # Choose appropriate mode based on shortage severity
+      if shortage_amount > 60
+        new_mode = 'emergency'
+        output = generator.operational_data.dig('operational_modes', 'modes').find { |m| m['name'] == 'emergency' }['power_output_kw'].to_f
+      else
+        new_mode = 'active'
+        output = generator.operational_data.dig('operational_modes', 'modes').find { |m| m['name'] == 'active' }['power_output_kw'].to_f
+      end
+      
+      # Update generator mode
+      generator.set_operational_mode(new_mode)
+      
+      # Track activated power
+      activated_power += output
+      
+      # Reduce available biogas
+      biogas_available -= biogas_rate
+      
+      # If we've met the shortage, stop activating more generators
+      break if activated_power >= shortage_amount
+    end
+    
+    # Return true if we activated any power
+    activated_power > 0
   end
 end
