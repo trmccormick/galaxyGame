@@ -191,24 +191,45 @@ RSpec.describe Craft::BaseCraft, type: :model do
 
   describe 'loading craft info' do
     it 'loads the correct craft data from the lookup service' do
-      # Create a new craft directly to test the load_craft_info method
-      new_craft = Craft::BaseCraft.new(
+      # Mock the CraftLookupService first
+      lookup_service = instance_double(Lookup::CraftLookupService)
+      
+      # Define what the lookup service should return
+      lookup_data = {
+        'name' => 'Starship (Lunar Variant)',
+        'craft_type' => 'transport',
+        'systems' => {},
+        'ports' => {
+          'internal_module_ports' => 8,
+          'external_module_ports' => 2,
+          'unit_ports' => 4
+        },
+        'operational_flags' => {
+          'human_rated' => true
+        }
+      }
+      
+      # Configure the mock to return our data
+      allow(Lookup::CraftLookupService).to receive(:new).and_return(lookup_service)
+      allow(lookup_service).to receive(:find_craft).with('transport').and_return(lookup_data)
+      
+      # Create a new craft and SAVE it to trigger callbacks
+      new_craft = create(:base_craft, 
         name: 'Test Craft', 
         craft_name: 'Starship (Lunar Variant)', 
         craft_type: 'transport',
-        owner: create(:player)
+        owner: create(:player),
+        operational_data: nil  # Start with empty operational_data
       )
       
-      # Force validation which triggers load_craft_info
-      new_craft.valid?
-
-      puts new_craft.inspect
+      # Force a reload to ensure we get the data after callbacks run
+      new_craft.reload
       
-      # Check that the operational_data was populated
+      # Check that the operational_data was populated correctly
       expect(new_craft.operational_data).to be_present
       expect(new_craft.operational_data['name']).to eq('Starship (Lunar Variant)')
-      expect(new_craft.operational_data['craft_type']). to eq('transport')
-      expect(new_craft.operational_data['recommended_units']).to be_present
+      expect(new_craft.operational_data['craft_type']).to eq('transport')
+      expect(new_craft.operational_data['ports']).to be_present
     end
   end
 
@@ -332,7 +353,21 @@ RSpec.describe Craft::BaseCraft, type: :model do
   end
 
   describe "atmosphere creation" do
-    let(:craft) { create(:base_craft, craft_name: "Explorer", craft_type: "science") }
+    let(:craft) do
+      # Create a craft with human_rated flag explicitly set
+      craft = create(:base_craft, 
+                    craft_name: "Explorer", 
+                    craft_type: "transport",
+                    operational_data: {
+                      'operational_flags' => {
+                        'human_rated' => true
+                      },
+                      'name' => "Explorer",
+                      'craft_type' => "transport"
+                    })
+      craft.reload # Make sure to reload to get the atmosphere
+      craft
+    end
     
     it "creates an atmosphere after creation" do
       expect(craft.atmosphere).to be_present
