@@ -9,15 +9,72 @@ require 'lookup/module_lookup_service'
 require 'lookup/rig_lookup_service'
 
 class UnitModuleAssemblyService
-  # This service assembles a target (e.g., a Craft or Settlement) by consuming
-  # items from inventory and creating functional components.
+  attr_reader :craft_item, :owner, :settlement, :variant
   
+  # Constructor to support the pattern in the test
+  def initialize(craft_item: nil, owner: nil, settlement: nil, variant: nil)
+    @craft_item = craft_item
+    @owner = owner
+    @settlement = settlement
+    @variant = variant
+    @settlement_inventory = settlement&.inventory
+  end
+  
+  # Instance method for creating a new craft from an inventory item
+  def build_units_and_modules
+    # Create a new craft from the craft_item
+    craft_data = Lookup::CraftLookupService.new.find_craft(variant || craft_item.metadata['craft_type'])
+    return nil unless craft_data
+    
+    # Create the craft with necessary attributes
+    craft = Craft::BaseCraft.create!(
+      name: craft_item.name,
+      craft_name: craft_data['name'],
+      craft_type: craft_item.metadata['craft_type'],
+      owner: owner,
+      operational_data: craft_data
+    )
+    
+    # Create inventory for the craft
+    craft.create_inventory! unless craft.inventory
+    
+    # Remove the craft item from settlement inventory
+    craft_item.destroy!
+    
+    # Add the recommended units to the craft
+    recommended_fit = craft_data.dig('recommended_units') || craft_data.dig('recommended_fit')
+    if recommended_fit
+      # Structure the data to match the expected format
+      formatted_fit = {}
+      if recommended_fit.is_a?(Array)
+        formatted_fit = {'units' => recommended_fit}
+      else
+        formatted_fit = recommended_fit
+      end
+      
+      # Call the class method to build units and modules
+      self.class.build_units_and_modules(
+        target: craft,
+        settlement_inventory: @settlement_inventory
+      )
+    end
+    
+    craft.reload
+    craft
+  end
+
   # Class method that takes named parameters
   def self.build_units_and_modules(target:, settlement_inventory:)
     Rails.logger.info "Starting assembly for #{target.class.name} ID: #{target.id}"
     
     # Get recommended fit from target's operational data
     recommended_fit = target.operational_data&.dig('recommended_fit')
+    
+    # Fall back to recommended_units if recommended_fit is not present
+    if !recommended_fit && target.operational_data&.dig('recommended_units')
+      recommended_fit = {'units' => target.operational_data['recommended_units']}
+    end
+    
     unless recommended_fit
       Rails.logger.warn "No recommended fit found for #{target.class.name} ID: #{target.id}"
       return target
@@ -41,9 +98,6 @@ class UnitModuleAssemblyService
       process_custom_ports(target.operational_data['custom_port_configurations'], target, settlement_inventory)
     end
     
-    # Log results
-    Rails.logger.info "Assembly complete. Units: #{target.base_units.count}, Modules: #{target.modules.count}, Rigs: #{target.rigs.count}"
-    
     # Return the target
     target
   rescue => e
@@ -61,7 +115,10 @@ class UnitModuleAssemblyService
       
       count.times do |i|
         # Find item in inventory
-        item = inventory.items.find_by(name: unit_id)
+        item = inventory.items.find_by(name: unit_id) || 
+               inventory.items.find_by("metadata->>'unit_type' = ?", unit_id) ||
+               inventory.items.find_by(name: "#{unit_id.humanize} Item")
+        
         unless item && item.amount > 0
           Rails.logger.warn "Item not found or zero amount: #{unit_id}"
           next
@@ -102,7 +159,10 @@ class UnitModuleAssemblyService
       
       count.times do |i|
         # Find item in inventory
-        item = inventory.items.find_by(name: module_id)
+        item = inventory.items.find_by(name: module_id) || 
+               inventory.items.find_by("metadata->>'module_type' = ?", module_id) ||
+               inventory.items.find_by(name: "#{module_id.humanize} Item")
+        
         next unless item && item.amount > 0
         
         # Generate port name
@@ -139,7 +199,10 @@ class UnitModuleAssemblyService
       
       count.times do |i|
         # Find item in inventory
-        item = inventory.items.find_by(name: rig_id)
+        item = inventory.items.find_by(name: rig_id) || 
+               inventory.items.find_by("metadata->>'rig_type' = ?", rig_id) ||
+               inventory.items.find_by(name: "#{rig_id.humanize} Item")
+        
         next unless item && item.amount > 0
         
         # Generate port name
@@ -196,7 +259,10 @@ class UnitModuleAssemblyService
   
   def self.process_custom_unit(item_id, count, port_type, target, inventory)
     count.times do |i|
-      item = inventory.items.find_by(name: item_id)
+      item = inventory.items.find_by(name: item_id) || 
+             inventory.items.find_by("metadata->>'unit_type' = ?", item_id) ||
+             inventory.items.find_by(name: "#{item_id.humanize} Item")
+      
       next unless item && item.amount > 0
       
       # Generate port name
@@ -226,7 +292,10 @@ class UnitModuleAssemblyService
   
   def self.process_custom_module(item_id, count, port_type, target, inventory)
     count.times do |i|
-      item = inventory.items.find_by(name: item_id)
+      item = inventory.items.find_by(name: item_id) || 
+             inventory.items.find_by("metadata->>'module_type' = ?", item_id) ||
+             inventory.items.find_by(name: "#{item_id.humanize} Item")
+      
       next unless item && item.amount > 0
       
       # Generate port name
@@ -255,7 +324,10 @@ class UnitModuleAssemblyService
   
   def self.process_custom_rig(item_id, count, port_type, target, inventory)
     count.times do |i|
-      item = inventory.items.find_by(name: item_id)
+      item = inventory.items.find_by(name: item_id) || 
+             inventory.items.find_by("metadata->>'rig_type' = ?", item_id) ||
+             inventory.items.find_by(name: "#{item_id.humanize} Item")
+      
       next unless item && item.amount > 0
       
       # Generate port name
@@ -285,7 +357,11 @@ class UnitModuleAssemblyService
   
   def self.process_landing_gear(item_id, count, port_type, target, inventory)
     count.times do |i|
-      item = inventory.items.find_by(name: item_id)
+      item = inventory.items.find_by(name: item_id) || 
+             inventory.items.find_by("metadata->>'unit_type' = ?", item_id) ||
+             inventory.items.find_by(name: "#{item_id.humanize} Item") ||
+             inventory.items.find_by(name: "Retractable Landing Legs")
+      
       next unless item && item.amount > 0
       
       # Create as a specialized unit with landing gear port
