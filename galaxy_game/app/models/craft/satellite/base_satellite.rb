@@ -77,6 +77,16 @@ module Craft
         base_units.where(unit_type: unit_type).exists?
       end
 
+      # Helper method to determine the appropriate unit class based on type
+      def determine_unit_class(unit_type)
+        case unit_type.to_s
+        when /computer/
+          Units::Computer
+        else
+          Units::BaseUnit
+        end
+      end
+
       # Method to build units based on craft configuration
       def build_units_and_modules
         # Clear existing units first
@@ -110,12 +120,17 @@ module Craft
           
           # Create the specified number of units
           count.times do
-            base_units.create!(
+            # Determine the appropriate class based on unit type
+            unit_class = determine_unit_class(unit_type)
+            
+            # Create the unit with the appropriate class
+            unit = unit_class.create!(
               unit_type: unit_type,
               name: unit_data['name'] || unit_type.to_s.humanize,
               identifier: "#{unit_type}_#{SecureRandom.hex(4)}",
               operational_data: unit_data,
-              owner: self.owner # Pass the owner from the satellite to the unit
+              owner: self.owner,
+              attachable: self
             )
           end
         end
