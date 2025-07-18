@@ -1,11 +1,19 @@
-require_relative '../../services/lookup/unit_lookup_service'
-
 module Units
   class BaseUnit < ApplicationRecord
+    # Tell Rails to use the 'units' table instead of 'base_units'
+    self.table_name = 'base_units'
+    # Tell Rails not to use 'unit_type' for STI
+    self.inheritance_column = :_type_disabled
+
     include HasModules
     include HasRigs
     include Housing
     include EnergyManagement
+
+    # ✅ Include existing concerns based on unit type
+    include Units::HasProcessing
+    include AtmosphericProcessing
+    include HasExtraction
 
     belongs_to :owner, polymorphic: true
     belongs_to :attachable, polymorphic: true, optional: true
@@ -388,6 +396,13 @@ module Units
       save!
     end
 
+    def operational?
+      # Simple operational check - unit exists and has valid operational_data
+      operational_data.present? && 
+      operational_data.is_a?(Hash) && 
+      !operational_data.empty?
+    end
+
     private
 
     def load_unit_info
@@ -534,6 +549,17 @@ module Units
     end
 
     private
+    def atmospheric_unit_types
+      %w[co2_oxygen_production_unit oxygen_production_unit gas_separator]
+    end
+    
+    def geosphere_unit_types
+      %w[planetary_volatiles_extractor thermal_extraction_unit lunar_oxygen_extractor mining_drill]
+    end
+    
+    def extraction_unit_types
+      %w[mining_drone resource_extractor]
+    end    
 
     def get_or_create_surface_storage
       # First try to get existing surface storage

@@ -1,3 +1,4 @@
+# spec/models/units/base_unit_spec.rb
 require 'rails_helper'
 
 RSpec.describe Units::BaseUnit, type: :model do
@@ -214,24 +215,60 @@ RSpec.describe Units::BaseUnit, type: :model do
   end
 
   describe '#store_on_surface' do
-    it 'calls add_pile on surface storage' do
-      base_unit = create(:base_unit)
-      surface_storage = instance_double(Storage::SurfaceStorage)
-      allow(base_unit.attachable).to receive(:surface_storage).and_return(surface_storage)
-      allow(surface_storage).to receive(:add_pile).and_return(true)
+    # Use a real settlement for attachable, and then stub its surface_storage
+    let(:settlement_with_storage) { create(:base_settlement) }
+    let!(:surface_storage_real) { create(:surface_storage, inventory: settlement_with_storage.inventory) } # Create a real surface_storage
 
-      base_unit.send(:store_on_surface, 'processed_regolith', 100)
+    # Create base_unit attached to the real settlement
+    let(:base_unit) { create(:base_unit, attachable: settlement_with_storage) }
 
-      expect(surface_storage).to have_received(:add_pile).with(material_name: 'processed_regolith', amount: 100, source_unit: base_unit)
+    before do
+      # Stub the add_pile method on the real surface_storage instance
+      allow(surface_storage_real).to receive(:add_pile).and_return(true)
     end
 
-    it 'returns false if no surface storage available' do
-      base_unit = create(:base_unit)
-      # The mock will prevent get_or_create_surface_storage from succeeding
-      allow(base_unit.attachable).to receive(:surface_storage?).and_return(true)
-      allow(base_unit.attachable).to receive(:inventory).and_return(nil)
+    it 'calls add_pile on surface storage' do
+      # Call the method under test
+      base_unit.send(:store_on_surface, 'processed_regolith', 100) # Use send as it's a private method
+
+      # Assert that add_pile was received by the real surface_storage_double
+      expect(surface_storage_real).to have_received(:add_pile).with(
+        material_name: 'processed_regolith',
+        amount: 100,
+        source_unit: base_unit # base_unit is a real object, so it will match
+      )
+    end
+
+    it 'returns false if attachable does not respond to :surface_storage' do
+      # Use a real model (e.g., Organization) as attachable
+      dummy_attachable = create(:organization)
+      # Stub respond_to? for :surface_storage
+      allow(dummy_attachable).to receive(:respond_to?).and_call_original
+      allow(dummy_attachable).to receive(:respond_to?).with(:surface_storage).and_return(false)
+
+      base_unit_without_surface_storage = Units::BaseUnit.new(
+        name: "Test Unit",
+        unit_type: "test_type",
+        owner: create(:organization),
+        identifier: "TEST-NO-SURFACE-STORAGE"
+      )
+      base_unit_without_surface_storage.attachable = dummy_attachable
+
+      expect(base_unit_without_surface_storage.send(:store_on_surface, 'processed_regolith', 100)).to be false
+    end
+
+    it 'returns false if surface_storage returns nil' do
+      # Create a base_unit attached to a settlement that has no surface_storage
+      settlement_no_storage = create(:base_settlement)
+      base_unit_no_surface_storage = create(:base_unit, attachable: settlement_no_storage)
       
-      expect(base_unit.send(:store_on_surface, 'processed_regolith', 100)).to be false
+      # Ensure its surface_storage method returns nil
+      allow(settlement_no_storage).to receive(:surface_storage).and_return(nil)
+
+      # Call the method under test
+      expect(base_unit_no_surface_storage.send(:store_on_surface, 'processed_regolith', 100)).to be false
+      # Ensure add_pile was NOT called
+      expect(surface_storage_real).not_to have_received(:add_pile)
     end
   end
 end
