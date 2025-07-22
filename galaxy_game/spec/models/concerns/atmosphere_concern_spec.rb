@@ -309,8 +309,8 @@ RSpec.describe AtmosphereConcern do
     
     it 'calculates different molar mass for different compositions' do
       hydrogen_helium_composition = {
-        "hydrogen" => 80.0,
-        "helium" => 20.0
+        "H2" => 80.0,
+        "He" => 20.0
       }
       
       molar_mass = atmosphere.estimate_molar_mass(hydrogen_helium_composition)
@@ -526,6 +526,38 @@ RSpec.describe AtmosphereConcern do
     it 'does nothing when no gases exist' do
       atmosphere.gases.destroy_all
       expect { atmosphere.recalculate_gas_percentages }.not_to raise_error
+    end
+  end
+
+  describe '#increase_dust and #decrease_dust' do
+    it 'increases dust concentration and sets properties' do
+      expect(atmosphere.dust).to eq({})
+      atmosphere.increase_dust(0.5, "Test dust")
+      atmosphere.reload
+      expect(atmosphere.dust['concentration']).to eq(0.5)
+      expect(atmosphere.dust['properties']).to eq("Test dust")
+    end
+
+    it 'decreases dust concentration but not below zero' do
+      atmosphere.increase_dust(0.5)
+      atmosphere.decrease_dust(0.2)
+      atmosphere.reload
+      expect(atmosphere.dust['concentration']).to eq(0.3)
+      atmosphere.decrease_dust(1.0)
+      atmosphere.reload
+      expect(atmosphere.dust['concentration']).to eq(0.0)
+    end
+  end
+
+  describe '#increase_pollution' do
+    it 'increases pollution value' do
+      expect(atmosphere.pollution).to eq(0)
+      atmosphere.increase_pollution(5)
+      atmosphere.reload
+      expect(atmosphere.pollution).to eq(5)
+      atmosphere.increase_pollution(2)
+      atmosphere.reload
+      expect(atmosphere.pollution).to eq(7)
     end
   end
 end

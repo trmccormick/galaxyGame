@@ -104,7 +104,7 @@ module AtmosphereConcern
         mass: mass,
         molar_mass: molar_mass
       )
-      
+
       # Save with validation to catch missing molar mass
       gas.save!
     end
@@ -405,9 +405,34 @@ module AtmosphereConcern
     end
   end  
 
+  def increase_dust(amount = 0, properties = "Mainly composed of silicates and sulfates.")
+    return unless amount > 0
+
+    self.dust ||= {}
+    self.dust['concentration'] = (self.dust['concentration'] || 0.0) + amount
+    self.dust['properties'] = properties if properties
+    save!
+  end
+
+  def decrease_dust(amount)
+    return unless self.dust.present? && self.dust.is_a?(Hash) && self.dust.any?
+
+    self.dust['concentration'] = (self.dust['concentration'] || 0.0) - amount
+    self.dust['concentration'] = 0.0 if self.dust['concentration'] < 0.0
+    save!
+  end
+
+  def increase_pollution(amount)
+    self.pollution ||= 0
+    self.pollution += amount
+    save!
+  end
+
   private
 
   def set_default_values
+    return unless celestial_body # ✅ Guard clause for nil celestial_body
+    
     # Fallback pressure logic
     if pressure.nil?
       self.pressure = celestial_body.known_pressure
