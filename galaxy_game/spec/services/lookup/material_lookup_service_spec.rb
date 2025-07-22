@@ -5,15 +5,6 @@ RSpec.describe Lookup::MaterialLookupService do
   let(:service) { described_class.new }
 
   describe '#find_material' do
-    # it 'loads materials from the correct file structure' do
-    #   gases_path = described_class.locate_gases_path
-    #   expect(File.directory?(gases_path)).to be true
-      
-    #   # ✅ FIX: Look for actual data files, not fixture files
-    #   oxygen_file = File.join(Rails.root, 'app', 'data', 'resources', 'materials', 'gases', 'reactive', 'oxygen.json')
-    #   expect(File.exist?(oxygen_file)).to be true
-    # end
-
     it 'loads materials from the correct file structure' do
       gases_path = Lookup::MaterialLookupService::MATERIAL_PATHS[:gases][:path].call
       expect(File.directory?(gases_path)).to be true
