@@ -4,14 +4,13 @@
 module CelestialBodies
   class CelestialBody < ApplicationRecord
     include OrbitalMechanics
-    include MaterialManagementConcern  # Add this line
+    include MaterialManagementConcern
 
     belongs_to :solar_system, optional: true
     before_save :run_terra_sim, if: :simulation_relevant_changes?
-    # before_create :set_calculated_values
-
-    # Add this callback after the existing callbacks
+    before_create :set_calculated_values
     after_create :ensure_spatial_location
+    after_create :initialize_associations
 
     # Spheres               
     has_one :atmosphere, class_name: 'CelestialBodies::Spheres::Atmosphere', dependent: :destroy
@@ -19,10 +18,6 @@ module CelestialBodies
     has_one :geosphere, class_name: 'CelestialBodies::Spheres::Geosphere', dependent: :destroy
     has_one :hydrosphere, class_name: 'CelestialBodies::Spheres::Hydrosphere', dependent: :destroy
 
-    # has_many :orbital_relationships
-    # has_many :orbits, through: :orbital_relationships, source: :celestial_body
-    # has_many :orbiting_bodies, class_name: 'OrbitalRelationship', foreign_key: :star_id
-    
     has_many :colonies
     has_many :base_settlements
     has_many :materials
@@ -36,14 +31,19 @@ module CelestialBodies
              class_name: 'Location::CelestialLocation',
              dependent: :destroy
 
+    has_many :orbiting_craft,
+         class_name: 'Craft::BaseCraft',
+         foreign_key: :orbiting_celestial_body_id,
+         inverse_of: :orbiting_celestial_body,
+         dependent: :nullify         
+
     # Star relationships
     has_many :star_distances, class_name: 'CelestialBodies::StarDistance', dependent: :destroy
     has_many :stars, through: :star_distances
 
     validates :identifier, presence: true, uniqueness: true   
     validates :size, presence: true, numericality: { greater_than: 0 }
-    validates :gravity, :density, :radius, :orbital_period, numericality: { greater_than_or_equal_to: 0 }
-    # Validates that mass is a valid number, allowing for scientific notation
+    validates :gravity, :density, :radius, :orbital_period, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validates :mass, format: { 
       with: /\A-?\d+(\.\d+)?([eE][-+]?\d+)?\z/, 
       message: "must be a valid number" 
@@ -152,10 +152,6 @@ module CelestialBodies
       end
     end
 
-    # def material_composition
-    #   available_materials
-    # end
-
     accepts_nested_attributes_for :geosphere
 
     def surface_composition
@@ -239,10 +235,6 @@ module CelestialBodies
       # Return the total
       base_mass + atmo_mass + hydro_mass + geo_mass
     end
-
-    # def body_category
-    #   self.class.name.demodulize.underscore
-    # end
 
     # Add a helper method to get a simplified type
     def body_category
@@ -350,13 +342,20 @@ module CelestialBodies
       Rails.logger.info "#{name} has been ejected from #{previous_system&.name || 'its system'}"
     end
 
+    def last_simulated_at
+      value = properties['last_simulated_at']
+      value.is_a?(String) ? Time.parse(value) : value
+    end
+
+    def last_simulated_at=(time)
+      self.properties ||= {}
+      self.properties['last_simulated_at'] = time&.iso8601
+    end
+
     private
 
     def set_defaults
-      # self.temperature ||= DEFAULT_TEMPERATURE
-      # self.known_pressure ||= 0
       self.status ||= :active
-      # self.radius ||= 1.0
       self.materials ||= '{}'
     end
 
@@ -364,45 +363,26 @@ module CelestialBodies
       self.properties ||= {}
     end
 
+    # ✅ Simplified initialization - spheres handle themselves
     def initialize_associations
       create_atmosphere unless atmosphere.present?
       create_spatial_location unless spatial_location.present?
 
-      # Set default values for atmosphere to prevent nil errors
+      # ✅ Only set essential atmosphere defaults
       if atmosphere.present?
         atmosphere.update!(
-          temperature: surface_temperature || 0,  # Add fallback value
-          pressure: 0,
+          temperature: surface_temperature || 288.0,  # Reasonable default
+          pressure: 0.0,
           composition: {},
-          total_atmospheric_mass: 0,
-          pollution: 0,
+          total_atmospheric_mass: 0.0,
+          pollution: 0.0,
           dust: {}
         )
 
         atmosphere.initialize_gases if atmosphere.respond_to?(:initialize_gases)
       end
-
-      # Set default values for biosphere to prevent nil errors
-      # biosphere.update!(
-      #   temperature_tropical: 0,
-      #   temperature_polar: 0
-      # )
-
-      # Set default values for geosphere to prevent nil errors
-      # geosphere.update!(
-      #   rock_types: {},
-      #   geological_activity: 0
-      # )
       
-      # Set default values for hydrosphere to prevent nil errors
-      # hydrosphere.update!(
-      #   liquid_name: 'unknown',
-      #   liquid_volume: 0,
-      #   lakes: 0,
-      #   rivers: 0,
-      #   oceans: 0,
-      #   ice: 0
-      # )
+      # ✅ All other spheres initialize themselves via their own callbacks
     end    
 
     def run_terra_sim
@@ -426,55 +406,23 @@ module CelestialBodies
       4 * Math::PI * (radius ** 2)
     end
 
-    def calculate_escape_velocity
-      return 0 unless mass.present? && radius.present?
-      # v_escape = sqrt(2GM/R)
-      Math.sqrt(2 * GameConstants::GRAVITATIONAL_CONSTANT * mass.to_f / radius)
-    end
-
     def set_calculated_values
       if radius.present?
-        # CRITICAL: Check if surface_area is ACTUALLY present in the database
-        # If it's nil or zero in the database, then calculate it
-        unless self[:surface_area].present? && self[:surface_area] != 0
+        if surface_area.nil? || surface_area == 0
           self.surface_area = calculate_surface_area
         end
         
-        # CRITICAL: Check if volume is ACTUALLY present in the database
-        # If it's nil or zero in the database, then calculate it
-        unless self[:volume].present? && self[:volume] != 0
+        if volume.nil? || volume == 0
           self.volume = (4.0 / 3) * Math::PI * (radius ** 3)
         end
       end
       
       if mass.present? && radius.present?
-        # CRITICAL: Check if escape_velocity is ACTUALLY present in the database
-        # If it's nil or zero in the database, then calculate it
-        unless self[:escape_velocity].present? && self[:escape_velocity] != 0
+        if escape_velocity.nil? || escape_velocity == 0
           self.escape_velocity = calculate_escape_velocity
         end
       end
     end
-
-    # def update_atmosphere(gas, amount)
-    #   self.atmosphere ||= Atmosphere.new(temperature: default_temperature)
-
-    #   if amount > 0
-    #     atmosphere.add_gas(gas)
-    #   else
-    #     atmosphere.remove_gas(gas.name)
-    #   end
-
-    #   run_terra_simulation
-    # end
-
-    # def update_geosphere
-    #   @geosphere.update_geological_activity if @geosphere
-    # end
-
-    # def update_hydrosphere
-    #   @hydrosphere.update_water_cycle if @hydrosphere
-    # end  
     
     # Add this method to the public section
     def ensure_spatial_location
@@ -489,11 +437,9 @@ module CelestialBodies
     
     # Example for load_gas_giant
     def load_gas_giant(params)
-      # Extract body_type from params to avoid unknown attribute error
       body_type = params.delete(:body_type)
       gas_giant = gas_giants.find_or_create_by(name: params[:name])
       
-      # Set required defaults to pass validations
       params[:identifier] ||= "GG-#{SecureRandom.hex(4)}"
       params[:gravity] ||= 0
       params[:density] ||= 0
@@ -501,7 +447,6 @@ module CelestialBodies
       params[:orbital_period] ||= 0
       params[:mass] ||= 0
       
-      # Store body_type in properties
       props = gas_giant.properties || {}
       props['body_type'] = 'gas_giant'
       params[:properties] = props
@@ -516,10 +461,27 @@ module CelestialBodies
       total_component_mass += atmosphere.total_atmospheric_mass if atmosphere
       total_component_mass += hydrosphere.total_hydrosphere_mass if hydrosphere
       
-      # Allow for small rounding errors (0.1% difference)
       unless (total_component_mass - mass).abs / mass < 0.001
         errors.add(:mass, "Total sphere masses (#{total_component_mass}) must equal celestial body mass (#{mass})")
       end
+    end
+
+    # Determines if the celestial body should be simulated during the game loop
+    def should_simulate?
+      # Basic checks: must be active, have a meaningful radius, and be a planet or moon type
+      return false unless active?
+      return false unless radius.present? && radius > 1000  # arbitrary threshold (1 km)
+      
+      # Use planet_class? (includes rocky planets, dwarf planets, etc) or moon check
+      return true if planet_class? || is_moon
+
+      # Additionally, allow explicit override in properties JSON
+      # e.g., properties['force_simulate'] = true to always simulate
+      if properties.is_a?(Hash) && properties['force_simulate'] == true
+        return true
+      end
+
+      false
     end
   end
 end
