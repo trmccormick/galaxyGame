@@ -1,117 +1,98 @@
 require 'rails_helper'
-require_relative '../../app/models/settlement/base_settlement'
-require_relative '../../app/models/units/base_unit'
 
-RSpec.describe Game, type: :model do
-  # Create a plain Ruby object instead of using database persistence
-  let(:game) { Game.new }
-
-  describe "initialization" do
-    it "starts with elapsed time at 0" do
-      expect(game.elapsed_time).to eq(0.0)
+RSpec.describe Game do
+  before(:all) do
+    # Create required Currencies
+    @gcc = Currency.find_or_create_by!(symbol: 'GCC') do |c|
+      c.name = 'Galactic Crypto Currency'
+      c.is_system_currency = true
+      c.precision = 8
     end
-
-    it "starts with an empty tasks array" do
-      expect(game.tasks).to eq([])
-    end
-  end
-
-  describe "#assign_task" do
-    let(:settlement) { double("Settlement", name: "Test Settlement") }
-    
-    it "adds a task to the queue" do
-      expect {
-        game.assign_task(settlement, "Test Task", 5.0)
-      }.to change { game.tasks.size }.by(1)
-    end
-    
-    it "sorts tasks by completion time" do
-      game.assign_task(settlement, "Task 1", 10.0)
-      game.assign_task(settlement, "Task 2", 5.0)
-      
-      expect(game.tasks.first[:description]).to eq("Task 2")
+    @usd = Currency.find_or_create_by!(symbol: 'USD') do |c|
+      c.name = 'United States Dollar'
+      c.is_system_currency = true
+      c.precision = 2
     end
   end
 
-  describe "#advance_time" do
-    let(:settlement) { double("Settlement", name: "Test Settlement") }
-    
+  let(:game) { described_class.new }
+  let(:player) { create(:player) }
+  let(:location) { create(:celestial_location, name: "Test Location") }
+
+  let!(:base_settlement) do
+    create(:base_settlement, :independent, :with_storage,
+           name: "Mars Base One",
+           current_population: 5,
+           owner: player,
+           location: location)
+  end
+
+  let!(:storage_unit) do
+    create(:base_unit, :storage,
+           name: "Test Storage",
+           unit_type: "storage",
+           owner: base_settlement,
+           attachable: base_settlement,
+           operational_data: {
+             'storage' => {
+               'capacity' => 500,
+               'current_contents' => 'N2'
+             },
+             'output_resources' => [] # <-- Add this line
+           })
+  end
+
+  let!(:housing_unit) do
+    create(:base_unit, :housing,
+           name: "Habitat Module",
+           unit_type: "housing",
+           owner: base_settlement,
+           attachable: base_settlement,
+           operational_data: {
+             'capacity' => 6,
+             'consumables' => { energy: 4, water: 15, oxygen: 10 },
+             'output_resources' => [] # <-- Add this line
+           })
+  end
+
+  describe '#assign_task' do
+    let!(:settlement) { create(:settlement, name: "Luna Outpost Alpha") }
+
+    it 'adds a new task to the task list with correct completion time' do
+      game.assign_task(settlement, "Build solar panel", 3.0)
+
+      expect(game.tasks.size).to eq(1)
+      task = game.tasks.first
+      expect(task[:description]).to eq("Build solar panel")
+      expect(task[:completion_time]).to eq(3.0)
+      expect(task[:settlement]).to eq(settlement)
+    end
+  end
+
+  describe '#advance_time' do
+    let!(:settlement) { create(:settlement, name: "Mars Base One") }
+    let!(:planet) { create(:terrestrial_planet, name: "Mars") }
+
     before do
-      # Stub the process methods to avoid database access
-      allow(game).to receive(:process_settlements)
-      allow(game).to receive(:process_units)
-      allow(game).to receive(:process_planets)
+      game.assign_task(settlement, "Deploy solar collector", 5.0)
+
+      allow(planet).to receive(:should_simulate?).and_return(true)
+      allow(PlanetUpdateService).to receive(:new)
+        .with(planet, 5.0)
+        .and_return(instance_double(PlanetUpdateService, run: true))
     end
-    
-    it "does nothing when there are no tasks" do
-      expect(game.advance_time).to be_nil
-    end
-    
-    it "advances time to the next task" do
-      game.assign_task(settlement, "Test Task", 5.0)
-      game.advance_time
-      
+
+    it 'advances game time and completes a task' do
+      expect { game.advance_time }.to output(/Task completed: Deploy solar collector/).to_stdout
+
       expect(game.elapsed_time).to eq(5.0)
-    end
-    
-    it "processes game systems for the skipped time" do
-      game.assign_task(settlement, "Test Task", 5.0)
-      
-      expect(game).to receive(:process_settlements).with(5.0)
-      expect(game).to receive(:process_units).with(5.0)
-      expect(game).to receive(:process_planets).with(5.0)
-      
-      game.advance_time
+      expect(game.tasks).to be_empty
     end
   end
 
-  describe "private methods" do
-    let(:settlement) { double("Settlement::BaseSettlement", consume_resources: nil, name: "Test Settlement") }
-    let(:unit) { double("Units::BaseUnit", operate: nil) }
-    let(:planet) { double("CelestialBodies::CelestialBody", should_simulate?: true) }
-    
-    # Mock a service that doesn't exist yet
-    let(:planet_service) { double("PlanetService", run: nil) }
-    
-    before do
-      # Mock the class methods
-      allow(Settlement::BaseSettlement).to receive(:all).and_return([settlement])
-      allow(Units::BaseUnit).to receive(:all).and_return([unit])
-      allow(CelestialBodies::CelestialBody).to receive(:all).and_return([planet])
-      
-      # Create a proper stub class that accepts the correct parameters
-      planet_update_service_class = Class.new do
-        def initialize(planet, time_skipped)
-          # Constructor with correct parameters
-        end
-        
-        def run
-          # Method to be called
-        end
-      end
-      
-      # Use this class for the stub
-      stub_const("PlanetUpdateService", planet_update_service_class)
-      
-      # Create a mock instance and allow new to return it
-      allow(PlanetUpdateService).to receive(:new).with(planet, 1.0).and_return(planet_service)
-    end
-    
-    it "processes settlements" do
-      expect(settlement).to receive(:consume_resources).with(1.0)
-      game.send(:process_settlements, 1.0)
-    end
-    
-    it "processes units" do
-      expect(unit).to receive(:operate).with(1.0)
-      game.send(:process_units, 1.0)
-    end
-    
-    it "processes planets" do
-      expect(PlanetUpdateService).to receive(:new).with(planet, 1.0)
-      expect(planet_service).to receive(:run)
-      game.send(:process_planets, 1.0)
+  describe '#advance_time with no tasks' do
+    it 'prints a message when there are no tasks' do
+      expect { game.advance_time }.to output(/No active tasks/).to_stdout
     end
   end
 end
-

@@ -43,7 +43,9 @@ class Game
   def process_settlements(time_skipped)
     # Use Settlement::BaseSettlement instead of just Settlement
     Settlement::BaseSettlement.all.each do |settlement|
-      settlement.consume_resources(time_skipped)
+      settlement.base_units.each do |unit|
+        unit.consume_resources(time_skipped) if unit.respond_to?(:consume_resources)
+      end
       puts "#{settlement.name} updated for #{time_skipped} days."
     end
   end
