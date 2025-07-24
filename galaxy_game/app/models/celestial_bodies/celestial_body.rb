@@ -327,6 +327,7 @@ module CelestialBodies
 
     # Helper to identify if this is any type of planet
     def planet_class?
+      return false if type.nil?
       type.include?('::Planets::') || type.include?('::MinorBodies::DwarfPlanet')
     end
 
@@ -351,6 +352,25 @@ module CelestialBodies
       self.properties ||= {}
       self.properties['last_simulated_at'] = time&.iso8601
     end
+
+
+    # Determines if the celestial body should be simulated during the game loop
+    def should_simulate?
+      # Basic checks: must be active, have a meaningful radius, and be a planet or moon type
+      return false unless active?
+      return false unless radius.present? && radius > 1000  # arbitrary threshold (1 km)
+      
+      # Use planet_class? (includes rocky planets, dwarf planets, etc) or moon check
+      return true if planet_class? || is_moon
+
+      # Additionally, allow explicit override in properties JSON
+      # e.g., properties['force_simulate'] = true to always simulate
+      if properties.is_a?(Hash) && properties['force_simulate'] == true
+        return true
+      end
+
+      false
+    end    
 
     private
 
@@ -464,24 +484,6 @@ module CelestialBodies
       unless (total_component_mass - mass).abs / mass < 0.001
         errors.add(:mass, "Total sphere masses (#{total_component_mass}) must equal celestial body mass (#{mass})")
       end
-    end
-
-    # Determines if the celestial body should be simulated during the game loop
-    def should_simulate?
-      # Basic checks: must be active, have a meaningful radius, and be a planet or moon type
-      return false unless active?
-      return false unless radius.present? && radius > 1000  # arbitrary threshold (1 km)
-      
-      # Use planet_class? (includes rocky planets, dwarf planets, etc) or moon check
-      return true if planet_class? || is_moon
-
-      # Additionally, allow explicit override in properties JSON
-      # e.g., properties['force_simulate'] = true to always simulate
-      if properties.is_a?(Hash) && properties['force_simulate'] == true
-        return true
-      end
-
-      false
     end
   end
 end

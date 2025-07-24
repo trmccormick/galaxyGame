@@ -97,4 +97,49 @@ RSpec.describe CelestialBodies::CelestialBody, type: :model do
       expect(mars.last_simulated_at).to be_a(Time)
     end
   end
+
+  describe '#planet_class?' do
+    it 'returns true for a planet type' do
+      allow(mars).to receive(:type).and_return('CelestialBodies::Planets::Rocky::TerrestrialPlanet')
+      expect(mars.planet_class?).to be true
+    end
+
+    it 'returns false for nil type' do
+      allow(mars).to receive(:type).and_return(nil)
+      expect(mars.planet_class?).to be false
+    end
+
+    it 'returns false for non-planet type' do
+      allow(mars).to receive(:type).and_return('CelestialBodies::Moon')
+      expect(mars.planet_class?).to be false
+    end
+  end
+
+  describe '#should_simulate?' do
+    it 'returns false if not active' do
+      allow(mars).to receive(:active?).and_return(false)
+      expect(mars.should_simulate?).to be false
+    end
+
+    it 'returns false if radius is too small' do
+      allow(mars).to receive(:radius).and_return(500)
+      expect(mars.should_simulate?).to be false
+    end
+
+    it 'returns true for planet_class? or is_moon' do
+      allow(mars).to receive(:active?).and_return(true)
+      allow(mars).to receive(:radius).and_return(6371000)
+      allow(mars).to receive(:planet_class?).and_return(true)
+      expect(mars.should_simulate?).to be true
+    end
+
+    it 'returns true if force_simulate property is set' do
+      allow(mars).to receive(:active?).and_return(true)
+      allow(mars).to receive(:radius).and_return(6371000)
+      allow(mars).to receive(:planet_class?).and_return(false)
+      allow(mars).to receive(:is_moon).and_return(false)
+      allow(mars).to receive(:properties).and_return({ 'force_simulate' => true })
+      expect(mars.should_simulate?).to be true
+    end
+  end
 end
