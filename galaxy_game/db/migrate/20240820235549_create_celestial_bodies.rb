@@ -5,18 +5,18 @@ class CreateCelestialBodies < ActiveRecord::Migration[7.0] # Ensure this matches
       t.string :identifier, null: false, index: { unique: true }
       t.string :name
       t.string :type # For Single Table Inheritance (STI)
-      t.decimal :size # Consider precision/scale if this is a ratio
-      t.decimal :gravity, precision: 10, scale: 2
-      t.decimal :density, precision: 10, scale: 2
-      t.decimal :orbital_period, precision: 10, scale: 2
+      t.decimal :size, precision: 38, scale: 10 # Increased for astronomical values
+      t.decimal :gravity, precision: 38, scale: 10 # Increased for astronomical values
+      t.decimal :density, precision: 38, scale: 10 # Increased for astronomical values
+      t.decimal :orbital_period, precision: 38, scale: 10 # Increased for astronomical values
       # t.jsonb :gas_quantities, default: {} # Review if this is still needed with Atmosphere model
       # t.jsonb :materials, default: {} # REMOVED: Assumed to be a `has_many :materials` association to a separate table/model
 
       t.decimal :mass, precision: 38, scale: 10 # High precision for astronomical masses
       t.decimal :radius, precision: 15, scale: 5 # Changed from float to decimal for better precision
       t.decimal :axial_tilt, precision: 5, scale: 2 # Changed from float to decimal
-      t.decimal :escape_velocity, precision: 10, scale: 5 # Changed from float to decimal
-      t.decimal :semi_major_axis, :decimal, precision: 15, scale: 6
+      t.decimal :escape_velocity, precision: 38, scale: 10 # Increased for astronomical values
+      t.decimal :semi_major_axis, precision: 38, scale: 10 # Increased for astronomical values
       
       # INCREASED PRECISION for surface_area and volume to handle large astronomical values
       t.decimal :surface_area, precision: 22, scale: 5 # Increased from 20 to 22 (allows up to 10^17 - 1)
