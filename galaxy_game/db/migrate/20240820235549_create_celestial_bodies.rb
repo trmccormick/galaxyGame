@@ -16,6 +16,7 @@ class CreateCelestialBodies < ActiveRecord::Migration[7.0] # Ensure this matches
       t.decimal :radius, precision: 15, scale: 5 # Changed from float to decimal for better precision
       t.decimal :axial_tilt, precision: 5, scale: 2 # Changed from float to decimal
       t.decimal :escape_velocity, precision: 10, scale: 5 # Changed from float to decimal
+      t.decimal :semi_major_axis, :decimal, precision: 15, scale: 6
       
       # INCREASED PRECISION for surface_area and volume to handle large astronomical values
       t.decimal :surface_area, precision: 22, scale: 5 # Increased from 20 to 22 (allows up to 10^17 - 1)
@@ -29,9 +30,6 @@ class CreateCelestialBodies < ActiveRecord::Migration[7.0] # Ensure this matches
       t.references :parent_celestial_body, foreign_key: { to_table: :celestial_bodies }, index: true, null: true
 
       t.jsonb :properties, default: {}, null: false # For miscellaneous dynamic properties
-
-      # t.string :parent_body # REMOVED: This string field is no longer needed.
-                             # The builder resolves the string identifier to an ID.
 
       t.timestamps
     end
