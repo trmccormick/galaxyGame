@@ -1,43 +1,78 @@
 <h1><%= @celestial_body.name %></h1>
 
-<h2>Atmospheric Composition</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Gas</th>
-      <th>Percentage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @celestial_body.atmospheric_composition.each do |gas, percentage| %>
-      <tr>
-        <td><%= gas_name_and_formula(gas) %></td>
-        <td><%= percentage %>%</td>
-      </tr>
+<p><strong>Size:</strong> <%= @celestial_body.size %></p>
+
+<% if @celestial_body.gravity %>
+  <p><strong>Gravity:</strong> <%= @celestial_body.gravity %></p>
+<% end %>
+
+<% if @celestial_body.density %>
+  <p><strong>Density:</strong> <%= @celestial_body.density %></p>
+<% end %>
+
+<% if @celestial_body.orbital_period %>
+  <p><strong>Orbital Period:</strong> <%= @celestial_body.orbital_period %></p>
+<% end %>
+
+<% if @celestial_body.respond_to?(:surface_temperature) && @celestial_body.surface_temperature %>
+  <p><strong>Surface Temperature:</strong> <%= @celestial_body.surface_temperature %></p>
+<% end %>
+
+<% if @celestial_body.atmosphere %>
+  <h2>Atmosphere</h2>
+  <p><strong>Total pressure:</strong> <%= @celestial_body.atmosphere.pressure %></p>
+  
+  <% if @celestial_body.atmosphere.composition.present? %>
+    <h3>Gas quantities</h3>
+    <% @celestial_body.atmosphere.composition.each do |gas, percentage| %>
+      <p><strong><%= gas %>:</strong> <%= (percentage * @celestial_body.atmosphere.pressure * 10000).round(1) %></p>
     <% end %>
-  </tbody>
-</table>
-
-<h2>Air Pressure</h2>
-<p>Air Pressure: <%= format("%.3f", @celestial_body.total_pressure) %> ATMs</p>
-
-<h2>Material Composition</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Material</th>
-      <th>Amount</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @celestial_body.available_materials.each do |material, amount| %>
+  <% end %>
+  
+  <h2>Atmospheric Composition</h2>
+  <table>
+    <thead>
       <tr>
-        <td><%= material %></td>
-        <td><%= format("%.2e", amount) %></td>
+        <th>Gas</th>
+        <th>Percentage</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% if @celestial_body.atmosphere.composition.present? %>
+        <% @celestial_body.atmosphere.composition.each do |gas, percentage| %>
+          <tr>
+            <td><%= gas %></td>
+            <td><%= percentage %>%</td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="2">No atmospheric data available</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
 
+<% if @celestial_body.available_materials.present? %>
+  <h2>Material Composition</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @celestial_body.available_materials.each do |material, amount| %>
+        <tr>
+          <td><%= material %></td>
+          <td><%= format("%.2e", amount) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
 
-
+<%= link_to 'Edit', edit_celestial_body_path(@celestial_body) %> |
+<%= link_to 'Back', celestial_bodies_path %>
