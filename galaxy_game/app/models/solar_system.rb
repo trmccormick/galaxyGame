@@ -9,11 +9,11 @@ class SolarSystem < ApplicationRecord
   has_many :stars, class_name: 'CelestialBodies::Star', dependent: :destroy
 
   # These associations now point to the specific subclasses
-  has_many :terrestrial_planets, class_name: 'CelestialBodies::TerrestrialPlanet'
-  has_many :gas_giants, class_name: 'CelestialBodies::GasGiant'
-  has_many :ice_giants, class_name: 'CelestialBodies::IceGiant'
-  has_many :moons, class_name: 'CelestialBodies::Moon'
-  has_many :dwarf_planets, class_name: 'CelestialBodies::DwarfPlanet'
+  has_many :terrestrial_planets, class_name: 'CelestialBodies::Planets::Rocky::TerrestrialPlanet'
+  has_many :gas_giants, class_name: 'CelestialBodies::Planets::Gaseous::GasGiant'
+  has_many :ice_giants, class_name: 'CelestialBodies::Planets::Gaseous::IceGiant'
+  has_many :moons, class_name: 'CelestialBodies::Satellites::Moon'
+  has_many :dwarf_planets, class_name: 'CelestialBodies::MinorBodies::DwarfPlanet'
 
   # You can still have a general association for all celestial bodies
   has_many :celestial_bodies, class_name: 'CelestialBodies::CelestialBody'
@@ -126,9 +126,9 @@ class SolarSystem < ApplicationRecord
     
     # Update the record using update! which is safer in this case
     # Don't use update_columns since it's causing issues
-    gas_giant.assign_attributes(params.except(:properties))
-    gas_giant.properties = props
-    gas_giant.save(validate: false)
+      gas_giant.assign_attributes(params.except(:properties))
+      gas_giant.properties = props
+      gas_giant.save(validate: false)
     
     # Return the gas giant
     gas_giant
@@ -141,7 +141,7 @@ class SolarSystem < ApplicationRecord
     # Set required defaults
     params[:identifier] ||= "IG-#{SecureRandom.hex(4)}"
     params[:gravity] ||= 0
-    params[:density] ||= 0
+    params[:density] = params[:density].to_f > 0 && params[:density].to_f < 2.0 ? params[:density].to_f : 1.5
     params[:radius] ||= 0
     params[:orbital_period] ||= 0
     params[:mass] ||= 0
@@ -194,13 +194,10 @@ class SolarSystem < ApplicationRecord
     
     # Set parent_body to a planet name if none is specified
     if !params[:parent_body].present?
-      # Find a planet to be the parent - prefer terrestrial planets, fall back to gas giants
       parent = terrestrial_planets.first || gas_giants.first
-      
       if parent
-        params[:parent_body] = parent.name
+        params[:parent_celestial_body] = parent
       else
-        # If no planets exist, create a default Earth-like planet as parent
         parent = terrestrial_planets.create!(
           name: 'Earth', 
           mass: 5.97e24,
@@ -210,8 +207,12 @@ class SolarSystem < ApplicationRecord
           solar_system_id: self.id,
           identifier: "TP-#{SecureRandom.hex(4)}"
         )
-        params[:parent_body] = parent.name
+        params[:parent_celestial_body] = parent
       end
+    else
+      parent = CelestialBodies::CelestialBody.find_by(name: params[:parent_body])
+      params[:parent_celestial_body] = parent if parent
+      params.delete(:parent_body)
     end
     
     # Find or create - use CelestialBodies::Moon explicitly
@@ -237,9 +238,9 @@ class SolarSystem < ApplicationRecord
     params[:identifier] ||= "DP-#{SecureRandom.hex(4)}"
     params[:gravity] ||= 0
     params[:density] ||= 0
-    params[:radius] ||= 0
+    params[:mass] = params[:mass].to_f > 1e20 && params[:mass].to_f < 1e24 ? params[:mass].to_f : 1.3e22
+    params[:radius] = params[:radius].to_f > 0 ? params[:radius].to_f : 1188000
     params[:orbital_period] ||= 0
-    params[:mass] ||= 0
     
     # Set the solar system explicitly to ensure the association
     params[:solar_system_id] = self.id

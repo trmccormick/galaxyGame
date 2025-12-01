@@ -29,11 +29,11 @@ RSpec.describe SolarSystem, type: :model do
 
     it { should have_many(:stars).class_name('CelestialBodies::Star').dependent(:destroy) }
     it { should have_many(:celestial_bodies).class_name('CelestialBodies::CelestialBody') }
-    it { should have_many(:terrestrial_planets).class_name('CelestialBodies::TerrestrialPlanet') }
-    it { should have_many(:gas_giants).class_name('CelestialBodies::GasGiant') }
-    it { should have_many(:ice_giants).class_name('CelestialBodies::IceGiant') }
-    it { should have_many(:moons).class_name('CelestialBodies::Moon') }
-    it { should have_many(:dwarf_planets).class_name('CelestialBodies::DwarfPlanet') }
+    it { should have_many(:terrestrial_planets).class_name('CelestialBodies::Planets::Rocky::TerrestrialPlanet') }
+    it { should have_many(:gas_giants).class_name('CelestialBodies::Planets::Gaseous::GasGiant') }
+    it { should have_many(:ice_giants).class_name('CelestialBodies::Planets::Gaseous::IceGiant') }
+    it { should have_many(:moons).class_name('CelestialBodies::Satellites::Moon') }
+    it { should have_many(:dwarf_planets).class_name('CelestialBodies::MinorBodies::DwarfPlanet') }
     # Removed the failing shoulda-matchers test for now
     it { should belong_to(:galaxy).optional }
   end
