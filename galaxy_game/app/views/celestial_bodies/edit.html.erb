@@ -1,6 +1,6 @@
 <h1>Edit Celestial Body </h1>
 
-<%= form_with(model: @celestial_body, local: true) do |form| %>
+<%= form_with(model: @celestial_body, url: celestial_body_path(@celestial_body), local: true, scope: :celestial_body) do |form| %>
   <% if @celestial_body.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@celestial_body.errors.count, "error") %> prohibited this celestial body from being saved:</h2>
@@ -39,12 +39,12 @@
 
   <div class="field">
     <%= form.label :atmosphere %>
-    <%= form.text_area :atmosphere, rows: 10 %>
+    <%= form.collection_select :atmosphere_id, CelestialBodies::Spheres::Atmosphere.all, :id, :id, include_blank: true %>
   </div>
 
   <div class="field">
     <%= form.label :materials %>
-    <%= form.text_area :materials, rows: 10 %>
+    <%= form.collection_select :materials, CelestialBodies::Material.all, :id, :name, {}, {multiple: true} %>
   </div>
 
   <div class="actions">

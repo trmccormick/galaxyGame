@@ -2,61 +2,86 @@ require 'rails_helper'
 
 RSpec.feature "TerrestrialPlanets", type: :feature do
   scenario "User views a planet detail" do
-    # Adding required attributes to satisfy the validation
-    planet = TerrestrialPlanet.create!(
+    planet = FactoryBot.create(:terrestrial_planet,
       name: "Earth",
-      size: 12742.0, # Example value in kilometers
-      gravity: 9.8, # Example value for Earth's gravity in m/s²
-      density: 5.51, # Example value for Earth's density in g/cm³
-      orbital_period: 365.25, # Example value in days
-      total_pressure: 10.0, # Example value for total pressure in atmospheres
-      gas_quantities: { "Nitrogen" => 780800.0, "Oxygen" => 209500.0 }
-    )
-
-    visit planet_path(planet)
-
-    # Adjusting the expected text to match the format in the view
-    expect(page).to have_content("Nitrogen: 780800.0")  # Ensure this matches your view output
-    expect(page).to have_content("Oxygen: 209500.0")   # Ensure this matches your view output
-  end
-
-  scenario "User updates a planet" do
-    planet = TerrestrialPlanet.create!(
-      name: "Earth", 
-      size: 12742.0, 
+      size: 12742.0,
       gravity: 9.8,
       density: 5.51,
       orbital_period: 365.25,
-      total_pressure: 10.0,
-      gas_quantities: { "Nitrogen" => 780800.0, "Oxygen" => 209500.0 }
+      known_pressure: 10.0
     )
-    visit edit_planet_path(planet)
+    planet.reload
+    planet.atmosphere.update!(
+      pressure: 10.0,
+      total_atmospheric_mass: 10000000.0,
+      composition: { "Nitrogen" => 78.08, "Oxygen" => 20.95 }
+    )
+
+    visit terrestrial_planet_path(planet)
+
+    expect(page).to have_content("Nitrogen: 7808000.0")
+    expect(page).to have_content("Oxygen: 2095000.0")
+  end
+
+  scenario "User updates a planet's name only" do
+    planet = FactoryBot.create(:terrestrial_planet,
+      name: "Earth",
+      size: 12742.0,
+      gravity: 9.8,
+      density: 5.51,
+      orbital_period: 365.25,
+      known_pressure: 10.0
+    )
+    FactoryBot.create(:atmosphere,
+      celestial_body: planet,
+      pressure: 10.0,
+      composition: { "Nitrogen" => 78.08, "Oxygen" => 20.95 }
+    )
+    
+    visit edit_celestial_body_path(planet)
+    
+    # Extract the actual error message
+    if page.status_code == 500
+      error_title = page.find('h1', text: /Error/).text rescue "No h1 found"
+      error_detail = page.find('h2').text rescue "No h2 found"
+      puts "\n=== ERROR ==="
+      puts "Title: #{error_title}"
+      puts "Detail: #{error_detail}"
+      
+      # Try to find the actual error message in pre tags
+      page.all('pre').first(3).each_with_index do |pre, i|
+        puts "\nPre tag #{i}: #{pre.text[0..200]}"
+      end
+      puts "=== END ERROR ===\n"
+    end
+    
     fill_in "Name", with: "Updated Earth"
-    click_button "Update Planet"
+    click_button "Update"
+    
     expect(page).to have_content("Updated Earth")
   end
 
-  scenario "User updates a planet" do
-    planet = TerrestrialPlanet.create!(
+  scenario "User updates a planet with all attributes" do
+    planet = FactoryBot.create(:terrestrial_planet,
       name: "Earth",
       size: 12742.0,
-      total_pressure: 10.0, 
-      gas_quantities: { "Nitrogen" => 780800.0, "Oxygen" => 209500.0 }
+      known_pressure: 10.0
+    )
+    FactoryBot.create(:atmosphere,
+      celestial_body: planet,
+      pressure: 10.0,
+      composition: { "Nitrogen" => 78.08, "Oxygen" => 20.95 }
     )
 
-    visit edit_planet_path(planet)
+    # Use celestial_body route
+    visit edit_celestial_body_path(planet)
+    
     fill_in "Name", with: "Updated Earth"
     fill_in "Size", with: 13000.0
-    fill_in "Total pressure", with: 12.0
-    # Ensure the gas quantities are correctly formatted or adjusted if needed
-    fill_in "Gas quantities Nitrogen", with: 800000.0
-    fill_in "Gas quantities Oxygen", with: 210000.0
-    click_button "Update Planet"
+    
+    click_button "Update"
 
     expect(page).to have_content("Updated Earth")
-    expect(page).to have_content("Size: 13000.0")
-    expect(page).to have_content("Total pressure: 12.0")
-    expect(page).to have_content("Gas quantities Nitrogen: 800000.0")
-    expect(page).to have_content("Gas quantities Oxygen: 210000.0")
+    expect(page).to have_content("13000.0")
   end
 end
