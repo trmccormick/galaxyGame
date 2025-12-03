@@ -506,6 +506,8 @@ RSpec.describe AtmosphereConcern do
       atmosphere.gases.create!(name: 'N2', mass: 780, percentage: 0, molar_mass: 28.0)
       atmosphere.gases.create!(name: 'O2', mass: 220, percentage: 0, molar_mass: 32.0)
       
+      # Update total atmospheric mass before recalculating percentages
+      atmosphere.update_total_atmospheric_mass
       atmosphere.recalculate_gas_percentages
       
       nitrogen = atmosphere.gases.find_by(name: 'N2')
