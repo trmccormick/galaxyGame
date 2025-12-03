@@ -99,15 +99,12 @@ RSpec.describe AtmosphereConcern do
       # Start with empty atmosphere
       expect(atmosphere.gases.count).to eq(0)
       
-      # Get the expected name (material ID)
-      expected_name = material_id_for('N2')
-      
       # Add a gas
       gas = atmosphere.add_gas('N2', 1000)
       
-      # Should have created a gas record with material ID as name
+      # Should have created a gas record with chemical formula as name
       expect(atmosphere.gases.count).to eq(1)
-      expect(gas.name).to eq(expected_name)  # "nitrogen"
+      expect(gas.name).to eq('N2')  # chemical formula
       expect(gas.mass).to eq(1000)
       
       # Should have updated total mass
@@ -115,10 +112,9 @@ RSpec.describe AtmosphereConcern do
     end
     
     it 'updates existing gas' do
-      # ✅ Create gas with material ID as name (consistent with add_gas)
-      expected_name = material_id_for('O2')
+      # Create gas with chemical formula as name
       existing_gas = atmosphere.gases.create!(
-        name: expected_name,  # Use material ID, not chemical formula
+        name: 'O2',  # Use chemical formula
         percentage: 100, 
         mass: 500,
         molar_mass: 32.0
@@ -139,11 +135,9 @@ RSpec.describe AtmosphereConcern do
   
   describe '#remove_gas' do
     it 'removes gas from the atmosphere' do
-      # ✅ Create gas with material ID (consistent with add_gas)
-      expected_name = material_id_for('O2')  # "oxygen"
-      
+      # Create gas with chemical formula
       atmosphere.gases.create!(
-        name: expected_name, 
+        name: 'O2', 
         percentage: 100, 
         mass: 1000,
         molar_mass: 32.0
@@ -160,11 +154,9 @@ RSpec.describe AtmosphereConcern do
     end
     
     it 'deletes gas when amount becomes zero' do
-      # ✅ Create gas with material ID (consistent with add_gas)
-      expected_name = material_id_for('H2')  # "hydrogen"
-      
+      # Create gas with chemical formula
       atmosphere.gases.create!(
-        name: expected_name, 
+        name: 'H2', 
         percentage: 100, 
         mass: 10,
         molar_mass: 2.02
@@ -176,7 +168,7 @@ RSpec.describe AtmosphereConcern do
       atmosphere.remove_gas('H2', 10)
       
       # Gas should be gone
-      expect(atmosphere.gases.where(name: expected_name).exists?).to be_falsey
+      expect(atmosphere.gases.where(name: 'H2').exists?).to be_falsey
       expect(atmosphere.reload.total_atmospheric_mass).to eq(0)
     end
     
@@ -336,8 +328,8 @@ RSpec.describe AtmosphereConcern do
       mass = atmosphere.calculate_atmospheric_mass_for_volume(volume, pressure, temperature, composition)
       
       expect(mass).to be > 0
-      # ✅ FIX: Earth air density ~1.225 kg/m³, so 1000 m³ = ~1225 kg
-      expect(mass).to be_within(100).of(1.225)  # Correct expectation: ~1.225 kg, not 1225 kg
+      # Earth air density ~1.225 kg/m³, so 1000 m³ = ~1225 kg
+      expect(mass).to be_within(100).of(1225)
     end
     
     it 'returns 0 for invalid inputs' do
@@ -478,8 +470,8 @@ RSpec.describe AtmosphereConcern do
       expect(result).to be true
       expect(atmosphere.gases.count).to eq(2)
       
-      nitrogen_gas = atmosphere.gases.find_by(name: material_id_for('nitrogen'))
-      oxygen_gas = atmosphere.gases.find_by(name: material_id_for('oxygen'))
+      nitrogen_gas = atmosphere.gases.find_by(name: 'N2')
+      oxygen_gas = atmosphere.gases.find_by(name: 'O2')
       
       expect(nitrogen_gas).to be_present
       expect(oxygen_gas).to be_present
@@ -511,13 +503,13 @@ RSpec.describe AtmosphereConcern do
 
   describe '#recalculate_gas_percentages' do
     it 'updates gas percentages based on masses' do
-      atmosphere.gases.create!(name: 'nitrogen', mass: 780, percentage: 0, molar_mass: 28.0)
-      atmosphere.gases.create!(name: 'oxygen', mass: 220, percentage: 0, molar_mass: 32.0)
+      atmosphere.gases.create!(name: 'N2', mass: 780, percentage: 0, molar_mass: 28.0)
+      atmosphere.gases.create!(name: 'O2', mass: 220, percentage: 0, molar_mass: 32.0)
       
       atmosphere.recalculate_gas_percentages
       
-      nitrogen = atmosphere.gases.find_by(name: 'nitrogen')
-      oxygen = atmosphere.gases.find_by(name: 'oxygen')
+      nitrogen = atmosphere.gases.find_by(name: 'N2')
+      oxygen = atmosphere.gases.find_by(name: 'O2')
       
       expect(nitrogen.percentage).to be_within(0.1).of(78.0)
       expect(oxygen.percentage).to be_within(0.1).of(22.0)
