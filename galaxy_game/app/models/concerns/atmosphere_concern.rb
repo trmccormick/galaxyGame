@@ -13,31 +13,12 @@ module AtmosphereConcern
   # 3. Returns 0.0 if not found anywhere
   def gas_percentage(formula_or_name)
     gases.reset if gases.loaded?
-    
-    # Try exact match first
     gas = gases.find_by(name: formula_or_name)
     return gas.percentage if gas
-    
-    # Map common formulas to material IDs
-    formula_to_id = {
-      'O2' => 'oxygen',
-      'CO2' => 'carbon_dioxide',
-      'CH4' => 'methane',
-      'N2' => 'nitrogen',
-      'Ar' => 'argon',
-      'H2O' => 'water'
-    }
-    
-    if formula_to_id[formula_or_name]
-      gas = gases.find_by(name: formula_to_id[formula_or_name])
-      return gas.percentage if gas
-    end
-    
     # Fallback to composition hash
     if composition.present?
       return composition[formula_or_name].to_f if composition[formula_or_name]
     end
-    
     0.0
   end
 
@@ -75,21 +56,12 @@ module AtmosphereConcern
 
   def initialize_gases
     return unless composition.present?
-    
-    # Delete existing gases to avoid duplicates
     gases.destroy_all
-    
-    # Find celestial body
     body = celestial_body
     return unless body.present?
-    
-    # Initialize lookup service once
     lookup_service = Lookup::MaterialLookupService.new
-    
-    # Calculate the total atmospheric mass
     total_mass = total_atmospheric_mass || 0
-    
-    # Create gases
+    created = false
     composition.each do |input_key, data|
       percentage = if data.is_a?(Hash)
                     data['percentage'].to_f
@@ -99,40 +71,48 @@ module AtmosphereConcern
       next if percentage <= 0
       mass = (percentage / 100.0) * total_mass
       material_data = lookup_service.find_material(input_key)
-      chemical_formula = material_data && material_data['chemical_formula'].present? ? material_data['chemical_formula'] : input_key
-      molar_mass = material_data ? material_data['molar_mass'] : nil
+      next unless material_data && material_data['chemical_formula'].present?
+      chemical_formula = material_data['chemical_formula']
+      molar_mass = material_data['molar_mass']
       gas = gases.new(
-        name: chemical_formula,  # Always use chemical formula
+        name: chemical_formula,
         percentage: percentage,
         mass: mass,
         molar_mass: molar_mass
       )
       gas.save!
+      created = true
     end
-    
-    # Recalculate percentages after creating all gases
     recalculate_gas_percentages
-    
-    # Return true if gases were created
-    gases.any?
+    created
   end
 
   # Replace the existing duplicate normalization logic
   def add_gas(chemical_formula, amount_kg)
-    raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
-    raise InvalidGasError, "Amount must be positive" if amount_kg <= 0
-
-    # Normalize input to chemical formula
+    if chemical_formula.blank?
+      raise InvalidGasError, "Chemical formula cannot be blank"
+    end
+    if amount_kg.nil? || amount_kg <= 0
+      raise InvalidGasError, "Amount must be positive"
+    end
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(chemical_formula)
-    unless material_data
+    unless material_data && material_data['chemical_formula'].present?
       raise InvalidGasError, "Unknown chemical formula or name: #{chemical_formula}. Check materials database."
     end
-    formula = material_data['chemical_formula'].present? ? material_data['chemical_formula'] : chemical_formula
+    formula = material_data['chemical_formula']
     gas = gases.find_or_initialize_by(name: formula)
     gas.mass = (gas.mass || 0.0) + amount_kg.to_f
     gas.molar_mass = material_data['molar_mass'] if gas.molar_mass.blank?
-    gas.save!
+    
+    # Set percentage to 0 initially to avoid validation error
+    gas.percentage = 0
+    
+    begin
+      gas.save!
+    rescue ActiveRecord::RecordInvalid => e
+      raise InvalidGasError, e.message
+    end
     update_total_atmospheric_mass
     recalculate_gas_percentages
     gas
@@ -141,17 +121,15 @@ module AtmosphereConcern
   # Also update remove_gas to use the lookup service
   def remove_gas(chemical_formula, amount_kg = nil)
     raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
-    
-    # Normalize input to chemical formula
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(chemical_formula)
-    unless material_data
+    unless material_data && material_data['chemical_formula'].present?
       raise InvalidGasError, "Unknown chemical formula or name: #{chemical_formula}. Check materials database."
     end
-    formula = material_data['chemical_formula'].present? ? material_data['chemical_formula'] : chemical_formula
+    formula = material_data['chemical_formula']
     gas = gases.find_by(name: formula)
     unless gas
-      raise InvalidGasError, "Gas '#{chemical_formula}' not found in atmosphere"
+      raise InvalidGasError, "Gas '#{formula}' not found in atmosphere"
     end
     amount_to_remove = amount_kg || gas.mass.to_f
     raise InvalidGasError, "Cannot remove negative amount" if amount_to_remove < 0
@@ -160,11 +138,27 @@ module AtmosphereConcern
     if new_mass <= 0.001
       gas.destroy!
     else
-      gas.update!(mass: new_mass)
+      gas.mass = new_mass
+      gas.save!
     end
     update_total_atmospheric_mass
     recalculate_gas_percentages
     true
+  end
+
+  # Calculate atmospheric mass for a given volume, pressure, temperature, and composition
+  def calculate_atmospheric_mass_for_volume(volume, pressure, temperature, composition)
+    return 0 if volume.nil? || volume <= 0 || pressure.nil? || pressure <= 0 || temperature.nil? || temperature <= 0
+    # Use ideal gas law: PV = nRT, where n = mass/molar_mass
+    # Rearranging: mass = (P * V * molar_mass) / (R * T)
+    # But we want density first: density = (P * molar_mass) / (R * T)
+    molar_mass_kg_mol = estimate_molar_mass(composition) # Already in kg/mol
+    pressure_pa = pressure * 1000.0 # convert kPa to Pa
+    r = 8.314462618 # J/(mol·K)
+    # density in kg/m³ = (Pa * kg/mol) / (J/(mol·K) * K) = kg/m³
+    density = (pressure_pa * molar_mass_kg_mol) / (r * temperature)
+    mass = density * volume # kg = kg/m³ * m³
+    mass > 0 ? mass : 0
   end
 
   def calculate_pressure
@@ -208,7 +202,6 @@ module AtmosphereConcern
     total = gases.sum(:mass)
     self.total_atmospheric_mass = total
     save!
-    
     # Debug logging
     Rails.logger.debug "Total atmospheric mass calculation:"
     Rails.logger.debug "Individual gas masses: #{gases.pluck(:name, :mass)}"
@@ -219,107 +212,33 @@ module AtmosphereConcern
     return 0.029 if composition.empty? # Default to air-like (29 g/mol)
 
     material_service = Lookup::MaterialLookupService.new
-    
-    total_weight = 0
-    total_percentage = 0
+    total_weight = 0.0
+    total_percentage = 0.0
     unknown_gases = []
-    
+
     composition.each do |gas_name, percentage|
+      pct = percentage.is_a?(Numeric) ? percentage : percentage.to_f
+      next if pct <= 0
       gas_material = material_service.find_material(gas_name)
-      
       if gas_material
-        # ✅ Get molar_mass property (matches JSON field name)
         molar_mass_g_mol = material_service.get_material_property(gas_material, 'molar_mass')
-        
         if molar_mass_g_mol
-          molar_mass_kg_mol = molar_mass_g_mol / 1000.0  # Convert g/mol to kg/mol
-          total_weight += molar_mass_kg_mol * percentage
-          total_percentage += percentage
-          
-          Rails.logger.debug "Found gas #{gas_name}: #{molar_mass_g_mol} g/mol (#{molar_mass_kg_mol} kg/mol)"
+          molar_mass_kg_mol = molar_mass_g_mol.to_f / 1000.0
+          total_weight += molar_mass_kg_mol * pct
+          total_percentage += pct
         else
           unknown_gases << gas_name
-          Rails.logger.warn "Gas #{gas_name} found but no molar_mass property"
         end
       else
         unknown_gases << gas_name
-        Rails.logger.warn "Gas #{gas_name} not found in material database"
       end
     end
-    
-    # Log any unknown gases for debugging
-    if unknown_gases.any?
-      Rails.logger.warn "Unknown gases in composition: #{unknown_gases.join(', ')}"
-    end
-    
     # If we found some valid gases, use weighted average
-    # If no valid gases found, fall back to air-like composition
     if total_percentage > 0
       weighted_average = total_weight / total_percentage
-      Rails.logger.debug "Calculated molar mass: #{weighted_average} kg/mol from #{total_percentage}% of composition"
-      weighted_average
-    else
-      Rails.logger.debug "No valid gases found, using air default: 0.029 kg/mol"
-      0.029  # Air-like fallback
+      return weighted_average
     end
-  end
-
-  def calculate_atmospheric_mass_for_volume(volume_m3, pressure_kpa, temperature_k, composition)
-    return 0 if volume_m3 <= 0 || pressure_kpa <= 0
-    
-    pressure_pa = pressure_kpa * 1000  # Convert kPa to Pa
-    
-    # Use molar mass estimation from composition
-    avg_molar_mass = estimate_molar_mass(composition)
-    
-    # Calculate density using ideal gas law: PV = nRT, density = PM/RT
-    density = (pressure_pa * avg_molar_mass) / (8314 * temperature_k)  # kg/m³
-    
-    total_mass = volume_m3 * density
-    
-    Rails.logger.debug "Atmospheric mass calculation:"
-    Rails.logger.debug "  volume: #{volume_m3} m³"
-    Rails.logger.debug "  pressure: #{pressure_kpa} kPa (#{pressure_pa} Pa)"
-    Rails.logger.debug "  temperature: #{temperature_k} K"
-    Rails.logger.debug "  avg_molar_mass: #{avg_molar_mass} kg/mol"
-    Rails.logger.debug "  density: #{density} kg/m³"
-    Rails.logger.debug "  total_mass: #{total_mass} kg"
-    
-    total_mass
-  end
-
-  def get_celestial_atmosphere_data
-    # Try different ways to get celestial body based on container type
-    celestial_body = case container
-    when responds_to?(:location)
-      # For structures: container.location.celestial_body
-      container.location&.celestial_body
-    when responds_to?(:celestial_body)
-      # For planetary atmospheres: container.celestial_body (direct)
-      container.celestial_body
-    when responds_to?(:current_location)
-      # For craft: container.current_location.celestial_body
-      container.current_location&.celestial_body
-    else
-      # Try location as fallback
-      container.try(:location)&.celestial_body
-    end
-    
-    if celestial_body&.atmosphere
-      # Use planetary atmosphere data
-      {
-        temperature: celestial_body.atmosphere.temperature || 273.15, # 0°C in Kelvin if missing
-        pressure: celestial_body.atmosphere.pressure || 0.0,          # Vacuum if missing (in kPa)
-        composition: celestial_body.atmosphere.composition || {}      # Empty if missing
-      }
-    else
-      # Fallback defaults (space/vacuum conditions)
-      {
-        temperature: 273.15,  # 0°C in Kelvin (reasonable default)
-        pressure: 0.0,        # Vacuum (kPa)
-        composition: {}       # No gases
-      }
-    end
+    0.029 # fallback to air-like
   end
 
   def habitable?
@@ -358,44 +277,31 @@ module AtmosphereConcern
 
 
   def recalculate_gas_percentages
-    # Don't recalculate if there are no gases
     return if gases.empty?
-
-    # Get total atmosphere mass
     total_atmospheric_mass = gases.sum(:mass)
     return if total_atmospheric_mass.nil? || total_atmospheric_mass.zero?
-
-    # Update percentages for each gas
     gases.each do |gas|
-      # Calculate percentage based on mass
+      next if gas.nil? || gas.mass.nil?
       percentage = (gas.mass.to_f / total_atmospheric_mass) * 100
-
-      # Ensure percentage is valid (between 0 and 100)
-      percentage = percentage.clamp(0, 100)
-
-      # Calculate PPM from percentage (1% = 10,000 ppm)
       ppm = percentage * 10_000
-      
-      # Update the gas record with both percentage and PPM
       gas.update!(
         percentage: percentage,
         ppm: ppm
       )
     end
-  end  
+  end
 
   def increase_dust(amount = 0, properties = "Mainly composed of silicates and sulfates.")
     return unless amount > 0
-
     self.dust ||= {}
     self.dust['concentration'] = (self.dust['concentration'] || 0.0) + amount
+    self.dust['concentration'] = 0.0 if self.dust['concentration'] < 0.0
     self.dust['properties'] = properties if properties
     save!
   end
 
   def decrease_dust(amount)
     return unless self.dust.present? && self.dust.is_a?(Hash) && self.dust.any?
-
     self.dust['concentration'] = (self.dust['concentration'] || 0.0) - amount
     self.dust['concentration'] = 0.0 if self.dust['concentration'] < 0.0
     save!
@@ -455,16 +361,17 @@ module AtmosphereConcern
   end
 
   def update_gas_percentages
-    return if total_atmospheric_mass.zero?
-
+    return if total_atmospheric_mass.nil? || total_atmospheric_mass.zero?
     gases.each do |gas|
-      gas.update!(percentage: (gas.mass / total_atmospheric_mass) * 100)
+      pct = (gas.mass.to_f / total_atmospheric_mass) * 100
+      gas.update!(percentage: pct)
     end
   end
 
   # Helper method to get material ID from formula
   def material_id_for(formula)
-    material = @material_lookup.find_material(formula)
-    material['id']  # ❌ This returns "oxygen", but should return "O2"
+    lookup_service = Lookup::MaterialLookupService.new
+    material = lookup_service.find_material(formula)
+    material ? material['id'] : formula
   end
 end
