@@ -154,7 +154,12 @@ module CelestialBodies
 
       def ice
         # Get ice_caps from water_bodies hash
-        water_bodies&.dig('ice_caps').to_f || 0.0
+        ice_caps = water_bodies&.dig('ice_caps')
+        if ice_caps.is_a?(Hash)
+          ice_caps['volume'].to_f
+        else
+          ice_caps.to_f || 0.0
+        end
       end
 
       def ice=(value)
@@ -164,13 +169,17 @@ module CelestialBodies
       end
 
       def update_hydrosphere_volume
-        # Use self instead of @hydrosphere since this is an instance method
         total_volume = 0
-        total_volume += water_bodies&.dig('oceans').to_f || 0
-        total_volume += water_bodies&.dig('lakes').to_f || 0
-        total_volume += water_bodies&.dig('rivers').to_f || 0
-        total_volume += water_bodies&.dig('ice_caps').to_f || 0
-        
+
+        %w[oceans lakes rivers ice_caps].each do |body|
+          value = water_bodies&.dig(body)
+          if value.is_a?(Hash)
+            total_volume += value['volume'].to_f
+          else
+            total_volume += value.to_f if value
+          end
+        end
+
         update(total_hydrosphere_mass: total_volume)
       end
 

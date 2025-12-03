@@ -1,5 +1,5 @@
 # ==============================================================================
-# UPDATED: app/services/terra_sim/biosphere_simulation_service.rb
+# FIXED: app/services/terra_sim/biosphere_simulation_service.rb
 # ==============================================================================
 
 module TerraSim
@@ -14,13 +14,11 @@ module TerraSim
       @config.merge!(config)
     end
     
-    # MODIFIED: Accept and store time_skipped parameter
     def simulate(time_skipped = 1)
       return if @simulation_in_progress
       @simulation_in_progress = true
       return unless @biosphere
       
-      # Store time for use in other methods
       @time_skipped = time_skipped
       
       calculate_biosphere_conditions
@@ -28,22 +26,22 @@ module TerraSim
       track_species_population
       manage_food_web
       balance_biomes 
-      influence_atmosphere(time_skipped)  # Pass time parameter
+      influence_atmosphere(time_skipped)
 
       @simulation_in_progress = false
     end
     
-    # MODIFIED: Use life form atmospheric effects
+    # FIXED: Preserve base atmosphere, don't destroy it
     def influence_atmosphere(time_skipped = 1)
       return unless @biosphere && @celestial_body.atmosphere
       
       atmosphere = @celestial_body.atmosphere
       
       if atmosphere.total_atmospheric_mass <= 0
-        atmosphere.update(total_atmospheric_mass: 100.0)
+        atmosphere.update(total_atmospheric_mass: 2.5e16)
       end
       
-      # NEW: Calculate gas changes from actual life forms
+      # Calculate gas changes from actual life forms
       life_effects = calculate_life_form_atmospheric_effects
       
       # Use life form effects if available, otherwise fall back to hardcoded
@@ -58,10 +56,9 @@ module TerraSim
         puts "Life form contributions per day: O2=#{life_effects[:o2_production]}, CO2 consumed=#{life_effects[:co2_consumption]}, CH4=#{life_effects[:ch4_production]}"
       else
         puts "No life forms with terraforming effects, using default values"
-        # Fall back to hardcoded values (scaled by time)
-        o2_change = 0.01 * time_skipped
-        co2_change = -0.01 * time_skipped
-        methane_change = 0.001 * time_skipped
+        o2_change = 0.00001 * time_skipped      # Realistic: 0.001% per day
+        co2_change = -0.00001 * time_skipped
+        methane_change = 0.000001 * time_skipped
       end
       
       # Scale by vegetation (biome complexity)
@@ -84,55 +81,87 @@ module TerraSim
         puts "Vegetation scaling factor: #{vegetation_factor}"
       end
       
-      # Apply changes to atmosphere
+      # Get current percentages (preserves existing atmosphere)
       initial_o2 = atmosphere.o2_percentage
       initial_co2 = atmosphere.co2_percentage
       initial_ch4 = atmosphere.ch4_percentage
+      initial_n2 = atmosphere.gas_percentage('N2')
+      initial_ar = atmosphere.gas_percentage('Ar')
       
+      # Calculate new percentages
       new_o2 = [initial_o2 + o2_change, 0.0].max
       new_co2 = [initial_co2 + co2_change, 0.0].max
       new_ch4 = [initial_ch4 + methane_change, 0.0].max
       
+      # Keep N2 and Ar constant (inert gases)
+      new_n2 = initial_n2
+      new_ar = initial_ar
+      
+      # Normalize if total exceeds 100%
+      total = new_o2 + new_co2 + new_ch4 + new_n2 + new_ar
+      if total > 100.0
+        scale = 100.0 / total
+        new_o2 *= scale
+        new_co2 *= scale
+        new_ch4 *= scale
+        new_n2 *= scale
+        new_ar *= scale
+        puts "Normalizing atmosphere: total was #{total.round(2)}%, scaled to 100%"
+      end
+      
       puts "Atmosphere changes over #{time_skipped} days:"
-      puts "  O2: #{initial_o2.round(4)} → #{new_o2.round(4)} (#{o2_change >= 0 ? '+' : ''}#{o2_change.round(4)}%)"
-      puts "  CO2: #{initial_co2.round(4)} → #{new_co2.round(4)} (#{co2_change >= 0 ? '+' : ''}#{co2_change.round(4)}%)"
-      puts "  CH4: #{initial_ch4.round(4)} → #{new_ch4.round(4)} (#{methane_change >= 0 ? '+' : ''}#{methane_change.round(4)}%)"
+      puts "  O2:  #{initial_o2.round(4)} → #{new_o2.round(4)} (#{o2_change >= 0 ? '+' : ''}#{o2_change.round(6)}%)"
+      puts "  CO2: #{initial_co2.round(4)} → #{new_co2.round(4)} (#{co2_change >= 0 ? '+' : ''}#{co2_change.round(6)}%)"
+      puts "  CH4: #{initial_ch4.round(4)} → #{new_ch4.round(4)} (#{methane_change >= 0 ? '+' : ''}#{methane_change.round(6)}%)"
       
       total_mass = atmosphere.total_atmospheric_mass
       
-      o2_mass = (new_o2 * total_mass) / 100.0
+      # Calculate masses
       o2_mass = (new_o2 * total_mass) / 100.0
       co2_mass = (new_co2 * total_mass) / 100.0
       ch4_mass = (new_ch4 * total_mass) / 100.0
+      n2_mass = (new_n2 * total_mass) / 100.0
+      ar_mass = (new_ar * total_mass) / 100.0
 
-      puts "Calculated O2 mass: #{o2_mass}, CO2 mass: #{co2_mass}, CH4 mass: #{ch4_mass}"
+      puts "Calculated gas masses: O2=#{o2_mass.round(2)}, CO2=#{co2_mass.round(2)}, CH4=#{ch4_mass.round(2)}"
 
-      # Destroy all gas records, then re-add
-      atmosphere.gases.destroy_all
-      if o2_mass > 0
-        puts "Adding oxygen gas with mass #{o2_mass}"
-        atmosphere.add_gas('oxygen', o2_mass)
-      else
-        puts "O2 mass not positive, not adding O2 gas"
-      end
-      if co2_mass > 0
-        atmosphere.add_gas('CO2', co2_mass)
-      end
-      if ch4_mass > 0
-        atmosphere.add_gas('CH4', ch4_mass)
-      end
+      # Get current masses
+      current_o2 = atmosphere.gases.find_by(name: 'O2')&.mass || 0.0
+      current_co2 = atmosphere.gases.find_by(name: 'CO2')&.mass || 0.0
+      current_ch4 = atmosphere.gases.find_by(name: 'CH4')&.mass || 0.0
+      current_n2 = atmosphere.gases.find_by(name: 'N2')&.mass || 0.0
+      current_ar = atmosphere.gases.find_by(name: 'Ar')&.mass || 0.0
 
+      # Calculate deltas
+      o2_delta = o2_mass - current_o2
+      co2_delta = co2_mass - current_co2
+      ch4_delta = ch4_mass - current_ch4
+      n2_delta = n2_mass - current_n2
+      ar_delta = ar_mass - current_ar
+
+      # Apply changes
+      atmosphere.add_gas('O2', o2_delta) if o2_delta > 0
+      atmosphere.remove_gas('O2', o2_delta.abs) if o2_delta < 0
+
+      atmosphere.add_gas('CO2', co2_delta) if co2_delta > 0
+      atmosphere.remove_gas('CO2', co2_delta.abs) if co2_delta < 0
+
+      atmosphere.add_gas('CH4', ch4_delta) if ch4_delta > 0
+      atmosphere.remove_gas('CH4', ch4_delta.abs) if ch4_delta < 0
+
+      atmosphere.add_gas('N2', n2_delta) if n2_delta > 0
+      atmosphere.remove_gas('N2', n2_delta.abs) if n2_delta < 0
+
+      atmosphere.add_gas('Ar', ar_delta) if ar_delta > 0
+      atmosphere.remove_gas('Ar', ar_delta.abs) if ar_delta < 0
+
+      # Recalculate percentages and update total mass
+      atmosphere.recalculate_gas_percentages
       atmosphere.reload
-
-      # Apply soil improvements if any
-      if life_effects[:soil_improvement] > 0
-        # ...existing code...
-      end
 
       true
     end
     
-    # NEW: Calculate atmospheric effects from all life forms
     def calculate_life_form_atmospheric_effects
       effects = {
         o2_production: 0.0,
@@ -176,7 +205,6 @@ module TerraSim
             biome = pb.biome
             puts "  Simulating interactions in #{biome.name} (Vegetation Cover: #{pb.vegetation_cover.round(2)})"
             
-            # Plant growth
             light_available = calculate_light_availability
             temp_suitability = calculate_temperature_suitability(biome.temperature_range)
             moisture_factor = pb.moisture_level.to_f.clamp(0.1, 1.0)
@@ -195,7 +223,6 @@ module TerraSim
             puts "    Plant growth: #{current_vegetation.round(2)} → #{new_vegetation_cover.round(2)} " +
                  "(Light: #{light_available.round(2)}, Temp: #{temp_suitability.round(2)}, Moisture: #{moisture_factor.round(2)})"
             
-            # Process life forms if they exist
             begin
               if ActiveRecord::Base.connection.table_exists?('biology_life_forms')
                 if @biosphere.respond_to?(:life_forms) && @biosphere.life_forms.any?
@@ -244,7 +271,6 @@ module TerraSim
 
     private 
     
-    # MODIFIED: Scale population changes by time
     def track_species_population
       return unless @biosphere.life_forms.any?
       
@@ -262,7 +288,6 @@ module TerraSim
         birth_rate = life_form.properties['reproduction_rate'].to_f * life_form.properties['health_modifier'].to_f
         death_rate = life_form.properties['mortality_rate'].to_f * (2.0 - life_form.properties['health_modifier'].to_f).clamp(0.1, 2.0)
 
-        # Scale by time_skipped
         population_change = (birth_rate - death_rate) * life_form.population * 0.01 * (@time_skipped || 1)
 
         new_population = (life_form.population + population_change).floor
@@ -282,7 +307,6 @@ module TerraSim
         next unless biome
 
         food_needed = consumer.population * consumer.properties['consumption_rate'].to_f
-
         food_obtained = 0
 
         if consumer.properties['diet'] == 'herbivore'
@@ -320,12 +344,6 @@ module TerraSim
         puts "  #{consumer.name} in #{biome.name} got food ratio: #{food_ratio.round(2)}"
       end
     end
-
-    # ... rest of your existing private methods stay the same ...
-    # (balance_biomes, calculate_biodiversity, calculate_biome_suitability, 
-    #  calculate_light_availability, calculate_temperature_suitability, 
-    #  ensure_kelvin, calculate_energy_obtained, life_form_table_exists?,
-    #  configure_for_planet, base_value)
     
     def balance_biomes
       puts "Balancing biomes based on climate and ecosystem conditions"
@@ -355,8 +373,8 @@ module TerraSim
         target_global_temp = @biosphere.tropical_temperature
       end
       
-      current_tropical = @biosphere.tropical_temperature
-      current_polar = @biosphere.polar_temperature
+      current_tropical = @biosphere.tropical_temperature.to_f
+      current_polar = @biosphere.polar_temperature.to_f
       
       tropical_change = (target_global_temp - current_tropical) * @config[:temperature_adjustment_rate]
       polar_change = (target_global_temp - current_polar) * @config[:temperature_adjustment_rate] * @config[:polar_adjustment_factor]
@@ -464,30 +482,18 @@ module TerraSim
       
       if raw_luminosity > 1000
         normalized_luminosity = raw_luminosity / 3.828e26
-        puts "DEBUG: Normalizing large luminosity value #{raw_luminosity} to #{normalized_luminosity}"
       else
         normalized_luminosity = raw_luminosity
       end
       
       light_intensity = normalized_luminosity / (distance_au ** 2)
-      
       albedo = @celestial_body.respond_to?(:albedo) ? @celestial_body.albedo : 0.3
-      
       absorbed_light = light_intensity * (1.0 - albedo)
       
       dust_factor = 1.0
       if @celestial_body.atmosphere&.dust.present?
         dust_factor = 1.0 - (@celestial_body.atmosphere.dust['concentration'].to_f / 100.0).clamp(0, 1)
       end
-      
-      puts "DEBUG: Light calculation components:"
-      puts "  Star luminosity (normalized): #{normalized_luminosity}"
-      puts "  Distance (AU): #{distance_au}"
-      puts "  Light intensity at planet: #{light_intensity}"
-      puts "  Planet albedo: #{albedo}"
-      puts "  Absorbed light: #{absorbed_light}"
-      puts "  Dust factor: #{dust_factor}"
-      puts "  Final light availability: #{absorbed_light * dust_factor}"
       
       absorbed_light * dust_factor
     end
@@ -501,11 +507,7 @@ module TerraSim
       
       current_temp = (tropical_temp_k + polar_temp_k) / 2.0
       
-      puts "Calculated average temperature (K): #{current_temp}"
-      puts "Temperature range to check against (K): #{temp_range}"
-      
       if current_temp < temp_range.min || current_temp > temp_range.max
-        puts "Condition met: current_temp (#{current_temp}) is outside temp_range (#{temp_range}). Returning 0.0"
         return 0.0
       end
       
@@ -514,9 +516,8 @@ module TerraSim
       distance_from_middle = (current_temp - middle_point).abs
       
       suitability = 1.0 - (distance_from_middle / (range / 2.0))
-      puts "Temperature is within range. Suitability: #{suitability}"
       
-      return suitability.clamp(0, 1)
+      suitability.clamp(0, 1)
     end
 
     def ensure_kelvin(temp)
@@ -577,12 +578,6 @@ module TerraSim
       axial_tilt = @celestial_body.axial_tilt || earth_reference.axial_tilt
       @config[:polar_adjustment_factor] = base_value(:polar_adjustment_factor) * 
                                           (1.0 + (axial_tilt / 90.0))
-      
-      puts "Planet-specific simulation configuration:"
-      puts "  Plant growth factor: #{@config[:plant_growth_factor].round(4)}"
-      puts "  Moisture adjustment rate: #{@config[:biome_moisture_adjustment_rate].round(4)}"
-      puts "  Temperature adjustment rate: #{@config[:temperature_adjustment_rate].round(4)}"
-      puts "  Polar adjustment factor: #{@config[:polar_adjustment_factor].round(4)}"
     end
     
     def base_value(key)
