@@ -277,12 +277,16 @@ module AtmosphereConcern
 
 
   def recalculate_gas_percentages
+    # Reload association to ensure we have current gases after any deletions
+    gases.reload
     return if gases.empty?
-    total_atmospheric_mass = gases.sum(:mass)
-    return if total_atmospheric_mass.nil? || total_atmospheric_mass.zero?
+    # Use the stored total_atmospheric_mass instead of recalculating
+    # to avoid race conditions with gas updates
+    total_mass = self.total_atmospheric_mass
+    return if total_mass.nil? || total_mass.zero?
     gases.each do |gas|
       next if gas.nil? || gas.mass.nil?
-      percentage = (gas.mass.to_f / total_atmospheric_mass) * 100
+      percentage = (gas.mass.to_f / total_mass) * 100
       ppm = percentage * 10_000
       gas.update!(
         percentage: percentage,
