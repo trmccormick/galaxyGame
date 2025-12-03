@@ -12,19 +12,32 @@ module AtmosphereConcern
   # 2. Then falls back to the composition hash
   # 3. Returns 0.0 if not found anywhere
   def gas_percentage(formula_or_name)
-    # Force a fresh gases collection to avoid stale data
     gases.reset if gases.loaded?
     
-    # First try by name (most common case)
+    # Try exact match first
     gas = gases.find_by(name: formula_or_name)
     return gas.percentage if gas
+    
+    # Map common formulas to material IDs
+    formula_to_id = {
+      'O2' => 'oxygen',
+      'CO2' => 'carbon_dioxide',
+      'CH4' => 'methane',
+      'N2' => 'nitrogen',
+      'Ar' => 'argon',
+      'H2O' => 'water'
+    }
+    
+    if formula_to_id[formula_or_name]
+      gas = gases.find_by(name: formula_to_id[formula_or_name])
+      return gas.percentage if gas
+    end
     
     # Fallback to composition hash
     if composition.present?
       return composition[formula_or_name].to_f if composition[formula_or_name]
     end
     
-    # Default if not found anywhere
     0.0
   end
 
@@ -70,42 +83,30 @@ module AtmosphereConcern
     body = celestial_body
     return unless body.present?
     
-    # ✅ Initialize lookup service once
+    # Initialize lookup service once
     lookup_service = Lookup::MaterialLookupService.new
     
     # Calculate the total atmospheric mass
     total_mass = total_atmospheric_mass || 0
     
     # Create gases
-    composition.each do |chemical_formula, percentage|
-      # Skip if percentage is zero
-      next if percentage.to_f <= 0
-      
-      # Calculate mass based on percentage
-      mass = (percentage.to_f / 100) * total_mass
-      
-      # ✅ Look up material data using the service
-      material_data = lookup_service.find_material(chemical_formula)
-      
-      if material_data
-        # ✅ Use material ID as name (consistent with add_gas)
-        material_id = material_data['id']
-        molar_mass = material_data['molar_mass']
-      else
-        Rails.logger.warn "Material not found for gas: #{chemical_formula}"
-        material_id = chemical_formula  # Fallback to formula
-        molar_mass = nil
-      end
-      
-      # Create the gas record with material ID as name
+    composition.each do |input_key, data|
+      percentage = if data.is_a?(Hash)
+                    data['percentage'].to_f
+                  else
+                    data.to_f
+                  end
+      next if percentage <= 0
+      mass = (percentage / 100.0) * total_mass
+      material_data = lookup_service.find_material(input_key)
+      chemical_formula = material_data && material_data['chemical_formula'].present? ? material_data['chemical_formula'] : input_key
+      molar_mass = material_data ? material_data['molar_mass'] : nil
       gas = gases.new(
-        name: material_id,  # Use material_id, not chemical_formula
-        percentage: percentage.to_f,
+        name: chemical_formula,  # Always use chemical formula
+        percentage: percentage,
         mass: mass,
         molar_mass: molar_mass
       )
-
-      # Save with validation to catch missing molar mass
       gas.save!
     end
     
@@ -121,29 +122,19 @@ module AtmosphereConcern
     raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
     raise InvalidGasError, "Amount must be positive" if amount_kg <= 0
 
-    # ✅ Use MaterialLookupService to get material ID
+    # Normalize input to chemical formula
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(chemical_formula)
-    
     unless material_data
-      raise InvalidGasError, "Unknown chemical formula: #{chemical_formula}. Check materials database."
+      raise InvalidGasError, "Unknown chemical formula or name: #{chemical_formula}. Check materials database."
     end
-
-    # ✅ Store by material ID (matching SystemBuilderService and test expectations)
-    material_id = material_data['id']  # "nitrogen", "oxygen", etc.
-    gas = gases.find_or_initialize_by(name: material_id)
-    
-    # ✅ Update mass
+    formula = material_data['chemical_formula'].present? ? material_data['chemical_formula'] : chemical_formula
+    gas = gases.find_or_initialize_by(name: formula)
     gas.mass = (gas.mass || 0.0) + amount_kg.to_f
-    
-    # ✅ Use precise molar mass from JSON data
     gas.molar_mass = material_data['molar_mass'] if gas.molar_mass.blank?
-    
     gas.save!
-    
     update_total_atmospheric_mass
     recalculate_gas_percentages
-    
     gas
   end
 
@@ -151,40 +142,28 @@ module AtmosphereConcern
   def remove_gas(chemical_formula, amount_kg = nil)
     raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
     
-    # ✅ Convert chemical formula to material ID for lookup
+    # Normalize input to chemical formula
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(chemical_formula)
-    
     unless material_data
-      raise InvalidGasError, "Unknown chemical formula: #{chemical_formula}. Check materials database."
+      raise InvalidGasError, "Unknown chemical formula or name: #{chemical_formula}. Check materials database."
     end
-    
-    # ✅ Find gas by material ID (matching add_gas behavior)
-    material_id = material_data['id']
-    gas = gases.find_by(name: material_id)
-    
+    formula = material_data['chemical_formula'].present? ? material_data['chemical_formula'] : chemical_formula
+    gas = gases.find_by(name: formula)
     unless gas
       raise InvalidGasError, "Gas '#{chemical_formula}' not found in atmosphere"
     end
-    
-    # ✅ Determine amount to remove
     amount_to_remove = amount_kg || gas.mass.to_f
     raise InvalidGasError, "Cannot remove negative amount" if amount_to_remove < 0
     raise InvalidGasError, "Cannot remove more than exists (#{gas.mass} kg available)" if amount_to_remove > gas.mass
-
-    # ✅ Update or destroy gas
     new_mass = gas.mass.to_f - amount_to_remove.to_f
-    
-    if new_mass <= 0.001  # Close to zero, remove completely
+    if new_mass <= 0.001
       gas.destroy!
     else
       gas.update!(mass: new_mass)
     end
-
-    # ✅ Update atmosphere totals
     update_total_atmospheric_mass
     recalculate_gas_percentages
-    
     true
   end
 
@@ -381,19 +360,19 @@ module AtmosphereConcern
   def recalculate_gas_percentages
     # Don't recalculate if there are no gases
     return if gases.empty?
-    
+
     # Get total atmosphere mass
     total_atmospheric_mass = gases.sum(:mass)
-    
+    return if total_atmospheric_mass.nil? || total_atmospheric_mass.zero?
+
     # Update percentages for each gas
     gases.each do |gas|
       # Calculate percentage based on mass
-      percentage = total_atmospheric_mass > 0 ? 
-                   (gas.mass / total_atmospheric_mass) * 100 : 0
-      
+      percentage = (gas.mass.to_f / total_atmospheric_mass) * 100
+
       # Ensure percentage is valid (between 0 and 100)
       percentage = percentage.clamp(0, 100)
-      
+
       # Calculate PPM from percentage (1% = 10,000 ppm)
       ppm = percentage * 10_000
       

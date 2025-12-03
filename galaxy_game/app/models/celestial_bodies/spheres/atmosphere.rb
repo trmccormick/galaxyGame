@@ -2,6 +2,43 @@
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
+            # Add debug output to gas management
+            def add_gas(name, mass)
+              puts "[Atmosphere#add_gas] Adding gas: #{name}, mass: #{mass}"
+              gas = gases.find_by(name: name)
+              if gas
+                old_mass = gas.mass
+                gas.mass += mass
+                gas.percentage = (gas.mass / total_atmospheric_mass) * 100.0
+                gas.ppm = (gas.percentage / 100.0) * 1_000_000
+                gas.save!
+                puts "[Atmosphere#add_gas] Updated gas: #{name}, old_mass: #{old_mass}, new_mass: #{gas.mass}, percentage: #{gas.percentage}, ppm: #{gas.ppm}"
+              else
+                material_lookup = Lookup::MaterialLookupService.new
+                material = material_lookup.find_material(name)
+                molar_mass = material ? material['molar_mass'] : 0
+                percentage = (mass / total_atmospheric_mass) * 100.0
+                ppm = (percentage / 100.0) * 1_000_000
+                gases.create!(name: name, mass: mass, percentage: percentage, ppm: ppm, molar_mass: molar_mass, atmosphere_id: self.id)
+                puts "[Atmosphere#add_gas] Created new gas: #{name}, mass: #{mass}, percentage: #{percentage}, ppm: #{ppm}"
+              end
+            end
+
+            def remove_gas(name, mass)
+              puts "[Atmosphere#remove_gas] Removing gas: #{name}, mass: #{mass}"
+              gas = gases.find_by(name: name)
+              if gas
+                old_mass = gas.mass
+                gas.mass -= mass
+                gas.mass = 0 if gas.mass < 0
+                gas.percentage = (gas.mass / total_atmospheric_mass) * 100.0
+                gas.ppm = (gas.percentage / 100.0) * 1_000_000
+                gas.save!
+                puts "[Atmosphere#remove_gas] Updated gas: #{name}, old_mass: #{old_mass}, new_mass: #{gas.mass}, percentage: #{gas.percentage}, ppm: #{gas.ppm}"
+              else
+                puts "[Atmosphere#remove_gas] Gas #{name} not found."
+              end
+            end
       include AtmosphereConcern
       include MaterialTransferable
       
@@ -27,6 +64,8 @@ module CelestialBodies
 
       # Callbacks
       after_create :initialize_gases
+
+      # The reset method is now provided by AtmosphereConcern for DRYness and consistency.
 
       #---------------------------------------------------------------------------
       # Temperature Management Methods
@@ -160,7 +199,31 @@ module CelestialBodies
         
         (r_universal * temperature.to_f) / (molar_mass * gravity) / 1000.0
       end
+
+      # ✅ ADD: Override for planetary atmospheres (they don't have containers)
+      def get_celestial_atmosphere_data
+        # For planetary atmospheres, they ARE the celestial atmosphere data
+        {
+          temperature: temperature || 273.15,
+          pressure: pressure || 0.0,
+          composition: composition || {}
+        }
+      end
+
+      # ✅ ADD: Planetary atmospheres are never "sealed" (they're natural)
+      def sealed?
+        false # Planetary atmospheres are never artificially sealed
+      end      
       
+      def habitable?
+        # Planetary atmospheres don't need to be "sealed" - they're natural
+        return false if pressure < 60.0   # Minimum pressure for human survival (kPa)  
+        return false if o2_percentage < 16.0
+        return false if co2_percentage > 0.5
+        return false if temperature < 273.15 || temperature > 313.15  # 0°C to 40°C
+        true
+      end
+
       private
 
       def default_temperature
