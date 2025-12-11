@@ -1,14 +1,37 @@
 # config/initializers/game_data_paths.rb
+# Provides GalaxyGame::Paths constants and helpers for data file locations.
+
+# Require Pathname as it's used extensively
+require 'pathname' 
+
+# Only define constants once to prevent reinitialization warnings
+return if defined?(GalaxyGame::Paths::JSON_DATA)
+
+# Use the environment-specific Rails.root, but fall back if not available (e.g., in a deep RSpec context)
+unless defined?(Rails)
+  class FakeRails
+    def self.root
+      Pathname.new(File.expand_path('../../../', __FILE__))
+    end
+  end
+  RAILS_ROOT = FakeRails.root
+else
+  RAILS_ROOT = Rails.root
+end
+
 module GalaxyGame
   module Paths
-    # Ensure JSON_DATA is an absolute path from Rails.root for clarity and consistency
-    # Added .freeze for constants
-    JSON_DATA = Rails.root.join('app', 'data').freeze 
+    JSON_DATA = if ENV['GALAXY_JSON_DATA_PATH']
+      Pathname.new(ENV['GALAXY_JSON_DATA_PATH']).freeze
+    else
+      RAILS_ROOT.join('app', 'data').freeze
+    end
 
     # === Celestial Bodies and Star Systems ===
     # Helper for dynamically constructing celestial body folder path
     # e.g., star_systems/sol/celestial_bodies/earth/luna
     def self.celestial_body_data_path(celestial_body)
+      # NOTE: Simplified implementation for test environment awareness
       system_name = celestial_body.star_system&.name || 'sol'
       path_parts = [
         'star_systems',
@@ -25,24 +48,24 @@ module GalaxyGame
       JSON_DATA.join(*path_parts).to_s 
     end
 
-    # === Operational Data Paths (Units, Structures, Crafts, Modules, Rigs) ===
-    # These paths are for the actual game data (operational parameters, etc.)
+    # === Template Data Paths ===
+    TEMPLATE_PATH = JSON_DATA.join('templates').freeze
 
-    # Units Operational Data Paths
+    # === Operational Data Paths (Units, Structures, Crafts, Modules, Rigs) ===
     UNITS_PATH = JSON_DATA.join('operational_data', 'units').freeze 
-    COMPUTER_UNITS_PATH = UNITS_PATH.join('computers').freeze # Matches script's 'computers' (plural)
+    COMPUTER_UNITS_PATH = UNITS_PATH.join('computers').freeze 
     DROID_UNITS_PATH = UNITS_PATH.join('droid').freeze
     ENERGY_UNITS_PATH = UNITS_PATH.join('energy').freeze
-    HABITATS_UNITS_PATH = UNITS_PATH.join('habitats').freeze # Matches script's 'habitats' (plural)
+    HABITATS_UNITS_PATH = UNITS_PATH.join('habitats').freeze 
     LIFE_SUPPORT_UNITS_PATH = UNITS_PATH.join('life_support').freeze
-    PROCESSING_UNITS_PATH = UNITS_PATH.join('processing').freeze # Added for consistency if it exists
+    PROCESSING_UNITS_PATH = UNITS_PATH.join('processing').freeze 
     PRODUCTION_UNITS_PATH = UNITS_PATH.join('production').freeze
     PROPULSION_UNITS_PATH = UNITS_PATH.join('propulsion').freeze
     STORAGE_UNITS_PATH = UNITS_PATH.join('storage').freeze
-    STRUCTURE_UNITS_PATH = UNITS_PATH.join('structure').freeze # Matches script's 'structure' (singular)
+    STRUCTURE_UNITS_PATH = UNITS_PATH.join('structure').freeze 
     SPECIALIZED_UNITS_PATH = UNITS_PATH.join('specialized').freeze
 
-    # Robot Units Operational Data Paths (subcategories under units/robots)
+    # Robot Units Operational Data Paths
     ROBOTS_UNITS_PATH = UNITS_PATH.join('robots').freeze
     ROBOTS_DEPLOYMENT_UNITS_PATH = ROBOTS_UNITS_PATH.join('deployment').freeze
     ROBOTS_CONSTRUCTION_UNITS_PATH = ROBOTS_UNITS_PATH.join('construction').freeze
@@ -59,7 +82,6 @@ module GalaxyGame
     ENERGY_MODULES_PATH = MODULES_PATH.join('energy').freeze
     INFRASTRUCTURE_MODULES_PATH = MODULES_PATH.join('infrastructure').freeze
     LIFE_SUPPORT_MODULES_PATH = MODULES_PATH.join('life_support').freeze
-    POWER_MODULES_PATH = MODULES_PATH.join('power').freeze
     PRODUCTION_MODULES_PATH = MODULES_PATH.join('production').freeze
     PROPULSION_MODULES_PATH = MODULES_PATH.join('propulsion').freeze
     SCIENCE_MODULES_PATH = MODULES_PATH.join('science').freeze
@@ -74,7 +96,6 @@ module GalaxyGame
     ENERGY_RIGS_PATH = RIGS_PATH.join('energy').freeze
     INFRASTRUCTURE_RIGS_PATH = RIGS_PATH.join('infrastructure').freeze
     LIFE_SUPPORT_RIGS_PATH = RIGS_PATH.join('life_support').freeze
-    POWER_RIGS_PATH = RIGS_PATH.join('power').freeze
     PRODUCTION_RIGS_PATH = RIGS_PATH.join('production').freeze
     PROPULSION_RIGS_PATH = RIGS_PATH.join('propulsion').freeze
     SCIENCE_RIGS_PATH = RIGS_PATH.join('science').freeze
@@ -87,7 +108,7 @@ module GalaxyGame
     LANDING_INFRASTRUCTURE_STRUCTURES_PATH = STRUCTURES_PATH.join('landing_infrastructure').freeze
     LIFE_SUPPORT_STRUCTURES_PATH = STRUCTURES_PATH.join('life_support').freeze
     MANUFACTURING_STRUCTURES_PATH = STRUCTURES_PATH.join('manufacturing').freeze
-    POWER_GENERATION_STRUCTURES_PATH = STRUCTURES_PATH.join('power_generation').freeze
+    ENERGY_GENERATION_STRUCTURES_PATH = STRUCTURES_PATH.join('energy_generation').freeze
     RESOURCE_EXTRACTION_STRUCTURES_PATH = STRUCTURES_PATH.join('resource_extraction').freeze
     RESOURCE_PROCESSING_STRUCTURES_PATH = STRUCTURES_PATH.join('resource_processing').freeze
     SCIENCE_RESEARCH_STRUCTURES_PATH = STRUCTURES_PATH.join('science_research').freeze
@@ -95,21 +116,25 @@ module GalaxyGame
     TRANSPORTATION_STRUCTURES_PATH = STRUCTURES_PATH.join('transportation').freeze
     SPACE_STATIONS_STRUCTURES_PATH = STRUCTURES_PATH.join('space_stations').freeze
 
-    # Craft Operational Data Paths
+    # === Craft Paths (Operational Data) ===
     CRAFTS_PATH = JSON_DATA.join('operational_data', 'crafts').freeze
-    SPACE_CRAFTS_PATH = CRAFTS_PATH.join('space').freeze
-    SPACE_SATELLITES_CRAFTS_PATH = SPACE_CRAFTS_PATH.join('satellites').freeze
-    SPACE_SPACECRAFT_CRAFTS_PATH = SPACE_CRAFTS_PATH.join('spacecraft').freeze
-    SPACE_LANDERS_CRAFTS_PATH = SPACE_CRAFTS_PATH.join('landers').freeze
-    SPACE_PROBES_CRAFTS_PATH = SPACE_CRAFTS_PATH.join('probes').freeze
+    
+    # Craft subcategories
     ATMOSPHERIC_CRAFTS_PATH = CRAFTS_PATH.join('atmospheric').freeze
     GROUND_CRAFTS_PATH = CRAFTS_PATH.join('ground').freeze
+    SPACE_CRAFTS_PATH = CRAFTS_PATH.join('space').freeze
+    
+    # Space craft subcategories
+    SPACE_SATELLITES_PATH = SPACE_CRAFTS_PATH.join('satellites').freeze
+    SPACE_SPACECRAFT_PATH = SPACE_CRAFTS_PATH.join('spacecraft').freeze
+    SPACE_LANDERS_PATH = SPACE_CRAFTS_PATH.join('landers').freeze
+    SPACE_PROBES_PATH = SPACE_CRAFTS_PATH.join('probes').freeze
 
     # === Resources Paths ===
     RESOURCES_PATH = JSON_DATA.join('resources').freeze
     MATERIALS_PATH = RESOURCES_PATH.join('materials').freeze
-    FUELS_PATH = RESOURCES_PATH.join('fuels').freeze # Added to match script
-    CHEMICALS_RESOURCES_PATH = RESOURCES_PATH.join('chemicals').freeze # Added to match script (distinct from materials/chemicals)
+    FUELS_PATH = RESOURCES_PATH.join('fuels').freeze 
+    CHEMICALS_RESOURCES_PATH = RESOURCES_PATH.join('chemicals').freeze 
 
     # Materials by category
     RAW_MATERIALS_PATH = MATERIALS_PATH.join('raw').freeze
@@ -124,7 +149,7 @@ module GalaxyGame
     PROCESSED_CERAMICS_MATERIALS_PATH = PROCESSED_MATERIALS_PATH.join('ceramics').freeze
     PROCESSED_COMPOSITES_MATERIALS_PATH = PROCESSED_MATERIALS_PATH.join('composites').freeze
 
-    CHEMICALS_MATERIALS_PATH = MATERIALS_PATH.join('chemicals').freeze # This is for materials/chemicals
+    CHEMICALS_MATERIALS_PATH = MATERIALS_PATH.join('chemicals').freeze 
     CHEMICALS_INDUSTRIAL_MATERIALS_PATH = CHEMICALS_MATERIALS_PATH.join('industrial').freeze
     CHEMICALS_BIOCHEMICAL_MATERIALS_PATH = CHEMICALS_MATERIALS_PATH.join('biochemical').freeze
     CHEMICALS_EXOTIC_MATERIALS_PATH = CHEMICALS_MATERIALS_PATH.join('exotic').freeze
@@ -149,7 +174,7 @@ module GalaxyGame
 
     # Fuels subcategories
     FUELS_SOLID_PATH = FUELS_PATH.join('solid').freeze
-    FUELS_LIQUID_PATH = FUELS_PATH.join('liquid').freeze # This is 'liquid' in script, not 'liquid/chemical'
+    FUELS_LIQUID_PATH = FUELS_PATH.join('liquid').freeze 
     FUELS_LIQUID_CHEMICAL_PATH = FUELS_LIQUID_PATH.join('chemical').freeze
     FUELS_LIQUID_NUCLEAR_PATH = FUELS_LIQUID_PATH.join('nuclear').freeze
     FUELS_GAS_PATH = FUELS_PATH.join('gas').freeze
@@ -165,15 +190,15 @@ module GalaxyGame
 
     # === Blueprint Paths ===
     BLUEPRINTS_PATH = JSON_DATA.join('blueprints').freeze
-    CRAFT_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('crafts').freeze # Matches script's 'crafts' (plural)
+    CRAFT_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('crafts').freeze 
     STRUCTURE_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('structures').freeze
     UNIT_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('units').freeze
     MODULE_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('modules').freeze
     COMPONENT_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('components').freeze
-    RIG_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('rigs').freeze # Matches script's 'rigs' (plural)
+    RIG_BLUEPRINTS_PATH = BLUEPRINTS_PATH.join('rigs').freeze 
 
     # === Items Paths ===
-    ITEMS_PATH = JSON_DATA.join('items').freeze # Added to match script
+    ITEMS_PATH = JSON_DATA.join('items').freeze 
     COMPONENTS_ITEMS_PATH = ITEMS_PATH.join('components').freeze
     CONSUMABLE_ITEMS_PATH = ITEMS_PATH.join('consumable').freeze
     CONTAINER_ITEMS_PATH = ITEMS_PATH.join('container').freeze
@@ -182,10 +207,14 @@ module GalaxyGame
     FURNITURE_ITEMS_PATH = ITEMS_PATH.join('furniture').freeze
     CRAFTED_PARTS_ITEMS_PATH = ITEMS_PATH.join('crafted_parts').freeze
 
+    # ==== Mission Paths ====
+    MISSIONS_PATH = JSON_DATA.join('missions').freeze
+    QUESTS_MISSIONS_PATH = MISSIONS_PATH.join('quests').freeze
+    TASKS_MISSIONS_PATH = MISSIONS_PATH.join('tasks').freeze
+    EVENTS_MISSIONS_PATH = MISSIONS_PATH.join('events').freeze
+
     # === Helper methods for path generation ===
     def self.material_path(category, subcategory, material_id)
-      # This helper needs to be smarter if category/subcategory don't map directly to top-level constants
-      # For now, it assumes category is a direct sub-folder of MATERIALS_PATH
       MATERIALS_PATH.join(category, subcategory, "#{material_id}.json").freeze
     end
 
