@@ -2,7 +2,7 @@ module FinancialManagement
   extend ActiveSupport::Concern
 
   included do
-    has_one :account, as: :accountable, dependent: :destroy
+    has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account'
     after_create :create_account
   end
 
@@ -50,7 +50,11 @@ module FinancialManagement
 
   def create_account
     return if account.present?
-    
+
+    # Find the default currency (GCC)
+    default_currency = Financial::Currency.find_by(symbol: 'GCC')
+    raise "Default currency (GCC) not found. Please seed currencies." unless default_currency
+
     # Set starting balance based on entity type
     starting_balance = case self
                       when Player then 1_000
@@ -58,7 +62,7 @@ module FinancialManagement
                       when Settlement::BaseSettlement then 10_000
                       else 100
                       end
-    
-    build_account(balance: starting_balance).save!
+
+    build_account(balance: starting_balance, currency: default_currency, lock_version: 0).save!
   end
 end

@@ -2,13 +2,15 @@
 require 'rails_helper'
 
 RSpec.describe FinancialManagement do
-  # Use the actual Player model instead of a dynamic class
+  let!(:currency) do
+    Financial::Currency.find_by(symbol: 'GCC') || raise("Test requires Financial::Currency with symbol 'GCC' to exist. Please seed the test database appropriately.")
+  end
   let(:test_instance) { create(:player) }
 
   describe 'associations' do
     it 'has an account' do
       expect(test_instance.account).to be_present
-      expect(test_instance.account).to be_a(Account)
+      expect(test_instance.account).to be_a(Financial::Account)
     end
   end
 
@@ -131,7 +133,7 @@ RSpec.describe FinancialManagement do
   end
 
   describe 'account creation' do
-    it 'creates account after creation with appropriate starting balance' do
+    it 'creates account after creation with appropriate starting balance and currency' do
       player = create(:player)
       expect(player.account).to be_present
       expect(player.balance).to eq(1_000) # Player starting balance
