@@ -6,6 +6,7 @@ RSpec.describe TransactionService, type: :service do
     let(:buyer) { create(:player) }
     let(:seller) { create(:player) }
     let(:amount) { 1000 }
+    let(:currency) { create(:currency) }
 
     context 'when the buyer has sufficient funds' do
       before do
@@ -15,18 +16,18 @@ RSpec.describe TransactionService, type: :service do
 
       it 'processes the transaction successfully' do
         expect {
-          TransactionService.process_transaction(buyer: buyer, seller: seller, amount: amount)
+          TransactionService.process_transaction(buyer: buyer, seller: seller, amount: amount, currency: currency)
         }.to change { buyer.account.reload.balance }.by(-amount)
-        
+
         expect(seller.account.reload.balance).to eq(amount)
-        expect(Transaction.count).to eq(2) # Two transactions created - one for each side
-        
-        buyer_transaction = Transaction.find_by(account: buyer.account)
+        expect(Financial::Transaction.count).to eq(2) # Two transactions created - one for each side
+
+        buyer_transaction = Financial::Transaction.find_by(account: buyer.account)
         expect(buyer_transaction.amount).to eq(-amount)
         expect(buyer_transaction.recipient).to eq(seller)
         expect(buyer_transaction.transaction_type).to eq('transfer')
-        
-        seller_transaction = Transaction.find_by(account: seller.account)
+
+        seller_transaction = Financial::Transaction.find_by(account: seller.account)
         expect(seller_transaction.amount).to eq(amount)
         expect(seller_transaction.recipient).to eq(buyer)
         expect(seller_transaction.transaction_type).to eq('transfer')
@@ -42,15 +43,15 @@ RSpec.describe TransactionService, type: :service do
       it 'raises an error and does not process the transaction' do
         initial_buyer_balance = buyer.account.balance
         initial_seller_balance = seller.account.balance
-        initial_transaction_count = Transaction.count
-        
+        initial_transaction_count = Financial::Transaction.count
+
         expect {
-          TransactionService.process_transaction(buyer: buyer, seller: seller, amount: amount)
+          TransactionService.process_transaction(buyer: buyer, seller: seller, amount: amount, currency: currency)
         }.to raise_error(StandardError, /Insufficient funds/)
-        
+
         expect(buyer.account.reload.balance).to eq(initial_buyer_balance)
         expect(seller.account.reload.balance).to eq(initial_seller_balance)
-        expect(Transaction.count).to eq(initial_transaction_count)
+        expect(Financial::Transaction.count).to eq(initial_transaction_count)
       end
     end
   end

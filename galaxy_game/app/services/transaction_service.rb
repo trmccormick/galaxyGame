@@ -1,5 +1,5 @@
 class TransactionService
-  def self.process_transaction(buyer:, seller:, amount:)
+  def self.process_transaction(buyer:, seller:, amount:, currency:)
     ActiveRecord::Base.transaction do
       # Check for sufficient funds
       if buyer.account.balance < amount
@@ -16,21 +16,22 @@ class TransactionService
       Rails.logger.info("Seller #{seller.name}'s account credited by #{amount}.")
 
       # Create transaction record - use your existing schema
-      Transaction.create!(
+      Financial::Transaction.create!(
         account: buyer.account,
         recipient: seller,
         amount: -amount,  # Negative because money is leaving the account
         transaction_type: 'transfer',
-        description: "Payment from #{buyer.name} to #{seller.name}"
+        description: "Payment from #{buyer.name} to #{seller.name}",
+        currency: currency
       )
-      
       # Also create a corresponding record for the seller's account
-      Transaction.create!(
+      Financial::Transaction.create!(
         account: seller.account,
         recipient: buyer,
         amount: amount,  # Positive because money is entering the account
         transaction_type: 'transfer',
-        description: "Payment from #{buyer.name} to #{seller.name}"
+        description: "Payment from #{buyer.name} to #{seller.name}",
+        currency: currency
       )
       
       Rails.logger.info("Transaction recorded: Buyer #{buyer.name} paid Seller #{seller.name} #{amount}.")
