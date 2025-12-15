@@ -10,80 +10,103 @@ module Settlement
     
     belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
     belongs_to :owner, polymorphic: true, optional: true
-    has_one :account, as: :accountable, dependent: :destroy
-    has_one :ai_manager, dependent: :destroy
+    has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account'
+    has_one :marketplace, 
+          class_name: 'Market::Marketplace', 
+          foreign_key: 'settlement_id', 
+          dependent: :destroy
 
     has_one :location, 
             as: :locationable, 
             class_name: 'Location::CelestialLocation',
             dependent: :destroy
 
-    # Add docked crafts association
     has_many :docked_crafts,
              class_name: 'Craft::BaseCraft',
              foreign_key: :docked_at_id,
              inverse_of: :docked_at
 
-    # Add base units association
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
-
     has_many :structures, class_name: 'Structures::BaseStructure', foreign_key: 'settlement_id'
 
     delegate :surface_storage, to: :inventory, allow_nil: true
-
-    # planned adjustment for location of settlements
-    # Change single location to boundary locations
-    # has_many :locations, 
-    #          as: :locationable, 
-    #          class_name: 'Location::CelestialLocation',
-    #          dependent: :destroy    
-
     delegate :celestial_body, to: :location, allow_nil: true
     
     validates :name, presence: true
     validates :current_population, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :settlement_type, presence: true
 
     enum settlement_type: { base: 0, outpost: 1, settlement: 2, city: 3 }
-
-    validates :settlement_type, presence: true
 
     after_create :create_account_and_inventory
     after_update :adjust_settlement_type_based_on_population, if: :saved_change_to_current_population?
     after_create :build_units_and_modules
 
-    # def central_location
-    #   locations.find_by(location_type: 'center')
-    # end
+    # FIXED: Remove override of operational_data getter - let Rails handle it
+    # The attribute accessor works fine with jsonb columns
+    
+    def operational_data=(value)
+      self[:operational_data] = value
+    end
+    
+    def construction_cost_percentage
+      # FIXED: Simplified - operational_data will return {} for nil thanks to Rails jsonb defaults
+      data = read_attribute(:operational_data) || {}
+      data.dig('manufacturing', 'construction_cost_percentage') || DEFAULT_CONSTRUCTION_PERCENTAGE
+    end
+    
+    def construction_cost_percentage=(value)
+      self.operational_data ||= {}
+      self.operational_data['manufacturing'] ||= {}
+      self.operational_data['manufacturing']['construction_cost_percentage'] = value.to_f
+    end
+    
+    def calculate_construction_cost(purchase_cost)
+      return 0.0 if purchase_cost.nil?
+      purchase_cost = purchase_cost.to_f
+      (purchase_cost * construction_cost_percentage / 100.0).round(2)
+    end
+    
+    def manufacturing_efficiency
+      (operational_data || {}).dig('manufacturing', 'efficiency_bonus') || 1.0
+    end
+    
+    def required_equipment_check_enabled?
+      (operational_data || {}).dig('manufacturing', 'check_equipment') != false
+    end
 
-    # def boundary_locations
-    #   locations.where(location_type: 'boundary')
-    # end
+    # FIXED: Consistent namespace and removed duplicate method
+    def npc_market_bid(resource_name)
+      Market::NpcPriceCalculator.calculate_bid(self, resource_name.to_s)
+    end
 
-    # def area
-    #   # Calculate area based on boundary locations
-    #   return 0 unless boundary_locations.count >= 3
-    #   # Use surveyor's formula or similar for area calculation
-    # end  
+    def npc_buy_capacity(resource_name)
+      return 0 unless account && inventory
+
+      storage_limit = inventory.available_capacity_for?(resource_name)
+      
+      bid_price = npc_market_bid(resource_name)
+      return 0 if bid_price <= 0
+
+      available_cash = account.balance
+      financial_limit = (available_cash / bid_price).floor
+      
+      [storage_limit, financial_limit].min.to_i
+    end    
     
     def accessible_by?(player)
-      # Define access rules - owner always has access
       return true if owner == player
-      
-      # Add other access rules (permissions, alliances, etc.)
       false
     end    
 
     def storage_capacity
-      # For backward compatibility, only count liquid and gas
       capacities = storage_capacity_by_type
       capacities[:liquid].to_i + capacities[:gas].to_i
     end
 
     def total_storage_capacity
-      # Sum all storage types
       storage_capacity_by_type.values.sum
     end
-
 
     def capacity
       base_units.sum do |unit|
@@ -91,21 +114,16 @@ module Settlement
       end
     end
 
-    # Allocate space for population (related to housing management)
     def allocate_space(num_people)
       super(num_people)
     end
 
-    # Initialize inventory if it doesn't exist
     def initialize_inventory
       initialize_storage(capacity, celestial_body) unless inventory
     end
 
     def establish_from_starship(starship, location)
-      # Load cargo manifest
       cargo_manifest = CargoManifestLoader.load('starship_settlement_cargo')
-      
-      # Verify required cargo
       verify_deployment_cargo(starship.inventory, cargo_manifest)
     
       transaction do
@@ -116,82 +134,34 @@ module Settlement
           owner: starship.owner
         )
     
-        # Deploy units from cargo
         cargo_manifest['cargo_sections']['deployment_units'].each do |unit_data|
           deploy_unit(settlement, starship.inventory, unit_data)
         end
     
-        # Transfer remaining cargo to settlement inventory
         transfer_cargo(starship.inventory, settlement.inventory, cargo_manifest)
-    
         settlement
       end
     end
 
     def surface_storage?
-      true  # Base settlements always have surface storage
+      true
     end
 
     def can_store_on_surface?(item_name, amount)
-      # No capacity limit for surface storage
       surface_storage? && 
         has_required_storage_equipment?(item_name) &&
         meets_environmental_requirements?(item_name)
     end
 
     def surface_storage_capacity
-      Float::INFINITY  # Surface storage is effectively unlimited
-    end
-    
-    def operational_data
-      self[:operational_data] ||= {}
-    end
-
-    def operational_data=(value)
-      self[:operational_data] = value
-    end
-    
-    def construction_cost_percentage
-      # Handle nil operational_data case explicitly
-      return DEFAULT_CONSTRUCTION_PERCENTAGE if operational_data.nil?
-      
-      # Then continue with normal logic
-      operational_data.dig('manufacturing', 'construction_cost_percentage') || DEFAULT_CONSTRUCTION_PERCENTAGE
-    end
-    
-    def construction_cost_percentage=(value)
-      self.operational_data ||= {}
-      self.operational_data['manufacturing'] ||= {}
-      self.operational_data['manufacturing']['construction_cost_percentage'] = value.to_f
-    end
-    
-    def calculate_construction_cost(purchase_cost)
-      # Handle nil or invalid input
-      return 0.0 if purchase_cost.nil?
-      
-      # Convert to float if string or other numeric type
-      purchase_cost = purchase_cost.to_f
-      
-      # Calculate and round to 2 decimal places
-      (purchase_cost * construction_cost_percentage / 100.0).round(2)
-    end
-    
-    # Optional: Add other manufacturing settings
-    def manufacturing_efficiency
-      operational_data.dig('manufacturing', 'efficiency_bonus') || 1.0
-    end
-    
-    def required_equipment_check_enabled?
-      operational_data.dig('manufacturing', 'check_equipment') != false  # Default true
+      Float::INFINITY
     end
     
     private
     
     def deploy_unit(settlement, inventory, unit_data)
-      # Remove from starship inventory
       inventory.remove_item(unit_data['id'], 1)
       
-      # Create and attach unit
       unit = Units::BaseUnit.create!(
         name: unit_data['name'],
         unit_type: unit_data['deployment_type'],
@@ -218,7 +188,6 @@ module Settlement
       calculate_life_support_requirements
     end
 
-    # Check if resources are sufficient and take appropriate actions if not
     def check_resource_availability
       resources = resource_requirements
 
@@ -237,9 +206,7 @@ module Settlement
       end
     end
 
-    # Handle starvation if food is critically low
     def handle_starvation
-      # 10% of the population dies due to starvation
       deaths = (current_population * DEATH_RATE).to_i
       self.current_population -= deaths
       self.save!
@@ -247,7 +214,6 @@ module Settlement
       puts "#{deaths} people have died from starvation."
     end
 
-    # Handle resource shortage by reducing population or morale
     def handle_resource_shortage(resource)
       case resource
       when :food
@@ -259,7 +225,6 @@ module Settlement
       end
     end
 
-    # Increase unhappiness and morale decline when there's a resource shortage
     def increase_unhappiness(resource, deaths = 0)
       morale_decline = MORALE_DECLINE_RATE * (current_population - deaths)
       self.morale -= morale_decline
@@ -268,9 +233,7 @@ module Settlement
       puts "Warning: Not enough #{resource}! Morale and happiness have declined."
     end
 
-    # Decrease population if resources are insufficient
     def reduce_population
-      # Can use a similar logic for resource shortages, or the death rate
       self.current_population -= (current_population * 0.05).to_i
       self.save!
     end
@@ -284,9 +247,16 @@ module Settlement
     end
 
     def create_account_and_inventory
-      build_account.save
-      build_inventory.save
-    end  
+      default_currency = Financial::Currency.find_by(symbol: 'GCC', is_system_currency: true) || Financial::Currency.first
+      
+      # Use exists? to check the database directly, not the unloaded association
+      if default_currency && !Financial::Account.exists?(accountable: self, currency: default_currency)
+        create_account!(currency: default_currency)
+      end
+      
+      # Use exists? with correct column name: inventoryable_type (not inventoriable)
+      build_inventory.save unless Inventory.exists?(inventoryable: self)
+    end
 
     def adjust_settlement_type_based_on_population
       case current_population
@@ -316,12 +286,9 @@ module Settlement
     end    
 
     def setup_initial_housing
-      # Check inventory for available housing units
       available_housing = inventory.items.where("properties->>'unit_class' = ?", 'Housing').first
-
       raise NoHousingUnitsAvailable, "Settlement requires housing units to be initialized" unless available_housing
 
-      # Create unit from available housing item
       housing = Units::BaseUnit.create(
         name: available_housing.name,
         unit_type: "housing",
@@ -330,27 +297,40 @@ module Settlement
         owner: self
       )
 
-      # Attach to settlement and remove from inventory
       self.base_units << housing
       inventory.remove_item(available_housing.id, 1)
     end
 
     def has_required_storage_equipment?(item_name)
-      true  # For now, assume all equipment is available
+      true
     end
 
     def within_labor_capacity?(amount)
-      true # For now, assume unlimited labor capacity
+      true
     end
 
     def meets_environmental_requirements?(item_name)
-      true # For now, assume all environmental requirements are met
+      true
     end
 
-    # Add this method if it doesn't exist
     def build_units_and_modules
-      # Just do nothing in the base implementation
       true
+    end
+
+    def critical_resource_threshold(resource, days: 2)
+      per_person_daily =
+        case resource.to_s.downcase
+        when 'oxygen'
+          GameConstants::HUMAN_LIFE_SUPPORT['oxygen_per_person_day']
+        when 'water'
+          GameConstants::HUMAN_LIFE_SUPPORT['water_per_person_day']
+        when 'food'
+          GameConstants::FOOD_PER_PERSON
+        else
+          0
+        end
+
+      (current_population * per_person_daily * days).ceil
     end
   end
 end
