@@ -4,18 +4,31 @@ require 'pathname'
 
 module Lookup
   class BlueprintLookupService < BaseLookupService
-    # Use the GalaxyGame::Paths module for consistent path handling
+    # Cache the path to avoid repeated calls
     def self.base_blueprints_path
-      Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "blueprints")
+      @base_blueprints_path ||= begin
+        path = Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "blueprints")
+        # Remove debug output - it's being called too frequently
+        path
+      end
     end
     
+    # Add missing rigs path
     BLUEPRINT_PATHS = {
+      components: {
+        path: -> { base_blueprints_path.join("components") },
+        recursive_scan: true
+      },
       units: {
         path: -> { base_blueprints_path.join("units") },
         recursive_scan: true
       },
       modules: {
         path: -> { base_blueprints_path.join("modules") },
+        recursive_scan: true
+      },
+      rigs: {
+        path: -> { base_blueprints_path.join("rigs") },
         recursive_scan: true
       },
       facilities: {
@@ -28,6 +41,10 @@ module Lookup
       },
       structures: {
         path: -> { base_blueprints_path.join("structures") },
+        recursive_scan: true
+      },
+      crafts: {
+        path: -> { base_blueprints_path.join("crafts") },
         recursive_scan: true
       }
     }
@@ -181,9 +198,9 @@ module Lookup
         return false unless blueprint_category == category.downcase
       end
 
-      # PRIORITY 1: Exact ID match
-      if blueprint['id']&.downcase == query_normalized
-        Rails.logger.debug "Matched by ID: #{blueprint['id']} == #{query}"
+      # PRIORITY 1: Exact ID or unit_id match
+      if (blueprint['id']&.downcase == query_normalized) || (blueprint['unit_id']&.downcase == query_normalized)
+        Rails.logger.debug "Matched by ID/unit_id: #{blueprint['id'] || blueprint['unit_id']} == #{query}"
         return true
       end
 
