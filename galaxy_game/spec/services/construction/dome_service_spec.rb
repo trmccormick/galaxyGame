@@ -134,11 +134,10 @@ RSpec.describe Construction::DomeService, type: :service do
         expect(TransactionService).to receive(:process_transaction).with(
           buyer: settlement,
           seller: service_provider,
-          amount: 50000
+          amount: 50000,
+          currency: currency
         )
-        
-        result = contracted_service.schedule_construction
-        
+        result = described_class.new(player, crater_dome, service_provider, nil, currency).schedule_construction
         expect(result[:success]).to be true
       end
       
