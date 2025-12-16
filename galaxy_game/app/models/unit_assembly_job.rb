@@ -36,7 +36,7 @@ class UnitAssemblyJob < ApplicationRecord
   end
 
   def materials_gathered?
-    material_requests.empty? || material_requests.all? { |req| req.status == 'fulfilled' }
+    material_requests.empty? || material_requests.all? { |req| req.status.in?(['fulfilled_by_player', 'fulfilled_by_npc']) }
   end
 
   def start_assembly
@@ -77,16 +77,16 @@ class UnitAssemblyJob < ApplicationRecord
   def consume_materials
     material_requests.each do |request|
       remaining_needed = request.quantity_requested
-      
+
       # Find items owned by the job requester
       items_to_consume = base_settlement.inventory.items.where(
         name: request.material_name,
         owner: base_settlement.owner
       ).order(:created_at)
-      
+
       items_to_consume.each do |item|
         break if remaining_needed <= 0
-        
+
         if item.amount <= remaining_needed
           remaining_needed -= item.amount
           item.destroy!
@@ -95,33 +95,33 @@ class UnitAssemblyJob < ApplicationRecord
           remaining_needed = 0
         end
       end
-      
-      request.update!(status: 'fulfilled')
+
+      request.update!(status: 'fulfilled_by_player')
     end
   end
 
   def create_unassembled_items
     blueprint_name = specifications['name'] || unit_type.humanize
-    
+
     count.times do |i|
       Item.create!(
         name: "Unassembled #{blueprint_name}",
         description: "Unassembled #{blueprint_name} ready for deployment",
         amount: 1,
-        
+
         # Ownership and location
         owner: base_settlement.owner,
         inventory: base_settlement.inventory,
-        
-        # Item properties - fix material_type to use the correct enum string
-        material_type: 'manufactured_goods',  # Ensure this matches an enum value in Item model
+
+        # Item properties - use enum key for material_type
+        material_type: :manufactured_goods,
         storage_method: 'bulk_storage',
-        
+
         # Deployment data
         metadata: {
           'deployment_data' => {
             'unit_type' => unit_type,
-            'blueprint_reference' => specifications['id'], # Use specifications['id'] instead of blueprint_id
+            'blueprint_reference' => specifications['id'],
             'manufactured_by' => base_settlement.owner.name,
             'manufactured_at' => Time.current.to_s,
             'assembly_job_id' => id
