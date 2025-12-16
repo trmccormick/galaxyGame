@@ -20,7 +20,7 @@ RSpec.describe Item, type: :model do
   
   let(:raw_material) {
     create(:item,
-           name: "Lunar Regolith",  # Changed to match our JSON file
+           name: "Lunar Regolith",
            storage_method: "bulk_storage",
            material_type: :raw_material,
            inventory: inventory)
@@ -221,10 +221,6 @@ RSpec.describe Item, type: :model do
       container.reload
       small_item.reload
       
-      # Debug capacity and weights
-      # puts "Container properties: #{container.properties.inspect}"
-      # puts "Small item weight: #{small_item.total_weight}"
-      
       container.add_item(small_item)
       container.reload
       
@@ -268,16 +264,34 @@ RSpec.describe Item, type: :model do
 
   describe 'regolith handling' do
     let!(:luna) do
-      FactoryBot.create(:large_moon, :luna) # Explicitly use FactoryBot.create
+      # Create Luna - the factory should set identifier to "LUNA-01"
+      create(:large_moon, :luna)
     end
 
-    let(:regolith) { create(:item, :regolith) }
+    let(:regolith) do
+      # Regolith item - metadata uses identifier, not name
+      create(:item,
+        name: "Regolith",
+        material_type: :raw_material,
+        storage_method: "bulk_storage",
+        inventory: inventory,
+        metadata: {
+          'source_body' => luna.identifier  # Use identifier, not name
+        }
+      )
+    end
 
     it 'gets composition from celestial body geosphere' do
-      # Reload luna to ensure it's in the database
       luna.reload
-      expect(CelestialBodies::CelestialBody.find_by(identifier: 'LUNA-01')).to eq(luna) # Verify luna exists
-
+      
+      # Verify Luna was created with correct identifier
+      expect(luna.identifier).to eq('LUNA-01')
+      
+      # Verify the body can be found by identifier
+      found_body = CelestialBodies::CelestialBody.find_by(identifier: luna.identifier)
+      expect(found_body).to eq(luna)
+      
+      # Check that regolith gets composition from Luna's geosphere
       expect(regolith.material_properties["composition"]).to eq(luna.geosphere.crust_composition)
     end
 

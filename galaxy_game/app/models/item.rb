@@ -1,4 +1,16 @@
 class Item < ApplicationRecord
+    enum material_type: {
+      manufactured_goods: 0,
+      metal: 1,
+      component: 2,
+      processed_material: 3,
+      gas: 4,
+      consumable: 5,
+      liquid: 6,
+      fuel: 7,
+      raw_material: 8,
+      unknown: 99
+    }, _default: :unknown
   # Associations
   belongs_to :inventory, optional: true
   belongs_to :container, class_name: "Item", optional: true
@@ -241,7 +253,7 @@ class Item < ApplicationRecord
 
     # If not found, check if it's a blueprint byproduct
     if name.end_with?("Scrap") || name.start_with?("Used")
-      Blueprint::MaterialGenerator.generate_material({
+      BlueprintServices::MaterialGenerator.generate_material({
         "material": name,
         "description": "Byproduct from manufacturing process",
         "weight_per_unit": weight_per_unit_for_scrap(name)
