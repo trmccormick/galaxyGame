@@ -5,10 +5,9 @@ class Colony < ApplicationRecord
   belongs_to :celestial_body, class_name: 'CelestialBodies::CelestialBody'
   has_many :settlements, class_name: 'Settlement::BaseSettlement', foreign_key: 'colony_id', dependent: :destroy, inverse_of: :colony
 
-  has_one :account, as: :accountable, dependent: :destroy
-  has_one :inventory, as: :inventoryable, dependent: :destroy
+  has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account'
+  has_one :inventory, as: :inventoryable, dependent: :destroy, class_name: 'Inventory'
   has_many :items, through: :inventory
-  has_one :location, as: :locationable, dependent: :destroy
 
   after_create :create_account_and_inventory
 
