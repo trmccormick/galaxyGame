@@ -1,5 +1,4 @@
 # spec/services/unit_module_assembly_service_spec.rb
-# spec/services/unit_module_assembly_service_spec.rb
 
 require 'rails_helper'
 
@@ -48,13 +47,14 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
   
   describe '.build_units_and_modules' do
     it 'creates units from the recommended fit' do
-      # The count should be by(4) - 2 engines + 1 life support + 1 landing gear
+      # The count should be by(4) - 2 engines + 1 life support + 1 landing gear (from custom configs)
       expect {
         UnitModuleAssemblyService.build_units_and_modules(
           target: craft, 
           settlement_inventory: inventory
         )
-      }.to change { craft.base_units.count }.by(4) # 2 engines + 1 life support + 1 landing gear
+        craft.reload
+      }.to change { craft.base_units.count }.by(4)
       
       # Verify specific units were created
       expect(craft.base_units.where(unit_type: 'basic_engine').count).to eq(2)
@@ -76,6 +76,9 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
         settlement_inventory: inventory
       )
       
+      # Reload to get fresh associations
+      result.reload
+      
       expect(result.modules.count).to eq(1)
       expect(result.modules.first.module_type).to eq('efficiency_module')
       expect(inventory.items.find_by(name: 'efficiency_module')).to be_nil
@@ -86,6 +89,9 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
         target: craft, 
         settlement_inventory: inventory
       )
+      
+      # Reload to get fresh associations
+      result.reload
       
       expect(result.rigs.count).to eq(1)
       expect(result.rigs.first.rig_type).to eq('cargo_expander')
@@ -98,9 +104,13 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
         settlement_inventory: inventory
       )
       
+      # Reload to get fresh associations
+      result.reload
+      
       # Verify landing gear was created with special port
       landing_gear = result.base_units.find_by(unit_type: 'landing_gear')
       expect(landing_gear).to be_present
+      expect(landing_gear.operational_data['port']).to eq('landing_gear_mount')
       expect(inventory.items.find_by(name: 'landing_gear')).to be_nil
     end
     
@@ -112,6 +122,9 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
         target: craft, 
         settlement_inventory: inventory
       )
+      
+      # Reload to get fresh associations
+      result.reload
       
       # Should only create one engine instead of two
       expect(result.base_units.where(unit_type: 'basic_engine').count).to eq(1)
@@ -125,9 +138,10 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
       allow(craft_without_fit).to receive(:operational_data).and_return({})
       allow(craft_without_fit).to receive(:persisted?).and_return(true)
       allow(craft_without_fit).to receive(:id).and_return(999)
-      allow(craft_without_fit).to receive(:base_units).and_return([])
-      allow(craft_without_fit).to receive(:modules).and_return([])
-      allow(craft_without_fit).to receive(:rigs).and_return([])
+      allow(craft_without_fit).to receive(:base_units).and_return(Craft::BaseCraft.none)
+      allow(craft_without_fit).to receive(:modules).and_return(Craft::BaseCraft.none)
+      allow(craft_without_fit).to receive(:rigs).and_return(Craft::BaseCraft.none)
+      allow(craft_without_fit).to receive(:reload).and_return(craft_without_fit)
       
       result = UnitModuleAssemblyService.build_units_and_modules(
         target: craft_without_fit, 
@@ -150,6 +164,9 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
         settlement_inventory: inventory
       )
       
+      # Reload to get fresh associations
+      result.reload
+      
       # First engine should have port_name "engine_port_1"
       engines = result.base_units.where(unit_type: 'basic_engine').order(:id)
       expect(engines.first.operational_data['port']).to eq('engine_port_1')
@@ -166,6 +183,28 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
       # Rig should have port_name "rig_mount_1"
       rig = result.rigs.first
       expect(rig.operational_data['port']).to eq('rig_mount_1')
+    end
+  end
+  
+  describe '.disconnect_unit' do
+    it 'disconnects a unit and returns it to inventory as an item' do
+      # Assemble units first
+      UnitModuleAssemblyService.build_units_and_modules(target: craft, settlement_inventory: inventory)
+      craft.reload
+      
+      unit = craft.base_units.find_by(unit_type: 'basic_engine')
+      expect(unit).to be_present
+
+      # Disconnect the unit using the service method
+      UnitModuleAssemblyService.disconnect_unit(unit: unit, settlement_inventory: inventory)
+
+      # Unit should be detached (attachable_id should be nil)
+      unit.reload
+      expect(unit.attachable_id).to be_nil
+      expect(unit.attachable_type).to be_nil
+
+      # Inventory should now have the item back
+      expect(inventory.items.where(name: 'basic_engine').sum(:amount)).to eq(1)
     end
   end
 end
