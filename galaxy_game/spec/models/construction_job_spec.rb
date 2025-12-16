@@ -199,15 +199,15 @@ RSpec.describe ConstructionJob, type: :model do
         request1 = job.material_requests.create!(
           material_name: "Steel",
           quantity_requested: 100,
-          status: :fulfilled  # This will now work correctly
+          status: "fulfilled_by_player"
         )
-        
+
         request2 = job.material_requests.create!(
           material_name: "Glass",
           quantity_requested: 50,
-          status: :fulfilled  # This will now work correctly
+          status: "fulfilled_by_player"
         )
-        
+
         expect(job.materials_gathered?).to be true
       end
       
@@ -216,7 +216,7 @@ RSpec.describe ConstructionJob, type: :model do
         job.material_requests.create!(
           material_name: "Steel",  # Try material_name instead of material_type
           quantity_requested: 100,
-          status: :fulfilled
+          status: :fulfilled_by_player
         )
         
         job.material_requests.create!(

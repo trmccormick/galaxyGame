@@ -34,7 +34,7 @@ class ConstructionJob < ApplicationRecord
   # Add the missing helper methods
   def materials_gathered?
     return true if material_requests.empty?
-    material_requests.all? { |req| req.status == 'fulfilled' }
+    material_requests.all? { |req| req.status.in?(['fulfilled_by_player', 'fulfilled_by_npc']) }
   end
   
   def equipment_gathered?
