@@ -105,6 +105,24 @@ class UnitModuleAssemblyService
     target
   end
   
+  # Class method to disconnect a unit and return it to inventory
+  def self.disconnect_unit(unit:, settlement_inventory:)
+    Rails.logger.info "Disconnecting unit: #{unit.unit_type} (#{unit.identifier})"
+    
+    # Detach the unit from its parent (set attachable to nil)
+    unit.update!(attachable_id: nil, attachable_type: nil)
+    
+    # Add the unit back to inventory as an item
+    settlement_inventory.add_item(unit.unit_type, 1, unit.owner)
+    
+    Rails.logger.info "Unit #{unit.unit_type} returned to inventory"
+    
+    unit
+  rescue => e
+    Rails.logger.error "Error disconnecting unit: #{e.message}\n#{e.backtrace.join("\n")}"
+    raise
+  end
+  
   private
   
   def self.process_units(units, target, inventory)
@@ -112,37 +130,37 @@ class UnitModuleAssemblyService
       unit_id = unit_data['id']
       count = unit_data['count'] || 1
       port_type = unit_data['port_type'] || 'unit_port'
-      
+      Rails.logger.info "Processing unit: #{unit_id}, count: #{count}"
+
       count.times do |i|
-        # Find item in inventory
         item = inventory.items.find_by(name: unit_id) || 
                inventory.items.find_by("metadata->>'unit_type' = ?", unit_id) ||
                inventory.items.find_by(name: "#{unit_id.humanize} Item")
-        
+
+        Rails.logger.info "  Attempt #{i+1} for #{unit_id}: item=#{item&.name}, amount=#{item&.amount}"
+
         unless item && item.amount > 0
           Rails.logger.warn "Item not found or zero amount: #{unit_id}"
           next
         end
-        
-        # Generate port name
+
         port_name = generate_port_name(port_type, target, i+1)
-        
-        # Create unit with only valid fields
         unit = target.base_units.new(
           unit_type: unit_id,
           name: unit_id.humanize,
           identifier: "#{unit_id}_#{SecureRandom.hex(4)}",
           operational_data: {'port' => port_name},
-          owner: target.owner # Set the owner to the same as the target's owner
+          owner: target.owner
         )
-        
-        # Save unit
+
         if unit.save
-          # Only remove from inventory if unit creation succeeded
+          Rails.logger.info "  Created unit: #{unit.unit_type} (#{unit.identifier})"
           if item.amount > 1
             item.update!(amount: item.amount - 1)
+            Rails.logger.info "  Decremented inventory for #{item.name}, new amount: #{item.amount}"
           else
             item.destroy!
+            Rails.logger.info "  Destroyed inventory item #{item.name}"
           end
         else
           Rails.logger.error "Failed to create unit: #{unit.errors.full_messages.join(', ')}"
@@ -156,6 +174,7 @@ class UnitModuleAssemblyService
       module_id = module_data['id']
       count = module_data['count'] || 1
       port_type = module_data['port_type'] || 'module_slot'
+      Rails.logger.info "Processing module: #{module_id}, count: #{count}"
       
       count.times do |i|
         # Find item in inventory
@@ -163,26 +182,32 @@ class UnitModuleAssemblyService
                inventory.items.find_by("metadata->>'module_type' = ?", module_id) ||
                inventory.items.find_by(name: "#{module_id.humanize} Item")
         
+        Rails.logger.info "  Attempt #{i+1} for #{module_id}: item=#{item&.name}, amount=#{item&.amount}"
+        
         next unless item && item.amount > 0
         
         # Generate port name
         port_name = generate_port_name(port_type, target, i+1)
         
-        # Create module with only valid fields
+        # Create module with only valid fields - including attachable if it uses polymorphic association
         mod = target.modules.new(
           module_type: module_id,
           name: module_id.humanize,
           identifier: "#{module_id}_#{SecureRandom.hex(4)}",
-          operational_data: {'port' => port_name}
+          operational_data: {'port' => port_name},
+          attachable: target  # Set polymorphic association
         )
         
         # Save module
         if mod.save
+          Rails.logger.info "  Created module: #{mod.module_type} (#{mod.identifier})"
           # Only remove from inventory if module creation succeeded
           if item.amount > 1
             item.update!(amount: item.amount - 1)
+            Rails.logger.info "  Decremented inventory for #{item.name}, new amount: #{item.amount}"
           else
             item.destroy!
+            Rails.logger.info "  Destroyed inventory item #{item.name}"
           end
         else
           Rails.logger.error "Failed to create module: #{mod.errors.full_messages.join(', ')}"
@@ -196,6 +221,7 @@ class UnitModuleAssemblyService
       rig_id = rig_data['id']
       count = rig_data['count'] || 1
       port_type = rig_data['port_type'] || 'rig_mount'
+      Rails.logger.info "Processing rig: #{rig_id}, count: #{count}"
       
       count.times do |i|
         # Find item in inventory
@@ -203,27 +229,34 @@ class UnitModuleAssemblyService
                inventory.items.find_by("metadata->>'rig_type' = ?", rig_id) ||
                inventory.items.find_by(name: "#{rig_id.humanize} Item")
         
+        Rails.logger.info "  Attempt #{i+1} for #{rig_id}: item=#{item&.name}, amount=#{item&.amount}"
+        
         next unless item && item.amount > 0
         
         # Generate port name
         port_name = generate_port_name(port_type, target, i+1)
         
-        # Create rig with required fields
+        # Create rig with required fields - including attachable if it uses polymorphic association
         rig = target.rigs.new(
           rig_type: rig_id,
           name: rig_id.humanize,
+          identifier: "#{rig_id}_#{SecureRandom.hex(4)}",
           operational_data: {'port' => port_name},
           description: "#{rig_id.humanize} rig",
-          capacity: 100
+          capacity: 100,
+          attachable: target  # Set polymorphic association
         )
         
         # Save rig
         if rig.save
+          Rails.logger.info "  Created rig: #{rig.rig_type} (#{rig.name})"
           # Only remove from inventory if rig creation succeeded
           if item.amount > 1
             item.update!(amount: item.amount - 1)
+            Rails.logger.info "  Decremented inventory for #{item.name}, new amount: #{item.amount}"
           else
             item.destroy!
+            Rails.logger.info "  Destroyed inventory item #{item.name}"
           end
         else
           Rails.logger.error "Failed to create rig: #{rig.errors.full_messages.join(', ')}"
@@ -294,7 +327,7 @@ class UnitModuleAssemblyService
     count.times do |i|
       item = inventory.items.find_by(name: item_id) || 
              inventory.items.find_by("metadata->>'module_type' = ?", item_id) ||
-             inventory.items.find_by(name: "#{item_id.humanize} Item")
+               inventory.items.find_by(name: "#{item_id.humanize} Item")
       
       next unless item && item.amount > 0
       
@@ -306,7 +339,8 @@ class UnitModuleAssemblyService
         module_type: item_id,
         name: item_id.humanize,
         identifier: "#{item_id}_#{SecureRandom.hex(4)}",
-        operational_data: {'port' => port_name}
+        operational_data: {'port' => port_name},
+        attachable: target  # Set polymorphic association
       )
       
       if mod.save
@@ -339,7 +373,8 @@ class UnitModuleAssemblyService
         name: item_id.humanize,
         operational_data: {'port' => port_name},
         description: "#{item_id.humanize} rig",
-        capacity: 100
+        capacity: 100,
+        attachable: target  # Set polymorphic association
       )
       
       if rig.save
@@ -356,18 +391,18 @@ class UnitModuleAssemblyService
   end
   
   def self.process_landing_gear(item_id, count, port_type, target, inventory)
+    Rails.logger.info "Processing landing gear: #{item_id}, count: #{count}"
     count.times do |i|
       item = inventory.items.find_by(name: item_id) || 
              inventory.items.find_by("metadata->>'unit_type' = ?", item_id) ||
              inventory.items.find_by(name: "#{item_id.humanize} Item") ||
              inventory.items.find_by(name: "Retractable Landing Legs")
-      
+
+      Rails.logger.info "  Attempt #{i+1} for landing gear #{item_id}: item=#{item&.name}, amount=#{item&.amount}"
+
       next unless item && item.amount > 0
-      
-      # Create as a specialized unit with landing gear port
-      port_name = port_type # Use the specified port type, usually 'landing_gear_mount'
-      
-      # Create landing gear unit
+
+      port_name = port_type
       unit = target.base_units.new(
         unit_type: item_id,
         name: "#{item_id.humanize}",
@@ -375,13 +410,15 @@ class UnitModuleAssemblyService
         operational_data: {'port' => port_name},
         owner: target.owner
       )
-      
+
       if unit.save
-        # Only remove from inventory if unit creation succeeded
+        Rails.logger.info "  Created landing gear unit: #{unit.unit_type} (#{unit.identifier})"
         if item.amount > 1
           item.update!(amount: item.amount - 1)
+          Rails.logger.info "  Decremented inventory for #{item.name}, new amount: #{item.amount}"
         else
           item.destroy!
+          Rails.logger.info "  Destroyed inventory item #{item.name}"
         end
       else
         Rails.logger.error "Failed to create landing gear: #{unit.errors.full_messages.join(', ')}"
