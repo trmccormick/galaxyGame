@@ -6,6 +6,11 @@ class Inventory < ApplicationRecord
   # Remove capacity validation since it comes from units
   # validates :capacity, numericality: { greater_than_or_equal_to: 0 }
 
+  # New public method needed for the Player delegation
+  def has_item?(resource_name, quantity)
+    current_storage_of(resource_name) >= quantity
+  end
+
   def current_storage_of(resource_name)
     items.where(name: resource_name).sum(:amount)
   end
@@ -50,10 +55,12 @@ class Inventory < ApplicationRecord
     end
   end
 
+  # Add alias for base_settlement.rb npc_buy_capacity method
+  alias_method :available_capacity_for, :available_capacity_for?
+
   def available_capacity
     return Float::INFINITY if inventoryable.respond_to?(:surface_storage?) && inventoryable.surface_storage?
-    
-    inventoryable.capacity - total_stored
+    inventoryable_capacity - total_stored
   end
 
   private
@@ -160,9 +167,13 @@ class Inventory < ApplicationRecord
     end
 
     # Check surface conditions and store
-    item = Item.new(name: name, amount: amount, metadata: metadata) # <--- ADDED metadata
+    item = Item.new(name: name, amount: amount, metadata: metadata)
     if surface_storage.check_item_conditions(item)
-      store_in_inventory(name, amount, owner, metadata) # <--- ADDED metadata
+      # ADDED: Record the item in a Material Pile on the surface
+      surface_storage.add_pile(material_name: name, amount: amount, source_unit: nil)
+
+      # Original action: Create the item record in the main inventory table
+      store_in_inventory(name, amount, owner, metadata) 
       true
     else
       false
@@ -176,7 +187,20 @@ class Inventory < ApplicationRecord
 
   def capacity_exceeded?(amount)
     return false if inventoryable.respond_to?(:surface_storage?) && inventoryable.surface_storage?
-    
-    (total_stored + amount) > inventoryable.capacity
+    (total_stored + amount) > inventoryable_capacity
+  end
+
+  def inventoryable_capacity
+    # If inventoryable has a direct capacity method (e.g., storage unit), use it
+    return inventoryable.capacity if inventoryable.respond_to?(:capacity) && !inventoryable.is_a?(Craft::BaseCraft) && !inventoryable.is_a?(Settlement::BaseSettlement)
+    # For Craft, Settlement, Structure: sum attached storage units' capacities
+    if inventoryable.respond_to?(:base_units)
+      storage_units = inventoryable.base_units.select do |unit|
+        unit.respond_to?(:operational_data) &&
+        unit.operational_data&.dig('storage', 'capacity').present?
+      end
+      return storage_units.sum { |unit| unit.operational_data['storage']['capacity'].to_i }
+    end
+    0
   end
 end
