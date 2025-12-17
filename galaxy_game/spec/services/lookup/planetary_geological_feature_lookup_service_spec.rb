@@ -6,16 +6,14 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
   let(:earth) { create(:terrestrial_planet, :earth, solar_system: sol) }
   let(:mars) { create(:terrestrial_planet, :mars, solar_system: sol) }
   
-  # Mock the JSON_DATA path for testing
+  let(:temp_test_dir) { Dir.mktmpdir('planetary_geological_test') }
+  
   before do
-    stub_const('GalaxyGame::Paths::JSON_DATA', 'spec/fixtures/data')
-    # Clean up any existing test files
-    cleanup_test_files
+    stub_const('GalaxyGame::Paths::JSON_DATA', temp_test_dir)
   end
 
-  # Clean up test files after each test
   after do
-    cleanup_test_files
+    FileUtils.rm_rf(temp_test_dir) if File.exist?(temp_test_dir)
   end
 
   describe "#initialize" do
@@ -25,10 +23,14 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
     end
 
     it "loads features during initialization" do
-      # Create test fixture
-      create_test_feature_file(earth, [
-        { "name" => "Mount Everest", "type" => "mountain" }
-      ])
+      # Create test fixture with new structure
+      create_test_feature_file(earth, {
+        "celestial_body" => "earth",
+        "feature_type" => "mountain",
+        "features" => [
+          { "name" => "Mount Everest", "feature_type" => "mountain", "tier" => "strategic" }
+        ]
+      })
       
       service = described_class.new(earth)
       expect(service.all_features).not_to be_empty
@@ -42,10 +44,13 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
     end
 
     it "returns all loaded features" do
-      features_data = [
-        { "name" => "Mount Everest", "type" => "mountain", "elevation" => 8848 },
-        { "name" => "Mariana Trench", "type" => "trench", "depth" => -11034 }
-      ]
+      features_data = {
+        "celestial_body" => "earth",
+        "features" => [
+          { "name" => "Mount Everest", "feature_type" => "mountain", "elevation" => 8848, "tier" => "strategic" },
+          { "name" => "Mariana Trench", "feature_type" => "trench", "depth" => -11034, "tier" => "strategic" }
+        ]
+      }
       
       create_test_feature_file(earth, features_data)
       service = described_class.new(earth)
@@ -56,22 +61,28 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
     end
 
     it "handles multiple JSON files" do
-      create_test_feature_file(earth, [
-        { "name" => "Feature 1", "type" => "mountain" }
-      ], "mountains.json")
+      create_test_feature_file(earth, {
+        "features" => [
+          { "name" => "Feature 1", "feature_type" => "mountain", "tier" => "strategic" }
+        ]
+      }, "mountains.json")
       
-      create_test_feature_file(earth, [
-        { "name" => "Feature 2", "type" => "ocean" }
-      ], "oceans.json")
+      create_test_feature_file(earth, {
+        "features" => [
+          { "name" => "Feature 2", "feature_type" => "ocean", "tier" => "strategic" }
+        ]
+      }, "oceans.json")
       
       service = described_class.new(earth)
       expect(service.all_features.length).to eq(2)
     end
 
     it "handles single feature JSON files" do
-      create_test_feature_file(earth, 
-        { "name" => "Single Feature", "type" => "crater" }
-      )
+      create_test_feature_file(earth, {
+        "features" => [
+          { "name" => "Single Feature", "feature_type" => "crater", "tier" => "strategic" }
+        ]
+      })
       
       service = described_class.new(earth)
       expect(service.all_features.length).to eq(1)
@@ -81,11 +92,13 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
 
   describe "#find_by_name" do
     let(:features_data) do
-      [
-        { "name" => "Mount Everest", "type" => "mountain" },
-        { "name" => "Pacific Ocean", "type" => "ocean" },
-        { "name" => "Grand Canyon", "type" => "canyon" }
-      ]
+      {
+        "features" => [
+          { "name" => "Mount Everest", "feature_type" => "mountain", "tier" => "strategic" },
+          { "name" => "Pacific Ocean", "feature_type" => "ocean", "tier" => "strategic" },
+          { "name" => "Grand Canyon", "feature_type" => "canyon", "tier" => "strategic" }
+        ]
+      }
     end
 
     before do
@@ -98,7 +111,7 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
       
       expect(feature).not_to be_nil
       expect(feature["name"]).to eq("Mount Everest")
-      expect(feature["type"]).to eq("mountain")
+      expect(feature["feature_type"]).to eq("mountain")
     end
 
     it "finds a feature by case-insensitive name match" do
@@ -135,10 +148,12 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
     end
 
     it "returns the first match when multiple features have the same name" do
-      duplicate_features = [
-        { "name" => "Duplicate", "type" => "mountain", "id" => 1 },
-        { "name" => "Duplicate", "type" => "crater", "id" => 2 }
-      ]
+      duplicate_features = {
+        "features" => [
+          { "name" => "Duplicate", "feature_type" => "mountain", "id" => 1, "tier" => "strategic" },
+          { "name" => "Duplicate", "feature_type" => "crater", "id" => 2, "tier" => "strategic" }
+        ]
+      }
       
       create_test_feature_file(earth, duplicate_features)
       service = described_class.new(earth)
@@ -150,12 +165,14 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
 
   describe "#features_by_type" do
     let(:features_data) do
-      [
-        { "name" => "Mount Everest", "type" => "mountain" },
-        { "name" => "K2", "type" => "mountain" },
-        { "name" => "Pacific Ocean", "type" => "ocean" },
-        { "name" => "Meteor Crater", "type" => "crater" }
-      ]
+      {
+        "features" => [
+          { "name" => "Mount Everest", "feature_type" => "mountain", "tier" => "strategic" },
+          { "name" => "K2", "feature_type" => "mountain", "tier" => "strategic" },
+          { "name" => "Pacific Ocean", "feature_type" => "ocean", "tier" => "strategic" },
+          { "name" => "Meteor Crater", "feature_type" => "crater", "tier" => "strategic" }
+        ]
+      }
     end
 
     before do
@@ -195,12 +212,14 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
 
   describe "#feature_summary" do
     let(:features_data) do
-      [
-        { "name" => "Mount Everest", "type" => "mountain" },
-        { "name" => "K2", "type" => "mountain" },
-        { "name" => "Pacific Ocean", "type" => "ocean" },
-        { "name" => "Unnamed Feature" } # No type
-      ]
+      {
+        "features" => [
+          { "name" => "Mount Everest", "feature_type" => "mountain", "tier" => "strategic" },
+          { "name" => "K2", "feature_type" => "mountain", "tier" => "strategic" },
+          { "name" => "Pacific Ocean", "feature_type" => "ocean", "tier" => "strategic" },
+          { "name" => "Unnamed Feature", "tier" => "strategic" } # No type
+        ]
+      }
     end
 
     before do
@@ -239,11 +258,12 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
   describe "path construction" do
     it "constructs correct path for planet" do
       service = described_class.new(earth)
-      expected_path = Rails.root.join('spec/fixtures/data/star_systems/sol/celestial_bodies/earth')
       
       # Use send to access private method for testing
       actual_path = service.send(:body_feature_path)
-      expect(actual_path.to_s).to eq(expected_path.to_s)
+      
+      # Should end with geological_features
+      expect(actual_path.to_s).to end_with('star_systems/sol/celestial_bodies/earth/geological_features')
     end
 
     it "handles missing solar system gracefully" do
@@ -274,9 +294,11 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
     end
 
     it "logs debug information about found files" do
-      create_test_feature_file(earth, [{ "name" => "Test", "type" => "test" }])
+      create_test_feature_file(earth, {
+        "features" => [{ "name" => "Test", "feature_type" => "test", "tier" => "strategic" }]
+      })
       
-      # Allow any debug messages, but ensure we get the specific one we care about
+      # Allow any debug messages
       allow(Rails.logger).to receive(:debug)
       expect(Rails.logger).to receive(:debug).with(/Found \d+ features for/)
       
@@ -301,23 +323,18 @@ RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
     File.write(File.join(path, "invalid.json"), "{ invalid json content")
   end
 
-  def cleanup_test_files
-    test_fixtures_path = Rails.root.join('spec/fixtures/data')
-    FileUtils.rm_rf(test_fixtures_path) if File.exist?(test_fixtures_path)
-  end
-
   def build_fixture_path(celestial_body)
     system_name = celestial_body&.solar_system&.name || 'sol'
     path_parts = [
-      Rails.root,
-      'spec/fixtures/data',
+      temp_test_dir,
       'star_systems',
       system_name.downcase,
       'celestial_bodies'
     ]
 
-    # Only handle planets for now - no parent_body logic
     path_parts << celestial_body.name.downcase
+    path_parts << 'geological_features'  # Add new subdirectory
+    
     File.join(*path_parts)
   end
 end
