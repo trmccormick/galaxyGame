@@ -16,19 +16,16 @@ RSpec.describe CelestialBodies::Materials::Gas, type: :model do
     end
     
     it "can be accessed through atmosphere.gases" do
-      # Explicitly create using the new class
-      gas = CelestialBodies::Materials::Gas.create!(
-        name: "Oxygen", 
-        percentage: 21.0,
-        atmosphere: celestial_body.atmosphere,
-        molar_mass: 32.0 # Add explicitly
-      )
-      
+      # Use the concern's add_gas method to add Oxygen
+      atmosphere = celestial_body.atmosphere
+      # Add 100 kg of Oxygen (arbitrary positive amount)
+      gas = atmosphere.add_gas("Oxygen", 100)
+
       # Force a reload
-      celestial_body.atmosphere.reload
-      
-      # Check if it exists
-      expect(celestial_body.atmosphere.gases.exists?(name: "Oxygen")).to be true
+      atmosphere.reload
+
+      # The name will be normalized to the chemical formula (e.g., "O2")
+      expect(atmosphere.gases.exists?(name: gas.name)).to be true
     end
   end
   
