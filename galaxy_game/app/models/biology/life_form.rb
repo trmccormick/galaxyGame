@@ -109,6 +109,22 @@ module Biology
       value.is_a?(Array) ? value : (value.nil? ? [] : [value])
     end
     
+    # NEW: Population growth model using _calculate_base_growth_rate and habitability
+    def simulate_growth(_conditions = {})
+      return if population.nil? || population <= 0
+
+      base_growth_rate = _calculate_base_growth_rate
+      habitability = biosphere&.habitable_ratio || 1.0
+      new_population = (population * base_growth_rate * habitability).to_i
+      self.population = new_population
+      save!
+    end
+        # Protected method for test stubbing
+        protected
+        def _calculate_base_growth_rate
+          1.0 # Default: no growth, override or stub in tests
+        end
+    
     protected
     
     def calculate_individual_mass
@@ -126,6 +142,102 @@ module Biology
     end
     
     private
+    
+    def calculate_growth_rate(temperature, o2_percentage, co2_percentage)
+      # Base growth rate: 0.1% per day (conservative)
+      base_rate = 0.001
+      
+      # Temperature suitability
+      min_temp = get_property('min_temperature', 170.0)
+      max_temp = get_property('max_temperature', 320.0)
+      optimal_temp = (min_temp + max_temp) / 2.0
+      
+      temp_suitability = if temperature < min_temp || temperature > max_temp
+        0.0  # Outside tolerance = death
+      else
+        # Gaussian curve around optimal temperature
+        temp_diff = (temperature - optimal_temp).abs
+        temp_range = (max_temp - min_temp) / 2.0
+        Math.exp(-(temp_diff**2) / (2 * (temp_range / 3.0)**2))
+      end
+      
+      # Oxygen suitability (for aerobic organisms)
+      diet_type = get_property('diet', 'photosynthetic')
+      
+      o2_suitability = case diet_type
+      when 'photosynthetic'
+        # Photosynthetic organisms produce O2, need CO2
+        co2_percentage > 0.1 ? 1.0 : 0.5
+      when 'chemosynthetic'
+        # Don't need much O2
+        0.8
+      else
+        # Aerobic organisms need O2
+        if o2_percentage < 0.1
+          o2_percentage / 0.1  # Scale up to 0.1%
+        elsif o2_percentage < 10.0
+          1.0
+        else
+          [2.0 - (o2_percentage / 20.0), 0.5].max  # Too much O2 is bad
+        end
+      end
+      
+      # Combined rate
+      combined_rate = base_rate * temp_suitability * o2_suitability
+      
+      # Apply population health modifier if present
+      health = get_property('health_modifier', 1.0)
+      combined_rate * health
+    end
+    
+    def calculate_carrying_capacity
+      # Base carrying capacity on biosphere size
+      return 1_000_000_000 unless biosphere
+      
+      # Get biosphere metrics
+      habitable_ratio = biosphere.habitable_ratio || 0.1
+      planet_radius = biosphere.celestial_body.radius || 3_389_500  # Mars default
+      
+      # Calculate habitable surface area (m²)
+      total_surface = 4 * Math::PI * (planet_radius ** 2)
+      habitable_surface = total_surface * habitable_ratio
+      
+      # Carrying capacity based on organism type and size
+      complexity_val = self.complexity&.downcase || 'simple'
+      
+      organisms_per_km2 = case complexity_val
+      when 'simple', 'microbial'
+        1_000_000_000  # 1 billion per km²
+      when 'complex'
+        1_000_000      # 1 million per km²
+      when 'intelligent'
+        10_000         # 10k per km²
+      else
+        10_000_000     # 10 million per km²
+      end
+      
+      # Convert surface area to km² and multiply
+      habitable_km2 = habitable_surface / 1_000_000.0
+      capacity = (habitable_km2 * organisms_per_km2).to_i
+      
+      # Minimum capacity
+      [capacity, 10_000_000].max
+    end
+    
+    def get_property(key, default = nil)
+      # Try direct accessor first
+      if respond_to?(key)
+        value = send(key)
+        return value if value && value != 0
+      end
+      
+      # Try properties hash
+      if properties && properties[key]
+        return properties[key]
+      end
+      
+      default
+    end
     
     # Helper to get rate from properties with fallback names
     def get_rate(*property_names)
