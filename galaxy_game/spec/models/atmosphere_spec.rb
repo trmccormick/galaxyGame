@@ -1,6 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe Atmosphere, type: :model do
+  before(:all) do
+    # Create required Currencies for tests that rely on them (e.g., Account creation)
+    @gcc = Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
+      c.name = 'Galactic Crypto Currency'
+      c.is_system_currency = true
+      c.precision = 8
+    end
+    @usd = Financial::Currency.find_or_create_by!(symbol: 'USD') do |c|
+      c.name = 'United States Dollar'
+      c.is_system_currency = true
+      c.precision = 2
+    end
+  end
+
   let(:star) { create(:star) }
   let(:solar_system) { create(:solar_system, current_star: star) }
   let(:earth) { create(:terrestrial_planet, :earth, solar_system: solar_system) }
