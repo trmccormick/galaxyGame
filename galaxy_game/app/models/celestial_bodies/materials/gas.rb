@@ -25,6 +25,15 @@ module CelestialBodies
       # set_molar_mass_from_material is now in the concern
       # but we still need to call it
       before_validation :set_molar_mass_from_material
+      before_validation :normalize_name_to_formula
+            # Always store the chemical formula as the name
+            def normalize_name_to_formula
+              if name.present?
+                mat = Lookup::MaterialLookupService.new.find_material(name)
+                formula = mat && mat['chemical_formula'].present? ? mat['chemical_formula'] : name
+                self.name = formula
+              end
+            end
       
       # Calculate moles of gas based on the material's amount and molar mass
       def moles(amount)
