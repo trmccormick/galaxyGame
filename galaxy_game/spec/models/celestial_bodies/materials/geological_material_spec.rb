@@ -101,4 +101,36 @@ RSpec.describe CelestialBodies::Materials::GeologicalMaterial, type: :model do
       expect(material.gas?).to be true
     end
   end
+
+  describe "exotic state handling" do
+    let(:geosphere) { create(:celestial_body).geosphere }
+    let(:exotic_material) { 
+      CelestialBodies::Materials::GeologicalMaterial.new(
+        name: 'Hydrogen',
+        state: 'metallic_hydrogen',
+        layer: 'core',
+        mass: 1000,
+        percentage: 10,
+        geosphere: geosphere
+      )
+    }
+    
+    it "correctly reports state for exotic materials" do
+      expect(exotic_material.solid?).to be false
+      expect(exotic_material.liquid?).to be false
+      expect(exotic_material.gas?).to be false
+      expect(exotic_material.exotic_state?).to be true
+    end
+    
+    it "handles metallic hydrogen specifically" do
+      expect(exotic_material.metallic_hydrogen?).to be true
+      expect(exotic_material.plasma?).to be false
+    end
+    
+    it "handles plasma state" do
+      exotic_material.state = 'plasma'
+      expect(exotic_material.plasma?).to be true
+      expect(exotic_material.metallic_hydrogen?).to be false
+    end
+  end
 end
