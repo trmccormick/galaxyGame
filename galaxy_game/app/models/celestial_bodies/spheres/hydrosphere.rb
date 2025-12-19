@@ -11,12 +11,12 @@ module CelestialBodies
       attr_accessor :simulation_running
       
       # JSONB field accessors
-      store_accessor :water_bodies, :oceans, :lakes, :rivers, :ice_caps, :groundwater
+      store_accessor :liquid_bodies, :oceans, :lakes, :rivers, :ice_caps, :groundwater
       store_accessor :composition
       store_accessor :state_distribution
       
       # Base values for reset functionality
-      store_accessor :base_values, :base_water_bodies, :base_composition, :base_state_distribution,
+      store_accessor :base_values, :base_liquid_bodies, :base_composition, :base_state_distribution,
                     :base_temperature, :base_pressure, :base_total_hydrosphere_mass
 
       validates :total_hydrosphere_mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
@@ -27,7 +27,7 @@ module CelestialBodies
       
       # Reset to base values
       def reset
-        self.water_bodies = base_water_bodies.deep_dup if base_water_bodies
+        self.liquid_bodies = base_liquid_bodies.deep_dup if base_liquid_bodies
         self.composition = base_composition.deep_dup if base_composition
         self.state_distribution = base_state_distribution.deep_dup if base_state_distribution
         self.temperature = base_temperature
@@ -56,8 +56,8 @@ module CelestialBodies
         liquid_material.amount += amount
         liquid_material.save!
         
-        # Update water distribution
-        update_water_distribution(name, amount)
+        # Update liquid distribution
+        update_liquid_distribution(name, amount)
         
         # Update total water mass
         self.total_hydrosphere_mass ||= 0
@@ -135,12 +135,12 @@ module CelestialBodies
       end
 
       def in_ocean?
-        # Check if the celestial body is in an ocean by examining water bodies
-        return false unless water_bodies
+        # Check if the celestial body is in an ocean by examining liquid bodies
+        return false unless liquid_bodies
         
-        # Either the water_bodies has oceans defined with significant volume
-        # or water_bodies has a high percentage of liquid water covering the surface
-        if water_bodies['oceans'].present? && water_bodies['oceans'].to_f > 1.0e15
+        # Either the liquid_bodies has oceans defined with significant volume
+        # or liquid_bodies has a high percentage of liquid covering the surface
+        if liquid_bodies['oceans'].present? && liquid_bodies['oceans'].to_f > 1.0e15
           return true
         end
         
@@ -153,8 +153,8 @@ module CelestialBodies
       end
 
       def ice
-        # Get ice_caps from water_bodies hash
-        ice_caps = water_bodies&.dig('ice_caps')
+        # Get ice_caps from liquid_bodies hash
+        ice_caps = liquid_bodies&.dig('ice_caps')
         if ice_caps.is_a?(Hash)
           ice_caps['volume'].to_f
         else
@@ -163,8 +163,8 @@ module CelestialBodies
       end
 
       def ice=(value)
-        self.water_bodies ||= {}
-        self.water_bodies['ice_caps'] = value
+        self.liquid_bodies ||= {}
+        self.liquid_bodies['ice_caps'] = value
         save! if persisted?
       end
 
@@ -172,7 +172,7 @@ module CelestialBodies
         total_volume = 0
 
         %w[oceans lakes rivers ice_caps].each do |body|
-          value = water_bodies&.dig(body)
+          value = liquid_bodies&.dig(body)
           if value.is_a?(Hash)
             total_volume += value['volume'].to_f
           else
@@ -185,32 +185,32 @@ module CelestialBodies
 
       def water_coverage
         return 0.0 unless celestial_body&.surface_area&.positive?
-        total_water_area = (oceans || 0) + (lakes || 0) + (rivers || 0)
+        total_water_area = (oceans.to_f || 0) + (lakes.to_f || 0) + (rivers.to_f || 0)
         (total_water_area / celestial_body.surface_area) * 100.0
       end      
 
       private
       
-      def update_water_distribution(name, amount)
+      def update_liquid_distribution(name, amount)
         # Default distribution: 70% oceans, 20% lakes, 10% rivers
-        self.water_bodies ||= {}
-        self.water_bodies['oceans'] ||= 0
-        self.water_bodies['lakes'] ||= 0
-        self.water_bodies['rivers'] ||= 0
+        self.liquid_bodies ||= {}
+        self.liquid_bodies['oceans'] ||= 0
+        self.liquid_bodies['lakes'] ||= 0
+        self.liquid_bodies['rivers'] ||= 0
         
-        self.water_bodies['oceans'] += amount * 0.7
-        self.water_bodies['lakes'] += amount * 0.2
-        self.water_bodies['rivers'] += amount * 0.1
+        self.liquid_bodies['oceans'] += amount * 0.7
+        self.liquid_bodies['lakes'] += amount * 0.2
+        self.liquid_bodies['rivers'] += amount * 0.1
       end
 
       def set_defaults
-        self.water_bodies ||= {}
+        self.liquid_bodies ||= {}
         self.composition ||= {}
         self.state_distribution ||= { liquid: 0.0, solid: 0.0, vapor: 0.0 }
         
         # Set base values if not already set
         unless base_values.present?
-          self.base_water_bodies = water_bodies.deep_dup
+          self.base_liquid_bodies = liquid_bodies.deep_dup
           self.base_composition = composition.deep_dup
           self.base_state_distribution = state_distribution.deep_dup
           self.base_temperature = temperature
@@ -223,8 +223,8 @@ module CelestialBodies
         # Prevent recursive updates
         self.simulation_running = true
         
-        # Call water_cycle_tick from the concern
-        water_cycle_tick
+        # Call hydrosphere_cycle_tick from the concern
+        hydrosphere_cycle_tick
         
         self.simulation_running = false
       end

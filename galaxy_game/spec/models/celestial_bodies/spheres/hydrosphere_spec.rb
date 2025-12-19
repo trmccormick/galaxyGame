@@ -23,7 +23,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
 
   describe 'store accessors' do
     it 'accesses water bodies attributes from JSONB store' do
-      hydrosphere.update!(water_bodies: { 'oceans' => 100, 'lakes' => 50, 'rivers' => 25 })
+      hydrosphere.update!(liquid_bodies: { 'oceans' => 100, 'lakes' => 50, 'rivers' => 25 })
       expect(hydrosphere.oceans).to eq(100)
       expect(hydrosphere.lakes).to eq(50)
       expect(hydrosphere.rivers).to eq(25)
@@ -35,9 +35,9 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       hydrosphere.rivers = 75
       hydrosphere.save!
       
-      expect(hydrosphere.water_bodies['oceans']).to eq(200)
-      expect(hydrosphere.water_bodies['lakes']). to eq(150)
-      expect(hydrosphere.water_bodies['rivers']).to eq(75)
+      expect(hydrosphere.liquid_bodies['oceans']).to eq(200)
+      expect(hydrosphere.liquid_bodies['lakes']). to eq(150)
+      expect(hydrosphere.liquid_bodies['rivers']).to eq(75)
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
     it 'resets to base values' do
       # First create a hydrosphere with specific values
       hydrosphere.update!(
-        water_bodies: { 'oceans' => 100.0, 'lakes' => 50.0, 'rivers' => 25.0 },
+        liquid_bodies: { 'oceans' => 100.0, 'lakes' => 50.0, 'rivers' => 25.0 },
         composition: { 'H2O' => 95.0, 'salts' => 5.0 },
         state_distribution: { 'liquid' => 80.0, 'solid' => 15.0, 'vapor' => 5.0 },
         temperature: 290.0,
@@ -55,7 +55,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       
       # Then explicitly set the base values (not relying on any auto-calculation)
       hydrosphere.update!(
-        base_water_bodies: { 'oceans' => 100.0, 'lakes' => 50.0, 'rivers' => 25.0 },
+        base_liquid_bodies: { 'oceans' => 100.0, 'lakes' => 50.0, 'rivers' => 25.0 },
         base_composition: { 'H2O' => 95.0, 'salts' => 5.0 },
         base_state_distribution: { 'liquid' => 80.0, 'solid' => 15.0, 'vapor' => 5.0 },
         base_temperature: 290.0,
@@ -65,7 +65,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       
       # Change values
       hydrosphere.update!(
-        water_bodies: { 'oceans' => 80.0, 'lakes' => 30.0, 'rivers' => 15.0 },
+        liquid_bodies: { 'oceans' => 80.0, 'lakes' => 30.0, 'rivers' => 15.0 },
         temperature: 280.0,
         pressure: 0.8,
         total_hydrosphere_mass: 800.0
@@ -78,9 +78,9 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       hydrosphere.reset
       
       # Verify key attributes were reset, ignoring the state distribution which is recalculated
-      expect(hydrosphere.water_bodies['oceans']).to eq(100.0)
-      expect(hydrosphere.water_bodies['lakes']).to eq(50.0) 
-      expect(hydrosphere.water_bodies['rivers']).to eq(25.0)
+      expect(hydrosphere.liquid_bodies['oceans']).to eq(100.0)
+      expect(hydrosphere.liquid_bodies['lakes']).to eq(50.0) 
+      expect(hydrosphere.liquid_bodies['rivers']).to eq(25.0)
       expect(hydrosphere.composition['H2O']).to eq(95.0)
       expect(hydrosphere.composition['salts']).to eq(5.0)
       expect(hydrosphere.temperature).to eq(290.0)
