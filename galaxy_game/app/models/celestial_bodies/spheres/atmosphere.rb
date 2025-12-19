@@ -2,43 +2,6 @@
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
-            # Add debug output to gas management
-            def add_gas(name, mass)
-              puts "[Atmosphere#add_gas] Adding gas: #{name}, mass: #{mass}"
-              gas = gases.find_by(name: name)
-              if gas
-                old_mass = gas.mass
-                gas.mass += mass
-                gas.percentage = (gas.mass / total_atmospheric_mass) * 100.0
-                gas.ppm = (gas.percentage / 100.0) * 1_000_000
-                gas.save!
-                puts "[Atmosphere#add_gas] Updated gas: #{name}, old_mass: #{old_mass}, new_mass: #{gas.mass}, percentage: #{gas.percentage}, ppm: #{gas.ppm}"
-              else
-                material_lookup = Lookup::MaterialLookupService.new
-                material = material_lookup.find_material(name)
-                molar_mass = material ? material['molar_mass'] : 0
-                percentage = (mass / total_atmospheric_mass) * 100.0
-                ppm = (percentage / 100.0) * 1_000_000
-                gases.create!(name: name, mass: mass, percentage: percentage, ppm: ppm, molar_mass: molar_mass, atmosphere_id: self.id)
-                puts "[Atmosphere#add_gas] Created new gas: #{name}, mass: #{mass}, percentage: #{percentage}, ppm: #{ppm}"
-              end
-            end
-
-            def remove_gas(name, mass)
-              puts "[Atmosphere#remove_gas] Removing gas: #{name}, mass: #{mass}"
-              gas = gases.find_by(name: name)
-              if gas
-                old_mass = gas.mass
-                gas.mass -= mass
-                gas.mass = 0 if gas.mass < 0
-                gas.percentage = (gas.mass / total_atmospheric_mass) * 100.0
-                gas.ppm = (gas.percentage / 100.0) * 1_000_000
-                gas.save!
-                puts "[Atmosphere#remove_gas] Updated gas: #{name}, old_mass: #{old_mass}, new_mass: #{gas.mass}, percentage: #{gas.percentage}, ppm: #{gas.ppm}"
-              else
-                puts "[Atmosphere#remove_gas] Gas #{name} not found."
-              end
-            end
       include AtmosphereConcern
       include MaterialTransferable
       
@@ -136,6 +99,7 @@ module CelestialBodies
             next 0 if gas.mass.to_f <= 0
             
             mass_fraction = gas.mass.to_f / total_mass
+            # Always use chemical formula for lookup
             material_data = material_service.find_material(gas.name)
             
             if material_data && material_data['properties'] && material_data['properties']['specific_gas_constant']
@@ -173,6 +137,7 @@ module CelestialBodies
             if gas.molar_mass.to_f > 0
               molar_mass = gas.molar_mass.to_f / 1000.0 # Convert to kg/mol
             else
+              # Always use chemical formula for lookup
               material_data = material_service.find_material(gas.name)
               if material_data && material_data['properties'] && material_data['properties']['molar_mass']
                 molar_mass = material_data['properties']['molar_mass'].to_f / 1000.0
@@ -196,7 +161,9 @@ module CelestialBodies
         gravity = celestial_body.respond_to?(:gravity) ? celestial_body.gravity : 9.8 # m/s²
         molar_mass = calculate_average_molar_mass
         r_universal = GameConstants::IDEAL_GAS_CONSTANT
-        
+
+        return nil if temperature.nil? || molar_mass.nil? || gravity.nil? || molar_mass == 0.0 || gravity == 0.0
+
         (r_universal * temperature.to_f) / (molar_mass * gravity) / 1000.0
       end
 
