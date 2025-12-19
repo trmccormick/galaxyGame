@@ -1,99 +1,5 @@
 FactoryBot.define do
   # Base ocean planet factory
-  factory :ocean_planet, class: 'CelestialBodies::Planets::Ocean::OceanPlanet' do
-    sequence(:name) { |n| "OceanWorld-#{n}" }
-    sequence(:identifier) { |n| "OCNP-#{n}" }
-    mass { 4.5e24 }
-    radius { 6.0e6 }
-    size { 0.94 }
-    gravity { 9.1 }
-    density { 5.2 }
-    orbital_period { 310.5 }
-    albedo { 0.45 }
-    insolation { 1250 }
-    surface_temperature { 290 }
-    known_pressure { 1.2 }
-    properties { {} }
-
-    before(:build) do |planet|
-      planet.properties ||= {}
-    end
-
-    after(:build) do |planet|
-      planet.surface_area ||= 4 * Math::PI * (planet.radius ** 2) if planet.radius
-      planet.properties = planet.properties.merge({
-        "habitability_index" => 0.8,
-        "surface_features" => ["oceans", "island_chains", "coastal_regions"]
-      })
-      
-      unless planet.hydrosphere
-        total_water_area = planet.surface_area * 0.45
-        planet.hydrosphere = build(:hydrosphere,
-          celestial_body: planet,
-          liquid_bodies: {
-            'oceans' => total_water_area * 0.7,
-            'lakes' => total_water_area * 0.2,
-            'rivers' => total_water_area * 0.1,
-            'ice_caps' => 0,
-            'groundwater' => 0
-          },
-          composition: { 'water' => 97, 'salts' => 3 },
-          temperature: planet.surface_temperature,
-          pressure: 101325,
-          state_distribution: { 'liquid' => 95, 'vapor' => 3, 'solid' => 2 },
-          total_hydrosphere_mass: 4.5e20
-        )
-      end
-    end
-
-    after(:create) do |planet|
-      unless planet.atmosphere
-        atmo = planet.create_atmosphere(
-          pressure: 1.2,
-          temperature: planet.surface_temperature,
-          humidity: 65,
-          total_atmospheric_mass: 5.2e18
-        )
-        ['N2', 'O2', 'CO2'].each do |gas_name|
-          percentage = case gas_name
-                      when 'N2' then 78
-                      when 'O2' then 21
-                      when 'CO2' then 1
-                      end
-          atmo.gases.create(name: gas_name, percentage: percentage)
-        end
-      end
-      
-      unless planet.geosphere
-        planet.create_geosphere(
-          geological_activity: 40,
-          tectonic_activity: true,
-          crust_composition: {
-            'Silicon' => 45.0, 
-            'Oxygen' => 30.0, 
-            'Magnesium' => 10.0,
-            'Iron' => 8.0
-          }
-        )
-      end
-      
-      unless planet.biosphere
-        planet.create_biosphere(
-          biodiversity_index: 0.6,
-          habitable_ratio: 0.4
-        )
-      end
-      
-      unless planet.spatial_location
-        planet.create_spatial_location(
-          x_coordinate: rand(-100.0..100.0),
-          y_coordinate: rand(-100.0..100.0),
-          z_coordinate: rand(-100.0..100.0)
-        )
-      end
-    end
-  end
-
   factory :water_world, class: 'CelestialBodies::Planets::Ocean::WaterWorld' do
     sequence(:name) { |n| "Oceanus-#{n}" }
     sequence(:identifier) { |n| "WATR-#{n}" }
@@ -108,25 +14,21 @@ FactoryBot.define do
     surface_temperature { 285 }
     known_pressure { 1.0 }
     properties { {} }
-    
-    before(:build) do |planet|
-      planet.properties ||= {}
-    end
-    
+
+    # (removed empty before(:build) block)
     after(:build) do |planet|
       planet.surface_area ||= 4 * Math::PI * (planet.radius ** 2) if planet.radius
       planet.properties = planet.properties.merge({
         "habitability_index" => 0.75,
         "surface_features" => ["global_ocean", "scattered_islands", "underwater_mountains"]
       })
-    end
-    
-    after(:create) do |planet|
-      if planet.surface_area.present?
-        total_water_area = planet.surface_area * 0.90
-        
-        unless planet.hydrosphere
-          planet.create_hydrosphere(
+
+      # Build hydrosphere BEFORE creation to satisfy validation
+      unless planet.hydrosphere
+        if planet.surface_area.present?
+          total_water_area = planet.surface_area * 0.90
+
+          planet.hydrosphere = build(:hydrosphere,
             celestial_body: planet,
             liquid_bodies: {
               'oceans' => total_water_area * 0.95,
@@ -143,7 +45,9 @@ FactoryBot.define do
           )
         end
       end
-      
+    end
+
+    after(:create) do |planet|
       unless planet.atmosphere
         atmo = planet.create_atmosphere(
           pressure: 1.0,
@@ -151,18 +55,16 @@ FactoryBot.define do
           humidity: 78,
           total_atmospheric_mass: 5.0e18
         )
-        
         ['N2', 'O2', 'Ar'].each do |gas_name|
           percentage = case gas_name
                       when 'N2' then 78
                       when 'O2' then 21
                       when 'Ar' then 1
                       end
-          
           atmo.gases.create(name: gas_name, percentage: percentage)
         end
       end
-      
+
       unless planet.geosphere
         planet.create_geosphere(
           geological_activity: 45,
@@ -175,14 +77,14 @@ FactoryBot.define do
           }
         )
       end
-      
+
       unless planet.biosphere
         planet.create_biosphere(
           biodiversity_index: 0.85,
           habitable_ratio: 0.7
         )
       end
-      
+
       unless planet.spatial_location
         planet.create_spatial_location(
           x_coordinate: rand(-100.0..100.0),
