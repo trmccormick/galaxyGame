@@ -3,6 +3,11 @@ require 'rails_helper'
 RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
   let(:celestial_body) { create(:celestial_body) }
   let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
+
+  after(:each) do
+    CelestialBodies::Spheres::Atmosphere.destroy_all
+    CelestialBodies::CelestialBody.destroy_all
+  end
   
   describe 'initialization' do
     it 'creates an atmosphere with default attributes' do
@@ -38,12 +43,10 @@ RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
         composition: { 'N2' => 78.0, 'O2' => 21.0, 'CO2' => 0.04 },
         total_atmospheric_mass: 1000
       )
-      
       atmosphere.initialize_gases
-      
-      expect(atmosphere.gases.find_by(name: 'nitrogen')).to be_present
-      expect(atmosphere.gases.find_by(name: 'oxygen')).to be_present
-      expect(atmosphere.gases.find_by(name: 'carbon_dioxide')).to be_present
+      expect(atmosphere.gases.find_by(name: 'N2')).to be_present
+      expect(atmosphere.gases.find_by(name: 'O2')).to be_present
+      expect(atmosphere.gases.find_by(name: 'CO2')).to be_present
     end
   end
 
@@ -51,8 +54,7 @@ RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
     it 'adds gas using chemical formula' do
       # ✅ Use real MaterialLookupService with fixture data
       gas = atmosphere.add_gas('O2', 100)
-      
-      expect(gas.name).to eq('oxygen')
+      expect(gas.name).to eq('O2')
       expect(gas.mass).to eq(100)
       expect(gas.molar_mass).to be > 0  # Should get real molar mass from fixtures
     end
@@ -64,9 +66,8 @@ RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
         total_atmospheric_mass: 100.0,
         pressure: 0.001
       )
-      
       atmosphere.gases.create!(
-        name: "carbon_dioxide",
+        name: "CO2",
         percentage: 100.0,
         mass: 100.0,
         molar_mass: 44.01
@@ -76,11 +77,9 @@ RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
     it 'removes gas and updates total atmospheric mass' do
       expect(atmosphere.gases.count).to eq(1)
       expect(atmosphere.total_atmospheric_mass).to eq(100.0)
-      
       # ✅ Use real service
       atmosphere.remove_gas("CO2", 30.0)
-      
-      co2 = atmosphere.gases.find_by(name: "carbon_dioxide")
+      co2 = atmosphere.gases.find_by(name: "CO2")
       expect(co2.mass).to eq(70.0)
       expect(atmosphere.total_atmospheric_mass).to eq(70.0)
     end
