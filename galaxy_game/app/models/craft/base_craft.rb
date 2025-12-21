@@ -1,17 +1,24 @@
 # app/models/craft/base_craft.rb
 module Craft
   class BaseCraft < ApplicationRecord
+      belongs_to :orbiting_celestial_body,
+             class_name: 'CelestialBodies::CelestialBody',
+             foreign_key: 'orbiting_celestial_body_id',
+             inverse_of: :orbiting_craft,
+             optional: true
     include HasModules
     include HasRigs
     include HasUnits
     include Housing
-    include GameConstants
+    include GameConstants # Ensure this is included to access GameConstants
     include HasUnitStorage
     include HasExternalConnections
-    include EnergyManagement    # <--- Corrected, now only one inclusion
+    include EnergyManagement
     include AtmosphericProcessing
-    include BatteryManagement   # <--- ADDED: For managing the craft's internal battery
-    include RechargeBehavior    # <--- ADDED: For behavior related to recharging the battery
+    include BatteryManagement
+    include RechargeBehavior
+
+    # Removed: DEFAULT_VOLUME_PER_CREW_M3 = 50.0 # Now in GameConstants
 
     belongs_to :player, optional: true # if the player is controlling the craft directly
     belongs_to :owner, polymorphic: true
@@ -40,16 +47,14 @@ module Craft
 
     has_many :modules, class_name: 'Modules::BaseModule', as: :attachable, dependent: :destroy
 
-    # all the existing associations...
-    has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
-    has_many :units,      through: :base_units, source: :itself
+    has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable, dependent: :destroy
+    has_many :units, through: :base_units, source: :base_unit # Corrected source
 
     has_many :rigs, as: :attachable, class_name: 'Rigs::BaseRig', dependent: :destroy
 
-    # ✅ Add atmosphere for life support
     has_one :atmosphere, foreign_key: :craft_id, dependent: :destroy
 
-    # ✅ Delegate atmospheric methods
+    # Delegate atmospheric methods
     delegate :pressure, :temperature, :gases, :add_gas, :remove_gas, :habitable?,
              :sealed?, :seal!, :o2_percentage, :co2_percentage,
              to: :atmosphere, allow_nil: true
@@ -58,43 +63,28 @@ module Craft
     validates :craft_name, :craft_type, presence: true
     validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :operational_data, presence: true
+    validates :owner, presence: true
 
     before_validation :load_craft_info
     after_save :reload_associations, if: :saved_change_to_docked_at_id?
-    # after_create :build_units_and_modules
     after_create :create_inventory
     after_create :initialize_atmosphere_if_needed
 
+    # Determines if the craft needs an atmosphere based on its operational data or installed units.
     def needs_atmosphere?
       # Check if craft is explicitly human-rated in operational data
       return true if operational_data&.dig('operational_flags', 'human_rated') == true
       
-      # Check if it has life support related systems in recommended fit
-      if operational_data&.dig('recommended_fit')
-        # Check modules
-        if operational_data['recommended_fit']['modules'].is_a?(Array)
-          life_support_modules = [
-            'life_support_module', 'co2_scrubber', 'air_filtration', 
-            'oxygen', 'airlock', 'habitat'
-          ]
-          
-          operational_data['recommended_fit']['modules'].each do |mod|
-            mod_id = mod['id'].to_s.downcase
-            return true if life_support_modules.any? { |ls| mod_id.include?(ls) }
-          end
-        end
+      # Check if it has life support related units in recommended_units
+      if operational_data&.dig('recommended_units').is_a?(Array)
+        life_support_unit_ids = [
+          'starship_habitat_unit', 'waste_management_unit', 'co2_oxygen_production_unit',
+          'water_recycling_unit', 'life_support_unit', 'habitat' # Added 'habitat' for common usage
+        ]
         
-        # Check units
-        if operational_data['recommended_fit']['units'].is_a?(Array)
-          life_support_units = [
-            'habitat', 'life_support', 'oxygen', 'co2', 'water_recycling',
-            'waste_management'
-          ]
-          
-          operational_data['recommended_fit']['units'].each do |unit|
-            unit_id = unit['id'].to_s.downcase
-            return true if life_support_units.any? { |ls| unit_id.include?(ls) }
-          end
+        operational_data['recommended_units'].each do |unit|
+          unit_id = unit['id'].to_s.downcase
+          return true if life_support_unit_ids.any? { |ls| unit_id.include?(ls) } # Using include? for flexibility
         end
       end
       
@@ -102,7 +92,7 @@ module Craft
       if persisted? && base_units.any?
         life_support_unit_types = [
           'habitat', 'starship_habitat', 'life_support', 
-          'co2_oxygen_production', 'waste_management'
+          'co2_oxygen_production', 'waste_management', 'water_recycling' # Added water_recycling
         ]
         
         return true if base_units.any? do |unit|
@@ -114,6 +104,7 @@ module Craft
       false
     end
 
+    # Retrieves atmospheric data for construction based on location hierarchy.
     def get_construction_atmosphere_data
       if docked_at&.respond_to?(:atmosphere) && docked_at.atmosphere
         factory_atm = docked_at.atmosphere
@@ -124,9 +115,10 @@ module Craft
           source: 'factory_inheritance'
         }
       elsif owner&.respond_to?(:current_location) && owner.current_location
+        # This path assumes owner.current_location is a Location object, not just a string
         get_location_based_atmosphere
-      elsif location&.respond_to?(:atmosphere)
-        celestial_atm = location.atmosphere
+      elsif celestial_location&.respond_to?(:atmosphere)
+        celestial_atm = celestial_location.atmosphere
         {
           temperature: celestial_atm.temperature || 293.15,
           pressure: celestial_atm.pressure || 101.325,
@@ -143,6 +135,7 @@ module Craft
       end
     end
 
+    # Retrieves atmospheric data based on the owner's current celestial body.
     def get_location_based_atmosphere
       if owner.respond_to?(:current_celestial_body) && owner.current_celestial_body&.atmosphere
         planetary_atm = owner.current_celestial_body.atmosphere
@@ -162,6 +155,7 @@ module Craft
       end
     end
 
+    # Defines the default atmospheric composition for a craft.
     def default_craft_composition
       {
         "N2" => 78.0,
@@ -171,18 +165,21 @@ module Craft
       }
     end
 
+    # Calculates the total atmospheric mass for the craft's internal volume.
     def calculate_atmospheric_mass_for_craft(inherited_atmosphere)
       crew_capacity = operational_data&.dig('crew_capacity') || 1
-      volume_estimate = crew_capacity * 50
-      pressure_pa = inherited_atmosphere[:pressure] * 1000
+      # Use the constant from GameConstants
+      volume_estimate = crew_capacity * GameConstants::DEFAULT_VOLUME_PER_CREW_M3 
+      pressure_pa = inherited_atmosphere[:pressure] * 1000 # Convert kPa to Pa
       temperature_k = inherited_atmosphere[:temperature]
-      gas_constant = 8.314
-      molar_mass = 0.029
+      gas_constant = 8.314 # J/(mol·K)
+      molar_mass = 0.029 # kg/mol (average molar mass of air)
 
       if pressure_pa > 0 && temperature_k > 0 && volume_estimate > 0
         moles = (pressure_pa * volume_estimate) / (gas_constant * temperature_k)
         moles * molar_mass
       else
+        # Fallback for invalid atmospheric data, provides a minimal mass
         crew_capacity * 1.2
       end
     end
@@ -192,28 +189,19 @@ module Craft
     end
 
     def output_resources
-      craft_info['output_resources'].map do |resource|
+      operational_data.dig('resources', 'output_resources')&.map do |resource|
         {
           'id' => resource['id'],
           'amount' => resource['amount'].to_i,
           'unit' => resource['unit']
         }
-      end
+      end || [] # Ensure it returns an array even if nil
     end
 
     def deploy(location)
       raise 'Invalid deployment location' unless valid_deployment_location?(location)
       update!(current_location: location, deployed: true)
     end
-
-    # def build_recommended_units
-    #   return unless operational_data&.dig('recommended_units')
-      
-    #   UnitModuleAssemblyService.build_units_and_modules(
-    #     target: self,
-    #     settlement_inventory: self.inventory
-    #   )
-    # end
 
     def fuel_capacity(fuel_type)
       tank = base_units.find_by(unit_type: "#{fuel_type}_tank")
@@ -232,6 +220,7 @@ module Craft
       operational_data
     end
 
+    # This method is not hooked into Rails validations, it's likely for manual checks.
     def validate_required_units
       required_units = craft_info['suggested_units'] || []
       required_units.each do |unit|
@@ -302,58 +291,24 @@ module Craft
       save if changed?
     end
 
-    def install_unit(unit)
-      return false unless unit
-
-      begin
-        unit.attachable = self
-        success = unit.save
-
-        unless success
-          success = unit.update(attachable: self)
-          unless success
-            unit.update_columns(attachable_id: self.id, attachable_type: self.class.name)
-            unit.reload
-            success = (unit.attachable == self)
-          end
-        end
-
-        recalculate_stats if success
-        return success
-      rescue => e
-        Rails.logger.error "Error installing unit: #{e.message}"
-        return false
-      end
-    end
-
-    def uninstall_unit(unit)
-      return false unless unit
-      return false unless unit.attachable == self
-
-      begin
-        unit.attachable = nil
-        success = unit.save
-
-        unless success
-          success = unit.update(attachable: nil)
-          unless success
-            unit.update_columns(attachable_id: nil, attachable_type: nil)
-            unit.reload
-            success = unit.attachable.nil?
-          end
-        end
-
-        recalculate_stats if success
-        return success
-      rescue => e
-        Rails.logger.error "Error uninstalling unit: #{e.message}"
-        return false
-      end
-    end
-
     def recalculate_stats
-      Rails.logger.debug "Recalculating stats for craft #{id}"
-      true
+      base_mining_rate = operational_data.dig('operational_properties', 'base_mining_rate_gcc_per_hour') || 0
+
+      # Sum mining boosts from computers
+      computer_units = base_units.select { |u| u.unit_type.include?('computer') }
+      computer_boost = computer_units.sum { |u| u.operational_data.dig('operational_properties', 'mining_boost_gcc_per_hour').to_f }
+
+      # Apply GPU rig boost to each computer
+      gpu_rigs = rigs.select { |r| r.rig_type == 'gpu_coprocessor_rig' }
+      gpu_boost = gpu_rigs.sum { |r| r.operational_data.dig('operational_properties', 'processing_boost_gcc_per_hour').to_f }
+      rigged_computer_boost = computer_units.count * gpu_boost
+
+      total_mining_rate = base_mining_rate + computer_boost + rigged_computer_boost
+
+      # Ensure operational_properties exists
+      operational_data['operational_properties'] ||= {}
+      operational_data['operational_properties']['current_mining_rate_gcc_per_hour'] = total_mining_rate.round(2)
+      save!
     end
 
     def has_recommended_units?
@@ -399,7 +354,7 @@ module Craft
     # These are now also provided by EnergyManagement module, but keeping for broader clarity
     POWER_UNIT_TYPES = EnergyManagement::POWER_UNIT_TYPES
     NAVIGATION_UNIT_TYPES = ['raptor_engine'].freeze
-    CONTROL_UNIT_TYPES = ['life_support'].freeze
+    CONTROL_UNIT_TYPES = ['life_support'].freeze # Consider if 'life_support' is a unit or a module
 
     def has_cargo_bay?
       base_units.where(unit_type: ['cargo_bay', 'storage_module']).exists?
@@ -414,7 +369,7 @@ module Craft
     end
 
     def can_operate?
-      has_minimum_required_units? && has_sufficient_power? # `has_sufficient_power?` is from EnergyManagement
+      has_minimum_required_units? && has_sufficient_power?
     end
 
     def load_variant_configuration(variant_id = nil)
@@ -454,10 +409,18 @@ module Craft
       self.operational_data['deployment_status'] = value
     end
 
+    def process_tick(time_skipped = 1)
+      # General per-tick logic for all crafts
+      base_units.each { |unit| unit.process_tick(time_skipped) if unit.respond_to?(:process_tick) }
+      modules.each { |mod| mod.process_tick(time_skipped) if mod.respond_to?(:process_tick) }
+      rigs.each { |rig| rig.process_tick(time_skipped) if rig.respond_to?(:process_tick) }
+      # Craft-specific logic (override in subclasses)
+    end
+
     private
 
     def can_dock?(settlement)
-      true
+      true # Placeholder logic, implement actual docking rules here
     end
 
     def load_craft_info
@@ -478,13 +441,16 @@ module Craft
     end
 
     def has_compatible_storage_unit?(material_type)
-      base_units.any? { |unit| unit.unit_type == 'storage' }
+      base_units.any? { |unit| unit.unit_type == 'storage' } # Generic check
     end
 
     def reload_associations
       docked_at&.reload
     end
 
+    # These private methods for creating/attaching units/modules are likely
+    # internal helpers for other methods like `build_units_and_modules`.
+    # They should not duplicate the public `install_unit`/`uninstall_unit` from concerns.
     def create_unit_from_data(unit_data)
       base_units.create!(
         identifier: SecureRandom.uuid,
@@ -536,25 +502,9 @@ module Craft
       end
     end
 
-    def install_module(mod)
-      return false unless mod.is_a?(Modules::BaseModule)
-      mod.update(attachable: self)
-      reload
-      true
-    rescue => e
-      Rails.logger.error "Failed to install module: #{e.message}"
-      false
-    end
-
-    def uninstall_module(mod)
-      return false unless mod.is_a?(Modules::BaseModule) && mod.attachable == self
-      mod.update(attachable: nil)
-      reload
-      true
-    rescue => e
-      Rails.logger.error "Failed to uninstall module: #{e.message}"
-      false
-    end
+    # Removed duplicate install_module/uninstall_module methods as HasModules concern should provide them.
+    # def install_module(mod) ... end
+    # def uninstall_module(mod) ... end
 
     def initialize_atmosphere_if_needed
       return if atmosphere.present? # Skip if already has atmosphere

@@ -1,21 +1,23 @@
 FactoryBot.define do
   factory :base_craft, class: 'Craft::BaseCraft' do
-    sequence(:name) { |n| "Starship Test #{n}" }
-    craft_name { 'Starship (Lunar Variant)' }
-    craft_type { 'transport' }
+    sequence(:name) { |n| "Heavy Lift Transport Test #{n}" }
+    craft_name { 'Heavy Lift Transport (Lunar Variant)' }
+    craft_type { 'spaceship' }
     current_location { 'Shackleton Crater Base' }
     
     # Provide operational_data including a comprehensive ports definition
     operational_data do
       {
-        'name' => 'Starship (Lunar Variant)',
-        'craft_type' => 'transport',
-        'systems' => {}, # Keep existing systems hash
+        'name' => 'Heavy Lift Transport (Lunar Variant)',
+        'craft_type' => 'spaceship',
+        'category' => 'spaceship',
+        'subcategory' => 'deep_space_craft',
+        'systems' => {},
         'operational_flags' => {
           'autonomous' => false,
-          'human_rated' => false  # Default to non-human rated
+          'human_rated' => false
         },
-        'ports' => {  # Use string keys consistently
+        'ports' => {
           'internal_module_ports' => 8,
           'external_module_ports' => 2,
           'fuel_storage_ports' => 2,
@@ -89,7 +91,7 @@ FactoryBot.define do
     
     # Keep simple trait for backwards compatibility
     trait :simple do
-      craft_name { "Starship" }
+      craft_name { "Heavy Lift Transport" }
       craft_type { "spaceships" }
     end
 
@@ -120,6 +122,44 @@ FactoryBot.define do
         data['recommended_fit']['units'].concat(life_support_units)
         craft.update_column(:operational_data, data)
       end
+    end
+  end
+
+  factory :craft_harvester, class: 'Craft::Harvester' do
+    sequence(:name) { |n| "Harvester Craft #{n}" }
+    craft_name { 'Mining Harvester' }
+    craft_type { 'harvester' }
+    current_location { 'Mining Site Alpha' }
+
+    operational_data do
+      {
+        'name' => 'Mining Harvester',
+        'craft_type' => 'harvester',
+        'category' => 'industrial',
+        'subcategory' => 'resource_extraction',
+        'systems' => {},
+        'operational_flags' => {
+          'autonomous' => true,
+          'human_rated' => false
+        },
+        'ports' => {
+          'internal_module_ports' => 4,
+          'external_module_ports' => 2,
+          'fuel_storage_ports' => 1,
+          'unit_ports' => 2,
+          'external_ports' => 1,
+          'propulsion_ports' => 2,
+          'storage_ports' => 4
+        },
+        'extraction_rate' => 100.0
+      }
+    end
+
+    association :owner, factory: :player
+
+    after(:create) do |craft|
+      # Create inventory for the harvester
+      craft.create_inventory unless craft.inventory
     end
   end
 end
