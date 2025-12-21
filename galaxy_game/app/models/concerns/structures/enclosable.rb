@@ -73,10 +73,11 @@ module Structures
     # @param count [Integer] number of panels
     # @param area_m2 [Float] total area covered
     def update_shell_composition(panel_type, count, area_m2)
-      self.operational_data ||= {}
-      self.operational_data['shell_composition'] ||= {}
+      # Get current operational_data
+      data = operational_data || {}
+      data['shell_composition'] ||= {}
       
-      self.operational_data['shell_composition'][panel_type] = {
+      data['shell_composition'][panel_type] = {
         'count' => count,
         'total_area_m2' => area_m2,
         'installed_date' => Time.current.to_s,
@@ -84,6 +85,8 @@ module Structures
         'failed_count' => 0
       }
       
+      # Set it back
+      self.operational_data = data
       save!
     end
     
@@ -192,12 +195,14 @@ module Structures
       
       panels_to_replace = (composition['count'] * (percentage / 100.0)).ceil
       
+      # Reset health for replaced panels proportionally
+      replaced_factor = panels_to_replace.to_f / composition['count']
+      health_boost = (100 - composition['health_percentage']) * replaced_factor
+      composition['health_percentage'] = [composition['health_percentage'] + health_boost, 100].min
+      
       # Calculate materials
       blueprint = load_panel_blueprint(panel_type)
       materials_needed = calculate_panel_materials(blueprint, panels_to_replace)
-      
-      # Replace panels - set health to 100% for replaced panels
-      composition['health_percentage'] = 100.0
       
       save!
       
@@ -256,12 +261,6 @@ module Structures
       panel_blueprint&.dig('properties', 'thermal_insulation') || 0
     end
     
-    private
-    
-    # ============================================================================
-    # HELPER METHODS
-    # ============================================================================
-    
     # Load panel blueprint from database or file
     # @param panel_type [String] panel identifier
     # @return [Hash, nil] blueprint data
@@ -273,6 +272,12 @@ module Structures
       # Fallback to JSON file
       load_blueprint_from_file(panel_type)
     end
+    
+    private
+    
+    # ============================================================================
+    # HELPER METHODS
+    # ============================================================================
     
     # Load blueprint from JSON file
     # @param panel_type [String] panel identifier
