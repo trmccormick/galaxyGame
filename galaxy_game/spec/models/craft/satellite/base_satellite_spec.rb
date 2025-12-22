@@ -1,6 +1,5 @@
 # spec/models/craft/satellite/base_satellite_spec.rb
 require 'rails_helper'
-require 'units/base_unit' # ✅ ADDED: Explicitly require the associated model
 
 RSpec.describe Craft::Satellite::BaseSatellite, type: :model do
   # --- Setup Common Test Data ---
@@ -97,7 +96,7 @@ RSpec.describe Craft::Satellite::BaseSatellite, type: :model do
       }
     )
     
-    craft.build_units_and_modules
+    # Note: build_units_and_modules is called via after_create, so no manual call needed
     craft.save!
     craft
   end
@@ -188,6 +187,7 @@ RSpec.describe Craft::Satellite::BaseSatellite, type: :model do
 
     context 'when recommended units are specified in operational data' do
       it 'installs the correct recommended units' do
+        satellite_with_recommended_units.reload
         expect(satellite_with_recommended_units.base_units.map(&:unit_type)).to include('basic_computer', 'solar_panels', 'basic_sensor')
         expect(satellite_with_recommended_units.base_units.count).to eq(3)
       end

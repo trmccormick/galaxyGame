@@ -1,24 +1,30 @@
 # app/models/craft/satellite/base_satellite.rb
 module Craft
   module Satellite
-    class BaseSatellite < BaseCraft
+    class BaseSatellite < Craft::BaseCraft
       include CryptocurrencyMining
-      include EnergyManagement
+      include EnergyManagement  
       include BatteryManagement
+      include HasMassCalculation
+      include HasConstructionCosts
+      include HasBlueprintPorts
 
+      # Associations
       has_many :base_units, class_name: '::Units::BaseUnit', as: :attachable, dependent: :destroy
       has_many :units, through: :base_units, source: :itself
 
       has_many :base_modules, class_name: '::Modules::BaseModule', as: :attachable, dependent: :destroy
-      has_many :modules, through: :base_modules, source: :itself
 
       has_many :base_rigs, class_name: '::Rigs::BaseRig', as: :attachable, dependent: :destroy
-      has_many :rigs, through: :base_rigs, source: :itself
 
       belongs_to :orbiting_celestial_body,
                 class_name: 'CelestialBodies::CelestialBody',
                 optional: true
 
+      # Callbacks
+      after_create :build_units_and_modules
+
+      # Satellite-specific methods only
       def needs_atmosphere?
         false
       end
@@ -48,11 +54,8 @@ module Craft
         update!(current_location: location_type, deployed: true)
       end
 
-      def stabilize_wormhole(wormhole)
-        return false unless operational?
-        return false unless can_stabilize_wormhole?
-        self.stabilizing_wormhole = wormhole
-        save
+      def can_stabilize_wormhole?
+        has_unit?('wormhole_stabilizer') || modules.any? { |mod| mod.stabilization_capable? }
       end
 
       def has_unit?(unit_type)
@@ -67,6 +70,34 @@ module Craft
         base_rigs.where(rig_type: rig_type).exists?
       end
 
+      # Port checks - using the concern's get_ports_data method
+      def available_unit_ports
+        ports_data = get_ports_data
+        
+        internal = ports_data&.dig('internal_unit_ports') || 0
+        external = ports_data&.dig('external_unit_ports') || 0
+        propulsion = ports_data&.dig('propulsion_ports') || 0
+        storage = ports_data&.dig('storage_ports') || 0
+        internal + external + propulsion + storage
+      end
+
+      # def available_module_ports
+      #   ports_data = get_ports_data
+        
+      #   internal = ports_data&.dig('internal_module_ports') || 0
+      #   external = ports_data&.dig('external_module_ports') || 0
+      #   internal + external
+      # end
+
+      # def available_rig_ports
+      #   ports_data = get_ports_data
+        
+      #   internal = ports_data&.dig('internal_rig_ports') || 0
+      #   external = ports_data&.dig('external_rig_ports') || 0
+      #   internal + external
+      # end
+
+      # Class determination methods - these should move to concerns too
       def determine_unit_class(unit_type)
         case unit_type.to_s
         when /computer/
@@ -76,27 +107,15 @@ module Craft
         end
       end
 
-      def determine_module_class(module_type)
-        Modules::BaseModule
-      end
+      # def determine_module_class(module_type)
+      #   Modules::BaseModule
+      # end
 
-      def determine_rig_class(rig_type)
-        Rigs::BaseRig
-      end
+      # def determine_rig_class(rig_type)
+      #   Rigs::BaseRig
+      # end
 
-      # Port checks for units, modules, rigs
-      def available_unit_ports
-        operational_data.dig('ports', 'unit_ports') || 0
-      end
-
-      def available_module_ports
-        operational_data.dig('ports', 'module_ports') || 0
-      end
-
-      def available_rig_ports
-        operational_data.dig('ports', 'rig_ports') || 0
-      end
-
+      # Build methods from old file
       def build_units_and_modules
         base_units.destroy_all
         base_modules.destroy_all
@@ -118,7 +137,6 @@ module Craft
           unit_data = unit_lookup_service.find_unit(unit_type)
           next unless unit_data.present?
           count.times do
-            break if installed_units >= unit_port_count
             unit_class = determine_unit_class(unit_type)
             unit_class.create!(
               unit_type: unit_type,
@@ -192,20 +210,6 @@ module Craft
         lookup_service = Lookup::CraftLookupService.new
         lookup_service.find_craft(craft_type)
       end
-
-      def can_stabilize_wormhole?
-        has_unit?('wormhole_stabilizer') || modules.any? { |mod| mod.stabilization_capable? }
-      end
-
-      def has_maintenance_robot?
-        base_units.any? do |unit|
-          data = unit.operational_data || {}
-          task_types = data.dig("processing_capabilities", "task_types") || []
-          task_types.include?("repair_system")
-        end
-      end
-
-      after_create :build_satellite_units
 
       def reload_operational_data
         lookup_service = Lookup::CraftLookupService.new
@@ -284,10 +288,49 @@ module Craft
         end
       end
 
+      def process_tick(time_skipped = 1)
+        super
+
+        # Power and battery logic
+        power_balance = power_generation - power_usage
+        battery_unit = base_units.find { |unit| unit.unit_type == 'satellite_battery' }
+        mined_amount = 0
+
+        if power_balance < 0 && battery_unit
+          charge = battery_unit.operational_data.dig('battery', 'current_charge') || 0
+          if charge >= power_usage.abs
+            battery_unit.operational_data['battery']['current_charge'] = charge - power_usage.abs
+            battery_unit.save!
+            mined_amount = mine_gcc if respond_to?(:mine_gcc)
+          end
+        elsif power_balance >= 0
+          mined_amount = mine_gcc if respond_to?(:mine_gcc)
+          if battery_unit
+            charge = battery_unit.operational_data.dig('battery', 'current_charge') || 0
+            capacity = battery_unit.operational_data.dig('battery', 'capacity') || 0
+            max_charge_rate = battery_unit.operational_data.dig('battery', 'max_charge_rate_kw') || 10.0
+            excess_power = [power_balance, max_charge_rate].min
+            battery_unit.operational_data['battery']['current_charge'] = [charge + excess_power, capacity].min
+            battery_unit.save!
+          end
+        end
+
+        # Deposit mined GCC
+        if mined_amount && mined_amount > 0
+          owner_gcc_account = Account.find_or_create_for_entity_and_currency(accountable_entity: owner, currency: Currency.find_by(symbol: 'GCC'))
+          owner_gcc_account.deposit(mined_amount, "Satellite mining tick")
+        end
+      end
+
       private
 
-      def build_satellite_units
-        build_units_and_modules
+      # Override the concern's default methods for satellites
+      def default_blueprint_id
+        'generic_satellite'  # ← This blueprint exists and has the mass data
+      end
+
+      def blueprint_category
+        'satellite'
       end
     end
   end
