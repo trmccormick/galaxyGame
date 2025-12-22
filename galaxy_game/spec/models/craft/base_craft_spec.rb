@@ -109,6 +109,19 @@ RSpec.describe Craft::BaseCraft, type: :model do
         'power_required' => 10
       }
     end
+
+    # Mock the craft lookup service for tests that create crafts
+    allow_any_instance_of(Lookup::CraftLookupService).to receive(:find_craft) do |_, craft_key|
+      {
+        'name' => 'Heavy Lift Transport (Lunar Variant)',
+        'craft_type' => 'spaceship',
+        'category' => 'spaceship',
+        'recommended_units' => [
+          { 'id' => 'methane_engine', 'count' => 2 },
+          { 'id' => 'life_support_unit', 'count' => 2 }
+        ]
+      }
+    end
   end
 
   describe 'associations' do
