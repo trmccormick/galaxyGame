@@ -13,7 +13,7 @@ module Structures
       # Status tracking
       attribute :shell_status, :string
       attribute :panel_type, :string
-      attribute :construction_start_date, :datetime
+      attribute :construction_date, :datetime
       attribute :estimated_completion, :datetime
     end
     
@@ -30,25 +30,63 @@ module Structures
     end
     
     # ============================================================================
+    # STATUS ACCESSORS
+    # ============================================================================
+    
+    # Get shell status (for compatibility)
+    # @return [String]
+    def shell_status
+      # Force column loading for dynamically created test classes
+      self.class.columns
+      if self.class.columns_hash.key?('status')
+        self.status || 'planned'
+      else
+        operational_data&.dig('shell', 'status') || 'planned'
+      end
+    end
+    
+    # Set shell status (for compatibility)
+    # @param status [String]
+    def shell_status=(status)
+      # Force column loading for dynamically created test classes
+      self.class.columns
+      if self.class.columns_hash.key?('status')
+        self.status = status
+      else
+        new_data = self.operational_data.dup || {}
+        new_data['shell'] ||= {}
+        new_data['shell']['status'] = status
+        self.operational_data = new_data
+        operational_data_will_change!
+      end
+    end
+    
+    # ============================================================================
     # STATUS HELPERS
     # ============================================================================
     
     # Check if shell construction is planned but not started
     # @return [Boolean]
     def shell_planned?
-      shell_status_value == 'planned'
+      shell_status == 'planned'
     end
     
     # Check if framework is under construction
     # @return [Boolean]
     def framework_construction?
-      shell_status_value == 'framework_construction'
+      shell_status == 'framework_construction'
     end
     
     # Check if panels are being installed
     # @return [Boolean]
     def panel_installation?
-      shell_status_value == 'panel_installation'
+      shell_status == 'panel_installation'
+    end
+    
+    # Check if shell is designed to be sealed
+    # @return [Boolean]
+    def shell_sealed_design?
+      operational_data&.dig('shell', 'sealed') || false
     end
     
     # Check if shell is sealed
@@ -56,25 +94,25 @@ module Structures
     def sealed?
       # Delegate to associated atmosphere if present, otherwise fallback
       return atmosphere.sealed? if respond_to?(:atmosphere) && atmosphere.present?
-      ['sealed', 'pressurized', 'operational'].include?(shell_status_value)
+      shell_status == 'sealed' || shell_status == 'pressurized'
     end
     
     # Check if shell is pressurized
     # @return [Boolean]
     def pressurized?
-      ['pressurized', 'operational'].include?(shell_status_value)
+      shell_status == 'pressurized'
     end
     
     # Check if shell construction is complete and operational
     # @return [Boolean]
     def shell_operational?
-      shell_status_value == 'operational'
+      shell_status == 'operational'
     end
     
     # Check if any construction is in progress
     # @return [Boolean]
     def shell_under_construction?
-      ['framework_construction', 'panel_installation'].include?(shell_status_value)
+      ['framework_construction', 'panel_installation'].include?(shell_status)
     end
     
     # ============================================================================
@@ -84,9 +122,10 @@ module Structures
     # Schedule shell construction
     # @param panel_type [String] type of panel to use
     # @param settlement [Settlement] settlement performing construction
+    # @param sealed [Boolean] whether the shell should be sealed during construction
     # @return [Hash] result with construction job
-    def schedule_shell_construction!(panel_type: 'structural_cover_panel', settlement: nil)
-      return { success: false, message: "Shell already constructed" } if sealed?
+    def schedule_shell_construction!(panel_type: 'structural_cover_panel', settlement: nil, sealed: false)
+      return { success: false, message: "Shell already constructed" } if shell_status != 'planned'
       return { success: false, message: "Settlement required" } unless settlement
       
       # Determine settlement if not provided
@@ -95,6 +134,7 @@ module Structures
       
       # Get blueprint
       blueprint = Blueprint.find_by(name: 'shell_construction')
+      return { success: false, message: "Shell construction blueprint not found" } unless blueprint
       
       # Calculate materials
       materials = calculate_enclosure_materials(panel_type: panel_type)
@@ -127,8 +167,13 @@ module Structures
       )
       
       # Update status
-      update_shell_status('framework')
-      update!(panel_type: panel_type, construction_start_date: Time.current)
+      update_shell_status('framework_construction')
+      update!(panel_type: panel_type, construction_date: Time.current)
+      
+      # Store sealing decision
+      self.operational_data ||= {}
+      self.operational_data['shell'] ||= {}
+      self.operational_data['shell']['sealed'] = sealed
       
       # Update shell composition
       panels_needed = (area_m2 / 25.0).ceil
@@ -147,20 +192,21 @@ module Structures
     # Advance shell construction to next phase
     # @return [Boolean] success
     def advance_shell_construction!
-      case shell_status_value
+      case shell_status
       when 'planned'
         update_shell_status('framework_construction')
       when 'framework_construction'
         update_shell_status('panel_installation')
       when 'panel_installation'
-        update_shell_status('sealed')
-        on_shell_sealed if respond_to?(:on_shell_sealed, true)
+        if shell_sealed_design?
+          update_shell_status('sealed')
+          on_shell_sealed if respond_to?(:on_shell_sealed, true)
+        else
+          update_shell_status('operational')
+          on_shell_operational if respond_to?(:on_shell_operational, true)
+        end
       when 'sealed'
-        update_shell_status('pressurized')
-        on_shell_pressurized if respond_to?(:on_shell_pressurized, true)
-      when 'pressurized'
         update_shell_status('operational')
-        self.operational_data['shell']['installed_panels'] = operational_data.dig('shell', 'panels_needed') || 10
         on_shell_operational if respond_to?(:on_shell_operational, true)
       else
         return false
@@ -305,7 +351,7 @@ module Structures
     def create_shell_atmosphere(temp: 293.15, pressure: 0.0)
       return atmosphere if atmosphere.present?
       # Only create atmosphere if we're in a sealing phase or beyond
-      return nil unless ['panel_installation', 'sealed', 'pressurized', 'operational'].include?(shell_status_value)
+      return nil unless ['panel_installation', 'sealed', 'pressurized', 'operational'].include?(shell_status)
       
       create_atmosphere(
         temperature: temp,
@@ -322,26 +368,16 @@ module Structures
     # PRIVATE HELPERS
     # ============================================================================
     
-    # Get shell status value
-    # @return [String]
-    def shell_status_value
-      if respond_to?(:shell_status)
-        shell_status
-      elsif respond_to?(:construction_status)
-        self.reload if respond_to?(:reload)
-        construction_status
-      else
-        'planned'
-      end
-    end
-    
     # Update shell status (handles different attribute names)
     # @param new_status [String]
     def update_shell_status(new_status)
-      if respond_to?(:shell_status=)
-        update!(shell_status: new_status)
-      elsif respond_to?(:construction_status=)
-        update!(construction_status: new_status)
+      # Force column loading for dynamically created test classes
+      self.class.columns
+      if self.class.columns_hash.key?('status')
+        update!(status: new_status)
+      else
+        self.shell_status = new_status
+        save!
       end
     end
     
@@ -385,15 +421,7 @@ module Structures
       # Override in including class if needed
     end
     
-    private
-    
-    def update_shell_status(status)
-      current_data = operational_data || {}
-      shell_data = current_data['shell'] || {}
-      shell_data = shell_data.merge('construction_status' => status)
-      self.operational_data = current_data.merge('shell' => shell_data)
-      save!
-    end
+    public
     
     # ============================================================================
     # SOLAR PANEL MANAGEMENT (from structures/shell.rb)
