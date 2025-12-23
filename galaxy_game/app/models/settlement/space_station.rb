@@ -9,42 +9,34 @@ module Settlement
     has_many :docked_crafts, class_name: 'Craft::BaseCraft', foreign_key: :docked_at_id, inverse_of: :docked_at, dependent: :destroy
     has_one :atmosphere, as: :structure, dependent: :destroy
     
+    # Shell construction attributes
+    attribute :panel_type, :string
+    attribute :construction_start_date, :datetime
+    
     validates :settlement_type, inclusion: { in: %w[station outpost] }
     
     after_initialize :set_defaults, if: :new_record?
     after_create :initialize_core_systems
     after_update :trigger_shell_callbacks, if: :saved_change_to_operational_data?
     
-    def construction_status
-      operational_data&.dig('shell', 'construction_status') || 'planned'
+    def shell_status
+      operational_data&.dig('shell', 'status') || 'planned'
     end
     
-    def construction_status=(value)
+    def shell_status=(value)
       self.operational_data ||= {}
       self.operational_data['shell'] ||= {}
-      old_value = self.operational_data['shell']['construction_status']
-      self.operational_data['shell']['construction_status'] = value
+      old_value = self.operational_data['shell']['status']
+      self.operational_data['shell']['status'] = value
       operational_data_will_change! if old_value != value
     end
     
     def operational?
-      construction_status == 'operational'
-    end
-    
-    def sealed?
-      ['sealed', 'pressurized', 'operational'].include?(construction_status)
-    end
-    
-    def pressurized?
-      ['pressurized', 'operational'].include?(construction_status)
-    end
-    
-    def shell_operational?
-      operational?
+      shell_operational?
     end
     
     def damaged?
-      construction_status == 'damaged'
+      shell_status == 'damaged'
     end
     
     def width_m
@@ -165,7 +157,7 @@ module Settlement
     def station_status
       {
         name: name,
-        construction_status: construction_status,
+        construction_status: shell_status,
         shell_sealed: sealed?,
         shell_pressurized: pressurized?,
         population: current_population,
@@ -203,7 +195,7 @@ module Settlement
         end
         simulate_panel_degradation(365)
       when :critical
-        self.construction_status = 'damaged'
+        self.shell_status = 'damaged'
         save!
       end
       
@@ -226,7 +218,7 @@ module Settlement
         end
       end
       
-      self.construction_status = 'operational'
+      self.shell_status = 'operational'
       save!
       
       true
@@ -251,8 +243,8 @@ module Settlement
       old_data = changes[0] || {}
       new_data = changes[1] || {}
       
-      old_status = old_data.dig('shell', 'construction_status')
-      new_status = new_data.dig('shell', 'construction_status')
+      old_status = old_data.dig('shell', 'status')
+      new_status = new_data.dig('shell', 'status')
       
       return if old_status == new_status
       
@@ -279,7 +271,7 @@ module Settlement
     end
     
     def set_defaults
-      self.construction_status ||= 'planned'
+      self.shell_status ||= 'planned'
       self.settlement_type ||= 'station'
       self.operational_data ||= {}
     end

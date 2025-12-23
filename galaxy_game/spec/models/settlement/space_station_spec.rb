@@ -181,7 +181,7 @@ RSpec.describe Settlement::SpaceStation, type: :model do
       it 'updates status to framework_construction' do
         station.schedule_shell_construction!(settlement: settlement)
         
-        expect(station.reload.construction_status).to eq('framework_construction')
+        expect(station.reload.shell_status).to eq('framework_construction')
       end
       
       it 'accepts custom panel type' do
@@ -209,28 +209,29 @@ RSpec.describe Settlement::SpaceStation, type: :model do
       before do
         station.schedule_shell_construction!(
           panel_type: 'solar_cover_panel',
-          settlement: settlement
+          settlement: settlement,
+          sealed: true
         )
       end
       
       it 'advances through construction phases' do
-        expect(station.construction_status).to eq('framework_construction')
+        expect(station.shell_status).to eq('framework_construction')
         
         station.advance_shell_construction!
-        expect(station.reload.construction_status).to eq('panel_installation')
+        expect(station.reload.shell_status).to eq('panel_installation')
         
         station.advance_shell_construction!
-        expect(station.reload.construction_status).to eq('sealed')
+        expect(station.reload.shell_status).to eq('sealed')
         
         station.advance_shell_construction!
-        expect(station.reload.construction_status).to eq('pressurized')
+        expect(station.reload.shell_status).to eq('pressurized')
         
         station.advance_shell_construction!
-        expect(station.reload.construction_status).to eq('operational')
+        expect(station.reload.shell_status).to eq('operational')
       end
       
       it 'creates atmosphere when sealed' do
-        station.update!(construction_status: 'panel_installation')
+        station.update!(shell_status: 'panel_installation')
         
         station.advance_shell_construction! # sealed
         
@@ -248,14 +249,15 @@ RSpec.describe Settlement::SpaceStation, type: :model do
         local_station.set_dimensions(width: 100, length: 100)
         local_station.schedule_shell_construction!(
           panel_type: 'solar_cover_panel',
-          settlement: settlement
+          settlement: settlement,
+          sealed: true
         )
-        local_station.construction_status = 'pressurized'
+        local_station.shell_status = 'pressurized'
         local_station.save!
         
         local_station.advance_shell_construction! # operational
         
-        expect(local_station.construction_status).to eq('operational')
+        expect(local_station.shell_status).to eq('operational')
         expect(Units::BaseUnit.where(attachable: local_station).count).to eq(0)
       end
     end
@@ -268,18 +270,18 @@ RSpec.describe Settlement::SpaceStation, type: :model do
       end
       
       it 'checks sealed status correctly' do
-        station.update!(construction_status: 'sealed')
+        station.update!(shell_status: 'sealed')
         expect(station.sealed?).to be true
         
-        station.update!(construction_status: 'framework_construction')
+        station.update!(shell_status: 'framework_construction')
         expect(station.sealed?).to be false
       end
       
       it 'checks pressurized status correctly' do
-        station.update!(construction_status: 'pressurized')
+        station.update!(shell_status: 'pressurized')
         expect(station.pressurized?).to be true
         
-        station.update!(construction_status: 'sealed')
+        station.update!(shell_status: 'sealed')
         expect(station.pressurized?).to be false
       end
     end
@@ -292,6 +294,8 @@ RSpec.describe Settlement::SpaceStation, type: :model do
         panel_type: 'solar_cover_panel',
         settlement: settlement
       )
+      # Advance to operational status
+      station.update!(shell_status: 'operational')
     end
     
     it 'calculates power generation from solar panels' do
@@ -495,12 +499,12 @@ RSpec.describe Settlement::SpaceStation, type: :model do
   
   describe 'module management' do
     before do
-      station.update!(construction_status: 'operational')
+      station.update!(shell_status: 'operational')
     end
     
     describe '#add_module' do
       it 'adds a new module to the station' do
-        station.update!(construction_status: 'operational')
+        station.update!(shell_status: 'operational')
         
         expect {
           station.add_module(
@@ -517,7 +521,7 @@ RSpec.describe Settlement::SpaceStation, type: :model do
       end
       
       it 'requires station to be operational' do
-        station.update!(construction_status: 'planned')
+        station.update!(shell_status: 'planned')
         
         expect {
           station.add_module(
@@ -616,7 +620,7 @@ RSpec.describe Settlement::SpaceStation, type: :model do
   
   describe 'operational status' do
     before do
-      station.update!(construction_status: 'operational')
+      station.update!(shell_status: 'operational')
     end
     
     describe '#fully_operational?' do
@@ -676,9 +680,12 @@ RSpec.describe Settlement::SpaceStation, type: :model do
   
   describe 'damage and repair' do
     before do
-      station.update!(construction_status: 'operational')
+      station.update!(shell_status: 'planned')
       station.set_dimensions(width: 100, length: 100)
       station.schedule_shell_construction!(settlement: settlement)
+      station.advance_shell_construction! until station.shell_operational?
+      station.save! # Ensure all changes are saved
+      station.reload # Make sure we have the latest data
     end
     
     it 'can damage modules' do
@@ -695,7 +702,7 @@ RSpec.describe Settlement::SpaceStation, type: :model do
       
       # Check if module was damaged (status stored in operational_data)
       damaged = station.base_units.any? { |u| u.operational_data['status'] == 'damaged' }
-      expect(damaged).to be false
+      expect(damaged).to be true
     end
     
     it 'repairs damaged modules and shell' do
@@ -703,11 +710,11 @@ RSpec.describe Settlement::SpaceStation, type: :model do
       composition['failed_count'] = 10
       station.save!
       
-      station.update!(construction_status: 'damaged')
+      station.update!(shell_status: 'damaged')
       
       station.repair!(repair_shell: true)
       
-      expect(station.construction_status).to eq('operational')
+      expect(station.shell_status).to eq('operational')
     end
   end
 
@@ -760,7 +767,8 @@ RSpec.describe Settlement::SpaceStation, type: :model do
         # Schedule construction
         result = new_station.schedule_shell_construction!(
           panel_type: 'solar_cover_panel',
-          settlement: settlement
+          settlement: settlement,
+          sealed: true
         )
         expect(result[:success]).to be true
         
