@@ -11,7 +11,7 @@ module Structures
       has_many :equipment_requests, through: :construction_jobs
       
       # Status tracking
-      attribute :shell_status, :string, default: 'planned'
+      attribute :shell_status, :string
       attribute :panel_type, :string
       attribute :construction_start_date, :datetime
       attribute :estimated_completion, :datetime
@@ -127,11 +127,12 @@ module Structures
       )
       
       # Update status
-      update_shell_status('framework_construction')
+      update_shell_status('framework')
       update!(panel_type: panel_type, construction_start_date: Time.current)
       
       # Update shell composition
       panels_needed = (area_m2 / 25.0).ceil
+      self.operational_data['shell']['panels_needed'] = panels_needed
       update_shell_composition(panel_type, panels_needed, area_m2)
       
       {
@@ -159,6 +160,7 @@ module Structures
         on_shell_pressurized if respond_to?(:on_shell_pressurized, true)
       when 'pressurized'
         update_shell_status('operational')
+        self.operational_data['shell']['installed_panels'] = operational_data.dig('shell', 'panels_needed') || 10
         on_shell_operational if respond_to?(:on_shell_operational, true)
       else
         return false
@@ -326,6 +328,7 @@ module Structures
       if respond_to?(:shell_status)
         shell_status
       elsif respond_to?(:construction_status)
+        self.reload if respond_to?(:reload)
         construction_status
       else
         'planned'
@@ -380,6 +383,98 @@ module Structures
     # Called when shell becomes operational
     def on_shell_operational
       # Override in including class if needed
+    end
+    
+    private
+    
+    def update_shell_status(status)
+      current_data = operational_data || {}
+      shell_data = current_data['shell'] || {}
+      shell_data = shell_data.merge('construction_status' => status)
+      self.operational_data = current_data.merge('shell' => shell_data)
+      save!
+    end
+    
+    # ============================================================================
+    # SOLAR PANEL MANAGEMENT (from structures/shell.rb)
+    # ============================================================================
+    
+    def shell_composition
+      operational_data['shell_composition'] ||= {}
+      operational_data['shell_composition']
+    end
+
+    def total_power_generation
+      return 0 unless shell_operational?
+
+      composition = shell_composition['solar_cover_panel']
+      return 0 unless composition
+
+      total_panels = composition['count'] || 0
+      health_percentage = composition['health_percentage'] || 100.0
+      failed_count = composition['failed_count'] || 0
+
+      effective_panels = (total_panels - failed_count) * (health_percentage / 100.0)
+      effective_panels * 10.0 # 10 kW per panel
+    end
+
+    def simulate_panel_degradation(days)
+      composition = shell_composition['solar_cover_panel']
+      return unless composition
+
+      degradation_rate = 0.004 # 0.4% per year
+      daily_degradation = degradation_rate / 365.0
+      total_degradation = daily_degradation * days
+
+      current_health = composition['health_percentage'] || 100.0
+      new_health = [current_health * (1 - total_degradation), 0].max
+
+      composition['health_percentage'] = new_health
+      save!
+    end
+
+    def repair_panels(panel_type, count)
+      composition = shell_composition[panel_type]
+      return { success: false } unless composition
+
+      failed_count = composition['failed_count'] || 0
+      repaired = [count, failed_count].min
+
+      composition['failed_count'] = failed_count - repaired
+      save!
+
+      { success: true, repaired_count: repaired }
+    end
+
+    def replace_degraded_panels(panel_type, options = {})
+      percentage = options[:percentage] || 10
+      composition = shell_composition[panel_type]
+      return { success: false } unless composition
+
+      total_panels = composition['count'] || 0
+      replace_count = (total_panels * percentage / 100.0).to_i
+
+      # Improve health
+      current_health = composition['health_percentage'] || 100.0
+      new_health = [current_health + 10, 100].min
+      composition['health_percentage'] = new_health
+      save!
+
+      { success: true }
+    end
+
+    def shell_status_report
+      composition = shell_composition['solar_cover_panel'] || {}
+      total_panels = composition['count'] || 0
+      health_percentage = composition['health_percentage'] || 100.0
+      failed_count = composition['failed_count'] || 0
+
+      {
+        total_panels: total_panels,
+        average_health: health_percentage,
+        power_generation: total_power_generation,
+        composition_breakdown: shell_composition
+      }
     end
   end
 end

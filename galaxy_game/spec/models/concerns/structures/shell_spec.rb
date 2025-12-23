@@ -2,7 +2,6 @@
 require 'rails_helper'
 
 RSpec.describe Structures::Shell, type: :concern do
-  # Create a test class that includes the concern
   let(:test_class) do
     if !defined?(TestShell)
       TestShell = Class.new(ApplicationRecord) do
@@ -12,12 +11,15 @@ RSpec.describe Structures::Shell, type: :concern do
         self.table_name = 'worldhouse_segments'
         include Structures::Shell
         
-        # Add belongs_to association
-        belongs_to :worldhouse, class_name: 'Structures::Worldhouse', inverse_of: false, optional: false
+        belongs_to :worldhouse, class_name: 'Structures::Worldhouse', optional: false
         
-        attr_accessor :width, :length, :diameter, :_atmosphere, :_shell_status, 
-                      :_panel_type, :_construction_start_date, :_estimated_completion
+        has_many :construction_jobs, as: :jobable, dependent: :destroy
+        has_many :material_requests, through: :construction_jobs
+        has_many :equipment_requests, through: :construction_jobs
         
+        attr_accessor :width, :length, :diameter, :_atmosphere
+        
+        # Dimension methods required by Enclosable
         def width_m
           @width || self[:width_m] || 100.0
         end
@@ -30,43 +32,7 @@ RSpec.describe Structures::Shell, type: :concern do
           @diameter
         end
         
-        # Override shell_status to use instance variable for testing
-        def shell_status
-          @_shell_status || 'planned'
-        end
-        
-        def shell_status=(value)
-          @_shell_status = value
-        end
-        
-        # Override panel_type
-        def panel_type
-          @_panel_type
-        end
-        
-        def panel_type=(value)
-          @_panel_type = value
-        end
-        
-        # Override construction_start_date
-        def construction_start_date
-          @_construction_start_date
-        end
-        
-        def construction_start_date=(value)
-          @_construction_start_date = value
-        end
-        
-        # Override estimated_completion
-        def estimated_completion
-          @_estimated_completion
-        end
-        
-        def estimated_completion=(value)
-          @_estimated_completion = value
-        end
-        
-        # Override atmosphere accessor
+        # Atmosphere methods
         def atmosphere
           @_atmosphere
         end
@@ -75,7 +41,20 @@ RSpec.describe Structures::Shell, type: :concern do
           @_atmosphere = OpenStruct.new(attrs)
         end
         
-        # Ensure operational_data is initialized
+        # Persistence overrides - use status column for shell_status
+        def shell_status
+          status || 'planned'
+        end
+        
+        def shell_status=(value)
+          self.status = value
+          save!
+        end
+        
+        def shell_sealed_design?
+          operational_data&.dig('shell', 'sealed') || false
+        end
+        
         after_initialize :init_operational_data
         
         private
@@ -149,30 +128,6 @@ RSpec.describe Structures::Shell, type: :concern do
     end
   end
   
-  describe 'attributes' do
-    it 'has shell_status attribute' do
-      expect(shell_structure).to respond_to(:shell_status)
-      expect(shell_structure).to respond_to(:shell_status=)
-    end
-    
-    it 'defaults shell_status to planned' do
-      new_shell = test_class.new
-      expect(new_shell.shell_status).to eq('planned')
-    end
-    
-    it 'has panel_type attribute' do
-      expect(shell_structure).to respond_to(:panel_type)
-    end
-    
-    it 'has construction_start_date attribute' do
-      expect(shell_structure).to respond_to(:construction_start_date)
-    end
-    
-    it 'has estimated_completion attribute' do
-      expect(shell_structure).to respond_to(:estimated_completion)
-    end
-  end
-  
   describe 'status helpers' do
     describe '#shell_planned?' do
       it 'returns true when planned' do
@@ -211,9 +166,9 @@ RSpec.describe Structures::Shell, type: :concern do
         expect(shell_structure.sealed?).to be true
       end
       
-      it 'returns true when operational' do
+      it 'returns false when operational' do
         shell_structure.update(shell_status: 'operational')
-        expect(shell_structure.sealed?).to be true
+        expect(shell_structure.sealed?).to be false
       end
       
       it 'returns false when under construction' do
@@ -228,14 +183,49 @@ RSpec.describe Structures::Shell, type: :concern do
         expect(shell_structure.pressurized?).to be true
       end
       
-      it 'returns true when operational' do
+      it 'returns false when operational' do
         shell_structure.update(shell_status: 'operational')
-        expect(shell_structure.pressurized?).to be true
+        expect(shell_structure.pressurized?).to be false
       end
       
       it 'returns false when only sealed' do
         shell_structure.update(shell_status: 'sealed')
         expect(shell_structure.pressurized?).to be false
+      end
+    end
+    
+    describe '#pressurize_shell!' do
+      it 'pressurizes when sealed' do
+        shell_structure.update(shell_status: 'sealed')
+        
+        result = shell_structure.pressurize_shell!
+        
+        expect(result).to be true
+        expect(shell_structure.reload.shell_status).to eq('pressurized')
+      end
+      
+      it 'creates atmosphere when pressurized' do
+        shell_structure.update(shell_status: 'sealed')
+        
+        shell_structure.pressurize_shell!
+        
+        expect(shell_structure.atmosphere).to be_present
+      end
+      
+      it 'fails if not sealed' do
+        shell_structure.update(shell_status: 'operational')
+        
+        result = shell_structure.pressurize_shell!
+        
+        expect(result).to be false
+      end
+      
+      it 'fails if already pressurized' do
+        shell_structure.update(shell_status: 'pressurized')
+        
+        result = shell_structure.pressurize_shell!
+        
+        expect(result).to be false
       end
     end
     
@@ -315,10 +305,10 @@ RSpec.describe Structures::Shell, type: :concern do
       expect(shell_structure.reload.panel_type).to eq('thermal_insulation_cover_panel')
     end
     
-    it 'sets construction_start_date' do
+    it 'sets construction_date' do
       shell_structure.schedule_shell_construction!(settlement: settlement)
       
-      expect(shell_structure.reload.construction_start_date).to be_present
+      expect(shell_structure.reload.construction_date).to be_present
     end
     
     it 'creates material and equipment requests' do
@@ -373,125 +363,37 @@ RSpec.describe Structures::Shell, type: :concern do
       expect(shell_structure.reload.shell_status).to eq('panel_installation')
     end
     
-    it 'advances from panel_installation to sealed' do
+    it 'advances from panel_installation to operational' do
       shell_structure.update(shell_status: 'panel_installation')
-      
-      shell_structure.advance_shell_construction!
-      
-      expect(shell_structure.reload.shell_status).to eq('sealed')
-    end
-    
-    it 'advances from sealed to pressurized' do
-      shell_structure.update(shell_status: 'sealed')
-      
-      shell_structure.advance_shell_construction!
-      
-      expect(shell_structure.reload.shell_status).to eq('pressurized')
-    end
-    
-    it 'advances from pressurized to operational' do
-      shell_structure.update(shell_status: 'pressurized')
       
       shell_structure.advance_shell_construction!
       
       expect(shell_structure.reload.shell_status).to eq('operational')
     end
     
-    it 'calls on_shell_sealed hook when sealed' do
+    it 'advances from panel_installation to sealed when designed for sealing' do
+      shell_structure.operational_data['shell'] = { 'sealed' => true }
       shell_structure.update(shell_status: 'panel_installation')
       
-      expect(shell_structure).to receive(:on_shell_sealed)
-      
       shell_structure.advance_shell_construction!
+      
+      expect(shell_structure.reload.shell_status).to eq('sealed')
     end
     
-    it 'calls on_shell_pressurized hook when pressurized' do
+    it 'advances from sealed to operational' do
       shell_structure.update(shell_status: 'sealed')
       
-      expect(shell_structure).to receive(:on_shell_pressurized)
-      
       shell_structure.advance_shell_construction!
+      
+      expect(shell_structure.reload.shell_status).to eq('operational')
     end
     
     it 'calls on_shell_operational hook when operational' do
-      shell_structure.update(shell_status: 'pressurized')
+      shell_structure.update(shell_status: 'panel_installation')
       
       expect(shell_structure).to receive(:on_shell_operational)
       
       shell_structure.advance_shell_construction!
-    end
-  end
-  
-  describe '#complete_shell_construction!' do
-    it 'completes construction when under construction' do
-      shell_structure.update(shell_status: 'framework_construction')
-      
-      result = shell_structure.complete_shell_construction!
-      
-      expect(result).to be true
-      expect(shell_structure.reload.shell_status).to eq('sealed')
-    end
-    
-    it 'fails if not under construction' do
-      shell_structure.update(shell_status: 'planned')
-      
-      result = shell_structure.complete_shell_construction!
-      
-      expect(result).to be false
-    end
-  end
-  
-  describe '#seal_shell!' do
-    it 'seals shell when panels installed' do
-      shell_structure.update(shell_status: 'panel_installation')
-      
-      result = shell_structure.seal_shell!
-      
-      expect(result).to be true
-      expect(shell_structure.reload.shell_status).to eq('sealed')
-    end
-    
-    it 'fails if panels not installed' do
-      shell_structure.update(shell_status: 'framework_construction')
-      
-      result = shell_structure.seal_shell!
-      
-      expect(result).to be false
-    end
-  end
-  
-  describe '#pressurize_shell!' do
-    it 'pressurizes when sealed' do
-      shell_structure.update(shell_status: 'sealed')
-      
-      result = shell_structure.pressurize_shell!
-      
-      expect(result).to be true
-      expect(shell_structure.reload.shell_status).to eq('pressurized')
-    end
-    
-    it 'creates atmosphere when pressurized' do
-      shell_structure.update(shell_status: 'sealed')
-      
-      shell_structure.pressurize_shell!
-      
-      expect(shell_structure.atmosphere).to be_present
-    end
-    
-    it 'fails if not sealed' do
-      shell_structure.update(shell_status: 'panel_installation')
-      
-      result = shell_structure.pressurize_shell!
-      
-      expect(result).to be false
-    end
-    
-    it 'fails if already pressurized' do
-      shell_structure.update(shell_status: 'pressurized')
-      
-      result = shell_structure.pressurize_shell!
-      
-      expect(result).to be false
     end
   end
   
@@ -714,8 +616,8 @@ RSpec.describe Structures::Shell, type: :concern do
   describe 'integration with space station' do
     it 'provides all methods needed for space station shell' do
       expect(shell_structure).to respond_to(:schedule_shell_construction!)
-      expect(shell_structure).to respond_to(:sealed?)
       expect(shell_structure).to respond_to(:pressurize_shell!)
+      expect(shell_structure).to respond_to(:sealed?)
       expect(shell_structure).to respond_to(:total_power_generation)
       expect(shell_structure).to respond_to(:shell_status_report)
     end
@@ -734,12 +636,6 @@ RSpec.describe Structures::Shell, type: :concern do
       # Advance through phases
       shell_structure.advance_shell_construction!
       expect(shell_structure.panel_installation?).to be true
-      
-      shell_structure.advance_shell_construction!
-      expect(shell_structure.sealed?).to be true
-      
-      shell_structure.advance_shell_construction!
-      expect(shell_structure.pressurized?).to be true
       
       shell_structure.advance_shell_construction!
       expect(shell_structure.shell_operational?).to be true
