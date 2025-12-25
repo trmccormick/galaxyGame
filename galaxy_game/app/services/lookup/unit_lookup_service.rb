@@ -90,7 +90,18 @@ module Lookup
       }
     }
 
-    def initialize
+    # Add class method to clear cached instances
+    def self.reset!
+      @instance = nil if instance_variable_defined?(:@instance)
+    end
+
+    def self.instance
+      @instance ||= new
+    end
+    
+    def initialize(force_reload: false)
+      return if @instance && !force_reload # Prevent multiple instances
+      
       begin
         @units = load_units
       rescue StandardError => e
@@ -98,6 +109,13 @@ module Lookup
         Rails.logger.error e.backtrace.join("\n")
         @units = []
       end
+      
+      @instance = self
+    end
+    
+    # Add method to reload units if needed
+    def reload_units!
+      @units = load_units
     end
 
     def find_unit(unit_type)
