@@ -33,10 +33,6 @@ module Lookup
         path: -> { base_modules_path.join("life_support") },
         recursive_scan: true
       },
-      power: {
-        path: -> { base_modules_path.join("power") },
-        recursive_scan: true
-      },
       production: {
         path: -> { base_modules_path.join("production") },
         recursive_scan: true
@@ -47,6 +43,10 @@ module Lookup
       },
       science: {
         path: -> { base_modules_path.join("science") },
+        recursive_scan: true
+      },
+      sensor: {
+        path: -> { base_modules_path.join("sensor") },
         recursive_scan: true
       },
       storage: {
@@ -74,6 +74,9 @@ module Lookup
       return nil unless module_type.present?
       
       query = module_type.to_s.downcase
+      found = @modules.find { |mod| mod['module_type']&.downcase == query }
+      return found if found
+      
       found = @modules.find { |mod| match_module?(mod, query) }
       Rails.logger.debug "Module lookup for '#{query}': #{found ? 'found' : 'not found'}"
       found
@@ -176,25 +179,19 @@ module Lookup
 
       query_normalized = query.to_s.downcase.strip
 
-      # ✅ PRIORITY 1: Exact module_type match
-      if module_data['module_type']&.downcase == query_normalized
-        Rails.logger.debug "Matched by module_type: #{module_data['module_type']} == #{query}"
-        return true
-      end
-
-      # ✅ PRIORITY 2: Exact ID match
+      # ✅ PRIORITY 1: Exact ID match
       if module_data['id']&.downcase == query_normalized
         Rails.logger.debug "Matched by ID: #{module_data['id']} == #{query}"
         return true
       end
 
-      # ✅ PRIORITY 3: Exact name match  
+      # ✅ PRIORITY 2: Exact name match  
       if module_data['name']&.downcase == query_normalized
         Rails.logger.debug "Matched by name: #{module_data['name']} == #{query}"
         return true
       end
 
-      # ✅ PRIORITY 4: Alias match
+      # ✅ PRIORITY 3: Alias match
       if module_data['aliases'].is_a?(Array)
         aliases = module_data['aliases'].map(&:downcase)
         if aliases.include?(query_normalized)
@@ -203,13 +200,13 @@ module Lookup
         end
       end
 
-      # ✅ PRIORITY 5: Partial ID match (SAFE - only for long queries)
+      # ✅ PRIORITY 4: Partial ID match (SAFE - only for long queries)
       if query_normalized.length >= 3 && module_data['id']&.downcase&.include?(query_normalized)
         Rails.logger.debug "Matched by partial ID: #{module_data['id']} contains #{query}"
         return true
       end
 
-      # ✅ PRIORITY 6: Partial name match (SAFE - only for long queries) 
+      # ✅ PRIORITY 5: Partial name match (SAFE - only for long queries) 
       if query_normalized.length >= 3 && module_data['name']&.downcase&.include?(query_normalized)
         Rails.logger.debug "Matched by partial name: #{module_data['name']} contains #{query}"
         return true

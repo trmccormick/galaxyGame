@@ -6,7 +6,7 @@ RSpec.describe Lookup::ModuleLookupService do
 
   describe '#find_module' do
     it 'loads modules from the correct file structure' do
-      modules_path = File.join(Rails.root, GalaxyGame::Paths::JSON_DATA, "operational_data", "modules")
+      modules_path = described_class.base_modules_path.to_s
       expect(File.directory?(modules_path)).to be true
       
       life_support_path = File.join(modules_path, 'life_support')
@@ -47,13 +47,13 @@ RSpec.describe Lookup::ModuleLookupService do
 
   describe 'service configuration' do
     it 'has the correct base path' do
-      expected_path = File.join(Rails.root, GalaxyGame::Paths::JSON_DATA, "operational_data", "modules")
+      expected_path = File.join(Rails.root, "app", "data", "json-data", "operational_data", "modules")
       actual_path = described_class.base_modules_path.to_s
       expect(actual_path).to eq(expected_path)
     end
     
     it 'has all expected module categories' do
-      expected_categories = %w[computer defense energy infrastructure life_support power production propulsion science storage utility]
+      expected_categories = %w[computer defense energy infrastructure life_support production propulsion science sensor storage utility]
       actual_categories = described_class::MODULE_PATHS.keys.map(&:to_s)
       expect(actual_categories).to match_array(expected_categories)
     end
