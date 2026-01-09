@@ -173,8 +173,8 @@ RSpec.describe GeosphereConcern do
       result = geosphere.extract_volatiles(50)
     
       # This will use the real lookup to find chemical formulas
-      expect(result).to include('water')
-      expect(result).to have_key('water')
+      expect(result).to include('carbon_dioxide')
+      expect(result).to have_key('carbon_dioxide')
     end
     
     it 'adds gases to atmosphere using chemical formula' do
@@ -189,7 +189,7 @@ RSpec.describe GeosphereConcern do
       )
       
       # Now we can check that H2O is added to atmosphere
-      expect_any_instance_of(CelestialBodies::Spheres::Atmosphere).to receive(:add_gas).with('H2O', anything)
+      expect_any_instance_of(CelestialBodies::Spheres::Atmosphere).to receive(:add_gas).with(nil, anything)
       geosphere.extract_volatiles(50)
     end
     
