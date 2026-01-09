@@ -164,6 +164,60 @@ RSpec.describe Wormhole, type: :model do
     end
   end
 
+  describe '#appearance_profile' do
+    context 'when natural wormhole' do
+      let(:natural_wormhole) { create(:wormhole, solar_system_a: system_a, solar_system_b: system_b, natural: true) }
+
+      context 'and stable without artificial station' do
+        before { natural_wormhole.update!(stability: :stable, artificial_station_built: false) }
+
+        it 'returns :naturally_anchored' do
+          expect(natural_wormhole.appearance_profile).to eq(:naturally_anchored)
+        end
+      end
+
+      context 'and unstable' do
+        before { natural_wormhole.update!(stability: :unstable) }
+
+        it 'returns :exotic_anomalous' do
+          expect(natural_wormhole.appearance_profile).to eq(:exotic_anomalous)
+        end
+      end
+
+      context 'and has hazard zone' do
+        before { natural_wormhole.update!(hazard_zone: true) }
+
+        it 'returns :exotic_anomalous' do
+          expect(natural_wormhole.appearance_profile).to eq(:exotic_anomalous)
+        end
+      end
+
+      context 'and has exotic resources' do
+        before { natural_wormhole.update!(exotic_resources: true) }
+
+        it 'returns :exotic_anomalous' do
+          expect(natural_wormhole.appearance_profile).to eq(:exotic_anomalous)
+        end
+      end
+
+      context 'and has artificial station built' do
+        before { natural_wormhole.update!(artificial_station_built: true) }
+
+        it 'returns :artificial_only_stabilized' do
+          expect(natural_wormhole.appearance_profile).to eq(:artificial_only_stabilized)
+        end
+      end
+    end
+
+    context 'when artificial wormhole' do
+      let(:artificial_wormhole) { create(:wormhole, solar_system_a: system_a, solar_system_b: system_b, natural: false) }
+
+      it 'returns :artificial_only_stabilized' do
+        expect(artificial_wormhole.appearance_profile).to eq(:artificial_only_stabilized)
+      end
+    end
+  end
+
   describe '#safe_for_travel?' do
     before do
       stub_const('GameConstants::MIN_STABILIZERS_REQUIRED', 2)

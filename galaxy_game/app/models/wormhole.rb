@@ -102,6 +102,20 @@ class Wormhole < ApplicationRecord
     true
   end
 
+  def appearance_profile
+    if natural?
+      if artificial_station_built?
+        :artificial_only_stabilized
+      elsif stable? && !hazard_zone? && !exotic_resources?
+        :naturally_anchored
+      else
+        :exotic_anomalous
+      end
+    else
+      :artificial_only_stabilized
+    end
+  end
+
   # --- Private helpers ---
   private
 
@@ -183,4 +197,7 @@ class Wormhole < ApplicationRecord
   def endpoint_b
     endpoints.find_by(spatial_context: solar_system_b)
   end
+
+  # --- Private helpers ---
+  private
 end
