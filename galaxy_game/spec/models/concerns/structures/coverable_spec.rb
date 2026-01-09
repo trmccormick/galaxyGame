@@ -95,8 +95,8 @@ RSpec.describe Structures::Coverable, type: :concern do
   before do
     allow(coverable).to receive(:load_panel_blueprint).and_return(blueprint_data)
     allow(Blueprint).to receive(:find_by).and_return(blueprint)
-    allow(MaterialRequestService).to receive(:create_material_requests_from_hash).and_return([])
-    allow(EquipmentRequestService).to receive(:create_equipment_requests).and_return([])
+    allow(Manufacturing::MaterialRequest).to receive(:create_material_requests_from_hash).and_return([])
+    allow(Manufacturing::EquipmentRequest).to receive(:create_equipment_requests).and_return([])
   end
   
   describe 'concern inclusion' do
@@ -299,8 +299,8 @@ RSpec.describe Structures::Coverable, type: :concern do
     end
     
     it 'creates material and equipment requests' do
-      expect(MaterialRequestService).to receive(:create_material_requests_from_hash)
-      expect(EquipmentRequestService).to receive(:create_equipment_requests)
+      expect(Manufacturing::MaterialRequest).to receive(:create_material_requests_from_hash)
+      expect(Manufacturing::EquipmentRequest).to receive(:create_equipment_requests)
       
       coverable.schedule_covering!(settlement: settlement)
     end
