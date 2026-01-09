@@ -8,15 +8,17 @@ require 'pathname'
 return if defined?(GalaxyGame::Paths::JSON_DATA)
 
 # Use the environment-specific Rails.root, but fall back if not available (e.g., in a deep RSpec context)
-unless defined?(Rails)
-  class FakeRails
-    def self.root
-      Pathname.new(File.expand_path('../../../', __FILE__))
+unless defined?(RAILS_ROOT)
+  if !defined?(Rails)
+    class FakeRails
+      def self.root
+        Pathname.new(File.expand_path('../../../', __FILE__))
+      end
     end
+    RAILS_ROOT = FakeRails.root
+  else
+    RAILS_ROOT = Rails.root
   end
-  RAILS_ROOT = FakeRails.root
-else
-  RAILS_ROOT = Rails.root
 end
 
 module GalaxyGame
@@ -24,7 +26,7 @@ module GalaxyGame
     JSON_DATA = if ENV['GALAXY_JSON_DATA_PATH']
       Pathname.new(ENV['GALAXY_JSON_DATA_PATH']).freeze
     else
-      RAILS_ROOT.join('app', 'data').freeze
+      RAILS_ROOT.join('app', 'data', 'json-data').freeze
     end
 
     # === Celestial Bodies and Star Systems ===
@@ -64,6 +66,17 @@ module GalaxyGame
     STORAGE_UNITS_PATH = UNITS_PATH.join('storage').freeze
     STRUCTURE_UNITS_PATH = UNITS_PATH.join('structure').freeze 
     SPECIALIZED_UNITS_PATH = UNITS_PATH.join('specialized').freeze
+
+    # Additional Unit Categories
+    COMMUNICATION_UNITS_PATH = UNITS_PATH.join('communication').freeze
+    CONSTRUCTION_UNITS_PATH = UNITS_PATH.join('construction').freeze
+    CONTROL_UNITS_PATH = UNITS_PATH.join('control').freeze
+    EM_PROCESSING_UNITS_PATH = UNITS_PATH.join('em_processing').freeze
+    GRAVITATIONAL_CONTROL_UNITS_PATH = UNITS_PATH.join('gravitational_control').freeze
+    INFRASTRUCTURE_UNITS_PATH = UNITS_PATH.join('infrastructure').freeze
+    POWER_UNITS_PATH = UNITS_PATH.join('power').freeze
+    RESOURCE_UNITS_PATH = UNITS_PATH.join('resource').freeze
+    SENSORS_UNITS_PATH = UNITS_PATH.join('sensors').freeze
 
     # Robot Units Operational Data Paths
     ROBOTS_UNITS_PATH = UNITS_PATH.join('robots').freeze
@@ -206,6 +219,15 @@ module GalaxyGame
     TOOL_ITEMS_PATH = ITEMS_PATH.join('tool').freeze
     FURNITURE_ITEMS_PATH = ITEMS_PATH.join('furniture').freeze
     CRAFTED_PARTS_ITEMS_PATH = ITEMS_PATH.join('crafted_parts').freeze
+
+    # === Names Paths ===
+    NAMES_PATH = JSON_DATA.join('names').freeze
+
+    # === Star Systems Paths ===
+    STAR_SYSTEMS_PATH = JSON_DATA.join('star_systems').freeze
+
+    # === Logistics Paths ===
+    LOGISTICS_PATH = JSON_DATA.join('logistics').freeze
 
     # ==== Mission Paths ====
     MISSIONS_PATH = JSON_DATA.join('missions').freeze
