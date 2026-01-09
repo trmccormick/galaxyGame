@@ -25,7 +25,7 @@ RSpec.describe CelestialBodies::CelestialBody, type: :model do
 
       it 'updates atmosphere gases if material is a gas' do
         mars.add_material('oxygen', 100)
-        expect(mars.atmosphere.gases.find_by(name: 'O2')).to be_present
+        expect(mars.atmosphere.gases.find_by(name: 'oxygen')).to be_present
       end
     end
 

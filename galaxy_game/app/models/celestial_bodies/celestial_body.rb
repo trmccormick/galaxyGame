@@ -56,11 +56,8 @@ module CelestialBodies
     before_validation :ensure_properties
     before_save :ensure_properties
 
-    # Callbacks
-
-    # updated setup
-    after_create :initialize_associations
-    after_create :ensure_spatial_location
+    # JSONB field accessors
+    store_accessor :properties, :has_magnetosphere, :preservation_mode
     
     def name
       self[:name] || identifier
@@ -79,8 +76,8 @@ module CelestialBodies
       0
     end
     
-    def density
-      return nil if mass.nil? || volume.nil?
+    def calculated_density
+      return nil if mass.nil? || volume.nil? || volume.zero?
       mass.to_f / volume
     end
     
@@ -372,6 +369,22 @@ module CelestialBodies
       false
     end    
 
+    # Determines if this celestial body can generate specific gases locally
+    def can_generate_locally?(gas_symbol)
+      case gas_symbol.to_sym
+      when :O2
+        # Can generate O2 from CO2 using energy (MOXIE/Sabatier process)
+        # Either Mars specifically, or any planet with very high CO2 (>90%)
+        name.downcase == 'mars' || (atmosphere&.composition&.dig('CO2').to_f > 90.0)
+      when :Ar
+        # Can extract Ar from atmosphere
+        # Either Mars specifically, or any planet with significant Ar (>1%)
+        name.downcase == 'mars' || (atmosphere&.composition&.dig('Ar').to_f > 1.0)
+      else
+        false
+      end
+    end
+
     private
 
     def set_defaults
@@ -475,15 +488,5 @@ module CelestialBodies
       gas_giant
     end
 
-    def validate_mass_conservation
-      total_component_mass = 0
-      total_component_mass += geosphere.total_geosphere_mass if geosphere
-      total_component_mass += atmosphere.total_atmospheric_mass if atmosphere
-      total_component_mass += hydrosphere.total_hydrosphere_mass if hydrosphere
-      
-      unless (total_component_mass - mass).abs / mass < 0.001
-        errors.add(:mass, "Total sphere masses (#{total_component_mass}) must equal celestial body mass (#{mass})")
-      end
-    end
   end
 end
