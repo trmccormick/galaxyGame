@@ -2,7 +2,7 @@ class StarsController < ApplicationController
   before_action :set_star, only: [:show, :update, :destroy]
 
   def index
-    @stars = Star.all
+    @stars = CelestialBodies::Star.all
     render json: @stars
   end
 
@@ -11,7 +11,7 @@ class StarsController < ApplicationController
   end
 
   def create
-    @star = Star.new(star_params)
+    @star = CelestialBodies::Star.new(star_params)
     if @star.save
       render json: @star, status: :created
     else
@@ -34,11 +34,11 @@ class StarsController < ApplicationController
   private
 
   def set_star
-    @star = Star.find(params[:id])
+    @star = CelestialBodies::Star.find(params[:id])
   end
 
   def star_params
-    params.require(:star).permit(:name, :type_of_star, :age, :mass, :radius, :temperature, :luminosity, :life, :r_ecosphere)
+    params.require(:star).permit(:name, :identifier, :type_of_star, :age, :mass, :radius, :temperature, :luminosity, :life, :r_ecosphere, properties: {})
   end
 end
 
