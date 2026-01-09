@@ -187,4 +187,67 @@ RSpec.describe MaterialPropertiesConcern do
       expect(instance.send(:default_state)).to eq('solid')
     end
   end
+
+  describe "exotic state handling" do
+    let(:test_class) do
+      Class.new(ApplicationRecord) do
+        include MaterialPropertiesConcern
+        
+        def self.table_name
+          'geological_materials'
+        end
+        
+        attr_accessor :state, :name
+      end
+    end
+    
+    it "identifies exotic states" do
+      material = test_class.new(state: 'solid')
+      expect(material.exotic_state?).to be false
+      
+      material.state = 'metallic_hydrogen'
+      expect(material.exotic_state?).to be true
+      
+      material.state = 'plasma'
+      expect(material.exotic_state?).to be true
+      
+      material.state = 'superfluid'
+      expect(material.exotic_state?).to be true
+    end
+    
+    it "calculates phase transitions for exotic conditions" do
+      # Regular phase transition
+      material = test_class.new(name: 'Iron')
+      allow(material).to receive(:properties).and_return({
+        'properties' => {
+          'melting_point' => 1811,
+          'boiling_point' => 3134
+        }
+      })
+      
+      expect(material.state_at(2000)).to eq('liquid')
+      
+      # Hydrogen at extreme pressure
+      hydrogen = test_class.new(name: 'Hydrogen')
+      allow(hydrogen).to receive(:properties).and_return({
+        'properties' => {
+          'melting_point' => 14.01,
+          'boiling_point' => 20.28
+        }
+      })
+      
+      expect(hydrogen.state_at(300, 1_500_000)).to eq('metallic_hydrogen')
+      
+      # Material at extreme temperature
+      oxygen = test_class.new(name: 'Oxygen')
+      allow(oxygen).to receive(:properties).and_return({
+        'properties' => {
+          'melting_point' => 54.36,
+          'boiling_point' => 90.19
+        }
+      })
+      
+      expect(oxygen.state_at(12000)).to eq('plasma')
+    end
+  end
 end
