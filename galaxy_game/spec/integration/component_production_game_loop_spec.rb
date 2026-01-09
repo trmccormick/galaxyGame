@@ -42,13 +42,7 @@ RSpec.describe 'Component Production Game Loop Integration', type: :integration 
   let(:game) { Game.new(game_state: game_state) }
 
   before do
-    # Add depleted_regolith to inventory
-    settlement.inventory.add_item('depleted_regolith', 300, player)
-    settlement.reload
-    settlement.inventory.reload
-    settlement.inventory.items.reload
-    
-    # Stub item lookups
+    # Stub item lookups FIRST
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
       .with('depleted_regolith')
@@ -78,6 +72,12 @@ RSpec.describe 'Component Production Game Loop Integration', type: :integration 
         'physical_properties' => { 'mass_kg' => 0.1, 'volume_m3' => 0.001 }
       })
 
+    # Add depleted_regolith to inventory AFTER stubbing
+    item = settlement.inventory.items.create!(name: 'depleted_regolith', amount: 1000, owner: player)
+    settlement.reload
+    settlement.inventory.reload
+    settlement.inventory.items.reload
+
     # ADD THIS - stub for offgas_volatiles waste product
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
@@ -87,6 +87,29 @@ RSpec.describe 'Component Production Game Loop Integration', type: :integration 
         'name' => 'Offgas Volatiles',
         'type' => 'waste_product',
         'physical_properties' => { 'mass_kg' => 2.0, 'volume_m3' => 0.0 }
+      })
+    
+    # Stub blueprint lookup
+    allow_any_instance_of(Lookup::BlueprintLookupService)
+      .to receive(:find_blueprint)
+      .with('3d_printed_ibeam_mk1')
+      .and_return({
+        'id' => '3d_printed_ibeam_mk1',
+        'name' => '3D-Printed I-Beam Mk1',
+        'category' => 'structural',
+        'production_time_hours' => 2.0,
+        'blueprint_data' => {
+          'material_requirements' => [
+            {
+              'material' => 'depleted_regolith',
+              'quantity' => 10
+            }
+          ],
+          'construction_time_hours' => 2.0,
+          'waste_generated' => {
+            'manufacturing_dust' => 1
+          }
+        }
       })
   end
 
