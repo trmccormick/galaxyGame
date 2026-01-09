@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AIManager::OperationalManager do
-  let(:settlement) { double('Settlement', id: 1) }
+  let(:settlement) { double('Settlement', id: 1, celestial_body: double('CelestialBody', data: {})) }
   let(:operational_manager) { described_class.new(settlement) }
 
   describe '#initialize' do
@@ -186,6 +186,55 @@ RSpec.describe AIManager::OperationalManager do
 
       expect(operational_manager.last_decision[:decision][:action]).to eq(:maintain)
       expect(operational_manager.instance_variable_get(:@decision_log)).to_not be_empty
+    end
+  end
+
+  describe '#determine_dc_type' do
+    let(:world_analysis) { { world_name: world_name, world_type: :terrestrial_planet } }
+    let(:world_name) { nil }
+
+    context 'with Ceres' do
+      let(:world_name) { 'Ceres' }
+
+      it 'forms Ceres Development Corporation aligned with Mars' do
+        result = operational_manager.send(:determine_dc_type, world_analysis)
+        expect(result[:dc_type]).to eq(:ceres_development_corporation)
+        expect(result[:alignment]).to eq(:mars_development_corporation)
+        expect(result[:region]).to eq(:asteroid_belt)
+      end
+    end
+
+    context 'with Mars' do
+      let(:world_name) { 'Mars' }
+
+      it 'forms independent Mars Development Corporation' do
+        result = operational_manager.send(:determine_dc_type, world_analysis)
+        expect(result[:dc_type]).to eq(:mars_development_corporation)
+        expect(result[:alignment]).to eq(:independent)
+        expect(result[:region]).to eq(:inner_solar)
+      end
+    end
+
+    context 'with Titan' do
+      let(:world_name) { 'Titan' }
+
+      it 'forms Titan Development Corporation aligned with Saturn' do
+        result = operational_manager.send(:determine_dc_type, world_analysis)
+        expect(result[:dc_type]).to eq(:titan_development_corporation)
+        expect(result[:alignment]).to eq(:saturn_development_corporation)
+        expect(result[:region]).to eq(:saturn_system)
+      end
+    end
+
+    context 'with unknown world' do
+      let(:world_name) { 'Unknown' }
+
+      it 'falls back to world type classification' do
+        result = operational_manager.send(:determine_dc_type, world_analysis)
+        expect(result[:dc_type]).to eq(:mars_development_corporation)
+        expect(result[:alignment]).to eq(:regional_coordination)
+        expect(result[:region]).to eq(:inner_solar)
+      end
     end
   end
 end
