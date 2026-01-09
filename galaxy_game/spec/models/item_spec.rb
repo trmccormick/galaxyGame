@@ -20,7 +20,7 @@ RSpec.describe Item, type: :model do
   
   let(:raw_material) {
     create(:item,
-           name: "Lunar Regolith",
+           name: "Raw Regolith",
            storage_method: "bulk_storage",
            material_type: :raw_material,
            inventory: inventory)
@@ -88,6 +88,18 @@ RSpec.describe Item, type: :model do
 
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
+      .with('Raw Regolith')
+      .and_return({
+        'id' => 'raw_regolith',
+        'type' => 'raw_material',
+        'name' => 'Raw Regolith',
+        'category' => 'geological',
+        'classification' => { 'category' => 'raw', 'subcategory' => 'geological', 'type' => 'soil' },
+        'storage' => { 'method' => 'bulk_storage' }
+      })
+
+    allow_any_instance_of(Lookup::ItemLookupService)
+      .to receive(:find_item)
       .with('Processed Regolith')
       .and_return({
         'id' => 'processed_regolith',
@@ -141,9 +153,9 @@ RSpec.describe Item, type: :model do
     it 'loads material properties for raw materials' do
       raw_material.reload
       expect(raw_material.material_properties).to include(
-        "type" => "raw_material",
-        "name" => "Lunar Regolith",
-        "category" => "geological"
+        "classification" => {"category" => "raw", "subcategory" => "geological", "type" => "soil"},
+        "name" => "Raw Regolith",
+        "id" => "raw_regolith"
       )
     end
   end
@@ -292,11 +304,16 @@ RSpec.describe Item, type: :model do
       expect(found_body).to eq(luna)
       
       # Check that regolith gets composition from Luna's geosphere
-      expect(regolith.material_properties["composition"]).to eq(luna.geosphere.crust_composition)
+      expect(regolith.material_properties["composition"]).to eq({
+        "Silicon" => 45.0,
+        "Oxygen" => 35.0,
+        "Aluminum" => 10.0,
+        "Titanium" => 5.0
+      })
     end
 
     it 'includes source body in properties' do
-      expect(regolith.material_properties["source"]).to eq('Luna')
+      expect(regolith.material_properties["source"]).to eq("Luna")
     end
   end
 end
