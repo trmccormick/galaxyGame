@@ -74,5 +74,19 @@ RSpec.describe Financial::Transaction, type: :model do
       transaction = Financial::Transaction.new(valid_attributes.merge(transaction_type: 'transfer'))
       expect(transaction).to be_valid
     end
+
+    it 'allows tax_collection transactions' do
+      transaction = Financial::Transaction.new(valid_attributes.merge(transaction_type: 'tax_collection'))
+      expect(transaction).to be_valid
+    end
   end
+
+  describe 'currency precision' do
+    it 'supports high precision for GCC (8 decimal places)' do
+      # This will fail if your DB is still scale: 2
+      gcc_amount = 0.12345678
+      transaction = Financial::Transaction.create!(valid_attributes.merge(amount: gcc_amount))
+      expect(transaction.reload.amount).to eq(gcc_amount)
+    end
+  end  
 end
