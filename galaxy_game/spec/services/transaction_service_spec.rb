@@ -3,15 +3,18 @@ require 'rails_helper'
 
 RSpec.describe TransactionService, type: :service do
   describe '.process_transaction' do
+    let(:currency) { create(:currency) }
     let(:buyer) { create(:player) }
     let(:seller) { create(:player) }
     let(:amount) { 1000 }
-    let(:currency) { create(:currency) }
 
     context 'when the buyer has sufficient funds' do
       before do
-        buyer.account.update!(balance: 5000)
-        seller.account.update!(balance: 0)
+        # Ensure buyer and seller accounts exist and are associated with the correct currency
+        buyer_account = buyer.account || create(:financial_account, accountable: buyer, currency: currency)
+        seller_account = seller.account || create(:financial_account, accountable: seller, currency: currency)
+        buyer_account.update!(balance: 5000, currency: currency)
+        seller_account.update!(balance: 0, currency: currency)
       end
 
       it 'processes the transaction successfully' do
@@ -36,8 +39,10 @@ RSpec.describe TransactionService, type: :service do
 
     context 'when the buyer has insufficient funds' do
       before do
-        buyer.account.update!(balance: 500)
-        seller.account.update!(balance: 0)
+        buyer_account = buyer.account || create(:financial_account, accountable: buyer, currency: currency)
+        seller_account = seller.account || create(:financial_account, accountable: seller, currency: currency)
+        buyer_account.update!(balance: 500, currency: currency)
+        seller_account.update!(balance: 0, currency: currency)
       end
 
       it 'raises an error and does not process the transaction' do
