@@ -22,7 +22,7 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
     it { is_expected.to validate_numericality_of(:total_mantle_mass).allow_nil }
     it { is_expected.to validate_numericality_of(:total_core_mass).allow_nil }
     it { is_expected.to validate_numericality_of(:geological_activity).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100).allow_nil }
-    it { is_expected.to validate_inclusion_of(:tectonic_activity).in_array([true, false]) }
+    # Removed boolean inclusion validation per shoulda-matchers warning
   end
 
   describe 'associations' do
@@ -92,7 +92,7 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
 
     it 'does not add material if the mass is non-positive' do
       initial_count = geosphere.materials.count
-      geosphere.add_material('Iron', -1000)
+      geosphere.add_material('Fe', -1000)
 
       # Expect no new materials
       expect(geosphere.materials.count).to eq(initial_count)
@@ -101,28 +101,28 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
     it 'adds material to the specified layer' do
       # Initialize the geosphere with some compositions first to avoid nil errors
       geosphere.update!(
-        crust_composition: {'Silicon' => 100.0},
+        crust_composition: {'Si' => 100.0},
         total_crust_mass: 1.0e19
       )
       
       # Initial silicon in crust
-      initial_si_pct = geosphere.reload.crust_composition['Silicon']
+      initial_si_pct = geosphere.reload.crust_composition['Si']
       initial_crust_mass = geosphere.total_crust_mass
       
       # Add silicon
       silicon_to_add = 1.0e19
-      result = geosphere.add_material('Silicon', silicon_to_add)
+      result = geosphere.add_material('Si', silicon_to_add)
       
       # Check results
       expect(result).to be true
       expect(geosphere.total_crust_mass).to eq(initial_crust_mass + silicon_to_add)
       
-      # Silicon percentage should not be nil
-      expect(geosphere.crust_composition['Silicon']).to be_present
+      # Si percentage should not be nil
+      expect(geosphere.crust_composition['Si']).to be_present
     end
     
     it 'rejects invalid layers' do
-      expect { geosphere.add_material('Iron', 1000, :invalid_layer) }.to raise_error(ArgumentError)
+      expect { geosphere.add_material('Fe', 1000, :invalid_layer) }.to raise_error(ArgumentError)
     end
   end
 
@@ -130,10 +130,10 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
     it 'removes material from the specified layer' do
       # Make sure core has iron first
       iron_amount = 1.0e20
-      geosphere.update!(core_composition: {'Iron' => 100.0}, total_core_mass: iron_amount)
+      geosphere.update!(core_composition: {'Fe' => 100.0}, total_core_mass: iron_amount)
       
       # Initial iron in core (now guaranteed to exist)
-      initial_fe_pct = geosphere.core_composition['Iron']
+      initial_fe_pct = geosphere.core_composition['Fe']
       initial_core_mass = geosphere.total_core_mass
       
       # Calculate how much iron that represents
@@ -141,14 +141,14 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
       
       # Remove 10% of the iron
       iron_to_remove = iron_mass * 0.1
-      result = geosphere.remove_material('Iron', iron_to_remove, :core)
+      result = geosphere.remove_material('Fe', iron_to_remove, :core)
       
       # Check results
       expect(result).to be_within(0.1).of(iron_to_remove)
       expect(geosphere.total_core_mass).to be_within(0.1).of(initial_core_mass - iron_to_remove)
       
       # Percentage of iron should remain about the same (other materials were reduced proportionally)
-      expect(geosphere.core_composition['Iron']).to be_within(0.1).of(initial_fe_pct)
+      expect(geosphere.core_composition['Fe']).to be_within(0.1).of(initial_fe_pct)
     end
   end
 
@@ -178,14 +178,14 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
       
       # Now add material to empty crust - USE EXACT VALUE
       amount_to_add = 1000.0
-      geosphere.add_material('Iron', amount_to_add, :crust)
+      geosphere.add_material('Fe', amount_to_add, :crust)
       
-      material = geosphere.materials.find_by(name: 'Iron')
+      material = geosphere.materials.find_by(name: 'Fe')
       expect(material).to be_present
       expect(material.amount).to be_within(0.1).of(amount_to_add)
       expect(material.state).to eq('solid')
       
-      expect(geosphere.crust_composition['Iron']).to be_present
+      expect(geosphere.crust_composition['Fe']).to be_present
       expect(geosphere.total_crust_mass).to be_within(0.1).of(amount_to_add)
     end
 
@@ -194,15 +194,15 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
       geosphere.update!(total_crust_mass: 0, crust_composition: {})
       
       # Now add iron to empty crust
-      geosphere.add_material('Iron', 1000, :crust)
-      expect(geosphere.crust_composition['Iron']).to be_within(0.001).of(100)
+      geosphere.add_material('Fe', 1000, :crust)
+      expect(geosphere.crust_composition['Fe']).to be_within(0.001).of(100)
 
-      allow(material_lookup).to receive(:find_material).with('Silicon')
+      allow(material_lookup).to receive(:find_material).with('Si')
         .and_return('properties' => {'state_at_room_temp' => 'solid'})
       
-      geosphere.add_material('Silicon', 1000, :crust)
-      expect(geosphere.crust_composition['Iron']).to be_within(0.001).of(50)
-      expect(geosphere.crust_composition['Silicon']).to be_within(0.001).of(50)
+      geosphere.add_material('Si', 1000, :crust)
+      expect(geosphere.crust_composition['Fe']).to be_within(0.001).of(50)
+      expect(geosphere.crust_composition['Si']).to be_within(0.001).of(50)
     end
 
     it 'prevents adding gas materials' do
@@ -226,7 +226,7 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
     it 'resets geosphere to base values' do
       # Change some values - use string keys not symbols
       geosphere.update!(
-        crust_composition: { 'Silicon' => 40.0, 'Oxygen' => 35.0, 'Aluminum' => 10.0 },
+        crust_composition: { 'Si' => 40.0, 'O' => 35.0, 'Al' => 10.0 },
         total_crust_mass: 9.0e19,
         geological_activity: 30,
         tectonic_activity: false
@@ -234,18 +234,22 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
       
       # Store these values in base_values to ensure the test works
       geosphere.update_column(:base_values, {
-        'crust_composition' => { 'Silicon' => 45.0, 'Oxygen' => 30.0, 'Aluminum' => 15.0 },
-        'total_crust_mass' => 1.0e20,
-        'geological_activity' => 60,
-        'tectonic_activity' => true
+        'base_crust_composition' => { 'Si' => 45.0, 'O' => 30.0, 'Al' => 15.0 },
+        'base_mantle_composition' => { 'Si' => 45.0, 'O' => 30.0, 'Al' => 15.0 },
+        'base_core_composition' => { 'Fe' => 80.0, 'Ni' => 10.0, 'Si' => 5.0 },
+        'base_total_crust_mass' => 1.0e20,
+        'base_total_mantle_mass' => 2.0e20,
+        'base_total_core_mass' => 3.0e20,
+        'base_geological_activity' => 60,
+        'base_tectonic_activity' => true
       })
       
       # Reset
       expect(geosphere.reset).to be true
       
       # Check values were restored
-      expect(geosphere.crust_composition['Silicon']).to eq(45.0)
-      expect(geosphere.crust_composition['Oxygen']).to eq(30.0)
+      expect(geosphere.crust_composition['Si']).to eq(45.0)
+      expect(geosphere.crust_composition['O']).to eq(30.0)
       expect(geosphere.total_crust_mass).to eq(1.0e20)
       expect(geosphere.geological_activity).to eq(60)
       expect(geosphere.tectonic_activity).to be true
@@ -282,20 +286,27 @@ RSpec.describe CelestialBodies::Spheres::Geosphere, type: :model do
     it 'resets both compositions and material records' do
       # Store current values
       geosphere.update_column(:base_values, {
-        'crust_composition' => { 'Silicon' => 45.0, 'Oxygen' => 30.0 }
+        'base_crust_composition' => { 'Si' => 45.0, 'O' => 30.0 },
+        'base_mantle_composition' => { 'Si' => 45.0, 'O' => 30.0 },
+        'base_core_composition' => { 'Fe' => 80.0, 'Ni' => 10.0 },
+        'base_total_crust_mass' => 1.0e20,
+        'base_total_mantle_mass' => 2.0e20,
+        'base_total_core_mass' => 3.0e20,
+        'base_geological_activity' => 60,
+        'base_tectonic_activity' => true
       })
       
       # Change composition 
       geosphere.update!(
-        crust_composition: { 'Silicon' => 30.0, 'Oxygen' => 45.0 }
+        crust_composition: { 'Si' => 30.0, 'O' => 45.0 }
       )
       
       # Reset
       geosphere.reset
       
       # Check composition restored
-      expect(geosphere.crust_composition['Silicon']).to eq(45.0)
-      expect(geosphere.crust_composition['Oxygen']).to eq(30.0)
+      expect(geosphere.crust_composition['Si']).to eq(45.0)
+      expect(geosphere.crust_composition['O']).to eq(30.0)
     end
   end
 
