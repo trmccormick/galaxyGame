@@ -18,13 +18,14 @@ RSpec.describe Financial::TaxCollectionService, type: :service do
     # Spy on the TransactionManager to ensure the transfer is requested correctly
     before do
       # We mock the manager to ensure we only test the tax service's logic, not the manager's persistence.
-      allow(Financial::TransactionManager).to receive(:create_transfer).and_return(double('Transaction', persisted?: true))
+      allow(Financial::TransactionManager).to receive(:create_transfer).and_return(double('Transaction', persisted?: true, id: 'mock-txn-1'))
     end
     
     context 'when tax is applicable' do
       it 'calculates the correct tax amount' do
-        tax_collected = Financial::TaxCollectionService.collect_sales_tax(corporation, sale_price, currency)
-        expect(tax_collected).to eq(expected_tax_amount)
+        tax_result = Financial::TaxCollectionService.collect_sales_tax(corporation, sale_price, currency)
+        expect(tax_result[:tax_paid]).to eq(expected_tax_amount)
+        expect(tax_result[:success]).to be true
       end
 
       it 'calls the TransactionManager to move the tax funds' do
@@ -48,9 +49,10 @@ RSpec.describe Financial::TaxCollectionService, type: :service do
       
       it 'returns 0.0 and does not call the TransactionManager' do
         # TaxAuthority's `tax_rate` is 0.0
-        tax_collected = Financial::TaxCollectionService.collect_sales_tax(authority, sale_price, currency)
+        tax_result = Financial::TaxCollectionService.collect_sales_tax(authority, sale_price, currency)
         
-        expect(tax_collected).to eq(0.0)
+        expect(tax_result[:tax_paid]).to eq(0.0)
+        expect(tax_result[:success]).to be true
         expect(Financial::TransactionManager).not_to have_received(:create_transfer)
       end
     end
@@ -59,9 +61,10 @@ RSpec.describe Financial::TaxCollectionService, type: :service do
       let(:missing_rate_entity) { create(:player) } # Assuming Player doesn't define a tax_rate method
       
       it 'returns 0.0 and does not call the TransactionManager' do
-        tax_collected = Financial::TaxCollectionService.collect_sales_tax(missing_rate_entity, sale_price, currency)
+        tax_result = Financial::TaxCollectionService.collect_sales_tax(missing_rate_entity, sale_price, currency)
         
-        expect(tax_collected).to eq(0.0)
+        expect(tax_result[:tax_paid]).to eq(0.0)
+        expect(tax_result[:success]).to be true
         expect(Financial::TransactionManager).not_to have_received(:create_transfer)
       end
     end
