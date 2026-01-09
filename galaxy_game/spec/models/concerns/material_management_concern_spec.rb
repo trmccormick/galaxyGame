@@ -101,7 +101,7 @@ RSpec.describe MaterialManagementConcern, type: :concern do
       end
 
       it 'updates atmosphere composition' do
-        expect(test_object).to receive(:update_atmosphere_for_gas).with('O2', 100)
+        expect(test_object).to receive(:update_atmosphere_for_gas).with('oxygen', 100)
         
         test_object.add_material('oxygen', 100)
       end
@@ -185,9 +185,9 @@ RSpec.describe MaterialManagementConcern, type: :concern do
         test_object.atmosphere = mock_atmosphere
       end
 
-      # ✅ Fix 2: Iron has chemical_formula "Fe" in the fixture
+      # ✅ Fix 2: Use material_id for atmosphere
       it 'updates atmosphere composition' do
-        expect(test_object).to receive(:update_atmosphere_for_gas).with("Fe", -100)  # ✅ Changed from nil to "Fe"
+        expect(test_object).to receive(:update_atmosphere_for_gas).with("iron", -100)
         
         test_object.remove_material('iron', 100)
       end
