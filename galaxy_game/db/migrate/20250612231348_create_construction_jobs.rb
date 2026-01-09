@@ -21,6 +21,7 @@ class CreateConstructionJobs < ActiveRecord::Migration[7.0]
       t.string :priority, default: 'normal'
 
       t.integer :completion_percentage, default: 0
+      t.references :blueprint, foreign_key: true
 
       t.timestamps
     end
