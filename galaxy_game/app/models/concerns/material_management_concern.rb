@@ -99,7 +99,7 @@ module MaterialManagementConcern
     # Only update atmosphere for gases, and only in a controlled way
     if has_gas_properties?(material_id)
       # For atmosphere, use chemical formula
-      chemical_formula = material_data['chemical_formula']
+      chemical_formula = material_data['chemical_formula'] || material_id
       update_atmosphere_for_gas(chemical_formula, -amount)
     end
     
