@@ -55,6 +55,10 @@ RSpec.describe Structures::Shell, type: :concern do
           operational_data&.dig('shell', 'sealed') || false
         end
         
+        def on_shell_operational
+          # Hook method for when shell becomes operational
+        end
+        
         after_initialize :init_operational_data
         
         private
@@ -97,8 +101,8 @@ RSpec.describe Structures::Shell, type: :concern do
   before do
     allow(shell_structure).to receive(:load_panel_blueprint).and_return(blueprint_data)
     allow(Blueprint).to receive(:find_by).and_return(blueprint)
-    allow(MaterialRequestService).to receive(:create_material_requests_from_hash).and_return([])
-    allow(EquipmentRequestService).to receive(:create_equipment_requests).and_return([])
+    allow(Manufacturing::MaterialRequest).to receive(:create_material_requests_from_hash).and_return([])
+    allow(Manufacturing::EquipmentRequest).to receive(:create_equipment_requests).and_return([])
   end
   
   describe 'concern inclusion' do
@@ -313,7 +317,7 @@ RSpec.describe Structures::Shell, type: :concern do
     
     it 'creates material and equipment requests' do
       expect(MaterialRequestService).to receive(:create_material_requests_from_hash)
-      expect(EquipmentRequestService).to receive(:create_equipment_requests)
+      expect(Manufacturing::EquipmentRequest).to receive(:create_equipment_requests)
       
       shell_structure.schedule_shell_construction!(settlement: settlement)
     end
@@ -380,12 +384,12 @@ RSpec.describe Structures::Shell, type: :concern do
       expect(shell_structure.reload.shell_status).to eq('sealed')
     end
     
-    it 'advances from sealed to operational' do
+    it 'advances from sealed to pressurized' do
       shell_structure.update(shell_status: 'sealed')
       
       shell_structure.advance_shell_construction!
       
-      expect(shell_structure.reload.shell_status).to eq('operational')
+      expect(shell_structure.reload.shell_status).to eq('pressurized')
     end
     
     it 'calls on_shell_operational hook when operational' do
@@ -522,24 +526,24 @@ RSpec.describe Structures::Shell, type: :concern do
     it 'includes base construction equipment' do
       equipment = shell_structure.calculate_equipment_needs('structural_cover_panel')
       
-      names = equipment.map { |e| e[:name] }
-      expect(names).to include('space_construction_drone')
-      expect(names).to include('welding_equipment')
-      expect(names).to include('structural_assembly_system')
+      types = equipment.map { |e| e[:equipment_type] }
+      expect(types).to include('space_construction_drone')
+      expect(types).to include('welding_equipment')
+      expect(types).to include('structural_assembly_system')
     end
     
     it 'includes panel-specific tools from blueprint' do
       equipment = shell_structure.calculate_equipment_needs('structural_cover_panel')
       
-      names = equipment.map { |e| e[:name] }
-      expect(names).to include('heavy_duty_fastening_system')
-      expect(names).to include('structural_load_tester')
+      types = equipment.map { |e| e[:equipment_type] }
+      expect(types).to include('heavy_duty_fastening_system')
+      expect(types).to include('structural_load_tester')
     end
     
     it 'includes crew requirements' do
       equipment = shell_structure.calculate_equipment_needs('structural_cover_panel')
       
-      crew = equipment.find { |e| e[:name] == 'construction_crew' }
+      crew = equipment.find { |e| e[:equipment_type] == 'construction_crew' }
       expect(crew).to be_present
       expect(crew[:quantity]).to eq(3)
     end
