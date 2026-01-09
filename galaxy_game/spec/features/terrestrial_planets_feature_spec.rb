@@ -17,7 +17,7 @@ RSpec.feature "TerrestrialPlanets", type: :feature do
       composition: { "Nitrogen" => 78.08, "Oxygen" => 20.95 }
     )
 
-    visit terrestrial_planet_path(planet)
+    visit celestial_body_path(planet)
 
     expect(page).to have_content("Nitrogen: 7808000.0")
     expect(page).to have_content("Oxygen: 2095000.0")
