@@ -3,7 +3,7 @@ class TerrestrialPlanetsController < ApplicationController
   
     # GET /terrestrial_planets
     def index
-      @terrestrial_planets = TerrestrialPlanet.all
+      @terrestrial_planets = CelestialBodies::Planets::Rocky::TerrestrialPlanet.all
       render json: @terrestrial_planets
     end
   
@@ -14,9 +14,9 @@ class TerrestrialPlanetsController < ApplicationController
   
     # POST /terrestrial_planets
     def create
-        @terrestrial_planet = TerrestrialPlanet.new(planet_params)
+        @terrestrial_planet = CelestialBodies::Planets::Rocky::TerrestrialPlanet.new(terrestrial_planet_params)
         if @terrestrial_planet.save
-          TerraSim.new.calc_current  # or pass @terrestrial_planet to TerraSim if needed
+          TerraSim::Simulator.new(@terrestrial_planet).calc_current  # or pass @terrestrial_planet to TerraSim if needed
           render json: @terrestrial_planet, status: :created
         else
           render json: @terrestrial_planet.errors, status: :unprocessable_entity
@@ -34,7 +34,7 @@ class TerrestrialPlanetsController < ApplicationController
   
     # DELETE /terrestrial_planets/1
     def destroy
-        @terrestrial_planet = TerrestrialPlanet.find(params[:id])
+        @terrestrial_planet = CelestialBodies::Planets::Rocky::TerrestrialPlanet.find(params[:id])
         @terrestrial_planet.destroy
         head :no_content
     end
@@ -43,15 +43,16 @@ class TerrestrialPlanetsController < ApplicationController
   
     # Use callbacks to share common setup or constraints between actions.
     def set_terrestrial_planet
-      @terrestrial_planet = TerrestrialPlanet.find(params[:id])
+      @terrestrial_planet = CelestialBodies::Planets::Rocky::TerrestrialPlanet.find(params[:id])
     end
   
     # Only allow a list of trusted parameters through.
     def terrestrial_planet_params
     params.require(:terrestrial_planet).permit(
-        :name, :size, :gravity, :density, :orbital_period, :mass, 
+        :identifier, :name, :size, :gravity, :density, :orbital_period, :mass, 
         :surface_temperature, :atmosphere_composition, :geological_activity, 
-        :biomes, :status, :atmospheric_pressure
+        :biomes, :status, :atmospheric_pressure, properties: {},
+        star_distances_attributes: [:id, :star_id, :distance, :_destroy]
     )
     end
   end
