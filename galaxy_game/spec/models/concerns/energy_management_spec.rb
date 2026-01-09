@@ -181,4 +181,76 @@ RSpec.describe EnergyManagement, type: :concern do
     
   #   # ...remaining settlement test code...
   # end
+  
+  describe "solar output factor" do
+    let(:player) { create(:player) }
+    let(:celestial_body) { create(:celestial_body, name: 'Luna') }
+    let(:location) { create(:celestial_location, celestial_body: celestial_body) }
+    let(:settlement) { create(:base_settlement, location: location, owner: player) }
+    
+    before do
+      ensure_complete_energy_data(settlement)
+    end
+    
+    describe "#current_solar_output_factor" do
+      it "queries location solar output factor" do
+        allow(location).to receive(:solar_output_factor).and_return(0.8)
+        expect(settlement.current_solar_output_factor).to eq(0.8)
+      end
+      
+      it "returns 1.0 when no settlement" do
+        allow(settlement).to receive(:location).and_return(nil)
+        expect(settlement.current_solar_output_factor).to eq(1.0)
+      end
+    end
+    
+    describe "#solar_daylight?" do
+      it "returns true when solar factor > 0.1" do
+        allow(location).to receive(:solar_output_factor).and_return(0.5)
+        expect(settlement.solar_daylight?).to be true
+      end
+      
+      it "returns false when solar factor <= 0.1" do
+        allow(location).to receive(:solar_output_factor).and_return(0.05)
+        expect(settlement.solar_daylight?).to be false
+      end
+    end
+    
+    describe "power generation with solar scaling" do
+      let(:mock_solar_unit) do
+        double('Unit',
+          operational_data: {
+            'subcategory' => 'solar_panel',
+            'operational_properties' => { 'power_generation_kw' => 10.0 }
+          }
+        )
+      end
+      
+      let(:mock_nuclear_unit) do
+        double('Unit',
+          operational_data: {
+            'subcategory' => 'nuclear_generator',
+            'operational_properties' => { 'power_generation_kw' => 10.0 }
+          }
+        )
+      end
+      
+      before do
+        # Clear the resource_management generated data so it uses base_units calculation
+        settlement.operational_data['resource_management'].delete('generated')
+      end
+      
+      it "scales solar unit output by solar factor" do
+        allow(settlement).to receive(:base_units).and_return([mock_solar_unit])
+        allow(location).to receive(:solar_output_factor).and_return(0.5)
+        expect(settlement.power_generation).to eq(5.0) # 10.0 * 0.5
+      end
+      
+      it "does not scale non-solar units" do
+        allow(settlement).to receive(:base_units).and_return([mock_nuclear_unit])
+        allow(location).to receive(:solar_output_factor).and_return(0.5)
+        expect(settlement.power_generation).to eq(10.0) # No scaling
+      end
+    end
+  end
 end
