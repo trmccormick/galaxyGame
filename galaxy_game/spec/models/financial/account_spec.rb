@@ -133,4 +133,45 @@ RSpec.describe Financial::Account, type: :model do
       expect(acc.accountable).to be_a(Organizations::BaseOrganization)
     end
   end
+
+  describe 'Development Corporation (DC) Trade' do
+    let(:dc_builder) {
+      create(:organization,
+        organization_type: :development_corporation,
+        operational_data: { 'is_npc' => true }
+      )
+    }
+    let(:dc_supplier) {
+      create(:organization,
+        organization_type: :development_corporation,
+        operational_data: { 'is_npc' => true }
+      )
+    }
+
+    let(:consortium_org) {
+      create(:organization,
+        organization_type: :consortium,
+        operational_data: { 'is_npc' => false, 'governance' => { 'voting_model' => 'weighted_by_investment' } }
+      )
+    }
+
+    it 'allows creation of consortium organization' do
+      acc = get_account(consortium_org, @gcc, 100)
+      expect(acc.accountable.organization_type).to eq('consortium')
+      expect(acc.accountable.operational_data['governance']['voting_model']).to eq('weighted_by_investment')
+    end
+    
+    it 'allows DC-to-DC trade on the virtual ledger via operational_data flags' do
+      builder_acc = get_account(dc_builder, @gcc, 0)
+      supplier_acc = get_account(dc_supplier, @gcc, 0)
+
+      # This will now pass because is_npc? returns true based on the data field
+      expect { 
+        builder_acc.transfer_funds(5000, supplier_acc, "Modular Habitation Units") 
+      }.not_to raise_error
+
+      expect(builder_acc.reload.balance).to eq(-5000)
+      expect(supplier_acc.reload.balance).to eq(5000)
+    end
+  end
 end
