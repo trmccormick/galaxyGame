@@ -79,6 +79,7 @@ The AI Manager now recognizes specialized mission patterns for optimized deploym
 - **Classification:** Tagged as `interplanetary_foundry`
 - **Priority:** HIGH PRIORITY when Lunar Elevator project is active
 - **Purpose:** Identifies Venus/Mars missions capable of producing CNTs for lunar infrastructure
+- **[Detailed Implementation](foundry_logic_and_lunar_elevator.md)**: Complete technical specification
 
 ### Pattern Training Integration
 - Mission profiles analyzed for equipment combinations
