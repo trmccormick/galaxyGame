@@ -8,7 +8,7 @@ class WormholeConsortiumFormationService
     }
     total_investment = founding_investment.values.sum
     founding_investment.each do |identifier, amount|
-      member = Organizations::Corporation.find_by(identifier: identifier)
+      member = Organizations::BaseOrganization.where(organization_type: :corporation).find_by(identifier: identifier)
       ownership_pct = (amount.to_f / total_investment * 100).round(2)
       voting_power = (ownership_pct * 100).to_i
       ConsortiumMembership.create!(
@@ -36,19 +36,19 @@ class WormholeConsortiumFormationService
         'founding_members' => founding_investment.keys
       )
     )
-    GameEvent.create!(
-      event_type: 'major_infrastructure',
-      title: 'Wormhole Transit Consortium Formed',
-      description: <<~DESC
-        The major logistics corporations have pooled resources to form the 
-        Wormhole Transit Consortium. This multi-corporate entity will manage 
-        artificial wormhole infrastructure across known space.
-        Founding Members:
-        - AstroLift Logistics (40%)
-        - Zenith Orbital (30%)
-        - Vector Hauling (20%)
-        The Consortium is now accepting route petitions and membership applications.
-      DESC
-    )
+    # GameEvent.create!(
+    #   event_type: 'major_infrastructure',
+    #   title: 'Wormhole Transit Consortium Formed',
+    #   description: <<~DESC
+    #     The major logistics corporations have pooled resources to form the
+    #     Wormhole Transit Consortium. This multi-corporate entity will manage
+    #     artificial wormhole infrastructure across known space.
+    #     Founding Members:
+    #     - AstroLift Logistics (40%)
+    #     - Zenith Orbital (30%)
+    #     - Vector Hauling (20%)
+    #     The Consortium is now accepting route petitions and membership applications.
+    #   DESC
+    # )
   end
 end
