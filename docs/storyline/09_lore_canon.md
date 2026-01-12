@@ -48,6 +48,7 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 - **Mars warming incremental and fragile**: Multi-generational gamble, not guaranteed success.
 - **Titan's delicate balance**: Methane/ethane hydrological cycle highly sensitive to atmospheric pressure changes; significant reduction could destabilize surface liquids and alter composition.
 - **Martian lava tubes**: Natural radiation/micrometeorite shielding; sealed tubes initially retain thin, CO2-rich atmosphere; require pressurization and gas introduction for habitability.
+- **Martian settlement evolution**: From lava tube shelters to cities, then suburbs with partially underground homes, domed yards, and attached garages; fusion power enables individual dwellings with self-sufficient life support (MOXIE units, backup oxygen).
 
 ### Design Assumption 🟨
 - **Physics-based constraints**: All changes follow real atmospheric/planetary science principles.
