@@ -6,6 +6,20 @@ RSpec.describe "Guaranteed Market Sale Transaction", type: :transaction_flow do
   GUARANTEED_BID_PRICE = 48.00
   SALE_VOLUME = 100
 
+  before(:all) do
+    # Ensure system currencies exist for all tests
+    Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
+      c.name = 'Galactic Crypto Currency'
+      c.is_system_currency = true
+      c.precision = 8
+    end
+    Financial::Currency.find_or_create_by!(symbol: 'USD') do |c|
+      c.name = 'US Dollar'
+      c.is_system_currency = true
+      c.precision = 2
+    end
+  end
+
   # Test entities
   let!(:player) { create(:player) }
   let!(:luna_settlement) { create(:base_settlement, name: 'Luna Base') }
@@ -60,7 +74,7 @@ RSpec.describe "Guaranteed Market Sale Transaction", type: :transaction_flow do
     allow(luna_settlement).to receive(:npc_buy_capacity).with('LOX').and_return(500)
     
     # Mock financial and inventory services
-    allow(Financial::TaxCollectionService).to receive(:collect_sales_tax).and_return(0.0)
+    allow(Financial::TaxCollectionService).to receive(:collect_sales_tax).and_return({ success: true, tax_paid: 0.0, transaction_id: nil, error: nil })
     allow(Financial::TransactionManager).to receive(:create_transfer).and_return(OpenStruct.new(id: 'mock-net-txn'))
     allow(player).to receive(:has_enough_inventory?).with('LOX', 100).and_return(true)
     allow(player).to receive(:remove_inventory).with('LOX', any_args).and_return(true)
