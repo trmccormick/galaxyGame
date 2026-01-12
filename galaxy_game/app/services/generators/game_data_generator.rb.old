@@ -1,0 +1,269 @@
+# In app/services/game_data_generator.rb or similar
+require 'ollama-ai'
+require 'json'
+require 'fileutils'
+require 'net/http'
+
+class GameDataGenerator
+  def initialize(model = 'llama3')
+    # Always use the container name when running in Docker
+    @host = 'http://ollama:11434'
+    @model = model
+  end
+
+  # Main method to generate a new item based on a template
+  def generate_item(template_path, output_path, params = {})
+    # Load the template
+    template = load_template(template_path)
+    
+    # Generate the content using Ollama
+    json_content = generate_content(template, params)
+    
+    # Save the generated content
+    save_content(json_content, output_path)
+    
+    # Return the generated content
+    JSON.parse(json_content)
+  end
+  
+  # Generate multiple items based on a list of specifications
+  def batch_generate(template_path, specs)
+    results = []
+    
+    specs.each do |spec|
+      output_path = spec.delete(:output_path)
+      result = generate_item(template_path, output_path, spec)
+      results << result
+    end
+    
+    results
+  end
+
+  def generate_structure(structure_type, category, name, description)
+    # Load templates
+    blueprint_template = File.join(TEMPLATES_PATH, 'structure_blueprint.json')
+    operational_template = File.join(TEMPLATES_PATH, 'structure_operational_data.json')
+
+    # Generate blueprint
+    blueprint_params = {
+      name: name,
+      description: description,
+      type: structure_type,
+      category: category
+    }
+    
+    blueprint_output_path = File.join(
+      Rails.root.to_s, 
+      GalaxyGame::Paths::STRUCTURE_BLUEPRINTS_PATH, 
+      category, 
+      "#{structure_type}_bp.json"
+    )
+    
+    # Generate operational data
+    operational_params = {
+      name: name,
+      description: "Operational data for #{name}",
+      type: structure_type,
+      category: category
+    }
+    
+    operational_output_path = File.join(
+      Rails.root.to_s, 
+      GalaxyGame::Paths::STRUCTURES_PATH, 
+      category, 
+      "#{structure_type}.json"
+    )
+    
+    # Generate both files
+    blueprint = generate_item(blueprint_template, blueprint_output_path, blueprint_params)
+    operational_data = generate_item(operational_template, operational_output_path, operational_params)
+    
+    [blueprint, operational_data]
+  end
+
+  private
+  
+  def load_template(template_path)
+    # Read the template file
+    JSON.parse(File.read(template_path))
+  rescue JSON::ParserError => e
+    raise "Invalid JSON in template file: #{e.message}"
+  rescue Errno::ENOENT
+    raise "Template file not found: #{template_path}"
+  end
+  
+  def generate_content(template, params)
+    # Prepare the prompt for Ollama
+    prompt = build_prompt(template, params)
+    
+    # Use direct HTTP request with increased timeout
+    uri = URI.parse("#{@host}/api/generate")
+    http = Net::HTTP.new(uri.host, uri.port)
+    
+    # Set longer timeouts (in seconds)
+    http.open_timeout = 30  # Time to establish connection
+    http.read_timeout = 300 # Time to wait for response (5 minutes)
+    
+    request = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
+    request.body = {
+      model: @model,
+      prompt: prompt,
+      temperature: 0.1,
+      max_tokens: 2048,
+      stream: false
+    }.to_json
+    
+    response = http.request(request)
+    
+    if response.code.to_i != 200
+      raise "Ollama API error: #{response.code} - #{response.body}"
+    end
+    
+    # Extract the generated JSON from the response
+    extract_json(response.body)
+  rescue Net::OpenTimeout => e
+    raise "Ollama connection timeout: Could not connect to Ollama server at #{@host}. Is it running?"
+  rescue Net::ReadTimeout => e
+    raise "Ollama response timeout: The request took too long to complete. Try with a simpler template or increase timeout."
+  rescue => e
+    raise "Ollama API error: #{e.class} - #{e.message}"
+  end
+
+  def generate_content_with_retry(template, params, max_retries = 3)
+    retries = 0
+    begin
+      generate_content(template, params)
+    rescue Net::ReadTimeout => e
+      retries += 1
+      if retries <= max_retries
+        puts "Timeout occurred, retrying (#{retries}/#{max_retries})..."
+        sleep 2
+        retry
+      else
+        raise e
+      end
+    end
+  end
+  
+  def build_prompt(template, params)
+    template_str = JSON.pretty_generate(template)
+    version = template.dig('metadata', 'version') || 'unknown'
+    <<~PROMPT
+      You are a JSON data generator for a space exploration game. Please follow version #{version} of this schema.
+      Ensure compliance with the structure and style in the template below.
+
+      Template:
+      ```json
+      #{template_str}
+      ```
+
+      Parameters to apply:
+      #{params.map { |k, v| "- #{k}: #{v}" }.join("\n")}
+
+      Respond ONLY with a complete JSON object that is valid and conforms to the provided structure.
+    PROMPT
+  end
+  
+  def extract_json(response_text)
+    begin
+      # First, try to parse the full response
+      full_response = JSON.parse(response_text)
+      
+      # If we have a properly formatted response with a "response" field, use that
+      if full_response.is_a?(Hash) && full_response.key?("response")
+        json_string = full_response["response"].to_s
+        
+        # Clean up the response - handle escaped quotes and newlines
+        json_string = json_string.gsub('\\n', "\n").gsub('\\"', '"')
+        
+        # Try to extract just the JSON object if it's embedded in text
+        if json_string.include?('{') && json_string.include?('}')
+          json_start = json_string.index('{')
+          json_end = json_string.rindex('}') + 1
+          json_string = json_string[json_start...json_end]
+        end
+        
+        # Validate and return
+        JSON.parse(json_string)
+        return json_string
+      else
+        # If there's no "response" field but the response itself is valid JSON, return it
+        return response_text
+      end
+    rescue JSON::ParserError => e
+      # If we can't parse the whole response, try to extract just a JSON object
+      if response_text.include?('{') && response_text.include?('}')
+        json_start = response_text.index('{')
+        json_end = response_text.rindex('}') + 1
+        json_string = response_text[json_start...json_end]
+        
+        # Validate and return
+        JSON.parse(json_string)
+        return json_string
+      else
+        raise "Failed to extract valid JSON: #{e.message}"
+      end
+    end
+  rescue JSON::ParserError => e
+    # Try one more aggressive approach - clean up common issues
+    begin
+      # Remove any text before the first { and after the last }
+      if response_text.include?('{') && response_text.include?('}')
+        cleaned = response_text[response_text.index('{')..response_text.rindex('}')]
+        
+        # Fix common JSON errors
+        cleaned = cleaned.gsub(/,\s*}/, '}')  # Remove trailing commas
+        cleaned = cleaned.gsub(/,\s*]/, ']')  # Remove trailing commas in arrays
+        
+        # Validate and return
+        JSON.parse(cleaned)
+        return cleaned
+      else
+        raise e
+      end
+    rescue
+      raise "Failed to extract valid JSON: #{e.message}"
+    end
+  end
+  
+  def save_content(content, output_path)
+    # Create directory if it doesn't exist
+    dir = File.dirname(output_path)
+    FileUtils.mkdir_p(dir) unless File.directory?(dir)
+    
+    # Write the content to the file
+    File.write(output_path, JSON.pretty_generate(JSON.parse(content)))
+  rescue => e
+    raise "Failed to save content: #{e.message}"
+  end
+end
+
+# app/services/game_data_generator.rb
+# require 'ollama-ai'
+
+# class GameDataGenerator
+#   def initialize(ollama_host: ENV.fetch('OLLAMA_HOST', 'http://ollama:11434'))
+#     # Correct client instantiation: call 'new' directly on the Ollama module
+#     @client = Ollama.new(host: ollama_host)
+
+#     @item_template = %Q({
+#       "item_id": "{{item_id}}",
+#       "name": "{{item_name}}",
+#       "description": "{{item_description}}",
+#       "type": "{{item_type}}",
+#       "rarity": "{{item_rarity}}",
+#       "stats": {
+#         "attack": {{item_attack | default: 0}},
+#         "defense": {{item_defense | default: 0}},
+#         "magic_power": {{item_magic_power | default: 0}}
+#       },
+#       "consumable": {{is_consumable | default: false}},
+#       "effects": [
+#         "{{effect_1 | default: ''}}",
+#         "{{effect_2 | default: ''}}"
+#       ]
+#     })
+#   end
+
+#   # ... rest of your generate_item method
+# end

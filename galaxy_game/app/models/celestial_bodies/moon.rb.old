@@ -1,0 +1,13 @@
+module CelestialBodies
+  class Moon < CelestialBody
+    validates :orbital_period, :parent_body, presence: true
+    validates :orbital_period, numericality: { greater_than: 0 }
+    
+    # Specific attributes for moons
+    
+    # Methods specific to moons
+    def update_orbit
+      # Implementation for updating orbit around a planet
+    end
+  end
+end

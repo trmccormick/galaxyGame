@@ -135,10 +135,27 @@ module Units
       true
     end
 
-    def operate(resources)
+    def operate(resources = nil)
+      # If resources is a number (time), skip processing for now
+      # This method is designed for resource processing, not time simulation
+      return true if resources.is_a?(Numeric)
+      
+      # If no resources provided, try to get them from craft inventory
+      resources ||= craft_inventory_resources
+      
       inputs = calculate_inputs(resources)
       outputs = calculate_outputs(inputs)
       handle_outputs(outputs)
+    end
+
+    def craft_inventory_resources
+      return {} unless attachable&.inventory
+      
+      resources = {}
+      attachable.inventory.items.each do |item|
+        resources[item.name] = item.amount
+      end
+      resources
     end
 
     def current_location
@@ -264,6 +281,22 @@ module Units
         remove_from_surface(resource_name, amount)
       else
         remove_from_unit(resource_name, amount)
+      end
+    end
+
+    def can_store_material?(material_type)
+      storage_type = operational_data&.dig('storage', 'type')
+      return false unless storage_type
+
+      case material_type
+      when 'liquid'
+        storage_type == 'liquid'
+      when 'gas'
+        storage_type == 'gas'
+      when 'fuel'
+        storage_type == 'liquid' || storage_type == 'gas'  # Fuels can be liquid or gas
+      else
+        storage_type == 'general'  # General storage can hold solids and other types
       end
     end
 

@@ -1,0 +1,22 @@
+class MineGccJob < ApplicationJob
+  queue_as :default
+
+  def perform(owner_type, owner_id)
+    owner = owner_type.constantize.find_by(id: owner_id)
+
+    if owner.nil?
+      Rails.logger.error("MineGccJob: #{owner_type} with ID #{owner_id} not found.")
+      return
+    end
+
+    # Use the CryptocurrencyMining concern's method
+    gcc_mined = owner.mine_gcc
+    Rails.logger.info("MineGccJob: Successfully mined #{gcc_mined} GCC for #{owner_type} #{owner_id}")
+
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error("MineGccJob: #{e.message}")
+  rescue StandardError => e
+    Rails.logger.error("MineGccJob: An unexpected error occurred: #{e.message}")
+    raise # Re-raise to trigger job retry
+  end
+end

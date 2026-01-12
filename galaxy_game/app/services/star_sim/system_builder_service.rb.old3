@@ -1,0 +1,481 @@
+# app/services/star_sim/system_builder_service.rb
+module StarSim
+  class SystemBuilderService
+    attr_reader :system_data, :name
+    attr_accessor :debug_mode
+
+    def initialize(name: nil)
+      raise ArgumentError, "Must provide system_name" if name.nil?
+
+      @name = name
+      @lookup_service = Lookup::StarSystemLookupService.new
+      @system_data = @lookup_service.fetch(@name)
+
+      puts "System data for #{@name}: #{@system_data ? 'found' : 'not found'}"
+      raise "System not found for name: #{name}" unless @system_data
+
+      @name_generator = NameGeneratorService.new
+      @solar_system = nil
+      @debug_mode = false
+    end   
+
+    def build!
+      puts "System data structure: #{system_data.inspect}"
+      ActiveRecord::Base.transaction do
+        create_galaxy
+        create_solar_system
+        create_stars
+        create_celestial_bodies
+      end
+    end
+
+    private
+
+    def create_galaxy
+      galaxy_data = system_data[:galaxy] || {}
+      
+      galaxy_name = galaxy_data[:name] || "Unknown Galaxy"
+      galaxy_identifier = galaxy_data[:identifier] || @name_generator.generate_identifier
+      
+      @galaxy = Galaxy.find_or_create_by!(name: galaxy_name) do |g|
+        g.identifier = galaxy_identifier
+        puts "Creating galaxy: #{galaxy_name}"
+      end
+    end
+
+    def create_solar_system
+      solar_data = system_data[:solar_system] || {}
+      
+      system_name = solar_data[:name] || name
+      system_identifier = solar_data[:identifier] || @name_generator.generate_identifier
+      
+      @solar_system = SolarSystem.find_or_create_by!(name: system_name, galaxy: @galaxy) do |sys|
+        sys.identifier = system_identifier
+        puts "Creating solar system: #{system_name}"
+      end
+    end
+
+    def create_stars
+      stars_data = system_data[:stars] || []
+      
+      stars_data.each do |star_data|
+        # Add debugging to see what's coming in
+        puts "Star data: #{star_data.inspect}"
+        
+        # Get the star type - ensure we have a value by doing this explicitly
+        star_type = star_data[:type_of_star].presence || "G"
+        puts "Using star type: #{star_type.inspect}"
+        
+        # Handle life value
+        life_value = star_data[:life].presence || 10.0e9
+        
+        # Important: Create the star directly with parameters instead of using a hash
+        unless @solar_system.stars.exists?(name: star_data[:name])
+          puts "Creating star: #{star_data[:name]} with type: #{star_type}"
+          
+          # Create the star with direct parameter assignment
+          star = CelestialBodies::Star.new
+          star.name = star_data[:name]
+          star.identifier = star_data[:identifier] || "STAR-#{SecureRandom.hex(4)}"
+          star.mass = star_data[:mass]
+          star.radius = star_data[:radius]
+          star.solar_system = @solar_system
+          
+          # CRITICALLY IMPORTANT: Set these required fields directly with string attributes
+          star['type_of_star'] = star_type
+          puts "After setting type_of_star directly: #{star.attributes['type_of_star'].inspect}"
+          
+          # Try multiple ways to set this critical field
+          star.write_attribute(:type_of_star, star_type)
+          puts "After write_attribute: #{star.attributes['type_of_star'].inspect}"
+          
+          # Set age correctly - try multiple ways
+          age_value = star_data[:age].presence || 4.6e9
+          puts "Using age value: #{age_value.inspect}"
+          
+          # Try different ways to set the age field
+          star.age = age_value
+          star.write_attribute(:age, age_value) 
+          star['age'] = age_value
+          puts "After setting age: #{star.attributes['age'].inspect}"
+          
+          # Continue with other attributes
+          star.luminosity = star_data[:luminosity]
+          star.temperature = star_data[:temperature]
+          star.life = life_value
+          star.r_ecosphere = star_data[:r_ecosphere]
+          
+          # Only store in properties what doesn't have its own column
+          star.properties = {
+            'spectral_class' => star_data[:spectral_class],
+            'stellar_class' => star_data[:stellar_class] || "Main Sequence",
+            'source' => 'system_builder'
+          }
+          
+          # Use a hash for creation as a last resort if the above fails
+          if star.attributes['type_of_star'].nil?
+            puts "WARNING: Direct assignment failed, trying hash creation"
+            star = CelestialBodies::Star.new(
+              name: star_data[:name],
+              identifier: star_data[:identifier] || "STAR-#{SecureRandom.hex(4)}",
+              mass: star_data[:mass],
+              radius: star_data[:radius],
+              solar_system: @solar_system,
+              type_of_star: star_type,
+              age: star_data[:age] || 4.6e9,
+              luminosity: star_data[:luminosity],
+              temperature: star_data[:temperature],
+              life: life_value,
+              r_ecosphere: star_data[:r_ecosphere],
+              properties: {
+                'spectral_class' => star_data[:spectral_class],
+                'stellar_class' => star_data[:stellar_class] || "Main Sequence",
+                'source' => 'system_builder'
+              }
+            )
+          end
+          
+          # Final check before save
+          puts "Final check before save: type_of_star = #{star.attributes['type_of_star'].inspect}"
+          
+          if star.save
+            puts "Successfully created star #{star.name} with ID #{star.id}"
+          else
+            puts "Failed to create star: #{star.errors.full_messages.join(', ')}"
+            # If you want to see exactly what's being attempted to save:
+            puts "Attributes for star: #{star.attributes.inspect}"
+            
+            # Critical fix - if the field is still null, set it directly in the database
+            if star.errors.include?(:type_of_star)
+              puts "EMERGENCY FIX: Direct SQL update for type_of_star"
+              star = CelestialBodies::Star.create!(
+                name: star_data[:name],
+                identifier: star_data[:identifier] || "STAR-#{SecureRandom.hex(4)}",
+                mass: star_data[:mass],
+                radius: star_data[:radius],
+                solar_system: @solar_system,
+                age: star_data[:age] || 4.6e9,
+                properties: {
+                  'spectral_class' => star_data[:spectral_class],
+                  'stellar_class' => star_data[:stellar_class] || "Main Sequence",
+                  'source' => 'system_builder'
+                }
+              )
+              
+              # Use direct SQL as a last resort
+              ActiveRecord::Base.connection.execute(
+                "UPDATE stars SET type_of_star = '#{star_type}' WHERE id = #{star.id}"
+              )
+              puts "Emergency fix applied, star saved with ID #{star.id}"
+            else
+              raise "Failed to create star"
+            end
+          end
+        else
+          puts "Star already exists: #{star_data[:name]}"
+        end
+      end
+    end
+
+    # Helper method to calculate gravity
+    def calculate_gravity(mass, radius)
+      g_constant = 6.67430e-11
+      gravity = g_constant * mass.to_f / (radius.to_f ** 2)
+      
+      # Convert to Earth gravity units (9.8 m/s²)
+      (gravity / 9.8).round(2)
+    end
+
+    def create_celestial_bodies
+      bodies_data = system_data[:celestial_bodies] || {}
+      
+      # Add debugging to see which categories are being processed
+      puts "Available categories: #{bodies_data.keys.join(', ')}"
+      
+      bodies_data.each do |category, bodies|
+        puts "Processing #{category} category with #{bodies.count} bodies"
+        next if bodies.nil? || bodies.empty?
+        
+        bodies.each do |body_data|
+          create_celestial_body(body_data)
+        end
+      end
+    end
+
+    def create_celestial_body(body_data)
+      # Determine the model class - if explicitly provided, use it
+      # Otherwise, infer from type
+      model_class = if body_data[:model_class]
+                      body_data[:model_class]
+                    elsif body_data[:type]
+                      case body_data[:type].to_s
+                      when "terrestrial" then CelestialBodies::TerrestrialPlanet
+                      when "gas_giant" then CelestialBodies::GasGiant
+                      when "ice_giant" then CelestialBodies::IceGiant
+                      when "moon" then CelestialBodies::Moon
+                      when "dwarf_planet" then CelestialBodies::DwarfPlanet
+                      else CelestialBodies::CelestialBody
+                      end
+                    else
+                      CelestialBodies::CelestialBody
+                    end
+      
+      # Create body with attributes, excluding special keys
+      attrs = body_data.except(:model_class, :atmosphere, :star_distances, :hydrosphere, :geosphere_attributes, :type)
+      
+      # Ensure these fields are included from the JSON data
+      [:axial_tilt, :surface_area, :escape_velocity].each do |field|
+        attrs[field] = body_data[field] if body_data[field]
+      end
+      
+      # Handle parent relationships correctly
+      if body_data[:parent_body].present?
+        parent_name = body_data[:parent_body]
+        parent_body = CelestialBodies::CelestialBody.find_by(name: parent_name, solar_system: @solar_system)
+        
+        if parent_body
+          # Only set the string parent_body, not parent_body_id
+          attrs[:parent_body] = parent_name
+        else
+          Rails.logger.warn "Parent body '#{parent_name}' not found for #{body_data[:name]}"
+        end
+      end
+      
+      # Add this to ensure solar_system is set
+      attrs[:solar_system] = @solar_system
+      
+      body_name = attrs[:name]
+      puts "Creating #{body_name} with model: #{model_class.name}"
+      
+      # Check if body already exists
+      existing_body = model_class.find_by(name: body_name)
+      if existing_body
+        puts "Body already exists: #{body_name}"
+        return existing_body
+      end
+      
+      # Before creating the body, add a source marker
+      attrs[:properties] ||= {}
+      attrs[:properties]['source'] = 'system_builder'
+
+      # Create the body
+      body = model_class.create!(attrs)
+
+      # Create atmosphere if present
+      if body_data[:atmosphere]
+        puts "Creating atmosphere for #{body_name}"
+        
+        # Transform composition as original seeds did
+        atmosphere_data = body_data[:atmosphere]
+        composition = atmosphere_data[:composition] || {}
+        
+        transformed_composition = {}
+        composition.each do |key, value|
+          if value.is_a?(Hash)
+            transformed_composition[key.to_s] = value[:percentage] || value["percentage"]
+          else
+            transformed_composition[key.to_s] = value
+          end
+        end
+        
+        # Create initial values hash
+        initial_values = {
+          composition: transformed_composition,
+          pressure: atmosphere_data[:pressure],
+          total_atmospheric_mass: atmosphere_data[:total_atmospheric_mass],
+          dust: atmosphere_data[:dust]
+        }
+        
+        atmo = body.create_atmosphere!(
+          initial_values.merge(
+            base_values: initial_values.deep_dup
+          )
+        )
+        
+        # Manually initialize gases
+        puts "Initializing gases for #{body_name}"
+        atmo.initialize_gases
+      end
+      
+      # Create star distances - exactly as in original seeds
+      if body_data[:star_distances]
+        body_data[:star_distances].each do |distance_data|
+          star = @solar_system.stars.find_by(name: distance_data[:star_name])
+          
+          if star
+            puts "Creating star distance from #{body_name} to #{distance_data[:star_name]}"
+            body.star_distances.create!(
+              star: star,
+              distance: distance_data[:distance]
+            )
+          else
+            puts "Warning: Star '#{distance_data[:star_name]}' not found for #{body_name}"
+          end
+        end
+      end
+      
+      # For geosphere creation
+      if body_data[:geosphere_attributes] && body.respond_to?(:create_geosphere!)
+        puts "Creating geosphere for #{body_name}"
+        
+        # Make a copy of the geosphere data to avoid modifying the original
+        geosphere_data = body_data[:geosphere_attributes].deep_dup
+        
+        # Always ensure stored_volatiles has a default (empty hash)
+        stored_volatiles = {}
+        
+        # Convert co2_reserves to stored_volatiles format if present
+        if geosphere_data[:co2_reserves].present?
+          co2_data = geosphere_data.delete(:co2_reserves)
+          
+          # Map co2_reserves to stored_volatiles format
+          stored_volatiles['CO2'] = {
+            'polar_caps' => co2_data['polar_cap_ice_mass'],
+            'regolith' => co2_data['regolith_co2_stores_mass'],
+            'clathrates' => co2_data['clathrate_potential_mass_high']
+          }.compact
+        end
+        
+        # Add any explicit stored_volatiles data
+        if geosphere_data[:stored_volatiles].present?
+          volatiles_data = geosphere_data.delete(:stored_volatiles)
+          
+          # Merge with any converted CO2 data
+          volatiles_data.each do |compound, locations|
+            stored_volatiles[compound] ||= {}
+            stored_volatiles[compound].merge!(locations)
+          end
+        end
+        
+        # Set flag to skip simulation during creation
+        geosphere = body.build_geosphere(geosphere_data)
+        geosphere.skip_simulation = true
+        
+        # ALWAYS set stored_volatiles, even if it's an empty hash
+        geosphere.stored_volatiles = stored_volatiles
+        
+        geosphere.save!
+        
+        # Store initial values as base values
+        base_values = {
+          base_crust_composition: geosphere.crust_composition.deep_dup,
+          base_mantle_composition: geosphere.mantle_composition.deep_dup,
+          base_core_composition: geosphere.core_composition.deep_dup,
+          base_total_crust_mass: geosphere.total_crust_mass,
+          base_total_mantle_mass: geosphere.total_mantle_mass,
+          base_total_core_mass: geosphere.total_core_mass,
+          base_geological_activity: geosphere.geological_activity,
+          base_tectonic_activity: geosphere.tectonic_activity,
+          base_temperature: geosphere.temperature,
+          base_pressure: geosphere.pressure,
+          base_stored_volatiles: geosphere.stored_volatiles.deep_dup
+        }
+        
+        geosphere.update!(base_values: base_values)
+      end
+      
+      # For hydrosphere creation
+      if body_data[:hydrosphere] && body.respond_to?(:create_hydrosphere!)
+        puts "Creating hydrosphere for #{body_name}"
+        
+        hydrosphere_attrs = body_data[:hydrosphere].deep_dup
+        
+        # Transform composition from array to hash
+        if hydrosphere_attrs[:composition].is_a?(Array)
+          transformed_composition = {}
+          hydrosphere_attrs[:composition].each do |item|
+            transformed_composition[item[:compound].to_s] = item[:percentage]
+          end
+          hydrosphere_attrs[:composition] = transformed_composition
+        end
+
+        # For hydrosphere
+        if hydrosphere_attrs[:composition].nil?
+          hydrosphere_attrs[:composition] = { "H2O" => 100.0 }
+        elsif hydrosphere_attrs[:composition].is_a?(Array) && hydrosphere_attrs[:composition].empty?
+          hydrosphere_attrs[:composition] = { "H2O" => 100.0 }
+        end
+        
+        # Transform state_distribution from array to hash
+        if hydrosphere_attrs[:state_distribution].is_a?(Array)
+          transformed_state_distribution = {}
+          hydrosphere_attrs[:state_distribution].each do |item|
+            transformed_state_distribution[item[:state].to_s] = item[:percentage]
+          end
+          hydrosphere_attrs[:state_distribution] = transformed_state_distribution
+        end
+        
+        # Create hydrosphere
+        hydrosphere = body.create_hydrosphere!(hydrosphere_attrs)
+        
+        # Add this to hydrosphere creation
+        if body.respond_to?(:skip_simulation=)
+          hydrosphere.skip_simulation = true
+        end
+        
+        # Store initial values as base values
+        base_values = {
+          base_water_bodies: hydrosphere.water_bodies.deep_dup,
+          base_composition: hydrosphere.composition.deep_dup,
+          base_state_distribution: hydrosphere.state_distribution.deep_dup,
+          base_temperature: hydrosphere.temperature,
+          base_pressure: hydrosphere.pressure,
+          base_total_hydrosphere_mass: hydrosphere.total_hydrosphere_mass
+        }
+        
+        hydrosphere.update!(base_values: base_values)
+      end
+      
+      # For biosphere creation
+      if body_data[:biosphere] && body.respond_to?(:create_biosphere)
+        puts "Creating biosphere for #{body_name}"
+        
+        biosphere_data = body_data[:biosphere]
+        biosphere = body.create_biosphere(
+          biodiversity_index: biosphere_data[:biodiversity_index],
+          habitable_ratio: biosphere_data[:habitable_ratio],
+          biome_distribution: biosphere_data[:biome_distribution] || {}
+        )
+        
+        # Add any starter biomes
+        if biosphere_data[:starter_biomes].present?
+          biosphere_data[:starter_biomes].each do |biome_name|
+            biome = Biome.find_by(name: biome_name)
+            next unless biome
+            biosphere.planet_biomes.create(biome: biome)
+          end
+          biosphere.calculate_biodiversity_index
+        end
+      end
+      
+      # After creating the body
+      if body_data[:star_distances].present?
+        body_data[:star_distances].each do |star_distance_data|
+          star_name = star_distance_data[:star_name]
+          distance = star_distance_data[:distance]
+          
+          star = @solar_system.stars.find_by(name: star_name)
+          if star
+            body.star_distances.create!(
+              star: star,
+              distance: distance
+            )
+          else
+            Rails.logger.warn "Star '#{star_name}' not found for #{body.name} star distance"
+          end
+        end
+      elsif @solar_system.stars.any? && body_data[:semi_major_axis].present?
+        # If no explicit star distances but we have semi-major axis data, use that for the primary star
+        primary_star = @solar_system.primary_star
+        if primary_star
+          body.star_distances.create!(
+            star: primary_star,
+            distance: body_data[:semi_major_axis] * 149_597_870_700.0 # Convert AU to meters
+          )
+        end
+      end
+      
+      body
+    end
+  end
+end

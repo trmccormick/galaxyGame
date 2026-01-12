@@ -1,0 +1,140 @@
+require 'rails_helper'
+
+class ScenarioTester
+  attr_accessor :resources, :projects, :base, :craft, :crew, :crew_capacity, :crew_rotation_period, :current_month
+
+  def initialize
+    # Define initial resources (fuel, metals, water, etc.)
+    @resources = { fuel: 1000, metals: 500, water: 200, power: 0 }
+    @projects = []
+    @base = { modules: [], power: 0 }  # Start with an empty base
+    @craft = nil  # Placeholder for the craft (spaceship/rover)
+    
+    # Crew initialization
+    @crew = 6  # Start with 6 crew members
+    @crew_capacity = 12  # Capacity increases with the second starship
+    @crew_rotation_period = 18 # Rotation starts after 18 months
+    @current_month = 0
+  end
+
+  def create_craft
+    # Create the first Starship (craft) and link it to a location
+    lunar_surface = Location::CelestialLocation.find_or_create_by(name: 'Lunar Surface') do |location|
+      location.coordinates = "#{SecureRandom.hex(4)}°N #{SecureRandom.hex(4)}°E"
+    end
+
+    @craft = Craft::BaseCraft.new(
+      name: 'Starship 1',
+      craft_name: 'Starship 1',
+      craft_type: 'spaceship',
+      location: lunar_surface
+    )
+
+    # Load craft info and build its modules
+    @craft.load_craft_info
+    @craft.build_units_and_modules
+
+    if @craft.save
+      puts "Starship created successfully!"
+      puts "Craft Info: #{@craft.craft_info.inspect}"
+      puts "Total Mass: #{@craft.total_mass}"
+      puts "Power Usage: #{@craft.power_usage}"
+      puts "Input Resources: #{@craft.input_resources.inspect}"
+      puts "Output Resources: #{@craft.output_resources.inspect}"
+      puts "Storage Capacity: #{@craft.storage_capacity}"
+      puts "Available Storage: #{@craft.available_storage}"
+    else
+      puts "Error creating Starship:"
+      puts @craft.errors.full_messages
+    end
+  end
+
+  def handle_crew_rotation
+    # Handle crew rotation after 18 months
+    if @current_month >= @crew_rotation_period
+      puts "Crew rotation underway..."
+
+      # Assume 50% crew turnover (you can tweak this logic)
+      leaving_crew = @crew / 2
+      arriving_crew = (12 - @crew)  # New crew members arriving from Earth
+
+      # Update crew count
+      @crew -= leaving_crew
+      @crew += arriving_crew
+
+      puts "#{leaving_crew} crew members are leaving, #{arriving_crew} new crew members are arriving from Earth."
+
+      # Determine if new habitat units are needed based on crew size
+      check_habitat_needs
+    end
+  end
+
+  def check_habitat_needs
+    # Check if the current habitat units are enough to accommodate the crew
+    required_habitats = (@crew / 4).ceil  # 1 habitat unit can support up to 4 crew members
+    current_habitats = @base[:modules].count { |module| module == :habitation }
+
+    if required_habitats > current_habitats
+      puts "Not enough habitation units! Building #{required_habitats - current_habitats} more units."
+      (required_habitats - current_habitats).times { build_base_module(:habitation) }
+    else
+      puts "Current habitat units are sufficient for the crew."
+    end
+  end
+
+  def build_base_module(module_type)
+    # Use resources to build a base module
+    case module_type
+    when :habitation
+      if @resources[:metals] >= 100 && @resources[:water] >= 50
+        puts "Habitation module built!"
+        @resources[:metals] -= 100
+        @resources[:water] -= 50
+        @base[:modules] << :habitation
+      else
+        puts "Not enough resources for habitation module."
+      end
+    when :power_supply
+      if @resources[:metals] >= 50
+        puts "Power supply module built!"
+        @resources[:metals] -= 50
+        @base[:power] += 100
+        @base[:modules] << :power_supply
+      else
+        puts "Not enough resources for power supply module."
+      end
+    else
+      puts "Invalid module type."
+    end
+  end
+
+  def simulate_turn
+    # Simulate resource gathering and project completion
+    puts "Simulating turn..."
+    @resources[:metals] += 20  # Example: metal mining
+    @resources[:water] += 5    # Example: water extraction
+    @resources[:fuel] += 10    # Example: fuel production
+
+    # Simulate ongoing projects (e.g., craft or base modules)
+    if @projects.include?(:craft_creation)
+      puts "Craft creation ongoing..."
+      progress = rand(10..30)
+      puts "Progress: #{progress}%"
+      if progress >= 100
+        puts "Craft creation completed!"
+        @projects.delete(:craft_creation)
+      end
+    end
+
+    # Handle crew rotation after each turn
+    handle_crew_rotation
+  end
+end
+
+# Example usage
+tester = ScenarioTester.new
+tester.create_craft
+tester.build_base_module(:habitation)
+tester.build_base_module(:power_supply)
+tester.simulate_turn
+tester.simulate_turn

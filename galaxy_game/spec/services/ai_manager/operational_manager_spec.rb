@@ -1,4 +1,6 @@
 require 'rails_helper'
+require_relative '../../../app/services/ai_manager'
+
 
 RSpec.describe AIManager::OperationalManager do
   let(:settlement) { double('Settlement', id: 1, celestial_body: double('CelestialBody', data: {})) }

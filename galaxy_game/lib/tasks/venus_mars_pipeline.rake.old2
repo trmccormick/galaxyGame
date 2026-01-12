@@ -1,0 +1,374 @@
+namespace :venus_mars do
+  desc "Simulate Venus-to-Mars atmosphere processing and transfer (N2 and O2 only)"
+  task pipeline: :environment do
+    puts "\n=== Venus-to-Mars Terraforming Pipeline Simulation ==="
+    # Find planets
+    venus = CelestialBodies::Planets::Rocky::TerrestrialPlanet.find_by(name: "Venus")
+    mars = CelestialBodies::Planets::Rocky::TerrestrialPlanet.find_by(name: "Mars")
+    raise "Venus not found" unless venus
+    raise "Mars not found" unless mars
+
+    # Parameters
+    years = 10
+    days_per_year = 365
+    total_days = years * days_per_year
+    synodic_period = 584 # Venus-Mars synodic period in days
+    base_cycler_capacity = 1.0e13 # 10 trillion kg per cycler per trip
+    max_cyclers = 10
+    transport_loss = 0.02 # 2% loss in transport
+    co2_to_o2_efficiency = 0.95 # 95% of theoretical O2 yield
+    trips_possible = (total_days / synodic_period).floor
+
+    # Tracking
+    sim_data = {
+      years: [],
+      venus_pressure: [],
+      mars_pressure: [],
+      venus_co2: [],
+      venus_n2: [],
+      mars_n2: [],
+      mars_o2: [],
+      total_n2_transferred: 0.0,
+      total_o2_transferred: 0.0,
+      total_o2_produced: 0.0,
+      trips_completed: 0
+    }
+
+    # Reset atmospheres if possible
+    puts "\nResetting atmospheres to baseline values..."
+    venus.atmosphere.reset if venus.atmosphere.respond_to?(:reset)
+    mars.atmosphere.reset if mars.atmosphere.respond_to?(:reset)
+
+    puts "\nSimulation Parameters:"
+    puts "- Duration: \\#{years} years (\\#{total_days} days)"
+    puts "- Cycler Capacity (per cycler): \\#{(base_cycler_capacity/1.0e12).round(2)} Tt per trip"
+    puts "- Cycler Ramp: 1 cycler, +1 every 2 years, max 10"
+    puts "- Synodic Period: \\#{synodic_period} days"
+    puts "- Max Possible Trips: \\#{trips_possible}"
+
+    current_day = 0
+    current_year = 0
+    while current_day < total_days
+      if (current_day % days_per_year).zero?
+        current_year = current_day / days_per_year
+        # Record yearly data
+        sim_data[:years] << current_year
+        sim_data[:venus_pressure] << venus.atmosphere.pressure
+        sim_data[:mars_pressure] << mars.atmosphere.pressure
+        sim_data[:venus_co2] << gas_percentage(venus, 'CO2')
+        sim_data[:venus_n2] << gas_percentage(venus, 'N2')
+        sim_data[:mars_n2] << gas_percentage(mars, 'N2')
+        sim_data[:mars_o2] << gas_percentage(mars, 'O2')
+        if (current_year % 10).zero? || current_year == years
+          puts "\nYear \#{current_year}:"
+          print_planet_status(venus)
+          print_planet_status(mars)
+        end
+      end
+
+      # Calculate number of cyclers (increase by 1 every 2 years, max 10)
+      cyclers = [1 + (current_year / 2), max_cyclers].min
+      cycler_capacity = base_cycler_capacity * cyclers
+
+      if (current_day % synodic_period).zero?
+        # Perform transfer mission
+        puts "\nDay \#{current_day} (Year \#{current_year}): Transfer Window Opened"
+        puts "  Cyclers available: \#{cyclers} (\#{format_mass(cycler_capacity)} total capacity)"
+        # 80% of cycler for CO2, 20% for N2
+        co2 = venus.atmosphere.gases.find_by(name: 'CO2')
+        n2 = venus.atmosphere.gases.find_by(name: 'N2')
+        if co2 && n2
+          co2_mass = [cycler_capacity * 0.8, co2.mass * 0.001].min
+          n2_mass = [cycler_capacity * 0.2, n2.mass * 0.001].min
+          # Remove from Venus
+          venus.atmosphere.remove_gas('CO2', co2_mass)
+          venus.atmosphere.remove_gas('N2', n2_mass)
+          # Process CO2 to O2 and CO (MOXIE-like)
+          o2_mass = co2_mass * (16.0 / 44.0) * co2_to_o2_efficiency
+          co_mass = co2_mass * (28.0 / 44.0) * co2_to_o2_efficiency
+          # Add CO back to Venus
+          add_gas_with_molar_mass(venus, 'CO', co_mass, 28.0)
+          # Return unconverted CO2 to Venus
+          unconverted_co2 = co2_mass * (1.0 - co2_to_o2_efficiency)
+          if unconverted_co2 > 0
+            add_gas_with_molar_mass(venus, 'CO2', unconverted_co2, 44.0)
+          end
+          # Apply transport loss
+          delivered_n2 = n2_mass * (1 - transport_loss)
+          delivered_o2 = o2_mass * (1 - transport_loss)
+          # Add to Mars, ensuring total percentage does not exceed 100%
+          [ ['N2', delivered_n2, 28.0], ['O2', delivered_o2, 32.0] ].each do |gas_name, gas_mass, fallback_molar_mass|
+            atm = mars.atmosphere
+            total_pct = atm.gases.sum(:percentage)
+            # Estimate percentage for new gas
+            new_gas_pct = (gas_mass / atm.total_atmospheric_mass) * 100.0
+            excess = (total_pct + new_gas_pct) - 100.0
+            if excess > 0
+              # Prefer to reduce CO2 if present
+              co2_gas = atm.gases.find_by(name: 'CO2')
+              if co2_gas && co2_gas.percentage > excess
+                co2_gas.mass -= (excess / 100.0) * atm.total_atmospheric_mass
+                co2_gas.mass = 0 if co2_gas.mass < 0
+                co2_gas.percentage = (co2_gas.mass / atm.total_atmospheric_mass) * 100.0
+                co2_gas.ppm = (co2_gas.percentage / 100.0) * 1_000_000
+                co2_gas.save!
+              else
+                # Cap new gas addition so total is 100%
+                allowed_pct = 100.0 - total_pct
+                allowed_mass = (allowed_pct / 100.0) * atm.total_atmospheric_mass
+                gas_mass = allowed_mass if allowed_mass < gas_mass
+              end
+            end
+            add_gas_with_molar_mass(mars, gas_name, gas_mass, fallback_molar_mass)
+          end
+          # Update pressures
+          venus.atmosphere.update_pressure_from_mass! if venus.atmosphere.respond_to?(:update_pressure_from_mass!)
+          mars.atmosphere.update_pressure_from_mass! if mars.atmosphere.respond_to?(:update_pressure_from_mass!)
+          # Track
+          sim_data[:total_n2_transferred] += delivered_n2
+          sim_data[:total_o2_transferred] += delivered_o2
+          sim_data[:total_o2_produced] += o2_mass
+          sim_data[:trips_completed] += 1
+          puts "Transferred: N2=\#{format_mass(delivered_n2)}, O2=\#{format_mass(delivered_o2)} (from CO2=\#{format_mass(co2_mass)})"
+          puts "CO produced and returned to Venus: \#{format_mass(co_mass)}"
+        else
+          puts "Venus missing CO2 or N2 for transfer."
+        end
+      end
+      current_day += 1
+    end
+
+    # Print results
+    puts "\n=== Simulation Complete ==="
+    puts "- Years simulated: \\#{years}"
+    puts "- Transfers completed: \\#{sim_data[:trips_completed]}"
+    puts "- Total N2 transferred:  \\#{format_mass(sim_data[:total_n2_transferred])}"
+    puts "- Total O2 produced:    \\#{format_mass(sim_data[:total_o2_produced])}"
+    puts "- Total O2 delivered:   \\#{format_mass(sim_data[:total_o2_transferred])}"
+    puts "\nFinal Status:"
+    print_planet_status(venus)
+    print_planet_status(mars)
+    # --- BIOSPHERE/LIFE SIMULATION ON MARS ---
+    puts "\n=== BIOSPHERE SEEDING AND LONG-TERM PLANETARY SIMULATION ON MARS ==="
+    biosphere = mars.biosphere || mars.create_biosphere!(habitable_ratio: 0.01, biodiversity_index: 0.0)
+    # Seed plausible life forms if none exist
+    if biosphere.life_forms.count == 0
+      puts "Seeding test life forms on Mars..."
+      Biology::LifeForm.create!(
+        biosphere: biosphere,
+        name: "Extremophile Cyanobacteria",
+        complexity: :simple,
+        population: 1_000_000_000,
+        diet: "photosynthetic",
+        properties: {
+          'oxygen_production_rate' => 0.00005,
+          'co2_consumption_rate' => 0.00006,
+          'nitrogen_fixation_rate' => 0.00001,
+          'preferred_biome' => 'Regolith',
+          'min_temperature' => 170.0,
+          'max_temperature' => 320.0,
+          'description' => 'Hardy photosynthetic bacteria for Mars.'
+        }
+      )
+      Biology::LifeForm.create!(
+        biosphere: biosphere,
+        name: "Cold-Adapted Green Algae",
+        complexity: :simple,
+        population: 500_000_000,
+        diet: "photosynthetic",
+        properties: {
+          'oxygen_production_rate' => 0.00007,
+          'co2_consumption_rate' => 0.00008,
+          'preferred_biome' => 'Polar Cap',
+          'min_temperature' => 180.0,
+          'max_temperature' => 310.0,
+          'description' => 'Algae for cold Martian regions.'
+        }
+      )
+      Biology::LifeForm.create!(
+        biosphere: biosphere,
+        name: "Methanogenic Archaea",
+        complexity: :simple,
+        population: 800_000_000,
+        diet: "chemosynthetic",
+        properties: {
+          'methane_production_rate' => 0.00003,
+          'co2_consumption_rate' => 0.00002,
+          'preferred_biome' => 'Subsurface',
+          'min_temperature' => 160.0,
+          'max_temperature' => 330.0,
+          'description' => 'Methane-producing archaea for Mars.'
+        }
+      )
+    end
+    atmosphere = mars.atmosphere
+    hydrosphere = mars.hydrosphere
+    biosphere.reload
+    puts "\n[BEFORE PLANETARY SIMULATION]"
+    puts "  Atmosphere:"
+    if atmosphere
+      puts "    Pressure: #{atmosphere.pressure} bar, Mass: #{atmosphere.total_atmospheric_mass} kg"
+      puts "    Composition: #{atmosphere.composition.inspect}"
+    else
+      puts "    None"
+    end
+    puts "  Hydrosphere:"
+    if hydrosphere
+      puts "    Mass: #{hydrosphere.total_hydrosphere_mass} kg"
+      puts "    Composition: #{hydrosphere.composition.inspect}"
+      puts "    State Distribution: #{hydrosphere.state_distribution.inspect}"
+    else
+      puts "    None"
+    end
+    puts "  Biosphere:"
+    puts "    Habitability: #{(biosphere.habitable_ratio * 100).round(2)}%"
+    puts "    Biodiversity: #{biosphere.biodiversity_index}"
+    puts "    Total Species: #{biosphere.life_forms.count}"
+    puts "    Total Organisms: #{biosphere.life_forms.sum(:population)}"
+
+    # Run full TerraSim planetary simulation for the same duration as the pipeline
+    planetary_simulation_days = total_days
+    puts "\nRunning full TerraSim simulation for #{years} years (#{planetary_simulation_days} days)..."
+    TerraSim::Simulator.new(mars).calc_current(planetary_simulation_days)
+    atmosphere.reload if atmosphere
+    hydrosphere.reload if hydrosphere
+    biosphere.reload
+    puts "\n[AFTER PLANETARY SIMULATION]"
+    puts "  Atmosphere:"
+    if atmosphere
+      puts "    Pressure: #{atmosphere.pressure} bar, Mass: #{atmosphere.total_atmospheric_mass} kg"
+      puts "    Composition: #{atmosphere.composition.inspect}"
+    else
+      puts "    None"
+    end
+    puts "  Hydrosphere:"
+    if hydrosphere
+      puts "    Mass: #{hydrosphere.total_hydrosphere_mass} kg"
+      puts "    Composition: #{hydrosphere.composition.inspect}"
+      puts "    State Distribution: #{hydrosphere.state_distribution.inspect}"
+    else
+      puts "    None"
+    end
+    puts "  Biosphere:"
+    puts "    Habitability: #{(biosphere.habitable_ratio * 100).round(2)}%"
+    puts "    Biodiversity: #{biosphere.biodiversity_index}"
+    puts "    Total Species: #{biosphere.life_forms.count}"
+    puts "    Total Organisms: #{biosphere.life_forms.sum(:population)}"
+    puts "\n=== FINAL STATUS: VENUS AND MARS ==="
+    # Venus
+    puts "\n[VENUS]"
+    v_atm = venus.atmosphere
+    v_hydro = venus.hydrosphere
+    puts "  Atmosphere:"
+    if v_atm
+      puts "    Pressure: #{v_atm.pressure} bar, Mass: #{v_atm.total_atmospheric_mass} kg"
+      gases = v_atm.gases.order(percentage: :desc)
+      trace_gases = []
+      trace_total = 0.0
+      puts "    Major Gases (>0.01%):"
+      gases.each do |gas|
+        if gas.percentage >= 0.01
+          puts "      â€¢ #{gas.name}: #{gas.percentage.round(4)}%"
+        else
+          trace_gases << gas
+          trace_total += gas.percentage
+        end
+      end
+      if trace_gases.any?
+        puts "    Trace Gases (<0.01%):"
+        trace_gases.each do |gas|
+          puts "      â€¢ #{gas.name}"
+        end
+        puts "      Combined trace percentage: #{trace_total.round(4)}%"
+      end
+    else
+      puts "    None"
+    end
+    puts "  Hydrosphere:"
+    if v_hydro
+      puts "    Mass: #{v_hydro.total_hydrosphere_mass} kg"
+      puts "    Composition: #{v_hydro.composition.inspect}"
+      puts "    State Distribution: #{v_hydro.state_distribution.inspect}"
+    else
+      puts "    None"
+    end
+
+    # Mars
+    puts "\n[MARS]"
+    m_atm = mars.atmosphere
+    m_hydro = mars.hydrosphere
+    m_bio = mars.biosphere
+    puts "  Atmosphere:"
+    if m_atm
+      puts "    Pressure: #{m_atm.pressure} bar, Mass: #{m_atm.total_atmospheric_mass} kg"
+      gases = m_atm.gases.order(percentage: :desc)
+      trace_gases = []
+      trace_total = 0.0
+      puts "    Major Gases (>0.01%):"
+      gases.each do |gas|
+        if gas.percentage >= 0.01
+          puts "      â€¢ #{gas.name}: #{gas.percentage.round(4)}%"
+        else
+          trace_gases << gas
+          trace_total += gas.percentage
+        end
+      end
+      if trace_gases.any?
+        puts "    Trace Gases (<0.01%):"
+        trace_gases.each do |gas|
+          puts "      â€¢ #{gas.name}"
+        end
+        puts "      Combined trace percentage: #{trace_total.round(4)}%"
+      end
+    else
+      puts "    None"
+    end
+    puts "  Hydrosphere:"
+    if m_hydro
+      puts "    Mass: #{m_hydro.total_hydrosphere_mass} kg"
+      puts "    Composition: #{m_hydro.composition.inspect}"
+      puts "    State Distribution: #{m_hydro.state_distribution.inspect}"
+    else
+      puts "    None"
+    end
+    puts "  Biosphere:"
+    if m_bio
+      puts "    Habitability: #{(m_bio.habitable_ratio * 100).round(2)}%"
+      puts "    Biodiversity: #{m_bio.biodiversity_index}"
+      puts "    Total Species: #{m_bio.life_forms.count}"
+      puts "    Total Organisms: #{m_bio.life_forms.sum(:population)}"
+    else
+      puts "    None"
+    end
+    puts "\nSimulation complete. Compare before/after states for changes."
+  end
+
+  # --- Helper methods ---
+  def gas_percentage(planet, gas_name)
+    gas = planet.atmosphere.gases.find_by(name: gas_name)
+    gas&.percentage || 0.0
+  end
+
+  def format_mass(mass)
+    "#{(mass / 1.0e12).round(2)} Tt"
+  end
+
+  def print_planet_status(planet)
+    puts "Status of #{planet.name}:"
+    puts "- Pressure: #{planet.atmosphere.pressure.round(4)} atm"
+    planet.atmosphere.gases.each do |gas|
+      puts "  â€¢ #{gas.name}: #{gas.percentage.round(2)}%"
+    end
+  end
+
+  def add_gas_with_molar_mass(planet, gas_name, amount, fallback_molar_mass)
+    planet.atmosphere.add_gas(gas_name, amount)
+  rescue => e
+    puts "Error adding #{gas_name}: #{e.message}"
+    gas = planet.atmosphere.gases.find_by(name: gas_name)
+    if gas && gas.molar_mass.nil?
+      gas.update!(molar_mass: fallback_molar_mass)
+      retry
+    end
+  end
+end

@@ -10,7 +10,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
   end
 
   describe 'validations' do
-    it { should validate_numericality_of(:total_hydrosphere_mass).is_greater_than_or_equal_to(0).allow_nil }
+    it { should validate_numericality_of(:total_liquid_mass).is_greater_than_or_equal_to(0).allow_nil }
     it { should validate_presence_of(:temperature) }
     
     it 'requires pressure to be present' do
@@ -43,6 +43,9 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
 
   describe '#reset' do
     it 'resets to base values' do
+      # Disable simulation during test setup
+      hydrosphere.simulation_running = true
+      
       # First create a hydrosphere with specific values
       hydrosphere.update!(
         liquid_bodies: { 'oceans' => 100.0, 'lakes' => 50.0, 'rivers' => 25.0 },
@@ -50,7 +53,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
         state_distribution: { 'liquid' => 80.0, 'solid' => 15.0, 'vapor' => 5.0 },
         temperature: 290.0,
         pressure: 1.0,
-        total_hydrosphere_mass: 1000.0
+        total_liquid_mass: 1000.0
       )
       
       # Then explicitly set the base values (not relying on any auto-calculation)
@@ -60,7 +63,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
         base_state_distribution: { 'liquid' => 80.0, 'solid' => 15.0, 'vapor' => 5.0 },
         base_temperature: 290.0,
         base_pressure: 1.0,
-        base_total_hydrosphere_mass: 1000.0
+        base_total_liquid_mass: 1000.0
       )
       
       # Change values
@@ -68,7 +71,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
         liquid_bodies: { 'oceans' => 80.0, 'lakes' => 30.0, 'rivers' => 15.0 },
         temperature: 280.0,
         pressure: 0.8,
-        total_hydrosphere_mass: 800.0
+        total_liquid_mass: 800.0
       )
       
       # Temporarily disable the water cycle simulation
@@ -86,8 +89,8 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       expect(hydrosphere.temperature).to eq(290.0)
       expect(hydrosphere.pressure).to eq(1.0)
       
-      # Use a more flexible comparison for total_hydrosphere_mass since it may be slightly modified during simulation
-      expect(hydrosphere.total_hydrosphere_mass).to be_within(1.0).of(1000.0)
+      # Use a more flexible comparison for total_liquid_mass since it may be slightly modified during simulation
+      expect(hydrosphere.total_liquid_mass).to be_within(1.0).of(1000.0)
     end
   end
 

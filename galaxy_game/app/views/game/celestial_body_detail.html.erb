@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @celestial_body&.name || "Celestial Body" %> Management</title>
+</head>
+<body>
+  <!-- Top Menu Bar -->
+  <div id="menuBar">
+    <div class="dropdown">
+      <a href="#">File</a>
+      <div class="dropdown-content">
+        <a href="<%= root_path %>">System Overview</a>
+        <a href="#" id="savePlanet">Save Status</a>
+        <a href="#" id="snapshot">Snapshot</a>
+        <a href="<%= simulation_path %>">Run Simulation</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">View</a>
+      <div class="dropdown-content">
+        <a href="#" id="map">Map</a>
+        <a href="#" id="globe">Globe</a>
+        <a href="#" id="terrain">Terrain</a>
+        <a href="#" id="temperature">Temperature</a>
+        <a href="#" id="rainfall">Rainfall</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Systems</a>
+      <div class="dropdown-content">
+        <a href="#" id="geosphere">Geosphere</a>
+        <a href="#" id="atmosphere">Atmosphere</a>
+        <a href="#" id="hydrosphere">Hydrosphere</a>
+        <a href="#" id="biosphere">Biosphere</a>
+        <% if @celestial_body&.biosphere&.habitable_ratio.to_f > 0.4 %>
+          <a href="#" id="civilization">Civilization</a>
+        <% end %>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Analysis</a>
+      <div class="dropdown-content">
+        <a href="#" id="airSample">Atmosphere Composition</a>
+        <a href="#" id="waterSample">Water Composition</a>
+        <a href="#" id="biomes">Biomes</a>
+        <% if @celestial_body&.biosphere&.life_forms&.any? %>
+          <a href="#" id="lifeForms">Life-Forms</a>
+        <% end %>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Tools</a>
+      <div class="dropdown-content">
+        <a href="#" id="terraforming">Terraforming</a>
+        <a href="#" id="instruments">Instruments</a>
+        <a href="#" id="colonize">Colonize</a>
+        <a href="#" id="missions">Missions</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Simulation</a>
+      <div class="dropdown-content">
+        <a href="#" id="fast">Fast</a>
+        <a href="#" id="moderate">Moderate</a>
+        <a href="#" id="slow">Slow</a>
+        <a href="#" id="pause">Pause</a>
+        <a href="<%= run_simulation_path(id: @celestial_body&.id) %>" id="runSim">Run Simulation</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <div id="sidebar">
+    <a href="<%= root_path %>" id="backToSystem">Back to System</a>
+    <a href="#" id="planetInfo">Planet Info</a>
+    <a href="#" id="terraformingTools">Terraforming</a>
+    <a href="<%= simulation_path %>" id="simulation">Simulation</a>
+    <a href="#" id="settings">Settings</a>
+    <a href="#" id="help">Help</a>
+  </div>
+
+  <!-- Main Content Area -->
+  <div id="main-content">
+    <% if @celestial_body %>
+      <div class="planet-header">
+        <h1><%= @celestial_body.name %></h1>
+        <p>Type: <%= @celestial_body.body_type || "Unknown" %></p>
+        <p>Surface Temperature: <%= number_to_temperature(@celestial_body.surface_temperature) %></p>
+      </div>
+    <% end %>
+    <canvas id="planetCanvas" width="800" height="600"></canvas>
+  </div>
+
+  <!-- Planet Info Panel -->
+  <div id="planetInfoPanel" class="side-panel">
+    <% if @celestial_body %>
+      <h2>Planet Information</h2>
+      <table>
+        <tr>
+          <td>Name:</td>
+          <td><%= @celestial_body.name %></td>
+        </tr>
+        <tr>
+          <td>Type:</td>
+          <td><%= @celestial_body.body_type || "Unknown" %></td>
+        </tr>
+        <tr>
+          <td>Diameter:</td>
+          <td><%= number_with_delimiter((@celestial_body.radius * 2 / 1000.0).round(2)) %> km</td>
+        </tr>
+        <tr>
+          <td>Mass:</td>
+          <td><%= number_to_human(@celestial_body.mass) %> kg</td>
+        </tr>
+        <tr>
+          <td>Surface Gravity:</td>
+          <td><%= number_with_precision(@celestial_body.gravity, precision: 2) %> m/s²</td>
+        </tr>
+        <% if @celestial_body.atmosphere %>
+          <tr>
+            <td>Atmosphere:</td>
+            <td><%= number_with_precision(@celestial_body.atmosphere.pressure, precision: 2) %> atm</td>
+          </tr>
+        <% end %>
+        <% if @celestial_body.hydrosphere %>
+          <tr>
+            <td>Water Coverage:</td>
+            <td><%= number_to_percentage(@celestial_body.hydrosphere.water_coverage_percentage, precision: 1) %></td>
+          </tr>
+        <% end %>
+        <% if @celestial_body.geosphere %>
+          <tr>
+            <td>Geological Activity:</td>
+            <td><%= number_to_percentage(@celestial_body.geosphere.geological_activity, precision: 0) %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <p>No celestial body selected</p>
+    <% end %>
+  </div>
+
+  <%= javascript_import_module_tag 'planet_detail' %>
+</body>
+</html>

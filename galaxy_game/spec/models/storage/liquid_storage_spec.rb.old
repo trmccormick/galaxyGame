@@ -1,0 +1,54 @@
+# spec/models/storage/liquid_storage_spec.rb
+require 'rails_helper'
+
+RSpec.describe Storage::LiquidStorage, type: :model do
+  let(:capacity) { 100 }
+  let(:location) { 'TestLocation' }
+  let(:liquid_storage) { Storage::LiquidStorage.new(capacity: capacity, location: location) }
+
+  describe 'initialization' do
+    it 'initializes with the correct item type' do
+      expect(liquid_storage.item_type).to eq('Liquid')
+    end
+
+    it 'initializes with the correct capacity' do
+      expect(liquid_storage.capacity).to eq(capacity)
+    end
+
+    it 'initializes with zero current stock' do
+      expect(liquid_storage.current_stock).to eq({})
+    end
+  end
+
+  describe '#can_store?' do
+    it 'returns true when there is enough capacity' do
+      expect(liquid_storage.can_store?('Water', 50)).to be_truthy
+    end
+
+    it 'returns false when adding exceeds capacity' do
+      liquid_storage.add_liquid('Water', 90)
+      expect(liquid_storage.can_store?('Water', 20)).to be_falsey
+    end
+  end
+
+  describe '#can_remove?' do
+    before { liquid_storage.add_liquid('Water', 50) }
+
+    it 'returns true when there is enough stock' do
+      expect(liquid_storage.can_remove?('Water', 20)).to be_truthy
+    end
+
+    it 'returns false when removing exceeds current stock' do
+      expect(liquid_storage.can_remove?('Water', 60)).to be_falsey
+    end
+  end
+
+  describe '#available_capacity' do
+    before { liquid_storage.add_liquid('Water', 30) }
+
+    it 'returns the available capacity' do
+      expect(liquid_storage.available_capacity).to eq(70)
+    end
+  end
+end
+

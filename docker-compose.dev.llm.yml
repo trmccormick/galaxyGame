@@ -1,0 +1,107 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: app # Explicitly name the app container
+    env_file:
+      - './env/.env.dev.local.app'
+
+    volumes:
+      - ./scripts:/home/galaxy_game/scripts
+      - ./galaxy_game:/home/galaxy_game
+      - ./data/json-data:/home/galaxy_game/app/data:delegated
+      - ./data/bundle:/usr/local/bundle # cache bundle install
+      - ./data/node_modules:/home/galaxy_game/node_modules # Assuming you might have Node.js assets
+      - ./data/logs:/home/galaxy_game/log
+      - ./env:/home/galaxy_game/env
+      - /home/galaxy_game/tmp
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_started
+      ollama: # Add Ollama as a dependency for the app container
+        condition: service_started
+
+  web:
+    extends: app
+    container_name: web
+    command: bash -c "rm -f tmp/pids/server.pid && rails server -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+
+    # depends_on:
+    #   ollama: # Also make web depend on ollama if you plan to make direct requests from web processes
+    #     condition: service_started
+
+  workers:
+    extends: app
+    container_name: sidekiq
+    command: bash -c "bundle install; bundle exec sidekiq -C config/sidekiq.yml"
+    stdin_open: true
+    tty: true
+
+    depends_on:
+      ollama: # Workers will likely be making the LLM calls, so it needs to depend on ollama
+        condition: service_started
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: redis-server
+    volumes:
+      - redis_data:/var/lib/redis/data
+    restart: unless-stopped
+    healthcheck:
+      test: redis-cli -h redis ping
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    env_file:
+      - './env/.env.redis' # Load Redis env vars
+
+  db:
+    image: postgres:16
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: password # Keep this here as well for simplicity
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "postgres", "-U", "postgres"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    env_file:
+      - './env/.env.db' # Load DB env vars
+
+  memcached:
+    image: bitnami/memcached
+    container_name: memcached
+    ports:
+      - "11211"
+
+  # --- Final Optimized Ollama Service for High-End Intel Mac ---
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./data/ollama_data:/root/.ollama
+    restart: unless-stopped
+    
+    environment:
+      # 1. CRITICAL: Prevents slow model reloading by pinning it in your abundant 64GB RAM.
+      - OLLAMA_KEEP_ALIVE=-1 
+      
+      # 2. CRITICAL: Maximize Core i9 utilization. 
+      # Set to the logical core count (often 16 on a Core i9) to maximize parallel processing.
+      - OLLAMA_NUM_THREADS=16  # Adjust if your specific i9 has more/fewer logical cores
+
+volumes:
+  redis_data:
+  postgres_data:

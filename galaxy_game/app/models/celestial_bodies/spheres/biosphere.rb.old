@@ -1,0 +1,50 @@
+module CelestialBodies
+  class Biosphere < ApplicationRecord
+    belongs_to :celestial_body
+    has_many :planet_biomes
+    has_many :biomes, through: :planet_biomes
+
+    attribute :temperature_tropical, :float, default: 300.0
+    attribute :temperature_polar, :float, default: 250.0
+    attribute :biodiversity_index, :float, default: 0.0
+    attribute :habitable_area, :float, default: 0.0
+    attribute :biome_distribution, :json, default: {}
+
+    def simulate_biome_management
+      update_biodiversity_index
+      adjust_biome_distribution
+    end
+
+    def introduce_biome(biome)
+      planet_biomes.create(biome: biome)
+      simulate_biome_management
+    end
+
+    def remove_biome(biome)
+      planet_biomes.find_by(biome: biome)&.destroy
+      simulate_biome_management
+    end
+
+    private
+
+    def update_biodiversity_index
+      # Calculate biodiversity based on biome distribution
+      total_biomes = planet_biomes.count
+      diverse_biomes = planet_biomes.select { |pb| pb.biodiversity > 0 }.count
+      self.biodiversity_index = diverse_biomes / total_biomes.to_f
+      save!
+    end
+
+    def adjust_biome_distribution
+      # Adjust biome distribution based on various factors like temperature
+      self.biome_distribution.each do |biome, attributes|
+        if attributes['temperature_range'] && temperature_tropical > attributes['temperature_range'].first
+          # Example: If the tropical temperature is high, expand tropical biomes
+          self.biome_distribution[biome]['area'] += 0.1
+        end
+      end
+      save!
+    end
+  end
+end
+

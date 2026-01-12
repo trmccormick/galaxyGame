@@ -1,0 +1,170 @@
+require_relative '../../config/environment'
+require 'securerandom'
+require_relative '../services/lavatube_generator_service'
+require 'json'
+
+# --- Setup Game World ---
+coordinates = "14.10°N 58.20°W"
+celestial_body = CelestialBodies::Moon.find_by(name: 'Luna')
+
+if celestial_body.nil?
+  raise "Celestial body 'Luna' not found in the database."
+end
+
+location = Location::CelestialLocation.find_or_create_by!(
+  coordinates: coordinates,
+  celestial_body: celestial_body
+) do |loc|
+  loc.name = "Marius Hills Skylight Location"
+end
+
+params = {
+  name: "Marius Hills Lava Tube",
+  location: location,
+  length: 50_000,
+  diameter: 100,
+  skylights: [
+    { diameter: 50, position: 15_000 },
+    { diameter: 40, position: 35_000 }
+  ],
+  access_points: [
+    { size: 15, position: 0, access_type: :large },
+    { size: 10, position: 25_000, access_type: :medium }
+  ]
+}
+
+lavatube_service = LavatubeGeneratorService.new(random: false, params: params)
+lavatube = lavatube_service.generate
+
+puts "Generated Lavatube:"
+puts lavatube.inspect
+puts "Skylights:"
+lavatube.skylights.each { |s| puts " - Diameter: #{s.diameter} meters, Position: #{s.position} meters" }
+puts "Access Points:"
+lavatube.access_points.each { |ap| puts " - Size: #{ap.size} meters, Position: #{ap.position} meters, Type: #{ap.access_type}" }
+
+unique_id = SecureRandom.hex(4)
+starship = Craft::BaseCraft.create!(
+  name: "Initial Deployment Ship #{unique_id}",
+  craft_name: "Starship (Lunar Variant)",
+  craft_type: "transport",
+  current_location: location,
+  owner: lavatube,
+  operational_data: {
+    'recommended_units' => [
+      { 'id' => 'storage_unit', 'count' => 2 },
+      { 'id' => 'lox_tank', 'count' => 1 },
+      { 'id' => 'methane_tank', 'count' => 1 }
+    ],
+    'storage' => {
+      'capacity' => 1000,
+      'current_level' => 0
+    }
+  }
+)
+starship.save!
+starship.reload
+starship.build_units_and_modules
+
+puts "\nInitial Deployment Ship Status:"
+puts "Name: #{starship.name}"
+puts "Total Units installed: #{starship.base_units.count}"
+
+starship.base_units.where("unit_type LIKE ?", "%tank%").each do |tank|
+  if tank.operational_data&.dig('storage', 'capacity')
+    capacity = tank.operational_data['storage']['capacity']
+    current_level = (capacity * 0.20).to_i
+    tank.save!
+  end
+end
+
+# --- AI Manager Simulation (Initial 6 Months) ---
+puts "\n--- AI Manager: Initial Base Deployment and Operation Test (6 Months) ---"
+
+game_time_elapsed = 0
+total_simulation_time = 6 * 30 * 24 * 3600 # 6 months in seconds (approx.)
+time_step = 3600 # Simulate in 1-hour increments
+
+base_deployed = false
+life_support_online = false
+power_stable = false
+resources_managed = true
+
+# Resource Tracking
+initial_resources = {}
+current_resources = {}
+
+# Load Simplified Cargo Manifest
+manifest_path = Rails.root.join('app', 'data', 'starship-cargo-manifest', 'ssc-001.json')
+begin
+  manifest_data = JSON.parse(File.read(manifest_path))
+  inventory = manifest_data['inventory']
+
+  initial_resources['water'] = inventory.dig('consumables')&.find { |item| item['name'] == 'Large Water Storage Tank' }&.fetch('count', 0) * 2000 rescue 0 # Assuming 2000L capacity
+  initial_resources['food'] = inventory.dig('consumables')&.find { |item| item['name'] == 'Extended Duration Food Crate' }&.fetch('count', 0) * 300 rescue 0 # Assuming 300 meals
+  initial_resources['oxygen_canisters'] = inventory.dig('consumables')&.find { |item| item['name'] == 'CO2 Scrubber Cartridges (Extended Supply)' }&.fetch('count', 0) rescue 0 # Using CO2 scrubbers as proxy for O2 supply for now
+  initial_resources['power_rtg'] = inventory.dig('units')&.find { |item| item['name'] == 'Radioisotope Thermoelectric Generator' }&.fetch('count', 0) * 1000 rescue 0 # Assuming 1000 kW output (this is likely too high, adjust based on actual unit data)
+  initial_resources['power_solar'] = inventory.dig('units')&.find { |item| item['name'] == 'Solar Power Array' }&.fetch('count', 0) * 5000 rescue 0 # Assuming 5000 kW output (also likely too high)
+
+  current_resources = initial_resources.dup
+
+  puts "\nInitial Resources from Manifest (Simplified):"
+  puts "  Water: #{current_resources['water']} L"
+  puts "  Food: #{current_resources['food']} meals"
+  puts "  O2 Canisters: #{current_resources['oxygen_canisters']}"
+  puts "  Power (RTG): #{current_resources['power_rtg']} kW"
+  puts "  Power (Solar): #{current_resources['power_solar']} kW"
+
+  # Simulate AI Deployment (very basic - assumes presence of habitat and life support)
+  habitat_present = inventory.dig('units')&.any? { |item| item['name'].include?('Inflatable Habitat Unit') }
+  life_support_present = inventory.dig('units')&.any? { |item| item['name'].include?('Emergency Life Support System') } || inventory.dig('units')&.any? { |item| item['name'].include?('Electrolysis Unit (Oxygen)') } || inventory.dig('units')&.any? { |item| item['name'].include?('Initial Oxygen Generator (Chemical)') }
+
+  if !base_deployed && habitat_present && life_support_present
+    puts "  AI: Deploying inflatable habitat and initial life support..."
+    base_deployed = true
+    life_support_online = true
+    power_stable = true # Assume initial power is stable upon deployment
+  end
+
+rescue Errno::ENOENT
+  puts "Error: Manifest file not found at #{manifest_path}"
+rescue JSON::ParserError
+  puts "Error: Invalid JSON in manifest file"
+end
+
+while game_time_elapsed < total_simulation_time
+  days_elapsed = (game_time_elapsed / (24 * 3600)).to_i
+  puts "\nGame Time: Day #{days_elapsed}"
+
+  if base_deployed && life_support_online && power_stable
+    crew_size = 6
+    water_consumption_rate = crew_size * 3.0 / (24 * 3600.0) # L/second
+    food_consumption_rate = crew_size * 1.0 / (24 * 3600.0) # meals/second
+    oxygen_canister_consumption_rate = crew_size * 1.0 / (7 * 24 * 3600.0) # Example: 1 canister lasts 7 days per person
+
+    current_resources['water'] -= (water_consumption_rate * time_step) if current_resources['water'] > 0
+    current_resources['food'] -= (food_consumption_rate * time_step) if current_resources['food'] > 0
+    current_resources['oxygen_canisters'] -= 1 if (game_time_elapsed % (7 * 24 * 3600)).zero? && current_resources['oxygen_canisters'] > 0
+
+    puts "  AI: Operating base. Water: #{current_resources['water'].round(1)} L, Food: #{current_resources['food'].round(1)} meals, O2 Canisters: #{current_resources['oxygen_canisters']}"
+
+    if current_resources['water'] <= 0 || current_resources['food'] <= 0 || current_resources['oxygen_canisters'] <= 0
+      resources_managed = false
+      puts "  WARNING: Critical resource depletion!"
+    end
+  end
+
+  game_time_elapsed += time_step
+end
+
+puts "\n--- Simulation End (6 Months) ---"
+puts "Initial Base Deployed: #{base_deployed ? 'Yes' : 'No'}"
+puts "Life Support Online: #{life_support_online ? 'Yes' : 'No'}"
+puts "Power Stable: #{power_stable ? 'Yes' : 'No'}"
+puts "Resources Managed Successfully: #{resources_managed ? 'Yes' : 'No'}"
+puts "\nFinal Resource Levels:"
+puts "  Water: #{current_resources['water'].round(1)} L"
+puts "  Food: #{current_resources['food'].round(1)} meals"
+puts "  O2 Canisters: #{current_resources['oxygen_canisters']}"
+puts "  Power (RTG): #{current_resources['power_rtg']} kW"
+puts "  Power (Solar): #{current_resources['power_solar']} kW"

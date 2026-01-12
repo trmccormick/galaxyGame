@@ -1,0 +1,41 @@
+require 'rails_helper'
+
+RSpec.describe Units::LunarRegolithProcessor, type: :model do
+  let(:processor) { Units::LunarRegolithProcessor.new }
+
+  # describe '#initialize' do
+  #   it 'initializes with default values' do
+  #     expect(processor.energy_consumption).to eq(200)
+  #     expect(processor.output_resources).to eq({ oxygen: 0 })
+  #     expect(processor.regolith_input).to eq(0)
+  #   end
+  # end
+
+  # describe '#process_regolith' do
+  #   it 'processes valid amount of regolith' do
+  #     processor.process_regolith(4)
+  #     expect(processor.output_resources[:oxygen]).to eq(2)  # 2 kg of oxygen for 4 kg of regolith
+  #     expect(processor.regolith_input).to eq(4)
+  #   end
+
+  #   it 'does not process invalid amount of regolith' do
+  #     expect { processor.process_regolith(-1) }.to output("Invalid amount of regolith.\n").to_stdout
+  #     expect(processor.regolith_input).to eq(0)
+  #   end
+  # end
+
+  #describe '#activate' do
+    # context 'when enough energy is available' do
+    #   it 'activates the processor and processes regolith' do
+    #     processor.activate(250)  # More than energy_consumption
+    #     expect(processor.output_resources[:oxygen]).to eq(2)
+    #   end
+    # end
+
+    # context 'when not enough energy is available' do
+    #   it 'does not activate the processor' do
+    #     expect { processor.activate(100) }.to output("Not enough energy to activate Lunar Regolith Processor.\n").to_stdout
+    #   end
+    # end
+  #end
+end

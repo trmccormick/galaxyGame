@@ -1,0 +1,14 @@
+# app/models/settlement/access_point.rb
+module Settlement
+  class AccessPoint < ApplicationRecord
+    belongs_to :lavatube, class_name: 'Settlement::Lavatube'
+
+    # Enum for access types
+    enum access_type: { large: 0, medium: 1, small: 2 }
+
+    # Validations
+    # validates :name, presence: true
+    validates :size, numericality: { greater_than_or_equal_to: 0 }
+    validates :position, numericality: { greater_than_or_equal_to: 0 }
+  end
+end

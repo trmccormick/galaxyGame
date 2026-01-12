@@ -1,0 +1,108 @@
+module CelestialBodies
+  class Geosphere < ApplicationRecord
+    include MaterialTransferable    
+    include GeosphereConcern
+
+    belongs_to :celestial_body
+    has_many :materials, as: :materializable, dependent: :destroy
+
+    # Define layers for easier iteration
+    LAYERS = [:crust, :mantle, :core]
+    store :composition, accessors: LAYERS.map { |l| :"#{l}_composition" }
+    store :mass, accessors: LAYERS.map { |l| :"total_#{l}_mass" }
+
+    validates :geological_activity, numericality: { 
+      greater_than_or_equal_to: 0, 
+      less_than_or_equal_to: 100 
+    }, allow_nil: true
+    validates :tectonic_activity, inclusion: { in: [true, false] }
+    
+    LAYERS.each do |layer|
+      validates :"total_#{layer}_mass", numericality: true, allow_nil: true
+    end
+
+    after_initialize :set_default_values
+    after_save :run_simulation, if: :saved_changes?
+
+    def transfer_material(material_name, amount, target_sphere)
+      material = materials.find_by(name: material_name)
+      return false unless material && material.amount >= amount
+
+      Material.transaction do
+        # Remove from source layer
+        material.amount -= amount
+        material.save!
+
+        # Add to target sphere
+        target_material = target_sphere.materials.find_or_create_by(name: material_name) do |m|
+          m.state = material.state
+          m.boiling_point = material.boiling_point
+          m.melting_point = material.melting_point
+        end
+        target_material.amount += amount
+        target_material.save!
+
+        recalculate_compositions
+      end
+    end
+
+    def add_material(name, amount, layer)
+      return false unless LAYERS.include?(layer)
+      
+      material_data = Lookup::MaterialLookupService.new.find_material(name)
+      return false unless material_data
+
+      Material.transaction do
+        material = materials.find_or_create_by(name: name) do |m|
+          m.state = :solid
+          m.boiling_point = material_data['properties']['boiling_point']
+          m.melting_point = material_data['properties']['melting_point']
+          m.amount = 0
+        end
+
+        material.amount += amount
+        material.save!
+
+        # Update layer composition
+        composition = send("#{layer}_composition")
+        composition[name] = calculate_percentage(amount, send("total_#{layer}_mass"))
+        send("#{layer}_composition=", composition)
+        
+        save!
+      end
+    end
+
+    private
+
+    def set_default_values
+      LAYERS.each do |layer|
+        send("#{layer}_composition=", {}) if send("#{layer}_composition").nil?
+        send("total_#{layer}_mass=", 0.0) if send("total_#{layer}_mass").nil?
+      end
+    end
+
+    def calculate_percentage(amount, total)
+      return 0.0 if total.zero?
+      (amount / total) * 100
+    end
+
+    def recalculate_compositions
+      LAYERS.each do |layer|
+        total = send("total_#{layer}_mass")
+        composition = {}
+        
+        materials.each do |material|
+          composition[material.name] = calculate_percentage(material.amount, total)
+        end
+        
+        send("#{layer}_composition=", composition)
+      end
+      save!
+    end
+
+    def run_simulation
+      calculate_tectonic_activity
+      # Additional simulation logic
+    end
+  end
+end

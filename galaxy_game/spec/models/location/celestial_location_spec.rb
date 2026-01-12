@@ -303,7 +303,7 @@ RSpec.describe Location::CelestialLocation, type: :model do
     end
     
     let(:orbital_location) do
-      location = Location::CelestialLocation.new(
+      location = Location::Location::CelestialLocation.new(
         name: 'Orbital Location',
         coordinates: '0.00°N 0.00°E',
         altitude: 408_000
@@ -313,7 +313,7 @@ RSpec.describe Location::CelestialLocation, type: :model do
     end
     
     let(:surface_location) do
-      location = Location::CelestialLocation.new(
+      location = Location::Location::CelestialLocation.new(
         name: 'Surface Location',
         coordinates: '40.71°N 74.01°W',
         altitude: 0

@@ -1,0 +1,78 @@
+# app/models/units/habitat.rb
+module Units
+  class Habitat < BaseUnit
+    include Housing
+    include PopulationManagement
+    include Storage  # Include the Storage module for managing various storages
+
+    attr_accessor :energy_storage, :liquid_storage, :solid_storage, :gas_storage
+
+    def initialize(name, operating_requirements, population_capacity)
+      super(name: name, population_capacity: population_capacity)  # Initialize BaseUnit
+      @current_population = 0
+
+      # Initialize specific storage types with their capacities
+      @energy_storage = EnergyStorage.new(operating_requirements[:power_capacity])
+      @liquid_storage = LiquidStorage.new(operating_requirements[:water_capacity])
+      @solid_storage = SolidStorage.new(operating_requirements[:solid_capacity])
+      @gas_storage = GasStorage.new(operating_requirements[:gas_capacity])
+      initialize_housing(population_capacity)  # Initialize housing capacity
+    end
+
+    # Allocate population to the habitat
+    def allocate_population(num_people)
+      if has_capacity_for?(num_people)
+        add_population(num_people)
+        puts "#{num_people} people allocated to #{@name}."
+      else
+        puts "Not enough capacity for #{num_people} people in #{@name}!"
+      end
+    end
+
+    # Operate the habitat to consume resources
+    def operate
+      return unless current_population > 0
+
+      # Calculate resource needs based on current population
+      food_needed = current_population * 2
+      water_needed = current_population * 3
+      power_needed = 10 # Assuming a fixed power need for simplicity
+
+      # Check if there are enough resources in respective storages
+      if @solid_storage.current_stock >= food_needed &&
+         @liquid_storage.current_stock >= water_needed &&
+         @energy_storage.current_stock >= power_needed
+          
+        # Consume resources
+        @solid_storage.remove_item(:food, food_needed)
+        @liquid_storage.remove_item(:water, water_needed)
+        @energy_storage.remove_item(:power, power_needed)
+
+        puts "#{@name} consuming #{food_needed} units of food, #{water_needed} liters of water, and #{power_needed} kWh of power."
+        
+        produce_waste # Handle waste production logic
+      else
+        puts "Not enough resources in storages to operate #{@name}."
+      end
+    end
+
+    private
+
+    # Produce waste based on current population
+    def produce_waste
+      waste_amount = current_population * 1
+      waste_water_amount = current_population * 1
+      biomass_amount = current_population * 0.5
+
+      puts "#{@name} produces #{waste_amount} units of solid waste, #{waste_water_amount} liters of wastewater, and #{biomass_amount} units of biomass."
+
+      # Add waste to the appropriate storage
+      @solid_storage.add_item(:solid_waste, waste_amount)
+      @liquid_storage.add_item(:wastewater, waste_water_amount)
+      @solid_storage.add_item(:biomass, biomass_amount)
+    end
+  end
+end
+
+
+  

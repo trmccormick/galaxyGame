@@ -1,0 +1,100 @@
+# app/models/units/base_unit.rb
+module Units
+  class BaseUnit < ApplicationRecord
+    include Storage  # Include the Storage module
+
+    belongs_to :base_settlement, polymorphic: true, optional: true
+    belongs_to :location, polymorphic: true
+    has_many :inventories, as: :inventoryable, dependent: :destroy # Update to use polymorphic association
+
+    validates :name, presence: true
+    validates :unit_type, presence: true
+    validates :capacity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+    validates :energy_cost, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+    validates :production_rate, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+    validates :material_list, presence: true
+
+    serialize :material_list, Hash
+
+    def initialize(attributes = {})
+      super(attributes)
+      initialize_storage(capacity) if capacity.present?
+    end
+
+    def can_be_built?(available_resources)
+      material_list.all? do |material, amount|
+        available_resources[material].to_i >= amount
+      end
+    end
+
+    # Method to process building a unit, consuming resources
+    def build_unit(available_resources)
+      return false unless can_be_built?(available_resources)
+
+      # Deduct materials from the available resources
+      material_list.each do |material, amount|
+        available_resources[material] -= amount
+      end
+      true
+    end
+
+    # Consolidated method to consume resources
+    def consume_resources(available_resources)
+      material_list.each do |material, amount|
+      next if material == 'energy' || build_unit(available_resources)
+
+      return false unless available_resources[material].to_i >= amount
+      
+      available_resources[material] -= amount
+
+      # Generate waste material
+      waste_material = "#{material}_waste"
+      available_resources[waste_material] ||= 0
+      available_resources[waste_material] += amount * 0.1 # Assuming 10% waste generation
+      end
+      true
+    end
+
+    def operate(available_resources)
+      consume_resources(available_resources)
+      # You may implement further operations or checks here
+    end
+
+    def upgrade
+      self.capacity += 10
+      self.production_rate += 5
+      initialize_storage(capacity)
+      save
+    end
+
+    def add_to_storage(item, quantity)
+      add_item(item, quantity) if can_store?(quantity)
+    end
+
+    # Method to remove items from storage
+    def remove_from_storage(item_name, quantity)
+      remove_item(item_name, quantity)
+    end
+
+    # New method to transfer inventory to the settlement
+    def transfer_inventory(item_name, quantity)
+      inventory = inventories.find_by(name: item_name)
+
+      return false unless inventory && inventory.quantity >= quantity
+
+      # Remove from unit's inventory
+      inventory.quantity -= quantity
+      inventory.save
+
+      # Update the settlement's inventory
+      settlement_inventory = base_settlement.inventories.find_or_initialize_by(name: item_name)
+      settlement_inventory.quantity += quantity
+      settlement_inventory.save
+
+      true
+    end
+  end
+end
+
+
+  

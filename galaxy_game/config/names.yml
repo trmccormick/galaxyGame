@@ -1,0 +1,179 @@
+star_systems:
+  star_trek:
+    cardassian_union:
+      - name: Cardassia
+        planets: 6
+        notable: ["Cardassia IV (Prime)"]
+        affiliation: "Cardassian Union"
+      - name: Amleth
+        planets: 4
+        notable: ["Amleth Prime"]
+        affiliation: "Cardassian Union"
+      - name: Septimus
+        planets: 3
+        notable: ["Septimus III"]
+        affiliation: "Cardassian Union"
+    
+    federation:
+      - name: Vulcan
+        planets: 3
+        notable: ["Vulcan II (Prime)"]
+        affiliation: "United Federation of Planets"
+      - name: Andor
+        planets: 8
+        notable: ["Andoria (Andor VIII)"]
+        moons: ["Andor VIII-A"]
+        affiliation: "United Federation of Planets"
+      - name: Betazed
+        planets: 5
+        notable: ["Betazed III (Prime)"]
+        affiliation: "United Federation of Planets"
+      - name: Terra Nova
+        planets: 1
+        notable: ["Terra Nova"]
+        affiliation: "United Federation of Planets"
+      - name: Denobula
+        planets: 3
+        notable: ["Denobula Prime"]
+        affiliation: "United Federation of Planets"
+    
+    klingon_empire:
+      - name: Qo'noS
+        planets: 4
+        notable: ["Qo'noS III (First City)"]
+        moons: ["Praxis"]
+        affiliation: "Klingon Empire"
+      - name: Boreth
+        planets: 2
+        notable: ["Boreth II"]
+        affiliation: "Klingon Empire"
+      - name: Ty'Gokor
+        planets: 3
+        notable: ["Ty'Gokor I"]
+        affiliation: "Klingon Empire"
+    
+    romulan_empire:
+      - name: Romulus
+        planets: 4
+        notable: ["Romulus III", "Remus (Romulus IV)"]
+        affiliation: "Romulan Star Empire"
+      - name: Algeron
+        planets: 2
+        notable: ["Algeron II"]
+        affiliation: "Romulan Star Empire"
+    
+    independent:
+      - name: Nimbus
+        planets: 3
+        notable: ["Nimbus III (Paradise City)"]
+        affiliation: "Neutral Zone"
+      - name: Risa
+        planets: 5
+        notable: ["Risa V (Prime)"]
+        affiliation: "Independent"
+      - name: Farius
+        planets: 2
+        notable: ["Farius Prime"]
+        affiliation: "Independent"
+
+  star_wars:
+    core_worlds:
+      - name: Coruscant
+        planets: 1
+        notable: ["Coruscant (Imperial Center)"]
+        affiliation: "Galactic Empire"
+      - name: Corellia
+        planets: 5
+        notable: ["Corellia", "Centerpoint Station"]
+        affiliation: "Core Worlds"
+      - name: Kuat
+        planets: 3
+        notable: ["Kuat Prime"]
+        affiliation: "Core Worlds"
+
+    mid_rim:
+      - name: Naboo
+        planets: 3
+        notable: ["Naboo"]
+        moons: ["Rori", "Ohma-D'un"]
+        affiliation: "Mid Rim"
+      - name: Malastare
+        planets: 2
+        notable: ["Malastare"]
+        affiliation: "Mid Rim"
+      - name: Kashyyyk
+        planets: 4
+        notable: ["Kashyyyk"]
+        affiliation: "Mid Rim"
+
+    outer_rim:
+      - name: Tatoo
+        planets: 3
+        notable: ["Tatooine (Tatoo I & II binary)"]
+        affiliation: "Outer Rim"
+      - name: Mandalore
+        planets: 4
+        notable: ["Mandalore"]
+        moons: ["Concordia"]
+        affiliation: "Outer Rim"
+      - name: Geonosis
+        planets: 1
+        notable: ["Geonosis"]
+        rings: true
+        affiliation: "Outer Rim"
+
+  babylon_5:
+    - name: Centauri Prime
+      planets: 3
+      notable: ["Centauri Prime"]
+      affiliation: "Centauri Republic"
+    - name: Narn
+      planets: 4
+      notable: ["Narn"]
+      affiliation: "Narn Regime"
+    - name: Minbar
+      planets: 2
+      notable: ["Minbar"]
+      affiliation: "Minbari Federation"
+
+  battlestar:
+    - name: Caprica
+      planets: 1
+      notable: ["Caprica"]
+      affiliation: "Twelve Colonies"
+    - name: Picon
+      planets: 1
+      notable: ["Picon"]
+      affiliation: "Twelve Colonies"
+    - name: Virgon
+      planets: 1
+      notable: ["Virgon"]
+      affiliation: "Twelve Colonies"
+
+  dune:
+    - name: Arrakis
+      planets: 1
+      notable: ["Arrakis (Dune)"]
+      moons: ["First Moon", "Second Moon"]
+      affiliation: "Imperium"
+    - name: Caladan
+      planets: 1
+      notable: ["Caladan"]
+      affiliation: "Imperium"
+    - name: Giedi
+      planets: 2
+      notable: ["Giedi Prime"]
+      affiliation: "Imperium"
+
+planet_names:
+  generic:
+    - New Eden
+    - Haven
+    - Providence
+    - Sanctuary
+    - Avalon
+    - Nova Terra
+    - Elysium
+    - Arcadia
+    - Olympus
+    - Atlantis

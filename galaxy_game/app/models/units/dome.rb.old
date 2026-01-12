@@ -1,0 +1,78 @@
+# app/models/units/dome.rb
+# app/models/units/dome.rb
+module Units
+  class Dome < BaseUnit
+    include Housing         # Include the Housing concern
+    include PopulationManagement  # Include the Population Management concern
+
+    attr_accessor :current_occupancy
+
+    # Ensure validations from PopulationManagement are included
+    validates :name, presence: true
+    validates :capacity, numericality: { greater_than_or_equal_to: 0 }
+    validates :current_occupancy, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: :population_capacity }
+
+    # Define constants for resource requirements
+    FOOD_PER_PERSON = 2    # Example resource requirement per person
+    WATER_PER_PERSON = 3    # Example resource requirement per person
+    ENERGY_PER_PERSON = 5   # Example resource requirement per person
+    DAILY_MAINTENANCE_COST_PER_PERSON = 1  # Example daily cost per person
+
+    def initialize(attributes = {})
+      super(attributes)  # Initialize BaseUnit with attributes
+      @current_occupancy = attributes[:current_occupancy] || 0
+      initialize_housing(attributes[:population_capacity] || 100)  # Set default or provided capacity
+    end
+
+    # Method to add occupants to the dome
+    def add_occupants(quantity)
+      if has_capacity_for?(quantity)
+        add_population(quantity)
+        save  # Save changes to the database
+        return "#{quantity} occupants added. Current occupancy: #{current_population}."
+      else
+        return "Cannot add #{quantity} occupants. Not enough remaining capacity."
+      end
+    end
+
+    # Method to remove occupants from the dome
+    def remove_occupants(quantity)
+      if remove_population(quantity)
+        save  # Save changes to the database
+        return "#{quantity} occupants removed. Current occupancy: #{current_population}."
+      else
+        return "Cannot remove #{quantity} occupants. Not enough current occupancy."
+      end
+    end
+
+    # Calculate the used capacity
+    def used_capacity
+      current_occupancy
+    end
+
+    # Calculate the remaining capacity
+    def remaining_capacity
+      capacity - current_occupancy
+    end
+
+    # Calculate the remaining population capacity
+    def remaining_population_capacity
+      population_capacity - current_population
+    end
+
+    # Override resource_requirements from PopulationManagement
+    def resource_requirements
+      {
+        food: current_population * FOOD_PER_PERSON,
+        water: current_population * WATER_PER_PERSON,
+        energy: current_population * ENERGY_PER_PERSON
+      }
+    end
+
+    # Override operational_costs from PopulationManagement
+    def operational_costs
+      current_population * DAILY_MAINTENANCE_COST_PER_PERSON
+    end
+  end
+end
+

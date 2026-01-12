@@ -1,0 +1,48 @@
+# app/controllers/transactions_controller.rb
+class TransactionsController < ApplicationController
+  def create
+    buyer = find_transactable(params[:buyer_type], params[:buyer_id])
+    seller = find_transactable(params[:seller_type], params[:seller_id])
+    item = Item.find(params[:item_id])
+    currency = Currency.find(params[:currency_id]) if params[:currency_id]
+
+    # Ensure seller has item in inventory
+    unless seller.inventory.items.exists?(id: item.id)
+      render json: { errors: ['Seller does not have item in inventory'] }, status: :unprocessable_entity and return
+    end
+
+    # Determine price using market logic
+    demand = params[:demand].to_i > 0 ? params[:demand].to_i : 1
+    price = Market::Marketplace.get_price(item, seller: seller, demand: demand)
+    price ||= params[:price].to_f # fallback for player/NPC listings
+
+    # Calculate base tax if seller is a base
+    base_tax = seller.respond_to?(:base_tax_rate) ? seller.base_tax_rate : 0
+    tax_amount = price * base_tax
+    total_price = price + tax_amount
+
+    transaction = Transaction.create(
+      account: buyer.account,
+      recipient: seller,
+      item: item,
+      amount: total_price,
+      currency: currency,
+      transaction_type: 'transfer',
+      tax: tax_amount
+    )
+
+    if transaction.persisted?
+      render json: { message: 'Transaction successful', price: price, tax: tax_amount }, status: :ok
+    else
+      render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def find_transactable(type, id)
+    type.constantize.find(id)
+  rescue NameError
+    nil
+  end
+end

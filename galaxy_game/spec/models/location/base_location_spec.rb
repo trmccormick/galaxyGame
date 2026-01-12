@@ -8,6 +8,12 @@ RSpec.describe Location::BaseLocation, type: :model do
       self.table_name = 'base_locations'
       attribute :name, :string # Add attributes used in tests
       # Remove: attribute :coordinates, :string
+
+      validates :name, presence: true
+
+      def update_location(attributes = {})
+        update(attributes)
+      end
     end
   end
 
@@ -30,12 +36,14 @@ RSpec.describe Location::BaseLocation, type: :model do
 
   # Test associations using test class
   describe 'associations' do
+    subject { test_location_class.new }
     it { is_expected.to belong_to(:locationable).optional }
     # it { is_expected.to have_many(:items) }
   end
 
   # Test validations using test class
   describe 'validations' do
+    subject { test_location_class.new }
     describe 'presence' do
       it { is_expected.to validate_presence_of(:name) }
       # Remove: it { is_expected.to validate_presence_of(:coordinates) }

@@ -1,0 +1,255 @@
+# app/services/star_sim/procedural_generator.rb
+require 'json'
+require 'fileutils'
+
+module StarSim
+  class ProceduralGenerator
+    def initialize(solar_system = nil)
+      @solar_system = solar_system
+      @name_generator = NameGeneratorService.new
+      @planet_counter = 0
+      @output_path = Lookup::StarSystemLookupService::SYSTEMS_PATH
+      FileUtils.mkdir_p(@output_path) unless File.directory?(@output_path)
+    end
+
+    def generate_system_seed_file(num_planets: 10, num_stars: 1)
+      seed_data = generate_system_seed(num_planets: num_planets, num_stars: num_stars)
+      timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+      filename = "generated_#{seed_data[:solar_system][:identifier]}_#{timestamp}.json" # Use identifier in filename
+      filepath = File.join(@output_path, filename)
+
+      File.open(filepath, 'w') do |f|
+        f.write(JSON.pretty_generate(seed_data))
+      end
+
+      puts "Generated seed file: #{filepath}"
+    end
+
+    # Main method used by SystemGeneratorService
+    def generate_system_seed(num_stars:, num_planets:)
+      # Generate a system name
+      system_name = @name_generator.generate_system_name
+      system_identifier = system_name.upcase.gsub(/\s+/, '-')
+      
+      # Create the basic system structure
+      system_data = {
+        "galaxy" => {
+          "name" => @solar_system&.galaxy&.name || "Milky Way",
+          "identifier" => @solar_system&.galaxy&.identifier || "MILKY-WAY"
+        },
+        "solar_system" => {
+          "name" => system_name,
+          "identifier" => system_identifier
+        },
+        "stars" => generate_stars(num_stars),
+        "celestial_bodies" => {
+          "terrestrial_planets" => generate_terrestrial_planets(num_planets),
+          "gas_giants" => generate_gas_giants(rand(0..3)),
+          "ice_giants" => generate_ice_giants(rand(0..2)),
+          "dwarf_planets" => generate_dwarf_planets(rand(0..5))
+        }
+      }
+      
+      system_data
+    end
+
+    # For test compatibility
+    alias_method :generate!, :generate_system_seed
+
+    private
+
+    # Methods to generate different types of celestial bodies
+    def generate_stars(count)
+      stars = []
+      count.times do |i|
+        star_name = @name_generator.generate_star_name
+        
+        # Assign star mass based on spectral type distribution
+        spectral_types = [
+          { type: "M", mass_range: (0.08..0.45), probability: 0.76 },
+          { type: "K", mass_range: (0.45..0.8), probability: 0.12 },
+          { type: "G", mass_range: (0.8..1.04), probability: 0.076 },
+          { type: "F", mass_range: (1.04..1.4), probability: 0.03 },
+          { type: "A", mass_range: (1.4..2.1), probability: 0.006 },
+          { type: "B", mass_range: (2.1..16), probability: 0.001 },
+          { type: "O", mass_range: (16..150), probability: 0.0001 }
+        ]
+        
+        # Pick a spectral type based on probability
+        rand_val = rand
+        cumulative_prob = 0
+        chosen_type = spectral_types.find do |type|
+          cumulative_prob += type[:probability]
+          rand_val <= cumulative_prob
+        end || spectral_types.first # Default to M if nothing matched
+        
+        # Generate mass within the range for this type
+        mass_range = chosen_type[:mass_range]
+        mass = rand(mass_range.begin..mass_range.end)
+        
+        # Calculate other properties based on mass
+        radius = calculate_star_radius(mass)
+        luminosity = calculate_star_luminosity(mass)
+        temperature = calculate_star_temperature(mass)
+        
+        stars << {
+          "name" => star_name,
+          "identifier" => star_name.upcase.gsub(/\s+/, '-'),
+          "type" => "#{chosen_type[:type]}#{rand(0..9)}V", # Adding a subtype and luminosity class
+          "mass" => mass,
+          "radius" => radius,
+          "luminosity" => luminosity,
+          "temperature" => temperature
+        }
+      end
+      
+      stars
+    end
+
+    def generate_terrestrial_planets(count)
+      planets = []
+      
+      # If we have stars, use the first one for orbits
+      star_for_planets = @solar_system&.stars&.first
+      
+      count.times do |i|
+        @planet_counter += 1
+        planet_name = "Planet #{@planet_counter}"
+        
+        # Generate planet properties
+        mass = rand(0.1..10.0) * 5.972e24 # Earth masses
+        radius = rand(0.5..2.0) * 6.371e6 # Earth radii
+        
+        # Calculate density
+        volume = (4.0/3.0) * Math::PI * (radius ** 3)
+        density = mass / volume
+        
+        # Generate orbital parameters
+        orbital_parameters = generate_orbital_parameters(i)
+        
+        planets << {
+          "name" => planet_name,
+          "identifier" => "PLANET-#{@planet_counter}",
+          "type" => "terrestrial",
+          "mass" => mass,
+          "radius" => radius,
+          "density" => density,
+          "gravity" => calculate_gravity(mass, radius),
+          "albedo" => rand(0.1..0.6),
+          "surface_temperature" => calculate_surface_temperature(orbital_parameters[:semi_major_axis_au]),
+          "orbits" => [{
+            "around" => star_for_planets&.name || "Primary Star",
+            "semi_major_axis_au" => orbital_parameters[:semi_major_axis_au],
+            "eccentricity" => orbital_parameters[:eccentricity],
+            "inclination_deg" => orbital_parameters[:inclination_deg],
+            "orbital_period_days" => orbital_parameters[:orbital_period_days],
+            "distance" => orbital_parameters[:semi_major_axis_au]
+          }]
+        }
+      end
+      
+      planets
+    end
+
+    def generate_gas_giants(count)
+      planets = []
+      
+      # Implementation similar to terrestrial planets but with gas giant characteristics
+      # ...
+      
+      planets
+    end
+
+    def generate_ice_giants(count)
+      planets = []
+      
+      # Implementation for ice giants
+      # ...
+      
+      planets
+    end
+
+    def generate_dwarf_planets(count)
+      planets = []
+      
+      # Implementation for dwarf planets
+      # ...
+      
+      planets
+    end
+
+    # Helper methods to calculate various properties
+    
+    def generate_orbital_parameters(planet_index)
+      # Use Titius-Bode Law for approximate spacing
+      semi_major_axis_au = 0.4 + 0.3 * (2 ** planet_index)
+      
+      # Add some randomness
+      semi_major_axis_au *= rand(0.8..1.2)
+      
+      # Other orbital parameters
+      eccentricity = rand(0.0..0.1)
+      inclination_deg = rand(0.0..5.0)
+      
+      # Calculate orbital period using Kepler's Third Law
+      # P^2 = a^3 (where P is in years and a is in AU)
+      orbital_period_years = Math.sqrt(semi_major_axis_au ** 3)
+      orbital_period_days = orbital_period_years * 365.25
+      
+      {
+        semi_major_axis_au: semi_major_axis_au,
+        eccentricity: eccentricity,
+        inclination_deg: inclination_deg,
+        orbital_period_days: orbital_period_days
+      }
+    end
+
+    def calculate_star_radius(mass)
+      # Simple approximation for main sequence stars
+      # For M >= 1 solar mass: R ~ M^0.8
+      # For M < 1 solar mass: R ~ M^0.57
+      solar_radius = 6.96e8
+      
+      if mass >= 1.0
+        solar_radius * (mass ** 0.8)
+      else
+        solar_radius * (mass ** 0.57)
+      end
+    end
+
+    def calculate_star_luminosity(mass)
+      # Approximation: L ~ M^3.5 for main sequence stars
+      mass ** 3.5
+    end
+
+    def calculate_star_temperature(mass)
+      # Very rough approximation
+      if mass < 0.5
+        3000 + (mass - 0.1) * 3000
+      elsif mass < 1.0
+        4000 + (mass - 0.5) * 1556
+      elsif mass < 2.0
+        5778 + (mass - 1.0) * 2000
+      else
+        7778 + (mass - 2.0) * 5000
+      end
+    end
+
+    def calculate_gravity(mass, radius)
+      # g = G * M / r^2
+      g_constant = 6.67430e-11
+      gravity = g_constant * mass / (radius ** 2)
+      
+      # Convert to Earth g's
+      earth_g = 9.80665
+      gravity / earth_g
+    end
+
+    def calculate_surface_temperature(distance_au)
+      # Very simple approximation assuming Earth-like atmospheres
+      # T ~ 278K * (1/sqrt(distance_au))
+      base_temp = 278
+      base_temp / Math.sqrt(distance_au)
+    end
+  end
+end

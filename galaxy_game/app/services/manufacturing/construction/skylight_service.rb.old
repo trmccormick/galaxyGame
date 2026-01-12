@@ -1,0 +1,272 @@
+module Construction
+  class SkylightService
+    def initialize(skylight, panel_type = nil, settlement = nil)
+      @skylight = skylight
+      @panel_type = panel_type || "basic_transparent_crater_tube_cover_array"
+      @primary_cover = "basic_transparent_crater_tube_cover_array"
+      @secondary_cover = "structural_cover_panel"
+      
+      # Load blueprint - try multiple sources
+      @blueprint = find_blueprint(@panel_type)
+      
+      # Get the lava tube and settlement
+      @lava_tube = get_lava_tube
+      @settlement = settlement || @lava_tube&.settlement || get_settlement_from_location
+    end
+    
+    def find_blueprint(panel_type)
+      # Try to find blueprint by panel type name
+      blueprint = Blueprint.find_by(name: panel_type)
+      return blueprint if blueprint
+      
+      # Try with blueprint suffix
+      blueprint = Blueprint.find_by(name: "#{panel_type}_blueprint")
+      return blueprint if blueprint
+      
+      # Fallback to generic skylight blueprint
+      Blueprint.find_by(name: "Skylight Array") || 
+      Blueprint.find_by(name: "basic_transparent_crater_tube_cover_array")
+    end
+    
+    def get_lava_tube
+      if @skylight.respond_to?(:lava_tube)
+        @skylight.lava_tube
+      elsif @skylight.respond_to?(:lavatube)
+        @skylight.lavatube
+      else
+        nil
+      end
+    end
+    
+    def get_settlement_from_location
+      return nil unless @lava_tube&.location
+      Settlement::BaseSettlement.find_by(location: @lava_tube.location)
+    end
+    
+    def calculate_materials
+      # Use the SkylightCalculator with our blueprint
+      base_materials = Construction::SkylightCalculator.calculate_materials(@skylight, @blueprint)
+      
+      # Add panel-specific materials based on type
+      panel_specific_materials = calculate_panel_specific_materials(@panel_type)
+      
+      # Merge materials
+      base_materials.merge(panel_specific_materials) { |key, base_val, panel_val| base_val + panel_val }
+    end
+    
+    def calculate_panel_specific_materials(panel_type)
+      panel_count = Construction::SkylightCalculator.calculate_panel_count(@skylight.width, @skylight.length)
+      
+      case panel_type
+      when @primary_cover, "transparent_cover_panel"
+        {
+          "silicate_glass" => panel_count * 25,  # 25kg per panel
+          "aluminum_frame" => panel_count * 5,   # 5kg per panel
+          "ceramic_composite" => panel_count * 2  # 2kg sealant per panel
+        }
+      when "solar_cover_panel"
+        {
+          "advanced_solar_cells" => panel_count * 10,
+          "graphene_layers" => panel_count * 3,
+          "silicate_glass" => panel_count * 20,
+          "aluminum_frame" => panel_count * 5
+        }
+      when "thermal_insulation_cover_panel"
+        {
+          "aerogel_layers" => panel_count * 15,
+          "thermal_resistant_coating" => panel_count * 5,
+          "aluminum_frame" => panel_count * 5
+        }
+      when @secondary_cover, "structural_cover_panel"
+        {
+          "reinforced_steel" => panel_count * 30,
+          "carbon_nanotubes" => panel_count * 2,
+          "radiation_shielding" => panel_count * 10
+        }
+      else
+        # Generic panel materials
+        {
+          "processed_materials" => panel_count * 20,
+          "structural_components" => panel_count * 10
+        }
+      end
+    end
+
+    def schedule_construction
+      return { success: false, message: "No settlement found" } unless @settlement
+      return { success: false, message: "No blueprint found for #{@panel_type}" } unless @blueprint
+      
+      # 1. Calculate required materials
+      materials_needed = calculate_materials
+      
+      # 2. Create a construction job to track this work
+      construction_job = ConstructionJob.create!(
+        jobable: @skylight,
+        job_type: 'skylight_cover',
+        status: 'materials_pending',
+        settlement: @settlement,
+        blueprint: @blueprint,
+        target_values: { 
+          panel_type: @panel_type,
+          materials_needed: materials_needed,
+          construction_phase: determine_construction_phase
+        }
+      )
+      
+      # 3. Create material requests for all required materials
+      material_requests = MaterialRequestService.create_material_requests_from_hash(
+        construction_job,
+        materials_needed
+      )
+      
+      # 4. Create equipment requests for 3D printers and construction equipment
+      equipment_requirements = calculate_equipment_requirements
+      equipment_requests = EquipmentRequestService.create_equipment_requests(
+        construction_job,
+        equipment_requirements
+      )
+      
+      # 5. Update skylight status
+      @skylight.update(
+        status: "materials_requested",
+        notes: "Waiting for materials and equipment for #{@panel_type}",
+        panel_type: @panel_type
+      )
+      
+      # 6. Return the construction job for tracking
+      {
+        success: true,
+        message: "Construction scheduled for #{@panel_type}",
+        construction_job: construction_job,
+        material_requests: material_requests,
+        equipment_requests: equipment_requests
+      }
+    end
+    
+    def determine_construction_phase
+      case @skylight.status
+      when 'uncovered'
+        'primary_installation'
+      when 'primary_cover'
+        'secondary_installation'
+      else
+        'upgrade_installation'
+      end
+    end
+    
+    def calculate_equipment_requirements
+      printer_requirements = Construction::SkylightCalculator.calculate_printer_requirements(@skylight)
+      
+      [
+        { equipment_type: "3d_printer", quantity: printer_requirements[:printer_count] },
+        { equipment_type: "construction_drone", quantity: 4 },
+        { equipment_type: "assembly_robot", quantity: 2 },
+        { equipment_type: "materials_transport", quantity: 1 }
+      ]
+    end
+    
+    # This method would be called by a job processor when materials are ready
+    def start_construction(construction_job)
+      return false unless construction_job.materials_gathered?
+      return false unless construction_job.equipment_gathered?
+      
+      # Update status
+      construction_job.update(status: 'in_progress')
+      
+      # Calculate estimated time based on panel type and skylight size
+      estimated_time = calculate_construction_time
+      
+      # Schedule builders through ConstructionManager
+      Construction::ConstructionManager.assign_builders(@skylight, estimated_time)
+      
+      # Update skylight status
+      @skylight.update(
+        status: "under_construction", 
+        estimated_completion: Time.now + estimated_time.hours,
+        notes: "Installing #{@panel_type}"
+      )
+      
+      true
+    end
+    
+    def calculate_construction_time
+      base_time = Construction::SkylightCalculator.estimate_construction_time(@skylight)
+      
+      # Adjust time based on panel complexity
+      complexity_factor = case @panel_type
+                         when @primary_cover then 1.0
+                         when "solar_cover_panel" then 1.5
+                         when "thermal_insulation_cover_panel" then 1.3
+                         when @secondary_cover then 1.2
+                         else 1.0
+                         end
+      
+      (base_time * complexity_factor).ceil
+    end
+
+    def track_progress(construction_job)
+      return false unless construction_job.status == 'in_progress'
+      
+      if Construction::ConstructionManager.complete?(@skylight)
+        # Get panel_type from the construction job, not from @panel_type
+        panel_type = construction_job.target_values['panel_type']
+        
+        # Mark job as complete
+        construction_job.update(
+          status: 'completed',
+          completion_date: Time.now
+        )
+        
+        # Update skylight status based on panel type and current state
+        new_status = determine_completion_status(panel_type)
+        
+        @skylight.update(
+          status: new_status,
+          panel_type: panel_type,  # Use the job's panel_type, not @panel_type
+          construction_date: Time.now,
+          notes: "#{panel_type} installation complete"
+        )
+        
+        # Release equipment
+        Construction::EquipmentManager.release_equipment(construction_job)
+        
+        # Start maintenance systems if needed
+        start_maintenance_systems(new_status)
+        
+        return true
+      end
+      
+      false
+    end
+    
+    def determine_completion_status(panel_type)
+      case panel_type
+      when @primary_cover
+        "primary_cover"
+      when @secondary_cover
+        if @skylight.status == "primary_cover"
+          "full_cover"
+        else
+          "secondary_cover"
+        end
+      when "solar_cover_panel"
+        "solar_cover"
+      when "thermal_insulation_cover_panel"  
+        "insulated_cover"
+      else
+        "covered"
+      end
+    end
+    
+    def start_maintenance_systems(status)
+      case status
+      when "primary_cover"
+        # Start basic maintenance for transparent panels
+        MaintenanceMonitorService.start_repair_drones(@skylight, @panel_type)
+      when "full_cover", "solar_cover", "insulated_cover"
+        # Start advanced maintenance for complex systems
+        MaintenanceMonitorService.start_advanced_maintenance(@skylight, @panel_type)
+      end
+    end
+  end
+end

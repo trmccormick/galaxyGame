@@ -1,0 +1,952 @@
+SOL_SYSTEM_DATA = {
+  stars: [{
+    name: 'Sol',
+    identifier: 'SOL',
+    luminosity: 3.828e26,
+    mass: 1.989e30,
+    type_of_star: 'G2V',
+    life: 'Main Sequence',
+    age: 4.6e9,
+    r_ecosphere: 1.496e8,
+    radius: 6.957e8,
+    temperature: 5778
+    # surface_gravity: 274.0,
+    # magnetic_field: true,
+    # rotation_period: 27.0, # days at equator
+    # spatial_location: { x: 0, y: 0, z: 0 }
+  }],
+  
+  celestial_bodies: {
+    terrestrial_planets: [
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'terrestrial',
+        name: 'Mercury',
+        identifier: 'MERCURY-01',
+        mass: '3.30e23',
+        radius: 2.44e6,
+        density: 5.427,
+        size: 0.3829,
+        orbital_period: 87.97,
+        surface_temperature: 440,
+        gravity: 3.7,
+        albedo: 0.12,
+        insolation: 9126,
+        known_pressure: 0,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 5.79e7 }],
+        atmosphere: {
+          composition: {},
+          dust: { concentration: 0, properties: "Negligible atmosphere" },
+          pressure: 0,
+          total_atmospheric_mass: 0
+        },
+        geospheres: {
+          crust: {
+            composition: { 
+              oxygen: 42.0,
+              sodium: 29.0,
+              hydrogen: 22.0,
+              helium: 6.0,
+              potassium: 0.5
+            },
+            thickness: '10-30km',
+            type: 'silicate'
+          },
+          mantle: {
+            composition: {
+              iron: 70.0,
+              nickel: 30.0
+            },
+            thickness: '600km'
+          },
+          core: {
+            composition: {
+              iron: 85.0,
+              nickel: 15.0
+            },
+            state: 'partially molten',
+            radius: '1800km'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'terrestrial', 
+        name: 'Venus',
+        identifier: 'VENUS-01',
+        mass: '4.87e24',
+        radius: 6.05e6,
+        density: 5.243,
+        size: 0.9499,
+        orbital_period: 224.7,
+        surface_temperature: 737,
+        gravity: 8.87,
+        albedo: 0.65,
+        insolation: 2613,
+        known_pressure: 92,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 1.08e8 }],
+        atmosphere: {
+          composition: {
+            "CO2" => { percentage: 96.5 },
+            "N2" => { percentage: 3.5 }
+          },
+          dust: { concentration: 0.1, properties: "Sulfuric acid clouds and volcanic ash" },
+          pressure: 92,
+          total_atmospheric_mass: 4.8e20
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              basalt: 45.0,
+              granite: 30.0,
+              iron_oxide: 15.0,
+              aluminum_oxide: 10.0
+            },
+            thickness: '50km',
+            type: 'basaltic'
+          },
+          mantle: {
+            composition: {
+              olivine: 60.0,
+              pyroxene: 30.0,
+              iron_oxide: 10.0
+            },
+            thickness: '3000km',
+            state: 'plastic'
+          },
+          core: {
+            composition: {
+              iron: 80.0,
+              nickel: 20.0
+            },
+            state: 'liquid',
+            radius: '3200km'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::TerrestrialPlanet,
+        name: 'Earth',
+        identifier: 'EARTH-01',
+        mass: '5.97e24',
+        radius: 6.371e6,
+        density: 5.514,
+        size: 1.0,
+        orbital_period: 365.25,
+        surface_temperature: 288,
+        gravity: 9.82,
+        albedo: 0.30,
+        insolation: 1361,
+        known_pressure: 1.0,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 1.496e8 }],
+        atmosphere: {
+          composition: GameConstants::EARTH_ATMOSPHERE[:composition],
+          dust: { concentration: 0.01, properties: "Various particulates including water vapor" },
+          pressure: 1.0,
+          total_atmospheric_mass: 5.15e18
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              oxygen: 46.6,
+              silicon: 27.7,
+              aluminum: 8.1,
+              iron: 5.0,
+              calcium: 3.6,
+              sodium: 2.8,
+              potassium: 2.6,
+              magnesium: 2.1
+            },
+            thickness: '5-70km',
+            type: 'continental and oceanic'
+          },
+          mantle: {
+            composition: {
+              oxygen: 44.0,
+              magnesium: 22.8,
+              silicon: 21.0,
+              iron: 5.8,
+              aluminum: 2.2,
+              calcium: 2.3
+            },
+            thickness: '2900km',
+            state: 'solid/plastic'
+          },
+          core: {
+            composition: {
+              iron: 85.0,
+              nickel: 10.0,
+              sulfur: 5.0
+            },
+            state: 'liquid outer/solid inner',
+            radius: '3485km'
+          }
+        },
+        hydrosphere: {
+          water_bodies: {
+            oceans: {
+              volume: 1.332e9,
+              salinity: 3.5,
+              coverage: 70.8
+            },
+            ice_caps: {
+              volume: 2.74e7,
+              coverage: 10.0
+            },
+            groundwater: {
+              volume: 2.34e7,
+              depth_range: '0-2km'
+            },
+            rivers: {
+              volume: 2100,
+              total_length: 2.1e6
+            },
+            lakes: {
+              volume: 1.76e5,
+              coverage: 2.0
+            }
+          },
+          composition: {
+            H2O: 96.5,
+            dissolved_salts: 3.5
+          },
+          state_distribution: {
+            liquid: 98.0,
+            solid: 1.7,
+            vapor: 0.3
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody, 
+        name: 'Mars',
+        identifier: 'MARS-01',
+        mass: '6.42e23',
+        radius: 3.389e6,
+        density: 3.933,
+        size: 0.532,
+        orbital_period: 687,
+        surface_temperature: 210,
+        gravity: 3.721,
+        albedo: 0.25,
+        insolation: 589,
+        known_pressure: 0.006,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 2.279e8 }],
+        atmosphere: {
+          composition: {
+            "CO2" => { percentage: 95.32 },
+            "N2" => { percentage: 2.7 },
+            "Ar" => { percentage: 1.6 }
+          },
+          dust: { concentration: 0.5, properties: "Predominantly composed of iron oxide." },
+          pressure: 0.006,
+          total_atmospheric_mass: 2.5e16
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              oxygen: 46.6,
+              silicon: 21.0,
+              iron: 12.5,
+              magnesium: 9.1,
+              aluminum: 4.5,
+              calcium: 4.1
+            },
+            thickness: '30-50km',
+            type: 'basaltic'
+          },
+          mantle: {
+            composition: {
+              iron: 30.0,
+              oxygen: 30.0,
+              silicon: 25.0,
+              magnesium: 15.0
+            },
+            thickness: '1500km'
+          },
+          core: {
+            composition: {
+              iron: 80.0,
+              sulfur: 20.0
+            },
+            state: 'partially liquid',
+            radius: '1800km'
+          }
+        }
+      }
+    ],
+    gas_giants: [
+      {
+        model_class: CelestialBodies::GasGiant,
+        type: 'gas_giant',
+        name: 'Jupiter',
+        identifier: 'JUPITER-01',
+        mass: '1.898e27',
+        radius: 6.991e7,
+        density: 1.326,
+        size: 11.209,
+        orbital_period: 4333,
+        surface_temperature: 165,
+        gravity: 24.79,
+        albedo: 0.52,
+        insolation: 50.5,
+        geological_activity: true,
+        atmosphere: {
+          composition: {
+            'H2' => { percentage: 89.8 },
+            'He' => { percentage: 10.2 }
+          },
+          dust: { 
+            concentration: 0.01, 
+            properties: "Trace amounts of silicates and ammonia." 
+          },
+          pressure: 0,
+          total_atmospheric_mass: 1.9e27
+        },
+        star_distances: [{ star_name: 'Sol', distance: 7.786e8 }],
+        magnetosphere: true,
+        magnetic_field_strength: 4.28, # Gauss
+        rotation_period: 9.925, # hours
+        orbital_elements: {
+          semi_major_axis: 7.786e8,
+          eccentricity: 0.0489,
+          inclination: 1.304, # degrees
+          longitude_of_ascending_node: 100.464,
+          argument_of_perihelion: 273.867,
+          mean_anomaly: 20.020
+        },
+        moons: ['Io', 'Europa', 'Ganymede', 'Callisto'] # References to moon objects
+      },
+      {
+        model_class: CelestialBodies::GasGiant,
+        name: 'Saturn',
+        identifier: 'SATURN-01',
+        mass: '5.683e26',
+        radius: 5.8232e7,
+        density: 0.687,
+        size: 9.449,
+        orbital_period: 10759.22,
+        surface_temperature: 134,
+        gravity: 10.44,
+        albedo: 0.342,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 1.434e9 }],
+        atmosphere: {
+          composition: {
+            "H2" => { percentage: 96.3 },
+            "He" => { percentage: 3.7 }
+          },
+          dust: { concentration: 0.02, properties: "Mainly composed of water ice and ammonia." },
+          pressure: 0,
+          total_atmospheric_mass: 5.4e26
+        }
+      }
+    ],
+    ice_giants: [
+      {
+        model_class: CelestialBodies::IceGiant,
+        type: 'ice_giant',
+        name: 'Uranus',
+        identifier: 'URANUS-01',
+        mass: '8.681e25',
+        radius: 2.5362e7,
+        density: 1.27,
+        size: 4.007,
+        orbital_period: 30688.5,
+        surface_temperature: 76,
+        gravity: 8.69,
+        albedo: 0.51,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 2.871e9 }],
+        atmosphere: {
+          composition: {
+            "H2" => { percentage: 82.5 },
+            "He" => { percentage: 15.2 },
+            "CH4" => { percentage: 2.3 }
+          },
+          dust: { concentration: 0.01, properties: "Methane ice crystals" },
+          pressure: 0,
+          total_atmospheric_mass: 5.18e18
+        }
+      },
+      {
+        model_class: CelestialBodies::IceGiant,
+        name: 'Neptune',
+        identifier: 'NEPTUNE-01',
+        mass: '1.024e26',
+        radius: 2.4622e7,
+        density: 1.638,
+        size: 3.883,
+        orbital_period: 60195,
+        surface_temperature: 72,
+        gravity: 11.15,
+        albedo: 0.41,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 4.495e9 }],
+        atmosphere: {
+          composition: {
+            "H2" => { percentage: 80.0 },
+            "He" => { percentage: 19.0 },
+            "CH4" => { percentage: 1.0 }
+          },
+          dust: { concentration: 0.01, properties: "Methane ice crystals and hydrocarbon compounds" },
+          pressure: 0,
+          total_atmospheric_mass: 6.2e18
+        }
+      }
+    ],
+    major_moons: [
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Luna',
+        identifier: 'LUNA-01',
+        parent_body: 'Earth',
+        mass: '7.342e22',
+        radius: 1.737e6,
+        density: 3.344,
+        orbital_period: 27.322,
+        surface_temperature: 250,
+        gravity: 1.62,
+        albedo: 0.12,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 1.496e8 }],
+        atmosphere: {
+          composition: {},
+          dust: { concentration: 0, properties: "Negligible atmosphere" },
+          pressure: 0,
+          total_atmospheric_mass: 0
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              oxygen: 43.0,
+              silicon: 21.0,
+              aluminum: 10.0,
+              calcium: 9.0,
+              iron: 8.0,
+              magnesium: 5.0,
+              titanium: 2.0
+            },
+            thickness: '60km',
+            type: 'anorthositic'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Io',
+        identifier: 'IO-01',
+        parent_body: 'Jupiter',
+        mass: '8.932e22',
+        radius: 1.8215e6,
+        density: 3.528,
+        orbital_period: 1.769,
+        surface_temperature: 110,
+        gravity: 1.796,
+        albedo: 0.63,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 7.786e8 }],
+        atmosphere: {
+          composition: {
+            "SO2" => { percentage: 90.0 },
+            "SO" => { percentage: 10.0 }
+          },
+          dust: { concentration: 0.1, properties: "Volcanic sulfur compounds" },
+          pressure: 3e-7,
+          total_atmospheric_mass: 1e10
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Europa',
+        identifier: 'EUROPA-01',
+        parent_body: 'Jupiter',
+        mass: '4.800e22',
+        radius: 1.561e6,
+        density: 3.013,
+        orbital_period: 3.551,
+        surface_temperature: 102,
+        gravity: 1.314,
+        albedo: 0.67,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 7.786e8 }],
+        atmosphere: {
+          composition: {
+            "O2" => { percentage: 100.0 }
+          },
+          dust: { concentration: 0, properties: "Tenuous oxygen atmosphere" },
+          pressure: 1e-7,
+          total_atmospheric_mass: 1e8
+        },
+        hydrosphere: {
+          water_bodies: {
+            subsurface_ocean: {
+              volume: 3e10,
+              depth: '60-150km',
+              salinity: 'unknown'
+            },
+            ice_shell: {
+              volume: 9.53e9,
+              thickness: '10-30km'
+            }
+          },
+          composition: {
+            H2O: 95.0,
+            dissolved_salts: 5.0
+          },
+          state_distribution: {
+            liquid: 85.0,
+            solid: 15.0
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Ganymede',
+        identifier: 'GANYMEDE-01',
+        parent_body: 'Jupiter',
+        mass: '1.482e23',
+        radius: 2.634e6,
+        density: 1.936,
+        orbital_period: 7.155,
+        surface_temperature: 110,
+        gravity: 1.428,
+        albedo: 0.43,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 7.786e8 }],
+        atmosphere: {
+          composition: {
+            "O2" => { percentage: 100.0 }
+          },
+          dust: { concentration: 0, properties: "Thin oxygen atmosphere" },
+          pressure: 1e-6,
+          total_atmospheric_mass: 1e9
+        },
+        hydrosphere: {
+          composition: {
+            water: 100.0
+          },
+          volume: 5e10,
+          distribution: {
+            ice_shell: 15.0,
+            subsurface_ocean: 85.0
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Callisto',
+        identifier: 'CALLISTO-01',
+        parent_body: 'Jupiter',
+        mass: '1.076e23',
+        radius: 2.410e6,
+        density: 1.834,
+        orbital_period: 16.689,
+        surface_temperature: 134,
+        gravity: 1.235,
+        albedo: 0.22,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 7.786e8 }],
+        atmosphere: {
+          composition: {
+            "CO2" => { percentage: 98.0 },
+            "O2" => { percentage: 2.0 }
+          },
+          dust: { concentration: 0, properties: "Extremely thin atmosphere" },
+          pressure: 7.5e-7,
+          total_atmospheric_mass: 4e8
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Titan',
+        identifier: 'TITAN-01',
+        parent_body: 'Saturn',
+        mass: '1.345e23',
+        radius: 2.575e6,
+        density: 1.880,
+        orbital_period: 15.945,
+        surface_temperature: 93.7,
+        gravity: 1.352,
+        albedo: 0.22,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 1.434e9 }],
+        atmosphere: {
+          composition: {
+            "N2" => { percentage: 98.4 },
+            "CH4" => { percentage: 1.6 }
+          },
+          dust: { concentration: 0.2, properties: "Composed of organic compounds and tholins." },
+          pressure: 1.5,
+          total_atmospheric_mass: 1.5e19
+        },
+        hydrosphere: {
+          composition: {
+            methane: 80.0,
+            ethane: 20.0
+          },
+          volume: 4e5,
+          distribution: {
+            lakes: 60.0,
+            seas: 40.0
+          },
+          properties: "Only celestial body besides Earth with stable surface liquids"
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'moon',
+        name: 'Triton',
+        identifier: 'TRITON-01',
+        parent_body: 'Neptune',
+        mass: '2.139e22',
+        radius: 1.353e6,
+        density: 2.061,
+        orbital_period: -5.877, # Negative indicates retrograde orbit
+        surface_temperature: 38,
+        gravity: 0.779,
+        albedo: 0.76,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 4.495e9 }],
+        atmosphere: {
+          composition: {
+            "N2" => { percentage: 99.9 },
+            "CH4" => { percentage: 0.1 }
+          },
+          dust: { concentration: 0.05, properties: "Primarily nitrogen ice and frozen methane." },
+          pressure: 0.014,
+          total_atmospheric_mass: 2.0e21
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              water_ice: 55.0,
+              nitrogen_ice: 25.0,
+              methane_ice: 15.0,
+              rock: 5.0
+            },
+            thickness: '320km',
+            type: 'icy'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        name: 'Phobos',
+        identifier: 'PHOBOS-01',
+        parent_body: 'Mars',
+        mass: '1.06e16',
+        radius: 11267,
+        density: 1.876,
+        orbital_period: 0.319,
+        surface_temperature: 233,
+        gravity: 0.0057,
+        albedo: 0.071,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 2.279e8 }],
+        atmosphere: {
+          composition: {},
+          dust: { concentration: 0, properties: "No atmosphere" },
+          pressure: 0,
+          total_atmospheric_mass: 0
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        name: 'Deimos',
+        identifier: 'DEIMOS-01',
+        parent_body: 'Mars',
+        mass: '1.48e15',
+        radius: 6200,
+        density: 1.471,
+        orbital_period: 1.263,
+        surface_temperature: 233,
+        gravity: 0.003,
+        albedo: 0.068,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 2.279e8 }],
+        atmosphere: {
+          composition: {},
+          dust: { concentration: 0, properties: "No atmosphere" },
+          pressure: 0,
+          total_atmospheric_mass: 0
+        }
+      }      
+    ],
+
+    dwarf_planets: [
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'dwarf_planet',
+        name: 'Ceres',
+        identifier: 'CERES-01',
+        mass: '9.393e20',
+        radius: 4.69e5,
+        density: 2.162,
+        size: 0.074,
+        orbital_period: 1682,
+        surface_temperature: 168,
+        gravity: 0.28,
+        albedo: 0.09,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 4.13e8 }],
+        atmosphere: {
+          composition: {
+            "H2O" => { percentage: 100.0 }
+          },
+          dust: { concentration: 0, properties: "Temporary water vapor from sublimating ice" },
+          pressure: 1e-14,
+          total_atmospheric_mass: 1e4
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              water_ice: 25.0,
+              clay_minerals: 20.0,
+              carbonates: 20.0,
+              rock: 35.0
+            },
+            thickness: '100km',
+            type: 'icy_rocky'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'dwarf_planet',
+        name: 'Pluto',
+        identifier: 'PLUTO-01',
+        mass: '1.303e22',
+        radius: 1.188e6,
+        density: 1.854,
+        orbital_period: 90560,
+        surface_temperature: 44,
+        gravity: 0.62,
+        albedo: 0.49,
+        geological_activity: true,
+        star_distances: [{ star_name: 'Sol', distance: 5.9e9 }],
+        atmosphere: {
+          composition: {
+            "N2" => { percentage: 98.0 },
+            "CH4" => { percentage: 1.5 },
+            "CO" => { percentage: 0.5 }
+          },
+          dust: { concentration: 0.01, properties: "Organic compounds from methane processing" },
+          pressure: 1e-5,
+          total_atmospheric_mass: 5e13
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'dwarf_planet',
+        name: 'Eris',
+        identifier: 'ERIS-01',
+        mass: '1.67e22',
+        radius: 1.163e6,
+        density: 2.52,
+        orbital_period: 203830,
+        surface_temperature: 42.5,
+        gravity: 0.82,
+        albedo: 0.96,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 1.016e10 }],
+        atmosphere: {
+          composition: {
+            "N2" => { percentage: 100.0 }
+          },
+          dust: { concentration: 0, properties: "Seasonal nitrogen atmosphere" },
+          pressure: 1e-7,
+          total_atmospheric_mass: 1e12
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'dwarf_planet',
+        name: 'Haumea',
+        identifier: 'HAUMEA-01',
+        mass: '4.006e21',
+        radius: 8.16e5,
+        density: 1.885,
+        orbital_period: 103468,
+        surface_temperature: 50,
+        gravity: 0.401,
+        albedo: 0.804,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 6.452e9 }],
+        atmosphere: {
+          composition: {},
+          dust: { concentration: 0, properties: "No significant atmosphere" },
+          pressure: 0,
+          total_atmospheric_mass: 0
+        },
+        geospheres: {
+          crust: {
+            composition: {
+              water_ice: 95.0,
+              rock: 5.0
+            },
+            type: 'crystalline_ice'
+          }
+        }
+      }
+    ],
+    asteroids: [
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'asteroid',
+        name: 'Vesta',
+        identifier: 'VESTA-01',
+        mass: '2.59e20',
+        radius: 2.625e5,
+        density: 3.456,
+        orbital_period: 1325.75,
+        surface_temperature: 85,
+        gravity: 0.25,
+        albedo: 0.423,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 3.53e8 }],
+        geospheres: {
+          crust: {
+            composition: {
+              basalt: 60.0,
+              pyroxene: 30.0,
+              olivine: 10.0
+            },
+            type: 'differentiated_igneous'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'asteroid',
+        name: 'Pallas',
+        identifier: 'PALLAS-01',
+        mass: '2.11e20',
+        radius: 2.512e5,
+        density: 2.86,
+        orbital_period: 1685.93,
+        surface_temperature: 164,
+        gravity: 0.21,
+        albedo: 0.155,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 4.14e8 }]
+      }
+    ],
+
+    kuiper_belt_objects: [
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'kbo',
+        name: 'Makemake',
+        identifier: 'MAKEMAKE-01',
+        mass: '3e21',
+        radius: 7.15e5,
+        density: 1.7,
+        orbital_period: 112897,
+        surface_temperature: 30,
+        gravity: 0.5,
+        albedo: 0.81,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 6.85e9 }],
+        atmosphere: {
+          composition: {},
+          dust: { concentration: 0, properties: "Possible seasonal atmosphere" },
+          pressure: 0,
+          total_atmospheric_mass: 0
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'kbo',
+        name: 'Quaoar',
+        identifier: 'QUAOAR-01',
+        mass: '1.4e21',
+        radius: 5.55e5,
+        density: 2.2,
+        orbital_period: 104347,
+        surface_temperature: 43,
+        gravity: 0.3,
+        albedo: 0.109,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 6.78e9 }],
+        geospheres: {
+          crust: {
+            composition: {
+              water_ice: 30.0,
+              methane_ice: 20.0,
+              rock: 50.0
+            },
+            type: 'mixed_ice_rock'
+          }
+        }
+      },
+      {
+        model_class: CelestialBodies::CelestialBody,
+        type: 'kbo',
+        name: 'Sedna',
+        identifier: 'SEDNA-01',
+        mass: '1e21',
+        radius: 4.95e5,
+        density: 2.0,
+        orbital_period: 265000,
+        surface_temperature: 12,
+        gravity: 0.27,
+        albedo: 0.32,
+        geological_activity: false,
+        star_distances: [{ star_name: 'Sol', distance: 1.3e11 }],
+        geospheres: {
+          crust: {
+            composition: {
+              water_ice: 20.0,
+              methane_ice: 30.0,
+              nitrogen_ice: 20.0,
+              tholin: 30.0
+            },
+            type: 'deep_frozen'
+          }
+        }
+      }
+    ]
+  },
+  base_units: [
+    {
+      name: "Inflatable Habitat Module",
+      base_materials: {
+        kevlar_fabric: "500 kg",
+        aluminum_alloy: "1000 kg",
+        carbon_fiber: "300 kg"
+      },
+      operating_requirements: {
+        power: "5 kW",
+        water: "100 L/day",
+        air: "500 L/day"
+      }
+    }
+  ],
+  materials: {
+    'Mercury' => [
+      {
+        name: 'Helium-3',
+        mass: 1.0e18,
+        percentage: 0.01,
+        uses: ['nuclear fusion', 'energy production']
+      },
+      {
+        name: 'Regolith',
+        mass: 1.0e22,
+        percentage: 100,
+        uses: ['construction', 'radiation shielding']
+      }
+    ]
+  }
+}

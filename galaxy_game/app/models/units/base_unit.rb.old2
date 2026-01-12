@@ -1,0 +1,171 @@
+module Units
+  class BaseUnit < ApplicationRecord
+    belongs_to :owner, polymorphic: true 
+
+    # has_one :inventory, as: :inventoryable, dependent: :destroy
+    # has_many :items, through: :inventory
+
+    validates :identifier, presence: true, uniqueness: true  
+    validates :name, :unit_type, presence: true
+    validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+
+    after_initialize :load_unit_info, :initialize_modules_and_rigs
+
+    attr_accessor :internal_modules, :external_modules, :rigs
+
+    def population_capacity
+      @unit_info['capacity']
+    end
+
+    def energy_usage
+      @unit_info['consumables']['energy']
+    end
+
+    def input_resources
+      @unit_info['input_resources']
+    end
+
+    def output_resources
+      @unit_info['output_resources']
+    end
+
+    def collect_materials(amount)
+      # Implement the logic to collect materials
+    end
+
+    def process_materials(inventory)
+      # Implement the logic to process materials
+    end
+
+    def max_rigs
+      @unit_info['max_rigs'] || 1
+    end
+
+    def add_module(module_type, location: :internal)
+      validate_module_location(location)
+      module_limit = module_port_limit(location)
+
+      return "No available #{location} ports" if send("#{location}_modules").size >= module_limit
+
+      module_data = load_module_data(module_type)
+      send("#{location}_modules") << module_data
+      apply_module_effects(module_data)
+    end
+
+    def remove_module(module_type, location: :internal)
+      module_data = find_module(module_type, location)
+      if module_data
+        send("#{location}_modules").delete(module_data)
+        revert_module_effects(module_data)
+      else
+        "Module not found"
+      end
+    end
+
+    def add_rig(rig_type)
+      return "Max rigs installed" if rigs.size >= max_rigs
+      rig_data = load_rig_data(rig_type)
+      rigs << rig_data
+      apply_rig_effects(rig_data)
+    end
+
+    def remove_rig(rig_type)
+      rig_data = find_rig(rig_type)
+      if rig_data
+        rigs.delete(rig_data)
+      else
+        "Rig not found"
+      end
+    end
+
+    def operate(resources)
+      inputs = calculate_inputs(resources)
+      outputs = calculate_outputs(inputs)
+      handle_outputs(outputs)
+    end
+
+    private
+
+    def load_unit_info
+      return nil unless unit_type.present?
+      lookup_service = UnitLookupService.new
+      @unit_info = lookup_service.find_unit(unit_type) || {}
+      self.current_population ||= 0
+    end
+
+    def initialize_modules_and_rigs
+      @internal_modules = []
+      @external_modules = []
+      @rigs = []
+    end
+
+    def module_port_limit(location)
+      @unit_info.dig('ports', location.to_s) || 0
+    end
+
+    def calculate_inputs(resources)
+      # Handle resource calculations and losses
+      inputs = {}
+      input_resources.each do |input|
+        resource_id = input['id']
+        required = input['amount']
+        inputs[resource_id] = resources.fetch(resource_id, 0) >= required ? required : 0
+      end
+      inputs
+    end
+
+    def calculate_outputs(inputs)
+      # Output must match mass conservation, taking into account dynamic ranges and waste
+      total_input_mass = inputs.values.sum
+      output_specs = output_resources.map { |output| [output['id'], output_mass(output, total_input_mass)] }.to_h
+      output_specs
+    end
+
+    def output_mass(output, total_mass)
+      range = output['amount_range']
+      base_amount = rand(range['min']..range['max'])
+      base_amount + (total_mass * 0.05).floor # Example: 5% waste is handled
+    end
+
+    def handle_outputs(outputs)
+      outputs.each { |resource, amount| inventory.add_item(resource, amount) }
+    end
+
+    def apply_module_effects(module_data)
+      # Example application
+      self.capacity += module_data['capacity_bonus'] if module_data.key?('capacity_bonus')
+    end
+
+    def revert_module_effects(module_data)
+      self.capacity -= module_data['capacity_bonus'] if module_data.key?('capacity_bonus')
+    end
+
+    def apply_rig_effects(rig_data)
+      # Example effects
+      self.durability -= rig_data['durability_penalty'] if rig_data.key?('durability_penalty')
+    end
+
+    def find_module(module_type, location)
+      send("#{location}_modules").find { |mod| mod['id'] == module_type }
+    end
+
+    def find_rig(rig_type)
+      rigs.find { |rig| rig['id'] == rig_type }
+    end
+
+    def validate_module_location(location)
+      raise ArgumentError, "Invalid location: #{location}" unless %i[internal external].include?(location)
+    end
+
+    def load_module_data(module_type)
+      # Fetch module data from an appropriate service or JSON store
+      { 'id' => module_type, 'name' => 'Sample Module' }
+    end
+
+    def load_rig_data(rig_type)
+      # Fetch rig data from an appropriate service or JSON store
+      { 'id' => rig_type, 'name' => 'Sample Rig' }
+    end
+  end
+end
+

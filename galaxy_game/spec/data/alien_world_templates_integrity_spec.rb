@@ -5,8 +5,8 @@ require 'json'
 RSpec.describe 'Alien World Template Integrity' do
   let(:template_path) do
     Rails.root.join(
+      'app',
       'data',
-      'json-data',
       'templates',
       'alien_world_templates_v1.1.json'
     )

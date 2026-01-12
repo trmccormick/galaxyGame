@@ -1,0 +1,32 @@
+# app/models/storage/liquid_storage.rb
+module Storage
+  class LiquidStorage < BaseStorage
+    def initialize(capacity:, location:)
+      super(capacity: capacity, item_type: 'Liquid', location: location)
+    end
+
+    def add_liquid(liquid, quantity)
+      if can_store?(liquid, quantity)
+        @current_stock[liquid] ||= 0
+        @current_stock[liquid] += quantity
+        "Added #{quantity} units of #{liquid}."
+      else
+        "Not enough capacity to add #{quantity} units of #{liquid}."
+      end
+    end
+
+    def remove_liquid(liquid, quantity)
+      if can_remove?(liquid, quantity)
+        @current_stock[liquid] -= quantity
+        @current_stock.delete(liquid) if @current_stock[liquid] <= 0
+        "Removed #{quantity} units of #{liquid}."
+      else
+        "Not enough #{liquid} available."
+      end
+    end
+
+    def current_stock
+      @current_stock
+    end
+  end
+end

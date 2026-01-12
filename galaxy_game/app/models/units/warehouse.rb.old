@@ -1,0 +1,27 @@
+# app/models/units/warehouse.rb
+module Units
+    class Warehouse < BaseUnit
+      attr_accessor :inventory
+  
+      def initialize(name, max_capacity, celestial_body)
+        super(name: name)
+        @inventory = Inventory.new(max_capacity: max_capacity, celestial_body: celestial_body)
+      end
+  
+      # Store an item in the warehouse
+      def store_item(name, amount, state)
+        @inventory.add_item(name, amount, state)
+      end
+  
+      # Remove an item from the warehouse
+      def remove_item(name, amount, state)
+        @inventory.remove_item(name, amount, state)
+      end
+  
+      # Check warehouse storage status
+      def storage_status
+        puts "Warehouse Capacity: #{@inventory.current_capacity}/#{@inventory.max_capacity}"
+      end
+    end
+end
+  

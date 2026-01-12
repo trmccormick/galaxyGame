@@ -1,0 +1,79 @@
+class StarSystemGenerator
+    def initialize(jumpgate_id)
+      @jumpgate = Jumpgate.find(jumpgate_id) # Link to the jumpgate that triggers this generation
+    end
+  
+    def generate
+      ActiveRecord::Base.transaction do
+        solar_system = create_solar_system
+        star = create_primary_star(solar_system)
+        create_planets_and_moons(solar_system, star)
+      end
+    end
+  
+    private
+  
+    # Create the SolarSystem model instance
+    def create_solar_system
+      SolarSystem.create!(
+        name: generate_system_name, # Generate a random name for the system
+        discovered_by: @jumpgate.owner, # Optional: Attribute discovery to the jumpgate owner
+        jumpgate_id: @jumpgate.id
+      )
+    end
+  
+    # Create the primary star for the system
+    def create_primary_star(solar_system)
+      Star.create!(
+        solar_system: solar_system,
+        spectral_class: generate_spectral_class, # Use logic to pick O, B, A, F, G, K, M
+        mass: random_mass_for_star,             # Based on stargen mass functions
+        luminosity: calculate_luminosity,
+        age: random_age_for_star
+      )
+    end
+  
+    # Create planets and optionally moons
+    def create_planets_and_moons(solar_system, star)
+      number_of_planets = random_planet_count
+      planet_semi_major_axes = distribute_orbital_distances(number_of_planets)
+  
+      planet_semi_major_axes.each do |a|
+        e = random_orbital_eccentricity
+        planet = create_planet(solar_system, star, a, e)
+  
+        if planet.can_have_moons? # Gas giants or large terrestrial planets
+          create_moons(planet)
+        end
+      end
+    end
+  
+    # Generate a planet for the given star and orbit
+    def create_planet(solar_system, star, semi_major_axis, eccentricity)
+      Planet.create!(
+        solar_system: solar_system,
+        star: star,
+        semi_major_axis: semi_major_axis,
+        eccentricity: eccentricity,
+        mass: calculate_planet_mass,
+        atmosphere: generate_atmosphere_for_planet,
+        biosphere: generate_biosphere_for_planet,
+        # Additional planet-specific attributes
+      )
+    end
+  
+    # Create moons around a planet
+    def create_moons(planet)
+      number_of_moons = random_moon_count(planet)
+      number_of_moons.times do
+        Moon.create!(
+          planet: planet,
+          semi_major_axis: random_moon_distance(planet),
+          eccentricity: random_orbital_eccentricity,
+          mass: calculate_moon_mass(planet),
+          # Additional moon-specific attributes
+        )
+      end
+    end
+  end
+  

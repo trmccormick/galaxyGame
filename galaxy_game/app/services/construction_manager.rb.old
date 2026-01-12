@@ -1,0 +1,48 @@
+class ConstructionManager
+    def self.assign_builders(construction_project)
+        return false unless MaterialRequestSystem.check_and_request(construction_project)
+    
+        available_units = ConstructionUnit.available
+        return false if available_units.empty?
+    
+        assigned_units = available_units.take(construction_project.required_units)
+        assigned_units.each { |unit| unit.assign_to(construction_project) }
+    
+        construction_project.update(status: "in_progress", assigned_units: assigned_units)
+        true
+    end
+  
+    def self.track_progress(construction_project)
+      return if construction_project.status != "in_progress"
+  
+      progress = construction_project.calculate_progress
+  
+      if progress >= 100
+        complete_construction(construction_project)
+      else
+        construction_project.update(progress: progress)
+      end
+    end
+  
+    def self.complete_construction(construction_project)
+      construction_project.update(status: "complete", progress: 100)
+      PressureTestService.perform(construction_project) if construction_project.requires_pressure_test?
+    end
+  
+    def self.pause_project(construction_project)
+      construction_project.update(status: "paused") if construction_project.status == "in_progress"
+    end
+  
+    def self.resume_project(construction_project)
+      if construction_project.status == "paused" && check_materials(construction_project)
+        construction_project.update(status: "in_progress")
+      end
+    end
+  
+    private
+  
+    def self.check_materials(construction_project)
+      Inventory.has_all?(construction_project.required_materials)
+    end
+  end
+  

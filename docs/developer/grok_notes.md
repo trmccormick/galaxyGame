@@ -111,7 +111,7 @@ REMINDER: All operations must stay inside the docker container. Ensure all RSpec
 
 "Grok, execute all commands ONLY within the web docker container.
 
-We need to continue testing to resolve the rspec failurs
+We need to continue testing to resolve the rspec failures
  1. please run "RAILS_ENV=test bundle exec rspec > ./log/rspec_full_{unix timestamp}.log" using the unix timestamp to make it unique. 
  2. Review the log and Identify the top 4 specs with the highest failure rates and work on them in order highest to lowest.
 
@@ -123,6 +123,10 @@ CRITICAL CONSTRAINTS:
 - Document the root cause of each failure pattern
 - All operations must stay inside the docker container
 - All tests must pass before proceeding
+- at each step commmit only the files you changed not all the uncommitted files. if you work on a spec
+  commmit only the files you worked on in that session only and push to git.
+- if you need to revert any code insure files are backed up to prevent any data loss. This is what is 
+  causing the current cascade of failures the accidental loss of files that didn't make it to github yet.
 
 REMINDER: All tests must pass, and all operations must stay inside the docker container."
 

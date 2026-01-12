@@ -1,0 +1,70 @@
+# app/services/lavatube_generator_service.rb
+class LavatubeGeneratorService
+  def initialize(random: true, params: {})
+    @random = random
+    @params = params
+  end
+
+  def generate
+    if @random
+      name = "Lavatube #{rand(1000..9999)}"
+      length = rand(1000..5000) # meters
+      diameter = rand(10..50) # meters
+      population = rand(0..100)
+      location = generate_location
+    else
+      name = @params[:name]
+      length = @params[:length]
+      diameter = @params[:diameter]
+      population = @params[:population]
+      location = @params[:location]
+    end
+
+    lavatube = Settlement::Lavatube.create(
+      name: name,
+      length: length,
+      diameter: diameter,
+      current_population: population,
+      location: location, 
+      celestial_body: params[:celestial_body]
+    )
+    
+    # Generate skylights
+    skylights = generate_skylights(length)
+    skylights.each { |skylight| lavatube.skylights.create(diameter: skylight.diameter, position: skylight.position) }
+
+    # Generate access points
+    access_points = generate_access_points(length)
+    access_points.each { |access_point| lavatube.access_points.create(size: access_point.size, position: access_point.position, type: access_point.type) }
+
+    
+    Settlement::Lavatube.new(
+      length: length,
+      diameter: diameter,
+      skylights: skylights || [],
+      access_points: access_points || []
+    )
+  end
+
+  private
+
+  def generate_skylights(length)
+    num_skylights = rand(1..5)
+    Array.new(num_skylights) do
+      diameter = rand(5..20) # meters
+      position = rand(0..length)
+      Settlement::Skylight.new(diameter: diameter, position: position)
+    end
+  end
+
+  def generate_access_points(length)
+    num_access_points = rand(2..10)
+    Array.new(num_access_points) do
+      size = rand(2..10) # meters
+      position = rand(0..length)
+      type = [:large, :medium, :small].sample
+      Settlement::AccessPoint.new(size: size, position: position, type: type)
+    end
+  end
+end
+  

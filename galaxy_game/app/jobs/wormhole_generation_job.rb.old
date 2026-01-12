@@ -1,0 +1,22 @@
+class WormholeGenerationJob < ApplicationJob
+  queue_as :default
+
+  def perform
+    # Check existing wormholes
+    active_systems = SolarSystem.joins(:wormholes_as_system_a)
+                              .or(SolarSystem.joins(:wormholes_as_system_b))
+                              .distinct
+
+    # Find systems that could have new wormholes
+    eligible_systems = SolarSystem.where.not(id: active_systems.select(:id))
+                                .where("random() < ?", GameConstants::WORMHOLE_GENERATION_CHANCE)
+                                .limit(GameConstants::MAX_NEW_WORMHOLES_PER_CYCLE)
+
+    eligible_systems.each do |system|
+      WormholeService.generate_connection(source_system: system)
+    end
+
+    # Schedule next generation cycle
+    WormholeGenerationJob.set(wait: GameConstants::WORMHOLE_GENERATION_INTERVAL).perform_later
+  end
+end

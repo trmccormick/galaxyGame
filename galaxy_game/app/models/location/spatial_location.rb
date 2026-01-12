@@ -8,7 +8,7 @@ module Location
     belongs_to :locationable, polymorphic: true, optional: true
 
     validates :x_coordinate, :y_coordinate, :z_coordinate,
-              presence: true,
+                presence: true,
               numericality: { greater_than_or_equal_to: -Float::INFINITY,
                             less_than_or_equal_to: Float::INFINITY }
 

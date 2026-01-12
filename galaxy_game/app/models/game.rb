@@ -1,7 +1,8 @@
 class Game
-  attr_accessor :elapsed_time, :tasks
+  attr_accessor :elapsed_time, :tasks, :game_state
 
-  def initialize
+  def initialize(game_state: nil)
+    @game_state = game_state
     @elapsed_time = 0.0
     @tasks = []
   end
@@ -37,6 +38,23 @@ class Game
     puts "Task completed: #{next_task[:description]} at #{next_task[:settlement].name}"
   end
 
+  # Advance game by a specific number of days
+  def advance_by_days(days)
+    @elapsed_time += days
+
+    # Update game_state if it exists
+    if @game_state
+      @game_state.update_time!
+    end
+
+    # Simulate everything in-game for the time skipped
+    process_settlements(days)
+    process_units(days)
+    process_planets(days)
+
+    puts "Time advanced by #{days} days. Now at day #{@elapsed_time.round(2)}"
+  end
+
   private
 
   # Simulate resource usage, growth, etc., at all settlements
@@ -46,7 +64,27 @@ class Game
       settlement.base_units.each do |unit|
         unit.consume_resources(time_skipped) if unit.respond_to?(:consume_resources)
       end
+      
+      # Process active jobs
+      process_jobs(settlement, time_skipped)
+      
       puts "#{settlement.name} updated for #{time_skipped} days."
+    end
+  end
+
+  def process_jobs(settlement, time_skipped)
+    # Convert days to hours (assuming 24 hours per day)
+    time_skipped_hours = time_skipped * 24
+    
+    # Process shell printing jobs
+    ShellPrintingJob.where(settlement: settlement, status: 'in_progress').each do |job|
+      job.progress_hours += time_skipped_hours
+      job.save!
+      
+      # Check if job is complete
+      if job.progress_hours >= job.production_time_hours
+        Manufacturing::ShellPrintingService.new(settlement).complete_job(job)
+      end
     end
   end
 

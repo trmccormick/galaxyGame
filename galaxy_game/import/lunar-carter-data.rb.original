@@ -1,0 +1,16 @@
+require 'nokogiri'
+require 'open-uri'
+
+url = 'https://en.wikipedia.org/wiki/List_of_craters_on_the_Moon:_A%E2%80%93B'
+doc = Nokogiri::HTML(URI.open(url))
+
+crater_names = doc.css('table.wikitable tbody tr td:first-child a').map(&:text)
+
+lunar_craters = crater_names.map { |name| { name: name } }
+
+updated_data = lunar_craters.map do |crater|
+    page = Wikipedia.find(crater[:name])
+    crater.merge(summary: page.summary)
+end
+
+File.write("lunar_craters.json", JSON.pretty_generate(updated_data))

@@ -1,0 +1,51 @@
+# app/models/storage/energy_storage.rb
+module Storage
+  class EnergyStorage < BaseStorage
+    attr_accessor :energy_type
+    
+    def initialize(capacity, energy_type)
+      super(capacity: capacity, item_type: 'Energy', location: nil)
+      @energy_type = energy_type
+      @current_stock = 0 # Use an integer for energy storage
+    end
+
+    # Add energy to storage
+    def add_energy(quantity)
+      if can_add?(quantity)
+        @current_stock += quantity
+        "Added #{quantity} units of #{energy_type} to storage."
+      else
+        "Not enough capacity to add #{quantity} units of #{energy_type}."
+      end
+    end
+
+    # Remove energy from storage
+    def remove_energy(quantity)
+      if can_remove?(quantity)
+        @current_stock -= quantity
+        "Removed #{quantity} units of #{energy_type} from storage."
+      else
+        "Not enough #{energy_type} available."
+      end
+    end
+
+    # Override total_stock to return current_stock directly
+    def total_stock
+      @current_stock
+    end
+
+    # Wrapper for BaseStorage#can_store?
+    def can_add?(quantity)
+      (@current_stock + quantity) <= capacity
+    end
+
+    # Wrapper for BaseStorage#can_remove?
+    def can_remove?(quantity)
+      @current_stock >= quantity
+    end
+  end
+end
+
+
+
+  

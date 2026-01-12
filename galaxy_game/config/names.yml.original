@@ -1,0 +1,194 @@
+stars:
+  # Star Trek Universe
+  - Vulcan Prime
+  - Qo'noS Prime
+  - Romulus Prime
+  - Cardassia Prime
+  - Ferenginar Prime
+  - Andoria Prime
+  - Betazed Prime
+  - Risa Prime
+  - Trill Prime
+  - Bajor Prime
+  - Tellar Prime
+  - Pacifica
+  - Rura Penthe
+  - Nimbus
+  
+  # Star Wars Universe
+  - Tatoo
+  - Yavin
+  - Kashyyyk Prime
+  - Mandalore
+  - Corellia Prime
+  - Kamino Prime
+  - Geonosis Prime
+  - Utapau
+  - Mustafar Prime
+  - Bespin
+  - Kessel
+  
+  # Babylon 5
+  - Centauri Prime
+  - Narn Prime
+  - Minbar Prime
+  - Z'ha'dum
+  - Epsilon Three
+  
+  # Mass Effect
+  - Thessia
+  - Palaven
+  - Tuchanka Prime
+  - Rannoch Prime
+  - Kahje Prime
+  - Dekuuna
+  - Irune
+  
+  # Battlestar Galactica
+  - Kobol Prime
+  - Caprica Prime
+  - Picon Prime
+  - Aerilon Prime
+  - Canceron Prime
+  - Gemenon Prime
+  - Leonis Prime
+  - Libran Prime
+  - Sagittaron Prime
+  - Scorpia Prime
+  - Tauron Prime
+  - Virgon Prime
+  
+  # Doctor Who
+  - Gallifrey Prime
+  - Skaro Prime
+  - Mondas Prime
+  - Raxacoricofallapatorius
+  - Trenzalore
+  
+planets:
+  # Star Trek Universe
+  - Vulcan
+  - Qo'noS
+  - Romulus
+  - Remus
+  - Cardassia IV
+  - Ferenginar
+  - Andoria
+  - Betazed
+  - Risa
+  - Trill
+  - Bajor
+  - Tellar
+  - Genesis
+  - Neural
+  - Ceti Alpha V
+  - Ceti Alpha VI
+  - Nibiru
+  - Delta Vega
+  
+  # Star Wars Universe
+  - Tatooine
+  - Naboo
+  - Coruscant
+  - Alderaan
+  - Hoth
+  - Dagobah
+  - Bespin
+  - Endor
+  - Yavin IV
+  - Kashyyyk
+  - Geonosis
+  - Kamino
+  - Utapau
+  - Mustafar
+  - Mandalore
+  - Scarif
+  - Jedha
+  - Eadu
+  - Wobani
+  - Corellia
+  - Kessel
+  - Pasaana
+  - Exegol
+  
+  # Babylon 5
+  - Centauri Prime
+  - Narn
+  - Minbar
+  - Epsilon III
+  - Z'ha'dum
+  - Sigma 957
+  
+  # Mass Effect
+  - Thessia
+  - Palaven
+  - Tuchanka
+  - Rannoch
+  - Sur'Kesh
+  - Kahje
+  - Dekuuna
+  - Irune
+  - Illium
+  - Omega
+  - Noveria
+  - Feros
+  - Eden Prime
+  - Horizon
+  - Ilos
+  
+  # Battlestar Galactica
+  - Kobol
+  - Caprica
+  - Picon
+  - Aerilon
+  - Canceron
+  - Gemenon
+  - Leonis
+  - Libran
+  - Sagittaron
+  - Scorpia
+  - Tauron
+  - Virgon
+  - New Caprica
+  
+  # Doctor Who
+  - Gallifrey
+  - Skaro
+  - Mondas
+  - Raxacoricofallapatorius
+  - Trenzalore
+  - New Earth
+  - Midnight
+  - Woman Wept
+  - Barcelona
+  
+  # Dune
+  - Arrakis
+  - Caladan
+  - Giedi Prime
+  - Salusa Secundus
+  - Ix
+  - Richese
+  
+  # Firefly/Serenity
+  - Persephone
+  - Ariel
+  - Beaumonde
+  - Bellerophon
+  - Miranda
+  - Haven
+  - Whitefall
+  - Regina
+  
+  # Other Sci-Fi
+  - Pandora
+  - LV-426
+  - Altair IV
+  - Mongo
+  - Metaluna
+  - Terminus
+  - Trantor
+  - Helios
+  - Osiris
+  - Chiron
+  - Ragnar

@@ -1,0 +1,501 @@
+# ==============================================================================
+# CRITICAL FIX 1: Atmosphere Temperature Runaway
+# File: app/services/terra_sim/atmosphere_simulation_service.rb
+# ==============================================================================
+
+module TerraSim
+  class AtmosphereSimulationService
+    GREENHOUSE_GASES = %w[CO2 CH4 N2O H2O].freeze
+
+    def initialize(celestial_body)
+      @celestial_body = celestial_body
+      @sigma = 5.67e-8 # Stefan-Boltzmann constant
+      @material_lookup = Lookup::MaterialLookupService.new
+    end
+
+    def simulate(time_skipped = 1)
+      atmosphere = @celestial_body.atmosphere
+      return unless atmosphere
+      
+      puts "[AtmosphereSimulation] Starting simulation for #{time_skipped} days"
+      puts "  Initial temp: #{@celestial_body.surface_temperature.round(2)} K"
+      puts "  Initial pressure: #{atmosphere.pressure.round(6)} bar"
+
+      update_pressure
+      calculate_greenhouse_effect
+      update_temperatures
+      simulate_atmospheric_loss(time_skipped)
+      decrease_dust(0.1 * time_skipped)
+
+      atmosphere.reload
+      puts "  Final temp: #{@celestial_body.surface_temperature.round(2)} K"
+      puts "  Final pressure: #{atmosphere.pressure.round(6)} bar"
+    end
+
+    private
+
+    def update_pressure
+      return unless @celestial_body.atmosphere.present?
+      atmosphere = @celestial_body.atmosphere
+      atmosphere.update_pressure_from_mass! if atmosphere.respond_to?(:update_pressure_from_mass!)
+    end
+
+    def calculate_greenhouse_effect
+      @albedo = @celestial_body.albedo.to_f
+      @solar_input = @celestial_body.solar_constant.to_f
+      
+      # Base temperature from solar input (Stefan-Boltzmann)
+      @base_temp = stefan_boltzmann_temp
+      
+      # CRITICAL FIX: Clamp base temp to reasonable range
+      @base_temp = @base_temp.clamp(150.0, 400.0)
+      
+      puts "  Base temp (Stefan-Boltzmann): #{@base_temp.round(2)} K"
+
+      gather_gas_data
+
+      @surface_temp = @base_temp
+      @polar_temp = @surface_temp - 75
+      @tropic_temp = @surface_temp
+
+      # FIXED: Limit iterations and check for runaway
+      previous_temp = @surface_temp
+      convergence_iterations = 0
+      
+      20.times do |i|
+        new_temp = greenhouse_adjusted_temp
+        
+        # CRITICAL: Prevent runaway greenhouse
+        # Cap temperature increase to 50K per iteration
+        if new_temp > previous_temp + 50.0
+          puts "  WARNING: Runaway greenhouse detected at iteration #{i}"
+          new_temp = previous_temp + 50.0
+        end
+        
+        # Cap absolute maximum temperature
+        new_temp = [new_temp, 500.0].min
+        
+        @surface_temp = new_temp
+        @polar_temp = @surface_temp - (75 / (1 + total_pressure))
+        
+        # Check convergence
+        if (new_temp - previous_temp).abs < 0.1
+          convergence_iterations += 1
+          break if convergence_iterations > 3
+        else
+          convergence_iterations = 0
+        end
+        
+        previous_temp = new_temp
+      end
+      
+      puts "  Greenhouse temp: #{@surface_temp.round(2)} K"
+      
+      # Final sanity check
+      if @surface_temp > 500.0 || @surface_temp < 100.0
+        puts "  ERROR: Invalid temperature #{@surface_temp} K, resetting to base"
+        @surface_temp = @base_temp
+      end
+
+      @celestial_body.update_columns(surface_temperature: @surface_temp)
+    end
+
+    def stefan_boltzmann_temp
+      temp = ((1 - @albedo) * @solar_input / (4 * @sigma))**0.25
+      # Sanity check
+      temp.clamp(150.0, 400.0)
+    end
+
+    def gather_gas_data
+      atmosphere = @celestial_body.atmosphere
+      @gases = {}
+
+      GREENHOUSE_GASES.each do |gas|
+        material = @material_lookup.find_material(gas)
+        gas_record = atmosphere.gases.find_by(name: gas)
+        gas_mass = gas_record&.mass || 0
+        molar_mass = material ? material["molar_mass"] : 0
+
+        @gases[gas] = { mass: gas_mass, molar_mass: molar_mass }
+      end
+    end
+
+    def greenhouse_adjusted_temp
+      # FIXED: Much more conservative greenhouse calculation
+      # Normalize masses to Earth-scale for reasonable effects
+      
+      water_effect = (water_vapor_pressure / 1e6)**0.15  # Very conservative
+      co2_effect = (@gases['CO2'][:mass] / 1e18)**0.15   # Conservative scaling
+      ch4_effect = (@gases['CH4'][:mass] / 1e18)**0.15   # Conservative scaling
+      
+      # Total greenhouse effect capped at 2x base temperature
+      total_effect = 1.0 + co2_effect + water_effect + ch4_effect
+      total_effect = [total_effect, 2.0].min  # Cap at 2x
+      
+      adjusted = @base_temp * total_effect**0.25
+      
+      # Additional safety cap
+      adjusted.clamp(@base_temp * 0.8, @base_temp * 1.5)
+    end
+
+    def water_vapor_pressure
+      rh = 0.7
+      r = 8.314
+      l_heat = 43655.0
+      p0 = 1.4e6
+      
+      # Ensure temperature is valid
+      temp = @surface_temp.clamp(200.0, 400.0)
+      rh * p0 * Math.exp(-l_heat / (r * temp))
+    end
+
+    def total_pressure
+      @celestial_body.atmosphere.pressure
+    end
+
+    def update_temperatures
+      atmosphere = @celestial_body.atmosphere
+      return unless atmosphere
+
+      # CRITICAL: Clamp all temperatures to reasonable ranges
+      @base_temp = @base_temp.clamp(150.0, 400.0)
+      @surface_temp = @surface_temp.clamp(150.0, 400.0)
+      @polar_temp = @polar_temp.clamp(100.0, 350.0)
+      @tropic_temp = @tropic_temp.clamp(150.0, 400.0)
+
+      atmosphere.set_effective_temp(@base_temp) if atmosphere.respond_to?(:set_effective_temp)
+      atmosphere.set_greenhouse_temp(@surface_temp) if atmosphere.respond_to?(:set_greenhouse_temp)
+      atmosphere.set_polar_temp(@polar_temp) if atmosphere.respond_to?(:set_polar_temp)
+      atmosphere.set_tropic_temp(@tropic_temp) if atmosphere.respond_to?(:set_tropic_temp)
+      
+      @celestial_body.update_columns(surface_temperature: @surface_temp)
+    end
+
+    def simulate_atmospheric_loss(time_skipped = 1)
+      atmosphere = @celestial_body.atmosphere
+      return unless atmosphere.present?
+
+      gravity = @celestial_body.gravity || 0.38
+      temperature = @celestial_body.surface_temperature.clamp(150.0, 400.0)  # Use clamped temp
+      
+      escape_factor = Math.sqrt(gravity / 9.8)
+      
+      atmosphere.gases.each do |gas|
+        mass = gas.mass.to_f
+        next if mass <= 0
+        
+        material = @material_lookup.find_material(gas.name)
+        molar_mass = material&.dig("molar_mass") || gas.molar_mass || 44.0
+        
+        mass_factor = 44.0 / molar_mass
+        temp_factor = temperature / 210.0
+        
+        base_loss_per_day = 1e-9
+        
+        if gas.name == 'Ar'
+          loss_rate = base_loss_per_day * 0.001
+        elsif gas.name == 'He'
+          loss_rate = base_loss_per_day * 100.0
+        elsif gas.name == 'H2'
+          loss_rate = base_loss_per_day * 1000.0
+        else
+          loss_rate = base_loss_per_day * mass_factor * temp_factor / escape_factor
+        end
+        
+        total_loss_fraction = loss_rate * time_skipped
+        total_loss_fraction = [total_loss_fraction, 0.1].min
+        
+        mass_lost = mass * total_loss_fraction
+        new_mass = mass - mass_lost
+        new_mass = [new_mass, 0].max
+        
+        if (new_mass - mass).abs > mass * 1e-10
+          gas.update_columns(mass: new_mass)
+        end
+      end
+
+      atmosphere.recalculate_mass! if atmosphere.respond_to?(:recalculate_mass!)
+      atmosphere.update_pressure_from_mass! if atmosphere.respond_to?(:update_pressure_from_mass!)
+    end
+
+    def decrease_dust(amount)
+      atmosphere = @celestial_body.atmosphere
+      return unless atmosphere
+      atmosphere.decrease_dust(amount) if atmosphere.respond_to?(:decrease_dust)
+    end
+  end
+end
+
+# ==============================================================================
+# CRITICAL FIX 2: Hydrosphere Mass Loss
+# File: app/services/terra_sim/hydrosphere_simulation_service.rb
+# ==============================================================================
+
+module TerraSim
+  class HydrosphereSimulationService
+    def initialize(celestial_body, options = {})
+      @celestial_body = celestial_body
+      @hydrosphere = celestial_body.hydrosphere
+      @atmosphere = celestial_body.atmosphere
+      @material_lookup = Lookup::MaterialLookupService.new
+      @options = options
+      @simulation_already_running = false
+    end
+
+    def simulate(time_skipped = 1)
+      return if @simulation_already_running
+      @simulation_already_running = true
+
+      return unless @celestial_body && @hydrosphere && @atmosphere
+
+      # Store initial mass for comparison
+      initial_mass = @hydrosphere.total_hydrosphere_mass
+      
+      # Step 1: Calculate region temperatures
+      calculate_region_temperatures
+      
+      # Step 2: Handle water movement (evaporation and precipitation)
+      handle_evaporation(time_skipped)
+      handle_precipitation(time_skipped)
+
+      # Step 3: Calculate state distributions based on temperature and pressure
+      calculate_state_distributions
+
+      # Step 4: Update the hydrosphere's total liquid volume
+      update_hydrosphere_volume
+
+      # Step 5: Handle ice melting
+      handle_ice_melting(time_skipped)
+      
+      # Verify we didn't lose too much water
+      final_mass = @hydrosphere.reload.total_hydrosphere_mass
+      if final_mass < initial_mass * 0.99
+        loss_pct = ((initial_mass - final_mass) / initial_mass * 100).round(2)
+        puts "  WARNING: Hydrosphere lost #{loss_pct}% mass in one cycle (#{time_skipped} days)"
+      end
+
+      @simulation_already_running = false
+    end
+
+    private
+
+    def calculate_region_temperatures
+      surface_temp = @celestial_body.surface_temperature
+
+      @hydrosphere.ocean_temp = calculate_liquid_temp(surface_temp, @hydrosphere.oceans)
+      @hydrosphere.lake_temp = calculate_liquid_temp(surface_temp, @hydrosphere.lakes)
+      @hydrosphere.river_temp = calculate_liquid_temp(surface_temp, @hydrosphere.rivers)
+
+      ice_volume = if @hydrosphere.respond_to?(:ice)
+        @hydrosphere.ice.is_a?(Numeric) ? @hydrosphere.ice : 0
+      elsif @hydrosphere.liquid_bodies&.dig('ice_caps').is_a?(Hash)
+        @hydrosphere.liquid_bodies['ice_caps']['volume'].to_f
+      else
+        ice_caps = @hydrosphere.liquid_bodies&.dig('ice_caps')
+        if ice_caps.is_a?(Hash)
+          ice_caps['volume'].to_f
+        else
+          ice_caps.to_f || 0
+        end
+      end
+
+      @hydrosphere.ice_temp = calculate_liquid_temp(surface_temp, ice_volume)
+    end
+
+    def calculate_liquid_temp(surface_temp, volume)
+      volume = volume.to_f rescue 0
+      base_temp = surface_temp - 5
+      volume_effect = Math.log(volume + 1)
+      base_temp - volume_effect
+    end
+
+    def handle_evaporation(time_skipped = 1)
+      water_material = @material_lookup.find_material("Water")
+      if water_material.nil?
+        Rails.logger.error("Water material not found in MaterialLookupService")
+        return
+      end
+
+      surface_temp = @celestial_body.surface_temperature
+
+      # CRITICAL FIX: Much more conservative evaporation rate
+      evaporation_rate = calculate_evaporation_rate(surface_temp, time_skipped)
+
+      ocean_evaporation = calculate_evaporation(@hydrosphere.oceans, evaporation_rate)
+      lake_evaporation  = calculate_evaporation(@hydrosphere.lakes, evaporation_rate)
+      river_evaporation = calculate_evaporation(@hydrosphere.rivers, evaporation_rate)
+
+      # Decrease hydrosphere volumes
+      if @hydrosphere.oceans.is_a?(Hash)
+        @hydrosphere.oceans['volume'] = [@hydrosphere.oceans['volume'].to_f - ocean_evaporation, 0].max
+      else
+        @hydrosphere.oceans = [@hydrosphere.oceans.to_f - ocean_evaporation, 0].max
+      end
+
+      if @hydrosphere.lakes.is_a?(Hash)
+        @hydrosphere.lakes['volume'] = [@hydrosphere.lakes['volume'].to_f - lake_evaporation, 0].max
+      else
+        @hydrosphere.lakes = [@hydrosphere.lakes.to_f - lake_evaporation, 0].max
+      end
+
+      if @hydrosphere.rivers.is_a?(Hash)
+        @hydrosphere.rivers['volume'] = [@hydrosphere.rivers['volume'].to_f - river_evaporation, 0].max
+      else
+        @hydrosphere.rivers = [@hydrosphere.rivers.to_f - river_evaporation, 0].max
+      end
+
+      total_evaporation = ocean_evaporation + lake_evaporation + river_evaporation
+
+      if total_evaporation > 0
+        # Add to atmosphere
+        @atmosphere.add_gas('Water', total_evaporation)
+      end
+    end
+
+    def calculate_evaporation(volume, evaporation_rate)
+      if volume.is_a?(Hash)
+        volume = volume['volume'].to_f
+      else
+        volume = volume.to_f
+      end
+      volume * evaporation_rate
+    end
+
+    def handle_precipitation(time_skipped = 1)
+      water_vapor = @atmosphere.gases.find_by(name: 'Water')&.mass || 0
+
+      precipitation_rate = calculate_precipitation_rate(water_vapor, @atmosphere.temperature, time_skipped)
+      precipitation_amount = water_vapor * precipitation_rate
+      precipitation_amount = [precipitation_amount, water_vapor].min
+
+      # Distribute precipitation
+      if @hydrosphere.oceans.is_a?(Hash)
+        @hydrosphere.oceans['volume'] = @hydrosphere.oceans['volume'].to_f + precipitation_amount * 0.7
+      else
+        @hydrosphere.oceans = @hydrosphere.oceans.to_f + precipitation_amount * 0.7
+      end
+
+      if @hydrosphere.lakes.is_a?(Hash)
+        @hydrosphere.lakes['volume'] = @hydrosphere.lakes['volume'].to_f + precipitation_amount * 0.2
+      else
+        @hydrosphere.lakes = @hydrosphere.lakes.to_f + precipitation_amount * 0.2
+      end
+
+      if @hydrosphere.rivers.is_a?(Hash)
+        @hydrosphere.rivers['volume'] = @hydrosphere.rivers['volume'].to_f + precipitation_amount * 0.1
+      else
+        @hydrosphere.rivers = @hydrosphere.rivers.to_f + precipitation_amount * 0.1
+      end
+
+      # Remove from atmosphere
+      if precipitation_amount > 0
+        @atmosphere.remove_gas('Water', precipitation_amount)
+      end
+
+      # Decrease dust
+      @atmosphere.decrease_dust(precipitation_amount * 0.05) if @atmosphere.respond_to?(:decrease_dust)
+    end
+
+    def calculate_precipitation_rate(water_vapor, temperature, time_skipped)
+      base_rate = 0.01
+      temperature_effect = [temperature - 273, 0].max * 0.001
+      humidity_effect = water_vapor * 0.0005
+      (base_rate + temperature_effect + humidity_effect) * time_skipped
+    end
+
+    def calculate_state_distributions
+      temperature = @celestial_body.surface_temperature
+      pressure = @hydrosphere.pressure
+
+      @hydrosphere.state_distribution = {
+        solid: percentage_frozen(temperature, pressure),
+        liquid: percentage_liquid(temperature, pressure),
+        gas: percentage_vapor(temperature, pressure)
+      }
+    end
+
+    def percentage_frozen(temp, pressure)
+      return 100 if temp < 273.15
+      return 0 if temp > 273.15
+      50
+    end
+
+    def percentage_liquid(temp, pressure)
+      return 0 if temp < 273.15 || temp > 373.15
+      70
+    end
+
+    def percentage_vapor(temp, pressure)
+      return 100 if temp > 373.15
+      30
+    end
+
+    def update_hydrosphere_volume
+      @hydrosphere.update_hydrosphere_volume if @hydrosphere.respond_to?(:update_hydrosphere_volume)
+    end
+
+    def handle_ice_melting(time_skipped = 1)
+      return unless @celestial_body.hydrosphere.liquid_bodies&.dig("ice_caps")
+      
+      surface_temp = @celestial_body.surface_temperature
+      return unless surface_temp > 273.15
+      
+      # FIXED: Scale melt factor by time_skipped
+      melt_factor = (surface_temp - 273.15) * 0.001 * time_skipped
+      
+      ice_volume = @celestial_body.hydrosphere.liquid_bodies["ice_caps"]["volume"].to_f
+      ice_mass = ice_volume * 917
+      
+      melt_amount = ice_mass * melt_factor
+      max_meltable = ice_mass * 0.01 * time_skipped  # Scale by time
+      melt_amount = [melt_amount, max_meltable].min
+      
+      if melt_amount > 0
+        new_ice_volume = (ice_mass - melt_amount) / 917
+        @celestial_body.hydrosphere.liquid_bodies["ice_caps"]["volume"] = new_ice_volume
+        
+        state_dist = @celestial_body.hydrosphere.state_distribution
+        solid_pct = state_dist["solid"].to_f
+        liquid_pct = state_dist["liquid"].to_f
+        
+        total_hydro_mass = @celestial_body.hydrosphere.total_hydrosphere_mass
+        solid_mass = total_hydro_mass * (solid_pct / 100.0)
+        liquid_mass = total_hydro_mass * (liquid_pct / 100.0)
+        
+        new_solid_mass = [solid_mass - melt_amount, 0].max  # Don't go negative
+        new_liquid_mass = liquid_mass + melt_amount
+        
+        new_solid_pct = (new_solid_mass / total_hydro_mass) * 100.0
+        new_liquid_pct = (new_liquid_mass / total_hydro_mass) * 100.0
+        
+        state_dist["solid"] = new_solid_pct
+        state_dist["liquid"] = new_liquid_pct
+        
+        @celestial_body.hydrosphere.state_distribution = state_dist
+        @celestial_body.hydrosphere.save!
+        
+        # Some evaporation - generic liquid, not just water
+        evaporation = melt_amount * 0.2
+        if evaporation > 0
+          # For Titan, this would be methane; for Mars/Earth, water
+          liquid_type = @hydrosphere.primary_liquid || 'H2O'
+          @celestial_body.atmosphere.add_gas(liquid_type, evaporation)
+        end
+      end
+    end
+
+    def calculate_evaporation_rate(surface_temp, time_skipped)
+      # CRITICAL FIX: Much more conservative rate
+      # Old rate was causing 100% loss in days
+      # New rate: ~0.0001% per day at 300K
+      
+      base_rate = 1e-8  # Was probably 1e-4 or higher
+      temp_factor = [surface_temp - 273.15, 0].max * 1e-7  # Very conservative
+      
+      total_rate = (base_rate + temp_factor) * time_skipped
+      
+      # Cap at 0.01% per day even for long simulations
+      [total_rate, 0.0001].min
+    end
+  end
+end

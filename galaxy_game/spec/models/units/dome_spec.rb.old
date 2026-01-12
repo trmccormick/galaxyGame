@@ -1,0 +1,45 @@
+# spec/models/units/dome_spec.rb
+require 'rails_helper'
+
+RSpec.describe Units::Dome, type: :model do
+  let(:dome) { Units::Dome.new(name: "Research Dome", capacity: 100, current_occupancy: 50) }
+
+  # describe 'validations' do
+  #   it 'is valid with valid attributes' do
+  #     expect(dome).to be_valid
+  #   end
+
+  #   it 'ensures current occupancy does not exceed total capacity' do
+  #     dome.current_occupancy = 150
+  #     expect(dome).not_to be_valid
+  #     expect(dome.errors[:current_occupancy]).to include("must be less than or equal to #{dome.capacity}")
+  #   end
+
+  #   it 'is not valid without a name' do
+  #     dome.name = nil
+  #     expect(dome).not_to be_valid
+  #   end
+
+  #   it 'is not valid with a negative capacity' do
+  #     dome.capacity = -1
+  #     expect(dome).not_to be_valid
+  #   end
+
+  #   it 'is not valid with a negative current occupancy' do
+  #     dome.current_occupancy = -1
+  #     expect(dome).not_to be_valid
+  #   end
+  # end
+
+  # describe '#used_capacity' do
+  #   it 'calculates used capacity (current occupancy) correctly' do
+  #     expect(dome.used_capacity).to eq(50)
+  #   end
+  # end
+
+  # describe '#remaining_capacity' do
+  #   it 'calculates remaining capacity correctly' do
+  #     expect(dome.remaining_capacity).to eq(50)  # 100 - 50
+  #   end
+  # end
+end

@@ -1,0 +1,202 @@
+module Settlement
+  class BaseSettlement < ApplicationRecord
+    include Housing
+    include GameConstants
+
+    belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
+    belongs_to :owner, polymorphic: true, optional: true  # Polymorphic association for ownership
+    has_one :account, as: :accountable, dependent: :destroy
+    has_many :base_units, class_name: 'Unit'
+    has_one :inventory, as: :inventoryable, dependent: :destroy
+    has_many :items, through: :inventory
+    has_one :location, 
+            as: :locationable, 
+            class_name: 'Location::CelestialLocation',
+            dependent: :destroy
+
+    # planned adjustment for location of settlements
+    # Change single location to boundary locations
+    # has_many :locations, 
+    #          as: :locationable, 
+    #          class_name: 'Location::CelestialLocation',
+    #          dependent: :destroy    
+    
+    validates :name, presence: true
+    validates :current_population, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
+    enum settlement_type: { base: 0, outpost: 1, settlement: 2, city: 3 }
+
+    validates :settlement_type, presence: true
+
+    after_create :create_account_and_inventory
+    after_update :adjust_settlement_type_based_on_population, if: :saved_change_to_current_population?
+
+    # def central_location
+    #   locations.find_by(location_type: 'center')
+    # end
+
+    # def boundary_locations
+    #   locations.where(location_type: 'boundary')
+    # end
+
+    # def area
+    #   # Calculate area based on boundary locations
+    #   return 0 unless boundary_locations.count >= 3
+    #   # Use surveyor's formula or similar for area calculation
+    # end
+
+    # Collect materials from base units and update the settlement's inventory
+    def collect_materials(amount)
+      collected_materials = base_units.sum do |unit|
+        unit.collect_materials(amount)
+      end
+
+      update_inventory(collected_materials)
+    end
+
+    # Process materials using the base units
+    def process_materials
+      base_units.each do |unit|
+        unit.process_materials(inventory)
+      end
+    end
+
+    # Allocate space for population (related to housing management)
+    def allocate_space(num_people)
+      super(num_people)
+    end
+
+    # Update inventory with collected materials
+    def update_inventory(collected_materials)
+      collected_materials.each do |material, amount|
+        item = inventory.items.find_or_initialize_by(name: material)
+        item.amount += amount
+        item.save!
+      end
+    end
+
+    # Initialize inventory if it doesn't exist
+    def initialize_inventory
+      initialize_storage(capacity, celestial_body) unless inventory
+    end
+
+    private
+
+    def resource_requirements
+      {
+        food: (current_population * 2 * 1.1).to_i,
+        water: current_population,
+        energy: current_population * 3
+      }
+    end
+
+    def calculate_food_requirements
+      current_population * FOOD_PER_PERSON
+    end
+
+    def calculate_water_requirements
+      current_population * WATER_PER_PERSON
+    end
+
+    def calculate_energy_requirements
+      current_population * ENERGY_PER_PERSON
+    end
+
+    # Check if resources are sufficient and take appropriate actions if not
+    def check_resource_availability
+      resources = resource_requirements
+
+      if resources[:food] < current_food * STARVATION_THRESHOLD
+        handle_starvation
+      elsif resources[:food] > current_food
+        handle_resource_shortage(:food)
+      end
+
+      if resources[:water] > current_water
+        handle_resource_shortage(:water)
+      end
+
+      if resources[:energy] > current_energy
+        handle_resource_shortage(:energy)
+      end
+    end
+
+    # Handle starvation if food is critically low
+    def handle_starvation
+      # 10% of the population dies due to starvation
+      deaths = (current_population * DEATH_RATE).to_i
+      self.current_population -= deaths
+      self.save!
+      increase_unhappiness("food", deaths)
+      puts "#{deaths} people have died from starvation."
+    end
+
+    # Handle resource shortage by reducing population or morale
+    def handle_resource_shortage(resource)
+      case resource
+      when :food
+        increase_unhappiness("food")
+      when :water
+        increase_unhappiness("water")
+      when :energy
+        increase_unhappiness("energy")
+      end
+    end
+
+    # Increase unhappiness and morale decline when there's a resource shortage
+    def increase_unhappiness(resource, deaths = 0)
+      morale_decline = MORALE_DECLINE_RATE * (current_population - deaths)
+      self.morale -= morale_decline
+      self.happiness -= morale_decline
+      self.save!
+      puts "Warning: Not enough #{resource}! Morale and happiness have declined."
+    end
+
+    # Decrease population if resources are insufficient
+    def reduce_population
+      # Can use a similar logic for resource shortages, or the death rate
+      self.current_population -= (current_population * 0.05).to_i
+      self.save!
+    end
+
+    def add_dome(capacity, energy_consumption)
+      base_units << Dome.new(capacity, energy_consumption)
+    end
+
+    def add_habitat(capacity, energy_consumption)
+      base_units << Habitat.new(capacity, energy_consumption)
+    end
+
+    def create_account_and_inventory
+      build_account.save
+      build_inventory.save
+    end  
+
+    def adjust_settlement_type_based_on_population
+      case current_population
+      when 0..9
+        self.settlement_type = :base
+      when 10..99
+        self.settlement_type = :outpost
+      when 100..999
+        self.settlement_type = :settlement
+      else
+        self.settlement_type = :city
+      end
+      save if settlement_type_changed?
+    end
+
+    def population_requirements
+      case settlement_type
+      when 'base'
+        errors.add(:base, 'Base must have at least 1 person') if current_population < 1
+      when 'outpost'
+        errors.add(:base, 'Outpost must have at least 10 people') if current_population < 10
+      when 'settlement'
+        errors.add(:base, 'Settlement must have at least 100 people') if current_population < 100
+      when 'city'
+        errors.add(:base, 'City must have at least 1000 people') if current_population < 1000
+      end
+    end    
+  end
+end

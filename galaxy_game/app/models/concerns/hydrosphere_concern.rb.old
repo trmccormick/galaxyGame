@@ -1,0 +1,54 @@
+# app/models/concerns/hydrosphere_concern.rb
+module HydrosphereConcern
+  extend ActiveSupport::Concern
+
+  def calculate_state_distributions(temperature, pressure)
+    {
+      solid: percentage_frozen(temperature),
+      liquid: percentage_liquid(temperature, pressure),
+      gas: percentage_vapor(temperature, pressure)
+    }
+  end
+
+  def water_cycle_tick
+    return unless celestial_body.atmosphere
+    handle_evaporation
+    handle_precipitation
+  end
+
+  private
+
+  def handle_evaporation
+    amount = calculate_evaporation_rate
+    transfer_material('H2O', amount, celestial_body.atmosphere) if amount > 0
+  end
+
+  def handle_precipitation
+    amount = calculate_precipitation_rate
+    celestial_body.atmosphere.transfer_material('H2O', amount, self) if amount > 0
+  end
+
+  def percentage_frozen(temp, pressure)
+    return 100 if temp < 273.15
+    return 0 if temp > 273.15
+    # Complex calculation based on pressure
+  end
+
+  def percentage_liquid(temp, pressure)
+    return 0 if temp < 273.15 || temp > 373.15
+    # Complex calculation based on pressure and temperature
+  end
+
+  def percentage_vapor(temp, pressure)
+    return 100 if temp > 373.15
+    # Complex calculation based on pressure
+  end
+
+  def calculate_evaporation_rate
+    # Implementation based on temperature, pressure, and surface area
+  end
+
+  def calculate_precipitation_rate
+    # Implementation based on atmospheric water content and temperature
+  end
+end

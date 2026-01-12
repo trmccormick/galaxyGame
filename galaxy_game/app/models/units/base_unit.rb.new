@@ -1,0 +1,110 @@
+module Units
+  class BaseUnit < ApplicationRecord
+    belongs_to :owner, polymorphic: true
+
+    has_one :inventory, as: :inventoryable, dependent: :destroy
+    has_many :items, through: :inventory
+
+    validates :identifier, presence: true, uniqueness: true  
+    validates :name, :unit_type, presence: true
+    
+    validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+
+    after_initialize :load_unit_info, :initialize_modules_and_rigs
+
+    attr_accessor :internal_modules, :external_modules, :rigs
+
+    def population_capacity
+      @unit_info['capacity']
+    end
+
+    def energy_usage
+      @unit_info['consumables']['energy']
+    end
+
+    def input_resources
+      @unit_info['input_resources']
+    end
+
+    def output_resources
+      @unit_info['output_resources']
+    end
+
+    def collect_materials(amount)
+      # Implement the logic to collect materials
+    end
+
+    def process_materials(inventory)
+      # Implement the logic to process materials
+    end
+
+    def add_module(module_type, location)
+      validate_module_location(location)
+      module_data = load_module_data(module_type)
+      if location == :internal
+        internal_modules << module_data
+      else
+        external_modules << module_data
+      end
+    end
+
+    def remove_module(module_type, location)
+      validate_module_location(location)
+      if location == :internal
+        internal_modules.reject! { |mod| mod['id'] == module_type }
+      else
+        external_modules.reject! { |mod| mod['id'] == module_type }
+      end
+    end
+
+    def add_rig(rig_type)
+      rig_data = load_rig_data(rig_type)
+      rigs << rig_data
+    end
+
+    def remove_rig(rig_type)
+      rigs.reject! { |rig| rig['id'] == rig_type }
+    end
+
+    def location
+      owner.location if owner.respond_to?(:location)
+    end
+
+    def celestial_body
+      location.celestial_body if location.respond_to?(:celestial_body)
+    end
+
+    private
+
+    def load_unit_info
+      # Load unit information from a service or configuration
+      @unit_info = {
+        'capacity' => 100,
+        'consumables' => { 'energy' => 50 },
+        'input_resources' => [],
+        'output_resources' => []
+      }
+    end
+
+    def initialize_modules_and_rigs
+      @internal_modules = []
+      @external_modules = []
+      @rigs = []
+    end
+
+    def validate_module_location(location)
+      raise ArgumentError, "Invalid location: #{location}" unless %i[internal external].include?(location)
+    end
+
+    def load_module_data(module_type)
+      # Fetch module data from an appropriate service or JSON store
+      { 'id' => module_type, 'name' => 'Sample Module' }
+    end
+
+    def load_rig_data(rig_type)
+      # Fetch rig data from an appropriate service or JSON store
+      { 'id' => rig_type, 'name' => 'Sample Rig' }
+    end
+  end
+end
+

@@ -1,0 +1,369 @@
+# app/models/celestial_bodies/celestial_body.rb
+module CelestialBodies
+  class CelestialBody < ApplicationRecord
+    include OrbitalMechanics
+    include MaterialManagementConcern
+
+    belongs_to :solar_system, optional: true
+
+    # Spheres               
+    has_one :atmosphere, class_name: 'CelestialBodies::Spheres::Atmosphere', dependent: :destroy
+    has_one :biosphere, class_name: 'CelestialBodies::Spheres::Biosphere', dependent: :destroy
+    has_one :geosphere, class_name: 'CelestialBodies::Spheres::Geosphere', dependent: :destroy
+    has_one :hydrosphere, class_name: 'CelestialBodies::Spheres::Hydrosphere', dependent: :destroy
+
+    # Relationships (consider if orbital_relationships are still needed or handled by parent_celestial_body on Satellite)
+    # has_many :orbital_relationships
+    # has_many :orbits, through: :orbital_relationships, source: :celestial_body
+    # has_many :orbiting_bodies, class_name: 'OrbitalRelationship', foreign_key: :star_id
+    
+    has_many :colonies
+    has_many :base_settlements
+    has_many :materials # Ensure this is a proper association if `materials` is a separate model
+
+    has_one :spatial_location, as: :spatial_context, 
+            class_name: 'Location::SpatialLocation',
+            dependent: :destroy
+   
+    has_many :locations, # For specific points of interest on the body
+             as: :locationable,
+             class_name: 'Location::CelestialLocation',
+             dependent: :destroy
+
+    # Star relationships
+    has_many :star_distances, class_name: 'CelestialBodies::StarDistance', dependent: :destroy
+    has_many :stars, through: :star_distances
+
+    validates :identifier, presence: true, uniqueness: true   
+    validates :size, presence: true, numericality: { greater_than: 0 }
+    # Assume gravity, density, radius, orbital_period are database columns
+    validates :gravity, :density, :radius, :orbital_period, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+    # Use numericality: true for mass unless it's stored as a string for some reason
+    validates :mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+    validates :known_pressure, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+
+    enum status: { active: 0, mined_out: 1 }
+
+    # Callbacks - REFINED ORDER AND LOGIC
+    before_validation :set_defaults
+    before_save :ensure_properties # Ensure properties hash exists before any save
+    before_save :set_calculated_values_before_save # Calculate area, volume, escape_velocity if needed
+    before_save :set_gravity_before_save, if: -> { mass_changed? || radius_changed? } # Calculate gravity if mass/radius changes
+
+    after_create :initialize_associations # Initialize spheres and spatial_location
+    after_save :run_terra_sim_after_save, if: :simulation_relevant_changes? # Run simulation AFTER save
+
+    def name
+      super.presence || identifier
+    end
+
+    # These getters should return the STORED value if the attribute exists in DB
+    # If density is a calculated-only property, remove it from validations
+    def density
+      # If density is a database column: self[:density]
+      # If density is always calculated: return nil if mass.nil? || volume.nil?; mass.to_f / volume
+      self[:density] # Assuming it's a DB column, updated by a callback
+    end
+
+    # Make sure this calculates, does NOT set (setter below)
+    def calculate_density
+      return nil if mass.nil? || volume.nil?
+      mass.to_f / volume
+    end
+
+    def calculate_gravity
+      return nil unless radius.present? && mass.present?
+      (GameConstants::GRAVITATIONAL_CONSTANT * mass.to_f) / (radius ** 2)
+    end
+
+    # Surface area, volume, escape_velocity might be calculated and stored (as per set_calculated_values_before_save)
+    def surface_area
+      self[:surface_area] # Returns stored value
+    end
+
+    def volume
+      self[:volume] # Returns stored value
+    end
+
+    def escape_velocity
+      self[:escape_velocity] # Returns stored value
+    end
+
+    # Placeholders, these might move to sphere models or dedicated services
+    def calculate_pressure
+      return nil unless atmosphere&.gases.present?
+      # Pressure calculation logic based on current atmospheric composition
+    end
+
+    def calculate_temperature
+      return nil unless distance_from_star.present? && albedo.present?
+      # Temperature calculation logic based on current conditions
+    end
+
+    def in_solar_system?
+      solar_system.present?
+    end
+
+    def distance_from_star?
+      star_distances.any?
+    end
+
+    def validate_distance_from_star
+      if in_solar_system? && star_distances.empty?
+        errors.add(:star_distances, "must be present if part of a solar system")
+      elsif solar_system&.stars&.empty?
+        errors.add(:star_distances, "cannot be validated without stars in the solar system")
+      end
+    end
+
+    # material_composition was commented out, available_materials and materials association are key
+    # def material_composition
+    #   available_materials
+    # end
+
+    # These material methods are complex, assume `materials` is a `has_many` association to a `Material` model
+    def material_distribution
+      return {} unless materials.present? # Guard against no materials
+      grouped = materials.group(:location, :state).sum(:amount)
+      
+      result = {
+        atmosphere: { gas: 0, liquid: 0, solid: 0 },
+        geosphere: { gas: 0, liquid: 0, solid: 0 },
+        hydrosphere: { gas: 0, liquid: 0, solid: 0 }
+      }
+      
+      grouped.each do |keys, amount|
+        location, state = keys
+        result[location.to_sym][state.to_sym] = amount
+      end
+      
+      # Calculate total by location
+      result[:atmosphere][:total] = result[:atmosphere].values.sum
+      result[:geosphere][:total] = result[:geosphere].values.sum
+      result[:hydrosphere][:total] = result[:hydrosphere].values.sum
+      
+      # Overall total
+      result[:total] = result[:atmosphere][:total] + 
+                       result[:geosphere][:total] + 
+                       result[:hydrosphere][:total]
+      
+      result
+    end
+    
+    def material_summary
+      distribution = material_distribution
+      return "No materials tracked" if distribution.empty?
+      
+      summary = []
+      summary << "Total Mass: #{GameFormatters::AtmosphericData.format_mass(distribution[:total])}"
+      summary << "  Atmosphere: #{GameFormatters::AtmosphericData.format_mass(distribution[:atmosphere][:total])}"
+      summary << "  Geosphere: #{GameFormatters::AtmosphericData.format_mass(distribution[:geosphere][:total])}"
+      summary << "  Hydrosphere: #{GameFormatters::AtmosphericData.format_mass(distribution[:hydrosphere][:total])}"
+      
+      top_materials = materials.group(:name).sum(:amount)
+                      .sort_by { |_, amount| -amount }
+                      .first(5)
+                      
+      if top_materials.any?
+        summary << "\nTop Materials:"
+        top_materials.each do |name, amount|
+          summary << "  #{name}: #{GameFormatters::AtmosphericData.format_mass(amount)}"
+        end
+      end
+      
+      summary.join("\n")
+    end
+
+    def calculate_total_mass
+      base_mass = self.mass.to_f # Ensure float for calculations
+      atmo_mass = atmosphere&.total_atmospheric_mass.to_f || 0
+      hydro_mass = hydrosphere&.total_hydrosphere_mass.to_f || 0
+      
+      geo_mass = 0
+      if geosphere.present?
+        geo_mass += geosphere.total_crust_mass.to_f if geosphere.respond_to?(:total_crust_mass)
+        geo_mass += geosphere.total_mantle_mass.to_f if geosphere.respond_to?(:total_mantle_mass)
+        geo_mass += geosphere.total_core_mass.to_f if geosphere.respond_to?(:total_core_mass)
+      end
+      base_mass + atmo_mass + hydro_mass + geo_mass
+    end
+
+    # STREAMLINED CLASSIFICATION METHODS - Post Refactoring
+    # This assumes all models are now in their new namespaces and STI types are updated in DB
+    def body_category
+      # Example: "TerrestrialPlanet", "GasGiant", "Moon", "DwarfPlanet"
+      self.class.name.demodulize.underscore
+    end
+    
+    def planet_type
+      # This method should primarily return the specific planet type for services
+      # After full refactoring, remove all 'when CelestialBodies::' legacy checks
+      case self.class.name # Use self.class.name directly for string comparison
+      when 'CelestialBodies::Planets::Rocky::TerrestrialPlanet' then 'terrestrial'
+      when 'CelestialBodies::Planets::Gaseous::GasGiant' then 'gas_giant'
+      when 'CelestialBodies::Planets::Gaseous::IceGiant' then 'ice_giant'
+      when 'CelestialBodies::Planets::Rocky::CarbonPlanet' then 'carbon_planet'
+      when 'CelestialBodies::Planets::Rocky::LavaWorld' then 'lava_world'  
+      when 'CelestialBodies::Planets::Rocky::SuperEarth' then 'super_earth'
+      when 'CelestialBodies::Planets::Gaseous::HotJupiter' then 'hot_jupiter'
+      when 'CelestialBodies::Planets::Ocean::HyceanPlanet' then 'hycean'
+      when 'CelestialBodies::Planets::Ocean::OceanWorld' then 'ocean_world'
+      when 'CelestialBodies::Planets::Ocean::WaterWorld' then 'water_world'
+      when 'CelestialBodies::Other::DwarfPlanet' then 'dwarf_planet'
+      when 'CelestialBodies::Other::RoguePlanet' then 'rogue_planet'
+      when 'CelestialBodies::Satellites::Moon' then 'moon' # New moon type
+      else
+        'celestial_body' # Default for base CelestialBody or unclassified
+      end
+    end
+
+    def luminosity
+      properties.try(:[], 'luminosity') || 1.0
+    end
+
+    def luminosity=(value)
+      self.properties = (properties || {}).merge('luminosity' => value)
+    end
+
+    def distance_from_star
+      # This is still simplified. Consider clarifying which star's distance.
+      star_distance = star_distances.first
+      star_distance&.distance
+    end
+
+    def is_moon
+      self.is_a?(CelestialBodies::Satellites::Moon) # Use is_a? for robustness
+    end  
+    
+    def is_orbiting_star?
+      solar_system.present? && star_distances.any?
+    end   
+    
+    def body_type # Assuming this is meant to be a simple string representation from properties
+      properties['body_type'] if properties
+    end
+
+    def body_type=(value)
+      self.properties ||= {}
+      self.properties['body_type'] = value
+    end    
+
+    accepts_nested_attributes_for :geosphere, reject_if: :all_blank, allow_destroy: true
+
+    def surface_composition
+      geosphere&.crust_composition || {}
+    end
+
+    private
+
+    def set_defaults
+      self.status ||= :active
+      self.materials ||= '{}' # If materials is a JSON column, else remove
+    end
+
+    def ensure_properties
+      self.properties ||= {}
+    end
+
+    def initialize_associations
+      # Ensure all expected spheres are created unless they exist
+      create_atmosphere unless atmosphere.present?
+      create_biosphere unless biosphere.present? # Assuming this is always needed
+      create_geosphere unless geosphere.present? # Assuming this is always needed
+      create_hydrosphere unless hydrosphere.present? # Assuming this is always needed
+      create_spatial_location unless spatial_location.present?
+
+      # Set default values for atmosphere
+      if atmosphere.present?
+        atmosphere.update!(
+          temperature: surface_temperature || 0,
+          pressure: 0,
+          composition: {},
+          total_atmospheric_mass: 0,
+          pollution: 0,
+          dust: {}
+        )
+        atmosphere.initialize_gases if atmosphere.respond_to?(:initialize_gases)
+      end
+      # Uncomment and complete initialization for other spheres as needed
+      # if biosphere.present?
+      #   biosphere.update!(
+      #     temperature_tropical: 0,
+      #     temperature_polar: 0
+      #   )
+      # end
+      # if geosphere.present?
+      #   geosphere.update!(
+      #     rock_types: {},
+      #     geological_activity: 0
+      #   )
+      # end
+      # if hydrosphere.present?
+      #   hydrosphere.update!(
+      #     liquid_name: 'unknown',
+      #     liquid_volume: 0,
+      #     lakes: 0,
+      #     rivers: 0,
+      #     oceans: 0,
+      #     ice: 0
+      #   )
+      # end
+    end    
+
+    # Callback method that runs after the object has been saved
+    def run_terra_sim_after_save
+      return if @simulating # Guard against re-entry
+      @simulating = true
+      # IMPORTANT: TerraSim::Simulator.new(self).calc_current should
+      # ONLY update attributes and NOT call `save!` on `self` within this method.
+      # Changes made by calc_current will be saved by the original `after_save` transaction.
+      TerraSim::Simulator.new(self).calc_current
+      @simulating = false
+    end
+  
+    def simulation_relevant_changes?
+      return false if new_record? # Don't run simulation for new records
+      # Check if attributes relevant to simulation changed directly on CelestialBody
+      # or if any associated sphere models changed
+      changed.include?('mass') || changed.include?('albedo') ||
+      atmosphere&.saved_change_to_id? || atmosphere&.changed? || # Check if association itself changed or atmosphere's attributes
+      hydrosphere&.saved_change_to_id? || hydrosphere&.changed? ||
+      geosphere&.saved_change_to_id? || geosphere&.changed? ||
+      biosphere&.saved_change_to_id? || biosphere&.changed? # Assuming biosphere is also simulated
+    end
+
+    def calculate_surface_area
+      return 0 unless radius.present?
+      4 * Math::PI * (radius ** 2)
+    end
+
+    def calculate_escape_velocity
+      return 0 unless mass.present? && radius.present?
+      Math.sqrt(2 * GameConstants::GRAVITATIONAL_CONSTANT * mass.to_f / radius)
+    end
+
+    # Consolidated method to set calculated values before saving
+    # These are values that should be stored in the database if they change
+    def set_calculated_values_before_save
+      if radius.present?
+        self.surface_area = calculate_surface_area if self[:surface_area].nil? || self.saved_change_to_radius?
+        self.volume = (4.0 / 3) * Math::PI * (radius ** 3) if self[:volume].nil? || self.saved_change_to_radius?
+      end
+      
+      if mass.present? && radius.present?
+        self.escape_velocity = calculate_escape_velocity if self[:escape_velocity].nil? || self.saved_change_to_mass? || self.saved_change_to_radius?
+      end
+
+      # If density is a stored attribute, uncomment and implement
+      # self.density = calculate_density if self[:density].nil? || self.saved_change_to_mass? || self.saved_change_to_volume?
+    end
+
+    # The `load_gas_giant` method seems like a utility method that doesn't belong in the
+    # CelestialBody base class. It's too specific.
+    # It should likely be in a dedicated service object for loading / creating
+    # specific celestial body types, or potentially in a GasGiant factory/class method.
+    # def load_gas_giant(params)
+    #   ...
+    # end
+  end
+end

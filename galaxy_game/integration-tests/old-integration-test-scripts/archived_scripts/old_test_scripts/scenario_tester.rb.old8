@@ -1,0 +1,212 @@
+require_relative '../../config/environment'
+require 'securerandom'
+require_relative '../services/lavatube_generator_service'
+require 'json'
+
+# --- Setup Game World ---
+coordinates = "14.10°N 58.20°W"
+celestial_body = CelestialBodies::Moon.find_by(name: 'Luna')
+
+if celestial_body.nil?
+  raise "Celestial body 'Luna' not found in the database."
+end
+
+location = Location::CelestialLocation.find_or_create_by!(
+  coordinates: coordinates,
+  celestial_body: celestial_body
+) do |loc|
+  loc.name = "Marius Hills Skylight Location"
+end
+
+params = {
+  name: "Marius Hills Lava Tube",
+  location: location,
+  length: 50_000,
+  diameter: 100,
+  skylights: [
+    { diameter: 50, position: 15_000 },
+    { diameter: 40, position: 35_000 }
+  ],
+  access_points: [
+    { size: 15, position: 0, access_type: :large },
+    { size: 10, position: 25_000, access_type: :medium }
+  ]
+}
+
+lavatube_service = LavatubeGeneratorService.new(random: false, params: params)
+lavatube = lavatube_service.generate
+
+puts "Generated Lavatube:"
+puts lavatube.inspect
+puts "Skylights:"
+lavatube.skylights.each { |s| puts " - Diameter: #{s.diameter} meters, Position: #{s.position} meters" }
+puts "Access Points:"
+lavatube.access_points.each { |ap| puts " - Size: #{ap.size} meters, Position: #{ap.position} meters, Type: #{ap.access_type}" }
+
+unique_id = SecureRandom.hex(4)
+starship = Craft::BaseCraft.create!(
+  name: "Initial Deployment Ship #{unique_id}",
+  craft_name: "Starship (Lunar Variant)",
+  craft_type: "transport",
+  current_location: location,
+  owner: lavatube,
+  operational_data: {
+    'recommended_units' => [
+      { 'id' => 'storage_unit', 'count' => 2 },
+      { 'id' => 'lox_tank', 'count' => 1 },
+      { 'id' => 'methane_tank', 'count' => 1 }
+    ],
+    'storage' => {
+      'capacity' => 1000,
+      'current_level' => 0
+    }
+  }
+)
+starship.save!
+starship.reload
+starship.build_units_and_modules
+
+puts "\nInitial Deployment Ship Status:"
+puts "Name: #{starship.name}"
+puts "Total Units installed: #{starship.base_units.count}"
+
+starship.base_units.where("unit_type LIKE ?", "%tank%").each do |tank|
+  if tank.operational_data&.dig('storage', 'capacity')
+    capacity = tank.operational_data['storage']['capacity']
+    current_level = (capacity * 0.20).to_i
+    tank.save!
+  end
+end
+
+# --- AI Manager Simulation (Enhanced Power System Test) ---
+puts "\n--- AI Manager: Enhanced Power System Establishment Test ---"
+
+game_time_elapsed = 0
+total_simulation_time = 72 * 3600 # 72 hours
+time_step = 3600 # 1 hour increments
+
+power_grid_online = false
+tasks_in_progress = {}
+tasks_completed = {}
+current_power = 0
+battery_charge = 0
+max_battery_capacity = 0
+
+# Unit Locations (Basic)
+unit_locations = {}
+
+# Load Power Test Cargo Manifest
+manifest_path = Rails.root.join('app', 'data', 'starship-cargo-manifest', 'ssc-000-test.json')
+begin
+  manifest_data = JSON.parse(File.read(manifest_path))
+  inventory = manifest_data['inventory']['units']
+  task_list = manifest_data['task_list']
+
+  puts "\nInitial Inventory (Power Test):"
+  inventory.each do |item|
+    puts "  #{item['name']} (Count: #{item['count']})"
+    if item['name'] == 'Battery Unit'
+      max_battery_capacity += (item['count'] * item.fetch('capacity', 0))
+    end
+  end
+
+  # Initialize task statuses and unit locations
+  task_list.each { |task| tasks_completed[task['task_id']] = 'pending' }
+  inventory.each { |item| (item['count'] || 1).times { |i| unit_locations["#{item['name'].gsub(/\s+/, '_').downcase}_#{i}"] = nil } } # Basic unit tracking
+
+  while game_time_elapsed < total_simulation_time
+    hours_elapsed = (game_time_elapsed / 3600).to_i
+    puts "\nSimulation Time: Hour #{hours_elapsed}"
+    puts "  Current Power: #{current_power.round(2)} watt, Battery Charge: #{battery_charge.round(2)}/#{max_battery_capacity} watt-hour, Power Grid: #{power_grid_online ? 'Online' : 'Offline'}"
+
+    # 1. Check for completable tasks
+    task_list.each do |task|
+      next if tasks_completed[task['task_id']] == 'completed' || tasks_in_progress.key?(task['task_id'])
+
+      can_start = true
+      if task['requires']
+        can_start = false unless tasks_completed[task['requires']] == 'completed'
+      end
+
+      if can_start
+        puts "  AI: Starting task - #{task['description']} (ID: #{task['task_id']})"
+        tasks_in_progress[task['task_id']] = {
+          'unit_assigned' => task['unit_assigned'],
+          'start_time' => game_time_elapsed,
+          'duration' => task['duration'] || 3600 # Default 1 hour
+        }
+      end
+    end
+
+    # 2. Update in-progress tasks
+    tasks_in_progress.each do |task_id, progress|
+      if (game_time_elapsed - progress['start_time']) >= progress['duration']
+        puts "  AI: Completing task - #{task_list.find { |t| t['task_id'] == task_id }['description']} (ID: #{task_id})"
+        tasks_completed[task_id] = 'completed'
+        tasks_in_progress.delete(task_id)
+
+        # Apply task effects
+        task = task_list.find { |t| t['task_id'] == task_id }
+        if task['effects']
+          task['effects'].each do |effect|
+            puts "    Effect: #{effect.inspect}" # Basic effect logging
+            case effect['action']
+            when 'power_on'
+              # Find the unit and mark it as powered on (you'd need a more robust unit tracking)
+              puts "      Powered on unit: #{effect['unit']}"
+            end
+          end
+        end
+
+        # Update power grid status based on tasks
+        power_grid_online = true if task_id == 'deploy_power_substation' || task_id == 'connect_power_generation'
+      end
+    end
+
+    # 3. Simulate resource generation and consumption
+    inventory.each do |item|
+      case item['name']
+      when 'Radioisotope Thermoelectric Generator'
+        current_power += (item['count'] || 0) * (item['power_output'] || 0)
+      when 'Solar Panel Unit'
+        # Basic solar cycle (assuming 12 hours of output)
+        if hours_elapsed % 24 < 12
+          current_power += (item['count'] || 0) * (item['power_output'] || 0)
+        end
+      when 'Small Robotic Excavation Unit'
+        if tasks_completed['power_up_excavator'] == 'completed'
+          current_power -= (item['power_consumption'] || 0) * (item['count'] || 0) # Assuming all consume if powered
+        end
+      when 'Battery Unit'
+        # Basic charge/discharge logic (if there's excess power, charge; if deficit, discharge)
+        net_power = current_power # Generation - Consumption (currently basic)
+        if net_power > 0 && battery_charge < max_battery_capacity
+          charge_amount = [net_power * (item['charge_rate'] || 1) / 100.0, (max_battery_capacity - battery_charge)].min
+          battery_charge += charge_amount
+        elsif net_power < 0 && battery_charge > 0
+          discharge_amount = [net_power.abs * (item['discharge_rate'] || 1) / 100.0, battery_charge].min
+          battery_charge -= discharge_amount
+          current_power += discharge_amount # Power drawn from battery
+        end
+      end
+    end
+
+    # Ensure power doesn't go negative
+    current_power = [0, current_power].max
+    battery_charge = [0, battery_charge].max
+
+    game_time_elapsed += time_step
+  end
+
+  puts "\n--- Power System Test End ---"
+  puts "Power Grid Online: #{power_grid_online ? 'Yes' : 'No'}"
+  puts "Final Power Level: #{current_power.round(2)} watt"
+  puts "Final Battery Charge: #{battery_charge.round(2)}/#{max_battery_capacity} watt-hour"
+  puts "\nTask Completion Status:"
+  tasks_completed.each { |id, status| puts "  Task '#{id}': #{status}" }
+
+rescue Errno::ENOENT
+  puts "Error: Manifest file not found at #{manifest_path}"
+rescue JSON::ParserError
+  puts "Error: Invalid JSON in manifest file"
+end

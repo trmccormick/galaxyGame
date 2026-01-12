@@ -1,0 +1,11 @@
+class MaterialLookup
+    MATERIAL_PATH = Rails.root.join("app", "data", "materials")
+  
+    def self.find_by_id(material_id)
+      material_file = Dir.glob("#{MATERIAL_PATH}/**/#{material_id}.json").first
+      return JSON.parse(File.read(material_file)) if material_file
+  
+      raise "Material with id '#{material_id}' not found"
+    end
+end
+  

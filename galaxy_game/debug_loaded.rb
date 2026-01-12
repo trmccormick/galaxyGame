@@ -1,0 +1,1 @@
+service = Lookup::UnitLookupService.new; units = service.instance_variable_get(:@units); comm_unit = units.find { |u| u["id"] == "communication_module" }; puts "Communication module loaded: #{comm_unit ? "yes" : "no"}"; puts "Total units: #{units.size}"; puts "Unit IDs sample: #{units.first(5).map { |u| u["id"] }}"

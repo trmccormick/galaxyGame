@@ -1,0 +1,50 @@
+require 'rails_helper'
+
+RSpec.describe Settlement::CraterDome, type: :model do
+  let!(:celestial_body) { create(:celestial_body, :luna) }
+  let!(:crater_location) { Location::CelestialLocation.create(name: "Test Crater Location", location_type: 0, coordinates: [0, 0], celestial_body: celestial_body) }
+  let!(:player) { create(:player, location: crater_location) }
+  # let!(:organization) { create(:organization) }
+  let!(:crater_dome) { Settlement::CraterDome.create(name: "Test Crater Dome", current_population: 50, owner: player, location: crater_location, diameter: 100, depth: 10) }
+
+  describe 'validations' do
+    it 'is valid with valid attributes' do
+      expect(crater_dome).to be_valid
+    end
+
+    it 'is not valid with a negative diameter' do
+      crater_dome.diameter = -1
+      expect(crater_dome).not_to be_valid
+    end
+
+    it 'is not valid with a negative depth' do
+      crater_dome.depth = -1
+      expect(crater_dome).not_to be_valid
+    end
+  end
+
+  describe 'associations' do
+    it 'belongs to a location' do
+      expect(crater_dome.location).to eq(crater_location)
+    end
+
+    it 'belongs to an owner (player or organization)' do
+      expect(crater_dome.owner).to eq(player)
+    end
+
+    # it 'can be associated with settlement modules (e.g., airlocks, habitats)' do
+    #   crater_dome.settlement_modules << Settlement::Module.create(name: "Airlock Module", module_type: :airlock)
+    #   expect(crater_dome.settlement_modules.count).to eq(1)
+    # end
+  end
+
+#   describe 'methods' do
+#     describe '#volume' do
+#       it 'calculates the volume of the crater based on diameter and depth' do
+#         # Volume = π * (r^2) * depth
+#         expected_volume = Math::PI * ((crater_dome.diameter / 2.0)**2) * crater_dome.depth
+#         expect(crater_dome.volume).to be_within(0.01).of(expected_volume)
+#       end
+#     end
+#   end
+end

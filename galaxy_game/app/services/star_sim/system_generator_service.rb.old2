@@ -1,0 +1,36 @@
+module StarSim
+  class SystemGeneratorService
+    def initialize(solar_system)
+      @solar_system = solar_system
+    end
+
+    def generate!(num_stars:, num_planets:)
+      # if @solar_system.known_system?
+      #   generate_from_known_system
+      # else
+        generate_random_system(num_stars: num_stars, num_planets: num_planets)
+      # end
+    end
+
+    private
+
+    def generate_from_known_system
+      lookup_service = Lookup::StarSystemLookupService.new
+      system_data = lookup_service.fetch(self.identifier)
+    
+      raise "System not found for identifier: #{self.identifier}" unless system_data
+    
+      StarSim::SystemBuilderService.new(
+        system_data: system_data.merge(name: self.name) # No need for galaxy info here
+      ).build!
+    end
+
+    def generate_random_system(num_stars:, num_planets:)
+      StarSim::ProceduralGenerator.new(@solar_system).generate_system(
+        num_stars: num_stars,
+        num_planets: num_planets
+      )
+    end
+  end
+end
+

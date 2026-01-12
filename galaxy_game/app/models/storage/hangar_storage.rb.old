@@ -1,0 +1,52 @@
+module Storage
+  class HangarStorage < BaseStorage
+    attr_reader :max_crafts, :material_lookup_service
+
+    def initialize(capacity:, location:, max_crafts:, material_lookup_service:)
+      super(capacity: capacity, item_type: 'Craft', location: location)
+      @max_crafts = max_crafts
+      @material_lookup_service = material_lookup_service
+      @current_stock = {} # {craft_id => craft_instance}
+    end
+
+    # Override can_store? to check max_crafts
+    def can_store?(craft_id, quantity = 1)
+      return false if quantity <= 0
+      (current_stock.size + quantity) <= max_crafts
+    end
+
+    # Store a Craft in the hangar (by id)
+    def store(craft_id, craft_instance)
+      raise ArgumentError, "Craft ID cannot be nil" if craft_id.nil?
+      raise ArgumentError, "Craft instance cannot be nil" if craft_instance.nil?
+      return "Insufficient capacity" unless can_store?(craft_id)
+      current_stock[craft_id] = craft_instance
+      "Craft #{craft_instance.respond_to?(:name) ? craft_instance.name : craft_id} successfully stored in the hangar."
+    end
+
+    # Remove a Craft from the hangar (by id)
+    def remove(craft_id)
+      raise ArgumentError, "Craft ID cannot be nil" if craft_id.nil?
+      return "Craft not found in hangar" unless current_stock.key?(craft_id)
+      craft = current_stock.delete(craft_id)
+      "Craft #{craft.respond_to?(:name) ? craft.name : craft_id} removed from the hangar."
+    end
+
+    # Get the remaining capacity for Crafts in the hangar
+    def remaining_capacity
+      max_crafts - current_stock.size
+    end
+
+    # Get the number of Crafts stored
+    def current_crafts_count
+      current_stock.size
+    end
+
+    # Get a list of all stored Crafts
+    def list_stored_crafts
+      current_stock.values.map { |c| c.respond_to?(:name) ? c.name : c.to_s }.join(", ")
+    end
+  end
+end
+
+  

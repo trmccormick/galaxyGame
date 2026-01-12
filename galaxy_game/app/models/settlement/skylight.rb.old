@@ -1,0 +1,29 @@
+# app/models/settlement/skylight.rb
+module Settlement
+  class Skylight < ApplicationRecord
+    belongs_to :lavatube, class_name: 'Settlement::Lavatube'
+
+    validates :diameter, presence: true, 
+                        numericality: { greater_than_or_equal_to: 0 }
+    validates :position, presence: true, 
+                        numericality: { greater_than_or_equal_to: 0 }
+    validate :position_within_lavatube_length
+    validate :diameter_within_lavatube_diameter
+
+    private
+
+    def position_within_lavatube_length
+      return unless lavatube && position
+      if position > lavatube.length
+        errors.add(:position, "cannot exceed lavatube length")
+      end
+    end
+
+    def diameter_within_lavatube_diameter
+      return unless lavatube && diameter
+      if diameter > lavatube.diameter
+        errors.add(:diameter, "cannot exceed lavatube diameter")
+      end
+    end
+  end
+end

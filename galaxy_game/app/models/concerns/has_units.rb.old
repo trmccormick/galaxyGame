@@ -1,0 +1,61 @@
+# app/models/concerns/has_units.rb
+
+module HasUnits
+  extend ActiveSupport::Concern
+
+  included do
+    attr_accessor :units
+    after_initialize :initialize_units
+  end
+
+  def add_unit(unit_type)
+    return "Max units reached" if units.length >= max_units
+    return "Invalid unit type" unless valid_unit_type?(unit_type)
+
+    unit_data = load_unit_data(unit_type)
+    units << unit_data
+    apply_unit_effects(unit_data)
+  end
+
+  def remove_unit(unit_type)
+    unit_data = find_unit(unit_type)
+    return "Unit not found" unless unit_data
+    
+    units.delete(unit_data)
+    revert_unit_effects(unit_data)
+  end
+
+  private
+
+  def initialize_units
+    @units = []
+  end
+
+  def valid_unit_type?(unit_type)
+    craft_info&.dig('compatible_units')&.include?(unit_type)
+  end
+
+  def max_units
+    craft_info&.dig('max_units') || 0
+  end
+
+  def load_unit_data(unit_type)
+    UnitLookupService.new.find_unit(unit_type)
+  end
+
+  def apply_unit_effects(unit_data)
+    # Example: Apply effects from the unit
+    self.cargo_capacity += unit_data['capacity'] if unit_data.key?('capacity')
+    self.energy_consumption += unit_data['energy_consumption'] if unit_data.key?('energy_consumption')
+  end
+
+  def revert_unit_effects(unit_data)
+    # Example: Revert effects from the unit
+    self.cargo_capacity -= unit_data['capacity'] if unit_data.key?('capacity')
+    self.energy_consumption -= unit_data['energy_consumption'] if unit_data.key?('energy_consumption')
+  end
+
+  def find_unit(unit_type)
+    units.find { |unit| unit['unit_type'] == unit_type }
+  end
+end

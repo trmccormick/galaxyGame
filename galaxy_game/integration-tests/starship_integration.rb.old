@@ -1,0 +1,160 @@
+require 'json'
+require 'securerandom'
+
+puts "\nStarting Precursor Mission Integration Test..."
+
+# 1. Load the precursor mission manifest
+puts "\n1. Loading precursor mission manifest..."
+manifest_path = File.join(GalaxyGame::Paths::JSON_DATA, 'missions', 'lunar-precursor', 'precursor_mission_autonomous_setup_v1.json')
+begin
+  manifest = JSON.parse(File.read(manifest_path))
+  puts "Manifest loaded successfully: #{manifest['mission_id']}"
+rescue => e
+  puts "ERROR: Failed to load manifest: #{e.message}"
+  exit
+end
+
+# 2. Setup Earth and organization with updated namespace
+puts "\n2. Setting up Earth and organization..."
+earth = CelestialBody.find_or_create_by!(
+  name: 'Earth',
+  celestial_body_type: 'terrestrial_planet',
+  identifier: 'EARTH-SOL-3'
+)
+
+earth_location = Location.find_or_create_by!(
+  name: "Kennedy Space Center",
+  coordinates: "28.57°N 80.65°W",
+  celestial_body: earth
+)
+
+space_x = Organization.find_or_create_by!(
+  name: 'AstroLift Corporation',
+  identifier: 'ASTROLIFT',
+  organization_type: :corporation
+)
+
+# 3. Create Starship with manifest configuration
+puts "\n3. Creating Starship with manifest configuration..."
+starship_config = manifest['starship']
+starship_name = "PrecursorMission-#{SecureRandom.hex(4)}"
+starship = Craft::Starship.create!(
+  name: starship_name,
+  craft_name: starship_config['craft_name'],
+  craft_type: starship_config['craft_type'],
+  craft_sub_type: starship_config['craft_sub_type'],
+  current_location: earth_location,
+  owner: space_x
+)
+puts "Starship created: #{starship.name} (ID: #{starship.id})"
+
+# 4. Load inventory units
+puts "\n4. Loading inventory units..."
+units_missing = []
+units_loaded = []
+
+inventory_units = manifest['inventory']['units']
+inventory_units.each do |unit_config|
+  unit_name = unit_config['name']
+  count = unit_config['count'] || 1
+  
+  puts "  Checking unit: #{unit_name} (#{count}x)"
+  
+  # Try to find unit definition
+  unit_lookup = Lookup::UnitLookupService.new
+  unit_data = unit_lookup.find_unit(unit_name.downcase.gsub(" ", "_"))
+  
+  if unit_data
+    units_loaded << {name: unit_name, count: count}
+    puts "    ✓ Unit definition found"
+    
+    # Create inventory entry for the unit
+    count.times do |i|
+      item_name = "#{unit_name} ##{i+1}"
+      starship.inventory.items.create!(
+        name: item_name,
+        item_type: 'unit',
+        quantity: 1
+      )
+    end
+  else
+    units_missing << {name: unit_name, count: count}
+    puts "    ✗ Unit definition NOT FOUND"
+  end
+end
+
+# 5. Validate units
+puts "\n5. Validation Results:"
+puts "  Units loaded successfully: #{units_loaded.size}"
+units_loaded.each do |unit|
+  puts "    - #{unit[:name]} (#{unit[:count]}x)"
+end
+
+puts "\n  Units missing definitions: #{units_missing.size}"
+units_missing.each do |unit|
+  puts "    - #{unit[:name]} (#{unit[:count]}x)"
+end
+
+# 6. Calculate volume and mass
+puts "\n6. Calculating Cargo Metrics..."
+total_volume = 0
+total_mass = 0
+
+starship.inventory.items.each do |item|
+  # Get unit data
+  unit_lookup = Lookup::UnitLookupService.new
+  unit_data = unit_lookup.find_unit(item.name.split('#').first.strip.downcase.gsub(" ", "_"))
+  
+  if unit_data
+    volume = unit_data['volume'] || 1.0
+    mass = unit_data['mass'] || 100.0
+    
+    total_volume += volume
+    total_mass += mass
+  end
+end
+
+puts "  Total Volume: #{total_volume.round(2)} m³"
+puts "  Total Mass: #{total_mass.round(2)} kg"
+
+# 7. Verify tasks can be executed with available units
+puts "\n7. Verifying Task Dependencies..."
+task_list = manifest['task_list']
+executable_tasks = []
+blocked_tasks = []
+
+task_list.each do |task|
+  # Skip tasks without task_id
+  next unless task['task_id']
+  
+  puts "  Checking task: #{task['task_id']}"
+  
+  # Check if required units are available
+  units_required = []
+  if task['effects']
+    task['effects'].each do |effect|
+      if effect['action'] == 'deploy_unit'
+        units_required << effect['unit']
+      end
+    end
+  end
+  
+  # Check if all required units are available
+  missing_units = units_required.reject do |unit_name|
+    units_loaded.any? { |u| u[:name] == unit_name }
+  end
+  
+  if missing_units.empty?
+    executable_tasks << task['task_id']
+    puts "    ✓ Task executable - all required units available"
+  else
+    blocked_tasks << {task_id: task['task_id'], missing_units: missing_units}
+    puts "    ✗ Task blocked - missing units: #{missing_units.join(', ')}"
+  end
+end
+
+puts "\n8. Task Execution Summary:"
+puts "  Executable tasks: #{executable_tasks.size}/#{task_list.count { |t| t['task_id'] }}"
+puts "  Blocked tasks: #{blocked_tasks.size}/#{task_list.count { |t| t['task_id'] }}"
+
+puts "\nPrecursor Mission Integration Test Complete!"

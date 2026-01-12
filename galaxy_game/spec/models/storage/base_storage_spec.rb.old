@@ -1,0 +1,76 @@
+require 'rails_helper'
+
+RSpec.describe Storage::BaseStorage, type: :model do
+  let(:base_storage) { Storage::BaseStorage.new(capacity: 100, item_type: 'Material', location: 'Base 1') }
+
+  describe '#store' do
+    it 'stores an item successfully' do
+      expect(base_storage.store('Iron', 50)).to eq('Stored 50 units of Iron.')
+      expect(base_storage.current_stock).to eq({ 'Iron' => 50 })
+    end
+
+    it 'fails to store an item if not enough capacity' do
+      base_storage.store('Iron', 90)
+      expect(base_storage.store('Iron', 20)).to eq('Insufficient capacity')
+      expect(base_storage.current_stock).to eq({ 'Iron' => 90 }) # Ensure current stock remains unchanged
+    end
+  end
+
+  describe '#remove' do
+    before { base_storage.store('Iron', 50) } # Prepopulate with items
+
+    it 'removes an item successfully' do
+      expect(base_storage.remove('Iron', 30)).to eq('Removed 30 units of Iron.')
+      expect(base_storage.current_stock).to eq({ 'Iron' => 20 })
+    end
+
+    it 'fails to remove an item if not enough stock' do
+      expect(base_storage.remove('Iron', 60)).to eq('Insufficient stock')
+      expect(base_storage.current_stock).to eq({ 'Iron' => 50 }) # Ensure current stock remains unchanged
+    end
+
+    it 'deletes the item from stock if the quantity is reduced to zero' do
+      expect(base_storage.remove('Iron', 50)).to eq('Removed 50 units of Iron.')
+      expect(base_storage.current_stock).to eq({})
+    end
+  end
+
+  describe '#can_store?' do
+    it 'returns true if there is enough capacity' do
+      expect(base_storage.can_store?('Iron', 50)).to be_truthy
+    end
+
+    it 'returns false if there is not enough capacity' do
+      base_storage.store('Iron', 90)
+      expect(base_storage.can_store?('Iron', 20)).to be_falsey
+    end
+  end
+
+  describe '#can_remove?' do
+    before { base_storage.store('Iron', 50) } # Prepopulate with items
+
+    it 'returns true if there is enough stock' do
+      expect(base_storage.can_remove?('Iron', 30)).to be_truthy
+    end
+
+    it 'returns false if there is not enough stock' do
+      expect(base_storage.can_remove?('Iron', 60)).to be_falsey
+    end
+  end
+
+  describe '#total_stock' do
+    it 'returns the total quantity of all items in storage' do
+      base_storage.store('Iron', 30)
+      base_storage.store('Copper', 20)
+      expect(base_storage.total_stock).to eq(50)
+    end
+  end
+
+  describe '#available_capacity' do
+    it 'returns the remaining capacity' do
+      base_storage.store('Iron', 30)
+      expect(base_storage.available_capacity).to eq(70)
+    end
+  end
+end
+

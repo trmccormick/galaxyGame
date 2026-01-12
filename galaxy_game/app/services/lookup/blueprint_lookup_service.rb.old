@@ -1,0 +1,28 @@
+require 'json'
+
+class BlueprintLookupService
+  BLUEPRINT_PATH = Rails.root.join('app', 'data', 'blueprints')
+
+  def initialize
+    @blueprint_cache = {} # Optional caching mechanism for performance
+  end
+
+  def find_blueprint(name)
+    name = name.downcase
+    Dir.glob("#{BLUEPRINT_PATH}/**/*.json").each do |file_path| # Search all subfolders
+      blueprint_data = JSON.parse(File.read(file_path))
+      return blueprint_data if match_blueprint?(blueprint_data, name)
+    end
+    nil # Return nil if not found
+  end
+
+  private
+
+  def match_blueprint?(blueprint_data, name)
+    blueprint_name = blueprint_data['name']&.downcase
+    aliases = blueprint_data['aliases']&.map(&:downcase) || []
+
+    [blueprint_name, *aliases].include?(name)
+  end
+end
+

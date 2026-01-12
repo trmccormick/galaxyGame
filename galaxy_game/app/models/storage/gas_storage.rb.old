@@ -1,0 +1,76 @@
+# app/models/storage/gas_storage.rb
+module Storage
+  class GasStorage < BaseStorage
+    attr_reader :gas_type, :material_lookup_service
+
+    def initialize(capacity:, location:, material_lookup_service:, gas_type: nil)
+      super(capacity: capacity, item_type: 'Gas', location: location)
+      @gas_type = gas_type # Gas type is nil if empty
+      @material_lookup_service = material_lookup_service
+    end
+
+    def can_store_gas?(gas_type, quantity)
+      return false if quantity.negative?
+      
+      if @gas_type.nil?
+        return quantity <= available_capacity
+      end
+
+      @gas_type == gas_type && quantity <= available_capacity
+    end
+
+    def store_gas(gas_type, quantity)
+      raise ArgumentError, "Gas type cannot be nil" if gas_type.nil?
+      raise ArgumentError, "Quantity must be positive" if quantity <= 0
+
+      return "Not enough capacity" unless can_store_gas?(gas_type, quantity)
+
+      @gas_type ||= gas_type
+      current_stock[gas_type] = current_stock.fetch(gas_type, 0) + quantity
+
+      "Stored #{quantity} units of #{gas_type}."
+    end
+
+    def remove_gas(gas_type, quantity)
+      raise ArgumentError, "Gas type cannot be nil" if gas_type.nil?
+      raise ArgumentError, "Quantity must be positive" if quantity <= 0
+    
+      # Check if the gas type exists in storage
+      return "Tank does not contain #{gas_type}" if @gas_type != gas_type
+    
+      # Check if there's enough stock to remove
+      return "Insufficient stock" unless can_remove?(gas_type, quantity)
+    
+      # If sufficient stock, remove the gas
+      current_stock[gas_type] -= quantity
+      current_stock.delete(gas_type) if current_stock[gas_type].zero?
+    
+      @gas_type = nil if current_stock.empty?
+    
+      "Removed #{quantity} units of #{gas_type}."
+    end
+
+    def calculate_volume(temperature, gas_type, pressure = 1.0)
+      return 0 unless current_stock[gas_type].to_f > 0
+  
+      r = 0.0821 # Ideal Gas Constant in L·atm/(mol·K)
+      molar_mass = self.molar_mass(gas_type) # Assumes a method exists that returns molar mass in g/mol
+      moles = current_stock[gas_type].to_f / molar_mass
+  
+      (moles * r * temperature) / pressure # V = (nRT) / P
+    end   
+
+    private
+    
+    # Retrieve molar mass using the lookup service
+    def molar_mass(gas_type)
+      material = @material_lookup_service.find_material(gas_type)
+      material ? material['molar_mass'] : 0.0 # Return molar mass if found, else 0.0
+    end
+  end
+end
+
+
+
+
+  

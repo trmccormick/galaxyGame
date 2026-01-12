@@ -1,0 +1,36 @@
+# spec/models/settlement/skylight_spec.rb
+
+require 'rails_helper'
+
+RSpec.describe Settlement::Skylight, type: :model do
+  describe 'associations' do
+    it { should belong_to(:lavatube).class_name('Settlement::Lavatube') }
+  end
+
+  describe 'validations' do
+    subject { build(:skylight) }
+
+    it { should validate_numericality_of(:diameter).is_greater_than_or_equal_to(0) }
+    it { should validate_numericality_of(:position).is_greater_than_or_equal_to(0) }
+    it { should validate_presence_of(:diameter) }
+    it { should validate_presence_of(:position) }
+  end
+
+  describe 'position validation' do
+    let(:lavatube) { create(:settlement_lavatube, length: 1000) }
+    
+    it 'is invalid if position exceeds lavatube length' do
+      skylight = build(:skylight, lavatube: lavatube, position: 1500)
+      expect(skylight).not_to be_valid
+    end
+  end
+
+  describe 'diameter validation' do
+    let(:lavatube) { create(:settlement_lavatube, diameter: 30) }
+    
+    it 'is invalid if diameter exceeds lavatube diameter' do
+      skylight = build(:skylight, lavatube: lavatube, diameter: 35)
+      expect(skylight).not_to be_valid
+    end
+  end
+end

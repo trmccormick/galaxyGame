@@ -1,0 +1,65 @@
+# app/models/settlement/colony.rb
+module Settlement
+  class Colony < ApplicationRecord
+    # include FinancialManagement
+
+    has_many :settlements, class_name: 'Settlement::Settlement', foreign_key: 'colony_id', dependent: :destroy
+    has_many :cities, class_name: 'Settlement::City', foreign_key: 'colony_id', dependent: :destroy
+    has_many :outposts, class_name: 'Settlement::Outpost', foreign_key: 'colony_id', dependent: :destroy
+
+    # might not need this
+    has_many :items, through: :inventory
+    has_one :inventory, as: :inventoryable, dependent: :destroy  
+
+    validates :name, presence: true
+    validates :funds, numericality: { greater_than_or_equal_to: 0 }
+    validates :expenses, numericality: { greater_than_or_equal_to: 0 }
+
+    # attr_accessor :food_per_person, :water_per_person, :energy_per_person
+
+    # Logic for managing sub-entities
+    def add_settlement(settlement)
+      settlements << settlement
+    end
+
+    def dissolve
+      # Logic to dissolve the colony if no sub-entities exist
+      destroy if settlements.empty? && cities.empty? && outposts.empty?
+    end
+
+    # Method to manage expenses
+    def manage_expenses(cost)
+      self.funds -= cost
+      self.expenses += cost
+      puts "Current funds: #{funds}. Total expenses: #{expenses}."
+    end
+
+    # Method to check if the colony can afford a specified amount
+    def can_afford?(amount)
+      funds >= amount
+    end
+
+    # Method to calculate total population across all settlements
+    def total_population
+      cities.sum(:current_population) + outposts.sum(:current_population) + settlements.sum(:current_population)
+    end
+
+    def calculate_food_per_person
+      # Calculate food requirements based on population
+      self.food_per_person = total_population * 2.5
+    end
+
+    def calculate_water_per_person
+      # Calculate water requirements based on population
+      self.total_population * 3.0
+    end
+
+    def calculate_energy_per_person
+      # Calculate energy requirements based on population
+      self.total_population * 1.5
+    end
+
+    # Other colony-specific methods...
+  end
+end
+

@@ -1,0 +1,71 @@
+require 'rails_helper'
+
+RSpec.describe Storage::GasStorage, type: :model do
+  let(:material_lookup_service) { Lookup::MaterialLookupService.new }  # Initialize the actual service
+  let(:gas_storage) { Storage::GasStorage.new(capacity: 100, location: "TestLocation", material_lookup_service: material_lookup_service, gas_type: "N2") }
+
+  describe 'initialization' do
+    it 'initializes with the correct type' do
+      expect(gas_storage.gas_type).to eq('N2')
+    end
+
+    it 'initializes with the correct capacity' do
+      expect(gas_storage.capacity).to eq(100)
+    end
+
+    it 'initializes with zero current stock' do
+      expect(gas_storage.current_stock).to eq({})
+    end
+  end
+
+  describe '#can_store_gas?' do
+    it 'returns true when there is enough capacity' do
+      expect(gas_storage.can_store_gas?("N2", 50)).to be_truthy
+    end
+
+    it 'returns false when adding exceeds capacity' do
+      gas_storage.instance_variable_set(:@current_stock, {"N2" => 90})
+      expect(gas_storage.can_store_gas?("N2", 20)).to be_falsey
+    end
+  end
+
+  # describe '#store_gas' do
+  #   it 'stores gas successfully when there is enough capacity' do
+  #     # Now using the actual material_lookup_service to find the molar mass
+  #     expect(gas_storage.store_gas("N2", 50)).to eq('Stored 50 units of N2.')
+  #   end
+
+  #   it 'fails to store gas if there is not enough capacity' do
+  #     gas_storage.instance_variable_set(:@current_stock, {"N2" => 90})
+  #     expect(gas_storage.store_gas("N2", 20)).to eq('Not enough capacity')
+  #   end
+  # end
+
+  describe '#remove_gas' do
+    it 'removes gas successfully when there is enough stock' do
+      gas_storage.instance_variable_set(:@current_stock, {"N2" => 50})
+      expect(gas_storage.remove_gas("N2", 30)).to eq('Removed 30 units of N2.')
+      expect(gas_storage.instance_variable_get(:@current_stock)["N2"]).to eq(20)
+    end
+
+    it 'fails to remove gas if there is not enough stock' do
+      gas_storage.instance_variable_set(:@current_stock, {"N2" => 10})
+      expect(gas_storage.remove_gas("N2", 20)).to eq('Tank does not contain N2')
+    end
+  end
+
+  describe '#calculate_volume' do
+    it 'calculates the volume correctly based on Ideal Gas Law' do
+      gas_storage.store_gas("N2", 50)  # Adding 50 units of N2
+      
+      # Calculate the expected volume for 50 units at 300K temperature, 1 atm pressure
+      expected_volume = (50 / 28.02) * 0.0821 * 300 / 1
+
+      expect(gas_storage.calculate_volume(300, "N2")).to be_within(0.1).of(expected_volume)
+    end
+  end
+end
+
+
+
+

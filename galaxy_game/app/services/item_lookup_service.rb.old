@@ -1,0 +1,45 @@
+class ItemLookupService
+  def initialize
+    @items = load_items # Assuming you load YAML files here
+  end
+
+  def items
+    @items
+  end
+
+  def find_item(name)
+    # downcase the name for case-insensitive search
+    name = name.downcase
+    
+    # Find a material by name across all loaded materials
+    @materials.each do |category, items|
+      # search by name
+      item = items.find { |i| i['name'].casecmp?(name) }
+      return item if item
+
+      # search by chemical_formula
+      item = items.find { |i| i['chemical_formula'] && i['chemical_formula'].casecmp?(name) }
+      return item if item
+
+      # search by aliases
+      item = items.find { |i| i['aliases']&.map(&:downcase)&.include?(name) }
+      return item if item
+    end
+    nil # Return nil if not found
+  end
+
+  private
+
+  def load_items
+    # Load items from YAML files and combine them into a single hash
+    items = {}
+    %w[items].each do |file_name|
+      items.merge!(YAML.load_file(Rails.root.join('config', 'items', "#{file_name}.yml"))) do |key, old_val, new_val|
+        old_val + new_val # Combine arrays if the keys are the same
+      end
+    end
+    items
+  end  
+end
+
+  

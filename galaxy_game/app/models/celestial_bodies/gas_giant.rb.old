@@ -1,0 +1,13 @@
+module CelestialBodies
+  class GasGiant < CelestialBody    
+      # Gas giants can't be terraformed in the traditional sense
+      def terraformed?
+        false
+      end
+    
+      # Overriding habitability score for gas giants
+      def habitability_score
+        "Gas giants are not habitable."
+      end
+  end
+end

@@ -1,0 +1,8 @@
+require_relative 'seeds/calculators'
+# require_relative 'seeds/sol_system'
+
+# StarSim::SystemBuilderService.new(system_data: SOL_SYSTEM_DATA).build!
+
+StarSim::SystemBuilderService.new(name: 'Sol', debug_mode: true).build!
+
+# StarSim::SystemBuilderService.new(name: "Alpha Centauri").build!

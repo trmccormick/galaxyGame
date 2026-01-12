@@ -1,0 +1,87 @@
+# spec/models/storage/item_storage_spec.rb
+
+require 'rails_helper'
+
+RSpec.describe Storage::ItemStorage, type: :model do
+  let(:capacity) { 100 }
+  let(:location) { 'TestLocation' }
+  let(:item_storage) { Storage::ItemStorage.new(capacity: capacity, location: location) }
+  let(:item) { double('Item', name: 'Test Item') }
+
+  describe 'initialization' do
+    it 'sets the correct capacity' do
+      expect(item_storage.capacity).to eq(capacity)
+    end
+
+    it 'initializes with zero current stock' do
+      expect(item_storage.current_stock).to eq({})
+    end
+  end
+
+  describe '#add_item' do
+    context 'when there is enough capacity' do
+      it 'adds the specified quantity of items' do
+        item_storage.add_item(item, 30)
+        expect(item_storage.current_stock[item.name]).to eq(30)
+      end
+
+      it 'prints a success message' do
+        expect(item_storage.add_item(item, 30)).to eq('Added 30 units of Test Item.')
+      end
+    end
+
+    context 'when there is not enough capacity' do
+      before { item_storage.add_item(item, 90) }
+
+      it 'does not add items and prints an error message' do
+        expect(item_storage.add_item(item, 20)).to eq('Not enough capacity to add 20 units of Test Item.')
+        expect(item_storage.current_stock[item.name]).to eq(90)
+      end
+    end
+  end
+
+  describe '#remove_item' do
+    before { item_storage.add_item(item, 50) }
+
+    context 'when there are enough items in stock' do
+      it 'removes the specified quantity of items' do
+        item_storage.remove_item(item, 30)
+        expect(item_storage.current_stock[item.name]).to eq(20)
+      end
+
+      it 'prints a success message' do
+        expect(item_storage.remove_item(item, 30)).to eq('Removed 30 units of Test Item.')
+      end
+    end
+
+    context 'when there are not enough items to remove' do
+      it 'does not remove items and prints an error message' do
+        expect(item_storage.remove_item(item, 60)).to eq('Not enough Test Item available.')
+        expect(item_storage.current_stock[item.name]).to eq(50)
+      end
+    end
+  end
+
+  describe '#can_store?' do
+    it 'returns true when there is enough capacity' do
+      expect(item_storage.can_store?(item.name, 50)).to be_truthy
+    end
+
+    it 'returns false when adding exceeds capacity' do
+      item_storage.add_item(item, 90)
+      expect(item_storage.can_store?(item.name, 20)).to be_falsey
+    end
+  end
+
+  describe '#can_remove?' do
+    before { item_storage.add_item(item, 50) }
+
+    it 'returns true when there is enough stock' do
+      expect(item_storage.can_remove?(item.name, 30)).to be_truthy
+    end
+
+    it 'returns false when removing exceeds current stock' do
+      expect(item_storage.can_remove?(item.name, 60)).to be_falsey
+    end
+  end
+end

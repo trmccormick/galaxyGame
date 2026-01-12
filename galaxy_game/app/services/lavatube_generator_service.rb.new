@@ -1,0 +1,117 @@
+# app/services/lavatube_generator_service.rb
+class LavatubeGeneratorService
+  def initialize(random: true, params: {})
+    @random = random
+    @params = params
+    @celestial_body = params[:celestial_body] # Celestial body instance (e.g., Mars, Moon)
+  end
+
+  def generate
+    if @random
+      name = generate_name
+      length = generate_length
+      diameter = generate_diameter
+      population = rand(0..100)
+      location = generate_location
+    else
+      name = @params[:name]
+      length = @params[:length]
+      diameter = @params[:diameter]
+      population = @params[:population]
+      location = @params[:location]
+    end
+
+    lavatube = Settlement::Lavatube.create(
+      name: name,
+      length: length,
+      diameter: diameter,
+      current_population: population,
+      location: location, 
+      celestial_body: @celestial_body
+    )
+
+    # Generate skylights and access points
+    skylights = generate_skylights(length)
+    skylights.each { |skylight| lavatube.skylights.create(diameter: skylight.diameter, position: skylight.position) }
+    access_points = generate_access_points(length)
+    access_points.each { |access_point| lavatube.access_points.create(size: access_point.size, position: access_point.position, type: access_point.type) }
+
+    Settlement::Lavatube.new(
+      length: length,
+      diameter: diameter,
+      skylights: skylights || [],
+      access_points: access_points || []
+    )
+  end
+
+  private
+
+  def generate_name
+    "#{@celestial_body.name} Lavatube #{rand(1000..9999)}"
+  end
+
+  def generate_length
+    base_length = rand(1000..5000)  # meters
+    scale_factor = gravity_scale_factor  # Use gravity scale factor from CelestialBody
+    return base_length * scale_factor
+  end
+
+  def generate_diameter
+    base_diameter = rand(10..50)  # meters
+    scale_factor = gravity_scale_factor
+    return base_diameter * scale_factor
+  end
+
+  def gravity_scale_factor
+    gravity = @celestial_body.gravity
+    case gravity
+    when 0..1.0  # Low gravity (e.g., Moon, Mars)
+      return 1.5  # Increase size of tubes (Moon-like gravity)
+    when 1.0..2.0  # Moderate gravity (Earth-like gravity)
+      return 1.0  # Base case (Earth-like gravity)
+    else
+      return 0.8  # High gravity (for large planets)
+    end
+  end
+
+  def atmosphere_pressure_scale_factor
+    # Assume default pressure for unknown atmospheres (e.g., Earth-like pressure or thin atmosphere)
+    pressure_current = @celestial_body.atmosphere_pressure_current || 101325  # Default to Earth-like pressure (101,325 Pa)
+    pressure_ratio = estimate_atmosphere_thickness(pressure_current)
+
+    # Scaling based on atmospheric pressure
+    return pressure_ratio * 1.2  # Estimate for larger tubes with thicker atmosphere
+  end
+
+  def estimate_atmosphere_thickness(pressure_current)
+    # Make an assumption based on the type of planet or known conditions
+    if @celestial_body.type == :terrestrial
+      return 1.0  # Default assumption: Earth-like atmosphere
+    elsif @celestial_body.type == :moon || @celestial_body.type == :mars
+      return 0.8  # Thinner atmosphere, reduce tube size
+    else
+      return 1.0  # Default assumption for unknown bodies, treat as Earth-like
+    end
+  end
+
+  def generate_skylights(length)
+    num_skylights = rand(1..5)
+    Array.new(num_skylights) do
+      diameter = rand(5..20) # meters
+      position = rand(0..length)
+      Settlement::Skylight.new(diameter: diameter, position: position)
+    end
+  end
+
+  def generate_access_points(length)
+    num_access_points = rand(2..10)
+    Array.new(num_access_points) do
+      size = rand(2..10) # meters
+      position = rand(0..length)
+      type = [:large, :medium, :small].sample
+      Settlement::AccessPoint.new(size: size, position: position, type: type)
+    end
+  end
+end
+
+  

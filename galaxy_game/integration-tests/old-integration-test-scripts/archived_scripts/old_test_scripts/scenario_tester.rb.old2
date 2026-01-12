@@ -1,0 +1,181 @@
+class ScenarioTester
+  attr_accessor :resources, :projects, :technologies, :crew, :base, :starship, :gas_storage_unit
+
+  def initialize
+    # Define initial resources (fuel, metals, water, etc.)
+    @resources = { fuel: 1000, metals: 500, water: 200, power: 0, nitrogen: 0 }
+    @projects = []
+    @technologies = []
+    @crew = []  # Crew members for base setup
+    @base = { modules: [], power: 0, gas_storage: [] }  # Start with an empty base
+    @starship = { power: 500, gas_storage: [] }  # Power and storage from the starship
+    @gas_storage_unit = { nitrogen: 0, other_gases: {} }  # Gas storage unit in the base
+
+    # Initialize crew members (name, role)
+    initialize_crew
+  end
+
+  def initialize_crew
+    @crew = [
+      { name: "John", role: :engineer },
+      { name: "Alice", role: :scientist },
+      { name: "Bob", role: :construction_worker },
+      { name: "Eve", role: :medic }
+    ]
+  end
+
+  def develop_reusable_rocket
+    if @resources[:metals] >= 50 && @resources[:fuel] >= 100
+      puts "Reusable rocket developed!"
+      @resources[:metals] -= 50
+      @resources[:fuel] -= 100
+      @technologies << :reusable_rocket
+    else
+      puts "Not enough resources for reusable rocket."
+    end
+  end
+
+  def build_lunar_station
+    if @technologies.include?(:reusable_rocket)
+      puts "Lunar station construction initiated!"
+      @projects << :lunar_station
+      # Assign crew to build the lunar station
+      assign_crew_to_project(:lunar_station)
+    else
+      puts "Develop reusable rockets first!"
+    end
+  end
+
+  def assign_crew_to_project(project)
+    case project
+    when :lunar_station
+      # Assign crew members based on their roles
+      @crew.each do |member|
+        case member[:role]
+        when :engineer
+          puts "#{member[:name]} is working on lunar station systems."
+        when :scientist
+          puts "#{member[:name]} is analyzing lunar soil for future projects."
+        when :construction_worker
+          puts "#{member[:name]} is helping with the base's physical construction."
+        when :medic
+          puts "#{member[:name]} is setting up the medical unit."
+        end
+      end
+    end
+  end
+
+  def build_base_module(module_type)
+    # Use resources to build a base module
+    case module_type
+    when :habitation
+      if @resources[:metals] >= 100 && @resources[:water] >= 50
+        puts "Habitation module built!"
+        @resources[:metals] -= 100
+        @resources[:water] -= 50
+        @base[:modules] << :habitation
+      else
+        puts "Not enough resources for habitation module."
+      end
+    when :power_supply
+      if @resources[:metals] >= 50
+        puts "Power supply module built!"
+        @resources[:metals] -= 50
+        @base[:power] += 100
+        @base[:modules] << :power_supply
+      else
+        puts "Not enough resources for power supply module."
+      end
+    when :gas_storage
+      # Build Gas Storage Unit
+      if @resources[:metals] >= 50
+        puts "Gas storage unit built!"
+        @resources[:metals] -= 50
+        @base[:gas_storage] << :gas_storage_unit
+      else
+        puts "Not enough resources for gas storage unit."
+      end
+    else
+      puts "Invalid module type."
+    end
+  end
+
+  def simulate_turn
+    # Simulate resource gathering, project completion, etc.
+    puts "Simulating turn..."
+    @resources[:metals] += 20  # Example: metal mining
+    @resources[:water] += 5    # Example: water extraction
+    @resources[:fuel] += 10    # Example: fuel production
+
+    # Simulate ongoing projects
+    if @projects.include?(:lunar_station)
+      puts "Lunar station construction ongoing..."
+      # Simulate progress (e.g., 10% per turn)
+      progress = rand(10..30)
+      puts "Progress: #{progress}%"
+      # Check if project is complete
+      if progress >= 100
+        puts "Lunar station construction completed!"
+        @projects.delete(:lunar_station)
+      end
+    end
+
+    # Simulate starship power contribution to base
+    if @starship[:power] > 0
+      puts "Starship providing power to base."
+      power_from_starship = [@starship[:power], 100].min  # Limit power transfer
+      @base[:power] += power_from_starship
+      @starship[:power] -= power_from_starship
+    else
+      puts "Starship power depleted."
+    end
+
+    # Simulate gas storage (e.g., nitrogen)
+    if @base[:gas_storage].include?(:gas_storage_unit)
+      # Harvest nitrogen from the atmosphere (or any resource gathering system)
+      harvested_nitrogen = 10  # Example: harvest 10 kg of nitrogen
+      @gas_storage_unit[:nitrogen] += harvested_nitrogen
+      puts "Harvested #{harvested_nitrogen}kg of nitrogen. Current storage: #{@gas_storage_unit[:nitrogen]}kg."
+    end
+  end
+
+  def simulate_resource_conversion
+    # Example of converting one resource into another
+    if @resources[:fuel] > 50
+      puts "Converting 50kg of metals into fuel."
+      @resources[:fuel] += 50
+      @resources[:metals] -= 50
+    end
+  end
+
+  def report_status
+    # Display current resource, project, and crew status
+    puts "\nCurrent Resources:"
+    @resources.each { |resource, amount| puts "#{resource.capitalize}: #{amount}" }
+
+    puts "\nBase Modules:"
+    @base[:modules].each { |module| puts module.capitalize }
+
+    puts "\nCrew Members:"
+    @crew.each { |member| puts "#{member[:name]} (Role: #{member[:role]})" }
+
+    puts "\nProjects:"
+    @projects.each { |project| puts project.capitalize }
+
+    puts "\nStarship Power: #{@starship[:power]}"
+    puts "\nGas Storage Unit (Nitrogen): #{@gas_storage_unit[:nitrogen]}kg"
+  end
+end
+
+# Example usage
+tester = ScenarioTester.new
+tester.develop_reusable_rocket
+tester.build_lunar_station
+tester.build_base_module(:habitation)
+tester.build_base_module(:power_supply)
+tester.build_base_module(:gas_storage)
+tester.simulate_turn
+tester.simulate_turn
+tester.simulate_resource_conversion
+tester.report_status
+

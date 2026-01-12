@@ -1,0 +1,256 @@
+require_relative '../../config/environment'
+require 'securerandom'
+require_relative '../services/lavatube_generator_service'
+require 'json'
+
+# --- Setup Game World ---
+coordinates = "14.10°N 58.20°W"
+celestial_body = CelestialBodies::Moon.find_by(name: 'Luna')
+
+if celestial_body.nil?
+  raise "Celestial body 'Luna' not found in the database."
+end
+
+location = Location::CelestialLocation.find_or_create_by!(
+  coordinates: coordinates,
+  celestial_body: celestial_body
+) do |loc|
+  loc.name = "Marius Hills Skylight Location"
+end
+
+params = {
+  name: "Marius Hills Lava Tube",
+  location: location,
+  length: 50_000,
+  diameter: 100,
+  skylights: [
+    { diameter: 50, position: 15_000 },
+    { diameter: 40, position: 35_000 }
+  ],
+  access_points: [
+    { size: 15, position: 0, access_type: :large },
+    { size: 10, position: 25_000, access_type: :medium }
+  ]
+}
+
+lavatube_service = LavatubeGeneratorService.new(random: false, params: params)
+lavatube = lavatube_service.generate
+
+puts "Generated Lavatube:"
+puts lavatube.inspect
+puts "Skylights:"
+lavatube.skylights.each { |s| puts " - Diameter: #{s.diameter} meters, Position: #{s.position} meters" }
+puts "Access Points:"
+lavatube.access_points.each { |ap| puts " - Size: #{ap.size} meters, Position: #{ap.position} meters, Type: #{ap.access_type}" }
+
+unique_id = SecureRandom.hex(4)
+starship = Craft::BaseCraft.create!(
+  name: "Initial Deployment Ship #{unique_id}",
+  craft_name: "Starship (Lunar Variant)",
+  craft_type: "transport",
+  current_location: location,
+  owner: lavatube,
+  operational_data: {
+    'recommended_units' => [
+      { 'id' => 'storage_unit', 'count' => 2 },
+      { 'id' => 'lox_tank', 'count' => 1 },
+      { 'id' => 'methane_tank', 'count' => 1 }
+    ],
+    'storage' => {
+      'capacity' => 1000,
+      'current_level' => 0
+    }
+  }
+)
+starship.save!
+starship.reload
+starship.build_units_and_modules
+
+puts "\nInitial Deployment Ship Status:"
+puts "Name: #{starship.name}"
+puts "Total Units installed: #{starship.base_units.count}"
+
+starship.base_units.where("unit_type LIKE ?", "%tank%").each do |tank|
+  if tank.operational_data&.dig('storage', 'capacity')
+    capacity = tank.operational_data['storage']['capacity']
+    current_level = (capacity * 0.20).to_i
+    tank.save!
+  end
+end
+
+# --- AI Manager Simulation (Advanced Power System Test) ---
+puts "\n--- AI Manager: Advanced Power System Establishment Test ---"
+
+game_time_elapsed = 0
+total_simulation_time = 72 * 3600 # 72 hours
+time_step = 3600 # 1 hour increments
+
+power_grid_online = false
+tasks_in_progress = {}
+tasks_completed = {}
+simulated_units = [] # Array to hold representations of deployed/built units
+simulated_inventory = [] # Copy of initial inventory to track remaining items
+battery_charge = 0
+max_battery_capacity = 0
+
+# Unit Locations (Basic)
+unit_locations = {}
+
+# Load Power Test Cargo Manifest
+manifest_path = Rails.root.join('app', 'data', 'starship-cargo-manifest', 'ssc-000-test.json')
+begin
+  manifest_data = JSON.parse(File.read(manifest_path))
+  initial_inventory = manifest_data['inventory']['units']
+  task_list = manifest_data['task_list']
+
+  # Create a working copy of the inventory
+  initial_inventory.each { |item| simulated_inventory << item.dup }
+
+  puts "\nInitial Inventory (Power Test):"
+  simulated_inventory.each do |item|
+    puts "  #{item['name']} (Count: #{item['count']})"
+    if item['name'] == 'Battery Unit'
+      max_battery_capacity += (item['count'] || 0) * item.fetch('capacity', 0)
+    end
+  end
+
+  # Initialize task statuses and unit locations
+  task_list.each { |task| tasks_completed[task['task_id']] = 'pending' }
+  initial_inventory.each do |item|
+    (item['count'] || 1).times { |i| unit_locations["#{item['name'].gsub(/\s+/, '_').downcase}_#{i}"] = nil } # Basic unit tracking
+
+  end
+
+  while game_time_elapsed < total_simulation_time
+    hours_elapsed = (game_time_elapsed / 3600).to_i
+    puts "\nSimulation Time: Hour #{hours_elapsed}"
+    puts "  Current Power: #{simulated_units.sum { |u| u['power_output'] || 0 }.round(2)} watt, Battery Charge: #{battery_charge.round(2)}/#{max_battery_capacity} watt-hour, Power Grid: #{power_grid_online ? 'Online' : 'Offline'}"
+    puts "  Simulated Units: #{simulated_units.map { |u| u['name'] }.tally}"
+    puts "  Remaining Inventory: #{simulated_inventory.select { |item| item['count'] > 0 }.map { |item| "#{item['name']} (#{item['count']})" }.join(', ')}"
+
+    # 1. Check for completable tasks
+    task_list.each do |task|
+      next if tasks_completed[task['task_id']] == 'completed' || tasks_in_progress.key?(task['task_id'])
+
+      can_start = true
+      if task['requires']
+        can_start = false unless tasks_completed[task['requires']] == 'completed'
+      end
+
+      if can_start
+        puts "  AI: Starting task - #{task['description']} (ID: #{task['task_id']})"
+        tasks_in_progress[task['task_id']] = {
+          'unit_assigned' => task['unit_assigned'],
+          'start_time' => game_time_elapsed,
+          'duration' => task['duration'] || 3600, # Default 1 hour
+          'task_details' => task
+        }
+      end
+    end
+
+    # 2. Update in-progress tasks
+    tasks_in_progress.each do |task_id, progress|
+      if (game_time_elapsed - progress['start_time']) >= progress['duration']
+        task = progress['task_details']
+        puts "  AI: Completing task - #{task['description']} (ID: #{task_id})"
+        tasks_completed[task_id] = 'completed'
+        tasks_in_progress.delete(task_id)
+
+        # Apply task effects (creating simulated units and updating inventory)
+        if task['effects']
+          task['effects'].each do |effect|
+            puts "    Effect: #{effect.inspect}"
+            case effect['action']
+            when 'deploy_unit'
+              unit_name = effect['unit']
+              found_in_inventory = simulated_inventory.find { |item| item['name'] == unit_name && (item['count'] || 0) > 0 }
+              puts "      Attempting to deploy: #{unit_name}. Found in inventory: #{!found_in_inventory.nil?}"
+              if found_in_inventory
+                unit_data = { 'name' => unit_name }
+                unit_data = unit_data.merge(found_in_inventory.slice('power_output', 'power_consumption')) if found_in_inventory['power_output'] || found_in_inventory['power_consumption']
+                simulated_units << unit_data
+                found_in_inventory['count'] -= 1
+                puts "      Deployed simulated unit: #{unit_name}. Remaining in inventory: #{found_in_inventory['count']}"
+              else
+                puts "      Warning: Cannot deploy #{unit_name}. Not available in inventory."
+              end
+            when 'build_unit'
+              unit_name = effect['unit']
+              parent_unit = effect['parent']
+              found_in_inventory = simulated_inventory.find { |item| item['name'] == unit_name && (item['count'] || 0) > 0 }
+              puts "      Attempting to build: #{unit_name} (parent: #{parent_unit}). Found in inventory: #{!found_in_inventory.nil?}"
+              if found_in_inventory
+                unit_data = { 'name' => unit_name, 'parent' => parent_unit }
+                unit_data = unit_data.merge(found_in_inventory.slice('power_output', 'power_consumption')) if found_in_inventory['power_output'] || found_in_inventory['power_consumption']
+                simulated_units << unit_data
+                found_in_inventory['count'] -= 1
+                puts "      Built simulated unit: #{unit_name} attached to #{parent_unit}. Remaining in inventory: #{found_in_inventory['count']}"
+              else
+                puts "      Warning: Cannot build #{unit_name}. Not available in inventory."
+              end
+            when 'power_on'
+              unit_to_power = simulated_units.find { |u| u['name'] == effect['unit'] }
+              if unit_to_power
+                unit_to_power['powered_on'] = true
+                puts "      Powered on simulated unit: #{effect['unit']}"
+              else
+                puts "      Warning: Could not find simulated unit to power on: #{effect['unit']}"
+              end
+            end
+          end
+        end
+
+        # Update power grid status based on tasks
+        power_grid_online = true if task_id == 'deploy_power_substation' || task_id == 'connect_power_generation'
+      end
+    end
+
+    # 3. Simulate resource generation and consumption based on simulated units
+    current_power = 0
+    active_power_consumption = 0
+
+    simulated_units.each do |unit|
+      if unit['powered_on'] || unit['power_output'] # Generators always output if deployed
+        current_power += unit['power_output'].to_i
+        active_power_consumption += unit['power_consumption'].to_i if unit['powered_on']
+      end
+    end
+
+    net_power = current_power - active_power_consumption
+
+    # Basic battery charge/discharge logic
+    battery_units = simulated_inventory.find { |item| item['name'] == 'Battery Unit' }
+    charge_rate = battery_units&.fetch('charge_rate', 100) || 100
+    discharge_rate = battery_units&.fetch('discharge_rate', 100) || 100
+
+    if net_power > 0 && battery_charge < max_battery_capacity
+      charge_amount = [net_power * (charge_rate / 100.0), (max_battery_capacity - battery_charge)].min
+      battery_charge += charge_amount
+    elsif net_power < 0 && battery_charge > 0
+      discharge_amount = [net_power.abs * (discharge_rate / 100.0), battery_charge].min
+      battery_charge -= discharge_amount
+      # Power drawn from battery is already implicitly accounted for in net_power < 0
+    end
+
+    battery_charge = [0, battery_charge].max
+    battery_charge = [battery_charge, max_battery_capacity].min
+
+    game_time_elapsed += time_step
+  end
+
+  puts "\n--- Power System Test End ---"
+  puts "Power Grid Online: #{power_grid_online ? 'Yes' : 'No'}"
+  puts "Final Power Level: #{simulated_units.sum { |u| u['power_output'] || 0 }.round(2)} watt"
+  puts "Final Battery Charge: #{battery_charge.round(2)}/#{max_battery_capacity} watt-hour"
+  puts "\nTask Completion Status:"
+  tasks_completed.each { |id, status| puts "  Task '#{id}': #{status}" }
+  puts "\nFinal Simulated Units:"
+  puts simulated_units.inspect
+  puts "\nRemaining Inventory:"
+  puts simulated_inventory.select { |item| item['count'] > 0 }.inspect
+
+rescue Errno::ENOENT
+  puts "Error: Manifest file not found at #{manifest_path}"
+rescue JSON::ParserError
+  puts "Error: Invalid JSON in manifest file"
+end

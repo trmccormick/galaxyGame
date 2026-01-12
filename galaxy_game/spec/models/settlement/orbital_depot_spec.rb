@@ -4,7 +4,7 @@ require 'rails_helper'
 RSpec.describe Settlement::OrbitalDepot, type: :model do
   let(:mars) { CelestialBodies::Planets::Rocky::TerrestrialPlanet.find_or_create_by!(name: 'Mars') }
   let(:location) do
-    Location::CelestialLocation.create!(
+    CelestialLocation.create!(
       celestial_body: mars,
       latitude: 0.0,
       longitude: 0.0,

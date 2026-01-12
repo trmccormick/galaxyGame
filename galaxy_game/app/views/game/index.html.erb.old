@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tile-Based Game with Sidebar</title>
+</head>
+<body>
+  <!-- Top Menu Bar -->
+  <div id="menuBar">
+    <div class="dropdown">
+      <a href="#">File</a>
+      <div class="dropdown-content">
+        <a href="#" id="newPlanet">New Planet</a>
+        <a href="#" id="loadPlanet">Load Planet</a>
+        <a href="#" id="savePlanet">Save Planet</a>
+        <a href="#" id="saveAs">Save As...</a>
+        <a href="#" id="snapshot">Snapshot</a>
+        <a href="#" id="quit">Quit</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Window</a>
+      <div class="dropdown-content">
+        <a href="#" id="edit">Edit</a>
+        <a href="#" id="map">Map</a>
+        <a href="#" id="globe">Globe</a>
+        <a href="#" id="gaia">Gaia</a>
+        <a href="#" id="history">History</a>
+        <a href="#" id="report">Report</a>
+        <a href="#" id="tutorial">Tutorial</a>
+        <a href="#" id="glossary">Glossary</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Model</a>
+      <div class="dropdown-content">
+        <a href="#" id="geosphere">Geosphere</a>
+        <a href="#" id="atmosphere">Atmosphere</a>
+        <a href="#" id="biosphere">Biosphere</a>
+        <a href="#" id="civilization">Civilization</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Graph</a>
+      <div class="dropdown-content">
+        <a href="#" id="airSample">Air Sample</a>
+        <a href="#" id="biomes">Biomes</a>
+        <a href="#" id="lifeForms">Life-Forms</a>
+        <a href="#" id="technology">Technology</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Options</a>
+      <div class="dropdown-content">
+        <a href="#" id="events">Go to Events</a>
+        <a href="#" id="updateBackground">Update Background</a>
+        <a href="#" id="compressEditScreen">Compress Edit Screen</a>
+        <a href="#" id="music">Music</a>
+        <a href="#" id="soundEffects">Sound Effects</a>
+        <a href="#" id="messages">Messages</a>
+        <a href="#" id="autoscroll">Autoscroll</a>
+        <a href="#" id="saveOptions">Save Options & Windows</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Speed</a>
+      <div class="dropdown-content">
+        <a href="#" id="fast">Fast</a>
+        <a href="#" id="moderate">Moderate</a>
+        <a href="#" id="slow">Slow</a>
+        <a href="#" id="pause">Pause</a>
+        <a href="#" id="relativeDate">Relative Date</a>
+        <a href="#" id="absoluteDate">Absolute Date</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <a href="#">Datasound</a>
+      <div class="dropdown-content">
+        <a href="#" id="toneMonitor">Tone Monitor</a>
+        <a href="#" id="playDataSong">Play Data Song</a>
+        <a href="#" id="altitude">Altitude</a>
+        <a href="#" id="airTemperature">Air Temperature</a>
+        <a href="#" id="rainfall">Rainfall</a>
+        <a href="#" id="seaTemperature">Sea Temperature</a>
+        <a href="#" id="biomes">Biomes</a>
+        <a href="#" id="life">Life</a>
+        <a href="#" id="civilization">Civilization</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <div id="sidebar">
+    <a href="#" id="homeSidebar">Home</a>
+    <a href="#" id="settings">Settings</a>
+    <a href="#" id="help">Help</a>
+    <!-- Add more sidebar links as needed -->
+  </div>
+
+  <!-- Main Content Area -->
+  <div id="main-content">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+  </div>
+
+  <!-- Modal for New Planet -->
+  <div id="newPlanetModal" class="modal">
+    <div class="modal-content">
+      <span class="close" data-modal="newPlanetModal">&times;</span>
+      <h2>New Planet</h2>
+      <!-- Modal content here -->
+    </div>
+  </div>
+  
+  <!-- Modal for Load Planet -->
+  <div id="loadPlanetModal" class="modal">
+    <div class="modal-content">
+      <span class="close" data-modal="loadPlanetModal">&times;</span>
+      <h2>Load Planet</h2>
+      <!-- Modal content here -->
+    </div>
+  </div>
+
+  <!-- Add more modals as needed -->
+
+  <%= javascript_include_tag 'game' %>
+</body>
+</html>

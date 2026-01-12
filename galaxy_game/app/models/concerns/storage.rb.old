@@ -1,0 +1,29 @@
+# app/models/concerns/storage.rb
+module Storage
+  extend ActiveSupport::Concern
+
+  included do
+    has_one :inventory, as: :inventoryable, dependent: :destroy
+  end
+
+  def initialize_storage(capacity, celestial_body = nil)
+    @storage_capacity = capacity
+    @celestial_body = celestial_body
+  end
+
+  def storage_capacity
+    @storage_capacity || operational_data&.dig('capacity') || 0
+  end
+
+  def can_store?(material_type, amount)
+    return false unless storage_capacity
+    current = current_storage_of(material_type)
+    (current + amount) <= storage_capacity
+  end 
+
+  private
+
+  def current_storage_of(material_type)
+    operational_data&.dig('resources', 'stored', material_type) || 0
+  end
+end

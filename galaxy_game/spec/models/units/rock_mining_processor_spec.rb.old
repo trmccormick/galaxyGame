@@ -1,0 +1,57 @@
+require 'rails_helper'
+
+RSpec.describe Units::RockMiningProcessor, type: :model do
+  let(:processor) { Units::RockMiningProcessor.new('granite') }
+
+  describe '#initialize' do
+    it 'initializes with default values' do
+      expect(processor.energy_consumption).to eq(300)
+      expect(processor.output_resources).to eq({})
+      expect(processor.mining_efficiency).to eq(0.5)
+      expect(processor.rock_type).to eq('granite')
+      # expect(processor.input_rock).to eq(0)
+    end
+  end
+
+  describe '#mine_rock' do
+    before do
+      allow_any_instance_of(MaterialLookupService).to receive(:find_material)
+        .with('granite').and_return({
+          smelting_output: [{ material: 'iron', percentage: 50 }]
+        })
+    end
+
+    # it 'mines valid amount of rock and yields resources' do
+    #   processor.mine_rock(10)
+    #   expect(processor.output_resources).to eq({ 'iron' => 5 })  # 50% of 10 kg
+    #   expect(processor.input_rock).to eq(10)
+    # end
+
+    # it 'does not mine invalid amount of rock' do
+    #   expect { processor.mine_rock(-5) }.to output("Invalid amount of rock.\n").to_stdout
+    #   expect(processor.input_rock).to eq(0)
+    # end
+
+    it 'does not mine if material data is not found' do
+      allow_any_instance_of(MaterialLookupService).to receive(:find_material)
+        .with('granite').and_return(nil)
+
+      expect { processor.mine_rock(10) }.to output("No material data found for granite.\n").to_stdout
+    end
+  end
+
+  # describe '#activate' do
+  #   context 'when enough energy is available' do
+  #     it 'activates the processor and mines rock' do
+  #       processor.activate(350)  # More than energy_consumption
+  #       expect(processor.output_resources).to eq({ 'iron' => 5 })
+  #     end
+  #   end
+
+  #   context 'when not enough energy is available' do
+  #     it 'does not activate the processor' do
+  #       expect { processor.activate(200) }.to output("Not enough energy to activate Rock Mining Processor.\n").to_stdout
+  #     end
+  #   end
+  # end
+end

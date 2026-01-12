@@ -18,7 +18,7 @@ class Player < ApplicationRecord
       return craft.inventory if craft
       
       # If not a craft, look for a location
-      location = Location::BaseLocation.find_by(name: active_location)
+      location = BaseLocation.find_by(name: active_location)
       return location&.inventory
     end
 end

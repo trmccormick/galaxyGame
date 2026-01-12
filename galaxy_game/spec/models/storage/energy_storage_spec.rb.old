@@ -1,0 +1,68 @@
+require 'rails_helper'
+
+RSpec.describe Storage::EnergyStorage, type: :model do
+  let(:energy_storage) { Storage::EnergyStorage.new(1000, 'Electricity') }
+
+  describe 'initialization' do
+    it 'initializes with the correct energy type' do
+      expect(energy_storage.energy_type).to eq('Electricity')
+    end
+
+    it 'initializes with the correct capacity' do
+      expect(energy_storage.capacity).to eq(1000)
+    end
+
+    it 'initializes with zero current stock' do
+      expect(energy_storage.current_stock).to eq(0)
+    end
+  end
+
+  describe '#can_add?' do
+    it 'returns true when there is enough capacity' do
+      expect(energy_storage.can_add?(500)).to be_truthy
+    end
+
+    it 'returns false when adding exceeds capacity' do
+      energy_storage.current_stock = 800
+      expect(energy_storage.can_add?(300)).to be_falsey
+    end
+  end
+
+  describe '#can_remove?' do
+    it 'returns true when there is enough stock' do
+      energy_storage.current_stock = 600
+      expect(energy_storage.can_remove?(200)).to be_truthy
+    end
+
+    it 'returns false when removing exceeds current stock' do
+      energy_storage.current_stock = 100
+      expect(energy_storage.can_remove?(200)).to be_falsey
+    end
+  end
+
+  describe '#add_energy' do
+    it 'adds energy when there is enough capacity' do
+      expect(energy_storage.add_energy(200)).to eq('Added 200 units of Electricity to storage.')
+    end
+
+    it 'does not add energy if capacity is exceeded' do
+      energy_storage.current_stock = 800
+      expect(energy_storage.add_energy(300)).to eq('Not enough capacity to add 300 units of Electricity.')
+    end
+  end
+
+  describe '#remove_energy' do
+    it 'removes energy when there is enough stock' do
+      energy_storage.current_stock = 600
+      expect(energy_storage.remove_energy(200)).to eq('Removed 200 units of Electricity from storage.')
+    end
+
+    it 'does not remove energy if there is insufficient stock' do
+      energy_storage.current_stock = 100
+      expect(energy_storage.remove_energy(200)).to eq('Not enough Electricity available.')
+    end
+  end
+end
+
+
+  

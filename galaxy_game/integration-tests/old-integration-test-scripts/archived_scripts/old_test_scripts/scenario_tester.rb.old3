@@ -1,0 +1,307 @@
+require_relative '../../config/environment'
+require 'securerandom'
+require_relative '../services/lavatube_generator_service'
+
+# code may be useful in the future
+# Useful for lavatube development
+# @resources = { 
+#   fuel: 1000, 
+#   metals: 500, 
+#   water: 200, 
+#   power: 0 
+# }
+
+# def build_base_module(module_type)
+#   case module_type
+#   when :habitation
+#     if @resources[:metals] >= 100 && @resources[:water] >= 50
+#       @base[:modules] << :habitation
+#       @resources[:metals] -= 100
+#       @resources[:water] -= 50
+#     end
+#   when :power_supply
+#     if @resources[:metals] >= 50
+#       @base[:power] += 100
+#       @base[:modules] << :power_supply
+#       @resources[:metals] -= 50
+#     end
+#   end
+# end
+
+# def check_habitat_needs
+#   required_habitats = (@crew / 4).ceil
+#   current_habitats = @base[:modules].count { |module| module == :habitation }
+  
+#   if required_habitats > current_habitats
+#     (required_habitats - current_habitats).times { build_base_module(:habitation) }
+#   end
+# end
+
+# Create a valid location with proper coordinates format
+coordinates = "14.1°N 58.2°W" # Marius Hills Skylight location coordinates
+celestial_body = CelestialBodies::Moon.where(name: 'Luna').first # Find the Moon by the name "Luna"
+
+# Check if celestial body was found
+if celestial_body.nil?
+  raise "Celestial body 'Luna' not found in the database."
+end
+
+# Find or create the location
+location = Location::CelestialLocation.find_or_create_by!(
+  coordinates: coordinates,
+  celestial_body: celestial_body
+) do |loc|
+  loc.name = "Marius Hills Skylight Location"
+end
+
+# Real lunar lava tube data
+params = {
+  name: "Marius Hills Lava Tube",
+  location: location,
+  length: 50_000,        # 50km length based on lunar data
+  diameter: 100,         # 100m diameter based on lunar data
+  skylights: [
+    { diameter: 50, position: 15_000 },  # Known skylight locations/sizes
+    { diameter: 40, position: 35_000 }
+  ],
+  access_points: [
+    { size: 15, position: 0, access_type: :large },      # Main entrance
+    { size: 10, position: 25_000, access_type: :medium }  # Mid-point access
+  ]
+}
+
+# Generate the lavatube with the provided parameters
+lavatube_service = LavatubeGeneratorService.new(random: false, params: params)
+
+lavatube = lavatube_service.generate
+
+# Output the generated lavatube for inspection
+puts "Generated Lavatube:"
+puts lavatube.inspect
+puts "Skylights:"
+lavatube.skylights.each do |skylight|
+  puts " - Diameter: #{skylight.diameter} meters, Position: #{skylight.position} meters"
+end
+puts "Access Points:"
+lavatube.access_points.each do |access_point|
+  puts " - Size: #{access_point.size} meters, Position: #{access_point.position} meters, Type: #{access_point.access_type}"
+end
+
+# Create player with valid required attributes
+# player = Player.create!(
+#   name: "Commander",
+#   active_location: lavatube.name  # Player requires active_location
+# )
+
+# player.save!
+
+# Generate a unique identifier for the craft
+unique_id = SecureRandom.hex(4)
+
+# Update the starship creation
+starship = Craft::BaseCraft.create!(
+  name: "Starship #{unique_id}",
+  craft_name: "Starship (Lunar Variant)", 
+  craft_type: "transport",
+  current_location: location,
+  owner: lavatube,
+  operational_data: {
+    'recommended_units' => [
+      { 'id' => 'storage_unit', 'count' => 2 },
+      { 'id' => 'lox_tank', 'count' => 1 },
+      { 'id' => 'methane_tank', 'count' => 1 }
+    ],
+    'storage' => {
+      'capacity' => 1000,
+      'current_level' => 0
+    }
+  }
+)
+
+# Add verification
+puts "\nVerifying Starship Creation:"
+if starship.persisted?
+  puts "Starship created successfully:"
+  puts "ID: #{starship.id}"
+  puts "Name: #{starship.name}"
+  puts "Craft Name: #{starship.craft_name}"
+  puts "Operational Data: #{starship.operational_data.present? ? 'Loaded' : 'Missing'}"
+else
+  puts "Failed to create starship:"
+  puts starship.errors.full_messages
+end
+
+# Force load craft info before save
+starship.save!
+
+# Now build units and modules with loaded craft info
+starship.build_units_and_modules
+
+puts "\nStarship Status:"
+puts "Name: #{starship.name}"
+puts "Total Units installed: #{starship.base_units.count}"
+
+# Group and display units by type
+puts "\nUnit Breakdown:"
+starship.base_units.group_by(&:unit_type).each do |type, units|
+  puts "\n#{type.titleize} Units (#{units.count}):"
+  units.each do |unit|
+    puts "  - Name: #{unit.name}"
+    
+    # Display capacity for storage units with nil checks
+    if unit.unit_type.include?('tank') && unit.operational_data.present?
+      capacity = unit.operational_data.dig('storage', 'capacity')
+      if capacity
+        # Assume 20% fuel remaining after lunar transit
+        current_level = (capacity * 0.20).to_i
+        puts "    Capacity: #{capacity} kg"
+        puts "    Current Level: #{current_level} kg (20% remaining after transit)"
+        
+        # Update operational data with current level
+        unit.operational_data['current_level'] = current_level
+        unit.save!
+      else
+        puts "    Warning: No capacity data found for #{unit.name}"
+      end
+    end
+  end
+end
+
+puts "\nStorage Summary:"
+total_storage = 0
+total_remaining = 0
+starship.base_units.where("unit_type LIKE ?", "%tank%").each do |tank|
+  if tank.operational_data&.dig('storage', 'capacity')
+    total_storage += tank.operational_data['storage']['capacity']
+    total_remaining += tank.operational_data['current_level'] || 0
+  end
+end
+
+puts "Total Storage Capacity: #{total_storage} kg"
+puts "Total Remaining Fuel: #{total_remaining} kg (#{((total_remaining.to_f / total_storage) * 100).round(1)}%)"
+
+puts "\nStorage Capacity by Type:"
+starship.storage_capacity_by_type.each do |type, capacity|
+  puts "  #{type}: #{capacity} kg"
+end
+
+puts "\nFuel Status:"
+lox_tank = starship.base_units.find_by(unit_type: 'lox_tank')
+methane_tank = starship.base_units.find_by(unit_type: 'methane_tank')
+
+if lox_tank && methane_tank
+  puts "LOX Storage:"
+  puts "  - Capacity: #{lox_tank.operational_data.dig('storage', 'capacity')} kg"
+  puts "  - Remaining: #{lox_tank.operational_data['current_level']} kg"
+  puts "Methane Storage:"
+  puts "  - Capacity: #{methane_tank.operational_data.dig('storage', 'capacity')} kg"
+  puts "  - Remaining: #{methane_tank.operational_data['current_level']} kg"
+end
+
+puts "\nPopulation Capacity: #{starship.total_capacity} people"
+
+# After starship creation and unit setup
+puts "\nInitializing Starship Inventory..."
+
+# Create inventory if it doesn't exist
+unless starship.inventory
+  starship.create_inventory!(capacity: starship.storage_capacity)
+end
+
+# Set initial fuel levels (20% remaining after transit)
+lox_capacity = starship.base_units.find_by(unit_type: 'lox_tank')&.operational_data&.dig('storage', 'capacity') || 0
+methane_capacity = starship.base_units.find_by(unit_type: 'methane_tank')&.operational_data&.dig('storage', 'capacity') || 0
+
+# Add fuel as items to inventory
+starship.inventory.add_item('liquid_oxygen', (lox_capacity * 0.20).to_i) if lox_capacity > 0
+starship.inventory.add_item('liquid_methane', (methane_capacity * 0.20).to_i) if methane_capacity > 0
+
+puts "\nLoading Cargo Manifest SSC-001..."
+
+# Load the cargo manifest
+manifest_path = Rails.root.join('app', 'data', 'starship-cargo-manifest', 'ssc-001.json')
+cargo_manifest = JSON.parse(File.read(manifest_path))
+
+# Process cargo items
+cargo_manifest['cargo_sections'].each do |section, items|
+  puts "\nLoading #{section.titleize}:"
+  
+  items.each do |item|
+    begin
+      quantity = item['count'] || 1
+      starship.inventory.add_item(
+        item['id'] || item['name'].downcase.gsub(' ', '_'),
+        quantity
+      )
+      puts "  - Added #{quantity}x #{item['name']} (#{item['weight_kg']} kg each)"
+    rescue => e
+      puts "  ! Failed to load #{item['name']}: #{e.message}"
+    end
+  end
+end
+
+# After starship unit creation
+puts "\nInitializing Fuel Levels..."
+
+# Find the tank units
+lox_tank = starship.base_units.find { |u| u.unit_type == 'lox_tank' }
+methane_tank = starship.base_units.find { |u| u.unit_type == 'methane_tank' }
+
+# Initialize fuel levels at 20% capacity after transit
+if lox_tank && lox_tank.operational_data['storage']
+  capacity = lox_tank.operational_data['storage']['capacity']
+  current_level = (capacity * 0.20).to_i
+  
+  # Use store_item instead of direct operational_data manipulation
+  result = lox_tank.store_item('liquid_oxygen', current_level)
+  
+  if result
+    puts "LOX Tank Status:"
+    puts "  Capacity: #{capacity} kg"
+    puts "  Current Level: #{current_level} kg (20% remaining)"
+  else
+    puts "Failed to store liquid oxygen in LOX tank"
+  end
+end
+
+if methane_tank && methane_tank.operational_data['storage']
+  capacity = methane_tank.operational_data['storage']['capacity']
+  current_level = (capacity * 0.20).to_i
+  
+  # Use store_item instead of direct operational_data manipulation
+  result = methane_tank.store_item('liquid_methane', current_level)
+  
+  if result
+    puts "Methane Tank Status:"
+    puts "  Capacity: #{capacity} kg"
+    puts "  Current Level: #{current_level} kg (20% remaining)"
+  else
+    puts "Failed to store liquid methane in methane tank"
+  end
+end
+
+# Verify the fuel levels are stored correctly
+puts "\nVerifying Fuel Storage:"
+puts "LOX Storage:"
+if lox_tank
+  puts "  - Current Level: #{lox_tank.operational_data.dig('resources', 'stored', 'liquid_oxygen')} kg"
+  puts "  - Storage Level: #{lox_tank.operational_data.dig('storage', 'current_level')} kg"
+end
+
+puts "Methane Storage:"
+if methane_tank
+  puts "  - Current Level: #{methane_tank.operational_data.dig('resources', 'stored', 'liquid_methane')} kg"
+  puts "  - Storage Level: #{methane_tank.operational_data.dig('storage', 'current_level')} kg"
+end
+
+# Display inventory summary
+puts "\nStarship Inventory Summary:"
+puts "Total Capacity: #{starship.inventory.capacity} kg"
+puts "Items by storage type:"
+
+starship.inventory.items.group_by(&:storage_method).each do |method, items|
+  puts "\n#{method.titleize}:"
+  items.each do |item|
+    puts "  - #{item.name}: #{item.amount} (#{item.weight * item.amount} kg)"
+  end
+end

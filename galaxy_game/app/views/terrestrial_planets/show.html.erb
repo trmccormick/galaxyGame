@@ -1,0 +1,26 @@
+<h1><%= @terrestrial_planet.name %></h1>
+
+<p><strong>Identifier:</strong> <%= @terrestrial_planet.identifier %></p>
+<p><strong>Mass:</strong> <%= @terrestrial_planet.mass %></p>
+<p><strong>Radius:</strong> <%= @terrestrial_planet.radius %></p>
+<p><strong>Size:</strong> <%= @terrestrial_planet.size %></p>
+<p><strong>Orbital Period:</strong> <%= @terrestrial_planet.orbital_period %></p>
+<p><strong>Surface Temperature:</strong> <%= @terrestrial_planet.surface_temperature %></p>
+
+<% if @terrestrial_planet.atmosphere %>
+  <h2>Atmosphere</h2>
+  <p><strong>Pressure:</strong> <%= @terrestrial_planet.atmosphere.pressure %></p>
+  
+  <% if @terrestrial_planet.atmosphere.composition.present? %>
+    <h3>Composition</h3>
+    <ul>
+      <% @terrestrial_planet.atmosphere.composition.each do |gas, percentage| %>
+        <% quantity = percentage.to_f * (@terrestrial_planet.atmosphere.pressure.to_f * 10000) %>
+        <li><%= gas %>: <%= quantity %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>
+
+<%= link_to 'Edit', edit_terrestrial_planet_path(@terrestrial_planet) %> |
+<%= link_to 'Back', terrestrial_planets_path %>

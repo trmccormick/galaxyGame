@@ -1,0 +1,53 @@
+class Wormhole < ApplicationRecord
+  belongs_to :galaxy_a, class_name: 'Galaxy'
+  belongs_to :galaxy_b, class_name: 'Galaxy'
+  belongs_to :solar_system_a, class_name: 'SolarSystem'
+  belongs_to :solar_system_b, class_name: 'SolarSystem'
+  has_one :entrance, class_name: 'Location::SpatialLocation', as: :spatial_context
+  has_one :exit, class_name: 'Location::SpatialLocation', as: :spatial_context
+
+  enum stability: { stable: 0, fluctuating: 1, collapsing: 2 }
+
+  validates :galaxy_a, :galaxy_b, :solar_system_a, :solar_system_b, presence: true
+  validate :validate_system_galaxy_membership
+  validate :different_systems
+  
+  after_create :generate_endpoints
+
+  def safe_for_travel?
+    stability == 'stable' && disruption_level < 50
+  end
+
+  private
+
+  def validate_system_galaxy_membership
+    unless solar_system_a.galaxy == galaxy_a && solar_system_b.galaxy == galaxy_b
+      errors.add(:base, "Solar systems must belong to their respective galaxies")
+    end
+  end
+
+  def different_systems
+    if solar_system_a == solar_system_b
+      errors.add(:base, "Must connect different solar systems")
+    end
+  end
+
+  def generate_endpoints
+    # Generate random coordinates within each solar system's space
+    create_entrance!(
+      name: "Wormhole Entrance #{id}",
+      x_coordinate: rand(-1000.0..1000.0),
+      y_coordinate: rand(-1000.0..1000.0),
+      z_coordinate: rand(-1000.0..1000.0),
+      spatial_context: solar_system_a
+    )
+
+    create_exit!(
+      name: "Wormhole Exit #{id}",
+      x_coordinate: rand(-1000.0..1000.0),
+      y_coordinate: rand(-1000.0..1000.0),
+      z_coordinate: rand(-1000.0..1000.0),
+      spatial_context: solar_system_b
+    )
+  end
+end

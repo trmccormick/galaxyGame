@@ -1,0 +1,81 @@
+require 'nokogiri'
+require 'open-uri'
+require 'json'
+require 'fileutils'
+
+url = 'https://en.wikipedia.org/wiki/List_of_craters_on_the_Moon:_A%E2%80%93B'
+doc = Nokogiri::HTML(URI.open(url))
+
+craters = doc.css('table.wikitable tbody tr').map do |row|
+    cells = row.css('td')
+    next if cells.empty?
+    {
+        name: cells[0].text.strip,
+        coordinates: cells[1].at_css('span.geo-dec')&.text&.strip || cells[1].text.strip,
+        diameter: cells[2].text.strip + " km",
+    }
+end.compact
+
+# next we need to pull additional data from the crater's wikipedia page
+craters.each do |crater|
+    # Fetch the Wikipedia page
+    page = Wikipedia.find("#{crater[:name]} (crater)")
+
+    # pull some of the data from the wikipedia page
+    crater[:summary] = page.summary
+
+    # get the page from the fullurl
+    page_url = page.fullurl
+
+    # puts page_url.inspect
+    # current = Nokogiri::HTML(URI.open(page.fullurl))
+    # depth_match = current.text[/depth\s*=\s*['"]?(.*?)['"]?/, 1]
+    # abort
+
+    # Fetch the Wikipedia page
+    begin
+        current = Nokogiri::HTML(URI.open(page.fullurl))
+        depth_element = current.at_css('th:contains("Depth") + td')
+        if depth_element
+            depth_text = depth_element.text.strip
+            depth_text = depth_text.gsub(/\[.*?\]|\(.*?\)/, '').strip # Remove references and parenthesis
+            depth_text = depth_text.match(/(\d+(\.\d+)?\s*(km|m))/i)&.[](0) || "Unknown" # Extract number and unit
+            depth_text[0] = depth_text[0].capitalize if depth_text.downcase == "unknown" # Capitalize "unknown"
+            crater[:depth] = depth_text
+        else
+            crater[:depth] = "Unknown"
+        end
+        puts "Depth: #{crater[:depth]}"
+    rescue OpenURI::HTTPError => e
+        # set depth to unknown if the page does not exist
+        crater[:depth] = "unknown"
+        puts "Failed to fetch page for #{crater[:name]}: #{e.message}"
+        next
+    end
+
+    # find depth from page should have "depth =" in the text
+    
+    # puts crater[:depth]
+    # abort
+    
+    # Check if the page exists and has content
+    # if page.text.nil? || page.text.empty?
+    #   crater[:depth] = "unknown"
+    # else
+    #   # Use simple text search to find the "depth ="
+    #   depth_match = page.text[/depth\s*=\s*['"]?(.*?)['"]?/, 1]
+    
+    #   if depth_match
+    #     crater[:depth] = depth_match.strip
+    #     puts "Depth: #{crater[:depth]}"
+    #   else
+    #     crater[:depth] = "unknown"
+    #     puts "Depth information not found."
+    #   end
+    # end
+end
+
+# output_path = "/app/data/celestial_bodies/luna"
+# FileUtils.mkdir_p(output_path)
+
+File.write("lunar_craters.json", JSON.pretty_generate(craters))

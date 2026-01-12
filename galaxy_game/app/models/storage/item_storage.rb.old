@@ -1,0 +1,43 @@
+# app/models/storage/item_storage.rb
+
+module Storage
+  class ItemStorage < BaseStorage
+    def initialize(capacity:, location:)
+      super(capacity: capacity, item_type: 'Item', location: location)
+      @current_stock = {}
+    end
+
+    def add_item(item, quantity)
+      if can_store?(item.name, quantity)
+        @current_stock[item.name] ||= 0
+        @current_stock[item.name] += quantity
+        "Added #{quantity} units of #{item.name}."
+      else
+        "Not enough capacity to add #{quantity} units of #{item.name}."
+      end
+    end
+
+    def remove_item(item, quantity)
+      if can_remove?(item.name, quantity)
+        @current_stock[item.name] -= quantity
+        @current_stock.delete(item.name) if @current_stock[item.name] <= 0
+        "Removed #{quantity} units of #{item.name}."
+      else
+        "Not enough #{item.name} available."
+      end
+    end
+
+    def current_stock
+      @current_stock
+    end
+
+    def can_store?(item_name, quantity)
+      (@current_stock.values.sum + quantity) <= @capacity
+    end
+
+    def can_remove?(item_name, quantity)
+      (@current_stock[item_name] || 0) >= quantity
+    end
+  end
+end
+

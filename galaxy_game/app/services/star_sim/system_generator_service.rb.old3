@@ -1,0 +1,124 @@
+module StarSim
+  class SystemGeneratorService
+    def initialize(solar_system)
+      @solar_system = solar_system
+    end
+
+    # Main public method to generate a system
+    def generate!(num_stars:, num_planets:)
+      if Lookup::StarSystemLookupService.new.system_exists?(@solar_system.identifier)
+        # System has predefined data in a JSON file
+        generate_from_predefined_data
+      else
+        # No predefined data, generate procedurally
+        generate_random_system(num_stars: num_stars, num_planets: num_planets)
+      end
+    end
+
+    private
+
+    def generate_from_predefined_data
+      # The SystemBuilderService expects a name parameter, not system_data
+      # So we pass the solar system identifier as the name
+      builder = StarSim::SystemBuilderService.new(name: @solar_system.identifier)
+      builder.build!
+      
+      @solar_system
+    end
+
+    def generate_random_system(num_stars:, num_planets:)
+      # Create a procedural generator
+      generator = StarSim::ProceduralGenerator.new
+      
+      # Generate the system seed data
+      system_seed = generator.generate_system_seed(
+        num_stars: num_stars,
+        num_planets: num_planets
+      )
+      
+      # Skip file operations in test environment
+      unless Rails.env.test?
+        # Save the seed data as a JSON file
+        timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+        generated_identifier = system_seed["solar_system"]["identifier"] || "unnamed-system"
+        filename = "generated_#{generated_identifier}_#{timestamp}.json"
+        filepath = File.join(Lookup::StarSystemLookupService::SYSTEMS_PATH, filename)
+        
+        FileUtils.mkdir_p(Lookup::StarSystemLookupService::SYSTEMS_PATH) unless File.directory?(Lookup::StarSystemLookupService::SYSTEMS_PATH)
+        
+        File.open(filepath, 'w') do |f|
+          f.write(JSON.pretty_generate(system_seed))
+        end
+      end
+      
+      # Update the solar system name and identifier - bypass validations
+      @solar_system.name = system_seed["solar_system"]["name"] || "Unnamed System"
+      @solar_system.identifier = system_seed["solar_system"]["identifier"] || "UNNAMED-#{SecureRandom.hex(4)}"
+      @solar_system.save(validate: false)
+      
+      # For procedurally generated systems, we can't use SystemBuilderService directly
+      # since it expects to lookup data by name. Instead, we'll use our fallback method.
+      fallback_build(system_seed, num_stars, num_planets)
+      
+      @solar_system
+    end
+    
+    # Fallback method - creates stars and planets directly
+    def fallback_build(system_seed, num_stars, num_planets)
+      Rails.logger.info("Building system using direct creation method")
+      
+      # Create stars based on the seed data
+      star_data = system_seed["stars"]&.first || {}
+      
+      num_stars.times do |i|
+        # Generate a unique identifier for each star
+        star_identifier = "STAR-#{i}-#{SecureRandom.hex(4)}"
+        
+        @solar_system.stars.create!(
+          name: star_data["name"] || "Star #{i}",
+          identifier: star_identifier,
+          type_of_star: star_data["type"] || "G2V",
+          mass: star_data["mass"] || 1.0,
+          radius: star_data["radius"] || 6.96e8,
+          luminosity: star_data["luminosity"] || 1.0,
+          temperature: star_data["temperature"] || 5778,
+          life: "main_sequence",
+          age: rand(1e9..10e9),
+          r_ecosphere: calculate_habitable_zone(star_data["luminosity"] || 1.0)[0]
+        )
+      end
+      
+      # Create planets based on the seed data
+      planet_data = system_seed.dig("celestial_bodies", "terrestrial_planets")&.first || {}
+      
+      num_planets.times do |i|
+        # Generate a unique identifier for each planet
+        planet_identifier = "PLANET-#{i}-#{SecureRandom.hex(4)}"
+        
+        CelestialBodies::TerrestrialPlanet.create!(
+          name: planet_data["name"] || "Planet #{i}",
+          identifier: planet_identifier,
+          solar_system: @solar_system,
+          mass: planet_data["mass"] || 1.0,
+          radius: planet_data["radius"] || 6.37e6,
+          size: planet_data["size"] || 1.0,
+          gravity: planet_data["gravity"] || 9.8,
+          orbital_period: planet_data.dig("orbits", 0, "orbital_period_days") || 365.25,
+          surface_temperature: planet_data["surface_temperature"] || 288,
+          density: planet_data["density"] || 5.51,
+          albedo: planet_data["albedo"] || 0.3,
+          status: "active"
+        )
+      end
+    end
+    
+    # Helper method to calculate habitable zone
+    def calculate_habitable_zone(luminosity)
+      luminosity ||= 1.0
+      inner_edge = Math.sqrt(luminosity) * 0.95
+      outer_edge = Math.sqrt(luminosity) * 1.37
+      [inner_edge, outer_edge]
+    end
+  end
+end
+

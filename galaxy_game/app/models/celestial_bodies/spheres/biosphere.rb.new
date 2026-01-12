@@ -1,0 +1,122 @@
+# ==============================================================================
+# TERRAFORMING-FOCUSED BIOSPHERE ARCHITECTURE
+# ==============================================================================
+# Design Philosophy:
+# - Biology is a TOOL for terraforming, not the primary simulation
+# - Life forms have terraforming EFFECTS (O2 production, CO2 consumption, etc.)
+# - Abstract away complex population dynamics
+# - Focus on: "What does this organism DO to the planet?"
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. BIOSPHERE MODEL - The container and orchestrator
+# ------------------------------------------------------------------------------
+module CelestialBodies
+  module Spheres
+    class Biosphere < ApplicationRecord
+      belongs_to :celestial_body
+      has_many :life_form_deployments, dependent: :destroy
+      has_many :life_forms, through: :life_form_deployments
+      
+      # Terraforming state (what we care about)
+      # These are the actual values that affect gameplay
+      store_accessor :terraforming_state,
+        :oxygen_production_rate,    # kg/year from all life
+        :co2_consumption_rate,       # kg/year from all life
+        :nitrogen_fixation_rate,     # kg/year from all life
+        :soil_quality,               # 0-100 scale
+        :biomass_coverage,           # percentage of surface
+        :water_retention             # affects hydrosphere
+      
+      # Simple biodiversity metric (for flavor, not complex simulation)
+      def biodiversity_score
+        # Just count distinct life form types and their spread
+        life_form_deployments.sum(:coverage_percentage) / 100.0 * 
+          life_form_deployments.count
+      end
+      
+      # Main terraforming tick - called when time advances
+      def apply_terraforming_effects(time_delta_years)
+        return if life_form_deployments.none?
+        
+        atmosphere = celestial_body.atmosphere
+        return unless atmosphere
+        
+        # Aggregate all life form effects
+        total_o2_production = 0
+        total_co2_consumption = 0
+        total_n_fixation = 0
+        total_soil_improvement = 0
+        
+        life_form_deployments.active.each do |deployment|
+          # Scale effects by coverage and time
+          scale = deployment.coverage_percentage / 100.0 * time_delta_years
+          
+          total_o2_production += deployment.life_form.oxygen_production * scale
+          total_co2_consumption += deployment.life_form.co2_consumption * scale
+          total_n_fixation += deployment.life_form.nitrogen_fixation * scale
+          total_soil_improvement += deployment.life_form.soil_improvement * scale
+        end
+        
+        # Apply to atmosphere
+        atmosphere.add_gas('O2', total_o2_production)
+        atmosphere.remove_gas('CO2', total_co2_consumption)
+        atmosphere.add_gas('N2', total_n_fixation)
+        
+        # Apply to biosphere state
+        update!(
+          oxygen_production_rate: total_o2_production / time_delta_years,
+          co2_consumption_rate: total_co2_consumption / time_delta_years,
+          nitrogen_fixation_rate: total_n_fixation / time_delta_years,
+          soil_quality: [soil_quality + total_soil_improvement, 100].min
+        )
+      end
+      
+      # Check if life can survive current conditions
+      def habitability_for(life_form)
+        atmosphere = celestial_body.atmosphere
+        temp = celestial_body.surface_temperature
+        
+        # Simple boolean checks
+        factors = {
+          temperature: life_form.can_survive_temperature?(temp),
+          pressure: atmosphere ? life_form.can_survive_pressure?(atmosphere.pressure) : false,
+          atmosphere: atmosphere ? life_form.compatible_atmosphere?(atmosphere) : false
+        }
+        
+        # Return hash with details for UI/AI decision making
+        {
+          viable: factors.values.all?,
+          limiting_factors: factors.select { |k, v| !v }.keys,
+          survival_probability: factors.values.count(true) / factors.size.to_f
+        }
+      end
+      
+      # Deploy a life form (with optional starting coverage)
+      def deploy_life_form(life_form, initial_coverage: 1.0)
+        habitability = habitability_for(life_form)
+        
+        # Allow deployment even if not ideal (let it struggle/adapt)
+        deployment = life_form_deployments.create!(
+          life_form: life_form,
+          coverage_percentage: initial_coverage,
+          status: habitability[:viable] ? 'thriving' : 'struggling',
+          limiting_factors: habitability[:limiting_factors]
+        )
+        
+        # Recalculate biosphere effects
+        recalculate_effects
+        
+        deployment
+      end
+      
+      private
+      
+      def recalculate_effects
+        # Update the cached terraforming rates
+        # This is called after any life form changes
+        apply_terraforming_effects(0) # Just updates rates, doesn't apply changes
+      end
+    end
+  end
+end

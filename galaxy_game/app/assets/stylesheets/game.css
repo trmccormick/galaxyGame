@@ -1,0 +1,277 @@
+/* Game specific styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+/* Original menuBar styles */
+#menuBar {
+  background-color: #444;
+  color: white;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 10; /* Ensure the menu bar is above other elements */
+}
+
+#menuBar .dropdown {
+  position: relative;
+  display: inline-block;
+  margin-right: 15px;
+}
+
+#menuBar .dropdown > a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  display: block;
+}
+
+#menuBar .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+#menuBar .dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 11; /* Ensure dropdown is above other content */
+}
+
+#menuBar .dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+#menuBar .dropdown-content a:hover {
+  background-color: #555;
+}
+
+/* Additional styles for game interface */
+/* These use different class names to avoid conflicts */
+.game-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  background-color: #111;
+  color: #eee;
+}
+
+/* Navigation */
+.game-nav {
+  background-color: #222;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.main-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.main-menu li {
+  margin-left: 20px;
+  position: relative;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+  color: #eee;
+  text-decoration: none;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  z-index: 10;
+  padding: 8px 0;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li {
+  margin: 0;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 8px 16px;
+  color: #eee;
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  background-color: #444;
+}
+
+/* Main Display */
+.main-display {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  height: 100%;
+}
+
+.system-view, .planet-view {
+  position: relative;
+}
+
+.system-view.active-view, .planet-view.active-view {
+  display: block;
+}
+
+.system-view:not(.active-view), .planet-view:not(.active-view) {
+  display: none;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+}
+
+.system-info, .planet-info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0,0,0,0.7);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+/* Details Panel */
+.details-panel {
+  background-color: #222;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #444;
+  margin-bottom: 15px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.tab-btn.active {
+  color: #fff;
+  border-bottom: 2px solid #4a90e2;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Control Panel */
+.control-panel {
+  background-color: #222;
+  padding: 10px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.sim-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-btn {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.control-btn:hover {
+  background-color: #357abf;
+}
+
+.sim-speed {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.time-display {
+  text-align: center;
+  font-size: 18px;
+}
+
+.notification-area {
+  background-color: #333;
+  padding: 8px;
+  height: 60px;
+  overflow-y: auto;
+  border-radius: 4px;
+}
+
+/* Notification styling */
+.notification {
+  margin-bottom: 5px;
+  padding: 5px;
+  border-left: 3px solid #4a90e2;
+  background-color: rgba(74, 144, 226, 0.1);
+}
+
+#fast-forward-btn, #reset-time-btn {
+  margin: 5px;
+  padding: 8px 15px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  z-index: 100;
+}
+
+#fast-forward-btn:hover, #reset-time-btn:hover {
+  background-color: #34495e;
+}
+
+.time-control-buttons {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}

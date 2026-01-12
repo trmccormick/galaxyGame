@@ -1,0 +1,40 @@
+module Lookup
+  class BaseLookupService
+    def initialize
+      @cache = {}
+    end
+
+    protected
+
+    def load_json_files(directory)
+      Dir.glob(Rails.root.join(directory, "**/*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError => e
+        Rails.logger.error("Failed to parse JSON file #{file}: #{e.message}")
+        nil
+      end.compact
+    end
+
+    def match_properties?(data, search_term)
+      return false unless data && search_term
+
+      search_term = search_term.downcase
+      name = data['name']&.downcase
+      aliases = data['aliases']&.map(&:downcase) || []
+
+      [name, *aliases].compact.include?(search_term)
+    end
+
+    def load_categorized_data(base_path, categories)
+      categories.each_with_object({}) do |category, hash|
+        category_path = Rails.root.join(base_path, category)
+        hash[category] = if Dir.exist?(category_path)
+          load_json_files(category_path)
+        else
+          Rails.logger.warn("Directory not found: #{category_path}")
+          []
+        end
+      end
+    end
+  end
+end

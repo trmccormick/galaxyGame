@@ -1,0 +1,121 @@
+require 'rails_helper'
+require 'json'
+
+RSpec.describe Lookup::MaterialLookupService do
+  let(:service) { described_class.new }
+
+  before do
+    # Allow any join calls and return appropriate paths
+    allow(Rails.root).to receive(:join) do |*args|
+      Pathname.new(File.join("/home/galaxy_game", *args))
+    end
+
+    # Mock File.directory? to return true for our paths
+    allow(File).to receive(:directory?).and_return(true)
+
+    # Mock Dir.glob for each directory
+    allow(Dir).to receive(:glob).and_return([
+      "app/data/materials/processed/refined_metals/iron.json",
+      "app/data/materials/raw/meteorites/iron_meteorite.json",
+      "app/data/materials/processed/refined_metals/copper.json"
+    ])
+
+    # Mock Dir.glob for specific material types
+    allow(Dir).to receive(:glob).with("/home/galaxy_game/data/json-data/materials/raw/gases/*.json").and_return([
+      "/home/galaxy_game/data/json-data/materials/raw/gases/co2.json",
+      "/home/galaxy_game/data/json-data/materials/raw/gases/n2.json",
+      "/home/galaxy_game/data/json-data/materials/raw/gases/ar.json"
+    ])
+
+    # Mock File.read for each material file
+    allow(File).to receive(:read)
+      .with("app/data/materials/processed/refined_metals/iron.json")
+      .and_return({
+        id: "iron",
+        name: "Iron",
+        category: "metal",
+        type: "processed_material",
+        subtype: "refined_metal",
+        chemical_formula: "Fe"
+      }.to_json)
+
+    allow(File).to receive(:read)
+      .with("app/data/materials/raw/meteorites/iron_meteorite.json")
+      .and_return({
+        id: "iron_meteorite",
+        name: "Iron Meteorite",
+        category: "meteorite",
+        type: "raw_material"
+      }.to_json)
+
+    allow(File).to receive(:read)
+      .with("app/data/materials/processed/refined_metals/copper.json")
+      .and_return({
+        id: "copper",
+        name: "Copper",
+        category: "metal",
+        type: "processed_material",
+        subtype: "refined_metal",
+        chemical_formula: "Cu"
+      }.to_json)
+
+    # Mock file reads for atmospheric gases
+    allow(File).to receive(:read).with("/home/galaxy_game/data/json-data/materials/raw/gases/co2.json")
+      .and_return({
+        id: "co2",
+        name: "CO2",
+        chemical_formula: "CO2",
+        properties: { molar_mass: 44.01 }
+      }.to_json)
+
+    allow(File).to receive(:read).with("/home/galaxy_game/data/json-data/materials/raw/gases/n2.json")
+      .and_return({
+        id: "n2",
+        name: "N2",
+        chemical_formula: "N2",
+        properties: { molar_mass: 28.014 }
+      }.to_json)
+
+    allow(File).to receive(:read).with("/home/galaxy_game/data/json-data/materials/raw/gases/ar.json")
+      .and_return({
+        id: "ar",
+        name: "Ar",
+        chemical_formula: "Ar",
+        properties: { molar_mass: 39.948 }
+      }.to_json)
+  end
+
+  describe '#find_material' do
+    it 'returns the correct material by name' do
+      expect(service.find_material("iron")["name"]).to eq("Iron")
+      expect(service.find_material("copper")["name"]).to eq("Copper")
+      expect(service.find_material("iron meteorite")["name"]).to eq("Iron Meteorite")
+    end
+
+    it 'returns the correct material by chemical formula' do
+      expect(service.find_material("Fe")["name"]).to eq("Iron")
+      expect(service.find_material("Cu")["name"]).to eq("Copper")
+    end
+
+    it 'returns nil for a nonexistent material' do
+      expect(service.find_material("gold")).to be_nil
+    end
+
+    it 'finds materials by chemical formula' do
+      expect(service.find_material("CO2")).to include("properties" => include("molar_mass" => 44.01))
+      expect(service.find_material("N2")).to include("properties" => include("molar_mass" => 28.014))
+      expect(service.find_material("Ar")).to include("properties" => include("molar_mass" => 39.948))
+    end
+
+    it 'finds materials case-insensitively' do
+      expect(service.find_material("co2")).to include("chemical_formula" => "CO2")
+      expect(service.find_material("n2")).to include("chemical_formula" => "N2")
+    end
+
+    it 'finds materials with correct molar mass' do
+      material = service.find_material("CO2")
+      expect(material).to be_present
+      expect(material["properties"]["molar_mass"]).to eq(44.01)
+    end
+  end
+end

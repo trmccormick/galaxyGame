@@ -1,0 +1,204 @@
+# app/services/star_sim/system_generator_service.rb
+module StarSim
+  class SystemGeneratorService
+    # Optionally accept a known system identifier or full data,
+    # along with a SolarSystem ActiveRecord instance.
+    # (If nothing is provided, a random system is generated.)
+    def initialize(solar_system, lookup_service: Lookup::StarSystemLookupService.new)
+      @solar_system = solar_system
+      @name_generator  = NameGeneratorService.new
+      @lookup_service  = lookup_service
+    end
+
+    # Main entry point.
+    # - If system_identifier is provided (or known_values), then generate from known data.
+    # - Otherwise, generate a random system.
+    def generate!(num_stars: 1, num_planets: 10, system_identifier: nil)
+      if system_identifier
+        known_system = @lookup_service.fetch(system_identifier)
+        if known_system
+          generate_from_known_system(known_system)
+        else
+          raise "System with identifier '#{system_identifier}' not found."
+        end
+      else
+        generate_random_system(num_stars, num_planets)
+      end
+      
+      @solar_system
+    end
+
+    private
+
+    # --- Random System Generation ---
+    def generate_random_system(num_stars, num_planets)
+      @solar_system.update!(
+        name: @name_generator.generate_system_name,
+        identifier: @name_generator.generate_system_name
+      )
+    
+      create_stars(num_stars)
+      simulate_accretion  # (Procedural simulation of accretion to generate planet seeds)
+      build_planets_from_seeds  # Build planets from the generated seeds
+      create_star_distances   # Calculate and assign orbital distances between stars and planets
+      generate_atmospheres    # Generate atmospheres using rules that incorporate mass, age, and distance
+    end
+
+    def simulate_accretion
+      # In a truly procedural mode you’d run a simulation that takes into account disk density,
+      # star properties, etc. Here, we assume AccretionSimulationService returns an array of ProtoplanetSeed objects.
+      @seeds = StarSim::AccretionSimulationService.new(@solar_system).run
+    end
+
+    def build_planets_from_seeds
+      @seeds.each do |seed|
+        builder = StarSim::PlanetBuilder.new(seed, @solar_system)
+        planet = builder.build
+        @solar_system.planets << planet
+      end
+    end
+
+    def create_stars(num_stars)
+      num_stars.times do
+        star = generate_random_star
+        @solar_system.stars << star
+      end
+    end
+
+    def generate_random_star
+      # You can further refine this randomization to favor M- or K-type stars (more common)
+      star_types = ["G2V", "M-type", "K-type", "F-type", "A-type"]
+      chosen_type = star_types.sample
+      # Star.new should accept attributes such as mass, radius, luminosity.  
+      # Here we assume default constants are defined in the Star model.
+      Star.new(
+        name: @name_generator.generate_star_name,
+        mass: rand(0.8..1.5) * Star::SOLAR_MASS,
+        radius: rand(0.8..1.5) * Star::SOLAR_RADIUS,
+        luminosity: rand(0.8..1.5) * Star::SOLAR_LUMINOSITY,
+        temperature: 5500 + rand(0..500),
+        type_of_star: chosen_type
+      )
+    end
+
+    # --- Known System Generation (using lookup data) ---
+    def generate_from_known_system(system_data)
+      @solar_system.update!(
+        name: system_data['name'],
+        identifier: system_data['id']
+      )
+    
+      # Create stars using known star type data.
+      # (For simplicity, we use a single star; for multi-star, you could iterate accordingly.)
+      create_stars_from_known(system_data['star_type'])
+      create_planets_from_known(system_data['planets'])
+      
+      # In this mode we might still simulate additional details (e.g., moons) based on the star's type.
+      simulate_accretion_based_on_known_star(system_data['star_type'])
+      create_star_distances
+      generate_atmospheres
+    end
+
+    def create_stars_from_known(star_type)
+      # For a known system, generate the star based on the provided type,
+      # using a routine similar to generate_random_star but based on known values.
+      star = generate_star_from_type(star_type)
+      @solar_system.stars << star
+    end
+
+    def generate_star_from_type(star_type)
+      # Stub out a basic star generator from a known type.
+      # Ideally, this method would set more accurate values based on star_type.
+      Star.new(
+        name: star_type + " Star",
+        mass: star_type == "G2V" ? 1.0 * Star::SOLAR_MASS : 0.8 * Star::SOLAR_MASS,
+        radius: star_type == "G2V" ? 1.0 * Star::SOLAR_RADIUS : 0.8 * Star::SOLAR_RADIUS,
+        luminosity: star_type == "G2V" ? Star::SOLAR_LUMINOSITY : 0.8 * Star::SOLAR_LUMINOSITY,
+        temperature: star_type == "G2V" ? 5778 : 5000,
+        type_of_star: star_type
+      )
+    end
+
+    def create_planets_from_known(planets_data)
+      planets_data.each do |planet_data|
+        create_planet_from_data(planet_data)
+      end
+    end
+
+    def create_planet_from_data(planet_data)
+      # Build a planet from known data (the structure should match your SOL_SYSTEM_DATA).
+      planet = planet_data[:model_class].create!(planet_data.except(:model_class, :atmosphere, :star_distances))
+      @solar_system.planets << planet
+
+      if planet_data[:atmosphere]
+        initial_values = {
+          composition: planet_data[:atmosphere][:composition].transform_values { |v| v[:percentage] || v["percentage"] },
+          pressure: planet_data[:atmosphere][:pressure],
+          total_atmospheric_mass: planet_data[:atmosphere][:total_atmospheric_mass],
+          dust: planet_data[:atmosphere][:dust]
+        }
+        planet.create_atmosphere!(
+          initial_values.merge(
+            base_values: initial_values.deep_dup
+          )
+        )
+      end
+
+      if planet_data[:star_distances]
+        planet_data[:star_distances].each do |distance_data|
+          star = @solar_system.stars.find_by(name: distance_data[:star_name])
+          raise "Star not found: #{distance_data[:star_name]}" unless star
+          planet.star_distances.create!(
+            star: star,
+            distance: distance_data[:distance]
+          )
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      puts "Failed to create #{planet_data[:name]}: #{e.record.errors.full_messages}"
+      raise e
+    end
+
+    # --- Star-Planet Orbital Relationships & Atmospheres ---
+    def create_star_distances
+      @solar_system.planets.each do |planet|
+        # The distance here can be based on procedural rules, or known values.
+        planet.star_distances.create!(
+          star: @solar_system.stars.first,
+          distance: rand(0.5e11..1.5e11)
+        )
+      end
+    end
+
+    def generate_atmospheres
+      @solar_system.planets.each do |planet|
+        # Here we incorporate factors such as planet mass, age, and distance from star.
+        # For example:
+        if planet.mass.to_f < 6e23  # Very low mass — likely lost hydrogen/helium
+          planet.atmosphere.update!(composition: { "CO2" => 95, "N2" => 5 })
+        elsif planet.mass.to_f < 6e24  # Smaller terrestrial, no light gases
+          planet.atmosphere.update!(composition: { "CO2" => 80, "N2" => 20 })
+        else
+          # More massive planets may have retained lighter gases
+          planet.atmosphere.update!(composition: { "Hydrogen" => 90, "Helium" => 10 })
+        end
+
+        # Adjust based on distance from star:
+        if planet.star_distances.first.distance < 1e11
+          # Closer in—hotter, might be more like Venus
+          planet.atmosphere.update!(pressure: 92, composition: { "CO2" => 96.5, "N2" => 3.5 })
+        elsif planet.star_distances.first.distance > 1.5e11
+          # Farther out—thinner atmosphere, Mars-like
+          planet.atmosphere.update!(pressure: 0.006, composition: { "CO2" => 95, "N2" => 5 })
+        end
+      end
+    end
+
+    def simulate_accretion_based_on_known_star(star_type)
+      # Even if we have some known planets, we might simulate additional details (like missing moons)
+      simulation = StarSim::AccretionSimulationService.new(@solar_system, star_type)
+      @seeds = simulation.run
+    end
+  end
+end
+

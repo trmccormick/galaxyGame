@@ -1,0 +1,82 @@
+# spec/models/units/habitat_spec.rb
+require 'rails_helper'
+
+RSpec.describe Units::Habitat, type: :model do
+  let(:operating_requirements) { { power: 100 } }
+  let(:habitat) { Units::Habitat.new("Green Habitat", [], operating_requirements, [], [], 150) }
+
+  # describe 'validations' do
+  #   it 'is valid with valid attributes' do
+  #     expect(habitat).to be_valid
+  #   end
+
+  #   it 'is not valid without a name' do
+  #     habitat.name = nil
+  #     expect(habitat).not_to be_valid
+  #     expect(habitat.errors[:name]).to include("can't be blank")
+  #   end
+
+  #   it 'is not valid with a negative population capacity' do
+  #     habitat.population_capacity = -1
+  #     expect(habitat).not_to be_valid
+  #   end
+
+  #   it 'is not valid with current occupancy greater than population capacity' do
+  #     habitat.current_population = 200
+  #     expect(habitat).not_to be_valid
+  #     expect(habitat.errors[:current_population]).to include("must be less than or equal to #{habitat.population_capacity}")
+  #   end
+  # end
+
+  # describe '#allocate_population' do
+  #   it 'allocates population correctly within capacity' do
+  #     habitat.allocate_population(50)
+  #     expect(habitat.current_population).to eq(50)
+  #   end
+
+  #   it 'does not allocate population exceeding capacity' do
+  #     habitat.allocate_population(200)
+  #     expect(habitat.current_population).to eq(0) # Assuming we haven't allocated yet
+  #     habitat.allocate_population(150)
+  #     expect(habitat.current_population).to eq(150)
+  #     habitat.allocate_population(1) # This should fail
+  #     expect(habitat.current_population).to eq(150)
+  #   end
+  # end
+
+  # describe '#consume_resources' do
+  #   it 'consumes resources correctly' do
+  #     allow(Resource).to receive(:consume) # Stub resource consumption
+  #     habitat.current_population = 10
+  #     expect(Resource).to receive(:consume).with(:food, 20) # 10 * 2
+  #     expect(Resource).to receive(:consume).with(:water, 30) # 10 * 3
+  #     expect(Resource).to receive(:consume).with(:power, 100) # Operating requirements power
+
+  #     habitat.send(:consume_resources)
+  #   end
+
+  #   it 'produces waste based on current population' do
+  #     allow(Resource).to receive(:add_waste)
+  #     allow(Resource).to receive(:add_waste_water)
+  #     allow(Resource).to receive(:add_biomass)
+
+  #     habitat.current_population = 10
+  #     expect(Resource).to receive(:add_waste).with(10) # 1 waste per person
+  #     expect(Resource).to receive(:add_waste_water).with(10) # 1 wastewater per person
+  #     expect(Resource).to receive(:add_biomass).with(5) # 0.5 biomass per person
+
+  #     habitat.send(:consume_resources)
+  #   end
+  # end
+
+  # describe '#produce_resources' do
+  #   it 'produces resources correctly' do
+  #     allow(Resource).to receive(:add)
+  #     habitat.current_population = 10
+  #     expect(Resource).to receive(:add).with(:oxygen, 20) # 10 * 2
+
+  #     habitat.send(:produce_resources)
+  #   end
+  # end
+end
+

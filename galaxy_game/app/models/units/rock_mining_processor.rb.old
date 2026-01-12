@@ -1,0 +1,72 @@
+module Units
+    class RockMiningProcessor < BaseUnit
+      attr_accessor :energy_consumption, :output_resources, :mining_efficiency, :rock_type
+    
+      def initialize(rock_type)
+        super()                                         # Initialize as a BaseUnit
+        @energy_consumption = 300                       # Energy required to operate
+        @mining_efficiency = 0.5                        # Efficiency of mining, 50% yield from mined rocks
+        @output_resources = {}                          # Initialize output resources
+        @rock_type = rock_type                          # Rock type to mine (e.g., granite, basalt)
+        @input_rock = 0                                 # Initialize rock input
+      end
+    
+      def mine_rock(amount)
+        if amount <= 0
+          puts "Invalid amount of rock."
+          return
+        end
+    
+        # Assume MaterialLookupService provides the raw materials associated with this rock type
+        materials = Lookup::MaterialLookupService.new.find_material(@rock_type)
+    
+        if materials.nil?
+          puts "No material data found for #{@rock_type}."
+          return
+        end
+    
+        # Calculate the mined resources based on mining efficiency
+        resources_yielded = materials[:smelting_output].map do |resource|
+          { resource[:material] => (resource[:percentage] * amount * @mining_efficiency / 100.0).floor }
+        end
+    
+        # Add the mined resources to the output
+        resources_yielded.each do |resource_hash|
+          resource_hash.each do |resource, amount_yielded|
+            @output_resources[resource] = (@output_resources[resource] || 0) + amount_yielded
+          end
+        end
+    
+        @input_rock += amount                             # Track input rock
+        puts "Mined #{amount} kg of #{@rock_type}. Yielded: #{resources_yielded}."
+    
+        # Add mined resources to storage
+        resources_yielded.each do |resource_hash|
+          resource_hash.each do |resource, amount_yielded|
+            add_to_storage(resource, amount_yielded) if amount_yielded > 0
+          end
+        end
+      end
+    
+      def activate(energy_available)
+        # Check if there is enough energy to operate
+        if energy_available >= @energy_consumption
+          puts "Rock Mining Processor activated."
+          # Process a certain amount of rock based on available input
+          mine_rock(10)  # For example, process 10 kg of rock each cycle
+          
+          # Optionally transfer output resources to the settlement inventory
+          @output_resources.each do |resource, amount|
+            if amount > 0
+              transfer_inventory(resource, amount)
+              @output_resources[resource] = 0  # Reset the output after transfer
+            end
+          end
+        else
+          puts "Not enough energy to activate Rock Mining Processor."
+        end
+      end
+    end
+  end
+  
+  

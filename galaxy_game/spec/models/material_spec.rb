@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Material, type: :model do
+RSpec.describe CelestialBodies::Material, type: :model do
   let(:celestial_body) { create(:celestial_body) }
   let(:material) { create(:material, celestial_body: celestial_body) }
 

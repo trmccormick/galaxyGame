@@ -36,7 +36,7 @@ module Settlement
     validates :current_population, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :settlement_type, presence: true
 
-    enum settlement_type: { base: 0, outpost: 1, settlement: 2, city: 3 }
+    enum settlement_type: { base: 0, outpost: 1, settlement: 2, city: 3, station: 4 }
 
     after_create :create_account_and_inventory
     after_update :adjust_settlement_type_based_on_population, if: :saved_change_to_current_population?

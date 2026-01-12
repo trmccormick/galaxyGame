@@ -1,0 +1,68 @@
+# app/services/craft_lookup_service.rb
+require 'json'
+
+class CraftLookupService < BaseLookupService
+  CRAFT_CATEGORIES = {
+    'deployable' => ['drones', 'probes', 'satellites'],
+    'surface' => ['landers', 'rovers'],
+    'transport' => ['shuttles', 'spaceships']
+  }.freeze
+
+  BASE_PATH = Rails.root.join('app', 'data', 'crafts')
+
+  def initialize
+    super
+    validate_directory_structure
+  end
+
+  def find_craft(craft_name, craft_type)
+    return nil unless craft_name.present? && craft_type.present?
+
+    craft_type = normalize_type(craft_type)
+    validate_craft_type!(craft_type)
+
+    category = get_category(craft_type)
+    cache_key = "#{category}/#{craft_type}/#{craft_name}"
+
+    @cache[cache_key] ||= search_craft(craft_name, craft_type, category)
+  end
+
+  private
+
+  def search_craft(craft_name, craft_type, category)
+    path = BASE_PATH.join(category, craft_type)
+    crafts = load_json_files(path)
+    crafts.find { |craft| match_properties?(craft, craft_name) }
+  end
+
+  def validate_directory_structure
+    CRAFT_CATEGORIES.each do |category, types|
+      types.each do |type|
+        path = BASE_PATH.join(category, type)
+        unless Dir.exist?(path)
+          Rails.logger.error("Missing directory: #{path}")
+          raise DirectoryStructureError, "Invalid craft data structure"
+        end
+      end
+    end
+  end
+
+  def normalize_type(type)
+    type.to_s.downcase
+  end
+
+  def validate_craft_type!(type)
+    unless valid_type?(type)
+      raise ArgumentError, "Invalid craft type: #{type}"
+    end
+  end
+
+  def valid_type?(type)
+    CRAFT_CATEGORIES.values.flatten.include?(type)
+  end
+
+  def get_category(type)
+    CRAFT_CATEGORIES.find { |_, types| types.include?(type) }&.first ||
+      raise(ArgumentError, "No category found for type: #{type}")
+  end
+end

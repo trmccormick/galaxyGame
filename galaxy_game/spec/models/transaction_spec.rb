@@ -6,6 +6,7 @@ RSpec.describe Transaction, type: :model do
   let(:player) { create(:player) }
   let(:account) { create(:account, accountable: player) }
   let(:recipient) { create(:player) }
+  let(:currency) { Financial::Currency.find_by(symbol: 'GCC') || create(:financial_currency, :gcc) }
 
   # Use these in all transaction creation/building
   let(:valid_attributes) do
@@ -14,7 +15,8 @@ RSpec.describe Transaction, type: :model do
       recipient: recipient,
       amount: 100.00,
       transaction_type: 'transfer',
-      description: "Test transaction"
+      description: "Test transaction",
+      currency: currency
     }
   end
 

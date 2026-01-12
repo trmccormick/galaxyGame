@@ -1,0 +1,500 @@
+# app/services/game_data_generator.rb
+
+require 'ollama-ai'
+require 'json'
+require 'fileutils'
+# require 'net/http' # REMOVED: Using the ollama-ai gem instead
+
+# Ensure your lookup services and paths are loaded
+# require_relative '../paths' 
+# require_relative 'lookup/material_lookup_service'
+# require_relative 'lookup/item_lookup_service'
+# require_relative 'lookup/blueprint_lookup_service'
+
+class GameDataGenerator
+  # --- CONSTANTS ---
+  DEFAULT_LLM_HOST = 'http://localhost:11434'
+  DEFAULT_MODEL = 'llama3' # Or your preferred optimized model
+  MAX_PROMPT_ENTITIES = 15 # The maximum number of entity IDs sent in the prompt for speed
+
+  # --- INITIALIZATION ---
+  def initialize(model = DEFAULT_MODEL)
+    @host = ENV['LLM_HOST_URL'] || DEFAULT_LLM_HOST
+    @model = model
+    
+    # --- FIX: Reverting to the most likely standard constant (Ollama::Client) ---
+    # The previous errors (NameError: uninitialized constant OllamaAi) strongly
+    # suggest a failure in the gem loading or a misnamed constant. 
+    # This uses the most conventional naming for the 'ollama-ai' gem.
+    @ollama_client = ::Ollama::Client.new(credentials: { host: @host })
+
+    # Initialize all relevant lookup services
+    @material_lookup_service = Lookup::MaterialLookupService.new
+    @item_lookup_service = Lookup::ItemLookupService.new
+    @blueprint_lookup_service = Lookup::BlueprintLookupService.new
+    
+    # Consolidate ALL known entity IDs for filtering
+    @available_game_entities_for_prompt = collect_all_available_game_entities_for_prompt
+  end
+
+  # --- PUBLIC GENERATION METHODS ---
+  
+  # Main method to generate a new item based on a template
+  def generate_item(template_path, output_path, params = {})
+    template = load_template(template_path)
+    json_content = generate_content_with_retry(template, params) 
+    save_content(json_content, output_path)
+    JSON.parse(json_content)
+  end
+  
+  # Generate multiple items based on a list of specifications
+  def batch_generate(template_path, specs)
+    results = []
+    
+    specs.each do |spec|
+      output_path = spec.delete(:output_path)
+      result = generate_item(template_path, output_path, spec)
+      results << result
+    end
+    
+    results
+  end
+
+  def generate_structure(structure_type, category, name, description)
+    # Load templates
+    blueprint_template = GalaxyGame::Paths::TEMPLATE_PATH.join('structure_blueprint.json').to_s
+    operational_template = GalaxyGame::Paths::TEMPLATE_PATH.join('structure_operational_data.json').to_s
+
+    # Generate blueprint
+    blueprint_params = {
+      name: name,
+      description: description,
+      type: structure_type,
+      category: category # NOTE: Added category parameter for filtering
+    }
+    
+    blueprint_output_path = File.join(
+      Rails.root.to_s, 
+      GalaxyGame::Paths::STRUCTURE_BLUEPRINTS_PATH, 
+      category, 
+      "#{structure_type}_bp.json"
+    )
+    
+    # Generate operational data
+    operational_params = {
+      name: name,
+      description: "Operational data for #{name}",
+      type: structure_type,
+      category: category # NOTE: Added category parameter for filtering
+    }
+    
+    operational_output_path = File.join(
+      Rails.root.to_s, 
+      GalaxyGame::Paths::STRUCTURES_PATH, 
+      category, 
+      "#{structure_type}.json"
+    )
+    
+    # Generate both files
+    blueprint = generate_item(blueprint_template, blueprint_output_path, blueprint_params)
+    operational_data = generate_item(operational_template, operational_output_path, operational_params)
+    
+    [blueprint, operational_data]
+  end
+
+  # Generate a unit blueprint and operational data
+  def generate_unit(unit_id, category, subcategory, properties = {})
+    # ... (Implementation from your previous code remains the same) ...
+    puts "\n🔍 Would generate unit: #{unit_id} (#{category}/#{subcategory})"
+
+    blueprint_template = latest_template_file('unit_blueprint')
+    operational_template = latest_template_file('unit_operational_data')
+
+    # Mapping of categories for consistent naming
+    category_to_blueprint_dir = {
+      'power' => 'power',      
+      'energy' => 'power',     
+      'electronics' => 'electronics',
+      'computers' => 'electronics', 
+      'propulsion' => 'propulsion'
+    }
+    
+    category_to_operational_dir = {
+      'power' => 'energy',     
+      'energy' => 'energy',    
+      'electronics' => 'computers', 
+      'computers' => 'computers',   
+      'propulsion' => 'propulsion'
+    }
+    
+    # Determine blueprint directory based on mapping
+    blueprint_dir = category_to_blueprint_dir[category] || category
+    blueprint_path = GalaxyGame::Paths::UNIT_BLUEPRINTS_PATH.join(blueprint_dir, "#{unit_id}_bp.json").to_s
+    
+    # Determine operational directory based on mapping
+    operational_dir = category_to_operational_dir[category] || category
+    
+    # Select the appropriate operational path constant based on the mapped category
+    operational_path = case operational_dir
+    when 'energy'
+      GalaxyGame::Paths::ENERGY_UNITS_PATH.join("#{unit_id}_data.json").to_s
+    when 'computers'
+      GalaxyGame::Paths::COMPUTER_UNITS_PATH.join("#{unit_id}_data.json").to_s
+    when 'propulsion'
+      GalaxyGame::Paths::PROPULSION_UNITS_PATH.join("#{unit_id}_data.json").to_s
+    else
+      GalaxyGame::Paths::UNITS_PATH.join(operational_dir, "#{unit_id}_data.json").to_s
+    end
+    
+    # Generate the blueprint
+    generate_item(
+      blueprint_template,
+      blueprint_path,
+      {
+        id: unit_id,
+        name: format_unit_name(unit_id),
+        category: category,
+        subcategory: subcategory,
+        description: properties[:description] || "A #{format_unit_name(unit_id).downcase} for spacecraft systems."
+      }.merge(properties)
+    )
+
+    # Generate the operational data
+    generate_item(
+      operational_template,
+      operational_path,
+      {
+        id: unit_id,
+        name: format_unit_name(unit_id),
+        category: category,
+        subcategory: subcategory
+      }.merge(properties)
+    )
+
+    [blueprint_path, operational_path]
+  end
+
+  # Generate a module blueprint and operational data
+  def generate_module(module_id, category, subcategory, properties = {})
+    # ... (Implementation from your previous code remains the same) ...
+    puts "\n🔍 Would generate module: #{module_id} (#{category}/#{subcategory})"
+
+    blueprint_template = latest_template_file('module_blueprint')
+    operational_template = latest_template_file('module_operational_data')
+
+    blueprint_dir = category
+    blueprint_path = GalaxyGame::Paths::MODULE_BLUEPRINTS_PATH.join(blueprint_dir, "#{module_id}_bp.json").to_s
+
+    operational_dir = category
+    operational_path = GalaxyGame::Paths::MODULES_PATH.join(operational_dir, "#{module_id}_data.json").to_s
+
+    generate_item(
+      blueprint_template,
+      blueprint_path,
+      {
+        id: module_id,
+        name: format_unit_name(module_id),
+        category: category,
+        subcategory: subcategory,
+        description: properties[:description] || "A #{format_unit_name(module_id).downcase} module."
+      }.merge(properties)
+    )
+
+    generate_item(
+      operational_template,
+      operational_path,
+      {
+        id: module_id,
+        name: format_unit_name(module_id),
+        category: category,
+        subcategory: subcategory
+      }.merge(properties)
+    )
+
+    [blueprint_path, operational_path]
+  end
+
+  # Generate a rig blueprint and operational data
+  def generate_rig(rig_id, category, subcategory, properties = {})
+    # ... (Implementation from your previous code remains the same) ...
+    puts "\n🔍 Would generate rig: #{rig_id} (#{category}/#{subcategory})"
+
+    blueprint_template = latest_template_file('rig_blueprint')
+    operational_template = latest_template_file('rig_operational_data')
+
+    blueprint_dir = category
+    blueprint_path = GalaxyGame::Paths::RIG_BLUEPRINTS_PATH.join(blueprint_dir, "#{rig_id}_bp.json").to_s
+
+    operational_dir = category
+    operational_path = GalaxyGame::Paths::RIGS_PATH.join(operational_dir, "#{rig_id}_data.json").to_s
+
+    generate_item(
+      blueprint_template,
+      blueprint_path,
+      {
+        id: rig_id,
+        name: format_unit_name(rig_id),
+        category: category,
+        subcategory: subcategory,
+        description: properties[:description] || "A #{format_unit_name(rig_id).downcase} rig."
+      }.merge(properties)
+    )
+
+    generate_item(
+      operational_template,
+      operational_path,
+      {
+        id: rig_id,
+        name: format_unit_name(rig_id),
+        category: category,
+        subcategory: subcategory
+      }.merge(properties)
+    )
+
+    [blueprint_path, operational_path]
+  end
+
+  # --- CORE LLM INTERACTION ---
+
+  def generate_content(template, params)
+    template_id = template.dig('metadata', 'template_compliance') || 'default_template'
+    
+    # 1. Load the formal JSON Schema
+    json_schema = load_schema(template_id)
+    
+    # 2. Build the optimized prompt (includes filtered context and schema)
+    prompt_text = build_prompt(json_schema, template, params)
+    
+    # --- OPTIMIZATION: OLLAMA API CALL WITH JSON MODE ---
+    response = @ollama_client.generate(
+      model: @model,
+      prompt: prompt_text,
+      # SYSTEM instruction is key for reliability
+      system: "You are a JSON generator for Galaxy Game. Respond ONLY with the JSON object defined by the schema and instructions. Do not include any text before or after the JSON.",
+      options: {
+        temperature: 0.1,
+        num_predict: 1024 # Limit output tokens for speed on Core i9
+      },
+      format: 'json', # CRUCIAL: Force Ollama's internal JSON mode
+      stream: false
+    )
+    
+    # The 'ollama-ai' gem returns a Hash, we extract the response string
+    response_text = response['response']
+
+    # Use the robust extraction logic as a final safeguard
+    extract_json(response_text)
+    
+rescue => e
+    # Catch any client-related errors
+    raise "Ollama Client Error during generation: #{e.class} - #{e.message}"
+end
+
+  def generate_content_with_retry(template, params, max_retries = 3)
+    retries = 0
+    begin
+      generate_content(template, params)
+    rescue => e # Catch all exceptions from generate_content
+      retries += 1
+      if retries <= max_retries
+        puts "LLM Generation failed, retrying (#{retries}/#{max_retries})... Error: #{e.message.lines.first}"
+        sleep 2
+        retry
+      else
+        raise e
+      end
+    end
+  end
+  
+  # --- PROMPT BUILDING AND CONTEXT FILTERING (OPTIMIZATIONS) ---
+
+  # NEW: The robust filtering logic to limit the context size for performance
+  private
+  def get_filtered_entities_for_prompt(category, subcategory)
+    # Define generic/common entity IDs that should always be included
+    base_entity_ids = ['water', 'crude_ore', 'power_unit', 'generic_alloy', 'standard_component'] 
+    
+    # Filter entities based on relevance
+    relevant_entities = @available_game_entities_for_prompt.select do |entity|
+      # 1. Always include the base entities
+      base_entity_ids.include?(entity[:id]) || 
+      # 2. Include entities that match the category of the item being generated
+      entity[:category] == category ||
+      # 3. Always include generic resources like materials
+      entity[:type] == 'material' ||
+      entity[:type] == 'resource'
+    end.uniq { |e| e[:id] }
+
+    # Randomly sample to ensure the prompt is manageable (MAX_PROMPT_ENTITIES constraint)
+    if relevant_entities.count > MAX_PROMPT_ENTITIES
+      sample = relevant_entities.select { |e| base_entity_ids.include?(e[:id]) }
+      remaining_relevant = relevant_entities - sample
+      sample += remaining_relevant.sample(MAX_PROMPT_ENTITIES - sample.count)
+      return sample
+    end
+    
+    relevant_entities
+  end
+
+  def build_prompt(json_schema, template, params)
+    schema_str = JSON.pretty_generate(json_schema) 
+    
+    category = params[:category] || 'general'
+    subcategory = params.key?(:subcategory) ? params[:subcategory] : 'default'
+    
+    # --- USES THE FILTERING METHOD HERE ---
+    filtered_entities = get_filtered_entities_for_prompt(category, subcategory)
+    available_entities_for_llm = filtered_entities.map do |entity_info|
+      "#{entity_info[:id]} (Type: #{entity_info[:type]}, Unit: #{entity_info[:unit] || 'unit'})"
+    end.join('; ')
+
+    <<~PROMPT
+      Your primary task is to generate a complete JSON object that **STRICTLY conforms** to the provided JSON Schema.
+      
+      **CRITICAL INSTRUCTION: RESOURCE SELECTION**
+      For 'material_requirements', 'inputs', 'outputs', and similar fields, you MUST choose the entity 'id' ONLY from the following **filtered** and **relevant** list. **DO NOT INVENT NEW IDS.**
+      
+      **AVAILABLE ENTITIES (Relevant and Filtered):** [#{available_entities_for_llm}]
+
+      **FORMAL JSON SCHEMA CONTRACT:**
+      This defines the required keys, data types, and nesting for the entire object. You MUST follow it perfectly.
+      ```json
+      #{schema_str}
+      ```
+      
+      **Creative and Asset Parameters to Apply:**
+      - **Asset Type:** #{template.dig('metadata', 'type') || 'Unknown'}
+      - **Category:** #{category}, Subcategory: #{subcategory}
+      #{params.map { |k, v| "- #{k}: #{v}" }.join("\n")}
+
+      GENERATE THE JSON:
+    PROMPT
+  end
+  
+  # --- PRIVATE HELPERS ---
+  
+  # Loads the template file (your original method)
+  def load_template(template_path)
+    JSON.parse(File.read(template_path))
+  rescue JSON::ParserError => e
+    raise "Invalid JSON in template file: #{e.message}"
+  rescue Errno::ENOENT
+    raise "Template file not found: #{template_path}"
+  end
+
+  # Loads the schema file (new method)
+  def load_schema(schema_id)
+    schema_path = GalaxyGame::Paths::SCHEMA_PATH.join("#{schema_id}.json").to_s
+    JSON.parse(File.read(schema_path))
+  rescue Errno::ENOENT
+    raise "JSON Schema file not found: #{schema_path}"
+  rescue JSON::ParserError => e
+    raise "Invalid JSON in schema file: #{e.message}"
+  end  
+
+  # Helper to find the latest template version (your original method)
+  def latest_template_file(prefix)
+    files = Dir.glob(GalaxyGame::Paths::TEMPLATE_PATH.join("#{prefix}_v*.json"))
+    return nil if files.empty?
+    files.sort_by { |f| f[/v(\d+\.\d+)/, 1].to_f }.last
+  end
+  
+  # Consolidated method to collect ALL entity IDs (your original method)
+  def collect_all_available_game_entities_for_prompt
+    entities_info = []
+    
+    # 1. Get Materials
+    @material_lookup_service.instance_variable_get(:@materials).each do |material|
+      entities_info << { id: material['id'], name: material['name'], type: material['type'] || 'material', unit: material.dig('properties', 'default_unit') || 'unit' }
+    end
+    # 2. Get Items
+    @item_lookup_service.instance_variable_get(:@items).each do |item|
+      entities_info << { id: item['id'], name: item['name'], type: item['type'] || 'item', unit: item.dig('properties', 'default_unit') || item.dig('weight', 'unit') || 'unit' }
+    end
+    # 3. Get Blueprints
+    @blueprint_lookup_service.all_blueprints.each do |blueprint|
+      entities_info << { id: blueprint['id'], name: blueprint['name'], type: blueprint['blueprint_type'] || 'blueprint', category: blueprint['category'] || 'general_blueprint', unit: 'blueprint' }
+    end
+    
+    entities_info.uniq { |e| e[:id] }
+  rescue => e
+    Rails.logger.error "Error collecting all available game entities for prompt: #{e.message}" if defined?(Rails)
+    [] 
+  end
+
+  # The robust JSON extraction logic (your original complex method)
+  def extract_json(response_text)
+    begin
+      # First, try to parse the full response
+      full_response = JSON.parse(response_text)
+      
+      # If we have a properly formatted response with a "response" field (Ollama format)
+      if full_response.is_a?(Hash) && full_response.key?("response")
+        json_string = full_response["response"].to_s
+        
+        # Clean up the response - handle escaped quotes and newlines
+        json_string = json_string.gsub('\\n', "\n").gsub('\\"', '"')
+        
+        # Try to extract just the JSON object if it's embedded in text
+        if json_string.include?('{') && json_string.include?('}')
+          json_start = json_string.index('{')
+          json_end = json_string.rindex('}') + 1
+          json_string = json_string[json_start...json_end]
+        end
+        
+        # Validate and return
+        JSON.parse(json_string)
+        return json_string
+      else
+        # If there's no "response" field but the response itself is valid JSON, return it
+        return response_text
+      end
+    rescue JSON::ParserError => e
+      # If we can't parse the whole response, try to extract just a JSON object
+      if response_text.include?('{') && response_text.include?('}')
+        json_start = response_text.index('{')
+        json_end = response_text.rindex('}') + 1
+        json_string = response_text[json_start...json_end]
+        
+        # Validate and return
+        JSON.parse(json_string)
+        return json_string
+      else
+        # Try one more aggressive approach - clean up common issues
+        begin
+          if response_text.include?('{') && response_text.include?('}')
+            cleaned = response_text[response_text.index('{')..response_text.rindex('}')]
+            
+            # Fix common JSON errors
+            cleaned = cleaned.gsub(/,\s*}/, '}')  # Remove trailing commas
+            cleaned = cleaned.gsub(/,\s*\]/, '\]')  # Remove trailing commas in arrays
+            
+            # Validate and return
+            JSON.parse(cleaned)
+            return cleaned
+          else
+            raise "Failed to extract valid JSON: #{e.message}"
+          end
+        rescue
+          raise "Failed to extract valid JSON: #{e.message}"
+        end
+      end
+    end
+  end
+  
+  def format_unit_name(unit_id)
+    # Convert snake_case to Title Case
+    unit_id.split('_').map(&:capitalize).join(' ')
+  end
+  
+  def save_content(content, output_path)
+    # Create directory if it doesn't exist
+    dir = File.dirname(output_path)
+    FileUtils.mkdir_p(dir) unless File.directory?(dir)
+    
+    # Write the content to the file
+    File.write(output_path, JSON.pretty_generate(JSON.parse(content)))
+  rescue => e
+    raise "Failed to save content: #{e.message}"
+  end
+end

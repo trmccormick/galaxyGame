@@ -1,0 +1,60 @@
+class UnitLookupService
+  def initialize
+    @units = load_units
+  end
+
+  def units
+    @units
+  end
+
+  def find_unit(name)
+    return nil unless name.present?
+
+    name = name.downcase
+    @units.each_value do |items|
+      next unless items
+
+      item = items.find { |i| i['name'].casecmp?(name) } ||
+             items.find { |i| i['aliases']&.map(&:downcase)&.include?(name) }
+
+      return item if item
+    end
+    
+    # Log the warning but return nil if no unit found
+    Rails.logger.warn("UnitLookupService: Unit not found for name '#{name}'")
+    nil
+  end
+
+  private
+
+  def load_units
+    categories = %w[craft energy housing life_support production propulsion storage]
+    categories.each_with_object({}) do |category, hash|
+      hash[category] = load_category_units(category)
+    end
+  end
+
+  def load_category_units(category)
+    category_dir = Rails.root.join('app', 'data', 'units', category)
+    units = []
+
+    if Dir.exist?(category_dir)
+      Dir.foreach(category_dir) do |file|
+        next if ['.', '..'].include?(file)
+
+        file_path = category_dir.join(file)
+        unit_data = JSON.parse(File.read(file_path)) rescue nil
+        units << unit_data if unit_data.is_a?(Hash) # Ensure data is added as a Hash
+      end
+    else
+      Rails.logger.warn("Directory for category #{category} not found: #{category_dir}")
+    end
+
+    units # Return an array of unit data
+  end
+end
+
+
+
+
+  

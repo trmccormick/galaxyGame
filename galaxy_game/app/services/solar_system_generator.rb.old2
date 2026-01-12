@@ -1,0 +1,32 @@
+class SolarSystemGenerator
+  def initialize
+    @solar_system = SolarSystem.new
+  end
+
+  def generate
+    generate_star
+    generate_planets
+    @solar_system.save
+  end
+
+  private
+
+  def generate_star
+    star_types = %w[RedDwarf YellowDwarf BlueGiant WhiteDwarf]
+    @solar_system.star = Star.create(type: star_types.sample, mass: rand(0.5..2.0))
+  end
+
+  def generate_planets
+    num_planets = rand(1..10)
+    num_planets.times do |i|
+      @solar_system.star.planets.create(
+        name: "Planet #{i + 1}",
+        orbit_radius: rand(0.5..50.0),
+        atmosphere: %w[Oxygen Methane Hydrogen None].sample,
+        surface_temp: rand(-200..300)
+      )
+    end
+  end
+end
+
+  

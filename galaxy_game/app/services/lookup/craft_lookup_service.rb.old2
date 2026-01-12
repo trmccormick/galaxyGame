@@ -1,0 +1,99 @@
+# app/services/craft_lookup_service.rb
+require 'json'
+module Lookup
+  class CraftLookupService
+    CRAFT_PATH = Rails.root.join('app', 'data', 'crafts')
+    
+    CRAFT_CATEGORIES = {
+      'deployable' => ['drones', 'harvester', 'probes', 'rovers', 'satellites'],
+      'surface' => ['landers', 'rovers'],
+      'transport' => ['cyclers', 'shuttles', 'spaceships']
+    }.freeze
+
+    def initialize
+      @craft_cache = {}
+      validate_directory_structure
+    end
+
+    def find_craft(craft_name, craft_type)
+      Rails.logger.debug("Craft Name: #{craft_name.inspect}")
+      Rails.logger.debug("Craft Type: #{craft_type.inspect}")
+
+      craft_name = craft_name.to_s.downcase
+      craft_type = normalize_type(craft_type)
+
+      raise ArgumentError, "Invalid craft name" if craft_name.empty?
+      raise ArgumentError, "Invalid craft type: #{craft_type}" unless valid_type?(craft_type)
+
+      category = get_category(craft_type)
+      cache_key = "#{category}/#{craft_type}/#{craft_name}"
+      return @craft_cache[cache_key] if @craft_cache.key?(cache_key)
+
+      search_craft(craft_name, craft_type, category)
+    end
+
+    def search_craft(craft_name, craft_type, category)
+      path = File.join(CRAFT_PATH, category, craft_type)
+      Rails.logger.debug("Searching in path: #{path}")
+
+      Dir.glob(File.join(path, "*.json")).each do |file|
+        Rails.logger.debug("Checking file: #{file}")
+        craft_data = JSON.parse(File.read(file))
+        
+        if match_craft?(craft_data, craft_name, craft_type)
+          @craft_cache["#{category}/#{craft_type}/#{craft_name}"] = craft_data
+          return craft_data
+        end
+      end
+
+      raise "Craft not found: #{craft_name} (#{craft_type})"
+    end  
+
+    private
+
+    def normalize_type(type)
+      type = type[:type] if type.is_a?(Hash)
+      type.to_s.downcase
+    end
+
+    def valid_type?(type)
+      CRAFT_CATEGORIES.values.flatten.include?(type)
+    end
+
+    def get_category(type)
+      CRAFT_CATEGORIES.find { |category, types| types.include?(type) }&.first
+    end
+
+    def validate_directory_structure
+      Rails.logger.debug("Validating directory structure in: #{CRAFT_PATH}")
+      CRAFT_CATEGORIES.each do |category, types|
+        types.each do |type|
+          path = File.join(CRAFT_PATH, category, type)
+          Rails.logger.debug("Checking path: #{path}")
+          raise "Missing directory: #{path}" unless Dir.exist?(path)
+        end
+      end
+    end
+
+    def load_craft_file(file_path)
+      JSON.parse(File.read(file_path))
+    rescue JSON::ParserError => e
+      Rails.logger.error("Invalid JSON in file: #{file_path} - #{e.message}")
+      nil
+    rescue => e
+      Rails.logger.error("Error reading file: #{file_path} - #{e.message}")
+      nil
+    end
+
+    def match_craft?(craft_data, craft_name, craft_type)
+      craft_data_name = craft_data["name"].downcase
+      search_name = craft_name.downcase
+      
+      Rails.logger.debug("Comparing: '#{craft_data_name}' with '#{search_name}'")
+      Rails.logger.debug("Types: '#{craft_data['unit_type']}' with '#{craft_type}'")
+      
+      craft_data_name == search_name &&
+      (craft_data["unit_type"] == "spaceship" || craft_data["unit_type"] == craft_type)
+    end
+  end
+end

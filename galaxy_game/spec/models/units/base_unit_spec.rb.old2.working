@@ -1,0 +1,228 @@
+require 'rails_helper'
+
+RSpec.describe Units::BaseUnit, type: :model do
+  let!(:celestial_body) { create(:celestial_body, name: "Luna") }
+  let!(:shackleton_crater) { 
+    create(:celestial_location, 
+           name: "Shackleton Crater Base", 
+           coordinates: "89.90°S 0.00°E",
+           celestial_body: celestial_body) 
+  }
+  let!(:base_settlement) { 
+    create(:base_settlement, 
+           name: "Alpha Base", 
+           current_population: 100, 
+           location: shackleton_crater) 
+  }
+  let!(:player) { create(:player, active_location: base_settlement.name) }
+
+  before(:each) do
+    # Mock MaterialLookupService
+    allow_any_instance_of(Lookup::MaterialLookupService)
+      .to receive(:find_material)
+      .and_return({
+        'storage_requirements' => [],
+        'type' => 'liquid'
+      })
+  end
+
+  describe 'validations' do
+    it { should validate_presence_of(:identifier) }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:unit_type) }
+  end
+
+  describe 'associations' do
+    it { should belong_to(:owner) }
+    it { should belong_to(:attachable).optional }
+    it { should have_many(:attached_units) }
+    it { should have_one(:location) }
+    it { should have_one(:inventory) }
+  end
+
+  describe 'create new unit' do
+    it 'creates a new unit' do
+      unit = Units::BaseUnit.create(
+        name: "Inflatable Habitat Unit", 
+        unit_type: "housing_unit", 
+        owner: base_settlement,
+        location: shackleton_crater,
+        identifier: "IHU001",
+        operational_data: {
+          capacity: 6,
+          consumables: {
+            energy: 4,
+            water: 15,
+            oxygen: 10
+          },
+          aliases: ["living module", "inflatable shelter"],
+          deployment_conditions: [
+            { location: "lunar_surface", shielding_required: "regolith_cover" },
+            { location: "mars_surface", shielding_required: "regolith_cover" },
+            { location: "lava_tube", shielding_required: "none" }
+          ]
+        }
+      )
+      expect(unit).to be_valid
+      expect(unit.name).to eq("Inflatable Habitat Unit")
+      expect(unit.unit_type).to eq("housing_unit")
+      expect(unit.owner).to eq(base_settlement)
+    end
+  end
+
+  describe 'location and celestial body' do
+    let(:unit) do
+      create(:base_unit, 
+        name: "Test Unit",
+        unit_type: "housing",
+        owner: base_settlement,
+        location: shackleton_crater,
+        identifier: "TEST001"
+      )
+    end
+
+    it 'returns the correct location' do
+      expect(unit.current_location).to eq(shackleton_crater)
+    end
+
+    it 'returns the correct celestial body' do
+      expect(unit.celestial_body).to eq(celestial_body)
+    end
+  end
+
+  describe 'storage operations' do
+    let(:lox_tank) do
+      create(:base_unit,
+        name: "LOX Storage Tank",
+        unit_type: "lox_tank",
+        owner: base_settlement,
+        attachable: base_settlement,
+        identifier: "LOX#{SecureRandom.hex(4)}",
+        operational_data: {
+          'storage' => {
+            'capacity' => 150000,
+            'type' => 'liquid',
+            'current_level' => 0
+          },
+          'resources' => {
+            'stored' => {}
+          }
+        }
+      )
+    end
+
+    describe '#store_resource' do
+      # Real material service for oxygen tests
+      before(:each) do
+        allow_any_instance_of(Lookup::MaterialLookupService)
+          .to receive(:find_material)
+          .and_call_original
+      end
+
+      it 'stores oxygen in liquid state' do
+        expect(lox_tank.store_resource('oxygen', 500)).to be true
+        expect(lox_tank.current_storage_of('oxygen')).to eq(500)
+      end
+
+      it 'prevents overfilling tank' do
+        lox_tank.store_resource('oxygen', 140000)
+        expect(lox_tank.store_resource('oxygen', 20000)).to be false
+      end
+
+      it 'validates storage compatibility' do
+        expect(lox_tank.store_resource('hematite', 100)).to be false
+      end
+    end
+  end
+
+  describe 'general storage operations' do
+    let(:storage_tank) do
+      create(:base_unit,
+        name: "Storage Tank",
+        unit_type: "storage_tank",
+        owner: base_settlement,
+        attachable: base_settlement,
+        identifier: "TANK#{SecureRandom.hex(4)}",
+        operational_data: {
+          'storage' => {
+            'capacity' => 1000,
+            'type' => 'general',
+            'current_level' => 0
+          },
+          'resources' => {
+            'stored' => {}
+          }
+        }
+      )
+    end
+
+    describe '#store_resource' do
+      before(:each) do
+        allow_any_instance_of(Lookup::MaterialLookupService)
+          .to receive(:find_material)
+          .and_call_original
+      end
+
+      it 'can store items up to capacity' do
+        expect(storage_tank.store_resource('oxygen', 500)).to be true
+        expect(storage_tank.current_storage_of('oxygen')).to eq(500)
+      end
+
+      it 'tracks available capacity' do
+        storage_tank.store_resource('oxygen', 600)
+        expect(storage_tank.available_capacity).to eq(400)
+      end
+    end
+  end
+
+  describe 'inventory integration' do
+    let(:storage_unit) do
+      create(:base_unit,
+        name: "Storage Unit",
+        unit_type: "storage",
+        owner: base_settlement,
+        identifier: "STORE#{SecureRandom.hex(4)}",
+        operational_data: {
+          'storage' => {
+            'capacity' => 1000,
+            'type' => 'general',
+            'current_level' => 0
+          },
+          'resources' => {
+            'stored' => {}
+          }
+        }
+      )
+    end
+
+    describe '#store_resource' do
+      before(:each) do
+        allow_any_instance_of(Lookup::MaterialLookupService)
+          .to receive(:find_material)
+          .with('steel_plates')
+          .and_return({
+            'id' => 'steel_plates',
+            'type' => 'refined_material',
+            'storage_requirements' => []
+          })
+      end
+
+      it 'creates inventory items when storing resources' do
+        expect {
+          storage_unit.store_resource('steel_plates', 100)
+        }.to change { 
+          storage_unit.inventory.items.count 
+        }.by(1)
+      end
+
+      it 'updates inventory when removing resources' do
+        storage_unit.store_resource('steel_plates', 100)
+        expect {
+          storage_unit.remove_resource('steel_plates', 50)
+        }.to change {
+          storage_unit.inventory.items.find_by(name: 'steel_plates').amount
+        }.by(-50)
+      end
+    end
+  end
+end

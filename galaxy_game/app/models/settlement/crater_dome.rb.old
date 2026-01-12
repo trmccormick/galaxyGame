@@ -1,0 +1,59 @@
+# app/models/settlement/crater_dome.rb
+module Settlement
+    class CraterDome < BaseSettlement
+      attr_accessor :diameter, :depth, :enclosure_materials
+  
+      validates :diameter, presence: true, numericality: { greater_than: 0 }
+      validates :depth, presence: true, numericality: { greater_than: 0 }
+  
+      # Calculate required materials for enclosing the crater
+      def calculate_enclosure_materials(material_efficiency = 5)
+        enclosure_area = calculate_enclosure_area
+        base_materials = {
+          "Steel" => 500,
+          "Planetary Regolith" => 600,
+          "Glass" => 200,
+          "Carbon Nanotubes" => 50,
+          "Radiation Shielding" => 100
+        }
+  
+        # Adjust base material requirements based on enclosure area and efficiency
+        @enclosure_materials = base_materials.transform_values do |amount|
+          ((amount * enclosure_area) / material_efficiency).round
+        end
+      end
+  
+      # Calculate the surface area of the dome
+      def calculate_enclosure_area
+        radius = diameter / 2.0
+  
+        # Surface area of a hemisphere (assuming the dome covers the crater)
+        hemisphere_area = 2 * Math::PI * radius**2
+  
+        hemisphere_area
+      end
+  
+      # Calculate usable area inside the dome
+      def usable_area
+        calculate_usable_area
+      end
+  
+      # Calculate required materials for enclosing the crater
+      def calculate_enclosure_materials
+        CraterDomeMaterialsCalculator.calculate_materials(self)
+      end
+  
+      private
+  
+      def calculate_usable_area
+        # Assume usable area is based on the flat circle at the base of the crater
+        radius = diameter / 2.0
+        base_area = Math::PI * radius**2
+  
+        # Adjust for sloped walls (e.g., reduce usable area by a percentage)
+        usable_area = base_area * 0.8
+  
+        usable_area
+      end
+    end
+  end

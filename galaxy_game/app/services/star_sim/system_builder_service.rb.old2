@@ -1,0 +1,218 @@
+# app/services/star_sim/system_builder_service.rb
+module StarSim
+  class SystemBuilderService
+    attr_reader :system_data, :name
+
+    def initialize(name:)
+      @name = name
+      @name_generator = NameGeneratorService.new
+      @lookup_service = Lookup::StarSystemLookupService.new
+      @system_data = @lookup_service.fetch(name)
+      
+      raise "System not found for name: #{name}" unless @system_data
+    end
+
+    def build!
+      ActiveRecord::Base.transaction do
+        find_or_create_galaxy
+        build_solar_system
+        build_stars
+        build_celestial_bodies
+      end
+    end
+
+    private
+
+    def find_or_create_galaxy
+      galaxy_data = system_data["galaxy"] || {}
+
+      galaxy_name = galaxy_data["name"] || "Unknown Galaxy"
+      galaxy_identifier = galaxy_data["identifier"] || @name_generator.generate_identifier
+
+      @galaxy = Galaxy.find_by(name: galaxy_name)
+
+      unless @galaxy
+        puts "Creating galaxy: #{galaxy_name}"
+        @galaxy = Galaxy.create!(
+          name: galaxy_name,
+          identifier: galaxy_identifier
+        )
+      else
+        puts "Using existing galaxy: #{galaxy_name}"
+      end
+    end
+
+    def build_solar_system
+      solar_data = system_data["solar_system"]
+      raise "Missing solar_system data" unless solar_data
+    
+      system_name = solar_data["name"] || "Unknown System"
+      system_identifier = solar_data["identifier"] || @name_generator.generate_identifier
+    
+      @solar_system = SolarSystem.find_or_create_by!(
+        name: system_name,
+        galaxy: @galaxy
+      ) do |system|
+        system.identifier = system_identifier
+        puts "Creating solar system: #{system_name}"
+      end
+    end
+
+    def build_stars
+      stars_data = system_data["stars"]
+      stars_data.each do |star_data|
+        star_name = star_data["name"]
+        unless @solar_system.stars.exists?(name: star_name)
+          puts "Creating star: #{star_name}"
+          
+          # Extract the attributes that match the Star model
+          star_attrs = {}
+          star_data.each do |key, value|
+            key_sym = key.to_sym
+            star_attrs[key_sym] = value
+          end
+          
+          @solar_system.stars.create!(star_attrs)
+        else
+          puts "Star already exists: #{star_name}"
+        end
+      end
+    end
+
+    def build_celestial_bodies
+      bodies_data = system_data["celestial_bodies"]
+      bodies_data.each do |category, bodies|
+        bodies.each do |body_data|
+          begin
+            model_class = determine_model_class(category)
+            build_celestial_body(body_data, model_class)
+          rescue => e
+            puts "Error creating body #{body_data['name']}: #{e.message}"
+            puts e.backtrace.join("\n") if Rails.env.development?
+          end
+        end
+      end
+    end
+
+    def determine_model_class(category)
+      case category.to_s
+      when "terrestrial_planets"
+        CelestialBodies::TerrestrialPlanet
+      when "gas_giants"
+        CelestialBodies::GasGiant
+      when "ice_giants"
+        CelestialBodies::IceGiant
+      when "major_moons", "moons"
+        CelestialBodies::Moon
+      when "dwarf_planets"
+        CelestialBodies::DwarfPlanet
+      else
+        # Default to base class
+        CelestialBodies::CelestialBody
+      end
+    end
+
+    def build_celestial_body(body_data, model_class)
+      begin
+        # Check if body already exists
+        body_name = body_data["name"]
+        existing_body = model_class.find_by(name: body_name)
+
+        if existing_body
+          puts "Celestial body already exists: #{body_name}"
+          return existing_body
+        end
+
+        # Create the celestial body - convert keys to symbols
+        attrs = {}
+        body_data.each do |key, value|
+          # Skip these keys as they're handled separately
+          next if ['atmosphere', 'star_distances', 'geosphere_attributes', 'type'].include?(key)
+          attrs[key.to_sym] = value
+        end
+        
+        puts "Creating #{body_name} with model: #{model_class.name}"
+        body = model_class.create!(attrs)
+
+        # Create atmosphere if present
+        if body_data["atmosphere"]
+          puts "Creating atmosphere for #{body_name}"
+          
+          # Handle composition
+          composition = body_data["atmosphere"]["composition"]
+          transformed_composition = {}
+          
+          if composition && !composition.empty?
+            composition.each do |gas, props|
+              percentage = props.is_a?(Hash) ? props["percentage"] : props
+              transformed_composition[gas.to_s] = { "percentage" => percentage }
+            end
+          end
+          
+          initial_values = {
+            composition: transformed_composition,
+            pressure: body_data["atmosphere"]["pressure"],
+            total_atmospheric_mass: body_data["atmosphere"]["total_atmospheric_mass"],
+            dust: body_data["atmosphere"]["dust"]
+          }
+
+          body.create_atmosphere!(
+            initial_values.merge(
+              base_values: initial_values.deep_dup
+            )
+          )
+        end
+
+        # Create star distances if present
+        if body_data["star_distances"]
+          body_data["star_distances"].each do |distance_data|
+            star_name = distance_data["star_name"]
+            star = @solar_system.stars.find_by(name: star_name)
+            
+            if star
+              body.star_distances.create!(
+                star: star, 
+                distance: distance_data["distance"]
+              )
+            else
+              puts "Warning: Star '#{star_name}' not found for #{body_name} star distance"
+            end
+          end
+        end
+
+        # Create geosphere if present
+        if body_data["geosphere_attributes"] && body.respond_to?(:create_geosphere!)
+          puts "Creating geosphere for #{body_name}"
+          
+          # Convert keys to symbols for geosphere attributes
+          geosphere_attrs = {}
+          body_data["geosphere_attributes"].each do |key, value|
+            if value.is_a?(Hash)
+              geosphere_attrs[key.to_sym] = {}
+              value.each do |subkey, subvalue|
+                if subvalue.is_a?(Hash)
+                  geosphere_attrs[key.to_sym][subkey.to_sym] = {}
+                  subvalue.each do |subsubkey, subsubvalue|
+                    geosphere_attrs[key.to_sym][subkey.to_sym][subsubkey.to_sym] = subsubvalue
+                  end
+                else
+                  geosphere_attrs[key.to_sym][subkey.to_sym] = subvalue
+                end
+              end
+            else
+              geosphere_attrs[key.to_sym] = value
+            end
+          end
+          
+          body.create_geosphere!(geosphere_attrs)
+        end
+
+        body
+      rescue ActiveRecord::RecordInvalid => e
+        puts "Failed to create #{body_name}"
+        puts "Validation errors: #{e.record.class.name} - #{e.record.errors.full_messages}"
+        raise e
+      end
+    end
+  end
+end

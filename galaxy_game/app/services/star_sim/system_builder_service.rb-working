@@ -1,0 +1,176 @@
+# app/services/star_sim/system_builder_service.rb
+module StarSim
+  class SystemBuilderService
+    attr_reader :system_data, :name
+
+    def initialize(name: nil)
+      raise ArgumentError, "Must provide system_name" if name.nil?
+
+      @name = name
+      @lookup_service = Lookup::StarSystemLookupService.new
+      @system_data = @lookup_service.fetch(@name)
+
+      puts "System data for #{@name}: #{@system_data ? 'found' : 'not found'}"
+      raise "System not found for name: #{name}" unless @system_data
+
+      @name_generator = NameGeneratorService.new
+      @solar_system = nil
+    end   
+
+    def build!
+      ActiveRecord::Base.transaction do
+        create_galaxy
+        create_solar_system
+        create_stars
+        create_celestial_bodies
+      end
+    end
+
+    private
+
+    def create_galaxy
+      galaxy_data = system_data[:galaxy] || {}
+      
+      galaxy_name = galaxy_data[:name] || "Unknown Galaxy"
+      galaxy_identifier = galaxy_data[:identifier] || @name_generator.generate_identifier
+      
+      @galaxy = Galaxy.find_or_create_by!(name: galaxy_name) do |g|
+        g.identifier = galaxy_identifier
+        puts "Creating galaxy: #{galaxy_name}"
+      end
+    end
+
+    def create_solar_system
+      solar_data = system_data[:solar_system] || {}
+      
+      system_name = solar_data[:name] || name
+      system_identifier = solar_data[:identifier] || @name_generator.generate_identifier
+      
+      @solar_system = SolarSystem.find_or_create_by!(name: system_name, galaxy: @galaxy) do |sys|
+        sys.identifier = system_identifier
+        puts "Creating solar system: #{system_name}"
+      end
+    end
+
+    def create_stars
+      stars_data = system_data[:stars] || []
+      
+      stars_data.each do |star_data|
+        unless @solar_system.stars.exists?(name: star_data[:name])
+          puts "Creating star: #{star_data[:name]}"
+          @solar_system.stars.create!(star_data)
+        else
+          puts "Star already exists: #{star_data[:name]}"
+        end
+      end
+    end
+
+    def create_celestial_bodies
+      bodies_data = system_data[:celestial_bodies] || {}
+      
+      bodies_data.each do |category, bodies|
+        next unless bodies.is_a?(Array)
+        
+        bodies.each do |body_data|
+          begin
+            create_celestial_body(body_data)
+          rescue => e
+            puts "Error creating body #{body_data[:name] || 'Unknown'}: #{e.message}"
+            puts e.backtrace.join("\n") if Rails.env.development?
+          end
+        end
+      end
+    end
+
+    def create_celestial_body(body_data)
+      # Determine the model class - if explicitly provided, use it
+      # Otherwise, infer from type
+      model_class = if body_data[:model_class]
+                      body_data[:model_class]
+                    elsif body_data[:type]
+                      case body_data[:type].to_s
+                      when "terrestrial" then CelestialBodies::TerrestrialPlanet
+                      when "gas_giant" then CelestialBodies::GasGiant
+                      when "ice_giant" then CelestialBodies::IceGiant
+                      when "moon" then CelestialBodies::Moon
+                      when "dwarf_planet" then CelestialBodies::DwarfPlanet
+                      else CelestialBodies::CelestialBody
+                      end
+                    else
+                      CelestialBodies::CelestialBody
+                    end
+      
+      # Create body with attributes, excluding special keys
+      # This is EXACTLY what the original working seeds file did
+      attrs = body_data.except(:model_class, :atmosphere, :star_distances, :hydrosphere, :geosphere_attributes, :type)
+      
+      body_name = attrs[:name]
+      puts "Creating #{body_name} with model: #{model_class.name}"
+      
+      # Check if body already exists
+      existing_body = model_class.find_by(name: body_name)
+      if existing_body
+        puts "Body already exists: #{body_name}"
+        return existing_body
+      end
+      
+      # Create the body
+      body = model_class.create!(attrs)
+      
+      # Create atmosphere if present - EXACTLY as in original seeds
+      if body_data[:atmosphere]
+        puts "Creating atmosphere for #{body_name}"
+        
+        # Transform composition as original seeds did
+        atmosphere_data = body_data[:atmosphere]
+        composition = atmosphere_data[:composition] || {}
+        
+        # This is the transform_values from the original seeds
+        transformed_composition = {}
+        composition.each do |key, value|
+          if value.is_a?(Hash)
+            transformed_composition[key.to_s] = value[:percentage] || value["percentage"]
+          else
+            transformed_composition[key.to_s] = value
+          end
+        end
+        
+        # Create initial values hash exactly like in seeds
+        initial_values = {
+          composition: transformed_composition,
+          pressure: atmosphere_data[:pressure],
+          total_atmospheric_mass: atmosphere_data[:total_atmospheric_mass],
+          dust: atmosphere_data[:dust]
+        }
+        
+        body.create_atmosphere!(
+          initial_values.merge(
+            base_values: initial_values.deep_dup
+          )
+        )
+      end
+      
+      # Create star distances - exactly as in original seeds
+      if body_data[:star_distances]
+        body_data[:star_distances].each do |distance_data|
+          star = @solar_system.stars.find_by(name: distance_data[:star_name])
+          
+          if star
+            puts "Creating star distance from #{body_name} to #{distance_data[:star_name]}"
+            body.star_distances.create!(
+              star: star,
+              distance: distance_data[:distance]
+            )
+          else
+            puts "Warning: Star '#{distance_data[:star_name]}' not found for #{body_name}"
+          end
+        end
+      end
+      
+      # We don't include any geosphere or hydrosphere creation
+      # as this wasn't in the original working seed file
+      
+      body
+    end
+  end
+end

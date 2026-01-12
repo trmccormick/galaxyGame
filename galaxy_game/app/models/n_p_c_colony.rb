@@ -3,7 +3,7 @@ class NPCColony < Settlement
   
     def initialize(name, population_capacity, initial_resources)
       super(name, population_capacity, initial_resources)
-      @ai_manager = AIManager.new  # Each NPC colony can have its own AI manager
+      @ai_manager = AiColonyManager.new  # Each NPC colony can have its own AI manager
       @trade_routes = []  # Potential routes for trading with other colonies
     end
   

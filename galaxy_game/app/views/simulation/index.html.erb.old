@@ -1,0 +1,26 @@
+<h1>Plant Simulation</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Plant</th>
+      <th>Environment</th>
+      <th>Temperature</th>
+      <th>Moisture</th>
+      <th>Current Health</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @plants.each do |plant| %>
+      <tr>
+        <td><%= plant.name %></td>
+        <td><%= plant.environment.name %></td>
+        <td><%= plant.environment.temperature %></td>
+        <td><%= plant.environment.moisture %></td>
+        <td><%= plant.current_health %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Run Simulation', run_simulation_path, method: :post, class: 'button' %>

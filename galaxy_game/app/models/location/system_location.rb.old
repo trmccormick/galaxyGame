@@ -1,0 +1,20 @@
+# app/models/location/galaxy_location.rb
+module Location
+  class SystemLocation < BaseLocation
+    self.table_name = 'system_locations'
+
+    belongs_to :galaxy, optional: true
+
+    validates :x_coordinate, :y_coordinate, :z_coordinate, 
+              presence: true, 
+              numericality: true
+
+    def distance_to(other_location)
+      Math.sqrt(
+        (x_coordinate - other_location.x_coordinate) ** 2 +
+        (y_coordinate - other_location.y_coordinate) ** 2 +
+        (z_coordinate - other_location.z_coordinate) ** 2
+      )
+    end
+  end
+end

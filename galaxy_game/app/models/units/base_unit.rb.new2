@@ -1,0 +1,346 @@
+require_relative '../../services/lookup/unit_lookup_service'
+
+module Units
+  class BaseUnit < ApplicationRecord
+    include HasModules
+    include HasRigs
+    include HasStorage
+    include Housing
+
+    belongs_to :owner, polymorphic: true
+    belongs_to :attachable, polymorphic: true, optional: true  # For craft/settlement installation
+    has_many :attached_units, as: :attachable, class_name: 'Units::BaseUnit'
+    has_one :location, as: :locationable, class_name: 'Location::CelestialLocation'
+    has_one :inventory, as: :inventoryable, dependent: :destroy
+
+    validates :identifier, presence: true, uniqueness: true  
+    validates :name, :unit_type, presence: true
+    validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+
+    after_initialize :load_unit_info
+    after_create :initialize_unit
+
+    attr_accessor :internal_modules, :external_modules, :rigs
+
+    def population_capacity
+      operational_data&.dig('capacity') || 0
+    end
+
+    def energy_usage
+      @unit_info['consumables']['energy']
+    end
+
+    def input_resources
+      @unit_info['input_resources']
+    end
+
+    def output_resources
+      @unit_info['output_resources']
+    end
+
+    def collect_materials(amount)
+      # Implement the logic to collect materials
+    end
+
+    def process_materials(inventory)
+      # Implement the logic to process materials
+    end
+
+    def operate(resources)
+      inputs = calculate_inputs(resources)
+      outputs = calculate_outputs(inputs)
+      handle_outputs(outputs)
+    end
+
+    def current_location
+      return attachable.location if attachable.present?
+      location
+    end
+
+    def process_resources
+      return unless operational_data['resources']
+      
+      consume_resources
+      generate_resources
+    end
+
+    def celestial_body
+      return location.celestial_body if location.present?
+      return attachable.location.celestial_body if attachable&.location.present?
+      nil
+    end
+
+    def can_store?(resource_name, amount)
+      return false unless operational_data&.dig('storage')
+      return false unless compatible_storage?(resource_name)
+      
+      capacity = operational_data['storage']['capacity'].to_i
+      current_level = current_storage_of(resource_name)
+      
+      Rails.logger.debug "Checking storage capacity: #{capacity}, current: #{current_level}, requested: #{amount}"
+      current_level + amount <= capacity
+    end
+
+    def current_storage_of(resource)
+      operational_data.dig('resources', 'stored', resource).to_i
+    end
+
+    def storage_capacity
+      operational_data&.dig('storage', 'capacity').to_i
+    end
+
+    def storage_type
+      operational_data&.dig('storage', 'type')
+    end
+
+    def store_resource(resource_name, amount)
+      Rails.logger.debug "Attempting to store #{amount} of #{resource_name}"
+      Rails.logger.debug "Current operational_data: #{operational_data.inspect}"
+      
+      ensure_inventory
+      return false unless can_store?(resource_name, amount)
+
+      if requires_surface_storage?(resource_name)
+        store_on_surface(resource_name, amount)
+      else
+        store_in_unit(resource_name, amount)
+      end
+    end
+
+    def remove_resource(resource_name, amount)
+      current = current_storage_of(resource_name)
+      return false if current < amount
+
+      if requires_surface_storage?(resource_name)
+        remove_from_surface(resource_name, amount)
+      else
+        remove_from_unit(resource_name, amount)
+      end
+    end
+
+    def compatible_storage?(resource_name)
+      storage_type = operational_data&.dig('storage', 'type')
+      return false unless storage_type
+      
+      material = Lookup::MaterialLookupService.new.find_material(resource_name)
+      return false unless material
+      
+      Rails.logger.debug "Checking compatibility for #{resource_name} (#{material['type']}) with #{storage_type}"
+      
+      case storage_type
+      when 'liquid'
+        material['type'] == 'liquid'
+      when 'gas'
+        material['type'] == 'gas'
+      when 'general'
+        material['type'] == 'solid' || material['container']
+      else
+        false
+      end
+    end
+
+    private
+
+    def initialize_unit
+      return unless unit_type
+
+      @lookup_service ||= ::Lookup::UnitLookupService.new
+      unit_data = @lookup_service.find_unit(unit_type)
+      
+      return unless unit_data
+      
+      # Set operational data directly from unit data
+      self.operational_data = {
+        'storage' => {
+          'type' => unit_data['storage_type'],
+          'capacity' => unit_data['capacity'],
+          'current_level' => 0
+        },
+        'resources' => {
+          'stored' => {}
+        }
+      }
+      
+      # Create inventory after operational data is set
+      build_inventory(
+        capacity: unit_data['capacity'],
+        storage_type: unit_data['storage_type']
+      ) unless inventory
+
+      save!
+    end
+
+    def load_unit_info
+      # Remove this method since initialize_unit handles everything
+      true
+    end
+
+    def initialize_operational_data
+      update!(operational_data: {
+        modules: { internal: [], external: [] },
+        rigs: [],
+        resources: {
+          stored: {},
+          production_rate: @unit_info.dig('generated'),
+          consumption_rate: @unit_info.dig('consumables')
+        },
+        efficiency: 1.0,
+        temperature: 20,
+        maintenance_cycle: 0
+      })
+    end
+
+    def initialize_storage(capacity)
+      return unless operational_data
+      
+      self.operational_data['storage'] = {
+        'type' => unit_data['storage_type'] || 'general',
+        'capacity' => capacity,
+        'current_level' => 0
+      }
+      save!
+    end
+
+    def capacity
+      operational_data&.dig('capacity') || 0
+    end
+
+    def current_population
+      operational_data&.dig('current_population') || 0
+    end
+
+    def current_modules(location)
+      operational_data&.dig('modules', location.to_s) || []
+    end
+
+    def module_port_limit(location)
+      @unit_info.dig('ports', location.to_s) || 0
+    end
+
+    def calculate_inputs(resources)
+      # Handle resource calculations and losses
+      inputs = {}
+      input_resources.each do |input|
+        resource_id = input['id']
+        required = input['amount']
+        inputs[resource_id] = resources.fetch(resource_id, 0) >= required ? required : 0
+      end
+      inputs
+    end
+
+    def calculate_outputs(inputs)
+      # Output must match mass conservation, taking into account dynamic ranges and waste
+      total_input_mass = inputs.values.sum
+      output_specs = output_resources.map { |output| [output['id'], output_mass(output, total_input_mass)] }.to_h
+      output_specs
+    end
+
+    def output_mass(output, total_mass)
+      range = output['amount_range']
+      base_amount = rand(range['min']..range['max'])
+      base_amount + (total_mass * 0.05).floor # Example: 5% waste is handled
+    end
+
+    def handle_outputs(outputs)
+      outputs.each { |resource, amount| inventory.add_item(resource, amount) }
+    end
+
+    def consume_resources
+      operational_data.dig('resources', 'consumption_rate')&.each do |resource, amount|
+        consume(resource, amount)
+      end
+    end
+
+    def generate_resources
+      operational_data.dig('resources', 'production_rate')&.each do |resource, amount|
+        store(resource, amount)
+      end
+    end
+
+    def consume(resource, amount)
+      current = current_storage_of(resource)
+      return false if current < amount
+      
+      stored = operational_data['resources']['stored']
+      stored[resource] = current - amount
+      update_operational_data('stored', stored)
+    end
+
+    def update_operational_data(key, value)
+      return unless operational_data['resources']
+      operational_data['resources'][key] = value
+      save!
+    end
+
+    def requires_surface_storage?(resource_name)
+      return false unless operational_data['resources']
+      material = Lookup::MaterialLookupService.new.find_material(resource_name)
+      material&.dig('storage_requirements')&.include?('surface_storage')
+    end
+
+    def store_on_surface(resource_name, amount)
+      return false unless attachable&.respond_to?(:surface_storage)
+      return false unless attachable.surface_storage
+
+      attachable.surface_storage.add_pile(
+        material_name: resource_name,
+        amount: amount,
+        source_unit: self
+      )
+    end
+
+    def store_in_unit(resource_name, amount)
+      return false unless operational_data['resources']
+      
+      # Create/update inventory first if needed
+      ensure_inventory
+      
+      # Create inventory item with proper owner
+      item = inventory.items.find_or_initialize_by(
+        name: resource_name,
+        storage_method: storage_type || 'general_storage'  # Set default storage method
+      )
+      item.owner = owner # Ensure item has an owner
+      item.amount = (item.amount || 0) + amount
+      
+      # Only update operational data if item saves
+      if item.save
+        stored = operational_data['resources']['stored']
+        stored[resource_name] = (stored[resource_name] || 0) + amount
+        save!
+        true
+      else
+        false
+      end
+    end
+
+    def remove_from_unit(resource_name, amount)
+      return false unless operational_data['resources']
+      
+      stored = operational_data['resources']['stored']
+      current = stored[resource_name].to_i
+      return false if current < amount
+
+      stored[resource_name] = current - amount
+      
+      # Update inventory item
+      item = inventory.items.find_by(name: resource_name)
+      return false unless item
+      
+      if item.amount == amount
+        item.destroy
+      else
+        item.amount -= amount
+        item.save!
+      end
+      
+      save!
+      true
+    end
+
+    def ensure_inventory
+      create_inventory unless inventory
+    end
+  end
+end
+

@@ -1,0 +1,120 @@
+# usage
+# generator = SolarSystemGenerator.new
+# system = generator.generate_system(name: "Test System")
+# one line version
+# system = SolarSystemGenerator.new.generate_system(name: "Test System")
+# puts system
+
+class SolarSystemGenerator
+  def generate_system(name: random_system_name, star_count: 1, planet_count: 5, galaxy: nil)
+    @system_name = name
+    @planet_counter = 0
+    solar_system = SolarSystem.create!(
+      name: name,
+      galaxy: galaxy || Galaxy.find_by(identifier: 'Sol') || Galaxy.first
+    )
+
+    # Create stars
+    star_count.times { create_star(solar_system) }
+
+    # Create celestial bodies
+    planet_count.times { create_celestial_body(solar_system) }
+
+    # Create star distances
+    create_star_distances(solar_system)
+
+    # Generate atmospheres for celestial bodies
+    solar_system.celestial_bodies.each { |body| generate_atmosphere(body) }
+
+    solar_system
+  end
+
+  private
+
+  def create_star(solar_system)
+    solar_system.stars.create!(
+      name: unique_star_name,
+      luminosity: rand(1.0..10.0) * 3.828e26,
+      mass: rand(0.1..2.0) * 1.989e30,
+      life: 'Main Sequence',
+      age: rand(1.0..10.0) * 1e9,
+      r_ecosphere: rand(0.5..2.0) * 1.496e8,
+      type_of_star: 'Main Sequence',
+      radius: rand(0.5..2.0) * 6.9634e8,
+      temperature: rand(3000..10000)
+    )
+  end
+
+  def create_celestial_body(solar_system)
+    model_class = determine_celestial_body_class
+    attributes = generate_celestial_body_attributes
+
+    model_class.create!(attributes.merge(solar_system: solar_system))
+  end
+
+  def create_star_distances(solar_system)
+    solar_system.celestial_bodies.each do |celestial_body|
+      solar_system.stars.each do |star|
+        celestial_body.star_distances.create!(
+          star: star,
+          distance: rand(0.5..10.0) * 1.496e8
+        )
+      end
+    end
+  end
+
+  def determine_celestial_body_class
+    classes = [
+      CelestialBodies::CelestialBody,
+      CelestialBodies::Moon,
+      CelestialBodies::GasGiant,
+      CelestialBodies::IceGiant,
+      CelestialBodies::DwarfPlanet
+    ]
+    classes.sample
+  end
+
+  def generate_celestial_body_attributes
+    @planet_counter += 1
+    {
+      name: "#{@system_name}#{('b'.ord + @planet_counter - 1).chr}",
+      mass: rand(0.1..10.0) * 5.972e24,
+      radius: rand(0.5..2.0) * 6.371e6,
+      density: rand(3.0..6.0),
+      orbital_period: rand(88..1000),
+      surface_temperature: rand(100..500),
+      albedo: rand(0.1..0.6),
+      gravity: rand(0.5..2.0) * 9.81,
+      insolation: rand(100..2000),
+      known_pressure: rand(0.001..10.0),
+      size: rand(1..1000) # Add size attribute
+    }
+  end
+
+  def generate_atmosphere(celestial_body)
+    return if rand < 0.2 # 20% chance of no atmosphere
+
+    atmosphere_compositions = [
+      { 'Nitrogen' => 78, 'Oxygen' => 21, 'Argon' => 1 },
+      { 'Carbon Dioxide' => 95, 'Nitrogen' => 3, 'Argon' => 2 },
+      { 'Hydrogen' => 90, 'Helium' => 10 }
+    ]
+
+    celestial_body.create_atmosphere unless celestial_body.atmosphere
+    celestial_body.atmosphere.update!(
+      composition: atmosphere_compositions.sample,
+      pressure: rand(0.001..10.0),
+      total_atmospheric_mass: rand(1e14..5e18),
+      dust: {},
+      pollution: 'None'
+    )
+  end
+
+  def unique_star_name
+    "Star #{SecureRandom.uuid}"
+  end
+
+  def random_system_name
+    [*('A'..'Z')].sample(rand(2..4)).join + '-' + rand(100..999999).to_s
+  end
+end

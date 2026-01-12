@@ -7,7 +7,8 @@ module Organizations
       corporation: 1,
       consortium: 2,  # NEW!
       government: 3,
-      tax_authority: 4
+      tax_authority: 4,
+      insurance_corporation: 5
     }
     # Consortium memberships (as member)
     has_many :consortium_memberships, 

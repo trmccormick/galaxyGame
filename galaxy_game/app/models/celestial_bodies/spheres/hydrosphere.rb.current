@@ -1,0 +1,74 @@
+module CelestialBodies
+  class Hydrosphere < ApplicationRecord
+    include MaterialTransferable
+    
+    belongs_to :celestial_body
+    has_many :materials, as: :materializable, dependent: :destroy
+    
+    attr_accessor :simulation_running
+    
+    # JSONB field accessors
+    store_accessor :water_bodies, :oceans, :lakes, :rivers, :ice_caps, :groundwater
+    store_accessor :composition
+    store_accessor :state_distribution
+    
+    # Base values for reset functionality
+    store_accessor :base_values, :base_water_bodies, :base_composition, :base_state_distribution,
+                  :base_temperature, :base_pressure, :base_total_hydrosphere_mass
+
+    validates :total_hydrosphere_mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+    validates :temperature, :pressure, presence: true
+
+    after_initialize :set_defaults
+    after_update :run_simulation
+    
+    # Reset to base values
+    def reset
+      self.water_bodies = base_water_bodies.deep_dup if base_water_bodies
+      self.composition = base_composition.deep_dup if base_composition
+      self.state_distribution = base_state_distribution.deep_dup if base_state_distribution
+      self.temperature = base_temperature
+      self.pressure = base_pressure
+      self.total_hydrosphere_mass = base_total_hydrosphere_mass
+      save!
+    end
+
+    def transfer_material(material_name, amount, target_sphere)
+      material = materials.find_by(name: material_name)
+      return false unless material && material.amount >= amount
+
+      target_material = target_sphere.materials.find_or_create_by(name: material_name) do |m|
+        m.state = material.state
+        m.boiling_point = material.boiling_point
+        m.melting_point = material.melting_point
+      end
+
+      Material.transaction do
+        material.update!(amount: material.amount - amount)
+        target_material.update!(amount: target_material.amount + amount)
+      end
+    end
+
+    private
+
+    def set_defaults
+      self.water_bodies ||= {}
+      self.composition ||= {}
+      self.state_distribution ||= { liquid: 0.0, solid: 0.0, vapor: 0.0 }
+      
+      # Set base values if not already set
+      unless base_values.present?
+        self.base_water_bodies = water_bodies.deep_dup
+        self.base_composition = composition.deep_dup
+        self.base_state_distribution = state_distribution.deep_dup
+        self.base_temperature = temperature
+        self.base_pressure = pressure
+        self.base_total_hydrosphere_mass = total_hydrosphere_mass
+      end
+    end
+
+    def run_simulation
+      # Simulation logic here
+    end
+  end
+end

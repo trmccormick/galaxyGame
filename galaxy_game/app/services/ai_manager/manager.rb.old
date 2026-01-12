@@ -1,0 +1,30 @@
+# app/services/ai_manager/manager.rb
+module AIManager
+    class Manager
+      def initialize(settlement:)
+        @settlement = settlement
+      end
+  
+      def advance_time
+        Rails.logger.info "[AI] Tick for #{@settlement.name}"
+        run_initial_construction
+      end
+  
+      private
+  
+      def run_initial_construction
+        Rails.logger.info "[AI] Evaluating basic construction needs"
+        # Placeholder logic
+        if needs_habitat_core?
+          Rails.logger.info "[AI] Deciding to build Lava Tube Habitat Core"
+          # Placeholder: we could start a construction job here!
+        end
+      end
+  
+      def needs_habitat_core?
+        # Placeholder: for now just say yes
+        true
+      end
+    end
+  end
+  

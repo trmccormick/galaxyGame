@@ -1,0 +1,47 @@
+module Storage
+    class StorageSystem < ApplicationRecord
+      has_many :hangar_storages, class_name: "Storage::HangarStorage", dependent: :destroy
+      has_many :gas_storages, class_name: "Storage::GasStorage", dependent: :destroy
+      has_many :other_storages, class_name: "Storage::BaseStorage", dependent: :destroy # Other storage types
+  
+      validates :location, presence: true
+      validates :storage_capacity, numericality: { greater_than_or_equal_to: 0 }
+  
+      def store_item(item)
+        case item
+        when Craft::BaseCraft
+          store_craft(item)
+        when Storage::GasStorage
+          store_gas(item)
+        else
+          raise ArgumentError, "Unsupported item type"
+        end
+      end
+  
+      private
+  
+      def store_craft(craft)
+        # Logic to store craft, ensuring storage type can accommodate it
+        hangar_storages.each do |hangar|
+          if hangar.can_store_craft?(craft)
+            hangar.store_craft(craft)
+            return
+          end
+        end
+        raise "No available hangar to store this craft"
+      end
+  
+      def store_gas(gas_storage)
+        # Similar logic for storing gases in appropriate gas storage units
+        gas_storages.each do |gas|
+          if gas.can_store_gas?(gas_storage.gas_type, gas_storage.quantity)
+            gas.store_gas(gas_storage.gas_type, gas_storage.quantity)
+            return
+          end
+        end
+        raise "No available gas storage for this gas type"
+      end
+    end
+  end
+  
+  

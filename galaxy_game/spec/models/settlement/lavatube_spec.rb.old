@@ -1,0 +1,35 @@
+# spec/models/settlement/lavatube_spec.rb
+require 'rails_helper'
+
+RSpec.describe Settlement::Lavatube, type: :model do
+  let!(:celestial_body) { create(:celestial_body, :luna) }
+  let!(:tube_location) { Location::CelestialLocation.create(name: "Test Lavatube Location", location_type: 0, coordinates: [0, 0], celestial_body: celestial_body) }
+  let!(:player) { create(:player, location: tube_location) }
+  # let!(:organization) { create(:organization) }
+  let!(:lavatube) { Settlement::Lavatube.create(name: "Test Lavatube", current_population: 100, owner: player, location: tube_location, length: 2000, diameter: 30) }
+
+  describe 'validations' do
+    it 'is valid with valid attributes' do
+      expect(lavatube).to be_valid
+    end
+
+    it 'is not valid with a negative length' do
+      lavatube.length = -1
+      expect(lavatube).not_to be_valid
+    end
+
+    it 'is not valid with a negative diameter' do
+      lavatube.diameter = -1
+      expect(lavatube).not_to be_valid
+    end
+  end
+
+  # describe 'associations' do
+  #   it 'can have skylights and access points' do
+  #     lavatube.skylights << Settlement::Skylight.create(diameter: 10, position: 0)
+  #     lavatube.access_points << Settlement::AccessPoint.create(name: "Test Access Point", size: 10, position: 0, access_type: :large)
+  #     expect(lavatube.skylights.count).to eq(1)
+  #     expect(lavatube.access_points.count).to eq(1)
+  #   end
+  # end
+end

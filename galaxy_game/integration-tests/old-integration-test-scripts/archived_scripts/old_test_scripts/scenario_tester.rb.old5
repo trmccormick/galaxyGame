@@ -1,0 +1,265 @@
+require_relative '../../config/environment'
+require 'securerandom'
+require_relative '../services/lavatube_generator_service'
+
+# Create a valid location with proper coordinates format
+coordinates = "14.10°N 58.20°W"  # Fixed format for Marius Hills Skylight
+celestial_body = CelestialBodies::Moon.find_by(name: 'Luna')
+
+# Check if celestial body was found
+if celestial_body.nil?
+  raise "Celestial body 'Luna' not found in the database."
+end
+
+# Find or create the location
+location = Location::CelestialLocation.find_or_create_by!(
+  coordinates: coordinates,
+  celestial_body: celestial_body
+) do |loc|
+  loc.name = "Marius Hills Skylight Location"
+end
+
+# Real lunar lava tube data
+params = {
+  name: "Marius Hills Lava Tube",
+  location: location,
+  length: 50_000,
+  diameter: 100,
+  skylights: [
+    { diameter: 50, position: 15_000 },
+    { diameter: 40, position: 35_000 }
+  ],
+  access_points: [
+    { size: 15, position: 0, access_type: :large },
+    { size: 10, position: 25_000, access_type: :medium }
+  ]
+}
+
+# Generate the lavatube
+lavatube_service = LavatubeGeneratorService.new(random: false, params: params)
+lavatube = lavatube_service.generate
+
+# Output the generated lavatube for inspection
+puts "Generated Lavatube:"
+puts lavatube.inspect
+puts "Skylights:"
+lavatube.skylights.each { |s| puts " - Diameter: #{s.diameter} meters, Position: #{s.position} meters" }
+puts "Access Points:"
+lavatube.access_points.each { |ap| puts " - Size: #{ap.size} meters, Position: #{ap.position} meters, Type: #{ap.access_type}" }
+
+# Generate a unique identifier for the craft
+unique_id = SecureRandom.hex(4)
+
+# Create the starship
+starship = Craft::BaseCraft.create!(
+  name: "Starship #{unique_id}",
+  craft_name: "Starship (Lunar Variant)",
+  craft_type: "transport",
+  current_location: location,
+  owner: lavatube,
+  operational_data: {
+    'recommended_units' => [
+      { 'id' => 'storage_unit', 'count' => 2 },
+      { 'id' => 'lox_tank', 'count' => 1 },
+      { 'id' => 'methane_tank', 'count' => 1 }
+    ],
+    'storage' => {
+      'capacity' => 1000,
+      'current_level' => 0
+    }
+  }
+)
+
+# Add verification
+puts "\nVerifying Starship Creation:"
+if starship.persisted?
+  puts "Starship created successfully:"
+  puts "ID: #{starship.id}"
+  puts "Name: #{starship.name}"
+  puts "Craft Name: #{starship.craft_name}"
+  puts "Operational Data: #{starship.operational_data.present? ? 'Loaded' : 'Missing'}"
+else
+  puts "Failed to create starship:"
+  puts starship.errors.full_messages
+end
+
+# Force load craft info before build units
+starship.save!
+starship.reload # Ensure craft info is loaded
+
+# Now build units and modules with loaded craft info
+starship.build_units_and_modules
+
+puts "\nStarship Status:"
+puts "Name: #{starship.name}"
+puts "Total Units installed: #{starship.base_units.count}"
+
+# Group and display units by type
+puts "\nUnit Breakdown:"
+starship.base_units.group_by(&:unit_type).each do |type, units|
+  puts "\n#{type.titleize} Units (#{units.count}):"
+  units.each do |unit|
+    puts "  - Name: #{unit.name}"
+
+    if unit.unit_type.include?('tank') && unit.operational_data&.dig('storage', 'capacity')
+      capacity = unit.operational_data['storage']['capacity']
+      current_level = (capacity * 0.20).to_i
+      puts "    Capacity: #{capacity} kg"
+      puts "    Current Level: #{current_level} kg (20% remaining after transit)"
+
+      unit.operational_data['storage']['current_level'] = current_level
+      unit.save!
+    else
+      puts "    Warning: No capacity data found for #{unit.name}" if unit.unit_type.include?('tank')
+    end
+  end
+end
+
+puts "\nStorage Summary:"
+total_storage = 0
+total_remaining = 0
+starship.base_units.where("unit_type LIKE ?", "%tank%").each do |tank|
+  if tank.operational_data&.dig('storage', 'capacity')
+    total_storage += tank.operational_data['storage']['capacity']
+    total_remaining += tank.operational_data['storage']['current_level'] || 0
+  end
+end
+
+puts "Total Storage Capacity: #{total_storage} kg"
+puts "Total Remaining Fuel: #{total_remaining} kg (#{((total_remaining.to_f / total_storage) * 100).round(1)}%)"
+
+puts "\nStorage Capacity by Type:"
+starship.storage_capacity_by_type.each { |type, capacity| puts "  #{type}: #{capacity} kg" }
+
+puts "\nFuel Status:"
+lox_tank = starship.base_units.find_by(unit_type: 'lox_tank')
+methane_tank = starship.base_units.find_by(unit_type: 'methane_tank')
+
+if lox_tank && methane_tank
+  puts "LOX Storage:"
+  puts "  - Capacity: #{lox_tank.operational_data.dig('storage', 'capacity')} kg"
+  puts "  - Remaining: #{lox_tank.operational_data['current_level']} kg"
+  puts "Methane Storage:"
+  puts "  - Capacity: #{methane_tank.operational_data.dig('storage', 'capacity')} kg"
+  puts "  - Remaining: #{methane_tank.operational_data['current_level']} kg"
+end
+
+puts "\nPopulation Capacity: #{starship.total_capacity} people"
+
+puts "\nInitializing Fuel Levels..."
+starship.base_units.where(unit_type: ['lox_tank', 'methane_tank']).each do |tank|
+  fuel_type = tank.unit_type == 'lox_tank' ? 'liquid_oxygen' : 'liquid_methane'
+  capacity = tank.operational_data['storage']['capacity']
+  current_level = (capacity * 0.20).to_i
+  
+  result = tank.store_item(fuel_type, current_level)
+  puts "\n#{tank.name} Status:"
+  puts "  Capacity: #{capacity} kg"
+  puts "  Current Level: #{current_level} kg (20%)"
+  puts "  Store Result: #{result}"
+end
+
+# Create initial location for Earth
+earth_location = Location::CelestialLocation.find_or_create_by!(
+  name: "Kennedy Space Center",
+  coordinates: "28.57°N 80.65°W",
+  celestial_body: CelestialBodies::CelestialBody.find_by(name: 'Earth')
+)
+
+# Create organizations first
+space_x = Organizations::BaseOrganization.find_or_create_by!(
+  name: 'AstroLift Corporation',
+  identifier: 'ASTROLIFT',
+  organization_type: :corporation
+)
+
+lunar_dev = Organizations::BaseOrganization.find_or_create_by!(
+  name: 'Lunar Development Organization',
+  identifier: 'LDO',
+  organization_type: :non_profit
+)
+
+puts "\nCreating Starship at Kennedy Space Center..."
+starship = space_x.owned_crafts.create!(
+  name: "Starship #{SecureRandom.hex(4)}",
+  craft_name: "Starship (Lunar Variant)",
+  craft_type: "transport",
+  current_location: earth_location,
+  current_population: 4
+)
+
+puts "\nVerifying Starship Creation:"
+if starship.persisted?
+  puts "Starship created successfully:"
+  puts "ID: #{starship.id}"
+  puts "Name: #{starship.name}"
+  puts "Craft Name: #{starship.craft_name}"
+  puts "Operational Data: #{starship.operational_data.present? ? 'Loaded' : 'Missing'}"
+else
+  puts "Failed to create starship:"
+  puts starship.errors.full_messages
+end
+
+# Build recommended units from craft data
+puts "\nBuilding recommended units..."
+starship.build_units_and_modules
+
+puts "\nUnit Status:"
+puts "Total Units: #{starship.base_units.count}"
+starship.base_units.group_by(&:unit_type).each do |type, units|
+  puts "#{type.titleize}: #{units.count} units"
+end
+
+# Initialize fuel tanks
+puts "\nInitializing Fuel Levels..."
+starship.base_units.where(unit_type: ['lox_tank', 'methane_tank']).each do |tank|
+  fuel_type = tank.unit_type == 'lox_tank' ? 'liquid_oxygen' : 'liquid_methane'
+  result = tank.store_item(fuel_type, tank.storage_capacity)
+  puts "\n#{tank.name} Status:"
+  puts "  Capacity: #{tank.storage_capacity} kg"
+  puts "  Current Level: #{tank.current_level} kg"
+  puts "  Store Result: #{result}"
+end
+
+# Load cargo manifest
+puts "\nLoading Cargo Manifest..."
+manifest_path = Rails.root.join('app', 'data', 'starship-cargo-manifest', 'ssc-001.json')
+storage_units = starship.base_units.where(unit_type: 'storage_unit')
+
+begin
+  manifest = JSON.parse(File.read(manifest_path))
+  manifest['cargo_sections'].each do |section_name, section_data|
+    next unless section_data.is_a?(Hash)
+    section_data.each do |item_type, item_data|
+      next unless item_data.is_a?(Hash) && item_data['weight_kg']
+      storage_unit = storage_units.first
+      if storage_unit
+        result = storage_unit.store_item(item_data['id'], item_data['weight_kg'])
+        puts "  Loaded #{item_data['name']}: #{item_data['weight_kg']}kg (Success: #{result})"
+      end
+    end
+  end
+rescue Errno::ENOENT
+  puts "Error: Manifest file not found at #{manifest_path}"
+rescue JSON::ParserError
+  puts "Error: Invalid JSON in manifest file"
+end
+
+# Create the starship owned by AstroLift Corporation
+starship = space_x.owned_crafts.create!(
+  name: "Starship #{SecureRandom.hex(4)}",
+  craft_name: "Starship (Lunar Variant)",
+  craft_type: "transport",
+  current_location: earth_location,
+  current_population: 6
+)
+
+# Build recommended units
+starship.build_units_and_modules
+
+# Later, when creating settlement, assign to lunar development org
+settlement = lunar_dev.owned_settlements.create!(
+  name: "Marius Hills Base",
+  settlement_type: :base,
+  location: location
+)

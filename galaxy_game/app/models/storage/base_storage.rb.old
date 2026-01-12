@@ -1,0 +1,63 @@
+# app/models/storage/base_storage.rb
+module Storage
+  class BaseStorage
+    attr_reader :capacity, :item_type, :location
+    attr_accessor :current_stock
+
+    def initialize(capacity:, item_type:, location:)
+      @capacity = capacity || 0                       # Ensure capacity is not nil
+      @item_type = item_type                          # Type of items (resource, blueprint, etc.)
+      @location = location                            # Location reference (settlement, base, station)
+      @current_stock = {}                             # Track stock as a hash of items and quantities
+    end
+
+    # Check if we can store the given quantity of a specific item
+    def can_store?(item_id, quantity)
+      return false if quantity.negative?              # Disallow negative quantities
+      total_stock + quantity <= capacity
+    end
+
+    # Check if we can remove a specific quantity of an item
+    def can_remove?(item_id, quantity)
+      return false if quantity.negative?              # Disallow negative quantities
+      current_stock.fetch(item_id, 0) >= quantity
+    end
+
+    # Store a given quantity of an item
+    def store(item_id, quantity)
+      raise ArgumentError, "Item ID cannot be nil" if item_id.nil?
+      raise ArgumentError, "Quantity must be positive" if quantity <= 0
+
+      return "Insufficient capacity" unless can_store?(item_id, quantity)
+
+      current_stock[item_id] = current_stock.fetch(item_id, 0) + quantity
+      "Stored #{quantity} units of #{item_id}."
+    end
+
+    # Remove a given quantity of an item
+    def remove(item_id, quantity)
+      raise ArgumentError, "Item ID cannot be nil" if item_id.nil?
+      raise ArgumentError, "Quantity must be positive" if quantity <= 0
+
+      return "Insufficient stock" unless can_remove?(item_id, quantity)
+
+      current_stock[item_id] -= quantity
+      current_stock.delete(item_id) if current_stock[item_id].zero?
+      "Removed #{quantity} units of #{item_id}."
+    end
+
+    # Total stock held in storage
+    def total_stock
+      current_stock.values.sum
+    end
+
+    # Available capacity
+    def available_capacity
+      capacity - total_stock
+    end
+  end
+end
+
+
+
+  

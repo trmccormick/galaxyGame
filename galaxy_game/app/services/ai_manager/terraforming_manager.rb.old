@@ -1,0 +1,431 @@
+module AIManager
+  class TerraformingManager
+    attr_reader :worlds, :orbital_depots, :simulation_params
+
+    def initialize(worlds:, transfer_rules:, simulation_params: {})
+      @worlds = worlds # Hash of world objects, e.g., { mars: <Planet>, venus: <Planet>, titan: <Moon> }
+      @transfer_rules = transfer_rules # Hash/config for resource flows
+      @simulation_params = simulation_params
+      @orbital_depots = {} # Hash of OrbitalDepot objects by world key
+      initialize_depots
+    end
+
+    def run_terraforming_cycle
+      monitor_conditions
+      plan_h2_imports
+      manage_excess_o2
+      plan_transfers
+      execute_transfers
+      synthesize_methane if @simulation_params[:enable_sabatier]
+      seed_biospheres
+      log_status
+    end
+
+    private
+
+    def initialize_depots
+      # Create orbital depots for each world that needs one
+      @worlds.each do |key, world|
+        @orbital_depots[key] = OrbitalDepot.new
+      end
+    end
+
+    def monitor_conditions
+      @worlds.each do |key, world|
+        next unless world.atmosphere
+
+        # Cache atmospheric data
+        @simulation_params["#{key}_pressure".to_sym] = world.atmosphere.pressure
+        @simulation_params["#{key}_temperature".to_sym] = world.surface_temperature
+        
+        # Cache gas percentages
+        %w[N2 O2 CO2 CH4 Ar].each do |gas_name|
+          gas = world.atmosphere.gases.find_by(name: gas_name)
+          @simulation_params["#{key}_#{gas_name.downcase}_pct".to_sym] = gas&.percentage.to_f || 0.0
+        end
+
+        # Cache hydrosphere data if present
+        if world.hydrosphere
+          @simulation_params["#{key}_liquid_water_pct".to_sym] = 
+            world.hydrosphere.state_distribution&.dig('liquid').to_f || 0.0
+        end
+      end
+    end
+
+    def plan_h2_imports
+      return unless @worlds[:mars] && @worlds[:saturn]
+      
+      mars = @worlds[:mars]
+      saturn = @worlds[:saturn]
+      depot = @orbital_depots[:mars]
+
+      # Calculate H2 needed for O2 management
+      h2_for_o2 = calculate_h2_for_o2_management(mars)
+      
+      # Calculate H2 needed for Sabatier CH4 synthesis
+      h2_for_ch4 = calculate_h2_for_sabatier(mars)
+      
+      total_h2_needed = h2_for_o2 + h2_for_ch4
+      
+      if total_h2_needed > 0
+        import_h2_to_depot(saturn, depot, total_h2_needed)
+      end
+    end
+
+    def calculate_h2_for_o2_management(mars)
+      return 0.0 unless mars.atmosphere
+
+      o2_gas = mars.atmosphere.gases.find_by(name: 'O2')
+      return 0.0 unless o2_gas
+
+      o2_pct = o2_gas.percentage.to_f
+      safe_threshold = @simulation_params[:safe_o2_threshold] || 22.0
+      
+      return 0.0 if o2_pct <= safe_threshold
+
+      excess_o2_mass = o2_gas.mass * ((o2_pct - 21.0) / o2_pct)
+      return 0.0 if excess_o2_mass.nan? || excess_o2_mass.infinite? || excess_o2_mass < 0
+      
+      excess_o2_mass = [excess_o2_mass, o2_gas.mass].min
+      # 2H2 + O2 -> 2H2O (molar masses: H2=2, O2=32)
+      h2_needed = excess_o2_mass * (2.0 / 32.0)
+      return 0.0 if h2_needed.nan? || h2_needed.infinite? || h2_needed < 0
+      
+      [h2_needed, 0.0].max
+    end
+
+    def calculate_h2_for_sabatier(mars)
+      return 0.0 unless mars.atmosphere
+
+      ch4_gas = mars.atmosphere.gases.find_by(name: 'CH4')
+      ch4_pct = ch4_gas&.percentage.to_f || 0.0
+      target_ch4 = @simulation_params[:target_ch4_pct] || 1.0
+      
+      return 0.0 if ch4_pct >= (target_ch4 - 0.1)
+
+      ch4_needed_mass = ((target_ch4 - ch4_pct) / 100.0) * mars.atmosphere.total_atmospheric_mass
+      # CO2 + 4H2 -> CH4 + 2H2O (molar masses: H2=2, CH4=16)
+      h2_needed = ch4_needed_mass * (8.0 / 16.0)
+      [h2_needed, 0.0].max
+    end
+
+    def import_h2_to_depot(saturn, depot, amount_needed)
+      return unless saturn.atmosphere
+
+      h2_gas = saturn.atmosphere.gases.find_by(name: 'H2')
+      return unless h2_gas
+
+      available_h2 = h2_gas.mass
+      cycler_capacity = @simulation_params[:cycler_capacity] || 1.0e13
+      
+      h2_to_import = [amount_needed, available_h2, cycler_capacity].min
+      return if h2_to_import <= 0
+
+      saturn.atmosphere.remove_gas('H2', h2_to_import)
+      depot.add_gas('H2', h2_to_import)
+      
+      puts "  Imported #{format_mass(h2_to_import)} H2 from Saturn to Mars OrbitalDepot. Depot H2: #{format_mass(depot.get_gas('H2'))}"
+      log_transfer("Saturn -> Mars Depot", 'H2', h2_to_import, depot.get_gas('H2'))
+    end
+
+    def manage_excess_o2
+      return unless @worlds[:mars]
+      
+      mars = @worlds[:mars]
+      depot = @orbital_depots[:mars]
+      
+      return unless mars.atmosphere
+
+      o2_gas = mars.atmosphere.gases.find_by(name: 'O2')
+      return unless o2_gas
+
+      o2_pct = o2_gas.percentage.to_f
+      safe_threshold = @simulation_params[:safe_o2_threshold] || 22.0
+      
+      return if o2_pct <= safe_threshold
+
+      excess_o2_mass = o2_gas.mass * ((o2_pct - 21.0) / o2_pct)
+      return if excess_o2_mass.nan? || excess_o2_mass.infinite? || excess_o2_mass < 0
+      
+      excess_o2_mass = [excess_o2_mass, o2_gas.mass].min
+      h2_needed = excess_o2_mass * (2.0 / 32.0)
+      return if h2_needed.nan? || h2_needed.infinite? || h2_needed < 0
+      
+      h2_to_use = [h2_needed, depot.get_gas('H2')].min
+      return if h2_to_use.nan? || h2_to_use.infinite? || h2_to_use <= 0
+
+      # Remove H2 from depot
+      depot.remove_gas('H2', h2_to_use)
+      
+      # Remove O2 from atmosphere
+      o2_to_consume = h2_to_use * (32.0 / 2.0)
+      o2_to_consume = [o2_to_consume, o2_gas.mass].min
+      return if o2_to_consume.nan? || o2_to_consume.infinite? || o2_to_consume <= 0
+      
+      mars.atmosphere.remove_gas('O2', o2_to_consume)
+      
+      # Produce H2O and add to hydrosphere
+      h2o_produced = h2_to_use * (18.0 / 2.0)
+      return if h2o_produced.nan? || h2o_produced.infinite? || h2o_produced <= 0
+      if mars.hydrosphere&.respond_to?(:add_liquid)
+        mars.hydrosphere.add_liquid('H2O', h2o_produced)
+      end
+      
+      puts "  [O2 MANAGEMENT] Used #{format_mass(h2_to_use)} H2 from Mars OrbitalDepot, consumed #{format_mass(o2_to_consume)} O2, produced #{format_mass(h2o_produced)} H2O."
+      
+      log_reaction("O2 Management (Mars)", {
+        h2_consumed: h2_to_use,
+        o2_consumed: o2_to_consume,
+        h2o_produced: h2o_produced,
+        depot_h2_remaining: depot.get_gas('H2')
+      })
+    end
+
+    def synthesize_methane
+      return unless @worlds[:mars]
+      
+      mars = @worlds[:mars]
+      depot = @orbital_depots[:mars]
+      
+      ch4_gas = mars.atmosphere.gases.find_by(name: 'CH4')
+      ch4_pct = ch4_gas&.percentage.to_f || 0.0
+      target_ch4 = @simulation_params[:target_ch4_pct] || 1.0
+      
+      # Only synthesize if below 0.5% (match rake task logic)
+      return if ch4_pct >= 0.5
+
+      # Try Mars CO2 first, then Venus if needed
+      sources = [
+        { name: 'Mars', world: mars, hydrosphere: mars.hydrosphere },
+        { name: 'Venus', world: @worlds[:venus], hydrosphere: nil }
+      ].compact
+
+      ch4_needed_mass = ((target_ch4 - ch4_pct) / 100.0) * mars.atmosphere.total_atmospheric_mass
+      capacity_limit = @simulation_params[:titan_capacity] || 1.0e13
+      ch4_to_make = [ch4_needed_mass, capacity_limit].min
+
+      sources.each do |source|
+        next unless source[:world]&.atmosphere
+        
+        co2_gas = source[:world].atmosphere.gases.find_by(name: 'CO2')
+        next unless co2_gas
+
+        co2_available = co2_gas.mass
+        h2_available = depot.get_gas('H2')
+        
+        # CO2 + 4H2 -> CH4 + 2H2O (molar masses: CO2=44, H2=2, CH4=16, H2O=18)
+        co2_needed = ch4_to_make * (44.0 / 16.0)
+        h2_needed = ch4_to_make * (8.0 / 16.0)
+        
+        # Scale down if insufficient resources
+        scale = [co2_available / (44.0 / 16.0), h2_available / (8.0 / 16.0), ch4_to_make].min
+        ch4_to_make = scale
+        co2_needed = ch4_to_make * (44.0 / 16.0)
+        h2_needed = ch4_to_make * (8.0 / 16.0)
+        
+        next if ch4_to_make <= 0 || co2_needed <= 0 || h2_needed <= 0
+
+        # Execute Sabatier reaction
+        source[:world].atmosphere.remove_gas('CO2', co2_needed)
+        depot.remove_gas('H2', h2_needed)
+        mars.atmosphere.add_gas('CH4', ch4_to_make)
+        
+        # Add H2O to hydrosphere if available
+        h2o_produced = ch4_to_make * (36.0 / 16.0)
+        if source[:hydrosphere]&.respond_to?(:add_liquid)
+          source[:hydrosphere].add_liquid('H2O', h2o_produced)
+        end
+        
+        puts "  [Sabatier] Synthesized #{format_mass(ch4_to_make)} CH4 at #{source[:name]} from #{format_mass(co2_needed)} CO2 and #{format_mass(h2_needed)} H2 (#{format_mass(h2o_produced)} H2O produced). Mars OrbitalDepot H2: #{format_mass(depot.get_gas('H2'))}"
+        
+        log_reaction("Sabatier (#{source[:name]})", {
+          co2_consumed: co2_needed,
+          h2_consumed: h2_needed,
+          ch4_produced: ch4_to_make,
+          h2o_produced: h2o_produced,
+          depot_h2_remaining: depot.get_gas('H2')
+        })
+        
+        break # Successfully synthesized, stop trying other sources
+      end
+    end
+
+    def plan_transfers
+      # Determine which transfers are needed based on world conditions
+      # This will be called before execute_transfers
+      @planned_transfers = []
+      
+      # Example: plan Venus -> Mars transfer if Mars needs gases
+      if @worlds[:mars] && @worlds[:venus]
+        mars = @worlds[:mars]
+        
+        mars_temp = mars.surface_temperature
+        liquid_water_pct = @simulation_params[:mars_liquid_water_pct] || 0.0
+        threshold = @simulation_params[:mars_liquid_water_threshold] || 1.0
+        
+        if mars_temp < 273.0 || liquid_water_pct < threshold
+          # Warming phase - raw transfer
+          @planned_transfers << {
+            from: :venus,
+            to: :mars,
+            mode: :raw,
+            reason: "Warming phase"
+          }
+        else
+          # Maintenance phase - selective transfer
+          mars_n2_pct = @simulation_params[:mars_n2_pct] || 0.0
+          mars_o2_pct = @simulation_params[:mars_o2_pct] || 0.0
+          target_n2 = @simulation_params[:target_n2_pct] || 70.0
+          target_o2 = @simulation_params[:target_o2_pct] || 18.0
+          
+          if mars_n2_pct < (target_n2 - 2.0) || mars_o2_pct < (target_o2 - 0.5)
+            @planned_transfers << {
+              from: :venus,
+              to: :mars,
+              mode: :processed,
+              reason: "Maintenance phase - N2/O2 needed"
+            }
+          end
+        end
+      end
+    end
+
+    def execute_transfers
+      # Execute planned transfers using AtmosphericTransferService
+      return unless @planned_transfers
+
+      @planned_transfers.each do |transfer|
+        source = @worlds[transfer[:from]]
+        dest = @worlds[transfer[:to]]
+        
+        next unless source && dest
+        
+        # Use AtmosphericTransferService for the actual transfer
+        # This would be called with appropriate parameters
+        # transfer_service = TerraSim::AtmosphericTransferService.new(source, dest, mode: transfer[:mode])
+        # result = transfer_service.transfer_atmosphere(...)
+      end
+    end
+
+    def seed_biospheres
+      @worlds.each do |key, world|
+        next unless should_seed_biosphere?(world)
+        
+        seed_biosphere(world)
+      end
+    end
+
+    def should_seed_biosphere?(world)
+      return false unless world.respond_to?(:hydrosphere)
+      return false if world.biosphere&.life_forms&.count.to_i > 0
+      
+      liquid_water = world.hydrosphere&.state_distribution&.dig('liquid').to_f || 0.0
+      threshold = @simulation_params[:mars_liquid_water_threshold] || 1.0
+      
+      liquid_water >= threshold
+    end
+
+    def seed_biosphere(world)
+      biosphere = world.biosphere || world.create_biosphere!(
+        habitable_ratio: 0.01,
+        biodiversity_index: 0.0
+      )
+      
+      # Seed extremophile organisms
+      Biology::LifeForm.create!(
+        biosphere: biosphere,
+        name: "Extremophile Cyanobacteria",
+        complexity: :simple,
+        population: 1_000_000_000,
+        diet: "photosynthetic",
+        properties: {
+          'oxygen_production_rate' => 0.00005,
+          'co2_consumption_rate' => 0.00006,
+          'nitrogen_fixation_rate' => 0.00001,
+          'preferred_biome' => 'Regolith',
+          'min_temperature' => 170.0,
+          'max_temperature' => 320.0
+        }
+      )
+      
+      Biology::LifeForm.create!(
+        biosphere: biosphere,
+        name: "Cold-Adapted Green Algae",
+        complexity: :simple,
+        population: 500_000_000,
+        diet: "photosynthetic",
+        properties: {
+          'oxygen_production_rate' => 0.00007,
+          'co2_consumption_rate' => 0.00008,
+          'preferred_biome' => 'Polar Cap',
+          'min_temperature' => 180.0,
+          'max_temperature' => 310.0
+        }
+      )
+      
+      Biology::LifeForm.create!(
+        biosphere: biosphere,
+        name: "Methanogenic Archaea",
+        complexity: :simple,
+        population: 800_000_000,
+        diet: "chemosynthetic",
+        properties: {
+          'methane_production_rate' => 0.00003,
+          'co2_consumption_rate' => 0.00002,
+          'preferred_biome' => 'Subsurface',
+          'min_temperature' => 160.0,
+          'max_temperature' => 330.0
+        }
+      )
+      
+      log_event("Seeded biosphere on #{world.name} with #{biosphere.life_forms.count} species")
+    end
+
+    def log_status
+      # Log current status of all worlds
+      @worlds.each do |key, world|
+        next unless world.atmosphere
+        
+        puts "[#{world.name}] P=#{world.atmosphere.pressure.round(4)} bar, T=#{world.surface_temperature.round(1)}K"
+        
+        # Log depot status if available
+        if @orbital_depots[key]
+          depot = @orbital_depots[key]
+          h2_amount = depot.get_gas('H2')
+          puts "  Depot H2: #{format_mass(h2_amount)}" if h2_amount > 0
+        end
+      end
+    end
+
+    def log_transfer(route, gas, amount, depot_remaining = nil)
+      msg = "[TRANSFER] #{route}: #{format_mass(amount)} #{gas}"
+      msg += " (Depot: #{format_mass(depot_remaining)} #{gas})" if depot_remaining
+      puts msg if @simulation_params[:verbose]
+    end
+
+    def log_reaction(type, data)
+      return unless @simulation_params[:verbose]
+      
+      puts "[REACTION] #{type}:"
+      data.each do |key, value|
+        puts "  #{key}: #{value.is_a?(Numeric) ? format_mass(value) : value}"
+      end
+    end
+
+    def log_event(message)
+      puts "[EVENT] #{message}" if @simulation_params[:verbose]
+    end
+
+    def format_mass(mass)
+      if mass >= 1.0e15
+        "#{(mass / 1.0e15).round(2)} Pt"
+      elsif mass >= 1.0e12
+        "#{(mass / 1.0e12).round(2)} Tt"
+      elsif mass >= 1.0e9
+        "#{(mass / 1.0e9).round(2)} Gt"
+      else
+        "#{mass.round(2)} kg"
+      end
+    end
+  end
+end

@@ -1,0 +1,88 @@
+require 'nokogiri'
+require 'open-uri'
+require 'json'
+require 'fileutils'
+
+BASE_URL = 'https://en.wikipedia.org'
+
+# Function to fetch catalog links from the main page
+def fetch_catalog_links(main_url)
+  puts "Fetching catalog links from #{main_url}..."
+  doc = Nokogiri::HTML(URI.open(main_url))
+
+  # Extract catalog links from the "Catalog" section
+  catalog_links = doc.css('span#Catalog ~ ul li a').map do |link|
+    href = link['href']
+    URI.join(BASE_URL, href).to_s
+  end
+
+  puts "Found #{catalog_links.size} catalog links."
+  catalog_links
+end
+
+# Function to fetch crater data from a catalog page
+def fetch_craters_from_page(url)
+  puts "Fetching craters from #{url}..."
+  doc = Nokogiri::HTML(URI.open(url))
+
+  craters = doc.css('table.wikitable tbody tr').map do |row|
+    cells = row.css('td')
+    next if cells.empty?
+
+    {
+      name: cells[0].text.strip,
+      coordinates: cells[1]&.text&.strip,
+      diameter: cells[2]&.text&.strip,
+      depth: "unknown" # Placeholder for depth
+    }
+  end.compact
+
+  craters
+end
+
+# Function to fetch additional data (e.g., depth) for a specific crater
+def fetch_crater_details(crater)
+  puts "Fetching details for #{crater[:name]}..."
+  page_url = URI.join(BASE_URL, "/wiki/#{crater[:name].gsub(' ', '_')}_(crater)").to_s
+
+  begin
+    doc = Nokogiri::HTML(URI.open(page_url))
+    depth_match = doc.at('th:contains("Depth") + td')&.text
+
+    if depth_match
+      crater[:depth] = depth_match.strip
+      puts "Depth found: #{crater[:depth]}"
+    else
+      puts "Depth not found."
+    end
+  rescue OpenURI::HTTPError
+    puts "Page not found for #{crater[:name]}."
+  end
+end
+
+# Main script logic
+def main
+  main_url = 'https://en.wikipedia.org/wiki/List_of_craters_on_the_Moon'
+  catalog_links = fetch_catalog_links(main_url)
+
+  all_craters = []
+
+  # Fetch craters from all catalog pages
+  catalog_links.each do |catalog_url|
+    craters = fetch_craters_from_page(catalog_url)
+
+    # Fetch additional details for each crater
+    craters.each do |crater|
+      fetch_crater_details(crater)
+    end
+
+    all_craters += craters
+  end
+
+  # Save to JSON
+  output_path = "lunar_craters.json"
+  File.write(output_path, JSON.pretty_generate(all_craters))
+  puts "Data saved to #{output_path}."
+end
+
+main

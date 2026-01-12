@@ -1,0 +1,72 @@
+require 'rails_helper'
+require 'json'
+
+RSpec.describe Lookup::MaterialLookupService do
+  let(:service) { described_class.new }
+
+  before do
+    allow(Dir).to receive(:glob).and_return([
+      Rails.root.join('app', 'data', 'materials', 'metals', 'iron.json'),
+      Rails.root.join('app', 'data', 'materials', 'ores', 'iron_ore.json'),
+      Rails.root.join('app', 'data', 'materials', 'metals', 'copper.json')
+    ])
+
+    allow(File).to receive(:read).with(Rails.root.join('app', 'data', 'materials', 'metals', 'iron.json'))
+      .and_return(JSON.generate({
+        name: "Iron",
+        chemical_formula: "Fe",
+        aliases: ["ferrum", "pure iron"],
+        material_type: "metal",
+        properties: {
+          density: 7.874,
+          melting_point: 1538,
+          boiling_point: 2862
+        }
+      }))
+
+    allow(File).to receive(:read).with(Rails.root.join('app', 'data', 'materials', 'ores', 'iron_ore.json'))
+      .and_return(JSON.generate({
+        name: "Iron Ore",
+        type: "raw_material",
+        aliases: ["hematite", "magnetite"],
+        properties: {
+          processing_required: true,
+          iron_content: "60-70%"
+        }
+      }))
+
+    allow(File).to receive(:read).with(Rails.root.join('app', 'data', 'materials', 'metals', 'copper.json'))
+      .and_return(JSON.generate({
+        name: "Copper",
+        chemical_formula: "Cu",
+        aliases: ["cuprum"],
+        material_type: "metal",
+        properties: {
+          density: 8.96,
+          melting_point: 1085,
+          boiling_point: 2562
+        }
+      }))
+  end
+
+  describe '#find_material' do
+    it 'finds materials by exact name' do
+      expect(service.find_material("Iron")).to include("name" => "Iron")
+      expect(service.find_material("Copper")).to include("name" => "Copper")
+    end
+
+    it 'finds materials by alias' do
+      expect(service.find_material("ferrum")).to include("name" => "Iron")
+      expect(service.find_material("cuprum")).to include("name" => "Copper")
+    end
+
+    it 'finds materials case insensitively' do
+      expect(service.find_material("iron")).to include("name" => "Iron")
+      expect(service.find_material("COPPER")).to include("name" => "Copper")
+    end
+
+    it 'returns nil for nonexistent materials' do
+      expect(service.find_material("Gold")).to be_nil
+    end
+  end
+end

@@ -1,0 +1,251 @@
+# app/services/star_sim/procedural_generator.rb
+module StarSim
+  class ProceduralGenerator
+    def initialize(solar_system)
+      @solar_system = solar_system
+      @name_generator = NameGeneratorService.new
+      @planet_counter = 0
+    end
+
+    # def generate_random_system(num_stars:, num_planets:)
+    #   StarSim::Procedural::Generator.new(@solar_system).generate!(
+    #     num_stars: num_stars,
+    #     num_planets: num_planets
+    #   )
+    # end
+
+    def generate_system(num_planets: 10, num_stars: 1)
+      system_name = @name_generator.generate_system_name
+      
+      # First create stars (to satisfy the validation)
+      star_ids = create_stars(num_stars)
+      
+      # Now it's safe to update the solar system
+      @solar_system.update!(name: system_name, identifier: system_name)
+      
+      # Create celestial bodies
+      create_celestial_bodies(num_planets)
+      
+      # Uncomment when implemented
+      # create_star_distances
+      # generate_atmospheres
+      
+      @solar_system
+    end
+
+    private
+
+    # Helper method to generate a unique identifier
+    def generate_identifier
+      [*('A'..'Z')].sample(rand(2..4)).join + '-' + rand(100..999999).to_s
+    end
+
+    def generate_planet_identifier(system_identifier, planet_counter)
+      "#{system_identifier} #{('b'.ord + planet_counter - 1).chr}"
+    end
+
+    def create_stars(num_stars)
+      star_types = ['O-type', 'B-type', 'A-type', 'F-type', 'G-type', 'K-type', 'M-type']
+      life_stages = ['Main Sequence', 'Giant', 'Dwarf', 'Supergiant', 'Hypergiant']
+
+      letter_incremental = "A"
+      num_stars.times do |i|
+        identifier = @name_generator.generate_star_name(@solar_system.identifier, i)
+        star = @solar_system.stars.create!(
+          identifier: identifier,
+          name: identifier,
+          luminosity: rand(0.1..10.0), # Random luminosity
+          mass: rand(0.5..3.0), # Random mass in solar masses
+          life: life_stages.sample, # Random life stage
+          age: rand(1..10) * 1e9, # Random age in billions of years
+          r_ecosphere: rand(0.5..2.0), # Random habitable zone radius in AU
+          type_of_star: star_types.sample, # Random type of star
+          radius: rand(0.5..2.0) * 6.963e8, # Random radius in solar radii
+          temperature: rand(3000..10000) # Random temperature in Kelvin
+        )
+        puts "Created star: #{star.name}"
+      end
+    end
+
+    def create_celestial_bodies(num_planets)
+      num_planets.times do
+        @planet_counter += 1
+        identifier = @name_generator.generate_planet_identifier(@solar_system.identifier, @planet_counter)
+        
+        model_class = determine_celestial_body_class
+        attributes = generate_celestial_body_attributes.merge(
+          identifier: identifier,
+          name: identifier,
+          solar_system: @solar_system
+        )
+        
+        model_class.create!(attributes)
+      end
+    end
+
+    def determine_celestial_body_class
+      classes = [
+        CelestialBodies::CelestialBody,
+        CelestialBodies::Moon,
+        CelestialBodies::GasGiant,
+        CelestialBodies::IceGiant,
+        CelestialBodies::DwarfPlanet
+      ]
+      classes.sample
+    end
+
+    def generate_celestial_body_attributes
+      @planet_counter += 1
+      mass = rand(0.1..10.0) * 5.972e24
+      radius = rand(0.5..2.0) * 6.371e6
+      
+      gravity = calculate_gravity(mass, radius)
+      
+      attributes = {
+        identifier: generate_planet_identifier(@solar_system.identifier, @planet_counter),
+        name: @name_generator.generate_planet_name,
+        mass: mass,
+        radius: radius,
+        density: rand(3.0..6.0),
+        orbital_period: rand(88..1000),
+        surface_temperature: rand(100..500),
+        albedo: rand(0.1..0.6),
+        gravity: gravity,
+        insolation: rand(100..2000),
+        known_pressure: rand(0.001..10.0),
+        size: rand(1..1000)
+      }
+
+      # Generate regolith composition based on body properties
+      regolith_composition = generate_regolith_composition(
+        surface_temperature: attributes[:surface_temperature],
+        gravity: attributes[:gravity],
+        insolation: attributes[:insolation],
+        known_pressure: attributes[:known_pressure]
+      )
+
+      attributes.merge!(
+        surface_composition: regolith_composition
+      )
+    end
+
+    def generate_regolith_composition(surface_temperature:, gravity:, insolation:, known_pressure:)
+      base_regolith = load_base_regolith_template
+
+      # Adjust compositions based on planetary conditions
+      composition = {
+        "oxides" => {},
+        "volatiles" => {}
+      }
+
+      # Modify oxide ratios based on temperature and pressure
+      base_regolith["base_composition"]["oxides"].each do |oxide, range|
+        min, max = range["range"]
+        # Higher temperatures favor certain oxides
+        modifier = temperature_modifier(surface_temperature, oxide)
+        amount = rand(min..max) * modifier
+        composition["oxides"][oxide] = amount.round(2)
+      end
+
+      # Adjust volatile content based on temperature/pressure
+      base_regolith["base_composition"]["volatiles"].each do |volatile, range|
+        min, max = range["range"]
+        # Less volatiles in high temp/low pressure
+        retention = volatile_retention_factor(
+          surface_temperature, 
+          known_pressure,
+          gravity,
+          volatile
+        )
+        amount = rand(min..max) * retention
+        composition["volatiles"][volatile] = amount.round(3)
+      end
+
+      composition
+    end
+
+    def create_star_distances
+      @solar_system.celestial_bodies.each do |celestial_body|
+        @solar_system.stars.each do |star|
+          celestial_body.star_distances.create!(
+            star: star,
+            distance: rand(0.5..10.0) * 1.496e8
+          )
+        end
+      end
+    end
+
+    def generate_atmospheres
+      @solar_system.celestial_bodies.each do |celestial_body|
+        next if rand < 0.2 # 20% chance of no atmosphere
+
+        atmosphere_compositions = [
+          { 'Nitrogen' => 78, 'Oxygen' => 21, 'Argon' => 1 },
+          { 'Carbon Dioxide' => 95, 'Nitrogen' => 3, 'Argon' => 2 },
+          { 'Hydrogen' => 90, 'Helium' => 10 }
+        ]
+
+        celestial_body.create_atmosphere unless celestial_body.atmosphere
+        celestial_body.atmosphere.update!(
+          composition: atmosphere_compositions.sample,
+          pressure: rand(0.001..10.0),
+          total_atmospheric_mass: rand(1e14..5e18),
+          dust: {},
+          pollution: 'None'
+        )
+      end
+    end
+
+    def handle_collisions_or_moons(star, planet)
+      star.celestial_bodies.each do |existing_planet|
+        distance = (existing_planet.semimajor_axis - planet.semimajor_axis).abs
+
+        if distance < collision_threshold(existing_planet, planet)
+          combine_planets(existing_planet, planet)
+          return
+        end
+
+        if planet.mass < moon_criteria(existing_planet)
+          create_moon(existing_planet, planet)
+          return
+        end
+      end
+    end
+
+    def collision_threshold(planet1, planet2)
+      reduced_mass1 = planet1.mass**0.25 / (1 + planet1.mass)
+      reduced_mass2 = planet2.mass**0.25 / (1 + planet2.mass)
+      perihelion = planet1.semimajor_axis * (1 - planet1.eccentricity) * (1 - reduced_mass1)
+      aphelion = planet2.semimajor_axis * (1 + planet2.eccentricity) * (1 + reduced_mass2)
+      perihelion + aphelion
+    end
+
+    def combine_planets(planet1, planet2)
+      total_mass = planet1.mass + planet2.mass
+      new_a = (planet1.mass * planet1.semimajor_axis + planet2.mass * planet2.semimajor_axis) / total_mass
+      new_e = Math.sqrt(planet1.eccentricity**2 + planet2.eccentricity**2) / 2
+
+      planet1.update!(
+        mass: total_mass,
+        semimajor_axis: new_a,
+        eccentricity: new_e
+      )
+      planet2.destroy!
+      puts "Planets combined: #{planet1.name} absorbs #{planet2.name}"
+    end
+
+    def create_moon(planet, moon)
+      moon.is_moon = true
+      moon.orbiting_body = planet
+      puts "Moon created: #{moon.name} orbits #{planet.name}"
+    end
+
+    def moon_criteria(planet)
+      planet.mass * 0.05 # Moons must be less than 5% of the planet's mass
+    end
+
+    def calculate_gravity(mass, radius)
+      GameConstants::GRAVITATIONAL_CONSTANT * mass / (radius ** 2)
+    end
+  end
+end

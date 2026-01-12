@@ -1,0 +1,94 @@
+# spec/services/lookup/craft_lookup_service_spec.rb
+
+require 'rails_helper'
+# require 'fileutils' # No longer needed if we're not creating/deleting files
+
+# Assuming GalaxyGame::Paths is correctly defined in config/initializers/game_data_paths.rb
+# and provides constants like GalaxyGame::Paths::CRAFTS_PATH
+
+RSpec.describe Lookup::CraftLookupService, type: :service do
+  # The service instance will now directly use the real paths from GalaxyGame::Paths
+  let(:service) { described_class.new }
+
+  # --- IMPORTANT ---
+  # These tests now assume that the actual files exist at:
+  # app/data/operational_data/craft/atmospheric/basic_fighter.json
+  # app/data/operational_data/craft/ground/heavy_tank.json
+  # app/data/operational_data/craft/space/orbital_cruiser.json
+  # If these files (or the directories) are missing or contain invalid JSON,
+  # the tests will fail. You must ensure these files are present and valid
+  # in your `app/data` directory for the tests to pass.
+  # ---
+
+  # No more `before(:each)` to create temp files or mock paths.
+  # No more `after(:each)` to clean up.
+
+  describe '#find_craft' do
+    context 'loads crafts from the correct file structure' do
+      it 'finds crafts from all specified subdirectories' do
+        # This test verifies that the service can find actual data files.
+        # It implicitly checks that the directories exist and files are readable.
+        # This relies on your `app/data/operational_data/craft` having real data.
+        expect(service.find_craft('basic_fighter')).to include('id' => 'basic_fighter')
+        expect(service.find_craft('heavy_tank')).to include('id' => 'heavy_tank')
+        expect(service.find_craft('orbital_cruiser')).to include('id' => 'orbital_cruiser')
+      end
+
+      it 'returns nil for a nonexistent craft' do
+        expect(service.find_craft('nonexistent_craft')).to be_nil
+      end
+    end
+
+    context 'when loading specific craft types' do
+      it 'finds an atmospheric craft' do
+        craft = service.find_craft('basic_fighter')
+        expect(craft).to_not be_nil
+        expect(craft['id']).to eq('basic_fighter')
+        expect(craft['category']).to eq('atmospheric')
+      end
+
+      it 'finds a ground craft' do
+        craft = service.find_craft('heavy_tank')
+        expect(craft).to_not be_nil
+        expect(craft['id']).to eq('heavy_tank')
+        expect(craft['category']).to eq('ground')
+      end
+
+      it 'finds a space craft' do
+        craft = service.find_craft('orbital_cruiser')
+        expect(craft).to_not be_nil
+        expect(craft['id']).to eq('orbital_cruiser')
+        expect(craft['category']).to eq('space')
+      end
+    end
+
+    context 'when finding crafts by name (case-insensitive)' do
+      it 'finds a craft by its name with different casing' do
+        expect(service.find_craft('BASIC FIGHTER')).to include('id' => 'basic_fighter')
+      end
+    end
+
+    context 'uses cached results for subsequent lookups' do
+      it 'does not reload the same craft from file system multiple times' do
+        # Clear Rails.cache to ensure the first lookup hits the file system (via BaseLookupService's `load_data`)
+        Rails.cache.clear
+
+        # Expect Rails.cache.fetch to be called once for the initial load of all crafts
+        expect(Rails.cache).to receive(:fetch).once.and_call_original
+
+        # First call should trigger loading from file system and populate internal cache
+        craft1 = service.find_craft('basic_fighter')
+        expect(craft1).to_not be_nil
+
+        # Subsequent call should use the in-memory `@data_cache` (or Rails.cache if @data_cache is empty)
+        # and should NOT trigger another `Rails.cache.fetch` for the entire dataset.
+        # We need to explicitly check that `load_data` (or the underlying file system reads) are not re-triggered.
+        # The BaseLookupService's `initialize` calls `load_data` once. Subsequent calls to `find_by_id`
+        # should only hit the `@data_cache` instance variable.
+        expect(Rails.cache).not_to receive(:fetch) # Confirm no second fetch from Rails.cache
+        craft2 = service.find_craft('basic_fighter')
+        expect(craft2).to eq(craft1) # Confirm same object from cache
+      end
+    end
+  end
+end

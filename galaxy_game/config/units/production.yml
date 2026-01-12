@@ -1,0 +1,150 @@
+# config/units/production.yml
+units:
+  - name: "Algae Bioreactor"
+    capacity: 1000 # Capacity in liters of algae culture
+    energy_usage: 50 # Energy required in kWh per day
+    aliases: ["algae reactor", "bio-reactor"]
+    build_materials:
+      gcc: 50000 # General construction cost (in arbitrary units)
+      materials:
+        - material: "Steel"
+          amount: 300 # Amount of steel needed for construction
+        - material: "Concrete"
+          amount: 150 # Amount of concrete needed for construction
+        - material: "Plastic"
+          amount: 50 # Amount of plastic needed for construction
+    consumables:
+      energy: 50 # Energy consumption in kWh per day
+      water: 200 # Water required in liters per day
+      maintenance_materials:
+        - material: "Lubricant"
+          amount: 1 # per year
+    generated:
+      food: 100 # Food produced in kg per day
+      biomass: 150 # Biomass produced in kg per day
+      oxygen: 200 # Oxygen produced in liters per day
+      sludge: 
+        amount: 15 # kg per day (10% of biomass output)
+  - name: "Water Purification System"
+    capacity: 5000  # Capacity in liters of purified water per day
+    energy_usage: 20  # Energy required in kWh per day
+    aliases: ["water filter", "purification plant"]
+    build_materials:
+      gcc: 30000  # General construction cost
+      materials:
+        - material: "Steel"
+          amount: 200
+        - material: "Concrete"
+          amount: 100
+        - material: "Plastic"
+          amount: 80
+    consumables:
+      energy: 20  # Energy consumption in kWh per day
+      water: 10000  # Water required for the purification process (in liters per day)
+      maintenance_materials:
+        - material: "Filtration Cartridges"
+          amount: 10  # per year
+    generated:
+      water: 5000  # Purified water produced in liters per day
+      waste_water: 
+        amount: 500  # Wastewater produced in liters per day (10% of input water)
+  - name: "Greenhouse Facility"
+    capacity: 2000  # Capacity in square meters of growing area
+    energy_usage: 100  # Energy required in kWh per day
+    aliases: ["greenhouse", "plant growth chamber"]
+    build_materials:
+      gcc: 60000  # General construction cost
+      materials:
+        - material: "Steel"
+          amount: 400
+        - material: "Glass"
+          amount: 300
+        - material: "Concrete"
+          amount: 200
+    consumables:
+      energy: 100  # Energy consumption in kWh per day (lighting, irrigation, etc.)
+      water: 500  # Water required in liters per day for plant irrigation
+      maintenance_materials:
+        - material: "Fertilizer"
+          amount: 10  # kg per year
+    generated:
+      food: 500  # Food produced in kg per day
+      oxygen: 800  # Oxygen produced in liters per day
+      biomass: 100  # Biomass produced in kg per day (plant matter)
+      waste: 
+        amount: 10  # Waste produced in kg per day (organic matter)
+  - name: "Oxygen Production Unit"
+    capacity: 1000  # Capacity in liters of oxygen produced per day
+    energy_usage: 30  # Energy required in kWh per day
+    aliases: ["oxygen generator", "O2 generator"]
+    build_materials:
+      gcc: 40000  # General construction cost
+      materials:
+        - material: "Steel"
+          amount: 250
+        - material: "Aluminum"
+          amount: 150
+        - material: "Concrete"
+          amount: 100
+    consumables:
+      energy: 30  # Energy consumption in kWh per day
+      maintenance_materials:
+        - material: "Lubricant"
+          amount: 2  # per year
+    generated:
+      oxygen: 1000  # Oxygen produced in liters per day
+      waste_heat: 50  # Heat produced in arbitrary units (e.g., energy loss)
+  - name: "Smelter"
+    capacity: 500  # Capacity in kg of ore processed per day
+    energy_usage: 80  # Energy required in kWh per day
+    aliases: ["ore processor", "metal smelter"]
+    build_materials:
+      gcc: 70000  # General construction cost
+      materials:
+        - material: "Steel"
+          amount: 500
+        - material: "Concrete"
+          amount: 300
+        - material: "Refractory Bricks"
+          amount: 200
+    consumables:
+      energy: 80  # Energy consumption in kWh per day
+      ore: 500  # Ore required in kg per day for processing
+      maintenance_materials:
+        - material: "Refractory Material"
+          amount: 5  # per year
+    generated:
+      metals: 
+        - material: "Iron"
+          amount: 200  # kg of metal produced per day
+        - material: "Copper"
+          amount: 100  # kg of metal produced per day
+      slag: 
+        amount: 50  # kg of waste produced per day (residual slag)
+  - name: "Fuel Refinery"
+    capacity: 1000  # Capacity in liters of fuel refined per day
+    energy_usage: 120  # Energy required in kWh per day
+    aliases: ["fuel processor", "hydrocarbon refinery"]
+    build_materials:
+      gcc: 80000  # General construction cost
+      materials:
+        - material: "Steel"
+          amount: 600
+        - material: "Concrete"
+          amount: 300
+        - material: "Copper"
+          amount: 200
+    consumables:
+      energy: 120  # Energy consumption in kWh per day
+      hydrocarbon: 1000  # Hydrocarbons (raw fuel) required in liters per day
+      maintenance_materials:
+        - material: "Lubricant"
+          amount: 5  # per year
+    generated:
+      fuel: 1000  # Fuel produced in liters per day
+      waste_gas: 
+        amount: 50  # Waste gas produced in liters per day (to be processed or discarded)
+
+
+
+

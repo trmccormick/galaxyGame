@@ -1,0 +1,13 @@
+module CelestialBodies
+  class IceGiant < CelestialBody   
+      # Ice giants can't be terraformed in the traditional sense
+      def terraformed?
+        false
+      end
+    
+      # Overriding habitability score for ice giants
+      def habitability_score
+        "Ice giants are not habitable."
+      end
+  end
+end

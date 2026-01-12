@@ -1,0 +1,146 @@
+# ------------------------------------------------------------------------------
+# 2. LIFE FORM - A terraforming tool with survival requirements
+# ------------------------------------------------------------------------------
+module Biology
+  class LifeForm < ApplicationRecord
+    # LifeForms are like "terraforming modules" that can be deployed
+    # They're more like building blocks than simulated organisms
+    
+    has_many :life_form_deployments, dependent: :destroy
+    has_many :biospheres, through: :life_form_deployments
+    
+    # Optional: track which species this was derived from
+    belongs_to :parent_species, class_name: 'Biology::LifeForm', optional: true
+    has_many :derived_species, class_name: 'Biology::LifeForm', 
+                                foreign_key: 'parent_species_id'
+    
+    # Core identity
+    validates :name, presence: true
+    validates :life_form_type, presence: true
+    
+    enum life_form_type: {
+      photosynthetic_bacteria: 0,   # Early O2 producers
+      nitrogen_fixers: 1,            # Soil building
+      decomposers: 2,                # Nutrient cycling
+      hardy_plants: 3,               # Established ecosystems
+      engineered_terraformers: 4,    # Custom designed
+      native_microbes: 5,            # Found on planet
+      hybrid_species: 6              # Combined traits
+    }
+    
+    # Terraforming effects (per 1% coverage per year)
+    # These are the important numbers for gameplay
+    store_accessor :effects,
+      :oxygen_production,      # kg/year per 1% coverage
+      :co2_consumption,        # kg/year per 1% coverage
+      :nitrogen_fixation,      # kg/year per 1% coverage
+      :soil_improvement,       # quality points per year per 1% coverage
+      :water_retention_bonus,  # affects water cycle
+      :temperature_regulation  # cooling/warming effect
+    
+    # Survival requirements (for habitability checks)
+    store_accessor :requirements,
+      :min_temperature,        # Kelvin
+      :max_temperature,        # Kelvin
+      :min_pressure,           # atm
+      :max_pressure,           # atm
+      :required_gases,         # array: ['CO2', 'N2']
+      :toxic_gases,            # array: ['SO2', 'CH4']
+      :requires_water          # boolean
+    
+    # Engineering/hybrid data
+    store_accessor :metadata,
+      :engineered,             # boolean
+      :source_planet,          # string
+      :designer_species,       # string
+      :genetic_stability,      # 0-100 (affects mutation rate)
+      :adaptation_potential    # 0-100 (can it evolve to conditions?)
+    
+    # Habitability checks (simple boolean logic)
+    def can_survive_temperature?(temp)
+      return true if min_temperature.nil? || max_temperature.nil?
+      temp.between?(min_temperature, max_temperature)
+    end
+    
+    def can_survive_pressure?(pressure)
+      return true if min_pressure.nil? || max_pressure.nil?
+      pressure.between?(min_pressure, max_pressure)
+    end
+    
+    def compatible_atmosphere?(atmosphere)
+      # Check for required gases
+      if required_gases.present?
+        required_met = required_gases.all? do |gas_name|
+          atmosphere.gases.exists?(name: gas_name)
+        end
+        return false unless required_met
+      end
+      
+      # Check for toxic gases
+      if toxic_gases.present?
+        has_toxins = toxic_gases.any? do |gas_name|
+          gas = atmosphere.gases.find_by(name: gas_name)
+          gas && gas.percentage > 1.0 # More than 1% is toxic
+        end
+        return false if has_toxins
+      end
+      
+      true
+    end
+    
+    # Create a hybrid or engineered variant
+    def self.create_hybrid(parent1, parent2, name:, designer:)
+      create!(
+        name: name,
+        life_form_type: :hybrid_species,
+        parent_species: parent1,
+        engineered: true,
+        designer_species: designer,
+        genetic_stability: [(parent1.genetic_stability + parent2.genetic_stability) / 2, 70].max,
+        
+        # Average or combine effects
+        oxygen_production: (parent1.oxygen_production + parent2.oxygen_production) / 2,
+        co2_consumption: (parent1.co2_consumption + parent2.co2_consumption) / 2,
+        nitrogen_fixation: (parent1.nitrogen_fixation + parent2.nitrogen_fixation) / 2,
+        soil_improvement: [parent1.soil_improvement, parent2.soil_improvement].max,
+        
+        # Take wider tolerance ranges
+        min_temperature: [parent1.min_temperature, parent2.min_temperature].min,
+        max_temperature: [parent1.max_temperature, parent2.max_temperature].max,
+        min_pressure: [parent1.min_pressure, parent2.min_pressure].min,
+        max_pressure: [parent1.max_pressure, parent2.max_pressure].max,
+        
+        # Combine requirements
+        required_gases: (parent1.required_gases + parent2.required_gases).uniq,
+        toxic_gases: (parent1.toxic_gases & parent2.toxic_gases) # Only common toxins
+      )
+    end
+    
+    def self.engineer_from_template(template, modifications: {})
+      create!(
+        name: modifications[:name] || "Engineered #{template.name}",
+        life_form_type: :engineered_terraformers,
+        parent_species: template,
+        engineered: true,
+        designer_species: modifications[:designer],
+        genetic_stability: 50, # Engineered species less stable
+        adaptation_potential: 80, # But can adapt better
+        
+        # Apply modifications to base template
+        oxygen_production: template.oxygen_production * (modifications[:o2_multiplier] || 1.0),
+        co2_consumption: template.co2_consumption * (modifications[:co2_multiplier] || 1.0),
+        nitrogen_fixation: template.nitrogen_fixation * (modifications[:n_multiplier] || 1.0),
+        soil_improvement: template.soil_improvement * (modifications[:soil_multiplier] || 1.0),
+        
+        # Copy or modify tolerances
+        min_temperature: modifications[:min_temp] || template.min_temperature,
+        max_temperature: modifications[:max_temp] || template.max_temperature,
+        min_pressure: modifications[:min_pressure] || template.min_pressure,
+        max_pressure: modifications[:max_pressure] || template.max_pressure,
+        
+        required_gases: modifications[:required_gases] || template.required_gases,
+        toxic_gases: modifications[:toxic_gases] || template.toxic_gases
+      )
+    end
+  end
+end

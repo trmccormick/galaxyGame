@@ -1,0 +1,25 @@
+module CelestialBodies
+  class DwarfPlanet < CelestialBody
+    include SolidBodyConcern 
+
+    # DEPRECATED: This class is being replaced by CelestialBodies::MinorBodies::DwarfPlanet
+    # Please update your code to use the new class.
+    
+    def self.inherited(subclass)
+      ActiveSupport::Deprecation.warn(
+        "Inheriting from CelestialBodies::DwarfPlanet is deprecated. " \
+        "Please use CelestialBodies::MinorBodies::DwarfPlanet instead."
+      )
+      super
+    end
+    
+    # Additional methods and attributes specific to dwarf planets
+    # validates :mass, presence: true, numericality: { less_than: 1e22 } # Example: mass < 1e22 kg for dwarf planets
+  
+    # Example of custom behavior for dwarf planets
+    def update_orbit
+      # Dwarf planets often have more irregular or elliptical orbits
+      # You could define specific logic for updating orbits here
+    end
+  end
+end

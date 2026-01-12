@@ -1,0 +1,78 @@
+class ConstructionJobProcessor
+  def self.process_jobs
+    # Process pending material requests
+    process_material_requests
+    
+    # Process pending equipment requests
+    process_equipment_requests
+    
+    # Start jobs that have all materials and equipment
+    start_ready_jobs
+    
+    # Update in-progress jobs
+    update_in_progress_jobs
+    
+    # Check for completed jobs
+    complete_finished_jobs
+  end
+  
+  private
+  
+  def self.process_material_requests
+    MaterialRequest.pending_requests.each do |request|
+      MaterialRequestService.try_to_fulfill_request(request)
+    end
+  end
+  
+  def self.process_equipment_requests
+    EquipmentRequest.pending_requests.each do |request|
+      EquipmentManager.reserve_equipment(request)
+    end
+  end
+  
+  def self.start_ready_jobs
+    ConstructionJob.where(status: [:materials_pending, :equipment_pending]).each do |job|
+      next unless job.materials_gathered? && job.equipment_gathered?
+      
+      case job.job_type
+      when 'crater_dome_construction'
+        CraterDomeConstructionService.new(
+          job.target_values['owner_type'].constantize.find(job.target_values['owner_id']), 
+          job.jobable
+        ).start_construction(job)
+      when 'skylight_cover'
+        SkylightConstructionService.new(
+          job.jobable, 
+          job.target_values['panel_type']
+        ).start_construction(job)
+      end
+    end
+  end
+  
+  def self.update_in_progress_jobs
+    # Update progress on in-progress jobs
+    ConstructionJob.in_progress.each do |job|
+      # Your progress tracking logic here
+    end
+  end
+  
+  def self.complete_finished_jobs
+    # Find jobs that are complete based on time or other criteria
+    ConstructionJob.in_progress.each do |job|
+      if job.estimated_completion && job.estimated_completion < Time.now
+        case job.job_type
+        when 'crater_dome_construction'
+          CraterDomeConstructionService.new(
+            job.target_values['owner_type'].constantize.find(job.target_values['owner_id']), 
+            job.jobable
+          ).complete_construction(job)
+        when 'skylight_cover'
+          SkylightConstructionService.new(
+            job.jobable, 
+            job.target_values['panel_type']
+          ).track_progress(job)
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,112 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const tileSize = 40;
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const map = [
+      [1, 0, 1, 0],
+      [0, 1, 0, 1],
+      [1, 0, 1, 0],
+      [0, 1, 0, 1]
+    ];
+  
+    // Add this function to draw a starfield behind your tiles
+    function drawStarfield() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw random stars
+      ctx.fillStyle = 'white';
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 2;
+        ctx.fillRect(x, y, size, size);
+      }
+    }
+  
+    // Update your drawMap function to include the starfield
+    function drawMap() {
+      drawStarfield();
+      
+      // Calculate centering to place the map in the middle
+      const mapWidth = map[0].length * tileSize;
+      const mapHeight = map.length * tileSize;
+      const startX = (canvas.width - mapWidth) / 2;
+      const startY = (canvas.height - mapHeight) / 2;
+      
+      for (let row = 0; row < map.length; row++) {
+        for (let col = 0; col < map[row].length; col++) {
+          ctx.fillStyle = map[row][col] === 1 ? 'green' : 'white';
+          ctx.fillRect(startX + col * tileSize, startY + row * tileSize, tileSize, tileSize);
+        }
+      }
+    }
+
+    // Add this function after your drawMap function
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+      drawMap(); // Redraw after resize
+    }
+  
+    // Call initially and on window resize
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+  
+    // Function to open a modal
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+        modal.style.display = "block";
+        // Prevent scrolling when modal is open
+        document.body.style.overflow = "hidden";
+        }
+    }
+  
+    // Function to close a modal
+    function closeModal(modal) {
+        if (modal) {
+        modal.style.display = "none";
+        // Allow scrolling when modal is closed
+        document.body.style.overflow = "";
+        }
+    }
+  
+    // Event listeners for menu items
+    document.getElementById('newPlanet').addEventListener('click', function() {
+        openModal('newPlanetModal');
+    });
+  
+    document.getElementById('loadPlanet').addEventListener('click', function() {
+        openModal('loadPlanetModal');
+    });
+  
+    // Add more event listeners for other menu items...
+  
+    // Event listeners for closing modals
+    const closeButtons = document.querySelectorAll('.close');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+        const modalId = this.getAttribute('data-modal');
+        const modal = document.getElementById(modalId);
+        closeModal(modal);
+        });
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+        closeModal(event.target);
+        }
+    });
+
+    document.querySelectorAll('#simulation, a[href*="simulation"]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Only if it's not a regular link with an href
+        if (!this.getAttribute('href')) {
+          e.preventDefault();
+          window.location.href = '/simulation';
+        }
+      });
+    });
+  });

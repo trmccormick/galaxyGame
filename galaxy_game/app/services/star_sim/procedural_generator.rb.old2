@@ -1,0 +1,290 @@
+# app/services/star_sim/procedural_generator.rb
+require 'json'
+require 'fileutils'
+
+module StarSim
+  class ProceduralGenerator
+    def initialize
+      @name_generator = NameGeneratorService.new
+      @planet_counter = 0
+      @output_path = Lookup::StarSystemLookupService::SYSTEMS_PATH # Use the correct path
+      FileUtils.mkdir_p(@output_path) unless File.directory?(@output_path)
+    end
+
+    def generate_system_seed_file(num_planets: 10, num_stars: 1)
+      seed_data = generate_system_seed(num_planets: num_planets, num_stars: num_stars)
+      timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+      filename = "generated_#{seed_data[:solar_system][:identifier]}_#{timestamp}.json" # Use identifier in filename
+      filepath = File.join(@output_path, filename)
+
+      File.open(filepath, 'w') do |f|
+        f.write(JSON.pretty_generate(seed_data))
+      end
+
+      puts "Generated seed file: #{filepath}"
+    end
+
+    def generate_system_seed(num_planets: 5, num_stars: 1)
+      system_name = @name_generator.generate_system_name
+      system_identifier = system_name.upcase.gsub(' ', '-') + '-' + rand(100..999).to_s
+
+      # Generate star data
+      star_generator = StarSim::StarGenerator.new(system_name: system_name)
+      stars_data = star_generator.generate
+
+      # Create a mock StarSystem object (if needed for OortCloudGenerator)
+      star_system = OpenStruct.new(id: system_identifier)
+
+      # Generate planetary seeds based on the primary star
+      primary_star_data = stars_data.first
+      star_for_planets = OpenStruct.new(
+        name: primary_star_data["name"],
+        identifier: primary_star_data["identifier"],
+        luminosity: primary_star_data["luminosity"],
+        habitable_zone_range: calculate_habitable_zone(primary_star_data["luminosity"])
+      )
+      planetary_seed_generator = PlanetarySeedGenerator.new(star: star_for_planets, num_planets: num_planets)
+      planet_seeds = planetary_seed_generator.generate
+
+      # Generate planet data using PlanetBuilder
+      planets_data = {}
+      planets_data["terrestrial_planets"] = [] # Default category
+      planet_seeds.each do |seed|
+        identifier = @name_generator.generate_planet_identifier(system_identifier, seed[:index] + 1)
+        protoplanet_seed = OpenStruct.new(
+          total_mass: seed[:mass],
+          mass: seed[:mass] * 0.8,
+          gas_mass: seed[:mass] * 0.2,
+          orbit: seed[:orbital_distance]
+        )
+        planet_attributes = PlanetBuilder.new(protoplanet_seed, star_for_planets).build_for_json.merge(
+          "orbital_zone" => OrbitalZoneClassifier.new(semi_major_axis_au: seed[:orbital_distance], star: star_for_planets).classify
+        )
+
+        orbital_parameters_generator = OrbitalParametersGenerator.new(star: star_for_planets, index: seed[:index])
+        orbital_parameters = orbital_parameters_generator.generate
+
+        planet_data = planet_attributes.merge(
+          "identifier" => identifier,
+          "name" => identifier,
+          "type" => planet_attributes[:type].split("::").last.underscore,
+          "orbits" => [{
+            "around" => star_for_planets.name,
+            "semi_major_axis_au" => orbital_parameters[:semi_major_axis_au],
+            "eccentricity" => orbital_parameters[:eccentricity],
+            "inclination_deg" => orbital_parameters[:inclination_deg],
+            "orbital_period_days" => orbital_parameters[:orbital_period_days],
+            "distance" => orbital_parameters[:semi_major_axis_au]
+          }]
+        )
+
+        case seed[:type]
+        when :gas_giant
+          planets_data["gas_giants"] ||= []
+          planets_data["gas_giants"] << planet_data
+        when :ice_giant
+          planets_data["ice_giants"] ||= []
+          planets_data["ice_giants"] << planet_data
+        when :terrestrial
+          planets_data["terrestrial_planets"] << planet_data
+        when :dwarf_planet
+          planets_data["dwarf_planets"] ||= []
+          planets_data["dwarf_planets"] << planet_data
+        end
+      end
+
+      # Generate asteroid belts
+      asteroid_belt_generator = AsteroidBeltGenerator.new(
+        star: star_for_planets,
+        existing_bodies: planet_seeds.map { |p| OpenStruct.new(semi_major_axis: p[:orbital_distance]) }
+      )
+      asteroid_belts_data = asteroid_belt_generator.generate
+
+      # Generate moons for the generated planets
+      moons_data = []
+      planets_data.each do |type, planet_array|
+        next unless planet_array.is_a?(Array)
+        planet_array.each do |planet|
+          parent_body = OpenStruct.new(
+            id: planet["identifier"],
+            name: planet["name"],
+            body_type: planet["type"],
+            radius_km: planet["radius"] / 1000.0
+          )
+          moon_generator = MoonGenerator.new(parent_body: parent_body)
+          moons_data.concat(moon_generator.generate.map { |moon| moon.merge("orbits" => [{ "around" => parent_body.name, "distance_km" => moon[:orbital_distance_km] }]) })
+        end
+      end
+
+      # Generate the Oort Cloud
+      oort_cloud_generator = OortCloudGenerator.new(star_system)
+      oort_cloud_data = oort_cloud_generator.generate
+
+      seed = {
+        "galaxy" => {
+          "name" => "Procedurally Generated Galaxy",
+          "identifier" => "PROCEDURAL-GALAXY-01"
+        },
+        "solar_system" => {
+          "name" => system_name,
+          "identifier" => system_identifier
+        },
+        "id" => system_name,
+        "name" => system_name,
+        "identifier" => system_identifier,
+        "stars" => stars_data,
+        "celestial_bodies" => planets_data.merge("asteroid_belts" => asteroid_belts_data).merge("moons" => moons_data).merge("oort_cloud" => oort_cloud_data)
+      }
+
+      seed
+    end
+
+    private
+    def generate_planetary_seeds(star_data, num_planets)
+      star = OpenStruct.new(name: star_data["name"], identifier: star_data["identifier"], luminosity: star_data["luminosity"], habitable_zone_range: calculate_habitable_zone(star_data["luminosity"]))
+      planetary_seed_generator = PlanetarySeedGenerator.new(star: star, num_planets: num_planets)
+      planetary_seed_generator.generate
+    end
+
+    def generate_planets_data(system_identifier, primary_star_data, planet_seeds)
+      celestial_bodies_data = {}
+      celestial_bodies_data["terrestrial_planets"] = []
+      star = OpenStruct.new(name: primary_star_data["name"], identifier: primary_star_data["identifier"], luminosity: primary_star_data["luminosity"])
+
+      planet_seeds.each do |seed|
+        # ... (planet creation logic using PlanetBuilder as before) ...
+        case seed[:type]
+        when :gas_giant
+          celestial_bodies_data["gas_giants"] ||= []
+          celestial_bodies_data["gas_giants"] << planet_data
+        when :ice_giant
+          celestial_bodies_data["ice_giants"] ||= []
+          celestial_bodies_data["ice_giants"] << planet_data
+        when :terrestrial
+          celestial_bodies_data["terrestrial_planets"] << planet_data
+        when :dwarf_planet
+          celestial_bodies_data["dwarf_planets"] ||= []
+          celestial_bodies_data["dwarf_planets"] << planet_data
+        end
+      end
+      celestial_bodies_data
+    end
+
+    def generate_stars_data(num_stars, system_identifier)
+      stars_data = []
+      star_types = ['O', 'B', 'A', 'F', 'G', 'K', 'M']
+      letter_incremental = "A"
+      num_stars.times do |i|
+        identifier = @name_generator.generate_star_name(system_identifier, i)
+        stars_data << {
+          "name" => identifier,
+          "identifier" => identifier,
+          "type" => "#{star_types.sample}#{rand(0..9)}V",
+          "mass" => rand(0.5..3.0),
+          "radius" => rand(0.5..2.0),
+          "luminosity" => rand(0.1..10.0),
+          "temperature" => rand(3000..10000),
+          "color" => "white"
+        }
+      end
+      stars_data
+    end
+
+    def generate_celestial_bodies_data(num_planets, system_identifier, primary_star_data)
+      celestial_bodies_data = {}
+      celestial_bodies_data["terrestrial_planets"] = []
+
+      # Create a mock Star object
+      star = OpenStruct.new(
+        name: primary_star_data["name"],
+        identifier: primary_star_data["identifier"],
+        luminosity: primary_star_data["luminosity"]
+      )
+
+      habitable_zone_calculator = HabitableZoneCalculator.new(star)
+
+      planetary_seed_generator = PlanetarySeedGenerator.new(star: star, num_planets: num_planets)
+      planet_seeds = planetary_seed_generator.generate
+
+      planet_seeds.each do |seed|
+        identifier = @name_generator.generate_planet_identifier(system_identifier, seed[:index] + 1)
+
+        protoplanet_seed = OpenStruct.new(
+          total_mass: seed[:mass],
+          mass: seed[:mass] * 0.8,
+          gas_mass: seed[:mass] * 0.2,
+          orbit: seed[:orbital_distance]
+        )
+
+        orbital_zone_classifier = OrbitalZoneClassifier.new(
+          semi_major_axis_au: seed[:orbital_distance],
+          star: star # Pass the star object
+        )
+        orbital_zone = orbital_zone_classifier.classify
+
+        planet_attributes = PlanetBuilder.new(protoplanet_seed, star).build_for_json.merge(
+          "orbital_zone" => orbital_zone
+        )
+
+        planet_data = planet_attributes.merge(
+          "identifier" => identifier,
+          "name" => identifier,
+          "type" => planet_attributes[:type].split("::").last.underscore,
+          "orbits" => [{ "around" => star.name, "distance" => seed[:orbital_distance] }]
+        )
+
+        if rand < 0.7
+          planet_data["atmosphere"] = {
+            "composition" => { "N2" => rand(50..80), "O2" => rand(1..30), "CO2" => rand(0..10) },
+            "pressure" => rand(0.1..2.0)
+          }
+        end
+
+        case seed[:type]
+        when :gas_giant
+          celestial_bodies_data["gas_giants"] ||= []
+          celestial_bodies_data["gas_giants"] << planet_data
+        when :ice_giant
+          celestial_bodies_data["ice_giants"] ||= []
+          celestial_bodies_data["ice_giants"] << planet_data
+        when :terrestrial
+          celestial_bodies_data["terrestrial_planets"] << planet_data
+        when :dwarf_planet
+          celestial_bodies_data["dwarf_planets"] ||= []
+          celestial_bodies_data["dwarf_planets"] << planet_data
+        end
+      end
+
+      celestial_bodies_data
+    end
+
+    def determine_celestial_body_type
+      classes = [
+        CelestialBodies::TerrestrialPlanet,
+        CelestialBodies::Moon,
+        CelestialBodies::GasGiant,
+        CelestialBodies::IceGiant,
+        CelestialBodies::DwarfPlanet
+      ]
+      classes.sample.name
+    end
+
+    def generate_celestial_body_attributes(system_identifier)
+      mass = rand(0.1..10.0)
+      radius = rand(0.5..2.0)
+
+      {
+        "mass" => mass * 5.972e24,
+        "radius" => radius * 6.371e6,
+        "density" => rand(3.0..6.0),
+        "orbital_period" => rand(88..1000),
+        "surface_temperature" => rand(100..500),
+        "albedo" => rand(0.1..0.6),
+        "gravity" => (GameConstants::GRAVITATIONAL_CONSTANT * mass * 5.972e24) / (radius * 6.371e6)**2,
+        "insolation" => rand(100..2000),
+        "known_pressure" => rand(0.001..10.0),
+        "size" => rand(1..1000)
+      }
+    end
+  end
+end

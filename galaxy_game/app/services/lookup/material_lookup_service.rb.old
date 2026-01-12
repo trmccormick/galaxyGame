@@ -1,0 +1,32 @@
+require 'yaml'
+
+class MaterialLookupService
+  MATERIAL_PATH = Rails.root.join('config', 'raw_materials', 'materials.yml')
+
+  def initialize
+    @material_cache = load_materials
+  end
+
+  def find_material(name)
+    name = name.downcase
+    @material_cache.each do |material_data|
+      return material_data if match_material?(material_data, name)
+    end
+    nil # Return nil if not found
+  end
+
+  private
+
+  def load_materials
+    YAML.load_file(MATERIAL_PATH)['materials']
+  end
+
+  def match_material?(material_data, name)
+    # Match by name, chemical formula, or aliases if available
+    material_name = material_data['name']&.downcase
+    chemical_formula = material_data['chemical_formula']&.downcase
+    aliases = material_data['aliases']&.map(&:downcase) || []
+
+    [material_name, chemical_formula, *aliases].include?(name)
+  end
+end

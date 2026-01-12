@@ -1,0 +1,23 @@
+# Create a new file: app/jobs/game_time_updater_job.rb
+class GameTimeUpdaterJob < ApplicationJob
+  queue_as :default
+  
+  def perform
+    # Update game time
+    game_state = GameState.first_or_create
+    game_state.update_time!
+    
+    # Run AI turns if needed
+    run_ai_tasks if game_state.running
+    
+    # Re-schedule itself
+    self.class.set(wait: 10.seconds).perform_later unless Rails.env.test?
+  end
+  
+  private
+  
+  def run_ai_tasks
+    # TODO: Implement AI tasks, ship movement, etc.
+    Rails.logger.info "AI turn executed at game time: Year #{GameState.first.year}, Day #{GameState.first.day.round(1)}"
+  end
+end
