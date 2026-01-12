@@ -17,6 +17,7 @@ The wormhole expansion storyline is divided into four acts, with detailed mechan
 - **[07_economic_systems.md](07_economic_systems.md)**: Priority systems and market dynamics
 - **[08_implementation_phases.md](08_implementation_phases.md)**: Technical rollout plan
 - **[09_lore_canon.md](09_lore_canon.md)**: Canonical lore document with confirmed, implied, and undecided elements
+- **[10_lore_mechanics_summary.md](10_lore_mechanics_summary.md)**: Bridge between narrative vision and technical implementation
 
 ## Key Principles
 
