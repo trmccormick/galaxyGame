@@ -16,6 +16,7 @@ The wormhole expansion storyline is divided into four acts, with detailed mechan
 - **[06_ai_intelligence.md](06_ai_intelligence.md)**: AI learning systems and memory
 - **[07_economic_systems.md](07_economic_systems.md)**: Priority systems and market dynamics
 - **[08_implementation_phases.md](08_implementation_phases.md)**: Technical rollout plan
+- **[09_lore_canon.md](09_lore_canon.md)**: Canonical lore document with confirmed, implied, and undecided elements
 
 ## Key Principles
 
