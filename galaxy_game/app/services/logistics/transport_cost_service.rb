@@ -16,16 +16,16 @@ module Logistics
         # Check for in-situ refueling at LEO or Luna
         if in_situ_refueling_available?('leo')
           # Earth→LEO at initial cost, LEO→Luna at minimum cost
-          cost_earth_leo = GameConstants::INITIAL_TRANSPORTATION_COST_PER_KG_LEO
-          cost_leo_luna = GameConstants::MIN_TRANSPORT_COST_PER_KG_LUNA
+          cost_earth_leo = base_rate * EconomicConfig.route_modifier('earth_to_leo')
+          cost_leo_luna = base_rate * EconomicConfig.route_modifier('leo_to_luna')
           return (cost_earth_leo + cost_leo_luna).round(2)
         elsif in_situ_refueling_available?('luna')
           # Earth→Luna direct, but Luna refueling drops return cost
-          cost_earth_luna = GameConstants::MIN_TRANSPORT_COST_PER_KG_LUNA
+          cost_earth_luna = base_rate * EconomicConfig.route_modifier('earth_to_luna') * 0.5 # Reduced for refueling
           return cost_earth_luna.round(2)
         else
-          # No infrastructure: use historical cost
-          return GameConstants::INITIAL_TRANSPORTATION_COST_PER_KG_LUNA
+          # No infrastructure: use baseline Earth-Luna cost
+          return (base_rate * EconomicConfig.route_modifier('earth_to_luna')).round(2)
         end
       end
 
