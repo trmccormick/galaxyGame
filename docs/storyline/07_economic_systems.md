@@ -23,6 +23,9 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 - **Market Dynamics**: Virtual ledger for NPC transactions, player-driven GCC economy
 - **Minting Mechanism**: Lunar Currency Authority Satellite (LCAS) mints GCC at controlled rate for LDC resource budget
 - **Dual Currency**: GCC for player transactions; USD restricted to NPC corp-to-corp use
+- **Adoption Incentives**: LDC pays employees/contracts in GCC; offers subsidies/grants; provides exclusive access to services/resources
+- **Governance**: LDC sets transaction fees, block rewards, staking rules; players may influence via reputation/actions
+- **Security**: Integrated wallets with cybersecurity challenges; potential for hacks or fraud
 
 ## Hybrid Market System
 
