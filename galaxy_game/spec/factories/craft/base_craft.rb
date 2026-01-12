@@ -12,7 +12,6 @@ FactoryBot.define do
     } }
 
     association :owner, factory: :player
-    association :location, factory: :spatial_location # Add this line
 
     trait :docked do
       association :docked_at, factory: :base_settlement
