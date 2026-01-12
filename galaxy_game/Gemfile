@@ -81,6 +81,7 @@ gem 'hpricot'
 gem 'htmlentities'
 gem 'wikipedia'
 gem 'wikipedia-client'
+gem 'ollama-ai'
 
 # suggested by copilot
 # gem 'psych', '~> 5.1'

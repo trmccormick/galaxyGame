@@ -73,7 +73,7 @@ RSpec.describe Structures::Shell, type: :concern do
   
   let(:worldhouse) { create(:worldhouse) }
   let(:shell_structure) { test_class.create!(worldhouse_id: worldhouse.id, segment_index: 0, length_m: 1000.0, width_m: 100.0) }
-  let(:settlement) { create(:settlement) }
+  let(:settlement) { create(:base_settlement) }
   let(:blueprint) { create(:blueprint, name: 'shell_construction') }
   let(:blueprint_data) do
     {

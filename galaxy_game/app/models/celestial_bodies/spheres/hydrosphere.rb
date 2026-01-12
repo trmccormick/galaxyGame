@@ -8,19 +8,25 @@ module CelestialBodies
       has_many :liquid_materials, class_name: 'CelestialBodies::Materials::Liquid', dependent: :destroy
       has_many :materials, as: :materializable, dependent: :destroy
       
+      validates :total_liquid_mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+      validates :temperature, presence: true
+      validates :pressure, presence: true
+      
       attr_accessor :simulation_running
       
-      # JSONB field accessors
-      store_accessor :liquid_bodies, :oceans, :lakes, :rivers, :ice_caps, :groundwater
+      # JSONB field accessors - using generic names for liquid bodies
+      store_accessor :water_bodies, :oceans, :lakes, :rivers, :ice_caps, :groundwater
       store_accessor :composition
       store_accessor :state_distribution
       
       # Base values for reset functionality
       store_accessor :base_values, :base_liquid_bodies, :base_composition, :base_state_distribution,
-                    :base_temperature, :base_pressure, :base_total_hydrosphere_mass
+                    :base_temperature, :base_pressure, :base_total_liquid_mass
 
-      validates :total_hydrosphere_mass, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-      validates :temperature, :pressure, presence: true
+      # Alias for backward compatibility and generic access
+      alias_attribute :total_liquid_mass, :total_water_mass
+      alias_attribute :liquid_bodies, :water_bodies
+      alias_attribute :total_hydrosphere_mass, :total_water_mass
 
       after_initialize :set_defaults
       after_update :run_simulation, unless: :simulation_running
@@ -32,7 +38,7 @@ module CelestialBodies
         self.state_distribution = base_state_distribution.deep_dup if base_state_distribution
         self.temperature = base_temperature
         self.pressure = base_pressure
-        self.total_hydrosphere_mass = base_total_hydrosphere_mass
+        self.total_liquid_mass = base_total_liquid_mass
         save!
       end
       
@@ -59,9 +65,9 @@ module CelestialBodies
         # Update liquid distribution
         update_liquid_distribution(name, amount)
         
-        # Update total water mass
-        self.total_hydrosphere_mass ||= 0
-        self.total_hydrosphere_mass += amount
+        # Update total liquid mass
+        self.total_liquid_mass ||= 0
+        self.total_liquid_mass += amount
         save!
       end
       
@@ -87,8 +93,8 @@ module CelestialBodies
           material.save!
         end
         
-        # Update total water mass
-        self.total_hydrosphere_mass -= amount
+        # Update total liquid mass
+        self.total_liquid_mass -= amount
         save!
         
         true
@@ -180,7 +186,7 @@ module CelestialBodies
           end
         end
 
-        update(total_hydrosphere_mass: total_volume)
+        update(total_liquid_mass: total_volume)
       end
 
       def water_coverage
@@ -215,7 +221,7 @@ module CelestialBodies
           self.base_state_distribution = state_distribution.deep_dup
           self.base_temperature = temperature
           self.base_pressure = pressure
-          self.base_total_hydrosphere_mass = total_hydrosphere_mass
+          self.base_total_liquid_mass = total_liquid_mass
         end
       end
 
@@ -223,8 +229,8 @@ module CelestialBodies
         # Prevent recursive updates
         self.simulation_running = true
         
-        # Call hydrosphere_cycle_tick from the concern
-        hydrosphere_cycle_tick
+        # Call water_cycle_tick from the concern
+        water_cycle_tick
         
         self.simulation_running = false
       end

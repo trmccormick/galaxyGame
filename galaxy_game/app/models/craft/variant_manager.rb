@@ -2,7 +2,7 @@
 module Craft
   class VariantManager
     # Use the path that matches where json-data is mounted in Docker
-    BASE_PATH = GalaxyGame::Paths::GAME_DATA.join('operational_data', 'crafts').freeze
+    BASE_PATH = GalaxyGame::Paths::JSON_DATA.join('operational_data', 'crafts').freeze
     
     def initialize(craft_id)
       @craft_id = craft_id

@@ -6,7 +6,7 @@ module Housing
       attr_accessor :population_capacity
   
       # Ensure population_capacity has a default value
-      before_initialize :set_default_population_capacity
+      after_initialize :set_default_population_capacity
     end
   
     def initialize_housing(capacity)

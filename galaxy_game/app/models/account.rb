@@ -2,6 +2,7 @@
 class Account < ApplicationRecord
   belongs_to :accountable, polymorphic: true
   belongs_to :colony, optional: true # Based on your schema
+  belongs_to :currency, class_name: 'Financial::Currency', required: true
   has_many :transactions, dependent: :destroy
 
   validates :balance, numericality: { greater_than_or_equal_to: 0 }

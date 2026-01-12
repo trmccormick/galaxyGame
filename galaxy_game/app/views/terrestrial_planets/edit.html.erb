@@ -1,0 +1,27 @@
+<h1>Edit Terrestrial Planet</h1>
+
+<%= form_with(model: @terrestrial_planet, local: true) do |form| %>
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <div>
+    <%= form.label :size %>
+    <%= form.text_field :size %>
+  </div>
+  <div>
+    <%= form.label :known_pressure, "Total pressure" %>
+    <%= form.text_field :known_pressure %>
+  </div>
+  <div>
+    <%= form.label :gas_quantities_nitrogen, "Gas quantities Nitrogen" %>
+    <%= form.text_field :gas_quantities_nitrogen %>
+  </div>
+  <div>
+    <%= form.label :gas_quantities_oxygen, "Gas quantities Oxygen" %>
+    <%= form.text_field :gas_quantities_oxygen %>
+  </div>
+  <div>
+    <%= form.submit "Update Planet" %>
+  </div>
+<% end %>

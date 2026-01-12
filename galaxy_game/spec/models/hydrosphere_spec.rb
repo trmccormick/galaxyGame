@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CelestialBodies::Hydrosphere, type: :model do
+RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
   let(:celestial_body) { create(:celestial_body) } # Assuming you have a celestial_body factory
   let(:hydrosphere) { create(:celestial_bodies_hydrosphere, celestial_body: celestial_body) }
 

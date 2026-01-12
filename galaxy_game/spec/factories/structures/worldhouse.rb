@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :worldhouse, class: 'Structures::Worldhouse' do
     sequence(:name) { |n| "Worldhouse #{n}" }
     structure_name { "worldhouse" }
+    structure_type { "worldhouse" }
     current_population { 0 }
     association :settlement, factory: :base_settlement
     association :owner, factory: :player

@@ -1,0 +1,64 @@
+geological_materials:
+  - name: "Granite"
+    type: "Rock"
+    description: "A common intrusive igneous rock with large crystals, used in construction."
+    smelting_output: [] # Granite wouldn't typically be smelted, so leave empty or add processing steps if applicable.
+    use_cases:
+      - "Construction"
+      - "Building Material"
+    waste_material: [] # Add waste products if processing involves any.
+
+  - name: "Basalt"
+    type: "Rock"
+    description: "A dark, fine-grained volcanic rock, often used in road construction."
+    smelting_output: []
+    use_cases:
+      - "Road Construction"
+      - "Building Material"
+    waste_material: []
+
+  - name: "Limestone"
+    type: "Sedimentary Rock"
+    description: "A sedimentary rock composed mostly of calcite, used in cement production."
+    smelting_output: []
+    use_cases:
+      - "Cement Production"
+      - "Construction"
+    waste_material: []
+
+  - name: "Sandstone"
+    type: "Sedimentary Rock"
+    description: "A clastic sedimentary rock composed mainly of sand-sized mineral particles."
+    smelting_output: []
+    use_cases:
+      - "Construction"
+      - "Glass Production"
+    waste_material: []
+
+  - name: "Marble"
+    type: "Metamorphic Rock"
+    description: "A metamorphic rock formed from limestone, prized for its use in sculpture and architecture."
+    smelting_output: []
+    use_cases:
+      - "Sculpture"
+      - "Building Material"
+    waste_material: []
+
+  - name: "Shale"
+    type: "Sedimentary Rock"
+    description: "A fine-grained sedimentary rock formed from clay, often used in ceramics."
+    smelting_output: []
+    use_cases:
+      - "Ceramics"
+      - "Oil Shale Production"
+    waste_material: []
+
+  - name: "Processed Slag"
+    type: "Industrial Byproduct"
+    description: "A processed waste material from asteroid hollowing operations, containing valuable trace elements that can be refined for propulsion systems."
+    smelting_output: []
+    use_cases:
+      - "Propulsion Fuel Refinement"
+      - "Trace Element Extraction"
+      - "Industrial Recycling"
+    waste_material: []

@@ -10,7 +10,6 @@ module Settlement
     has_one :atmosphere, as: :structure, dependent: :destroy
     
     # Shell construction attributes
-    attribute :panel_type, :string
     attribute :construction_start_date, :datetime
     
     validates :settlement_type, inclusion: { in: %w[station outpost] }

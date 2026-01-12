@@ -53,7 +53,7 @@ RSpec.describe Settlement::SpaceStation, type: :model do
     allow(Blueprint).to receive(:find_by).and_return(double('Blueprint', id: 1))
     allow(MaterialRequestService).to receive(:create_material_requests_from_hash).and_return([])
     allow(EquipmentRequestService).to receive(:create_equipment_requests).and_return([])
-    allow(ConstructionJob).to receive(:create!).and_return(double('ConstructionJob'))
+    allow(ConstructionJob).to receive(:create!).and_return(double('ConstructionJob', equipment_requests: double('equipment_requests', create!: double('equipment_request'))))
     allow(station).to receive(:load_panel_blueprint).and_return(blueprint_data)
   end
 

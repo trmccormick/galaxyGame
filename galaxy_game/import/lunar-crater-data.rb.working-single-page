@@ -1,0 +1,56 @@
+require 'nokogiri'
+require 'open-uri'
+require 'json'
+require 'fileutils'
+
+# Helper to extract depth
+def extract_depth(html)
+  depth_element = html.at_css('th:contains("Depth") + td')
+  return "Unknown" unless depth_element
+
+  depth_text = depth_element.text.strip.gsub(/\[.*?\]|\(.*?\)/, '').strip
+  depth_text.match(/(\d+(\.\d+)?\s*(km|m|))(\s*-\s*\d+(\.\d+)?\s*(km|m|))?/i)&.[](0) || "Unknown"
+end
+
+# Fetch main page
+url = 'https://en.wikipedia.org/wiki/List_of_craters_on_the_Moon:_A%E2%80%93B'
+doc = Nokogiri::HTML(URI.open(url))
+
+craters = doc.css('table.wikitable tbody tr').map do |row|
+  cells = row.css('td')
+  next if cells.empty?
+  {
+    name: cells[0].text.strip,
+    coordinates: cells[1].at_css('span.geo-dec')&.text&.strip || cells[1].text.strip,
+    diameter: cells[2].text.strip + " km",
+  }
+end.compact
+
+# Pull additional data for each crater
+craters.each do |crater|
+  puts "Processing #{crater[:name]}..."
+  begin
+    # Fetch crater's Wikipedia page
+    page = Wikipedia.find("#{crater[:name]} (crater)")
+    current = Nokogiri::HTML(URI.open(page.fullurl))
+
+    # Extract data
+    crater[:summary] = page.summary
+    crater[:depth] = extract_depth(current)
+    puts "Depth extracted: #{crater[:depth]}"
+  rescue OpenURI::HTTPError => e
+    puts "Failed to fetch page for #{crater[:name]}: #{e.message}"
+    crater[:depth] = "Unknown"
+  rescue StandardError => e
+    puts "Unexpected error for #{crater[:name]}: #{e.message}"
+    crater[:depth] = "Unknown"
+  end
+
+  sleep(rand(1..3)) # Avoid rate-limiting
+end
+
+# Output to JSON
+# output_path = "/app/data/celestial_bodies/luna"
+# FileUtils.mkdir_p(output_path)
+File.write("lunar_craters.json", JSON.pretty_generate(craters))
+

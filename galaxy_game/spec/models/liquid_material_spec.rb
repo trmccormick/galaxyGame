@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe LiquidMaterial, type: :model do
-  let(:hydrosphere) { create(:hydrosphere) }
+RSpec.describe CelestialBodies::Materials::Liquid, type: :model do
+  let(:hydrosphere) { create(:celestial_bodies_spheres_hydrosphere) }
 
-  subject(:liquid_material) { LiquidMaterial.new(name: 'Methane', amount: 500.0, hydrosphere: hydrosphere) }
+  subject(:liquid_material) { described_class.new(name: 'Methane', amount: 500.0, hydrosphere: hydrosphere) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:hydrosphere) }

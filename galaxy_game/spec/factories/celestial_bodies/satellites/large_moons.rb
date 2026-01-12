@@ -72,11 +72,11 @@ FactoryBot.define do
         
         # Create hydrosphere with lunar properties (minimal water)
         unless luna.hydrosphere
-          luna.create_hydrosphere(
-            liquid_bodies: { 'ice_caps' => 1.0e12 },
+          luna.build_hydrosphere(
+            water_bodies: { 'ice_caps' => 1.0e12 },
             state_distribution: { 'solid' => 100.0 },
             temperature: luna.surface_temperature
-          )
+          ).save!
         end
         
         # Create biosphere (no life on Luna)

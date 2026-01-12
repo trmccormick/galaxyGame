@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CelestialBodies::Biosphere, type: :model do
+RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
   let(:celestial_body) { create(:celestial_body) }
 
   subject {

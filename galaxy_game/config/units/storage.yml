@@ -1,0 +1,71 @@
+storage:
+  - name: "Small Warehouse"
+    capacity: 1000
+    energy_usage: 5
+    aliases: ["small depot"]
+    build_materials:
+      gcc: 10000
+      materials:
+        - material: "Steel"
+          amount: 500
+        - material: "Concrete"
+          amount: 200
+        - material: "Electronics"
+          amount: 50
+    consumables:
+      energy: 10 # kWh
+      maintenance_materials:
+        - material: "Lubricant"
+          amount: 1 # per year
+    generated:
+      waste_heat: 5 # Heat generated per hour (in arbitrary units)
+
+  - name: "Mining Facility"
+    capacity: 10000
+    energy_usage: 50
+    aliases: ["mine"]
+    build_materials:
+      gcc: 75000
+      materials:
+        - material: "Steel"
+          amount: 3000
+        - material: "Concrete"
+          amount: 1000
+        - material: "Heavy Machinery"
+          amount: 200
+    consumables:
+      energy: 200 # kWh
+      personnel:
+        - people: 5 # number of people needed to operate
+        - food: 5 # food units per person per day
+        - water: 5 # water units per person per day
+        - air: 10 # air units per person per day
+    generated:
+      ore: 
+        type: "Iron Ore"
+        amount: 500 # tons per day
+      waste_materials:
+        - material: "Tailings"
+          amount: 50 # tons per day
+      co2: 100 # kg per day
+
+  - name: "Battery Storage Unit"
+    capacity: 5000  # Capacity in kWh of energy that can be stored
+    energy_usage: 0  # No energy used for storage, but discharges energy when needed
+    aliases: ["energy storage", "battery bank"]
+    build_materials:
+      gcc: 40000  # General construction cost
+      materials:
+        - material: "Steel"
+          amount: 300
+        - material: "Lithium"
+          amount: 100
+        - material: "Plastic"
+          amount: 50
+    consumables:
+      maintenance_materials:
+        - material: "Lithium"
+          amount: 10  # Replacement materials per year for recharging
+    generated:
+      energy_stored: 5000  # Energy stored in kWh
+      waste_heat: 10  # Heat produced in arbitrary units

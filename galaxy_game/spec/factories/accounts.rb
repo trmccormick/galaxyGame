@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :account do
     balance { 1000.0 }
+    association :currency, factory: :financial_currency
     
     # By default, no accountable is assigned
     # This allows explicit assignment in tests

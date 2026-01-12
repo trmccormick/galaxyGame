@@ -1,0 +1,64 @@
+housing:
+  - name: "Habitat Unit"
+    capacity: 100
+    energy_usage: 50
+    aliases: ["residential unit", "housing"]
+    comfort_level: "basic"
+    cost: 1000
+    material_requirements:
+      - wood: 50
+      - steel: 20
+    maintenance_needs: "requires repairs every 10 cycles"
+    resource_efficiency: 80  # percentage
+    environmental_impact: 10  # low impact
+    size: "medium"
+    features: 
+      - "basic amenities"
+      - "access to water supply"
+    build_time: 5  # in game cycles
+    allowed_population_types: 
+      - "humans"
+      - "androids"
+
+  - name: "Luxury Habitat"
+    capacity: 200
+    energy_usage: 100
+    aliases: ["luxury housing"]
+    comfort_level: "high"
+    cost: 5000
+    material_requirements:
+      - wood: 100
+      - steel: 50
+      - glass: 30
+    maintenance_needs: "requires repairs every 5 cycles"
+    resource_efficiency: 90
+    environmental_impact: 5  # very low impact
+    size: "large"
+    features: 
+      - "swimming pool"
+      - "solar panels"
+      - "high-speed internet"
+    build_time: 10
+    allowed_population_types: 
+      - "humans"
+
+  - name: "Basic Habitat"
+    capacity: 5
+    energy_usage: 10
+    aliases: ["basic habitat"]
+    comfort_level: "low"
+    cost: 1000
+    material_requirements:
+      - plastic: 100
+      - steel: 50
+      - glass: 30
+    maintenance_needs: "requires repairs every 5 cycles"
+    resource_efficiency: 90
+    environmental_impact: 5  # very low impact
+    size: "small"
+    features: 
+      - "solar panels"
+      - "relayed internet"
+    build_time: 1
+    allowed_population_types: 
+      - "humans"

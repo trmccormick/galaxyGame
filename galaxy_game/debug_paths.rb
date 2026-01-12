@@ -1,0 +1,1 @@
+puts "Communication path: #{GalaxyGame::Paths::COMMUNICATION_UNITS_PATH}"; puts "Exists: #{Dir.exist?(GalaxyGame::Paths::COMMUNICATION_UNITS_PATH)}"; puts "Contents: #{Dir.glob(GalaxyGame::Paths::COMMUNICATION_UNITS_PATH.join("*.json"))}"

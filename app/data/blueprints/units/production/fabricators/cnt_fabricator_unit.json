@@ -1,0 +1,41 @@
+{
+  "template": "base_unit",
+  "id": "cnt_fabricator_unit",
+  "name": "Carbon Nanotube Fabricator",
+  "description": "Advanced manufacturing unit specialized in producing carbon nanotubes from atmospheric carbon dioxide and other feedstock materials.",
+  "category": "production",
+  "subcategory": "fabricator",
+  "power_consumption_kw": 750,
+  "transferable": true,
+  "operational_requirements": {
+    "atmosphere": "any",
+    "gravity": "any",
+    "temperature_range": {
+      "min": 200,
+      "max": 400,
+      "unit": "kelvin"
+    }
+  },
+  "production_capabilities": {
+    "carbon_nanotubes": {
+      "output_rate": 100,
+      "unit": "kg/hour",
+      "input_requirements": {
+        "carbon_dioxide": {
+          "amount": 200,
+          "unit": "kg/hour"
+        },
+        "catalyst": {
+          "amount": 5,
+          "unit": "kg/hour"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "type": "unit",
+    "category": "production",
+    "template_compliance": "base_unit"
+  }
+}

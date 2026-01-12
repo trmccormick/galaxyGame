@@ -161,14 +161,16 @@ module Structures
       
       # Create equipment requests
       equipment = calculate_equipment_needs(panel_type)
-      EquipmentRequestService.create_equipment_requests(
+      Manufacturing::EquipmentRequest.create_equipment_requests(
         job,
         equipment
       )
       
       # Update status
       update_shell_status('framework_construction')
-      update!(panel_type: panel_type, construction_date: Time.current)
+      self.panel_type = panel_type
+      self.operational_data = self.operational_data.dup
+      save!
       
       # Store sealing decision
       self.operational_data ||= {}
@@ -206,6 +208,9 @@ module Structures
           on_shell_operational if respond_to?(:on_shell_operational, true)
         end
       when 'sealed'
+        update_shell_status('pressurized')
+        on_shell_pressurized if respond_to?(:on_shell_pressurized, true)
+      when 'pressurized'
         update_shell_status('operational')
         on_shell_operational if respond_to?(:on_shell_operational, true)
       else
@@ -311,9 +316,9 @@ module Structures
       panel_blueprint = load_panel_blueprint(panel_type)
       
       base_equipment = [
-        { name: 'space_construction_drone', quantity: 5 },
-        { name: 'welding_equipment', quantity: 10 },
-        { name: 'structural_assembly_system', quantity: 1 }
+        { equipment_type: 'space_construction_drone', quantity: 5 },
+        { equipment_type: 'welding_equipment', quantity: 10 },
+        { equipment_type: 'structural_assembly_system', quantity: 1 }
       ]
       
       return base_equipment unless panel_blueprint
@@ -322,8 +327,8 @@ module Structures
       crew_size = panel_blueprint.dig('installation', 'crew_size') || 3
       
       base_equipment + 
-        tools.map { |tool| { name: tool, quantity: 1 } } +
-        [{ name: 'construction_crew', quantity: crew_size }]
+        tools.map { |tool| { equipment_type: tool, quantity: 1 } } +
+        [{ equipment_type: 'construction_crew', quantity: crew_size }]
     end
     
     # Calculate enclosed volume
@@ -377,7 +382,7 @@ module Structures
         update!(status: new_status)
       else
         self.shell_status = new_status
-        save!
+        update!(operational_data: self.operational_data)
       end
     end
     

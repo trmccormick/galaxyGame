@@ -22,7 +22,7 @@ RSpec.describe SolarSystem, type: :model do
   describe 'associations' do
     it 'has one spatial_location association' do
       expect(SolarSystem.reflect_on_association(:spatial_location).macro).to eq(:has_one)
-      expect(SolarSystem.reflect_on_association(:spatial_location).class_name).to eq('Location::SpatialLocation')
+      expect(SolarSystem.reflect_on_association(:spatial_location).class_name).to eq('SpatialLocation')
       expect(SolarSystem.reflect_on_association(:spatial_location).options[:as]).to eq(:spatial_context)
       expect(SolarSystem.reflect_on_association(:spatial_location).options[:dependent]).to eq(:destroy)
     end

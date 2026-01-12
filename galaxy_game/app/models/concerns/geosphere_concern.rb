@@ -342,7 +342,6 @@ module GeosphereConcern
             material.location = 'geosphere'
             material.layer = layer.to_s
             material.celestial_body = celestial_body
-            material.properties = {'category' => category}
             material.save!
           end
         end

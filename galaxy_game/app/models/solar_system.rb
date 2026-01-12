@@ -3,7 +3,7 @@ class SolarSystem < ApplicationRecord
   belongs_to :galaxy, optional: true
   
   has_one :spatial_location, as: :spatial_context,
-          class_name: 'Location::SpatialLocation',
+          class_name: 'SpatialLocation',
           dependent: :destroy
 
   has_many :stars, class_name: 'CelestialBodies::Star', dependent: :destroy

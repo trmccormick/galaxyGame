@@ -26,7 +26,7 @@ module Lookup
     def base_path
       @base_path ||= Rails.env.test? ? 
         Rails.root.join('spec/support/test_data/items') :
-        Rails.root.join('data/json-data/items')
+        GalaxyGame::Paths::ITEMS_PATH
     end
 
     def find_item(item_id, category = nil)

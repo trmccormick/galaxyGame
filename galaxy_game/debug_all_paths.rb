@@ -1,0 +1,1 @@
+service = Lookup::UnitLookupService.new; service.debug_paths; puts "---"; puts "Actual directories:"; Dir.glob(GalaxyGame::Paths::UNITS_PATH.join("*")).select { |d| File.directory?(d) }.each { |d| puts "#{File.basename(d)}: #{d}" }

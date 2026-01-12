@@ -1,0 +1,1 @@
+service = Lookup::UnitLookupService.new; first_unit = service.instance_variable_get(:@units).first; puts "First unit ID: #{first_unit["id"]}"; puts "First unit name: #{first_unit["name"]}"; result = service.find_unit(first_unit["id"]); puts "Find result: #{result ? "found" : "nil"}"; puts "Result ID: #{result&.[]("id")}"

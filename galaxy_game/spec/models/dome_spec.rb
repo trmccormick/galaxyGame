@@ -1,7 +1,7 @@
 # spec/models/dome_spec.rb
 require 'rails_helper'
 
-RSpec.describe Dome, type: :model do
+RSpec.describe Settlement::Dome, type: :model do
   it "calculates used capacity (current occupancy) correctly" do
     dome = Dome.create(name: "Research Dome", capacity: 100, current_occupancy: 50)
     expect(dome.used_capacity).to eq(50)

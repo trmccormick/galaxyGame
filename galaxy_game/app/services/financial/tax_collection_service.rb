@@ -23,9 +23,9 @@ module Financial
           currency: currency,
           description: "GCC Operational Tax on $#{'%.2f' % price} sale."
         )
-        return tax_amount
+        return { success: true, tax_paid: tax_amount, transaction_id: nil, error: nil }
       else
-        return 0.0
+        return { success: true, tax_paid: 0.0, transaction_id: nil, error: nil }
       end
     end
   end

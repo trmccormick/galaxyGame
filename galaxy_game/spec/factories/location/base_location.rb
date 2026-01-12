@@ -2,14 +2,8 @@
 FactoryBot.define do
   factory :base_location, class: 'Location::BaseLocation' do
     sequence(:name) { |n| "Location #{n}" }
-    coordinates { 
-      lat = format('%.2f', rand(-90.00..90.00))
-      long = format('%.2f', rand(-180.00..180.00))
-      ns = lat.to_f >= 0 ? 'N' : 'S'
-      ew = long.to_f >= 0 ? 'E' : 'W'
-      "#{lat.abs}°#{ns} #{long.abs}°#{ew}"
-    }
-    location_type { :in_space }
+    # coordinates removed from base class
+    # location_type removed from base class
 
     trait :with_items do
       after(:create) do |location|

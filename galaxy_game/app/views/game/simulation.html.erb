@@ -1,0 +1,24 @@
+<!-- app/views/game/simulation.html.erb -->
+<div class="simulation-container">
+  <h1>Solar System Simulation: <%= @solar_system.name %></h1>
+  
+  <% if @star %>
+    <div class="star-info">
+      <h2>Primary Star: <%= @star.name %></h2>
+      <p>Type: <%= @star.type_of_star %></p>
+    </div>
+  <% end %>
+  
+  <div class="celestial-bodies">
+    <h2>Celestial Bodies</h2>
+    <% if @solar_system.celestial_bodies.any? %>
+      <ul>
+        <% @solar_system.celestial_bodies.each do |body| %>
+          <li><%= body.name %> - <%= body.type %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No celestial bodies in this system.</p>
+    <% end %>
+  </div>
+</div>

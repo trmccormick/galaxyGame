@@ -1,0 +1,31 @@
+<h1>Terrestrial Planets</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Identifier</th>
+      <th>Mass</th>
+      <th>Radius</th>
+      <th>Surface Temperature</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @terrestrial_planets.each do |planet| %>
+      <tr>
+        <td><%= planet.name %></td>
+        <td><%= planet.identifier %></td>
+        <td><%= planet.mass %></td>
+        <td><%= planet.radius %></td>
+        <td><%= planet.surface_temperature %></td>
+        <td>
+          <%= link_to 'Show', terrestrial_planet_path(planet) %>
+          <%= link_to 'Edit', edit_terrestrial_planet_path(planet) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'New Terrestrial Planet', new_terrestrial_planet_path %>

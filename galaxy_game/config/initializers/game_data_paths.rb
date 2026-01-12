@@ -26,7 +26,7 @@ module GalaxyGame
     JSON_DATA = if ENV['GALAXY_JSON_DATA_PATH']
       Pathname.new(ENV['GALAXY_JSON_DATA_PATH']).freeze
     else
-      RAILS_ROOT.join('app', 'data', 'json-data').freeze
+      RAILS_ROOT.join('app', 'data').freeze
     end
 
     # === Celestial Bodies and Star Systems ===
@@ -225,6 +225,7 @@ module GalaxyGame
 
     # === Star Systems Paths ===
     STAR_SYSTEMS_PATH = JSON_DATA.join('star_systems').freeze
+    GENERATED_STAR_SYSTEMS_PATH = JSON_DATA.join('generated_star_systems').freeze
 
     # === Logistics Paths ===
     LOGISTICS_PATH = JSON_DATA.join('logistics').freeze
@@ -234,6 +235,15 @@ module GalaxyGame
     QUESTS_MISSIONS_PATH = MISSIONS_PATH.join('quests').freeze
     TASKS_MISSIONS_PATH = MISSIONS_PATH.join('tasks').freeze
     EVENTS_MISSIONS_PATH = MISSIONS_PATH.join('events').freeze
+
+    # === AI Manager Paths ===
+    AI_MANAGER_PATH = JSON_DATA.join('ai-manager').freeze
+    AI_PATTERNS_PATH = AI_MANAGER_PATH.join('learned_patterns.json').freeze
+    AI_MISSION_PATTERNS_PATH = AI_MANAGER_PATH.join('mission_profile_patterns.json').freeze
+    AI_PERFORMANCE_PATH = AI_MANAGER_PATH.join('performance').freeze
+    AI_SETTLEMENT_PATTERNS_PATH = AI_MANAGER_PATH.join('settlement-patterns').freeze
+    AI_ADAPTATION_RULES_PATH = AI_MANAGER_PATH.join('adaptation_rules.json').freeze
+    AI_EXECUTION_PATTERNS_PATH = AI_MANAGER_PATH.join('execution_patterns.json').freeze
 
     # === Helper methods for path generation ===
     def self.material_path(category, subcategory, material_id)
