@@ -5,16 +5,17 @@ RSpec.describe WormholeConsortiumFormationService, type: :service do
   let!(:astrolift) { create(:corporation, identifier: 'ASTROLIFT', operational_data: {}) }
   let!(:zenith) { create(:corporation, identifier: 'ZENITH', operational_data: {}) }
   let!(:vector) { create(:corporation, identifier: 'VECTOR', operational_data: {}) }
+  let!(:ldc) { create(:corporation, identifier: 'LDC', operational_data: {}) }
 
   it 'creates memberships for founding members and updates consortium operational_data' do
     expect {
       WormholeConsortiumFormationService.form_consortium
-    }.to change { ConsortiumMembership.count }.by(3)
+    }.to change { ConsortiumMembership.count }.by(4)
 
     consortium.reload
     expect(consortium.operational_data['status']).to eq('active')
-    expect(consortium.operational_data['founding_members']).to include('ASTROLIFT', 'ZENITH', 'VECTOR')
-    expect(consortium.operational_data['total_capital']).to eq(22_500_000)
+    expect(consortium.operational_data['founding_members']).to include('ASTROLIFT', 'ZENITH', 'VECTOR', 'LDC')
+    expect(consortium.operational_data['total_capital']).to eq(27_500_000)
   end
 
   it 'updates member operational_data with consortium membership' do

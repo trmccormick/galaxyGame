@@ -5,6 +5,7 @@ class WormholeConsortiumFormationService
       'ASTROLIFT' => 10_000_000,
       'ZENITH'    =>  7_500_000,
       'VECTOR'    =>  5_000_000,
+      'LDC'       =>  5_000_000,
     }
     total_investment = founding_investment.values.sum
     founding_investment.each do |identifier, amount|
@@ -44,9 +45,10 @@ class WormholeConsortiumFormationService
     #     Wormhole Transit Consortium. This multi-corporate entity will manage
     #     artificial wormhole infrastructure across known space.
     #     Founding Members:
-    #     - AstroLift Logistics (40%)
-    #     - Zenith Orbital (30%)
-    #     - Vector Hauling (20%)
+    #     - AstroLift Logistics (36%)
+    #     - Zenith Orbital (27%)
+    #     - Vector Hauling (18%)
+    #     - Lunar Development Corporation (18%)
     #     The Consortium is now accepting route petitions and membership applications.
     #   DESC
     # )
