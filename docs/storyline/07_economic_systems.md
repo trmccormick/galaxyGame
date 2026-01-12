@@ -26,6 +26,8 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 - **Adoption Incentives**: LDC pays employees/contracts in GCC; offers subsidies/grants; provides exclusive access to services/resources
 - **Governance**: LDC sets transaction fees, block rewards, staking rules; players may influence via reputation/actions
 - **Security**: Integrated wallets with cybersecurity challenges; potential for hacks or fraud
+- **Supply Model**: Hybrid - hard cap on core supply (80%) for scarcity; controlled minting on reserve (20%) for flexibility and crisis response
+- **Inactive Account Handling**: Escheatment after prolonged inactivity; reclaimed GCC redistributed via LDC grants or algorithmic minting to maintain circulation
 
 ## Hybrid Market System
 
