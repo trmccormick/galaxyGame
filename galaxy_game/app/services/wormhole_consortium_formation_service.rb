@@ -1,12 +1,28 @@
 class WormholeConsortiumFormationService
   def self.form_consortium
     consortium = Organizations::BaseOrganization.find_by(identifier: 'WH-CONSORTIUM')
-    founding_investment = {
-      'ASTROLIFT' => 10_000_000,
-      'ZENITH'    =>  7_500_000,
-      'VECTOR'    =>  5_000_000,
-      'LDC'       =>  5_000_000,
-    }
+    
+    # Core logistics corporations (always included)
+    logistics_corps = ['ASTROLIFT', 'ZENITH', 'VECTOR']
+    
+    # Find all existing development corporations
+    development_corps = Organizations::BaseOrganization.where(
+      organization_type: :corporation
+    ).where.not(
+      identifier: logistics_corps
+    ).pluck(:identifier)
+    
+    # Combine all founding members
+    founding_members = logistics_corps + development_corps
+    
+    # Equal investment per member for simplicity
+    investment_per_member = 5_000_000
+    total_investment = founding_members.count * investment_per_member
+    
+    founding_investment = {}
+    founding_members.each do |identifier|
+      founding_investment[identifier] = investment_per_member
+    end
     total_investment = founding_investment.values.sum
     founding_investment.each do |identifier, amount|
       member = Organizations::BaseOrganization.where(organization_type: :corporation).find_by(identifier: identifier)
@@ -34,21 +50,27 @@ class WormholeConsortiumFormationService
         'status' => 'active',
         'founding_date' => Time.current.to_s,
         'total_capital' => total_investment,
-        'founding_members' => founding_investment.keys
+        'founding_members' => founding_members
       )
     )
+    
+    # Generate dynamic event description
+    member_descriptions = founding_members.map do |identifier|
+      percentage = (investment_per_member.to_f / total_investment * 100).round(0)
+      corporation = Organizations::BaseOrganization.find_by(identifier: identifier)
+      name = corporation&.name || identifier
+      "- #{name} (#{percentage}%)"
+    end.join("\n    ")
+    
     # GameEvent.create!(
     #   event_type: 'major_infrastructure',
     #   title: 'Wormhole Transit Consortium Formed',
     #   description: <<~DESC
-    #     The major logistics corporations have pooled resources to form the
-    #     Wormhole Transit Consortium. This multi-corporate entity will manage
+    #     The major corporations have pooled resources to form the 
+    #     Wormhole Transit Consortium. This multi-corporate entity will manage 
     #     artificial wormhole infrastructure across known space.
     #     Founding Members:
-    #     - AstroLift Logistics (36%)
-    #     - Zenith Orbital (27%)
-    #     - Vector Hauling (18%)
-    #     - Lunar Development Corporation (18%)
+    #     #{member_descriptions}
     #     The Consortium is now accepting route petitions and membership applications.
     #   DESC
     # )
