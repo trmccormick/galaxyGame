@@ -37,8 +37,8 @@ module StarSim::Wormholes
       consortium = Organizations::BaseOrganization.find_by(identifier: 'WH-CONSORTIUM')
       return if consortium&.member_relationships&.any?
 
-      # Check if all founding members exist
-      required_members = ['ASTROLIFT', 'ZENITH', 'VECTOR', 'LDC']
+      # Check if core logistics corporations exist (minimum requirement)
+      required_members = ['ASTROLIFT', 'ZENITH', 'VECTOR']
       existing_members = Organizations::BaseOrganization.where(identifier: required_members).pluck(:identifier)
       
       if existing_members.sort == required_members.sort
@@ -46,8 +46,9 @@ module StarSim::Wormholes
         Rails.logger.info "[DiscoveryService] Forming Wormhole Transit Consortium after first wormhole discovery" if defined?(Rails)
         WormholeConsortiumFormationService.form_consortium
       else
-        puts "[DiscoveryService] Cannot form consortium - missing members. Required: #{required_members}, Found: #{existing_members}" if defined?(Rails)
-        Rails.logger.warn "[DiscoveryService] Cannot form consortium - missing members. Required: #{required_members}, Found: #{existing_members}" if defined?(Rails)
+        missing = required_members - existing_members
+        puts "[DiscoveryService] Cannot form consortium - missing core members: #{missing.join(', ')}" if defined?(Rails)
+        Rails.logger.warn "[DiscoveryService] Cannot form consortium - missing core members: #{missing.join(', ')}" if defined?(Rails)
       end
     end
   end
