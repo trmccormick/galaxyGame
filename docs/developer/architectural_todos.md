@@ -25,3 +25,21 @@ Consider refactoring find_matching_orders to use dependency injection for easier
 - data/json-data/star_systems/sol/celestial_bodies/mars/martian_craters.json
 
 **Priority:** Medium - improves architecture, not blocking
+
+## FUTURE FEATURE: Technology Tree System
+
+**Proposed Structure (from Gemini chat review):**
+- Category: Computing & AI
+- Tiers: Advanced Computing → AI Systems → Advanced AI → Quantum Computing
+- Research Requirements: GCC costs, research points (engineering, scientific, social)
+- Unlocks: Units, buildings, capabilities (e.g., Space-Hardened Computing System)
+- Materials: Silicon, gold, electronics for construction
+- Time-based research and building
+
+**Implementation Notes:**
+- JSON-based tech tree definitions
+- Research progression with prerequisites
+- Unlocks tied to AI manager capabilities, cycler configurations
+- Potential for player-driven research branches
+
+**Priority:** Low - Future expansion after core systems stable
