@@ -45,6 +45,7 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 - **Civilizational project, not cosmetic**: Targets temperature/pressure, gradual atmosphere evolution, requires orbital infrastructure (solar shades, reflectors).
 - **Venus ≠ surface bases**: Cloud cities first due to hostile surface.
 - **Mars warming incremental and fragile**: Multi-generational gamble, not guaranteed success.
+- **Titan's delicate balance**: Methane/ethane hydrological cycle highly sensitive to atmospheric pressure changes; significant reduction could destabilize surface liquids and alter composition.
 
 ### Design Assumption 🟨
 - **Physics-based constraints**: All changes follow real atmospheric/planetary science principles.
