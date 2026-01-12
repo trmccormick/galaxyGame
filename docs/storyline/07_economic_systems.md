@@ -21,6 +21,20 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 - **Initial Coupling**: GCC coupled to USD to bootstrap lunar market
 - **Decoupling**: Eventually becomes independent galactic currency
 - **Market Dynamics**: Virtual ledger for NPC transactions, player-driven GCC economy
+- **Minting Mechanism**: Lunar Currency Authority Satellite (LCAS) mints GCC at controlled rate for LDC resource budget
+- **Dual Currency**: GCC for player transactions; USD restricted to NPC corp-to-corp use
+
+## Hybrid Market System
+
+- **Fixed Prices for Basics**: Essential goods (ammunition, basic repairs) sold at NPC vendors with stable prices
+- **Player-Driven Advanced Market**: Rare/advanced goods traded via buy/sell orders with dynamic pricing
+- **NPC Stabilizers**: LDC posts buy/sell orders to maintain price floors/ceilings, preventing extreme volatility
+
+## GCC Faucets and Sinks
+
+- **Faucets**: LDC mission payouts funded by LCAS-minted GCC; guaranteed buy orders for lunar resources
+- **Sinks**: Reprocessing/manufacturing fees at LDC facilities; import duties for Earth goods; base upkeep costs
+- **Import System**: Players request Earth imports via LDC, paying GCC; LDC uses USD reserves for procurement
 
 ## Consortium Integration
 
