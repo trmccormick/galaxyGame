@@ -88,6 +88,18 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 3. **Expand canon**: Add decided elements to this document
 4. **Cross-reference**: Ensure all systems align with canonical lore
 
----
+## Implementation Status
 
-*This is Lore Canon v0.1 - established from current documentation and memory. Update as gaps are filled.*
+### Current Focus: System Stabilization
+Many advanced narrative elements are **deferred until after system cleanup and stabilization**. The current priority is ensuring core wormhole expansion mechanics work reliably before adding optional narrative features.
+
+### Future Enhancement Candidates
+The following elements are planned for future implementation as optional features once the base system is stable:
+
+- **Wormhole Origin Lore**: Ancient civilization, natural phenomenon, or failed FTL experiment backstories
+- **Opening Scenario Variations**: Alternative starting points (extrasolar, post-first anomaly)
+- **Advanced Failure Modes**: Permanent system loss vs recovery mechanics
+- **AI Governance Narratives**: Human oversight and ethical constraint storylines
+- **Extended Terraforming Lore**: Multi-generational project narratives and Venus cloud city histories
+
+These will be revisited as optional content packs or expansion features after core functionality is solid.
