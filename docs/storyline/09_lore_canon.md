@@ -23,7 +23,8 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 - **Lunar Development Corporation (LDC)**: Manages initial lunar settlements, focusing on material production and infrastructure.
 - **Astrolift**: Operates orbital logistics, including LEO depots for refueling and interplanetary transport.
 - **Early economic drivers**: Mars-Venus bilateral trade loop and Titan fuel production establish initial interplanetary commerce.
-
+### Design Assumption 🟨
+- **Interstellar expansion options**: Potential generational "hopscotch" approach with Von Neumann probes for multi-millennial terraforming before human arrival, combined with slow-propagating communication relays.
 ### Implied Lore 🟨
 - **No unified galactic government**: Isolated systems, long communication delays, political fragmentation.
 - **Exploration is dangerous**: Wormhole shifts can make systems unreachable, ships are slow, rescue not guaranteed → abandoned colonies and lost expeditions.
