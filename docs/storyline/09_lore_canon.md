@@ -19,6 +19,10 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 - **Corporate entities**: Venus Development Corporation (VDC) for cloud cities, Mars-focused terraforming, Saturn/Titan system administration (SDC/TDC).
 - **Consortium formation**: Wormhole Transit Consortium emerges from crisis, combining AstroLift (logistics) and LDC (construction).
 - **Economic priorities**: Player market (GCC) first, NPC trade second, Earth imports last resort.
+- **Squatter's rights ownership**: No single entity owns worlds; corporations establish bases through development, creating competitive settlement dynamics.
+- **Lunar Development Corporation (LDC)**: Manages initial lunar settlements, focusing on material production and infrastructure.
+- **Astrolift**: Operates orbital logistics, including LEO depots for refueling and interplanetary transport.
+- **Early economic drivers**: Mars-Venus bilateral trade loop and Titan fuel production establish initial interplanetary commerce.
 
 ### Implied Lore 🟨
 - **No unified galactic government**: Isolated systems, long communication delays, political fragmentation.
