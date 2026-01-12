@@ -43,3 +43,21 @@ Consider refactoring find_matching_orders to use dependency injection for easier
 - Potential for player-driven research branches
 
 **Priority:** Low - Future expansion after core systems stable
+
+## FUTURE FEATURE: AI Managers for Player Autonomy
+
+**Concept:** AI systems that manage settlements and operations when the player is absent or focused elsewhere, enabling continuous gameplay progression.
+
+**Key Features:**
+- Autonomous decision-making for resource harvesting, building, and trade
+- Delegated actions based on player-defined priorities
+- Communication systems for status updates and decision approvals
+- Physical player presence integration for immersive control
+
+**Implementation Notes:**
+- AI logic for economic decisions, market interactions, and infrastructure management
+- Integration with existing services (ManufacturingService, MarketService)
+- Player override capabilities for critical decisions
+- Scalability for multiple settlements across star systems
+
+**Priority:** Medium - Enhances gameplay depth without core changes

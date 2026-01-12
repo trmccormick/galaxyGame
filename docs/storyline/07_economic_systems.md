@@ -29,6 +29,14 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 - **Supply Model**: Hybrid - hard cap on core supply (80%) for scarcity; controlled minting on reserve (20%) for flexibility and crisis response
 - **Inactive Account Handling**: Escheatment after prolonged inactivity; reclaimed GCC redistributed via LDC grants or algorithmic minting to maintain circulation
 
+## Power Credits (Venus Energy Trade Framework)
+
+- **Concept**: Units of Venus-based production capacity representing energy surplus from solar harvesting arrays
+- **Trade Mechanism**: Used in long-term contracts to offset material imports by offering energy-intensive goods (carbon nanotubes, supercapacitors, atmospheric fuels) at reduced export cost
+- **Implementation**: Energy surplus transformed into manufactured products or stored fuels, traded via conventional cargo transfers (e.g., cycler ships)
+- **Economic Role**: Ensures Venus remains a major player despite limited raw minerals, leveraging abundant energy as a diplomatic and economic asset
+- **Integration**: Complements GCC system for interplanetary trade, particularly with Luna Development Corporation (LDC) and Martian Terraforming Authority (MTA)
+
 ## Hybrid Market System
 
 - **Fixed Prices for Basics**: Essential goods (ammunition, basic repairs) sold at NPC vendors with stable prices

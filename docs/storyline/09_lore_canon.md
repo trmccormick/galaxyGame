@@ -25,9 +25,41 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 - **Early economic drivers**: Mars-Venus bilateral trade loop and Titan fuel production establish initial interplanetary commerce.
 ### Design Assumption 🟨
 - **Interstellar expansion options**: Potential generational "hopscotch" approach with Von Neumann probes for multi-millennial terraforming before human arrival, combined with slow-propagating communication relays.
+## Expansion Drivers
+
+### Confirmed Lore 🟦
+- **Corporate entities**: Venus Development Corporation (VDC) for cloud cities, Mars-focused terraforming, Saturn/Titan system administration (SDC/TDC).
+- **Consortium formation**: Wormhole Transit Consortium emerges from crisis, combining AstroLift (logistics) and LDC (construction).
+- **Economic priorities**: Player market (GCC) first, NPC trade second, Earth imports last resort.
+- **Squatter's rights ownership**: No single entity owns worlds; corporations establish bases through development, creating competitive settlement dynamics.
+- **Lunar Development Corporation (LDC)**: Manages initial lunar settlements, focusing on material production and infrastructure.
+- **Astrolift**: Operates orbital logistics, including LEO depots for refueling and interplanetary transport.
+- **Early economic drivers**: Mars-Venus bilateral trade loop and Titan fuel production establish initial interplanetary commerce.
+
+### Design Assumption 🟨
+- **Interstellar expansion options**: Potential generational "hopscotch" approach with Von Neumann probes for multi-millennial terraforming before human arrival, combined with slow-propagating communication relays.
+
 ### Implied Lore 🟨
 - **No unified galactic government**: Isolated systems, long communication delays, political fragmentation.
 - **Exploration is dangerous**: Wormhole shifts can make systems unreachable, ships are slow, rescue not guaranteed → abandoned colonies and lost expeditions.
+
+## Colonization Phases
+
+### Confirmed Lore 🟦
+- **Lunar Base**: Initial foothold on Moon's lava tube, resource extraction (regolith oxygen), trade with Earth, scientific samples for grants.
+- **Earth-Moon L1 Station**: Shipyard and trade hub for spacecraft manufacturing, logistics center.
+- **Mars Artificial Magnetosphere**: 1 million miles ahead of Mars, shields from solar wind, begins atmosphere stabilization.
+- **Near-Mars Asteroid Settlement**: Captured asteroid hollowed for habitat, mining for construction/export.
+- **Mars Colonization**: Pressurized habitats, research stations, gas imports for atmosphere, metal exports.
+- **Venus Floating Settlement**: Upper atmosphere harvesting oxygen/CO2/nitrogen, carbon nanotube production, solar shades for cooling.
+- **Cycler Ships**: Automated cargo transport between Earth, Mars, Venus for efficient trade.
+- **Titan Mining Colony**: Nitrogen/methane/hydrocarbons export, supports deep-space exploration.
+
+### Design Assumption 🟨
+- **Progressive specialization**: Each celestial body develops unique economic roles (Venus gases, Titan fuels, Mars metals).
+- **Infrastructure milestones**: From basic habitats to orbital stations and interplanetary logistics.
+
+## Wormhole Truth
 
 ## Wormhole Truth
 
@@ -36,6 +68,10 @@ This document establishes the canonical lore for the Galaxy Game, separating est
 - **Instability and mass limits**: Shared mass limits, environmental hazards, require stabilization satellites.
 - **Story driver**: Anomalies create time pressure, first contact opportunities, and mystery elements.
 - **Artificial wormholes as earned technology**: Built after mastering natural ones, representing power escalation.
+- **Exploration dynamics**: Players must scout wormhole destinations before expansion; discoveries can shift priorities (e.g., habitable exoplanets reduce Mars importance).
+- **Instability risks**: Wormholes can shift exits, orphaning colonies; require artificial links for stability.
+- **Faction conflicts**: Rival factions may disrupt trade routes; security measures needed for wormhole stations.
+- **Artificial wormhole mechanics**: Stabilization satellites for flexible deployment; reassignment for strategic needs; defensive upgrades against sabotage.
 
 ### Undecided 🟥
 - **Origin of anomalies**: Options include ancient civilization, natural phenomenon, or failed FTL experiment. **Needs decision** - this is a critical lore fork.
