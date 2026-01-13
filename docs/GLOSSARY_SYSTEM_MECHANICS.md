@@ -24,3 +24,8 @@ The 70% waste material produced during asteroid hollowing operations. This slag 
 
 ### Shielded Volume
 The 30% of asteroid mass that can be converted into functional station space through hollowing equipment. This volume provides radiation shielding and pressurizable habitat for crew and operations.
+
+### Geosphere Simulation
+Planetary geological simulation system that models tectonic activity, material distribution, and geological processes. Includes specialized ice tectonics simulation for cryogenic worlds where traditional rock plate tectonics are replaced by slower-moving ice plate dynamics.
+
+## Planetary Systems

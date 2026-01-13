@@ -7,7 +7,7 @@ module MaterialPropertiesConcern
     validates :name, presence: true
     
     # Common callbacks
-    before_validation :set_molar_mass_from_material, if: :respond_to?
+    before_validation :set_molar_mass_from_material
   end
   
   # Common instance methods
