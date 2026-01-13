@@ -15,21 +15,23 @@ RSpec.describe TerraSim::ExoticWorldSimulationService, type: :service do
     )
     
     # Create some geological materials for testing
-    celestial_body.geosphere.geological_materials.create!(
+    carbon_material = celestial_body.geosphere.geological_materials.build(
       name: 'Carbon',
       state: 'solid',
       layer: 'mantle',
       percentage: 10,
       mass: 1000
     )
+    carbon_material.save!
     
-    celestial_body.geosphere.geological_materials.create!(
+    hydrogen_material = celestial_body.geosphere.geological_materials.build(
       name: 'Hydrogen',
       state: 'gas',
       layer: 'core',
       percentage: 30,
       mass: 5000
     )
+    hydrogen_material.save!
   end
   
   describe '#initialize' do

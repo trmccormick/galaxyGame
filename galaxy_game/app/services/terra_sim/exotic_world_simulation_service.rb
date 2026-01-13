@@ -185,15 +185,48 @@ module TerraSim
     end
 
     def simulate_ice_tectonics
-      # Placeholder logic for ice tectonics.
-      # Could involve movement of ice sheets, formation of ridges,
-      # or subduction of ice plates.
       puts "Simulating ice tectonics on #{@celestial_body.name}..."
-      # Example: Trigger minor ice quakes
-      # if rand < 0.2
-      #   puts "Minor ice quake detected!"
-      #   @geosphere.log_earthquake # Assuming Geosphere has this method
-      # end
+
+      return unless @geosphere && @geosphere.plates.present?
+
+      # Get current plate configuration
+      current_plates = @geosphere.plates.dig('positions', -1, 'plates') || []
+
+      if current_plates.any?
+        # Simulate ice plate tectonics with smaller movements than rock plates
+        modified_plates = current_plates.map do |plate|
+          # Ice plates move more slowly and with less dramatic shifts
+          latitude_shift = rand(-0.05..0.05)  # Smaller movement range
+          longitude_shift = rand(-0.05..0.05)
+
+          # Ensure we stay within valid coordinates
+          new_lat = (plate['latitude'].to_f + latitude_shift).clamp(-90.0, 90.0)
+          new_lon = (plate['longitude'].to_f + longitude_shift).clamp(-180.0, 180.0)
+
+          {
+            'id' => plate['id'],
+            'latitude' => new_lat,
+            'longitude' => new_lon,
+            'movement' => (latitude_shift.abs + longitude_shift.abs) / 2.0
+          }
+        end
+
+        # Create new position entry
+        new_position = {
+          'timestamp' => Time.now.to_i,
+          'plates' => modified_plates
+        }
+
+        # Update plates history (keep last 10 entries)
+        @geosphere.plates['positions'] ||= []
+        @geosphere.plates['positions'] << new_position
+        @geosphere.plates['positions'] = @geosphere.plates['positions'].last(10)
+
+        @geosphere.save!
+        puts "Ice tectonics simulation complete - #{modified_plates.size} ice plates adjusted"
+      else
+        puts "No ice plates found to simulate tectonics on"
+      end
     end
 
     def cryovolcanic_activity_chance

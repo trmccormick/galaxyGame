@@ -373,6 +373,15 @@ module CelestialBodies
         celestial_body.present? && celestial_body.radius.to_f > 6000000 ? 7 : 3 # More plates for larger bodies
       end
 
+      # Ice tectonics accessor methods for ExoticWorldSimulationService
+      def ice_tectonics_enabled?
+        self.plates&.dig('ice_tectonics_enabled') || false
+      end
+
+      def ice_tectonic_enabled
+        self.plates&.dig('ice_tectonics_enabled') || false
+      end
+
       def run_simulation_after_save
         activity = geological_activity || 0
         self.tectonic_activity = activity > 50
