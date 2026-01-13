@@ -37,8 +37,8 @@ module TerraSim
       
       atmosphere = @celestial_body.atmosphere
       
-      if atmosphere.total_atmospheric_mass <= 0
-        atmosphere.update(total_atmospheric_mass: 2.5e16)
+      if atmosphere.total_atmospheric_mass <= 0 || atmosphere.total_atmospheric_mass < 1
+        atmosphere.update(total_atmospheric_mass: 100.0)
       end
       
       # Calculate gas changes from actual life forms
@@ -426,7 +426,7 @@ module TerraSim
         puts "  Biome #{biome.name}: moisture #{new_moisture.round(2)}, area #{new_area.round(2)}%"
       end
       
-      total_area = @biosphere.planet_biomes.sum(:area_percentage)
+      total_area = @biosphere.planet_biomes.sum(&:area_percentage)
       if total_area > 0 && (total_area < 99.0 || total_area > 101.0)
         scaling_factor = 100.0 / total_area
         @biosphere.planet_biomes.each do |pb|

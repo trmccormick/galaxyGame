@@ -244,7 +244,7 @@ module TerraSim
           puts "  - #{gas.name}: #{gas.percentage}%, #{gas.mass} kg"
         end
         # Check for oxygen gas with the correct name from material lookup
-        o2_gas = atmosphere.gases.find_by(name: 'oxygen')
+        o2_gas = atmosphere.gases.find_by(name: 'O2')
         # Verify this gas exists and has the right percentage
         expect(o2_gas).to be_present, "Expected to find oxygen gas but none found"
         expect(o2_gas.percentage).to be > 0, "Expected oxygen percentage > 0"
@@ -428,7 +428,7 @@ module TerraSim
           # Run for 1 day
           service.influence_atmosphere(1)
           atmosphere.reload
-          o2_gas_1 = atmosphere.gases.find_by(name: 'oxygen')
+          o2_gas_1 = atmosphere.gases.find_by(name: 'O2')
           o2_mass_1 = o2_gas_1&.mass.to_f
 
           # Reset atmosphere
@@ -439,7 +439,7 @@ module TerraSim
           # Run for 10 days
           service.influence_atmosphere(10)
           atmosphere.reload
-          o2_gas_10 = atmosphere.gases.find_by(name: 'oxygen')
+          o2_gas_10 = atmosphere.gases.find_by(name: 'O2')
           o2_mass_10 = o2_gas_10&.mass.to_f
 
           puts "DEBUG: O2 mass after 1 day: #{o2_mass_1}"
