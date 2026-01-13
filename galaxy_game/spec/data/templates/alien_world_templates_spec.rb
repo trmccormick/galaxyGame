@@ -3,9 +3,7 @@ require 'json'
 
 RSpec.describe 'Alien World Templates Integrity' do
   let(:template_path) do
-    Rails.root.join(
-      'data', 'json-data', 'templates', 'alien_world_templates_v1.1.json'
-    )
+    GalaxyGame::Paths::TEMPLATE_PATH.join('alien_world_templates_v1.1.json')
   end
 
   let(:json) do
