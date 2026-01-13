@@ -225,5 +225,7 @@ Files Modified:
 - galaxy_game/app/services/terra_sim/biosphere_simulation_service.rb
 - galaxy_game/spec/services/terra_sim/biosphere_simulation_service_spec.rb
 
+See docs/architecture/biosphere_system.md for complete system documentation.
+
 REMINDER: All operations must stay inside the docker container. Biosphere simulation now fully functional with comprehensive test coverage."
 
