@@ -10,6 +10,7 @@ Galaxy Game is a Rails-based space simulation game that models planetary coloniz
 - **Celestial Bodies**: Planets, moons, asteroids with realistic physics and compositions
 - **Spheres**: Atmosphere, hydrosphere, geosphere, biosphere layers with independent simulation
   - [Hydrosphere System](hydrosphere_system.md): Generic liquid modeling for diverse planetary environments
+  - [Geosphere System](geosphere_system.md): Generic solid body modeling with geological processes
 - **Terraforming**: Multi-stage planetary modification with realistic constraints
 
 #### 🚀 Space Infrastructure

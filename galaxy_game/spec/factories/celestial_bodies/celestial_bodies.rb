@@ -12,7 +12,7 @@ FactoryBot.define do
     orbital_period { 365.25 }
     albedo { 0.306 }
     insolation { 1361 }
-    surface_temperature { 15 }
+    surface_temperature { 288.0 } # Updated to Kelvin, not Celsius
     known_pressure { 1.0 }
     properties { {} }  # Must initialize as empty hash, NOT null
 
