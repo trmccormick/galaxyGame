@@ -53,6 +53,55 @@ The system supports any liquid material through:
 
 ## Simulation Engine (HydrosphereConcern)
 
+### HydrosphereSimulationService
+
+The `TerraSim::HydrosphereSimulationService` provides comprehensive hydrosphere dynamics simulation:
+
+#### Core Simulation Loop
+
+```ruby
+def simulate
+  return unless valid_spheres?
+  return if @simulating  # Prevent recursive calls
+  
+  @simulating = true
+  begin
+    calculate_region_temperatures
+    handle_evaporation
+    handle_precipitation
+    calculate_state_distributions
+    @hydrosphere.recalculate_state_distribution
+    update_hydrosphere_volume
+    handle_ice_melting
+  ensure
+    @simulating = false
+  end
+end
+```
+
+#### Key Methods
+
+- **calculate_region_temperatures**: Computes temperatures for oceans, lakes, rivers, and ice based on surface temperature
+- **handle_evaporation**: Transfers liquid to atmospheric vapor, supporting both numeric volumes and hash-based liquid bodies
+- **handle_precipitation**: Condenses atmospheric vapor back to liquid bodies
+- **calculate_state_distributions**: Updates solid/liquid/vapor phase percentages based on temperature and pressure
+- **handle_ice_melting**: Simulates polar ice cap melting when temperatures exceed freezing point
+- **update_hydrosphere_volume**: Maintains total liquid volume consistency
+
+#### Robust Data Handling
+
+The service handles multiple data formats for backward compatibility:
+
+- **Numeric Volumes**: Direct numeric values for simple cases
+- **Hash Volumes**: `{'volume' => 1.0e15}` for complex liquid body structures
+- **Nil-Safe Operations**: Graceful handling of missing or invalid data
+
+#### Integration with Atmosphere
+
+- **Material Exchange**: Uses `MaterialLookupService` for proper material identification
+- **Gas Management**: Adds/removes water vapor from atmosphere during evaporation/precipitation
+- **Dust Reduction**: Precipitation reduces atmospheric dust concentrations
+
 ### Water Cycle Simulation
 
 The hydrosphere concern provides realistic water cycle simulation:

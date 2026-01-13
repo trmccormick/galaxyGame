@@ -16,7 +16,7 @@ RSpec.describe TerraSim::HydrosphereSimulationService, type: :service do
       state_distribution: {
         'solid' => 50.0,
         'liquid' => 40.0,
-        'gas' => 10.0
+        'vapor' => 10.0
       }
     )
   end
@@ -213,7 +213,7 @@ RSpec.describe TerraSim::HydrosphereSimulationService, type: :service do
       state_dist = hydrosphere.state_distribution
       expect(state_dist).to have_key('solid')
       expect(state_dist).to have_key('liquid')
-      expect(state_dist).to have_key('gas')
+      expect(state_dist).to have_key('vapor')
     end
   end
   
@@ -349,8 +349,8 @@ RSpec.describe TerraSim::HydrosphereSimulationService, type: :service do
       # Handle both string and symbol keys
       solid = state_dist['solid'] || state_dist[:solid] || 0
       liquid = state_dist['liquid'] || state_dist[:liquid] || 0
-      gas = state_dist['gas'] || state_dist[:gas] || 0
-      total_pct = solid + liquid + gas
+      vapor = state_dist['vapor'] || state_dist[:vapor] || 0
+      total_pct = solid + liquid + vapor
       
       # Allow some floating point tolerance
       expect(total_pct).to be_within(5.0).of(100.0)
@@ -365,11 +365,11 @@ RSpec.describe TerraSim::HydrosphereSimulationService, type: :service do
       state_dist = hydrosphere.state_distribution
       solid = state_dist['solid'] || state_dist[:solid] || 0
       liquid = state_dist['liquid'] || state_dist[:liquid] || 0
-      gas = state_dist['gas'] || state_dist[:gas] || 0
+      vapor = state_dist['vapor'] || state_dist[:vapor] || 0
       
       expect(solid).to be >= 0.0
       expect(liquid).to be >= 0.0
-      expect(gas).to be >= 0.0
+      expect(vapor).to be >= 0.0
     end
   end
   
