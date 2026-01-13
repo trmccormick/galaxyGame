@@ -71,9 +71,9 @@ module AtmosphereConcern
       next if percentage <= 0
       mass = (percentage / 100.0) * total_mass
       material_data = lookup_service.find_material(input_key)
-      next unless material_data && material_data['chemical_formula'].present?
-      chemical_formula = material_data['chemical_formula']
-      molar_mass = material_data['molar_mass']
+      next unless material_data && lookup_service.get_material_property(material_data, 'chemical_formula').present?
+      chemical_formula = lookup_service.get_material_property(material_data, 'chemical_formula')
+      molar_mass = lookup_service.get_material_property(material_data, 'molar_mass')&.to_f
       gas = gases.new(
         name: chemical_formula,
         percentage: percentage,
@@ -97,13 +97,13 @@ module AtmosphereConcern
     end
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(chemical_formula)
-    unless material_data && material_data['chemical_formula'].present?
+    unless material_data && lookup_service.get_material_property(material_data, 'chemical_formula').present?
       raise InvalidGasError, "Unknown chemical formula or name: #{chemical_formula}. Check materials database."
     end
-    formula = material_data['chemical_formula']
+    formula = lookup_service.get_material_property(material_data, 'chemical_formula')
     gas = gases.find_or_initialize_by(name: formula)
     gas.mass = (gas.mass || 0.0) + amount_kg.to_f
-    gas.molar_mass = material_data['molar_mass'] if gas.molar_mass.blank?
+    gas.molar_mass = lookup_service.get_material_property(material_data, 'molar_mass')&.to_f if gas.molar_mass.blank?
     
     # Set percentage to 0 initially to avoid validation error
     gas.percentage = 0
@@ -123,10 +123,10 @@ module AtmosphereConcern
     raise InvalidGasError, "Chemical formula cannot be blank" if chemical_formula.blank?
     lookup_service = Lookup::MaterialLookupService.new
     material_data = lookup_service.find_material(chemical_formula)
-    unless material_data && material_data['chemical_formula'].present?
+    unless material_data && lookup_service.get_material_property(material_data, 'chemical_formula').present?
       raise InvalidGasError, "Unknown chemical formula or name: #{chemical_formula}. Check materials database."
     end
-    formula = material_data['chemical_formula']
+    formula = lookup_service.get_material_property(material_data, 'chemical_formula')
     gas = gases.find_by(name: formula)
     unless gas
       raise InvalidGasError, "Gas '#{formula}' not found in atmosphere"

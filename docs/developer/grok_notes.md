@@ -1,3 +1,14 @@
+Only commit and push files that were directly worked on in the current session, never all files.
+Always update relevant documentation for changes made.
+Ensure RSpec tests are passing before committing.
+Run all tests exclusively in the web Docker container, not on the host.
+Remember these guidelines to maintain the setup's integrity.
+
+Next on our list is the GeosphereInitializer as before please review the failures compare the Jan 8 timemachine backup to the existing codebase. review only. Determine what cause the new failures. no code changes.
+
+continue your review only of the associated files comparing them to the Jan 6th backup. again only code review and comparison. do not run new rspce tests.
+
+update using recommended fix. insure only files that you updated are commited to git update all documentation and specs (spec tests must only be ran in the web docker container). git commits are ran on the host system. All specs for the update must be passing before committing to git.
 
 01/10/26
 -------
@@ -169,4 +180,50 @@ Results:
 - ✅ System now data-driven and supports any liquid material
 
 REMINDER: All operations must stay inside the docker container. System now supports realistic planetary diversity beyond water-only worlds."
+
+
+01/12/26 - BiosphereSimulationService Fixes
+-------------------------------------------
+
+"Grok, execute all commands ONLY within the web docker container.
+
+Objective: Fix all failing BiosphereSimulationService specs by comparing Jan 8 backup and implementing systematic corrections.
+
+Task 1: Material Property Access Regression Fix
+
+- Restored MaterialLookupService.match_material? to use get_material_property for nested properties
+- Fixed chemical formula lookups for gases (O2, CO2, CH4) that were failing due to top-level only property checks
+- Updated get_material_property to handle molar_mass_g_mol as fallback for molar_mass
+
+Task 2: Database Schema Compatibility Fixes
+
+- Fixed balance_biomes method to use sum(&:area_percentage) instead of sum(:area_percentage) 
+- Resolved store_accessor vs direct column access mismatch for PlanetBiome area_percentage
+
+Task 3: Gas Management and Validation Fixes
+
+- Updated AtmosphereConcern add_gas method to properly set molar_mass from material properties
+- Fixed gas name consistency in tests (use chemical formulas like 'O2' instead of material names like 'oxygen')
+- Improved atmospheric mass validation to handle edge cases where total_atmospheric_mass is unreasonably small
+
+Task 4: Time-Scaled Atmospheric Effects
+
+- Ensured influence_atmosphere properly scales gas exchange effects over time periods
+- Fixed test expectations for multi-day simulations to verify correct accumulation
+
+Results:
+- ✅ All 27 BiosphereSimulationService specs now passing (from 9 failures)
+- ✅ Gas exchange with planetary atmospheres working correctly
+- ✅ Life form terraforming effects properly simulated
+- ✅ Biome balancing and climate adjustments functional
+- ✅ Material property lookups for atmospheric gases resolved
+- ✅ Time-scaled atmospheric changes validated
+
+Files Modified:
+- galaxy_game/app/services/lookup/material_lookup_service.rb
+- galaxy_game/app/models/concerns/atmosphere_concern.rb
+- galaxy_game/app/services/terra_sim/biosphere_simulation_service.rb
+- galaxy_game/spec/services/terra_sim/biosphere_simulation_service_spec.rb
+
+REMINDER: All operations must stay inside the docker container. Biosphere simulation now fully functional with comprehensive test coverage."
 

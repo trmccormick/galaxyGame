@@ -118,6 +118,11 @@ module Lookup
         return material['properties'][property_name]
       end
       
+      # Special handling for molar_mass - also check molar_mass_g_mol
+      if property_name == 'molar_mass' && material['properties'] && material['properties'].key?('molar_mass_g_mol')
+        return material['properties']['molar_mass_g_mol']
+      end
+      
       nil
     end    
 
@@ -230,14 +235,15 @@ module Lookup
       query_normalized = query.to_s.downcase.strip
 
       # ✅ PRIORITY 1: Exact chemical formula match (case sensitive for chemistry)
-      if material['chemical_formula'] == query.to_s.strip
-        Rails.logger.debug "Matched by exact formula: #{material['chemical_formula']} == #{query}"
+      chemical_formula = get_material_property(material, 'chemical_formula')
+      if chemical_formula == query.to_s.strip
+        Rails.logger.debug "Matched by exact formula: #{chemical_formula} == #{query}"
         return true
       end
 
       # ✅ PRIORITY 2: Exact chemical formula match (case insensitive)
-      if material['chemical_formula']&.downcase == query_normalized
-        Rails.logger.debug "Matched by formula: #{material['chemical_formula']} == #{query}"
+      if chemical_formula&.downcase == query_normalized
+        Rails.logger.debug "Matched by formula: #{chemical_formula} == #{query}"
         return true
       end
 
