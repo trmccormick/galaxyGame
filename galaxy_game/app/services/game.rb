@@ -49,7 +49,7 @@ class Game
       end
 
       # 4. Process manufacturing jobs
-      process_manufacturing_jobs(settlement, time_skipped)
+      process_manufacturing_jobs(time_skipped)
 
       # 5. Manage shared services (power, data, robots, etc.)
       settlement.manage_shared_services!(time_skipped)
@@ -75,30 +75,32 @@ class Game
     end
   end
 
-  def process_manufacturing_jobs(settlement, time_skipped)
+  def process_manufacturing_jobs(time_skipped)
     # Convert days to hours
     hours_elapsed = time_skipped * 24
     
     # Process material processing jobs
-    MaterialProcessingJob.active.where(settlement: settlement).each do |job|
+    MaterialProcessingJob.active.each do |job|
       job.process_tick(hours_elapsed)
     end
     
     # Process component production jobs
-    ComponentProductionJob.active.where(settlement: settlement).each do |job|
+    ComponentProductionJob.active.each do |job|
       job.process_tick(hours_elapsed)
       
       if job.reload.status == 'completed'
+        settlement = job.settlement
         service = Manufacturing::ComponentProductionService.new(settlement)
         service.complete_job(job)
       end
     end
     
     # Process shell printing jobs (NEW!)
-    ShellPrintingJob.active.where(settlement: settlement).each do |job|
+    ShellPrintingJob.active.each do |job|
       job.process_tick(hours_elapsed)
       
       if job.reload.status == 'completed'
+        settlement = job.settlement
         service = Manufacturing::ShellPrintingService.new(settlement)
         service.complete_job(job)
       end
