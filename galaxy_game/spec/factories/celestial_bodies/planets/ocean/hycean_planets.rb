@@ -79,6 +79,13 @@ FactoryBot.define do
         
         # Add hydrogen-rich gases that meet Hycean requirements
         # Must have at least 10% hydrogen and significant pressure (>1 atm)
+        gas_molar_masses = {
+          'H2' => 2.016,
+          'He' => 4.0026,
+          'CH4' => 16.04,
+          'NH3' => 17.03
+        }
+        
         ['H2', 'He', 'CH4', 'NH3'].each do |gas_name|
           percentage = case gas_name
                       when 'H2' then 60  # Well above 10% requirement
@@ -87,7 +94,7 @@ FactoryBot.define do
                       when 'NH3' then 3
                       end
           
-          instance.atmosphere.gases.create!(name: gas_name, percentage: percentage)
+          instance.atmosphere.gases.create!(name: gas_name, percentage: percentage, molar_mass: gas_molar_masses[gas_name])
         end
         
         # Ensure pressure meets requirement (>1 atm)
