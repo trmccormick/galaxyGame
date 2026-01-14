@@ -47,9 +47,17 @@ vector = Organizations::BaseOrganization.find_or_create_by!(
 )
 
 # Create Wormhole Transit Consortium
-consortium = Organizations::BaseOrganization.find_or_create_by!(
+consortium = Organizations::BaseOrganization.find_by(
   name: 'Wormhole Transit Consortium',
   identifier: 'WH-CONSORTIUM',
-  organization_type: :consortium,
-  operational_data: {}
+  organization_type: :consortium
 )
+
+if consortium.nil?
+  consortium = Organizations::BaseOrganization.create!(
+    name: 'Wormhole Transit Consortium',
+    identifier: 'WH-CONSORTIUM',
+    organization_type: :consortium,
+    operational_data: {}
+  )
+end
