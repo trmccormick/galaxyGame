@@ -30,17 +30,76 @@ Galaxy Game is a space colonization simulation where players establish and manag
 
 ### Planetary Terraforming
 
-Each planet has multiple spheres that can be modified:
+The game features a two-phase terraforming approach: early industrial support from Venus, followed by comprehensive Mars habitation development.
 
-- **Atmosphere**: Composition changes affect climate and habitability
-- **Hydrosphere**: Water distribution and purification
-- **Geosphere**: Surface modification and resource accessibility
-- **Biosphere**: Introduction of Earth life forms
+#### Early Game: Venus Industrial Hub
+Venus serves as Earth's primary industrial platform for Mars terraforming:
+- **Gas extraction** from Venus atmosphere for Mars thickening
+- **CNT production** for orbital shades and infrastructure
+- **Solar shade technology** development (initially for Venus cooling, later adapted for Mars warming)
+- **Resource processing** and export to Mars via orbital transfers
 
-Terraforming requires:
-- Energy input (solar, nuclear, or beamed power)
-- Material resources for construction
-- Time for natural processes to take effect
+#### Primary Target: Mars
+Once orbital transfer technologies improve:
+- **Atmospheric thickening** through imported CO2 and methane
+- **Water liberation** from polar ice and imported sources
+- **Temperature warming** via greenhouse gases and orbital mirrors
+- **Biosphere establishment** starting with microbial lifeforms
+
+#### Venus Evolution
+Initially considered for habitation due to proximity, Venus transitioned to industrial role:
+- **Pre-wormhole necessity**: Only viable large-scale industrial platform
+- **Resource abundance**: Unlimited CO2 and atmospheric gases
+- **Energy advantages**: Extreme conditions enable unique processes
+- **Strategic positioning**: Efficient material transport to Mars
+
+Current Venus assessment shows habitation unlikely due to 400°C+ temperatures, 90+ bar pressure, sulfuric acid atmosphere, and limited water. However, its industrial role has become permanent.
+
+#### Current Capabilities
+- **Atmospheric modifications** through industrial processors
+- **Basic lifeform introduction** with hardy microorganisms
+- **Resource importation** from other solar system bodies
+- **Future portal technology** for specialized transport (personnel and small cargo) within the Solar System only
+- **Engineering potential** for large-scale material transfer through continuous portal loop systems
+- **Cryogenic storage networks** (e.g., Venus-Titan gas banking for Mars terraforming)
+- **Distributed processing networks** (e.g., Venus CO2 → O2/CO separation with portal transport to Mars/orbital depots)
+- **Hydrogen fuel cycles** (e.g., outer solar system H2 import to Mars for water production via O2 combustion)
+
+**Player Integration**: These portal systems operate as background mechanics providing economic opportunities and strategic constraints, enhancing player decision-making rather than becoming direct controls.
+
+### AI Manager Comprehensive Role
+**Multi-System Development Coordinator**: The AI manager oversees interconnected development systems that enable and accelerate player expansion.
+
+#### Large-Scale Project Oversight
+- **Terraforming Maintenance**: Manages ongoing planetary modification operations
+- **Infrastructure Expansion**: Builds and maintains colony facilities and networks
+- **Resource Allocation**: Optimizes long-term resource distribution for sustained growth
+- **Progress Assurance**: Ensures development continues independent of player activity
+
+#### Foothold Protocol Execution
+- **Initial Base Construction**: Establishes Development Corporation Bases as colonization beachheads
+- **Strategic Site Selection**: Positions initial settlements in optimal expansion locations
+- **Foundation Development**: Creates basic infrastructure to support early colonization efforts
+- **Player Enablement**: Provides platforms for player-driven colony development
+
+#### Wormhole Network Development
+- **System Expansion**: Increases accessible star systems for player exploration
+- **Network Infrastructure**: Builds and maintains wormhole connections between systems
+- **Exploration Pathways**: Opens new territories for colonization and trade
+- **Inter-System Connectivity**: Creates routes for migration and resource exchange
+
+#### Population Dynamics
+- **Workforce Allocation**: 1-20% of population dedicated to terraforming (unless AI-assisted)
+- **Growth Simulation**: Births (1.5%), deaths (0.8%), immigration (1%) affect labor availability
+- **AI Assistance**: Reduces human workforce requirements for accelerated progress
+
+### Population Simulation
+
+Planetary populations evolve through:
+- **Initial Settlement**: 20,000-150,000 colonists
+- **Demographic Changes**: Births, deaths, immigration/emigration
+- **Economic Factors**: Credits and resources influence population growth
+- **Terraforming Impact**: Successful terraforming attracts more settlers
 
 ### Economic Engine
 
@@ -48,6 +107,12 @@ Terraforming requires:
 - **Dynamic Pricing**: Supply and demand affect resource values
 - **Interplanetary Trade**: Transport costs and time delays
 - **Market Manipulation**: Players can influence prices through bulk transactions
+
+#### Trade Simulation
+- **Import Costs**: 100-500 credits per material unit
+- **Export Earnings**: 50-200 credits per unit
+- **Net Economics**: Imports minus exports affect planetary credits
+- **Sustainability**: Colonies must maintain positive credit balance for operations
 
 #### Production Chains
 - **Raw Materials**: Extracted from planetary surfaces

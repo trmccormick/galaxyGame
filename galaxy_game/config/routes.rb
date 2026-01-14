@@ -27,7 +27,12 @@ Rails.application.routes.draw do
 
   # Routes for celestial bodies with all CRUD actions
   resources :solar_systems, only: [:show, :index]
-  resources :celestial_bodies
+  resources :celestial_bodies do
+    member do
+      get :map                    # Planet map viewer
+      get :geological_features    # API: Load geological features JSON
+    end
+  end
   resources :stars
   resources :terrestrial_planets
 

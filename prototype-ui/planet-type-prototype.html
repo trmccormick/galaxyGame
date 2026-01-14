@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Map Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        
+        #mapContainer {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        #canvasWrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        canvas {
+            border: 2px solid #0f3460;
+            cursor: crosshair;
+            background: #000;
+        }
+        
+        #controls {
+            width: 300px;
+            background: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        h2 {
+            color: #e94560;
+            margin-top: 0;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #ff6b6b;
+        }
+        
+        #tileInfo {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        
+        .layer-toggle {
+            margin: 5px 0;
+        }
+        
+        .layer-toggle input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .value-display {
+            color: #e94560;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="mapContainer">
+        <div id="canvasWrapper">
+            <canvas id="planetCanvas" width="800" height="400"></canvas>
+        </div>
+        
+        <div id="controls">
+            <h2>Planet Map</h2>
+            
+            <div class="control-group">
+                <label>Planet ID:</label>
+                <input type="number" id="planetId" value="1" min="1">
+                <button onclick="loadPlanet()">Load Planet</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
+                <input type="range" id="zoom" min="0.5" max="4" step="0.1" value="1">
+            </div>
+            
+            <div class="control-group">
+                <h3>Visible Layers:</h3>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerTerrain" checked>
+                    <label for="layerTerrain">Terrain/Elevation</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerWater" checked>
+                    <label for="layerWater">Water Bodies</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerBiomes" checked>
+                    <label for="layerBiomes">Biomes</label>
+                </div>
+                <div class="layer-toggle">
+                    <input type="checkbox" id="layerStructures">
+                    <label for="layerStructures">Structures</label>
+                </div>
+            </div>
+            
+            <button onclick="regenerateMap()">Generate New Map</button>
+            
+            <div id="tileInfo">
+                <h3>Tile Information</h3>
+                <div id="tileDetails">Click on the map to see tile details</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simplified Perlin noise implementation
+        class PerlinNoise {
+            constructor(seed = Math.random()) {
+                this.seed = seed;
+                this.gradients = {};
+                this.memory = {};
+            }
+
+            rand(x, y) {
+                const angle = (Math.sin(x * 12.9898 + y * 78.233 + this.seed) * 43758.5453) % (2 * Math.PI);
+                return { x: Math.cos(angle), y: Math.sin(angle) };
+            }
+
+            dot(g, x, y) {
+                return g.x * x + g.y * y;
+            }
+
+            lerp(a, b, t) {
+                return a + t * (b - a);
+            }
+
+            fade(t) {
+                return t * t * t * (t * (t * 6 - 15) + 10);
+            }
+
+            noise(x, y) {
+                const X = Math.floor(x);
+                const Y = Math.floor(y);
+                const xf = x - X;
+                const yf = y - Y;
+
+                const g00 = this.rand(X, Y);
+                const g10 = this.rand(X + 1, Y);
+                const g01 = this.rand(X, Y + 1);
+                const g11 = this.rand(X + 1, Y + 1);
+
+                const d00 = this.dot(g00, xf, yf);
+                const d10 = this.dot(g10, xf - 1, yf);
+                const d01 = this.dot(g01, xf, yf - 1);
+                const d11 = this.dot(g11, xf - 1, yf - 1);
+
+                const u = this.fade(xf);
+                const v = this.fade(yf);
+
+                const x1 = this.lerp(d00, d10, u);
+                const x2 = this.lerp(d01, d11, u);
+
+                return this.lerp(x1, x2, v);
+            }
+
+            octaveNoise(x, y, octaves = 4, persistence = 0.5) {
+                let total = 0;
+                let frequency = 1;
+                let amplitude = 1;
+                let maxValue = 0;
+
+                for (let i = 0; i < octaves; i++) {
+                    total += this.noise(x * frequency, y * frequency) * amplitude;
+                    maxValue += amplitude;
+                    amplitude *= persistence;
+                    frequency *= 2;
+                }
+
+                return total / maxValue;
+            }
+        }
+
+        // Main map class
+        class PlanetMap {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.mapData = null;
+                this.zoom = 1.0;
+                this.offsetX = 0;
+                this.offsetY = 0;
+                this.tileSize = 4;
+                this.layers = {
+                    terrain: true,
+                    water: true,
+                    biomes: true,
+                    structures: false
+                };
+                
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                this.canvas.addEventListener('click', (e) => this.handleClick(e));
+                
+                document.getElementById('zoom').addEventListener('input', (e) => {
+                    this.zoom = parseFloat(e.target.value);
+                    document.getElementById('zoomValue').textContent = this.zoom.toFixed(1) + 'x';
+                    this.render();
+                });
+                
+                ['layerTerrain', 'layerWater', 'layerBiomes', 'layerStructures'].forEach(id => {
+                    document.getElementById(id).addEventListener('change', (e) => {
+                        const layer = id.replace('layer', '').toLowerCase();
+                        this.layers[layer] = e.target.checked;
+                        this.render();
+                    });
+                });
+            }
+
+            async loadFromAPI(planetId) {
+                try {
+                    const response = await fetch(`/api/v1/planets/${planetId}/map`);
+                    if (!response.ok) {
+                        throw new Error('Map not found - generating...');
+                    }
+                    this.mapData = await response.json();
+                    this.render();
+                } catch (error) {
+                    console.log('Generating new map...');
+                    await this.generateMap(planetId);
+                }
+            }
+
+            async generateMap(planetId) {
+                const seed = Math.random();
+                const response = await fetch(`/api/v1/planets/${planetId}/map`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ seed, octaves: 4, noise_scale: 100 })
+                });
+                
+                this.mapData = await response.json();
+                this.render();
+            }
+
+            getTerrainColor(tile) {
+                if (!tile) return 'rgb(0, 0, 0)';
+                
+                const { terrain, elevation, biome } = tile;
+                
+                // Water
+                if (terrain === 'ocean') {
+                    if (elevation < -3000) return 'rgb(0, 0, 139)'; // Deep ocean
+                    if (elevation < -1000) return 'rgb(0, 0, 255)'; // Ocean
+                    return 'rgb(65, 105, 225)'; // Shallow water
+                }
+                
+                // Land based on elevation
+                if (elevation > 2500) return 'rgb(255, 255, 255)'; // Snow
+                if (elevation > 2000) return 'rgb(139, 137, 137)'; // Mountain
+                if (elevation > 1000) return 'rgb(139, 69, 19)'; // High ground
+                
+                // Land based on biome
+                switch(biome) {
+                    case 'ice': return 'rgb(240, 248, 255)';
+                    case 'tundra': return 'rgb(192, 192, 192)';
+                    case 'taiga': return 'rgb(34, 139, 34)';
+                    case 'temperate_forest': return 'rgb(46, 139, 87)';
+                    case 'grassland': return 'rgb(124, 252, 0)';
+                    case 'desert': return 'rgb(244, 164, 96)';
+                    case 'tropical': return 'rgb(0, 100, 0)';
+                    default: return 'rgb(160, 82, 45)'; // Rocky
+                }
+            }
+
+            render() {
+                if (!this.mapData) return;
+                
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                const { width, height, tiles } = this.mapData;
+                const scaledTileSize = this.tileSize * this.zoom;
+                
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const tile = tiles[`${x},${y}`];
+                        if (!tile) continue;
+                        
+                        const color = this.getTerrainColor(tile);
+                        this.ctx.fillStyle = color;
+                        this.ctx.fillRect(
+                            x * scaledTileSize + this.offsetX,
+                            y * scaledTileSize + this.offsetY,
+                            scaledTileSize,
+                            scaledTileSize
+                        );
+                    }
+                }
+            }
+
+            handleClick(event) {
+                if (!this.mapData) return;
+                
+                const rect = this.canvas.getBoundingClientRect();
+                const x = Math.floor((event.clientX - rect.left - this.offsetX) / (this.tileSize * this.zoom));
+                const y = Math.floor((event.clientY - rect.top - this.offsetY) / (this.tileSize * this.zoom));
+                
+                const tile = this.mapData.tiles[`${x},${y}`];
+                this.showTileInfo(x, y, tile);
+            }
+
+            showTileInfo(x, y, tile) {
+                const details = document.getElementById('tileDetails');
+                if (!tile) {
+                    details.innerHTML = 'No tile data';
+                    return;
+                }
+                
+                details.innerHTML = `
+                    <strong>Position:</strong> (${x}, ${y})<br>
+                    <strong>Coordinates:</strong> ${tile.coordinates?.lat?.toFixed(2)}°, ${tile.coordinates?.lon?.toFixed(2)}°<br>
+                    <strong>Terrain:</strong> ${tile.terrain}<br>
+                    <strong>Elevation:</strong> ${tile.elevation}m<br>
+                    <strong>Biome:</strong> ${tile.biome}<br>
+                    <strong>Composition:</strong> ${tile.composition}
+                `;
+            }
+        }
+
+        // Global instance
+        let planetMap;
+
+        function init() {
+            planetMap = new PlanetMap('planetCanvas');
+            loadPlanet();
+        }
+
+        function loadPlanet() {
+            const planetId = document.getElementById('planetId').value;
+            planetMap.loadFromAPI(planetId);
+        }
+
+        function regenerateMap() {
+            const planetId = document.getElementById('planetId').value;
+            planetMap.generateMap(planetId);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

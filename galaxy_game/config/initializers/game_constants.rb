@@ -119,6 +119,9 @@ module GameConstants
   STORAGE_WORKERS_RATIO = 0.1  # 10% of population can work on storage
   STORAGE_CAPACITY_PER_WORKER = 1000  # kg per worker  
 
+  # Construction cost percentage
+  DEFAULT_CONSTRUCTION_PERCENTAGE = 10.0
+
   # Earth reference values
   module Earth
     RADIUS = 6371.0  # km

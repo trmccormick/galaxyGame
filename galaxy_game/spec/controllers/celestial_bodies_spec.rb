@@ -14,6 +14,19 @@ RSpec.describe CelestialBodiesController, type: :controller do
     }
   }
 
+  let(:luna) {
+    CelestialBodies::Satellites::Moon.create!(
+      name: "Luna",
+      identifier: "LUNA-01",
+      size: 0.273,
+      gravity: 1.62,
+      density: 3.344,
+      mass: 7.342e22,
+      radius: 1.737e6,
+      orbital_period: 27.322
+    )
+  }
+
   describe "GET #show" do
     # it "returns a success response" do
     #   planet = CelestialBody.create! valid_attributes
@@ -37,6 +50,36 @@ RSpec.describe CelestialBodiesController, type: :controller do
     #   # Verify that the JSON response matches the expected composition
     #   expect(json_response['gas_quantities']).to eq(expected_composition)
     # end
+  end
+
+  describe "GET #map" do
+    it "renders the map view for a celestial body" do
+      get :map, params: { id: luna.to_param }
+      expect(response).to be_successful
+      expect(response).to render_template(:map)
+    end
+  end
+
+  describe "GET #geological_features" do
+    it "returns geological features as JSON" do
+      get :geological_features, params: { id: luna.to_param }, format: :json
+      expect(response).to be_successful
+      expect(response.content_type).to include('application/json')
+      
+      json_response = JSON.parse(response.body)
+      expect(json_response).to have_key('celestial_body')
+      expect(json_response).to have_key('lava_tubes')
+      expect(json_response).to have_key('craters')
+      expect(json_response).to have_key('strategic_sites')
+    end
+
+    it "returns celestial body information" do
+      get :geological_features, params: { id: luna.to_param }, format: :json
+      json_response = JSON.parse(response.body)
+      
+      expect(json_response['celestial_body']['name']).to eq('Luna')
+      expect(json_response['celestial_body']['id']).to eq(luna.id)
+    end
   end
 end
 
