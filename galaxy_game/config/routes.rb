@@ -44,5 +44,17 @@ Rails.application.routes.draw do
 
   require 'sidekiq/web'
   require 'sidekiq/cron/web'
-  mount Sidekiq::Web => '/sidekiq'  
+  mount Sidekiq::Web => '/sidekiq'
+
+  # Admin namespace for testing and monitoring
+  namespace :admin do
+    resources :celestial_bodies, only: [] do
+      member do
+        get :monitor                 # Main monitoring interface
+        get :sphere_data            # JSON: Real-time sphere data
+        get :mission_log            # JSON: AI mission activity
+        post :run_ai_test           # Trigger AI Manager test
+      end
+    end
+  end
 end
