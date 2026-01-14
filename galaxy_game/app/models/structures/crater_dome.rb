@@ -186,6 +186,7 @@ module Structures
     def set_structure_type
       self.operational_data ||= {}
       self.operational_data['structure_type'] = 'crater_dome'
+      self.structure_type = 'crater_dome'
     end
     
     # ✅ ATMOSPHERIC OVERRIDES: Only specify construction differences
