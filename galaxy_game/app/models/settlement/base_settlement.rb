@@ -52,7 +52,7 @@ module Settlement
     def construction_cost_percentage
       # FIXED: Simplified - operational_data will return {} for nil thanks to Rails jsonb defaults
       data = read_attribute(:operational_data) || {}
-      data.dig('manufacturing', 'construction_cost_percentage') || DEFAULT_CONSTRUCTION_PERCENTAGE
+      data.dig('manufacturing', 'construction_cost_percentage') || GameConstants::DEFAULT_CONSTRUCTION_PERCENTAGE
     end
     
     def construction_cost_percentage=(value)

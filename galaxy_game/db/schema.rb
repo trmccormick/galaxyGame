@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_12_010005) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_13_040336) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -172,9 +172,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_12_010005) do
     t.datetime "updated_at", null: false
     t.bigint "player_id"
     t.string "panel_type"
+    t.jsonb "operational_data", default: {}
     t.index ["accounts_id"], name: "index_base_settlements_on_accounts_id"
     t.index ["base_settlements_type", "base_settlements_id"], name: "index_base_settlements_on_base_settlements"
     t.index ["colony_id"], name: "index_base_settlements_on_colony_id"
+    t.index ["operational_data"], name: "index_base_settlements_on_operational_data", using: :gin
     t.index ["owner_type", "owner_id"], name: "index_base_settlements_on_owner"
     t.index ["player_id"], name: "index_base_settlements_on_player_id"
   end
@@ -1094,6 +1096,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_12_010005) do
     t.bigint "biosphere_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "properties"
     t.index ["biome_id"], name: "index_planet_biomes_on_biome_id"
     t.index ["biosphere_id"], name: "index_planet_biomes_on_biosphere_id"
   end

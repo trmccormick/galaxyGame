@@ -287,42 +287,87 @@ REMINDER: All operations must stay inside the docker container. Biosphere simula
 
 01-13-2026
 --------------
-"Grok, execute all commands ONLY within the web docker container.
+nightly run
+--------------
+🚀 Grok Hybrid Recovery Protocol
+Role: Senior Systems Architect / Recovery Lead. Context: We are recovering from a code revert that resulted in missing files and logic regressions. Use the Jan 8th, 2026 backup as the source of truth.
 
-We need to continue testing to resolve the rspec failures from the recent code revert 
- 1. please run "RAILS_ENV=test bundle exec rspec > ./log/rspec_full_{unix timestamp}.log" using the unix timestamp to make it unique. 
- 2. Review the log and Identify the top spec with the highest failure rate and work on resolving the failures.
- 3. Compare the time machine backup files from 01/08/2025 that may have working code.
+CRITICAL ENVIRONMENT BOUNDARIES:
 
-CRITICAL CONSTRAINTS:
-  - Only commit and push files that were directly worked on in the current session, never all files.
-  - Always update relevant documentation for changes made.
-  - Ensure RSpec tests are passing before committing.
-  - Run all rspec tests exclusively in the web Docker container, not on the host.
-  - Fix ONE spec file completely before moving to the next
-  - Run full spec file after each fix to catch regressions
-  - Document the root cause of each failure pattern
-  - All tests must pass before proceeding
-  - if you need to revert any code insure files are backed up to prevent any data loss. This is what is causing the current cascade of failures the accidental loss of files that didn't make it to github yet.
+INSIDE WEB CONTAINER: RAILS_ENV=test, bundle exec rspec, rails commands.
 
-REMINDER: All tests must pass, and all operations must stay inside the docker container."
+OUTSIDE (HOST MACHINE): git, diff (file comparison), file editing, and documentation.
 
-"Grok, execute all commands ONLY within the web docker container.
- We need to continue testing to resolve the rspec failures from the recent code revert 
- please run "docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --only-failures 2>&1 | head -50" to identify the next failing rspec test. And continue work. Review the backup from Jan 8th at /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-2026 to determine if recent code was lost or reverted. Compare current code to backup to determine if fix already exists. 
+Phase 1: Full System Triage (Inside Container)
+Execute this command to generate a failure map: docker-compose -f docker-compose.dev.yml exec web /bin/bash -c "RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1"
 
-CRITICAL CONSTRAINTS:
-  - Only commit and push files that were directly worked on in the current session, never all files.
-  - Always update relevant documentation for changes made.
-  - Ensure RSpec tests are passing before committing.
-  - Run all rspec tests exclusively in the web Docker container, not on the host.
-  - Fix ONE spec file completely before moving to the next
-  - Run full spec file after each fix to catch regressions
-  - Document the root cause of each failure pattern
-  - All tests must pass before proceeding
-  - if you need to revert any code insure files are backed up to prevent any data loss. This is what is causing the current cascade of failures the accidental loss of files that didn't make it to github yet.
+Analyze the Log: Find the spec file with the highest failure count.
 
-REMINDER: All tests must pass, and all operations must stay inside the docker container."
+Determine the Nature of Failure: Is it a NoMethodError (missing logic) or NameError/LoadError (missing file)?
+
+Phase 2: Analysis & Restoration (Host Machine)
+Compare the current project files against the backup at: /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-2026.
+
+Check for Missing Files: If the RSpec log indicates a missing class/file, locate it in the backup and copy it to the current project.
+
+Logic Comparison: Use diff or a similar tool (on the host) to compare existing files. Identify where the revert wiped out working code (e.g., planet generation logic, Alpha Centauri setups, or market variables).
+
+Apply Fixes: Restore or repair the code on the host machine.
+
+Phase 3: Verification & Documentation (Hybrid)
+Test (Inside Container): Run only the spec you are currently fixing: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/path/to/target_spec.rb
+
+Fix ONE File at a Time: Do not move to a new spec until the current one has zero failures.
+
+Documentation (Host): * IF documentation for the feature exists: Update it with the root cause of the failure and the fix.
+
+IF it is missing: CREATE a new .md file in docs/ explaining the feature (e.g., Terrestrial Planet generation or GCC Market mechanics).
+
+Phase 4: Commit (Host Machine)
+Once a spec file is 100% passing:
+
+Atomic Commit: git add [specific files] and git commit -m "[Feature Name]: Resolved regressions and restored lost logic".
+
+NEVER use git add ..
+
+-----------------
+
+⚡ Grok "Quick-Fix" Protocol (Fail-Fast)
+Role: Senior Recovery Engineer. Context: We need to rapidly clear the RSpec failure queue. Solve the absolute first error found, then move to the next only when that file is 100% green.
+
+ENVIRONMENT BOUNDARIES (CRITICAL):
+
+COMMAND EXECUTION: Must be inside the web container.
+
+FILE EDITING / GIT / BACKUPS: Must be on the Host machine.
+
+Step 1: Identify the "First Domino"
+Run this command on the host to trigger the test inside Docker: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --only-failures --fail-fast
+
+Step 2: Source Recovery (Host Machine)
+Once a failure is identified:
+
+Check for Missing Files: If the error is a LoadError or NameError, look in the backup: /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-2026. If found, copy the missing file into the current project.
+
+Logic Comparison: Use diff on the host to compare the failing file with the Jan 8th version. Restore lost logic (specifically check for Market variables or Planet generation parameters).
+
+Step 3: Repair & Document (Host Machine)
+Apply Fix: Restore code from backup or implement a new fix on the host.
+
+Create/Update Docs: Check the docs/ folder for a corresponding file.
+
+IF MISSING: Create a new .md file explaining the logic of the feature you just fixed.
+
+IF PRESENT: Update it to reflect the current implementation and why the recovery was needed.
+
+Step 4: Verification & Commit (Hybrid)
+Verify (Container): Rerun the specific spec file to ensure it passes: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/path/to/spec.rb
+
+Atomic Commit (Host): Once the file is green, git add ONLY the modified/created files. Do NOT use git add ..
+
+Loop: Repeat Step 1 until --only-failures returns a clean pass.
+
+-------
 
 ## Early Concept Ideas (ChatGPT Solar System Generation)
 

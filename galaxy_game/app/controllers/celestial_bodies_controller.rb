@@ -1,5 +1,5 @@
 class CelestialBodiesController < ApplicationController
-  before_action :set_celestial_body, only: [:show, :edit, :update, :destroy]
+  before_action :set_celestial_body, only: [:show, :edit, :update, :destroy, :map, :geological_features]
 
   # GET /celestial_bodies
   def index
@@ -67,6 +67,19 @@ class CelestialBodiesController < ApplicationController
       format.html { redirect_to celestial_bodies_url, notice: 'Celestial body was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  # GET /celestial_bodies/:id/map
+  def map
+    # Render the planet map viewer
+  end
+
+  # GET /celestial_bodies/:id/geological_features
+  def geological_features
+    service = GeologicalFeatureService.new(@celestial_body)
+    features = service.load_features
+    
+    render json: features
   end
 
   private

@@ -12,6 +12,10 @@ FactoryBot.define do
       settlement.build_inventory if settlement.inventory.nil?
     end
 
+    trait :independent do
+      owner { nil }
+    end
+
     trait :with_storage do
       after(:create) do |settlement|
         create(:base_unit, :storage,

@@ -346,7 +346,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       # ================================================================
       # STAGE 2: Volatiles Extraction (PVE)
       # ================================================================
-      puts "\n=== STAGE 2: Plasma Volatiles Extractor (PVE) ==="
+      puts "\n=== STAGE 2: Planetary Volatiles Extractor (PVE) ==="
       
       # Process all processed regolith → inert waste + volatiles
       pve_job = processing_service.volatiles_extraction(processed.amount, pve_unit)
