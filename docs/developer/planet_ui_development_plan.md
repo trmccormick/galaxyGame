@@ -526,7 +526,8 @@ galaxy_game/
 │   │       └── pattern_tests_controller.rb     # Phase 6
 │   │
 │   ├── services/
-│   │   ├── geological_feature_service.rb       # Phase 1
+│   │   ├── lookup/
+│   │   │   └── planetary_geological_feature_lookup_service.rb  # Existing - Phase 1
 │   │   ├── ai_mission_status_service.rb        # Phase 3
 │   │   ├── ai_decision_analyzer_service.rb     # Phase 4
 │   │   ├── sphere_data_aggregator_service.rb   # Phase 5
@@ -1061,12 +1062,12 @@ function latLonToPixel(lat, lon, mapWidth, mapHeight) {
 **Time to Complete:** ~30 minutes
 
 **Files Created:**
-- `app/services/geological_feature_service.rb` - Service to load geological JSON data
 - `app/views/celestial_bodies/map.html.erb` - Planet map viewer (from prototype)
-- `spec/services/geological_feature_service_spec.rb` - Service tests
-- Updated `app/controllers/celestial_bodies_controller.rb` - Added map actions
+- Updated `app/controllers/celestial_bodies_controller.rb` - Added map actions using existing `Lookup::PlanetaryGeologicalFeatureLookupService`
 - Updated `config/routes.rb` - Added map routes
 - Updated `spec/controllers/celestial_bodies_spec.rb` - Added map action tests
+
+**Note:** Uses existing `Lookup::PlanetaryGeologicalFeatureLookupService` for loading geological data instead of creating a new service.
 
 **Routes Added:**
 ```ruby
