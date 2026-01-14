@@ -51,6 +51,15 @@ module CelestialBodies
       return true unless solar_system
       solar_system.stars.order(mass: :desc).first.id == id
     end
+
+    def binary_system?
+      solar_system&.stars&.count.to_i > 1
+    end
+
+    def binary_companion
+      return nil unless binary_system?
+      solar_system.stars.where.not(id: id).first
+    end
     
     private
     

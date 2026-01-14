@@ -203,6 +203,7 @@ class SolarSystem < ApplicationRecord
           mass: 5.97e24,
           radius: 6371000,
           gravity: 9.8,
+          size: 1.0,
           properties: { 'body_type' => 'terrestrial_planet' },
           solar_system_id: self.id,
           identifier: "TP-#{SecureRandom.hex(4)}"

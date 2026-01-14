@@ -26,6 +26,15 @@ FactoryBot.define do
     association :solar_system
 
     # Add traits for different types of terrestrial planets
+    trait :earth do
+      sequence(:identifier) { |n| "earth-#{n}" }
+      name { "Earth" }
+      mass { 5.972e24 }
+      radius { 6.371e6 }
+      surface_temperature { 288.15 }
+      known_pressure { 1.0 }
+    end
+
     trait :mars do
       sequence(:identifier) { |n| "mars-#{n}" }
       name { "Mars" }
