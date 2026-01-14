@@ -230,7 +230,7 @@ Located: `data/json-data/missions/tasks/`
 **Deliverables:**
 - [ ] Admin route: `/admin/celestial_bodies/:id/monitor`
 - [ ] Controller: `Admin::MonitoringController`
-- [ ] Service: `GeologicalFeatureService` (loads JSON files)
+- [ ] Service: `Lookup::PlanetaryGeologicalFeatureLookupService` (existing service for loading JSON files)
 - [ ] View: HTML page with Canvas element
 - [ ] JavaScript: Plot markers at lat/lon coordinates
 - [ ] Basic interaction: Click marker → Console log feature name
@@ -238,10 +238,10 @@ Located: `data/json-data/missions/tasks/`
 **Files to Create:**
 ```
 app/controllers/admin/monitoring_controller.rb
-app/services/geological_feature_service.rb
 app/views/admin/monitoring/show.html.erb
 app/assets/javascripts/admin/planet_map.js
 config/routes.rb (add admin namespace)
+# Note: Use existing Lookup::PlanetaryGeologicalFeatureLookupService
 ```
 
 **API Endpoints:**
@@ -759,7 +759,7 @@ GET /admin/celestial_bodies/1/ai_decisions.json
 ### Testing Approach
 
 **Unit Tests:**
-- GeologicalFeatureService (JSON loading)
+- Lookup::PlanetaryGeologicalFeatureLookupService (JSON loading - already exists)
 - AIMissionStatusService (state queries)
 - AIDecisionAnalyzerService (scoring algorithm)
 
