@@ -16,6 +16,20 @@ to reset the database use. Useful if adjusting migrations and resetting the test
 ### Troubleshooting
 Using Chatgpt to generate some of this code based on the original java version. 
 
+**PostgreSQL JSONB Comparison Error**
+If you encounter: `PG::UndefinedFunction: ERROR: operator does not exist: json = unknown`
+This happens when using `find_or_create_by!` with JSONB columns. Solution: Use `find_by` for non-JSON fields first, then create if needed. Don't include JSONB fields in the `find_or_create_by!` matching criteria.
+
+Example fix:
+```ruby
+# WRONG - causes JSONB comparison error
+record = Model.find_or_create_by!(name: 'test', json_field: {})
+
+# RIGHT - avoids JSONB comparison
+record = Model.find_by(name: 'test')
+record ||= Model.create!(name: 'test', json_field: {})
+``` 
+
 ### testing
 set this first before running migrations
 bin/rails db:environment:set RAILS_ENV=test
