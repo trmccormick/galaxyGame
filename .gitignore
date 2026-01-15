@@ -1,5 +1,11 @@
 .DS_Store
 
+# Backup files
+*.old
+*.old2
+*.bak
+*.backup
+
 # Exclude root-level data directory (production/development data)
 /data/
 
