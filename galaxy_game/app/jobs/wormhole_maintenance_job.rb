@@ -30,6 +30,13 @@ class WormholeMaintenanceJob
 
     contract['link_registry'].each do |link|
       tax = link['stability_metrics']['maintenance_tax_em'].to_f
+      
+      # Apply Sabatier offset if active (reduces tax by 40% for local fuel production)
+      if link['logistics'] && link['logistics']['sabatier_offset_active']
+        tax *= 0.6  # 40% reduction
+        Rails.logger.info "[WormholeMaintenance] Applied Sabatier offset to #{link['link_id']}: tax reduced to #{tax}"
+      end
+      
       environment = link['environment']
 
       if environment == 'Cold_Start'
