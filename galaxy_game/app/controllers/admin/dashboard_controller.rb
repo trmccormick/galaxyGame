@@ -5,7 +5,7 @@ module Admin
   # Main control center for game administration and AI testing
   class DashboardController < ApplicationController
     def index
-      @celestial_bodies = CelestialBody.includes(:solar_system)
+      @celestial_bodies = CelestialBodies::CelestialBody.includes(:solar_system)
                                        .order('solar_systems.name, celestial_bodies.name')
                                        .limit(50)
       
@@ -17,7 +17,7 @@ module Admin
 
     def calculate_system_stats
       {
-        total_bodies: CelestialBody.count,
+        total_bodies: CelestialBodies::CelestialBody.count,
         total_systems: SolarSystem.count,
         habitable_bodies: count_habitable_bodies,
         active_simulations: 0, # TODO: Implement simulation tracking
@@ -28,7 +28,7 @@ module Admin
 
     def count_habitable_bodies
       # Count bodies with atmosphere and acceptable temperature
-      CelestialBody.joins(:atmosphere)
+      CelestialBodies::CelestialBody.joins(:atmosphere)
                    .where('surface_temperature > ? AND surface_temperature < ?', 250, 350)
                    .count
     rescue StandardError
