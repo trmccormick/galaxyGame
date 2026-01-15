@@ -1,0 +1,105 @@
+{
+  "mission_id": "super_mars_l1_depot_establishment",
+  "mission_name": "Super-Mars L1 Depot Network Establishment",
+  "target_system": "AC-01",
+  "target_body": "AC-B1",
+  "mission_type": "infrastructure_deployment",
+  "priority": "high",
+  "description": "Establish L1 depot network around Alpha Centauri B-1 (Super-Mars) using Phobos Pattern asteroid relocation and conversion",
+
+  "objectives": [
+    {
+      "id": "asteroid_survey",
+      "description": "Survey and select 3 Phobos-class asteroids (1.0-2.0 × 10^16 kg) from AC-01 asteroid belt",
+      "estimated_duration_hours": 24,
+      "required_resources": {
+        "crew": 2,
+        "fuel": 100
+      }
+    },
+    {
+      "id": "tug_deployment",
+      "description": "Deploy Asteroid Relocation Tugs for mass relocation operations",
+      "estimated_duration_hours": 12,
+      "required_resources": {
+        "tugs": 3,
+        "fuel": 500
+      }
+    },
+    {
+      "id": "l1_positioning",
+      "description": "Position asteroids at AC-B1 L1 Lagrange point using slag propulsion",
+      "estimated_duration_hours": 168,
+      "required_resources": {
+        "propellant_mass_reduction": "90%",
+        "navigation_systems": "precision_guidance"
+      }
+    },
+    {
+      "id": "depot_conversion",
+      "description": "Convert hollowed asteroids into orbital depots to avoid material imports",
+      "estimated_duration_hours": 240,
+      "required_resources": {
+        "construction_crew": 10,
+        "power_generation": "nuclear_fusion"
+      }
+    }
+  ],
+
+  "asteroid_candidates": [
+    {
+      "id": "AC-AST-001",
+      "mass_kg": 1.5e16,
+      "composition": "stony_iron",
+      "distance_from_target_au": 0.8,
+      "estimated_hollowing_time_hours": 72
+    },
+    {
+      "id": "AC-AST-002",
+      "mass_kg": 1.8e16,
+      "composition": "carbonaceous",
+      "distance_from_target_au": 1.2,
+      "estimated_hollowing_time_hours": 84
+    },
+    {
+      "id": "AC-AST-003",
+      "mass_kg": 1.2e16,
+      "composition": "metallic",
+      "distance_from_target_au": 0.6,
+      "estimated_hollowing_time_hours": 60
+    }
+  ],
+
+  "logistics": {
+    "slag_propulsion_economy": {
+      "fuel_cost_reduction": "90%",
+      "reaction_mass_source": "hollowing_slag",
+      "efficiency_gain": "high"
+    },
+    "depot_capabilities": {
+      "storage_volume_m3": 100000,
+      "processing_capacity_tons_day": 500,
+      "crew_capacity": 25,
+      "power_generation_mw": 50
+    }
+  },
+
+  "expected_outcomes": {
+    "tax_reduction": "752.5 → 451.5 EM/hour (40% via Sabatier + ballast)",
+    "depot_network": "3 operational L1 depots",
+    "settlement_capacity": "Super-Mars colonization infrastructure",
+    "economic_impact": "Enable Alpha Centauri B system development"
+  },
+
+  "risks": {
+    "asteroid_stability": "Monitor structural integrity during hollowing",
+    "navigation_precision": "L1 point requires high-precision orbital mechanics",
+    "resource_availability": "Ensure slag economy supplies sufficient reaction mass"
+  },
+
+  "metadata": {
+    "created_date": "2026-01-15",
+    "pattern": "Phobos_Pattern_L1_Depot",
+    "integration": "Super-Mars_Settlement_Infrastructure"
+  }
+}

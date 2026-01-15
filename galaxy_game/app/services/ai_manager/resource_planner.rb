@@ -221,5 +221,17 @@ module AIManager
       Rails.logger.info "[ResourcePlanner] Prioritizing energy allocation for #{gas_type} generation"
       # Implementation: adjust energy allocation for gas generation systems
     end
+
+    def apply_slag_propulsion_economy(resource_plan)
+      # Apply 90% propellant mass reduction for asteroid relocation operations
+      if resource_plan[:procurement_method] == 'asteroid_relocation'
+        original_fuel = resource_plan[:fuel_requirement] || 1000  # default assumption
+        reduced_fuel = original_fuel * 0.1  # 90% reduction
+        resource_plan[:fuel_requirement] = reduced_fuel
+        resource_plan[:slag_economy_applied] = true
+        Rails.logger.info "[ResourcePlanner] Applied slag propulsion economy: fuel reduced from #{original_fuel} to #{reduced_fuel} units"
+      end
+      resource_plan
+    end
   end
 end
