@@ -14,6 +14,7 @@ class Game
     # Handle fractional days by converting to integer iterations
     # Process the whole game tick for the entire duration at once
     process_settlements(days)
+    process_manufacturing_jobs(days)
     process_free_crafts(days)
     
     @elapsed_time += days
@@ -48,10 +49,7 @@ class Game
         craft.process_tick(time_skipped, settlement: settlement)
       end
 
-      # 4. Process manufacturing jobs
-      process_manufacturing_jobs(time_skipped)
-
-      # 5. Manage shared services (power, data, robots, etc.)
+      # 4. Manage shared services (power, data, robots, etc.)
       settlement.manage_shared_services!(time_skipped)
     end
   end
@@ -80,15 +78,15 @@ class Game
     hours_elapsed = time_skipped * 24
     
     # Process material processing jobs
-    MaterialProcessingJob.active.each do |job|
-      job.process_tick(hours_elapsed)
-    end
+    # MaterialProcessingJob.active.each do |job|
+    #   job.process_tick(hours_elapsed)
+    # end
     
     # Process component production jobs
     ComponentProductionJob.active.each do |job|
       job.process_tick(hours_elapsed)
       
-      if job.reload.status == 'completed'
+      if job.status == 'completed'
         settlement = job.settlement
         service = Manufacturing::ComponentProductionService.new(settlement)
         service.complete_job(job)
@@ -96,14 +94,14 @@ class Game
     end
     
     # Process shell printing jobs (NEW!)
-    ShellPrintingJob.active.each do |job|
-      job.process_tick(hours_elapsed)
+    # ShellPrintingJob.active.each do |job|
+    #   job.process_tick(hours_elapsed)
       
-      if job.reload.status == 'completed'
-        settlement = job.settlement
-        service = Manufacturing::ShellPrintingService.new(settlement)
-        service.complete_job(job)
-      end
-    end
+    #   if job.reload.status == 'completed'
+    #     settlement = job.settlement
+    #     service = Manufacturing::ShellPrintingService.new(settlement)
+    #     service.complete_job(job)
+    #   end
+    # end
   end
 end

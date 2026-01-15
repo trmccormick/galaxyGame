@@ -99,6 +99,15 @@ module CelestialBodies
       {} # Default empty, overridden in SolidBodyConcern
     end
 
+    def atmospheric_composition
+      # Get composition from associated Atmosphere model
+      if atmosphere&.gases.present?
+        atmosphere.gases.pluck(:name, :percentage).to_h
+      else
+        {}
+      end
+    end
+
     def calculate_pressure
       return nil unless atmosphere&.gases.present?
       # Pressure calculation based on current atmospheric composition

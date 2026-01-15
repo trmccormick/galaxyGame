@@ -48,6 +48,9 @@ Rails.application.routes.draw do
 
   # Admin namespace for testing and monitoring
   namespace :admin do
+    root 'dashboard#index'        # Admin dashboard home
+    get 'dashboard', to: 'dashboard#index'
+    
     resources :celestial_bodies, only: [] do
       member do
         get :monitor                 # Main monitoring interface
