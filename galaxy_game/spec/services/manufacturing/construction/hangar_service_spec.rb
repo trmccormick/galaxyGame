@@ -98,7 +98,7 @@ RSpec.describe Manufacturing::Construction::HangarService, type: :service do
       
       construction_job = result[:construction_job]
       expect(construction_job).to be_present
-      expect(construction_job.job_type).to eq('hangar_construction')
+      expect(construction_job.job_type).to eq('access_point_conversion')
       expect(construction_job.status).to eq('materials_pending')
       expect(construction_job.jobable).to be_a(Structures::Hangar)
     end
@@ -169,7 +169,7 @@ RSpec.describe Manufacturing::Construction::HangarService, type: :service do
     let!(:construction_job) {
       job = ConstructionJob.new(
         jobable: hangar,
-        job_type: 'hangar_construction',
+        job_type: 'access_point_conversion',
         status: 'materials_pending',
         settlement: settlement
       )
@@ -232,7 +232,7 @@ RSpec.describe Manufacturing::Construction::HangarService, type: :service do
     let!(:construction_job) {
       job = ConstructionJob.new(
         jobable: hangar,
-        job_type: 'hangar_construction',
+        job_type: 'access_point_conversion',
         status: 'in_progress',
         settlement: settlement
       )

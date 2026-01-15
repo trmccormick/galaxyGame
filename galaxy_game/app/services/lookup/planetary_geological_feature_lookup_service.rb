@@ -19,6 +19,10 @@ module Lookup
       @features.find { |f| f['name']&.downcase == name.to_s.downcase }
     end
 
+    def find_by_id(id)
+      @features.find { |f| f['id'] == id.to_s || f['feature_id'] == id.to_s }
+    end
+
     def features_by_type(type)
       @features.select { |f| f['feature_type']&.downcase == type.to_s.downcase }
     end

@@ -34,7 +34,7 @@ class Manufacturing::Construction::HangarService
       # 4. Create the construction job
       construction_job = ConstructionJob.create!(
         jobable: hangar,
-        job_type: 'hangar_construction',
+        job_type: 'access_point_conversion',
         status: 'materials_pending',
         settlement: @settlement,
         target_values: {
