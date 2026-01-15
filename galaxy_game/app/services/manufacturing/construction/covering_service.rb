@@ -58,9 +58,6 @@ class Manufacturing::Construction::CoveringService
       # Update coverable status
       update_coverable_status('materials_requested', panel_type: @panel_type)
       
-      # Set panel_type on the coverable object
-      @coverable.panel_type = @panel_type
-      
       {
         success: true,
         message: "Construction scheduled for #{@panel_type}",
