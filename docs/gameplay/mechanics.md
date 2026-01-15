@@ -4,6 +4,10 @@
 
 Galaxy Game is a space colonization simulation where players establish and manage interplanetary infrastructure. The game focuses on resource management, technological advancement, and economic optimization across multiple celestial bodies.
 
+## Game Initialization
+
+Upon first startup, the game automatically initializes the Sol solar system with core celestial bodies (Sun, Earth, Moon, Mars, Jupiter, etc.) using the SystemBuilderService. The game state begins in year 0, day 0, with time paused. Players can then start the simulation clock and begin exploration and development activities.
+
 ## Core Game Loop
 
 ### 1. Exploration Phase

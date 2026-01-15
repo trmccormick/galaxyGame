@@ -11,6 +11,8 @@ RSpec.describe GameController, type: :controller do
     allow_any_instance_of(Lookup::StarSystemLookupService).to receive(:fetch).and_return({ name: 'Sol', id: 'sol' })
   end
 
+  before { GameState.delete_all }
+
   describe "GET #index" do
     it "initializes a game state if none exists" do
       GameState.delete_all
@@ -20,7 +22,7 @@ RSpec.describe GameController, type: :controller do
     end
 
     it "uses an existing game state if one exists" do
-      existing_state = GameState.create!(year: 0, day: 0, running: false, last_updated_at: Time.current, speed: 1)
+      existing_state = GameState.create!(id: 1, year: 0, day: 0, running: false, last_updated_at: Time.current, speed: 1)
       expect {
         get :index
       }.not_to change(GameState, :count)
@@ -28,19 +30,25 @@ RSpec.describe GameController, type: :controller do
     end
 
     it "updates time if game is running" do
-      game_state = GameState.create!(year: 1, day: 10, running: true, last_updated_at: 5.minutes.ago, speed: 3)
+      game_state = GameState.create!(id: 1, year: 1, day: 10, running: true, last_updated_at: 5.minutes.ago, speed: 3)
       get :index
       expect(assigns(:game_state).day).to be > 10
     end
 
     it "doesn't update time if game is not running" do
-      game_state = GameState.create!(year: 1, day: 10, running: false, speed: 3)
+      game_state = GameState.create!(id: 1, year: 1, day: 10, running: false, speed: 3)
       get :index
       expect(assigns(:game_state).day).to eq(10)
     end
 
     context "solar system seeding and display" do
-      let!(:sol_system) { FactoryBot.create(:solar_system, name: 'Sol', identifier: 'SOL-01') }
+      before do
+        CelestialBodies::Materials::Gas.delete_all
+        Atmosphere.delete_all
+        CelestialBodies::CelestialBody.delete_all
+        SolarSystem.delete_all
+      end
+      let!(:sol_system) { SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01') }
       let!(:sol_star) { FactoryBot.create(:star, name: 'Sol', identifier: 'SOL', solar_system: sol_system, type_of_star: 'G') }
       let!(:earth) { FactoryBot.create(:terrestrial_planet, name: 'Earth', identifier: 'EARTH-01', solar_system: sol_system, orbital_period: 365, surface_temperature: 288) }
       let!(:luna) { FactoryBot.create(:moon, name: 'Luna', identifier: 'LUNA-01', solar_system: sol_system, orbital_period: 27, parent_celestial_body: earth, surface_temperature: 250) }
@@ -72,7 +80,7 @@ RSpec.describe GameController, type: :controller do
         
         # Stub to actually create the solar system
         expect_any_instance_of(StarSim::SystemBuilderService).to receive(:build!).once do
-          FactoryBot.create(:solar_system, name: 'Sol', identifier: 'SOL-01')
+          SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01')
         end
         
         get :index
@@ -131,20 +139,21 @@ RSpec.describe GameController, type: :controller do
   end
 
   describe "POST #toggle_running" do
+    before { GameState.delete_all }
     it "toggles the running state from false to true" do
-      game_state = GameState.create!(running: false, year: 0, day: 0, last_updated_at: Time.current, speed: 1)
+      game_state = GameState.create!(id: 1, running: false, year: 0, day: 0, last_updated_at: Time.current, speed: 1)
       post :toggle_running
       expect(game_state.reload.running).to be true
     end
 
     it "toggles the running state from true to false" do
-      game_state = GameState.create!(running: true, year: 0, day: 0, last_updated_at: Time.current, speed: 1)
+      game_state = GameState.create!(id: 1, running: true, year: 0, day: 0, last_updated_at: Time.current, speed: 1)
       post :toggle_running
       expect(game_state.reload.running).to be false
     end
 
     it "returns JSON with the updated state" do
-      GameState.create!(running: false, year: 2, day: 45, last_updated_at: Time.current, speed: 1)
+      GameState.create!(id: 1, running: false, year: 2, day: 45, last_updated_at: Time.current, speed: 1)
       post :toggle_running
       json = JSON.parse(response.body)
       expect(json["running"]).to be true
@@ -154,14 +163,15 @@ RSpec.describe GameController, type: :controller do
   end
 
   describe "POST #set_speed" do
+    before { GameState.delete_all }
     it "updates the game speed" do
-      game_state = GameState.create!(speed: 3, year: 0, day: 0, running: false, last_updated_at: Time.current)
+      game_state = GameState.create!(id: 1, speed: 3, year: 0, day: 0, running: false, last_updated_at: Time.current)
       post :set_speed, params: { speed: 5 }
       expect(game_state.reload.speed).to eq(5)
     end
 
     it "clamps the speed value between 1 and 5" do
-      game_state = GameState.create!(speed: 3, year: 0, day: 0, running: false, last_updated_at: Time.current)
+      game_state = GameState.create!(id: 1, speed: 3, year: 0, day: 0, running: false, last_updated_at: Time.current)
       post :set_speed, params: { speed: 10 }
       expect(game_state.reload.speed).to eq(5)
       post :set_speed, params: { speed: 0 }
@@ -170,21 +180,22 @@ RSpec.describe GameController, type: :controller do
   end
 
   describe "POST #jump_time" do
+    before { GameState.delete_all }
     it "adds the specified number of days" do
-      game_state = GameState.create!(year: 1, day: 10, running: false, last_updated_at: Time.current, speed: 1)
+      game_state = GameState.create!(id: 1, year: 1, day: 10, running: false, last_updated_at: Time.current, speed: 1)
       post :jump_time, params: { days: 20 }
       expect(game_state.reload.day).to eq(30)
     end
 
     it "handles year rollover" do
-      game_state = GameState.create!(year: 1, day: 350, running: false, last_updated_at: Time.current, speed: 1)
+      game_state = GameState.create!(id: 1, year: 1, day: 350, running: false, last_updated_at: Time.current, speed: 1)
       post :jump_time, params: { days: 20 }
       expect(game_state.reload.year).to eq(2)
       expect(game_state.reload.day).to eq(5)
     end
 
     it "clamps days between 1 and 365" do
-      game_state = GameState.create!(year: 1, day: 10, running: false, last_updated_at: Time.current, speed: 1)
+      game_state = GameState.create!(id: 1, year: 1, day: 10, running: false, last_updated_at: Time.current, speed: 1)
       post :jump_time, params: { days: 500 }
       expect(game_state.reload.year).to eq(2)
       expect(game_state.reload.day).to eq(10)
@@ -192,8 +203,9 @@ RSpec.describe GameController, type: :controller do
   end
 
   describe "GET #state" do
+    before { GameState.delete_all }
     it "returns the current game state" do
-      GameState.create!(year: 3, day: 42, running: true, speed: 4, last_updated_at: Time.current)
+      GameState.create!(id: 1, year: 3, day: 42, running: true, speed: 4, last_updated_at: Time.current)
       get :state
       json = JSON.parse(response.body)
       expect(json["running"]).to be true
@@ -203,7 +215,7 @@ RSpec.describe GameController, type: :controller do
     end
 
     it "updates time if running" do
-      GameState.create!(year: 1, day: 10, running: true, last_updated_at: 5.minutes.ago, speed: 3)
+      GameState.create!(id: 1, year: 1, day: 10, running: true, last_updated_at: 5.minutes.ago, speed: 3)
       get :state
       json = JSON.parse(response.body)
       expect(json["time"]["day"]).to be > 10
@@ -238,7 +250,7 @@ RSpec.describe GameController, type: :controller do
       
       # Stub to actually create the solar system when build! is called
       allow_any_instance_of(StarSim::SystemBuilderService).to receive(:build!) do
-        FactoryBot.create(:solar_system, name: 'Sol', identifier: 'SOL-01')
+        SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01')
       end
       
       get :index
@@ -247,7 +259,7 @@ RSpec.describe GameController, type: :controller do
     end
 
     it "handles celestial bodies with no parent or atmosphere" do
-      sol_system = FactoryBot.create(:solar_system, name: 'Sol', identifier: 'SOL-01')
+      sol_system = SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01')
       planet = FactoryBot.create(:terrestrial_planet, name: 'Solo', identifier: 'SOLO-01', solar_system: sol_system, orbital_period: 365, surface_temperature: 288)
       # Explicitly remove atmosphere if present
       planet.atmosphere&.destroy
@@ -263,6 +275,7 @@ RSpec.describe GameController, type: :controller do
   end
 
   describe "private get_or_create_game_state" do
+    before { GameState.delete_all }
     it "creates a new game state if none exists" do
       GameState.delete_all
       controller.send(:get_or_create_game_state)
@@ -270,7 +283,7 @@ RSpec.describe GameController, type: :controller do
     end
 
     it "returns the existing game state if present" do
-      gs = GameState.create!(year: 2, day: 22, running: false, last_updated_at: Time.current, speed: 1)
+      gs = GameState.create!(id: 1, year: 2, day: 22, running: false, last_updated_at: Time.current, speed: 1)
       expect(controller.send(:get_or_create_game_state)).to eq(gs)
     end
   end
