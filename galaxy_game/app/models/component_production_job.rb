@@ -71,11 +71,15 @@ class ComponentProductionJob < ApplicationRecord
     
     self.progress_hours += hours_elapsed
     
-    # Always complete for testing
-    self.status = 'completed'
-    self.completed_at = Time.current
-    self.progress_hours = production_time_hours
-    save!
+    if progress_hours >= production_time_hours
+      # Mark as completed - service will finalize it
+      self.status = 'completed'
+      self.completed_at = Time.current
+      self.progress_hours = production_time_hours
+      save!
+    else
+      save!
+    end
   end
 
   private
