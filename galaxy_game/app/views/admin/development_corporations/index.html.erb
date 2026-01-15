@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DC Operations Monitor | Admin</title>
+  <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+  <style>
+    .dc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    
+    .dc-card {
+      background: #000;
+      border: 2px solid #0f0;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .dc-header {
+      color: #0ff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #0f0;
+      padding-bottom: 5px;
+    }
+    
+    .dc-stat {
+      color: #0f0;
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .dc-stat-label {
+      color: #0f0;
+    }
+    
+    .dc-stat-value {
+      color: #fff;
+      font-weight: bold;
+    }
+    
+    .settlement-list {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #0f0;
+    }
+    
+    .settlement-item {
+      color: #0f0;
+      margin: 3px 0;
+      font-size: 12px;
+    }
+    
+    .settlement-location {
+      color: #888;
+      margin-left: 10px;
+    }
+    
+    .contract-badge {
+      display: inline-block;
+      background: #0f0;
+      color: #000;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: bold;
+      border-radius: 3px;
+      margin-left: 5px;
+    }
+    
+    .view-details-btn {
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    .view-details-btn:hover {
+      background: #0ff;
+    }
+    
+    .stats-panel {
+      background: #000;
+      border: 2px solid #0f0;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    
+    .stat-box {
+      text-align: center;
+      border-right: 1px solid #0f0;
+    }
+    
+    .stat-box:last-child {
+      border-right: none;
+    }
+    
+    .stat-number {
+      color: #0ff;
+      font-size: 36px;
+      font-weight: bold;
+    }
+    
+    .stat-label {
+      color: #0f0;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="monitor-header">
+    <div class="header-left">
+      <h1>▼ DEVELOPMENT CORPORATIONS OPERATIONS</h1>
+      <div class="breadcrumb">
+        <%= link_to "ADMIN", admin_dashboard_path %> &gt; 
+        <span>DC OPERATIONS</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator">
+        <span class="blink">●</span> <%= Time.current.strftime("%Y-%m-%d %H:%M:%S UTC") %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Panel -->
+  <div class="stats-panel">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-number"><%= @total_dc_count %></div>
+        <div class="stat-label">ACTIVE CORPORATIONS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><%= @dc_settlements.values.flatten.count %></div>
+        <div class="stat-label">TOTAL SETTLEMENTS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><%= @active_contracts_count %></div>
+        <div class="stat-label">ACTIVE CONTRACTS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DC Cards Grid -->
+  <div class="dc-grid">
+    <% @development_corporations.each do |dc| %>
+      <div class="dc-card">
+        <div class="dc-header">
+          <%= dc.name %>
+          <span style="float: right; font-size: 12px; color: #888;"><%= dc.identifier %></span>
+        </div>
+        
+        <div class="dc-stat">
+          <span class="dc-stat-label">Type:</span>
+          <span class="dc-stat-value"><%= dc.organization_type.to_s.titleize %></span>
+        </div>
+        
+        <div class="dc-stat">
+          <span class="dc-stat-label">GCC Balance:</span>
+          <span class="dc-stat-value">
+            <%= number_to_human(dc.accounts.first&.balance || 0, precision: 2, units: { thousand: 'K', million: 'M', billion: 'B' }) %>
+          </span>
+        </div>
+        
+        <div class="dc-stat">
+          <span class="dc-stat-label">Settlements:</span>
+          <span class="dc-stat-value">
+            <%= @dc_settlements[dc.id]&.count || 0 %>
+          </span>
+        </div>
+        
+        <div class="dc-stat">
+          <span class="dc-stat-label">Active Contracts:</span>
+          <span class="dc-stat-value">
+            <%= (@active_contracts[dc.id] || []).count %>
+          </span>
+        </div>
+        
+        <% if @dc_settlements[dc.id].present? %>
+          <div class="settlement-list">
+            <div style="color: #0ff; font-size: 12px; margin-bottom: 5px;">BASES:</div>
+            <% @dc_settlements[dc.id].each do |settlement| %>
+              <div class="settlement-item">
+                ▸ <%= settlement.name %>
+                <% if settlement.location %>
+                  <span class="settlement-location">
+                    @ <%= settlement.location.celestial_body&.name || settlement.location.name %>
+                  </span>
+                  <% if settlement.location.celestial_body_id %>
+                    <%= link_to "[MONITOR]", admin_celestial_body_monitor_path(settlement.location.celestial_body_id), 
+                        style: "color: #0ff; font-size: 10px; margin-left: 5px; text-decoration: none;" %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <% if dc.description.present? %>
+          <div style="color: #888; font-size: 11px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
+            <%= dc.description %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    
+    <% if @development_corporations.empty? %>
+      <div class="dc-card">
+        <div class="dc-header" style="color: #f80;">NO DEVELOPMENT CORPORATIONS FOUND</div>
+        <div style="color: #888; margin-top: 10px;">
+          No development corporations have been initialized in the database.
+          Run the solar system setup rake tasks to create DCs.
+        </div>
+      </div>
+    <% end %>
+  </div>
+</body>
+</html>
