@@ -1,0 +1,60 @@
+{
+  "contract_name": "Wormhole Contract v1.2",
+  "active_anchors": [
+    {
+      "anchor_id": "SOL-CORE-01",
+      "status": "Primary",
+      "em_reserve": 50000.0,
+      "links": [
+        "AC-01",
+        "SYSTEM-A-01"
+      ]
+    }
+  ],
+  "link_registry": [
+    {
+      "link_id": "SOL-AC-01",
+      "type": "Targeted_Artificial",
+      "status": "stabilizing",
+      "origin": "SOL-CORE-01",
+      "destination": "AC-01",
+      "environment": "Cold_Start",
+      "stability_metrics": {
+        "residual_em": 0.0,
+        "maintenance_tax_em": 752.5,
+        "mass_limit_tons": 500000,
+        "current_hold_duration": "0h",
+        "mass_fatigue_limit": 1000000
+      },
+      "logistics": {
+        "fuel_bridge_active": true,
+        "supply_origin": "SOL-CORE-01",
+        "sabatier_offset_active": true
+      }
+    },
+    {
+      "link_id": "SOL-SYSA-01",
+      "type": "Natural_Scraped",
+      "status": "stabilizing",
+      "origin": "SOL-CORE-01",
+      "destination": "SYSTEM-A-01",
+      "environment": "Hot_Start",
+      "stability_metrics": {
+        "residual_em": 450.2,
+        "maintenance_tax_em": 25.0,
+        "mass_limit_tons": 100000,
+        "current_hold_duration": "48h",
+        "mass_fatigue_limit": 1000000
+      },
+      "logistics": {
+        "harvest_mode_active": true,
+        "target_em_extraction": 1000.0
+      }
+    }
+  ],
+  "global_em_economy": {
+    "total_harvested_em": 125000.0,
+    "current_burn_rate_em": 175.5,
+    "expansion_budget_em": 25000.0
+  }
+}
