@@ -46,12 +46,22 @@ Rails.application.routes.draw do
   require 'sidekiq/cron/web'
   mount Sidekiq::Web => '/sidekiq'
 
-  # Admin namespace for testing and monitoring
+  # Admin namespace for comprehensive monitoring and control
   namespace :admin do
     root 'dashboard#index'        # Admin dashboard home
     get 'dashboard', to: 'dashboard#index'
     
-    resources :celestial_bodies, only: [] do
+    # AI Manager routes
+    get 'ai_manager/missions', to: 'ai_manager#missions', as: 'ai_manager_missions'
+    get 'ai_manager/missions/:id', to: 'ai_manager#show_mission', as: 'ai_manager_mission'
+    post 'ai_manager/missions/:id/advance_phase', to: 'ai_manager#advance_phase', as: 'ai_manager_advance_phase'
+    post 'ai_manager/missions/:id/reset', to: 'ai_manager#reset_mission', as: 'ai_manager_reset_mission'
+    get 'ai_manager/decisions', to: 'ai_manager#decisions', as: 'ai_manager_decisions'
+    get 'ai_manager/patterns', to: 'ai_manager#patterns', as: 'ai_manager_patterns'
+    get 'ai_manager/performance', to: 'ai_manager#performance', as: 'ai_manager_performance'
+    
+    # Celestial Bodies routes
+    resources :celestial_bodies, only: [:index] do
       member do
         get :monitor                 # Main monitoring interface
         get :sphere_data            # JSON: Real-time sphere data
@@ -59,5 +69,28 @@ Rails.application.routes.draw do
         post :run_ai_test           # Trigger AI Manager test
       end
     end
+    
+    # Development Corporations routes
+    get 'development_corporations', to: 'development_corporations#index', as: 'development_corporations'
+    get 'development_corporations/:id/operations', to: 'development_corporations#operations', as: 'development_corporation_operations'
+    get 'development_corporations/contracts', to: 'development_corporations#contracts', as: 'development_corporation_contracts'
+    
+    # Settlements routes
+    get 'settlements', to: 'settlements#index', as: 'settlements'
+    get 'settlements/:id/details', to: 'settlements#details', as: 'settlement_details'
+    get 'settlements/construction_jobs', to: 'settlements#construction_jobs', as: 'settlement_construction_jobs'
+    
+    # Resources & Economy routes
+    get 'resources/flows', to: 'resources#flows', as: 'resource_flows'
+    get 'resources/supply_chains', to: 'resources#supply_chains', as: 'resource_supply_chains'
+    get 'resources/market', to: 'resources#market', as: 'resource_market'
+    
+    # Simulation Control routes
+    get 'simulation', to: 'simulation#index', as: 'simulation'
+    post 'simulation/run/:id', to: 'simulation#run', as: 'simulation_run'
+    post 'simulation/run_all', to: 'simulation#run_all', as: 'simulation_run_all'
+    get 'simulation/spheres', to: 'simulation#spheres', as: 'simulation_spheres'
+    get 'simulation/time_control', to: 'simulation#time_control', as: 'simulation_time_control'
+    get 'simulation/testing', to: 'simulation#testing', as: 'simulation_testing'
   end
 end

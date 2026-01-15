@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resources & Economy</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>RESOURCES & ECONOMY</h1>
+            <div id="planetInfo">
+                <%= link_to '← Admin Dashboard', admin_root_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>💰 RESOURCES</h3>
+                <%= link_to '📊 Resource Flows', admin_resource_flows_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
+                <%= link_to '⛓️ Supply Chains', admin_resource_supply_chains_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
+                <%= link_to '💱 Market Data', admin_resource_market_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
+            </div>
+        </div>
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <div class="tool-section">
+                <h3>🚧 COMING SOON</h3>
+                <p style="color: #888;">Resource flows, supply chain visualization, and market data monitoring will be implemented here.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

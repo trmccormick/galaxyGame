@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settlements</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>SETTLEMENTS & INFRASTRUCTURE</h1>
+            <div id="planetInfo">
+                <%= link_to '← Admin Dashboard', admin_root_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🏗️ SETTLEMENTS</h3>
+            </div>
+        </div>
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <div class="tool-section">
+                <h3>🚧 COMING SOON</h3>
+                <p style="color: #888;">Settlement monitoring, construction jobs, and infrastructure tracking will be implemented here.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

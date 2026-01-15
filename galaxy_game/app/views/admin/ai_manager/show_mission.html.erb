@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Mission: <%= @mission.identifier %></title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr 300px; grid-template-rows: 80px 1fr;">
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>MISSION: <%= @mission.identifier.upcase %></h1>
+            <div id="planetInfo">
+                Settlement: <%= @mission.settlement&.name || 'N/A' %> | 
+                Status: <span style="color: <%= @mission.status == 'in_progress' ? '#0ff' : @mission.status == 'completed' ? '#0f0' : '#f00' %>;"><%= @mission.status.titleize %></span> | 
+                Progress: <%= @mission.progress %>% |
+                <%= link_to '← Back to Missions', admin_ai_manager_missions_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Controls -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>⚙️ MISSION CONTROLS</h3>
+                <%= button_to '⏭️ Advance Phase', admin_ai_manager_advance_phase_path(@mission), method: :post, class: 'tool-button', style: 'background: #0f0; color: #000; font-weight: bold;' %>
+                <%= button_to '🔄 Reset Mission', admin_ai_manager_reset_mission_path(@mission), method: :post, data: { confirm: 'Reset mission to beginning?' }, class: 'tool-button', style: 'background: #333; color: #f80;' %>
+            </div>
+            
+            <div class="tool-section">
+                <h3>📊 MISSION INFO</h3>
+                <div style="font-size: 11px; color: #888;">
+                    <div style="margin: 5px 0;">
+                        <span>Type:</span>
+                        <span style="color: #0f0; float: right;"><%= @mission.mission_type || 'N/A' %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>Total Tasks:</span>
+                        <span style="color: #0f0; float: right;"><%= @task_list.length %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>Current Task:</span>
+                        <span style="color: #0ff; float: right;"><%= @current_task_index + 1 %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>Created:</span>
+                        <span style="color: #0f0; float: right;"><%= @mission.created_at.strftime('%Y-%m-%d') %></span>
+                    </div>
+                    <% if @mission.completion_date %>
+                    <div style="margin: 5px 0;">
+                        <span>Completed:</span>
+                        <span style="color: #0f0; float: right;"><%= @mission.completion_date.strftime('%Y-%m-%d') %></span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+            
+            <% if @manifest %>
+            <div class="tool-section">
+                <h3>📋 MANIFEST DATA</h3>
+                <div style="font-size: 10px; color: #888;">
+                    <% if @manifest['target_location'] %>
+                    <div style="margin: 5px 0;">
+                        <span>Target:</span>
+                        <span style="color: #0ff; float: right;"><%= @manifest['target_location']['body'] %></span>
+                    </div>
+                    <% end %>
+                    <% if @manifest['mission_objective'] %>
+                    <div style="margin: 5px 0; padding-top: 5px; border-top: 1px solid #333;">
+                        <span style="color: #0f0;">Objective:</span>
+                        <div style="color: #888; margin-top: 3px; font-size: 9px;">
+                            <%= @manifest['mission_objective'] %>
+                        </div>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+            <% end %>
+        </div>
+        
+        <!-- Main Content: Task Breakdown -->
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <div class="tool-section">
+                <h3>📝 TASK BREAKDOWN</h3>
+                <div style="margin-top: 15px;">
+                    <% @task_list.each_with_index do |task, index| %>
+                        <div class="tool-section" style="margin: 10px 0; <%= index == @current_task_index ? 'border-color: #0ff; background: #003333;' : index < @current_task_index ? 'border-color: #0f0; opacity: 0.6;' : '' %>">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <h4 style="color: <%= index == @current_task_index ? '#0ff' : index < @current_task_index ? '#0f0' : '#888' %>; font-size: 12px; margin: 0;">
+                                    Task <%= index + 1 %>: <%= task['task_id'] %>
+                                </h4>
+                                <span style="color: <%= index == @current_task_index ? '#0ff' : index < @current_task_index ? '#0f0' : '#666' %>; font-size: 10px;">
+                                    <%= index == @current_task_index ? '▶️ CURRENT' : index < @current_task_index ? '✅ DONE' : '⏸️ PENDING' %>
+                                </span>
+                            </div>
+                            
+                            <div style="font-size: 11px; color: #888; margin-bottom: 10px;">
+                                <%= task['description'] %>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;">
+                                <% if task['type'] %>
+                                <div class="data-row">
+                                    <span class="data-label">Type:</span>
+                                    <span class="data-value"><%= task['type'] %></span>
+                                </div>
+                                <% end %>
+                                
+                                <% if task['resource'] %>
+                                <div class="data-row">
+                                    <span class="data-label">Resource:</span>
+                                    <span class="data-value"><%= task['resource'] %></span>
+                                </div>
+                                <% end %>
+                                
+                                <% if task['quantity'] %>
+                                <div class="data-row">
+                                    <span class="data-label">Quantity:</span>
+                                    <span class="data-value"><%= task['quantity'] %></span>
+                                </div>
+                                <% end %>
+                                
+                                <% if task['craft_type'] %>
+                                <div class="data-row">
+                                    <span class="data-label">Craft Type:</span>
+                                    <span class="data-value"><%= task['craft_type'] %></span>
+                                </div>
+                                <% end %>
+                                
+                                <% if task['facility_type'] %>
+                                <div class="data-row">
+                                    <span class="data-label">Facility:</span>
+                                    <span class="data-value"><%= task['facility_type'] %></span>
+                                </div>
+                                <% end %>
+                            </div>
+                            
+                            <% if task['dependencies']&.any? %>
+                            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #333;">
+                                <span style="color: #666; font-size: 10px;">Dependencies: <%= task['dependencies'].join(', ') %></span>
+                            </div>
+                            <% end %>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Console Log -->
+        <div id="toolPanel" style="border-left: 2px solid #0f0; border-right: none;">
+            <div class="tool-section">
+                <h3>🖥️ EXECUTION CONSOLE</h3>
+                <div id="consoleLog" style="max-height: 600px; overflow-y: auto; font-size: 10px; color: #0f0; font-family: 'Courier New', monospace; background: #000; padding: 10px;">
+                    <% if flash[:notice] %>
+                        <div style="color: #0f0; margin: 5px 0; padding: 5px; background: #003300; border-left: 2px solid #0f0;">
+                            ✓ <%= flash[:notice] %>
+                        </div>
+                    <% end %>
+                    <% if flash[:alert] %>
+                        <div style="color: #f00; margin: 5px 0; padding: 5px; background: #330000; border-left: 2px solid #f00;">
+                            ✗ <%= flash[:alert] %>
+                        </div>
+                    <% end %>
+                    
+                    <div style="color: #0ff; margin: 10px 0;">
+                        === MISSION: <%= @mission.identifier %> ===
+                    </div>
+                    <div style="color: #888;">
+                        Status: <%= @mission.status.titleize %>
+                    </div>
+                    <div style="color: #888;">
+                        Progress: <%= @mission.progress %>%
+                    </div>
+                    <div style="color: #888;">
+                        Current Task: <%= @current_task_index + 1 %>/<%= @task_list.length %>
+                    </div>
+                    <div style="color: #0f0; margin-top: 10px;">
+                        System ready for task execution...
+                    </div>
+                    
+                    <% if @mission.operational_data.present? %>
+                    <div style="color: #0ff; margin-top: 15px; padding-top: 10px; border-top: 1px solid #333;">
+                        Operational Data:
+                    </div>
+                    <div style="color: #888; font-size: 9px; margin-top: 5px;">
+                        <%= JSON.pretty_generate(@mission.operational_data) %>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
