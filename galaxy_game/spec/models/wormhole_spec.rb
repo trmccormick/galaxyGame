@@ -17,7 +17,7 @@ RSpec.describe Wormhole, type: :model do
     )
     
     # Create endpoints with the locationable association
-    SpatialLocation.create!(
+    Location::SpatialLocation.create!(
       name: "Test Endpoint A",
       spatial_context: system_a,
       locationable: w,  # Use the polymorphic association
@@ -26,7 +26,7 @@ RSpec.describe Wormhole, type: :model do
       z_coordinate: 0
     )
     
-    SpatialLocation.create!(
+    Location::SpatialLocation.create!(
       name: "Test Endpoint B",
       spatial_context: system_b,
       locationable: w,  # Use the polymorphic association
@@ -41,7 +41,7 @@ RSpec.describe Wormhole, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:solar_system_a).class_name('SolarSystem') }
     it { is_expected.to belong_to(:solar_system_b).class_name('SolarSystem') }
-    it { is_expected.to have_many(:endpoints).class_name('SpatialLocation').dependent(:destroy) }
+    it { is_expected.to have_many(:endpoints).class_name('Location::SpatialLocation').dependent(:destroy) }
     it { is_expected.to have_many(:stabilizers)
                         .class_name('Craft::BaseCraft')
                         .with_foreign_key('stabilizing_wormhole_id')
@@ -275,7 +275,7 @@ RSpec.describe Wormhole, type: :model do
                   mass_limit: 1000)
         
         # Create endpoints with different coordinates - use locationable not wormhole
-        SpatialLocation.create!(
+        Location::SpatialLocation.create!(
           name: "One Way Endpoint A",
           spatial_context: system_a,
           locationable: w,  # FIXED: Use locationable not wormhole
@@ -284,7 +284,7 @@ RSpec.describe Wormhole, type: :model do
           z_coordinate: 5
         )
         
-        SpatialLocation.create!(
+        Location::SpatialLocation.create!(
           name: "One Way Endpoint B",
           spatial_context: system_b,
           locationable: w,  # FIXED: Use locationable not wormhole
