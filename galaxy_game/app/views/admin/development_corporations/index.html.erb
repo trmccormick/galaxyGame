@@ -143,91 +143,77 @@
     <div class="stats-grid">
       <div class="stat-box">
         <div class="stat-number"><%= @total_dc_count %></div>
-        <div class="stat-label">ACTIVE CORPORATIONS</div>
+        <div class="stat-label">DEVELOPMENT CORPS</div>
       </div>
       <div class="stat-box">
-        <div class="stat-number"><%= @dc_settlements.values.flatten.count %></div>
-        <div class="stat-label">TOTAL SETTLEMENTS</div>
+        <div class="stat-number"><%= @total_corp_count %></div>
+        <div class="stat-label">SERVICE CORPS</div>
       </div>
       <div class="stat-box">
-        <div class="stat-number"><%= @active_contracts_count %></div>
-        <div class="stat-label">ACTIVE CONTRACTS</div>
+        <div class="stat-number"><%= @total_consortium_count %></div>
+        <div class="stat-label">CONSORTIUMS</div>
       </div>
     </div>
   </div>
 
-  <!-- DC Cards Grid -->
-  <div class="dc-grid">
-    <% @development_corporations.each do |dc| %>
-      <div class="dc-card">
-        <div class="dc-header">
-          <%= dc.name %>
-          <span style="float: right; font-size: 12px; color: #888;"><%= dc.identifier %></span>
-        </div>
-        
-        <div class="dc-stat">
-          <span class="dc-stat-label">Type:</span>
-          <span class="dc-stat-value"><%= dc.organization_type.to_s.titleize %></span>
-        </div>
-        
-        <div class="dc-stat">
-          <span class="dc-stat-label">GCC Balance:</span>
-          <span class="dc-stat-value">
-            <%= number_to_human(dc.accounts.first&.balance || 0, precision: 2, units: { thousand: 'K', million: 'M', billion: 'B' }) %>
-          </span>
-        </div>
-        
-        <div class="dc-stat">
-          <span class="dc-stat-label">Settlements:</span>
-          <span class="dc-stat-value">
-            <%= @dc_settlements[dc.id]&.count || 0 %>
-          </span>
-        </div>
-        
-        <div class="dc-stat">
-          <span class="dc-stat-label">Active Contracts:</span>
-          <span class="dc-stat-value">
-            <%= (@active_contracts[dc.id] || []).count %>
-          </span>
-        </div>
-        
-        <% if @dc_settlements[dc.id].present? %>
-          <div class="settlement-list">
-            <div style="color: #0ff; font-size: 12px; margin-bottom: 5px;">BASES:</div>
-            <% @dc_settlements[dc.id].each do |settlement| %>
-              <div class="settlement-item">
-                ▸ <%= settlement.name %>
-                <% if settlement.location %>
-                  <span class="settlement-location">
-                    @ <%= settlement.location.celestial_body&.name || settlement.location.name %>
-                  </span>
-                  <% if settlement.location.celestial_body_id %>
-                    <%= link_to "[MONITOR]", admin_celestial_body_monitor_path(settlement.location.celestial_body_id), 
-                        style: "color: #0ff; font-size: 10px; margin-left: 5px; text-decoration: none;" %>
-                  <% end %>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-        
-        <% if dc.description.present? %>
-          <div style="color: #888; font-size: 11px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
-            <%= dc.description %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+  <!-- Development Corporations Section -->
+  <% if @development_corporations.any? %>
+    <div style="padding: 20px; border-bottom: 2px solid #0f0;">
+      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ DEVELOPMENT CORPORATIONS</h2>
+      <div style="color: #888; font-size: 12px;">Planet-focused infrastructure and ISRU operations</div>
+    </div>
     
-    <% if @development_corporations.empty? %>
+    <div class="dc-grid">
+      <% @development_corporations.each do |dc| %>
+        <%= render partial: 'org_card', locals: { org: dc, settlements: @settlements_by_org[dc.id] || [], contracts: (@active_contracts[dc.id] || []).count } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Service Corporations Section -->
+  <% if @corporations.any? %>
+    <div style="padding: 20px; border-bottom: 2px solid #0f0; margin-top: 20px;">
+      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ LOGISTICS & SERVICE CORPORATIONS</h2>
+      <div style="color: #888; font-size: 12px;">Orbital logistics, transport, and station operations</div>
+    </div>
+    
+    <div class="dc-grid">
+      <% @corporations.each do |corp| %>
+        <%= render partial: 'org_card', locals: { org: corp, settlements: @settlements_by_org[corp.id] || [], contracts: (@active_contracts[corp.id] || []).count } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Consortiums Section -->
+  <% if @consortiums.any? %>
+    <div style="padding: 20px; border-bottom: 2px solid #0f0; margin-top: 20px;">
+      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ CONSORTIUMS</h2>
+      <div style="color: #888; font-size: 12px;">Multi-corporate collaborative entities</div>
+    </div>
+    
+    <div class="dc-grid">
+      <% @consortiums.each do |consortium| %>
+        <%= render partial: 'org_card', locals: { org: consortium, settlements: @settlements_by_org[consortium.id] || [], contracts: (@active_contracts[consortium.id] || []).count } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Empty State -->
+  <% if @development_corporations.empty? && @corporations.empty? && @consortiums.empty? %>
+    <div class="dc-grid">
+  <!-- Empty State -->
+  <% if @development_corporations.empty? && @corporations.empty? && @consortiums.empty? %>
+    <div class="dc-grid">
       <div class="dc-card">
-        <div class="dc-header" style="color: #f80;">NO DEVELOPMENT CORPORATIONS FOUND</div>
+        <div class="dc-header" style="color: #f80;">NO ORGANIZATIONS FOUND</div>
         <div style="color: #888; margin-top: 10px;">
-          No development corporations have been initialized in the database.
-          Run the solar system setup rake tasks to create DCs.
+          No organizations have been initialized in the database.
+          Run <span style="color: #0f0;">rails db:seed</span> to create initial corporations.
         </div>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
+</body>
+</html>
 </body>
 </html>

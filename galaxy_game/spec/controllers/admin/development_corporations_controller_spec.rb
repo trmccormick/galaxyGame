@@ -11,20 +11,28 @@ RSpec.describe Admin::DevelopmentCorporationsController, type: :controller do
       )
     end
     
-    let!(:mdc) do
+    let!(:astrolift) do
       Organizations::BaseOrganization.create!(
-        name: 'Mars Development Corporation',
-        identifier: 'MDC',
-        organization_type: :development_corporation,
-        operational_data: { 'is_npc' => true }
+        name: 'AstroLift',
+        identifier: 'ASTROLIFT',
+        organization_type: :corporation,
+        operational_data: { 'is_npc' => true, 'specialization' => 'orbital_logistics' }
+      )
+    end
+    
+    let!(:consortium) do
+      Organizations::BaseOrganization.create!(
+        name: 'Wormhole Transit Consortium',
+        identifier: 'WH-CONSORTIUM',
+        organization_type: :consortium
       )
     end
     
     let!(:settlement1) { create(:base_settlement, owner: ldc, name: 'Lunar Base Alpha') }
-    let!(:settlement2) { create(:base_settlement, owner: mdc, name: 'Mars Outpost One') }
+    let!(:settlement2) { create(:base_settlement, owner: astrolift, name: 'LEO Depot One') }
     
     before do
-      # Create accounts for DCs (use existing GCC currency)
+      # Create accounts for organizations (use existing GCC currency)
       gcc = Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
         c.name = 'Galactic Credit'
       end
@@ -35,24 +43,41 @@ RSpec.describe Admin::DevelopmentCorporationsController, type: :controller do
         balance: 1_000_000
       )
       Financial::Account.create!(
-        accountable: mdc,
+        accountable: astrolift,
         currency: gcc,
-        balance: 2_000_000
+        balance: 500_000
+      )
+      Financial::Account.create!(
+        accountable: consortium,
+        currency: gcc,
+        balance: 10_000_000
       )
     end
     
-    it "loads all development corporations" do
+    it "loads development corporations" do
       get :index
       expect(response).to have_http_status(:success)
-      expect(assigns(:development_corporations)).to include(ldc, mdc)
-      expect(assigns(:total_dc_count)).to eq(2)
+      expect(assigns(:development_corporations)).to include(ldc)
+      expect(assigns(:total_dc_count)).to eq(1)
     end
     
-    it "groups settlements by DC owner" do
+    it "loads service corporations" do
       get :index
-      dc_settlements = assigns(:dc_settlements)
-      expect(dc_settlements[ldc.id]).to include(settlement1)
-      expect(dc_settlements[mdc.id]).to include(settlement2)
+      expect(assigns(:corporations)).to include(astrolift)
+      expect(assigns(:total_corp_count)).to eq(1)
+    end
+    
+    it "loads consortiums" do
+      get :index
+      expect(assigns(:consortiums)).to include(consortium)
+      expect(assigns(:total_consortium_count)).to eq(1)
+    end
+    
+    it "groups settlements by organization owner" do
+      get :index
+      settlements_by_org = assigns(:settlements_by_org)
+      expect(settlements_by_org[ldc.id]).to include(settlement1)
+      expect(settlements_by_org[astrolift.id]).to include(settlement2)
     end
     
     it "counts active contracts" do

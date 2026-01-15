@@ -20,44 +20,48 @@ gcc_currency = Financial::Currency.find_or_create_by!(
   precision: 8
 )
 
-# Create initial corporations
-puts "Creating initial corporations..."
+# Create Development Corporations (planet-focused development)
+puts "Creating Development Corporations..."
 ldc = Organizations::BaseOrganization.find_or_create_by!(
   name: 'Lunar Development Corporation',
   identifier: 'LDC',
-  organization_type: :corporation
-)
+  organization_type: :development_corporation,
+  description: 'Lunar infrastructure and ISRU operations'
+) do |org|
+  org.operational_data = { 'is_npc' => true }
+end
 
+# Create logistics and service corporations
+puts "Creating logistics corporations..."
 astrolift = Organizations::BaseOrganization.find_or_create_by!(
   name: 'AstroLift',
   identifier: 'ASTROLIFT',
-  organization_type: :corporation
-)
+  organization_type: :corporation,
+  description: 'Orbital logistics and LEO depot operations'
+) do |org|
+  org.operational_data = { 'is_npc' => true, 'specialization' => 'orbital_logistics' }
+end
 
 zenith = Organizations::BaseOrganization.find_or_create_by!(
   name: 'Zenith Orbital',
   identifier: 'ZENITH',
-  organization_type: :corporation
-)
+  organization_type: :corporation,
+  description: 'Orbital station construction and management'
+) do |org|
+  org.operational_data = { 'is_npc' => true, 'specialization' => 'station_construction' }
+end
 
 vector = Organizations::BaseOrganization.find_or_create_by!(
   name: 'Vector Hauling',
   identifier: 'VECTOR',
-  organization_type: :corporation
-)
-
-# Create Wormhole Transit Consortium
-consortium = Organizations::BaseOrganization.find_by(
-  name: 'Wormhole Transit Consortium',
-  identifier: 'WH-CONSORTIUM',
-  organization_type: :consortium
-)
-
-if consortium.nil?
-  consortium = Organizations::BaseOrganization.create!(
-    name: 'Wormhole Transit Consortium',
-    identifier: 'WH-CONSORTIUM',
-    organization_type: :consortium,
-    operational_data: {}
-  )
+  organization_type: :corporation,
+  description: 'Interplanetary cargo transport'
+) do |org|
+  org.operational_data = { 'is_npc' => true, 'specialization' => 'cargo_transport' }
 end
+
+# Note: Wormhole Transit Consortium is NOT created during initial seed
+# It will be formed later during the "Snap Event" storyline when access to 
+# the first extrasolar system is lost, forcing LDC and AstroLift to collaborate
+# on artificial wormhole technology
+puts "Note: Wormhole Transit Consortium will be created during Snap Event storyline"

@@ -1,0 +1,81 @@
+<div class="dc-card">
+  <div class="dc-header">
+    <% logo_path = "logos/#{org.identifier}.png" %>
+    <% if image_path(logo_path, skip_pipeline: true) rescue false %>
+      <div style="text-align: center; margin-bottom: 10px;">
+        <%= image_tag logo_path, style: "max-width: 150px; max-height: 80px; margin: 0 auto;", alt: org.name %>
+      </div>
+    <% end %>
+    <%= org.name %>
+    <span style="float: right; font-size: 12px; color: #888;"><%= org.identifier %></span>
+  </div>
+  
+  <div class="dc-stat">
+    <span class="dc-stat-label">Type:</span>
+    <span class="dc-stat-value"><%= org.organization_type.to_s.titleize %></span>
+  </div>
+  
+  <% if org.operational_data && org.operational_data['specialization'] %>
+    <div class="dc-stat">
+      <span class="dc-stat-label">Specialization:</span>
+      <span class="dc-stat-value"><%= org.operational_data['specialization'].to_s.humanize %></span>
+    </div>
+  <% end %>
+  
+  <div class="dc-stat">
+    <span class="dc-stat-label">GCC Balance:</span>
+    <span class="dc-stat-value">
+      <%= number_to_human(org.accounts.first&.balance || 0, precision: 2, units: { thousand: 'K', million: 'M', billion: 'B' }) %>
+    </span>
+  </div>
+  
+  <div class="dc-stat">
+    <span class="dc-stat-label">Settlements:</span>
+    <span class="dc-stat-value">
+      <%= settlements.count %>
+    </span>
+  </div>
+  
+  <div class="dc-stat">
+    <span class="dc-stat-label">Active Contracts:</span>
+    <span class="dc-stat-value">
+      <%= contracts %>
+    </span>
+  </div>
+  
+  <% if settlements.any? %>
+    <div class="settlement-list">
+      <div style="color: #0ff; font-size: 12px; margin-bottom: 5px;">BASES:</div>
+      <% settlements.each do |settlement| %>
+        <div class="settlement-item">
+          ▸ <%= settlement.name %>
+          <% if settlement.location %>
+            <span class="settlement-location">
+              @ <%= settlement.location.celestial_body&.name || settlement.location.name %>
+            </span>
+            <% if settlement.location.celestial_body_id %>
+              <%= link_to "[MONITOR]", admin_celestial_body_monitor_path(settlement.location.celestial_body_id), 
+                  style: "color: #0ff; font-size: 10px; margin-left: 5px; text-decoration: none;" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  
+  <% if org.description.present? %>
+    <div style="color: #888; font-size: 11px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
+      <%= org.description %>
+    </div>
+  <% end %>
+  
+  <% if org.organization_type == 'consortium' %>
+    <div style="background: #0ff; color: #000; padding: 5px; margin-top: 10px; font-size: 11px; font-weight: bold; text-align: center;">
+      ⚠ CONSORTIUM STATUS
+    </div>
+  <% elsif org.operational_data && org.operational_data['is_npc'] %>
+    <div style="background: #333; color: #0f0; padding: 5px; margin-top: 10px; font-size: 11px; text-align: center;">
+      NPC CONTROLLED
+    </div>
+  <% end %>
+</div>
