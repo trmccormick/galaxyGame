@@ -102,6 +102,26 @@ module Structures
       self.operational_data['notes'] = value
     end
     
+    # Cover status accessor for covering service
+    def cover_status
+      operational_data&.dig('cover_status') || 'uncovered'
+    end
+    
+    def cover_status=(value)
+      self.operational_data ||= {}
+      self.operational_data['cover_status'] = value
+    end
+    
+    # Area in square meters for covering calculations
+    def area_m2
+      calculate_surface_area
+    end
+    
+    # Check if already covered
+    def covered?
+      cover_status == 'covered'
+    end
+    
     # Add contained structures association
     has_many :contained_structures, class_name: 'Structures::BaseStructure', 
              foreign_key: 'container_structure_id'
