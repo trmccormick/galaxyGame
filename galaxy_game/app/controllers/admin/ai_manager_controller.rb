@@ -43,6 +43,42 @@ module Admin
       redirect_to admin_ai_manager_mission_path(@mission), notice: "Mission reset to beginning"
     end
     
+    def planner
+      # Mission planning simulator
+      @available_patterns = ['mars-terraforming', 'venus-industrial', 'titan-fuel', 'asteroid-mining', 'europa-water']
+      @simulation_result = nil
+      @forecast = nil
+      
+      if params[:pattern].present?
+        # Run simulation
+        @planner = AIManager::MissionPlannerService.new(
+          params[:pattern],
+          {
+            tech_level: params[:tech_level] || 'standard',
+            timeline_years: params[:timeline_years]&.to_i || 10,
+            budget_gcc: params[:budget_gcc]&.to_i || 1_000_000,
+            priority: params[:priority] || 'balanced'
+          }
+        )
+        
+        @simulation_result = @planner.simulate
+        @forecaster = AIManager::EconomicForecasterService.new(@simulation_result)
+        @forecast = @forecaster.analyze
+      end
+    end
+    
+    def export_plan
+      planner = AIManager::MissionPlannerService.new(
+        params[:pattern],
+        JSON.parse(params[:parameters] || '{}')
+      )
+      planner.simulate
+      
+      send_data planner.export_plan, 
+        filename: "mission_plan_#{params[:pattern]}_#{Time.current.to_i}.json",
+        type: 'application/json'
+    end
+    
     def decisions
       # TODO: Load AI decision log
       @decisions = []
