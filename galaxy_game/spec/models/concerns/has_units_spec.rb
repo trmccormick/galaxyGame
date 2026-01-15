@@ -23,7 +23,7 @@ RSpec.describe HasUnits, type: :concern do
         case blueprint_id.to_s
         when 'computer'
           # Note: unit_type here is the string stored in the DB, not the class name
-          { 'id' => 'computer', 'name' => 'Computer Unit', 'human_rated' => false, 'unit_type' => 'computer', 'category' => 'computer',
+          { 'id' => 'computer', 'name' => 'Computer Unit', 'human_rated' => false, 'unit_type' => 'control_computer', 'category' => 'computer',
             'operational_data' => { 'power_draw' => 10, 'capacity' => 0 } }
         when 'robot'
           { 'id' => 'robot', 'name' => 'Robot Unit', 'human_rated' => false, 'unit_type' => 'robot', 'category' => 'robot',

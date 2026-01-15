@@ -68,7 +68,7 @@ FactoryBot.define do
     # --- NEW/UPDATED TRAITS AND FACTORIES FOR SPECIFIC UNIT TYPES ---
 
     trait :computer do
-      unit_type { 'computer' } # Matches LookupService 'computer'
+      unit_type { 'control_computer' } # Matches CONTROL_UNIT_TYPES
       name { 'Computer Unit' }
       operational_data do
         {
