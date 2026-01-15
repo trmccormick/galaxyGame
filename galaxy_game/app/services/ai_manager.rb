@@ -37,4 +37,6 @@ module AIManager
   require_relative 'ai_manager/world_knowledge_service'
   require_relative 'ai_manager/wormhole_placement_service'
   require_relative 'ai_manager/wormhole_scouting_service'
+  require_relative 'ai_manager/mission_planner_service'
+  require_relative 'ai_manager/economic_forecaster_service'
 end

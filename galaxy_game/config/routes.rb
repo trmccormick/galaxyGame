@@ -56,6 +56,8 @@ Rails.application.routes.draw do
     get 'ai_manager/missions/:id', to: 'ai_manager#show_mission', as: 'ai_manager_mission'
     post 'ai_manager/missions/:id/advance_phase', to: 'ai_manager#advance_phase', as: 'ai_manager_advance_phase'
     post 'ai_manager/missions/:id/reset', to: 'ai_manager#reset_mission', as: 'ai_manager_reset_mission'
+    get 'ai_manager/planner', to: 'ai_manager#planner', as: 'ai_manager_planner'
+    post 'ai_manager/export_plan', to: 'ai_manager#export_plan', as: 'ai_manager_export_plan'
     get 'ai_manager/decisions', to: 'ai_manager#decisions', as: 'ai_manager_decisions'
     get 'ai_manager/patterns', to: 'ai_manager#patterns', as: 'ai_manager_patterns'
     get 'ai_manager/performance', to: 'ai_manager#performance', as: 'ai_manager_performance'

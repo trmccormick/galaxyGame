@@ -60,4 +60,58 @@ RSpec.describe Admin::AiManagerController, type: :controller do
       expect(response).to redirect_to(admin_ai_manager_mission_path(mission))
     end
   end
+  
+  describe "GET #planner" do
+    it "loads available patterns" do
+      get :planner
+      expect(response).to have_http_status(:success)
+      expect(assigns(:available_patterns)).to be_an(Array)
+      expect(assigns(:available_patterns)).to include('mars-terraforming', 'venus-industrial', 'titan-fuel')
+    end
+    
+    it "does not run simulation without pattern parameter" do
+      get :planner
+      expect(assigns(:simulation_result)).to be_nil
+      expect(assigns(:forecast)).to be_nil
+    end
+    
+    it "runs simulation when pattern is provided" do
+      get :planner, params: { 
+        pattern: 'mars-terraforming',
+        timeline_years: 10,
+        budget_gcc: 1_000_000
+      }
+      
+      expect(assigns(:simulation_result)).to_not be_nil
+      expect(assigns(:forecast)).to_not be_nil
+      expect(assigns(:planner)).to be_a(AIManager::MissionPlannerService)
+      expect(assigns(:forecaster)).to be_a(AIManager::EconomicForecasterService)
+    end
+    
+    it "uses default parameters if not provided" do
+      get :planner, params: { pattern: 'mars-terraforming' }
+      
+      planner = assigns(:planner)
+      expect(planner.parameters[:tech_level]).to eq('standard')
+      expect(planner.parameters[:timeline_years]).to eq(10)
+      expect(planner.parameters[:budget_gcc]).to eq(1_000_000)
+    end
+  end
+  
+  describe "POST #export_plan" do
+    it "exports simulation plan as JSON" do
+      post :export_plan, params: {
+        pattern: 'mars-terraforming',
+        parameters: { timeline_years: 10 }.to_json
+      }
+      
+      expect(response.content_type).to eq('application/json')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+      expect(response.headers['Content-Disposition']).to include('mission_plan_mars-terraforming')
+      
+      json_data = JSON.parse(response.body)
+      expect(json_data['pattern']).to eq('mars-terraforming')
+      expect(json_data['results']).to be_present
+    end
+  end
 end
