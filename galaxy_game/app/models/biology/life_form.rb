@@ -109,23 +109,40 @@ module Biology
       value.is_a?(Array) ? value : (value.nil? ? [] : [value])
     end
     
-    # NEW: Population growth model using _calculate_base_growth_rate and habitability
-    def simulate_growth(_conditions = {})
+    # NEW: Population growth model
+    def simulate_growth(conditions = {})
       return if population.nil? || population <= 0
-
-      base_growth_rate = _calculate_base_growth_rate
-      habitability = biosphere&.habitable_ratio || 1.0
-      new_population = (population * base_growth_rate * habitability).to_i
+      
+      # Get environmental conditions
+      temp = conditions[:temperature] || biosphere&.celestial_body&.surface_temperature || 250.0
+      o2_pct = conditions[:o2_percentage] || 0.0
+      co2_pct = conditions[:co2_percentage] || 95.0
+      
+      # Calculate growth rate based on suitability
+      growth_rate = calculate_growth_rate(temp, o2_pct, co2_pct)
+      
+      # Calculate carrying capacity
+      carrying_capacity = calculate_carrying_capacity
+      
+      # Logistic growth equation: dN/dt = rN(1 - N/K)
+      crowding_factor = 1.0 - (population.to_f / carrying_capacity)
+      crowding_factor = [crowding_factor, 0.0].max  # Don't go negative
+      
+      population_change = (population * growth_rate * crowding_factor).to_i
+      
+      # Apply change
+      new_population = population + population_change
+      
+      # Bounds checking
+      new_population = [[new_population, 0].max, carrying_capacity].min
+      
       self.population = new_population
       save!
+      
+      puts "  #{name}: pop #{population} (Δ#{population_change}, rate=#{(growth_rate * 100).round(2)}%)"
     end
-        # Protected method for test stubbing
-        protected
-        def _calculate_base_growth_rate
-          1.0 # Default: no growth, override or stub in tests
-        end
     
-    protected
+    private
     
     def calculate_individual_mass
       return super unless properties.present?
