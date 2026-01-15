@@ -52,6 +52,7 @@ module Structures
     private
     
     def set_structure_type
+      self.structure_type = 'hangar'
       self.structure_name = operational_data&.dig('hangar_type')&.titleize || 'Hangar'
     end
     
