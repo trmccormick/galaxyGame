@@ -101,6 +101,6 @@ class GameController < ApplicationController
   private
 
   def get_or_create_game_state
-    GameState.first_or_create!
+    GameState.find_or_create_by!(id: 1)
   end
 end
