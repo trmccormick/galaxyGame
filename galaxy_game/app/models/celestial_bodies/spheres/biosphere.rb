@@ -227,7 +227,11 @@ module CelestialBodies
           end
           
           # All life forms go through growth cycle
-          life_form.simulate_growth
+          life_form.simulate_growth(
+            temperature: environment_factors[:temperature] * 300, # Convert to Kelvin-ish
+            o2_percentage: environment_factors[:atmosphere] * 100, # Convert to percentage
+            co2_percentage: 100 - (environment_factors[:atmosphere] * 100) # Assume rest is CO2
+          )
         end
         
         # Check for new life emergence

@@ -161,8 +161,8 @@ module Biology
     private
     
     def calculate_growth_rate(temperature, o2_percentage, co2_percentage)
-      # Base growth rate: 0.1% per day (conservative)
-      base_rate = 0.001
+      # Base growth rate: 1% per day (conservative)
+      base_rate = 0.01
       
       # Temperature suitability
       min_temp = get_property('min_temperature', 170.0)
