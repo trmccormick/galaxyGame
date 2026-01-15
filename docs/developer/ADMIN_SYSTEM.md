@@ -72,6 +72,65 @@ Displays detailed task breakdown for a specific mission.
 - `POST /admin/ai_manager/advance_phase/:id` - Execute next task in mission
 - `POST /admin/ai_manager/reset_mission/:id` - Reset mission to beginning
 
+#### Mission Planner (`/admin/ai_manager/planner`)
+
+What-if mission planning simulator with economic forecasting.
+
+**Features:**
+- **Configuration Panel**: Select mission pattern, tech level, timeline, budget, priority
+- **Simulation Results**: Timeline breakdown, cost analysis, resource requirements, planetary changes
+- **Economic Forecast**: GCC distribution analysis, demand forecasting, bottleneck identification, opportunity identification
+- **Export Functionality**: Download complete simulation plan as JSON
+- **Three-Panel Layout**: Config | Results | Forecast
+
+**Controller:** `Admin::AiManagerController#planner`
+
+```ruby
+# Run simulation with parameters
+@planner = AIManager::MissionPlannerService.new(
+  params[:pattern],
+  {
+    tech_level: params[:tech_level] || 'standard',
+    timeline_years: params[:timeline_years]&.to_i || 10,
+    budget_gcc: params[:budget_gcc]&.to_i || 1_000_000,
+    priority: params[:priority] || 'balanced'
+  }
+)
+
+@simulation_result = @planner.simulate
+@forecaster = AIManager::EconomicForecasterService.new(@simulation_result)
+@forecast = @forecaster.analyze
+```
+
+**Available Mission Patterns:**
+- `mars-terraforming` - Long-term atmospheric transformation
+- `venus-industrial` - Cloud layer resource extraction
+- `titan-fuel` - Methane harvesting and refining
+- `asteroid-mining` - Resource extraction operations
+- `europa-water` - Ice mining and water processing
+
+**Simulation Results Include:**
+- **Timeline**: Total duration, phase breakdown, key milestones
+- **Costs**: Base cost, contingency (15%), grand total
+- **Player Revenue**: Total contract opportunities, estimated contract count, average value
+- **Resources**: Year-by-year requirements, peak demand period, total quantities
+- **Planetary Changes**: Pattern-specific environmental changes
+
+**Economic Forecast Provides:**
+- **GCC Distribution**: DC vs player earnings, economic velocity (GCC/year)
+- **Demand Forecast**: Resource trend (increasing/steady/declining), critical resources
+- **Bottlenecks**: Resource spikes, concentrated demand periods with severity levels
+- **Opportunities**: High-revenue years, bulk discount opportunities
+- **Risk Assessment**: Financial (contingency), schedule (timeline), logistics (demand spikes)
+
+**Export Action:**
+- `POST /admin/ai_manager/export_plan` - Download JSON with full simulation data
+- Includes pattern, parameters, results, timestamp, version
+
+**Services:**
+- `AIManager::MissionPlannerService` - Runs accelerated simulations
+- `AIManager::EconomicForecasterService` - Analyzes economic implications
+
 ### 2. Celestial Bodies (`/admin/celestial_bodies/:id/monitor`)
 
 Real-time planetary monitoring with sphere-based data visualization.
@@ -171,6 +230,8 @@ namespace :admin do
   get 'ai_manager/missions/:id', to: 'ai_manager#show_mission', as: 'ai_manager_mission'
   post 'ai_manager/advance_phase/:id', to: 'ai_manager#advance_phase', as: 'ai_manager_advance_phase'
   post 'ai_manager/reset_mission/:id', to: 'ai_manager#reset_mission', as: 'ai_manager_reset_mission'
+  get 'ai_manager/planner', to: 'ai_manager#planner', as: 'ai_manager_planner'
+  post 'ai_manager/export_plan', to: 'ai_manager#export_plan', as: 'ai_manager_export_plan'
   
   # Celestial Bodies
   resources :celestial_bodies, only: [] do
@@ -210,11 +271,19 @@ docker-compose exec web bundle exec rspec spec/controllers/admin/ai_manager_cont
 
 ### Test Coverage
 
-- **AI Manager Controller**: 6 examples
+- **AI Manager Controller**: 11 examples
   - Mission loading and status separation
   - Mission detail view with TaskExecutionEngine integration
   - Phase advancement controls
   - Mission reset functionality
+  - Mission planner simulator configuration
+  - Simulation execution with custom parameters
+  - Economic forecast generation
+  - Plan export as JSON
+  
+- **AI Manager Services**: 25 examples
+  - **MissionPlannerService** (12 examples): Pattern initialization, resource calculations, cost analysis, timeline generation, planetary changes simulation, contract generation, plan export
+  - **EconomicForecasterService** (13 examples): Demand forecasting, GCC distribution, bottleneck identification, opportunity detection, risk assessment, scenario comparison
   
 - **Celestial Bodies Controller**: 29 examples
   - Monitor view rendering
@@ -222,12 +291,13 @@ docker-compose exec web bundle exec rspec spec/controllers/admin/ai_manager_cont
   - Mission log tracking
   - AI test execution
 
-- **Development Corporations Controller**: 3 examples
+- **Development Corporations Controller**: 5 examples
   - DC loading with settlements and accounts
   - Settlement grouping by DC owner
   - Active contracts counting
+  - Organization type separation (DCs, Service Corps, Consortiums)
 
-**Total**: 38 examples, 0 failures
+**Total**: 70 examples (45 controllers + 25 services), 0 failures
 
 ## Implementation Notes
 
