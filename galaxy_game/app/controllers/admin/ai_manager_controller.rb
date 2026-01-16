@@ -97,5 +97,18 @@ module Admin
         resource_efficiency: 0
       }
     end
+    
+    private
+    
+    # Maps simplified UI pattern names to actual JSON pattern identifiers
+    def available_mission_patterns
+      {
+        'mars-terraforming' => 'mars_pattern',
+        'venus-industrial' => 'venus_pattern', 
+        'titan-fuel' => 'titan_pattern',
+        'asteroid-mining' => 'gcc_mining_satellite_01_pattern',
+        'europa-water' => 'europa_subsurface_exploration_pattern'
+      }
+    end
   end
 end
