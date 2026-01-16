@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
   let(:celestial_body) { create(:celestial_body) } # Assuming you have a celestial_body factory
-  let(:hydrosphere) { create(:hydrosphere, celestial_body: celestial_body) }
+  let(:hydrosphere) { create(:celestial_bodies_hydrosphere, celestial_body: celestial_body) }
 
   describe 'associations' do
     it { should belong_to(:celestial_body) }
@@ -10,7 +10,11 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
   end
 
   describe 'validations' do
-    it { should validate_numericality_of(:total_liquid_mass) }
+    it { should validate_numericality_of(:liquid_volume) }
+    it { should validate_numericality_of(:lakes) }
+    it { should validate_numericality_of(:rivers) }
+    it { should validate_numericality_of(:oceans) }
+    it { should validate_numericality_of(:ice) }
   end
 
   describe '#setup_liquid_materials' do

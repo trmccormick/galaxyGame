@@ -36,9 +36,8 @@ RSpec.describe CelestialBodies::Material, type: :model do
       end
     end
 
-    it 'is not valid with an invalid state' do
-      material.state = 'unknown_state'
-      expect(material).to_not be_valid
+    it 'raises ArgumentError with an invalid state' do
+      expect { material.state = 'unknown_state' }.to raise_error(ArgumentError)
     end
 
     it 'is valid with valid melting and boiling points' do

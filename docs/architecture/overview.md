@@ -15,7 +15,7 @@ Galaxy Game is a Rails-based space simulation game that models planetary coloniz
 
 #### 🚀 Space Infrastructure
 - **Cyclers**: Mobile space stations for interplanetary transport and construction
-  - [Cycler System](cycler_system.md): Mission configurations and equipment transfer
+  - [Cycler System](ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md): Mission configurations and equipment transfer
   - [Foundry Logic & Lunar Elevator](foundry_logic_and_lunar_elevator.md): Interplanetary industrial symbiosis
 - **Stations**: Orbital platforms for processing, manufacturing, and crew habitation
 - **Depots**: Automated cargo facilities for resource storage and transfer

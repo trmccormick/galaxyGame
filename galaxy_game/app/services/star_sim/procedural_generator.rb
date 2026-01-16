@@ -142,6 +142,96 @@ module StarSim
       system_data
     end
 
+    # Data-driven hybrid: preserve all seed bodies and fill per-star gaps without name-based checks
+    def generate_hybrid_system_from_seed_generic(seed_path)
+      seed_data = JSON.parse(File.read(seed_path))
+
+      system_data = {
+        "galaxy" => seed_data["galaxy"],
+        "id" => seed_data["id"],
+        "name" => seed_data["name"],
+        "identifier" => seed_data["identifier"],
+        "stars" => seed_data["stars"],
+        "celestial_bodies" => {
+          "terrestrial_planets" => [],
+          "gas_giants" => [],
+          "ice_giants" => [],
+          "dwarf_planets" => [],
+          "asteroids" => []
+        }
+      }
+
+      # Categorize existing seed bodies and preserve them
+      if seed_data["celestial_bodies"].is_a?(Array)
+        seed_data["celestial_bodies"].each do |body|
+          type = (body["type"] || "").to_s.downcase
+          case type
+          when 'terrestrial', 'super-earth', 'rocky'
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["terrestrial_planets"] << body
+          when 'gas_giant'
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["gas_giants"] << body
+          when 'ice_giant'
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["ice_giants"] << body
+          when 'dwarf_planet'
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["dwarf_planets"] << body
+          when 'asteroid'
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["asteroids"] << body
+          else
+            # Unknown type: default to terrestrial for completeness
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["terrestrial_planets"] << body
+          end
+        end
+      end
+
+      # Fill missing planets per star generically
+      identifier = seed_data["identifier"]
+      (seed_data["stars"] || []).each do |star|
+        # Count existing terrestrial planets linked to this star by parent_star identifier if provided
+        existing_count = system_data["celestial_bodies"]["terrestrial_planets"].count do |p|
+          (p["parent_star"] && p["parent_star"] == star["identifier"]) ||
+          (p.dig("orbits", 0, "around") && p["orbits"][0]["around"] == star["name"])
+        end
+
+        target_min = 1
+        to_add = [target_min - existing_count, 0].max
+        next if to_add <= 0
+
+        ecosphere = star["r_ecosphere"] || 1.0
+        to_add.times do
+          semi_major = ecosphere * rand(0.8..1.3)
+          if !@terraformable_templates.empty?
+            tpl = @terraformable_templates.sample
+            planet_id = @name_generator.generate_planet_identifier(identifier, @planet_counter + 1)
+            planet_name = planet_id
+            planet = generate_from_template(tpl, planet_name, planet_id, @planet_counter)
+            planet["orbits"] = [{
+              "around" => star["name"],
+              "semi_major_axis_au" => semi_major,
+              "eccentricity" => rand(0.0..0.1),
+              "inclination_deg" => rand(0.0..5.0),
+              "orbital_period_days" => calculate_orbital_period(semi_major),
+              "distance" => semi_major
+            }]
+            planet["surface_temperature"] = calculate_surface_temperature(semi_major)
+            planet["market_status"] = "unclaimed_procedural"
+            system_data["celestial_bodies"]["terrestrial_planets"] << planet
+          else
+            planet = generate_planet_at_orbit(star, semi_major, identifier, "G")
+            planet["market_status"] = "unclaimed_procedural"
+            system_data["celestial_bodies"]["terrestrial_planets"] << planet
+          end
+        end
+      end
+
+      system_data
+    end
+
     # For test compatibility
     alias_method :generate!, :generate_system_seed
 
@@ -603,7 +693,7 @@ module StarSim
           mass,
           radius,
           semi_major_axis_au,
-          star['type_of_star'],
+          (star['type_of_star'] || star['type'] || 'G-type'),
           rand < 0.5
         ),
         "biosphere_attributes" => generate_biosphere_data({

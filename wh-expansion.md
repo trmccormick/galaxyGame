@@ -89,6 +89,14 @@ Structure Ownership: The Consortium owns the Artificial Wormhole Stations (AWS),
 
 Following the snap events that opened multiple new systems, Development Corporations formed TerraGen to coordinate terraforming efforts. The consortium pools expertise, technology, and resources to transform newly accessible worlds into habitable colonies, complementing the Wormhole Transit Consortium's logistics network.
 
+**TerraGen Mission Integration with Kinetic Hammer:**
+TerraGen coordinates with the AI Manager's kinetic hammer planning to offer time-sensitive player missions:
+- **Pre-Hammer Resource Windows**: When wormholes shift to resource-rich systems not yet prioritized for permanent connection, TerraGen offers harvesting missions before the scheduled hammer event
+- **Inter-System Resource Transport**: Players transport terraforming-critical resources (e.g., Venus CO2/N2 to Mars) using the established wormhole network
+- **Hammer Event Timing**: Players receive advance notice of impending kinetic hammer closures, creating urgency for resource extraction and transport missions
+
+This creates a symbiotic relationship where TerraGen's terraforming needs drive player participation in the wormhole network, while the network's expansion enables TerraGen's colonization goals.
+
 ## 3. Physics & Topology: The Brown Dwarf Hub (Integrated)
 
 Brown Dwarfs act as unique "Logistics Batteries" due to their immense mass but lack of stellar radiation.

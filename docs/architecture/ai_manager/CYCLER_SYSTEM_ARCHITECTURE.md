@@ -46,12 +46,14 @@ Cyclers are large mobile space stations that serve as AI Manager's primary deplo
 - CNT fabricators (transfer to station)
 - Gas separators (transfer to depot)
 - Skimmer deployment bays (return to Sol)
+- **Production Loop:** Atmospheric processors → CNT fabricators (CO₂ → Carbon Nanotubes, 50 kg/hour per fabricator)
 
 **Luna Support Configuration:**
 - ISRU processors (transfer to base)
 - Regolith processors (transfer to base)
 - Fabrication units (transfer to base)
 - Construction drones (return to Sol)
+- **Prerequisite for Lunar Space Elevator:** Requires CNT delivery from Venus/Mars foundry
 
 **Mars Constructor Configuration:**
 - Mining drones (deploy to Ceres)
@@ -64,6 +66,24 @@ Cyclers are large mobile space stations that serve as AI Manager's primary deplo
 - Maximum cargo capacity
 - Loaded with: extracted resources + retracted satellites
 - Total mass: 18M+ kg
+
+---
+
+## AI Manager Pattern Recognition
+
+The AI Manager now recognizes specialized mission patterns for optimized deployment:
+
+### Interplanetary Foundry Pattern
+- **Detection:** Profiles including atmospheric harvesting + CNT fabricator units
+- **Classification:** Tagged as `interplanetary_foundry`
+- **Priority:** HIGH PRIORITY when Lunar Elevator project is active
+- **Purpose:** Identifies Venus/Mars missions capable of producing CNTs for lunar infrastructure
+- **[Detailed Implementation](foundry_logic_and_lunar_elevator.md)**: Complete technical specification
+
+### Pattern Training Integration
+- Mission profiles analyzed for equipment combinations
+- Foundry patterns prioritized for lunar elevator dependency fulfillment
+- Dynamic weighting based on active project requirements
 ```
 
 ---
