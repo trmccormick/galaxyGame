@@ -193,10 +193,10 @@ AI system performance monitoring and optimization controls.
 
 #### Index (`/admin/celestial_bodies`)
 
-Overview page listing all celestial bodies for monitoring selection.
+Global celestial body catalog showing all bodies in the game database for monitoring selection.
 
 **Features:**
-- Complete celestial body catalog with type classification
+- Complete celestial body catalog with type classification (shows ALL bodies in the game)
 - Statistics dashboard (total bodies, planets, moons, asteroids)
 - Grouped display by celestial body type
 - Direct links to individual body monitors
@@ -205,7 +205,7 @@ Overview page listing all celestial bodies for monitoring selection.
 **Controller:** `Admin::CelestialBodiesController#index`
 
 ```ruby
-# Load all celestial bodies for monitoring selection
+# Load ALL celestial bodies from the game database for monitoring selection
 @celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
 @total_bodies = @celestial_bodies.count
 @bodies_by_type = @celestial_bodies.group_by(&:type)
