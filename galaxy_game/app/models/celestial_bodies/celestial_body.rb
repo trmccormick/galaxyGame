@@ -375,7 +375,152 @@ module CelestialBodies
       self.properties['body_type'] = value
     end    
 
-    # Planets can be flagged as rogue (not bound to a star)
+    # Generate a description for the celestial body
+    def description
+      return properties['description'] if properties && properties['description'].present?
+      
+      # Generate description based on type and properties
+      case body_category
+      when 'star'
+        generate_star_description
+      when 'brown_dwarf'
+        generate_brown_dwarf_description
+      when 'terrestrial_planet'
+        generate_terrestrial_planet_description
+      when 'gas_giant'
+        generate_gas_giant_description
+      when 'ice_giant'
+        generate_ice_giant_description
+      when 'carbon_planet'
+        generate_carbon_planet_description
+      when 'lava_world'
+        generate_lava_world_description
+      when 'super_earth'
+        generate_super_earth_description
+      when 'hycean_planet'
+        generate_hycean_planet_description
+      when 'ocean_planet'
+        generate_ocean_planet_description
+      when 'water_world'
+        generate_water_world_description
+      when 'hot_jupiter'
+        generate_hot_jupiter_description
+      when 'moon'
+        generate_moon_description
+      when 'large_moon'
+        generate_large_moon_description
+      when 'small_moon'
+        generate_small_moon_description
+      when 'ice_moon'
+        generate_ice_moon_description
+      when 'asteroid'
+        generate_asteroid_description
+      when 'comet'
+        generate_comet_description
+      when 'dwarf_planet'
+        generate_dwarf_planet_description
+      when 'kuiper_belt_object'
+        generate_kuiper_belt_description
+      when 'alien_life_form'
+        generate_alien_life_form_description
+      when 'material'
+        generate_material_description
+      else
+        "A celestial body of type #{type}. #{body_type.present? ? "Body type: #{body_type}." : ''}"
+      end
+    end
+
+    private
+
+    def generate_star_description
+      spectral_info = properties.try(:[], 'spectral_class') || 'unknown'
+      "A star with spectral class #{spectral_info}. Mass: #{mass.present? ? "#{(mass / 1.989e30).round(2)} solar masses" : 'unknown'}. Temperature: #{temperature.present? ? "#{temperature}°C" : 'unknown'}."
+    end
+
+    def generate_brown_dwarf_description
+      "A brown dwarf star, too small to sustain hydrogen fusion. Mass: #{mass.present? ? "#{(mass / 1.989e30).round(3)} solar masses" : 'unknown'}. Temperature: #{temperature.present? ? "#{temperature}°C" : 'unknown'}."
+    end
+
+    def generate_terrestrial_planet_description
+      atmosphere_info = atmosphere.present? ? "Has an atmosphere." : "No significant atmosphere."
+      "A terrestrial planet with a solid surface. #{atmosphere_info} Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_gas_giant_description
+      "A massive gas giant planet composed primarily of hydrogen and helium. Mass: #{mass.present? ? "#{(mass / 1.898e27).round(2)} Jupiter masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_ice_giant_description
+      "An ice giant planet with a thick atmosphere of volatile compounds. Mass: #{mass.present? ? "#{(mass / 1.898e27).round(2)} Jupiter masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_carbon_planet_description
+      "A carbon-rich planet with a surface composed primarily of graphite and carbides. Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_lava_world_description
+      "A lava world with extensive volcanic activity and a surface covered in molten rock. Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_super_earth_description
+      "A super-Earth planet, larger than Earth but smaller than ice giants. Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_hycean_planet_description
+      "A Hycean planet with a global ocean beneath a hydrogen-rich atmosphere. Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_ocean_planet_description
+      "An ocean planet with a surface completely covered by liquid water. Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_water_world_description
+      "A water world with vast oceans covering most of its surface. Mass: #{mass.present? ? "#{(mass / 5.972e24).round(2)} Earth masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_hot_jupiter_description
+      "A hot Jupiter gas giant orbiting very close to its star. Mass: #{mass.present? ? "#{(mass / 1.898e27).round(2)} Jupiter masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_moon_description
+      "A natural satellite orbiting a planet. Mass: #{mass.present? ? "#{(mass / 7.342e22).round(2)} lunar masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_large_moon_description
+      "A large moon, comparable in size to some planets. Mass: #{mass.present? ? "#{(mass / 7.342e22).round(2)} lunar masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_small_moon_description
+      "A small natural satellite. Mass: #{mass.present? ? "#{(mass / 7.342e22).round(3)} lunar masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_ice_moon_description
+      "An ice-covered moon with potential subsurface oceans. Mass: #{mass.present? ? "#{(mass / 7.342e22).round(2)} lunar masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_asteroid_description
+      "A rocky asteroid, remnant from the early solar system. Mass: #{mass.present? ? "#{(mass / 1e12).round(0)} kg" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(1)} km" : 'unknown'}."
+    end
+
+    def generate_comet_description
+      "A comet with a volatile-rich nucleus and extended tail when near the sun. Mass: #{mass.present? ? "#{(mass / 1e12).round(0)} kg" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(1)} km" : 'unknown'}."
+    end
+
+    def generate_dwarf_planet_description
+      "A dwarf planet, spherical but not massive enough to clear its orbital path. Mass: #{mass.present? ? "#{(mass / 1.3e22).round(2)} Pluto masses" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(0)} km" : 'unknown'}."
+    end
+
+    def generate_kuiper_belt_description
+      "A Kuiper Belt object, located beyond Neptune's orbit. Mass: #{mass.present? ? "#{(mass / 1e12).round(0)} kg" : 'unknown'}. Radius: #{radius.present? ? "#{(radius / 1000).round(1)} km" : 'unknown'}."
+    end
+
+    def generate_alien_life_form_description
+      "An extraterrestrial life form. #{body_type.present? ? "Type: #{body_type}." : ''}"
+    end
+
+    def generate_material_description
+      "A celestial material resource. #{body_type.present? ? "Type: #{body_type}." : ''}"
+    end
     def rogue?
       solar_system_id.nil? && planet_class?
     end
