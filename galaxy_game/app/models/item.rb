@@ -307,6 +307,7 @@ class Item < ApplicationRecord
     return true if name.end_with?(" Scrap") # Skip for scrap materials
     return true if name.start_with?("Processed") # Skip for processed materials
     return true if name.start_with?("Used") # Skip for used catalysts/components
+    return true if metadata.is_a?(Hash) && metadata['unit_type'].present? # Skip for items representing units
     false
   end
 
