@@ -10,37 +10,41 @@ module Admin
     # Index page listing all celestial bodies for monitoring selection
     def index
       @celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
-      @total_bodies = @celestial_bodies.count
-      @bodies_by_category = @celestial_bodies.group_by(&:body_category)
+      @bodies = @celestial_bodies # Alias for view compatibility
+      @total_bodies = @celestial_bodies.count + CelestialBodies::Star.count
+      @bodies_by_type = @celestial_bodies.group_by(&:body_category)
+
+      # Calculate habitable count
+      @habitable_count = @celestial_bodies.select do |body|
+        body.atmosphere&.habitable? || body.respond_to?(:habitable?) && body.habitable?
+      end.count
 
       # Calculate statistics for major categories
       @category_stats = {
-        stars: @bodies_by_category['star']&.count || 0,
-        brown_dwarfs: @bodies_by_category['brown_dwarf']&.count || 0,
+        stars: CelestialBodies::Star.count,
+        brown_dwarfs: @bodies_by_type['brown_dwarf']&.count || 0,
         planets: count_planet_types,
         moons: count_moon_types,
         minor_bodies: count_minor_body_types,
-        other: (@bodies_by_category['alien_life_form']&.count || 0) + (@bodies_by_category['material']&.count || 0)
+        other: (@bodies_by_type['alien_life_form']&.count || 0) + (@bodies_by_type['material']&.count || 0)
       }
     end
-
-    private
 
     def count_planet_types
       planet_categories = ['terrestrial_planet', 'carbon_planet', 'lava_world', 'super_earth',
                           'gas_giant', 'ice_giant', 'hot_jupiter', 'hycean_planet',
                           'ocean_planet', 'water_world']
-      planet_categories.sum { |cat| @bodies_by_category[cat]&.count || 0 }
+      planet_categories.sum { |cat| @bodies_by_type[cat]&.count || 0 }
     end
 
     def count_moon_types
       moon_categories = ['moon', 'large_moon', 'small_moon', 'ice_moon']
-      moon_categories.sum { |cat| @bodies_by_category[cat]&.count || 0 }
+      moon_categories.sum { |cat| @bodies_by_type[cat]&.count || 0 }
     end
 
     def count_minor_body_types
       minor_categories = ['asteroid', 'comet', 'dwarf_planet', 'kuiper_belt_object']
-      minor_categories.sum { |cat| @bodies_by_category[cat]&.count || 0 }
+      minor_categories.sum { |cat| @bodies_by_type[cat]&.count || 0 }
     end
 
     # GET /admin/celestial_bodies/:id/monitor
@@ -119,9 +123,16 @@ module Admin
       atmo = @celestial_body.atmosphere
       composition = @celestial_body.atmospheric_composition || {}
 
+      # Get temperature from temperature column, temperature_data, or celestial body surface temperature
+      temperature = atmo.temperature
+      if temperature.nil? && atmo.temperature_data.present?
+        temperature = atmo.temperature_data['tropical_temperature'] || atmo.temperature_data['surface_temperature']
+      end
+      temperature ||= @celestial_body.surface_temperature
+
       {
         pressure: atmo.pressure&.round(4) || 0,
-        temperature: atmo.temperature&.round(2) || 0,
+        temperature: temperature&.round(2) || 0,
         total_mass: atmo.total_atmospheric_mass&.round(2) || 0,
         composition: composition,
         scale_height: atmo.scale_height&.round(2),
