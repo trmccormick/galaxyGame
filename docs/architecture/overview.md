@@ -25,6 +25,12 @@ Galaxy Game is a Rails-based space simulation game that models planetary coloniz
 - **Resource Allocation**: Dynamic distribution of equipment and personnel
 - **Pattern Learning**: AI learns from successful mission templates
 
+#### 🌌 Wormhole Scouting
+- **Natural Discovery Events**: Automated processing of natural wormhole openings detected by probe sweeps
+- **SystemArchitect Integration**: Natural discovery events automatically trigger SystemArchitect for infrastructure deployment
+- **Gravitational Anchor Detection**: Identifies and flags celestial bodies meeting Anchor Law mass requirements (≥10¹⁶ kg)
+- **Contract Generation**: Automatically generates stabilizing entries in wormhole_contract.json for discovered systems
+
 #### 📊 Economic Engine
 - **Market System**: Dynamic pricing based on supply/demand
 - **Resource Chains**: Multi-stage processing from raw materials to finished products

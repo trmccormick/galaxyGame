@@ -1,4 +1,6 @@
 # app/services/ai_manager/wormhole_scouting_service.rb
+require 'json'
+
 module AIManager
   class WormholeScoutingService
     attr_reader :current_system, :available_systems
@@ -76,6 +78,37 @@ module AIManager
         analysis: analysis,
         recommendation: recommendation
       }
+    end
+
+    # Process natural wormhole discovery event and generate stabilizing entry
+    def process_natural_discovery(event_id)
+      puts "[WormholeScoutingService] Processing natural discovery event: #{event_id}" if defined?(Rails)
+      Rails.logger.info "[WormholeScoutingService] Processing natural discovery event: #{event_id}" if defined?(Rails)
+
+      # Load the event data
+      event_data = load_event_data(event_id)
+      return { status: :failed, reason: :event_not_found } unless event_data
+
+      # Validate event type
+      unless event_data['template'] == 'wormhole_discovery_event'
+        puts "[WormholeScoutingService] Invalid event template: #{event_data['template']}" if defined?(Rails)
+        Rails.logger.error "[WormholeScoutingService] Invalid event template: #{event_data['template']}" if defined?(Rails)
+        return { status: :failed, reason: :invalid_event_type }
+      end
+
+      # Generate stabilizing entry in wormhole contract
+      contract_update = generate_stabilizing_entry(event_data)
+
+      # Update the wormhole contract
+      success = update_wormhole_contract(contract_update)
+
+      if success
+        puts "[WormholeScoutingService] Successfully processed natural discovery for #{event_data['wormhole_data']['target_system']}" if defined?(Rails)
+        Rails.logger.info "[WormholeScoutingService] Successfully processed natural discovery for #{event_data['wormhole_data']['target_system']}" if defined?(Rails)
+        { status: :success, system: event_data['wormhole_data']['target_system'], link_id: event_data['wormhole_data']['link_id'] }
+      else
+        { status: :failed, reason: :contract_update_failed }
+      end
     end
 
     private
@@ -304,6 +337,95 @@ module AIManager
           estimated_cost: analysis[:infrastructure_cost],
           expected_roi_years: analysis[:roi_estimate]
         }
+      end
+    end
+
+    def load_event_data(event_id)
+      # Load event data from the wormhole-discovery events directory
+      # In container: /home/galaxy_game/app/data/missions/events/wormhole-discovery
+      events_dir = '/home/galaxy_game/app/data/missions/events/wormhole-discovery'
+      file_path = File.join(events_dir, "#{event_id}.json")
+
+      # If exact filename doesn't match, try to find by event_id
+      unless File.exist?(file_path)
+        Dir.glob(File.join(events_dir, '*.json')).each do |file|
+          begin
+            data = JSON.parse(File.read(file))
+            return data if data['event_id'] == event_id
+          rescue JSON::ParserError
+            next
+          end
+        end
+        return nil
+      end
+
+      begin
+        JSON.parse(File.read(file_path))
+      rescue JSON::ParserError
+        puts "[WormholeScoutingService] Failed to parse event data for #{event_id}" if defined?(Rails)
+        Rails.logger.error "[WormholeScoutingService] Failed to parse event data for #{event_id}" if defined?(Rails)
+        nil
+      end
+    end
+
+    def generate_stabilizing_entry(event_data)
+      # Generate a stabilizing link entry for the wormhole contract
+      wormhole_data = event_data['wormhole_data']
+      {
+        link_id: wormhole_data['link_id'],
+        type: wormhole_data['type'],
+        status: wormhole_data['stability_metrics']['status'],
+        origin: "SOL-CORE-01",
+        destination: wormhole_data['target_system'],
+        environment: "Hot_Start",
+        stability_metrics: {
+          maintenance_tax_em: wormhole_data['stability_metrics']['maintenance_tax_em'],
+          mass_limit_tons: wormhole_data['stability_metrics']['mass_limit_tons'],
+          residual_em: wormhole_data['stability_metrics']['residual_em']
+        },
+        logistics: {
+          anchor_body: wormhole_data['gravitational_anchor']['body_name'],
+          ste_ratio: wormhole_data['gravitational_anchor']['ste_ratio']
+        }
+      }
+    end
+
+    def update_wormhole_contract(new_link_entry)
+      # Load current wormhole contract
+      # In container: /home/galaxy_game/app/data/contract/wormhole_contract.json
+      contract_path = '/home/galaxy_game/app/data/contract/wormhole_contract.json'
+
+      begin
+        contract_data = JSON.parse(File.read(contract_path))
+      rescue JSON::ParserError
+        puts "[WormholeScoutingService] Failed to parse wormhole contract" if defined?(Rails)
+        Rails.logger.error "[WormholeScoutingService] Failed to parse wormhole contract" if defined?(Rails)
+        return false
+      end
+
+      # Check if link already exists
+      existing_index = contract_data['link_registry'].find_index { |link| link['link_id'] == new_link_entry[:link_id] }
+
+      if existing_index
+        # Replace existing link completely
+        contract_data['link_registry'][existing_index] = new_link_entry
+        puts "[WormholeScoutingService] Updated existing link #{new_link_entry[:link_id]}" if defined?(Rails)
+        Rails.logger.info "[WormholeScoutingService] Updated existing link #{new_link_entry[:link_id]}" if defined?(Rails)
+      else
+        # Add new link
+        contract_data['link_registry'] << new_link_entry
+        puts "[WormholeScoutingService] Added new stabilizing link #{new_link_entry[:link_id]}" if defined?(Rails)
+        Rails.logger.info "[WormholeScoutingService] Added new stabilizing link #{new_link_entry[:link_id]}" if defined?(Rails)
+      end
+
+      # Write back to file
+      begin
+        File.write(contract_path, JSON.pretty_generate(contract_data))
+        true
+      rescue StandardError => e
+        puts "[WormholeScoutingService] Failed to update wormhole contract: #{e.message}" if defined?(Rails)
+        Rails.logger.error "[WormholeScoutingService] Failed to update wormhole contract: #{e.message}" if defined?(Rails)
+        false
       end
     end
   end

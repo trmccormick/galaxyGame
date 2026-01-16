@@ -1,0 +1,41 @@
+{
+  "template": "wormhole_discovery_event",
+  "event_id": "natural_wormhole_discovery_2026_01_15",
+  "name": "Natural Wormhole Discovery: AOL-732356",
+  "description": "Automated detection and stabilization of natural wormhole opening to AOL-732356 system",
+  "detection": {
+    "method": "Probe_Sweep",
+    "timestamp": "2026-01-15T00:00:00Z",
+    "detected_by": "Automated Probe Network"
+  },
+  "wormhole_data": {
+    "link_id": "SOL-AOL-732356",
+    "type": "Natural_Scraped",
+    "target_system": "AOL-732356",
+    "discovery_type": "Natural_Scraped",
+    "gravitational_anchor": {
+      "body_name": "Asteroid XXXV",
+      "body_id": "ASTEROID-35",
+      "mass_kg": 2.4403543605891727e+19,
+      "ste_ratio": 15000,
+      "anchor_compliance": true
+    },
+    "stability_metrics": {
+      "maintenance_tax_em": 33.3,
+      "mass_limit_tons": 500000,
+      "residual_em": 0.0,
+      "status": "stabilizing"
+    }
+  },
+  "processing": {
+    "auto_stabilize": true,
+    "system_architect_trigger": true,
+    "contract_update_required": true
+  },
+  "metadata": {
+    "version": "1.0",
+    "type": "wormhole_discovery_event",
+    "template_compliance": "wormhole_discovery_event",
+    "protocol": "Natural Wormhole Event Protocol [2026-01-15]"
+  }
+}
