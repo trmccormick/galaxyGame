@@ -206,6 +206,46 @@ AI Manager decision flow for material sourcing:
 
 ---
 
+## Currency Precision Standards
+
+The financial system uses different decimal precision levels based on currency type and use case:
+
+### GCC (Galactic Credit Currency)
+- **Precision**: 15 digits total, 8 decimal places (`decimal(15, 8)`)
+- **Range**: 0.00000001 to 9999999.99999999 GCC
+- **Rationale**: Cryptocurrency-style precision for micro-transactions
+- **Use Cases**:
+  - Manufacturing material costs (fractional component pricing)
+  - Energy trading (kWh micro-billing)
+  - Cargo freight rates (per-kg fractional charges)
+  - AI NPC trading (high-volume low-value transactions)
+  - Future expansion: micro-transaction game mechanics
+
+### USD (United States Dollar)
+- **Precision**: 15 digits total, 2 decimal places (`decimal(15, 2)`)
+- **Range**: 0.01 to 9999999999999.99 USD
+- **Rationale**: Standard fiat currency precision (cents)
+- **Use Cases**:
+  - Earth import/export transactions
+  - Real-world economic modeling
+  - Campaign storyline Earth-Mars trade
+
+### Database Schema
+```ruby
+# transactions table
+t.decimal :amount, precision: 15, scale: 8  # GCC default
+t.string :currency, default: 'GCC'         # GCC or USD
+
+# accounts table
+t.decimal :balance, precision: 20, scale: 8  # GCC default (larger for accumulation)
+```
+
+### Migration History
+- **2024-09-15**: Initial financial system created with scale: 2 (standard currency)
+- **2026-01-16**: Increased to scale: 8 for GCC micro-transaction support
+
+---
+
 ## Related Documentation
 
 - [Economic Systems (Storyline)](../storyline/07_economic_systems.md) - High-level economic overview
