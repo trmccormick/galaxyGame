@@ -189,7 +189,29 @@ AI system performance monitoring and optimization controls.
 }
 ```
 
-### 2. Celestial Bodies (`/admin/celestial_bodies/:id/monitor`)
+### 2. Celestial Bodies (`/admin/celestial_bodies`)
+
+#### Index (`/admin/celestial_bodies`)
+
+Overview page listing all celestial bodies for monitoring selection.
+
+**Features:**
+- Complete celestial body catalog with type classification
+- Statistics dashboard (total bodies, planets, moons, asteroids)
+- Grouped display by celestial body type
+- Direct links to individual body monitors
+- Body details: mass, radius, temperature, atmosphere status
+
+**Controller:** `Admin::CelestialBodiesController#index`
+
+```ruby
+# Load all celestial bodies for monitoring selection
+@celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
+@total_bodies = @celestial_bodies.count
+@bodies_by_type = @celestial_bodies.group_by(&:type)
+```
+
+#### Monitor (`/admin/celestial_bodies/:id/monitor`)
 
 Real-time planetary monitoring with sphere-based data visualization.
 
