@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Admin Market & Economy</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>GALAXY GAME - MARKET & ECONOMY</h1>
+            <div id="planetInfo">
+                System Status: <span style="color: #0f0;">OPERATIONAL</span> |
+                Market Data: <span style="color: #888;">COMING SOON</span>
+            </div>
+        </div>
+
+        <!-- Left Panel: Admin Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🎯 ADMIN SECTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/resources'">
+                    ← Back to Resources
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <div class="content-section">
+                <h2>📊 MARKET & ECONOMY</h2>
+                <p style="color: #888;">Market data and economic analysis features coming soon.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
