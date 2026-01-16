@@ -29,6 +29,8 @@ module Settlement
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
     has_many :structures, class_name: 'Structures::BaseStructure', foreign_key: 'settlement_id'
 
+    has_many :orbital_construction_projects, class_name: 'OrbitalConstructionProject', foreign_key: 'station_id'
+
     delegate :surface_storage, to: :inventory, allow_nil: true
     delegate :celestial_body, to: :location, allow_nil: true
     
