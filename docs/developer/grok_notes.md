@@ -66,6 +66,82 @@ if you need to revert any code insure files are backed up to prevent any data lo
 causing the current cascade of failures the accidental loss of files that didn't make it to github yet.
 REMINDER: All tests must pass, and all operations must stay inside the docker container."
 
+----
+begin working on code corrections / adustments.
+
+CRITICAL CONSTRAINTS:
+
+All operations must stay inside the web docker container
+All tests must pass before proceeding
+at each step commmit only the files you changed not all the uncommitted files. if you work on a spec
+commmit only the files you worked on in that session only and push to git. remember use git on the local system not the web docker container.
+update or create new documentation if it doesn't exist for the feature you are working on.
+REMINDER: All tests must pass, and all operations must stay inside the docker container."
+
+01/15/26 - Wormhole Scouting Integration Architecture Review
+-------------------------------------------------------------
+
+**Problem**: After implementing Local Bubble expansion scripts, discovered that the approach was fundamentally incorrect:
+- Pre-generated 41 hybrid system files via batch script
+- Hybrids only contained 1 terraformable planet per star
+- Missing gas giants, ice giants, asteroids, dwarf planets  
+- Pre-generation contradicts on-demand gameplay intent
+- Scripts processed non-system files (lava_tubes.json, craters.json)
+
+**Root Cause**:
+- Misunderstood workflow: generation should happen during wormhole scouting, not as batch pre-process
+- ProceduralGenerator `generate_hybrid_system_from_seed_generic()` too conservative (minimal filling)
+- WormholeScoutingService line 62 just loads seed data, doesn't generate complete system
+- AI Manager needs complete system data to evaluate "Prizes" (terraformable worlds, resources)
+
+**Correct Architecture**:
+
+Workflow:
+1. Player opens artificial wormhole OR natural wormhole discovered
+2. WormholeScoutingService.execute_scouting_mission() called
+3. **Generate complete system from seed** (not just load seed)
+4. AI Manager analyzes complete data for "Prizes":
+   - Terraformable planets in habitable zone
+   - Resource value (gas giants, ice giants, asteroids)
+   - Strategic position
+5. Decision: Build permanent station OR close temporary link
+
+Data Structure:
+- `star_systems/` = Read-only canonical seed files (real exoplanet data)
+- `star_systems/sol/celestial_bodies/` = Known body features for lookup (NOT systems)
+- `generated_star_systems/` = On-demand complete systems (created during scouting)
+- Scripts = Dev/testing tools only
+
+**Implementation Plan**:
+1. ✅ Created WORMHOLE_SCOUTING_INTEGRATION.md documentation
+2. Delete 41 pre-generated hybrid files (incorrect workflow)
+3. Enhance ProceduralGenerator with `generate_complete_system_from_seed()`:
+   - Preserve all seed bodies
+   - Add gas giants (1-2 per system)
+   - Add ice giants (0-2 per system)
+   - Add terrestrial planets (2-5 per star, using templates)
+   - Add dwarf planets (1-3 per system)
+   - Add asteroids (3-10 per system)
+4. Update WormholeScoutingService to call generator during scouting
+5. Add RSpec tests for complete workflow
+6. Update LOCAL_BUBBLE_EXPANSION.md to clarify on-demand intent
+
+**Files Created**:
+- docs/developer/WORMHOLE_SCOUTING_INTEGRATION.md
+
+**Git Commit**:
+- f5e6a58 "docs: Add wormhole scouting integration architecture"
+
+**Next Steps**:
+- Clean up pre-generated hybrid files
+- Implement ProceduralGenerator enhancements
+- Integrate generator into WormholeScoutingService
+- Add comprehensive RSpec coverage
+
+**Key Insight**: Pre-generation was premature optimization. Generation is fast - do it on-demand when player scouts system. This provides fresh data and allows AI Manager to make informed decisions about wormhole station investment.
+
+REMINDER: All operations inside docker container. Documentation completed before code changes. Tests must pass before proceeding.
+
 01/10/26
 -------
 
