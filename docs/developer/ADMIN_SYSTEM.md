@@ -131,6 +131,64 @@ What-if mission planning simulator with economic forecasting.
 - `AIManager::MissionPlannerService` - Runs accelerated simulations
 - `AIManager::EconomicForecasterService` - Analyzes economic implications
 
+#### Decision Log (`/admin/ai_manager/decisions`)
+
+Tracks AI decision-making processes and operational choices.
+
+**Features:**
+- Real-time decision log with filtering by type
+- Decision outcomes (success/failure/pending)
+- Decision categories: Resource Allocation, Contract Negotiation, Mission Planning, Settlement Ops
+- Statistics dashboard with success rates and response times
+- Auto-refresh capability for live monitoring
+
+**Controller:** `Admin::AiManagerController#decisions`
+
+```ruby
+# Decision tracking (currently stub implementation)
+@decisions = []
+```
+
+#### Pattern Library (`/admin/ai_manager/patterns`)
+
+Mission pattern testing and management interface.
+
+**Features:**
+- Pattern library with activation/deactivation controls
+- Testing interface for pattern validation
+- Pattern metadata: target bodies, complexity, success rates
+- Configuration testing with tech level and budget parameters
+- Pattern status indicators (active/inactive)
+
+**Controller:** `Admin::AiManagerController#patterns`
+
+```ruby
+# Pattern management (currently stub implementation)
+@patterns = []
+```
+
+#### Performance Metrics (`/admin/ai_manager/performance`)
+
+AI system performance monitoring and optimization controls.
+
+**Features:**
+- Key performance indicators: Success rate, timeline efficiency, resource utilization
+- System health monitoring with status indicators
+- Performance controls: Decision timeouts, concurrent mission limits, resource thresholds
+- Mission performance table with detailed breakdowns
+- Trend analysis and bottleneck identification
+
+**Controller:** `Admin::AiManagerController#performance`
+
+```ruby
+# Performance metrics (currently stub implementation)
+@metrics = {
+  success_rate: 0,
+  average_timeline: 0,
+  resource_efficiency: 0
+}
+```
+
 ### 2. Celestial Bodies (`/admin/celestial_bodies/:id/monitor`)
 
 Real-time planetary monitoring with sphere-based data visualization.
