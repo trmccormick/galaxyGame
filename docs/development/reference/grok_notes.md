@@ -142,6 +142,271 @@ Data Structure:
 
 REMINDER: All operations inside docker container. Documentation completed before code changes. Tests must pass before proceeding.
 
+---
+
+## Grok Task Templates (Updated 01/16/2026)
+
+### 🌙 Task 1: Nightly Grinder (Autonomous Overnight - Big Failures)
+
+**Use Case:** Unattended overnight operation. Processes 8-12 simple restoration specs while you sleep.
+
+**Command:**
+```
+"Grok, execute AUTONOMOUS NIGHTLY GRINDER PROTOCOL (4-hour limit):
+
+⚠️ CRITICAL BOUNDARIES:
+- ALL RSpec commands MUST start with: docker-compose -f docker-compose.dev.yml exec web
+- NEVER run bare 'bundle exec' or 'rails' commands - Ruby version mismatch will fail
+- Git commands ALWAYS on host, NEVER in container
+- Fail fast on complex issues - log for human review
+
+AUTONOMOUS WORKFLOW (No Permission Required):
+
+1. IDENTIFY TARGET (Container Parse + Host File Ops):
+   LATEST_LOG=$(ls -t data/logs/rspec_full_*.log 2>/dev/null | head -n 1)
+   IF NO LOG: Run fresh suite:
+     docker-compose -f docker-compose.dev.yml exec web /bin/bash -c "RAILS_ENV=test bundle exec rspec > ./data/logs/rspec_full_$(date +%s).log 2>&1"
+   Extract highest-failure spec:
+     grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -1 | awk '{print $2}'
+
+2. AUTONOMOUS DECISION TREE:
+
+   IF spec NOT in Jan 8 backup:
+     → Host: rm galaxy_game/spec/[path]/[file]
+     → Log: 'Removed obsolete spec: [filename]'
+     → Host: git add galaxy_game/spec/[path]/[file]
+     → Host: git commit -m 'chore: remove obsolete spec [name] - not in Jan 8 backup'
+     → NEXT spec
+   
+   ELSIF diff shows only deletions/simple restore (< 50 lines changed):
+     → Host: mkdir -p tmp/pre_revert_backup && cp galaxy_game/[path]/[file] tmp/pre_revert_backup/
+     → Host: cp data/old-code/galaxyGame-01-08-2026/galaxy_game/[path]/[file] galaxy_game/[path]/[file]
+     → Container: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/[path]/[file]_spec.rb
+     → IF 100% GREEN:
+         Host: git add galaxy_game/[path]/[file]
+         Host: git commit -m 'fix: restore [name] from Jan 8 backup'
+         NEXT spec
+     → IF RED:
+         Host: cp tmp/pre_revert_backup/[file] galaxy_game/[path]/[file]
+         Log: 'Failed restoration: [name] - needs human review'
+         NEXT spec
+   
+   ELSIF diff shows missing associations/attributes only:
+     → Host: mkdir -p tmp/pre_revert_backup && cp galaxy_game/app/models/[file] tmp/pre_revert_backup/
+     → Host: Edit to add missing code from Jan 8 (associations, attributes, validations)
+     → Container: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/models/[file]_spec.rb
+     → IF GREEN:
+         Host: git add galaxy_game/app/models/[file]
+         Host: git commit -m 'fix: restore missing [feature] to [model] - Jan 8 backup'
+         NEXT spec
+     → IF RED:
+         Host: cp tmp/pre_revert_backup/[file] galaxy_game/app/models/[file]
+         Log: 'Failed partial restore: [name]'
+         NEXT spec
+   
+   ELSIF diff > 50 lines OR complex logic changes:
+     → SKIP
+     → Log: 'COMPLEX: [filename] requires manual surgical fix - see RESTORATION_AND_ENHANCEMENT_PLAN.md Phase 1'
+     → NEXT spec
+   
+   ELSE:
+     → SKIP
+     → Log: 'UNKNOWN SCENARIO: [filename] - human review required'
+     → NEXT spec
+
+3. ITERATION LIMIT:
+   REPEAT until:
+   - 4 hours elapsed OR
+   - 12 specs processed OR
+   - No more failing specs OR
+   - 3 consecutive SKIPs (hit complex wall)
+
+4. FINAL REPORT:
+   Create: log/nightly_grinder_summary_$(date +%s).txt
+   Content:
+   - Specs restored: X
+   - Specs removed: Y
+   - Specs skipped: Z (complex - flagged for human)
+   - Failed restorations: N
+   - Estimated current failures: [baseline - resolved]
+   - Next targets: [list top 5 remaining by failure count]
+
+VERIFICATION PER CYCLE:
+- Individual spec MUST be 100% green before commit
+- NEVER commit if spec still has failures
+- ALWAYS revert backup if restoration fails
+- ALWAYS atomic commits (specific files only, NO 'git add .')
+
+REMINDER: All docker-compose commands for RSpec. All git commands on host. NO USER PROMPTS."
+```
+
+---
+
+### ⚡ Task 2: Quick-Fix (Daytime - Small Failures from Last Log)
+
+**Use Case:** Fast targeted fixes during work hours. Identifies lowest-hanging fruit for quick wins.
+
+**Command:**
+```
+"Grok, execute QUICK-FIX PROTOCOL using latest log:
+
+⚠️ ENVIRONMENT RULES:
+- RSpec in container: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
+- Git on host: git add / git commit (NEVER in container)
+- NEVER run bare 'bundle exec' on host - will fail
+
+WORKFLOW:
+
+1. FIND LOW-HANGING FRUIT:
+   LATEST_LOG=$(ls -t data/logs/rspec_full_*.log 2>/dev/null | head -n 1)
+   Extract specs with 1-3 failures (quick wins):
+     grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -n | head -5
+
+2. ANALYZE FIRST TARGET:
+   Run individually to see exact errors:
+     docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/[path]/[file]_spec.rb
+   
+   Compare with Jan 8:
+     diff galaxy_game/[path]/[file] data/old-code/galaxyGame-01-08-2026/galaxy_game/[path]/[file]
+
+3. CATEGORIZE ISSUE:
+   - Missing method/validation? → Restore specific method from Jan 8
+   - Factory issue? → Check spec/factories/ vs backup
+   - Test data issue? → Update test setup
+   - Obsolete spec? → Remove if not in Jan 8 backup
+
+4. SURGICAL FIX (NOT Full Restore):
+   Host: mkdir -p tmp/pre_revert_backup && cp galaxy_game/[path]/[file] tmp/pre_revert_backup/
+   Host: Edit ONLY broken method/validation (preserve post-Jan-8 improvements)
+   Container: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/[path]/[file]_spec.rb
+   
+   IF GREEN:
+     Host: git add galaxy_game/[path]/[file]
+     Host: git commit -m 'fix: restore [specific_method] to [file] - surgical fix'
+   ELSE:
+     Host: cp tmp/pre_revert_backup/[file] galaxy_game/[path]/[file]
+     Report failure details for human review
+
+5. REPEAT for next 2-3 quick wins
+
+TARGET: Fix 3-5 small specs in 1-2 hours
+
+REMINDER: Quick surgical fixes only. If complex, flag for human review."
+```
+
+**Success Example 1 (01/16/2026 - Shell Construction - Code Restoration):**
+```
+Target: shell_spec.rb (1 failure)
+Issue: Missing construction_date tracking in schedule_shell_construction!
+Approach: Surgical fix (restored 2 lines from Jan 8, preserved other improvements)
+Files: 
+  - galaxy_game/app/models/concerns/structures/shell.rb (line 171 fix)
+  - docs/construction/construction_system.md (lifecycle documentation)
+Result: ✅ 66/66 passing (100%)
+Commit: 2ba4620 "fix: restore construction_date tracking in Shell#schedule_shell_construction!"
+Time: ~15-20 minutes
+Pattern: Code restoration - fixed application logic bug
+```
+
+**Success Example 2 (01/16/2026 - Consortium Membership - Test Improvement):**
+```
+Target: consortium_membership_spec.rb (1 failure)
+Issue: Spec using RSpec double instead of real ActiveRecord object (pre-existing flaw)
+Discovery: Jan 8 backup IDENTICAL - not a regression, test design issue
+Approach: Test improvement (replace mock with real organization instance)
+Files:
+  - galaxy_game/spec/models/consortium_membership_spec.rb (proper validation test)
+  - docs/architecture/organizations_system.md (consortium membership rules)
+Result: ✅ 5/5 passing (100%)
+Commit: "fix: use real organization in consortium_membership_spec validation test - 5/5 passing (100%)"
+Time: ~20 minutes
+Pattern: Test improvement - fixed spec design flaw, not code bug
+Key: Interactive protocol identified this needed judgment call, not blind restoration
+```
+
+---
+
+### 🚀 Task 3: Continued Development (Interactive - Vision Alignment)
+
+**Use Case:** Collaborative development with human guidance. Answer questions, align with SimEarth/Eve Online vision.
+
+**Command:**
+```
+"Grok, enter INTERACTIVE DEVELOPMENT MODE:
+
+⚠️ CONTEXT REQUIRED:
+- Reference: docs/developer/RESTORATION_AND_ENHANCEMENT_PLAN.md
+- Vision: SimEarth planetary simulation + Eve Online mission system
+- Current Phase: [specify: Phase 1 restoration / Phase 4 UI / Phase 5 pattern learning]
+
+INTERACTION PROTOCOL:
+
+1. ASK BEFORE ACTING:
+   - Present analysis of what needs to be done
+   - Show code snippets from Jan 8 backup vs current
+   - Explain trade-offs (restore vs preserve improvements)
+   - WAIT for human approval before making changes
+
+2. VISION ALIGNMENT QUESTIONS:
+   When working on new features, ask:
+   - "Does this align with SimEarth-style admin controls?"
+   - "How does this fit the Eve Online mission generation workflow?"
+   - "Should AI Manager learn this pattern for autonomous deployment?"
+   - "Does this support the Local Bubble expansion strategy?"
+
+3. ARCHITECTURAL DECISIONS:
+   When encountering:
+   - Location hardcoding → Ask: "Should I query geosphere/atmosphere data instead?"
+   - Material naming → Ask: "Should this use chemical formula (H2O) or common name?"
+   - Economic calculations → Ask: "Should this use EconomicConfig or hardcoded constants?"
+   - Mission generation → Ask: "Should this be pattern-based or procedural?"
+
+4. DOCUMENTATION INTEGRATION:
+   - Update docs/developer/[FEATURE].md with each change
+   - Cross-reference existing docs (GUARDRAILS.md, DATA_DRIVEN_SYSTEMS.md)
+   - Document lessons learned in grok_notes.md
+
+5. TESTING STRATEGY:
+   Container: docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/[relevant]_spec.rb
+   Ask: "Should I add new specs for this feature?"
+   Ask: "Are there integration tests that might be affected?"
+
+6. COMMIT STRATEGY:
+   Present proposed changes:
+   - Files to modify
+   - Tests to update
+   - Documentation to create/update
+   WAIT for approval before:
+   Host: git add [specific_files]
+   Host: git commit -m '[type]: [description]'
+
+EXAMPLE INTERACTION:
+
+Grok: "I found that MissionPlannerService has hardcoded location checks at lines 328-339. 
+
+Jan 8 backup shows same code. Current code appears identical but specs are failing.
+
+Analysis: Tests may be using new data that doesn't match hardcoded expectations.
+
+Options:
+A) Restore Jan 8 specs (preserves hardcoded logic - technical debt)
+B) Refactor service to query geosphere/atmosphere (aligns with data-driven vision)
+C) Update test data to match hardcoded expectations (temporary fix)
+
+Which approach aligns with your vision for AI Manager pattern learning?"
+
+[Wait for human response before proceeding]
+
+REMINDER: 
+- NO autonomous changes in this mode
+- ASK questions about vision/architecture
+- WAIT for approval before commits
+- All RSpec in container (docker-compose prefix)
+- All git on host"
+```
+
+---
+
 01/10/26
 -------
 
