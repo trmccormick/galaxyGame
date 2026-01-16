@@ -268,4 +268,41 @@ RSpec.describe Admin::CelestialBodiesController, type: :controller do
       end
     end
   end
+
+  describe 'GET #index' do
+    let!(:gas_giant) { create(:gas_giant, solar_system: solar_system) }
+    let!(:moon) { create(:moon, solar_system: solar_system, parent_body: terrestrial_planet) }
+    let!(:asteroid) { create(:asteroid, solar_system: solar_system) }
+
+    it 'returns http success' do
+      get :index
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'assigns all celestial bodies' do
+      get :index
+      expect(assigns(:celestial_bodies)).to include(terrestrial_planet, gas_giant, moon, asteroid)
+    end
+
+    it 'orders celestial bodies by name' do
+      get :index
+      names = assigns(:celestial_bodies).map(&:name)
+      expect(names).to eq(names.sort)
+    end
+
+    it 'assigns total count' do
+      get :index
+      expect(assigns(:total_bodies)).to eq(4)
+    end
+
+    it 'groups bodies by type' do
+      get :index
+      bodies_by_type = assigns(:bodies_by_type)
+      expect(bodies_by_type).to be_a(Hash)
+      expect(bodies_by_type['terrestrial_planet']).to include(terrestrial_planet)
+      expect(bodies_by_type['gas_giant']).to include(gas_giant)
+      expect(bodies_by_type['moon']).to include(moon)
+      expect(bodies_by_type['asteroid']).to include(asteroid)
+    end
+  end
 end
