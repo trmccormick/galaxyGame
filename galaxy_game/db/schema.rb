@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_13_040336) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_16_153011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,7 +28,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_13_040336) do
   create_table "accounts", force: :cascade do |t|
     t.string "accountable_type", null: false
     t.bigint "accountable_id", null: false
-    t.decimal "balance", precision: 15, scale: 2, default: "0.0", null: false
+    t.decimal "balance", precision: 20, scale: 8, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "colony_id"
@@ -1405,7 +1405,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_13_040336) do
     t.bigint "account_id", null: false
     t.string "recipient_type", null: false
     t.bigint "recipient_id", null: false
-    t.decimal "amount", precision: 15, scale: 2, null: false
+    t.decimal "amount", precision: 15, scale: 8, null: false
     t.string "transaction_type", null: false
     t.text "description"
     t.datetime "created_at", null: false
