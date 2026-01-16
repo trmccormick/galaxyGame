@@ -33,6 +33,14 @@ module Location
       )
     end
 
+    def update_location(coordinates)
+      update(
+        x_coordinate: coordinates[:x_coordinate],
+        y_coordinate: coordinates[:y_coordinate],
+        z_coordinate: coordinates[:z_coordinate]
+      )
+    end
+
     private
 
     def unique_3d_position_within_context
