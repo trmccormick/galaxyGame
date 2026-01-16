@@ -31,10 +31,12 @@ enum organization_type: {
 - **Can be NPC** - Set `operational_data: { 'is_npc' => true }` for virtual ledger
 
 **Consortium (2)**
-- Joint ventures formed by multiple corporations
-- Owns major infrastructure (AWS, L1 Stations, Depots)
-- Example: Wormhole Transit Consortium (AstroLift + LDC)
-- See: [Consortium Framework](../storyline/03_consortium_framework.md)
+- Joint ventures formed by multiple corporations for high-capital infrastructure projects
+- Can be specialized by purpose (logistics, terraforming, etc.)
+- Examples: 
+  - Wormhole Transit Consortium (interstellar logistics and infrastructure)
+  - TerraGen Terraforming Consortium (planetary development and colonization)
+- See: [Consortium Framework](../storyline/03_consortium_framework.md) and [TerraGen Consortium](../storyline/04_terra_gen_consortium.md)
 
 **Government (3)**
 - Governmental organizations

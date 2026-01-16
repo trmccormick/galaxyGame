@@ -75,15 +75,19 @@ The Mass Trigger: Once local infrastructure is established, the AI retrieves sta
 
 Standby Activation: Systems "orphaned" by the snap immediately activate pre-built Artificial Wormhole Stations (AWS) to reconnect to the existing network backbone (e.g., reconnecting B to A). **Shift Event Handling**: When a wormhole shifts location, AWS infrastructure must be rebuilt at the new natural wormhole position to maintain EM harvesting capability, preserving any existing counterbalance stations for gravitational stability.
 
-## 2. Institutional Framework: The Consortium
+## 2. Institutional Framework: The Wormhole Transit Consortium
 
-Founders: Formed by AstroLift (Logistics & Ship Ops) and the LDC (Materials & Construction) to combine infrastructure building with long-haul transit.
+Founders: Formed by major logistics corporations (AstroLift, Zenith Orbital, Vector Hauling) and Development Corporations, with LDC playing a crucial role due to their mature construction infrastructure essential for building Wormhole Stations and Artificial Wormhole Stations.
 
 The Gamble: Member corporations (including players) fund the initial high-cost build by voting on Route Proposals.
 
 Dividends: Once operational, members receive dividends from transit fees and preferential logistical rates.
 
 Structure Ownership: The Consortium owns the Artificial Wormhole Stations (AWS), L1 Stations, and Depots; local settlements are users/customers.
+
+## 2b. Post-Snap Institutional Evolution: TerraGen Terraforming Consortium
+
+Following the snap events that opened multiple new systems, Development Corporations formed TerraGen to coordinate terraforming efforts. The consortium pools expertise, technology, and resources to transform newly accessible worlds into habitable colonies, complementing the Wormhole Transit Consortium's logistics network.
 
 ## 3. Physics & Topology: The Brown Dwarf Hub (Integrated)
 

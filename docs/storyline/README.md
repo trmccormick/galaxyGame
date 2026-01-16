@@ -10,14 +10,16 @@ The wormhole expansion storyline is divided into four acts, with detailed mechan
 
 - **[01_story_arc.md](01_story_arc.md)**: The four-act narrative structure
 - **[02_crisis_mechanics.md](02_crisis_mechanics.md)**: The "Snap" event and controlled expansion
-- **[03_consortium_framework.md](03_consortium_framework.md)**: Institutional governance and economics
-- **[04_physics_topology.md](04_physics_topology.md)**: Brown dwarf hubs and wormhole physics
-- **[05_deployment_hierarchy.md](05_deployment_hierarchy.md)**: ISRU philosophy and settlement patterns
-- **[06_ai_intelligence.md](06_ai_intelligence.md)**: AI learning systems and memory
-- **[07_economic_systems.md](07_economic_systems.md)**: Priority systems and market dynamics
-- **[08_implementation_phases.md](08_implementation_phases.md)**: Technical rollout plan
-- **[09_lore_canon.md](09_lore_canon.md)**: Canonical lore document with confirmed, implied, and undecided elements
-- **[10_lore_mechanics_summary.md](10_lore_mechanics_summary.md)**: Bridge between narrative vision and technical implementation
+- **[03_consortium_framework.md](03_consortium_framework.md)**: Wormhole Transit Consortium governance and economics
+- **[04_terra_gen_consortium.md](04_terra_gen_consortium.md)**: TerraGen Terraforming Consortium and post-snap colonization
+- **[05_physics_topology.md](05_physics_topology.md)**: Brown dwarf hubs and wormhole physics
+- **[06_deployment_hierarchy.md](06_deployment_hierarchy.md)**: ISRU philosophy and settlement patterns
+- **[07_procedural_generation.md](07_procedural_generation.md)**: Procedural generation systems
+- **[08_ai_intelligence.md](08_ai_intelligence.md)**: AI learning systems and memory
+- **[09_economic_systems.md](09_economic_systems.md)**: Priority systems and market dynamics
+- **[10_implementation_phases.md](10_implementation_phases.md)**: Technical rollout plan
+- **[11_lore_canon.md](11_lore_canon.md)**: Canonical lore document with confirmed, implied, and undecided elements
+- **[12_lore_mechanics_summary.md](12_lore_mechanics_summary.md)**: Bridge between narrative vision and technical implementation
 
 ## Key Principles
 
