@@ -415,6 +415,47 @@ The Mission Planner follows the SimEarth aesthetic:
 **Status**: Production-ready UI with synthetic data; awaiting integration with actual pattern JSON and TerraSim
 
 ---
+## Economic Model for Mission Planner
+
+### Earth Anchor Price (EAP)
+- **Definition:** (Earth spot price × refining factor) + delivered transport cost.
+- **Refining factors:** See `economic_parameters.yml` (`ore_to_metal: 2.5`, `raw_to_processed: 2.0`, `electronics_fabrication: 6.0`).
+- **Example (Titanium → Luna):** Earth spot `$30/kg` × `2.5` = `$75/kg`; transport (manufactured) `150 GCC/kg`; total EAP ≈ `225 GCC/kg`.
+
+### Transport Cost Model
+- **Cargo categories:** `bulk_material: 100`, `manufactured: 150`, `high_tech: 200`, `specialized: 250` (GCC/kg).
+- **Route modifiers:** `earth_to_luna: 1.0`, `earth_to_mars: 1.5`, `earth_to_leo: 0.3`, `leo_to_luna: 0.7`.
+- **Delivered transport:** `rate × route_modifier × technology_multiplier × logistics_multipliers(resource)`.
+
+### Era Selection Guidance
+- **Bootstrap (legacy):** `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg` for early missions or when no route data exists.
+- **Mature era (default):** Use `rates_per_kg` + `route_modifiers` from `economic_parameters.yml`.
+- **Planner choice:** Prefer mature-era; fallback to bootstrap constant only if target/location or service is missing.
+
+### Local Production (ISRU) Multipliers
+- **Maturity stages:** `bootstrap: 2.0×`, `developing: 1.0×`, `mature: 0.5×`, `advanced: 0.2×`.
+- **Sample local costs (mature):** `water: 2 GCC/kg`, `oxygen: 3 GCC/kg`, `iron: 5 GCC/kg`, `aluminum: 8 GCC/kg`.
+- **Policy:** If precursor infrastructure exists, default to local-first for O2, H2O, regolith, and common ISRU metals.
+
+### NPC Pricing Behavior
+- **Cost-based (no market history):** `sell_markup ≈ 1.05`, `minimum_profit_margin ≈ 3%`.
+- **Market-based (with history):** `sell_markup ≈ 1.03`, thresholds in `economic_parameters.yml`.
+- **Undercutting:** Regional NPCs may price just below EAP total when feasible and within margin constraints.
+
+### Blueprint Costs
+- **Presence:** Blueprints include mixed cost representations (numeric-like strings, qualitative tiers).
+- **Guidance:** Where numeric costs exist (e.g., `material_cost: "7,000 GCC"`), prefer direct use; otherwise derive via EAP/local ISRU.
+- **Future:** Standardize `unit_cost_gcc` fields for manufactured items to ease planner consumption.
+
+### Example Calculation (Manufactured Panel → Mars)
+1. Earth spot (components): `100 GCC/kg`; refining/assembly: `components_assembly: 4.0×` → `400 GCC/kg`.
+2. Transport: `manufactured: 150 GCC/kg × earth_to_mars: 1.5` → `225 GCC/kg`.
+3. Delivered EAP: `400 + 225 = 625 GCC/kg`.
+4. Local alternative (mature ISRU regolith panel): `~10–25 GCC/kg` → choose local-first.
+
+### Implementation Notes
+- Use `Logistics::TransportCostService.calculate_cost_per_kg(from:, to:, resource:)` where available.
+- Consider adding a helper: `calculate_earth_anchor_price(resource)` that returns `{ material_cost, transport_cost, total }` for testing and clarity.
 
 ## Market Integration (v2.0 - January 2026)
 

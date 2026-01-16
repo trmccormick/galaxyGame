@@ -56,7 +56,7 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 - [Hycean Planets](architecture/hycean_planet_system.md) - Ocean worlds
 
 ### Transportation
-- [Cycler System](architecture/cycler_system.md) - Orbital logistics
+- [Cycler System](architecture/ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md) - Orbital logistics
 - [Wormhole System](architecture/wormhole_system.md) - FTL travel
 - [Asteroid Relocation](crafts/asteroid_relocation_tug.md) - Resource transport
 

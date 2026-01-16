@@ -16,11 +16,19 @@ TerraGen represents the institutional response to the terraforming challenges pr
 - **Economic Coordination**: Manages terraforming contracts and settlement development funding
 
 ## Player Mission Examples
-TerraGen contracts players for critical terraforming support missions:
-- **Resource Harvesting**: Extract raw CO2 and N2 from Venus for Mars' atmospheric buildup
+TerraGen contracts players for critical terraforming support missions, often in coordination with the AI Manager's wormhole planning:
+
+- **Resource Harvesting**: Extract raw CO2 and N2 from Venus for Mars' atmospheric buildup (paid by receiving world's local DC)
 - **Inter-System Transport**: Move terraforming organisms or materials between colonized systems
 - **Survey Operations**: Map planetary resources and assess terraforming potential
 - **Technology Testing**: Deploy experimental terraforming equipment on new worlds
+- **Pre-Snap Harvesting**: When wormholes shift to resource-rich systems that the AI Manager hasn't prioritized for permanent connection, TerraGen offers time-sensitive missions to harvest valuable resources before the planned "hammer event" closes the wormhole
+
+## AI Manager Integration
+TerraGen missions are coordinated with the AI Manager's wormhole network planning:
+- **Hammer Events**: AI Manager schedules specific game-time events to intentionally close wormholes and trigger controlled snaps
+- **Resource Windows**: Temporary access to new systems creates harvesting opportunities before permanent infrastructure is built
+- **Mission Timing**: Players receive advance notice of impending hammer events, creating urgency for resource extraction missions
 
 ## Founding Members
 - **Established DCs**: LDC, Mars Development Corporation, Venus Development Corporation (for atmospheric expertise)

@@ -87,7 +87,7 @@ This guide documents the transition from the old scattered documentation structu
 
 | Old Location | New Location | Status |
 |-------------|-------------|---------|
-| `Documentation/cycler_system_architecture.md` | `docs/architecture/cycler_system.md` | ✅ Migrated |
+| `Documentation/cycler_system_architecture.md` | `docs/architecture/ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md` | ✅ Consolidated & Migrated |
 | `Documentation/saturn_jupiter_pattern_comparison.md` | `docs/architecture/planetary_patterns/saturn_jupiter_pattern_comparison.md` | ✅ Migrated |
 | `Documentation/three_tier_infrastructure.md` | `docs/architecture/planetary_patterns/three_tier_infrastructure.md` | ✅ Migrated |
 | `galaxy_game/docs/AI_MANAGER/*` | `docs/architecture/ai_manager/*` | ✅ Migrated |
