@@ -153,4 +153,43 @@ RSpec.describe Admin::AiManagerController, type: :controller do
       expect(json_data['results']).to be_present
     end
   end
+
+  describe "GET #decisions" do
+    it "returns http success" do
+      get :decisions
+      expect(response).to have_http_status(:success)
+    end
+
+    it "assigns decisions data" do
+      get :decisions
+      expect(assigns(:decisions)).to be_an(Array)
+    end
+  end
+
+  describe "GET #patterns" do
+    it "returns http success" do
+      get :patterns
+      expect(response).to have_http_status(:success)
+    end
+
+    it "assigns patterns data" do
+      get :patterns
+      expect(assigns(:patterns)).to be_an(Array)
+    end
+  end
+
+  describe "GET #performance" do
+    it "returns http success" do
+      get :performance
+      expect(response).to have_http_status(:success)
+    end
+
+    it "assigns performance metrics" do
+      get :performance
+      expect(assigns(:metrics)).to be_a(Hash)
+      expect(assigns(:metrics)).to have_key(:success_rate)
+      expect(assigns(:metrics)).to have_key(:average_timeline)
+      expect(assigns(:metrics)).to have_key(:resource_efficiency)
+    end
+  end
 end

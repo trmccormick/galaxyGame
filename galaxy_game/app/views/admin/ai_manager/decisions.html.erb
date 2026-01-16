@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - AI Manager Decisions</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        .decision-log {
+            max-height: 600px;
+            overflow-y: auto;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .decision-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .decision-type {
+            color: #0ff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .decision-timestamp {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .decision-content {
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .decision-outcome {
+            margin-top: 10px;
+            padding: 8px;
+            background: #222;
+            border-left: 3px solid #0f0;
+        }
+
+        .decision-outcome.success {
+            border-left-color: #0f0;
+        }
+
+        .decision-outcome.failure {
+            border-left-color: #f00;
+        }
+
+        .decision-outcome.pending {
+            border-left-color: #ff0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #888;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: #0f0;
+            color: #000;
+            border-color: #0f0;
+        }
+
+        .filter-btn:hover {
+            border-color: #0f0;
+            color: #0f0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            color: #0ff;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>GALAXY GAME - AI MANAGER DECISIONS</h1>
+            <div id="planetInfo">
+                System Status: <span style="color: #0f0;">OPERATIONAL</span> |
+                AI Decision Engine: <span style="color: #0ff;">ACTIVE</span> |
+                Version: 1.0.0-alpha
+            </div>
+        </div>
+
+        <!-- Left Panel: AI Manager Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🤖 AI MANAGER</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/missions'">
+                    🚀 Missions
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/decisions'">
+                    🧠 Decisions
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/planner'">
+                    📋 Planner
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/patterns'">
+                    🎯 Patterns
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/performance'">
+                    📊 Performance
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>🎯 ADMIN SECTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/dashboard'">
+                    ← Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <div class="content-section">
+                <h2>🧠 AI DECISION LOG</h2>
+
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Total Decisions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Avg Response Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Active Decisions</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <button class="filter-btn active" onclick="filterDecisions('all')">All Decisions</button>
+                    <button class="filter-btn" onclick="filterDecisions('resource')">Resource Allocation</button>
+                    <button class="filter-btn" onclick="filterDecisions('contract')">Contract Negotiation</button>
+                    <button class="filter-btn" onclick="filterDecisions('mission')">Mission Planning</button>
+                    <button class="filter-btn" onclick="filterDecisions('settlement')">Settlement Ops</button>
+                </div>
+
+                <!-- Decision Log -->
+                <div class="decision-log" id="decisionLog">
+                    <% if @decisions.empty? %>
+                        <div style="text-align: center; color: #666; padding: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">🧠</div>
+                            <div>No AI decisions logged yet.</div>
+                            <div style="font-size: 12px; margin-top: 10px;">Decision tracking will appear here as the AI makes operational choices.</div>
+                        </div>
+                    <% else %>
+                        <% @decisions.each do |decision| %>
+                            <div class="decision-item" data-type="<%= decision[:type] %>">
+                                <div class="decision-header">
+                                    <div class="decision-type"><%= decision[:type].upcase %></div>
+                                    <div class="decision-timestamp"><%= decision[:timestamp] %></div>
+                                </div>
+                                <div class="decision-content"><%= decision[:description] %></div>
+                                <div class="decision-outcome <%= decision[:outcome] %>">
+                                    <strong>Outcome:</strong> <%= decision[:outcome_message] %>
+                                </div>
+                            </div>
+                        <% end %>
+                    <% end %>
+                </div>
+
+                <div class="content-section">
+                    <h3>📋 DECISION TYPES</h3>
+                    <div style="background: #0a0a0a; padding: 15px; border: 1px solid #333; margin-top: 10px;">
+                        <div style="color: #0f0;"><strong>Resource Allocation:</strong> AI deciding how to distribute limited resources across competing needs</div>
+                        <div style="color: #888;"><strong>Contract Negotiation:</strong> AI evaluating and negotiating supply contracts with NPCs</div>
+                        <div style="color: #888;"><strong>Mission Planning:</strong> AI making strategic decisions about mission priorities and timelines</div>
+                        <div style="color: #888;"><strong>Settlement Operations:</strong> AI managing day-to-day settlement activities and optimizations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterDecisions(type) {
+            const items = document.querySelectorAll('.decision-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            // Update button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter items
+            items.forEach(item => {
+                if (type === 'all' || item.dataset.type === type) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto-refresh decision log every 30 seconds
+        setInterval(() => {
+            // TODO: Implement AJAX refresh when decisions are populated
+        }, 30000);
+    </script>
+</body>
+</html>
