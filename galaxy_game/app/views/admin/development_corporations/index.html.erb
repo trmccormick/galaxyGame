@@ -4,6 +4,11 @@
   <title>DC Operations Monitor | Admin</title>
   <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
   <style>
+    body {
+      overflow-y: auto !important;
+      overflow-x: hidden;
+    }
+    
     .dc-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
