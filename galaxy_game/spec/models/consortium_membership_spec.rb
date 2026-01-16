@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ConsortiumMembership, type: :model do
   let(:consortium) { create(:consortium) }
   let(:corporation) { create(:corporation) }
-  let(:non_corp) { double('Player', organization_type: 'player') }
+  let(:non_corp) { create(:organization, organization_type: 'government') }
 
   it 'is valid with valid attributes' do
     membership = ConsortiumMembership.new(
