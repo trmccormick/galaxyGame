@@ -48,18 +48,58 @@
             text-transform: uppercase;
         }
 
-        .body-type.planet {
+        .body-type.star {
+            background: #ffd700;
+            color: #000;
+        }
+
+        .body-type.brown_dwarf {
+            background: #daa520;
+            color: #000;
+        }
+
+        .body-type.terrestrial_planet,
+        .body-type.carbon_planet,
+        .body-type.lava_world,
+        .body-type.super_earth,
+        .body-type.gas_giant,
+        .body-type.ice_giant,
+        .body-type.hot_jupiter,
+        .body-type.hycean_planet,
+        .body-type.ocean_planet,
+        .body-type.water_world {
             background: #0f0;
             color: #000;
         }
 
-        .body-type.moon {
+        .body-type.moon,
+        .body-type.large_moon,
+        .body-type.small_moon,
+        .body-type.ice_moon {
             background: #ff0;
             color: #000;
         }
 
-        .body-type.asteroid {
+        .body-type.asteroid,
+        .body-type.comet,
+        .body-type.dwarf_planet,
+        .body-type.kuiper_belt_object {
             background: #f00;
+            color: #fff;
+        }
+
+        .body-type.alien_life_form {
+            background: #f0f;
+            color: #fff;
+        }
+
+        .body-type.material {
+            background: #0ff;
+            color: #000;
+        }
+
+        .body-type.unknown {
+            background: #666;
             color: #fff;
         }
 
@@ -222,29 +262,37 @@
                         <div class="stat-label">Total Bodies</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value"><%= @bodies_by_type['planet']&.count || 0 %></div>
+                        <div class="stat-value"><%= @category_stats[:stars] %></div>
+                        <div class="stat-label">Stars</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value"><%= @category_stats[:planets] %></div>
                         <div class="stat-label">Planets</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value"><%= @bodies_by_type['moon']&.count || 0 %></div>
+                        <div class="stat-value"><%= @category_stats[:moons] %></div>
                         <div class="stat-label">Moons</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value"><%= @bodies_by_type['asteroid']&.count || 0 %></div>
-                        <div class="stat-label">Asteroids</div>
+                        <div class="stat-value"><%= @category_stats[:minor_bodies] %></div>
+                        <div class="stat-label">Minor Bodies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value"><%= @category_stats[:other] %></div>
+                        <div class="stat-label">Other</div>
                     </div>
                 </div>
 
-                <!-- Celestial Bodies by Type -->
-                <% @bodies_by_type.each do |type, bodies| %>
+                <!-- Celestial Bodies by Category -->
+                <% @bodies_by_category.each do |category, bodies| %>
                     <div class="type-section">
-                        <div class="type-header"><%= type.pluralize.titleize %> (<%= bodies.count %>)</div>
+                        <div class="type-header"><%= category.humanize.titleize %> (<%= bodies.count %>)</div>
                         <div class="body-grid">
                             <% bodies.each do |body| %>
                                 <div class="body-card">
                                     <div class="body-header">
                                         <div class="body-name"><%= body.name %></div>
-                                        <div class="body-type <%= type %>"><%= type %></div>
+                                        <div class="body-type <%= category %>"><%= category.humanize %></div>
                                     </div>
                                     <div class="body-description">
                                         <%= body.description || "No description available" %>
