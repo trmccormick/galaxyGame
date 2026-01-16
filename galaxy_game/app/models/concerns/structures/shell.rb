@@ -168,9 +168,7 @@ module Structures
       
       # Update status
       update_shell_status('framework_construction')
-      self.panel_type = panel_type
-      self.operational_data = self.operational_data.dup
-      save!
+      update!(panel_type: panel_type, construction_date: Time.current)
       
       # Store sealing decision
       self.operational_data ||= {}

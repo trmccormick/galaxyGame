@@ -116,8 +116,29 @@ Located in `app/services/construction/`
 
 4. **StationConstructionService**
    - Builds space station components (airlocks, docking ports, utilities)
-   - Placeholder for station shell construction
+   - Handles station shell construction workflow
    - Uses source constraint tags (e.g., lunar-derived materials)
+
+#### Shell Construction Lifecycle
+
+**Construction Date Tracking:**
+When `schedule_shell_construction!` is called on any structure with shell capability:
+- Sets `construction_date` to `Time.current` - marks when construction scheduling began
+- Sets `panel_type` (structural_cover_panel, transparent_panel, etc.)
+- Updates `shell_status` from 'planned' → 'framework_construction'
+- Creates ConstructionJob with material/equipment requests via MaterialRequestService
+- Creates equipment requests via Manufacturing::EquipmentRequest
+
+**Shell Status Progression:**
+- `planned` - Shell design complete, awaiting construction scheduling
+- `framework_construction` - Construction scheduled, materials/equipment requested
+- `panels_installed` - Panel installation in progress
+- `sealed` - Shell complete and pressure-ready
+
+**Key Fields:**
+- `construction_date` - Timestamp when construction was scheduled (not completion)
+- `panel_type` - Type of panels used (structural, transparent, etc.)
+- `shell_status` - Current construction phase
 
 5. **CoveringCalculator**
    - Material calculations for panels and I-beams
