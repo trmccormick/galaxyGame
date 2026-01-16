@@ -1,7 +1,7 @@
 <div class="dc-card">
   <div class="dc-header">
     <% logo_path = "logos/#{org.identifier}.png" %>
-    <% if image_path(logo_path, skip_pipeline: true) rescue false %>
+    <% if File.exist?(Rails.root.join('public', logo_path)) %>
       <div style="text-align: center; margin-bottom: 10px;">
         <%= image_tag logo_path, style: "max-width: 150px; max-height: 80px; margin: 0 auto;", alt: org.name %>
       </div>
