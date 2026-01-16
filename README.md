@@ -1,56 +1,148 @@
-# galaxyGame
-Rails Game similar to SimEarth
+# Galaxy Game
 
-## Versions
-- Rails 7.0.8.4
-- Ruby 3.2
-- Postgress 16
+**A SimEarth-inspired space colonization game featuring realistic manufacturing chains, AI-driven mission planning, and player-driven economics.**
 
-## Testing and Quality Control 
-The test suite includes rspec, capybara, selnium, simplecov, CircleCI, and code climate. 
-Javascript is difficult to test by iteself.  To run tests locally uncomment the selenium docker container and adjust capybara setups. 
-`RAILS_ENV=test bundle exec rspec` this helps to ensure that all gems are loaded appropriately and you do not get the `shoulda error`.  
+Build settlements across the solar system and beyond. Process raw regolith into manufactured goods. Manage complex supply chains. Make critical decisions about terraforming alien worlds. Guide humanity's expansion through wormhole networks into the unknown.
 
-### Troubleshooting
-Using Chatgpt to generate some of this code based on the original java version.
+---
+
+## 🎮 Game Vision
+
+### SimEarth Inspiration
+- **Planetary Projection Systems**: Economic forecasting, resource flow visualization, terraforming progress tracking
+- **Admin Tools**: System-wide monitoring and management interfaces
+- **Emergent Complexity**: Simple rules creating complex, realistic outcomes
+
+### Eve Online Inspiration  
+- **Player-Driven Economy**: Contracts, insurance, logistics markets controlled by players
+- **Mission Generation**: Procedural missions with pattern learning and AI adaptation
+- **Corporation Mechanics**: Organizations, consortiums, reputation systems
+
+### Realistic Science
+Grounded in real physics, chemistry, and orbital mechanics while maintaining engaging gameplay.
+
+---
+
+## 🚀 Current Development Status
+
+**Phase 3**: Integration & Restoration (Active)  
+**Test Failures**: ~398 (down from 401) - Target: <50  
+**Next Phase**: UI Enhancement (SimEarth admin panel + Eve mission builder)
+
+**Recent Progress**:
+- ✅ Shell construction system - 66/66 specs passing
+- ✅ Consortium membership - 5/5 specs passing  
+- ✅ Crater dome covering - 23/24 specs passing
+- 🔄 Financial accounts - in progress
+
+📊 **[View Current Status](docs/development/active/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
+
+---
+
+## 📚 Documentation
+
+### Quick Links
+- **[Full Documentation Hub](docs/README.md)** - Complete documentation navigation
+- **[Getting Started Guide](docs/developer/setup.md)** - Set up development environment
+- **[Architecture Overview](docs/architecture/overview.md)** - System design and structure
+- **[Game Mechanics](docs/gameplay/mechanics.md)** - Core gameplay systems
+
+### For Developers
+- **[Development Docs](docs/development/)** - Active work, planning, and reference guides
+- **[Environment Rules](docs/development/reference/ENVIRONMENT_BOUNDARIES.md)** - Critical Docker/Git boundaries
+- **[Testing Guide](docs/developer/ai_testing_framework.md)** - RSpec, integration tests, CI/CD
+
+### For Players
+- **[User Guide](docs/user/)** - How to play
+- **[Terraforming Guide](docs/gameplay/terraforming.md)** - Planet transformation systems
+- **[Trading System](#trading--logistics-system)** - Contracts, insurance, and logistics (see below)
+
+---
+
+## 🛠️ Tech Stack
+
+- **Rails** 7.0.8.4
+- **Ruby** 3.2
+- **PostgreSQL** 16
+- **Docker** (development environment)
+- **RSpec** + Capybara + Selenium (testing)
+- **SimpleCov** + CircleCI + Code Climate (quality control)
+
+### Quick Start
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/galaxyGame.git
+cd galaxyGame
+
+# Start development environment
+docker-compose -f docker-compose.dev.yml up
+
+# Run tests (in container)
+docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
+
+# Access application
+open http://localhost:3000
+```
+
+**Full setup instructions**: [docs/developer/setup.md](docs/developer/setup.md)
+
+---
+
+## 🏗️ Key Systems
+
+### Manufacturing & Industry
+- **ISRU Processing**: Regolith → Processed materials → Components → Structures
+- **Component Production**: 3D printing, material processing, waste management
+- **Construction**: Shells, domes, habitats, industrial facilities
+- **[Manufacturing Chains Documentation](docs/architecture/SYSTEM_INDUSTRIAL_CHAINS.md)**
+
+### Economics & Trade
+- **Player Contracts**: Item exchange, courier services, auctions
+- **Insurance System**: Risk management for logistics and trade
+- **Organizations**: Corporations, consortiums, reputation systems
+- **[Economic System Documentation](docs/architecture/financial_system.md)**
+
+### Planetary Systems
+- **Geosphere**: Geology, regolith composition, resource deposits
+- **Hydrosphere**: Water systems, ice caps, subsurface oceans
+- **Biosphere**: Terraforming, ecosystems, life support
+- **[Planetary Systems Documentation](docs/architecture/)**
+
+### AI & Automation
+- **Mission Planning**: AI-driven expansion and resource optimization
+- **Probe System**: Autonomous exploration and scouting
+- **Pattern Learning**: AI learns from missions to improve future decisions
+- **[AI Manager Documentation](docs/ai_manager/)**
+
+---
 
 ## Trading & Logistics System
 
-### Overview
-The game features a comprehensive player-driven trading and logistics system inspired by EVE Online, with integrated insurance for risk management.
+**Comprehensive player-driven trading inspired by EVE Online with integrated insurance for risk management.**
 
-### Key Components
+### Core Features
 
-#### 1. Player Contracts
-- **Item Exchange**: Direct item-for-item trades between players
-- **Courier Contracts**: Transport services with insurance options
-- **Auction System**: Player-created auctions for goods
-- **Location-Based**: Contracts only available at specific stations/bases
+#### Player Contracts
+- **Item Exchange**: Direct trades between players
+- **Courier Services**: Transport contracts with insurance options
+- **Auctions**: Player-created markets for goods
+- **Location-Based**: Contracts available at specific stations/bases
 
-#### 2. Insurance System
-- **NPC Insurance Corporations**: Three pre-seeded insurance companies
-  - Galactic Insurance Consortium (Luna-based)
-  - Luna Risk Management Corp (Luna-based)
-  - Earth Transport Underwriters (Earth-based)
-- **Risk-Based Pricing**: Premiums adjust based on route risk and contractor reliability
+#### Insurance & Risk Management
+- **NPC Insurance Providers**: Three companies (Galactic Insurance Consortium, Luna Risk Management, Earth Transport Underwriters)
+- **Risk-Based Pricing**: Premiums adjust based on route danger and contractor reputation
 - **Coverage Tiers**: Basic (50%), Standard (75%), Premium (90%)
-- **Claim Processing**: Automated assessment with manual review for high-risk claims
+- **Claims Processing**: Automated assessment with manual review for disputes
 
-#### 3. Security Mechanisms
-- **Collateral Requirements**: Contractors must post security deposits
-- **Insurance Coverage**: Optional protection against cargo loss
-- **Reputation System**: Failed deliveries impact future contract access
-- **Escrow System**: Secure fund/item holding during transactions
+#### Security & Trust
+- **Collateral System**: Security deposits for contractors
+- **Reputation Tracking**: Failed deliveries impact future opportunities
+- **Escrow Services**: Secure fund/item holding during transactions
+- **Player-First Logistics**: NPCs create player contracts first, fallback to automated delivery if no takers
 
-#### 4. Player-First Logistics
-- **NPC Contract Creation**: When NPCs need goods moved, player contracts are created first
-- **Fallback System**: If no players accept, automated NPC logistics handle delivery
-- **Variable Transport Costs**: Cycler network vs. player contract pricing
-- **Same-Body Transfers**: Surface logistics for settlements on the same celestial body
+### Example: Creating a Courier Contract
 
-### Usage Examples
-
-#### Creating a Courier Contract
 ```ruby
 # NPC creates player-visible contract
 contract_data = {
@@ -69,37 +161,87 @@ contract_data = {
 result = Logistics::PlayerContractService.create_logistics_contract(contract_data)
 ```
 
-#### Purchasing Insurance
-```ruby
-# Player purchases insurance for contract
-insurance_options = TradeService.get_insurance_options(contract)
-premium = TradeService.calculate_insurance_premium(contract.value, :standard)
-
-# Accept contract with insurance
-TradeService.accept_contract(contract, player, { insurer_id: insurer.id, tier: :standard })
-```
-
-#### Processing Contract Completion/Failure
-```ruby
-# Successful delivery
-TradeService.complete_contract(contract)
-
-# Failed delivery (cargo lost)
-TradeService.fail_contract(contract, {
-  type: 'cargo_lost',
-  loss_amount: contract.value,
-  cargo_recovered: false
-})
-```
+**Full API Documentation**: [docs/architecture/organizations_system.md](docs/architecture/organizations_system.md)
 
 ### Economic Impact
-- **Player Agency**: Players control logistics market, not just automated systems
-- **Risk/Reward Balance**: High-risk contracts offer better rewards but require insurance
+- **Player Agency**: Players control logistics market through competitive contracts
 - **Market Dynamics**: Insurance companies compete on rates and coverage
-- **Systemic Stability**: Insurance absorbs logistics failures, preventing economic cascades
+- **Systemic Stability**: Insurance absorbs failures, preventing economic cascades
 
-### Future Enhancements
-- **Player Insurance Corporations**: Players can create and manage insurance companies
-- **Reinsurance Market**: Insurance companies can hedge their own risks
-- **Contract Arbitration**: Dispute resolution system for contested deliveries
-- **Advanced Risk Modeling**: Machine learning-based premium calculation 
+**Detailed Documentation**: [docs/architecture/financial_system.md](docs/architecture/financial_system.md)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Current focus areas:
+
+### Active Development (Phase 3)
+- **Test Restoration**: Surgical fixes for ~398 failing specs
+- **Code Quality**: Improving test coverage and documentation
+- **Bug Fixes**: Addressing issues in manufacturing, financial, and settlement systems
+
+### Upcoming (Phase 4)
+- **UI Enhancement**: SimEarth-style admin panels and D3.js visualizations
+- **Mission Builder**: Eve Online-inspired mission generation tools
+- **System Projector**: Economic forecasting and resource flow tracking
+
+### How to Contribute
+1. Check **[Current Status](docs/development/active/CURRENT_STATUS.md)** for active work
+2. Review **[Environment Boundaries](docs/development/reference/ENVIRONMENT_BOUNDARIES.md)** for critical development rules
+3. Follow commit message format: `fix:`, `feat:`, `docs:`, `test:`
+4. Update documentation with every code change
+5. Submit PRs with passing tests
+
+**Contribution Guidelines**: [docs/developer/README.md](docs/developer/README.md)
+
+---
+
+## 📖 Lore & Story
+
+### The Premise
+Humanity has discovered a network of wormholes enabling FTL travel. Your role: guide the expansion beyond Sol, establish settlements on alien worlds, develop manufacturing chains from raw regolith to complex structures, and make critical decisions about terraforming and resource allocation.
+
+### Key Story Elements
+- **Consortium Framework**: Competing factions and corporations
+- **Crisis Mechanics**: Events and challenges driving narrative
+- **AI Intelligence**: Autonomous systems learning from player decisions
+- **Procedural Generation**: Unique alien worlds and challenges
+
+**Full Storyline**: [docs/storyline/](docs/storyline/)
+
+---
+
+## 📊 Project Metrics
+
+### Test Suite Health
+- **Total Examples**: ~2,600
+- **Current Failures**: ~398 (Phase 3 restoration in progress)
+- **Target**: <50 failures before Phase 4
+- **Coverage**: SimpleCov tracking (manufacturing pipeline fully tested)
+
+### Development Activity
+- **Active Branch**: `main`
+- **Recent Commits**: Test restoration, manufacturing fixes, documentation reorganization
+- **CI/CD**: CircleCI + Code Climate integration
+- **Code Quality**: Monitored via Code Climate
+
+---
+
+## 📜 License
+
+[License Type] - See LICENSE file for details
+
+---
+
+## 🔗 Links
+
+- **Documentation**: [docs/README.md](docs/README.md)
+- **GitHub Issues**: [Issue Tracker](#)
+- **Project Board**: [Development Roadmap](#)
+- **Live Demo**: [Coming Soon]
+
+---
+
+**Last Updated**: January 16, 2026  
+**Version**: Development (Phase 3 - Test Restoration) 
