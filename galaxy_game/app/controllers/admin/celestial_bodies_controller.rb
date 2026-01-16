@@ -6,6 +6,14 @@ module Admin
   class CelestialBodiesController < ApplicationController
     before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test]
 
+    # GET /admin/celestial_bodies
+    # Index page listing all celestial bodies for monitoring selection
+    def index
+      @celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
+      @total_bodies = @celestial_bodies.count
+      @bodies_by_type = @celestial_bodies.group_by(&:type)
+    end
+
     # GET /admin/celestial_bodies/:id/monitor
     # Main monitoring interface with three-panel layout
     def monitor
