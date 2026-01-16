@@ -24,7 +24,7 @@ RSpec.describe Market::Marketplace, type: :model do
   end
 
   describe '#current_market_condition' do
-    let(:settlement) { Settlement::BaseSettlement.create!(name: 'Test Settlement') }
+    let(:settlement) { create(:base_settlement) }
     let(:marketplace) { described_class.create!(settlement: settlement) }
     
     let!(:lox_condition) do
@@ -47,7 +47,7 @@ RSpec.describe Market::Marketplace, type: :model do
   end
 
   describe '#find_matching_orders' do
-    let(:settlement) { Settlement::BaseSettlement.create!(name: 'Test Settlement') }
+    let(:settlement) { create(:base_settlement) }
     let(:marketplace) { described_class.create!(settlement: settlement) }
     let(:player) { create(:player) }
     
@@ -68,7 +68,7 @@ RSpec.describe Market::Marketplace, type: :model do
         base_settlement_id: settlement.id,
         resource: 'LOX',
         quantity: 100,
-        order_type: 'Sell'
+        order_type: 'sell'
       )
     end
 
@@ -77,6 +77,11 @@ RSpec.describe Market::Marketplace, type: :model do
       # The functionality is adequately covered by the #place_order integration tests
       # Skipping these tests for now - consider refactoring find_matching_orders
       # to be more testable (e.g., dependency injection)
+      
+      before do
+        allow(settlement).to receive(:npc_market_bid).and_return(48.0)
+        allow(settlement).to receive(:npc_buy_capacity).and_return(500)
+      end
       
       it 'calls the settlement NPC methods' do
         # Just verify the method is callable
@@ -93,7 +98,7 @@ RSpec.describe Market::Marketplace, type: :model do
           base_settlement_id: settlement.id,
           resource: 'LOX',
           quantity: 100,
-          order_type: 'Buy'
+          order_type: 'buy'
         )
       end
 
@@ -104,7 +109,7 @@ RSpec.describe Market::Marketplace, type: :model do
   end
 
   describe '#place_order' do
-    let(:settlement) { Settlement::BaseSettlement.create!(name: 'Test Settlement') }
+    let(:settlement) { create(:base_settlement) }
     let(:marketplace) { described_class.create!(settlement: settlement) }
     let(:player) { create(:player) }
     
@@ -130,8 +135,6 @@ RSpec.describe Market::Marketplace, type: :model do
       allow(settlement).to receive(:npc_market_bid).and_return(48.0)
       allow(settlement).to receive(:npc_buy_capacity).and_return(500)
       allow(settlement).to receive(:market_condition).and_return(market_condition)
-      allow(FinancialManager).to receive(:transfer).and_return(true)
-      allow(player).to receive(:has_enough_inventory?).and_return(true)
       allow(player).to receive(:remove_inventory).and_return(true)
       allow_any_instance_of(Logistics::ShippingCalculator).to receive(:calculate_shipping).and_return(
         { shipping_cost: 200.00, total_cost: 0, base_cost: 0 }
@@ -144,17 +147,20 @@ RSpec.describe Market::Marketplace, type: :model do
           orderable: player,
           resource: 'LOX',
           volume: 100,
-          order_type: 'Sell'
+          order_type: 'sell'
         )
       }.to change(Market::Order, :count).by(1)
     end
 
     it 'converts volume parameter to quantity' do
+      # Prevent order matching for this test
+      allow(marketplace).to receive(:find_matching_orders).and_return([])
+      
       marketplace.place_order(
         orderable: player,
         resource: 'LOX',
         volume: 100,
-        order_type: 'Sell'
+        order_type: 'sell'
       )
       
       order = Market::Order.last
@@ -166,7 +172,7 @@ RSpec.describe Market::Marketplace, type: :model do
         orderable: player,
         resource: 'LOX',
         volume: 100,
-        order_type: 'Sell'
+        order_type: 'sell'
       )
       
       order = Market::Order.last
@@ -179,7 +185,7 @@ RSpec.describe Market::Marketplace, type: :model do
           orderable: player,
           resource: 'LOX',
           volume: 100,
-          order_type: 'Sell',
+          order_type: 'sell',
           order_type_detail: 'Market',
           price: 50.0
         )
@@ -194,7 +200,7 @@ RSpec.describe Market::Marketplace, type: :model do
             id: -1,
             orderable: settlement,
             resource: 'LOX',
-            order_type: 'Buy',
+            order_type: 'buy',
             quantity: 100,
             price: 48.0,
             market_condition: market_condition
@@ -205,7 +211,7 @@ RSpec.describe Market::Marketplace, type: :model do
           orderable: player,
           resource: 'LOX',
           volume: 100,
-          order_type: 'Sell'
+          order_type: 'sell'
         )
         
         expect(result).to be_nil
@@ -218,7 +224,7 @@ RSpec.describe Market::Marketplace, type: :model do
             id: -1,
             orderable: settlement,
             resource: 'LOX',
-            order_type: 'Buy',
+            order_type: 'buy',
             quantity: 100,
             price: 48.0,
             market_condition: market_condition
@@ -229,7 +235,7 @@ RSpec.describe Market::Marketplace, type: :model do
           orderable: player,
           resource: 'LOX',
           volume: 100,
-          order_type: 'Sell'
+          order_type: 'sell'
         )
         
         order = Market::Order.last
@@ -245,7 +251,7 @@ RSpec.describe Market::Marketplace, type: :model do
             id: -1,
             orderable: settlement,
             resource: 'LOX',
-            order_type: 'Buy',
+            order_type: 'buy',
             quantity: 50,
             price: 48.0,
             market_condition: market_condition
@@ -258,7 +264,7 @@ RSpec.describe Market::Marketplace, type: :model do
           orderable: player,
           resource: 'LOX',
           volume: 100,
-          order_type: 'Sell'
+          order_type: 'sell'
         )
         
         expect(result).to be_a(Market::Order)
@@ -276,7 +282,7 @@ RSpec.describe Market::Marketplace, type: :model do
           orderable: player,
           resource: 'LOX',
           volume: 100,
-          order_type: 'Sell'
+          order_type: 'sell'
         )
         
         expect(result).to be_a(Market::Order)
@@ -286,8 +292,8 @@ RSpec.describe Market::Marketplace, type: :model do
   end
 
   describe '#execute_trades' do
-      let(:settlement) { Settlement::BaseSettlement.create!(name: 'Test Settlement') }
-      let(:marketplace) { described_class.create!(settlement: settlement) }
+    let(:settlement) { create(:base_settlement) }
+    let(:marketplace) { described_class.create!(settlement: settlement) }
       
       # Use a real model (like Corporation) that can respond to tax_rate and has an account.
       let(:seller_organization) { Organizations::Corporation.create!(
@@ -313,7 +319,7 @@ RSpec.describe Market::Marketplace, type: :model do
           base_settlement_id: settlement.id,
           resource: 'LOX',
           quantity: 100,
-          order_type: 'Sell'
+          order_type: 'sell'
         )
       end
 
@@ -326,7 +332,7 @@ RSpec.describe Market::Marketplace, type: :model do
             id: -1,
             orderable: settlement,
             resource: 'LOX',
-            order_type: 'Buy',
+            order_type: 'buy',
             quantity: trade_volume,
             price: unit_price,
             market_condition: market_condition
@@ -379,7 +385,7 @@ RSpec.describe Market::Marketplace, type: :model do
               id: -1,
               orderable: settlement,
               resource: 'LOX',
-              order_type: 'Buy',
+              order_type: 'buy',
               quantity: 50,
               price: 48.0,
               market_condition: market_condition
