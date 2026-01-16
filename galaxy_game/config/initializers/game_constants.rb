@@ -122,6 +122,9 @@ module GameConstants
   # Construction cost percentage
   DEFAULT_CONSTRUCTION_PERCENTAGE = 10.0
 
+  # Craft volume constants
+  DEFAULT_VOLUME_PER_CREW_M3 = 15.0 # m³ per crew member for habitable volume
+
   # Earth reference values
   module Earth
     RADIUS = 6371.0  # km

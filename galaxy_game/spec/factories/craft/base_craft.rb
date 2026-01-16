@@ -26,5 +26,9 @@ FactoryBot.define do
       craft_name { "Wormhole Stabilization Satellite" }
       deployed { true }
     end
+
+    trait :player_constructed do
+      association :owner, factory: :player
+    end
   end
 end
