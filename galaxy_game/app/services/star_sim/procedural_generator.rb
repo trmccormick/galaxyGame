@@ -59,6 +59,9 @@ module StarSim
           "name" => system_name,
           "identifier" => system_identifier
         },
+        "metadata" => {
+          "naming_status" => "scientific_catalog"
+        },
         "stars" => generate_stars(num_stars, system_identifier),
         "celestial_bodies" => {
           "terrestrial_planets" => generate_terrestrial_planets(num_planets, system_identifier),
@@ -1115,6 +1118,103 @@ module StarSim
       roman << "IV" * ((n % 1000 % 900 % 500 % 400 % 100 % 90 % 50 % 40 % 10 % 9 % 5) / 4)
       roman << "I" * ((n % 1000 % 900 % 500 % 400 % 100 % 90 % 50 % 40 % 10 % 9 % 5 % 4) / 1)
       roman
+    end
+
+    # Load existing generated system and mark with scientific catalog status
+    def load_generated_system(system_path)
+      system_data = JSON.parse(File.read(system_path))
+      
+      # Add metadata flag for scientific catalog status
+      system_data['metadata'] ||= {}
+      system_data['metadata']['naming_status'] = 'scientific_catalog'
+      
+      # Sanitize identifiers to enforce [System]-[Letter] formatting
+      sanitize_identifiers!(system_data)
+      
+      system_data
+    end
+
+    private
+
+    def sanitize_identifiers!(system_data)
+      system_identifier = system_data['solar_system']['identifier']
+      
+      # Sanitize terrestrial planets
+      system_data['celestial_bodies']['terrestrial_planets']&.each_with_index do |planet, index|
+        planet['identifier'] = @name_generator.generate_planet_identifier(system_identifier, index + 1)
+      end
+      
+      # Sanitize gas giants
+      system_data['celestial_bodies']['gas_giants']&.each_with_index do |planet, index|
+        planet['identifier'] = @name_generator.generate_planet_identifier(system_identifier, index + 1)
+      end
+      
+      # Sanitize ice giants
+      system_data['celestial_bodies']['ice_giants']&.each_with_index do |planet, index|
+        planet['identifier'] = @name_generator.generate_planet_identifier(system_identifier, index + 1)
+      end
+      
+      # Sanitize dwarf planets
+      system_data['celestial_bodies']['dwarf_planets']&.each_with_index do |planet, index|
+        planet['identifier'] = @name_generator.generate_planet_identifier(system_identifier, index + 1)
+      end
+      
+      # Sanitize asteroids
+      system_data['celestial_bodies']['asteroids']&.each_with_index do |asteroid, index|
+        asteroid['identifier'] = "#{system_identifier}-AST-#{index + 1}"
+        asteroid['name'] = asteroid['identifier'] # Update name to match identifier for consistency
+      end
+    end
+
+    # Load vetted system for System A event - force-loads aol-732356.json
+    def load_vetted_system(file_id)
+      # Force-load aol-732356.json when System A event is triggered
+      vetted_path = GalaxyGame::Paths::GENERATED_STAR_SYSTEMS_PATH.join('aol-732356.json')
+      
+      unless File.exist?(vetted_path)
+        raise "Vetted system aol-732356.json not found at #{vetted_path}"
+      end
+      
+      system_data = JSON.parse(File.read(vetted_path))
+      
+      # Ensure Prize status with required attributes
+      system_data['celestial_bodies']['terrestrial_planets'].each do |planet|
+        if planet['name'] == 'Topaz' # The prize planet
+          planet['magnetic_moment'] = 0.82
+          planet['tei_score'] = 0.88
+          planet['aliases'] ||= []
+          planet['aliases'] << 'Topaz' unless planet['aliases'].include?('Topaz')
+        end
+      end
+      
+      # Sanitize identifiers to enforce [System]-[Letter] formatting
+      sanitize_identifiers!(system_data)
+      
+      # Mark as vetted system
+      system_data['metadata'] ||= {}
+      system_data['metadata']['naming_status'] = 'scientific_catalog'
+      system_data['metadata']['vetted_for_system_a'] = true
+      
+      system_data
+    end
+
+    # Rename system for settlement phase - triggered only when player/AI initiates settlement
+    def rename_system_for_settlement(system_data)
+      return system_data unless system_data['metadata']&.dig('naming_status') == 'scientific_catalog'
+      
+      # Generate proper settlement name using NameGeneratorService
+      new_name = @name_generator.generate_star_proper_name
+      new_identifier = new_name.upcase.gsub(/\s+/, '-')
+      
+      # Replace scientific identifier with settlement name
+      system_data['solar_system']['name'] = new_name
+      system_data['solar_system']['identifier'] = new_identifier
+      
+      # Update metadata to reflect naming evolution
+      system_data['metadata']['naming_status'] = 'settlement_named'
+      system_data['metadata']['original_scientific_id'] = system_data['solar_system']['identifier'].dup
+      
+      system_data
     end
   end
 end

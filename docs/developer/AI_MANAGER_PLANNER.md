@@ -413,3 +413,233 @@ The Mission Planner follows the SimEarth aesthetic:
 
 **Last Updated**: January 15, 2026  
 **Status**: Production-ready UI with synthetic data; awaiting integration with actual pattern JSON and TerraSim
+
+---
+
+## Market Integration (v2.0 - January 2026)
+
+### Real Market Pricing
+
+The Mission Planner now integrates with the live game economy using:
+
+#### Market::NpcPriceCalculator
+- Provides real-time GCC pricing for all resources
+- Accounts for supply/demand fluctuations
+- Uses settlement-specific pricing
+- Falls back to Earth import costs when unavailable
+
+#### Logistics::TransportCostService
+- Calculates per-kg transport costs between locations
+- Accounts for delta-v requirements
+- Considers route infrastructure (refueling stations, depots)
+- Applies physics-based cost modeling
+
+#### PatternTargetMapper
+Maps mission patterns to target celestial bodies:
+```ruby
+AIManager::PatternTargetMapper.target_location('mars-terraforming') # => Mars CelestialBody
+```
+
+### Sourcing Hierarchy
+
+The planner determines resource sources in this priority order:
+
+1. **Local ISRU (In-Situ Resource Utilization)**
+   - Zero transport cost
+   - Location-specific resources (Mars: regolith, water_ice, CO2)
+   - Requires local production infrastructure
+
+2. **Regional Supply**
+   - Nearby settlements (same planet/moon system)
+   - Moderate transport costs
+   - Faster delivery than Earth import
+
+3. **Earth Import**
+   - Fallback for unavailable resources
+   - Highest transport costs
+   - Guaranteed availability
+
+### Cost Breakdown Structure
+
+```ruby
+costs: {
+  total_gcc: Float,
+  transport_cost_total: Float,
+  transport_cost_ratio: Float (percentage),
+  breakdown: {
+    'resource_name' => {
+      quantity: Integer,
+      source: String, # "Local ISRU", "Regional Supply", or settlement name
+      source_type: 'local' | 'regional' | 'import',
+      unit_cost: Float (GCC/kg),
+      transport_cost_per_unit: Float (GCC/kg),
+      total_material_cost: Float,
+      total_transport_cost: Float,
+      total: Float,
+      alternatives: [
+        { source: String, total: Float, savings: Float, savings_percent: Float }
+      ]
+    }
+  },
+  contingency: Float,
+  grand_total: Float
+}
+```
+
+### Sourcing Strategy Analysis
+
+```ruby
+sourcing_strategy: {
+  local_production: Float (percentage),
+  regional_supply: Float (percentage),
+  earth_import: Float (percentage),
+  transport_cost_ratio: Float (percentage),
+  infrastructure_note: String
+}
+```
+
+### Economic Forecast Enhancements
+
+#### Transport Cost Analysis
+```ruby
+transport_analysis: {
+  total_transport_cost: Float,
+  total_material_cost: Float,
+  transport_percentage: Float,
+  high_transport_resources: [
+    {
+      resource: String,
+      transport_percentage: Float,
+      transport_cost: Float,
+      total_cost: Float,
+      recommendation: String
+    }
+  ],
+  recommendation: String # Overall transport optimization advice
+}
+```
+
+#### Cost Optimization Suggestions
+```ruby
+cost_optimization: {
+  alternative_sourcing: [
+    {
+      resource: String,
+      current_cost: Float,
+      alternative: String (source name),
+      alternative_cost: Float,
+      savings: Float,
+      savings_percent: Float,
+      recommendation: String
+    }
+  ],
+  total_potential_savings: Float,
+  infrastructure_investments: [
+    {
+      type: 'local_production_facility',
+      investment_required: Float,
+      annual_savings: Float,
+      payback_period_years: Float,
+      roi_percentage: Float,
+      recommendation: String
+    }
+  ],
+  optimization_priority: 'HIGH' | 'MEDIUM' | 'LOW' | 'MINIMAL'
+}
+```
+
+### UI Updates
+
+#### Center Panel Additions
+- **Transport Cost**: Displayed as percentage of total cost
+- **Sourcing Strategy**: Pie chart showing local/regional/import percentages
+
+#### Right Panel Additions
+- **Transport Analysis**: High transport cost warnings
+- **Cost Optimization**: Alternative sourcing recommendations
+- **Infrastructure ROI**: Investment payback calculations
+
+### Graceful Degradation
+
+When market data is unavailable:
+1. Falls back to simplified cost estimates
+2. Assumes Earth import for all resources
+3. Uses generic transport cost multipliers
+4. Logs warnings but continues simulation
+
+### Testing with Mocks
+
+Specs mock external services to avoid database dependencies:
+
+```ruby
+# Mock CelestialBody lookups
+allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'mars')
+  .and_return(double('Mars', id: 1, identifier: 'mars'))
+
+# Mock Market pricing
+allow(Market::NpcPriceCalculator).to receive(:calculate_ask).and_return(100.0)
+
+# Mock Transport costs
+allow(Logistics::TransportCostService).to receive(:calculate_cost_per_kg).and_return(50.0)
+
+# Mock Settlement queries
+allow(Settlement::BaseSettlement).to receive(:joins).with(:celestial_body)
+  .and_return(double('Relation', where: double('Where', limit: [])))
+```
+
+### Performance Considerations
+
+- **Caching**: Market prices are fetched once per simulation
+- **Batch Queries**: Settlement lookups use joins to minimize DB hits
+- **Fallback Strategy**: Quick estimates when services timeout
+- **Resource Limits**: Alternative source search limited to 5 settlements
+
+### Example Usage
+
+```ruby
+# Run simulation with market pricing
+planner = AIManager::MissionPlannerService.new('mars-terraforming', {
+  tech_level: 'standard',
+  timeline_years: 10,
+  budget_gcc: 5_000_000
+})
+
+result = planner.simulate
+
+# Access sourcing breakdown
+result[:sourcing_strategy][:local_production] # => 45.0 (%)
+result[:sourcing_strategy][:earth_import] # => 25.0 (%)
+
+# Check transport costs
+result[:costs][:transport_cost_ratio] # => 23.5 (%)
+
+# Find high-transport resources
+forecaster = AIManager::EconomicForecasterService.new(result)
+forecast = forecaster.analyze
+
+forecast[:transport_analysis][:high_transport_resources]
+# => [{ resource: 'structural_panels', transport_percentage: 65.2, ... }]
+
+# Get optimization suggestions
+forecast[:cost_optimization][:alternative_sourcing]
+# => [{ resource: 'water_ice', savings: 125_000, ... }]
+```
+
+### Troubleshooting
+
+**Issue**: "uninitialized constant PatternTargetMapper"  
+**Solution**: Ensure `require_relative 'ai_manager/pattern_target_mapper'` is in `app/services/ai_manager.rb`
+
+**Issue**: All resources showing as "Earth Import"  
+**Solution**: Check `can_produce_locally?` logic matches your celestial body identifiers
+
+**Issue**: Transport costs are zero  
+**Solution**: Verify `Logistics::TransportCostService.calculate_cost_per_kg` is accessible and returns valid values
+
+**Issue**: Alternative sources not appearing  
+**Solution**: Create settlements on different celestial bodies in your database
+
+---
+
+**Last Updated**: January 16, 2026  
+**Status**: Production-ready with real market integration

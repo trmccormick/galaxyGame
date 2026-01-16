@@ -11,6 +11,9 @@ class SimulationController < ApplicationController
       @celestial_bodies = @solar_system.celestial_bodies
       @star = @solar_system.primary_star  # Use primary_star method instead of .star
     end
+    
+    # Set @plants to empty array to prevent error in old view
+    @plants = []
   end
 
   def run

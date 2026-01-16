@@ -12,15 +12,26 @@
 
 ## Phase 3: ScoutLogic - System Analysis (Intelligence)
 - AI Manager analyzes any celestial body/system and generates a standardized profile
+- Systems are referred to by their scientific catalog identifiers (e.g., "AOL-732356") during exploration to avoid premature naming and maintain objective analysis. Identifier sanitization is enforced during system loading to ensure consistent [System]-[Letter] formatting for all celestial bodies.
 - **EM Detection & Analysis**: Scans for residual Exotic Matter (EM) signatures indicating previous wormhole activity or natural EM sources
 - **Wormhole Location Memory**: When natural wormholes are detected, stores precise location coordinates for future artificial wormhole targeting
 - **Historical Data Integration**: Cross-references current scans with historical survey data to identify EM-rich systems or previously mapped wormhole locations
+- **Terraforming Ease Index (TEI)**: A composite score helping the AI identify 'Prize Worlds' (System A) for rapid colonization
+  - **Magnetic Moment (40%)**: Natural radiation shielding essential for reducing heavy shielding costs
+  - **Atmospheric Pressure (30%)**: Proximity to 1.0 atm reduces complexity compared to Venus-style 'Pressure Cooker' environments
+  - **Volatile Presence (20%)**: Natural availability of $N_2$ (Nitrogen) and $CH_4$ (Methane) eliminates need for Titan-style long-range supply chains
+  - **Solar Flux (10%)**: Proximity to star for natural energy harvesting
+  - **Threshold Logic**: TEI > 80% triggers the 'Prize World' priority flag for immediate colonization focus
+- **System A Integration**: Utilizes pre-vetted physical data from `load_vetted_system()` to ensure terraformability scores meet colonization requirements
 - All analysis is data-driven (no hardcoded system logic)
-- Outputs comprehensive system profile including EM potential and wormhole history for pattern selection
+- Outputs comprehensive system profile including EM potential, wormhole history, and terraforming viability for pattern selection
+
+### Status: Ready
 
 ## Phase 4: StrategySelector - Pattern Matching (Intelligence)
 - AI Manager maps system profile to appropriate deployment pattern
 - Uses data-driven logic to select and apply patterns
+- **Naming Milestone**: System re-christening occurs upon successful landing of the first Tier 1 habitation module, transitioning from scientific catalog identifiers to permanent settlement names
 - Handles edge cases and phased deployment planning
 
 ## Phase 5: SystemOrchestrator (Integration)
@@ -32,6 +43,11 @@
 - Applies proven patterns to wormhole-discovered systems
 - **Artificial Wormhole Targeting**: Uses stored natural wormhole location data to precisely target artificial wormhole creation to known EM-rich locations
 - **EM Opportunity Assessment**: Prioritizes systems with detected residual EM for artificial wormhole development
+- **Wormhole Lifecycle Transition**: Defines the progression from Natural Anomaly to Harvesting Site to Permanent Anchor, facilitating the 'Act 2 Urbanization' transition through systematic EM resource development
+  - **Natural Anomaly**: Initial detection and mapping of EM signatures
+  - **Harvesting Site**: Deployment of temporary stabilization satellites for EM extraction
+  - **Permanent Anchor**: Construction of Artificial Wormhole Stations for sustained network integration
+    - **MK1-H Note**: The Natural Wormhole Anchor MK1-H represents the Consortium's first permanent interstellar structure, marking the transition from temporary harvesting to permanent network infrastructure
 - Manages wormhole network, Snap events, and economic decisions
 - All logic is pattern-based and system-agnostic
 

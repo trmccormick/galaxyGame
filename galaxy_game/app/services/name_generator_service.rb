@@ -1,6 +1,15 @@
 require 'yaml'
 require 'json'
 
+# NameGeneratorService handles the distinction between Scientific Catalog names and Settlement names:
+# - Scientific Catalog: Machine-generated identifiers (e.g., "AOL-732356") used during exploration
+# - Settlement Names: Human-readable proper names (e.g., "Eden Prime") assigned upon colonization
+# The service treats loaded JSON systems as "Official Catalog" entries, preserving scientific IDs
+# until settlement phase triggers proper name generation via generate_star_proper_name.
+# 
+# DEPRECATED: "PLANET-X" style strings are no longer used. All identifiers must follow
+# [System]-[Letter] format (e.g., "AOL-732356-b") enforced by ProceduralGenerator sanitization.
+
 class NameGeneratorService
   def initialize
     @names = YAML.load_file(Rails.root.join('config', 'names.yml'))

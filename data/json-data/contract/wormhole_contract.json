@@ -54,16 +54,14 @@
     {
       "link_id": "SOL-AOL-732356",
       "type": "Natural_Scraped",
-      "status": "stabilized",
+      "status": "stabilizing",
       "origin": "SOL-CORE-01",
       "destination": "AOL-732356",
       "environment": "Hot_Start",
       "stability_metrics": {
-        "residual_em": 0.0,
         "maintenance_tax_em": 33.3,
         "mass_limit_tons": 500000,
-        "current_hold_duration": "0h",
-        "mass_fatigue_limit": 1000000
+        "residual_em": 0.0
       },
       "logistics": {
         "anchor_body": "Asteroid XXXV",

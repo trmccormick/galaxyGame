@@ -1,78 +1,267 @@
-<h1><%= @celestial_body.name %></h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title><%= @celestial_body.name %> - Celestial Body Data</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1><%= @celestial_body.name.upcase %></h1>
+            <div id="planetInfo">
+                <%= @celestial_body.type || 'Unknown Type' %> | 
+                <%= @celestial_body.solar_system&.name || 'Unknown System' %> |
+                <%= link_to '← Back to List', celestial_bodies_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>📍 NAVIGATION</h3>
+                <button class="tool-button" onclick="window.location.href='<%= celestial_bodies_path %>'">
+                    📋 All Bodies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/monitor'">
+                    🖥️ Admin Monitor
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin'">
+                    🏠 Admin Dashboard
+                </button>
+                <button class="tool-button" onclick="window.location.href='/'">
+                    🎮 Main Game
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>⚙️ ACTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='<%= edit_celestial_body_path(@celestial_body) %>'">
+                    ✏️ Edit Body
+                </button>
+                <button class="tool-button" onclick="exportData()">
+                    💾 Export Data
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>📊 QUICK STATS</h3>
+                <div style="font-size: 11px; color: #888;">
+                    <div style="margin: 5px 0;">
+                        <span>Size:</span>
+                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.size, precision: 2) %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>Gravity:</span>
+                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.gravity, precision: 2) %>g</span>
+                    </div>
+                    <% if @celestial_body.density %>
+                    <div style="margin: 5px 0;">
+                        <span>Density:</span>
+                        <span style="color: #0f0; float: right;"><%= number_to_human(@celestial_body.density, precision: 2) %></span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <!-- Basic Properties -->
+            <div class="tool-section">
+                <h3>🌍 PHYSICAL PROPERTIES</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                    <div class="data-row">
+                        <span class="data-label">Size:</span>
+                        <span class="data-value"><%= number_with_precision(@celestial_body.size, precision: 3) %></span>
+                    </div>
+                    <% if @celestial_body.gravity %>
+                    <div class="data-row">
+                        <span class="data-label">Gravity:</span>
+                        <span class="data-value"><%= number_with_precision(@celestial_body.gravity, precision: 3) %>g</span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.density %>
+                    <div class="data-row">
+                        <span class="data-label">Density:</span>
+                        <span class="data-value"><%= number_to_human(@celestial_body.density, precision: 2) %> g/cm³</span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.orbital_period %>
+                    <div class="data-row">
+                        <span class="data-label">Orbital Period:</span>
+                        <span class="data-value"><%= number_with_precision(@celestial_body.orbital_period, precision: 2) %> days</span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.respond_to?(:surface_temperature) && @celestial_body.surface_temperature %>
+                    <div class="data-row">
+                        <span class="data-label">Surface Temperature:</span>
+                        <span class="data-value"><%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %>K</span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.mass %>
+                    <div class="data-row">
+                        <span class="data-label">Mass:</span>
+                        <span class="data-value"><%= number_to_human(@celestial_body.mass, precision: 2) %> kg</span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.radius %>
+                    <div class="data-row">
+                        <span class="data-label">Radius:</span>
+                        <span class="data-value"><%= number_to_human(@celestial_body.radius, precision: 2) %> m</span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+            
+            <!-- Atmosphere -->
+            <% if @celestial_body.atmosphere %>
+            <div class="tool-section">
+                <h3>🌫️ ATMOSPHERE</h3>
+                <div class="data-row">
+                    <span class="data-label">Total Pressure:</span>
+                    <span class="data-value"><%= number_with_precision(@celestial_body.atmosphere.pressure, precision: 4) %> bar</span>
+                </div>
+                
+                <% if @celestial_body.atmosphere.composition.present? %>
+                <h4 style="color: #0ff; font-size: 12px; margin: 15px 0 10px 0;">Gas Composition</h4>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid #0f0;">
+                            <th style="text-align: left; padding: 8px; color: #888;">Gas</th>
+                            <th style="text-align: right; padding: 8px; color: #888;">Percentage</th>
+                            <th style="text-align: right; padding: 8px; color: #888;">Partial Pressure</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @celestial_body.atmosphere.composition.each do |gas, percentage| %>
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td style="padding: 8px; color: #0ff;"><%= gas %></td>
+                            <td style="padding: 8px; color: #0f0; text-align: right;"><%= number_with_precision(percentage, precision: 2) %>%</td>
+                            <td style="padding: 8px; color: #0f0; text-align: right;"><%= number_with_precision((percentage * @celestial_body.atmosphere.pressure / 100), precision: 4) %> bar</td>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+                <% end %>
+            </div>
+            <% end %>
+            
+            <!-- Materials -->
+            <% if @celestial_body.available_materials.present? %>
+            <div class="tool-section">
+                <h3>⛏️ MATERIAL COMPOSITION</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid #0f0;">
+                            <th style="text-align: left; padding: 8px; color: #888;">Material</th>
+                            <th style="text-align: right; padding: 8px; color: #888;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @celestial_body.available_materials.each do |material, amount| %>
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td style="padding: 8px; color: #0ff;"><%= material %></td>
+                            <td style="padding: 8px; color: #0f0; text-align: right; font-family: 'Courier New', monospace;"><%= number_to_human(amount, precision: 3, units: :si) %></td>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+            <% end %>
+            
+            <!-- Hydrosphere -->
+            <% if @celestial_body.hydrosphere %>
+            <div class="tool-section">
+                <h3>💧 HYDROSPHERE</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                    <% if @celestial_body.hydrosphere.total_water_mass %>
+                    <div class="data-row">
+                        <span class="data-label">Total Liquid Mass:</span>
+                        <span class="data-value"><%= number_to_human(@celestial_body.hydrosphere.total_water_mass, precision: 2) %> kg</span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.hydrosphere.water_bodies %>
+                    <div class="data-row">
+                        <span class="data-label">Water Bodies:</span>
+                        <span class="data-value"><%= @celestial_body.hydrosphere.water_bodies.keys.join(', ') %></span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+            <% end %>
+            
+            <!-- Geosphere -->
+            <% if @celestial_body.geosphere %>
+            <div class="tool-section">
+                <h3>🌋 GEOSPHERE</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                    <% if @celestial_body.geosphere.geological_activity %>
+                    <div class="data-row">
+                        <span class="data-label">Geological Activity:</span>
+                        <span class="data-value"><%= @celestial_body.geosphere.geological_activity %></span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.geosphere.tectonic_activity %>
+                    <div class="data-row">
+                        <span class="data-label">Tectonic Activity:</span>
+                        <span class="data-value"><%= @celestial_body.geosphere.tectonic_activity ? 'Active' : 'Inactive' %></span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+            <% end %>
+            
+            <!-- Biosphere -->
+            <% if @celestial_body.biosphere %>
+            <div class="tool-section">
+                <h3>🌱 BIOSPHERE</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                    <% if @celestial_body.biosphere.biodiversity_index %>
+                    <div class="data-row">
+                        <span class="data-label">Biodiversity Index:</span>
+                        <span class="data-value"><%= number_to_percentage(@celestial_body.biosphere.biodiversity_index * 100, precision: 1) %></span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.biosphere.habitable_ratio %>
+                    <div class="data-row">
+                        <span class="data-label">Habitable Ratio:</span>
+                        <span class="data-value"><%= number_to_percentage(@celestial_body.biosphere.habitable_ratio * 100, precision: 1) %></span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+            <% end %>
+        </div>
+    </div>
 
-<p><strong>Size:</strong> <%= @celestial_body.size %></p>
-
-<% if @celestial_body.gravity %>
-  <p><strong>Gravity:</strong> <%= @celestial_body.gravity %></p>
-<% end %>
-
-<% if @celestial_body.density %>
-  <p><strong>Density:</strong> <%= @celestial_body.density %></p>
-<% end %>
-
-<% if @celestial_body.orbital_period %>
-  <p><strong>Orbital Period:</strong> <%= @celestial_body.orbital_period %></p>
-<% end %>
-
-<% if @celestial_body.respond_to?(:surface_temperature) && @celestial_body.surface_temperature %>
-  <p><strong>Surface Temperature:</strong> <%= @celestial_body.surface_temperature %></p>
-<% end %>
-
-<% if @celestial_body.atmosphere %>
-  <h2>Atmosphere</h2>
-  <p><strong>Total pressure:</strong> <%= @celestial_body.atmosphere.pressure %></p>
-  
-  <% if @celestial_body.atmosphere.composition.present? %>
-    <h3>Gas quantities</h3>
-    <% @celestial_body.atmosphere.composition.each do |gas, percentage| %>
-      <p><strong><%= gas %>:</strong> <%= (percentage * @celestial_body.atmosphere.pressure * 10000).round(1) %></p>
-    <% end %>
-  <% end %>
-  
-  <h2>Atmospheric Composition</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Gas</th>
-        <th>Percentage</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if @celestial_body.atmosphere.composition.present? %>
-        <% @celestial_body.atmosphere.composition.each do |gas, percentage| %>
-          <tr>
-            <td><%= gas %></td>
-            <td><%= percentage %>%</td>
-          </tr>
-        <% end %>
-      <% else %>
-        <tr>
-          <td colspan="2">No atmospheric data available</td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
-
-<% if @celestial_body.available_materials.present? %>
-  <h2>Material Composition</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Material</th>
-        <th>Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @celestial_body.available_materials.each do |material, amount| %>
-        <tr>
-          <td><%= material %></td>
-          <td><%= format("%.2e", amount) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
-
-<%= link_to 'Edit', edit_celestial_body_path(@celestial_body) %> |
-<%= link_to 'Back', celestial_bodies_path %>
+    <script>
+        function exportData() {
+            const data = {
+                name: '<%= @celestial_body.name %>',
+                type: '<%= @celestial_body.type %>',
+                system: '<%= @celestial_body.solar_system&.name %>',
+                properties: <%= raw({
+                    size: @celestial_body.size,
+                    gravity: @celestial_body.gravity,
+                    density: @celestial_body.density,
+                    orbital_period: @celestial_body.orbital_period,
+                    surface_temperature: @celestial_body.surface_temperature,
+                    mass: @celestial_body.mass,
+                    radius: @celestial_body.radius
+                }.compact.to_json) %>
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '<%= @celestial_body.name.parameterize %>-data.json';
+            a.click();
+        }
+    </script>
+</body>
+</html>

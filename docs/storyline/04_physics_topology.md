@@ -14,10 +14,10 @@ Because of its high mass, it provides a stable gravitational anchor for an Artif
 These systems are rich in volatiles (like Hydrogen and Nitrogen) but have no breathable atmosphere or sunlight.
 
 ## The Role: EM Fuel Production
-The Consortium builds a hub here to "siphon" these gases. These gases are processed into the Exotic Matter (EM) fuel needed to keep the entire wormhole network from snapping.
+The Consortium builds a hub here to stabilize natural wormholes and harvest Exotic Matter (EM) fuel exclusively from the wormhole throats via stabilization satellites. The system's volatiles (Hydrogen, Nitrogen) are siphoned to construct and maintain EM-capture infrastructure, but EM itself is harvested directly from the quantum instabilities of natural wormholes, not from planetary atmospheres.
 
 ## Strategic Importance
-- **Primary Siphons**: Because they are rich in volatiles but "light-poor," the Consortium targets them as Primary Siphons to harvest the fuel needed to power the network's EM Inductors.
+- **Primary Siphons**: Because they are rich in volatiles but "light-poor," the Consortium targets them as Primary Siphons to build EM harvesting infrastructure needed to power the network's EM Inductors.
 - **Gateway Systems**: Enable deeper, more remote systems through stable connections.
 - **Branching Hubs**: Systems with multiple gas giants (e.g., two) can support more links, becoming regional junctions. If a second natural wormhole appears in a remote system, the AI Manager upgrades it to a Secondary Branch Hub, enabling recursive scouting into parallel frontier systems.
 
@@ -25,6 +25,29 @@ The Consortium builds a hub here to "siphon" these gases. These gases are proces
 - **Standard Gas Giant**: 1 Slot (L3)
 - **Jupiter-Class**: 2 Slots (L3 + Direct Anchor)
 - **Brown Dwarf**: 1 High-Stability Slot (L3), often used as a "Gateway" to deeper, more remote systems
+
+## The Mass-Limit Formula
+
+### Natural Wormhole Stability Equation
+The stability of natural wormholes is governed by the following equation:
+
+$$Mass\_Limit = \frac{System\_Mass \times Stability\_Index}{EM\_Surplus}$$
+
+**Variables:**
+- **System_Mass**: Total mass of the star system (influences gravitational anchor strength)
+- **Stability_Index**: A value from 0.1 to 1.0 (Natural wormholes start at 1.0 and decay over time due to quantum fluctuations)
+- **EM_Surplus**: The amount of EM harvested and stored from the wormhole itself, which is then used to 'reinforce' the link and stabilize the throat
+
+## The 'Snap' Logic
+
+If the current transit mass exceeds the calculated Mass_Limit ($Current\_Transit\_Mass > Mass\_Limit$), the wormhole undergoes a "Snap" event where the Exit_Vector randomly shifts, orphaning the current destination and requiring rediscovery through scouting operations.
+
+## The Dual-Link Solution: Artificial Counterbalancing
+
+An Artificial Wormhole Station (AWS) positioned at the L3 Lagrange point acts as a 'Mass-Damper', creating a counterbalancing gravitational anchor that:
+- Doubles the effective Mass_Limit for the system
+- Reduces EM fuel costs by 50% through active stabilization
+- Enables reliable two-way transit for heavy cyclers and industrial shipments
 
 ---
 
