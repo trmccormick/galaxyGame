@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DC Operations Monitor | Admin</title>
+  <title>Organization Monitor | Admin</title>
   <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
   <style>
     body {
@@ -130,10 +130,10 @@
 <body>
   <div class="monitor-header">
     <div class="header-left">
-      <h1>▼ DEVELOPMENT CORPORATIONS OPERATIONS</h1>
+      <h1>▼ ORGANIZATION MONITOR</h1>
       <div class="breadcrumb">
         <%= link_to "ADMIN", admin_dashboard_path %> &gt; 
-        <span>DC OPERATIONS</span>
+        <span>ORGANIZATIONS</span>
       </div>
     </div>
     <div class="header-right">
@@ -147,12 +147,12 @@
   <div class="stats-panel">
     <div class="stats-grid">
       <div class="stat-box">
-        <div class="stat-number"><%= @total_dc_count %></div>
-        <div class="stat-label">DEVELOPMENT CORPS</div>
+        <div class="stat-number"><%= @total_npc_count %></div>
+        <div class="stat-label">NPC ORGANIZATIONS</div>
       </div>
       <div class="stat-box">
-        <div class="stat-number"><%= @total_corp_count %></div>
-        <div class="stat-label">SERVICE CORPS</div>
+        <div class="stat-number"><%= @total_player_count %></div>
+        <div class="stat-label">PLAYER ORGANIZATIONS</div>
       </div>
       <div class="stat-box">
         <div class="stat-number"><%= @total_consortium_count %></div>
@@ -161,30 +161,30 @@
     </div>
   </div>
 
-  <!-- Development Corporations Section -->
-  <% if @development_corporations.any? %>
+  <!-- NPC Organizations Section -->
+  <% if @npc_organizations.any? %>
     <div style="padding: 20px; border-bottom: 2px solid #0f0;">
-      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ DEVELOPMENT CORPORATIONS</h2>
-      <div style="color: #888; font-size: 12px;">Planet-focused infrastructure and ISRU operations</div>
+      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ NPC ORGANIZATIONS</h2>
+      <div style="color: #888; font-size: 12px;">AI-controlled corporations and development entities</div>
     </div>
     
     <div class="dc-grid">
-      <% @development_corporations.each do |dc| %>
-        <%= render partial: 'org_card', locals: { org: dc, settlements: @settlements_by_org[dc.id] || [], contracts: (@active_contracts[dc.id] || []).count } %>
+      <% @npc_organizations.each do |org| %>
+        <%= render partial: 'org_card', locals: { org: org, settlements: @settlements_by_org[org.id] || [], contracts: (@active_contracts[org.id] || []).count } %>
       <% end %>
     </div>
   <% end %>
 
-  <!-- Service Corporations Section -->
-  <% if @corporations.any? %>
+  <!-- Player Organizations Section -->
+  <% if @player_organizations.any? %>
     <div style="padding: 20px; border-bottom: 2px solid #0f0; margin-top: 20px;">
-      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ LOGISTICS & SERVICE CORPORATIONS</h2>
-      <div style="color: #888; font-size: 12px;">Orbital logistics, transport, and station operations</div>
+      <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ PLAYER ORGANIZATIONS</h2>
+      <div style="color: #888; font-size: 12px;">Player-owned corporations and enterprises</div>
     </div>
     
     <div class="dc-grid">
-      <% @corporations.each do |corp| %>
-        <%= render partial: 'org_card', locals: { org: corp, settlements: @settlements_by_org[corp.id] || [], contracts: (@active_contracts[corp.id] || []).count } %>
+      <% @player_organizations.each do |org| %>
+        <%= render partial: 'org_card', locals: { org: org, settlements: @settlements_by_org[org.id] || [], contracts: (@active_contracts[org.id] || []).count } %>
       <% end %>
     </div>
   <% end %>
@@ -193,7 +193,7 @@
   <% if @consortiums.any? %>
     <div style="padding: 20px; border-bottom: 2px solid #0f0; margin-top: 20px;">
       <h2 style="color: #0ff; font-size: 20px; margin: 0;">▼ CONSORTIUMS</h2>
-      <div style="color: #888; font-size: 12px;">Multi-corporate collaborative entities</div>
+      <div style="color: #888; font-size: 12px;">Multi-corporate alliances and collaborative entities</div>
     </div>
     
     <div class="dc-grid">
@@ -202,9 +202,13 @@
       <% end %>
     </div>
   <% end %>
+        <%= render partial: 'org_card', locals: { org: consortium, settlements: @settlements_by_org[consortium.id] || [], contracts: (@active_contracts[consortium.id] || []).count } %>
+      <% end %>
+    </div>
+  <% end %>
 
   <!-- Empty State -->
-  <% if @development_corporations.empty? && @corporations.empty? && @consortiums.empty? %>
+  <% if @npc_organizations.empty? && @player_organizations.empty? && @consortiums.empty? %>
     <div class="dc-grid">
       <div class="dc-card">
         <div class="dc-header" style="color: #f80;">NO ORGANIZATIONS FOUND</div>
