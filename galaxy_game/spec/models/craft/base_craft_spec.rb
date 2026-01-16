@@ -264,8 +264,8 @@ RSpec.describe Craft::BaseCraft, type: :model do
       expect(result).to be_a(String)
       expect(result).to match(/removed|uninstalled|detached/i)
 
-      unit.reload
-      expect(unit.attachable).to be_nil
+      # Unit should be destroyed after uninstalling
+      expect { unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
       # Note: Item creation may fail in test environment, but unit is detached
       # expect(player_craft.inventory.items.where(name: "Battery Cells").count).to be >= 1
     end
