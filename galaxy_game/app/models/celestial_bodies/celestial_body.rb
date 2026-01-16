@@ -120,6 +120,36 @@ module CelestialBodies
       # Used when conditions change or for generated planets
     end
 
+    # Accessor methods for view compatibility
+    def temperature
+      # Try to get temperature from properties first
+      return properties['temperature'] if properties && properties['temperature'].present?
+      
+      # For stars, temperature is a direct attribute
+      return self[:temperature] if has_attribute?(:temperature) && self[:temperature].present?
+      
+      # Try to get from atmosphere (surface temperature)
+      return atmosphere&.surface_temperature if atmosphere&.surface_temperature.present?
+      
+      # Calculate based on stellar flux and albedo if we have the data
+      if stars.any? && albedo.present?
+        star = stars.first
+        distance = star_distances.find_by(star: star)&.distance
+        if distance && star.luminosity.present?
+          # Simplified blackbody temperature calculation
+          stellar_flux = star.luminosity / (4 * Math::PI * (distance * 1000)**2)  # Convert km to m
+          equilibrium_temp = ((stellar_flux * (1 - albedo)) / (4 * 5.67e-8))**0.25 - 273.15
+          return equilibrium_temp.round(1)
+        end
+      end
+      
+      nil
+    end
+
+    def surface_temperature
+      temperature  # Alias for compatibility
+    end
+
     def in_solar_system?
       solar_system.present?
     end
