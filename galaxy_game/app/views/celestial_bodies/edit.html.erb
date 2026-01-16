@@ -1,55 +1,162 @@
-<h1>Edit Celestial Body </h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Edit <%= @celestial_body.name %> - Celestial Body</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>EDIT: <%= @celestial_body.name.upcase %></h1>
+            <div id="planetInfo">
+                Celestial Body Editor | 
+                <%= link_to '← Back to View', celestial_body_path(@celestial_body), style: 'color: #0ff; text-decoration: none;' %> |
+                <%= link_to '← Back to List', celestial_bodies_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>📍 NAVIGATION</h3>
+                <button class="tool-button" onclick="window.location.href='<%= celestial_body_path(@celestial_body) %>'">
+                    👁️ View Body
+                </button>
+                <button class="tool-button" onclick="window.location.href='<%= celestial_bodies_path %>'">
+                    📋 All Bodies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/monitor'">
+                    🖥️ Admin Monitor
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin'">
+                    🏠 Admin Dashboard
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>⚙️ ACTIONS</h3>
+                <button class="tool-button" onclick="document.getElementById('editForm').reset()">
+                    🔄 Reset Form
+                </button>
+                <button class="tool-button" onclick="if(confirm('Are you sure?')) document.getElementById('deleteForm').submit()">
+                    🗑️ Delete Body
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>📊 CURRENT VALUES</h3>
+                <div style="font-size: 11px; color: #888;">
+                    <div style="margin: 5px 0;">
+                        <span>Size:</span>
+                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.size, precision: 2) %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>Gravity:</span>
+                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.gravity, precision: 2) %>g</span>
+                    </div>
+                    <% if @celestial_body.density %>
+                    <div style="margin: 5px 0;">
+                        <span>Density:</span>
+                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.density, precision: 2) %></span>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area: Form -->
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <%= form_with(model: @celestial_body, url: celestial_body_path(@celestial_body), local: true, scope: :celestial_body, html: { id: 'editForm' }) do |form| %>
+                <% if @celestial_body.errors.any? %>
+                    <div class="tool-section" style="border-color: #f00; margin-bottom: 20px;">
+                        <h3 style="color: #f00;">⚠️ ERRORS DETECTED</h3>
+                        <ul style="color: #f00; margin-left: 20px; margin-top: 10px;">
+                            <% @celestial_body.errors.full_messages.each do |message| %>
+                                <li><%= message %></li>
+                            <% end %>
+                        </ul>
+                    </div>
+                <% end %>
 
-<%= form_with(model: @celestial_body, url: celestial_body_path(@celestial_body), local: true, scope: :celestial_body) do |form| %>
-  <% if @celestial_body.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@celestial_body.errors.count, "error") %> prohibited this celestial body from being saved:</h2>
-      <ul>
-        <% @celestial_body.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+                <!-- Basic Properties -->
+                <div class="tool-section">
+                    <h3>🌍 BASIC PROPERTIES</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <%= form.label :name, "Name:", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                        <%= form.text_field :name, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <%= form.label :type, "Type:", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                        <%= form.text_field :type, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <%= form.label :size, "Size:", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                            <%= form.number_field :size, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                        </div>
+                        
+                        <div>
+                            <%= form.label :gravity, "Gravity (g):", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                            <%= form.number_field :gravity, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                        </div>
+                        
+                        <div>
+                            <%= form.label :density, "Density (g/cm³):", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                            <%= form.number_field :density, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                        </div>
+                        
+                        <div>
+                            <%= form.label :orbital_period, "Orbital Period (days):", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                            <%= form.number_field :orbital_period, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                        </div>
+                        
+                        <div>
+                            <%= form.label :mass, "Mass (kg):", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                            <%= form.number_field :mass, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                        </div>
+                        
+                        <div>
+                            <%= form.label :radius, "Radius (m):", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                            <%= form.number_field :radius, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Properties -->
+                <div class="tool-section">
+                    <h3>🔬 ADVANCED PROPERTIES</h3>
+                    
+                    <% if @celestial_body.respond_to?(:surface_temperature) %>
+                    <div style="margin-bottom: 15px;">
+                        <%= form.label :surface_temperature, "Surface Temperature (K):", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                        <%= form.number_field :surface_temperature, step: :any, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                    </div>
+                    <% end %>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <%= form.label :solar_system_id, "Solar System:", style: "color: #888; display: block; margin-bottom: 5px;" %>
+                        <%= form.collection_select :solar_system_id, SolarSystem.all, :id, :name, { include_blank: "Select System" }, style: "width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;" %>
+                    </div>
+                </div>
+                
+                <!-- Submit Actions -->
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #0f0;">
+                    <%= form.submit "💾 Save Changes", style: "padding: 12px 30px; background: #0f0; color: #000; border: none; font-family: 'Courier New', monospace; font-size: 14px; cursor: pointer; margin-right: 10px;" %>
+                    <%= link_to "✖ Cancel", celestial_body_path(@celestial_body), style: "padding: 12px 30px; background: #333; color: #0f0; border: 1px solid #0f0; text-decoration: none; font-family: 'Courier New', monospace; font-size: 14px; display: inline-block;" %>
+                </div>
+            <% end %>
+            
+            <!-- Delete Form (hidden) -->
+            <%= form_with(url: celestial_body_path(@celestial_body), method: :delete, local: true, html: { id: 'deleteForm', style: 'display: none;' }) do %>
+            <% end %>
+        </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :size %>
-    <%= form.number_field :size %>
-  </div>
-
-  <div class="field">
-    <%= form.label :gravity %>
-    <%= form.number_field :gravity %>
-  </div>
-
-  <div class="field">
-    <%= form.label :density %>
-    <%= form.number_field :density %>
-  </div>
-
-  <div class="field">
-    <%= form.label :orbital_period %>
-    <%= form.number_field :orbital_period %>
-  </div>
-
-  <div class="field">
-    <%= form.label :atmosphere %>
-    <%= form.collection_select :atmosphere_id, CelestialBodies::Spheres::Atmosphere.all, :id, :id, include_blank: true %>
-  </div>
-
-  <div class="field">
-    <%= form.label :materials %>
-    <%= form.collection_select :materials, CelestialBodies::Material.all, :id, :name, {}, {multiple: true} %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
-
-<%= link_to 'Back', celestial_bodies_path %>
+</body>
+</html>

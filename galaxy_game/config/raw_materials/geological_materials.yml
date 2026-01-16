@@ -53,12 +53,15 @@ geological_materials:
       - "Oil Shale Production"
     waste_material: []
 
-  - name: "Processed Slag"
-    type: "Industrial Byproduct"
-    description: "A processed waste material from asteroid hollowing operations, containing valuable trace elements that can be refined for propulsion systems."
-    smelting_output: []
-    use_cases:
-      - "Propulsion Fuel Refinement"
-      - "Trace Element Extraction"
-      - "Industrial Recycling"
-    waste_material: []
+  # - name: "Processed Slag"
+  #   type: "Fuel"
+  #   description: "A processed waste material from asteroid hollowing operations, optimized as high-efficiency fuel for Asteroid Propulsion Modules with superior mass-to-thrust ratio."
+  #   fuel_properties:
+  #     mass_to_thrust_efficiency: 0.95  # High efficiency for propulsion systems
+  #     energy_density: 8.5  # MJ/kg
+  #   smelting_output: []
+  #   use_cases:
+  #     - "Asteroid Propulsion Fuel"
+  #     - "Orbital Maneuver Fuel"
+  #     - "High-Thrust Reaction Mass"
+  #   waste_material: []

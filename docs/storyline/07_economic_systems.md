@@ -49,6 +49,23 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 - **Sinks**: Reprocessing/manufacturing fees at LDC facilities; import duties for Earth goods; base upkeep costs
 - **Import System**: Players request Earth imports via LDC, paying GCC; LDC uses USD reserves for procurement
 
+## Byproduct Economics
+
+### Slag to Processed Slag Conversion
+
+- **Source Material**: 'Slag' is a byproduct generated during asteroid hollowing operations, representing 70% of the excavated mass from captured asteroids (Phobos, Deimos, or large asteroids).
+- **Processing Chain**: Raw slag undergoes refinement to become 'Processed Slag', a high-efficiency fuel optimized for Asteroid Propulsion Modules.
+- **Economic Benefit**: Conversion reduces the cost of orbital maneuvers by providing abundant, low-cost reaction mass for propulsion systems.
+- **Value Creation**: Transforms waste material into a strategic resource, lowering operational expenses for tug operations and enabling cost-effective relocation of moon-scale objects.
+- **Integration**: Processed slag fuels the modular civilization concept, supporting the unplug-and-move paradigm for cyclers and habitats.
+
+## Wormhole Logistics & Trade
+
+- **Matching Pair Rule**: Artificial Wormhole Stations must be deployed in matched pairs for gravitational counterbalance, requiring coordinated resource allocation across systems
+- **Local Harvesting Bonus**: Station operations near natural wormhole anomalies receive a 25% efficiency bonus for EM extraction, reducing operational costs and accelerating network expansion
+- **Slag-Propulsion Economy**: Hollowing slag is used as reaction mass for relocation operations, reducing tug fuel costs by 90% through abundant, low-cost propulsion material derived from asteroid excavation byproducts
+- **Act 2 Urbanization**: These logistics rules enable the transition to permanent urbanized wormhole networks by optimizing EM supply chains and infrastructure deployment
+
 ## Consortium Integration
 
 - **Transit Fees**: Revenue from wormhole usage

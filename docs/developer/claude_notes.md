@@ -134,3 +134,5 @@ CRITICAL CONSTRAINTS:
 - At each step commmit only the files you changed not all the uncommitted files. this is done on the host not inside the docker container.
 
 REMINDER: All tests must pass, and all operations must stay inside the docker container.
+
+-------

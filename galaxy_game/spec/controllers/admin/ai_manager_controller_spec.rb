@@ -2,6 +2,45 @@ require 'rails_helper'
 require_relative '../../../app/services/ai_manager'
 
 RSpec.describe Admin::AiManagerController, type: :controller do
+  # Mock market and transport services
+  before(:each) do
+    # Mock CelestialBody lookups
+    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'mars').and_return(
+      double('Mars', id: 1, identifier: 'mars', name: 'Mars')
+    )
+    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'earth').and_return(
+      double('Earth', id: 2, identifier: 'earth', name: 'Earth')
+    )
+    
+    # Mock settlements
+    earth_settlement = double('EarthSettlement', 
+      id: 1, 
+      name: 'Earth Hub', 
+      celestial_body_id: 2,
+      celestial_body: double('Earth', id: 2, identifier: 'earth', name: 'Earth')
+    )
+    
+    # Mock Settlement::BaseSettlement query chains
+    empty_relation = double('EmptyRelation')
+    allow(empty_relation).to receive(:limit).and_return([])
+    
+    where_not_relation = double('WhereNotRelation')
+    allow(where_not_relation).to receive(:not).and_return(empty_relation)
+    allow(where_not_relation).to receive(:limit).and_return([])
+    
+    joins_relation = double('JoinsRelation')
+    allow(joins_relation).to receive(:where).and_return(where_not_relation)
+    
+    allow(Settlement::BaseSettlement).to receive(:find_by).and_return(earth_settlement)
+    allow(Settlement::BaseSettlement).to receive(:joins).with(:celestial_body).and_return(joins_relation)
+    
+    # Mock Market::NpcPriceCalculator
+    allow(Market::NpcPriceCalculator).to receive(:calculate_ask).and_return(100.0)
+    
+    # Mock Logistics::TransportCostService
+    allow(Logistics::TransportCostService).to receive(:calculate_cost_per_kg).and_return(50.0)
+  end
+  
   describe "GET #missions" do
     it "loads all missions" do
       get :missions

@@ -1,26 +1,206 @@
-<h1>Plant Simulation</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Simulation Control - Galaxy Game</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr 300px; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>SIMULATION CONTROL CENTER</h1>
+            <div id="planetInfo">
+                System: <%= @solar_system&.name || 'No System Loaded' %> | 
+                Bodies: <%= @celestial_bodies.count %> | 
+                <%= link_to '🏠 Admin Dashboard', '/admin', style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Controls -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>⚙️ SIMULATION CONTROLS</h3>
+                <%= button_to '▶️ Run All Bodies', run_all_simulation_path, method: :post, class: 'tool-button', style: 'background: #0f0; color: #000; font-weight: bold;' %>
+                <button class="tool-button" onclick="resetAllSpheres()">
+                    🔄 Reset All Spheres
+                </button>
+                <button class="tool-button" onclick="window.location.href='/'">
+                    🎮 Main Game
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>🕐 TIME CONTROLS</h3>
+                <button class="tool-button" onclick="advanceTime(1)">
+                    ⏭️ Advance 1 Tick
+                </button>
+                <button class="tool-button" onclick="advanceTime(10)">
+                    ⏭️⏭️ Advance 10 Ticks
+                </button>
+                <button class="tool-button" onclick="advanceTime(100)">
+                    ⏩ Advance 100 Ticks
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>🔬 TESTING TOOLS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin'">
+                    📊 View Metrics
+                </button>
+                <button class="tool-button" onclick="exportSimulationData()">
+                    💾 Export Data
+                </button>
+            </div>
+            
+            <% if @solar_system %>
+            <div class="tool-section">
+                <h3>📊 SYSTEM STATS</h3>
+                <div style="font-size: 11px; color: #888;">
+                    <div style="margin: 5px 0;">
+                        <span>Total Bodies:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.count %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>With Atmosphere:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.joins(:atmosphere).count %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>With Biosphere:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.joins(:biosphere).count %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>With Hydrosphere:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.joins(:hydrosphere).count %></span>
+                    </div>
+                </div>
+            </div>
+            <% end %>
+        </div>
+        
+        <!-- Main Content: Body List -->
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a; grid-column: 2;">
+            <% if @celestial_bodies.any? %>
+                <% @celestial_bodies.each do |body| %>
+                    <div class="tool-section" style="margin-bottom: 15px; position: relative;">
+                        <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                            <span><%= body.name.upcase %></span>
+                            <span style="font-size: 11px; color: #888;"><%= body.type&.titleize || 'Unknown' %></span>
+                        </h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 10px 0;">
+                            <div class="data-row">
+                                <span class="data-label">Size:</span>
+                                <span class="data-value"><%= number_with_precision(body.size, precision: 2) %></span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">Gravity:</span>
+                                <span class="data-value"><%= number_with_precision(body.gravity, precision: 2) %>g</span>
+                            </div>
+                            <% if body.atmosphere %>
+                            <div class="data-row">
+                                <span class="data-label">Atmosphere:</span>
+                                <span class="data-value" style="color: #0ff;">Present</span>
+                            </div>
+                            <% end %>
+                            <% if body.biosphere %>
+                            <div class="data-row">
+                                <span class="data-label">Biosphere:</span>
+                                <span class="data-value" style="color: #0f0;">Active</span>
+                            </div>
+                            <% end %>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #333;">
+                            <%= button_to '▶️ Run Simulation', run_simulation_path(body.id), method: :post, style: 'padding: 8px 15px; background: #0f0; color: #000; border: none; cursor: pointer; font-family: "Courier New", monospace; flex: 1;' %>
+                            
+                            <%= link_to '🖥️ Monitor', "/admin/celestial_bodies/#{body.id}/monitor", style: 'padding: 8px 15px; background: #222; color: #0ff; border: 1px solid #0ff; text-decoration: none; text-align: center; font-family: "Courier New", monospace; flex: 1; display: block;' %>
+                            
+                            <%= link_to '👁️ View', celestial_body_path(body), style: 'padding: 8px 15px; background: #222; color: #0ff; border: 1px solid #0ff; text-decoration: none; text-align: center; font-family: "Courier New", monospace; flex: 1; display: block;' %>
+                        </div>
+                    </div>
+                <% end %>
+            <% else %>
+                <div class="tool-section">
+                    <h3 style="color: #f00;">⚠️ NO CELESTIAL BODIES FOUND</h3>
+                    <p style="color: #888; margin-top: 10px;">
+                        No celestial bodies exist in the database. Please seed the database or create bodies manually.
+                    </p>
+                    <button class="tool-button" onclick="window.location.href='/celestial_bodies/new'" style="margin-top: 10px;">
+                        ➕ Create New Body
+                    </button>
+                </div>
+            <% end %>
+        </div>
+        
+        <!-- Right Panel: Simulation Log -->
+        <div id="toolPanel" style="border-left: 2px solid #0f0; border-right: none;">
+            <div class="tool-section">
+                <h3>📜 SIMULATION LOG</h3>
+                <div id="simulationLog" style="max-height: 400px; overflow-y: auto; font-size: 11px; color: #0f0; font-family: 'Courier New', monospace;">
+                    <% if flash[:notice] %>
+                        <div style="color: #0f0; margin: 5px 0; padding: 5px; background: #003300; border-left: 2px solid #0f0;">
+                            ✓ <%= flash[:notice] %>
+                        </div>
+                    <% end %>
+                    <% if flash[:alert] %>
+                        <div style="color: #f00; margin: 5px 0; padding: 5px; background: #330000; border-left: 2px solid #f00;">
+                            ✗ <%= flash[:alert] %>
+                        </div>
+                    <% end %>
+                    <div style="color: #888; margin-top: 10px;">
+                        System ready for simulation commands...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-section">
+                <h3>🎯 QUICK ACTIONS</h3>
+                <%= link_to '📋 All Bodies', celestial_bodies_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
+                <%= link_to '🏠 Admin Dashboard', '/admin', class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
+            </div>
+        </div>
+    </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Plant</th>
-      <th>Environment</th>
-      <th>Temperature</th>
-      <th>Moisture</th>
-      <th>Current Health</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @plants.each do |plant| %>
-      <tr>
-        <td><%= plant.name %></td>
-        <td><%= plant.environment.name %></td>
-        <td><%= plant.environment.temperature %></td>
-        <td><%= plant.environment.moisture %></td>
-        <td><%= plant.current_health %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<%= link_to 'Run Simulation', run_simulation_path, method: :post, class: 'button' %>
+    <script>
+        function advanceTime(ticks) {
+            alert(`Time advance feature coming soon!\nWill advance ${ticks} tick(s)`);
+            // TODO: Implement time advancement API
+        }
+        
+        function resetAllSpheres() {
+            if (confirm('Reset all sphere data to base values?\nThis will affect all celestial bodies.')) {
+                alert('Reset sphere feature coming soon!');
+                // TODO: Implement sphere reset API
+            }
+        }
+        
+        function exportSimulationData() {
+            const data = {
+                system: '<%= @solar_system&.name %>',
+                timestamp: new Date().toISOString(),
+                bodies: <%= raw @celestial_bodies.map { |b| 
+                    {
+                        name: b.name,
+                        type: b.type,
+                        size: b.size,
+                        gravity: b.gravity,
+                        has_atmosphere: b.atmosphere.present?,
+                        has_biosphere: b.biosphere.present?,
+                        has_hydrosphere: b.hydrosphere.present?
+                    }
+                }.to_json %>
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'simulation-data-export.json';
+            a.click();
+        }
+    </script>
+</body>
+</html>

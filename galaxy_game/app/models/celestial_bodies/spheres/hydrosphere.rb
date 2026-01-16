@@ -15,9 +15,13 @@ module CelestialBodies
       attr_accessor :simulation_running
       
       # JSONB field accessors - using generic names for liquid bodies
-      store_accessor :water_bodies, :oceans, :lakes, :rivers, :ice_caps, :groundwater
+      store_accessor :water_bodies, :oceans, :lakes, :rivers, :ice_caps, :subsurface
       store_accessor :composition
       store_accessor :state_distribution
+      
+      # Alias for backward compatibility
+      alias_method :groundwater, :subsurface
+      alias_method :groundwater=, :subsurface=
       
       # Base values for reset functionality
       store_accessor :base_values, :base_liquid_bodies, :base_composition, :base_state_distribution,

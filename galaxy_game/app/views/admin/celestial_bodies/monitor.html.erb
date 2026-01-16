@@ -14,7 +14,7 @@
             <h1 id="planetName"><%= @celestial_body.name %> - ADMIN MONITOR</h1>
             <div id="planetInfo">
                 <%= @celestial_body.type %> | 
-                Radius: <%= number_to_human(@celestial_body.radius, precision: 2, units: :si) %>m | 
+                Radius: <%= number_to_human(@celestial_body.radius, precision: 2) %> m | 
                 Gravity: <%= number_with_precision(@celestial_body.gravity, precision: 3) %>g |
                 Temp: <%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %>K
             </div>
@@ -122,7 +122,7 @@
                         </span>
                     </div>
                     <div class="data-row">
-                        <span class="data-label">Total Mass:</span>
+                        <span class="data-label">Total Liquid Mass:</span>
                         <span class="data-value" id="atmo-mass">
                             <%= number_to_human(@celestial_body.atmosphere.total_atmospheric_mass || 0, precision: 2) %> kg
                         </span>
@@ -152,21 +152,21 @@
                 <h3>HYDROSPHERE</h3>
                 <% if @celestial_body.hydrosphere %>
                     <div class="data-row">
-                        <span class="data-label">Water Coverage:</span>
+                        <span class="data-label">Liquid Coverage:</span>
                         <span class="data-value" id="hydro-coverage">
-                            <%= number_with_precision(@celestial_body.hydrosphere.water_coverage_percentage || 0, precision: 1) %>%
+                            <%= number_with_precision(@celestial_body.hydrosphere.water_coverage || 0, precision: 1) %>%
                         </span>
                     </div>
                     <div class="data-row">
                         <span class="data-label">Ocean Mass:</span>
                         <span class="data-value" id="hydro-ocean">
-                            <%= number_to_human(@celestial_body.hydrosphere.ocean_mass || 0, precision: 2) %> kg
+                            <%= number_to_human(@celestial_body.hydrosphere.oceans.to_f || 0, precision: 2) %> kg
                         </span>
                     </div>
                     <div class="data-row">
                         <span class="data-label">Ice Mass:</span>
                         <span class="data-value" id="hydro-ice">
-                            <%= number_to_human(@celestial_body.hydrosphere.ice_mass || 0, precision: 2) %> kg
+                            <%= number_to_human(@celestial_body.hydrosphere.ice_caps.to_f || 0, precision: 2) %> kg
                         </span>
                     </div>
                 <% else %>
@@ -204,7 +204,7 @@
                     <div class="data-row">
                         <span class="data-label">Life Forms:</span>
                         <span class="data-value" id="bio-lifeforms">
-                            <%= @celestial_body.biosphere.life_forms_count || 0 %>
+                            <%= @celestial_body.biosphere.life_forms.count %>
                         </span>
                     </div>
                 <% else %>
@@ -222,7 +222,7 @@
                     <div class="data-row">
                         <span class="data-label">Geological Activity:</span>
                         <span class="data-value" id="geo-activity">
-                            <%= @celestial_body.geosphere.geological_activity_level || 0 %>/100
+                            <%= number_with_precision((@celestial_body.geosphere.geological_activity || 0) * 100, precision: 1) %>%
                         </span>
                     </div>
                     <div class="data-row">
@@ -232,9 +232,9 @@
                         </span>
                     </div>
                     <div class="data-row">
-                        <span class="data-label">Volcanism:</span>
-                        <span class="data-value" id="geo-volcano">
-                            <%= @celestial_body.geosphere.volcanic_activity_level || 'None' %>
+                        <span class="data-label">Core Mass:</span>
+                        <span class="data-value" id="geo-core">
+                            <%= number_to_human(@celestial_body.geosphere.total_core_mass || 0, precision: 2) %> kg
                         </span>
                     </div>
                 <% else %>

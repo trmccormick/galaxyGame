@@ -1,40 +1,213 @@
-<h1>Celestial Bodies</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Bodies - Database</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>CELESTIAL BODIES DATABASE</h1>
+            <div id="planetInfo">
+                Total: <%= @celestial_bodies.count %> bodies | 
+                <%= link_to '🏠 Admin Dashboard', '/admin', style: 'color: #0ff; text-decoration: none;' %> |
+                <%= link_to '🎮 Main Game', '/', style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Filters & Actions -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🔍 FILTERS</h3>
+                <select id="typeFilter" onchange="filterBodies()" style="width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace; margin-bottom: 10px;">
+                    <option value="">All Types</option>
+                    <option value="terrestrial">Terrestrial</option>
+                    <option value="gas_giant">Gas Giant</option>
+                    <option value="ice_giant">Ice Giant</option>
+                    <option value="dwarf">Dwarf</option>
+                </select>
+                
+                <select id="systemFilter" onchange="filterBodies()" style="width: 100%; padding: 8px; background: #000; color: #0f0; border: 1px solid #0f0; font-family: 'Courier New', monospace;">
+                    <option value="">All Systems</option>
+                    <% @celestial_bodies.map(&:solar_system).compact.uniq.each do |system| %>
+                        <option value="<%= system.id %>"><%= system.name %></option>
+                    <% end %>
+                </select>
+            </div>
+            
+            <div class="tool-section">
+                <h3>⚙️ ACTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='<%= new_celestial_body_path %>'">
+                    ➕ New Body
+                </button>
+                <button class="tool-button" onclick="exportAllData()">
+                    💾 Export All
+                </button>
+                <button class="tool-button" onclick="toggleView()">
+                    🔄 Toggle View
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>📊 STATISTICS</h3>
+                <div style="font-size: 11px; color: #888;">
+                    <div style="margin: 5px 0;">
+                        <span>Total Bodies:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.count %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>With Atmosphere:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.joins(:atmosphere).count %></span>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <span>With Biosphere:</span>
+                        <span style="color: #0f0; float: right;"><%= @celestial_bodies.joins(:biosphere).count %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div id="mainContent" style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <!-- Table View -->
+            <div id="tableView">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #0f0;">
+                            <th style="text-align: left; padding: 12px; color: #888; font-weight: normal;">NAME</th>
+                            <th style="text-align: left; padding: 12px; color: #888; font-weight: normal;">TYPE</th>
+                            <th style="text-align: left; padding: 12px; color: #888; font-weight: normal;">SYSTEM</th>
+                            <th style="text-align: right; padding: 12px; color: #888; font-weight: normal;">SIZE</th>
+                            <th style="text-align: right; padding: 12px; color: #888; font-weight: normal;">GRAVITY</th>
+                            <th style="text-align: center; padding: 12px; color: #888; font-weight: normal;">ATMOSPHERE</th>
+                            <th style="text-align: center; padding: 12px; color: #888; font-weight: normal;">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodiesTable">
+                        <% @celestial_bodies.each do |body| %>
+                        <tr class="body-row" data-type="<%= body.type %>" data-system="<%= body.solar_system_id %>" style="border-bottom: 1px solid #333;">
+                            <td style="padding: 12px;">
+                                <%= link_to body.name, celestial_body_path(body), style: 'color: #0ff; text-decoration: none; font-weight: bold;' %>
+                            </td>
+                            <td style="padding: 12px; color: #0f0;">
+                                <%= body.type&.titleize || 'Unknown' %>
+                            </td>
+                            <td style="padding: 12px; color: #888;">
+                                <%= body.solar_system&.name || 'N/A' %>
+                            </td>
+                            <td style="padding: 12px; color: #0f0; text-align: right; font-family: 'Courier New', monospace;">
+                                <%= number_with_precision(body.size, precision: 2) %>
+                            </td>
+                            <td style="padding: 12px; color: #0f0; text-align: right; font-family: 'Courier New', monospace;">
+                                <%= number_with_precision(body.gravity, precision: 2) %>g
+                            </td>
+                            <td style="padding: 12px; text-align: center;">
+                                <% if body.atmosphere %>
+                                    <span style="color: #0ff;">✓</span>
+                                <% else %>
+                                    <span style="color: #555;">✗</span>
+                                <% end %>
+                            </td>
+                            <td style="padding: 12px; text-align: center;">
+                                <%= link_to '👁️', celestial_body_path(body), style: 'color: #0ff; text-decoration: none; margin: 0 5px;', title: 'View' %>
+                                <%= link_to '🖥️', "/admin/celestial_bodies/#{body.id}/monitor", style: 'color: #0f0; text-decoration: none; margin: 0 5px;', title: 'Monitor' %>
+                                <%= link_to '✏️', edit_celestial_body_path(body), style: 'color: #ff0; text-decoration: none; margin: 0 5px;', title: 'Edit' %>
+                            </td>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Card View (hidden by default) -->
+            <div id="cardView" style="display: none;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                    <% @celestial_bodies.each do |body| %>
+                    <div class="body-card tool-section" data-type="<%= body.type %>" data-system="<%= body.solar_system_id %>" style="cursor: pointer; transition: all 0.2s;" onclick="window.location.href='<%= celestial_body_path(body) %>'">
+                        <h3 style="color: #0ff; font-size: 14px; margin-bottom: 10px;">
+                            <%= body.name %>
+                        </h3>
+                        <div style="font-size: 11px; color: #888;">
+                            <div class="data-row">
+                                <span class="data-label">Type:</span>
+                                <span class="data-value"><%= body.type&.titleize || 'Unknown' %></span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">System:</span>
+                                <span class="data-value"><%= body.solar_system&.name || 'N/A' %></span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">Size:</span>
+                                <span class="data-value"><%= number_with_precision(body.size, precision: 2) %></span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">Gravity:</span>
+                                <span class="data-value"><%= number_with_precision(body.gravity, precision: 2) %>g</span>
+                            </div>
+                            <% if body.atmosphere %>
+                            <div class="data-row">
+                                <span class="data-label">Atmosphere:</span>
+                                <span class="data-value" style="color: #0ff;">Present</span>
+                            </div>
+                            <% end %>
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; font-size: 10px;">
+                            <%= link_to '👁️ View', celestial_body_path(body), style: 'color: #0ff; text-decoration: none; margin-right: 10px;' %>
+                            <%= link_to '🖥️ Monitor', "/admin/celestial_bodies/#{body.id}/monitor", style: 'color: #0f0; text-decoration: none; margin-right: 10px;' %>
+                            <%= link_to '✏️ Edit', edit_celestial_body_path(body), style: 'color: #ff0; text-decoration: none;' %>
+                        </div>
+                    </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Size</th>
-      <th>Gravity</th>
-      <th>Density</th>
-      <th>Orbital Period</th>
-      <th>Atmosphere Composition</th>
-      <th>Available Materials</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @celestial_bodies.each do |celestial| %>
-      <tr>
-        <td><%= link_to celestial.name, celestial_body_path(celestial) %></td>
-        <td><%= celestial.size %></td>
-        <td><%= format("%.2e", celestial.gravity) %></td>
-        <td><%= format("%.2e", celestial.density) %></td>
-        <td><%= format("%.2e", celestial.orbital_period) %></td>
-        <td>
-          <% if celestial.atmospheric_composition %>
-            <% celestial.atmospheric_composition.each do |gas, percentage| %>
-              <p><%= gas %>: <%= percentage %>%</p>
-            <% end %>
-          <% end %>
-        </td>
-        <td>
-          <% if celestial.available_materials %>
-            <% celestial.available_materials.each do |material, amount| %>
-              <p><%= material %>: <%= format("%.2e", amount) %></p>
-            <% end %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <script>
+        let currentView = 'table';
+        
+        function toggleView() {
+            currentView = currentView === 'table' ? 'card' : 'table';
+            document.getElementById('tableView').style.display = currentView === 'table' ? 'block' : 'none';
+            document.getElementById('cardView').style.display = currentView === 'card' ? 'block' : 'none';
+        }
+        
+        function filterBodies() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            const systemFilter = document.getElementById('systemFilter').value;
+            
+            const rows = document.querySelectorAll('.body-row, .body-card');
+            rows.forEach(row => {
+                const matchesType = !typeFilter || row.dataset.type === typeFilter;
+                const matchesSystem = !systemFilter || row.dataset.system === systemFilter;
+                
+                row.style.display = (matchesType && matchesSystem) ? '' : 'none';
+            });
+        }
+        
+        function exportAllData() {
+            const bodies = <%= raw @celestial_bodies.map { |b| 
+                {
+                    name: b.name,
+                    type: b.type,
+                    system: b.solar_system&.name,
+                    size: b.size,
+                    gravity: b.gravity,
+                    density: b.density,
+                    has_atmosphere: b.atmosphere.present?
+                }
+            }.to_json %>;
+            
+            const blob = new Blob([JSON.stringify(bodies, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'celestial-bodies-export.json';
+            a.click();
+        }
+    </script>
+</body>
+</html>
