@@ -129,7 +129,7 @@ module CelestialBodies
       return self[:temperature] if has_attribute?(:temperature) && self[:temperature].present?
       
       # Try to get from atmosphere (surface temperature)
-      return atmosphere&.surface_temperature if atmosphere&.surface_temperature.present?
+      return atmosphere&.temperature if atmosphere&.temperature.present?
       
       # Calculate based on stellar flux and albedo if we have the data
       if stars.any? && albedo.present?
