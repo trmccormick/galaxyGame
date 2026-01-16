@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - AI Manager Performance</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            color: #0ff;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .metric-trend {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .metric-trend.positive {
+            background: #0f0;
+            color: #000;
+        }
+
+        .metric-trend.negative {
+            background: #f00;
+            color: #fff;
+        }
+
+        .metric-trend.neutral {
+            background: #333;
+            color: #888;
+        }
+
+        .performance-chart {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .performance-table {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .performance-table th,
+        .performance-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .performance-table th {
+            background: #1a1a1a;
+            color: #0ff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .performance-table td {
+            color: #ccc;
+        }
+
+        .performance-table tr:hover td {
+            background: #1a1a1a;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.good {
+            background: #0f0;
+        }
+
+        .status-indicator.warning {
+            background: #ff0;
+        }
+
+        .status-indicator.critical {
+            background: #f00;
+        }
+
+        .controls-section {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-label {
+            color: #0f0;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .control-input {
+            padding: 6px 10px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .control-btn {
+            padding: 6px 12px;
+            background: #222;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>GALAXY GAME - AI MANAGER PERFORMANCE</h1>
+            <div id="planetInfo">
+                System Status: <span style="color: #0f0;">OPERATIONAL</span> |
+                AI Performance: <span style="color: #0ff;">MONITORING</span> |
+                Version: 1.0.0-alpha
+            </div>
+        </div>
+
+        <!-- Left Panel: AI Manager Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🤖 AI MANAGER</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/missions'">
+                    🚀 Missions
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/decisions'">
+                    🧠 Decisions
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/planner'">
+                    📋 Planner
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/patterns'">
+                    🎯 Patterns
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/performance'">
+                    📊 Performance
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>🎯 ADMIN SECTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/dashboard'">
+                    ← Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <div class="content-section">
+                <h2>📊 AI PERFORMANCE METRICS</h2>
+
+                <!-- Key Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value"><%= @metrics[:success_rate] %>%</div>
+                        <div class="metric-trend positive">+2.1%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Avg Timeline</div>
+                        <div class="metric-value"><%= @metrics[:average_timeline] %></div>
+                        <div class="metric-trend neutral">±0.0%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-card">
+                        <div class="metric-label">Resource Efficiency</div>
+                        <div class="metric-value"><%= @metrics[:resource_efficiency] %>%</div>
+                        <div class="metric-trend positive">+5.3%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Active Missions</div>
+                        <div class="metric-value">--</div>
+                        <div class="metric-trend neutral">±0.0%</div>
+                    </div>
+                </div>
+
+                <!-- Performance Controls -->
+                <div class="controls-section">
+                    <h3>🎛️ PERFORMANCE CONTROLS</h3>
+                    <div class="control-group">
+                        <span class="control-label">Decision Timeout:</span>
+                        <input type="number" class="control-input" value="30" min="5" max="300">
+                        <span style="color: #888; font-size: 12px;">seconds</span>
+                        <button class="control-btn">Update</button>
+                    </div>
+                    <div class="control-group">
+                        <span class="control-label">Max Concurrent:</span>
+                        <input type="number" class="control-input" value="5" min="1" max="20">
+                        <span style="color: #888; font-size: 12px;">missions</span>
+                        <button class="control-btn">Update</button>
+                    </div>
+                    <div class="control-group">
+                        <span class="control-label">Resource Threshold:</span>
+                        <input type="number" class="control-input" value="85" min="50" max="95">
+                        <span style="color: #888; font-size: 12px;">percent</span>
+                        <button class="control-btn">Update</button>
+                    </div>
+                </div>
+
+                <!-- Performance Chart Placeholder -->
+                <div class="performance-chart">
+                    📈 Performance Trends Chart (Coming Soon)
+                </div>
+
+                <!-- Mission Performance Table -->
+                <h3>🚀 MISSION PERFORMANCE</h3>
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Mission</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Timeline</th>
+                            <th>Efficiency</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="status-indicator good"></span>Mars Colony Alpha</td>
+                            <td style="color: #0f0;">Active</td>
+                            <td>67%</td>
+                            <td>8.2 / 12 months</td>
+                            <td>94%</td>
+                            <td><button class="control-btn" style="font-size: 10px; padding: 4px 8px;">Details</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="status-indicator warning"></span>Venus Industrial Hub</td>
+                            <td style="color: #ff0;">Delayed</td>
+                            <td>23%</td>
+                            <td>4.1 / 18 months</td>
+                            <td>78%</td>
+                            <td><button class="control-btn" style="font-size: 10px; padding: 4px 8px;">Details</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="status-indicator good"></span>Titan Fuel Depot</td>
+                            <td style="color: #0f0;">Completed</td>
+                            <td>100%</td>
+                            <td>6.8 / 7 months</td>
+                            <td>96%</td>
+                            <td><button class="control-btn" style="font-size: 10px; padding: 4px 8px;">Review</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="content-section">
+                    <h3>⚙️ SYSTEM HEALTH</h3>
+                    <div style="background: #0a0a0a; padding: 15px; border: 1px solid #333; margin-top: 10px;">
+                        <div style="color: #0f0;"><span class="status-indicator good"></span><strong>Decision Engine:</strong> Operating normally</div>
+                        <div style="color: #0f0;"><span class="status-indicator good"></span><strong>Pattern Library:</strong> All patterns loaded</div>
+                        <div style="color: #ff0;"><span class="status-indicator warning"></span><strong>Resource Monitor:</strong> High utilization detected</div>
+                        <div style="color: #0f0;"><span class="status-indicator good"></span><strong>Mission Tracker:</strong> All missions accounted for</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh performance metrics every 60 seconds
+        setInterval(() => {
+            // TODO: Implement AJAX refresh for live metrics
+            console.log('Refreshing performance metrics...');
+        }, 60000);
+
+        // Update controls
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const value = input.value;
+                const label = this.parentElement.querySelector('.control-label').textContent;
+
+                // TODO: Implement control updates
+                alert(`${label} updated to: ${value}`);
+            });
+        });
+    </script>
+</body>
+</html>

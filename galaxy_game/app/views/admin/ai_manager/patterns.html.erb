@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - AI Manager Patterns</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .pattern-card {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 20px;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+
+        .pattern-card:hover {
+            border-color: #0ff;
+            background: #222;
+        }
+
+        .pattern-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pattern-name {
+            color: #0ff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .pattern-status {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .pattern-status.active {
+            background: #0f0;
+            color: #000;
+        }
+
+        .pattern-status.inactive {
+            background: #333;
+            color: #888;
+        }
+
+        .pattern-description {
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .pattern-details {
+            background: #0a0a0a;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+
+        .pattern-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .pattern-detail-label {
+            color: #888;
+        }
+
+        .pattern-detail-value {
+            color: #0f0;
+            font-weight: bold;
+        }
+
+        .pattern-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid #0f0;
+            background: #222;
+            color: #0f0;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .action-btn.danger {
+            border-color: #f00;
+            color: #f00;
+        }
+
+        .action-btn.danger:hover {
+            background: #f00;
+            color: #000;
+        }
+
+        .test-controls {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .test-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .test-input {
+            padding: 8px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .test-select {
+            padding: 8px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>GALAXY GAME - AI MANAGER PATTERNS</h1>
+            <div id="planetInfo">
+                System Status: <span style="color: #0f0;">OPERATIONAL</span> |
+                Pattern Library: <span style="color: #0ff;">LOADED</span> |
+                Version: 1.0.0-alpha
+            </div>
+        </div>
+
+        <!-- Left Panel: AI Manager Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🤖 AI MANAGER</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/missions'">
+                    🚀 Missions
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/decisions'">
+                    🧠 Decisions
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/planner'">
+                    📋 Planner
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/patterns'">
+                    🎯 Patterns
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/performance'">
+                    📊 Performance
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>🎯 ADMIN SECTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/dashboard'">
+                    ← Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <div class="content-section">
+                <h2>🎯 AI MISSION PATTERNS</h2>
+
+                <!-- Test Controls -->
+                <div class="test-controls">
+                    <h3>🧪 PATTERN TESTING</h3>
+                    <div class="test-form">
+                        <select class="test-select" id="patternSelect">
+                            <option value="">Select Pattern...</option>
+                            <option value="mars-terraforming">Mars Terraforming</option>
+                            <option value="venus-industrial">Venus Industrial</option>
+                            <option value="titan-fuel">Titan Fuel Mining</option>
+                            <option value="asteroid-mining">Asteroid Mining</option>
+                            <option value="europa-water">Europa Water Extraction</option>
+                        </select>
+                        <input type="number" class="test-input" id="techLevel" placeholder="Tech Level (1-5)" min="1" max="5" value="3">
+                        <input type="number" class="test-input" id="budget" placeholder="Budget (GCC)" min="100000" value="1000000">
+                        <button class="action-btn" onclick="testPattern()">Test Pattern</button>
+                        <button class="action-btn" onclick="loadPattern()">Load Pattern</button>
+                    </div>
+                </div>
+
+                <!-- Patterns Grid -->
+                <div class="patterns-grid">
+                    <% if @patterns.empty? %>
+                        <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">🎯</div>
+                            <div>No AI patterns loaded.</div>
+                            <div style="font-size: 12px; margin-top: 10px;">Mission patterns will be displayed here for testing and validation.</div>
+                        </div>
+                    <% else %>
+                        <% @patterns.each do |pattern| %>
+                            <div class="pattern-card">
+                                <div class="pattern-header">
+                                    <div class="pattern-name"><%= pattern[:name] %></div>
+                                    <div class="pattern-status <%= pattern[:active] ? 'active' : 'inactive' %>">
+                                        <%= pattern[:active] ? 'ACTIVE' : 'INACTIVE' %>
+                                    </div>
+                                </div>
+                                <div class="pattern-description"><%= pattern[:description] %></div>
+                                <div class="pattern-details">
+                                    <div class="pattern-detail">
+                                        <span class="pattern-detail-label">Target:</span>
+                                        <span class="pattern-detail-value"><%= pattern[:target_body] %></span>
+                                    </div>
+                                    <div class="pattern-detail">
+                                        <span class="pattern-detail-label">Duration:</span>
+                                        <span class="pattern-detail-value"><%= pattern[:estimated_duration] %> years</span>
+                                    </div>
+                                    <div class="pattern-detail">
+                                        <span class="pattern-detail-label">Complexity:</span>
+                                        <span class="pattern-detail-value"><%= pattern[:complexity] %></span>
+                                    </div>
+                                    <div class="pattern-detail">
+                                        <span class="pattern-detail-label">Success Rate:</span>
+                                        <span class="pattern-detail-value"><%= pattern[:success_rate] %>%</span>
+                                    </div>
+                                </div>
+                                <div class="pattern-actions">
+                                    <button class="action-btn" onclick="viewPattern('<%= pattern[:id] %>')">View Details</button>
+                                    <button class="action-btn" onclick="testPattern('<%= pattern[:id] %>')">Test Run</button>
+                                    <% if pattern[:active] %>
+                                        <button class="action-btn danger" onclick="deactivatePattern('<%= pattern[:id] %>')">Deactivate</button>
+                                    <% else %>
+                                        <button class="action-btn" onclick="activatePattern('<%= pattern[:id] %>')">Activate</button>
+                                    <% end %>
+                                </div>
+                            </div>
+                        <% end %>
+                    <% end %>
+                </div>
+
+                <div class="content-section">
+                    <h3>📋 PATTERN TYPES</h3>
+                    <div style="background: #0a0a0a; padding: 15px; border: 1px solid #333; margin-top: 10px;">
+                        <div style="color: #0f0;"><strong>Terraforming Patterns:</strong> Planetary transformation missions (Mars, Venus)</div>
+                        <div style="color: #888;"><strong>Resource Extraction:</strong> Mining and harvesting operations (Titan, Asteroids, Europa)</div>
+                        <div style="color: #888;"><strong>Infrastructure:</strong> Base building and orbital construction patterns</div>
+                        <div style="color: #888;"><strong>Research:</strong> Scientific investigation and data collection missions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testPattern(patternId) {
+            const pattern = patternId || document.getElementById('patternSelect').value;
+            const techLevel = document.getElementById('techLevel').value;
+            const budget = document.getElementById('budget').value;
+
+            if (!pattern) {
+                alert('Please select a pattern to test');
+                return;
+            }
+
+            // TODO: Implement pattern testing
+            alert(`Testing pattern: ${pattern} (Tech: ${techLevel}, Budget: ${budget} GCC)`);
+        }
+
+        function loadPattern() {
+            const pattern = document.getElementById('patternSelect').value;
+            if (!pattern) {
+                alert('Please select a pattern to load');
+                return;
+            }
+
+            // TODO: Implement pattern loading
+            alert(`Loading pattern: ${pattern}`);
+        }
+
+        function viewPattern(patternId) {
+            // TODO: Implement pattern detail view
+            alert(`Viewing pattern details: ${patternId}`);
+        }
+
+        function activatePattern(patternId) {
+            // TODO: Implement pattern activation
+            alert(`Activating pattern: ${patternId}`);
+        }
+
+        function deactivatePattern(patternId) {
+            // TODO: Implement pattern deactivation
+            alert(`Deactivating pattern: ${patternId}`);
+        }
+    </script>
+</body>
+</html>
