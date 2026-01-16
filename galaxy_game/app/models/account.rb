@@ -15,28 +15,29 @@ class Account < ApplicationRecord
         # Deduct from sender account
         self.balance -= amount
 
-        # Create transaction record for sender (negative amount)
+        # Add to recipient account
+        recipient_account.balance += amount
+
+        # Save both accounts first
+        save!
+        recipient_account.save!
+
+        # Create transaction records after accounts are saved
         transactions.create!(
           amount: -amount,
           description: description,
           transaction_type: 'transfer',
-          recipient: recipient_account.accountable # The recipient entity
+          recipient: recipient_account.accountable, # The recipient entity
+          currency: self.currency
         )
 
-        # Add to recipient account
-        recipient_account.balance += amount
-
-        # Create transaction record for recipient (positive amount)
         recipient_account.transactions.create!(
           amount: amount,
           description: description,
           transaction_type: 'transfer',
-          recipient: self.accountable # The sender entity
+          recipient: self.accountable, # The sender entity
+          currency: self.currency
         )
-
-        # Save both accounts
-        save!
-        recipient_account.save!
       rescue ActiveRecord::RecordInvalid => e
         raise ActiveRecord::Rollback, e.message
       end
@@ -51,15 +52,17 @@ class Account < ApplicationRecord
         # Add to balance
         self.balance += amount
 
-        # Create transaction record
+        # Save account first
+        save!
+
+        # Create transaction record after account is saved
         transactions.create!(
           amount: amount,
           description: description,
           transaction_type: 'deposit',
-          recipient: self.accountable # Deposit to self
+          recipient: self.accountable, # Deposit to self
+          currency: self.currency
         )
-
-        save!
       rescue ActiveRecord::RecordInvalid => e
         raise ActiveRecord::Rollback, e.message
       end
@@ -74,15 +77,17 @@ class Account < ApplicationRecord
         # Subtract from balance
         self.balance -= amount
 
-        # Create transaction record
+        # Save account first
+        save!
+
+        # Create transaction record after account is saved
         transactions.create!(
           amount: -amount,  # Negative amount for withdrawals
           description: description,
           transaction_type: 'withdraw',
-          recipient: self.accountable # Withdraw from self
+          recipient: self.accountable, # Withdraw from self
+          currency: self.currency
         )
-
-        save!
       rescue ActiveRecord::RecordInvalid => e
         raise ActiveRecord::Rollback, e.message
       end
