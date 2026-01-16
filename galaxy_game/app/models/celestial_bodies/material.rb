@@ -25,6 +25,7 @@ module CelestialBodies
     
     validates :name, presence: true
     validates :amount, numericality: { greater_than_or_equal_to: 0 }
+    validates :state, presence: true
     
     # Transfer material to another sphere
     def transfer_to(target, transfer_amount)
@@ -107,6 +108,13 @@ module CelestialBodies
     
     def boiling_point
       properties&.dig('properties', 'boiling_point')
+    end
+    
+    # Determine the physical state of the material at given conditions
+    def state_at(temperature, pressure)
+      return 'solid' if melting_point && temperature < melting_point
+      return 'liquid' if boiling_point && temperature < boiling_point
+      'gas'
     end
   end
 end
