@@ -244,16 +244,65 @@ module CelestialBodies
 
     # Add a helper method to get a simplified type
     def body_category
-      if type.to_s.include?('Moon')
-        'moon'
-      elsif type.to_s.include?('TerrestrialPlanet')
+      case type.to_s
+      # Stars
+      when /Star$/
+        'star'
+      when /BrownDwarf$/
+        'brown_dwarf'
+
+      # Planets - Rocky
+      when /TerrestrialPlanet$/
         'terrestrial_planet'
-      elsif type.to_s.include?('GasGiant')
+      when /CarbonPlanet$/
+        'carbon_planet'
+      when /LavaWorld$/
+        'lava_world'
+      when /SuperEarth$/
+        'super_earth'
+
+      # Planets - Gaseous
+      when /GasGiant$/
         'gas_giant'
-      elsif type.to_s.include?('IceGiant')
-        'ice_giant' 
-      elsif type.to_s.include?('DwarfPlanet')
+      when /IceGiant$/
+        'ice_giant'
+      when /HotJupiter$/
+        'hot_jupiter'
+
+      # Planets - Ocean
+      when /HyceanPlanet$/
+        'hycean_planet'
+      when /OceanPlanet$/
+        'ocean_planet'
+      when /WaterWorld$/
+        'water_world'
+
+      # Satellites/Moons
+      when /Moon$/
+        'moon'
+      when /LargeMoon$/
+        'large_moon'
+      when /SmallMoon$/
+        'small_moon'
+      when /IceMoon$/
+        'ice_moon'
+
+      # Minor Bodies
+      when /Asteroid$/
+        'asteroid'
+      when /Comet$/
+        'comet'
+      when /DwarfPlanet$/
         'dwarf_planet'
+      when /KuiperBeltObject$/
+        'kuiper_belt_object'
+
+      # Other
+      when /AlienLifeForm$/
+        'alien_life_form'
+      when /Material$/
+        'material'
+
       else
         'unknown'
       end

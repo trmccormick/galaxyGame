@@ -11,7 +11,36 @@ module Admin
     def index
       @celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
       @total_bodies = @celestial_bodies.count
-      @bodies_by_type = @celestial_bodies.group_by(&:type)
+      @bodies_by_category = @celestial_bodies.group_by(&:body_category)
+
+      # Calculate statistics for major categories
+      @category_stats = {
+        stars: @bodies_by_category['star']&.count || 0,
+        brown_dwarfs: @bodies_by_category['brown_dwarf']&.count || 0,
+        planets: count_planet_types,
+        moons: count_moon_types,
+        minor_bodies: count_minor_body_types,
+        other: (@bodies_by_category['alien_life_form']&.count || 0) + (@bodies_by_category['material']&.count || 0)
+      }
+    end
+
+    private
+
+    def count_planet_types
+      planet_categories = ['terrestrial_planet', 'carbon_planet', 'lava_world', 'super_earth',
+                          'gas_giant', 'ice_giant', 'hot_jupiter', 'hycean_planet',
+                          'ocean_planet', 'water_world']
+      planet_categories.sum { |cat| @bodies_by_category[cat]&.count || 0 }
+    end
+
+    def count_moon_types
+      moon_categories = ['moon', 'large_moon', 'small_moon', 'ice_moon']
+      moon_categories.sum { |cat| @bodies_by_category[cat]&.count || 0 }
+    end
+
+    def count_minor_body_types
+      minor_categories = ['asteroid', 'comet', 'dwarf_planet', 'kuiper_belt_object']
+      minor_categories.sum { |cat| @bodies_by_category[cat]&.count || 0 }
     end
 
     # GET /admin/celestial_bodies/:id/monitor

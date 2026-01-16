@@ -196,9 +196,9 @@ AI system performance monitoring and optimization controls.
 Global celestial body catalog showing all bodies in the game database for monitoring selection.
 
 **Features:**
-- Complete celestial body catalog with type classification (shows ALL bodies in the game)
-- Statistics dashboard (total bodies, planets, moons, asteroids)
-- Grouped display by celestial body type
+- Complete celestial body catalog with comprehensive type classification
+- Statistics dashboard showing counts for all major categories (Stars, Planets, Moons, Minor Bodies, Other)
+- Grouped display by celestial body category (star, planet types, moon types, minor bodies, etc.)
 - Direct links to individual body monitors
 - Body details: mass, radius, temperature, atmosphere status
 
@@ -208,8 +208,25 @@ Global celestial body catalog showing all bodies in the game database for monito
 # Load ALL celestial bodies from the game database for monitoring selection
 @celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
 @total_bodies = @celestial_bodies.count
-@bodies_by_type = @celestial_bodies.group_by(&:type)
+@bodies_by_category = @celestial_bodies.group_by(&:body_category)
+
+# Calculate statistics for major categories
+@category_stats = {
+  stars: @bodies_by_category['star']&.count || 0,
+  brown_dwarfs: @bodies_by_category['brown_dwarf']&.count || 0,
+  planets: count_planet_types,  # terrestrial, gas giants, ice giants, etc.
+  moons: count_moon_types,      # various moon types
+  minor_bodies: count_minor_body_types,  # asteroids, comets, etc.
+  other: count_other_types      # alien life forms, materials
+}
 ```
+
+**Supported Celestial Body Categories:**
+- **Stars**: Main sequence stars, brown dwarfs
+- **Planets**: Terrestrial planets, gas giants, ice giants, carbon planets, lava worlds, super earths, ocean planets, etc.
+- **Moons/Satellites**: Various moon types (large, small, ice moons)
+- **Minor Bodies**: Asteroids, comets, dwarf planets, Kuiper belt objects
+- **Other**: Alien life forms, materials
 
 #### Monitor (`/admin/celestial_bodies/:id/monitor`)
 
@@ -286,11 +303,45 @@ Settlement status and resource monitoring (stub).
 
 **Controller:** `Admin::SettlementsController`
 
-### 5. Resources (`/admin/resources/flows`)
+### 5. Resources (`/admin/resources`)
+
+#### Index (`/admin/resources`)
+
+Resource management overview and navigation hub.
+
+**Features:**
+- Navigation to resource flows, supply chains, and market analysis
+- System status indicators for resource management components
+- Quick access to all resource monitoring tools
+
+**Controller:** `Admin::ResourcesController#index`
+
+```ruby
+# Resource management sections navigation
+@sections = [
+  { name: 'Resource Flows', path: admin_resource_flows_path, description: 'Monitor resource movement and distribution' },
+  { name: 'Supply Chains', path: admin_resource_supply_chains_path, description: 'Track supply chain networks and dependencies' },
+  { name: 'Market & Economy', path: admin_resource_market_path, description: 'View market data, pricing, and economic indicators' }
+]
+```
+
+#### Resource Flows (`/admin/resources/flows`)
 
 Track resource flows and economic chains (stub).
 
-**Controller:** `Admin::ResourcesController`
+**Controller:** `Admin::ResourcesController#flows`
+
+#### Supply Chains (`/admin/resources/supply_chains`)
+
+Supply chain analysis and dependency tracking (stub).
+
+**Controller:** `Admin::ResourcesController#supply_chains`
+
+#### Market (`/admin/resources/market`)
+
+Market data and economic indicators (stub).
+
+**Controller:** `Admin::ResourcesController#market`
 
 ### 6. Simulation (`/admin/simulation`)
 
