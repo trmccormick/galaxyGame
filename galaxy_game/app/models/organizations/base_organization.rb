@@ -27,6 +27,13 @@ module Organizations
       organization_type == 'consortium'
     end
 
+    def is_npc?
+      # Development Corporations are NPCs by default
+      return true if development_corporation?
+      # Or explicitly marked as NPC in operational_data
+      operational_data&.dig('is_npc') == true
+    end
+
     # Associations
     has_many :accounts, as: :accountable, class_name: 'Financial::Account'
     attr_accessor :resources, :projects, :profits, :tax_rate
