@@ -7,10 +7,20 @@ Formed in the aftermath of the first major snap events, when the Sol system gain
 TerraGen represents the institutional response to the terraforming challenges presented by newly accessible systems. Just as the Wormhole Transit Consortium solved the logistics crisis, TerraGen addresses the colonization bottleneck.
 
 ## Key Functions
+- **Technology Development**: Focuses on advancing new terraforming technologies and methodologies for diverse planetary environments
+- **Resource Identification**: Analyzes planetary compositions to identify specific resources needed for terraforming (e.g., CO2, N2, biological materials)
+- **Mission Coordination**: Offers player missions for resource harvesting and inter-system resource transport to support terraforming plans
 - **Technology Standardization**: Develops common terraforming protocols across different planetary types
 - **Resource Sharing**: Pools rare biological materials and terraforming organisms
 - **Knowledge Exchange**: Shares terraforming data and lessons learned between systems
 - **Economic Coordination**: Manages terraforming contracts and settlement development funding
+
+## Player Mission Examples
+TerraGen contracts players for critical terraforming support missions:
+- **Resource Harvesting**: Extract raw CO2 and N2 from Venus for Mars' atmospheric buildup
+- **Inter-System Transport**: Move terraforming organisms or materials between colonized systems
+- **Survey Operations**: Map planetary resources and assess terraforming potential
+- **Technology Testing**: Deploy experimental terraforming equipment on new worlds
 
 ## Founding Members
 - **Established DCs**: LDC, Mars Development Corporation, Venus Development Corporation (for atmospheric expertise)
