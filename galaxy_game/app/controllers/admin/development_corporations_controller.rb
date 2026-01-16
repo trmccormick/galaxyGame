@@ -1,33 +1,35 @@
 module Admin
   class DevelopmentCorporationsController < ApplicationController
     def index
-      # Load Development Corporations (planet-focused development)
-      @development_corporations = Organizations::BaseOrganization
-        .where(organization_type: :development_corporation)
+      # Load NPC Organizations (Development Corps + NPC Service Corps)
+      @npc_organizations = Organizations::BaseOrganization
+        .where(organization_type: [:development_corporation, :corporation])
         .includes(:accounts)
-        .order(:name)
+        .select(&:is_npc?)
+        .sort_by(&:name)
       
-      # Load logistics/service corporations
-      @corporations = Organizations::BaseOrganization
+      # Load Player Organizations (Player-owned corporations only)
+      @player_organizations = Organizations::BaseOrganization
         .where(organization_type: :corporation)
         .includes(:accounts)
-        .order(:name)
+        .reject(&:is_npc?)
+        .sort_by(&:name)
       
-      # Load consortiums
+      # Load Consortiums (separate from individual organizations)
       @consortiums = Organizations::BaseOrganization
         .where(organization_type: :consortium)
         .includes(:accounts)
         .order(:name)
       
-      @total_dc_count = @development_corporations.count
-      @total_corp_count = @corporations.count
+      @total_npc_count = @npc_organizations.count
+      @total_player_count = @player_organizations.count
       @total_consortium_count = @consortiums.count
       
-      # Count active logistics contracts for all DCs
+      # Count active logistics contracts for all organizations
       @active_contracts_count = Logistics::Contract.active.count
       
       # Load settlements owned by all organizations
-      all_org_ids = @development_corporations.pluck(:id) + @corporations.pluck(:id) + @consortiums.pluck(:id)
+      all_org_ids = @npc_organizations.pluck(:id) + @player_organizations.pluck(:id) + @consortiums.pluck(:id)
       @settlements_by_org = Settlement::BaseSettlement
         .where(owner_type: 'Organizations::BaseOrganization', owner_id: all_org_ids)
         .includes(:location)

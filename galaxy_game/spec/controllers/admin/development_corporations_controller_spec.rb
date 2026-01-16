@@ -54,17 +54,25 @@ RSpec.describe Admin::DevelopmentCorporationsController, type: :controller do
       )
     end
     
-    it "loads development corporations" do
+    it "loads NPC organizations" do
       get :index
       expect(response).to have_http_status(:success)
-      expect(assigns(:development_corporations)).to include(ldc)
-      expect(assigns(:total_dc_count)).to eq(1)
+      expect(assigns(:npc_organizations)).to include(ldc, astrolift)
+      expect(assigns(:total_npc_count)).to eq(2)
     end
     
-    it "loads service corporations" do
+    it "loads player organizations" do
+      # Create a player corporation
+      player_corp = Organizations::BaseOrganization.create!(
+        name: 'Player Enterprises',
+        identifier: 'PLAYER-ENT',
+        organization_type: :corporation,
+        operational_data: { 'is_npc' => false }
+      )
+      
       get :index
-      expect(assigns(:corporations)).to include(astrolift)
-      expect(assigns(:total_corp_count)).to eq(1)
+      expect(assigns(:player_organizations)).to include(player_corp)
+      expect(assigns(:total_player_count)).to eq(1)
     end
     
     it "loads consortiums" do

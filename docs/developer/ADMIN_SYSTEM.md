@@ -250,47 +250,51 @@ Real-time planetary monitoring with sphere-based data visualization.
 - `base_construction` - Test base building procedures
 - `isru_pipeline` - Test in-situ resource utilization
 
-### 3. Development Corporations (`/admin/development_corporations`)
+### 3. Organization Monitor (`/admin/development_corporations`)
 
-Monitor DC activities and economic performance.
+Monitor all organizations in the game universe with proper separation by ownership type.
 
 **Features:**
-- List all Development Corporation organizations
-- Show settlements owned by each DC with locations
-- Display GCC balances for each corporation
+- **NPC Organizations**: AI-controlled corporations and development entities
+- **Player Organizations**: Player-owned corporations and enterprises  
+- **Consortiums**: Multi-corporate alliances and collaborative entities (separate from individual organizations)
+- Display GCC balances for each organization
 - Track active logistics contracts count
-- Link to celestial body monitor for each DC base
-- Statistics panel: total DCs, settlements, active contracts
+- Link to celestial body monitor for each organization base
+- Statistics panel: total NPCs, players, consortiums
 - Production capabilities tracking (structures and units)
 
 **Controller:** `Admin::DevelopmentCorporationsController#index`
 
 ```ruby
-# Loads all Development Corporation organizations
-@development_corporations = Organizations::BaseOrganization
-  .where(organization_type: :development_corporation)
+# Load NPC Organizations (Development Corps + NPC Service Corps)
+@npc_organizations = Organizations::BaseOrganization
+  .where(organization_type: [:development_corporation, :corporation])
+  .includes(:accounts)
+  .select(&:is_npc?)
+  .sort_by(&:name)
+
+# Load Player Organizations (Player-owned corporations only)
+@player_organizations = Organizations::BaseOrganization
+  .where(organization_type: :corporation)
+  .includes(:accounts)
+  .reject(&:is_npc?)
+  .sort_by(&:name)
+
+# Load Consortiums (separate alliance-like entities)
+@consortiums = Organizations::BaseOrganization
+  .where(organization_type: :consortium)
   .includes(:accounts)
   .order(:name)
-
-# Groups settlements by DC owner
-@dc_settlements = Settlement::BaseSettlement
-  .where(owner_type: 'Organizations::BaseOrganization', owner_id: @development_corporations.pluck(:id))
-  .includes(:location)
-  .group_by(&:owner_id)
-
-# Loads active contracts for DC settlements
-@active_contracts = Logistics::Contract.active
-  .where('from_settlement_id IN (?) OR to_settlement_id IN (?)', settlement_ids, settlement_ids)
 ```
 
-**Data Models:**
-- `Organizations::BaseOrganization` - DC records (organization_type: :development_corporation)
-- `Settlement::BaseSettlement` - Settlements owned by DCs (polymorphic owner)
-- `Logistics::Contract` - Active supply contracts between settlements
-- `Financial::Account` - GCC balances for each DC
+**Organization Types:**
+- **NPC Organizations**: `organization_type` in `[:development_corporation, :corporation]` where `is_npc?` returns true
+- **Player Organizations**: `organization_type: :corporation` where `is_npc?` returns false
+- **Consortiums**: `organization_type: :consortium` (can include both NPC and player member corporations)
 
-**DC Cards Display:**
-- DC name and identifier (e.g., LDC, MDC, VDC)
+**Organization Cards Display:**
+- Organization name and identifier
 - GCC balance with human-readable format (K/M/B)
 - Settlement count and list
 - Active contracts count
