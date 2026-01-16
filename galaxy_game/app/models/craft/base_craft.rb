@@ -6,6 +6,7 @@ module Craft
              foreign_key: 'orbiting_celestial_body_id',
              inverse_of: :orbiting_craft,
              optional: true
+    attribute :status, :string, default: 'operational'
     include HasModules
     include HasRigs
     include HasUnits
