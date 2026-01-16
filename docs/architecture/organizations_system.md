@@ -22,11 +22,13 @@ enum organization_type: {
 - Specialized corporations focused on colony development
 - Handle terraforming, infrastructure projects
 - Example: Lunar Development Corporation (LDC)
+- **Always NPC by default** - Enables virtual ledger trading
 
 **Corporation (1)**
 - Standard profit-oriented corporate entities
 - Can participate in consortiums as members
 - Example: AstroLift (logistics and ship operations)
+- **Can be NPC** - Set `operational_data: { 'is_npc' => true }` for virtual ledger
 
 **Consortium (2)**
 - Joint ventures formed by multiple corporations
@@ -113,6 +115,78 @@ and LDC (construction) combined capabilities to rebuild artificial wormhole infr
 scope :active, -> { where(membership_status: 'active') }
 scope :founding, -> { where("membership_terms->>'founding_member' = 'true'") }
 ```
+
+---
+
+## NPC Organizations & Virtual Ledger
+
+### NPC Identification
+
+**Method: `BaseOrganization#is_npc?`**
+
+Returns `true` if:
+1. Organization type is `development_corporation` (always NPC)
+2. OR `operational_data['is_npc']` explicitly set to `true`
+
+**Purpose:** Enables virtual ledger trading (negative balances allowed)
+
+### Virtual Ledger Trading
+
+**What is it?**
+NPC-to-NPC transactions using internal accounting instead of actual GCC transfers.
+
+**How it works:**
+- NPCs can have negative account balances
+- Transactions recorded but no real GCC moves
+- Balances settle when players enter the economy
+
+**Why?**
+- Realistic NPC economic activity without draining player GCC pools
+- Development Corps can pay subcontractors before mission revenue
+- Consortium members can settle internal accounts
+- LDC can maintain supply chains independent of player timing
+
+**Example Flow:**
+```
+1. LDC (NPC) → Subcontractor (NPC): -10,000 GCC (virtual)
+2. Subcontractor (NPC) → Supplier (NPC): -5,000 GCC (virtual)
+3. Player sells to LDC: +20,000 GCC (real)
+4. LDC virtual balance: -10,000 + 20,000 = +10,000 GCC
+```
+
+### NPC Organization Types
+
+**Always NPCs:**
+- ✅ `development_corporation` - Automatic NPC status
+
+**Optional NPCs (requires flag):**
+- ⚙️ `corporation` - Must set `operational_data: { 'is_npc' => true }`
+- ⚙️ `consortium` - Must set `operational_data: { 'is_npc' => true }`
+
+**Never NPCs:**
+- ❌ `government` - Government entities don't use virtual ledger
+- ❌ `tax_authority` - Tax collection uses real GCC only
+- ❌ Player-owned organizations - Always use real GCC
+
+### Setting NPC Status
+
+**Factory Example:**
+```ruby
+create(:organization,
+  organization_type: :corporation,
+  operational_data: { 'is_npc' => true }
+)
+```
+
+**Development Corps (automatic):**
+```ruby
+create(:organization,
+  organization_type: :development_corporation
+  # is_npc? returns true automatically
+)
+```
+
+See: [Financial System - Virtual Ledger](./financial_system.md#virtual-ledger-system-npc-trading)
 
 ---
 
