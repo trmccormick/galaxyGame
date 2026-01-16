@@ -83,6 +83,7 @@ Rails.application.routes.draw do
     get 'settlements/construction_jobs', to: 'settlements#construction_jobs', as: 'settlement_construction_jobs'
     
     # Resources & Economy routes
+    get 'resources', to: 'resources#index', as: 'resources'
     get 'resources/flows', to: 'resources#flows', as: 'resource_flows'
     get 'resources/supply_chains', to: 'resources#supply_chains', as: 'resource_supply_chains'
     get 'resources/market', to: 'resources#market', as: 'resource_market'
