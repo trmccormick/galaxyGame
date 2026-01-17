@@ -1,0 +1,56 @@
+{
+  "mission_profile": "v1",
+  "mission_id": "discovery_ac_bc_link",
+  "mission_name": "Alpha Centauri B-C Link Discovery",
+  "mission_category": "wormhole-discovery",
+  "mission_type": "exploration_probe",
+  "description": "Deploy advanced scouting probe with slag-propulsion system to discover and map the wormhole link between Alpha Centauri B and Alpha Centauri C (Proxima Centauri). Establish navigation beacons and collect gravitational data for future colonization routes.",
+  "objectives": [
+    "discover_wormhole_bc_link",
+    "map_gravitational_anomalies",
+    "establish_navigation_beacons",
+    "collect_spectral_data",
+    "verify_anchor_points"
+  ],
+  "system_requirements": {
+    "origin_system": "alpha_centauri_b",
+    "target_system": "alpha_centauri_c",
+    "infrastructure_dependency": "l1_depot_network",
+    "propulsion_technology": "slag_propulsion"
+  },
+  "economic_parameters": {
+    "estimated_cost_gcc": 2500000,
+    "expected_duration_days": 180,
+    "resource_requirements": {
+      "slag_fuel": 500,
+      "navigation_beacons": 12,
+      "spectral_sensors": 8,
+      "gravitational_mappers": 4
+    },
+    "economic_benefits": {
+      "new_trade_route_value": 50000000,
+      "wormhole_tax_revenue": 10000000,
+      "colonization_premium": 25000000
+    }
+  },
+  "risk_assessment": {
+    "discovery_risk": "high",
+    "navigation_risk": "medium",
+    "technical_risk": "low",
+    "economic_risk": "medium"
+  },
+  "success_criteria": {
+    "wormhole_discovery": "confirmed_link_bc",
+    "navigation_mapping": "complete_beacon_network",
+    "data_collection": "spectral_gravitational_complete",
+    "anchor_verification": "stable_endpoints_identified"
+  },
+  "compliance_requirements": {
+    "anchor_law_compliance": "required",
+    "sabatier_offset": "inherited_from_ac_b1",
+    "environmental_protection": "minimal_impact_protocol"
+  },
+  "created_date": "2026-01-16",
+  "author": "AI Mission Planner v2.1",
+  "template_version": "v1"
+}

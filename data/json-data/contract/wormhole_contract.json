@@ -63,9 +63,24 @@
         "mass_limit_tons": 500000,
         "residual_em": 0.0
       },
+    },
+    {
+      "link_id": "AC-B-AC-C",
+      "type": "Pending_Discovery",
+      "status": "discovery_mission_active",
+      "origin": "AC-B-L1-DEPOT",
+      "destination": "AC-C-STELLAR",
+      "environment": "Unknown",
+      "stability_metrics": {
+        "projected_maintenance_tax_em": 500.0,
+        "estimated_mass_limit_tons": 1000000,
+        "discovery_probability": 0.75
+      },
       "logistics": {
-        "anchor_body": "Asteroid XXXV",
-        "ste_ratio": 15000
+        "sabatier_offset_inheritance": "ac_b1_infrastructure",
+        "slag_propulsion_discovery": true,
+        "anchor_law_compliance": "required",
+        "navigation_beacons_required": 12
       }
     }
   ],
