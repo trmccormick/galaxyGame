@@ -348,7 +348,7 @@ module AIManager
       potential_sources.each do |body_name|
         body = CelestialBodies::CelestialBody.find_by(name: body_name)
         next unless body
-        settlements = Settlement::BaseSettlement.joins(:location).where(locations: { celestial_body_id: body.id })
+        settlements = Settlement::BaseSettlement.joins(:location).where(celestial_locations: { celestial_body_id: body.id })
         settlements.each do |settlement|
           available = settlement.inventory.available(resource) rescue 0
           if available > 0

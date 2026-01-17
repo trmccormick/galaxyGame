@@ -6,18 +6,23 @@ RSpec.describe Admin::AiManagerController, type: :controller do
   before(:each) do
     # Mock CelestialBody lookups
     allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'mars').and_return(
-      double('Mars', id: 1, identifier: 'mars', name: 'Mars')
+      double('Mars', id: 1, identifier: 'mars', name: 'Mars', has_solid_surface?: true,
+             atmosphere: double('MarsAtmosphere', composition: {'CO2' => 0.95, 'N2' => 0.03}), 
+             geosphere: double('MarsGeosphere', surface_composition: {'iron_oxide' => 0.2, 'silicon' => 0.3}, volatile_reservoirs: {'H2O' => 0.1}, subsurface_water_mass: 0.0), 
+             hydrosphere: nil)
     )
     allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'earth').and_return(
-      double('Earth', id: 2, identifier: 'earth', name: 'Earth')
+      double('Earth', id: 2, identifier: 'earth', name: 'Earth', has_solid_surface?: true,
+             atmosphere: double('EarthAtmosphere', composition: {'N2' => 0.78, 'O2' => 0.21}), 
+             geosphere: double('EarthGeosphere', surface_composition: {'silicon' => 0.3, 'aluminum' => 0.1}, volatile_reservoirs: {}, subsurface_water_mass: 0.0), 
+             hydrosphere: double('EarthHydrosphere', ocean_coverage: 0.7))
     )
     
     # Mock settlements
     earth_settlement = double('EarthSettlement', 
       id: 1, 
       name: 'Earth Hub', 
-      celestial_body_id: 2,
-      celestial_body: double('Earth', id: 2, identifier: 'earth', name: 'Earth')
+      location: double('EarthLocation', celestial_body_id: 2, celestial_body: double('Earth', id: 2, identifier: 'earth', name: 'Earth'))
     )
     
     # Mock Settlement::BaseSettlement query chains
@@ -30,9 +35,10 @@ RSpec.describe Admin::AiManagerController, type: :controller do
     
     joins_relation = double('JoinsRelation')
     allow(joins_relation).to receive(:where).and_return(where_not_relation)
+    allow(joins_relation).to receive(:find_by).and_return(earth_settlement)
     
     allow(Settlement::BaseSettlement).to receive(:find_by).and_return(earth_settlement)
-    allow(Settlement::BaseSettlement).to receive(:joins).with(:celestial_body).and_return(joins_relation)
+    allow(Settlement::BaseSettlement).to receive(:joins).and_return(joins_relation)
     
     # Mock Market::NpcPriceCalculator
     allow(Market::NpcPriceCalculator).to receive(:calculate_ask).and_return(100.0)

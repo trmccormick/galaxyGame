@@ -107,7 +107,7 @@ module AIManager
     end
 
     def settlements_in_system
-      Settlement::BaseSettlement.joins(:location).where(celestial_locations: { celestial_body: celestial_body })
+      Settlement::BaseSettlement.joins(:location).where(celestial_locations: { celestial_body_id: celestial_body.id })
     end
 
     def structures_in_system
