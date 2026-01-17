@@ -63,6 +63,10 @@
         "mass_limit_tons": 500000,
         "residual_em": 0.0
       },
+      "logistics": {
+        "anchor_body": "Asteroid XXXV",
+        "ste_ratio": 15000
+      }
     },
     {
       "link_id": "AC-B-AC-C",

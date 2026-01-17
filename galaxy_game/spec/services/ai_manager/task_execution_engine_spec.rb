@@ -632,14 +632,14 @@ RSpec.describe AIManager::TaskExecutionEngine, type: :service do
     before do
       @l1_station = create(:base_settlement, name: 'L1 Depot', owner: player, settlement_type: :station)
       @lunar_settlement = create(:base_settlement, name: 'Lunar Base', owner: player)
-      @hlt_craft = create(:base_craft, docked_at: @lunar_settlement, status: 'operational')
+      @hlt_craft = create(:base_craft, docked_at: @lunar_settlement, status: 'operational', craft_type: 'heavy_lift_transport')
       @l1_station.save!
       @lunar_settlement.save!
       @hlt_craft.save!
       project.update!(station: @l1_station)
       
-      allow(@lunar_settlement.inventory).to receive(:current_storage_of).with('ibeam').and_return(500)
-      allow(@lunar_settlement.inventory).to receive(:current_storage_of).with('modular_structural_panel_base').and_return(300)
+      allow(described_class).to receive(:check_material_surplus).with(anything, 'ibeam').and_return(500)
+      allow(described_class).to receive(:check_material_surplus).with(anything, 'modular_structural_panel_base').and_return(300)
       allow(Logistics::InventoryManager).to receive(:transfer_item).and_return(true)
       allow(described_class).to receive(:process_project_payment)
     end

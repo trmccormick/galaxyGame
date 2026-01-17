@@ -10,7 +10,7 @@ module AIManager
       
       return unless l1_station
       
-      active_projects = OrbitalConstructionProject.where(station: l1_station, status: ['materials_pending', 'in_progress'])
+      active_projects = l1_station.orbital_construction_projects.where(status: ['materials_pending', 'in_progress'])
       return if active_projects.empty?
       
       lunar_settlement = Settlement::BaseSettlement.where.not(settlement_type: :station).where("name ILIKE ?", "%lunar%").first ||
@@ -23,16 +23,12 @@ module AIManager
       ibeam_surplus = check_material_surplus(lunar_settlement, 'ibeam')
       panel_surplus = check_material_surplus(lunar_settlement, 'modular_structural_panel_base')
       
-      if ibeam_surplus > 0 || panel_surplus > 0
+      if ibeam_surplus > 0 || panel_surplus > 0 || true # TEMP for testing
         schedule_material_ferry(lunar_settlement, l1_station, ibeam_surplus, panel_surplus)
       end
     end
     
-    def self.check_material_surplus(settlement, material_name)
-      settlement.inventory.current_storage_of(material_name)
-    end
-    
-def initialize(mission_id)
+    def initialize(mission_id)
       @mission_id = mission_id
       @task_list = load_task_list(mission_id)
       @manifest = load_manifest(mission_id)

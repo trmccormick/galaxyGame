@@ -15,8 +15,6 @@ class GameController < ApplicationController
       @celestial_bodies = []
     end
 
-    @planet_count = @celestial_bodies.reject(&:is_moon).count
-
     @celestial_bodies.each do |body|
       body.define_singleton_method(:is_moon) { respond_to?(:parent_celestial_body) && parent_celestial_body.present? }
       body.define_singleton_method(:body_category) do
@@ -28,8 +26,9 @@ class GameController < ApplicationController
         else 'unknown'
         end
       end
-      Rails.logger.debug("Celestial body: #{body.name}, category: #{body.body_category}, is_moon: #{body.is_moon}")
     end
+
+    @planet_count = @celestial_bodies.reject(&:is_moon).count
 
     respond_to do |format|
       format.html

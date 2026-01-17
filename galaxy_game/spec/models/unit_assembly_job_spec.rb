@@ -41,7 +41,7 @@ RSpec.describe UnitAssemblyJob, type: :model do
       job.material_requests.create!(
         material_name: 'Steel',
         quantity_requested: 100,
-        status: 'fulfilled_by_player'
+        status: 'fulfilled'
       )
       job.material_requests.create!(
         material_name: 'Electronics',
@@ -55,7 +55,7 @@ RSpec.describe UnitAssemblyJob, type: :model do
     end
 
     it "returns true when all materials are fulfilled" do
-      job.material_requests.update_all(status: 'fulfilled_by_player')
+      job.material_requests.update_all(status: 'fulfilled')
       expect(job.materials_gathered?).to be true
     end
 
@@ -86,12 +86,12 @@ RSpec.describe UnitAssemblyJob, type: :model do
       job.material_requests.create!(
         material_name: 'Steel',
         quantity_requested: 100,
-        status: 'fulfilled_by_player'
+        status: 'fulfilled'
       )
       job.material_requests.create!(
         material_name: 'Electronics',
         quantity_requested: 50,
-        status: 'fulfilled_by_player'
+        status: 'fulfilled'
       )
     end
 

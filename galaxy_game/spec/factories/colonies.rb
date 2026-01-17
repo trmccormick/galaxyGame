@@ -2,8 +2,8 @@ FactoryBot.define do
   factory :colony do
     sequence(:name) { |n| "Test Colony #{n}" }
     
-    # Use the :luna trait to create a lunar celestial body
-    association :celestial_body, factory: [:celestial_body, :luna]
+    # Use a basic celestial body instead of luna to avoid identifier conflicts
+    association :celestial_body, factory: :celestial_body
     
     # Skip account creation to avoid duplicates during testing
     after(:build) do |colony|
