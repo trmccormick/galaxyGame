@@ -202,10 +202,6 @@
       <% end %>
     </div>
   <% end %>
-        <%= render partial: 'org_card', locals: { org: consortium, settlements: @settlements_by_org[consortium.id] || [], contracts: (@active_contracts[consortium.id] || []).count } %>
-      <% end %>
-    </div>
-  <% end %>
 
   <!-- Empty State -->
   <% if @npc_organizations.empty? && @player_organizations.empty? && @consortiums.empty? %>
