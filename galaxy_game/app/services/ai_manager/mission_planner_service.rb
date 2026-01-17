@@ -32,6 +32,14 @@ module AIManager
           orbital_period: 687 # Default period (Mars-like)
         )
       end
+      
+      # Initialize services
+      @material_lookup = Lookup::MaterialLookupService.new
+      @capability_service = if @target_location
+        AIManager::PrecursorCapabilityService.new(@target_location)
+      else
+        nil
+      end
     end
     
     def simulate
@@ -42,7 +50,8 @@ module AIManager
         costs: calculate_costs,
         sourcing_strategy: calculate_sourcing_strategy,
         player_revenue: calculate_player_revenue,
-        planetary_changes: simulate_planetary_changes
+        planetary_changes: simulate_planetary_changes,
+        local_capabilities: summarize_local_capabilities  # NEW
       }
       
       @results
@@ -282,75 +291,170 @@ module AIManager
     # ========== REAL MARKET PRICING METHODS ==========
     
     def calculate_total_delivered_cost(resource, quantity)
-      source = determine_resource_source(resource)
-      
-      # Get base market price
-      unit_cost = get_market_price(resource, source[:settlement])
-      
-      # Calculate transport cost
-      transport_cost_per_unit = if source[:settlement]
-        calculate_transport_cost(source[:settlement], resource)
+      # Get material data to determine actual chemical formula
+      material_data = @material_lookup.find_material(resource)
+      chemical_formula = if material_data
+        @material_lookup.get_material_property(material_data, 'chemical_formula') || 
+          material_data['id']
       else
-        0.0
+        resource  # Fallback to input if not found
       end
       
-      total_material_cost = unit_cost * quantity
-      total_transport_cost = transport_cost_per_unit * quantity
-      total_cost = total_material_cost + total_transport_cost
-      
-      # Find alternatives
-      alternatives = find_alternative_sources(resource, quantity, total_cost)
-      
-      {
-        source: source[:name],
-        source_type: source[:type],
-        unit_cost: unit_cost.round(2),
-        transport_cost_per_unit: transport_cost_per_unit.round(2),
-        total_material_cost: total_material_cost.round(2),
-        total_transport_cost: total_transport_cost.round(2),
-        total: total_cost.round(2),
-        alternatives: alternatives
-      }
-    end
-    
-    def determine_resource_source(resource)
-      # Check if we can produce locally (ISRU)
-      if can_produce_locally?(@target_location, resource)
+      # PRIORITY 1: Local production check (using chemical formula)
+      if @capability_service && @capability_service.can_produce_locally?(chemical_formula)
+        local_cost = calculate_local_production_cost(chemical_formula, material_data)
+        import_cost_for_comparison = calculate_earth_anchor_price(resource)[:total]
+        
         return {
-          name: 'Local ISRU',
-          type: 'local',
-          settlement: nil,
-          location: @target_location
+          source: "Local ISRU (#{@target_location.name})",
+          source_type: 'local',
+          chemical_formula: chemical_formula,
+          unit_cost: local_cost,
+          transport_cost_per_unit: 0.0,
+          total_material_cost: local_cost * quantity,
+          total_transport_cost: 0.0,
+          total: local_cost * quantity,
+          alternatives: [],
+          precursor_savings: (import_cost_for_comparison - local_cost) * quantity,
+          production_method: determine_production_method(chemical_formula)
         }
       end
       
-      # Find nearby settlements that might supply
-      nearby = find_nearby_settlements(@target_location, resource)
-      if nearby.any?
-        return {
-          name: nearby.first.name || "Regional Supply",
-          type: 'regional',
-          settlement: nearby.first,
-          location: nearby.first.celestial_body
-        }
+      # PRIORITY 2: Regional NPC sources
+      regional = find_best_regional_source(resource, quantity)
+      if regional && regional[:total] < calculate_earth_anchor_price(resource)[:total] * quantity * 0.9
+        return regional
       end
       
-      # Default to Earth import
-      earth_settlement = Settlement::BaseSettlement.find_by(celestial_body: @earth)
+      # PRIORITY 3: Earth import
+      eap = calculate_earth_anchor_price(resource)
+      total_import_cost = eap[:total] * quantity
+      
       {
-        name: 'Earth Import',
-        type: 'import',
-        settlement: earth_settlement,
-        location: @earth
+        source: 'Earth Import',
+        source_type: 'import',
+        chemical_formula: chemical_formula,
+        unit_cost: eap[:material_cost],
+        transport_cost_per_unit: eap[:transport_cost],
+        total_material_cost: eap[:material_cost] * quantity,
+        total_transport_cost: eap[:transport_cost] * quantity,
+        total: total_import_cost,
+        alternatives: find_alternative_sources(resource, quantity, total_import_cost),
+        precursor_note: suggest_precursor_if_beneficial(chemical_formula, quantity, total_import_cost)
       }
     end
     
-    def can_produce_locally?(location, resource)
-      return false unless location
+    def calculate_local_production_cost(resource, material_data = nil)
+      # Get material data if not provided
+      material_data ||= @material_lookup.find_material(resource)
+      chemical_formula = if material_data
+        @material_lookup.get_material_property(material_data, 'chemical_formula') || material_data['id']
+      else
+        resource
+      end
       
-      # Use data-driven capability service instead of hardcoded world list
-      capability_service = AIManager::PrecursorCapabilityService.new(location)
-      capability_service.can_produce_locally?(resource)
+      # Try EconomicConfig first
+      maturity = :mature
+      config_cost = EconomicConfig.local_production_cost(chemical_formula, maturity)
+      return config_cost if config_cost
+      
+      # Use capability service to determine extraction complexity
+      if @capability_service
+        if @capability_service.precursor_enables?(:oxygen) && chemical_formula == 'O2'
+          return 3.0
+        elsif @capability_service.precursor_enables?(:water) && chemical_formula == 'H2O'
+          return 10.0
+        elsif @capability_service.precursor_enables?(:fuel) && ['CH4', 'H2'].include?(chemical_formula)
+          return 8.0
+        elsif @capability_service.precursor_enables?(:regolith_processing) && material_data
+          return estimate_regolith_extraction_cost(chemical_formula, material_data)
+        end
+      end
+      
+      # Fallback estimates by formula
+      case chemical_formula
+      when 'CO2' then 0.5
+      when 'H2O' then 10.0
+      when 'O2' then 3.0
+      when 'N2' then 2.0
+      when 'CH4' then 8.0
+      when 'H2' then 5.0
+      when 'He3' then 50.0
+      else 20.0
+      end
+    end
+    
+    def estimate_regolith_extraction_cost(formula, material_data)
+      # Regolith composition varies by world
+      # Cost depends on concentration and extraction complexity
+      
+      # Check material properties for extraction difficulty
+      extraction_complexity = @material_lookup.get_material_property(material_data, 'extraction_complexity')
+      energy_requirement = @material_lookup.get_material_property(material_data, 'energy_requirement')
+      
+      base_cost = case formula
+      when 'SiO2' then 15.0
+      when 'Al2O3' then 30.0
+      when 'FeO', 'Fe2O3' then 25.0
+      when 'TiO2' then 45.0
+      when 'He3' then 50.0
+      else 5.0
+      end
+      
+      # Adjust for extraction complexity if available
+      if extraction_complexity
+        multiplier = case extraction_complexity.downcase
+        when 'low' then 0.7
+        when 'medium' then 1.0
+        when 'high' then 1.5
+        when 'extreme' then 2.0
+        else 1.0
+        end
+        base_cost *= multiplier
+      end
+      
+      base_cost
+    end
+    
+    def determine_production_method(chemical_formula)
+      return nil unless @capability_service
+      
+      capabilities = @capability_service.production_capabilities
+      
+      if capabilities[:atmosphere].include?(chemical_formula)
+        'Atmospheric Processing'
+      elsif capabilities[:surface].include?(chemical_formula)
+        'Surface Extraction'
+      elsif capabilities[:subsurface].include?(chemical_formula)
+        'Subsurface Mining'
+      elsif capabilities[:regolith].any? { |compound| compound.include?(chemical_formula) }
+        'Regolith Processing'
+      else
+        'ISRU'
+      end
+    end
+    
+    def suggest_precursor_if_beneficial(resource, quantity, import_cost)
+      return nil unless @target_location
+      return nil if @capability_service  # Already has precursor
+      
+      # Create temporary capability service to check potential
+      temp_service = AIManager::PrecursorCapabilityService.new(@target_location)
+      
+      if temp_service.can_produce_locally?(resource)
+        estimated_local_cost = calculate_local_production_cost(resource) * quantity
+        savings = import_cost - estimated_local_cost
+        
+        if savings > 100_000  # Significant savings threshold
+          return {
+            deployable: true,
+            estimated_savings: savings.round(2),
+            message: "Precursor deployment could save #{(savings / 1_000_000).round(1)}M GCC"
+          }
+        end
+      end
+      
+      nil
     end
     
     def find_nearby_settlements(target_location, resource)
@@ -358,9 +462,43 @@ module AIManager
       
       # Find settlements within reasonable transport distance
       # For simulation purposes, consider settlements on same body or nearby bodies
-      Settlement::BaseSettlement.joins(:celestial_body)
-        .where.not(celestial_body_id: nil)
+      Settlement::BaseSettlement.joins(:location)
+        .where.not(celestial_locations: { celestial_body_id: nil })
         .limit(3)
+    end
+    
+    def find_best_regional_source(resource, quantity)
+      # Find nearby settlements that might supply
+      nearby = find_nearby_settlements(@target_location, resource)
+      return nil if nearby.empty?
+      
+      settlement = nearby.first
+      unit_cost = get_market_price(resource, settlement)
+      transport_cost = calculate_transport_cost(settlement, resource)
+      total_cost = (unit_cost + transport_cost) * quantity
+      
+      {
+        source: settlement.name || "Regional Supply",
+        source_type: 'regional',
+        unit_cost: unit_cost,
+        transport_cost_per_unit: transport_cost,
+        total_material_cost: unit_cost * quantity,
+        total_transport_cost: transport_cost * quantity,
+        total: total_cost,
+        alternatives: []
+      }
+    end
+    
+    def calculate_earth_anchor_price(resource)
+      earth_settlement = Settlement::BaseSettlement.find_by(celestial_body: @earth)
+      unit_cost = get_market_price(resource, earth_settlement)
+      transport_cost = calculate_transport_cost(earth_settlement, resource)
+      
+      {
+        material_cost: unit_cost,
+        transport_cost: transport_cost,
+        total: unit_cost + transport_cost
+      }
     end
     
     def get_market_price(resource, settlement)
@@ -501,6 +639,28 @@ module AIManager
         quantity: quantity,
         delivery_year: year,
         reward_gcc: quantity * estimate_unit_cost(resource_name) * 0.25
+      }
+    end
+    
+    def summarize_local_capabilities
+      return { available: false } unless @capability_service
+      
+      capabilities = @capability_service.production_capabilities
+      
+      {
+        available: true,
+        location: @target_location.name,
+        atmosphere: capabilities[:atmosphere],
+        surface: capabilities[:surface],
+        subsurface: capabilities[:subsurface],
+        regolith: capabilities[:regolith],
+        precursor_enables: {
+          oxygen: @capability_service.precursor_enables?(:oxygen),
+          water: @capability_service.precursor_enables?(:water),
+          fuel: @capability_service.precursor_enables?(:fuel),
+          metals: @capability_service.precursor_enables?(:metals),
+          regolith_processing: @capability_service.precursor_enables?(:regolith_processing)
+        }
       }
     end
   end

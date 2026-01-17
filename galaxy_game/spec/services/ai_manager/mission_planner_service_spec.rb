@@ -141,4 +141,67 @@ RSpec.describe AIManager::MissionPlannerService do
       expect(plan['version']).to eq('1.0')
     end
   end
+  
+  describe 'data-driven local production' do
+    let(:solar_system) { create(:solar_system, :sol) }
+    let(:mars) { solar_system.celestial_bodies.find_by(identifier: 'mars') }
+    let(:planner) { described_class.new('mars-terraforming') }
+    
+    before do
+      allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)
+    end
+    
+    it 'uses actual celestial body data for capability detection' do
+      results = planner.simulate
+      capabilities = results[:local_capabilities]
+      
+      expect(capabilities[:available]).to be true
+      expect(capabilities[:atmosphere]).to include('co2')
+      expect(capabilities[:precursor_enables][:oxygen]).to be true
+    end
+    
+    it 'calculates costs using actual sphere data' do
+      results = planner.simulate
+      costs = results[:costs][:breakdown]
+      
+      # Resources Mars can produce should be marked local
+      if costs['oxygen']
+        expect(costs['oxygen'][:source_type]).to eq('local')
+      end
+      
+      # Resources Mars cannot produce should be imports
+      if costs['electronics']
+        expect(costs['electronics'][:source_type]).to eq('import')
+      end
+    end
+  end
+  
+  describe 'MaterialLookupService integration' do
+    let(:planner) { described_class.new('mars-terraforming') }
+    
+    before do
+      allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)
+    end
+    
+    it 'uses MaterialLookupService to get chemical formulas' do
+      material_lookup = instance_double(Lookup::MaterialLookupService)
+      allow(Lookup::MaterialLookupService).to receive(:new).and_return(material_lookup)
+      
+      material_data = { 'id' => 'oxygen', 'chemical_formula' => 'O2' }
+      allow(material_lookup).to receive(:find_material).with('oxygen').and_return(material_data)
+      allow(material_lookup).to receive(:get_material_property).with(material_data, 'chemical_formula').and_return('O2')
+      
+      # Planner should use O2 formula for capability checks
+      planner.send(:calculate_total_delivered_cost, 'oxygen', 1000)
+      
+      expect(material_lookup).to have_received(:find_material).with('oxygen')
+    end
+    
+    it 'handles materials not in lookup gracefully' do
+      results = planner.simulate
+      
+      # Should not crash if some resources aren't in MaterialLookupService
+      expect(results[:costs]).to be_present
+    end
+  end
 end

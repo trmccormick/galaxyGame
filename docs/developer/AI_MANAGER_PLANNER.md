@@ -437,6 +437,48 @@ The Mission Planner follows the SimEarth aesthetic:
 - **Sample local costs (mature):** `water: 2 GCC/kg`, `oxygen: 3 GCC/kg`, `iron: 5 GCC/kg`, `aluminum: 8 GCC/kg`.
 - **Policy:** If precursor infrastructure exists, default to local-first for O2, H2O, regolith, and common ISRU metals.
 
+## Local Production Detection (Data-Driven)
+
+The planner uses `AIManager::PrecursorCapabilityService` to determine what resources
+can be produced locally. This service queries actual celestial body sphere data:
+
+- **Atmosphere composition** → Available gases (CO2, CH4, N2, O2)
+- **Geosphere surface** → Minerals and regolith (iron_oxide, silicon, aluminum)
+- **Geosphere volatiles** → Frozen deposits (H2O, CO2, CH4)
+- **Hydrosphere** → Water resources (oceans, ice caps, subsurface)
+
+Benefits:
+- Works for procedurally generated planets
+- Automatically reflects terraforming changes
+- No hardcoded world identifiers
+- Accurate to actual game state
+
+## Material Data Integration
+
+The planner uses `Lookup::MaterialLookupService` to resolve resource identifiers
+to chemical formulas and material properties.
+
+**Process:**
+1. User/pattern references resource (e.g., "oxygen", "O2", "water_ice")
+2. MaterialLookupService finds matching material JSON
+3. Extract chemical_formula property (e.g., "O2", "H2O")
+4. PrecursorCapabilityService checks if formula can be produced locally
+5. Calculate costs based on production method
+
+**Benefits:**
+- Consistent resource identification across system
+- Access to material properties (molar_mass, density, energy_requirement)
+- Supports both common names and chemical formulas
+- Uses existing validated material database
+
+**Example:**
+```ruby
+# Input: "water" or "h2o" or "water_ice"
+# MaterialLookupService resolves to: chemical_formula = "H2O"
+# PrecursorCapabilityService checks: can Mars produce "H2O"?
+# Result: Yes (subsurface ice extraction)
+```
+
 ### NPC Pricing Behavior
 - **Cost-based (no market history):** `sell_markup ≈ 1.05`, `minimum_profit_margin ≈ 3%`.
 - **Market-based (with history):** `sell_markup ≈ 1.03`, thresholds in `economic_parameters.yml`.
