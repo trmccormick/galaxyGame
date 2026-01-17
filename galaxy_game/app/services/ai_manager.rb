@@ -19,6 +19,7 @@ module AIManager
   require_relative 'ai_manager/pattern_loader'
   require_relative 'ai_manager/pattern_validator'
   require_relative 'ai_manager/performance_tracker'
+  require_relative 'ai_manager/precursor_capability_service'
   require_relative 'ai_manager/priority_heuristic'
   require_relative 'ai_manager/probe_deployment_service'
   require_relative 'ai_manager/procurement_service'
