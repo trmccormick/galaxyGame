@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::DevelopmentCorporationsController, type: :controller do
+RSpec.describe Admin::OrganizationsController, type: :controller do
   describe "GET #index" do
     let!(:ldc) do
       Organizations::BaseOrganization.create!(
