@@ -1,0 +1,55 @@
+{
+  "template": "mission_profile",
+  "mission_id": "discovery_aol_732356",
+  "name": "Wormhole Discovery AOL-732356",
+  "description": "Investigate anomalous wormhole signature AOL-732356. Deploy reconnaissance probes and establish anchor point on Asteroid XXXV for long-term monitoring and potential exploitation.",
+  "manifest_file": "manifest_v1.1.json",
+  "phases": [
+    {
+      "phase_id": "reconnaissance",
+      "name": "Initial Reconnaissance",
+      "task_list_file": "phases_v1.json"
+    },
+    {
+      "phase_id": "anchor_establishment",
+      "name": "Anchor Point Establishment",
+      "task_list_file": "phases_v1.json"
+    },
+    {
+      "phase_id": "monitoring_setup",
+      "name": "Long-term Monitoring Setup",
+      "task_list_file": "phases_v1.json"
+    }
+  ],
+  "start_conditions": {
+    "location": "SOL_SYSTEM",
+    "tech_requirements": ["AdvancedSensorArrays", "WormholeDetection"],
+    "resource_requirements": {
+      "gcc_budget": 500000,
+      "personnel": 25
+    }
+  },
+  "completion_conditions": {
+    "wormhole_signature_mapped": true,
+    "asteroid_anchor_established": true,
+    "monitoring_network_active": true
+  },
+  "rewards": {
+    "credits": 1000000,
+    "player_xp": 500000,
+    "unlocked_blueprints": ["WormholeProbe_Mk1", "AnchorBeacon_Array", "QuantumSensorSuite"],
+    "unlocked_technologies": ["WormholeNavigation", "AnchorLawExploitation", "QuantumCommunication"],
+    "system_status_update": {
+      "wormhole_discoveries": ["AOL-732356"],
+      "asteroid_claims": ["XXXV"]
+    }
+  },
+  "risks": {
+    "wormhole_instability": "High risk of wormhole collapse during investigation",
+    "radiation_exposure": "Extreme radiation near wormhole event horizon",
+    "navigation_failure": "Loss of probe control in quantum field distortions"
+  },
+  "estimated_duration_years": 3,
+  "priority": "high",
+  "category": "wormhole-discovery"
+}

@@ -1,0 +1,80 @@
+{
+  "template": "mission_manifest",
+  "manifest_id": "discovery_aol_732356_manifest_v1.1",
+  "version": "1.1",
+  "craft": {
+    "id": "wormhole_probe_fleet",
+    "name": "AOL-732356 Reconnaissance Fleet",
+    "use_recommended_fit": true,
+    "recommended_fit": {
+      "modules": [
+        { "id": "quantum_sensor_array", "count": 3 },
+        { "id": "radiation_shielding_extreme", "count": 4 },
+        { "id": "wormhole_stabilizer", "count": 2 },
+        { "id": "anchor_beacon_transmitter", "count": 1 },
+        { "id": "autonomous_navigation_ai", "count": 1 },
+        { "id": "emergency_return_system", "count": 2 }
+      ],
+      "units": [
+        { "id": "ion_thruster_probe", "count": 4 },
+        { "id": "quantum_computer_core", "count": 1 },
+        { "id": "sensor_dome", "count": 2 },
+        { "id": "data_storage_array", "count": 3 }
+      ]
+    },
+    "installed_units": [
+      {
+        "name": "Ion Thruster Probe",
+        "id": "ion_thruster_probe",
+        "count": 4,
+        "status": "operational"
+      },
+      {
+        "name": "Quantum Computer Core",
+        "id": "quantum_computer_core",
+        "count": 1,
+        "status": "operational"
+      }
+    ]
+  },
+  "personnel": {
+    "required": 25,
+    "specializations": {
+      "quantum_physicists": 8,
+      "astrogators": 6,
+      "sensor_technicians": 5,
+      "radiation_specialists": 4,
+      "ai_supervisors": 2
+    }
+  },
+  "resources": {
+    "power_requirements": {
+      "base_load": 500,
+      "peak_load": 2000,
+      "power_source": "nuclear_micro_reactor"
+    },
+    "communication_requirements": {
+      "bandwidth_min": 100,
+      "latency_max": 300,
+      "protocol": "quantum_entanglement"
+    },
+    "data_storage": {
+      "capacity_tb": 1000,
+      "backup_redundancy": 3
+    }
+  },
+  "operational_parameters": {
+    "mission_duration_days": 1095,
+    "communication_windows": "continuous_via_quantum_link",
+    "emergency_protocols": {
+      "wormhole_instability": "immediate_return",
+      "radiation_threshold": "shield_activation",
+      "navigation_loss": "beacon_homing"
+    }
+  },
+  "anchor_law_compliance": {
+    "target_asteroid": "XXXV",
+    "claim_establishment": "phase_1_completion",
+    "monitoring_duration_years": 10
+  }
+}

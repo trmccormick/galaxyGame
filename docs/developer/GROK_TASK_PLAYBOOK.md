@@ -158,6 +158,39 @@ docker-compose -f docker-compose.dev.yml exec web rm -f tmp/rspec_examples.txt
 - Acceptance:
   - KPIs present and parsable in logs/reports.
 
+## Section F: Mission & Discovery Architecture
+
+### Required Folder Structure
+All mission data must follow the standardized folder structure:
+```
+data/json-data/missions/[category]/
+├── [mission_name]_profile_v1.json
+├── manifest_v1.1.json
+└── phases_v1.json
+```
+
+**Categories:**
+- `wormhole-discovery/` - Wormhole investigation and mapping missions
+- `planetary-terraforming/` - Planet-scale environmental modification
+- `asteroid-mining/` - Resource extraction from asteroids
+- `orbital-construction/` - Space station and infrastructure building
+- `interstellar-expansion/` - Multi-system exploration and colonization
+
+### Template Version Requirements
+- **Profile files**: Must use `v1` template format
+- **Manifest files**: Must use `v1.1` template format (includes Anchor Law compliance)
+- **Phase files**: Must use `v1` template format
+
+### Anchor Law Integration
+All missions targeting wormhole exploitation must:
+1. Designate a primary asteroid anchor point (Phase 1 requirement)
+2. Include Anchor Law compliance verification in manifest_v1.1.json
+3. Establish claim registration objectives in phase planning
+
+### Cross-references
+- [Settlement Patterns Architecture](../architecture/settlement_patterns.md) - Planetary colonization frameworks
+- [Mission Profile Library](../mission_profiles/00_complete_profile_library.md) - Complete mission template reference
+
 ## Atomic Commit Recipe
 ```bash
 # Host
