@@ -426,10 +426,12 @@
         </div>
 
         <% if @bodies.empty? %>
-            <div style="text-align: center; color: #666; padding: 40px;">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 400px; color: #666;">
                 <div style="font-size: 48px; margin-bottom: 20px;">🌍</div>
-                <div>No celestial bodies found in the database.</div>
-                <div style="font-size: 12px; margin-top: 10px;">This interface shows all celestial bodies in the game. Bodies will appear here once they are loaded into the database.</div>
+                <div style="text-align: center;">
+                    <div>No celestial bodies found in the database.</div>
+                    <div style="font-size: 12px; margin-top: 10px;">This interface shows all celestial bodies in the game. Bodies will appear here once they are loaded into the database.</div>
+                </div>
             </div>
         <% end %>
     </div>
