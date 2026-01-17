@@ -40,3 +40,38 @@ RSpec.configure do |config|
     end
   end
 end
+
+# Database Cleaner Configuration
+RSpec.configure do |config|
+  config.use_transactional_fixtures = false
+
+  config.before(:suite) do
+    # Clean test DB completely before test suite
+    DatabaseCleaner.clean_with(:truncation)
+    
+    # Create system currencies needed for tests
+    Financial::Currency.find_or_create_by!(
+      name: 'Galactic Crypto Currency',
+      symbol: 'GCC',
+      is_system_currency: true,
+      precision: 8
+    )
+    
+    Financial::Currency.find_or_create_by!(
+      name: 'US Dollar',
+      symbol: 'USD',
+      is_system_currency: true,
+      precision: 2
+    )
+  end
+
+  config.before(:each) do
+    # Use transaction strategy for most tests
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+end

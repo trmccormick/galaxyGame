@@ -1,6 +1,12 @@
 # app/services/trade_service.rb
 # Unified trading service that orchestrates all trading activities
 class TradeService
+  attr_reader :inventory, :buyer_colony
+
+  def initialize(inventory, buyer_colony)
+    @inventory = inventory
+    @buyer_colony = buyer_colony
+  end
   # Execute different types of trades
   def self.execute_trade(trade_type, participants, terms)
     case trade_type.to_sym
@@ -52,7 +58,54 @@ class TradeService
     Insurance::InsuranceService.calculate_premium(contract_value, tier, risk_factors)
   end
 
+  # Instance methods for pricing calculations
+  def dynamic_price
+    scarcity_factor = scarcity_factor()
+    base_price = base_price_for_type
+    fuel_cost = distance_to_buyer * fuel_cost_per_unit
+    market_modifier = market_conditions
+
+    base_price * scarcity_factor + fuel_cost + market_modifier
+  end
+
+  def base_price_for_type
+    # Assume we're dealing with the first item in the inventory
+    item = @inventory.items.first
+    case item&.material_type
+    when 'raw_material'
+      5.0
+    when 'processed_material'
+      20.0
+    else
+      10.0
+    end
+  end
+
+  def fuel_cost_per_unit
+    0.1
+  end
+
+  def distance_to_buyer
+    # Calculate distance between colonies
+    # For now, return a simple calculation
+    seller_distance = @inventory.inventoryable.celestial_body.distance_from_star || 10000
+    buyer_distance = @buyer_colony.celestial_body.distance_from_star || 5000
+    (seller_distance - buyer_distance).abs / 1000.0
+  end
+
+  def market_conditions
+    # Return a random market condition modifier between -5 and 5
+    rand(-5.0..5.0)
+  end
+
   private
+
+  def scarcity_factor
+    # Assume we're dealing with the first item in the inventory
+    item = @inventory.items.first
+    quantity = item&.amount || 0
+    (1000 / (quantity + 1).to_f)
+  end
 
   def self.execute_direct_trade(participants, terms)
     # Direct item exchange between players at same location

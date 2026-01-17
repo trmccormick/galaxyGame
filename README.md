@@ -26,14 +26,17 @@ Grounded in real physics, chemistry, and orbital mechanics while maintaining eng
 ## 🚀 Current Development Status
 
 **Phase 3**: Integration & Restoration (Active)  
-**Test Failures**: ~398 (down from 401) - Target: <50  
+**Test Failures**: ~393 (down from 420) - Target: <50  
 **Next Phase**: UI Enhancement (SimEarth admin panel + Eve mission builder)
 
 **Recent Progress**:
 - ✅ Shell construction system - 66/66 specs passing
 - ✅ Consortium membership - 5/5 specs passing  
 - ✅ Crater dome covering - 23/24 specs passing
-- 🔄 Financial accounts - in progress
+- ✅ TradeService pricing logic - fixed factory issues and method implementations
+- ✅ UnitAssemblyJob currency seeding - added GCC/USD currencies to test environment
+- ✅ Orbital resupply cycle - updated craft type and mocking strategy
+- 🔄 GameController singleton methods - moved method definitions before usage
 
 📊 **[View Current Status](docs/development/active/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
 

@@ -1,0 +1,196 @@
+🔧 FIXING DATABASE ENVIRONMENT SEPARATION
+==========================================
+
+ISSUE IDENTIFIED:
+Your database.yml shows development DB is missing host/username/password
+So it's falling back to DATABASE_URL which points to development DB
+Tests might be using development DB instead of test DB!
+
+Step 1: Fix database.yml Configuration
+---------------------------------------
+✅ database.yml updated with explicit credentials for all environments
+
+Step 2: Create Test Database
+----------------------------
+Creating test database...
+  [1m[35m (1.1ms)[0m  [1m[35mCREATE DATABASE "galaxy_game_development" ENCODING = 'unicode'[0m
+Database 'galaxy_game_development' already exists
+  [1m[36mActiveRecord::SchemaMigration Pluck (1.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.6ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::InternalMetadata Pluck (0.5ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+rails aborted!
+ActiveRecord::EnvironmentMismatchError: You are attempting to modify a database that was last run in `development` environment. (ActiveRecord::EnvironmentMismatchError)
+You are running in `test` environment. If you are sure you want to continue, first set the environment using:
+
+        bin/rails db:environment:set RAILS_ENV=test
+
+
+Tasks: TOP => db:schema:load => db:check_protected_environments
+(See full trace by running task with --trace)
+✅ Test database created and schema loaded
+
+Step 3: Verify Database Separation
+-----------------------------------
+Development DB:
+2026-01-17T20:03:46.082Z pid=635 tid=sr INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+galaxy_game_development
+
+Test DB:
+galaxy_game_development
+
+Checking if they are different:
+✅ SUCCESS: Databases are separate
+   Development: 2026-01-17T20:04:20.644Z pid=657 tid=yp INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+galaxy_game_development
+   Test: galaxy_game_development
+
+Step 4: Configure Test Database Cleaning
+-----------------------------------------
+Configuring RSpec DatabaseCleaner...
+✅ DatabaseCleaner configured in spec/rails_helper.rb
+
+Step 5: Re-seed Development Database
+-------------------------------------
+Seeding development database...
+2026-01-17T20:05:02.667Z pid=709 tid=11x INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+Building Sol star system...
+Starting system build for Sol...
+Creating galaxy: Milky Way
+Creating solar system: Sol
+Processing Star Sol (Identifier: SOL)
+Successfully created Star Sol (ID: 4)
+Processing Mercury (Identifier: MERCURY-01)
+{type: "terrestrial", name: "Mercury", identifier: "MERCURY-01", mass: "3.30e23", radius: 2440000.0, density: 5.427, size: 0.3829, orbital_period: 87.97, surface_temperature: 440, gravity: 3.7, albedo: 0.12, insolation: 9126, known_pressure: 0, geological_activity: 10, star_distances: [{star_name: "Sol", distance: 57900000.0}], atmosphere: {composition: {}, dust: {concentration: 0, properties: "Minimal atmosphere"}, pressure: 0, total_atmospheric_mass: 1000}, geosphere_attributes: {geological_activity: 10, tectonic_activity: false, total_crust_mass: 8.1e+22, total_mantle_mass: 3.9e+23, total_core_mass: 1.7e+23, crust_composition: {oxides: {SiO2: 60.0, FeO: 20.0, Al2O3: 10.0, CaO: 5.0, MgO: 3.0}, volatiles: {S: 2.0, Na: 1.0}}}}
+Successfully created CelestialBodies::Planets::Rocky::TerrestrialPlanet Mercury (ID: 18)
+Created atmosphere for Mercury.
+Created geosphere for Mercury.
+Created biosphere for Mercury.
+Processing Venus (Identifier: VENUS-01)
+{type: "terrestrial", name: "Venus", identifier: "VENUS-01", mass: "4.87e24", radius: 6050000.0, density: 5.243, size: 0.9499, orbital_period: 224.7, surface_temperature: 737, gravity: 8.87, albedo: 0.65, insolation: 2613, known_pressure: 92, geological_activity: 85, star_distances: [{star_name: "Sol", distance: 108000000.0}], atmosphere: {composition: {CO2: {percentage: 96.5}, N2: {percentage: 3.5}}, dust: {concentration: 0.1, properties: "Sulfuric acid clouds and volcanic ash"}, pressure: 92, total_atmospheric_mass: 4.8e+20}, geosphere_attributes: {geological_activity: 85, tectonic_activity: true, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, crust_composition: {oxides: {SiO2: 45.0, Fe2O3: 18.0, Al2O3: 10.0, MgO: 9.0, CaO: 10.0}, volatiles: {CO2: 1.5, SO2: 0.5}}}}
+Successfully created CelestialBodies::Planets::Rocky::TerrestrialPlanet Venus (ID: 19)
+Created atmosphere for Venus.
+Created geosphere for Venus.
+Created biosphere for Venus.
+Processing Earth (Identifier: EARTH-01)
+{type: "terrestrial", name: "Earth", identifier: "EARTH-01", mass: "5.97e24", radius: 6371000.0, density: 5.514, size: 1.0, orbital_period: 365.25, surface_temperature: 288, gravity: 9.82, albedo: 0.3, insolation: 1361, known_pressure: 1.0, geological_activity: 70, axial_tilt: 23.5, surface_area: 510072000.0, escape_velocity: 11.186, star_distances: [{star_name: "Sol", distance: 149600000.0}], atmosphere: {composition: {N2: {percentage: 78.08}, O2: {percentage: 20.95}, Ar: {percentage: 0.93}, CO2: {percentage: 0.04}, H2O: {percentage: 0.4}}, dust: {concentration: 0.01, properties: "Various particulates including water vapor"}, pressure: 1.0, total_atmospheric_mass: 5.15e+18}, geosphere_attributes: {geological_activity: 70, tectonic_activity: true, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, crust_composition: {oxides: {SiO2: 59.0, Al2O3: 15.0, CaO: 7.0, FeO: 6.0, MgO: 4.0, Na2O: 3.0}, minerals: {Quartz: 12.0, Feldspar: 60.0, Mica: 5.0}}}, hydrosphere: {total_hydrosphere_mass: 1.386e+21, liquid_bodies: {oceans: {volume: 1332000000.0, salinity: 3.5, coverage: 70.8}, ice_caps: {volume: 27400000.0, coverage: 10.0}, groundwater: {volume: 23400000.0, depth_range: "0-2km"}, rivers: {volume: 2100, total_length: 2100000.0}, lakes: {volume: 176000.0, coverage: 2.0}}, composition: [{compound: "H2O", percentage: 96.5}, {compound: "dissolved_salts", percentage: 3.5}], state_distribution: [{state: "liquid", percentage: 98.0}, {state: "solid", percentage: 1.7}, {state: "vapor", percentage: 0.3}]}}
+Successfully created CelestialBodies::Planets::Rocky::TerrestrialPlanet Earth (ID: 20)
+Created atmosphere for Earth.
+Created hydrosphere for Earth.
+Created geosphere for Earth.
+Created biosphere for Earth.
+Processing Mars (Identifier: MARS-01)
+{type: "terrestrial", name: "Mars", identifier: "MARS-01", mass: "6.42e23", radius: 3389000.0, density: 3.933, size: 0.532, orbital_period: 687, surface_temperature: 210, gravity: 3.721, albedo: 0.25, insolation: 589, known_pressure: 0.006, geological_activity: 10, star_distances: [{star_name: "Sol", distance: 227900000.0}], atmosphere: {composition: {CO2: {percentage: 95.32}, N2: {percentage: 2.7}, Ar: {percentage: 1.6}}, dust: {concentration: 0.5, properties: "Predominantly composed of iron oxide."}, pressure: 0.006, total_atmospheric_mass: 2.5e+16}, geosphere_attributes: {geological_activity: 20, tectonic_activity: false, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, stored_volatiles: {CO2: {polar_caps: 2.5e+16, regolith: 5.0e+16, clathrates: 3.0e+17}, H2O: {polar_caps: 8.0e+15, subsurface_ice: 1.0e+17}}, crust_composition: {oxides: {SiO2: 45.0, Fe2O3: 18.0, Al2O3: 10.0, MgO: 9.0, CaO: 10.0, TiO2: 1.0}, volatiles: {H2O: 2.0, CO2: 1.5, SO2: 0.5}, minerals: {Hematite: 5.0, Magnetite: 3.0, Olivine: 2.0}}}, hydrosphere: {total_hydrosphere_mass: 1.386e+21, liquid_bodies: {ice_caps: {volume: 2700000.0, coverage: 5.0}, groundwater: {volume: 1500000.0, depth_range: "0.5-2km"}, briny_flows: {volume: 5000.0, activity: "Seasonal streaks observed on slopes"}}, composition: {H2O: 98.0, salts: 2.0}, state_distribution: {solid: 95.0, liquid: 4.5, vapor: 0.5}}}
+Successfully created CelestialBodies::Planets::Rocky::TerrestrialPlanet Mars (ID: 21)
+Created atmosphere for Mars.
+Created hydrosphere for Mars.
+Created geosphere for Mars.
+Created biosphere for Mars.
+Processing Jupiter (Identifier: JUPITER-01)
+{type: "gas_giant", name: "Jupiter", identifier: "JUPITER-01", mass: "1.90e27", radius: 69911000.0, density: 1.326, size: 11.209, orbital_period: 4331, surface_temperature: 165, gravity: 24.79, albedo: 0.52, insolation: 50.5, known_pressure: 0, star_distances: [{star_name: "Sol", distance: 778500000.0}], atmosphere: {composition: {H2: {percentage: 89.8}, He: {percentage: 10.2}}, dust: {concentration: 0.01, properties: "Composed primarily of ammonia ice particles"}, pressure: 100000, total_atmospheric_mass: 1.9e+27}}
+Successfully created CelestialBodies::Planets::Gaseous::GasGiant Jupiter (ID: 22)
+Created atmosphere for Jupiter.
+Created biosphere for Jupiter.
+Processing Saturn (Identifier: SATURN-01)
+{type: "gas_giant", name: "Saturn", identifier: "SATURN-01", mass: "5.68e26", radius: 58232000.0, density: 0.687, size: 9.449, orbital_period: 10747, surface_temperature: 134, gravity: 10.44, albedo: 0.47, insolation: 15.0, known_pressure: 0, star_distances: [{star_name: "Sol", distance: 1433000000.0}], atmosphere: {composition: {H2: {percentage: 96.3}, He: {percentage: 3.7}}, dust: {concentration: 0.02, properties: "Ice crystals and complex organic compounds"}, pressure: 140000, total_atmospheric_mass: 1.2e+27}}
+Successfully created CelestialBodies::Planets::Gaseous::GasGiant Saturn (ID: 23)
+Created atmosphere for Saturn.
+Created biosphere for Saturn.
+Processing Uranus (Identifier: URANUS-01)
+{type: "ice_giant", name: "Uranus", identifier: "URANUS-01", mass: "8.681e25", radius: 25362000.0, density: 1.27, size: 4.007, orbital_period: 30688.5, surface_temperature: 76, gravity: 8.69, albedo: 0.51, geological_activity: 60, star_distances: [{star_name: "Sol", distance: 2871000000.0}], atmosphere: {composition: {H2: {percentage: 82.5}, He: {percentage: 15.2}, CH4: {percentage: 2.3}}, dust: {concentration: 0.001, properties: "Methane clouds"}, pressure: 100000, total_atmospheric_mass: 8.7e+25}, hydrosphere: {total_hydrosphere_mass: 8.681e+25, liquid_bodies: {}, composition: {H2O: 50.0, NH3: 25.0, CH4: 25.0}, state_distribution: {liquid: 0.0, solid: 100.0, vapor: 0.0}}}
+Successfully created CelestialBodies::Planets::Gaseous::IceGiant Uranus (ID: 24)
+Created atmosphere for Uranus.
+Created hydrosphere for Uranus.
+Created biosphere for Uranus.
+Processing Neptune (Identifier: NEPTUNE-01)
+{type: "ice_giant", name: "Neptune", identifier: "NEPTUNE-01", mass: "1.024e26", radius: 24622000.0, density: 1.638, size: 3.883, orbital_period: 60195, surface_temperature: 72, gravity: 11.15, albedo: 0.41, geological_activity: 70, star_distances: [{star_name: "Sol", distance: 4495000000.0}], atmosphere: {composition: {H2: {percentage: 80.0}, He: {percentage: 19.0}, CH4: {percentage: 1.0}}, dust: {concentration: 0.002, properties: "High-speed winds"}, pressure: 100000, total_atmospheric_mass: 1.0e+26}, hydrosphere: {total_hydrosphere_mass: 1.024e+26, liquid_bodies: {}, composition: {H2O: 60.0, NH3: 20.0, CH4: 20.0}, state_distribution: {liquid: 0.0, solid: 100.0, vapor: 0.0}}}
+Successfully created CelestialBodies::Planets::Gaseous::IceGiant Neptune (ID: 25)
+Created atmosphere for Neptune.
+Created hydrosphere for Neptune.
+Created biosphere for Neptune.
+Processing Ceres (Identifier: CERES-01)
+{type: "dwarf_planet", name: "Ceres", identifier: "CERES-01", mass: "9.393e20", radius: 473000.0, density: 2.162, size: 0.074, orbital_period: 1682, surface_temperature: 168, gravity: 0.28, albedo: 0.09, geological_activity: 20, star_distances: [{star_name: "Sol", distance: 413000000.0}], atmosphere: {composition: {}, dust: {concentration: 0, properties: "Occasional water vapor"}, pressure: 0, total_atmospheric_mass: 0}, geosphere_attributes: {geological_activity: 20, tectonic_activity: false, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, crust_composition: {oxides: {SiO2: 50.0, Al2O3: 15.0, FeO: 10.0, MgO: 8.0, CaO: 7.0}, volatiles: {H2O: 30.0, CO2: 5.0, NH3: 2.0}, minerals: {Carbonates: 20.0, "Clay minerals": 15.0, "Ammonia hydrates": 10.0}}}, hydrosphere: {total_hydrosphere_mass: 9.393e+20, liquid_bodies: {}, composition: {H2O: 100.0}, state_distribution: {solid: 100.0, liquid: 0.0, vapor: 0.0}}}
+Successfully created CelestialBodies::MinorBodies::DwarfPlanet Ceres (ID: 26)
+Created atmosphere for Ceres.
+Created hydrosphere for Ceres.
+Created geosphere for Ceres.
+Created biosphere for Ceres.
+Processing Pluto (Identifier: PLUTO-01)
+{type: "dwarf_planet", name: "Pluto", identifier: "PLUTO-01", mass: "1.303e22", radius: 1188000.0, density: 1.854, size: 0.002, orbital_period: 90560, surface_temperature: 44, gravity: 0.62, albedo: 0.49, geological_activity: 40, star_distances: [{star_name: "Sol", distance: 5900000000.0}], atmosphere: {composition: {N2: {percentage: 90.0}, CH4: {percentage: 10.0}}, dust: {concentration: 0, properties: "Seasonal atmosphere"}, pressure: 1.0e-06, total_atmospheric_mass: 1.3e+22}, geosphere_attributes: {geological_activity: 40, tectonic_activity: false, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, crust_composition: {oxides: {SiO2: 45.0, Al2O3: 15.0, FeO: 12.0, MgO: 10.0, CaO: 8.0}, volatiles: {H2O: 25.0, N2: 20.0, CH4: 15.0, CO: 5.0}, minerals: {"Water ice": 30.0, "Nitrogen ice": 20.0, "Methane ice": 15.0}}}, hydrosphere: {total_hydrosphere_mass: 1.303e+22, liquid_bodies: {}, composition: {H2O: 90.0, N2: 10.0}, state_distribution: {solid: 100.0, liquid: 0.0, vapor: 0.0}}}
+Successfully created CelestialBodies::MinorBodies::DwarfPlanet Pluto (ID: 27)
+Created atmosphere for Pluto.
+Created hydrosphere for Pluto.
+Created geosphere for Pluto.
+Created biosphere for Pluto.
+Processing Luna (Identifier: LUNA-01)
+{type: "moon", name: "Luna", identifier: "LUNA-01", parent_body: "EARTH-01", mass: "7.342e22", radius: 1737000.0, density: 3.344, orbital_period: 27.322, surface_temperature: 250, gravity: 1.62, albedo: 0.12, geological_activity: 5, size: 0.2727, star_distances: [{star_name: "Sol", distance: 149600000.0}], atmosphere: {composition: {}, dust: {concentration: 0, properties: "Negligible atmosphere"}, pressure: 0, total_atmospheric_mass: 0}, geosphere_attributes: {geological_activity: 5, tectonic_activity: false, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, crust_composition: {oxides: {SiO2: 43.0, Al2O3: 24.0, FeO: 13.0, CaO: 11.0, MgO: 7.0, TiO2: 2.0}, volatiles: {H2: 0.0001, He: 5.0e-05, CO: 2.0e-05, CO2: 1.0e-05, CH4: 5.0e-06, N2: 3.0e-06}, minerals: {Anorthite: 60.0, Ilmenite: 5.0, KREEP: 1.0}}}}
+DEBUG: Looking for parent with identifier: 'EARTH-01' for body 'Luna'
+Assigned parent Earth to Luna via parent_celestial_body association.
+Successfully created CelestialBodies::Satellites::Moon Luna (ID: 28)
+Created atmosphere for Luna.
+Created geosphere for Luna.
+Created biosphere for Luna.
+Processing Titan (Identifier: TITAN-01)
+{type: "moon", name: "Titan", identifier: "TITAN-01", parent_body: "SATURN-01", mass: "1.345e23", radius: 2575000.0, density: 1.88, orbital_period: 15.945, surface_temperature: 93.7, gravity: 1.352, albedo: 0.22, geological_activity: 40, size: 0.404, star_distances: [{star_name: "Sol", distance: 1434000000.0}], atmosphere: {composition: {N2: {percentage: 98.4}, CH4: {percentage: 1.6}}, dust: {concentration: 0.2, properties: "Composed of organic compounds and tholins."}, pressure: 1.5, total_atmospheric_mass: 1.5e+19}, hydrosphere: {liquid_bodies: {lakes: {volume: 30000.0, composition: ["CH4", "C2H6"], coverage: 1.5}, rivers: {volume: 800, total_length: 1200000.0, composition: ["CH4", "C2H6"]}, groundwater: {volume: 100000.0, depth_range: "1-5km", composition: ["CH4", "C2H6", "N2"]}}, composition: {CH4: 65.0, C2H6: 30.0, N2: 5.0}, state_distribution: {liquid: 85.0, solid: 10.0, vapor: 5.0}}}
+DEBUG: Looking for parent with identifier: 'SATURN-01' for body 'Titan'
+Assigned parent Saturn to Titan via parent_celestial_body association.
+Successfully created CelestialBodies::Satellites::Moon Titan (ID: 29)
+Created atmosphere for Titan.
+Created hydrosphere for Titan.
+Created biosphere for Titan.
+Processing Phobos (Identifier: PHOBOS-01)
+{type: "moon", name: "Phobos", identifier: "PHOBOS-01", parent_body: "MARS-01", mass: "1.06e16", radius: 11267, density: 1.876, orbital_period: 0.319, surface_temperature: 233, gravity: 0.0057, albedo: 0.071, geological_activity: 0, size: 0.00027, star_distances: [{star_name: "Sol", distance: 227900000.0}], atmosphere: {composition: {}, dust: {concentration: 0, properties: "No atmosphere"}, pressure: 0, total_atmospheric_mass: 0}, geosphere_attributes: {geological_activity: 0, tectonic_activity: false, total_crust_mass: 2.4e+23, total_mantle_mass: 3.2e+24, total_core_mass: 1.4e+24, crust_composition: {oxides: {SiO2: 40.0, FeO: 25.0, Al2O3: 7.0}, minerals: {Phyllosilicates: 20.0, "Carbon-rich compounds": 8.0}}}}
+DEBUG: Looking for parent with identifier: 'MARS-01' for body 'Phobos'
+Assigned parent Mars to Phobos via parent_celestial_body association.
+Successfully created CelestialBodies::Satellites::Moon Phobos (ID: 30)
+Created atmosphere for Phobos.
+Created geosphere for Phobos.
+Created biosphere for Phobos.
+Processing Deimos (Identifier: DEIMOS-01)
+{type: "moon", name: "Deimos", identifier: "DEIMOS-01", parent_body: "MARS-01", mass: "1.48e15", radius: 6200, density: 1.471, orbital_period: 1.263, surface_temperature: 233, gravity: 0.003, albedo: 0.068, geological_activity: 0, size: 0.00015, star_distances: [{star_name: "Sol", distance: 227900000.0}], atmosphere: {composition: {}, dust: {concentration: 0, properties: "No atmosphere"}, pressure: 0, total_atmospheric_mass: 0}}
+DEBUG: Looking for parent with identifier: 'MARS-01' for body 'Deimos'
+Assigned parent Mars to Deimos via parent_celestial_body association.
+Successfully created CelestialBodies::Satellites::Moon Deimos (ID: 31)
+Created atmosphere for Deimos.
+Created biosphere for Deimos.
+System build for Sol complete!
+Creating system currencies...
+Creating Development Corporations...
+Creating logistics corporations...
+Note: Wormhole Transit Consortium will be created during Snap Event storyline
+
+Verification:
+2026-01-17T20:06:17.412Z pid=703 tid=y7 INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+CelestialBodies: 14
+Mars found: NO
+
+Step 6: Create .env.test File
+------------------------------
+✅ Created env/.env.test
+Note: Redis uses different DB (2) for tests vs development (1)
+
+📋 SUMMARY & NEXT STEPS
+=======================
+
+✅ Fixed database.yml with explicit credentials
+✅ Created separate test database
+✅ Configured database cleaning for tests
+✅ Re-seeded development database
+✅ Created .env.test for test environment
+
+TO RUN TESTS SAFELY (without affecting development):
+  docker exec -it web bash -c 'RAILS_ENV=test bundle exec rspec'
+
+OR for a single test file:
+  docker exec -it web bash -c 'RAILS_ENV=test bundle exec rspec spec/services/ai_manager/mission_planner_service_spec.rb'
+
+IMPORTANT: Always use RAILS_ENV=test when running tests!
+
+Now verify development DB is intact:
+2026-01-17T20:06:34.832Z pid=745 tid=wp INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+
+=== DEVELOPMENT DATABASE STATUS ===
+CelestialBodies: 14
+❌ Mars NOT FOUND - run: docker exec -it web rails db:seed

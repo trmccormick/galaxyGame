@@ -3,8 +3,8 @@ require 'rails_helper'
 
 RSpec.describe ShellPrintingJob, type: :model do
   let(:settlement) { create(:base_settlement) }
-  let(:printer_unit) { create(:unit, owner: settlement) }
-  let(:inflatable_tank) { create(:unit, owner: settlement) }
+  let(:printer_unit) { create(:base_unit, owner: settlement) }
+  let(:inflatable_tank) { create(:base_unit, owner: settlement) }
   
   let(:job) do
     create(:shell_printing_job,

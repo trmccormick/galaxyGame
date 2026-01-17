@@ -48,8 +48,8 @@ grep "rspec ./spec" "$LATEST_LOG" | awk '{print $2}' | cut -d: -f1 | sort | uniq
 ```
 - If missing log, run full suite:
 ```bash
-# Host → Container
-docker-compose -f docker-compose.dev.yml exec web /bin/bash -c "RAILS_ENV=test bundle exec rspec > ./data/logs/rspec_full_$(date +%s).log 2>&1"
+# Container
+docker-compose -f docker-compose.dev.yml exec -e DATABASE_URL=postgres://postgres:password@db:5432/galaxy_game_test -e RAILS_ENV=test web /bin/bash -c "bundle exec rails db:test:prepare && bundle exec rspec > ./log/rspec_full_\$(date +%s).log 2>&1"
 ```
 - Compare failing code vs backup:
 ```bash
@@ -60,7 +60,7 @@ ls -la /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-20
 - Fix & Verify one file at a time:
 ```bash
 # Container
-bundle exec rspec [path_to_spec]
+docker-compose -f docker-compose.dev.yml exec -e DATABASE_URL=postgres://postgres:password@db:5432/galaxy_game_test -e RAILS_ENV=test web bundle exec rspec [path_to_spec]
 ```
 - Atomic commit:
 ```bash
