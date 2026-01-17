@@ -191,6 +191,38 @@ All missions targeting wormhole exploitation must:
 - [Settlement Patterns Architecture](../architecture/settlement_patterns.md) - Planetary colonization frameworks
 - [Mission Profile Library](../mission_profiles/00_complete_profile_library.md) - Complete mission template reference
 
+## Section G: Market Impact
+
+### Mission Completion Market Triggers
+**MANDATORY RULE**: All mission completions must trigger a Market Manifest update in `data/json-data/market/`.
+
+- **Trigger Events**: Mission completion automatically updates corresponding market manifest
+- **Documentation**: Market changes must be documented in `docs/market/gcc_coupling_status.md`
+- **Validation**: Market manifests must be validated for GCC coupling consistency
+
+### Resource Transformation Table
+Mission completions transform resource availability according to these codified rules:
+
+| Mission Type | Primary Resource Impact | Secondary Effects |
+|-------------|-------------------------|-------------------|
+| Hollowed Asteroid Depot | +50% Silicate Supply | +100% Slag Fuel, +30% Construction Materials |
+| Planetary Harvesting | +200% Helium-3 Supply | +75% Rare Earth Metals, +150% Volatiles |
+| Wormhole Discovery | -40% Transport Costs | +25% Trade Volume, -20% Wormhole Tax |
+| Orbital Construction | +40% Infrastructure Capacity | +60% Power Supply, +35% Crew Capacity |
+| Asteroid Mining | +80% Mineral Supply | +50% Industrial Metals, +25% Fuel Resources |
+
+### Market Manifest Structure
+All market manifests must include:
+- GCC/USD coupling logic with base exchange rates
+- Resource supply status (Abundant/Low/Emerging/Stable)
+- Economic indicators (tax rates, cost modifiers)
+- Mission completion transformation rules
+- Validation status and update timestamps
+
+### Cross-references
+- [GCC Coupling Status](../market/gcc_coupling_status.md) - Current exchange rates and market conditions
+- [Market Manifest AC-B1](../../data/json-data/market/market_manifest_ac_b1.json) - Alpha Centauri market initialization
+
 ## Atomic Commit Recipe
 ```bash
 # Host

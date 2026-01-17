@@ -1,0 +1,74 @@
+{
+  "manifest_version": "1.0",
+  "market_id": "ac_b1_market_manifest",
+  "system": "Alpha Centauri B-1",
+  "coupling_logic": {
+    "gcc_usd_exchange": {
+      "base_rate": 1.0,
+      "description": "GCC maintains 1:1 parity with USD for initial Alpha Centauri market coupling",
+      "stability_mechanism": "anchored_to_usd",
+      "last_updated": "2026-01-15"
+    },
+    "market_initialization": {
+      "trigger_event": "super_mars_relocation_ac_b1_completion",
+      "infrastructure_status": "l1_depots_operational",
+      "wormhole_anchor": "established",
+      "planetary_operations": "pending"
+    }
+  },
+  "resource_variables": {
+    "silicate_supply": {
+      "status": "abundant",
+      "reason": "hollowing of 3 Phobos-class asteroids provides extensive silicate byproduct",
+      "quantity_modifier": 2.5,
+      "market_impact": "reduced_mineral_costs"
+    },
+    "helium_3_supply": {
+      "status": "low",
+      "reason": "planetary harvesting operations not yet initiated",
+      "quantity_modifier": 0.2,
+      "market_impact": "premium_helium_3_pricing"
+    },
+    "slag_fuel": {
+      "status": "emerging",
+      "reason": "asteroid hollowing operations producing slag byproduct",
+      "quantity_modifier": 1.0,
+      "market_impact": "alternative_propellant_available"
+    },
+    "nuclear_fuel": {
+      "status": "stable",
+      "reason": "fusion reactor infrastructure established in L1 depots",
+      "quantity_modifier": 1.0,
+      "market_impact": "reliable_power_supply"
+    }
+  },
+  "economic_indicators": {
+    "wormhole_tax_rate": 0.6,
+    "transport_cost_modifier": 0.9,
+    "infrastructure_cost_modifier": 0.8,
+    "resource_extraction_efficiency": 1.5
+  },
+  "market_transformation_rules": {
+    "mission_completion_triggers": [
+      {
+        "mission_type": "hollowed_asteroid_depot",
+        "resource_impact": {
+          "silicates": "+50%",
+          "slag_fuel": "+100%",
+          "construction_materials": "+30%"
+        }
+      },
+      {
+        "mission_type": "planetary_harvesting",
+        "resource_impact": {
+          "helium_3": "+200%",
+          "rare_earth_metals": "+75%",
+          "volatiles": "+150%"
+        }
+      }
+    ]
+  },
+  "validation_status": "initialized",
+  "created_date": "2026-01-15",
+  "author": "Market Coupling Protocol v1.0"
+}
