@@ -8,6 +8,30 @@ module AIManager
       @results = {}
       @target_location = AIManager::PatternTargetMapper.target_location(pattern_name)
       @earth = CelestialBodies::CelestialBody.find_by(identifier: 'earth')
+      
+      # Handle case where Earth doesn't exist in database
+      unless @earth
+        Rails.logger.warn "MissionPlannerService: Earth celestial body not found, using default values"
+        @earth = OpenStruct.new(
+          name: 'Earth',
+          identifier: 'earth',
+          distance_from_sun: 1.0,
+          orbital_period: 365.25
+        )
+      end
+      
+      # Handle case where target location doesn't exist in database
+      unless @target_location
+        target_identifier = AIManager::PatternTargetMapper.target_identifier(pattern_name)
+        Rails.logger.warn "MissionPlannerService: Target location '#{target_identifier}' not found, using default values"
+        @target_location = OpenStruct.new(
+          name: target_identifier&.titleize || 'Unknown',
+          identifier: target_identifier || 'unknown',
+          id: nil,
+          distance_from_sun: 1.5, # Default distance
+          orbital_period: 687 # Default period (Mars-like)
+        )
+      end
     end
     
     def simulate
@@ -324,21 +348,9 @@ module AIManager
     def can_produce_locally?(location, resource)
       return false unless location
       
-      # ISRU-capable resources based on location
-      case location.identifier
-      when 'mars'
-        ['regolith', 'water_ice', 'co2', 'iron_oxide'].any? { |r| resource.downcase.include?(r) }
-      when 'luna', 'moon'
-        ['regolith', 'he3', 'oxygen'].any? { |r| resource.downcase.include?(r) }
-      when 'titan'
-        ['methane', 'ethane', 'nitrogen'].any? { |r| resource.downcase.include?(r) }
-      when 'europa'
-        ['water_ice', 'oxygen', 'hydrogen'].any? { |r| resource.downcase.include?(r) }
-      when 'ceres'
-        ['water_ice', 'regolith', 'carbonates'].any? { |r| resource.downcase.include?(r) }
-      else
-        false
-      end
+      # Use data-driven capability service instead of hardcoded world list
+      capability_service = AIManager::PrecursorCapabilityService.new(location)
+      capability_service.can_produce_locally?(resource)
     end
     
     def find_nearby_settlements(target_location, resource)
