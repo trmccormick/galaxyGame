@@ -1,42 +1,227 @@
 {
-  "phase_name": "Wormhole Discovery AOL-732356: Phase 1 - Reconnaissance & Anchor Establishment",
-  "goal": "Map wormhole signature AOL-732356, establish anchor point on Asteroid XXXV, and initiate long-term monitoring network.",
-  "description": "Deploy reconnaissance probes to investigate anomalous wormhole signature. Establish Anchor Law claim on Asteroid XXXV as primary monitoring and exploitation anchor point. Set up quantum sensor network for continuous wormhole activity tracking.",
+  "phase_name": "Alpha Centauri B-C Link Discovery Mission",
+  "goal": "Deploy slag-propulsion equipped scouting probe to discover and map the wormhole link between Alpha Centauri B and C, establishing navigation infrastructure for Proxima Centauri colonization.",
+  "description": "Execute systematic wormhole discovery protocol using advanced slag-propulsion technology. Deploy autonomous probe from AC-B L1 depot network, conduct comprehensive gravitational anomaly scanning, establish navigation beacon network, and register wormhole claim under Anchor Law with Sabatier Offset inheritance.",
   "mission_log": [
     {
-      "mission_id": "WD_AOL732356_P1_M001_ProbeDeployment",
-      "name": "Initial Probe Deployment",
-      "description": "Launch reconnaissance probes equipped with quantum sensors to map wormhole signature AOL-732356. Establish safe approach vectors and initial stability readings.",
+      "mission_id": "DISC_ACBC_P1_M001_ProbeDeployment",
+      "name": "Phase 1: Probe Deployment & Systems Calibration (7 days)",
+      "description": "Launch slag-propulsion equipped scouting probe from AC-B L1 depot. Perform full systems calibration and establish autonomous navigation protocols for wormhole search operations.",
       "prerequisites": [],
       "status": "active",
       "rewards": {
-        "credits": 50000,
+        "credits": 100000,
         "player_xp": 25000,
-        "unlocked_blueprints": ["WormholeProbe_Mk1"],
-        "system_status_update": {"wormhole_discoveries": ["AOL-732356_initial_mapping"]}
+        "unlocked_blueprints": ["SlagPropelledScoutProbe"],
+        "system_status_update": {"ac_bc_discovery": ["probe_deployed", "calibration_active"]}
       },
       "objectives": [
         {
-          "objective_id": "OBJ_WD_P1_M001_1_ProbeLaunch",
-          "name": "Launch Reconnaissance Probes",
-          "description": "Deploy 5 quantum-sensor equipped probes to investigate wormhole signature AOL-732356",
+          "objective_id": "OBJ_DISC_P1_M001_1_ProbeLaunch",
+          "name": "Launch Scouting Probe",
+          "description": "Deploy slag-propulsion equipped probe from AC-B L1 depot with full sensor suite",
           "type": "launch_craft",
           "target": {
-            "craft_type": "wormhole_probe",
-            "quantity": 5,
-            "destination": "wormhole_signature_aol_732356"
+            "craft_type": "slag_scout_probe",
+            "quantity": 1,
+            "propellant": "slag_fuel",
+            "efficiency": 0.9
           },
           "resources_cost": {
-            "gcc": 25000,
+            "gcc": 50000,
             "materials": {
-              "quantum_sensors": 5,
-              "radiation_shielding": 10
+              "slag_scout_probe": 1,
+              "navigation_beacons": 12
             }
           },
-          "time_estimate_days": 30
+          "time_estimate_days": 1
+        },
+        {
+          "objective_id": "OBJ_DISC_P1_M001_2_Calibration",
+          "name": "Systems Calibration",
+          "description": "Complete full calibration of gravitational mappers, spectral scanners, and navigation systems",
+          "type": "calibration_task",
+          "target": {
+            "systems_to_calibrate": ["gravitational_mapper", "spectral_scanner", "wormhole_detector", "navigation_ai"]
+          },
+          "resources_cost": {
+            "personnel": {
+              "probe_technicians": 5
+            }
+          },
+          "time_estimate_days": 6
         }
       ]
     },
+    {
+      "mission_id": "DISC_ACBC_P2_M002_WormholeSearch",
+      "name": "Phase 2: Wormhole Search & Gravitational Mapping (120 days)",
+      "description": "Execute systematic search pattern for wormhole signatures between AC-B and AC-C. Conduct comprehensive gravitational anomaly mapping and multi-spectral scanning to identify potential wormhole endpoints.",
+      "prerequisites": ["DISC_ACBC_P1_M001_ProbeDeployment"],
+      "status": "locked",
+      "rewards": {
+        "credits": 500000,
+        "player_xp": 150000,
+        "unlocked_blueprints": ["WormholeDetectorArray"],
+        "system_status_update": {"wormhole_bc_link": ["search_active", "gravitational_mapping_complete"]}
+      },
+      "objectives": [
+        {
+          "objective_id": "OBJ_DISC_P2_M002_1_AnomalyScan",
+          "name": "Gravitational Anomaly Scanning",
+          "description": "Map gravitational anomalies in the search volume between AC-B and AC-C orbital planes",
+          "type": "scanning_operation",
+          "target": {
+            "scan_type": "gravitational_anomaly",
+            "search_volume": "ac_b_to_ac_c_orbital_plane",
+            "resolution_requirement": "micro_gravity_precision"
+          },
+          "resources_cost": {
+            "power": 5000,
+            "personnel": {
+              "gravitational_physicists": 8
+            }
+          },
+          "time_estimate_days": 60
+        },
+        {
+          "objective_id": "OBJ_DISC_P2_M002_2_WormholeDetection",
+          "name": "Wormhole Signature Detection",
+          "description": "Identify and characterize wormhole signatures using multi-spectral scanning",
+          "type": "detection_operation",
+          "target": {
+            "detection_method": "multi_spectral_analysis",
+            "signature_types": ["hawking_radiation", "gravitational_lensing", "quantum_fluctuations"]
+          },
+          "resources_cost": {
+            "gcc": 200000,
+            "personnel": {
+              "quantum_physicists": 12
+            }
+          },
+          "time_estimate_days": 60
+        }
+      ]
+    },
+    {
+      "mission_id": "DISC_ACBC_P3_M003_BeaconNetwork",
+      "name": "Phase 3: Navigation Beacon Network Establishment (45 days)",
+      "description": "Deploy comprehensive navigation beacon network along discovered wormhole route. Establish stable anchor points and register wormhole claim under Anchor Law with Sabatier Offset inheritance.",
+      "prerequisites": ["DISC_ACBC_P2_M002_WormholeSearch"],
+      "status": "locked",
+      "rewards": {
+        "credits": 750000,
+        "player_xp": 200000,
+        "unlocked_blueprints": ["WormholeNavigationBeacon"],
+        "system_status_update": {"ac_bc_link": ["beacons_deployed", "anchor_law_registered"]}
+      },
+      "objectives": [
+        {
+          "objective_id": "OBJ_DISC_P3_M003_1_BeaconDeployment",
+          "name": "Deploy Navigation Beacons",
+          "description": "Establish 12 navigation beacons along the wormhole route for safe transit",
+          "type": "infrastructure_deployment",
+          "target": {
+            "beacon_type": "wormhole_navigation",
+            "quantity": 12,
+            "placement": "optimal_transit_points",
+            "power_source": "nuclear_micro_reactor"
+          },
+          "resources_cost": {
+            "gcc": 300000,
+            "materials": {
+              "navigation_beacons": 12,
+              "nuclear_micro_reactors": 12
+            }
+          },
+          "time_estimate_days": 30
+        },
+        {
+          "objective_id": "OBJ_DISC_P3_M003_2_AnchorRegistration",
+          "name": "Anchor Law Registration",
+          "description": "Register wormhole claim with primary AC-B L1 depot anchor and secondary AC-C stellar anchor",
+          "type": "legal_registration",
+          "target": {
+            "primary_anchor": "ac_b_l1_depot_network",
+            "secondary_anchor": "ac_c_stellar_mass",
+            "sabatier_offset": "inherited_from_ac_b1",
+            "claim_type": "wormhole_transit_rights"
+          },
+          "resources_cost": {
+            "personnel": {
+              "anchor_law_specialists": 3
+            }
+          },
+          "time_estimate_days": 15
+        }
+      ]
+    },
+    {
+      "mission_id": "DISC_ACBC_P4_M004_DataTransmission",
+      "name": "Phase 4: Data Transmission & Mission Verification (8 days)",
+      "description": "Transmit complete wormhole mapping data back to AC-B L1 depot. Perform final verification of navigation systems and prepare for colonization operations.",
+      "prerequisites": ["DISC_ACBC_P3_M003_BeaconNetwork"],
+      "status": "locked",
+      "rewards": {
+        "credits": 250000,
+        "player_xp": 50000,
+        "unlocked_blueprints": ["WormholeTransitSystem"],
+        "unlocked_technologies": ["AC-BC Link Navigation"],
+        "system_status_update": {"proxima_colonization": ["wormhole_link_established", "navigation_ready"]}
+      },
+      "objectives": [
+        {
+          "objective_id": "OBJ_DISC_P4_M004_1_DataTransmission",
+          "name": "Complete Data Transmission",
+          "description": "Transmit all gravitational maps, spectral data, and navigation coordinates to L1 depot",
+          "type": "data_transmission",
+          "target": {
+            "data_types": ["gravitational_maps", "spectral_scans", "navigation_coordinates", "wormhole_characteristics"],
+            "transmission_method": "quantum_entanglement_link",
+            "destination": "ac_b_l1_depot"
+          },
+          "resources_cost": {
+            "power": 2500,
+            "personnel": {
+              "data_analysts": 6
+            }
+          },
+          "time_estimate_days": 5
+        },
+        {
+          "objective_id": "OBJ_DISC_P4_M004_2_SystemVerification",
+          "name": "Navigation System Verification",
+          "description": "Verify complete beacon network functionality and wormhole transit safety protocols",
+          "type": "verification_operation",
+          "target": {
+            "verification_tests": ["beacon_synchronization", "transit_safety", "emergency_protocols", "data_integrity"]
+          },
+          "resources_cost": {
+            "personnel": {
+              "navigation_engineers": 4
+            }
+          },
+          "time_estimate_days": 3
+        }
+      ]
+    }
+  ],
+  "phase_completion_criteria": {
+    "wormhole_discovery_verified": "AC-B to AC-C link confirmed and mapped",
+    "navigation_infrastructure_complete": "12-beacon network operational",
+    "anchor_law_compliance": "Claim registered with Sabatier Offset inheritance",
+    "slag_propulsion_efficiency": "90% fuel efficiency maintained throughout mission",
+    "data_transmission_successful": "Complete dataset delivered to L1 depot"
+  },
+  "phase_risks": {
+    "wormhole_nonexistence": "Critical risk - no link may exist between B and C",
+    "gravitational_instability": "High risk during beacon deployment",
+    "navigation_system_failure": "Medium risk - autonomous probe reliability",
+    "data_corruption": "Medium risk during long-range transmission"
+  },
+  "estimated_completion_days": 180,
+  "pattern_reference": "Slag-Propulsion Discovery Protocol - wormhole_discovery.md"
+}
     {
       "mission_id": "WD_AOL732356_P1_M002_AnchorClaim",
       "name": "Asteroid XXXV Anchor Establishment",

@@ -1,42 +1,128 @@
 {
-  "template": "mission_manifest",
-  "manifest_id": "discovery_aol_732356_manifest_v1.1",
-  "version": "1.1",
-  "craft": {
-    "id": "wormhole_probe_fleet",
-    "name": "AOL-732356 Reconnaissance Fleet",
-    "use_recommended_fit": true,
-    "recommended_fit": {
-      "modules": [
-        { "id": "quantum_sensor_array", "count": 3 },
-        { "id": "radiation_shielding_extreme", "count": 4 },
-        { "id": "wormhole_stabilizer", "count": 2 },
-        { "id": "anchor_beacon_transmitter", "count": 1 },
-        { "id": "autonomous_navigation_ai", "count": 1 },
-        { "id": "emergency_return_system", "count": 2 }
+  "manifest_version": "1.1",
+  "mission_id": "discovery_ac_bc_link",
+  "mission_name": "Alpha Centauri B-C Link Discovery",
+  "mission_category": "wormhole-discovery",
+  "mission_type": "exploration_probe",
+  "pattern_reference": "Slag-Propulsion Discovery Protocol",
+  "protocol_version": "2026-01-16",
+  "description": "Advanced wormhole discovery mission utilizing slag-propulsion technology to minimize exploration costs while establishing the critical B-C link for Proxima Centauri colonization.",
+  "key_features": [
+    "Slag-propulsion equipped scouting probe for cost-efficient exploration",
+    "90% propellant efficiency reducing discovery mission costs",
+    "Anchor Law compliant wormhole mapping and claim registration",
+    "Sabatier Offset inheritance from AC-B1 infrastructure",
+    "Multi-spectral gravitational anomaly detection"
+  ],
+  "propulsion_system": {
+    "primary_system": "slag_propulsion",
+    "efficiency": 0.9,
+    "mass_reduction_factor": 0.1,
+    "fuel_source": "l1_depot_resupply",
+    "production_rate": 0.8,
+    "verification_status": "confirmed",
+    "economic_impact": {
+      "fuel_cost_reduction": 0.9,
+      "mission_cost_savings": 0.75,
+      "exploration_range_extension": 2.0
+    }
+  },
+  "craft_configuration": {
+    "scouting_probe": {
+      "id": "slag_propelled_scout_probe",
+      "name": "AC-BC Link Discovery Probe",
+      "propulsion_system": "slag_propulsion_engine",
+      "navigation_system": "ai_guided_autonomous",
+      "sensor_suite": [
+        "gravitational_mapper",
+        "multi_spectral_scanner",
+        "wormhole_detector",
+        "navigation_beacon_deployer"
       ],
-      "units": [
-        { "id": "ion_thruster_probe", "count": 4 },
-        { "id": "quantum_computer_core", "count": 1 },
-        { "id": "sensor_dome", "count": 2 },
-        { "id": "data_storage_array", "count": 3 }
-      ]
+      "fuel_capacity": 500,
+      "operational_range": 1000000000,
+      "deployment_method": "l1_depot_launch"
+    }
+  },
+  "anchor_law_compliance": {
+    "primary_anchor_designation": "ac_b_l1_depot_network",
+    "secondary_anchor_requirement": "ac_c_stellar_anchor",
+    "claim_registration": "automatic_upon_discovery",
+    "sabatier_offset_inheritance": "ac_b1_infrastructure",
+    "environmental_protection": "minimal_impact_scanning"
+  },
+  "mission_phases": [
+    {
+      "phase_id": "P1",
+      "name": "Probe Deployment & Calibration",
+      "duration_days": 7,
+      "slag_consumption": 0.1,
+      "discovery_milestone": "probe_operational"
     },
-    "installed_units": [
-      {
-        "name": "Ion Thruster Probe",
-        "id": "ion_thruster_probe",
-        "count": 4,
-        "status": "operational"
-      },
-      {
-        "name": "Quantum Computer Core",
-        "id": "quantum_computer_core",
-        "count": 1,
-        "status": "operational"
-      }
+    {
+      "phase_id": "P2",
+      "name": "Wormhole Search & Mapping",
+      "duration_days": 120,
+      "slag_consumption": 0.7,
+      "discovery_milestone": "link_discovered"
+    },
+    {
+      "phase_id": "P3",
+      "name": "Beacon Network Establishment",
+      "duration_days": 45,
+      "slag_consumption": 0.2,
+      "discovery_milestone": "navigation_complete"
+    },
+    {
+      "phase_id": "P4",
+      "name": "Data Transmission & Verification",
+      "duration_days": 8,
+      "slag_consumption": 0.0,
+      "discovery_milestone": "mission_complete"
+    }
+  ],
+  "economic_model": {
+    "total_cost_gcc": 2500000,
+    "cost_breakdown": {
+      "probe_construction": 1500000,
+      "slag_propulsion_system": 300000,
+      "sensor_suite": 400000,
+      "navigation_beacons": 200000,
+      "data_transmission": 100000
+    },
+    "revenue_projections": {
+      "wormhole_usage_fees": 10000000,
+      "trade_route_value": 50000000,
+      "colonization_acceleration": 25000000,
+      "data_licensing": 5000000
+    },
+    "roi_timeline_days": 365,
+    "net_present_value_gcc": 75000000
+  },
+  "risk_assessment": {
+    "wormhole_nonexistence_risk": "high",
+    "navigation_failure_risk": "medium",
+    "propulsion_system_risk": "low",
+    "data_loss_risk": "medium",
+    "mitigation_strategies": [
+      "Redundant navigation systems",
+      "Continuous data transmission",
+      "Emergency return protocols",
+      "AI-assisted decision making"
     ]
   },
+  "compliance_verification": {
+    "slag_propulsion": "verified",
+    "anchor_law": "verified",
+    "sabatier_offset": "inherited",
+    "environmental_protection": "verified",
+    "economic_model": "validated"
+  },
+  "created_date": "2026-01-16",
+  "author": "AI Mission Planner v2.1",
+  "template_version": "v1.1",
+  "validation_status": "passed"
+}
   "personnel": {
     "required": 25,
     "specializations": {
