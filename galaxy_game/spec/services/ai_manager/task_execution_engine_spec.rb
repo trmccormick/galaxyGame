@@ -75,19 +75,22 @@ RSpec.describe AIManager::TaskExecutionEngine, type: :service do
     # Mock file loading for profile-based mission structure
     allow(File).to receive(:read).and_call_original
     allow(File).to receive(:exist?).and_call_original
+    allow(Dir).to receive(:glob).and_call_original
     
     # Mock profile file
     profile_path = GalaxyGame::Paths::MISSIONS_PATH.join('test-mission-001', 'test_mission_001_profile_v1.json')
+    allow(Dir).to receive(:glob).with(GalaxyGame::Paths::MISSIONS_PATH.join("**", "test_mission_001_profile_v1.json")).and_return([profile_path])
     allow(File).to receive(:exist?).with(profile_path).and_return(true)
     allow(File).to receive(:read).with(profile_path).and_return(profile.to_json)
     
     # Mock phase tasks file
     phase_path = GalaxyGame::Paths::MISSIONS_PATH.join('test-mission-001', 'test_mission_001_phase_1.json')
-    allow(File).to receive(:exist?).with(phase_path).and_return(true)
-    allow(File).to receive(:read).with(phase_path).and_return({ 'tasks' => task_list }.to_json)
+    allow(File).to receive(:exist?).with(phase_path.to_s).and_return(true)
+    allow(File).to receive(:read).with(phase_path.to_s).and_return({ 'tasks' => task_list }.to_json)
     
     # Mock manifest file
     manifest_path = GalaxyGame::Paths::MISSIONS_PATH.join('test-mission-001', 'test_mission_001_manifest_v1.json')
+    allow(Dir).to receive(:glob).with(GalaxyGame::Paths::MISSIONS_PATH.join("**", "test_mission_001_manifest_v1.json")).and_return([manifest_path])
     allow(File).to receive(:exist?).with(manifest_path).and_return(true)
     allow(File).to receive(:read).with(manifest_path).and_return(manifest.to_json)
   end

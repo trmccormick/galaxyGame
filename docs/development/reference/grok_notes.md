@@ -776,6 +776,7 @@ Task 5: Test Coverage
 - TaskExecutionEngine instance variables accessed via `instance_variable_get(:@task_list)`
 - Mission JSON files loaded from `app/data/missions/{mission-identifier}/` directory
 - Test missions show expected warnings about missing profile/task files (normal for test data)
+- TaskExecutionEngine now uses Dir.glob for recursive file discovery to support mission manifests in categorized subdirectories (e.g., missions/wormhole-discovery/)
 
 **Documentation**:
 See docs/developer/ADMIN_SYSTEM.md for complete admin system architecture, usage patterns, and extension guidelines.

@@ -150,11 +150,10 @@ module AIManager
     
     # Instance methods
     def load_task_list(mission_id)
-      mission_dir = mission_id.gsub('_', '-')
-      profile_file_path = GalaxyGame::Paths::MISSIONS_PATH.join(mission_dir, "#{mission_id}_profile_v1.json")
+      profile_file_path = Dir.glob(GalaxyGame::Paths::MISSIONS_PATH.join("**", "#{mission_id}_profile_v1.json")).first
       puts "Loading profile from: #{profile_file_path}"
 
-      if File.exist?(profile_file_path)
+      if profile_file_path && File.exist?(profile_file_path)
         profile = JSON.parse(File.read(profile_file_path))
         puts "Loaded profile with #{profile['phases']&.length || 0} phases"
 
@@ -162,7 +161,7 @@ module AIManager
         profile['phases']&.each do |phase|
           task_file = phase['task_list_file']
           if task_file
-            task_file_path = GalaxyGame::Paths::MISSIONS_PATH.join(mission_dir, task_file)
+            task_file_path = File.join(File.dirname(profile_file_path), task_file)
             puts "Loading phase tasks from: #{task_file_path}"
 
             if File.exist?(task_file_path)
@@ -180,10 +179,10 @@ module AIManager
         all_tasks
       else
         # Fallback to old single tasks file for backward compatibility
-        tasks_file_path = GalaxyGame::Paths::MISSIONS_PATH.join(mission_dir, "#{mission_id}_tasks_v1.json")
+        tasks_file_path = Dir.glob(GalaxyGame::Paths::MISSIONS_PATH.join("**", "#{mission_id}_tasks_v1.json")).first
         puts "Profile not found, falling back to: #{tasks_file_path}"
 
-        if File.exist?(tasks_file_path)
+        if tasks_file_path && File.exist?(tasks_file_path)
           data = JSON.parse(File.read(tasks_file_path))
           puts "Loaded #{data.length} tasks (legacy format)"
           data
@@ -195,12 +194,11 @@ module AIManager
     end
     
     def load_manifest(mission_id)
-      mission_dir = mission_id.gsub('_', '-')
       manifest_name = ENV['TEST_MANIFEST'] || "#{mission_id}_manifest_v1"
-      manifest_file_path = GalaxyGame::Paths::MISSIONS_PATH.join(mission_dir, "#{manifest_name}.json")
+      manifest_file_path = Dir.glob(GalaxyGame::Paths::MISSIONS_PATH.join("**", "#{manifest_name}.json")).first
       puts "Loading manifest from: #{manifest_file_path}"
       
-      if File.exist?(manifest_file_path)
+      if manifest_file_path && File.exist?(manifest_file_path)
         data = JSON.parse(File.read(manifest_file_path))
         puts "Loaded manifest with keys: #{data.keys}"
         data
