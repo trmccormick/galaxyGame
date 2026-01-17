@@ -250,7 +250,7 @@ Real-time planetary monitoring with sphere-based data visualization.
 - `base_construction` - Test base building procedures
 - `isru_pipeline` - Test in-situ resource utilization
 
-### 3. Organization Monitor (`/admin/development_corporations`)
+### 3. Organization Monitor (`/admin/organizations`)
 
 Monitor all organizations in the game universe with proper separation by ownership type.
 
@@ -264,7 +264,7 @@ Monitor all organizations in the game universe with proper separation by ownersh
 - Statistics panel: total NPCs, players, consortiums
 - Production capabilities tracking (structures and units)
 
-**Controller:** `Admin::DevelopmentCorporationsController#index`
+**Controller:** `Admin::OrganizationsController#index`
 
 ```ruby
 # Load NPC Organizations (Development Corps + NPC Service Corps)
@@ -379,7 +379,7 @@ namespace :admin do
   end
   
   # Other sections (stub controllers)
-  resources :development_corporations, only: [:index]
+  resources :organizations, only: [:index]
   resources :settlements, only: [:index]
   resources :resources, only: [] do
     collection do
