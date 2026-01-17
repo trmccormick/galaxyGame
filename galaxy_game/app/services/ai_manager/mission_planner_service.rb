@@ -9,6 +9,9 @@ module AIManager
       @target_location = AIManager::PatternTargetMapper.target_location(pattern_name)
       @earth = CelestialBodies::CelestialBody.find_by(identifier: 'earth')
       
+      Rails.logger.info "[MissionPlanner] Pattern: #{pattern_name}"
+      Rails.logger.info "[MissionPlanner] Target location: #{@target_location&.name || 'NONE'}"
+      
       # Handle case where Earth doesn't exist in database
       unless @earth
         Rails.logger.warn "MissionPlannerService: Earth celestial body not found, using default values"
@@ -35,9 +38,15 @@ module AIManager
       
       # Initialize services
       @material_lookup = Lookup::MaterialLookupService.new
+      Rails.logger.info "[MissionPlanner] MaterialLookupService initialized"
+      
       @capability_service = if @target_location
-        AIManager::PrecursorCapabilityService.new(@target_location)
+        service = AIManager::PrecursorCapabilityService.new(@target_location)
+        Rails.logger.info "[MissionPlanner] PrecursorCapabilityService initialized for #{@target_location.name}"
+        Rails.logger.info "[MissionPlanner] Local resources: #{service.local_resources.inspect}"
+        service
       else
+        Rails.logger.warn "[MissionPlanner] No target location - capability service disabled"
         nil
       end
     end
@@ -53,6 +62,9 @@ module AIManager
         planetary_changes: simulate_planetary_changes,
         local_capabilities: summarize_local_capabilities  # NEW
       }
+      
+      Rails.logger.info "[MissionPlanner] Simulation complete"
+      Rails.logger.info "[MissionPlanner] Local capabilities present: #{@results[:local_capabilities].present?}"
       
       @results
     end
@@ -130,6 +142,7 @@ module AIManager
       total_cost = 0
       cost_breakdown = {}
       total_transport_cost = 0
+      precursor_total_savings = 0
       
       resources[:total].each do |resource, quantity|
         # Use real market pricing with transport costs
@@ -138,6 +151,8 @@ module AIManager
         cost_breakdown[resource] = {
           quantity: quantity,
           source: costing[:source],
+          source_type: costing[:source_type],
+          chemical_formula: costing[:chemical_formula],
           unit_cost: costing[:unit_cost],
           transport_cost_per_unit: costing[:transport_cost_per_unit],
           total_material_cost: costing[:total_material_cost],
@@ -148,6 +163,7 @@ module AIManager
         
         total_cost += costing[:total]
         total_transport_cost += costing[:total_transport_cost]
+        precursor_total_savings += costing[:precursor_savings] || 0
       end
       
       {
@@ -156,7 +172,8 @@ module AIManager
         transport_cost_total: total_transport_cost,
         transport_cost_ratio: total_cost > 0 ? (total_transport_cost / total_cost * 100).round(2) : 0,
         contingency: total_cost * 0.15, # 15% contingency
-        grand_total: total_cost * 1.15
+        grand_total: total_cost * 1.15,
+        precursor_total_savings: precursor_total_savings
       }
     end
     
@@ -291,33 +308,48 @@ module AIManager
     # ========== REAL MARKET PRICING METHODS ==========
     
     def calculate_total_delivered_cost(resource, quantity)
+      Rails.logger.info "[MissionPlanner] Calculating cost for #{resource} (#{quantity} units)"
+      
       # Get material data to determine actual chemical formula
       material_data = @material_lookup.find_material(resource)
+      Rails.logger.info "[MissionPlanner] Material data found: #{material_data ? 'YES' : 'NO'}"
+      
       chemical_formula = if material_data
-        @material_lookup.get_material_property(material_data, 'chemical_formula') || 
-          material_data['id']
+        formula = @material_lookup.get_material_property(material_data, 'chemical_formula') || material_data['id']
+        Rails.logger.info "[MissionPlanner] Chemical formula: #{formula}"
+        formula
       else
-        resource  # Fallback to input if not found
+        Rails.logger.warn "[MissionPlanner] No material data for #{resource}, using raw name"
+        resource
       end
       
-      # PRIORITY 1: Local production check (using chemical formula)
-      if @capability_service && @capability_service.can_produce_locally?(chemical_formula)
-        local_cost = calculate_local_production_cost(chemical_formula, material_data)
-        import_cost_for_comparison = calculate_earth_anchor_price(resource)[:total]
+      # PRIORITY 1: Local production check
+      if @capability_service
+        can_produce = @capability_service.can_produce_locally?(chemical_formula)
+        Rails.logger.info "[MissionPlanner] Can produce locally: #{can_produce}"
         
-        return {
-          source: "Local ISRU (#{@target_location.name})",
-          source_type: 'local',
-          chemical_formula: chemical_formula,
-          unit_cost: local_cost,
-          transport_cost_per_unit: 0.0,
-          total_material_cost: local_cost * quantity,
-          total_transport_cost: 0.0,
-          total: local_cost * quantity,
-          alternatives: [],
-          precursor_savings: (import_cost_for_comparison - local_cost) * quantity,
-          production_method: determine_production_method(chemical_formula)
-        }
+        if can_produce
+          local_cost = calculate_local_production_cost(chemical_formula, material_data)
+          Rails.logger.info "[MissionPlanner] Local cost: #{local_cost} GCC/kg"
+          
+          import_cost_for_comparison = calculate_earth_anchor_price(resource)[:total]
+          
+          return {
+            source: "Local ISRU (#{@target_location.name})",
+            source_type: 'local',
+            chemical_formula: chemical_formula,
+            unit_cost: local_cost,
+            transport_cost_per_unit: 0.0,
+            total_material_cost: local_cost * quantity,
+            total_transport_cost: 0.0,
+            total: local_cost * quantity,
+            alternatives: [],
+            precursor_savings: (import_cost_for_comparison - local_cost) * quantity,
+            production_method: determine_production_method(chemical_formula)
+          }
+        end
+      else
+        Rails.logger.warn "[MissionPlanner] No capability service - skipping local check"
       end
       
       # PRIORITY 2: Regional NPC sources
@@ -327,7 +359,10 @@ module AIManager
       end
       
       # PRIORITY 3: Earth import
+      Rails.logger.info "[MissionPlanner] Using Earth import for #{resource}"
       eap = calculate_earth_anchor_price(resource)
+      Rails.logger.info "[MissionPlanner] EAP: material=#{eap[:material_cost]}, transport=#{eap[:transport_cost]}, total=#{eap[:total]}"
+      
       total_import_cost = eap[:total] * quantity
       
       {
@@ -490,14 +525,55 @@ module AIManager
     end
     
     def calculate_earth_anchor_price(resource)
-      earth_settlement = Settlement::BaseSettlement.joins(:location).find_by(celestial_locations: { celestial_body_id: @earth.id })
-      unit_cost = get_market_price(resource, earth_settlement)
-      transport_cost = calculate_transport_cost(earth_settlement, resource)
+      # Get Earth spot price from config
+      earth_price = EconomicConfig.earth_spot_price(resource)
       
+      unless earth_price
+        earth_price = estimate_unit_cost(resource)
+        Rails.logger.info "[MissionPlanner] Using estimated Earth price: #{earth_price} USD/kg"
+      end
+      
+      # Apply refining factor
+      refining_factor = EconomicConfig.refining_factor('default') || 1.0
+      material_cost = earth_price * refining_factor
+      
+      # Calculate transport cost
+      transport_cost = if @target_location
+        begin
+          cost = Logistics::TransportCostService.calculate_cost_per_kg(
+            from: 'earth',
+            to: @target_location.identifier,
+            resource: resource
+          )
+          Rails.logger.info "[MissionPlanner] Transport cost calculated: #{cost} GCC/kg"
+          cost
+        rescue => e
+          Rails.logger.error "[MissionPlanner] Transport calculation failed: #{e.message}"
+          fallback = estimate_transport_cost_fallback(resource)
+          Rails.logger.info "[MissionPlanner] Using fallback transport: #{fallback} GCC/kg"
+          fallback
+        end
+      else
+        # Fallback to game constant if no target location
+        Rails.logger.warn "[MissionPlanner] No target location - using initial transport cost"
+        GameConstants::INITIAL_TRANSPORTATION_COST_PER_KG
+      end
+      
+      result = {
+        material_cost: material_cost.round(2),
+        transport_cost: transport_cost.round(2),
+        total: (material_cost + transport_cost).round(2)
+      }
+      
+      Rails.logger.info "[MissionPlanner] EAP result: #{result.inspect}"
+      result
+    rescue => e
+      Rails.logger.error "[MissionPlanner] EAP calculation failed: #{e.message}"
+      estimated = estimate_unit_cost(resource)
       {
-        material_cost: unit_cost,
-        transport_cost: transport_cost,
-        total: unit_cost + transport_cost
+        material_cost: estimated * 0.3,
+        transport_cost: estimated * 0.7,
+        total: estimated
       }
     end
     
@@ -604,12 +680,26 @@ module AIManager
         end
       end
       
+      precursor_recommendation = if local_cost == 0 && @capability_service
+        potential_savings = costs[:precursor_total_savings] || 0
+        payback_years = potential_savings > 0 ? (100_000_000 / potential_savings.to_f).round(1) : nil # Rough estimate
+        
+        {
+          payback_analysis: {
+            recommendation: "Establish precursor infrastructure for #{payback_years} year payback",
+            potential_savings: potential_savings,
+            estimated_savings: potential_savings
+          }
+        }
+      end
+      
       {
         local_production: total_cost > 0 ? (local_cost / total_cost * 100).round(2) : 0,
         regional_supply: total_cost > 0 ? (regional_cost / total_cost * 100).round(2) : 0,
         earth_import: total_cost > 0 ? (import_cost / total_cost * 100).round(2) : 0,
         transport_cost_ratio: costs[:transport_cost_ratio],
-        infrastructure_note: local_cost == 0 ? "No local infrastructure - all materials imported" : "Local ISRU active"
+        infrastructure_note: local_cost == 0 ? "No local infrastructure - all materials imported" : "Local ISRU active",
+        precursor_recommendation: precursor_recommendation
       }
     end
     
