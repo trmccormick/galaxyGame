@@ -243,6 +243,11 @@ ls -la /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-20
 - Update or create relevant doc in `/docs` for each fix.
 - Include restored logic, Market/GCC variables, and alignment with mission/system intent.
 
+## Simulation Mandate **[2026-01-15] Documentation Update**
+- All fixes to the AIManager::MissionPlannerService and TerraSim::Simulator must preserve or implement support for source: :simulation hooks to enable the Digital Twin workflow.
+- Digital Twin operations shall use transient storage with automatic cleanup.
+- Simulation exports must conform to manifest_v1.1.json schema for AI Manager execution.
+
 ## Optional: Alpha Centauri JSON Generator Template
 - Goal: Provide generator for Alpha Centauri system files.
 - Suggested placement: `scripts/alpha_centauri_generator.rb` or JSON build script under `galaxy_game/json-build-scripts/`.
