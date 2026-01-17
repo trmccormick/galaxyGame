@@ -1,0 +1,108 @@
+{
+  "template": "mission_manifest",
+  "manifest_id": "relocation_ac_b1_manifest_v1.1",
+  "version": "1.1",
+  "craft": {
+    "id": "asteroid_relocation_tug_fleet",
+    "name": "AC-B1 Asteroid Relocation Fleet",
+    "use_recommended_fit": true,
+    "recommended_fit": {
+      "modules": [
+        { "id": "asteroid_hollowing_laser", "count": 6 },
+        { "id": "slag_collection_system", "count": 4 },
+        { "id": "precision_orbit_control", "count": 2 },
+        { "id": "nuclear_micro_reactor", "count": 3 },
+        { "id": "structural_integrity_scanner", "count": 1 },
+        { "id": "emergency_separation_system", "count": 1 }
+      ],
+      "units": [
+        { "id": "slag_propulsion_engine", "count": 8 },
+        { "id": "cryogenic_slag_storage", "count": 12 },
+        { "id": "asteroid_attachment_clamp", "count": 4 },
+        { "id": "navigation_computer_l1", "count": 1 }
+      ]
+    },
+    "installed_units": [
+      {
+        "name": "Slag Propulsion Engines",
+        "id": "slag_propulsion_engine",
+        "count": 8,
+        "status": "operational"
+      },
+      {
+        "name": "Cryogenic Slag Storage",
+        "id": "cryogenic_slag_storage",
+        "count": 12,
+        "status": "operational"
+      }
+    ]
+  },
+  "propulsion_system": {
+    "primary_propellant": "slag_fuel_id",
+    "efficiency_rating": 0.9,
+    "mass_reduction_factor": 0.1,
+    "slag_production_rate": 0.7,
+    "verification": {
+      "mass_burden_reduction": "90% confirmed",
+      "fuel_self_sufficiency": "achieved through asteroid hollowing",
+      "economic_impact": "reduces relocation costs by 90%"
+    }
+  },
+  "personnel": {
+    "required": 150,
+    "specializations": {
+      "asteroid_engineers": 45,
+      "orbital_mechanics": 30,
+      "slag_propulsion_specialists": 25,
+      "structural_integrity_experts": 20,
+      "l1_positioning_technicians": 15,
+      "depot_conversion_engineers": 15
+    }
+  },
+  "resources": {
+    "power_requirements": {
+      "base_load": 2500,
+      "peak_load": 15000,
+      "power_source": "nuclear_micro_reactor_array"
+    },
+    "communication_requirements": {
+      "bandwidth_min": 500,
+      "latency_max": 600,
+      "protocol": "wormhole_relay"
+    },
+    "material_requirements": {
+      "asteroid_targets": 3,
+      "slag_storage_capacity": 50000,
+      "structural_reinforcement": 1000
+    }
+  },
+  "operational_parameters": {
+    "mission_duration_days": 730,
+    "communication_windows": "continuous_via_wormhole",
+    "emergency_protocols": {
+      "asteroid_failure": "immediate_detachment",
+      "navigation_loss": "wormhole_anchor_homing",
+      "slag_depletion": "chemical_propulsion_backup"
+    }
+  },
+  "phobos_pattern_compliance": {
+    "pattern_version": "2026-01-08",
+    "sequence_verification": "Hollowed Asteroid Depot before planetary landing",
+    "asteroid_class": "Phobos-class (1.0-2.0 × 10^16 kg)",
+    "l1_destination": "Alpha Centauri B-1 L1 Lagrange point",
+    "depot_conversion": "nuclear fusion powered infrastructure"
+  },
+  "economic_integration": {
+    "wormhole_tax_optimization": {
+      "pre_depot_rate": 752.5,
+      "post_depot_rate": 451.5,
+      "reduction_percentage": 0.4,
+      "annual_savings": 2638800
+    },
+    "slag_economy_metrics": {
+      "propellant_efficiency": 0.9,
+      "cost_reduction": 0.9,
+      "fuel_self_sufficiency": true
+    }
+  }
+}

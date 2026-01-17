@@ -1,0 +1,71 @@
+{
+  "template": "mission_profile",
+  "mission_id": "relocation_ac_b1",
+  "name": "Super-Mars Relocation AC-B1",
+  "description": "Execute Phobos Pattern asteroid relocation to establish L1 Lagrange point depots for Alpha Centauri B-1 colonization. Convert hollowed asteroids into orbital infrastructure hubs using slag propulsion economy.",
+  "manifest_file": "manifest_v1.1.json",
+  "phases": [
+    {
+      "phase_id": "survey_selection",
+      "name": "Survey & Asteroid Selection",
+      "task_list_file": "phases_v1.json"
+    },
+    {
+      "phase_id": "tug_deployment",
+      "name": "Tug Deployment & Hollowing",
+      "task_list_file": "phases_v1.json"
+    },
+    {
+      "phase_id": "l1_positioning",
+      "name": "L1 Positioning & Stabilization",
+      "task_list_file": "phases_v1.json"
+    },
+    {
+      "phase_id": "depot_conversion",
+      "name": "Depot Conversion & Activation",
+      "task_list_file": "phases_v1.json"
+    }
+  ],
+  "start_conditions": {
+    "location": "ALPHA_CENTAURI_SYSTEM",
+    "tech_requirements": ["AsteroidRelocationTugs", "SlagPropulsion", "L1OrbitalMechanics"],
+    "resource_requirements": {
+      "gcc_budget": 2500000,
+      "personnel": 150,
+      "infrastructure": ["wormhole_anchor_stabilized"]
+    }
+  },
+  "completion_conditions": {
+    "asteroids_relocated": 3,
+    "l1_depots_operational": 3,
+    "slag_economy_established": true,
+    "wormhole_tax_reduction_achieved": true
+  },
+  "rewards": {
+    "credits": 5000000,
+    "player_xp": 2000000,
+    "unlocked_blueprints": ["AsteroidRelocationTug", "L1DepotCore", "SlagPropulsionSystem", "NuclearFusionDepot"],
+    "unlocked_technologies": ["PhobosPattern", "SlagPropulsionEconomy", "L1Infrastructure"],
+    "system_status_update": {
+      "alpha_centauri_b1": {
+        "l1_depots": "operational",
+        "slag_economy": "active",
+        "colonization_ready": true
+      },
+      "wormhole_economics": {
+        "tax_reduction": 0.4,
+        "transit_hub_established": true
+      }
+    }
+  },
+  "risks": {
+    "asteroid_structural_failure": "Risk of asteroid disintegration during hollowing",
+    "navigation_precision_failure": "L1 positioning requires extreme orbital precision",
+    "slag_supply_insufficiency": "Inadequate slag production for propulsion needs",
+    "wormhole_instability": "Anchor mass changes could destabilize wormhole"
+  },
+  "estimated_duration_years": 2,
+  "priority": "critical",
+  "category": "super-mars-relocation",
+  "pattern_compliance": "Phobos Pattern - Hollowed Asteroid Depot sequence"
+}
