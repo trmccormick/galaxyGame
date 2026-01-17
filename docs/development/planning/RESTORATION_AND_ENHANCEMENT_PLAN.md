@@ -678,6 +678,76 @@ git add galaxy_game/app/controllers/admin/resources_controller.rb galaxy_game/ap
 git commit -m 'feat: add D3.js resource flow visualization to admin panel'
 
 REMINDER: All operations inside docker container. JavaScript changes may need asset recompilation."
+
+### 4.2 SimEarth Digital Twin Sandbox **[2026-01-15] Documentation Mandate**
+
+**Goal:** Implement Digital Twin simulation capabilities for accelerated deployment pattern testing
+
+**Codified Intent:** The Admin Dashboard shall support a 'Digital Twin' mode where a target celestial body's data (Atmosphere, Hydrosphere, Geosphere) is cloned into a transient state. This allows for accelerated (100-year projection) 'What-If' simulations of deployment patterns (e.g., Mars-Terraforming) without impacting live game data.
+
+**Requirement:** Successful simulation runs must be exportable as a versioned manifest_v1.1.json which can be passed to the AIManager::TaskExecutionEngine for live execution.
+
+**Grok Command:**
+
+```
+"Grok, execute all commands ONLY within the web docker container.
+
+Objective: Implement SimEarth Digital Twin Sandbox for accelerated deployment pattern simulation.
+
+Task 1: Digital Twin Data Cloning Service
+
+CREATE: galaxy_game/app/services/digital_twin_service.rb
+
+Features:
+- clone_celestial_body(celestial_body_id) → creates transient copy in Redis/memory
+- simulate_deployment_pattern(pattern_name, duration_years, parameters) → runs accelerated simulation
+- export_simulation_manifest → generates manifest_v1.1.json with optimized parameters
+- cleanup_twin(twin_id) → removes transient data
+
+Integration: 
+- Atmosphere, Hydrosphere, Geosphere data cloning
+- TerraSim integration for accelerated time projection
+- Pattern parameter optimization (budget, tech level, priority)
+
+Task 2: Admin Digital Twin UI Component
+
+CREATE: galaxy_game/app/views/admin/simulation/digital_twin.html.erb
+
+Features:
+- Celestial body selector (dropdown from CelestialBody.all)
+- Pattern selector (mars-terraform, venus-industrial, etc.)
+- Simulation parameters (duration, budget multiplier, tech assumptions)
+- Real-time progress visualization
+- Export Manifest button → downloads manifest_v1.1.json
+- Apply to Live button → passes manifest to AIManager::TaskExecutionEngine
+
+Controller: galaxy_game/app/controllers/admin/simulation_controller.rb (extend)
+Actions: create_twin, run_simulation, export_manifest, apply_to_live
+
+Task 3: Simulation Hook Integration
+
+ENHANCE: galaxy_game/app/services/ai_manager/mission_planner_service.rb
+ENHANCE: galaxy_game/app/services/terra_sim/simulator.rb
+
+Add source: :simulation parameter support:
+- MissionPlannerService.simulate(source: :simulation) → uses digital twin data
+- TerraSim::Simulator.run(source: :simulation) → accelerated time projection
+- Pattern optimization hooks for AI learning
+
+VERIFICATION:
+- Start server: bundle exec rails s -b 0.0.0.0
+- Navigate to: http://localhost:3000/admin/simulation/digital_twin
+- Create twin of Mars, run 100-year terraform simulation
+- Export manifest, verify JSON structure matches v1.1 schema
+- Test 'Apply to Live' passes manifest to AI Manager
+
+COMMIT:
+git add galaxy_game/app/services/digital_twin_service.rb
+git add galaxy_game/app/views/admin/simulation/digital_twin.html.erb
+git add galaxy_game/app/controllers/admin/simulation_controller.rb
+git commit -m 'feat: implement SimEarth Digital Twin Sandbox for accelerated deployment simulation'
+
+REMINDER: Digital Twin operations use transient storage. Ensure cleanup on session end."
 ```
 
 ---
