@@ -72,10 +72,10 @@ Rails.application.routes.draw do
       end
     end
     
-    # Development Corporations routes
-    get 'development_corporations', to: 'development_corporations#index', as: 'development_corporations'
-    get 'development_corporations/:id/operations', to: 'development_corporations#operations', as: 'development_corporation_operations'
-    get 'development_corporations/contracts', to: 'development_corporations#contracts', as: 'development_corporation_contracts'
+    # Organizations routes
+    get 'organizations', to: 'organizations#index', as: 'organizations'
+    get 'organizations/:id/operations', to: 'organizations#operations', as: 'organization_operations'
+    get 'organizations/contracts', to: 'organizations#contracts', as: 'organization_contracts'
     
     # Settlements routes
     get 'settlements', to: 'settlements#index', as: 'settlements'
