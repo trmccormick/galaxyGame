@@ -4,6 +4,16 @@
 
 ## Active Work
 
+### Data-Driven Architecture Improvements
+**Status**: ✅ Completed PrecursorCapabilityService  
+**Achievement**: Eliminated hardcoded world identifiers from AI Manager
+
+**Recent Implementation**:
+- ✅ PrecursorCapabilityService - Queries celestial body sphere data
+- ✅ Replaced `MissionPlannerService.can_produce_locally?` hardcoded case statements
+- ✅ Data-driven resource detection (atmosphere, geosphere, hydrosphere)
+- 📝 Documentation moved to [PRECURSOR_CAPABILITY_SERVICE.md](../planning/PRECURSOR_CAPABILITY_SERVICE.md)
+
 ### Test Suite Restoration (Phase 3)
 **Status**: In Progress - Quick-Fix grinding with Grok  
 **Current Failures**: ~398 (down from 401)  
@@ -13,7 +23,8 @@
 - ✅ shell_spec.rb → 66/66 passing (restored construction_date tracking)
 - ✅ consortium_membership_spec.rb → 5/5 passing (improved test with real organization)
 - ✅ covering_service_spec.rb → 23/24 passing (restored CraterDome cover methods)
-- 🔄 financial/account_spec.rb → in progress
+- ✅ spatial_location_spec.rb → 14/14 passing (implemented update_location method)
+- 🔄 Additional specs - ongoing Quick-Fix grinding
 
 #### Workflow
 - **Interactive Quick-Fix**: 2-3 specs per hour with human approval
