@@ -490,7 +490,7 @@ module AIManager
     end
     
     def calculate_earth_anchor_price(resource)
-      earth_settlement = Settlement::BaseSettlement.find_by(celestial_body: @earth)
+      earth_settlement = Settlement::BaseSettlement.joins(:location).find_by(celestial_locations: { celestial_body_id: @earth.id })
       unit_cost = get_market_price(resource, earth_settlement)
       transport_cost = calculate_transport_cost(earth_settlement, resource)
       
@@ -518,10 +518,10 @@ module AIManager
     
     def calculate_transport_cost(from_settlement, resource)
       return 0.0 unless from_settlement && @target_location
-      return 0.0 if from_settlement.celestial_body_id == @target_location.id
+      return 0.0 if from_settlement.location.celestial_body_id == @target_location.id
       
       begin
-        from_body = from_settlement.celestial_body&.identifier || 'earth'
+        from_body = from_settlement.location.celestial_body&.identifier || 'earth'
         to_body = @target_location.identifier
         
         Logistics::TransportCostService.calculate_cost_per_kg(
@@ -538,7 +538,7 @@ module AIManager
     
     def estimate_transport_cost(from_settlement, to_location)
       # Simple distance-based estimate if service fails
-      from_body = from_settlement.celestial_body
+      from_body = from_settlement.location.celestial_body
       return 100.0 unless from_body && to_location
       
       # Very rough estimate based on orbital relationships
@@ -559,12 +559,12 @@ module AIManager
       alternatives = []
       
       # Try finding other settlements that could supply
-      possible_sources = Settlement::BaseSettlement.joins(:celestial_body)
-        .where.not(celestial_body_id: nil)
+      possible_sources = Settlement::BaseSettlement.joins(location: :celestial_body)
+        .where.not(celestial_locations: { celestial_body_id: nil })
         .limit(5)
       
       possible_sources.each do |settlement|
-        next if settlement.celestial_body_id == @target_location&.id
+        next if settlement.location.celestial_body_id == @target_location&.id
         
         unit_cost = get_market_price(resource, settlement)
         transport_cost = calculate_transport_cost(settlement, resource)
@@ -573,7 +573,7 @@ module AIManager
         if alt_total < current_total_cost
           savings = current_total_cost - alt_total
           alternatives << {
-            source: settlement.name || settlement.celestial_body.name,
+            source: settlement.name || settlement.location.celestial_body.name,
             total: alt_total.round(2),
             savings: savings.round(2),
             savings_percent: ((savings / current_total_cost) * 100).round(1)
