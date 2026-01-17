@@ -15,9 +15,12 @@ module AIManager
       # @return [CelestialBodies::CelestialBody, nil] The target celestial body
       def target_location(pattern_name)
         identifier = PATTERN_TARGETS[pattern_name]
+        Rails.logger.info "[PatternTargetMapper] Pattern: #{pattern_name} → identifier: #{identifier}"
         return nil unless identifier
         
-        CelestialBodies::CelestialBody.find_by(identifier: identifier)
+        body = CelestialBodies::CelestialBody.find_by(identifier: identifier)
+        Rails.logger.info "[PatternTargetMapper] Found celestial body: #{body&.name || 'NONE'}"
+        body
       end
       
       # Get the target location identifier (for cases where DB isn't available)
