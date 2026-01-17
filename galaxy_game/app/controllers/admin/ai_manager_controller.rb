@@ -1,7 +1,5 @@
 module Admin
   class AiManagerController < ApplicationController
-    # Ensure AIManager module is loaded
-    require_dependency 'ai_manager/task_execution_engine' if Rails.env.test?
     
     def missions
       # Load all missions from database
