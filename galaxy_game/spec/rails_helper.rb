@@ -52,7 +52,8 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     # Clean test DB completely before test suite
-    DatabaseCleaner.clean_with(:truncation)
+    # Using :deletion instead of :truncation to avoid PostgreSQL deadlocks (2026-01-18)
+    DatabaseCleaner.clean_with(:deletion)
     
     # Create system currencies needed for tests
     Financial::Currency.find_or_create_by!(
