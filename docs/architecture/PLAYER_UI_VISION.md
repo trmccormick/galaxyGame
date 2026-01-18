@@ -1,14 +1,14 @@
 # Player UI Vision - SimEarth Meets Eve Online
 
-**⚠️ CRITICAL**: This is a **FUTURE VISION DOCUMENT** - NOT current development priorities.
+**Purpose**: Define the player-facing UI for the **player-first contract economy** where players get first refusal on harvesting, logistics, and construction missions.
 
-**Current Development Focus** (Jan 2026): AI Manager pattern learning in Sol system, then wormhole expansion to Prize systems like AOL-732356. **Players are NOT being introduced yet** - this is testing and buildout only. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md) for actual development sequence.
+**Philosophy**: **Player-first task priority** - Contracts offered to players FIRST, NPC fallback ensures game progression. Players earn **GCC (Galactic Credit Chip)** to influence game development through economic participation in an AI-managed living universe.
 
-**Purpose**: Define the player-facing UI IF/WHEN players are introduced (potentially after wormhole network operational).
+**Current Development Status** (Jan 2026): 
+- **Phase 1** (CURRENT): Contract board, GCC wallet, basic ship/cargo management for player contract participation
+- **Phase 4** (FUTURE): Advanced features (corporation system, reputation, advanced markets)
 
-**Philosophy**: Players would be participants in an existing AI-managed economy (not empty sandbox), learning through contracts and missions in a SimEarth-style universe with Eve Online economic depth.
-
-**Target Timeline**: Unknown - depends on AI Manager testing success. Earliest possible: After Milestone 5 (wormhole network stable). See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md#player-integration-future---not-current-development) for details.
+**Target Timeline**: Phase 1 contract system implementation after test suite < 50 failures. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md#phase-1-sol-system-npc-buildout--player-contract-economy-current) for player-first task assignment details.
 
 ---
 

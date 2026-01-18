@@ -10,9 +10,9 @@
 
 ## 🎯 Actual Development Sequence
 
-### Phase 1: Sol System NPC Buildout (CURRENT - Testing Phase)
+### Phase 1: Sol System NPC Buildout + Player Contract Economy (CURRENT)
 
-**Goal**: Build complete Sol system infrastructure using mission profiles to establish proven patterns
+**Goal**: Build complete Sol system infrastructure using mission profiles while enabling player participation through **player-first task assignment**
 
 **What AI Manager Learns**:
 1. **Luna Pattern** - Surface ISRU (regolith → I-beams, panels)
@@ -25,19 +25,22 @@
 **NPC Infrastructure Built** (see [NPC_INITIAL_DEPLOYMENT_SEQUENCE.md](NPC_INITIAL_DEPLOYMENT_SEQUENCE.md)):
 - Luna → L1 → LEO → Mars/Phobos → Venus (artificial moons) → Titan → Jupiter → Saturn → Uranus → Neptune
 - All depots, stations, atmospheric harvesting operational
-- GCC markets established (NPC-to-NPC Virtual Ledger trading)
+- GCC markets established (player + NPC trading, Virtual Ledger for NPC-only flows)
 - Early terraforming active (Mars CO2/N2 import, Venus gas extraction)
 
-**Player Status**: **NO PLAYERS** - This is testing/development only
-- Player UI exists in vision documents but NOT implemented
-- No player accounts, no player contracts, no player UI
-- NPCs trade via Virtual Ledger (internal accounting, no player interaction)
+**Player Status**: **PLAYER-FIRST TASK PRIORITY**
+- **Contract System**: Harvesting, logistics, construction missions offered to players FIRST
+- **NPC Fallback**: If players don't accept (or timeout), tasks move to NPC queue to keep game progressing
+- **GCC Economy**: Players earn Galactic Credit Chip (GCC) for completed missions
+- **Influence**: Players use GCC to buy materials, ships, contracts - influencing game progression
 
 **Success Criteria**:
 - ✅ All 10-phase NPC deployment completes successfully
-- ✅ AI Manager can execute mission profiles autonomously
-- ✅ Patterns validated and documented
-- ✅ Economic systems operational (GCC markets, Virtual Ledger, USD imports)
+- ✅ Player-first task assignment operational (contracts → players first, NPC fallback)
+- ✅ GCC economy functional (players earn credits, trade in markets)
+- ✅ Dual accounting: GCC for player transactions, Virtual Ledger for NPC-to-NPC
+- ✅ AI Manager executes mission profiles autonomously (game progresses without player participation)
+- ✅ Patterns validated and documented (ready for wormhole expansion)
 
 ---
 
@@ -190,62 +193,104 @@ Sol (Hub)
 - **Kinetic Hammer Strategy**: Controlled Snaps to discover new systems
 - **Economic Intelligence**: Minimize Earth dependency, maximize ISRU and NPC self-sufficiency
 
-**Player Status**: **IF PLAYERS EXIST** (still optional)
-- Players participate in network economy (transport contracts, market trading)
-- Players join Consortium (vote on routes, invest in AWS construction)
-- Players specialize (logistics, manufacturing, exploration contracts)
-- Players experience "living universe" (NPCs already established, infrastructure operational)
+**Player Status**: **PLAYER-FIRST CONTRACT PRIORITY** (Phase 1 active)
+- Players get first refusal on transport contracts (fuel delivery, material shipments between systems)
+- Players can join Consortium (vote on routes, invest in AWS construction) if reputation high
+- Players earn GCC through logistics missions, market trading, exploration contracts
+- NPCs provide fallback (game progresses autonomously if players don't participate)
 
 **Success Criteria**:
 - ✅ AI Manager manages 5+ systems simultaneously
 - ✅ Network remains stable (EM production ≥ consumption)
-- ✅ Economic systems scale (GCC markets, Virtual Ledger, NPC trading)
+- ✅ Economic systems scale (GCC markets, Virtual Ledger, player + NPC trading)
 - ✅ AI Manager makes data-driven expansion decisions (Prize vs Siphon prioritization)
+- ✅ Player contract system scales to multi-system logistics missions
 
 ---
 
-## 🎮 Player Integration (Future - NOT Current Development)
+## 🎮 Player Integration: Phase 1 Contract Economy (CURRENT)
 
-### When Players Enter (IF AT ALL)
+### Player-First Task Priority System
 
-**Earliest Possible Entry**: After Phase 4 (Snap Crisis)
-- Sol system already built (all depots, stations operational)
-- AOL-732356 infrastructure established (first wormhole expansion complete)
-- Crisis creates economic opportunities (resource transport, logistics optimization)
+**Philosophy**: **Players get first refusal** on harvesting, logistics, and construction contracts. If players don't accept (or timeout), tasks move to NPC queue to keep game progressing.
 
-**What Players Would Experience**:
-- **Living Universe**: NPCs have built everything, economy operational
-- **Active Markets**: GCC trading, contracts available, baseline pricing established
-- **Tutorial Missions**: Simple delivery contracts (Luna → L1, Venus → Mars)
-- **Progression**: Reputation unlocks better contracts, access to wormhole network
-- **Consortium Participation**: Vote on routes, earn dividends, invest in AWS construction
+**Player Role in Phase 1**:
+- **Contract Participant**: Accept missions (harvesting, logistics, construction) before NPCs get them
+- **GCC Earner**: Complete missions to earn Galactic Credit Chip (GCC) currency
+- **Economic Actor**: Use GCC to buy materials, ships, influence game progression
+- **Optional Engagement**: Game progresses autonomously via NPC fallback (players don't block development)
 
-**What Players Would NOT Do** (AI Manager handles):
-- Building initial Sol infrastructure (NPCs already did this)
-- Discovering first wormhole (AI Manager scouting probes)
-- Deploying to AOL-732356 (AI Manager cycler missions)
-- Managing network EM budgets (AI Manager economic intelligence)
+**Contract Examples**:
+- **Harvesting**: Luna regolith collection, Venus CO₂ extraction, Titan methane processing
+- **Logistics**: Fuel delivery (L1 → Mars), material transport (Luna → LEO), supply runs
+- **Construction**: Habitat assembly, depot setup, atmospheric harvesting station deployment
 
-**Player Role**:
-- **Participants** in existing economy (not builders of initial infrastructure)
-- **Optimizers** (find profitable niches NPCs miss)
-- **Specialists** (logistics, manufacturing, exploration)
-- **Stakeholders** (Consortium members with voting power)
+**Economic Flow**:
+```
+Mission Available
+    ↓
+Offered to Players First (24-48 hour timeout)
+    ↓
+If Accepted: Player completes → Earns GCC → Trades in markets
+If Declined/Timeout: Moves to NPC queue → AI Manager assigns → Game progresses
+```
 
-### Player UI Status (See [PLAYER_UI_VISION.md](PLAYER_UI_VISION.md))
+**GCC Economy**:
+- Players earn GCC for completed missions
+- Players spend GCC in markets (buy materials, fuel, ships, contracts)
+- Players influence game: High GCC = outbid NPCs, access premium contracts, invest in infrastructure
+- Dual accounting: GCC for player transactions, Virtual Ledger for NPC-to-NPC flows
 
-**Current State**: Vision documents exist, NO implementation
-- ❌ Player dashboard (no code)
-- ❌ Contract board (backend exists, no UI)
-- ❌ Market interface (no code)
-- ❌ Ship/cargo management (no code)
-- ❌ Tutorial system (no code)
+### Player UI Requirements (See [PLAYER_UI_VISION.md](PLAYER_UI_VISION.md))
 
-**Implementation Priority**: AFTER test suite green (<50 failures)
-- Phase 4.1: Core contracts (dashboard, contract board, ship management)
-- Phase 4.2: Economic depth (market trading, reputation system)
-- Phase 4.3: Strategic tools (system map, economic forecasting)
-- Phase 4.4: Social systems (corporations, contract sharing)
+**Phase 1 Required** (Contract Economy - CURRENT):
+- ✅ Contract board (backend exists, UI needed)
+- ✅ GCC wallet/balance display
+- ✅ Basic ship/cargo management
+- ✅ Simple mission tracking
+
+**Phase 4 Future** (Advanced Features):
+- ❌ Advanced market interface (order books, limit orders, trading tools)
+- ❌ Reputation system (unlock better contracts)
+- ❌ Corporation/Consortium participation
+- ❌ Economic forecasting tools
+
+**Implementation Priority**: Phase 1 contract UI AFTER test suite green (<50 failures)
+
+### Player Progression Path
+
+**Beginner Contracts** (Tutorial):
+- Simple deliveries: Luna → L1, Venus → LEO
+- Earn first GCC, learn market basics
+- Build reputation with NPCs
+
+**Intermediate Contracts** (After reputation threshold):
+- Multi-leg logistics: Titan methane → Mars, Venus CO₂ → LEO
+- Participate in outer planet missions (Jupiter, Saturn, Uranus, Neptune)
+- Access to higher GCC rewards
+
+**Advanced Participation** (High reputation):
+- Wormhole logistics (Phase 3+): Sol → AOL-732356 transport
+- Consortium membership: Vote on network routes, invest in AWS construction
+- Specialized roles: Exploration scouts, manufacturing specialists
+
+---
+
+## 🔮 Future Expansion (Phase 4-5 - Optional)
+
+### "The Snap" Crisis Event (Phase 4)
+
+**If Players Active**: Crisis creates economic opportunities
+- **Emergency Contracts**: High-GCC missions for rapid resource transport, emergency fuel delivery
+- **Market Volatility**: Price spikes create arbitrage opportunities
+- **Reputation Boost**: Players who complete crisis contracts earn major reputation gains
+
+### Multi-System Network (Phase 5 - Optional Far Future)
+
+**If Implemented**: Players participate in larger galactic economy
+- **Inter-System Logistics**: High-value contracts for wormhole transport (AOL-732356 ↔ System B)
+- **Consortium Governance**: Vote on network expansion routes, AWS construction priorities
+- **Economic Specialization**: Players find niches NPCs don't optimize (rare material arbitrage, exploration)
 
 ---
 
@@ -256,15 +301,15 @@ Sol (Hub)
 **Active Work**:
 1. ✅ **Test Suite Restoration** - Fix 393 failures to get code baseline stable
 2. ✅ **Database Fixes** - Resolved deadlock issues (deletion strategy working)
-3. ✅ **Documentation** - Clarifying NPC deployment, AI Manager vision, player UI plans
-4. **Mission Profile Validation** - Ensure Sol patterns work correctly
-5. **AI Manager Foundation** - MissionExecutor, ResourceAcquisition, ScoutLogic services
+3. ✅ **Documentation** - Clarified player-first task priority, NPC fallback, GCC economy
+4. **Player Contract System** - Backend exists (contracts, missions), UI needed (contract board, GCC wallet)
+5. **Mission Profile Validation** - Ensure Sol patterns work correctly for both player + NPC execution
+6. **AI Manager Foundation** - MissionExecutor, ResourceAcquisition services (support NPC fallback)
 
 **NOT Doing Now**:
-- ❌ Player UI implementation (vision only, no code)
-- ❌ Wormhole expansion (patterns first, expansion later)
+- ❌ Advanced player UI (reputation, corporations, forecasting tools - Phase 4 only)
+- ❌ Wormhole expansion (patterns first, expansion Phase 3)
 - ❌ Consortium governance (after wormhole mechanics proven)
-- ❌ Player contracts/markets (NPCs only via Virtual Ledger)
 
 ### Next Milestones
 

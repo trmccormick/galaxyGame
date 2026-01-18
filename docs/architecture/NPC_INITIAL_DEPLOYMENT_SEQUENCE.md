@@ -337,18 +337,20 @@ Phase 10: Market Establishment & Player Entry Readiness
 
 ---
 
-### Phase 10: Pattern Library Completion & Wormhole Expansion Readiness
+### Phase 10: Market Establishment & Player Contract System
 
 **Status**: ❌ **MISSING - AI Manager integration needed**
 
-**Required Code**: `app/services/ai_manager/pattern_learning_service.rb`
+**Required Code**: `app/services/ai_manager/market_establishment_service.rb`, `app/controllers/contracts_controller.rb`
 
 **AI Manager Actions**:
-1. **Pattern Extraction**: Generalize Luna, L1, Mars, Venus, Titan, Gas Giant patterns from Sol deployment
-2. **System Analysis**: Implement ScoutLogic (TEI scoring, EM detection, resource assessment)
-3. **Pattern Matching**: Implement StrategySelector (map system profile to appropriate pattern)
-4. **Economic Intelligence**: Validate ResourceAcquisition (ISRU → NPC → Earth priority)
-5. **Wormhole Readiness**: Verify all Phase 1-9 patterns operational and ready for AOL-732356 deployment
+1. **Market Creation**: Generate GCC markets at each settlement (Luna, L1, Phobos, Venus, Titan, LEO)
+2. **Contract Generation**: Create harvesting, logistics, construction contracts with player-first priority
+3. **Player-First Assignment**: Offer contracts to players (timeout 24-48 hours), move to NPC queue if declined
+4. **Pricing Establishment**: Set baseline GCC prices using economic forecaster (supply/demand simulation)
+5. **Dual Economy**: GCC for player transactions, Virtual Ledger for NPC-to-NPC accounting
+6. **NPC Fallback Trading**: Activate NPC-to-NPC trade to ensure game progression if players don't participate
+7. **Pattern Library**: Extract Luna, L1, Mars, Venus, Titan, Gas Giant patterns for wormhole expansion (Phase 2)
 
 **Market Establishment Criteria**:
 - ✅ Luna market: Regolith products (I-beams, panels), gases

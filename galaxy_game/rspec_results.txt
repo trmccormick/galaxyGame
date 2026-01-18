@@ -1,33 +1,30 @@
 
 An error occurred in a `before(:suite)` hook.
-Failure/Error:
-  DatabaseCleaner.clean_with(:truncation, except: %w[
-    celestial_bodies
-    locations
-    materials
-    ar_internal_metadata
-    schema_migrations
-  ])
+Failure/Error: DatabaseCleaner.clean_with(:truncation)
 
-ActiveRecord::ConnectionNotEstablished:
-  connection is closed
-# /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:240:in 'DatabaseCleaner::ActiveRecord::ConnectionWrapper::PostgreSQLAdapter#tables_with_schema'
-# /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:215:in 'DatabaseCleaner::ActiveRecord::ConnectionWrapper::PostgreSQLAdapter#database_cleaner_table_cache'
-# /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:44:in 'DatabaseCleaner::ActiveRecord::Truncation#tables_to_clean'
+ActiveRecord::Deadlocked:
+  PG::TRDeadlockDetected: ERROR:  deadlock detected
+  DETAIL:  Process 26826 waits for AccessExclusiveLock on relation 29584 of database 22024; blocked by process 26636.
+  Process 26636 waits for AccessShareLock on relation 30438 of database 22024; blocked by process 26826.
+  HINT:  See server log for query details.
+# /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:198:in 'DatabaseCleaner::ActiveRecord::ConnectionWrapper::PostgreSQLAdapter#truncate_tables'
 # /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:25:in 'block in DatabaseCleaner::ActiveRecord::Truncation#clean'
 # /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:21:in 'DatabaseCleaner::ActiveRecord::Truncation#clean'
 # /usr/local/bundle/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaner.rb:65:in 'DatabaseCleaner::Cleaner#clean_with'
 # /usr/local/bundle/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:40:in 'block in DatabaseCleaner::Cleaners#clean_with'
 # /usr/local/bundle/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:40:in 'Array#each'
 # /usr/local/bundle/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:40:in 'DatabaseCleaner::Cleaners#clean_with'
-# ./spec/support/database_cleaner.rb:10:in 'block (2 levels) in <main>'
+# ./spec/rails_helper.rb:55:in 'block (2 levels) in <top (required)>'
 # ------------------
 # --- Caused by: ---
-# PG::ConnectionBad:
-#   connection is closed
-#   /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:240:in 'DatabaseCleaner::ActiveRecord::ConnectionWrapper::PostgreSQLAdapter#tables_with_schema'
+# PG::TRDeadlockDetected:
+#   ERROR:  deadlock detected
+#   DETAIL:  Process 26826 waits for AccessExclusiveLock on relation 29584 of database 22024; blocked by process 26636.
+#   Process 26636 waits for AccessShareLock on relation 30438 of database 22024; blocked by process 26826.
+#   HINT:  See server log for query details.
+#   /usr/local/bundle/gems/database_cleaner-active_record-2.2.0/lib/database_cleaner/active_record/truncation.rb:198:in 'DatabaseCleaner::ActiveRecord::ConnectionWrapper::PostgreSQLAdapter#truncate_tables'
 
 
-Finished in 1.14 seconds (files took 25.13 seconds to load)
+Finished in 2.4 seconds (files took 24.81 seconds to load)
 0 examples, 0 failures, 1 error occurred outside of examples
 
