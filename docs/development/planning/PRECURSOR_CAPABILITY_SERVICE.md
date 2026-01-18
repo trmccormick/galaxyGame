@@ -31,38 +31,20 @@ Precursor missions establish local ISRU capacity and core infrastructure before 
 
 **Schema Evolution Note:** The service was updated on 2026-01-17 to use current attribute names after database migrations changed the Geosphere/Hydrosphere schemas. See [GROK_TASK_PLAYBOOK.md](../../developer/GROK_TASK_PLAYBOOK.md#schema-evolution-tracking-2026-01-17) for details.
 
-**Usage:**
+
 ```ruby
 # In MissionPlannerService
-capability_service = AIManager::PrecursorCapabilityService.new(celestial_body)
 can_produce = capability_service.can_produce_locally?('water_ice')
 ```
 
 ## Precursor Phases
-
-- **Phase 1: Initial Setup**
-  - Power systems online (solar/nuclear depending on environment)
-  - Communications and monitoring
   - Basic surface preparation
 - **Phase 2: Habitat & Advanced ISRU**
-  - Pressurization infrastructure
-  - Water extraction and processing
-  - Atmospheric processing (where applicable)
-  - Regolith mining and materials preparation
-
 ## Environment-Aware Capabilities
 
-### Luna (luna/moon)
-- **Resources:** oxygen, water (polar ice/recycling), regolith, silicon, aluminum, helium-3
-- **Extraction:** regolith processing, electrolysis, surface mining
 - **Notes:** Lava tube sites preferred for settlement entrances and coverage
 
-### Mars (mars)
-- **Resources:** oxygen, water (polar/subsurface), CO2 (atmospheric), regolith, iron, nitrogen
-- **Extraction:** atmospheric processing (MOXIE-like), subsurface ice, regolith mining
-- **Notes:** Precursor enables on-site O2/H2O production
 
-### Titan (titan)
 - **Resources:** methane, ethane, nitrogen, water_ice
 - **Extraction:** lakes and atmospheric processing
 - **Notes:** Fuel hub for outer system operations
