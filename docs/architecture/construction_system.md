@@ -81,9 +81,73 @@ Located in `app/models/structures/`
   - Belongs to settlement
   - Has operational_data (jsonb)
 
-### Old Structure Files (To Be Deleted After Migration)
-- `app/models/structures/access_point.rb` - OLD, being replaced by feature
-- `app/models/structures/skylight.rb` - OLD, being replaced by feature
+### Old Structure Files (Migration Context - 2026-01-18)
+
+**Important: These represent the Worldhouse Evolution**
+
+- `app/models/structures/skylight.rb` - **LEGACY TABLE REFERENCE**
+  - Uses `self.table_name = 'skylights'` to maintain compatibility with 'skylights' table
+  - Originally: Natural lava tube skylights that could be covered
+  - Evolution: Generic worldhouse enclosure system for ANY feature opening
+  - **Architecture Shift**: Separated into two concerns:
+    - `CelestialBodies::Features::Skylight` - Natural planetary features (actual roof openings)
+    - `Structures::Skylight` - Worldhouse enclosure records (construction status for covering)
+  - **Why Both Exist**: Natural features (discovery) vs construction status (enclosure process)
+  - Related to regolith I-beam + panel construction methodology (see Worldhouse Construction below)
+
+- `app/models/structures/access_point.rb` - LEGACY
+  - Being replaced by CelestialBodies::Features::AccessPoint
+  - Natural openings in feature sides/ends
+
+---
+
+## Worldhouse Construction Methodology
+
+### Generic Regolith I-Beam + Panel System
+
+**Design Philosophy**: Lowest-cost construction using in-situ resources
+
+**Construction Materials**:
+1. **3D Printed I-Beams**
+   - Source: Depleted planetary regolith
+   - Enhancement: Possibly enhanced for structural strength on-world
+   - Process: ISRU (In-Situ Resource Utilization)
+   - Function: Structural framework for enclosures
+
+2. **Generic Panel Technology**
+   - Types: Structural panels (opaque) or transparent panels (for skylights)
+   - Purpose: Sealing enclosed areas for pressurization
+   - Manufacturing: On-site fabrication from local materials
+
+**First Implementation: Luna Settlement**
+- Target: First habitable settlement on Luna (Moon)
+- Method: Seal natural lava tube using I-beam framework + panels
+- Goal: Lowest cost option for initial human habitation
+- Progression: Proves concept for all subsequent construction
+
+**Expansion Path**:
+1. **Luna → L1 Station**
+   - Apply same I-beam + panel tech to L1 station construction
+   - Built at Earth-Moon L1 Lagrange point
+   - Enables shipyard capabilities
+
+2. **L1 → Depot**
+   - Construct warehouse and refueling depot using proven methodology
+   - Supports logistics for deeper space operations
+
+3. **L1 Shipyard → Tug & Cycler Construction**
+   - Repair station + shipyard facilities
+   - Enables construction of:
+     - **Tugs**: Short-range cargo/crew transfer craft
+     - **Cyclers**: Long-range efficient transport (Mars cycler orbits)
+
+**Worldhouse Enclosure Process**:
+- Survey natural feature (lava tube, valley, crater, etc.)
+- Design segment layout for enclosure
+- 3D print I-beams from local regolith
+- Fabricate panels (structural or transparent)
+- Assemble framework and seal
+- Pressurize and make habitable
 
 ---
 
