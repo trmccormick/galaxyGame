@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Account, type: :model do
+RSpec.describe Financial::Account, type: :model do
   # Create players with accounts
   let(:player) { create(:player) }
   let(:recipient_player) { create(:player) }
