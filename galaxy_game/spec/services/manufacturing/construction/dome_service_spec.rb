@@ -127,8 +127,8 @@ RSpec.describe Manufacturing::Construction::DomeService, type: :service do
       
       before do
         # Ensure accounts exist
-        create(:account, accountable: service_provider, balance: 100_000) unless service_provider.account
-        create(:account, accountable: settlement, balance: 100_000) unless settlement.account
+        create(:financial_account, accountable: service_provider, balance: 100_000) unless service_provider.account
+        create(:financial_account, accountable: settlement, balance: 100_000) unless settlement.account
       end
       
       it "processes payment for contracted construction" do

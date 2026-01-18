@@ -7,10 +7,10 @@ FactoryBot.define do
     
     trait :earth do
       after(:create) do |atmosphere|
-        create(:gas, atmosphere: atmosphere, name: "N2", percentage: 78)
-        create(:gas, atmosphere: atmosphere, name: "O2", percentage: 21)
-        create(:gas, atmosphere: atmosphere, name: "CO2", percentage: 0.04)
-        create(:gas, atmosphere: atmosphere, name: "Ar", percentage: 0.93)
+        create(:gas, :n2, atmosphere: atmosphere, percentage: 78)
+        create(:gas, :o2, atmosphere: atmosphere, percentage: 21)
+        create(:gas, :co2, atmosphere: atmosphere, percentage: 0.04)
+        create(:gas, :ar, atmosphere: atmosphere, percentage: 0.93)
       end
     end
     
@@ -20,9 +20,9 @@ FactoryBot.define do
       total_atmospheric_mass { 2.5e16 }
       
       after(:create) do |atmosphere|
-        create(:gas, atmosphere: atmosphere, name: "CO2", percentage: 95)
-        create(:gas, atmosphere: atmosphere, name: "N2", percentage: 2.7)
-        create(:gas, atmosphere: atmosphere, name: "Ar", percentage: 1.6)
+        create(:gas, :co2, atmosphere: atmosphere, percentage: 95)
+        create(:gas, :n2, atmosphere: atmosphere, percentage: 2.7)
+        create(:gas, :ar, atmosphere: atmosphere, percentage: 1.6)
       end
     end
   end
