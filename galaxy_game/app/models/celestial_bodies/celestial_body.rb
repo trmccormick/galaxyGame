@@ -630,6 +630,21 @@ module CelestialBodies
       end
     end
 
+    # Check if magnetosphere protection exists (natural or artificial)
+    def magnetosphere_protection?
+      has_magnetosphere == true
+    end
+
+    # Accessor for has_magnetosphere stored in properties JSON
+    def has_magnetosphere
+      properties&.dig('has_magnetosphere')
+    end
+
+    def has_magnetosphere=(value)
+      self.properties ||= {}
+      self.properties['has_magnetosphere'] = value
+    end
+
     private
 
     def set_defaults
