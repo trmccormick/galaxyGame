@@ -5,7 +5,6 @@ FactoryBot.define do
     sequence(:segment_index) { |n| n }  # Auto-incrementing index
     segment_type { 'residential' }
     status { 'planned' }
-    coverage_status { 'uncovered' }
     
     operational_data do
       {
