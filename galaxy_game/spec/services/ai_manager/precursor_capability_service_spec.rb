@@ -19,6 +19,9 @@ RSpec.describe AIManager::PrecursorCapabilityService do
       mass: 1.3452e23
     )
     
+    # Override has_solid_surface? for Titan since it's a solid body
+    body.define_singleton_method(:has_solid_surface?) { true }
+    
     # Create thick nitrogen/methane atmosphere
     atmosphere = create(:atmosphere, celestial_body: body, pressure: 1.46, temperature: 94.0)
     create(:gas, atmosphere: atmosphere, name: 'N2', percentage: 95.0)

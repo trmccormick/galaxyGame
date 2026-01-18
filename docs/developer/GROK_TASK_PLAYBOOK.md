@@ -106,6 +106,35 @@ Use when you want fully automated overnight triage + documentation.
 
 **PREREQUISITE:** Run Pre-flight Checks first to avoid incomplete logs!
 
+**EFFICIENCY MANDATE:** Run the full suite ONCE, then analyze that saved log multiple times. Do NOT run the suite again until you've fixed 3-5 specs from the same log analysis.
+
+**❌ WASTEFUL (Don't do this):**
+```bash
+# Running multiple full suites just to check progress
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec | tail -20'  # 10-20 min
+# Fix one spec
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec | tail -20'  # Another 10-20 min
+# This wastes hours on redundant test runs!
+```
+
+**✅ EFFICIENT (Do this):**
+```bash
+# Run ONCE with logging
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+
+# Analyze that log multiple times (seconds, not minutes)
+LATEST_LOG=$(ls -t ./log/rspec_full_*.log | head -1)
+grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -5
+
+# Fix #1, commit
+# Then re-analyze SAME log for next target (no rerun needed)
+grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -5
+
+# After fixing 3-5 specs, THEN run a fresh full suite
+```
+
+**Time Savings:** Analyzing one log 5 times = 10 seconds. Running suite 5 times = 50-100 minutes.
+
 - Identify Latest Log:
 ```bash
 # Host
