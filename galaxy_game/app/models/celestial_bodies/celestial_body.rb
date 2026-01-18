@@ -602,6 +602,8 @@ module CelestialBodies
       false
     end    
 
+    public
+
     # Determines if this celestial body can generate specific gases locally
     def can_generate_locally?(gas_symbol)
       case gas_symbol.to_sym
