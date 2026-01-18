@@ -87,6 +87,43 @@ module Lookup
       robots_resource: {
         path: -> { GalaxyGame::Paths::ROBOTS_RESOURCE_UNITS_PATH },
         recursive_scan: true
+      },
+      # Additional unit categories
+      communication: {
+        path: -> { GalaxyGame::Paths::COMMUNICATION_UNITS_PATH },
+        recursive_scan: true
+      },
+      construction: {
+        path: -> { GalaxyGame::Paths::CONSTRUCTION_UNITS_PATH },
+        recursive_scan: true
+      },
+      control: {
+        path: -> { GalaxyGame::Paths::CONTROL_UNITS_PATH },
+        recursive_scan: true
+      },
+      em_processing: {
+        path: -> { GalaxyGame::Paths::EM_PROCESSING_UNITS_PATH },
+        recursive_scan: true
+      },
+      gravitational_control: {
+        path: -> { GalaxyGame::Paths::GRAVITATIONAL_CONTROL_UNITS_PATH },
+        recursive_scan: true
+      },
+      infrastructure: {
+        path: -> { GalaxyGame::Paths::INFRASTRUCTURE_UNITS_PATH },
+        recursive_scan: true
+      },
+      power: {
+        path: -> { GalaxyGame::Paths::POWER_UNITS_PATH },
+        recursive_scan: true
+      },
+      resource: {
+        path: -> { GalaxyGame::Paths::RESOURCE_UNITS_PATH },
+        recursive_scan: true
+      },
+      sensors: {
+        path: -> { GalaxyGame::Paths::SENSORS_UNITS_PATH },
+        recursive_scan: true
       }
     }
 
