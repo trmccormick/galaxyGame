@@ -2,9 +2,14 @@
 require 'rails_helper'
 
 RSpec.describe Units::WasteTreatmentUnit, type: :model do
+  let(:player) { create(:player) }
+  
   let(:waste_treatment_unit) do
-    Units::WasteTreatmentUnit.new(
+    Units::WasteTreatmentUnit.create!(
+      identifier: 'waste-treatment-1',
       name: 'Basic Waste Treatment Unit',
+      unit_type: 'waste_treatment',
+      owner: player,
       material_list: { 'waste' => 30, 'recycled_output' => 15, 'neutralized_output' => 5 },
       energy_cost: 10
     )
