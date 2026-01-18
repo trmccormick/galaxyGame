@@ -4,19 +4,43 @@ require_relative '../../../app/services/ai_manager'
 RSpec.describe Admin::AiManagerController, type: :controller do
   # Mock market and transport services
   before(:each) do
-    # Mock CelestialBody lookups
-    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'mars').and_return(
-      double('Mars', id: 1, identifier: 'mars', name: 'Mars', has_solid_surface?: true,
+    # Create shared doubles for celestial bodies
+    mars_double = double('Mars', id: 1, identifier: 'mars', name: 'Mars', has_solid_surface?: true,
              atmosphere: double('MarsAtmosphere', composition: {'CO2' => 0.95, 'N2' => 0.03}), 
-             geosphere: double('MarsGeosphere', surface_composition: {'iron_oxide' => 0.2, 'silicon' => 0.3}, volatile_reservoirs: {'H2O' => 0.1}, subsurface_water_mass: 0.0), 
+             geosphere: double('MarsGeosphere', 
+               surface_composition: {'iron_oxide' => 0.2, 'silicon' => 0.3}, 
+               volatile_reservoirs: {'H2O' => 0.1}, 
+               subsurface_water_mass: 0.0,
+               crust_composition: {'iron_oxide' => 0.2, 'silicon' => 0.3},
+               total_crust_mass: 1.0e23,
+               stored_volatiles: {'H2O' => 0.1}), 
              hydrosphere: nil)
-    )
-    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'earth').and_return(
-      double('Earth', id: 2, identifier: 'earth', name: 'Earth', has_solid_surface?: true,
+    
+    earth_double = double('Earth', id: 2, identifier: 'earth', name: 'Earth', has_solid_surface?: true,
              atmosphere: double('EarthAtmosphere', composition: {'N2' => 0.78, 'O2' => 0.21}), 
-             geosphere: double('EarthGeosphere', surface_composition: {'silicon' => 0.3, 'aluminum' => 0.1}, volatile_reservoirs: {}, subsurface_water_mass: 0.0), 
+             geosphere: double('EarthGeosphere', 
+               surface_composition: {'silicon' => 0.3, 'aluminum' => 0.1}, 
+               volatile_reservoirs: {}, 
+               subsurface_water_mass: 0.0,
+               crust_composition: {'silicon' => 0.3, 'aluminum' => 0.1},
+               total_crust_mass: 2.5e22,
+               stored_volatiles: {}), 
              hydrosphere: double('EarthHydrosphere', ocean_coverage: 0.7))
-    )
+    
+    # Mock CelestialBody lookups - handle both lowercase and capitalized identifiers
+    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'mars').and_return(mars_double)
+    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'Mars').and_return(mars_double)
+    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'earth').and_return(earth_double)
+    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'Earth').and_return(earth_double)
+    
+    # Mock case-insensitive name lookups for target_location
+    mars_where = double('MarsWhere')
+    allow(mars_where).to receive(:first).and_return(mars_double)
+    allow(CelestialBodies::CelestialBody).to receive(:where).with('LOWER(name) = ?', 'mars').and_return(mars_where)
+    
+    earth_where = double('EarthWhere')
+    allow(earth_where).to receive(:first).and_return(earth_double)
+    allow(CelestialBodies::CelestialBody).to receive(:where).with('LOWER(name) = ?', 'earth').and_return(earth_where)
     
     # Mock settlements
     earth_settlement = double('EarthSettlement', 
