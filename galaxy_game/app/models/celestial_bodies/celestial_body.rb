@@ -76,6 +76,16 @@ module CelestialBodies
       0
     end
     
+    # Override column accessor to calculate if not set
+    def density
+      # Return stored value if present
+      return self[:density] if has_attribute?(:density) && self[:density].present?
+      
+      # Otherwise calculate from mass and volume
+      return nil if mass.nil? || volume.nil? || volume.zero?
+      mass.to_f / volume
+    end
+    
     def calculated_density
       return nil if mass.nil? || volume.nil? || volume.zero?
       mass.to_f / volume

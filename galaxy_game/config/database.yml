@@ -1,4 +1,4 @@
-# PostgreSQL. Versions 9.3 and up are supported.
+# PostgreSQL configuration
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -11,7 +11,8 @@ development:
   username: postgres
   password: password
 
-# Test database - completely separate from development
+# Test database - MUST be separate from development
+# Explicitly set to ignore DATABASE_URL
 test:
   <<: *default
   database: galaxy_game_test

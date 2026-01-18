@@ -7,7 +7,7 @@ module AIManager
       @parameters = default_parameters.merge(parameters)
       @results = {}
       @target_location = AIManager::PatternTargetMapper.target_location(pattern_name)
-      @earth = CelestialBodies::CelestialBody.find_by(identifier: 'earth')
+      @earth = CelestialBodies::CelestialBody.where('LOWER(name) = ?', 'earth').first
       
       Rails.logger.info "[MissionPlanner] Pattern: #{pattern_name}"
       Rails.logger.info "[MissionPlanner] Target location: #{@target_location&.name || 'NONE'}"

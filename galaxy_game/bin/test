@@ -1,0 +1,5 @@
+#!/bin/bash
+# Test runner that ensures DATABASE_URL doesn't interfere
+
+unset DATABASE_URL
+RAILS_ENV=test bundle exec rspec "$@"

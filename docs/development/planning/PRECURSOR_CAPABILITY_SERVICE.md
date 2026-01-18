@@ -2,6 +2,7 @@
 
 **Date:** 2026-01-15  
 **Status:** ✅ IMPLEMENTED (2026-01-16)  
+**Last Updated:** 2026-01-17 (Schema evolution fixes)  
 **Implementation:** `galaxy_game/app/services/ai_manager/precursor_capability_service.rb`
 
 ## Overview
@@ -22,11 +23,13 @@ Precursor missions establish local ISRU capacity and core infrastructure before 
 - `production_capabilities` - Capabilities by resource type (atmosphere, surface, subsurface, regolith)
 - `precursor_enables?(capability)` - Check if precursor phase enables specific capability (:oxygen, :water, :fuel, :metals)
 
-**Data Sources:**
+**Data Sources (Current Schema as of 2026-01-17):**
 - `CelestialBody.atmosphere.composition` - Atmospheric resources (CO2, N2, CH4, O2)
-- `CelestialBody.geosphere.surface_composition` - Surface minerals (iron_oxide, silicon, aluminum)
-- `CelestialBody.geosphere.volatile_reservoirs` - Frozen volatiles (H2O, CO2, CH4)
-- `CelestialBody.hydrosphere` - Water resources (oceans, ice caps, subsurface)
+- `CelestialBody.geosphere.crust_composition` - Surface minerals (iron_oxide, silicon, aluminum) **[NOT surface_composition]**
+- `CelestialBody.geosphere.stored_volatiles` - Hash with volatile masses: `{CO2: {polar_caps: Float, regolith: Float}, H2O: {subsurface_ice: Float}}` **[NOT volatile_reservoirs]**
+- `CelestialBody.hydrosphere.water_bodies` - Water resource presence (JSON field) **[NOT ocean_coverage]**
+
+**Schema Evolution Note:** The service was updated on 2026-01-17 to use current attribute names after database migrations changed the Geosphere/Hydrosphere schemas. See [GROK_TASK_PLAYBOOK.md](../../developer/GROK_TASK_PLAYBOOK.md#schema-evolution-tracking-2026-01-17) for details.
 
 **Usage:**
 ```ruby
@@ -95,7 +98,12 @@ can_produce = capability_service.can_produce_locally?('water_ice')
 
 **Completed:**
 - ✅ Created `AIManager::PrecursorCapabilityService` 
-- ✅ Replaced hardcoded case statements in `MissionPlannerService.can_produce_locally?`
+- ✅ Replaced hardcoded case sta
+- ✅ **[2026-01-17]** Schema evolution fixes:
+  - Updated `crust_composition` (was `surface_composition`)
+  - Updated `stored_volatiles` Hash lookup (was `volatile_reservoirs`)
+  - Updated `water_bodies.present?` (was `ocean_coverage.to_f > 0`)
+  - Fixed Mars detection - now correctly identifies CO2 atmosphere, subsurface water, and regolith resourcestements in `MissionPlannerService.can_produce_locally?`
 - ✅ Data-driven resource queries from celestial body spheres
 - ✅ Comprehensive spec coverage
 

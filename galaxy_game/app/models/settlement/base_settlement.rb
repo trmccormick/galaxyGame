@@ -77,6 +77,10 @@ module Settlement
       (operational_data || {}).dig('manufacturing', 'check_equipment') != false
     end
 
+    def age_in_days
+      ((Time.current - created_at) / 1.day).to_i
+    end
+
     # FIXED: Consistent namespace and removed duplicate method
     def npc_market_bid(resource_name)
       Market::NpcPriceCalculator.calculate_bid(self, resource_name.to_s)
@@ -350,6 +354,12 @@ module Settlement
     end
 
     private
+
+    def set_life_support_defaults
+      self.food_per_person ||= 2.0
+      self.water_per_person ||= 1.0
+      self.energy_per_person ||= 3.0
+    end
 
     def manage_power_services(time_skipped)
       # Calculate total power needed for the time period
