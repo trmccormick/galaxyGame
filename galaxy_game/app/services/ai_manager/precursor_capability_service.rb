@@ -91,15 +91,12 @@ module AIManager
       atmo = celestial_body.atmosphere
       resources = []
 
-      # Extract from composition (JSONB field)
-      if atmo.composition.present?
-        composition = atmo.composition
-        resources << 'co2' if composition['CO2'].to_f > 0.01
-        resources << 'nitrogen' if composition['N2'].to_f > 0.01
-        resources << 'methane' if composition['CH4'].to_f > 0.01
-        resources << 'oxygen' if composition['O2'].to_f > 0.01
-        resources << 'argon' if composition['Ar'].to_f > 0.001
-      end
+      # Check for gases using the gas_percentage method
+      resources << 'co2' if atmo.gas_percentage('CO2') > 0.01
+      resources << 'nitrogen' if atmo.gas_percentage('N2') > 0.01
+      resources << 'methane' if atmo.gas_percentage('CH4') > 0.01
+      resources << 'oxygen' if atmo.gas_percentage('O2') > 0.01
+      resources << 'argon' if atmo.gas_percentage('Ar') > 0.001
 
       resources
     end
@@ -113,10 +110,9 @@ module AIManager
       # Surface composition from geosphere
       if geo.crust_composition.present?
         composition = geo.crust_composition
-        resources << 'iron_oxide' if composition['iron_oxide'].to_f > 0.01
-        resources << 'silicon' if composition['silicon'].to_f > 0.01
-        resources << 'aluminum' if composition['aluminum'].to_f > 0.01
-        resources << 'titanium' if composition['titanium'].to_f > 0.01
+        composition.each do |material, percentage|
+          resources << material if percentage.to_f > 0.01
+        end
       end
 
       # Volatile deposits

@@ -137,18 +137,11 @@ FactoryBot.define do
         end
         
         # Create geosphere with lunar properties
-        unless celestial_body.geosphere
-          celestial_body.create_geosphere(
-            temperature: celestial_body.surface_temperature,
-            pressure: 0.0,
-            geological_activity: 5,  # Low geological activity
-            tectonic_activity: false,
-            crust_composition: { 'Silicon' => 45.0, 'Oxygen' => 35.0, 'Aluminum' => 10.0, 'Titanium' => 5.0 },
-            core_composition: { 'Iron' => 80.0, 'Nickel' => 20.0 },
-            stored_volatiles: { 'H2O' => { 'polar_caps' => 1.0e12 } },  # Some ice in polar regions
-            skip_simulation: true
-          )
-        end
+        celestial_body.geosphere.update_columns(
+          crust_composition: { 'regolith' => 100.0, 'Silicon' => 45.0, 'Oxygen' => 35.0, 'Aluminum' => 10.0, 'Titanium' => 5.0 },
+          stored_volatiles: { 'H2O' => 1.0e12, 'He3' => 100.0 }
+        )
+        celestial_body.geosphere.reload
         
         # Create hydrosphere with lunar properties (minimal)
         unless celestial_body.hydrosphere

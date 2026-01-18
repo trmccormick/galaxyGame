@@ -6,6 +6,7 @@ FactoryBot.define do
       mass { 1.898e27 }
       radius { 6.9911e7 }
       size { 11.2 }  # Jupiter's size relative to Earth
+      density { 1.33 }  # Jupiter's density in g/cm³
       association :solar_system
     end
 end

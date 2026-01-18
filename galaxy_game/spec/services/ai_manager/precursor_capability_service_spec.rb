@@ -24,6 +24,9 @@ RSpec.describe AIManager::PrecursorCapabilityService do
     create(:gas, atmosphere: atmosphere, name: 'N2', percentage: 95.0)
     create(:gas, atmosphere: atmosphere, name: 'CH4', percentage: 5.0)
     
+    # Create geosphere with regolith
+    create(:geosphere, :titan, celestial_body: body)
+    
     body
   end
   
@@ -123,7 +126,7 @@ RSpec.describe AIManager::PrecursorCapabilityService do
 
   describe 'data-driven approach' do
     it 'does not hardcode world identifiers' do
-      source_code = File.read(__FILE__.gsub('_spec.rb', '.rb'))
+      source_code = File.read(__FILE__.gsub('_spec.rb', '').gsub('spec/', 'app/') + '.rb')
       
       expect(source_code).not_to include("when 'mars'")
       expect(source_code).not_to include("when 'luna'")
@@ -134,8 +137,8 @@ RSpec.describe AIManager::PrecursorCapabilityService do
       service = described_class.new(mars)
 
       # Should use actual geosphere/atmosphere data
-      expect(mars.geosphere).to receive(:surface_composition).at_least(:once).and_call_original
-      expect(mars.atmosphere).to receive(:composition).at_least(:once).and_call_original
+      expect(mars.geosphere).to receive(:crust_composition).at_least(:once).and_call_original
+      expect(mars.atmosphere).to receive(:gas_percentage).at_least(:once).and_call_original
 
       service.local_resources
     end

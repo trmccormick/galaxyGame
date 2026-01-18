@@ -16,6 +16,7 @@ RSpec.describe SolarSystem, type: :model do
            mass: 1.898e27, 
            name: 'Jupiter', 
            size: 11.0,
+           density: 1.33,
            properties: {})
   end # Example
 
@@ -253,7 +254,7 @@ RSpec.describe SolarSystem, type: :model do
     let!(:earth) { create(:terrestrial_planet, name: "Earth", solar_system: solar_system) }
     # Change from :mars to :mars_like
     let!(:mars) { create(:terrestrial_planet, :mars, solar_system: solar_system) }
-    let!(:jupiter) { create(:gas_giant, name: "Jupiter", solar_system: solar_system) }
+    let!(:jupiter) { create(:gas_giant, name: "Jupiter", solar_system: solar_system, density: 1.33) }
     let!(:pluto) { create(:dwarf_planet, name: "Pluto", solar_system: solar_system, 
                 mass: 1.309e22, properties: {'body_type' => 'dwarf_planet'}) }
 
@@ -267,7 +268,7 @@ RSpec.describe SolarSystem, type: :model do
       # Create exactly one of each type
       earth = create(:terrestrial_planet, :earth, solar_system: solar_system, mass: 5.97e24)
       mars = create(:terrestrial_planet, :mars, solar_system: solar_system, mass: 6.39e23)
-      jupiter = create(:gas_giant, name: "Jupiter", solar_system: solar_system, mass: 1.898e27)
+      jupiter = create(:gas_giant, name: "Jupiter", solar_system: solar_system, mass: 1.898e27, density: 1.33)
       pluto = create(:dwarf_planet, name: "Pluto", solar_system: solar_system, 
                      mass: 1.309e22, properties: {'body_type' => 'dwarf_planet'})
     
