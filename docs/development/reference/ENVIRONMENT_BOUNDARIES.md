@@ -4,6 +4,39 @@
 
 ---
 
+## [2026-01-17] Environment Safety Patch
+
+### Mandatory Command Prefix for RSpec/Test Operations
+**ALL RSpec/Test commands MUST use `unset DATABASE_URL`** to prevent environment bleed between development and test databases.
+
+**❌ WRONG (causes data loss):**
+```bash
+docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/models/account_spec.rb
+```
+
+**✅ CORRECT (safe):**
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/models/account_spec.rb'
+```
+
+### The "Safety Check" - Pre-flight Database Verification
+**BEFORE any destructive operation (RSpec, migrations, data operations), verify the database name:**
+
+```bash
+# Safety check - run this FIRST
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"'
+# Expected output: galaxy_game_test
+# ❌ If you see galaxy_game_development, STOP and fix environment first
+```
+
+### Log Path Mapping - Critical for Debugging
+- **Container path:** `./log/` inside web container
+- **Host path:** `./data/logs/` on host machine  
+- **Volume mount:** `./data/logs:/home/galaxy_game/log` (from docker-compose.dev.yml)
+- **Example:** Container writes to `./log/rspec_full_123456.log` → appears as `./data/logs/rspec_full_123456.log` on host
+
+---
+
 ## The Golden Rules
 
 ### **Rule 1: Git Operations**
@@ -45,12 +78,12 @@ docker-compose -f docker-compose.dev.yml exec web bundle exec rake db:migrate RA
 
 | Operation | Location | Command Example | What Happens If Run on Wrong Environment |
 |-----------|----------|-----------------|------------------------------------------|
-| **RSpec Tests** | ✅ CONTAINER | `docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/path/to/spec.rb` | Host: Ruby version mismatch, gems missing, DB connection fails |
+| **RSpec Tests** | ✅ CONTAINER | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'` | Host: Ruby version mismatch, gems missing, DB connection fails. Container: DATABASE_URL causes environment bleed |
 | **Rails Console** | ✅ CONTAINER | `docker-compose -f docker-compose.dev.yml exec web bundle exec rails c` | Host: Rails not found or wrong version, DB unreachable |
-| **Rails Runner** | ✅ CONTAINER | `docker-compose -f docker-compose.dev.yml exec web bundle exec rails runner "puts Model.count"` | Host: Rails environment missing, gems missing |
+| **Rails Runner** | ✅ CONTAINER | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rails runner "puts Model.count"'` | Host: Rails environment missing, gems missing. Container: DATABASE_URL causes environment bleed |
 | **Bundle Commands** | ✅ CONTAINER | `docker-compose -f docker-compose.dev.yml exec web bundle install` | Host: Installs gems for WRONG Ruby version |
-| **Database Migrations** | ✅ CONTAINER | `docker-compose -f docker-compose.dev.yml exec web bundle exec rake db:migrate RAILS_ENV=test` | Host: Cannot connect to PostgreSQL container |
-| **Database Reset** | ✅ CONTAINER | `docker-compose -f docker-compose.dev.yml exec web bundle exec rake db:reset RAILS_ENV=test` | Host: Database connection error |
+| **Database Migrations** | ✅ CONTAINER | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rake db:migrate'` | Host: Cannot connect to PostgreSQL container. Container: DATABASE_URL causes environment bleed |
+| **Database Reset** | ✅ CONTAINER | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rake db:reset'` | Host: Database connection error. Container: DATABASE_URL causes environment bleed |
 | **Code Editing** | ✅ HOST | VS Code, vim, etc. on `/Users/tam0013/Documents/git/galaxyGame/` | Files mounted via volume |
 | **Git Status** | ✅ HOST | `git status` | Git repo on host filesystem |
 | **Git Add** | ✅ HOST | `git add galaxy_game/app/models/account.rb` | Git repo on host filesystem |
