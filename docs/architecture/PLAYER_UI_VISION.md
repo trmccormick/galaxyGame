@@ -1,10 +1,14 @@
 # Player UI Vision - SimEarth Meets Eve Online
 
-**Purpose**: Define the player-facing UI for entering an active, living solar system where NPCs have already established infrastructure, markets, and trade networks.
+**⚠️ CRITICAL**: This is a **FUTURE VISION DOCUMENT** - NOT current development priorities.
 
-**Philosophy**: Players are participants in an existing economy (not empty sandbox), learning through contracts and missions in a SimEarth-style universe with Eve Online economic depth.
+**Current Development Focus** (Jan 2026): AI Manager pattern learning in Sol system, then wormhole expansion to Prize systems like AOL-732356. **Players are NOT being introduced yet** - this is testing and buildout only. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md) for actual development sequence.
 
-**Target Timeline**: After test suite < 50 failures (Phase 4 implementation)
+**Purpose**: Define the player-facing UI IF/WHEN players are introduced (potentially after wormhole network operational).
+
+**Philosophy**: Players would be participants in an existing AI-managed economy (not empty sandbox), learning through contracts and missions in a SimEarth-style universe with Eve Online economic depth.
+
+**Target Timeline**: Unknown - depends on AI Manager testing success. Earliest possible: After Milestone 5 (wormhole network stable). See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md#player-integration-future---not-current-development) for details.
 
 ---
 

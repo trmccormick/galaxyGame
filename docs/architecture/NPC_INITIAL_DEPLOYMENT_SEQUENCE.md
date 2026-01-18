@@ -1,8 +1,10 @@
 # NPC Initial Deployment Sequence - Code Alignment Plan
 
-**Purpose**: Document the AI Manager's autonomous NPC deployment sequence to establish Sol system infrastructure and markets before player entry (pre-wormhole discovery and "The Snap" crisis events).
+**Purpose**: Document the AI Manager's autonomous NPC deployment sequence to establish Sol system infrastructure and learn deployment patterns for future wormhole expansion.
 
-**Philosophy**: Player-first experience - NPCs build functional economy and trade networks so players enter an active, living solar system with existing contracts, market pricing, and infrastructure.
+**Philosophy**: Pattern learning first - AI Manager builds Sol system to master Luna, Mars, Venus, Titan, and Gas Giant patterns. These proven patterns will be applied autonomously to wormhole-discovered systems like AOL-732356. **Players are NOT part of this phase** - this is pure AI Manager testing and development.
+
+**Context**: See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md) for complete development sequence: Sol buildout → Pattern learning → Wormhole expansion → (Optional) Player integration.
 
 ---
 
@@ -335,18 +337,18 @@ Phase 10: Market Establishment & Player Entry Readiness
 
 ---
 
-### Phase 10: Market Establishment & Player Entry Readiness
+### Phase 10: Pattern Library Completion & Wormhole Expansion Readiness
 
 **Status**: ❌ **MISSING - AI Manager integration needed**
 
-**Required Code**: `app/services/ai_manager/market_establishment_service.rb`
+**Required Code**: `app/services/ai_manager/pattern_learning_service.rb`
 
 **AI Manager Actions**:
-1. **Market Creation**: Generate GCC markets at each settlement (Luna, L1, Phobos, Venus, Titan, LEO)
-2. **Contract Generation**: Create automated buy/sell contracts for materials, fuel, gases
-3. **Pricing Establishment**: Set baseline prices using economic forecaster (supply/demand simulation)
-4. **NPC Trading**: Activate NPC-to-NPC trade via Virtual Ledger (no GCC, internal accounting)
-5. **Player Entry Criteria**: Verify all Phase 1-9 infrastructure operational and markets active
+1. **Pattern Extraction**: Generalize Luna, L1, Mars, Venus, Titan, Gas Giant patterns from Sol deployment
+2. **System Analysis**: Implement ScoutLogic (TEI scoring, EM detection, resource assessment)
+3. **Pattern Matching**: Implement StrategySelector (map system profile to appropriate pattern)
+4. **Economic Intelligence**: Validate ResourceAcquisition (ISRU → NPC → Earth priority)
+5. **Wormhole Readiness**: Verify all Phase 1-9 patterns operational and ready for AOL-732356 deployment
 
 **Market Establishment Criteria**:
 - ✅ Luna market: Regolith products (I-beams, panels), gases
@@ -373,7 +375,7 @@ Phase 10: Market Establishment & Player Entry Readiness
 - ✅ All Phases 1-9 complete
 - ✅ Economic forecaster functional ([EconomicForecasterService](../../docs/developer/AI_MANAGER_PLANNER.md#L682))
 
-**Timeline**: Player entry occurs **before** natural wormhole discovery event (players experience Sol system economy first, then participate in wormhole expansion crisis)
+**Timeline**: Pattern learning completes **before** wormhole expansion begins (Sol system validates patterns, then AI Manager applies them to Prize systems like AOL-732356)
 
 ---
 
