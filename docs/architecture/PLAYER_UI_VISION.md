@@ -2,7 +2,7 @@
 
 **Purpose**: Define the player-facing UI for the **player-first contract economy** where players get first refusal on harvesting, logistics, and construction missions.
 
-**Philosophy**: **Player-first task priority** - Contracts offered to players FIRST, NPC fallback ensures game progression. Players earn **GCC (Galactic Credit Chip)** to influence game development through economic participation in an AI-managed living universe.
+**Philosophy**: **Player-first task priority** - Contracts offered to players FIRST, NPC fallback ensures game progression. Players earn **GCC (Galactic Crypto Currency)** to influence game development through economic participation in an AI-managed living universe.
 
 **Current Development Status** (Jan 2026): 
 - **Phase 1** (CURRENT): Contract board, GCC wallet, basic ship/cargo management for player contract participation
