@@ -164,12 +164,14 @@ FactoryBot.define do
         celestial_body.star_distances.create(distance: 1.0) if celestial_body.star_distances.empty?
       end
 
-      # This after(:build) is already present in luna, keeping it for specific luna properties
+      # Override has_solid_surface? for Luna since it's a solid body
       after(:build) do |celestial_body|
         celestial_body.properties ||= {}
         celestial_body.properties = celestial_body.properties.merge(
           "surface_features" => ["craters", "maria", "highlands"]
         )
+        # Define singleton method to override has_solid_surface?
+        celestial_body.define_singleton_method(:has_solid_surface?) { true }
       end
     end
 
