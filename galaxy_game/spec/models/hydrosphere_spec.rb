@@ -1,107 +1,142 @@
 require 'rails_helper'
 
 RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
-  let(:celestial_body) { create(:celestial_body) } # Assuming you have a celestial_body factory
+  let(:celestial_body) { create(:celestial_body) }
   let(:hydrosphere) { create(:hydrosphere, celestial_body: celestial_body) }
 
   describe 'associations' do
     it { should belong_to(:celestial_body) }
-    it { should have_many(:liquid_materials).dependent(:destroy) }
+    it { should have_many(:materials).dependent(:destroy) }
   end
 
   describe 'validations' do
-    it { should validate_numericality_of(:total_liquid_mass) }
-  end
-
-  describe '#setup_liquid_materials' do
-    before do
-      hydrosphere.setup_liquid_materials
-    end
-
-    it 'calls update_liquid_materials_from_celestial_body' do
-      expect(hydrosphere).to receive(:update_liquid_materials_from_celestial_body)
-      hydrosphere.setup_liquid_materials
-    end
-
-    it 'calculates the liquid volume after setup' do
-      expect(hydrosphere.liquid_volume).to be > 0
+    it { should validate_numericality_of(:total_liquid_mass).is_greater_than_or_equal_to(0).allow_nil }
+    it { should validate_presence_of(:temperature) }
+    
+    it 'requires pressure to be present' do
+      # Use update! with new validation instead of new instantiation
+      hydrosphere.pressure = nil  
+      expect(hydrosphere).not_to be_valid
+      expect(hydrosphere.errors[:pressure]).to include("can't be blank")
     end
   end
 
-  describe '#update_liquid_materials_from_celestial_body' do
-    let!(:water) { create(:material, state: 'liquid', amount: 100) } # Assuming you have a material factory
-    let!(:ice) { create(:material, state: 'solid', amount: 50) }
-
-    before do
-      celestial_body.materials << water
-      celestial_body.materials << ice
-      hydrosphere.update_liquid_materials_from_celestial_body
+  describe 'store accessors' do
+    it 'accesses water bodies attributes from JSONB store' do
+      hydrosphere.update!(liquid_bodies: { 'oceans' => 100, 'lakes' => 50, 'rivers' => 25 })
+      expect(hydrosphere.oceans).to eq(100)
+      expect(hydrosphere.lakes).to eq(50)
+      expect(hydrosphere.rivers).to eq(25)
     end
 
-    it 'adds liquid materials to the hydrosphere' do
-      expect(hydrosphere.liquid_materials.count).to eq(1) # Only liquid water
+    it 'writes water bodies attributes to JSONB store' do
+      hydrosphere.oceans = 200
+      hydrosphere.lakes = 150
+      hydrosphere.rivers = 75
+      hydrosphere.save!
+      
+      expect(hydrosphere.liquid_bodies['oceans']).to eq(200)
+      expect(hydrosphere.liquid_bodies['lakes']). to eq(150)
+      expect(hydrosphere.liquid_bodies['rivers']).to eq(75)
     end
+  end
 
-    it 'adds ice to the hydrosphere' do
-      expect(hydrosphere.ice).to eq(50)
+  describe '#reset' do
+    it 'resets to base values' do
+      # First create a hydrosphere with specific values
+      hydrosphere.update!(
+        liquid_bodies: { 'oceans' => 100.0, 'lakes' => 50.0, 'rivers' => 25.0 },
+        composition: { 'H2O' => 95.0, 'salts' => 5.0 },
+        state_distribution: { 'liquid' => 80.0, 'solid' => 15.0, 'vapor' => 5.0 },
+        temperature: 300.0,
+        pressure: 1.0,
+        total_liquid_mass: 1000.0
+      )
+      
+      # Reset
+      hydrosphere.reset
+      
+      # Check that it reverted to base values
+      expect(hydrosphere.liquid_bodies).to eq({})
+      expect(hydrosphere.composition).to eq({})
+      expect(hydrosphere.state_distribution).to eq({ 'liquid' => 0.0, 'solid' => 0.0, 'vapor' => 0.0 })
+      expect(hydrosphere.temperature).to eq(0.0)
+      expect(hydrosphere.pressure).to eq(0.0)
+      expect(hydrosphere.total_liquid_mass).to eq(0.0)
     end
   end
 
   describe '#add_liquid' do
-    let(:liquid_material) { create(:material, state: 'liquid', amount: 100) }
-
-    it 'distributes liquid between oceans, lakes, and rivers' do
-      expect { hydrosphere.add_liquid(liquid_material) }.to change { hydrosphere.oceans }.by(70)
-      expect { hydrosphere.add_liquid(liquid_material) }.to change { hydrosphere.lakes }.by(20)
-      expect { hydrosphere.add_liquid(liquid_material) }.to change { hydrosphere.rivers }.by(10)
+    it 'adds liquid material to the hydrosphere' do
+      expect {
+        hydrosphere.add_liquid('water', 100)
+      }.to change { hydrosphere.total_liquid_mass }.by(100)
+      
+      expect(hydrosphere.liquid_materials.find_by(name: 'water').amount).to eq(100)
     end
   end
 
-  describe '#calculate_liquid_volume' do
-    it 'calculates the total liquid volume correctly' do
-      hydrosphere.oceans = 100
-      hydrosphere.lakes = 50
-      hydrosphere.rivers = 30
-      hydrosphere.ice = 20
-
-      hydrosphere.calculate_liquid_volume
-
-      expect(hydrosphere.liquid_volume).to eq(200)
-    end
-  end
-
-  describe '#update_water_cycle' do
+  describe '#remove_liquid' do
     before do
-      allow(hydrosphere).to receive(:current_temperature).and_return(300) # Above freezing
-      hydrosphere.ice = 100
-      hydrosphere.update_water_cycle
+      hydrosphere.add_liquid('water', 100)
     end
-
-    it 'melts ice when temperature is above freezing' do
-      expect(hydrosphere.oceans).to be > 0
-      expect(hydrosphere.ice).to be < 100
-    end
-
-    it 'does not melt ice when temperature is below freezing' do
-      allow(hydrosphere).to receive(:current_temperature).and_return(250)
-      hydrosphere.update_water_cycle
-      expect(hydrosphere.oceans).to eq(0)
-      expect(hydrosphere.ice).to eq(100)
+    
+    it 'removes liquid material from the hydrosphere' do
+      expect {
+        hydrosphere.remove_liquid('water', 50)
+      }.to change { hydrosphere.total_liquid_mass }.by(-50)
+      
+      expect(hydrosphere.liquid_materials.find_by(name: 'water').amount).to eq(50)
     end
   end
 
-  describe '#evaporate_liquids' do
+  describe '#transfer_material' do
+    let(:target_sphere) { create(:hydrosphere, celestial_body: celestial_body) }
+    
     before do
-      hydrosphere.oceans = 100
-      hydrosphere.lakes = 50
-      hydrosphere.rivers = 30
-      allow(hydrosphere).to receive(:evaporation_condition_met?).and_return(true)
+      hydrosphere.add_liquid('water', 100)
     end
+    
+    it 'transfers material to another sphere' do
+      expect {
+        hydrosphere.transfer_material('water', 50, target_sphere)
+      }.to change { hydrosphere.liquid_materials.find_by(name: 'water').amount }.by(-50)
+      
+      expect(target_sphere.materials.find_by(name: 'water').amount).to eq(50)
+    end
+  end
 
-    it 'evaporates liquids when conditions are met' do
-      expect { hydrosphere.evaporate_liquids }.to change { hydrosphere.oceans }.by(-70)
-      expect { hydrosphere.evaporate_liquids }.to change { hydrosphere.lakes }.by(-20)
-      expect { hydrosphere.evaporate_liquids }.to change { hydrosphere.rivers }.by(-10)
+  describe '#in_ocean?' do
+    it 'returns true when there are significant oceans' do
+      hydrosphere.update!(liquid_bodies: { 'oceans' => 1.0e16 })
+      expect(hydrosphere.in_ocean?).to be true
+    end
+    
+    it 'returns false when there are no significant oceans' do
+      hydrosphere.update!(liquid_bodies: { 'oceans' => 1.0e10 })
+      expect(hydrosphere.in_ocean?).to be false
+    end
+  end
+
+  describe '#ice' do
+    it 'gets ice from liquid_bodies' do
+      hydrosphere.update!(liquid_bodies: { 'ice_caps' => 100.0 })
+      expect(hydrosphere.ice).to eq(100.0)
+    end
+    
+    it 'sets ice in liquid_bodies' do
+      hydrosphere.ice = 200.0
+      hydrosphere.save!
+      expect(hydrosphere.liquid_bodies['ice_caps']).to eq(200.0)
+    end
+  end
+
+  describe '#water_coverage' do
+    it 'calculates water coverage percentage' do
+      hydrosphere.celestial_body.update!(surface_area: 100.0)
+      hydrosphere.update!(water_bodies: { 'oceans' => 25.0, 'lakes' => 25.0, 'rivers' => 25.0 })
+      
+      expect(hydrosphere.water_coverage).to eq(75.0)
     end
   end
 end

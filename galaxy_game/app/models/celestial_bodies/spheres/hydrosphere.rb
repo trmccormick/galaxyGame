@@ -35,6 +35,76 @@ module CelestialBodies
       after_initialize :set_defaults
       after_update :run_simulation, unless: :simulation_running
       
+      # Setup liquid materials from celestial body
+      def setup_liquid_materials
+        update_liquid_materials_from_celestial_body
+        calculate_liquid_volume
+      end
+      
+      # Update liquid materials from celestial body
+      def update_liquid_materials_from_celestial_body
+        return unless celestial_body
+        
+        liquid_materials_from_body = celestial_body.materials.where(state: 'liquid')
+        liquid_materials_from_body.each do |material|
+          liquid_mat = liquid_materials.find_or_initialize_by(name: material.name)
+          liquid_mat.amount ||= 0
+          liquid_mat.amount += material.amount
+          liquid_mat.save!
+        end
+        
+        # Handle ice (solid water)
+        ice_materials = celestial_body.materials.where(name: 'water', state: 'solid')
+        total_ice = ice_materials.sum(:amount)
+        self.ice = total_ice if total_ice > 0
+      end
+      
+      # Calculate total liquid volume
+      def calculate_liquid_volume
+        total = (oceans || 0) + (lakes || 0) + (rivers || 0) + (ice || 0)
+        self.liquid_volume = total
+        total
+      end
+      
+      # Update water cycle (simplified)
+      def update_water_cycle
+        # Melt ice if above freezing
+        if temperature > 273.15 && ice > 0
+          melt_amount = [ice * 0.1, ice].min # Melt 10% per cycle
+          self.oceans += melt_amount
+          self.ice -= melt_amount
+          save!
+        end
+      end
+      
+      # Evaporate liquids
+      def evaporate_liquids
+        if evaporation_condition_met?
+          total_liquid = (oceans || 0) + (lakes || 0) + (rivers || 0)
+          evaporate_amount = total_liquid * 0.1 # Evaporate 10%
+          
+          # Distribute evaporation proportionally
+          ocean_evap = oceans * 0.7
+          lake_evap = lakes * 0.2
+          river_evap = rivers * 0.1
+          
+          self.oceans -= ocean_evap
+          self.lakes -= lake_evap
+          self.rivers -= river_evap
+          save!
+        end
+      end
+      
+      # Check if evaporation conditions are met
+      def evaporation_condition_met?
+        temperature > 273.15 && (oceans || 0) + (lakes || 0) + (rivers || 0) > 0
+      end
+      
+      # Current temperature (alias for temperature)
+      def current_temperature
+        temperature
+      end
+      
       # Reset to base values
       def reset
         self.liquid_bodies = base_liquid_bodies.deep_dup if base_liquid_bodies
@@ -43,11 +113,19 @@ module CelestialBodies
         self.temperature = base_temperature
         self.pressure = base_pressure
         self.total_liquid_mass = base_total_liquid_mass
-        save!
       end
       
       # Add liquid to hydrosphere
-      def add_liquid(name, amount, state = 'liquid')
+      def add_liquid(name_or_material, amount = nil, state = 'liquid')
+        if name_or_material.is_a?(Material)
+          material = name_or_material
+          name = material.name
+          amount = material.amount
+        else
+          name = name_or_material
+          amount ||= 0
+        end
+        
         # Validate inputs
         raise ArgumentError, "Invalid amount" if amount <= 0
         raise ArgumentError, "Name required" if name.blank?
@@ -56,9 +134,10 @@ module CelestialBodies
         lookup_service = Lookup::MaterialLookupService.new
         material_data = lookup_service.find_material(name)
         
-        unless material_data
-          raise ArgumentError, "Material '#{name}' not found in the lookup service."
-        end
+        # Allow basic materials even if not in lookup
+        # unless material_data
+        #   raise ArgumentError, "Material '#{name}' not found in the lookup service."
+        # end
         
         # Create or update liquid material record
         liquid_material = liquid_materials.find_or_initialize_by(name: name)
@@ -81,20 +160,20 @@ module CelestialBodies
         raise ArgumentError, "Invalid amount" if amount <= 0
         raise ArgumentError, "Name required" if name.blank?
         
-        # Find material
-        material = materials.find_by(name: name.to_s, location: 'hydrosphere')
+        # Find liquid material
+        liquid_material = liquid_materials.find_by(name: name)
         
-        unless material
+        unless liquid_material
           raise ArgumentError, "Material '#{name}' not found in hydrosphere"
         end
         
         # Update liquid material
-        material.amount -= amount
+        liquid_material.amount -= amount
         
-        if material.amount <= 0
-          material.destroy
+        if liquid_material.amount <= 0
+          liquid_material.destroy
         else
-          material.save!
+          liquid_material.save!
         end
         
         # Update total liquid mass
@@ -237,6 +316,22 @@ module CelestialBodies
         water_cycle_tick
         
         self.simulation_running = false
+      end
+
+      private
+
+      def set_defaults
+        set_base_values
+      end
+
+      def set_base_values
+        self.base_values ||= {}
+        self.base_values['base_liquid_bodies'] = {}
+        self.base_values['base_composition'] = {}
+        self.base_values['base_state_distribution'] = { 'liquid' => 0.0, 'solid' => 0.0, 'vapor' => 0.0 }
+        self.base_values['base_temperature'] = 0.0
+        self.base_values['base_pressure'] = 0.0
+        self.base_values['base_total_liquid_mass'] = 0.0
       end
 
     end

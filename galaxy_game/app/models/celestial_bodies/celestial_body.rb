@@ -67,6 +67,8 @@ module CelestialBodies
     # but still work for gas giants
     
     def surface_area
+      stored = read_attribute(:surface_area)
+      return stored if stored.present? && stored != 0
       return 4 * Math::PI * (radius ** 2) if radius.present?
       0
     end
