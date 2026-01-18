@@ -36,6 +36,64 @@ FactoryBot.define do
     # That's what's causing the error
   end
 
+  trait :operational do
+    operational_data do
+      {
+        "connection_systems" => {
+          "power_distribution" => {"status" => "online", "efficiency" => 85}
+        },
+        "container_capacity" => {
+          "unit_slots" => [
+            {"type" => "energy", "count" => 1},
+            {"type" => "computers", "count" => 1}
+          ],
+          "module_slots" => [
+            {"type" => "power", "count" => 1}
+          ]
+        },
+        "operational_modes" => {
+          "current_mode" => "production",
+          "available_modes" => [
+            {"name" => "standby", "power_draw" => 250.0, "staff_required" => 2},
+            {"name" => "production", "power_draw" => 2500.0, "staff_required" => 10}
+          ]
+        }
+      }
+    end
+
+    after(:create) do |structure|
+      # Add required units for operational status
+      create(:unit, :power, attachable: structure)
+      create(:unit, :computer, attachable: structure)
+    end
+  end
+
+  trait :non_operational do
+    operational_data do
+      {
+        "connection_systems" => {
+          "power_distribution" => {"status" => "offline", "efficiency" => 85}
+        },
+        "container_capacity" => {
+          "unit_slots" => [
+            {"type" => "energy", "count" => 1},
+            {"type" => "computers", "count" => 1}
+          ],
+          "module_slots" => [
+            {"type" => "power", "count" => 1}
+          ]
+        },
+        "operational_modes" => {
+          "current_mode" => "standby",
+          "available_modes" => [
+            {"name" => "standby", "power_draw" => 250.0, "staff_required" => 2},
+            {"name" => "production", "power_draw" => 2500.0, "staff_required" => 10}
+          ]
+        }
+      }
+    end
+  end
+
   trait :with_inventory do
     after(:create) do |structure|
       create(:inventory, inventoryable: structure)
