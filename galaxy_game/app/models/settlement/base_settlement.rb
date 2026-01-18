@@ -319,6 +319,20 @@ module Settlement
       true
     end
 
+    # Manage shared services like power, data, robots, etc. over time
+    def manage_shared_services!(time_skipped)
+      # Manage power distribution and consumption
+      manage_power_services(time_skipped)
+      
+      # Manage data/communication services
+      manage_data_services(time_skipped)
+      
+      # Manage robot allocation and maintenance
+      manage_robot_services(time_skipped)
+      
+      # Other shared infrastructure management can be added here
+    end
+
     def critical_resource_threshold(resource, days: 2)
       per_person_daily =
         case resource.to_s.downcase
@@ -333,6 +347,46 @@ module Settlement
         end
 
       (current_population * per_person_daily * days).ceil
+    end
+
+    private
+
+    def manage_power_services(time_skipped)
+      # Calculate total power needed for the time period
+      total_energy_needed = power_usage * time_skipped * 24 # Convert days to hours
+      
+      # Check if we have sufficient power generation
+      if has_sufficient_power?
+        # Power is sufficient, log normal operation
+        Rails.logger.info "#{name}: Power grid operating normally. Generation: #{power_generation}kW, Usage: #{power_usage}kW"
+      else
+        # Handle power shortage
+        shortage_amount = power_usage - power_generation
+        Rails.logger.warn "#{name}: Power shortage detected. Shortage: #{shortage_amount}kW"
+        
+        # Try to activate backup power systems
+        if respond_to?(:handle_power_shortage)
+          handle_power_shortage(shortage_amount)
+        end
+      end
+    end
+
+    def manage_data_services(time_skipped)
+      # Basic data service management - could be expanded
+      # For now, just ensure data infrastructure is operational
+      data_units = base_units.where(unit_type: ['computer', 'server', 'communication'])
+      if data_units.any?
+        Rails.logger.debug "#{name}: Data services operational with #{data_units.count} units"
+      end
+    end
+
+    def manage_robot_services(time_skipped)
+      # Basic robot service management - could be expanded
+      # For now, just ensure robot units are operational
+      robot_units = base_units.where(unit_type: ['robot', 'drone', 'construction_robot'])
+      if robot_units.any?
+        Rails.logger.debug "#{name}: Robot services operational with #{robot_units.count} units"
+      end
     end
   end
 end
