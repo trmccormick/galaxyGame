@@ -34,7 +34,7 @@ Phase 10: Market Establishment & Player Entry Readiness
 
 ---
 
-## 📋 Phase Details
+
 
 ### Phase 1: Earth → Luna (Precursor Generic Build)
 
@@ -54,22 +54,13 @@ Phase 10: Market Establishment & Player Entry Readiness
 3. Establish Luna base as first settlement
 4. Create initial GCC market with USD coupling
 5. Deploy regolith processing for local ISRU
-
 **Success Criteria**:
 - ✅ Base operational (power, life support, comms)
 - ✅ Regolith I-beam production active
 - ✅ Generic panel manufacturing online
 - ✅ Luna market established (GCC/USD coupled)
 
-**Dependencies**: None (cold start from Earth)
-
-**Reference**: [construction_system.md - Worldhouse Construction Methodology](construction_system.md#worldhouse-construction-methodology)
-
 ---
-
-### Phase 2: L1 Station/Depot Construction
-
-**Status**: ❌ **MISSING - Mission profile needed**
 
 **Required Mission**: `earth-moon-l1-station/l1_station_construction_profile_v1.json`
 
@@ -79,13 +70,9 @@ Phase 10: Market Establishment & Player Entry Readiness
 3. **Station Framework** - Assemble I-beam skeleton (same Luna regolith methodology)
 4. **Manufacturing Setup** - Install cycler/tug construction bays
 5. **Depot Operations** - Activate storage, refueling, and orbital logistics
-
 **AI Manager Actions**:
-1. Use Luna-produced materials (I-beams, panels) for construction
 2. Establish L1 as ship construction hub (tugs, cyclers)
-3. Create depot for orbital refueling and storage
 4. Set up logistics contracts for Earth-Luna-L1 transport
-
 **Success Criteria**:
 - ✅ L1 station operational at Earth-Moon Lagrange point
 - ✅ Ship construction bays active (tug/cycler fabrication)
