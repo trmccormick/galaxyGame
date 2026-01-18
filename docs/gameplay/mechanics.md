@@ -2,7 +2,25 @@
 
 ## Game Overview
 
-Galaxy Game is a space colonization simulation where players establish and manage interplanetary infrastructure. The game focuses on resource management, technological advancement, and economic optimization across multiple celestial bodies.
+Galaxy Game is a space colonization simulation where players participate in an AI-managed interplanetary economy through a **player-first task priority system**. Players get first refusal on harvesting, logistics, and construction contracts, earning GCC (Galactic Crypto Currency) to influence game progression. NPCs provide autonomous fallback to ensure the game never stalls, creating a living universe that progresses whether players participate or not.
+
+## Core Philosophy: Player-First Task Priority
+
+### The Player-First System
+- **Contracts Offered First:** All harvesting, logistics, and construction missions are offered to players with 24-48 hour timeout
+- **Player Choice:** Accept contracts to earn GCC and influence development, or decline to let NPCs handle them
+- **NPC Fallback:** Game progression continues autonomously via AI Manager if players don't participate
+- **Living Economy:** NPCs build infrastructure, trade materials, and maintain operations independently
+- **Player Influence:** GCC spending allows outbidding NPCs, accessing premium contracts, and directing development priorities
+
+### Contract Types
+- **Harvesting Missions:** Luna regolith collection, Venus CO₂ extraction, Titan methane processing
+- **Logistics Missions:** Fuel delivery (L1 → Mars), material transport (Luna → LEO), supply runs
+- **Construction Missions:** Habitat assembly, depot setup, atmospheric harvesting station deployment
+
+### Dual Economy
+- **GCC (Galactic Crypto Currency):** Player currency earned through contract completion, used for market trading and influence
+- **Virtual Ledger:** NPC-to-NPC internal accounting system (invisible to players, ensures autonomous progression)
 
 ## Game Initialization
 
@@ -125,11 +143,33 @@ Planetary populations evolve through:
 
 ### AI Management
 
-The AI Manager handles:
-- **Automated Missions**: Pre-planned colonization sequences
-- **Resource Allocation**: Optimal distribution of equipment
-- **Crisis Response**: Emergency resource deployment
-- **Pattern Learning**: Improvement through successful operations
+The AI Manager ensures autonomous game progression through:
+- **Player-First Task Assignment:** Offers contracts to players (24-48h timeout), then assigns to NPCs if declined
+- **Automated Missions:** Pre-planned colonization sequences execute whether players participate or not
+- **Resource Allocation:** Optimal distribution of equipment across Sol system and wormhole networks
+- **Crisis Response:** Emergency resource deployment maintains system stability
+- **Pattern Learning:** Improvement through successful operations (Luna, Mars, Venus, Titan, Gas Giant patterns)
+- **NPC Fallback:** Autonomous execution ensures game progression never stalls waiting for players
+
+### Player Progression Path
+
+#### Beginner Phase (Tutorial)
+- **Simple Deliveries:** Luna → L1, Venus → LEO contracts
+- **First GCC Earnings:** Complete missions to understand economy
+- **Learn Market Basics:** Buy materials, fuel with earned GCC
+- **Build Reputation:** Successful contracts unlock better opportunities
+
+#### Intermediate Phase (After Reputation Threshold)
+- **Multi-Leg Logistics:** Titan methane → Mars, Venus CO₂ → LEO
+- **Outer Planet Missions:** Jupiter, Saturn, Uranus, Neptune depot operations
+- **Higher GCC Rewards:** Access to premium contracts
+- **Market Competition:** Outbid NPCs for valuable resources
+
+#### Advanced Phase (High Reputation)
+- **Wormhole Logistics:** Sol → AOL-732356 Prize World transport
+- **Consortium Membership:** Vote on network routes, invest in AWS construction
+- **Specialized Roles:** Exploration scouts, manufacturing specialists, fuel traders
+- **Economic Influence:** High GCC balance shapes development priorities
 
 ## Victory Conditions
 

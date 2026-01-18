@@ -31,7 +31,7 @@
 **Player Status**: **PLAYER-FIRST TASK PRIORITY**
 - **Contract System**: Harvesting, logistics, construction missions offered to players FIRST
 - **NPC Fallback**: If players don't accept (or timeout), tasks move to NPC queue to keep game progressing
-- **GCC Economy**: Players earn Galactic Credit Chip (GCC) for completed missions
+- **GCC Economy**: Players earn Galactic Crypto Currency (GCC) for completed missions
 - **Influence**: Players use GCC to buy materials, ships, contracts - influencing game progression
 
 **Success Criteria**:
@@ -216,7 +216,7 @@ Sol (Hub)
 
 **Player Role in Phase 1**:
 - **Contract Participant**: Accept missions (harvesting, logistics, construction) before NPCs get them
-- **GCC Earner**: Complete missions to earn Galactic Credit Chip (GCC) currency
+- **GCC Earner**: Complete missions to earn Galactic Crypto Currency (GCC) currency
 - **Economic Actor**: Use GCC to buy materials, ships, influence game progression
 - **Optional Engagement**: Game progresses autonomously via NPC fallback (players don't block development)
 
