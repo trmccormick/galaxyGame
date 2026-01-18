@@ -9,9 +9,10 @@ Build settlements across the solar system and beyond. Process raw regolith into 
 ## 🎮 Game Vision
 
 ### SimEarth Inspiration
-- **Planetary Projection Systems**: Economic forecasting, resource flow visualization, terraforming progress tracking
-- **Admin Tools**: System-wide monitoring and management interfaces
-- **Emergent Complexity**: Simple rules creating complex, realistic outcomes
+- **Planetary Simulation**: Test terraforming scenarios with accelerated time (100-year projections in minutes)
+- **Admin Control**: Manual mission design teaching AI patterns for autonomous deployment
+- **Economic Projection**: Resource flow visualization showing GCC movement across solar system
+- **Emergent Complexity**: Simple controls creating realistic planetary evolution and economic outcomes
 
 ### Eve Online Inspiration  
 - **Player-Driven Economy**: Contracts, insurance, logistics markets controlled by players
@@ -20,6 +21,8 @@ Build settlements across the solar system and beyond. Process raw regolith into 
 
 ### Realistic Science
 Grounded in real physics, chemistry, and orbital mechanics while maintaining engaging gameplay.
+
+**Deep Dive**: [SimEarth Admin Vision](docs/architecture/SIMEARTH_ADMIN_VISION.md) - Comprehensive guide to planetary simulation, mission control, and AI pattern learning
 
 ---
 
