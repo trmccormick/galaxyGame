@@ -7,7 +7,8 @@ RSpec.configure do |config|
   config.before(:suite) do
     # Clean all tables EXCEPT core reference data
     # Note: celestial_bodies and materials have FK relationships, both must be preserved
-    DatabaseCleaner.clean_with(:truncation, except: %w[
+    # Using :deletion instead of :truncation to avoid PostgreSQL deadlocks (2026-01-18)
+    DatabaseCleaner.clean_with(:deletion, except: %w[
       celestial_bodies
       locations
       materials
@@ -24,9 +25,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each, js: true) do
-    # For JavaScript/feature tests, use truncation
-    # But still preserve core tables
-    DatabaseCleaner.strategy = :truncation, {
+    # For JavaScript/feature tests, use deletion instead of truncation
+    # to avoid deadlocks while still preserving core tables
+    DatabaseCleaner.strategy = :deletion, {
       except: %w[
         celestial_bodies
         locations
