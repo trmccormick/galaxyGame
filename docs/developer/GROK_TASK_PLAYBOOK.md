@@ -2,21 +2,54 @@
 
 Purpose: Provide small, assignable task templates with exact commands, guardrails, and acceptance criteria for reliable maintenance and recovery.
 
+## [2026-01-17] Environment Safety Patch
+
+### Mandatory Command Prefix
+**ALL RSpec/Test commands MUST use `unset DATABASE_URL`** to prevent environment bleed between development and test databases.
+
+**❌ WRONG (causes data loss):**
+```bash
+docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/models/account_spec.rb
+```
+
+**✅ CORRECT (safe):**
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/models/account_spec.rb'
+```
+
+### The "Safety Check" - Pre-flight Requirement
+**BEFORE any destructive operation (RSpec, migrations, data operations), verify the database name:**
+
+```bash
+# Safety check - run this FIRST
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"'
+# Expected output: galaxy_game_test
+# ❌ If you see galaxy_game_development, STOP and fix environment first
+```
+
+### Log Mapping - Explicit Documentation
+- **Container path:** `./log/` inside web container
+- **Host path:** `./data/logs/` on host machine  
+- **Volume mount:** `./data/logs:/home/galaxy_game/log` (from docker-compose.dev.yml)
+- **Example:** Container writes to `./log/rspec_full_123456.log` → appears as `./data/logs/rspec_full_123456.log` on host
+
 ## Always-On Guardrails
 - Atomic Commits: Only stage fixed code + its docs. Never `git add ..`.
 - Backup First: Copy changed files to `tmp/pre_revert_backup/` before overwriting from the Jan 8 backup.
 - Documentation Mandate: A fix is "Done" only when `/docs` reflects the new logic/state.
 - Host vs Container: Host runs git/backup; container runs rspec and app commands.
 
-## Log Path Hint
-- Default path used in recent sessions: `log/rspec_full_*.log`
-- Alternate path (older scripts): `data/logs/rspec_full_*.log`
-- Set `LOG_DIR` to the one you use consistently.
+## Log Path Reference
+- **Host path:** `./data/logs/` - All RSpec logs stored here
+- **Container path:** `/home/galaxy_game/log` - Inside container, mapped to host `./data/logs/`
+- **Volume mount:** `./data/logs:/home/galaxy_game/log` (from docker-compose.dev.yml)
 
 ```bash
-# Host
-LOG_DIR="log"   # or "data/logs"
-LATEST_LOG=$(ls -t "$LOG_DIR"/rspec_full_*.log 2>/dev/null | head -n 1)
+# Host - Check logs
+ls -t ./data/logs/rspec_full_*.log
+
+# Container - Write logs (mapped to host ./data/logs/)
+docker exec -it web bash -c 'bundle exec rspec > ./log/rspec_full_$(date +%s).log'
 ```
 
 ## Container Path Map (web container)
@@ -29,16 +62,54 @@ Examples (inside container, cwd `/home/galaxy_game`):
 - Ruby scripts: `ruby json-build-scripts/star_system_validator.rb --input app/data/star_systems/alpha_centauri.json`
 - Rails runner: `bundle exec rails runner scripts/local_bubble_expand.rb --dir app/data/star_systems`
 
+## Pre-flight Checks (Run BEFORE any protocol)
+
+### Database Environment Verification
+**Critical:** Test database issues cause deadlocks, incomplete logs, and unreliable results.
+
+```bash
+# Verify test database is accessible and properly configured
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"'
+# Expected output: galaxy_game_test
+```
+
+If output shows `galaxy_game_development` or errors occur:
+1. Run database environment fix: `sh ./scripts/fix_test_database_url.sh`
+2. Verify test database has seed data: `sh ./scripts/prepare_test_database.sh`
+3. Always use test wrapper: `docker exec -it web bin/test` OR `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec'`
+
+### Test Environment Health Check
+```bash
+# Verify no deadlocks or hanging connections
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "ActiveRecord::Base.connection.execute(\"SELECT COUNT(*) FROM pg_stat_activity WHERE datname='\''galaxy_game_test'\''\")"'
+
+# Clear any stale test data
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:test:prepare'
+```
+
+### Factory Verification
+Common issue: Missing or renamed factories cause cascading failures.
+
+```bash
+# List all available factories
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts FactoryBot.factories.map(&:name).sort.join(\"\n\")"'
+```
+
+Known factory mapping (as of 2026-01-17):
+- ✅ Use `:base_unit` not `:unit`
+- ✅ Currency seeding must complete before financial tests
+
 ## Protocols
 
 ### 1) Autonomous Nightly Grinder Protocol (ANGP)
 Use when you want fully automated overnight triage + documentation.
 
+**PREREQUISITE:** Run Pre-flight Checks first to avoid incomplete logs!
+
 - Identify Latest Log:
 ```bash
 # Host
-LOG_DIR="log"   # or "data/logs"
-LATEST_LOG=$(ls -t "$LOG_DIR"/rspec_full_*.log 2>/dev/null | head -n 1)
+LATEST_LOG=$(ls -t data/logs/rspec_full_*.log 2>/dev/null | head -n 1)
 echo "Latest log: $LATEST_LOG"
 ```
 - Extract top failing spec:
@@ -48,8 +119,8 @@ grep "rspec ./spec" "$LATEST_LOG" | awk '{print $2}' | cut -d: -f1 | sort | uniq
 ```
 - If missing log, run full suite:
 ```bash
-# Container
-docker-compose -f docker-compose.dev.yml exec -e DATABASE_URL=postgres://postgres:password@db:5432/galaxy_game_test -e RAILS_ENV=test web /bin/bash -c "bundle exec rails db:test:prepare && bundle exec rspec > ./log/rspec_full_\$(date +%s).log 2>&1"
+# Container (output goes to /home/galaxy_game/log which maps to host ./data/logs/)
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
 ```
 - Compare failing code vs backup:
 ```bash
@@ -60,7 +131,7 @@ ls -la /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-20
 - Fix & Verify one file at a time:
 ```bash
 # Container
-docker-compose -f docker-compose.dev.yml exec -e DATABASE_URL=postgres://postgres:password@db:5432/galaxy_game_test -e RAILS_ENV=test web bundle exec rspec [path_to_spec]
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [path_to_spec]'
 ```
 - Atomic commit:
 ```bash
@@ -96,13 +167,73 @@ Keep workspace clean and context fresh.
 
 - Archive logs (host):
 ```bash
-mkdir -p ./data/logs/archive && mv ./data/logs/rspec_full_*.log ./data/logs/archive/
-```
+mkdir -p ./log/archive && mv ./log/rspec_full_*.log ./log/archive/
+# or for ol
 - Clear RSpec cache (container):
 ```bash
 docker-compose -f docker-compose.dev.yml exec web rm -f tmp/rspec_examples.txt
 ```
+- Clear test database deadlocks (container):
+```Progress Tracking
+
+### Current Status (2026-01-17)
+- **Latest Failure Count:** 393 (down from 420)
+- **Recent Fixes:**
+  - GameController singleton methods (is_moon, body_category timing issue)
+  - ShellPrintingJob factory references (:base_unit vs :unit)
+  - PrecursorCapabilityService schema mismatches (geosphere/hydrosphere attributes)
+- **Known Issues:**
+  - Test database deadlocks (resolved via DDR protocol)
+  - Factory naming inconsistencies (use Pre-flight Factory Verification)
+  - DATABASE_URL override (resolved via test wrapper script)
+
+### Failure Count Log
+Track progress here after each Grinder run:
+
+| Date | Failures | Change | Notes |
+|------|----------|--------|-------|
+| 2026-01-17 | 393 | -27 | GameController, ShellPrintingJob, PrecursorCapability fixes |
+| [Next] | | | |
+
+## bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:test:prepare'
+```
 - Sync docs: Ensure `README.md` or system_architecture.md reflects current state.
+
+### 5) Database Deadlock Recovery (DDR)
+Use when tests hang, fail with "database is locked", or produce incomplete logs.
+
+**Symptoms:**
+- RSpec suite stops mid-run
+- Errors like "PG::TRDeadlockDetected" or "database deadlock detected"
+- Multiple test sessions conflict
+- Log files incomplete or truncated
+
+**Recovery Steps:**
+```bash
+# 1. Kill all test processes (container)
+docker exec -it web pkill -f rspec
+
+# 2. Drop and recreate test database
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:drop db:create db:migrate'
+
+# 3. Re-seed core data (Sol, planets, materials)
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:seed'
+
+# 4. Verify database connection
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts CelestialBodies::CelestialBody.count"'
+# Expected: 14 (core celestial bodies)
+
+# 5. Run clean test suite
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+```
+# Note: Container ./log/ maps to host ./data/logs/
+
+**Prevention:**
+- Always use `unset DATABASE_URL` before RAILS_ENV=test
+- Never run tests against development database
+- Use `bin/test` wrapper script (automatically handles DATABASE_URL)
+- Run database cleanup between major test runs
 
 ## Assignment Templates (Small, Delegable Tasks)
 
@@ -226,6 +357,31 @@ All market manifests must include:
 ## Atomic Commit Recipe
 ```bash
 # Host
+
+## Schema Evolution Tracking **[2026-01-17]**
+
+### Recent Schema Updates
+Track breaking schema changes to prevent recurring "undefined method" errors:
+
+**Geosphere Model:**
+- ✅ Use `crust_composition` NOT `surface_composition`
+- ✅ Use `stored_volatiles` (Hash with :CO2, :H2O keys) NOT `volatile_reservoirs`
+- ✅ `stored_volatiles` structure: `{CO2: {polar_caps: Float, regolith: Float}, H2O: {subsurface_ice: Float}}`
+
+**Hydrosphere Model:**
+- ✅ Use `water_bodies` (Hash/JSON field) NOT `ocean_coverage`
+- ✅ Check presence with `water_bodies.present?` NOT numeric comparison
+
+**CelestialBody Lookup:**
+- ✅ Search by `name` (case-insensitive) for user-facing identifiers
+- ✅ `identifier` field uses format like "MARS-01", "EARTH-01" (internal system codes)
+- ✅ Use `CelestialBodies::CelestialBody.find_by("LOWER(name) = ?", target_name.downcase)`
+
+### Before Restoring from Jan 8 Backup
+1. Check if restored code uses old schema methods
+2. Compare against current models in `app/models/celestial_bodies/spheres/`
+3. Update method calls to match current schema
+4. Run targeted spec to verify: `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/[relevant_spec].rb'`
 git add [file1] [file2] docs/[updated_doc].md
 git commit -m "fix: [component] — code + docs"
 ```
