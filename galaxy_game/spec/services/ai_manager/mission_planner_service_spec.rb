@@ -143,8 +143,8 @@ RSpec.describe AIManager::MissionPlannerService do
   end
   
   describe 'data-driven local production' do
-    let(:solar_system) { create(:solar_system, :sol) }
-    let(:mars) { solar_system.celestial_bodies.find_by(identifier: 'mars') }
+    let(:solar_system) { create(:solar_system) }
+    let!(:mars) { create(:terrestrial_planet, :mars, solar_system: solar_system) }
     let(:planner) { described_class.new('mars-terraforming') }
     
     before do
