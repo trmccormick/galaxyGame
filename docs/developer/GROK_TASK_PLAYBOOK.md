@@ -176,23 +176,24 @@ docker-compose -f docker-compose.dev.yml exec web rm -f tmp/rspec_examples.txt
 - Clear test database deadlocks (container):
 ```Progress Tracking
 
-### Current Status (2026-01-17)
-- **Latest Failure Count:** 393 (down from 420)
-- **Recent Fixes:**
-  - GameController singleton methods (is_moon, body_category timing issue)
-  - ShellPrintingJob factory references (:base_unit vs :unit)
-  - PrecursorCapabilityService schema mismatches (geosphere/hydrosphere attributes)
-- **Known Issues:**
-  - Test database deadlocks (resolved via DDR protocol)
-  - Factory naming inconsistencies (use Pre-flight Factory Verification)
-  - DATABASE_URL override (resolved via test wrapper script)
+### Current Status (2026-01-17 Evening)
+- **Baseline:** Starting from ~415 failures (Nightly Grinder baseline)
+- **Session Fixes (Backup Restoration):**
+  - BaseSettlement: Restored manage_shared_services! with power/data/robot service management
+  - CelestialBody: Made can_generate_locally? public (was accidentally private)
+  - CelestialBody: Restored density method to check column before calculating
+  - CelestialBody: Added magnetosphere_protection? and has_magnetosphere accessors
+  - BaseStructure factory: Restored :operational and :non_operational traits
+- **Strategy:** Systematic backup comparison (Jan 8th) to identify missing/regressed functionality
+- **Next:** Fresh full suite run to establish new baseline after restoration work
 
 ### Failure Count Log
 Track progress here after each Grinder run:
 
 | Date | Failures | Change | Notes |
 |------|----------|--------|-------|
-| 2026-01-17 | 393 | -27 | GameController, ShellPrintingJob, PrecursorCapability fixes |
+| 2026-01-17 PM | TBD | TBD | Backup restoration session - BaseSettlement, CelestialBody, BaseStructure factory |
+| 2026-01-17 AM | 393 | -27 | GameController, ShellPrintingJob, PrecursorCapability fixes |
 | [Next] | | | |
 
 ## bash
