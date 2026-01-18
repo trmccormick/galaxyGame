@@ -64,14 +64,18 @@ module Structures
     
     def position_within_lava_tube_length
       return unless lava_tube && position
-      if position > lava_tube.length_m
+      lava_tube_length = lava_tube.length_m
+      return unless lava_tube_length
+      if position > lava_tube_length
         errors.add(:position, "cannot exceed lava tube length")
       end
     end
     
     def diameter_within_lava_tube_diameter
       return unless lava_tube && diameter
-      if diameter > lava_tube.width_m
+      lava_tube_width = lava_tube.width_m
+      return unless lava_tube_width
+      if diameter > lava_tube_width
         errors.add(:diameter, "cannot exceed lava tube width")
       end
     end
