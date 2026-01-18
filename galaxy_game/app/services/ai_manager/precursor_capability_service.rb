@@ -111,8 +111,8 @@ module AIManager
       resources = []
 
       # Surface composition from geosphere
-      if geo.surface_composition.present?
-        composition = geo.surface_composition
+      if geo.crust_composition.present?
+        composition = geo.crust_composition
         resources << 'iron_oxide' if composition['iron_oxide'].to_f > 0.01
         resources << 'silicon' if composition['silicon'].to_f > 0.01
         resources << 'aluminum' if composition['aluminum'].to_f > 0.01
@@ -120,8 +120,8 @@ module AIManager
       end
 
       # Volatile deposits
-      if geo.volatile_reservoirs.present?
-        reservoirs = geo.volatile_reservoirs
+      if geo.stored_volatiles.present?
+        reservoirs = geo.stored_volatiles
         resources << 'water_ice' if reservoirs['H2O'].to_f > 0
         resources << 'frozen_co2' if reservoirs['CO2'].to_f > 0
         resources << 'methane_ice' if reservoirs['CH4'].to_f > 0
@@ -136,14 +136,14 @@ module AIManager
       geo = celestial_body.geosphere
       resources = []
 
-      # Subsurface water
-      if geo.subsurface_water_mass.to_f > 0
+      # Subsurface water - check if stored_volatiles contains H2O
+      if geo.stored_volatiles.is_a?(Hash) && geo.stored_volatiles.key?(:H2O)
         resources << 'subsurface_water'
         resources << 'water_ice'
       end
 
       # Subsurface ocean (Europa-style)
-      if celestial_body.hydrosphere&.ocean_coverage.to_f > 0
+      if celestial_body.hydrosphere&.water_bodies.present?
         resources << 'subsurface_ocean'
       end
 
@@ -156,8 +156,8 @@ module AIManager
       hydro = celestial_body.hydrosphere
       resources = []
 
-      resources << 'water' if hydro.ocean_coverage.to_f > 0
-      resources << 'water_ice' if hydro.ice_mass.to_f > 0 || hydro.polar_ice_mass.to_f > 0
+      resources << 'water' if hydro.water_bodies.present?
+      # Removed: ice_mass, polar_ice_mass not in schema
 
       resources
     end
@@ -172,8 +172,8 @@ module AIManager
       resources << 'regolith'
 
       # Check regolith enrichment
-      if geo.surface_composition.present?
-        composition = geo.surface_composition
+      if geo.crust_composition.present?
+        composition = geo.crust_composition
         resources << 'he3' if composition['he3'].to_f > 0.00001 # Luna-specific
         resources << 'rare_earth_elements' if composition['rare_earths'].to_f > 0.01
       end
