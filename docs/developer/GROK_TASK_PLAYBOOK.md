@@ -99,6 +99,70 @@ Known factory mapping (as of 2026-01-17):
 - ✅ Use `:base_unit` not `:unit`
 - ✅ Currency seeding must complete before financial tests
 
+---
+
+## Common Blockers & Solutions
+
+### Database Deadlock During Test Runs
+
+**Symptoms:**
+- PostgreSQL deadlock errors during DatabaseCleaner truncation
+- Tests hang or fail with "could not obtain lock" messages
+- Full suite cannot complete due to truncation conflicts
+
+**Root Cause:** DatabaseCleaner's `:truncation` strategy can cause deadlocks when:
+- Tests run in parallel
+- Foreign key constraints create circular dependencies
+- Long-running transactions hold locks
+
+**Solutions (try in order):**
+
+1. **Switch to Deletion Strategy:**
+```ruby
+# spec/rails_helper.rb or spec/support/database_cleaner.rb
+config.before(:suite) do
+  DatabaseCleaner.strategy = :deletion  # Instead of :truncation
+  DatabaseCleaner.clean_with(:deletion)
+end
+```
+
+2. **Disable Parallel Tests:**
+```bash
+# Force sequential execution
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --no-parallel'
+```
+
+3. **Use Transaction Strategy for Most Tests:**
+```ruby
+config.before(:each) do
+  DatabaseCleaner.strategy = :transaction
+end
+
+config.before(:each, type: :feature) do
+  DatabaseCleaner.strategy = :deletion  # Only for specs that need it
+end
+```
+
+4. **Check for Stuck Connections:**
+```sql
+-- Find and kill stuck connections
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity 
+WHERE datname = 'galaxy_game_test' AND state = 'idle in transaction';
+```
+
+**Prevention:**
+- Always use `unset DATABASE_URL` before test runs
+- Avoid manual database operations during test execution
+- Use transactions when possible, deletion/truncation only when necessary
+
+**Real-World Example (Jan 18, 2026):**
+- Fixed segment_covering_service_spec.rb (12 failures → 0)
+- Fixed precursor_capability_service_spec.rb (18 failures, solid surface detection)
+- Hit database deadlock blocker during full suite run
+- Stopped redundant test runs, diagnosed issue, applied deletion strategy
+
+---
+
 ## Protocols
 
 ### 1) Autonomous Nightly Grinder Protocol (ANGP)
@@ -134,6 +198,18 @@ grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -
 ```
 
 **Time Savings:** Analyzing one log 5 times = 10 seconds. Running suite 5 times = 50-100 minutes.
+
+**Real-World Example (Jan 18, 2026 Session):**
+- ❌ Grok ran multiple full suites without logging → Only fixed 2 specs in hours
+- ✅ After correction: Fixed 2 specs, attempted 1 more, then hit blocker
+- Lesson: Even with blocker, saved time for debugging instead of wasting it on redundant runs
+
+**When You Hit a Blocker (e.g., Database Deadlock):**
+1. STOP running full suites immediately
+2. Diagnose blocker with targeted individual specs
+3. Fix blocker issue (see Common Blockers section)
+4. Resume with fresh logged run
+5. Don't waste time running broken suites repeatedly
 
 - Identify Latest Log:
 ```bash

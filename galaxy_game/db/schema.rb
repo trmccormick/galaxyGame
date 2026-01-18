@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_16_153011) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_16_153012) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -574,6 +574,20 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_16_153011) do
     t.index ["from_currency_id", "to_currency_id"], name: "index_exchange_rates_on_from_currency_id_and_to_currency_id", unique: true
     t.index ["from_currency_id"], name: "index_exchange_rates_on_from_currency_id"
     t.index ["to_currency_id"], name: "index_exchange_rates_on_to_currency_id"
+  end
+
+  create_table "exotic_materials", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "state"
+    t.bigint "geosphere_id", null: false
+    t.integer "rarity", default: 0
+    t.integer "stability", default: 0
+    t.decimal "percentage", precision: 10, scale: 4
+    t.decimal "mass", precision: 20, scale: 4
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["geosphere_id", "name"], name: "index_exotic_materials_on_geosphere_id_and_name", unique: true
+    t.index ["geosphere_id"], name: "index_exotic_materials_on_geosphere_id"
   end
 
   create_table "galaxies", force: :cascade do |t|
@@ -1527,6 +1541,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_16_153011) do
   add_foreign_key "environments", "celestial_bodies", column: "celestial_bodies_id"
   add_foreign_key "exchange_rates", "currencies", column: "from_currency_id"
   add_foreign_key "exchange_rates", "currencies", column: "to_currency_id"
+  add_foreign_key "exotic_materials", "geospheres"
   add_foreign_key "gases", "atmospheres"
   add_foreign_key "geological_materials", "geospheres"
   add_foreign_key "geospheres", "celestial_bodies"

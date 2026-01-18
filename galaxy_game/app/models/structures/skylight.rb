@@ -1,5 +1,7 @@
 module Structures
   class Skylight < ApplicationRecord
+    self.table_name = 'skylights'
+    
     belongs_to :lava_tube, class_name: 'CelestialBodies::Features::LavaTube', foreign_key: 'lavatube_id'
     
     # Validations from original model
