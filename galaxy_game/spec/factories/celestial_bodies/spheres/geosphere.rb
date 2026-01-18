@@ -38,6 +38,8 @@ FactoryBot.define do
       regolith_depth { 10.0 } # Mars has deep regolith but no soil
       regolith_particle_size { 0.1 }
       weathering_rate { 0.2 } # Low due to limited atmosphere
+      crust_composition { { 'iron_oxide' => 18.0, 'silicon' => 25.0, 'aluminum' => 3.0, 'titanium' => 0.5 } }
+      stored_volatiles { { 'H2O' => 100.0, 'CO2' => 50.0 } }
     end
     
     trait :moon do
@@ -46,6 +48,16 @@ FactoryBot.define do
       regolith_depth { 15.0 } # Lunar regolith can be quite deep
       regolith_particle_size { 0.05 }
       weathering_rate { 0.01 } # Very low due to no atmosphere
+    end
+    
+    trait :titan do
+      geological_activity { 10 }
+      tectonic_activity { false }
+      regolith_depth { 5.0 }
+      regolith_particle_size { 0.2 }
+      weathering_rate { 0.1 }
+      crust_composition { { 'regolith' => 100.0 } }
+      stored_volatiles { { 'CH4' => 100.0, 'N2' => 50.0 } }
     end
   end
 end

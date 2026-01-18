@@ -42,6 +42,11 @@ FactoryBot.define do
       radius { 3.3895e6 }
       surface_temperature { 210.0 }
       known_pressure { 0.006 }
+      
+      after(:create) do |planet|
+        create(:geosphere, :mars, celestial_body: planet)
+        create(:atmosphere, :mars, celestial_body: planet)
+      end
     end
 
     trait :venus do
