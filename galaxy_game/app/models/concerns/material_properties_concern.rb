@@ -36,7 +36,9 @@ module MaterialPropertiesConcern
   
   # Retrieve molar mass from properties
   def molar_mass_from_properties
-    properties&.dig('properties', 'molar_mass') || properties&.dig('molar_mass')
+    properties&.dig('properties', 'molar_mass_g_mol') || 
+    properties&.dig('properties', 'molar_mass') || 
+    properties&.dig('molar_mass')
   end
   
   # Get state helper methods

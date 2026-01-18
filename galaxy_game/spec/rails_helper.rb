@@ -1,8 +1,13 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 
-require File.expand_path('../../config/environment', __FILE__)
+# Set JSON data path for test environment BEFORE loading Rails
+# In Docker, ./data/json-data is mounted to /home/galaxy_game/app/data
+# This ensures MaterialLookupService can find material JSON files during tests
+ENV['GALAXY_JSON_DATA_PATH'] ||= File.expand_path('../../app/data', __FILE__)
 ENV["RAILS_ENV"] ||= 'test'
+
+require File.expand_path('../../config/environment', __FILE__)
 
 # RUN RAILS
 abort("The Rails environment is running in production mode!") if Rails.env.production?
