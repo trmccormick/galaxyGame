@@ -3,11 +3,32 @@ require 'rails_helper'
 require_relative '../../../app/services/ai_manager'
 
 RSpec.describe AIManager::PrecursorCapabilityService do
-  let(:solar_system) { create(:solar_system, :sol) }
+  let(:solar_system) { create(:solar_system) }
+  
+  # Use existing factory traits
+  let!(:mars) { create(:terrestrial_planet, :mars, solar_system: solar_system) }
+  let!(:luna) { create(:celestial_body, :luna, solar_system: solar_system) }
+  
+  # Create Titan manually since no trait exists yet
+  let!(:titan) do
+    body = create(:celestial_body,
+      solar_system: solar_system,
+      identifier: 'titan',
+      name: 'Titan',
+      radius: 2574700.0,
+      mass: 1.3452e23
+    )
+    
+    # Create thick nitrogen/methane atmosphere
+    atmosphere = create(:atmosphere, celestial_body: body, pressure: 1.46, temperature: 94.0)
+    create(:gas, atmosphere: atmosphere, name: 'N2', percentage: 95.0)
+    create(:gas, atmosphere: atmosphere, name: 'CH4', percentage: 5.0)
+    
+    body
+  end
   
   describe '#can_produce_locally?' do
     context 'with Mars (CO2 atmosphere + water ice)' do
-      let(:mars) { solar_system.celestial_bodies.find_by(identifier: 'mars') }
       let(:service) { described_class.new(mars) }
 
       it 'returns true for regolith' do
@@ -28,7 +49,6 @@ RSpec.describe AIManager::PrecursorCapabilityService do
     end
 
     context 'with Luna (regolith + He3)' do
-      let(:luna) { solar_system.celestial_bodies.find_by(identifier: 'luna') }
       let(:service) { described_class.new(luna) }
 
       it 'returns true for regolith' do
@@ -48,7 +68,6 @@ RSpec.describe AIManager::PrecursorCapabilityService do
 
   describe '#local_resources' do
     context 'with Titan (methane/nitrogen atmosphere)' do
-      let(:titan) { solar_system.celestial_bodies.find_by(identifier: 'titan') }
       let(:service) { described_class.new(titan) }
 
       it 'includes atmospheric methane' do
@@ -66,7 +85,6 @@ RSpec.describe AIManager::PrecursorCapabilityService do
   end
 
   describe '#precursor_enables?' do
-    let(:mars) { solar_system.celestial_bodies.find_by(identifier: 'mars') }
     let(:service) { described_class.new(mars) }
 
     it 'enables oxygen production on Mars (via CO2 processing)' do
@@ -87,7 +105,6 @@ RSpec.describe AIManager::PrecursorCapabilityService do
   end
 
   describe '#production_capabilities' do
-    let(:mars) { solar_system.celestial_bodies.find_by(identifier: 'mars') }
     let(:service) { described_class.new(mars) }
 
     it 'returns capabilities hash' do
@@ -114,7 +131,6 @@ RSpec.describe AIManager::PrecursorCapabilityService do
     end
 
     it 'queries actual celestial body spheres' do
-      mars = solar_system.celestial_bodies.find_by(identifier: 'mars')
       service = described_class.new(mars)
 
       # Should use actual geosphere/atmosphere data
