@@ -222,17 +222,24 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 
 ## ðŸ”§ Implementation Phases
 
-### Phase 1: MissionExecutor Service (Foundation)
+### Phase 1: TaskExecutionEngine (Foundation) - ✅ IMPLEMENTED
+**Service**: `app/services/ai_manager/task_execution_engine.rb`
+
 - AI Manager reads and executes mission profile JSONs (system-agnostic)
 - Removes hardcoded deployment logic
 - Proves patterns are reusable and data-driven
 
-### Phase 2: ResourceAcquisition Intelligence (Economics)
-- AI Manager makes smart, data-driven sourcing decisions
-- Prioritizes player market, then NPC, then Earth
-- Implements buy order pricing, timeout/fallback logic, and tracks metrics
+### Phase 2: ResourceAcquisitionService (Economics) - ✅ IMPLEMENTED
+**Service**: `app/services/ai_manager/resource_acquisition_service.rb`
 
-### Phase 3: ScoutLogic - System Analysis (Intelligence)
+- AI Manager makes smart, data-driven sourcing decisions
+- Prioritizes player market (GCC), then NPC (Virtual Ledger), then Earth (USD)
+- Implements buy order pricing, timeout/fallback logic, and tracks metrics
+- **Player-First Economics**: Enforces GUARDRAILS.md Section 4
+
+### Phase 3: ScoutLogic - System Analysis (Intelligence) - ✅ IMPLEMENTED
+**Service**: `app/services/ai_manager/scout_logic.rb`
+
 - AI Manager analyzes any celestial body/system and generates a standardized profile
 - **EM Detection & Analysis**: Scans for residual Exotic Matter (EM) signatures indicating previous wormhole activity or natural EM sources
 - **Wormhole Location Memory**: When natural wormholes are detected, stores precise location coordinates for future artificial wormhole targeting
@@ -240,22 +247,30 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 - All analysis is data-driven (no hardcoded system logic)
 - Outputs comprehensive system profile including EM potential and wormhole history for pattern selection
 
-### Phase 4: StrategySelector - Pattern Matching (Intelligence)
+### Phase 4: StrategySelector - Pattern Matching (Intelligence) - 💡 CONCEPT/EMBEDDED
+**Status**: No discrete service found; logic may be embedded in `mission_planner_service.rb` or `pattern_target_mapper.rb`
+
 - AI Manager maps system profile to appropriate deployment pattern
 - Uses data-driven logic to select and apply patterns
 - Handles edge cases and phased deployment planning
+- **Implementation Note**: Pattern selection may occur within ScoutLogic or MissionPlannerService
 
-### Phase 5: SystemOrchestrator (Integration)
+### Phase 5: SystemOrchestrator (Integration) - 💡 CONCEPT/PARTIAL
+**Status**: May be part of `operational_manager.rb`; multi-settlement coordination unclear
+
 - AI Manager orchestrates multi-settlement development using all learned patterns
 - Tracks dependencies and manages resource flows
 - Collects performance metrics for optimization
 
-### Phase 6: Wormhole Integration (Expansion)
+### Phase 6: Wormhole Services (Expansion) - ⚠️ PARTIAL/FRAGMENTED
+**Services**: `wormhole_scouting_service.rb`, `wormhole_placement_service.rb`, `expansion_service.rb`
+
 - Applies proven patterns to wormhole-discovered systems
 - **Artificial Wormhole Targeting**: Uses stored natural wormhole location data to precisely target artificial wormhole creation to known EM-rich locations
 - **EM Opportunity Assessment**: Prioritizes systems with detected residual EM for artificial wormhole development
 - Manages wormhole network, Snap events, and economic decisions
 - All logic is pattern-based and system-agnostic
+- **Implementation Note**: Fragmented across multiple services; no unified orchestrator
 
 ### Phase 7: Wormhole Scouting Probe Development (New Addition)
 - Develop a comprehensive series of probes for surveying systems discovered through wormholes
