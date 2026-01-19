@@ -154,9 +154,96 @@ end
 - **Exchange Rate Impact**: Payouts calculated in GCC but may be affected by real-time exchange rate fluctuations
 - **Reserve Requirements**: LDC maintains 25% GCC reserves for contract funding (see GUARDRAILS.md)
 
+### Phase 3: Escalation on Expiration
+
+**When Buy Orders Expire Unfilled**:
+```ruby
+def handle_expired_buy_orders(expired_orders)
+  expired_orders.each do |order|
+    case determine_escalation_strategy(order)
+    when :special_mission
+      create_special_mission_for_order(order)
+    when :automated_harvesting
+      deploy_automated_harvesters(order)
+    when :scheduled_import
+      schedule_cycler_import(order)
+    end
+  end
+end
+```
+
+**Escalation Options**:
+
+1. **Special Missions/Contracts**: High-reward missions targeting specific resources
+   ```json
+   {
+     "mission_id": "emergency_nitrogen_harvest_001",
+     "type": "special_emergency",
+     "description": "URGENT: Extract nitrogen from Martian atmosphere for lavatube project",
+     "rewards": {
+       "gcc": 15000,
+       "bonus_items": ["rare_mineral_sample"],
+       "reputation": 25
+     },
+     "time_limit": "48 hours"
+   }
+   ```
+
+2. **Automated Harvesters/Robots**: AI deploys robotic systems (higher operational cost)
+   ```ruby
+   # Deploy automated nitrogen harvester
+   harvester = AutomatedHarvester.create!(
+     target_material: "nitrogen",
+     location: "Mars Atmosphere",
+     operational_cost: 8000,  # GCC - higher than player cost
+     completion_time: 72.hours
+   )
+   ```
+
+3. **Scheduled Imports**: Order from external sources via cycler/supply runs (highest cost)
+   ```ruby
+   # Schedule import on next cycler
+   import = ScheduledImport.create!(
+     material: "transparent_panels",
+     quantity: 100,
+     source: "Luna Manufacturing",
+     transport_cost: 50000,  # GCC - includes shipping
+     delivery_eta: 14.days
+   )
+   ```
+
+### Phase 4: Surplus Material Sales
+
+**NPC-Generated Surplus**:
+- When NPCs harvest/generate materials they don't need, they post sell orders
+- Creates market liquidity and resource redistribution
+
+```ruby
+def handle_surplus_materials(production_output, project_needs)
+  surplus = production_output - project_needs
+  
+  surplus.each do |material, amount|
+    sell_order = SellOrder.create!(
+      seller: "npc_harvester",
+      material: material,
+      quantity: amount,
+      price_per_unit: calculate_market_sell_price(material),
+      expiration: 30.days.from_now
+    )
+    
+    Market::OrderBoard.post(sell_order)
+  end
+end
+```
+
+**Example Surplus Generation**:
+- Automated nitrogen harvester produces 200 units but project only needs 150
+- 50 units listed as sell order on market
+- Players can purchase at market rates
+
 ---
 
-### Phase 3: Contract Distribution
+### Phase 5: Contract Distribution
 
 **Contract Board** (UI/API):
 - Display available contracts sorted by payout, urgency, location
@@ -171,7 +258,7 @@ end
 
 ---
 
-### Phase 4: Timeout & NPC Fallback
+### Phase 6: Timeout & NPC Fallback
 
 **After 48 Hours**:
 ```ruby
@@ -198,7 +285,7 @@ end
 
 ---
 
-### Phase 5: Contract Completion
+### Phase 7: Contract Completion
 
 **Player Delivers**:
 ```ruby
