@@ -51,5 +51,54 @@ module Admin
     def testing
       # Scenario testing tools
     end
+
+    # PHASE 4 PLACEHOLDER METHODS
+    # TODO: Implement after Phase 3 completion (<50 test failures)
+
+    def projector
+      # PLACEHOLDER: System projector UI for planetary visualization
+      # TODO: Load solar system data for D3.js resource flow visualization
+      # TODO: Prepare data for interactive planet projection
+      raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
+
+    def digital_twin
+      # PLACEHOLDER: Digital Twin Sandbox UI
+      # TODO: List available digital twins
+      # TODO: Provide twin creation interface
+      raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
+
+    def create_twin
+      # PLACEHOLDER: Create new digital twin
+      # TODO: Clone celestial body data
+      # TODO: Store in transient storage
+      # TODO: Create database record
+      raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
+
+    def run_simulation
+      # PLACEHOLDER: Execute accelerated simulation
+      # TODO: Queue simulation job
+      # TODO: Track progress
+      # TODO: Store results
+      raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
+
+    def export_manifest
+      # PLACEHOLDER: Export simulation as deployable manifest
+      # TODO: Generate manifest_v1.1.json
+      # TODO: Optimize parameters
+      # TODO: Provide download
+      raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
+
+    def apply_to_live
+      # PLACEHOLDER: Deploy manifest to live AI Manager
+      # TODO: Validate manifest
+      # TODO: Pass to TaskExecutionEngine
+      # TODO: Monitor deployment
+      raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
   end
 end
