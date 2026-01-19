@@ -225,6 +225,14 @@ end
    )
    ```
 
+   **Real-World Space Transportation Economics**:
+   - **Transportation Dominates Cost**: Space imports are always highest cost due to transportation economics
+   - **Example**: A 5-gallon water jug (40 lbs) costs ~$10,000-$20,000/lb to transport to LEO
+   - **Total Cost**: $400,000-$800,000 for water that costs <$1 on Earth
+   - **Cost Ratio**: Transportation cost is 400,000x higher than material cost
+   - **Current Reality**: ISS resupply missions cost tens of millions per shipment
+   - **Game Implication**: Imports represent last-resort option when local production fails
+
 ### Phase 4: Surplus Material Sales
 
 **NPC-Generated Surplus**:
