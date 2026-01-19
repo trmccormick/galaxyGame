@@ -203,8 +203,8 @@ end
    **Cost Structure Clarification**:
    - **Automated Harvesters**: Lowest cost for AI (no player payouts, minimal operational overhead)
    - **Player Contracts**: Higher cost (includes GCC payouts + reputation rewards)
-   - **Special Missions**: Highest cost (premium payouts for urgent/emergency work)
-   - **Scheduled Imports**: Variable cost (transport + procurement from external sources)
+   - **Special Missions**: Higher cost (premium payouts for urgent/emergency work)
+   - **Scheduled Imports**: Highest cost (transport + procurement + urgency premiums from external sources)
 
    **Precursor Missions for Base Establishment**:
    - All NPC bases start with automated precursor missions for foothold operations
