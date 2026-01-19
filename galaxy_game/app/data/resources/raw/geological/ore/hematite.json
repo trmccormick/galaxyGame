@@ -1,0 +1,106 @@
+{
+  "template": "material_v1.6",
+  "category": "geological",
+  "id": "hematite",
+  "name": "Hematite",
+  "type": "Iron Ore",
+  "description": "A common iron oxide mineral and important ore of iron. Its name comes from the Greek word for blood, in allusion to its red color.",
+  "composition": [
+    {
+      "element": "Iron",
+      "percentage": 70.0,
+      "form": "Fe2O3"
+    },
+    {
+      "element": "Oxygen",
+      "percentage": 30.0,
+      "form": "Fe2O3"
+    }
+  ],
+  "primary_element": {
+    "element": "Iron",
+    "percentage": 70.0,
+    "form": "Fe2O3"
+  },
+  "density": 5.1,
+  "hardness": 6.5,
+  "appearance": "Crystalline with a metallic luster",
+  "color": "Dark red to reddish-brown",
+  "yield_rate": 0.7,
+  "formation": "Forms in sedimentary or metamorphic environments",
+  "common_locations": [
+    "Mars",
+    "Venus",
+    "Earth"
+  ],
+  "extraction": {
+    "difficulty": "medium",
+    "method": "mining",
+    "processing_required": true,
+    "hazards": [
+      "dust",
+      "acidic environment"
+    ]
+  },
+  "properties": {
+    "radioactive": false,
+    "magnetic": true,
+    "conductive": false,
+    "flammable": false,
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "high"
+  },
+  "purity": 75,
+  "processing": {
+    "refining_method": "smelting",
+    "byproducts": [
+      "slag"
+    ],
+    "energy_requirement": 3000,
+    "refined_output_ratio": 0.7,
+    "pollution_factor": "low"
+  },
+  "resource_value": {
+    "rarity": "common",
+    "base_value": 30,
+    "industrial_uses": [
+      "metal production",
+      "construction",
+      "electronics"
+    ]
+  },
+  "storage": {
+    "container_type": "bulk",
+    "stability": "stable",
+    "incompatible_with": [],
+    "pressure": "atmospheric",
+    "temperature": "room"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "subcategory": "general",
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

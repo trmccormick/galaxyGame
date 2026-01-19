@@ -1,0 +1,109 @@
+{
+  "template": "material_v1.6",
+  "category": "geological",
+  "id": "bauxite",
+  "name": "Bauxite",
+  "type": "Aluminum Ore",
+  "description": "The primary ore of aluminum, consisting mostly of aluminum hydroxide minerals. Named after Les Baux in France where it was first identified.",
+  "composition": [
+    {
+      "element": "Aluminum",
+      "percentage": 30.0,
+      "form": "Al(OH)3, AlOOH"
+    },
+    {
+      "element": "Oxygen",
+      "percentage": 50.0,
+      "form": "Hydroxides and oxides"
+    },
+    {
+      "element": "Hydrogen",
+      "percentage": 5.0,
+      "form": "Hydroxides"
+    }
+  ],
+  "primary_element": {
+    "element": "Aluminum",
+    "percentage": 30.0,
+    "form": "Al(OH)3, AlOOH"
+  },
+  "density": 2.4,
+  "hardness": 1.5,
+  "appearance": "Earthy",
+  "color": "Yellowish-brown to grayish-yellow",
+  "yield_rate": 0.8,
+  "formation": "Forms in sedimentary environments, often as a result of weathering and erosion",
+  "common_locations": [
+    "Mars",
+    "Asteroids",
+    "Moon"
+  ],
+  "extraction": {
+    "difficulty": "medium",
+    "method": "mining",
+    "processing_required": true,
+    "hazards": [
+      "dust"
+    ]
+  },
+  "properties": {
+    "radioactive": false,
+    "magnetic": false,
+    "conductive": false,
+    "flammable": false,
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "high"
+  },
+  "purity": 70,
+  "processing": {
+    "refining_method": "smelting",
+    "byproducts": [
+      "slag"
+    ],
+    "energy_requirement": 3000,
+    "refined_output_ratio": 0.75,
+    "pollution_factor": "low"
+  },
+  "resource_value": {
+    "rarity": "uncommon",
+    "base_value": 20,
+    "industrial_uses": [
+      "metal production",
+      "construction"
+    ]
+  },
+  "storage": {
+    "container_type": "bulk",
+    "stability": "stable",
+    "incompatible_with": [],
+    "pressure": "atmospheric",
+    "temperature": "room"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "subcategory": "general",
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

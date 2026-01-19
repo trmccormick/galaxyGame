@@ -1,0 +1,64 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "gas",
+    "purity": "high",
+    "color": "Colorless",
+    "vapor_point": -195.8,
+    "melting_point": -210.0,
+    "specific_gas_constant": 296.8
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "nitrogen",
+  "name": "Nitrogen",
+  "description": "A major component of Earth's atmosphere, inert in most reactions.",
+  "category": "gases",
+  "subcategory": "compound",
+  "type": "raw_material",
+  "chemical_formula": "N2",
+  "molar_mass": 28.0134,
+  "boiling_point": -195.8,
+  "freezing_point": -210.0,
+  "state_at_stp": "gas",
+  "applications": [
+    "cryogenics",
+    "inert_atmosphere",
+    "food_packaging",
+    "industrial_processes"
+  ],
+  "hazards": {
+    "asphyxiant": true,
+    "storage": "Pressurized containers required"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

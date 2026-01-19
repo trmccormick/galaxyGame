@@ -1,0 +1,85 @@
+{
+  "template": "material_v1.6",
+  "id": "3d_printed_frame",
+  "name": "3D-Printed Structural Frame",
+  "description": "Precision-manufactured structural component created through in-situ additive manufacturing, optimized for strength-to-weight ratio.",
+  "category": "building",
+  "subcategory": "structural",
+  "properties": {
+    "density": 3100,
+    "tensile_strength": 420,
+    "compressive_strength": 580,
+    "thermal_expansion": "low",
+    "fabrication_method": "additive_manufacturing",
+    "unit_of_measurement": "kg",
+    "purity": "high",
+    "state_at_room_temp": "solid",
+    "corrosion_resistance": "high"
+  },
+  "composition": [
+    {
+      "material": "aluminum_alloy",
+      "percentage": 60
+    },
+    {
+      "material": "regolith_composite",
+      "percentage": 25
+    },
+    {
+      "material": "carbon_fiber",
+      "percentage": 15
+    }
+  ],
+  "manufacturing": {
+    "equipment": [
+      "industrial_3d_printer",
+      "material_extruder"
+    ],
+    "energy_per_unit": 65,
+    "time_per_unit": 3.5,
+    "skill_required": "advanced_manufacturing"
+  },
+  "applications": [
+    "structural_supports",
+    "dome_frameworks",
+    "habitat_modules",
+    "skylight_frames"
+  ],
+  "advantages": [
+    "can be manufactured on-site",
+    "optimized topology for strength",
+    "reduced mass compared to traditional frames",
+    "customizable for specific structural needs"
+  ],
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "recycle"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

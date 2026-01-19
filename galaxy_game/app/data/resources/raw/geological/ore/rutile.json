@@ -1,0 +1,91 @@
+{
+  "template": "material_v1.6",
+  "category": "geological",
+  "id": "rutile",
+  "name": "Rutile",
+  "type": "Titanium Ore",
+  "description": "Another important titanium ore, often found in beach sands.",
+  "composition": [
+    "titanium oxide"
+  ],
+  "primary_element": "unknown",
+  "density": 4.2,
+  "hardness": 5.5,
+  "appearance": "Prismatic",
+  "color": "Brown with metallic luster",
+  "yield_rate": 0.7,
+  "formation": "Forms in hydrothermal or metamorphic environments",
+  "common_locations": [
+    "Mars",
+    "Asteroids",
+    "Earth"
+  ],
+  "extraction": {
+    "difficulty": "medium",
+    "method": "mining",
+    "processing_required": true,
+    "hazards": [
+      "dust"
+    ]
+  },
+  "properties": {
+    "radioactive": false,
+    "magnetic": false,
+    "conductive": true,
+    "flammable": false,
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "high"
+  },
+  "purity": 60,
+  "processing": {
+    "refining_method": "smelting",
+    "byproducts": [
+      "slag"
+    ],
+    "energy_requirement": 7000,
+    "refined_output_ratio": 0.75,
+    "pollution_factor": "moderate"
+  },
+  "resource_value": {
+    "rarity": "uncommon",
+    "base_value": 20,
+    "industrial_uses": [
+      "metal production",
+      "construction"
+    ]
+  },
+  "storage": {
+    "container_type": "bulk",
+    "stability": "stable",
+    "incompatible_with": [],
+    "pressure": "atmospheric",
+    "temperature": "room"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "subcategory": "general",
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

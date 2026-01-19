@@ -1,0 +1,48 @@
+[31mF[0m[31mF[0m[31mF[0m
+
+Failures:
+
+  1) TerrestrialPlanets User views a planet detail
+     [31mFailure/Error: expect(page).to have_content("Nitrogen: 7808000.0")[0m
+     [31m  expected to find text "Nitrogen: 7808000.0" in "Blocked hosts: localhost\nTo allow requests to these hosts, make sure they are valid hostnames (containing only numbers, letters, dashes and dots), then add the following to your environment configuration:\nconfig.hosts << \"localhost\"\nFor more details view: the Host Authorization guide"[0m
+     [36m# ./spec/features/terrestrial_planets_feature_spec.rb:22:in 'block (2 levels) in <top (required)>'[0m
+
+  2) TerrestrialPlanets User updates a planet's name only
+     [31mFailure/Error: fill_in "Name", with: "Updated Earth"[0m
+     [31m[0m
+     [31mCapybara::ElementNotFound:[0m
+     [31m  Unable to find field "Name" that is not disabled[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/finders.rb:312:in 'block in Capybara::Node::Finders#synced_resolve'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/base.rb:84:in 'Capybara::Node::Base#synchronize'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/finders.rb:301:in 'Capybara::Node::Finders#synced_resolve'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/finders.rb:60:in 'Capybara::Node::Finders#find'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/actions.rb:91:in 'Capybara::Node::Actions#fill_in'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/session.rb:774:in 'Capybara::Session#fill_in'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/dsl.rb:52:in 'Method#call'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/dsl.rb:52:in 'Capybara::DSL#fill_in'[0m
+     [36m# ./spec/features/terrestrial_planets_feature_spec.rb:58:in 'block (2 levels) in <top (required)>'[0m
+
+  3) TerrestrialPlanets User updates a planet with all attributes
+     [31mFailure/Error: fill_in "Name", with: "Updated Earth"[0m
+     [31m[0m
+     [31mCapybara::ElementNotFound:[0m
+     [31m  Unable to find field "Name" that is not disabled[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/finders.rb:312:in 'block in Capybara::Node::Finders#synced_resolve'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/base.rb:84:in 'Capybara::Node::Base#synchronize'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/finders.rb:301:in 'Capybara::Node::Finders#synced_resolve'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/finders.rb:60:in 'Capybara::Node::Finders#find'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/node/actions.rb:91:in 'Capybara::Node::Actions#fill_in'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/session.rb:774:in 'Capybara::Session#fill_in'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/dsl.rb:52:in 'Method#call'[0m
+     [36m# /usr/local/bundle/gems/capybara-3.40.0/lib/capybara/dsl.rb:52:in 'Capybara::DSL#fill_in'[0m
+     [36m# ./spec/features/terrestrial_planets_feature_spec.rb:79:in 'block (2 levels) in <top (required)>'[0m
+
+Finished in 2.84 seconds (files took 9.92 seconds to load)
+[31m3 examples, 3 failures[0m
+
+Failed examples:
+
+[31mrspec ./spec/features/terrestrial_planets_feature_spec.rb:4[0m [36m# TerrestrialPlanets User views a planet detail[0m
+[31mrspec ./spec/features/terrestrial_planets_feature_spec.rb:26[0m [36m# TerrestrialPlanets User updates a planet's name only[0m
+[31mrspec ./spec/features/terrestrial_planets_feature_spec.rb:64[0m [36m# TerrestrialPlanets User updates a planet with all attributes[0m
+

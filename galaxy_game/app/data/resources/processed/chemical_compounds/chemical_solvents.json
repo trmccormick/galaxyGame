@@ -1,0 +1,165 @@
+{
+  "template": "material_v1.6",
+  "id": "chemical_solvents",
+  "name": "Chemical Solvents",
+  "description": "A versatile liquid compound capable of dissolving other substances, widely used in various industrial processes, including cleaning, chemical synthesis, and adhesive formulation.",
+  "category": "chemical_compound",
+  "subcategory": "solvent",
+  "type": "processed_material",
+  "state_at_stp": "liquid",
+  "properties": {
+    "unit_of_measurement": "liter",
+    "state_at_room_temp": "liquid",
+    "purity": "high",
+    "color": "clear",
+    "flash_point_k": 255.15,
+    "boiling_point": {
+      "min": 323.15,
+      "max": 423.15,
+      "unit": "kelvin"
+    },
+    "vapor_pressure_kpa": 50,
+    "density_kg_per_liter": 0.85,
+    "toxicity": "medium"
+  },
+  "production": {
+    "input_materials": [
+      {
+        "material": "petrochemical_feedstock",
+        "amount": 8,
+        "unit": "kilogram"
+      },
+      {
+        "material": "water",
+        "amount": 2,
+        "unit": "liter"
+      }
+    ],
+    "process": "distillation_and_synthesis",
+    "time_hours": 1.0,
+    "facility": "chemical_processing_plant",
+    "output": {
+      "amount": 5,
+      "unit": "liter"
+    },
+    "energy_kwh": 80,
+    "efficiency": 0.75
+  },
+  "composition": [
+    {
+      "component": "refined_hydrocarbons",
+      "percentage": 70
+    },
+    {
+      "component": "alcohol_compounds",
+      "percentage": 20
+    },
+    {
+      "component": "water",
+      "percentage": 8
+    },
+    {
+      "component": "stabilizers",
+      "percentage": 2
+    }
+  ],
+  "storage": {
+    "type": "sealed_container",
+    "pressure": "atmospheric",
+    "temperature": "cool",
+    "stability": "stable",
+    "shelf_life_months": 36,
+    "incompatible_with": [
+      "strong_oxidizers",
+      "open_flame",
+      "reactive_metals"
+    ]
+  },
+  "handling": {
+    "ppe_required": [
+      "gloves",
+      "eye_protection",
+      "respirator"
+    ],
+    "hazard_class": [
+      "flammable",
+      "respiratory_irritant",
+      "skin_irritant"
+    ],
+    "disposal": "chemical_waste_protocols",
+    "ventilation_required": true
+  },
+  "requirements": {
+    "technology": [
+      {
+        "name": "chemical_engineering",
+        "level": 1
+      },
+      {
+        "name": "distillation_systems",
+        "level": 1
+      }
+    ],
+    "facilities": [
+      "chemical_processing_plant"
+    ]
+  },
+  "applications": [
+    "industrial_adhesives",
+    "cleaning_agents",
+    "paint_thinners",
+    "pharmaceutical_synthesis",
+    "extraction_processes",
+    "degreasing_operations",
+    "polymer_production"
+  ],
+  "hazards": {
+    "flammable": true,
+    "flash_point_celsius": -18,
+    "respiratory_irritant": true,
+    "skin_contact": "causes_irritation",
+    "vapor_inhalation": "harmful",
+    "environmental_impact": "moderate"
+  },
+  "safety_notes": [
+    "Store in cool, well-ventilated area away from ignition sources",
+    "Use only in adequately ventilated areas",
+    "Keep containers tightly closed when not in use",
+    "Avoid prolonged skin contact or vapor inhalation",
+    "Have fire suppression equipment readily available"
+  ],
+  "trade_value": 50,
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "notes": [
+      "Requires petrochemical feedstock (imported material)",
+      "Essential component for industrial adhesives production",
+      "High energy consumption in production process",
+      "Flammable - requires careful handling and storage"
+    ],
+    "tags": [
+      "chemical",
+      "solvent",
+      "industrial",
+      "imported",
+      "flammable"
+    ],
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 10.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "hazardous",
+      "hazard_multiplier": 1.2
+    }
+  }
+}

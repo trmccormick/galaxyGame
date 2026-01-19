@@ -1,0 +1,75 @@
+{
+  "template": "material_v1.6",
+  "id": "basalt",
+  "name": "Basalt",
+  "description": "A dark, fine-grained volcanic rock formed from rapidly cooled lava. Used in construction and as aggregate material.",
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": [
+      "Volcanic rock",
+      "Trap rock"
+    ],
+    "is_procedural": false
+  },
+  "classification": {
+    "category": "raw",
+    "subcategory": "geological",
+    "type": "rock"
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "chemical_formula": "Variable mafic silicate",
+    "molar_mass_g_mol": null,
+    "color": "Dark gray to black",
+    "density_stp_kg_m3": 2900.0,
+    "viscosity_pa_s": null,
+    "corrosion_resistance": "high"
+  },
+  "phase_transitions": {
+    "melting_point_k": 1200.0,
+    "boiling_point_k": null,
+    "critical_point_k": null,
+    "latent_heat_fusion_kj_kg": null,
+    "latent_heat_vaporization_kj_kg": null,
+    "triple_point": {
+      "temp_k": null,
+      "pressure_kpa": null
+    }
+  },
+  "thermodynamics": {
+    "specific_heat_capacity_j_kg_k": 800.0,
+    "thermal_conductivity_w_m_k": 2.0,
+    "coefficient_of_expansion": null
+  },
+  "habitability_impact": {
+    "is_potable": false,
+    "toxicity_level": "low",
+    "greenhouse_gas_factor": 0.0,
+    "radiation_shielding_value": 0.2,
+    "breathable_percentage": 0.0
+  },
+  "production": {
+    "facility_type": "quarry_operation",
+    "energy_kwh_per_kg": 0.005,
+    "input_materials": [],
+    "byproducts": []
+  },
+  "storage_requirements": {
+    "preferred_phase": "solid",
+    "containment_type": "bulk_storage",
+    "safety_protocol": "standard"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 0.1
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "template": "material_v1.6",
+  "id": "industrial_adhesives",
+  "name": "Industrial Adhesives",
+  "description": "A strong, versatile bonding agent used for joining structural components, providing high shear strength and resistance to extreme temperatures and pressures.",
+  "category": "chemical_compound",
+  "subcategory": "adhesive",
+  "type": "processed_material",
+  "state_at_stp": "liquid",
+  "properties": {
+    "unit_of_measurement": "liter",
+    "state_at_room_temp": "liquid",
+    "purity": "high",
+    "viscosity": "medium",
+    "curing_time_minutes": 10,
+    "temperature_range_celsius": {
+      "min": -150,
+      "max": 400
+    },
+    "bond_strength_mpa": 50
+  },
+  "production": {
+    "input_materials": [
+      {
+        "material": "refined_polymers",
+        "amount": 0.5,
+        "unit": "liter"
+      },
+      {
+        "material": "chemical_solvents",
+        "amount": 0.3,
+        "unit": "liter"
+      }
+    ],
+    "process": "polymer_chemistry_synthesis",
+    "time_hours": 0.75,
+    "facility": "chemical_processing_plant",
+    "output": {
+      "amount": 1,
+      "unit": "liter"
+    },
+    "energy_kwh": 40,
+    "efficiency": 0.8
+  },
+  "composition": [
+    {
+      "component": "refined_polymers",
+      "percentage": 50
+    },
+    {
+      "component": "chemical_solvents",
+      "percentage": 30
+    },
+    {
+      "component": "catalysts",
+      "percentage": 15
+    },
+    {
+      "component": "stabilizers",
+      "percentage": 5
+    }
+  ],
+  "storage": {
+    "type": "sealed_container",
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "shelf_life_months": 24,
+    "incompatible_with": [
+      "strong_oxidizers",
+      "open_flame"
+    ]
+  },
+  "handling": {
+    "ppe_required": [
+      "gloves",
+      "eye_protection"
+    ],
+    "hazard_class": [
+      "flammable",
+      "irritant"
+    ],
+    "disposal": "chemical_waste_protocols"
+  },
+  "requirements": {
+    "technology": [
+      {
+        "name": "polymer_chemistry",
+        "level": 1
+      },
+      {
+        "name": "industrial_chemistry",
+        "level": 1
+      }
+    ],
+    "facilities": [
+      "chemical_processing_plant"
+    ]
+  },
+  "applications": [
+    "structural_component_bonding",
+    "panel_joint_sealing",
+    "high_stress_connections",
+    "pressure_vessel_assembly",
+    "spacecraft_construction"
+  ],
+  "advantages": [
+    "High bond strength (50 MPa)",
+    "Wide temperature range (-150°C to +400°C)",
+    "Fast curing time (10 minutes)",
+    "Resistant to thermal cycling",
+    "Vacuum-compatible"
+  ],
+  "trade_value": 70,
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "notes": [
+      "Premium bonding material requiring imported chemicals",
+      "Alternative: regolith_cement for basic applications using ISRU materials",
+      "Preferred for critical structural joints and high-stress applications"
+    ],
+    "tags": [
+      "chemical",
+      "adhesive",
+      "industrial",
+      "imported"
+    ],
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

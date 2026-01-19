@@ -1,0 +1,53 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "square_meter",
+    "state_at_room_temp": "solid",
+    "purity": "high",
+    "density": "2.5 g/cm³",
+    "color": "Transparent"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "glass",
+  "name": "Glass",
+  "description": "A solid material made by fusing silica with other ingredients at high temperatures.",
+  "category": "building_material",
+  "subcategory": "general",
+  "type": "processed_material",
+  "state_at_stp": "solid",
+  "applications": [
+    "windows",
+    "bottles",
+    "fiber optics"
+  ],
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

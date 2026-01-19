@@ -1,0 +1,41 @@
+{
+  "id": "regolith",
+  "name": "Regolith",
+  "category": "geological",
+  "type": "raw_material",
+  "subtype": "surface_material",
+  "description": "Surface material composed of loose deposits of dust, broken rock, and other materials.",
+  "metadata": {
+    "is_procedural": false,
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "state_at_room_temp": "Solid",
+    "stackable": true,
+    "storage": {
+      "method": "bulk_storage",
+      "stack_limit": 1000
+    }
+  },
+  "applications": [
+    "oxygen_extraction",
+    "construction_material",
+    "radiation_shielding",
+    "metal_extraction"
+  ],
+  "template": "material_v1.6",
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 0.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

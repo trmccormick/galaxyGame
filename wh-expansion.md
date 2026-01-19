@@ -186,9 +186,10 @@ This section must be completed and validated before further AI Manager or expans
 
 1. Player Market (GCC) - Always try players first
 2. NPC Trade (Virtual Ledger) - If no players available
-3. Earth Import (USD) - Last resort only
+3. Lunar Production (GCC) - Local lunar materials for orbital construction (panels, I-beams from world house setups moved to orbit)
+4. Earth Import (USD) - Last resort only (specialized items like computers that cannot be produced locally)
 
-AI Manager uses a data-driven decision flow to source materials, always prioritizing player engagement and self-sufficiency.
+AI Manager uses a data-driven decision flow to source materials, always prioritizing player engagement and self-sufficiency. Station construction materials primarily come from established lunar production facilities rather than Earth imports. As lunar infrastructure matures, more specialized items will be produced locally, reducing Earth dependency over time.
 
 ---
 

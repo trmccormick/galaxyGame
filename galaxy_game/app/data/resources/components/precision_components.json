@@ -1,0 +1,80 @@
+{
+  "template": "material_v1.6",
+  "id": "precision_components",
+  "name": "Precision Components",
+  "description": "High-precision machined parts used in advanced manufacturing and assembly operations.",
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": [
+      "Machined parts",
+      "Precision parts"
+    ],
+    "is_procedural": false
+  },
+  "classification": {
+    "category": "components",
+    "subcategory": "mechanical",
+    "type": "machined"
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "chemical_formula": "Various alloys",
+    "molar_mass_g_mol": null,
+    "color": "Metallic",
+    "density_stp_kg_m3": 7800.0,
+    "viscosity_pa_s": null,
+    "corrosion_resistance": "medium"
+  },
+  "phase_transitions": {
+    "melting_point_k": null,
+    "boiling_point_k": null,
+    "critical_point_k": null,
+    "latent_heat_fusion_kj_kg": null,
+    "latent_heat_vaporization_kj_kg": null,
+    "triple_point": {
+      "temp_k": null,
+      "pressure_kpa": null
+    }
+  },
+  "thermodynamics": {
+    "specific_heat_capacity_j_kg_k": 500.0,
+    "thermal_conductivity_w_m_k": 50.0,
+    "coefficient_of_expansion": null
+  },
+  "habitability_impact": {
+    "is_potable": false,
+    "toxicity_level": "low",
+    "greenhouse_gas_factor": 0.0,
+    "radiation_shielding_value": 0.0,
+    "breathable_percentage": 0.0
+  },
+  "production": {
+    "facility_type": "machine_shop",
+    "energy_kwh_per_kg": 2.0,
+    "input_materials": [
+      "steel",
+      "aluminum_alloy"
+    ],
+    "byproducts": [
+      "metal_shavings"
+    ]
+  },
+  "storage_requirements": {
+    "preferred_phase": "solid",
+    "containment_type": "secure_storage",
+    "safety_protocol": "standard"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 1.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "template": "material_v1.6",
+  "category": "processed",
+  "id": "actuators",
+  "name": "Actuators",
+  "description": "Auto-generated material for actuators",
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "solid",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": false,
+    "oxidizer": false,
+    "radioactive": false,
+    "chemical_formula": null,
+    "molar_mass": null
+  },
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "is_procedural": true,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 5.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

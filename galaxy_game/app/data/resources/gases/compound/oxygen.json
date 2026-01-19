@@ -1,0 +1,54 @@
+{
+  "template": "material_v1.6",
+  "category": "gas",
+  "id": "oxygen",
+  "name": "Oxygen",
+  "description": "Essential for aerobic life, highly reactive and found in Earth's atmosphere.",
+  "density": null,
+  "boiling_point": null,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "standard",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": true,
+    "radioactive": false,
+    "chemical_formula": "O2",
+    "molar_mass": 31.9988
+  },
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 0.2
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "hazardous",
+      "hazard_multiplier": 1.3
+    }
+  }
+}

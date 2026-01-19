@@ -1,0 +1,84 @@
+{
+  "template": "material_v1.6",
+  "id": "reinforced_smart_glass",
+  "name": "Reinforced Smart Glass",
+  "description": "Advanced transparent material with embedded carbon nanotubes and electrochromic capabilities for adjustable transparency and structural integrity.",
+  "category": "building",
+  "subcategory": "functional",
+  "properties": {
+    "density": 2900,
+    "tensile_strength": 250,
+    "transparency": "adjustable",
+    "uv_filtering": "high",
+    "radiation_shielding": "moderate",
+    "impact_resistance": "high",
+    "unit_of_measurement": "kg",
+    "purity": "high",
+    "state_at_room_temp": "solid",
+    "thermal_conductivity": "low",
+    "electrical_conductivity": "low"
+  },
+  "composition": [
+    {
+      "material": "silicate_extract",
+      "percentage": 70
+    },
+    {
+      "material": "carbon_nanotubes",
+      "percentage": 10
+    },
+    {
+      "material": "electrochromic_compounds",
+      "percentage": 15
+    },
+    {
+      "material": "polymer_interlayer",
+      "percentage": 5
+    }
+  ],
+  "manufacturing": {
+    "equipment": [
+      "glass_fabricator",
+      "nanocomposite_integrator",
+      "high_temperature_kiln"
+    ],
+    "energy_per_sq_meter": 120,
+    "time_per_sq_meter": 4.5
+  },
+  "functionality": {
+    "adjustable_transparency": "Electrochromic compounds allow opacity to be adjusted from 15% to 95%",
+    "solar_energy_harvesting": "Optional integrated photovoltaic layer",
+    "data_display": "Can function as information display"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "recycle"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

@@ -5,39 +5,28 @@
 **Last Updated:** 2026-01-17 (Schema evolution fixes)  
 **Implementation:** `galaxy_game/app/services/ai_manager/precursor_capability_service.rb`
 
-## Overview
+
 
 Precursor missions establish local ISRU capacity and core infrastructure before major missions begin. The mission planner should assume local-first sourcing for basic resources once precursor phases are complete.
-
 **Problem Solved:** Replaced hardcoded world identifiers in `MissionPlannerService.can_produce_locally?` with data-driven queries against actual celestial body sphere data (geosphere, atmosphere, hydrosphere).
 
 ## Implementation
 
-### PrecursorCapabilityService
 
 **Location:** `app/services/ai_manager/precursor_capability_service.rb`
 
-**Key Methods:**
 - `can_produce_locally?(resource)` - Check if resource available via ISRU
 - `local_resources` - List all extractable resources from celestial body data
 - `production_capabilities` - Capabilities by resource type (atmosphere, surface, subsurface, regolith)
 - `precursor_enables?(capability)` - Check if precursor phase enables specific capability (:oxygen, :water, :fuel, :metals)
-
 **Data Sources (Current Schema as of 2026-01-17):**
 - `CelestialBody.atmosphere.composition` - Atmospheric resources (CO2, N2, CH4, O2)
 - `CelestialBody.geosphere.crust_composition` - Surface minerals (iron_oxide, silicon, aluminum) **[NOT surface_composition]**
-- `CelestialBody.geosphere.stored_volatiles` - Hash with volatile masses: `{CO2: {polar_caps: Float, regolith: Float}, H2O: {subsurface_ice: Float}}` **[NOT volatile_reservoirs]**
 - `CelestialBody.hydrosphere.water_bodies` - Water resource presence (JSON field) **[NOT ocean_coverage]**
-
-**Schema Evolution Note:** The service was updated on 2026-01-17 to use current attribute names after database migrations changed the Geosphere/Hydrosphere schemas. See [GROK_TASK_PLAYBOOK.md](../../developer/GROK_TASK_PLAYBOOK.md#schema-evolution-tracking-2026-01-17) for details.
-
 
 ```ruby
 # In MissionPlannerService
-can_produce = capability_service.can_produce_locally?('water_ice')
-```
 
-## Precursor Phases
   - Basic surface preparation
 - **Phase 2: Habitat & Advanced ISRU**
 ## Environment-Aware Capabilities

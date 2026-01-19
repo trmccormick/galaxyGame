@@ -1,0 +1,81 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kilogram",
+    "state_at_room_temp": "solid",
+    "purity": "high",
+    "density": "2.33 g/cm³",
+    "color": "Gray",
+    "melting_point": 1414.0,
+    "vapor_point": 2900.0
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "silicon",
+  "name": "Silicon",
+  "description": "High-purity semiconductor material refined from silica. Essential for microprocessors, solar cells, and advanced electronic components.",
+  "category": "element",
+  "subcategory": "general",
+  "type": "processed_material",
+  "chemical_formula": "Si",
+  "molar_mass": 28.085,
+  "boiling_point": 2900.0,
+  "freezing_point": 1414.0,
+  "state_at_stp": "solid",
+  "sources": {
+    "materials": [
+      {
+        "material": "silica",
+        "amount": 2.0
+      }
+    ],
+    "production_method": "refinement",
+    "facility_type": "Semiconductor Fab",
+    "energy_cost": 80
+  },
+  "production": {
+    "time": 120,
+    "facility": "Semiconductor Fab",
+    "energy": 80,
+    "output": 1.0,
+    "unit": "kilogram"
+  },
+  "applications": [
+    "semiconductors",
+    "solar_cells",
+    "electronics",
+    "circuit_boards",
+    "photovoltaic_cells",
+    "microprocessors"
+  ],
+  "trade_value": 150,
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 20.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.1
+    }
+  }
+}

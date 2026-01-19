@@ -1,0 +1,72 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "variable",
+    "chemical_formula": "Si",
+    "molar_mass": 28.085,
+    "boiling_point": 2900.0,
+    "freezing_point": 1414.0,
+    "color": "Gray"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "silicon",
+  "name": "Silicon",
+  "description": "A semiconductor used in electronics.",
+  "category": "chemicals",
+  "type": "compound",
+  "chemical_formula": "Si",
+  "molar_mass": 28.085,
+  "boiling_point": 2900.0,
+  "freezing_point": 1414.0,
+  "state_at_stp": "solid",
+  "applications": [
+    "Semiconductors",
+    "Solar cells"
+  ],
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 20.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.1
+    }
+  },
+  "pricing": {
+    "earth_usd": {
+      "base_price_per_kg": 2.00,
+      "transport_category": "manufactured",
+      "hazard_multiplier": 1.0
+    },
+    "lunar_production": {
+      "available": true,
+      "facility_required": "chemical_processor",
+      "cost_per_kg": 1.50,
+      "production_time_hours": 4,
+      "energy_kwh_per_kg": 50
+    }
+  }
+}

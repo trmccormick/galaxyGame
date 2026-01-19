@@ -1,0 +1,55 @@
+{
+  "template": "material_v1.6",
+  "id": "beryllium",
+  "name": "Beryllium",
+  "description": "A lightweight, stiff metal used in aerospace and precision instruments.",
+  "category": "raw",
+  "subcategory": "geological",
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "high",
+    "chemical_formula": "Be",
+    "molar_mass": 9.012,
+    "density": 1850,
+    "melting_point": 1287,
+    "tensile_strength": 350,
+    "thermal_conductivity": 200,
+    "electrical_conductivity": 31
+  },
+  "applications": [
+    "aerospace structures",
+    "precision instruments",
+    "nuclear applications"
+  ],
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": ["Be"]
+  },
+  "pricing": {
+    "earth_usd": {
+      "base_price_per_kg": 850.00,
+      "transport_category": "specialized",
+      "hazard_multiplier": 1.5
+    },
+    "lunar_production": {
+      "available": false
+    }
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 850.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "specialized",
+      "hazard_multiplier": 1.5
+    }
+  }
+}
