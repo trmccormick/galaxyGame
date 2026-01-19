@@ -189,16 +189,29 @@ end
    }
    ```
 
-2. **Automated Harvesters/Robots**: AI deploys robotic systems (higher operational cost)
+2. **Automated Harvesters/Robots**: AI deploys robotic systems (lowest operational cost for AI)
    ```ruby
    # Deploy automated nitrogen harvester
    harvester = AutomatedHarvester.create!(
      target_material: "nitrogen",
      location: "Mars Atmosphere",
-     operational_cost: 8000,  # GCC - higher than player cost
+     operational_cost: 2000,  # GCC - lowest cost option for AI
      completion_time: 72.hours
    )
    ```
+
+   **Cost Structure Clarification**:
+   - **Automated Harvesters**: Lowest cost for AI (no player payouts, minimal operational overhead)
+   - **Player Contracts**: Higher cost (includes GCC payouts + reputation rewards)
+   - **Special Missions**: Highest cost (premium payouts for urgent/emergency work)
+   - **Scheduled Imports**: Variable cost (transport + procurement from external sources)
+
+   **Precursor Missions for Base Establishment**:
+   - All NPC bases start with automated precursor missions for foothold operations
+   - These harvest resources automatically without player engagement
+   - Purpose: Establish initial infrastructure and resource flow
+   - Transition: Once operational, bases switch to player-first contract system
+   - Player Engagement: Players can participate in expansion/upgrade missions after initial establishment
 
 3. **Scheduled Imports**: Order from external sources via cycler/supply runs (highest cost)
    ```ruby
