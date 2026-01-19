@@ -1,0 +1,172 @@
+{
+  "template": "base_craft",
+  "id": "earth_mars_cycler",
+  "name": "Earth-Mars Cycler",
+  "description": "A massive orbital cycler craft that maintains a continuous trajectory between Earth and Mars, serving as an interplanetary conveyor belt for cargo and passengers.",
+  "type": "craft",
+  "category": "cycler",
+  "physical_properties": {
+    "length_m": 500.0,
+    "width_m": 100.0,
+    "height_m": 80.0,
+    "empty_mass_kg": 500000.0,
+    "volume_m3": 4000000.0,
+    "drag_coefficient": 0.3
+  },
+  "mounting_points": [],
+  "compatible_units": [
+    "ion_engine",
+    "xenon_tank",
+    "cycler_habitat_module",
+    "storage_unit",
+    "waste_management_unit",
+    "water_recycling_unit",
+    "medical_bay_unit",
+    "large_solar_array",
+    "cryogenic_storage_unit"
+  ],
+  "compatible_modules": [
+    "life_support_module",
+    "co2_scrubber_module",
+    "air_filtration_system",
+    "fire_suppression_system",
+    "airlock_module",
+    "emergency_power_backup",
+    "automated_navigation_module",
+    "cargo_management_system",
+    "automated_maintenance_module",
+    "radiation_shielding_module"
+  ],
+  "crew_capacity": 50,
+  "ports": {
+    "internal_module_ports": 20,
+    "external_module_ports": 10,
+    "internal_fuel_storage_ports": 8,
+    "external_fuel_storage_ports": 4,
+    "internal_unit_ports": 15,
+    "external_unit_ports": 8,
+    "propulsion_ports": 6,
+    "storage_ports": 12,
+    "internal_rig_ports": 5,
+    "external_rig_ports": 3,
+    "umbilical_ports": 4
+  },
+  "systems": {
+    "stabilizer_unit": { "status": "offline" },
+    "propulsion": { "status": "offline" },
+    "power": { "status": "offline" },
+    "life_support": { "status": "offline" },
+    "navigation": { "status": "offline" }
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 50000000
+    },
+    "manufacturing_cost": {
+      "currency": "GCC",
+      "amount": 250000000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 168,
+      "repair_cost_gcc": 1000000,
+      "materials_needed_for_repair": [
+        { "id": "ibeam", "amount": 100 },
+        { "id": "modular_structural_panel_base", "amount": 200 },
+        { "id": "aluminum_alloy", "amount": 5000 }
+      ]
+    }
+  },
+  "blueprint_data": {
+    "base_material_efficiency": 0.85,
+    "base_time_efficiency": 0.8,
+    "materials": [
+      {
+        "id": "ibeam",
+        "amount": 5000,
+        "unit": "each"
+      },
+      {
+        "id": "modular_structural_panel_base",
+        "amount": 10000,
+        "unit": "each"
+      },
+      {
+        "id": "aluminum_alloy",
+        "amount": 100000,
+        "unit": "kg"
+      },
+      {
+        "id": "titanium_alloy",
+        "amount": 50000,
+        "unit": "kg"
+      },
+      {
+        "id": "composite_materials",
+        "amount": 25000,
+        "unit": "kg"
+      },
+      {
+        "id": "solar_cells",
+        "amount": 5000,
+        "unit": "m2"
+      },
+      {
+        "id": "ion_thruster_components",
+        "amount": 20,
+        "unit": "sets"
+      }
+    ],
+    "assembly_time": 720,
+    "research_required": "advanced_propulsion"
+  },
+  "operational_data": {
+    "cycler_type": "earth_mars",
+    "cycler_trajectory": {
+      "period_days": 780,
+      "trajectory_type": "earth_mars_hohmann",
+      "delta_v_budget": 5000,
+      "transfer_windows": [
+        { "from": "earth", "to": "mars", "duration_days": 200 },
+        { "from": "mars", "to": "earth", "duration_days": 180 }
+      ]
+    },
+    "propulsion": {
+      "primary_system": "ion_drive",
+      "secondary_system": "chemical_boost",
+      "fuel_consumption_rate": 0.05,
+      "max_delta_v": 6000
+    },
+    "power_generation": {
+      "primary_source": "solar_array",
+      "secondary_source": "nuclear_backup",
+      "total_capacity_kw": 5000
+    },
+    "life_support": {
+      "crew_capacity": 50,
+      "passenger_capacity": 200,
+      "recycling_efficiency": 0.98
+    },
+    "cargo_capacity": {
+      "pressurized_cargo_kg": 200000,
+      "unpressurized_cargo_kg": 500000,
+      "cryogenic_storage_kg": 100000
+    },
+    "fuel_management": {
+      "lox_reserve_threshold_percent": 10,
+      "methane_reserve_threshold_percent": 10,
+      "preflight_fuel_strategy": "balanced",
+      "inflight_transfer_rules": {
+        "allow_lox_transfer_to_main": true,
+        "allow_methane_transfer_to_main": true,
+        "autobalance_priority": ["main_tank", "maneuvering_tank"]
+      }
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "type": "base_craft",
+    "template_compliance": "base_craft_v1.6",
+    "construction_type": "orbital_shipyard"
+  }
+}
