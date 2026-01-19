@@ -1,11 +1,12 @@
 # app/services/crater_dome_construction_service.rb
 class CraterDomeConstructionService
-  def initialize(entity, crater_dome, service_provider = nil, layer_type = 'primary')
+  def initialize(entity, crater_dome, service_provider = nil, layer_type = 'primary', currency = nil)
     @entity = entity  # Player, Organizations::BaseOrganization, etc.
     @crater_dome = crater_dome
     @service_provider = service_provider || entity  # Default to self-construction
     @layer_type = layer_type
     @settlement = get_current_settlement
+    @currency = currency || (@settlement&.account&.currency)
   end
 
   def construct
@@ -81,7 +82,8 @@ class CraterDomeConstructionService
         TransactionService.process_transaction(
           buyer: @settlement,  # Settlement pays, not necessarily the entity
           seller: @service_provider,
-          amount: construction_cost
+          amount: construction_cost,
+          currency: @currency
         )
         
         # Record transaction info
