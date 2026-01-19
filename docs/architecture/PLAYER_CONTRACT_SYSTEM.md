@@ -125,6 +125,12 @@ def calculate_gcc_payout(material, amount, destination)
 end
 ```
 
+**Economic Integration Clarifications**:
+- **GCC Minting**: Contract payouts are funded by LDC GCC reserves, not deducted from settlement budgets
+- **Virtual Ledger**: NPC settlement budgets use Virtual Ledger for internal accounting during contract posting
+- **Exchange Rate Impact**: Payouts calculated in GCC but may be affected by real-time exchange rate fluctuations
+- **Reserve Requirements**: LDC maintains 25% GCC reserves for contract funding (see GUARDRAILS.md)
+
 ---
 
 ### Phase 3: Contract Distribution
@@ -197,6 +203,12 @@ def complete_contract(contract, player)
   end
 end
 ```
+
+**Economic Flow Clarification**:
+- **GCC Source**: Payouts funded from LDC stabilization reserves, not settlement operating budgets
+- **Settlement Accounting**: Settlements use Virtual Ledger for contract posting costs, resolved through successful delivery
+- **LDC Revenue**: Contract system generates USD revenue for LDC through Earth exports and fuel sales
+- **Currency Conversion**: GCC payouts may trigger exchange rate adjustments if reserves are drawn down
 
 ---
 
