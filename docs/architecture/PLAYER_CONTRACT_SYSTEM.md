@@ -183,8 +183,14 @@ end
 
 **Purpose**: Enable player-driven settlement growth through modular construction, allowing players to build specialized facilities and monetize them through processing fees.
 
+**Blueprint Licensing System**:
+- Players purchase **licensed blueprint copies** from NPC bases with limited production runs
+- Licenses include research permissions to improve material/time efficiency
+- Production limits prevent infinite manufacturing while encouraging specialization
+- NPCs retain full access to all blueprints for operational needs
+
 **How It Works**:
-1. **Construction**: Players build modular structures (e.g., metal smelter facilities, nuclear fuel reprocessing facilities) using available blueprints
+1. **Construction**: Players build modular structures (e.g., metal smelter facilities, nuclear fuel reprocessing facilities) using licensed blueprints
 2. **Attachment**: Players pay connection fees to attach modules to existing settlements (surface bases or orbital stations), requiring available ports and sufficient power
 3. **Operation**: Players outfit the structure with units and operate it themselves, or allow other players to use processing slots
 4. **Monetization**: Facility owners can charge processing fees for other players to use their equipment with their materials
@@ -196,11 +202,62 @@ end
 - **Ownership Benefits**: Facility owners retain control and can upgrade/expand their modules
 
 **Examples**:
-- Player builds nuclear fuel reprocessing facility, attaches to lunar base (surface or orbital), charges other players for uranium processing
-- Player constructs metal smelter, offers alloy production services to industrial players on any settlement
+- Player purchases nuclear fuel reprocessing facility license, attaches to lunar base (surface or orbital), charges other players for uranium processing
+- Player constructs metal smelter with limited production license, offers alloy production services to industrial players on any settlement
 - AI Manager can offer contracts for players to build specific facilities needed for settlement expansion
 
-**Integration with AI Manager**: As the game progresses, AI Manager increases base capabilities by offering contracts for players to build and attach specialized modules, creating organic station growth.
+**AI Manager Manufacturing Role**:
+- Builds items to fill unfilled buy orders at correct market pricing
+- Lists surplus production as sell orders when demand is low
+- Imports items from Earth when profitable during high-demand periods
+- Maintains market liquidity and prevents supply shortages
+
+**NPC Base Economic Roles**:
+- **Buyer of Last Resort**: Purchases unsold player goods at minimum prices to ensure market liquidity
+- **Producer of Last Resort**: Manufactures essential local items when player production lags
+- **Importer of Last Resort**: Sources items from various locations (Earth, other settlements, cyclers) during shortages
+- **New Player Supporter**: Immediately provides essential survival items (oxygen, water, basic panels) to players who lack manufacturing skills
+- **Logistics Coordinator**: Manages multi-tier delivery systems with realistic time delays
+
+**New Player Support System**:
+- Players start with basic resource gathering skills but limited manufacturing capabilities
+- NPCs provide essential manufactured goods until players develop skills and acquire blueprints
+- **Precursor Infrastructure**: Automated precursor missions establish basic infrastructure before players arrive
+- Critical items (oxygen, water, life support) always available regardless of player progression
+- Blueprint licensing prevents infinite production while allowing gradual specialization
+- System ensures game remains playable for players who never specialize in manufacturing
+
+**Precursor Mission Integration**:
+- **Planetary Precursor 1**: Deploys power, communications, resource extraction, and construction infrastructure
+- **Planetary Precursor 2**: Adds habitat components and pressurized operations
+- **Luna Enhanced Precursor**: AI-driven site analysis, power grid optimization, resource extraction setup, lava tube assessment and preparation, and infrastructure construction
+- Precursor missions create the foundation that enables NPC market stabilization
+- Players arrive to settlements with operational infrastructure already in place
+- **AI Learning Integration**: Missions collect performance data for continuous improvement
+- **Market Stabilization Service**: Checks for precursor-established infrastructure before enabling NPC production
+- Infrastructure checks: electrolysis units for oxygen, fabrication units for panels/circuits, harvesters for regolith processing
+- **Lava Tube Assessment**: Geological evaluation and preparation for future sealing (deferred until sufficient gas production capability achieved)
+
+**Multi-Tier Logistics System**:
+- **Priority 1 - Player Contracts**: Fastest delivery via specialized logistics contracts (hours-days)
+- **Priority 2 - Cycler Deliveries**: Regular scheduled transport between settlements (days-weeks)  
+- **Priority 3 - NPC Imports**: Sourced from Earth or other systems during shortages (weeks-months)
+- **Priority 4 - Inter-Settlement Transfers**: Movement between planetary bases via orbital infrastructure (variable)
+
+**Import Sources** (Beyond Earth):
+- Other planetary settlements in same system
+- Orbital depots and manufacturing stations
+- Cycler fleets returning from expeditions
+- NPC production facilities in other systems
+- Consortium supply chains through wormhole networks
+
+**AI Manager Logistics Coordination**:
+- Monitors market imbalances and initiates appropriate responses
+- Prioritizes player opportunities while ensuring system stability
+- Uses predictive analytics to anticipate shortages and preposition supplies
+- Balances economic efficiency with player engagement incentives
+
+**Integration with AI Manager**: As the game progresses, AI Manager increases base capabilities by offering contracts for players to build and attach specialized modules, creating organic settlement growth.
 
 ---
 

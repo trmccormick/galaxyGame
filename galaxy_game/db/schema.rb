@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_16_153012) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -281,6 +281,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_16_153012) do
     t.float "time_efficiency", default: 0.0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "licensed_runs_remaining"
     t.index ["player_id"], name: "index_blueprints_on_player_id"
   end
 

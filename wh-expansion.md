@@ -191,6 +191,13 @@ This section must be completed and validated before further AI Manager or expans
 
 AI Manager uses a data-driven decision flow to source materials, always prioritizing player engagement and self-sufficiency. Station construction materials primarily come from established lunar production facilities rather than Earth imports. As lunar infrastructure matures, more specialized items will be produced locally, reducing Earth dependency over time.
 
+**NPC Base Market Stabilization**:
+- **Buyer of Last Resort**: Ensures player goods don't go unsold by purchasing at fair minimum prices
+- **Producer of Last Resort**: Manufactures essential items when player production is insufficient
+- **Importer of Last Resort**: Sources items from Earth and other settlements during shortages
+- **New Player Supporter**: Provides essential survival items immediately to players starting with limited skills
+- **Logistics Coordinator**: Manages tiered delivery systems (player contracts → cyclers → imports)
+
 ---
 
 ## ðŸ“Š AI Manager Performance Metrics

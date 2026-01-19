@@ -8,6 +8,7 @@ require_relative 'scout_logic'
   require_relative 'financial_service'
   require_relative 'performance_tracker'
   require_relative 'world_knowledge_service'
+  require_relative 'market_stabilization_service'
 
   class OperationalManager
     attr_reader :settlement, :patterns, :priorities, :last_decision
@@ -260,6 +261,38 @@ require_relative 'scout_logic'
       construction = construction_needs
       if construction
         needs << { type: :construction, facility: construction[:facility], priority: construction[:priority] }
+      end
+
+      # Market stabilization
+      market_needs = assess_market_stability
+      if market_needs.any?
+        needs.concat(market_needs)
+      end
+
+      needs
+    end
+
+    def assess_market_stability
+      needs = []
+
+      # Check for market imbalances that require NPC intervention
+      market_imbalances = MarketStabilizationService.stabilize_market(@settlement)
+
+      market_imbalances.each do |imbalance|
+        case imbalance[:action]
+        when :new_player_support
+          if imbalance[:item]
+            needs << { type: :market_stabilization, action: :provide_essential, item: imbalance[:item], amount: imbalance[:amount], reason: imbalance[:reason] }
+          end
+        when :producer_of_last_resort
+          if imbalance[:item]
+            needs << { type: :market_stabilization, action: :produce_item, item: imbalance[:item], amount: imbalance[:amount_produced] }
+          end
+        when :importer_of_last_resort
+          if imbalance[:item]
+            needs << { type: :market_stabilization, action: :import_item, item: imbalance[:item], amount: imbalance[:amount], source: imbalance[:source] }
+          end
+        end
       end
 
       needs
@@ -560,6 +593,15 @@ require_relative 'scout_logic'
         { action: :resource_procurement, resource: need[:resource], amount: need[:amount], reason: "resource_shortage" }
       when :construction
         { action: :construction, facility: need[:facility], reason: "infrastructure_needed" }
+      when :market_stabilization
+        case need[:action]
+        when :provide_essential
+          { action: :market_stabilization, subaction: :provide_essential, item: need[:item], amount: need[:amount], reason: need[:reason] }
+        when :produce_item
+          { action: :market_stabilization, subaction: :produce_item, item: need[:item], amount: need[:amount], reason: "market_shortage" }
+        when :import_item
+          { action: :market_stabilization, subaction: :import_item, item: need[:item], amount: need[:amount], source: need[:source], reason: "market_shortage" }
+        end
       end
     end
 

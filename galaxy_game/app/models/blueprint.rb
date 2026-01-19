@@ -6,6 +6,7 @@ class Blueprint < ApplicationRecord
     validates :current_research_level, numericality: { greater_than_or_equal_to: 0 }
     validates :material_efficiency, numericality: { greater_than_or_equal_to: 0 }
     validates :time_efficiency, numericality: { greater_than_or_equal_to: 0 }
+    validates :licensed_runs_remaining, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   
     # Returns a hash of material names to required amounts, using the lookup service and JSON data
     def materials
@@ -13,6 +14,18 @@ class Blueprint < ApplicationRecord
       data = service.find_blueprint(name)
       return {} unless data && data['required_materials']
       data['required_materials'].transform_values { |v| v['amount'] }
+    end
+
+    # Check if blueprint has remaining licensed runs
+    def can_manufacture?(quantity = 1)
+      return true if licensed_runs_remaining.nil? # Unlimited for NPCs
+      licensed_runs_remaining >= quantity
+    end
+
+    # Consume licensed runs after manufacturing
+    def consume_runs(quantity = 1)
+      return if licensed_runs_remaining.nil? # Unlimited for NPCs
+      update!(licensed_runs_remaining: licensed_runs_remaining - quantity)
     end
 
     # Example to calculate derived efficiencies if needed

@@ -146,16 +146,12 @@ module HasRigs
     end
   end
 
-  def available_rig_ports
-    ports_data = get_ports_data if respond_to?(:get_ports_data)
-    return 0 unless ports_data
+  def revert_mining_boost_effect(effect)
+    boost_gcc_per_hour = effect.dig('parameters', 'boost_gcc_per_hour') || 0
     
-    # Rigs might use external ports or have their own rig ports
-    rig_ports = ports_data.dig('rig_ports') || ports_data.dig('external_ports') || 0
-    rig_ports.to_i
-  end
-
-  def determine_rig_class(rig_type)
-    Rigs::BaseRig
+    if respond_to?(:operational_data) && operational_data&.dig('mining_effects')
+      current_boost = self.operational_data['mining_effects']['boost_gcc_per_hour'] || 0
+      self.operational_data['mining_effects']['boost_gcc_per_hour'] = current_boost - boost_gcc_per_hour
+    end
   end
 end
