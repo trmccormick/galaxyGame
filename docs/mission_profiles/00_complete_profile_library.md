@@ -4,6 +4,152 @@
 
 Mission profiles are **reusable deployment techniques** learned from Sol's colonization history. Each profile represents a proven pattern for specific system characteristics that the AI can apply to any compatible discovered star system. The system is completely data-driven and system-agnostic - no hardcoded assumptions about specific systems exist (except Sol as the origin point).
 
+## Mission Type Standards
+
+### Mission Taxonomy
+
+Galaxy Game missions are categorized by primary objective and operational focus. Each mission type has defined success/failure criteria, resource requirements, and economic impact calculations.
+
+#### Terraforming Missions
+**Objective**: Transform planetary environments to support human habitation
+**Success Criteria**:
+- Atmosphere composition within habitable ranges (O2: 19-23%, N2: 75-80%, CO2: <0.1%)
+- Temperature range: 273-313K (0-40°C)
+- Pressure range: 0.8-1.2 atm
+- Water availability: Liquid surface water or accessible subsurface reserves
+**Failure Criteria**:
+- Irreversible environmental damage
+- Resource depletion preventing completion
+- Timeline exceeding 50 Earth years
+**Resource Requirements**:
+- Energy: 1e15-1e18 MJ (solar/wind/nuclear infrastructure)
+- Mass: 1e10-1e12 kg (atmospheric processors, habitat domes)
+- Crew: 100-1000 personnel for multi-decade operations
+**Economic Impact**:
+- GCC Cost: 1e9-1e11 credits
+- ROI Timeline: 20-100 years
+- Value Creation: Habitable real estate, resource accessibility
+
+#### Industrial Missions
+**Objective**: Establish manufacturing and production infrastructure
+**Success Criteria**:
+- Production capacity: 1000+ tons/year of refined materials
+- Supply chain integration: 80% local sourcing
+- Quality standards: 95% defect-free output
+- Scalability: 10x capacity expansion capability
+**Failure Criteria**:
+- Supply chain disruptions >30 days
+- Equipment failure rate >5%
+- Market demand collapse
+**Resource Requirements**:
+- Energy: 1e12-1e15 MJ (industrial power systems)
+- Mass: 1e8-1e10 kg (factories, robotics, raw materials)
+- Crew: 50-500 technical specialists
+**Economic Impact**:
+- GCC Investment: 1e8-1e10 credits
+- ROI Timeline: 5-20 years
+- Value Creation: Manufactured goods, technology exports
+
+#### Fuel Production Missions
+**Objective**: Establish in-situ fuel production for transportation
+**Success Criteria**:
+- Production rate: 1000+ tons/year of LOX/LH2/CH4
+- Purity: >99% for rocket fuel applications
+- Storage capacity: 1e6+ kg cryogenic storage
+- Distribution network: Orbital depot connectivity
+**Failure Criteria**:
+- Resource depletion in <10 years
+- Contamination >1%
+- Distribution system failures
+**Resource Requirements**:
+- Energy: 1e11-1e14 MJ (electrolyzers, refrigeration)
+- Mass: 1e7-1e9 kg (processing plants, storage tanks)
+- Crew: 20-200 operations personnel
+**Economic Impact**:
+- GCC Investment: 5e7-5e9 credits
+- ROI Timeline: 3-15 years
+- Value Creation: Transportation fuel, export revenue
+
+#### Mining Missions
+**Objective**: Extract and process planetary resources
+**Success Criteria**:
+- Extraction rate: 100+ tons/day of target materials
+- Purity: >90% refined product
+- Waste management: <10% environmental impact
+- Reserve longevity: >50 years at current rates
+**Failure Criteria**:
+- Resource quality below economic thresholds
+- Environmental regulations violations
+- Market price collapse
+**Resource Requirements**:
+- Energy: 1e10-1e13 MJ (mining equipment, processing)
+- Mass: 1e6-1e8 kg (drills, crushers, refineries)
+- Crew: 10-100 mining specialists
+**Economic Impact**:
+- GCC Investment: 1e7-1e9 credits
+- ROI Timeline: 2-10 years
+- Value Creation: Raw materials, rare earth exports
+
+#### Water Extraction Missions
+**Objective**: Access and process water resources for life support
+**Success Criteria**:
+- Production rate: 100+ tons/day of potable water
+- Purity: >99.9% for human consumption
+- Storage capacity: 1e5+ m³ long-term storage
+- Distribution: Colony-wide water network
+**Failure Criteria**:
+- Water source contamination
+- Treatment system failures
+- Demand exceeding supply capacity
+**Resource Requirements**:
+- Energy: 1e9-1e12 MJ (pumps, filtration, desalination)
+- Mass: 1e5-1e7 kg (wells, pipelines, treatment plants)
+- Crew: 5-50 water specialists
+**Economic Impact**:
+- GCC Investment: 5e6-5e8 credits
+- ROI Timeline: 1-5 years
+- Value Creation: Life support capability, export potential
+
+### Mission Planning Framework
+
+#### Resource Requirements Patterns
+**Energy Scaling**: Missions scale energy requirements exponentially with complexity
+- Basic (mining): 1e9-1e10 MJ
+- Intermediate (fuel): 1e11-1e12 MJ  
+- Advanced (terraforming): 1e15-1e18 MJ
+
+**Mass Scaling**: Construction mass follows power-law distribution
+- Infrastructure: 60% of total mass
+- Equipment: 30% of total mass
+- Supplies: 10% of total mass
+
+**Crew Scaling**: Personnel requirements based on automation level
+- High automation: 10-50 crew
+- Medium automation: 50-200 crew
+- Low automation: 200-1000 crew
+
+#### Economic Impact Calculations
+**Net Present Value (NPV)**:
+```
+NPV = Σ (Revenue_t - Cost_t) / (1 + r)^t
+Where:
+- Revenue_t: Annual economic output
+- Cost_t: Annual operational costs
+- r: Discount rate (typically 0.08 for space missions)
+- t: Time period in years
+```
+
+**Return on Investment (ROI)**:
+```
+ROI = (Total Revenue - Total Investment) / Total Investment
+Break-even Period = Investment / Annual Net Revenue
+```
+
+**Risk-Adjusted Valuation**:
+- Technical risk: 20-40% failure probability
+- Market risk: 10-30% demand uncertainty
+- Political risk: 5-15% regulatory changes
+
 ## Complete Profile Catalog
 
 ### Luna Pattern
