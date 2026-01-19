@@ -13,6 +13,7 @@ The geosphere represents a planet's solid envelope with the following key attrib
 - **crust_composition**: JSON object defining crustal material composition
 - **mantle_composition**: JSON object defining mantle material composition
 - **core_composition**: JSON object defining core material composition
+- **stored_volatiles**: JSON object defining volatile material storage (CO2, H2O) in polar caps, regolith, subsurface ice
 - **total_crust_mass**: Total mass of crustal materials (kg)
 - **total_mantle_mass**: Total mass of mantle materials (kg)
 - **total_core_mass**: Total mass of core materials (kg)
@@ -163,7 +164,7 @@ The `GeosphereConcern` provides shared geosphere functionality and simulation ca
 - **Composition Management**: JSON-based material composition storage and manipulation
 - **Material State Tracking**: Automatic state updates based on temperature changes
 - **Reset Functionality**: Ability to restore geosphere to base initialization values
-- **Volatile Extraction**: Temperature-driven release of volatile materials to atmosphere
+- **Volatile Extraction**: Temperature-driven release of volatile materials to atmosphere and hydrosphere
 
 #### Key Methods
 
@@ -179,6 +180,16 @@ The geosphere integrates with:
 - **Atmosphere**: Volatile extraction feeds atmospheric composition
 - **Biosphere**: Geological activity influences habitability
 - **Terraforming**: Material availability affects terraforming processes
+- **Hydrosphere**: Volatile exchange between solid and liquid phases
+
+#### Hydrosphere Integration
+
+The geosphere interacts with the hydrosphere for volatile exchange and cryosphere management:
+
+- **Volatile Storage**: Geosphere stores volatiles (H2O, CO2) that can be released to hydrosphere during geological activity or temperature increases
+- **Cryosphere**: Polar ice caps and subsurface ice contribute to hydrosphere composition and can be mobilized for terraforming
+- **Permafrost**: Frozen ground water at geosphere-hydrosphere boundary affects water availability
+- **Outgassing**: Geological processes release stored volatiles to atmosphere and hydrosphere, supporting terraforming operations
 
 ## Data Architecture
 
@@ -192,6 +203,7 @@ CREATE TABLE geospheres (
   crust_composition jsonb,
   mantle_composition jsonb,
   core_composition jsonb,
+  stored_volatiles jsonb,
   total_crust_mass decimal,
   total_mantle_mass decimal,
   total_core_mass decimal,
@@ -238,6 +250,16 @@ Geosphere compositions use nested JSON structures:
     "iron": 85.0,
     "nickel": 5.0,
     "sulfur": 4.0
+  },
+  "stored_volatiles": {
+    "CO2": {
+      "polar_caps": 1000000.0,
+      "regolith": 500000.0
+    },
+    "H2O": {
+      "subsurface_ice": 2000000.0,
+      "permafrost": 1500000.0
+    }
   }
 }
 ```
