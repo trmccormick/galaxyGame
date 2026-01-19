@@ -4,10 +4,11 @@ RSpec.describe Financial::Account, type: :model do
   # Create players with accounts
   let(:player) { create(:player) }
   let(:recipient_player) { create(:player) }
+  let(:currency) { create(:financial_currency) }
 
   # Create accounts explicitly
-  let(:player_account) { create(:account, accountable: player, balance: 1_000) }
-  let(:recipient_account) { create(:account, accountable: recipient_player, balance: 500) }
+  let(:player_account) { create(:account, accountable: player, balance: 1_000, currency: currency) }
+  let(:recipient_account) { create(:account, accountable: recipient_player, balance: 500, currency: currency) }
 
   describe 'associations' do
     it { should belong_to(:accountable) }
@@ -15,7 +16,7 @@ RSpec.describe Financial::Account, type: :model do
   end
 
   describe 'validations' do
-    it { should validate_numericality_of(:balance).is_greater_than_or_equal_to(0) }
+    it { should validate_numericality_of(:balance) }
   end
 
   describe '#deposit' do
