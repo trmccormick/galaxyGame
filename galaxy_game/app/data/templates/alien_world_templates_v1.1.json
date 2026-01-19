@@ -1,0 +1,1138 @@
+{
+  "metadata": {
+    "name": "Alien World Templates",
+    "version": "1.1",
+    "status": "stable",
+    "schema": "alien_world_template_v1.1",
+    "compatible_generator": "star_sim/procedural_generator",
+    "created_at": "2026-01-18",
+    "notes": "Templates for generating alien terrestrial planets with unique atmospheric and geological characteristics."
+  },
+  "terrestrial_planets": [
+    {
+      "identifier": "TPL-A01",
+      "name": "Template A01",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A02",
+      "name": "Template A02",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A03",
+      "name": "Template A03",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A04",
+      "name": "Template A04",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A05",
+      "name": "Template A05",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A06",
+      "name": "Template A06",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A07",
+      "name": "Template A07",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A08",
+      "name": "Template A08",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A09",
+      "name": "Template A09",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A10",
+      "name": "Template A10",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A11",
+      "name": "Template A11",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A12",
+      "name": "Template A12",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A13",
+      "name": "Template A13",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A14",
+      "name": "Template A14",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A15",
+      "name": "Template A15",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A16",
+      "name": "Template A16",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A17",
+      "name": "Template A17",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A18",
+      "name": "Template A18",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A19",
+      "name": "Template A19",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A20",
+      "name": "Template A20",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A21",
+      "name": "Template A21",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A22",
+      "name": "Template A22",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A23",
+      "name": "Template A23",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A24",
+      "name": "Template A24",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    },
+    {
+      "identifier": "TPL-A25",
+      "name": "Template A25",
+      "type": "terrestrial",
+      "mass": 1.0,
+      "radius": 1.0,
+      "density": 1.0,
+      "size": "medium",
+      "orbital_period": 365.25,
+      "surface_temperature": 288.0,
+      "gravity": 1.0,
+      "albedo": 0.3,
+      "insolation": 1.0,
+      "known_pressure": 1.0,
+      "geological_activity": "moderate",
+      "atmosphere": {
+        "composition": {
+          "N2": 78.0,
+          "CO2": 20.0,
+          "Ar": 2.0
+        }
+      },
+      "geosphere_attributes": {
+        "crust_composition": {
+          "SiO2": 50.0,
+          "Al2O3": 15.0,
+          "Fe2O3": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": 100.0,
+          "CO2": 50.0
+        }
+      },
+      "engineered_atmosphere": false,
+      "terraforming_difficulty": 5.0,
+      "volatile_reservoir": {
+        "CO2": 1000.0,
+        "H2O": 500.0
+      },
+      "material_yield_bias": {
+        "rare_earth": 1.0,
+        "precious_metal": 1.0,
+        "industrial_metal": 1.0
+      }
+    }
+  ]
+}
