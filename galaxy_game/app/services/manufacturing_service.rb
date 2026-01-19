@@ -5,6 +5,14 @@ class ManufacturingService
     
     return { success: false, error: "Blueprint not found" } unless blueprint_data
     
+    # Check blueprint licensing for players
+    if owner.is_a?(Player)
+      blueprint_record = owner.blueprints.find_by(name: blueprint_name)
+      unless blueprint_record&.can_manufacture?(count)
+        return { success: false, error: "Blueprint license exhausted or not owned" }
+      end
+    end
+    
     # Validate owner has access to settlement
     unless settlement.owner == owner || settlement.accessible_by?(owner)
       return { success: false, error: "No access to settlement" }
@@ -63,7 +71,10 @@ class ManufacturingService
     end
     
     # Charge construction cost
-    if owner.respond_to?(:withdraw)
+    if owner.respond_to?(:charge)
+      # If the owner has a charge method (like through FinancialManagement concern)
+      owner.charge(construction_cost, "Construction cost for #{blueprint_name}")
+    elsif owner.respond_to?(:withdraw)
       # If the owner has a withdraw method (like through an Account)
       owner.withdraw(construction_cost, "Construction cost for #{blueprint_name}")
     elsif owner.respond_to?(:debit)
@@ -85,6 +96,26 @@ class ManufacturingService
       message: "Manufacturing job started. Construction cost: #{construction_cost} GCC",
       job: job
     }
+  end
+  
+  def self.complete_manufacturing_job(job)
+    # Consume licensed runs for player-owned blueprints
+    if job.owner.is_a?(Player)
+      blueprint_record = job.owner.blueprints.find_by(name: job.unit_type)
+      blueprint_record&.consume_runs(job.count)
+    end
+    
+    # Mark job as completed
+    job.update(status: 'completed', completed_at: Time.current)
+    
+    # Add completed items to settlement inventory
+    add_completed_items(job.base_settlement, job.unit_type, job.count)
+  end
+  
+  def self.add_completed_items(settlement, item_name, count)
+    # Find or create inventory item
+    item = settlement.inventory.items.find_or_create_by(name: item_name)
+    item.update(amount: item.amount + count)
   end
   
   def self.get_required_materials(blueprint_data)

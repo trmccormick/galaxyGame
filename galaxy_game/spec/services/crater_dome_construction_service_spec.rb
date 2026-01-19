@@ -122,7 +122,8 @@ RSpec.describe CraterDomeConstructionService, type: :service do
         allow(TransactionService).to receive(:process_transaction).with(
           buyer: settlement,
           seller: service_provider,
-          amount: anything
+          amount: anything,
+          currency: anything
         ).and_return(true)
         
         service = described_class.new(player, crater_dome, service_provider)

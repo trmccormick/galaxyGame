@@ -27,7 +27,13 @@ module HasBlueprintPorts
       return blueprint_data['ports']
     end
     
-    nil
+    # Return default ports if no blueprint data found
+    {
+      'internal_module_ports' => 5,
+      'external_module_ports' => 5,
+      'internal_rig_ports' => 5,
+      'external_rig_ports' => 5
+    }
   end
 
   private

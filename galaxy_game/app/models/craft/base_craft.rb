@@ -17,7 +17,7 @@ module Craft
     include EnergyManagement
     include AtmosphericProcessing
     include BatteryManagement
-    include RechargeBehavior
+    include HasBlueprintPorts
 
     # Removed: DEFAULT_VOLUME_PER_CREW_M3 = 50.0 # Now in GameConstants
 
@@ -534,5 +534,16 @@ module Craft
         }
       )
     end
-  end
+
+    private
+
+    def default_blueprint_id
+      'generic_craft'
+    end
+
+    def blueprint_category
+      'craft'
+    end
+
+end
 end
