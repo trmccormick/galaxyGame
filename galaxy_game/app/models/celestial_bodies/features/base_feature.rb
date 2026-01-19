@@ -21,8 +21,10 @@ module CelestialBodies
       VALID_STATUSES = %w[natural surveyed enclosed pressurized settlement_established].freeze
       validates :status, inclusion: { in: VALID_STATUSES }
       
-      # Helper to fetch static data from lookup service
+      # Helper to fetch static data from database column or lookup service
       def static_data
+        return super if super.present? # Use database column if present
+        
         @static_data ||= begin
           return nil unless celestial_body
           Lookup::PlanetaryGeologicalFeatureLookupService
