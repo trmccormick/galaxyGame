@@ -7,15 +7,15 @@ class MaterialLookupService
     # Find a material by name across all loaded materials
     @materials.each do |category, items|
       # search by name
-      item = items.find { |i| i['name'].casecmp?(name) }
+      item = items.find { |i| i['name']&.casecmp?(name) }
       return item if item
 
       # search by chemical_formula
-      item = items.find { |i| i['chemical_formula'].casecmp?(name) }
+      item = items.find { |i| i['chemical_formula']&.casecmp?(name) }
       return item if item
 
       # search by aliases
-      item = items.find { |i| i['aliases'].map(&:downcase).include?(name.downcase) }
+      item = items.find { |i| i['aliases']&.map(&:downcase)&.include?(name.downcase) }
       return item if item
     end
     nil # Return nil if not found
