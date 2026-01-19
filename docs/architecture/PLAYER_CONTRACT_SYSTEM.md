@@ -8,15 +8,22 @@
 
 ## Overview
 
-The Player Contract System implements **player-first task priority** (GUARDRAILS.md Section 4): contracts are offered to players first with a 24-48h timeout, then fall back to NPC execution if not accepted. This ensures players have first opportunity to earn GCC and influence game progression while maintaining autonomous NPC operations.
+The Player Contract System implements **player-first task priority** (GUARDRAILS.md Section 4): AI Manager offers both **missions** (assigned tasks with rewards) and **contracts/buy orders** (market opportunities) to players first, with NPC fallback. Players can also post their own market orders. This ensures players have first opportunity to earn GCC and influence game progression while maintaining autonomous NPC operations.
+
+**Two Main Mechanisms:**
+
+1. **Missions**: AI-generated tasks assigned to specific players (e.g., "Harvest 100 transparent panels for GCC reward")
+2. **Contracts/Buy Orders**: Market listings where players fulfill AI needs (e.g., "AI offers GCC for 100 transparent panels") or players post their own offers
+
+**Player-Posted Orders**: Players can create their own buy/sell orders with skill-based limits and listing fees.
 
 ---
 
 ## System Components
 
-### 1. Contract Generation (AI Manager → Player)
+### 1. Mission Generation (AI Manager → Player Assignment)
 
-**Service**: `app/services/ai_manager/contract_creation_service.rb`
+**Service**: `app/services/ai_manager/mission_creation_service.rb`
 
 **Trigger Conditions**:
 - Settlement needs resources (via ResourceAcquisitionService)
@@ -24,12 +31,28 @@ The Player Contract System implements **player-first task priority** (GUARDRAILS
 - Mission profile task flagged as "player_eligible"
 - NPC cannot fulfill task internally (no available workforce/equipment)
 
+**Mission Types**:
+- **Harvesting Missions**: Extract resources from celestial bodies
+- **Logistics Missions**: Transport materials between settlements
+- **Construction Missions**: Deliver construction materials to build sites
+- **Exploration Missions**: Scout new systems, deploy probes
+- **Emergency Missions**: Critical repairs, disaster response
+
+### 2. Contract/Buy Order Generation (AI Manager → Market)
+
+**Service**: `app/services/ai_manager/contract_creation_service.rb`
+
+**Trigger Conditions**:
+- AI Manager needs specific items (e.g., 100 Transparent Panels)
+- Settlement requires materials not immediately available
+- Resource gaps in supply chain
+- Opportunity for player-driven fulfillment
+
 **Contract Types**:
-- **Harvesting Contracts**: Extract resources from celestial bodies
-- **Logistics Contracts**: Transport materials between settlements
-- **Construction Contracts**: Deliver construction materials to build sites
-- **Exploration Contracts**: Scout new systems, deploy probes
-- **Emergency Contracts**: Critical repairs, disaster response
+- **Buy Orders**: AI Manager offers GCC for specific items/materials
+- **Supply Contracts**: Requests for delivery of goods to locations
+- **Service Contracts**: Requests for specific work (repairs, construction)
+- **Trade Contracts**: Exchange offers between different goods
 
 ---
 
@@ -209,6 +232,43 @@ end
 - **Settlement Accounting**: Settlements use Virtual Ledger for contract posting costs, resolved through successful delivery
 - **LDC Revenue**: Contract system generates USD revenue for LDC through Earth exports and fuel sales
 - **Currency Conversion**: GCC payouts may trigger exchange rate adjustments if reserves are drawn down
+
+---
+
+## Player-Posted Contracts
+
+### Market Orders
+**Player-Initiated Contracts**:
+- Players can post their own buy/sell orders
+- Listing costs: percentage of contract value (e.g., 1-5% of GCC value)
+- Expiration times set by players (hours to weeks)
+- Maximum active orders based on skill level
+
+**Order Types**:
+- **Buy Orders**: Players seeking specific items
+- **Sell Orders**: Players offering items for sale
+- **Trade Contracts**: Barter arrangements between players
+
+**Skill-Based Limits**:
+```ruby
+def max_active_orders(player)
+  base_limit = 5
+  skill_bonus = player.skill_level(:trading) * 2  # Trading skill
+  reputation_bonus = player.reputation_tier * 1
+  
+  base_limit + skill_bonus + reputation_bonus
+end
+```
+
+**Listing Fee Calculation**:
+```ruby
+def calculate_listing_fee(contract_value_gcc, duration_days)
+  base_percentage = 0.01  # 1% base fee
+  duration_multiplier = [duration_days / 7.0, 1.0].min  # Up to 1x for week+
+  
+  contract_value_gcc * base_percentage * duration_multiplier
+end
+```
 
 ---
 
