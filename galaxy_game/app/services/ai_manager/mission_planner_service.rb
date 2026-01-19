@@ -193,9 +193,167 @@ module AIManager
     end
     
     def simulate_planetary_changes
-      # This would integrate with TerraSim for actual calculations
-      # For now, return estimated changes based on pattern
-      
+      # Integrate with existing TerraSim system for realistic planetary modeling
+      target_location = @target_location
+
+      unless target_location
+        Rails.logger.warn "[MissionPlanner] No target location found for pattern #{@pattern}, using default planetary changes"
+        return default_planetary_changes
+      end
+
+      # Use TerraSim services for actual planetary simulation
+      begin
+        simulate_with_terrasim(target_location)
+      rescue => e
+        Rails.logger.error "[MissionPlanner] TerraSim integration failed: #{e.message}, falling back to estimates"
+        default_planetary_changes
+      end
+    end
+
+    private
+
+    def simulate_with_terrasim(target_location)
+      # Run accelerated TerraSim simulation for the mission duration
+      simulation_years = @parameters[:timeline_years]
+
+      # Create a temporary simulation context
+      initial_state = capture_initial_state(target_location)
+      final_state = run_terrasim_simulation(target_location, simulation_years)
+
+      # Calculate changes
+      calculate_state_changes(initial_state, final_state, simulation_years)
+    end
+
+    def capture_initial_state(celestial_body)
+      return {} unless celestial_body
+
+      state = {}
+      if celestial_body.atmosphere
+        state[:atmosphere] = {
+          pressure: celestial_body.atmosphere.pressure,
+          temperature: celestial_body.atmosphere.temperature,
+          composition: celestial_body.atmosphere.gases.map { |g| [g.name, g.percentage] }.to_h
+        }
+      end
+
+      if celestial_body.hydrosphere
+        state[:hydrosphere] = {
+          total_mass: celestial_body.hydrosphere.total_hydrosphere_mass,
+          state_distribution: celestial_body.hydrosphere.state_distribution
+        }
+      end
+
+      if celestial_body.biosphere
+        state[:biosphere] = {
+          habitable_ratio: celestial_body.biosphere.habitable_ratio,
+          biodiversity_index: celestial_body.biosphere.biodiversity_index,
+          life_forms_count: celestial_body.biosphere.life_forms.count
+        }
+      end
+
+      state
+    end
+
+    def run_terrasim_simulation(celestial_body, years)
+      return {} unless celestial_body
+
+      # Use existing TerraSim BiosphereSimulationService
+      service = TerraSim::BiosphereSimulationService.new(celestial_body)
+
+      # Run simulation for equivalent days (simplified - real missions would have complex timelines)
+      total_days = years * 365
+      service.simulate(total_days)
+
+      # Return final state
+      capture_initial_state(celestial_body.reload)
+    end
+
+    def calculate_state_changes(initial_state, final_state, years)
+      changes = {}
+
+      # Atmospheric changes
+      if initial_state[:atmosphere] && final_state[:atmosphere]
+        initial_atm = initial_state[:atmosphere]
+        final_atm = final_state[:atmosphere]
+
+        changes[:atmosphere] = {
+          pressure_change: format_change(final_atm[:pressure] - initial_atm[:pressure], 'bar', years),
+          temperature_change: format_change(final_atm[:temperature] - initial_atm[:temperature], 'K', years),
+          composition_changes: calculate_gas_changes(initial_atm[:composition], final_atm[:composition])
+        }
+      end
+
+      # Hydrosphere changes
+      if initial_state[:hydrosphere] && final_state[:hydrosphere]
+        initial_hydro = initial_state[:hydrosphere]
+        final_hydro = final_state[:hydrosphere]
+
+        changes[:hydrosphere] = {
+          mass_change: format_change(final_hydro[:total_mass] - initial_hydro[:total_mass], 'kg', years),
+          state_distribution_changes: calculate_state_changes_hash(initial_hydro[:state_distribution], final_hydro[:state_distribution])
+        }
+      end
+
+      # Biosphere changes
+      if initial_state[:biosphere] && final_state[:biosphere]
+        initial_bio = initial_state[:biosphere]
+        final_bio = final_state[:biosphere]
+
+        changes[:biosphere] = {
+          habitability_change: format_change(final_bio[:habitable_ratio] - initial_bio[:habitable_ratio], '', years),
+          biodiversity_change: format_change(final_bio[:biodiversity_index] - initial_bio[:biodiversity_index], '', years),
+          species_count_change: final_bio[:life_forms_count] - initial_bio[:life_forms_count]
+        }
+      end
+
+      changes
+    end
+
+    def calculate_gas_changes(initial_composition, final_composition)
+      changes = {}
+      all_gases = (initial_composition.keys + final_composition.keys).uniq
+
+      all_gases.each do |gas|
+        initial_pct = initial_composition[gas] || 0.0
+        final_pct = final_composition[gas] || 0.0
+        change = final_pct - initial_pct
+
+        if change.abs > 0.001  # Only report significant changes
+          changes[gas] = format_change(change, '%', @parameters[:timeline_years])
+        end
+      end
+
+      changes
+    end
+
+    def calculate_state_changes_hash(initial_dist, final_dist)
+      changes = {}
+      all_states = (initial_dist.keys + final_dist.keys).uniq
+
+      all_states.each do |state|
+        initial_pct = initial_dist[state] || 0.0
+        final_pct = final_dist[state] || 0.0
+        change = final_pct - initial_pct
+
+        if change.abs > 0.1  # Only report significant changes
+          changes[state] = format_change(change, '%', @parameters[:timeline_years])
+        end
+      end
+
+      changes
+    end
+
+    def format_change(delta, unit, years)
+      if delta.abs < 0.001
+        "No significant change"
+      else
+        sign = delta > 0 ? '+' : ''
+        "#{sign}#{delta.round(3)}#{unit} over #{years} years"
+      end
+    end
+
+    def default_planetary_changes
+      # Fallback estimates when TerraSim integration fails
       case @pattern
       when 'mars-terraforming'
         {
