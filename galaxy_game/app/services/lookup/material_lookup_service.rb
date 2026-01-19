@@ -74,7 +74,7 @@ module Lookup
     # Add this class method
     def self.locate_gases_path
       # Always use the path system from GalaxyGame::Paths - the same one used in production
-      primary_path = File.join(Rails.root, GalaxyGame::Paths::JSON_DATA, "resources", "materials", "gases")
+      primary_path = File.join(GalaxyGame::Paths::JSON_DATA, "resources", "materials", "gases")
       
       if File.directory?(primary_path)
         Rails.logger.debug "Using gases path: #{primary_path}"
@@ -198,7 +198,7 @@ module Lookup
           Rails.logger.debug "Loaded material from #{file}"
           data
         rescue JSON::ParserError => e
-          Rails.logger.error "Error parsing #{file}: #{e.message}"
+          Rails.logger.error "Invalid JSON in file: #{file} - #{e.message}"
           nil
         rescue StandardError => e
           Rails.logger.error "Error loading #{file}: #{e.message}"
@@ -220,7 +220,7 @@ module Lookup
           Rails.logger.debug "Loaded material from #{file}"
           data
         rescue JSON::ParserError => e
-          Rails.logger.error "Error parsing #{file}: #{e.message}"
+          Rails.logger.error "Invalid JSON in file: #{file} - #{e.message}"
           nil
         rescue StandardError => e
           Rails.logger.error "Error loading #{file}: #{e.message}"
