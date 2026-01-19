@@ -25,5 +25,48 @@ module Admin
       @market_data = []
       @gcc_exchange_rate = 1.0
     end
+
+    # PHASE 4 PLACEHOLDER METHODS
+    # TODO: Implement after Phase 3 completion (<50 test failures)
+
+    def flows_api
+      # PLACEHOLDER: API endpoint for D3.js resource flow visualization
+      # TODO: Aggregate trade records by route and resource type
+      # TODO: Calculate GCC values using current pricing
+      # TODO: Return nodes/links structure for Sankey diagram
+
+      solar_system = SolarSystem.find(params[:solar_system_id])
+
+      # PLACEHOLDER: Mock data structure for development
+      flow_data = {
+        nodes: [
+          { id: 'earth', name: 'Earth', type: 'source', total_throughput: 15000000 },
+          { id: 'mars_colony', name: 'Mars Colony', type: 'settlement', total_throughput: 8500000 },
+          { id: 'venus_station', name: 'Venus L1', type: 'station', total_throughput: 3200000 }
+        ],
+        links: [
+          {
+            source: 'earth',
+            target: 'mars_colony',
+            value: 15000,
+            resource: 'H2O',
+            gcc_value: 1200000,
+            route_efficiency: 0.94
+          },
+          {
+            source: 'mars_colony',
+            target: 'venus_station',
+            value: 8000,
+            resource: 'structural_carbon',
+            gcc_value: 450000,
+            route_efficiency: 0.87
+          }
+        ]
+      }
+
+      respond_to do |format|
+        format.json { render json: flow_data }
+      end
+    end
   end
 end
