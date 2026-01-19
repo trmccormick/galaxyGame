@@ -38,3 +38,47 @@
 - **Incident Precedent [2026-01-15]:** Resolved 10 RSpec failures caused by the flattening of the `Location` namespace in `wormhole_spec.rb`. This incident validated the importance of namespace preservation for maintaining system stability—just as the [Anchor Law](GUARDRAILS.md#-2-the-anchor-law-stability--infrastructure) requires physical mass thresholds for wormhole stability, architectural integrity requires namespace structures for code stability.
 - **Gold Standard Reference:** `wormhole_spec.rb` serves as the canonical example of proper namespace testing. All future model specs must use fully qualified class names (e.g., `Location::SpatialLocation`) in both instantiation and association expectations.
 - **Sabatier Bug Fix [2026-01-15]:** Resolved critical implementation gap in `WormholeMaintenanceJob` where `sabatier_offset_active` contract flags were configured but not executed. Added 40% tax reduction logic for local fuel production offsets. Ensures future job updates properly parse and apply all contract configuration flags to prevent silent feature failures.
+
+## 💵 7. Economic System Guardrails
+
+### Contract Ceiling Limits
+- **Maximum Contract Value**: No single player contract may exceed 10% of current GCC money supply to prevent economic distortion
+- **Daily Contract Limits**: Players limited to 5 active contracts per day to ensure market distribution
+- **Contract Duration Caps**: Maximum 90 Earth days for any contract to prevent long-term economic commitments
+
+### Debt and Overdraft Controls
+- **Virtual Ledger Limits**: NPC entities cannot exceed 50% of their asset value in overdraft to prevent economic collapse
+- **Player Debt Ceilings**: Players cannot accumulate debt exceeding 200% of their net worth
+- **Interest Rate Floors**: Minimum 2% annual interest on all overdrafts to discourage excessive borrowing
+
+### Reserve Requirements
+- **LDC Stabilization Reserves**: Lunar Development Corporation must maintain 25% of total GCC supply as stabilization reserves
+- **System-wide Liquidity**: Minimum 10% of all currencies held in liquid reserves for market stability
+- **Emergency Funds**: 5% of annual GDP allocated to economic crisis response funds
+
+### Currency Stability Measures
+- **Exchange Rate Bands**: GCC/USD exchange rates limited to ±5% daily movement to prevent speculation
+- **Minting Limits**: LDC limited to 5% annual GCC supply increase to control inflation
+- **Burn Mechanisms**: Automatic GCC destruction for Earth exports to maintain supply equilibrium
+
+### Market Intervention Rules
+- **LDC Market Operations**: Lunar Development Corporation may intervene in currency markets only when exchange rate exceeds ±10% band
+- **Price Stabilization**: Automatic purchase/sale of commodities when prices deviate >20% from 30-day average
+- **Anti-Manipulation**: Any entity attempting to manipulate markets faces permanent ban and asset forfeiture
+
+## 🎮 8. Player Experience Boundaries
+
+### Economic Transparency
+- **Contract Clarity**: All contracts must display clear GCC earnings, risk levels, and completion timeframes
+- **Market Information**: Real-time access to commodity prices, exchange rates, and economic indicators
+- **Performance Tracking**: Historical contract completion rates and earnings visibility
+
+### Fair Competition
+- **NPC Efficiency Caps**: NPC operations limited to 90% efficiency to maintain player competitive advantage
+- **Contract Priority**: Players receive 48-hour exclusive window on all eligible contracts
+- **Premium Access**: GCC spending enables priority contract access and faster NPC fallback
+
+### Game Balance
+- **Progression Gates**: Major expansions require player participation thresholds
+- **Economic Multipliers**: Player contracts provide 1.5x GCC rewards vs NPC execution
+- **Influence Mechanisms**: GCC investment allows players to influence AI Manager priorities
