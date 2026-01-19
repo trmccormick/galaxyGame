@@ -1,0 +1,75 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "unit",
+    "state_at_room_temp": "solid",
+    "purity": "high"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "basic_electronic_parts",
+  "name": "Basic Electronic Parts",
+  "description": "Fundamental electronic components such as raw circuit elements, basic semiconductors, resistors, and capacitors. These form the building blocks for more complex electronic assemblies.",
+  "category": "component",
+  "subcategory": "general",
+  "type": "processed_material",
+  "state_at_stp": "solid",
+  "sources": {
+    "composition": [
+      {
+        "material": "Copper",
+        "percentage": 0.3
+      },
+      {
+        "material": "Silicon",
+        "percentage": 0.25
+      },
+      {
+        "material": "Gold",
+        "percentage": 0.05
+      },
+      {
+        "material": "Industrial_Plastics",
+        "percentage": 0.4
+      }
+    ],
+    "production_method": "microfabrication_and_assembly",
+    "facility_type": "Semiconductor Fab"
+  },
+  "production": {
+    "time": 90,
+    "facility": "Semiconductor Fab",
+    "energy": 150,
+    "output": 1
+  },
+  "trade_value": 100,
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 20.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.1
+    }
+  }
+}

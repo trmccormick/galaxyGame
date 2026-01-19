@@ -1,0 +1,64 @@
+[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[31mF[0m[31mF[0m[31mF[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m
+
+Failures:
+
+  1) Admin::AiManagerController GET #planner runs simulation when pattern is provided
+     [31mFailure/Error: resources << 'co2' if atmo.gas_percentage('CO2') > 0.01[0m
+     [31m  #<Double "MarsAtmosphere"> received unexpected message :gas_percentage with ("CO2")[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:95:in 'AIManager::PrecursorCapabilityService#atmospheric_resources'[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:71:in 'AIManager::PrecursorCapabilityService#extract_local_resources'[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:31:in 'AIManager::PrecursorCapabilityService#local_resources'[0m
+     [36m# ./app/services/ai_manager/mission_planner_service.rb:46:in 'AIManager::MissionPlannerService#initialize'[0m
+     [36m# ./app/controllers/admin/ai_manager_controller.rb:52:in 'Class#new'[0m
+     [36m# ./app/controllers/admin/ai_manager_controller.rb:52:in 'Admin::AiManagerController#planner'[0m
+     [36m# /usr/local/bundle/gems/turbo-rails-2.0.11/lib/turbo-rails.rb:24:in 'Turbo.with_request_id'[0m
+     [36m# /usr/local/bundle/gems/turbo-rails-2.0.11/app/controllers/concerns/turbo/request_id_tracking.rb:10:in 'Turbo::RequestIdTracking#turbo_tracking_request_id'[0m
+     [36m# /usr/local/bundle/gems/actiontext-7.0.8.7/lib/action_text/rendering.rb:20:in 'ActionText::Rendering::ClassMethods#with_renderer'[0m
+     [36m# /usr/local/bundle/gems/actiontext-7.0.8.7/lib/action_text/engine.rb:69:in 'block (4 levels) in <class:Engine>'[0m
+     [36m# /usr/local/bundle/gems/rails-controller-testing-1.0.5/lib/rails/controller/testing/template_assertions.rb:62:in 'Rails::Controller::Testing::TemplateAssertions#process'[0m
+     [36m# /usr/local/bundle/gems/rails-controller-testing-1.0.5/lib/rails/controller/testing/integration.rb:16:in 'block (2 levels) in <module:Integration>'[0m
+     [36m# ./spec/controllers/admin/ai_manager_controller_spec.rb:148:in 'block (3 levels) in <top (required)>'[0m
+
+  2) Admin::AiManagerController GET #planner uses default parameters if not provided
+     [31mFailure/Error: resources << 'co2' if atmo.gas_percentage('CO2') > 0.01[0m
+     [31m  #<Double "MarsAtmosphere"> received unexpected message :gas_percentage with ("CO2")[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:95:in 'AIManager::PrecursorCapabilityService#atmospheric_resources'[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:71:in 'AIManager::PrecursorCapabilityService#extract_local_resources'[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:31:in 'AIManager::PrecursorCapabilityService#local_resources'[0m
+     [36m# ./app/services/ai_manager/mission_planner_service.rb:46:in 'AIManager::MissionPlannerService#initialize'[0m
+     [36m# ./app/controllers/admin/ai_manager_controller.rb:52:in 'Class#new'[0m
+     [36m# ./app/controllers/admin/ai_manager_controller.rb:52:in 'Admin::AiManagerController#planner'[0m
+     [36m# /usr/local/bundle/gems/turbo-rails-2.0.11/lib/turbo-rails.rb:24:in 'Turbo.with_request_id'[0m
+     [36m# /usr/local/bundle/gems/turbo-rails-2.0.11/app/controllers/concerns/turbo/request_id_tracking.rb:10:in 'Turbo::RequestIdTracking#turbo_tracking_request_id'[0m
+     [36m# /usr/local/bundle/gems/actiontext-7.0.8.7/lib/action_text/rendering.rb:20:in 'ActionText::Rendering::ClassMethods#with_renderer'[0m
+     [36m# /usr/local/bundle/gems/actiontext-7.0.8.7/lib/action_text/engine.rb:69:in 'block (4 levels) in <class:Engine>'[0m
+     [36m# /usr/local/bundle/gems/rails-controller-testing-1.0.5/lib/rails/controller/testing/template_assertions.rb:62:in 'Rails::Controller::Testing::TemplateAssertions#process'[0m
+     [36m# /usr/local/bundle/gems/rails-controller-testing-1.0.5/lib/rails/controller/testing/integration.rb:16:in 'block (2 levels) in <module:Integration>'[0m
+     [36m# ./spec/controllers/admin/ai_manager_controller_spec.rb:161:in 'block (3 levels) in <top (required)>'[0m
+
+  3) Admin::AiManagerController POST #export_plan exports simulation plan as JSON
+     [31mFailure/Error: resources << 'co2' if atmo.gas_percentage('CO2') > 0.01[0m
+     [31m  #<Double "MarsAtmosphere"> received unexpected message :gas_percentage with ("CO2")[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:95:in 'AIManager::PrecursorCapabilityService#atmospheric_resources'[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:71:in 'AIManager::PrecursorCapabilityService#extract_local_resources'[0m
+     [36m# ./app/services/ai_manager/precursor_capability_service.rb:31:in 'AIManager::PrecursorCapabilityService#local_resources'[0m
+     [36m# ./app/services/ai_manager/mission_planner_service.rb:46:in 'AIManager::MissionPlannerService#initialize'[0m
+     [36m# ./app/controllers/admin/ai_manager_controller.rb:69:in 'Class#new'[0m
+     [36m# ./app/controllers/admin/ai_manager_controller.rb:69:in 'Admin::AiManagerController#export_plan'[0m
+     [36m# /usr/local/bundle/gems/turbo-rails-2.0.11/lib/turbo-rails.rb:24:in 'Turbo.with_request_id'[0m
+     [36m# /usr/local/bundle/gems/turbo-rails-2.0.11/app/controllers/concerns/turbo/request_id_tracking.rb:10:in 'Turbo::RequestIdTracking#turbo_tracking_request_id'[0m
+     [36m# /usr/local/bundle/gems/actiontext-7.0.8.7/lib/action_text/rendering.rb:20:in 'ActionText::Rendering::ClassMethods#with_renderer'[0m
+     [36m# /usr/local/bundle/gems/actiontext-7.0.8.7/lib/action_text/engine.rb:69:in 'block (4 levels) in <class:Engine>'[0m
+     [36m# /usr/local/bundle/gems/rails-controller-testing-1.0.5/lib/rails/controller/testing/template_assertions.rb:62:in 'Rails::Controller::Testing::TemplateAssertions#process'[0m
+     [36m# /usr/local/bundle/gems/rails-controller-testing-1.0.5/lib/rails/controller/testing/integration.rb:16:in 'block (2 levels) in <module:Integration>'[0m
+     [36m# ./spec/controllers/admin/ai_manager_controller_spec.rb:172:in 'block (3 levels) in <top (required)>'[0m
+
+Finished in 3.73 seconds (files took 8.55 seconds to load)
+[31m17 examples, 3 failures[0m
+
+Failed examples:
+
+[31mrspec ./spec/controllers/admin/ai_manager_controller_spec.rb:147[0m [36m# Admin::AiManagerController GET #planner runs simulation when pattern is provided[0m
+[31mrspec ./spec/controllers/admin/ai_manager_controller_spec.rb:160[0m [36m# Admin::AiManagerController GET #planner uses default parameters if not provided[0m
+[31mrspec ./spec/controllers/admin/ai_manager_controller_spec.rb:171[0m [36m# Admin::AiManagerController POST #export_plan exports simulation plan as JSON[0m
+

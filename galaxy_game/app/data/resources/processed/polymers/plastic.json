@@ -1,0 +1,62 @@
+{
+  "id": "plastic",
+  "name": "Plastic",
+  "category": "synthetic",
+  "type": "processed_material",
+  "description": "A synthetic polymer used in a wide variety of applications.",
+  "properties": {
+    "unit_of_measurement": "kilogram",
+    "density": "0.9-1.4 g/cm³",
+    "state_at_room_temp": "Solid",
+    "purity": "high"
+  },
+  "applications": [
+    "packaging",
+    "construction",
+    "electronics"
+  ],
+  "sourceable": [
+    "import",
+    "recycling",
+    "manufacturing"
+  ],
+  "tags": [
+    "material",
+    "polymer",
+    "recyclable"
+  ],
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "subcategory": "general",
+  "state_at_stp": "solid",
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 3.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

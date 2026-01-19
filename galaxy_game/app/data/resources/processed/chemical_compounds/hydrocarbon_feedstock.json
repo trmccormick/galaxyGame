@@ -1,0 +1,76 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "liter",
+    "state_at_room_temp": "liquid",
+    "purity": "high",
+    "color": "Clear to yellowish",
+    "density": "0.78-0.95 g/cm³",
+    "boiling_point_range": {
+      "min": 303.15,
+      "max": 623.15,
+      "unit": "kelvin"
+    },
+    "viscosity": "medium"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "hydrocarbon_feedstock",
+  "name": "Hydrocarbon Feedstock",
+  "description": "A refined mixture of organic compounds, primarily hydrocarbons, processed from various raw carbonaceous sources found across the solar system. Essential for producing polymers, fuels, and industrial chemicals.",
+  "category": "chemical_compound",
+  "subcategory": "general",
+  "type": "processed_material",
+  "state_at_stp": "liquid",
+  "sources": {
+    "primary_material_types": [
+      "methane_ice",
+      "carbonaceous_regolith",
+      "atmospheric_methane"
+    ],
+    "processing_method": "hydrocarbon_refinement",
+    "facility_type": "Organic Processing Plant"
+  },
+  "production": {
+    "time": 75,
+    "facility": "Organic Processing Plant",
+    "energy": 120,
+    "output": 10
+  },
+  "applications": [
+    "polymer_synthesis",
+    "fuel_production",
+    "chemical_synthesis",
+    "lubricant_production"
+  ],
+  "trade_value": 35,
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

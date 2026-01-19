@@ -1,0 +1,1079 @@
+{
+  "settlement_id": 1,
+  "decision_history": [
+    {
+      "timestamp": "2026-01-18 23:01:45 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-18 23:01:45 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-18 23:01:45 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-18 23:01:45 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-18 23:52:35 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-18 23:52:35 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-18 23:52:35 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-18 23:52:35 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 00:05:13 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 00:05:13 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 00:05:13 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 00:05:13 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:37:04 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:37:04 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:37:04 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 0.7,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:37:04 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:45:04 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:45:04 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:45:04 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 0.9,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:45:04 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:51:44 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:51:44 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:51:44 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:51:44 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:59:39 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:59:39 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 02:59:39 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 02:59:39 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:16:30 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:16:30 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:16:30 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:16:30 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:25:39 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:25:39 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:25:39 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:25:39 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:33:11 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:33:11 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:33:11 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:33:11 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:42:45 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:42:45 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:42:45 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:42:45 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:52:04 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:52:04 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 03:52:04 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 03:52:04 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:01:05 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:01:05 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:01:05 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:01:05 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:10:38 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:10:38 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:10:38 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:10:38 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:19:51 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:19:51 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:19:51 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:19:51 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:31:45 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:31:45 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:31:45 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:31:45 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:42:33 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:42:33 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:42:33 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:42:33 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:50:40 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:50:40 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:50:40 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:50:40 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:58:48 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:58:48 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 04:58:48 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 04:58:48 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 05:07:01 UTC",
+      "decision": {
+        "action": "emergency_procurement",
+        "resource": "oxygen",
+        "reason": "life_support_critical"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 05:07:01 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    },
+    {
+      "timestamp": "2026-01-19 05:07:01 UTC",
+      "decision": {
+        "action": "resource_procurement",
+        "resource": "water",
+        "amount": 1000,
+        "reason": "resource_shortage",
+        "adapted_from": "emergency_procurement",
+        "adaptation_confidence": 1.0,
+        "adaptation_reason": "learned_from_past_experience"
+      },
+      "context": {
+        "oxygen_level": 75,
+        "water_level": 80,
+        "food_level": 85,
+        "debt_level": 10000,
+        "construction_queue_size": 0,
+        "available_resources": {
+          "oxygen": 200,
+          "water": 300,
+          "food": 400
+        },
+        "isru_capability": 0.7,
+        "timestamp": "2026-01-19 05:07:01 UTC"
+      },
+      "outcome": null,
+      "success_score": null,
+      "lessons_learned": []
+    }
+  ],
+  "pattern_performance": {},
+  "adaptation_rules": {},
+  "last_updated": "2026-01-19T05:07:01Z"
+}

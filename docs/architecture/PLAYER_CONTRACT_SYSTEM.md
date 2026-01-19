@@ -17,6 +17,11 @@ The Player Contract System implements **player-first task priority** (GUARDRAILS
 
 **Player-Posted Orders**: Players can create their own buy/sell orders with skill-based limits and listing fees.
 
+**Contract Types (Initial Implementation)**:
+- **Courier Contracts**: Transport materials/goods between locations
+- **Item Exchange**: Direct trade of items between players
+- **Future Options**: Auction contracts, loan contracts (EVE Online style bidding/lending)
+
 ---
 
 ## Economic Initialization & Market Development
@@ -48,6 +53,91 @@ The Player Contract System implements **player-first task priority** (GUARDRAILS
 - **Need-Based Pricing**: Premium pricing justified by critical resource requirements
 - **Infrastructure Investment**: Player construction projects drive cost reduction over time
 - **Realistic Progression**: Mirrors actual space development economics (high initial costs → efficiency gains)
+
+### Earth Anchor Price (EAP) Market Control
+
+**What is EAP?**
+Earth Anchor Price establishes maximum market prices for imported goods, preventing price gouging and ensuring economic stability.
+
+**How EAP Controls Markets**:
+- **Price Ceiling**: No player sell order can exceed EAP for imported materials
+- **Import Trigger**: If market prices rise above EAP, NPCs automatically import from Earth
+- **Contract Impact**: High-value contracts may be undercut by cheaper Earth imports
+- **Economic Balance**: Prevents speculative bubbles while allowing profit margins
+
+**EAP Enforcement**:
+```ruby
+def self.player_sell_orders_exceed_eap?(settlement, material)
+  eap = get_anchor_price(material, 'USD')
+  player_orders = Market.player_sell_orders(material)
+  
+  player_orders.any? { |order| order.price_per_unit > eap }
+end
+```
+
+**Transport Requirements**:
+- **Capability Levels**: surface_to_orbit, orbit_to_orbit, interplanetary, asteroid_relocation
+  - **Asteroid Relocation Sub-types**: simple_capture (smaller asteroids), slag_propulsion (large asteroids with hollowing)
+- **Cargo Capacity**: Minimum tonnage/volume requirements  
+- **Environmental Rating**: vacuum, atmosphere, reentry-capable
+- **Special Equipment**: landing_gear, heat_shield, docking_ports, capture_system (for asteroid relocation), hollowing_tools (for slag propulsion)
+
+**Player Competition**:
+- Players can accept contracts requiring any transport capability they possess
+- Higher capability requirements = higher payouts (more valuable service)
+- Players undercut NPC logistics costs, creating competitive market
+- "Player first" ensures players get opportunity before automated systems
+
+**Specialized Transport Examples**:
+- **Asteroid Relocation**: 
+  - **Simple Capture**: Move smaller asteroids without modification
+  - **Slag Propulsion**: Hollow larger asteroids (up to 10B kg) using mass for propellant (90% fuel reduction)
+  - **Station Conversion**: Relocate asteroids for conversion into orbital stations/depots (cheaper than Earth construction)
+    - **Integrated Workflow**: Tug relocates asteroid while performing initial hollowing; cyclers deliver specialized modules for final conversion
+    - **Faster Deployment**: Asteroid shells come online faster than traditional I-beam/panel construction
+  - **Equipment Required**: `capture_system` for all, hollowing tools for slag propulsion, conversion equipment for stations
+- **Heavy Cargo**: Large-scale orbital-to-surface transfers using heavy lift transports
+- **Deep Space**: Interplanetary cargo movement between settlements using private ships or specialized cyclers
+- **Local Delivery**: Surface transportation between nearby facilities using tugs
+
+**Real-World Parallel**: Similar to freight bidding where carriers compete based on equipment and routes.
+
+**Mission JSON Integration**:
+- Asteroid relocation contracts should be reflected in mission profile JSON files
+- Include station conversion missions for Artificial Wormhole Stations (AWS) and orbital depots
+- Support multi-phase contracts: relocation → hollowing → conversion → activation
+- Enable player-driven orbital infrastructure development
+- **Existing Mission Profiles**:
+  - `asteroid-conversion-artificial-wormhole-station`: EM-shielded wormhole stabilization facilities
+  - `asteroid-conversion-orbital-depot`: L1-style storage and processing depots  
+  - `asteroid-conversion-planetary-staging-hub`: Mega-industrial complexes for planetary operations
+- **Integrated Tug-Cycler Workflow**: Tugs handle heavy relocation and initial preparation; cyclers deliver precision modules
+
+**Player Specialization Opportunities**:
+- **Surface Haulers**: Tug operators for local settlement transport
+- **Orbital Transfer**: Heavy lift pilots moving cargo orbit-to-surface  
+- **Interplanetary Traders**: Cycler operators or private ship captains
+- **Asteroid Relocators**: 
+  - **Simple Capture Specialists**: Moving smaller asteroids without modification
+  - **Slag Propulsion Experts**: Hollowing large asteroids for efficient relocation (90% fuel savings)
+  - **Station Constructors**: Converting relocated asteroids into orbital infrastructure (cheaper than Earth-built stations)
+- **Logistics Coordinators**: Managing multi-stage supply chains
+
+**Market Competition**:
+- Players bid on contracts, potentially undercutting NPC rates
+- NPC systems remain as fallback when no players available
+- Creates dynamic pricing based on player availability and competition
+- Rewards player investment in transport infrastructure
+- **Slag Propulsion Advantage**: Players using asteroid mass for fuel can offer 90% cheaper relocation contracts
+- **Station Construction Value**: Asteroid-based stations provide cheaper orbital infrastructure than Earth-built alternatives
+
+**Strategic Importance**:
+- **Wormhole Infrastructure**: Asteroid stations serve as Artificial Wormhole Stations (AWS) for network expansion
+- **Orbital Depots**: Converted asteroids become L1-style depots for storage and processing
+- **Cost Efficiency**: Local asteroid conversion avoids expensive Earth-to-orbit transport costs
+- **Scalability**: Players can create distributed orbital infrastructure networks
+- **Integrated Construction**: Tug-cycler synergy enables faster station deployment than traditional methods
+- **Parallel Operations**: Tugs perform hollowing during transit while cyclers prepare specialized modules
 
 ---
 
@@ -84,7 +174,33 @@ The Player Contract System implements **player-first task priority** (GUARDRAILS
 - **Buy Orders**: AI Manager offers GCC for specific items/materials
 - **Supply Contracts**: Requests for delivery of goods to locations
 - **Service Contracts**: Requests for specific work (repairs, construction)
+- **Station Expansion Contracts**: Players build and attach modular structures (e.g., factories, processing facilities) to existing stations, paying connection fees for ports/power. Players can operate facilities themselves or allow other players to use processing slots for materials.
 - **Trade Contracts**: Exchange offers between different goods
+
+---
+
+## Station Expansion Contracts
+
+**Purpose**: Enable player-driven settlement growth through modular construction, allowing players to build specialized facilities and monetize them through processing fees.
+
+**How It Works**:
+1. **Construction**: Players build modular structures (e.g., metal smelter facilities, nuclear fuel reprocessing facilities) using available blueprints
+2. **Attachment**: Players pay connection fees to attach modules to existing settlements (surface bases or orbital stations), requiring available ports and sufficient power
+3. **Operation**: Players outfit the structure with units and operate it themselves, or allow other players to use processing slots
+4. **Monetization**: Facility owners can charge processing fees for other players to use their equipment with their materials
+
+**Economic Model**:
+- **Connection Fees**: GCC payment for port/power allocation on the host settlement
+- **Processing Fees**: Variable rates set by facility owners for slot usage
+- **Material Costs**: Players using facilities pay for their own input materials
+- **Ownership Benefits**: Facility owners retain control and can upgrade/expand their modules
+
+**Examples**:
+- Player builds nuclear fuel reprocessing facility, attaches to lunar base (surface or orbital), charges other players for uranium processing
+- Player constructs metal smelter, offers alloy production services to industrial players on any settlement
+- AI Manager can offer contracts for players to build specific facilities needed for settlement expansion
+
+**Integration with AI Manager**: As the game progresses, AI Manager increases base capabilities by offering contracts for players to build and attach specialized modules, creating organic station growth.
 
 ---
 
@@ -130,10 +246,13 @@ end
   issuer: "Luna Base Alpha",
   destination: "Luna Base Alpha",
   
-  # Requirements
-  material: "Oxygen",
-  quantity: 1000,  # kg
-  delivery_location: "Luna Base Alpha Depot",
+  transport_requirements: {
+    capability: "asteroid_relocation",  # surface_to_orbit, orbit_to_orbit, interplanetary, asteroid_relocation
+    sub_type: "slag_propulsion",        # for asteroid_relocation: simple_capture, slag_propulsion
+    minimum_cargo_capacity: 1000000000, # kg or m³ (1B kg for large asteroids)
+    environmental_rating: "vacuum",    # vacuum, atmosphere, reentry
+    special_equipment: ["capture_system", "hollowing_tools"] # required for slag propulsion
+  },
   
   # Rewards
   payout_gcc: 2500,  # Calculated from market + transport costs

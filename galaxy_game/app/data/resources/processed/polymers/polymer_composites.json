@@ -1,0 +1,62 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kilogram",
+    "state_at_room_temp": "solid",
+    "purity": "high",
+    "density": "1.2-2.0 g/cm³"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "polymer_composites",
+  "name": "Polymer Composites",
+  "description": "Advanced synthetic material, formed by combining polymers with reinforcing fibers or particles to achieve superior strength, rigidity, and durability compared to basic plastic.",
+  "category": "synthetic",
+  "subcategory": "general",
+  "type": "processed_material",
+  "state_at_stp": "solid",
+  "sources": {
+    "manufacturing_unit": "advanced_materials_fabricator"
+  },
+  "production": {
+    "time": 45,
+    "facility": "Advanced Materials Fabricator",
+    "output": 1
+  },
+  "applications": [
+    "structural_components",
+    "advanced_robotics",
+    "high_strength_housings",
+    "armor"
+  ],
+  "trade_value": 350,
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 3.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

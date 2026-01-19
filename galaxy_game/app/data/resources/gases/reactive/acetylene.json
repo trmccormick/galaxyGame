@@ -1,0 +1,70 @@
+{
+  "template": "material_v1.6",
+  "category": "gases",
+  "id": "acetylene",
+  "name": "Acetylene",
+  "chemical_formula": "C2H2",
+  "description": "A flammable gas used in welding and cutting.",
+  "molar_mass": 26.04,
+  "density": null,
+  "boiling_point": -84.0,
+  "melting_point": null,
+  "state_at_stp": "gas",
+  "appearance": null,
+  "color": null,
+  "odor": null,
+  "taste": null,
+  "toxicity": null,
+  "flammability": null,
+  "reactivity": null,
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "standard",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "properties": {
+    "transparent": true,
+    "oxidizer": false,
+    "radioactive": false,
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "gas",
+    "purity": "variable",
+    "chemical_formula": "C2H2",
+    "molar_mass": 26.04,
+    "boiling_point": -84.0,
+    "freezing_point": -80.8,
+    "color": "Colorless"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "type": "compound",
+  "freezing_point": -80.8,
+  "applications": [
+    "Welding",
+    "Chemical synthesis"
+  ],
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

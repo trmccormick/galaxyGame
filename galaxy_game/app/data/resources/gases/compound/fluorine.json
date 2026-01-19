@@ -1,0 +1,71 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "gas",
+    "purity": "high",
+    "color": "Pale yellow",
+    "vapor_point": -188.1,
+    "melting_point": -219.6,
+    "specific_gas_constant": 218.8,
+    "reactivity": 2.0,
+    "weathering_factor": 2.0,
+    "acid_forming": true,
+    "corrosivity": "extreme",
+    "oxidizing_agent": true
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "fluorine",
+  "name": "Fluorine",
+  "description": "The most electronegative and reactive of all elements, pale yellow gas used in specialized applications.",
+  "category": "gases",
+  "subcategory": "compound",
+  "type": "raw_material",
+  "chemical_formula": "F2",
+  "molar_mass": 38.0,
+  "boiling_point": -188.1,
+  "freezing_point": -219.6,
+  "state_at_stp": "gas",
+  "applications": [
+    "uranium_enrichment",
+    "semiconductor_manufacturing",
+    "specialized_chemicals",
+    "fluoropolymer_production"
+  ],
+  "hazards": {
+    "toxic": true,
+    "corrosive": true,
+    "oxidizer": true,
+    "storage": "Specialized fluoropolymer-lined containers required"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

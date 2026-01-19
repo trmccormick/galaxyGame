@@ -1,0 +1,90 @@
+{
+  "template": "material_v1.6",
+  "id": "aluminum_alloy",
+  "name": "Aluminum Alloy",
+  "description": "Lightweight, corrosion-resistant alloy used in aerospace and construction applications.",
+  "category": "processed",
+  "subcategory": "alloys",
+  "properties": {
+    "density": 2700,
+    "melting_point": 660,
+    "tensile_strength": 310,
+    "thermal_conductivity": 237,
+    "electrical_conductivity": 37.7,
+    "corrosion_resistance": "high",
+    "unit_of_measurement": "kg",
+    "purity": "high",
+    "state_at_room_temp": "solid"
+  },
+  "composition": [
+    {
+      "material": "aluminum",
+      "percentage": 95
+    },
+    {
+      "material": "magnesium",
+      "percentage": 3
+    },
+    {
+      "material": "silicon",
+      "percentage": 2
+    }
+  ],
+  "sourcing": {
+    "lunar": {
+      "availability": "medium",
+      "extraction_method": "regolith_processing",
+      "extraction_difficulty": "medium",
+      "estimated_abundance": "8-12% by weight in highland regolith"
+    },
+    "martian": {
+      "availability": "medium",
+      "extraction_method": "regolith_processing",
+      "extraction_difficulty": "medium"
+    },
+    "earth": {
+      "availability": "high",
+      "extraction_method": "mining_and_refining",
+      "extraction_difficulty": "low"
+    }
+  },
+  "processing": {
+    "requires": [
+      "metal_foundry",
+      "alloy_mixer"
+    ],
+    "energy_per_kg": 45,
+    "time_per_kg": 0.15
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "recycle"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 5.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "template": "material_v1.6",
+  "id": "offgas_volatiles",
+  "name": "Offgas Volatiles",
+  "description": "Mixed gases released during thermal processing of regolith. Contains water vapor, CO2, and trace volatiles. Non-recoverable in basic manufacturing.",
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": [
+      "process_gas",
+      "thermal_offgas",
+      "volatile_release"
+    ],
+    "is_procedural": false
+  },
+  "classification": {
+    "category": "byproducts",
+    "subcategory": "non_recyclable_waste",
+    "type": "gaseous_waste"
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "chemical_formula": "mixed",
+    "molar_mass_g_mol": 30.0,
+    "color": "colorless",
+    "density_stp_kg_m3": 1.5,
+    "viscosity_pa_s": 2.0e-05,
+    "corrosion_resistance": "n/a"
+  },
+  "phase_transitions": {
+    "melting_point_k": 0.0,
+    "boiling_point_k": 0.0,
+    "critical_point_k": 0.0,
+    "latent_heat_fusion_kj_kg": 0.0,
+    "latent_heat_vaporization_kj_kg": 0.0,
+    "triple_point": {
+      "temp_k": 0.0,
+      "pressure_kpa": 0.0
+    }
+  },
+  "thermodynamics": {
+    "specific_heat_capacity_j_kg_k": 1000.0,
+    "thermal_conductivity_w_m_k": 0.025,
+    "coefficient_of_expansion": 0.0
+  },
+  "habitability_impact": {
+    "is_potable": false,
+    "toxicity_level": "low",
+    "greenhouse_gas_factor": 0.5,
+    "radiation_shielding_value": 0.0,
+    "breathable_percentage": 0.0
+  },
+  "production": {
+    "facility_type": "none",
+    "energy_kwh_per_kg": 0.0,
+    "input_materials": [],
+    "byproducts": []
+  },
+  "storage_requirements": {
+    "preferred_phase": "gas",
+    "containment_type": "vented_to_space",
+    "safety_protocol": "none_required"
+  },
+  "recyclability": {
+    "recyclable": false,
+    "recovery_rate": 0.0,
+    "reprocessing_energy_kwh_kg": 0.0,
+    "reprocessing_method": "none"
+  },
+  "disposal": {
+    "method": "vented_to_vacuum",
+    "notes": "Released during thermal processing. Advanced facilities can capture with gas recovery systems."
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 1.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

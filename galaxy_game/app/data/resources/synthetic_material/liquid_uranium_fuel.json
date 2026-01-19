@@ -1,0 +1,71 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "high",
+    "weight_per_unit": 10.0,
+    "volume_per_unit": 2.0,
+    "storage": {
+      "method": "shielded_cryogenic_storage",
+      "stack_limit": 50
+    },
+    "reprocessing": {
+      "enabled": true,
+      "efficiency": 0.99
+    },
+    "energy_output_per_unit": {
+      "amount": 1000000,
+      "unit": "megajoules"
+    }
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "liquid_uranium_fuel",
+  "name": "Liquid Uranium Fuel",
+  "description": "A highly enriched, liquid uranium compound designed as an ultra-efficient propellant for advanced nuclear thermal propulsion engines. Extremely energetic and highly radioactive.",
+  "category": "chemical_compound",
+  "subcategory": "general",
+  "type": "synthetic_material",
+  "chemical_formula": "UF6_L",
+  "applications": [
+    "nuclear_thermal_propulsion",
+    "high_power_generation_experimental"
+  ],
+  "hazards": {
+    "radioactive": true,
+    "corrosive": true,
+    "cryogenic_handling_required": true,
+    "storage": "Requires extremely robust, cryogenically cooled, radiation-shielded containment. Remote handling is mandatory.",
+    "environmental_impact_risk": "Catastrophic"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

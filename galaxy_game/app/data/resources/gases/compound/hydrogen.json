@@ -1,0 +1,70 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "gas",
+    "purity": "high",
+    "color": "Colorless",
+    "vapor_point": -252.9,
+    "melting_point": -259.2,
+    "abundance": "very_high",
+    "is_greenhouse_gas": false,
+    "average_density": 0.08988,
+    "thermal_conductivity": 0.1805,
+    "specific_heat_capacity": 14.304,
+    "specific_gas_constant": 4124.0
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "hydrogen",
+  "name": "Hydrogen",
+  "description": "The most abundant element in the universe, found in gas giants and used for fusion energy.",
+  "category": "gases",
+  "subcategory": "compound",
+  "type": "raw_material",
+  "chemical_formula": "H2",
+  "molar_mass": 2.016,
+  "boiling_point": -252.9,
+  "freezing_point": -259.2,
+  "state_at_stp": "gas",
+  "applications": [
+    "rocket_fuel",
+    "chemical_synthesis",
+    "fuel_cells",
+    "industrial_processes"
+  ],
+  "hazards": {
+    "flammable": true,
+    "explosive": true,
+    "storage": "Pressurized containers required"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

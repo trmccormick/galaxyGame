@@ -6,9 +6,9 @@ class PlayerContract < ApplicationRecord
 
   enum contract_type: {
     item_exchange: 0,    # Direct item trade
-    courier: 1,          # Transport contract
-    auction: 2,          # Auction-style selling
-    loan: 3             # Future expansion
+    courier: 1          # Transport contract
+    # auction: 2,          # Auction-style selling (future expansion)
+    # loan: 3             # Future expansion
   }
   enum status: { open: 0, accepted: 1, completed: 2, failed: 3, cancelled: 4 }
 

@@ -1,0 +1,68 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "state_at_room_temp": "solid",
+    "purity": "variable",
+    "chemical_formula": "C",
+    "molar_mass": 12.01,
+    "boiling_point": "N/A",
+    "freezing_point": 3550.0,
+    "color": "Transparent"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "diamond",
+  "name": "Diamond",
+  "description": "Another form of carbon, known for its hardness and use in jewelry.",
+  "category": "chemicals",
+  "type": "compound",
+  "chemical_formula": "C",
+  "molar_mass": 12.01,
+  "boiling_point": "N/A",
+  "freezing_point": 3550.0,
+  "state_at_stp": "solid",
+  "applications": [
+    "Jewelry",
+    "Industrial cutting tools"
+  ],
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  },
+  "pricing": {
+    "earth_usd": {
+      "base_price_per_kg": 5000.00,
+      "transport_category": "specialized",
+      "hazard_multiplier": 1.0
+    },
+    "lunar_production": {
+      "available": false
+    }
+  }
+}

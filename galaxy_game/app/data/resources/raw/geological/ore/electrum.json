@@ -1,0 +1,96 @@
+{
+  "template": "material_v1.6",
+  "category": "geological",
+  "id": "electrum",
+  "name": "Electrum Ore",
+  "type": "ore",
+  "description": "A naturally occurring alloy of gold and silver, valued for its unique properties and serving as a source for both precious metals.",
+  "composition": {
+    "gold": "50-90%",
+    "silver": "10-50%"
+  },
+  "primary_element": "unknown",
+  "density": 8.5,
+  "hardness": 4.2,
+  "appearance": "Dull gray with metallic sheen",
+  "color": "Grayish-white with yellow undertones",
+  "yield_rate": 0.7,
+  "formation": "Forms in hydrothermal veins and meteorite impacts",
+  "common_locations": [
+    "Mars",
+    "Asteroids",
+    "Moons of Jupiter"
+  ],
+  "extraction": {
+    "difficulty": "medium",
+    "method": "mining",
+    "processing_required": true,
+    "hazards": [
+      "toxic fumes"
+    ]
+  },
+  "properties": {
+    "radioactive": false,
+    "magnetic": true,
+    "conductive": true,
+    "flammable": false,
+    "unit_of_measurement": "kg",
+    "purity": "variable",
+    "state_at_room_temp": "solid",
+    "density": "3.5",
+    "hardness": "medium"
+  },
+  "purity": 72,
+  "processing": {
+    "refining_method": "chemical separation",
+    "byproducts": [
+      "slag"
+    ],
+    "energy_requirement": 8000,
+    "refined_output_ratio": 0.75,
+    "pollution_factor": "high"
+  },
+  "resource_value": {
+    "rarity": "uncommon",
+    "base_value": 50,
+    "industrial_uses": [
+      "metal production",
+      "electronics"
+    ]
+  },
+  "storage": {
+    "container_type": "bulk",
+    "stability": "stable",
+    "incompatible_with": [],
+    "pressure": "atmospheric",
+    "temperature": "room"
+  },
+  "subcategory": "geological",
+  "handling": {
+    "ppe_required": [
+      "dust_mask"
+    ],
+    "hazard_class": [],
+    "disposal": "mining_waste"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

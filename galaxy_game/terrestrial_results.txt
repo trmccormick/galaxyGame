@@ -1,0 +1,20 @@
+[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[31mF[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m
+
+Failures:
+
+  1) TerrestrialPlanetsController PATCH/PUT #update with valid parameters updates the requested terrestrial_planet
+     [31mFailure/Error: expect(terrestrial_planet.surface_temperature).to eq(210)[0m
+     [31m[0m
+     [31m  expected: 210[0m
+     [31m       got: 0.0[0m
+     [31m[0m
+     [31m  (compared using ==)[0m
+     [36m# ./spec/controllers/terrestrial_planets_spec.rb:92:in 'block (4 levels) in <top (required)>'[0m
+
+Finished in 4.18 seconds (files took 8.99 seconds to load)
+[31m10 examples, 1 failure[0m
+
+Failed examples:
+
+[31mrspec ./spec/controllers/terrestrial_planets_spec.rb:87[0m [36m# TerrestrialPlanetsController PATCH/PUT #update with valid parameters updates the requested terrestrial_planet[0m
+

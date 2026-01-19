@@ -1,0 +1,75 @@
+{
+  "template": "material_v1.6",
+  "id": "ilmenite",
+  "name": "Ilmenite",
+  "description": "Iron titanium oxide mineral, primary lunar resource for oxygen extraction via hydrogen reduction process. Abundant in lunar mare regions.",
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": [
+      "FeTiO3",
+      "Titanium ore"
+    ],
+    "is_procedural": false
+  },
+  "classification": {
+    "category": "raw",
+    "subcategory": "geological",
+    "type": "ore"
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "chemical_formula": "FeTiO3",
+    "molar_mass_g_mol": 151.71,
+    "color": "Black",
+    "density_stp_kg_m3": 4790.0,
+    "viscosity_pa_s": null,
+    "corrosion_resistance": "high"
+  },
+  "phase_transitions": {
+    "melting_point_k": 1565.0,
+    "boiling_point_k": null,
+    "critical_point_k": null,
+    "latent_heat_fusion_kj_kg": null,
+    "latent_heat_vaporization_kj_kg": null,
+    "triple_point": {
+      "temp_k": null,
+      "pressure_kpa": null
+    }
+  },
+  "thermodynamics": {
+    "specific_heat_capacity_j_kg_k": 692.0,
+    "thermal_conductivity_w_m_k": 3.8,
+    "coefficient_of_expansion": null
+  },
+  "habitability_impact": {
+    "is_potable": false,
+    "toxicity_level": "low",
+    "greenhouse_gas_factor": 0.0,
+    "radiation_shielding_value": 0.0,
+    "breathable_percentage": 0.0
+  },
+  "production": {
+    "facility_type": "resource_extraction_unit",
+    "energy_kwh_per_kg": 0.01,
+    "input_materials": [],
+    "byproducts": []
+  },
+  "storage_requirements": {
+    "preferred_phase": "solid",
+    "containment_type": "bulk_storage",
+    "safety_protocol": "standard"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 0.1
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

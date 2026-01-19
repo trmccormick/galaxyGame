@@ -1,0 +1,52 @@
+{
+  "template": "material_v1.6",
+  "category": "processed",
+  "subcategory": "semiconductors",
+  "properties": {
+    "unit_of_measurement": "kg",
+    "purity": "ultra_high",
+    "state_at_room_temp": "solid",
+    "density": "2.3",
+    "melting_point": "1414",
+    "electrical_conductivity": "semiconductor",
+    "thermal_conductivity": "medium"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": [
+      "moisture"
+    ]
+  },
+  "handling": {
+    "ppe_required": [
+      "gloves"
+    ],
+    "hazard_class": [],
+    "disposal": "electronic_waste"
+  },
+  "id": "electronics",
+  "name": "Electronics",
+  "description": "A semiconductors processed material",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 20.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.1
+    }
+  }
+}

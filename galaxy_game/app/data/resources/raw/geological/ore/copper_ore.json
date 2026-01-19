@@ -1,0 +1,94 @@
+{
+  "template": "material_v1.6",
+  "category": "geological",
+  "id": "copper_ore",
+  "name": "Copper Ore",
+  "type": "ore",
+  "description": "A reddish-orange mineral rich in copper.",
+  "composition": [
+    "copper",
+    "iron oxide"
+  ],
+  "primary_element": "copper",
+  "density": 4.2,
+  "hardness": 3.5,
+  "appearance": "Fissured and earthy",
+  "color": "Reddish-orange with dark streaks",
+  "yield_rate": 0.7,
+  "formation": "Forms in hydrothermal veins or sedimentary deposits",
+  "common_locations": [
+    "Mars",
+    "Venus",
+    "Titan"
+  ],
+  "extraction": {
+    "difficulty": "easy",
+    "method": "open-pit mining",
+    "processing_required": true,
+    "hazards": []
+  },
+  "properties": {
+    "radioactive": false,
+    "magnetic": true,
+    "conductive": true,
+    "flammable": false,
+    "unit_of_measurement": "kg",
+    "purity": "variable",
+    "state_at_room_temp": "solid",
+    "density": "3.5",
+    "hardness": "medium"
+  },
+  "purity": 80,
+  "processing": {
+    "refining_method": "electrolysis",
+    "byproducts": [
+      "slag"
+    ],
+    "energy_requirement": 2000,
+    "refined_output_ratio": 0.7,
+    "pollution_factor": "low"
+  },
+  "resource_value": {
+    "rarity": "common",
+    "base_value": 15,
+    "industrial_uses": [
+      "electronics production",
+      "construction materials"
+    ]
+  },
+  "storage": {
+    "container_type": "bulk",
+    "stability": "stable",
+    "incompatible_with": [],
+    "pressure": "atmospheric",
+    "temperature": "room"
+  },
+  "subcategory": "geological",
+  "handling": {
+    "ppe_required": [
+      "dust_mask"
+    ],
+    "hazard_class": [],
+    "disposal": "mining_waste"
+  },
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

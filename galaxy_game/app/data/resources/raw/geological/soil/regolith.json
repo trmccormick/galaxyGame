@@ -1,0 +1,78 @@
+{
+  "template": "material_v1.6",
+  "id": "regolith",
+  "name": "Regolith",
+  "description": "Fragmented unconsolidated surface material. Physical properties are standardized; chemical composition is procedurally derived from the source body.",
+  "metadata": {
+    "version": "1.6",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "source_mapping": {
+      "solid_composition": "geosphere.crust_composition",
+      "volatile_composition": "atmosphere.composition"
+    },
+    "required_metadata_keys": [
+      "source_body",
+      "extraction_state"
+    ],
+    "aliases": [
+      "soil",
+      "dirt",
+      "surface_piles"
+    ],
+    "standard": "Earth STP (273.15K, 101.325 kPa)"
+  },
+  "procedural_logic": {
+    "is_dynamic": true,
+    "source_mapping": {
+      "composition": "geosphere.crust_composition",
+      "density": "geosphere.material_properties.density",
+      "hazards": "geosphere.material_properties.hazards"
+    },
+    "required_metadata_keys": [
+      "source_body"
+    ]
+  },
+  "classification": {
+    "category": "raw_materials",
+    "subcategory": "geological",
+    "type": "procedural_mixture"
+  },
+  "properties": {
+    "unit_of_measurement": "kg",
+    "density_stp_kg_m3": 1500.0,
+    "abrasiveness_index": 0.85,
+    "porosity": 0.45,
+    "corrosion_resistance": "variable"
+  },
+  "thermodynamics": {
+    "specific_heat_capacity_j_kg_k": 800.0,
+    "thermal_conductivity_w_m_k": 0.01,
+    "melting_point_baseline_k": 1500.0
+  },
+  "processing_rules": {
+    "handler_service": "Manufacturing::RegolithProcessingService",
+    "primary_extraction_methods": [
+      "thermal_desorption",
+      "hydrogen_reduction"
+    ],
+    "byproduct_id": "processed_regolith",
+    "volatile_capture_efficiency": 0.98
+  },
+  "storage_requirements": {
+    "preferred_phase": "solid",
+    "containment_type": "bulk_storage",
+    "safety_protocol": "dust_containment_lvl_1"
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 0.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}

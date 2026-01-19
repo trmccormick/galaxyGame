@@ -1,0 +1,74 @@
+{
+  "template": "material_v1.6",
+  "metadata": {
+    "version": "1.6",
+    "type": "material",
+    "template_compliance": "material_v1.3",
+    "last_updated": "2026-01-02",
+    "is_procedural": false,
+    "standard": "Earth STP (273.15K, 101.325 kPa)",
+    "aliases": []
+  },
+  "properties": {
+    "unit_of_measurement": "kilogram",
+    "state_at_room_temp": "solid",
+    "purity": "high",
+    "density": "8.908 g/cm³",
+    "melting_point": 1455,
+    "color": "Silvery-white",
+    "corrosion_resistance": "high",
+    "ductility": "high"
+  },
+  "storage": {
+    "pressure": "atmospheric",
+    "temperature": "room",
+    "stability": "stable",
+    "incompatible_with": []
+  },
+  "handling": {
+    "ppe_required": [],
+    "hazard_class": [],
+    "disposal": "standard"
+  },
+  "id": "nickel",
+  "name": "Nickel",
+  "description": "A silvery-white, hard, and ductile metal, highly resistant to corrosion and often used in alloys, batteries, and special steels.",
+  "category": "processed",
+  "subcategory": "metal",
+  "type": "processed_material",
+  "state_at_stp": "solid",
+  "sources": {
+    "primary_material": "pentlandite",
+    "secondary_material": "magnetite",
+    "refining_unit": "smelter",
+    "processing_methods": [
+      "pyrometallurgy",
+      "hydrometallurgy"
+    ]
+  },
+  "production": {
+    "time": 200,
+    "facility": "Smelting Plant",
+    "energy": 600,
+    "output": 10
+  },
+  "applications": [
+    "stainless_steel_production",
+    "superalloys",
+    "batteries",
+    "electroplating",
+    "coins"
+  ],
+  "trade_value": 120,
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "USD",
+      "amount": 2.0
+    },
+    "import_config": {
+      "mass_per_unit_kg": 1.0,
+      "transport_category": "standard",
+      "hazard_multiplier": 1.0
+    }
+  }
+}
