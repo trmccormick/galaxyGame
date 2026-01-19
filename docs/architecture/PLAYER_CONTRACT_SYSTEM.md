@@ -19,6 +19,38 @@ The Player Contract System implements **player-first task priority** (GUARDRAILS
 
 ---
 
+## Economic Initialization & Market Development
+
+### GCC=USD Starting Point
+
+**Currency Foundation**: GCC (Galactic Credits) start at 1:1 parity with USD to establish real-world economic grounding.
+
+**Real-World Cost Basis**: Initial lunar market prices based on current space transportation and infrastructure costs:
+- **Transportation Costs**: $10,000-$20,000 per pound to LEO (Low Earth Orbit)
+- **Infrastructure Costs**: ISS construction costs, lunar base concepts, commercial space operations
+- **Resource Production**: Lunar water production, regolith processing, solar power generation
+
+### Automated Market Building Approach
+
+**Initial Phase**: Run automated builds to simulate real costs and establish baseline market data:
+- **Data-Driven Universe**: Use real-world space economics to seed the game universe
+- **Cost Simulation**: Automated systems generate initial market prices and contract values
+- **Infrastructure Evolution**: Costs decrease as player-built infrastructure develops
+
+**Market Development Stages**:
+1. **Bootstrap Phase**: High import costs, basic local production (water, oxygen, basic materials)
+2. **Infrastructure Growth**: Player construction reduces transportation dependency
+3. **Market Maturity**: Local production undercuts imports, diversified economy emerges
+4. **Expansion Phase**: Inter-system trade, specialized production centers
+
+**Economic Justification**:
+- **High Initial Costs**: Even local lunar water production costs remain high due to infrastructure needs
+- **Need-Based Pricing**: Premium pricing justified by critical resource requirements
+- **Infrastructure Investment**: Player construction projects drive cost reduction over time
+- **Realistic Progression**: Mirrors actual space development economics (high initial costs → efficiency gains)
+
+---
+
 ## System Components
 
 ### 1. Mission Generation (AI Manager → Player Assignment)
