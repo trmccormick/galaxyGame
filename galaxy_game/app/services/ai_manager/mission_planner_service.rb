@@ -95,44 +95,12 @@ module AIManager
     private
     
     def default_parameters
-      # Pattern-specific parameters for realistic mission planning
-      case @pattern
-      when 'mars-terraforming'
-        {
-          tech_level: 'advanced',
-          timeline_years: 200,  # Multi-century terraforming effort
-          budget_gcc: 500_000_000_000,  # 500 trillion GCC for full terraforming
-          priority: 'terraforming',
-          local_resource_percentage: 5.0,  # Only 5% can come from Mars locally
-          import_sources: ['venus', 'titan', 'saturn', 'asteroids'],
-          greenhouse_gas_requirement: 1.2e18,  # kg of CO2 needed
-          water_requirement: 2.1e17,  # kg of water needed
-          infrastructure_scale: 'planetary'
-        }
-      when 'venus-terraforming'
-        {
-          tech_level: 'advanced',
-          timeline_years: 150,
-          budget_gcc: 300_000_000_000,
-          priority: 'terraforming',
-          local_resource_percentage: 25.0,  # Venus has more local resources
-          import_sources: ['earth', 'mars'],
-          greenhouse_gas_requirement: 8.7e17,  # kg needed for cooling
-          water_requirement: 1.4e18,  # kg of water needed
-          infrastructure_scale: 'planetary'
-        }
-      else
-        # Default for settlement/resource missions
-        {
-          tech_level: 'standard',
-          timeline_years: 10,
-          budget_gcc: 1_000_000,
-          priority: 'balanced',
-          local_resource_percentage: 60.0,
-          import_sources: ['earth'],
-          infrastructure_scale: 'regional'
-        }
-      end
+      {
+        tech_level: 'standard',
+        timeline_years: 10,
+        budget_gcc: 1_000_000,
+        priority: 'balanced'
+      }
     end
     
     def calculate_timeline
@@ -177,13 +145,8 @@ module AIManager
       precursor_total_savings = 0
       
       resources[:total].each do |resource, quantity|
-        # Special handling for terraforming-scale resources
-        if @pattern.include?('terraforming') && terraforming_resource?(resource)
-          costing = calculate_terraforming_cost(resource, quantity)
-        else
-          # Use real market pricing with transport costs
-          costing = calculate_total_delivered_cost(resource, quantity)
-        end
+        # Use real market pricing with transport costs
+        costing = calculate_total_delivered_cost(resource, quantity)
         
         cost_breakdown[resource] = {
           quantity: quantity,
@@ -277,101 +240,25 @@ module AIManager
     end
     
     def load_pattern_data
-      case @pattern
-      when 'mars-terraforming'
-        # Realistic Mars terraforming requirements based on scientific consensus
-        {
-          infrastructure: [
-            'orbital_transfer_stations',
-            'atmospheric_processors',
-            'greenhouse_gas_storage',
-            'water_extraction_facilities',
-            'nuclear_power_plants',
-            'magnetic_field_generators',
-            'biosphere_domes'
-          ],
-          materials: [
-            'co2_from_venus',      # Primary greenhouse gas
-            'ch4_from_titan',      # Methane supplement
-            'water_from_asteroids', # Essential for atmosphere and biosphere
-            'o2_generation_equipment', # CO2 electrolysis systems
-            'trace_gases',         # Noble gases, etc.
-            'biosphere_seeding'    # Microbes, plants, initial life
-          ],
-          equipment: [
-            'mass_drivers',
-            'solar_sails',
-            'cryogenic_tanks',
-            'plasma_engines',
-            'atmospheric_shields'
-          ],
-          challenges: [
-            'extreme_cold',
-            'thin_atmosphere',
-            'no_magnetic_field',
-            'dust_storms',
-            'radiation'
-          ],
-          scientific_basis: 'Requires multi-century effort with massive gas imports from Venus, Titan, and Saturn systems'
-        }
-      else
-        # Generic pattern for other missions
-        {
-          infrastructure: ['habitats', 'power', 'life_support'],
-          materials: ['regolith', 'water_ice', 'metals'],
-          equipment: ['excavators', 'refineries', 'transporters']
-        }
-      end
+      # Would load from app/data/missions/patterns/
+      # For now, return basic structure
+      {
+        infrastructure: ['habitats', 'power', 'life_support'],
+        materials: ['regolith', 'water_ice', 'metals'],
+        equipment: ['excavators', 'refineries', 'transporters']
+      }
     end
     
     def estimate_year_resources(year, pattern_data)
-      case @pattern
-      when 'mars-terraforming'
-        # Mars terraforming requires massive imports over centuries
-        # Phase 1 (Years 1-50): Infrastructure buildup
-        # Phase 2 (Years 51-150): Major atmospheric transfer
-        # Phase 3 (Years 151-200): Fine-tuning and biosphere development
-        
-        if year <= 50
-          # Infrastructure phase - heavy equipment imports
-          {
-            'structural_panels' => 100_000 + (year * 2_000),  # Scaling infrastructure
-            'power_modules' => 10_000 + (year * 200),         # Massive energy needs
-            'processing_facilities' => 500 + (year * 10),     # Atmospheric processors
-            'transport_infrastructure' => 1_000 + (year * 20) # Orbital transfer systems
-          }
-        elsif year <= 150
-          # Major transfer phase - greenhouse gases and water
-          base_multiplier = (year - 50) * 0.02  # Gradual ramp-up
-          {
-            'co2_from_venus' => (50_000_000 * base_multiplier).to_i,  # Millions of tons CO2
-            'ch4_from_titan' => (5_000_000 * base_multiplier).to_i,   # Methane for warming
-            'water_from_asteroids' => (10_000_000 * base_multiplier).to_i,  # Water imports
-            'o2_generation_equipment' => 50_000 + (year * 500),       # CO2->O2 processors
-            'structural_panels' => 200_000,                          # Maintenance level
-            'power_modules' => 50_000                               # Sustained power needs
-          }
-        else
-          # Fine-tuning phase - precision work
-          {
-            'trace_gases' => 1_000_000,     # Precise atmospheric composition
-            'biosphere_seeding' => 100_000, # Plants, microbes, etc.
-            'monitoring_equipment' => 10_000, # Atmospheric sensors
-            'structural_panels' => 50_000,  # Minimal new construction
-            'power_modules' => 25_000      # Reduced but sustained power
-          }
-        end
-      else
-        # Original simplified estimation for other mission types
-        multiplier = [year * 0.5, 2.0].min
-        
-        {
-          'regolith' => (10_000 * multiplier).to_i,
-          'water_ice' => (5_000 * multiplier).to_i,
-          'structural_panels' => (500 * multiplier).to_i,
-          'power_modules' => (50 * multiplier).to_i
-        }
-      end
+      # Simplified resource estimation - ramps up in early years, stabilizes later
+      multiplier = [year * 0.5, 2.0].min
+      
+      {
+        'regolith' => (10_000 * multiplier).to_i,
+        'water_ice' => (5_000 * multiplier).to_i,
+        'structural_panels' => (500 * multiplier).to_i,
+        'power_modules' => (50 * multiplier).to_i
+      }
     end
     
     def estimate_phases(years)
@@ -418,120 +305,6 @@ module AIManager
       end
     end
     
-    def terraforming_resource?(resource)
-      terraforming_materials = [
-        'co2_from_venus', 'ch4_from_titan', 'water_from_asteroids',
-        'o2_generation_equipment', 'trace_gases', 'biosphere_seeding',
-        'processing_facilities', 'transport_infrastructure', 'monitoring_equipment'
-      ]
-      terraforming_materials.include?(resource)
-    end
-    
-    def calculate_terraforming_cost(resource, quantity)
-      # Realistic costs for planetary-scale terraforming operations
-      # Based on scientific estimates and engineering requirements
-      
-      case resource
-      when 'co2_from_venus'
-        # CO2 atmospheric transfer from Venus
-        # ~$100-500/kg for planetary-scale gas mining and transfer
-        unit_cost = 300.0  # GCC per kg
-        transport_cost_per_unit = 50.0  # Interplanetary transfer
-        source = 'Venus Atmosphere'
-        source_type = 'interplanetary_import'
-        chemical_formula = 'CO2'
-        
-      when 'ch4_from_titan'
-        # Methane from Titan's atmosphere
-        unit_cost = 500.0  # GCC per kg (rarer, more complex extraction)
-        transport_cost_per_unit = 75.0
-        source = 'Titan Atmosphere'
-        source_type = 'interplanetary_import'
-        chemical_formula = 'CH4'
-        
-      when 'water_from_asteroids'
-        # Water mining from asteroids/comets
-        unit_cost = 200.0  # GCC per kg
-        transport_cost_per_unit = 30.0
-        source = 'Asteroid Belt'
-        source_type = 'interplanetary_import'
-        chemical_formula = 'H2O'
-        
-      when 'o2_generation_equipment'
-        # Industrial-scale CO2->O2 electrolysis systems
-        unit_cost = 50_000.0  # GCC per unit (massive industrial equipment)
-        transport_cost_per_unit = 5_000.0
-        source = 'Earth Manufacturing'
-        source_type = 'import'
-        chemical_formula = 'O2_generation_system'
-        
-      when 'processing_facilities'
-        # Atmospheric processing plants
-        unit_cost = 100_000.0  # GCC per facility
-        transport_cost_per_unit = 10_000.0
-        source = 'Earth Manufacturing'
-        source_type = 'import'
-        chemical_formula = 'atmospheric_processor'
-        
-      when 'transport_infrastructure'
-        # Orbital transfer stations, mass drivers, etc.
-        unit_cost = 25_000.0  # GCC per unit
-        transport_cost_per_unit = 2_500.0
-        source = 'Earth Manufacturing'
-        source_type = 'import'
-        chemical_formula = 'orbital_infrastructure'
-        
-      when 'trace_gases'
-        # Noble gases and other trace atmospheric components
-        unit_cost = 1_000.0  # GCC per kg
-        transport_cost_per_unit = 100.0
-        source = 'Various Sources'
-        source_type = 'interplanetary_import'
-        chemical_formula = 'trace_atmospheric_gases'
-        
-      when 'biosphere_seeding'
-        # Microbes, plants, initial life forms
-        unit_cost = 10_000.0  # GCC per kg (biotechnology costs)
-        transport_cost_per_unit = 1_000.0
-        source = 'Earth Biotechnology'
-        source_type = 'import'
-        chemical_formula = 'biosphere_package'
-        
-      when 'monitoring_equipment'
-        # Atmospheric sensors, orbital monitoring
-        unit_cost = 5_000.0  # GCC per unit
-        transport_cost_per_unit = 500.0
-        source = 'Earth Manufacturing'
-        source_type = 'import'
-        chemical_formula = 'atmospheric_sensor'
-        
-      else
-        # Fallback for unknown terraforming resources
-        unit_cost = 100.0
-        transport_cost_per_unit = 10.0
-        source = 'Unknown'
-        source_type = 'unknown'
-        chemical_formula = 'unknown'
-      end
-      
-      total_material_cost = quantity * unit_cost
-      total_transport_cost = quantity * transport_cost_per_unit
-      total_cost = total_material_cost + total_transport_cost
-      
-      {
-        source: source,
-        source_type: source_type,
-        chemical_formula: chemical_formula,
-        unit_cost: unit_cost,
-        transport_cost_per_unit: transport_cost_per_unit,
-        total_material_cost: total_material_cost,
-        total_transport_cost: total_transport_cost,
-        total: total_cost,
-        alternatives: [],
-        precursor_savings: 0
-      }
-    end
-
     # ========== REAL MARKET PRICING METHODS ==========
     
     def calculate_total_delivered_cost(resource, quantity)
