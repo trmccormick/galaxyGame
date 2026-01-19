@@ -15,10 +15,25 @@ module Lookup
       curated_systems = @systems.select { |sys| sys[:_source_type] == :curated }
       generated_systems = @systems.select { |sys| sys[:_source_type] == :generated }
       
-      system_data = curated_systems.find do |sys|
-        sys[:id] == system_name.to_s || 
-        sys[:solar_system]&.[](:name)&.downcase == system_name.to_s.downcase ||
-        sys[:name]&.downcase == system_name.to_s.downcase
+      # Special handling for Sol system: prefer sol.json over sol-complete.json
+      if system_name.to_s.downcase == 'sol'
+        sol_systems = curated_systems.select do |sys|
+          (sys[:id] == 'Sol' || sys[:id] == 'sol') && 
+          (sys[:_source_file] == 'sol.json' || sys[:_source_file] == 'sol-complete.json')
+        end
+        
+        # Prefer sol.json (partial/working version) over sol-complete.json
+        system_data = sol_systems.find { |sys| sys[:_source_file] == 'sol.json' } ||
+                     sol_systems.find { |sys| sys[:_source_file] == 'sol-complete.json' }
+      end
+      
+      # If not found (or not Sol system), search normally
+      if system_data.nil?
+        system_data = curated_systems.find do |sys|
+          sys[:id] == system_name.to_s || 
+          sys[:solar_system]&.[](:name)&.downcase == system_name.to_s.downcase ||
+          sys[:name]&.downcase == system_name.to_s.downcase
+        end
       end
       
       # If not found in curated, try generated
@@ -66,7 +81,11 @@ module Lookup
       
       # Debug what categories we have
       if system_data && system_data[:celestial_bodies]
-        Rails.logger.debug "Loaded celestial body categories: #{system_data[:celestial_bodies].keys.join(', ')}"
+        if system_data[:celestial_bodies].is_a?(Hash)
+          Rails.logger.debug "Loaded celestial body categories: #{system_data[:celestial_bodies].keys.join(', ')}"
+        elsif system_data[:celestial_bodies].is_a?(Array)
+          Rails.logger.debug "Loaded celestial bodies as array with #{system_data[:celestial_bodies].size} bodies"
+        end
       end
       
       system_data
@@ -98,7 +117,8 @@ module Lookup
       if File.directory?(SYSTEMS_PATH)
         Dir.glob(File.join(SYSTEMS_PATH, "*.json")).each do |file|
           # Skip files with 'complete' or 'old' in the name as they may have different structures
-          next if File.basename(file).include?('complete') || File.basename(file).include?('old')
+          # Exception: Don't skip 'complete' files for the Sol system as sol-complete.json serves as backup
+          next if (File.basename(file).include?('complete') || File.basename(file).include?('old')) && !File.basename(file).start_with?('sol')
           
           begin
             data = JSON.parse(File.read(file), symbolize_names: true)
