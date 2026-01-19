@@ -39,6 +39,9 @@ module StarSim
         create_galaxy
         create_solar_system
 
+        # Normalize celestial_bodies structure - handle both array and hash formats
+        normalized_celestial_bodies = normalize_celestial_bodies_structure
+
         # Pass 1: Create all stars first, as they are often parents to planets
         (@system_data[:stars] || []).each do |star_data|
           create_star_record(star_data)
@@ -46,7 +49,7 @@ module StarSim
 
         # Pass 2: Create all non-satellite celestial bodies (planets, dwarf planets, etc.)
         # These bodies might orbit stars or be parents to moons.
-        (@system_data[:celestial_bodies] || {}).each do |category, bodies_array|
+        normalized_celestial_bodies.each do |category, bodies_array|
           # Skip moons/satellites in this pass
           next if category.to_s.include?('moon') || category.to_s.include?('satellite') 
           (bodies_array || []).each do |body_data|
@@ -56,7 +59,7 @@ module StarSim
 
         # Pass 3: Create all satellites (moons).
         # Their parent bodies (planets) should now be in the database and cache.
-        (@system_data[:celestial_bodies] || {}).each do |category, bodies_array|
+        normalized_celestial_bodies.each do |category, bodies_array|
           if category.to_s.include?('moon') || category.to_s.include?('satellite') # Process moons/satellites in this pass
             (bodies_array || []).each do |body_data|
               create_celestial_body_record(body_data, category)
@@ -73,6 +76,51 @@ module StarSim
     end
 
     private
+
+    # Normalizes celestial_bodies structure to handle both array and hash formats
+    # Converts array format (from sol-complete.json) to hash format expected by the builder
+    def normalize_celestial_bodies_structure
+      celestial_bodies = @system_data[:celestial_bodies] || {}
+      
+      # If it's already a hash, return as-is
+      return celestial_bodies if celestial_bodies.is_a?(Hash)
+      
+      # If it's an array (sol-complete.json format), group by type
+      if celestial_bodies.is_a?(Array)
+        grouped = {}
+        celestial_bodies.each do |body|
+          type = body[:type] || 'unknown'
+          
+          # Map types to categories
+          category = case type
+          when 'terrestrial_planet'
+            'terrestrial_planets'
+          when 'gas_giant'
+            'gas_giants'  
+          when 'ice_giant'
+            'ice_giants'
+          when 'dwarf_planet'
+            'dwarf_planets'
+          when 'moon'
+            # Check if it's a major moon or regular moon
+            if ['Luna', 'Titan', 'Ganymede', 'Callisto', 'Io', 'Europa', 'Rhea', 'Iapetus', 'Dione', 'Tethys', 'Enceladus', 'Mimas', 'Titania', 'Oberon', 'Umbriel', 'Ariel', 'Miranda'].include?(body[:name])
+              'major_moons'
+            else
+              'moons'
+            end
+          else
+            'other_bodies'
+          end
+          
+          grouped[category] ||= []
+          grouped[category] << body
+        end
+        return grouped
+      end
+      
+      # Fallback for unexpected formats
+      {}
+    end
 
     # Creates or finds the main Galaxy record.
     def create_galaxy
