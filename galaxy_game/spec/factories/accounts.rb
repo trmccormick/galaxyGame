@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :account do
+  factory :account, class: 'Financial::Account' do
     balance { 1000.0 }
     association :currency, factory: :financial_currency
     
