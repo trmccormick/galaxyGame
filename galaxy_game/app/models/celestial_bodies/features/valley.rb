@@ -30,6 +30,14 @@ module CelestialBodies
         static_data&.dig('conversion_suitability') || {}
       end
       
+      def suitability_rating
+        conversion_suitability['habitat']
+      end
+      
+      def segments
+        static_data&.dig('segments') || []
+      end
+      
       # Override to use predefined segments from static data
       def calculate_construction_segments
         segments_data = static_data&.dig('segments') || []
