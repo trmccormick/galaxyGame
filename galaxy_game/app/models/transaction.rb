@@ -1,6 +1,6 @@
 # app/models/transaction.rb
 class Transaction < ApplicationRecord
-  belongs_to :account
+  belongs_to :account, class_name: 'Financial::Account'
   belongs_to :recipient, polymorphic: true
   belongs_to :currency, class_name: 'Financial::Currency', required: true
   

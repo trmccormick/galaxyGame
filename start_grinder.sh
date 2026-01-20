@@ -8,7 +8,7 @@ echo ""
 
 # Step 1: Verify test database connection
 echo "Step 1: Verifying test database connection..."
-TEST_DB=$(docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"' 2>/dev/null | tr -d '\r')
+TEST_DB=$(docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"' 2>/dev/null | tr -d '\r')
 if [[ "$TEST_DB" == *"galaxy_game_test"* ]]; then
     echo "✅ Connected to: galaxy_game_test"
 else
@@ -21,42 +21,60 @@ echo ""
 
 # Step 2: Verify core seed data exists
 echo "Step 2: Verifying test database has core data..."
-BODY_COUNT=$(docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts CelestialBodies::CelestialBody.count"' 2>/dev/null | tail -1 | tr -d '\r\n ')
+BODY_COUNT=$(docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts CelestialBodies::CelestialBody.count"' 2>/dev/null | tail -1 | tr -d '\r\n ')
 if [[ "$BODY_COUNT" =~ ^[0-9]+$ ]] && [[ "$BODY_COUNT" -ge 10 ]]; then
     echo "✅ Test database seeded: $BODY_COUNT celestial bodies"
 else
     echo "⚠️  WARNING: Test database needs seeding (found: $BODY_COUNT)"
     echo "   Re-seeding test database..."
-    docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:seed' > /dev/null 2>&1
-    BODY_COUNT=$(docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts CelestialBodies::CelestialBody.count"' 2>/dev/null | tail -1 | tr -d '\r\n ')
+    docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:seed' > /dev/null 2>&1
+    BODY_COUNT=$(docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts CelestialBodies::CelestialBody.count"' 2>/dev/null | tail -1 | tr -d '\r\n ')
     echo "✅ Test database re-seeded: $BODY_COUNT celestial bodies"
 fi
 echo ""
 
 # Step 3: Clear stale test cache
 echo "Step 3: Clearing RSpec cache..."
-docker exec -it web rm -f tmp/rspec_examples.txt 2>/dev/null
+docker exec web rm -f tmp/rspec_examples.txt 2>/dev/null
 echo "✅ Cache cleared"
 echo ""
 
-# Step 4: Archive old logs
-echo "Step 4: Archiving old log files..."
-mkdir -p ./data/logs/archive
-if ls ./data/logs/rspec_full_*.log 1> /dev/null 2>&1; then
-    mv ./data/logs/rspec_full_*.log ./data/logs/archive/
-    echo "✅ Old logs archived"
+# Step 4: Check for recent complete log (skip if exists)
+echo "Step 4: Checking for recent complete RSpec log..."
+LATEST_LOG=$(ls -t ./data/logs/rspec_full_*.log 2>/dev/null | head -n 1)
+
+if [[ -n "$LATEST_LOG" ]] && grep -q "Finished in" "$LATEST_LOG"; then
+    echo "✅ Using existing complete log: $LATEST_LOG"
+    LOG_FILE="$LATEST_LOG"
+    # Skip archiving and fresh run - use existing log
+    echo "   Skipping fresh test run - analyzing existing results"
+    echo ""
+    # Jump to analysis section
 else
-    echo "✅ No old logs to archive"
+    echo "🔄 No recent complete log found"
+    echo ""
+
+    # Step 4b: Archive old logs (only if we're doing a fresh run)
+    echo "Step 4b: Archiving old log files..."
+    mkdir -p ./data/logs/archive
+    if ls ./data/logs/rspec_full_*.log 1> /dev/null 2>&1; then
+        mv ./data/logs/rspec_full_*.log ./data/logs/archive/
+        echo "✅ Old logs archived"
+    else
+        echo "✅ No old logs to archive"
+    fi
+    echo ""
+
+    # Step 5: Generate fresh baseline log
+    echo "Step 5: Generating fresh baseline RSpec log..."
+    echo "   This will take several minutes..."
+
+    # FIXED: Use same pattern as working manual command
+    docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+
+    # Find the newly created log file (container ./log/ maps to host ./data/logs/)
+    LOG_FILE=$(ls -t ./data/logs/rspec_full_*.log 2>/dev/null | head -n 1)
 fi
-echo ""
-
-# Step 5: Generate fresh baseline log
-echo "Step 5: Generating fresh baseline RSpec log..."
-echo "   This will take several minutes..."
-TIMESTAMP=$(date +%s)
-LOG_FILE="./data/logs/rspec_full_${TIMESTAMP}.log"
-
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec' > "$LOG_FILE" 2>&1
 
 # Check log file size to verify it actually ran
 LOG_SIZE=$(wc -c < "$LOG_FILE")
@@ -65,7 +83,8 @@ if [[ "$LOG_SIZE" -lt 1000 ]]; then
     echo "   Check: $LOG_FILE"
 fi
 
-# Count failures - look for both failure patterns
+echo ""
+echo "Step 5: Analyzing test results..."
 
 # If no failures, check if tests actually ran
 if [[ "$TOTAL_FAILURES" == "0" ]]; then
@@ -122,8 +141,18 @@ echo "NEXT STEPS:"
 echo "1. Compare $TOP_FILE with Jan 8 backup"
 echo "2. Identify regression vs schema evolution"
 echo "3. Fix code + update /docs"
-echo "4. Run: docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [spec_file]'"
+echo "4. Run: docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [spec_file]'"
 echo "5. Atomic commit: git add [fixed_files] docs/[updated_doc].md"
 echo "6. Repeat for next highest failure"
 echo ""
 echo "Grinder ready for overnight autonomous execution"
+
+echo ""
+echo "⚠️  RATE LIMITING AWARENESS:"
+echo "   Grok agent calls may hit rate limits during analysis"
+echo "   If you see rate limiting messages:"
+echo "   - Wait 5-15 minutes before retrying"
+echo "   - Add 'sleep 30' between agent calls"
+echo "   - Process one failure at a time"
+echo "   - Resume from where you left off"
+echo ""
