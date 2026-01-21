@@ -4,6 +4,27 @@ Purpose: Provide small, assignable task templates with exact commands, guardrail
 
 ## [2026-01-17] Environment Safety Patch
 
+### ⚠️ CRITICAL: Mandatory Test Logging Protocol
+**ALL RSpec test runs MUST be logged to preserve results for analysis and prevent redundant execution.**
+
+**❌ NEVER run tests without logging:**
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec'
+# This wastes time - results are lost forever!
+```
+
+**✅ ALWAYS log test runs:**
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+# Results saved to ./log/rspec_full_[timestamp].log (maps to host ./data/logs/)
+```
+
+**Why this matters:**
+- **Efficiency:** Analyze one logged run multiple times instead of re-running tests
+- **Collaboration:** Other tasks can access recent test results without regeneration
+- **Debugging:** Full failure context preserved for detailed analysis
+- **Progress Tracking:** Historical failure counts and patterns maintained
+
 ### Mandatory Command Prefix
 **ALL RSpec/Test commands MUST use `unset DATABASE_URL`** to prevent environment bleed between development and test databases.
 
@@ -38,6 +59,32 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "
 - Backup First: Copy changed files to `tmp/pre_revert_backup/` before overwriting from the Jan 8 backup.
 - Documentation Mandate: A fix is "Done" only when `/docs` reflects the new logic/state.
 - Host vs Container: Host runs git/backup; container runs rspec and app commands.
+- **Environment Protection:** Do NOT restart, rebuild, or stop Docker containers without explicit user permission, unless operating in autonomous "Grinder" mode. Assume containers are running correctly in interactive sessions.
+
+## Container Operations Protocol
+
+### 🚫 Prohibited in Interactive Mode
+- `docker-compose down`, `docker-compose up`, `docker-compose restart`
+- `docker stop`, `docker rm`, `docker build`
+- Any container lifecycle operations
+
+### ✅ Permitted in Interactive Mode  
+- `docker-compose ps` - check status
+- `docker-compose logs` - inspect logs
+- `docker exec` - run commands inside running containers
+- Database queries and test execution
+
+### 🤖 Permitted in Grinder Mode
+- Full container lifecycle management for batch processing
+- Automated restarts as part of scripted workflows
+- Must log all actions and provide rollback instructions
+
+### 🔍 Pre-Operation Checklist
+**BEFORE suggesting any container operation:**
+1. Ask: "Are the containers currently running?"
+2. Check: `docker-compose ps` 
+3. Confirm: User explicitly approves any disruptive operations
+4. Document: Any container changes in commit messages
 
 ## Log Path Reference
 - **Host path:** `./data/logs/` - All RSpec logs stored here
@@ -168,9 +215,11 @@ WHERE datname = 'galaxy_game_test' AND state = 'idle in transaction';
 ### 1) Autonomous Nightly Grinder Protocol (ANGP)
 Use when you want fully automated overnight triage + documentation.
 
+**MANDATORY LOGGING REQUIREMENT:** Every test run must be logged. Never run tests without `> ./log/rspec_full_$(date +%s).log 2>&1`
+
 **PREREQUISITE:** Run Pre-flight Checks first to avoid incomplete logs!
 
-**EFFICIENCY MANDATE:** Run the full suite ONCE, then analyze that saved log multiple times. Do NOT run the suite again until you've fixed 3-5 specs from the same log analysis.
+**EFFICIENCY MANDATE:** Run the full suite ONCE with logging, then analyze that saved log multiple times. Do NOT run the suite again until you've fixed 3-5 specs from the same log analysis.
 
 **❌ WASTEFUL (Don't do this):**
 ```bash
@@ -181,9 +230,9 @@ docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec 
 # This wastes hours on redundant test runs!
 ```
 
-**✅ EFFICIENT (Do this):**
+**✅ EFFICIENT (MANDATORY LOGGING):**
 ```bash
-# Run ONCE with logging
+# Run ONCE with logging (MANDATORY - always do this)
 docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
 
 # Analyze that log multiple times (seconds, not minutes)
@@ -194,7 +243,7 @@ grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -
 # Then re-analyze SAME log for next target (no rerun needed)
 grep "rspec ./spec" $LATEST_LOG | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -5
 
-# After fixing 3-5 specs, THEN run a fresh full suite
+# After fixing 3-5 specs, THEN run a fresh logged full suite
 ```
 
 **Time Savings:** Analyzing one log 5 times = 10 seconds. Running suite 5 times = 50-100 minutes.
@@ -224,7 +273,7 @@ grep "rspec ./spec" "$LATEST_LOG" | awk '{print $2}' | cut -d: -f1 | sort | uniq
 ```
 - If missing log, run full suite:
 ```bash
-# Container (output goes to /home/galaxy_game/log which maps to host ./data/logs/)
+# Container (MANDATORY: output goes to /home/galaxy_game/log which maps to host ./data/logs/)
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
 ```
 - Compare failing code vs backup:
@@ -330,7 +379,7 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:seed'
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts CelestialBodies::CelestialBody.count"'
 # Expected: 14 (core celestial bodies)
 
-# 5. Run clean test suite
+# 5. Run clean test suite (MANDATORY: with logging)
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
 ```
 # Note: Container ./log/ maps to host ./data/logs/
