@@ -922,7 +922,7 @@ module AIManager
       end
     end
 
-    def find_matching_easter_egg(easter_eggs, world_type, temp, pressure, has_ice, has_atmosphere, has_wormhole = false)
+    def find_matching_easter_egg(easter_eggs, world_type, temp, pressure, has_ice, has_atmosphere, has_wormhole = false, location = nil)
       # Filter by world type and conditions
       candidates = easter_eggs.select do |egg|
         triggers = egg['trigger_conditions'] || {}
@@ -935,6 +935,7 @@ module AIManager
         next false if triggers['pressure_min'] && pressure < triggers['pressure_min'].to_f
         next false if triggers['pressure_max'] && pressure > triggers['pressure_max'].to_f
         next false if triggers['has_wormhole'] && !has_wormhole
+        next false if triggers['location'] && triggers['location'] != location
 
         case triggers['world_type']
         when 'desert' then temp > 300 && pressure < 1.0 && !has_ice
@@ -949,7 +950,7 @@ module AIManager
       # Prefer more specific matches (those with specific conditions)
       specific_candidates = candidates.select do |egg|
         triggers = egg['trigger_conditions'] || {}
-        triggers.key?('world_type') || triggers.key?('has_ice') || triggers.key?('temperature_max') || triggers.key?('temperature_min') || triggers.key?('has_wormhole')
+        triggers.key?('world_type') || triggers.key?('has_ice') || triggers.key?('temperature_max') || triggers.key?('temperature_min') || triggers.key?('has_wormhole') || triggers.key?('location')
       end
       return specific_candidates.sample if specific_candidates.any?
 
