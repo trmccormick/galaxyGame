@@ -190,7 +190,25 @@
                     <% if @celestial_body.hydrosphere.water_bodies %>
                     <div class="data-row">
                         <span class="data-label"><%= @celestial_body.hydrosphere.composition&.keys&.include?('H2O') ? 'Water' : 'Liquid' %> Bodies:</span>
-                        <span class="data-value"><%= @celestial_body.hydrosphere.water_bodies.keys.join(', ') %></span>
+                        <span class="data-value"><%
+                          is_water_based = @celestial_body.hydrosphere.composition&.keys&.include?('H2O')
+                          body_names = @celestial_body.hydrosphere.water_bodies.keys.map do |key|
+                            case key
+                            when 'groundwater'
+                              is_water_based ? 'groundwater' : 'subsurface liquids'
+                            when 'lakes'
+                              is_water_based ? 'lakes' : 'hydrocarbon lakes'
+                            when 'rivers'
+                              is_water_based ? 'rivers' : 'hydrocarbon rivers'
+                            when 'oceans'
+                              is_water_based ? 'oceans' : 'hydrocarbon seas'
+                            when 'ice_caps'
+                              is_water_based ? 'ice caps' : 'cryogenic deposits'
+                            else
+                              key
+                            end
+                          end
+                        %><%= body_names.join(', ') %></span>
                     </div>
                     <% end %>
                 </div>
