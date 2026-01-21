@@ -326,6 +326,14 @@ Detailed solar system monitoring and celestial body overview.
                                 .order(:name)
 ```
 
+## Public Solar Systems Interface
+
+The public solar systems interface provides read-only access to solar system information for players.
+
+**Routes:** `resources :solar_systems, only: [:index, :show]`
+**Controller:** `SolarSystemsController`
+**Views:** Interactive solar system visualization with celestial body details
+
 ### 4. Galaxies (`/admin/galaxies`)
 
 #### Index (`/admin/galaxies`)
