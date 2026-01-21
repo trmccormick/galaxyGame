@@ -1,59 +1,393 @@
 <!-- filepath: /Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/views/solar_systems/show.html.erb -->
-<div class="game-container">
-  <nav class="game-nav">
-    <div class="logo"><%= @solar_system.name %> System</div>
-    <ul class="main-menu">
-      <li><a href="<%= root_path %>">Back to Main View</a></li>
-    </ul>
-  </nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Game - <%= @solar_system.name %> System</title>
+    <style>
+        /* SimEarth Aesthetic - Matching Admin Interface */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <div class="main-display">
-    <div class="system-view active-view">
-      <canvas id="systemCanvas" 
-              data-planets="<%= @celestial_bodies.to_json(
-                only: [:id, :name, :body_type, :diameter, :mass, :orbital_period, :surface_temperature, :surface_gravity],
-                methods: [:parent_body_data]
-              ) %>">
-      </canvas>
-      <div class="system-info">
-        <h2><%= @solar_system.name %></h2>
-        <p>Star: <%= @solar_system.stars.first&.name || "Unknown" %> 
-           (<%= @solar_system.stars.first&.type_of_star || "Unknown Type" %>)</p>
-        <p>Planets: <%= @celestial_bodies.count %></p>
-      </div>
-    </div>
-    
-    <div class="details-panel">
-      <h3>System Details</h3>
-      <p>Galaxy: <%= @solar_system.galaxy&.name || "Unknown" %></p>
-      <p>Identifier: <%= @solar_system.identifier %></p>
-      
-      <h4>Celestial Bodies</h4>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Surface Temp</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @celestial_bodies.each do |body| %>
-            <tr>
-              <td><%= body.name %></td>
-              <td><%= body.body_type&.humanize || body.class.name.demodulize.underscore.humanize %></td>
-              <td><%= body.surface_temperature %> K</td>
-              <td>
-                <a href="<%= celestial_body_detail_path(id: body.id) %>" class="btn btn-small">Details</a>
-                <a href="<%= run_simulation_path(body_id: body.id) %>" class="btn btn-small" data-method="post">Simulate</a>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            overflow: hidden;
+        }
 
-<%= javascript_import_module_tag "game_interface" %>
+        #mainContainer {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 2px;
+            background: #111;
+        }
+
+        /* Header Styles */
+        #header {
+            grid-column: 1 / -1;
+            background: #1a1a1a;
+            padding: 15px 15px 25px 15px;
+            border-bottom: 2px solid #0f0;
+        }
+
+        #header h1 {
+            font-size: 24px;
+            color: #0ff;
+            margin: 0;
+        }
+
+        #planetInfo {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Left Panel: Navigation */
+        #toolPanel {
+            background: #1a1a1a;
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 2px solid #0f0;
+        }
+
+        .tool-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .tool-section h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .tool-button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .tool-button:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .tool-button.active {
+            background: #0ff;
+            color: #000;
+            border-color: #0ff;
+        }
+
+        /* Main Content Area */
+        #mainContent {
+            padding: 20px;
+            overflow-y: auto;
+            background: #0a0a0a;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+        }
+
+        /* System Header */
+        .system-header {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 20px;
+        }
+
+        .system-title {
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .system-meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .system-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            background: #000;
+            border: 1px solid #0f0;
+            position: relative;
+            min-height: 400px;
+        }
+
+        #systemCanvas {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            background: #000;
+        }
+
+        /* Right Panel: System Details */
+        #detailsPanel {
+            background: #1a1a1a;
+            padding: 15px;
+            overflow-y: auto;
+            border-left: 2px solid #0f0;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .detail-section h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .detail-section h4 {
+            color: #0ff;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .data-table th {
+            color: #0ff;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            color: #0f0;
+            font-size: 12px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            background: #222;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .btn-small {
+            padding: 3px 8px;
+            font-size: 10px;
+        }
+
+        /* Star Information Box */
+        .star-info {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .star-title {
+            color: #0ff;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .star-details {
+            color: #0f0;
+            font-size: 12px;
+        }
+
+        .star-detail-item {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer">
+        <!-- Header -->
+        <div id="header">
+            <h1>GALAXY GAME - SOLAR SYSTEM VIEW</h1>
+            <div id="planetInfo">
+                Viewing: <%= @solar_system.name %> | <%= @celestial_bodies.count %> Celestial Bodies
+            </div>
+        </div>
+
+        <!-- Left Panel: Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🧭 NAVIGATION</h3>
+                <button class="tool-button" onclick="window.location.href='/'">
+                    🏠 Main Menu
+                </button>
+                <button class="tool-button" onclick="window.location.href='/solar_systems'">
+                    ☀️ Solar Systems
+                </button>
+                <% if @solar_system.galaxy %>
+                    <button class="tool-button" onclick="window.location.href='/galaxies'">
+                        🌌 Galaxies
+                    </button>
+                <% end %>
+            </div>
+
+            <div class="tool-section">
+                <h3>🔗 QUICK LINKS</h3>
+                <% if @solar_system.galaxy %>
+                    <button class="tool-button" onclick="window.location.href='/admin/galaxies/<%= @solar_system.galaxy.id %>'">
+                        👁️ Admin Galaxy View
+                    </button>
+                <% end %>
+                <button class="tool-button" onclick="window.location.href='/admin/solar_systems/<%= @solar_system.id %>'">
+                    👁️ Admin System View
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="mainContent">
+            <!-- System Header -->
+            <div class="system-header">
+                <div class="system-title"><%= @solar_system.name %> System</div>
+                <div class="system-meta">
+                    Galaxy: <%= @solar_system.galaxy&.name || "Unknown" %> |
+                    Identifier: <%= @solar_system.identifier %> |
+                    Created: <%= @solar_system.created_at.strftime('%Y-%m-%d') %>
+                </div>
+                <div class="system-stats">
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @celestial_bodies.count %></div>
+                        <div class="stat-label">Celestial Bodies</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @solar_system.stars.count %></div>
+                        <div class="stat-label">Stars</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @celestial_bodies.select { |b| b.body_type == 'terrestrial_planet' }.count %></div>
+                        <div class="stat-label">Terrestrial Planets</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @celestial_bodies.select { |b| ['gas_giant', 'ice_giant'].include?(b.body_type) }.count %></div>
+                        <div class="stat-label">Gas/Ice Giants</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="canvas-container">
+                <canvas id="systemCanvas"
+                        data-planets="<%= @celestial_bodies.to_json(
+                          only: [:id, :name, :body_type, :diameter, :mass, :orbital_period, :surface_temperature, :surface_gravity],
+                          methods: [:parent_body_data]
+                        ) %>">
+                </canvas>
+            </div>
+        </div>
+
+        <!-- Right Panel: System Details -->
+        <div id="detailsPanel">
+            <!-- Star Information -->
+            <% if @solar_system.stars.any? %>
+                <div class="star-info">
+                    <div class="star-title">🌟 <%= @solar_system.stars.first.name %></div>
+                    <div class="star-details">
+                        <div class="star-detail-item">Type: <%= @solar_system.stars.first.type_of_star || "Unknown" %></div>
+                        <div class="star-detail-item">Mass: <%= @solar_system.stars.first.mass ? "#{'%.2e' % @solar_system.stars.first.mass} kg" : "Unknown" %></div>
+                        <div class="star-detail-item">Radius: <%= @solar_system.stars.first.radius ? "#{'%.2e' % @solar_system.stars.first.radius} m" : "Unknown" %></div>
+                        <div class="star-detail-item">Temperature: <%= @solar_system.stars.first.temperature ? "#{@solar_system.stars.first.temperature.round} K" : "Unknown" %></div>
+                        <div class="star-detail-item">Luminosity: <%= @solar_system.stars.first.luminosity ? "#{'%.2e' % @solar_system.stars.first.luminosity} W" : "Unknown" %></div>
+                    </div>
+                </div>
+            <% end %>
+
+            <!-- Celestial Bodies Table -->
+            <div class="detail-section">
+                <h3>🌍 Celestial Bodies</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Surface Temp</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @celestial_bodies.each do |body| %>
+                            <tr>
+                                <td><%= body.name %></td>
+                                <td><%= body.body_type&.humanize || body.class.name.demodulize.underscore.humanize %></td>
+                                <td><%= body.surface_temperature ? "#{body.surface_temperature.round} K" : "Unknown" %></td>
+                                <td>
+                                    <a href="<%= celestial_body_detail_path(id: body.id) %>" class="btn btn-small">Details</a>
+                                    <a href="<%= run_simulation_path(body_id: body.id) %>" class="btn btn-small" data-method="post">Simulate</a>
+                                </td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%= javascript_import_module_tag "game_interface" %>
+</body>
+</html>
