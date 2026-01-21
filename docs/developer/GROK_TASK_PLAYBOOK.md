@@ -483,6 +483,9 @@ Track breaking schema changes to prevent recurring "undefined method" errors:
 - ✅ `identifier` field uses format like "MARS-01", "EARTH-01" (internal system codes)
 - ✅ Use `CelestialBodies::CelestialBody.find_by("LOWER(name) = ?", target_name.downcase)`
 
+**SolarSystem Model:**
+- ✅ Use `class_name: 'Location::SpatialLocation'` NOT `class_name: 'SpatialLocation'` for spatial_location association
+
 ### Before Restoring from Jan 8 Backup
 1. Check if restored code uses old schema methods
 2. Compare against current models in `app/models/celestial_bodies/spheres/`
