@@ -125,6 +125,7 @@
 - **Industrial Horror:** Corporate exploitation themes (e.g., Nostromo incident)
 - **Military/Refugee Fleet:** Fleet sightings and refugee encounters (e.g., Lost Fleet)
 - **Smuggler/Outlaw:** Rogue vessel and outlaw activities (e.g., Kessel Run)
+- **Xeno-Biological Anomaly:** Alien life and biological threats (e.g., Protomolecule)
 
 This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
 
