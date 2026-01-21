@@ -33,13 +33,25 @@ RSpec.describe AIManager::WorldKnowledgeService, type: :service do
       ]
     end
 
-    it 'matches easter eggs with has_wormhole trigger' do
-      result = service.send(:find_matching_easter_egg, easter_eggs, nil, 0, 0, false, false, true)
+    it 'matches easter eggs with location trigger' do
+      egg = {
+        'easter_egg_id' => 'test_egg',
+        'category' => 'world_naming',
+        'flavor_text' => 'Test flavor',
+        'trigger_conditions' => { 'location' => 'ancient_world', 'rarity' => 1.0 }
+      }
+      result = service.send(:find_matching_easter_egg, [egg], nil, 0, 0, false, false, false, 'ancient_world')
       expect(result['easter_egg_id']).to eq('test_egg')
     end
 
-    it 'does not match when has_wormhole is false' do
-      result = service.send(:find_matching_easter_egg, easter_eggs, nil, 0, 0, false, false, false)
+    it 'does not match when location does not match' do
+      egg = {
+        'easter_egg_id' => 'test_egg',
+        'category' => 'world_naming',
+        'flavor_text' => 'Test flavor',
+        'trigger_conditions' => { 'location' => 'ancient_world', 'rarity' => 1.0 }
+      }
+      result = service.send(:find_matching_easter_egg, [egg], nil, 0, 0, false, false, false, 'deep_space')
       expect(result).to be_nil
     end
   end

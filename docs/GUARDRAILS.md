@@ -108,6 +108,7 @@
 - **GUARDRAILS.md Rules:** Naming conventions ensure easter eggs stay within "nod" category—e.g., no direct character names, focus on locations/ships/concepts.
 - **JSON Schema:** Every generated system JSON includes `flavor_text` or `easter_egg_id` fields for references, kept separate from core game logic.
 - **System-Level Easter Eggs:** For special systems (e.g., wormhole hubs), use `AIManager::WorldKnowledgeService#generate_system_easter_egg(has_wormhole: true)` to apply sci-fi references like the "Celestial Anomaly" from Star Trek DS9.
+- **Location-Based Triggers:** `location` is now an optional parameter in `find_matching_easter_egg`. `ancient_world` is a reserved location tag triggered by worlds with a `geological_age > 10.0` or the `pre_collapse_ruins` trait. System-level tags (e.g., `deep_space`) are validated against `system.sector_type`.
 - **Documentation Sync:** Any new easter egg must be documented in `docs/` with its source inspiration and guardrail compliance.
 - **Testing:** Easter eggs must not affect gameplay balance or cause immersion breaks. Specs include checks for flavor text presence without requiring sci-fi knowledge.
 
