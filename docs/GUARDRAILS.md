@@ -82,3 +82,43 @@
 - **Progression Gates**: Major expansions require player participation thresholds
 - **Economic Multipliers**: Player contracts provide 1.5x GCC rewards vs NPC execution
 - **Influence Mechanisms**: GCC investment allows players to influence AI Manager priorities
+
+## 🚀 9. Sci-Fi Easter Eggs (Love Letter to the Genre)
+
+**Context:** Game World Flavor & Immersion  
+**Mandate:** Transform the game into a "love letter" to sci-fi by including subtle nods to shows, books, and movies that inspired the project. These must remain non-infringing and feel natural to casual players while providing "eureka" moments for fans.
+
+### 🧪 Core Philosophy
+- **Subtle Nods:** References should be easter eggs, not core mechanics. Casual players see them as flavor; fans recognize them as homages.
+- **No Copyright Infringement:** Use generic names, indirect references, or public-domain elements. Avoid direct quotes, logos, or protected trademarks.
+- **Immersion First:** Easter eggs enhance the universe without breaking gameplay or requiring knowledge to enjoy.
+
+### 🛰️ Integration Points
+- **Celestial Body Names & Descriptions:** Unnamed moons or asteroid clusters can bear names of famous fictional star systems (e.g., "Arrakis Cluster" for a desert world, "Terminus Belt" for a trade hub, or "The Belt" for asteroid fields). Descriptions include subtle flavor text.
+- **Mission Manifests:** `manifest_v1.1.json` files include "Legacy Cargo" or "Historic Logs" referencing famous ships/captains (e.g., "Cargo from the Nostromo" or "Logs from the Serenity's maiden voyage").
+- **AI Manager Quips:** Occasional dialogue or "Error Codes" reference famous sentient computers (e.g., "HAL 9000 protocol engaged" for navigation errors, "GlaDOS testing sequence" for experimental phases, or "Holly override" for AI decisions).
+- **Item Metadata:** Standard items like `slag_propellant` have flavor text referencing sci-fi fuel types (e.g., "Propellant reminiscent of the fuel used in the Rocinante's Epstein drives").
+
+### 🌌 Alpha Centauri Connection
+- **Wormhole Hub:** Use Alpha Centauri as the primary hub for Easter Eggs. "Natural wormholes" can open to systems in the Milky Way, acting as "guest appearances" for iconic sci-fi locations.
+- **Proxima Centauri References:** Generated JSON files for Proxima systems include nods to *The Three-Body Problem* (e.g., "Trisolarian signals detected") or *Avatar* (e.g., "Pandora-like bioluminescent flora").
+- **Milky Way Access:** Wormholes enable "visits" to sci-fi-inspired systems without developing FTL travel.
+
+### 🛠️ Technical Implementation
+- **GUARDRAILS.md Rules:** Naming conventions ensure easter eggs stay within "nod" category—e.g., no direct character names, focus on locations/ships/concepts.
+- **JSON Schema:** Every generated system JSON includes `flavor_text` or `easter_egg_id` fields for references, kept separate from core game logic.
+- **System-Level Easter Eggs:** For special systems (e.g., wormhole hubs), use `AIManager::WorldKnowledgeService#generate_system_easter_egg(has_wormhole: true)` to apply sci-fi references like the "Celestial Anomaly" from Star Trek DS9.
+- **Documentation Sync:** Any new easter egg must be documented in `docs/` with its source inspiration and guardrail compliance.
+- **Testing:** Easter eggs must not affect gameplay balance or cause immersion breaks. Specs include checks for flavor text presence without requiring sci-fi knowledge.
+
+### 📋 Examples & Compliance
+- **Compliant:** "A barren world echoing the harsh deserts of ancient tales" (nods to Dune without naming).
+- **Non-Compliant:** "Welcome to Arrakis, home of the Fremen" (direct reference, potential infringement).
+- **Implementation Check:** Before adding, verify against public-domain status or generic nature.
+
+This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
+
+---
+
+*Last Updated: January 20, 2026*  
+*Status: Active - Integrate into world generation and AI quips*
