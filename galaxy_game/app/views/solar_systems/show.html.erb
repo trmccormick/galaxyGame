@@ -12,9 +12,7 @@
       <canvas id="systemCanvas" 
               data-planets="<%= @celestial_bodies.to_json(
                 only: [:id, :name, :body_type, :diameter, :mass, :orbital_period, :surface_temperature, :surface_gravity],
-                include: {
-                  parent_body: { only: [:id, :name] }
-                }
+                methods: [:parent_body_data]
               ) %>">
       </canvas>
       <div class="system-info">
@@ -44,7 +42,7 @@
           <% @celestial_bodies.each do |body| %>
             <tr>
               <td><%= body.name %></td>
-              <td><%= body.body_type.humanize %></td>
+              <td><%= body.body_type&.humanize || body.class.name.demodulize.underscore.humanize %></td>
               <td><%= body.surface_temperature %> K</td>
               <td>
                 <a href="<%= celestial_body_detail_path(id: body.id) %>" class="btn btn-small">Details</a>

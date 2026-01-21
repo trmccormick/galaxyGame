@@ -133,16 +133,20 @@ module CelestialBodies
     end
 
     # Accessor methods for view compatibility
+
     def temperature
       # Try to get temperature from properties first
       return properties['temperature'] if properties && properties['temperature'].present?
-      
+
+      # For celestial bodies, use surface_temperature attribute if present
+      return self[:surface_temperature] if has_attribute?(:surface_temperature) && self[:surface_temperature].present?
+
       # For stars, temperature is a direct attribute
       return self[:temperature] if has_attribute?(:temperature) && self[:temperature].present?
-      
+
       # Try to get from atmosphere (surface temperature)
       return atmosphere&.temperature if atmosphere&.temperature.present?
-      
+
       # Calculate based on stellar flux and albedo if we have the data
       if stars.any? && albedo.present?
         star = stars.first
@@ -154,12 +158,20 @@ module CelestialBodies
           return equilibrium_temp.round(1)
         end
       end
-      
+
       nil
     end
 
     def surface_temperature
-      temperature  # Alias for compatibility
+      # Only return the attribute, do not call temperature to avoid recursion
+      return self[:surface_temperature] if has_attribute?(:surface_temperature) && self[:surface_temperature].present?
+      nil
+    end
+
+    # Method for JSON serialization - returns parent body data only if it exists
+    def parent_body_data
+      return nil unless respond_to?(:parent_body) && parent_body.present?
+      { id: parent_body.id, name: parent_body.name }
     end
 
     def in_solar_system?
