@@ -175,7 +175,13 @@
             <div class="tool-section">
                 <h3>💧 HYDROSPHERE</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
-                    <% if @celestial_body.hydrosphere.total_water_mass %>
+                    <% if @celestial_body.hydrosphere.composition.present? %>
+                    <div class="data-row">
+                        <span class="data-label">Composition:</span>
+                        <span class="data-value"><%= @celestial_body.hydrosphere.composition.map{|k,v| "#{k}:#{v}%"}.join(', ') %></span>
+                    </div>
+                    <% end %>
+                    <% if @celestial_body.hydrosphere.total_water_mass && @celestial_body.hydrosphere.total_water_mass > 0 %>
                     <div class="data-row">
                         <span class="data-label">Total Liquid Mass:</span>
                         <span class="data-value"><%= number_to_human(@celestial_body.hydrosphere.total_water_mass, precision: 2) %> kg</span>
@@ -183,7 +189,7 @@
                     <% end %>
                     <% if @celestial_body.hydrosphere.water_bodies %>
                     <div class="data-row">
-                        <span class="data-label">Water Bodies:</span>
+                        <span class="data-label"><%= @celestial_body.hydrosphere.composition&.keys&.include?('H2O') ? 'Water' : 'Liquid' %> Bodies:</span>
                         <span class="data-value"><%= @celestial_body.hydrosphere.water_bodies.keys.join(', ') %></span>
                     </div>
                     <% end %>
