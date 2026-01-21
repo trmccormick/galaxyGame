@@ -191,6 +191,8 @@ AI system performance monitoring and optimization controls.
 
 ### 2. Celestial Bodies (`/admin/celestial_bodies`)
 
+**Data Source**: Celestial bodies are created from authoritative data sources (JSON data files, StarSim generation) and cannot be manually created through the admin interface. The admin interface provides monitoring and limited metadata editing capabilities only.
+
 #### Index (`/admin/celestial_bodies`)
 
 Global celestial body catalog showing all bodies in the game database for monitoring selection.
