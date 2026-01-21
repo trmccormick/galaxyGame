@@ -4,7 +4,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test]
+    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update]
 
     # GET /admin/celestial_bodies
     # Index page listing all celestial bodies for monitoring selection
@@ -109,12 +109,35 @@ module Admin
       render json: result
     end
 
+    # GET /admin/celestial_bodies/:id/edit
+    # Admin interface for editing celestial body names and aliases only
+    def edit
+      # Only allow editing name and aliases - properties come from JSON/StarSim
+    end
+
+    # PATCH/PUT /admin/celestial_bodies/:id
+    # Update celestial body name and aliases only
+    def update
+      if @celestial_body.update(celestial_body_admin_params)
+        redirect_to monitor_admin_celestial_body_path(@celestial_body), 
+                    notice: 'Celestial body name/aliases updated successfully.'
+      else
+        render :edit, alert: 'Failed to update celestial body.'
+      end
+    end
+
     private
 
     def set_celestial_body
       @celestial_body = CelestialBodies::CelestialBody.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       redirect_to root_path, alert: 'Celestial body not found'
+    end
+
+    # Only allow name and aliases to be edited through admin
+    # Properties come from JSON data, known info, or StarSim generation
+    def celestial_body_admin_params
+      params.require(:celestial_body).permit(:name, :aliases)
     end
 
     def atmosphere_data
@@ -148,10 +171,10 @@ module Admin
       {
         water_coverage: (hydro.water_bodies&.dig('ocean', 'percentage') || 0),
         ocean_mass: (hydro.water_bodies&.dig('ocean', 'mass') || 0),
-        ice_mass: (hydro.water_bodies&.dig('ice', 'mass') || 0),
+        ice_mass: (hydro.water_bodies&.dig('ice_caps', 'volume') || 0),
         total_water: hydro.total_water_mass&.round(2) || 0,
         average_depth: (hydro.water_bodies&.dig('ocean', 'average_depth') || 0),
-        ice_coverage: (hydro.water_bodies&.dig('ice', 'percentage') || 0)
+        ice_coverage: (hydro.water_bodies&.dig('ice_caps', 'coverage') || 0)
       }
     end
 

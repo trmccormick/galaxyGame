@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Edit <%= @celestial_body.name %> - Admin Celestial Body</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>ADMIN EDIT: <%= @celestial_body.name.upcase %></h1>
+            <div id="planetInfo">
+                Celestial Body Name/Alias Editor |
+                <%= link_to '← Back to Monitor', monitor_admin_celestial_body_path(@celestial_body), style: 'color: #0ff; text-decoration: none;' %> |
+                <%= link_to '← Back to List', admin_celestial_bodies_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+
+        <!-- Left Panel: Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>📍 NAVIGATION</h3>
+                <button class="tool-button" onclick="window.location.href='<%= monitor_admin_celestial_body_path(@celestial_body) %>'">
+                    🖥️ Monitor Body
+                </button>
+                <button class="tool-button" onclick="window.location.href='<%= admin_celestial_bodies_path %>'">
+                    📋 All Bodies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin'">
+                    🏠 Admin Dashboard
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>ℹ️ BODY INFO</h3>
+                <div class="info-item">
+                    <strong>Type:</strong><br>
+                    <%= @celestial_body.body_category&.humanize || 'Unknown' %>
+                </div>
+                <div class="info-item">
+                    <strong>Identifier:</strong><br>
+                    <%= @celestial_body.identifier %>
+                </div>
+                <div class="info-item">
+                    <strong>System:</strong><br>
+                    <%= @celestial_body.solar_system&.name || 'Unknown' %>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <h3>⚠️ RESTRICTIONS</h3>
+                <div class="warning-text">
+                    Only name and aliases can be edited.<br>
+                    Properties come from JSON data, known information, or StarSim generation.
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content: Edit Form -->
+        <div id="contentPanel">
+            <div class="content-section">
+                <h2>✏️ Edit Celestial Body Name & Aliases</h2>
+
+                <%= form_with(model: @celestial_body, url: admin_celestial_body_path(@celestial_body), method: :patch, id: 'editForm') do |f| %>
+                    <% if @celestial_body.errors.any? %>
+                        <div class="error-messages">
+                            <h3>Errors:</h3>
+                            <ul>
+                                <% @celestial_body.errors.full_messages.each do |message| %>
+                                    <li><%= message %></li>
+                                <% end %>
+                            </ul>
+                        </div>
+                    <% end %>
+
+                    <div class="form-group">
+                        <%= f.label :name, 'Primary Name', class: 'form-label' %>
+                        <%= f.text_field :name, class: 'form-input', placeholder: 'Enter primary name' %>
+                        <div class="form-help">
+                            The main display name for this celestial body
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <%= f.label :aliases, 'Aliases (Optional)', class: 'form-label' %>
+                        <%= f.text_field :aliases, class: 'form-input', placeholder: 'Comma-separated alternative names' %>
+                        <div class="form-help">
+                            Alternative names or designations (e.g., "Sol, The Sun, Helios")
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <%= f.submit 'Update Name & Aliases', class: 'action-btn primary' %>
+                        <%= link_to 'Cancel', monitor_admin_celestial_body_path(@celestial_body), class: 'action-btn secondary' %>
+                    </div>
+                <% end %>
+            </div>
+
+            <div class="content-section">
+                <h3>🔒 Protected Properties</h3>
+                <div class="protected-properties">
+                    <p>The following properties cannot be edited through this interface:</p>
+                    <ul>
+                        <li>Physical properties (mass, radius, gravity, etc.)</li>
+                        <li>Orbital characteristics</li>
+                        <li>Atmospheric composition</li>
+                        <li>Surface features and geology</li>
+                        <li>Resource deposits</li>
+                        <li>Habitable status</li>
+                    </ul>
+                    <p><em>These properties are sourced from JSON data, astronomical databases, or procedurally generated by StarSim.</em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #0ff;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.1em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #001100;
+            border: 1px solid #0ff;
+            border-radius: 4px;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #0ff;
+        }
+
+        .form-help {
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 0.25rem;
+        }
+
+        .form-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #0ff;
+            border-radius: 4px;
+            background: #001100;
+            color: #0ff;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #0ff;
+            color: #000;
+        }
+
+        .action-btn.primary {
+            background: #0ff;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .action-btn.secondary {
+            border-color: #888;
+            color: #888;
+        }
+
+        .error-messages {
+            background: #330000;
+            border: 1px solid #f00;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .error-messages h3 {
+            color: #f00;
+            margin-top: 0;
+        }
+
+        .error-messages ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .protected-properties {
+            background: #001122;
+            border: 1px solid #0088ff;
+            border-radius: 4px;
+            padding: 1rem;
+        }
+
+        .protected-properties ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .protected-properties em {
+            color: #888;
+        }
+
+        .info-item {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #001100;
+            border-radius: 4px;
+        }
+
+        .warning-text {
+            color: #ff8800;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+    </style>
+</body>
+</html></content>
+<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/views/admin/celestial_bodies/edit.html.erb

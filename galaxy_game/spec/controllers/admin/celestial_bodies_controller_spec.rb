@@ -292,7 +292,7 @@ RSpec.describe Admin::CelestialBodiesController, type: :controller do
 
     it 'assigns total count' do
       get :index
-      expect(assigns(:total_bodies)).to eq(7)
+      expect(assigns(:total_bodies)).to eq(CelestialBodies::CelestialBody.count + CelestialBodies::Star.count)
     end
 
     it 'groups bodies by type' do
