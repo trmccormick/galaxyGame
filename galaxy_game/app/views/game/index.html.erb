@@ -1,13 +1,316 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Tile-Based Game with Sidebar</title>
-  <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    height: 100vh;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Sol System</title>
+    <%= stylesheet_link_tag 'game', media: 'all' %>
+    <style>
+        /* Galaxy Game Main Interface Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background: #000011;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: #001100;
+            border-bottom: 2px solid #00ff00;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: #002200;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        .control-btn.active {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        .time-display {
+            font-size: 14px;
+            color: #00aa00;
+        }
+
+        .main-content {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #001100;
+            border-right: 1px solid #00ff00;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            color: #00ff00;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .system-overview {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .system-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .system-title h2 {
+            color: #00ff00;
+            font-size: 28px;
+            text-shadow: 0 0 15px #00ff00;
+            margin: 0;
+        }
+
+        .celestial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            flex: 1;
+        }
+
+        .celestial-body {
+            background: #001100;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .celestial-body:hover {
+            background: #002200;
+            box-shadow: 0 0 15px #00ff00;
+            transform: scale(1.05);
+        }
+
+        .body-name {
+            font-size: 18px;
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+
+        .body-type {
+            font-size: 12px;
+            color: #00aa00;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .body-stats {
+            font-size: 11px;
+            color: #888888;
+        }
+
+        .star {
+            border-color: #ffff00 !important;
+        }
+
+        .star .body-name {
+            color: #ffff00;
+        }
+
+        .terrestrial {
+            border-color: #00ff00;
+        }
+
+        .gas-giant {
+            border-color: #ff8800;
+        }
+
+        .gas-giant .body-name {
+            color: #ff8800;
+        }
+
+        .moon {
+            border-color: #888888;
+        }
+
+        .moon .body-name {
+            color: #cccccc;
+        }
+
+        .status-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: #001100;
+            border: 1px solid #00ff00;
+        }
+
+        .status-panel h3 {
+            color: #00ff00;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .status-label {
+            color: #00aa00;
+        }
+
+        .status-value {
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Galaxy Game</h1>
+        <div class="game-controls">
+            <div class="time-display" id="game-time">
+                <%= @game_state ? @game_state.current_time.strftime('%Y-%m-%d %H:%M:%S') : 'Time not initialized' %>
+            </div>
+            <button class="control-btn" id="toggle-simulation">
+                <%= @game_state&.running ? 'Pause' : 'Start' %> Simulation
+            </button>
+            <button class="control-btn" id="fast-forward">Fast Forward</button>
+            <a href="/admin" class="control-btn">Admin Panel</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <h2>Navigation</h2>
+            <a href="/admin/dashboard" style="color: #00ff00; text-decoration: none; display: block; margin: 10px 0;">Admin Dashboard</a>
+            <a href="/admin/celestial_bodies" style="color: #00ff00; text-decoration: none; display: block; margin: 10px 0;">Celestial Bodies</a>
+            <a href="/admin/solar_systems" style="color: #00ff00; text-decoration: none; display: block; margin: 10px 0;">Solar Systems</a>
+            <a href="/admin/simulation" style="color: #00ff00; text-decoration: none; display: block; margin: 10px 0;">Simulation Control</a>
+
+            <div class="status-panel">
+                <h3>System Status</h3>
+                <div class="status-item">
+                    <span class="status-label">Bodies:</span>
+                    <span class="status-value"><%= @celestial_bodies.count %></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Planets:</span>
+                    <span class="status-value"><%= @planet_count %></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Simulation:</span>
+                    <span class="status-value" id="sim-status"><%= @game_state&.running ? 'Running' : 'Paused' %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="system-overview">
+            <div class="system-title">
+                <h2>Sol System</h2>
+                <p style="color: #00aa00; margin: 5px 0 0 0;">Explore the planets, moons, and mysteries of our solar system</p>
+            </div>
+
+            <div class="celestial-grid">
+                <% @celestial_bodies.each do |body| %>
+                    <div class="celestial-body <%= body.body_category %>"
+                         onclick="window.location.href='<%= celestial_body_detail_path(body) %>'">
+                        <div class="body-name"><%= body.name %></div>
+                        <div class="body-type"><%= body.body_category.humanize %></div>
+                        <div class="body-stats">
+                            <% if body.respond_to?(:surface_temperature) && body.surface_temperature %>
+                                Temp: <%= body.surface_temperature.round %>°C<br>
+                            <% end %>
+                            <% if body.respond_to?(:orbital_period) && body.orbital_period %>
+                                Orbit: <%= body.orbital_period.round(1) %> days
+                            <% end %>
+                        </div>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game control functionality
+        document.getElementById('toggle-simulation').addEventListener('click', function() {
+            fetch('/game/toggle_running', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(response => response.json())
+            .then(data => {
+                const btn = document.getElementById('toggle-simulation');
+                const status = document.getElementById('sim-status');
+                if (data.running) {
+                    btn.textContent = 'Pause Simulation';
+                    status.textContent = 'Running';
+                } else {
+                    btn.textContent = 'Start Simulation';
+                    status.textContent = 'Paused';
+                }
+            });
+        });
+
+        document.getElementById('fast-forward').addEventListener('click', function() {
+            fetch('/game/jump_time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ days: 30 })
+            });
+        });
+
+        // Auto-refresh time display
+        setInterval(function() {
+            fetch('/game/state')
+            .then(response => response.json())
+            .then(data => {
+                const timeString = `Year ${data.time.year}, Day ${data.time.day}`;
+                document.getElementById('game-time').textContent = timeString;
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
     overflow: hidden;
     flex-direction: column;
   }

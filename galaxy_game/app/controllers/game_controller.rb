@@ -77,6 +77,12 @@ class GameController < ApplicationController
     head :ok
   end
 
+  def get_time
+    @game_state = get_or_create_game_state
+    @game_state.update_time! if @game_state.running
+    render json: { time: "Year #{@game_state.year}, Day #{@game_state.day}" }
+  end
+
   def state
     @game_state = get_or_create_game_state
     @game_state.update_time! if @game_state.running
@@ -95,6 +101,15 @@ class GameController < ApplicationController
       return
     end
     @star = @solar_system.stars.first
+  end
+
+  def celestial_body_detail
+    @celestial_body = CelestialBodies::CelestialBody.find_by(id: params[:id])
+    if @celestial_body.nil?
+      flash[:error] = "Celestial body not found"
+      redirect_to root_path
+      return
+    end
   end
 
   private
