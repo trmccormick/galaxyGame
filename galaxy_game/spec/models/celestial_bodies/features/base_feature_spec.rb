@@ -27,10 +27,10 @@ RSpec.describe CelestialBodies::Features::BaseFeature, type: :model do
         'discovered' => false
       }
     end
-    let(:feature) { create(:lava_tube_feature, celestial_body: luna, feature_id: 'luna_lt_001') }
+    let(:feature) { create(:lava_tube_feature, celestial_body: luna, feature_id: 'luna_lt_001', static_data: nil) }
 
     before do
-      allow(Lookup::PlanetaryGeologicalFeatureLookupService).to receive(:new).and_return(
+      allow(Lookup::PlanetaryGeologicalFeatureLookupService).to receive(:new).with(luna).and_return(
         double(find_by_id: static_data)
       )
     end
