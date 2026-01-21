@@ -1,6 +1,8 @@
 module CelestialBodies
   module Spheres
     class Hydrosphere < ApplicationRecord
+      self.table_name = 'hydrospheres'
+      
       include MaterialTransferable
       include HydrosphereConcern
       
@@ -274,8 +276,14 @@ module CelestialBodies
 
       def water_coverage
         return 0.0 unless celestial_body&.surface_area&.positive?
-        total_water_area = (oceans.to_f || 0) + (lakes.to_f || 0) + (rivers.to_f || 0)
-        (total_water_area / celestial_body.surface_area) * 100.0
+        
+        # Extract coverage percentages from water_bodies hashes
+        oceans_coverage = oceans.is_a?(Hash) ? oceans['coverage'].to_f : oceans.to_f
+        lakes_coverage = lakes.is_a?(Hash) ? lakes['coverage'].to_f : lakes.to_f
+        rivers_coverage = rivers.is_a?(Hash) ? rivers['coverage'].to_f : rivers.to_f
+        
+        total_coverage = oceans_coverage + lakes_coverage + rivers_coverage
+        total_coverage
       end      
 
       private
