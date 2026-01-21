@@ -114,7 +114,6 @@
                             <td style="padding: 12px; text-align: center;">
                                 <%= link_to '👁️', celestial_body_path(body), style: 'color: #0ff; text-decoration: none; margin: 0 5px;', title: 'View' %>
                                 <%= link_to '🖥️', "/admin/celestial_bodies/#{body.id}/monitor", style: 'color: #0f0; text-decoration: none; margin: 0 5px;', title: 'Monitor' %>
-                                <%= link_to '✏️', edit_celestial_body_path(body), style: 'color: #ff0; text-decoration: none; margin: 0 5px;', title: 'Edit' %>
                             </td>
                         </tr>
                         <% end %>
@@ -157,7 +156,6 @@
                         <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; font-size: 10px;">
                             <%= link_to '👁️ View', celestial_body_path(body), style: 'color: #0ff; text-decoration: none; margin-right: 10px;' %>
                             <%= link_to '🖥️ Monitor', "/admin/celestial_bodies/#{body.id}/monitor", style: 'color: #0f0; text-decoration: none; margin-right: 10px;' %>
-                            <%= link_to '✏️ Edit', edit_celestial_body_path(body), style: 'color: #ff0; text-decoration: none;' %>
                         </div>
                     </div>
                     <% end %>
