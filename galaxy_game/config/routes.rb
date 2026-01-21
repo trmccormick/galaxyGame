@@ -25,9 +25,11 @@ Rails.application.routes.draw do
 
   get 'materials/:name', to: 'materials#show'
 
-  # Routes for celestial bodies with all CRUD actions
+  # Routes for celestial bodies - READ ONLY for public users
+  # Properties come from JSON data, known info, or StarSim generation
+  # Name/alias editing should only be available through admin interface
   resources :solar_systems, only: [:show, :index]
-  resources :celestial_bodies do
+  resources :celestial_bodies, only: [:index, :show] do
     member do
       get :map                    # Planet map viewer
       get :geological_features    # API: Load geological features JSON
@@ -69,8 +71,16 @@ Rails.application.routes.draw do
         get :sphere_data            # JSON: Real-time sphere data
         get :mission_log            # JSON: AI mission activity
         post :run_ai_test           # Trigger AI Manager test
+        get :edit                   # Admin name/alias editing only
+        patch :update               # Update name/aliases only
       end
     end
+    
+    # Solar Systems routes
+    resources :solar_systems, only: [:index, :show]
+    
+    # Galaxies routes
+    resources :galaxies, only: [:index, :show]
     
     # Organizations routes
     get 'organizations', to: 'organizations#index', as: 'organizations'
