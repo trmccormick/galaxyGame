@@ -250,7 +250,133 @@ Real-time planetary monitoring with sphere-based data visualization.
 - `base_construction` - Test base building procedures
 - `isru_pipeline` - Test in-situ resource utilization
 
-### 3. Organization Monitor (`/admin/organizations`)
+#### Edit (`/admin/celestial_bodies/:id/edit`)
+
+Admin-only interface for editing celestial body names and aliases.
+
+**Features:**
+- Name editing with validation
+- Alias management (add/remove alternative names)
+- Clear warnings about protected properties
+- Restricted to admin users only
+
+**Controller:** `Admin::CelestialBodiesController#edit`, `Admin::CelestialBodiesController#update`
+
+**Permitted Parameters:**
+- `name` - Primary celestial body name
+- `aliases` - Array of alternative names
+
+**Protected Properties:**
+All physical and astronomical properties (mass, radius, temperature, atmosphere, etc.) are read-only and sourced from authoritative data (JSON/StarSim generation). Only metadata (names/aliases) can be edited through this interface.
+
+### 3. Solar Systems (`/admin/solar_systems`)
+
+#### Index (`/admin/solar_systems`)
+
+Hierarchical solar system catalog organized by galaxy membership.
+
+**Features:**
+- Complete solar system catalog grouped by galaxy
+- Statistics dashboard: total systems, systems with stars, habitable systems, average bodies per system
+- Galaxy-based organization with separate section for ungrouped systems
+- System details: star count, body count, central star information
+- Links to individual system detail views and public solar system views
+
+**Controller:** `Admin::SolarSystemsController#index`
+
+```ruby
+# Load solar systems with galaxy associations
+@solar_systems = SolarSystem.includes(:galaxy, :stars, :celestial_bodies)
+                           .order('galaxies.name, solar_systems.name')
+                           .limit(100)
+
+@galaxies = Galaxy.includes(:solar_systems).order(:name)
+
+@system_stats = calculate_system_stats
+```
+
+**System Statistics:**
+- **Total Systems**: Count of all solar systems
+- **Systems with Stars**: Systems containing at least one star
+- **Habitable Systems**: Systems with terrestrial planets in habitable temperature range
+- **Average Bodies/System**: Mean celestial bodies per solar system
+
+#### Show (`/admin/solar_systems/:id`)
+
+Detailed solar system monitoring and celestial body overview.
+
+**Features:**
+- System header with galaxy context and creation metadata
+- Central star information (if present): type, temperature, luminosity, age
+- Complete celestial body listing with physical properties
+- Navigation links to galaxy view and public solar system interface
+- Body classification statistics (terrestrial planets, gas giants, etc.)
+
+**Controller:** `Admin::SolarSystemsController#show`
+
+```ruby
+# Load system with full associations
+@solar_system = SolarSystem.includes(:galaxy, :stars, :celestial_bodies)
+                          .find(params[:id])
+
+@celestial_bodies = @solar_system.celestial_bodies
+                                .includes(:atmosphere)
+                                .order(:name)
+```
+
+### 4. Galaxies (`/admin/galaxies`)
+
+#### Index (`/admin/galaxies`)
+
+Galaxy overview with type distribution and system counts.
+
+**Features:**
+- Complete galaxy catalog with type classification
+- Statistics dashboard: total galaxies, total systems, average systems per galaxy
+- Galaxy type breakdown visualization
+- Individual galaxy cards with system counts and mass information
+- Links to detailed galaxy views
+
+**Controller:** `Admin::GalaxiesController#index`
+
+```ruby
+# Load all galaxies with system counts
+@galaxies = Galaxy.includes(:solar_systems)
+                  .order(:name)
+
+@galaxy_stats = calculate_galaxy_stats
+```
+
+**Galaxy Statistics:**
+- **Total Galaxies**: Count of all galaxies
+- **Total Systems**: Sum of all solar systems across galaxies
+- **Avg Systems/Galaxy**: Mean solar systems per galaxy
+- **Type Breakdown**: Count by galaxy type (spiral, elliptical, irregular, etc.)
+
+#### Show (`/admin/galaxies/:id`)
+
+Galaxy detail view with complete solar system listing.
+
+**Features:**
+- Galaxy header with type, mass, and creation metadata
+- Complete solar system listing within the galaxy
+- System details: star count, body count, central star information
+- Navigation links to individual system views
+- Galaxy-wide statistics and system distribution
+
+**Controller:** `Admin::GalaxiesController#show`
+
+```ruby
+# Load galaxy with all systems and their details
+@galaxy = Galaxy.includes(solar_systems: [:stars, :celestial_bodies])
+                .find(params[:id])
+
+@solar_systems = @galaxy.solar_systems
+                        .includes(:stars, :celestial_bodies)
+                        .order(:name)
+```
+
+### 5. Organization Monitor (`/admin/organizations`)
 
 Monitor all organizations in the game universe with proper separation by ownership type.
 
@@ -377,6 +503,12 @@ namespace :admin do
       post :run_ai_test
     end
   end
+  
+  # Solar Systems
+  resources :solar_systems, only: [:index, :show]
+  
+  # Galaxies
+  resources :galaxies, only: [:index, :show]
   
   # Other sections (stub controllers)
   resources :organizations, only: [:index]
