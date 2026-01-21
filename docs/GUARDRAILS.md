@@ -116,6 +116,14 @@
 - **Non-Compliant:** "Welcome to Arrakis, home of the Fremen" (direct reference, potential infringement).
 - **Implementation Check:** Before adding, verify against public-domain status or generic nature.
 
+### 🏷️ Easter Egg Categories & Sub-Categories
+- **World Naming:** System/planet name references (e.g., Celestial Anomaly)
+- **Found Footage:** Discovery logs and signals (e.g., Monolith, Ghost Ship)
+- **AI Personality:** Sentient computer behaviors (e.g., HAL protocol)
+- **Vessel Logs:** Ship sightings and encounters (e.g., Serenity-class)
+- **Improbable Events:** Reality-bending anomalies (e.g., Infinite Improbability Drive)
+- **Industrial Horror:** Corporate exploitation themes (e.g., Nostromo incident)
+
 This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
 
 ---
