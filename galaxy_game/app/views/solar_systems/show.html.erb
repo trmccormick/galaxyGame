@@ -20,7 +20,7 @@
       <div class="system-info">
         <h2><%= @solar_system.name %></h2>
         <p>Star: <%= @solar_system.stars.first&.name || "Unknown" %> 
-           (<%= @solar_system.stars.first&.star_type || "Unknown Type" %>)</p>
+           (<%= @solar_system.stars.first&.type_of_star || "Unknown Type" %>)</p>
         <p>Planets: <%= @celestial_bodies.count %></p>
       </div>
     </div>

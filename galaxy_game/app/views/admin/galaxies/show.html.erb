@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Admin Galaxy: <%= @galaxy.name %></title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        /* Galaxy detail styles */
+        .galaxy-header {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .galaxy-title {
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .galaxy-meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .galaxy-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .system-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            transition: all 0.2s;
+        }
+
+        .system-card:hover {
+            border-color: #0f0;
+            background: #222;
+        }
+
+        .system-name {
+            color: #0ff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .system-stats {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .system-details {
+            color: #0f0;
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+
+        .system-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            background: #222;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>GALAXY GAME - GALAXY ADMIN</h1>
+            <div id="planetInfo">
+                Viewing: <%= @galaxy.name %> | <%= @solar_systems.count %> Solar Systems
+            </div>
+        </div>
+
+        <!-- Left Panel: Admin Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🎯 ADMIN SECTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin'">
+                    📊 Dashboard
+                </button>
+                <button class="tool-button active" onclick="window.location.href='/admin/galaxies'">
+                    🌌 Galaxies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/solar_systems'">
+                    ☀️ Solar Systems
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies'">
+                    🌍 Celestial Bodies
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>🔗 QUICK LINKS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/galaxies'">
+                    🌌 All Galaxies
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <!-- Galaxy Header -->
+            <div class="galaxy-header">
+                <div class="galaxy-title"><%= @galaxy.name %></div>
+                <div class="galaxy-meta">
+                    Type: <%= @galaxy.galaxy_type&.humanize || 'Unknown' %> Galaxy |
+                    Identifier: <%= @galaxy.identifier %> |
+                    Created: <%= @galaxy.created_at.strftime('%Y-%m-%d') %>
+                </div>
+                <div class="galaxy-stats">
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @solar_systems.count %></div>
+                        <div class="stat-label">Solar Systems</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @solar_systems.joins(:celestial_bodies).count %></div>
+                        <div class="stat-label">Total Bodies</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><%= @solar_systems.joins(:stars).distinct.count %></div>
+                        <div class="stat-label">Systems with Stars</div>
+                    </div>
+                    <% if @galaxy.mass %>
+                        <div class="stat-item">
+                            <div class="stat-value"><%= number_with_precision(@galaxy.mass, precision: 1) %></div>
+                            <div class="stat-label">Mass (10^12 M☉)</div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+
+            <!-- Solar Systems -->
+            <div class="tool-section">
+                <h3>☀️ SOLAR SYSTEMS</h3>
+                <div class="systems-grid">
+                    <% @solar_systems.each do |system| %>
+                        <div class="system-card">
+                            <div class="system-name"><%= system.name %></div>
+                            <div class="system-stats">
+                                <%= system.celestial_bodies.count %> Bodies |
+                                <%= system.stars.count %> Stars |
+                                ID: <%= system.identifier %>
+                            </div>
+                            <div class="system-details">
+                                <% if system.stars.first %>
+                                    Star: <%= system.stars.first.name %> (<%= system.stars.first.type_of_star || 'Unknown' %>)<br>
+                                    Temperature: <%= system.stars.first.temperature %>K |
+                                    Luminosity: <%= number_with_precision(system.stars.first.luminosity, precision: 1) %> W
+                                <% else %>
+                                    No central star detected
+                                <% end %>
+                            </div>
+                            <div class="system-actions">
+                                <button class="action-btn" onclick="window.location.href='/admin/solar_systems/<%= system.id %>'">
+                                    View Details
+                                </button>
+                                <button class="action-btn" onclick="window.location.href='/solar_systems/<%= system.id %>'">
+                                    Public View
+                                </button>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+
+                <% if @solar_systems.empty? %>
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        No solar systems in this galaxy.
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
