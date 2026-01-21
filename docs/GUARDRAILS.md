@@ -123,6 +123,8 @@
 - **Vessel Logs:** Ship sightings and encounters (e.g., Serenity-class)
 - **Improbable Events:** Reality-bending anomalies (e.g., Infinite Improbability Drive)
 - **Industrial Horror:** Corporate exploitation themes (e.g., Nostromo incident)
+- **Military/Refugee Fleet:** Fleet sightings and refugee encounters (e.g., Lost Fleet)
+- **Smuggler/Outlaw:** Rogue vessel and outlaw activities (e.g., Kessel Run)
 
 This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
 
