@@ -22,7 +22,7 @@
 
         #mainContainer {
             display: grid;
-            grid-template-columns: 250px 1fr 300px;
+            grid-template-columns: 250px 1fr 350px;
             grid-template-rows: 80px 1fr;
             height: 100vh;
             gap: 2px;
@@ -209,9 +209,21 @@
             text-transform: uppercase;
         }
 
+        .data-table th:nth-child(1) { width: 25%; } /* Name */
+        .data-table th:nth-child(2) { width: 30%; } /* Type */
+        .data-table th:nth-child(3) { width: 20%; } /* Surface Temp */
+        .data-table th:nth-child(4) { width: 25%; } /* Actions */
+
         .data-table td {
             color: #0f0;
             font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: flex-start;
         }
 
         .btn {
@@ -377,8 +389,10 @@
                                 <td><%= body.body_type&.humanize || body.class.name.demodulize.underscore.humanize %></td>
                                 <td><%= body.surface_temperature ? "#{body.surface_temperature.round} K" : "Unknown" %></td>
                                 <td>
-                                    <a href="<%= celestial_body_detail_path(id: body.id) %>" class="btn btn-small">Details</a>
-                                    <a href="<%= run_simulation_path(body_id: body.id) %>" class="btn btn-small" data-method="post">Simulate</a>
+                                    <div class="action-buttons">
+                                        <a href="<%= celestial_body_detail_path(id: body.id) %>" class="btn btn-small">Details</a>
+                                        <a href="<%= run_simulation_path(body_id: body.id) %>" class="btn btn-small" data-method="post">Simulate</a>
+                                    </div>
                                 </td>
                             </tr>
                         <% end %>
