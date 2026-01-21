@@ -823,5 +823,179 @@ module AIManager
         :low
       end
     end
+
+    # Generate subtle sci-fi Easter Egg based on world characteristics
+    # Returns hash with flavor_text, easter_egg_id, and naming_description for JSON inclusion
+    def generate_sci_fi_easter_egg
+      return { flavor_text: nil, easter_egg_id: nil, naming_description: nil } unless @celestial_body
+
+      temp = @celestial_body['surface_temperature'].to_f
+      pressure = @celestial_body['known_pressure'].to_f
+      has_ice = has_water_ice?
+      has_atmosphere = pressure > 0.1
+      world_type = determine_world_type
+
+      # Load available Easter Eggs
+      easter_eggs = load_easter_eggs
+
+      # Find matching Easter Egg based on world characteristics
+      matching_egg = find_matching_easter_egg(easter_eggs, world_type, temp, pressure, has_ice, has_atmosphere, false)
+
+      if matching_egg
+        {
+          flavor_text: matching_egg['flavor_text'],
+          easter_egg_id: matching_egg['easter_egg_id'],
+          naming_description: matching_egg['naming_description'] || "A world that evokes the spirit of classic science fiction exploration."
+        }
+      else
+        # Fallback to generic descriptions
+        generate_generic_easter_egg(world_type, temp, pressure, has_ice, has_atmosphere)
+      end
+    end
+
+    public
+
+    # Generate easter egg for systems (e.g., wormhole systems)
+    def generate_system_easter_egg(has_wormhole = false)
+      return nil unless has_wormhole
+
+      easter_eggs = load_easter_eggs
+
+      # Find matching Easter Egg based on system characteristics
+      matching_egg = find_matching_easter_egg(easter_eggs, nil, 0, 0, false, false, has_wormhole)
+
+      if matching_egg
+        {
+          flavor_text: matching_egg['flavor_text'],
+          easter_egg_id: matching_egg['easter_egg_id'],
+          manifest_entry: matching_egg['manifest_entry']
+        }
+      else
+        nil
+      end
+    end
+
+    private
+
+    def load_easter_eggs
+      # Cache Easter Eggs to avoid repeated file I/O
+      @easter_eggs_cache ||= begin
+        easter_eggs_path = Rails.root.join('app', 'data', 'easter_eggs')
+        return [] unless Dir.exist?(easter_eggs_path)
+
+        Dir.glob("#{easter_eggs_path}/*.json").map do |file|
+          begin
+            data = JSON.parse(File.read(file))
+            validate_easter_egg_data(data, file)
+            data
+          rescue JSON::ParserError => e
+            Rails.logger.warn("Failed to parse Easter Egg file: #{file} - #{e.message}")
+            nil
+          rescue StandardError => e
+            Rails.logger.warn("Error loading Easter Egg file: #{file} - #{e.message}")
+            nil
+          end
+        end.compact
+      end
+    end
+
+    def clear_easter_eggs_cache
+      @easter_eggs_cache = nil
+    end
+
+    private
+
+    def validate_easter_egg_data(data, file_path)
+      required_fields = ['easter_egg_id', 'category', 'flavor_text']
+      missing_fields = required_fields.select { |field| data[field].nil? }
+
+      if missing_fields.any?
+        Rails.logger.warn("Easter Egg file #{file_path} missing required fields: #{missing_fields.join(', ')}")
+      end
+
+      # Validate trigger conditions structure
+      if data['trigger_conditions']
+        triggers = data['trigger_conditions']
+        if triggers['rarity'] && (triggers['rarity'] < 0.0 || triggers['rarity'] > 1.0)
+          Rails.logger.warn("Easter Egg file #{file_path} has invalid rarity (must be 0.0-1.0): #{triggers['rarity']}")
+        end
+      end
+    end
+
+    def find_matching_easter_egg(easter_eggs, world_type, temp, pressure, has_ice, has_atmosphere, has_wormhole = false)
+      # Filter by world type and conditions
+      candidates = easter_eggs.select do |egg|
+        triggers = egg['trigger_conditions'] || {}
+        next false unless triggers['rarity'].to_f > rand # Rarity check
+
+        # Check specific conditions
+        next false if triggers['has_ice'] && !has_ice
+        next false if triggers['temperature_max'] && temp > triggers['temperature_max'].to_f
+        next false if triggers['temperature_min'] && temp < triggers['temperature_min'].to_f
+        next false if triggers['pressure_min'] && pressure < triggers['pressure_min'].to_f
+        next false if triggers['pressure_max'] && pressure > triggers['pressure_max'].to_f
+        next false if triggers['has_wormhole'] && !has_wormhole
+
+        case triggers['world_type']
+        when 'desert' then temp > 300 && pressure < 1.0 && !has_ice
+        when 'icy' then has_ice && temp < 200
+        when 'high_pressure' then pressure > 50 && temp > 400
+        when 'gas_giant_moon' then world_type == :gas_giant_moon
+        when 'terrestrial_planet' then world_type == :terrestrial_planet
+        else true # No specific type requirement
+        end
+      end
+
+      # Prefer more specific matches (those with specific conditions)
+      specific_candidates = candidates.select do |egg|
+        triggers = egg['trigger_conditions'] || {}
+        triggers.key?('world_type') || triggers.key?('has_ice') || triggers.key?('temperature_max') || triggers.key?('temperature_min') || triggers.key?('has_wormhole')
+      end
+      return specific_candidates.sample if specific_candidates.any?
+
+      # Fall back to general matches
+      candidates.sample
+    end
+
+    def generate_generic_easter_egg(world_type, temp, pressure, has_ice, has_atmosphere)
+      # Desert planet (Dune-like)
+      if temp > 300 && pressure < 1.0 && !has_ice && world_type == :terrestrial_planet
+        return {
+          flavor_text: "A harsh world where the sands whisper secrets of ancient civilizations.",
+          easter_egg_id: "desert_world_generic",
+          naming_description: "This world's name draws inspiration from the unforgiving deserts of a renowned science fiction epic."
+        }
+      end
+
+      # Icy moon (Europa-like, but with sci-fi nod)
+      if has_ice && temp < 200 && world_type == :gas_giant_moon
+        return {
+          flavor_text: "Subsurface oceans hide mysteries beneath the frozen surface.",
+          easter_egg_id: "icy_moon_generic",
+          naming_description: "Named after the enigmatic icy worlds featured in classic space exploration tales."
+        }
+      end
+
+      # Gas giant moon with atmosphere (Titan-like)
+      if world_type == :gas_giant_moon && has_atmosphere
+        return {
+          flavor_text: "Thick atmosphere shrouds a world of hydrocarbon lakes and organic chemistry.",
+          easter_egg_id: "methane_world_generic",
+          naming_description: "This moon's designation echoes the hydrocarbon-rich worlds from interstellar adventure series."
+        }
+      end
+
+      # High-pressure world (Venus-like)
+      if pressure > 50 && temp > 400
+        return {
+          flavor_text: "Crushing pressures and searing heat forge a world of extreme conditions.",
+          easter_egg_id: "pressure_world_generic",
+          naming_description: "Inspired by the hellish, high-pressure planets depicted in pioneering science fiction works."
+        }
+      end
+
+      # Default: no Easter Egg
+      { flavor_text: nil, easter_egg_id: nil, naming_description: nil }
+    end
   end
 end
