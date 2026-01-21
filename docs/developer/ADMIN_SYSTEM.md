@@ -350,10 +350,13 @@ end
 ```
 
 **View Features:**
-- Interactive canvas-based solar system visualization
+- Interactive canvas-based solar system visualization with orbital mechanics
 - Celestial body data passed as JSON with parent_body relationships for satellites
 - Safe handling of missing body_type properties with fallback to class name
-- Responsive table display of celestial body properties
+- Three-panel SimEarth aesthetic layout matching admin interface
+- Left navigation panel with system links and admin shortcuts
+- Center canvas visualization with system statistics header
+- Right details panel with comprehensive star information and celestial bodies table
 
 ### 4. Galaxies (`/admin/galaxies`)
 
