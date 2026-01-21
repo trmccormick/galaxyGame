@@ -1,145 +1,430 @@
+<!-- filepath: /Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/views/game/celestial_body_detail.html.erb -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title><%= @celestial_body&.name || "Celestial Body" %> Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Game - <%= @celestial_body&.name || "Celestial Body" %> Management</title>
+    <style>
+        /* SimEarth Aesthetic - Matching Admin Interface */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            overflow: hidden;
+        }
+
+        #mainContainer {
+            display: grid;
+            grid-template-columns: 250px 1fr 350px;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 2px;
+            background: #111;
+        }
+
+        /* Header Styles */
+        #header {
+            grid-column: 1 / -1;
+            background: #1a1a1a;
+            padding: 15px 15px 25px 15px;
+            border-bottom: 2px solid #0f0;
+        }
+
+        #header h1 {
+            font-size: 24px;
+            color: #0ff;
+            margin: 0;
+        }
+
+        #planetInfo {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Left Panel: Tools */
+        #toolPanel {
+            background: #1a1a1a;
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 2px solid #0f0;
+        }
+
+        .tool-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .tool-section h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .tool-button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .tool-button:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .tool-button.active {
+            background: #0ff;
+            color: #000;
+            border-color: #0ff;
+        }
+
+        /* Main Content Area */
+        #mainContent {
+            padding: 20px;
+            overflow-y: auto;
+            background: #0a0a0a;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+        }
+
+        /* Planet Header */
+        .planet-header {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 20px;
+        }
+
+        .planet-title {
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .planet-meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .planet-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            background: #000;
+            border: 1px solid #0f0;
+            position: relative;
+            min-height: 400px;
+        }
+
+        #planetCanvas {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            background: #000;
+        }
+
+        /* Right Panel: Planet Details */
+        #detailsPanel {
+            background: #1a1a1a;
+            padding: 15px;
+            overflow-y: auto;
+            border-left: 2px solid #0f0;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+
+        .detail-section h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .detail-section h4 {
+            color: #0ff;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .data-table th {
+            color: #0ff;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            color: #0f0;
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: flex-start;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            background: #222;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .btn-small {
+            padding: 3px 8px;
+            font-size: 10px;
+        }
+    </style>
 </head>
 <body>
-  <!-- Top Menu Bar -->
-  <div id="menuBar">
-    <div class="dropdown">
-      <a href="#">File</a>
-      <div class="dropdown-content">
-        <a href="<%= root_path %>">System Overview</a>
-        <a href="#" id="savePlanet">Save Status</a>
-        <a href="#" id="snapshot">Snapshot</a>
-        <a href="<%= simulation_path %>">Run Simulation</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#">View</a>
-      <div class="dropdown-content">
-        <a href="#" id="map">Map</a>
-        <a href="#" id="globe">Globe</a>
-        <a href="#" id="terrain">Terrain</a>
-        <a href="#" id="temperature">Temperature</a>
-        <a href="#" id="rainfall">Rainfall</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#">Systems</a>
-      <div class="dropdown-content">
-        <a href="#" id="geosphere">Geosphere</a>
-        <a href="#" id="atmosphere">Atmosphere</a>
-        <a href="#" id="hydrosphere">Hydrosphere</a>
-        <a href="#" id="biosphere">Biosphere</a>
-        <% if @celestial_body&.biosphere&.habitable_ratio.to_f > 0.4 %>
-          <a href="#" id="civilization">Civilization</a>
-        <% end %>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#">Analysis</a>
-      <div class="dropdown-content">
-        <a href="#" id="airSample">Atmosphere Composition</a>
-        <a href="#" id="waterSample">Water Composition</a>
-        <a href="#" id="biomes">Biomes</a>
-        <% if @celestial_body&.biosphere&.life_forms&.any? %>
-          <a href="#" id="lifeForms">Life-Forms</a>
-        <% end %>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#">Tools</a>
-      <div class="dropdown-content">
-        <a href="#" id="terraforming">Terraforming</a>
-        <a href="#" id="instruments">Instruments</a>
-        <a href="#" id="colonize">Colonize</a>
-        <a href="#" id="missions">Missions</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#">Simulation</a>
-      <div class="dropdown-content">
-        <a href="#" id="fast">Fast</a>
-        <a href="#" id="moderate">Moderate</a>
-        <a href="#" id="slow">Slow</a>
-        <a href="#" id="pause">Pause</a>
-        <a href="<%= run_simulation_path(id: @celestial_body&.id) %>" id="runSim">Run Simulation</a>
-      </div>
-    </div>
-  </div>
+    <div id="mainContainer">
+        <!-- Header -->
+        <div id="header">
+            <h1><%= @celestial_body&.name || "Celestial Body" %> Management</h1>
+            <div id="planetInfo">
+                Type: <%= @celestial_body&.type&.demodulize&.humanize || @celestial_body&.class&.name&.demodulize&.humanize || "Unknown" %> |
+                Temperature: <%= @celestial_body&.surface_temperature ? "#{@celestial_body.surface_temperature.round} K" : "Unknown" %>
+            </div>
+        </div>
 
-  <!-- Sidebar Navigation -->
-  <div id="sidebar">
-    <a href="<%= root_path %>" id="backToSystem">Back to System</a>
-    <a href="#" id="planetInfo">Planet Info</a>
-    <a href="#" id="terraformingTools">Terraforming</a>
-    <a href="<%= simulation_path %>" id="simulation">Simulation</a>
-    <a href="#" id="settings">Settings</a>
-    <a href="#" id="help">Help</a>
-  </div>
+        <!-- Left Panel: Tools -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>File Operations</h3>
+                <button class="tool-button" onclick="location.href='<%= root_path %>'">System Overview</button>
+                <button class="tool-button" id="savePlanet">Save Status</button>
+                <button class="tool-button" id="snapshot">Snapshot</button>
+                <%= button_to 'Run Simulation', run_simulation_path(id: @celestial_body&.id), method: :post, class: 'tool-button' %>
+            </div>
 
-  <!-- Main Content Area -->
-  <div id="main-content">
-    <% if @celestial_body %>
-      <div class="planet-header">
-        <h1><%= @celestial_body.name %></h1>
-        <p>Type: <%= @celestial_body.body_type || "Unknown" %></p>
-        <p>Surface Temperature: <%= number_to_temperature(@celestial_body.surface_temperature) %></p>
-      </div>
-    <% end %>
-    <canvas id="planetCanvas" width="800" height="600"></canvas>
-  </div>
+            <div class="tool-section">
+                <h3>View Modes</h3>
+                <button class="tool-button" id="map">Map</button>
+                <button class="tool-button" id="globe">Globe</button>
+                <button class="tool-button" id="terrain">Terrain</button>
+                <button class="tool-button" id="temperature">Temperature</button>
+                <button class="tool-button" id="rainfall">Rainfall</button>
+            </div>
 
-  <!-- Planet Info Panel -->
-  <div id="planetInfoPanel" class="side-panel">
-    <% if @celestial_body %>
-      <h2>Planet Information</h2>
-      <table>
-        <tr>
-          <td>Name:</td>
-          <td><%= @celestial_body.name %></td>
-        </tr>
-        <tr>
-          <td>Type:</td>
-          <td><%= @celestial_body.body_type || "Unknown" %></td>
-        </tr>
-        <tr>
-          <td>Diameter:</td>
-          <td><%= number_with_delimiter((@celestial_body.radius * 2 / 1000.0).round(2)) %> km</td>
-        </tr>
-        <tr>
-          <td>Mass:</td>
-          <td><%= number_to_human(@celestial_body.mass) %> kg</td>
-        </tr>
-        <tr>
-          <td>Surface Gravity:</td>
-          <td><%= number_with_precision(@celestial_body.gravity, precision: 2) %> m/s²</td>
-        </tr>
-        <% if @celestial_body.atmosphere %>
-          <tr>
-            <td>Atmosphere:</td>
-            <td><%= number_with_precision(@celestial_body.atmosphere.pressure, precision: 2) %> atm</td>
-          </tr>
-        <% end %>
-        <% if @celestial_body.hydrosphere %>
-          <tr>
-            <td>Water Coverage:</td>
-            <td><%= number_to_percentage(@celestial_body.hydrosphere.water_coverage_percentage, precision: 1) %></td>
-          </tr>
-        <% end %>
-        <% if @celestial_body.geosphere %>
-          <tr>
-            <td>Geological Activity:</td>
-            <td><%= number_to_percentage(@celestial_body.geosphere.geological_activity, precision: 0) %></td>
-          </tr>
-        <% end %>
-      </table>
-    <% else %>
-      <p>No celestial body selected</p>
-    <% end %>
-  </div>
+            <div class="tool-section">
+                <h3>Systems</h3>
+                <% if @celestial_body&.geosphere %>
+                    <button class="tool-button" id="geosphere">Geosphere</button>
+                <% end %>
+                <% if @celestial_body&.atmosphere %>
+                    <button class="tool-button" id="atmosphere">Atmosphere</button>
+                <% end %>
+                <% if @celestial_body&.hydrosphere %>
+                    <button class="tool-button" id="hydrosphere">Hydrosphere</button>
+                <% end %>
+                <% if @celestial_body&.biosphere %>
+                    <button class="tool-button" id="biosphere">Biosphere</button>
+                    <% if @celestial_body.biosphere.habitable_ratio.to_f > 0.4 %>
+                        <button class="tool-button" id="civilization">Civilization</button>
+                    <% end %>
+                <% end %>
+            </div>
 
-  <%= javascript_import_module_tag 'planet_detail' %>
+            <div class="tool-section">
+                <h3>Analysis</h3>
+                <% if @celestial_body&.atmosphere %>
+                    <button class="tool-button" id="airSample">Atmosphere Composition</button>
+                <% end %>
+                <% if @celestial_body&.hydrosphere %>
+                    <button class="tool-button" id="waterSample">Water Composition</button>
+                <% end %>
+                <button class="tool-button" id="biomes">Biomes</button>
+                <% if @celestial_body&.biosphere&.life_forms&.any? %>
+                    <button class="tool-button" id="lifeForms">Life-Forms</button>
+                <% end %>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="mainContent">
+            <% if @celestial_body %>
+                <div class="planet-header">
+                    <div class="planet-title"><%= @celestial_body.name %></div>
+                    <div class="planet-meta">
+                        <%= @celestial_body.type.demodulize.humanize %> |
+                        Orbital Period: <%= @celestial_body.orbital_period ? "#{'%.1f' % @celestial_body.orbital_period} days" : "Unknown" %>
+                    </div>
+                    <div class="planet-stats">
+                        <div class="stat-item">
+                            <div class="stat-value"><%= @celestial_body.surface_temperature ? "#{@celestial_body.surface_temperature.round}" : "?" %></div>
+                            <div class="stat-label">Temperature (K)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><%= @celestial_body.respond_to?(:mass) && @celestial_body.mass ? "#{'%.2e' % @celestial_body.mass}" : "?" %></div>
+                            <div class="stat-label">Mass (kg)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><%= @celestial_body.respond_to?(:radius) && @celestial_body.radius ? "#{'%.1f' % (@celestial_body.radius / 1000)}" : "?" %></div>
+                            <div class="stat-label">Radius (km)</div>
+                        </div>
+                    </div>
+                </div>
+            <% end %>
+
+            <div class="canvas-container">
+                <canvas id="planetCanvas" width="800" height="600"></canvas>
+            </div>
+        </div>
+
+        <!-- Right Panel: Planet Details -->
+        <div id="detailsPanel">
+            <div class="detail-section">
+                <h3>Planet Information</h3>
+                <% if @celestial_body %>
+                    <p><strong>Name:</strong> <%= @celestial_body.name %></p>
+                    <p><strong>Type:</strong> <%= @celestial_body.type.demodulize.humanize %></p>
+                    <p><strong>Surface Temperature:</strong> <%= @celestial_body.surface_temperature ? "#{@celestial_body.surface_temperature.round} K" : "Unknown" %></p>
+                    <p><strong>Orbital Period:</strong> <%= @celestial_body.orbital_period ? "#{'%.1f' % @celestial_body.orbital_period} days" : "Unknown" %></p>
+
+                    <% @celestial_body.spheres_by_level.each do |sphere_info| %>
+                        <h4>
+                            <%= sphere_info[:name].humanize %> 
+                            <small style="color: #888; font-weight: normal;">(Level <%= sphere_info[:level] %> - <%= sphere_info[:description] %>)</small>
+                        </h4>
+                        
+                        <% sphere = sphere_info[:sphere] %>
+                        <% case sphere_info[:name] %>
+                        <% when 'atmosphere' %>
+                            <p><strong>Composition:</strong> <%= sphere.composition || "Unknown" %></p>
+                            <p><strong>Pressure:</strong> <%= sphere.pressure ? "#{'%.2f' % sphere.pressure} atm" : "Unknown" %></p>
+                        <% when 'biosphere' %>
+                            <p><strong>Habitability:</strong> <%= "#{'%.1f' % (sphere.habitable_ratio * 100)}%" %></p>
+                            <% if sphere.life_forms&.any? %>
+                                <p><strong>Life Forms:</strong> <%= sphere.life_forms.count %></p>
+                            <% end %>
+                        <% when 'hydrosphere' %>
+                            <p><strong>Water Coverage:</strong> <%= "#{'%.1f' % sphere.water_coverage}%" %></p>
+                        <% when 'subsurface_hydrosphere' %>
+                            <p><strong>Deep Ocean:</strong> Subsurface liquid layer</p>
+                            <p><strong>Composition:</strong> <%= sphere.composition ? sphere.composition.map { |k,v| "#{k}: #{v}%" }.join(', ') : "Unknown" %></p>
+                        <% when 'geosphere' %>
+                            <p><strong>Geological Activity:</strong> <%= sphere.geological_activity ? "#{'%.1f' % (sphere.geological_activity * 100)}%" : "Unknown" %></p>
+                        <% when 'cryosphere' %>
+                            <p><strong>Shell Type:</strong> <%= sphere.shell_type&.humanize || "Unknown" %></p>
+                            <p><strong>Thickness:</strong> <%= sphere.thickness ? "#{'%.0f' % (sphere.thickness / 1000.0)} km" : "Unknown" %></p>
+                            <p><strong>Composition:</strong> <%= sphere.composition ? sphere.composition.map { |k,v| "#{k}: #{v}%" }.join(', ') : "Unknown" %></p>
+                            <p><strong>Artificial:</strong> <%= sphere.artificial ? "Yes" : "No" %></p>
+                            <% if sphere.convecting %>
+                                <p><strong>Convecting:</strong> Yes (active ice flow)</p>
+                            <% end %>
+                        <% end %>
+                        <br>
+                    <% end %>
+                <% else %>
+                    <p>No celestial body data available.</p>
+                <% end %>
+            </div>
+
+            <div class="detail-section">
+                <h3>Actions</h3>
+                <div class="action-buttons">
+                    <a href="<%= root_path %>" class="btn btn-small">Back to System</a>
+                    <a href="<%= simulation_path %>" class="btn btn-small">Simulation Overview</a>
+                    <% if @celestial_body %>
+                        <%= button_to 'Run Simulation', run_simulation_path(id: @celestial_body.id), method: :post, class: 'btn btn-small' %>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add active state to tool buttons
+        document.querySelectorAll('.tool-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons in the same section
+                this.parentElement.querySelectorAll('.tool-button').forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+            });
+        });
+
+        // Placeholder for canvas rendering
+        const canvas = document.getElementById('planetCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Simple placeholder rendering
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0f0';
+        ctx.font = '20px Courier New';
+        ctx.fillText('<%= @celestial_body&.name || "Celestial Body" %>', 50, 50);
+        ctx.fillText('Visualization Loading...', 50, 100);
+    </script>
 </body>
 </html>
+
