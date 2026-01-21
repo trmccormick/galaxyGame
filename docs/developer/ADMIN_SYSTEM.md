@@ -334,6 +334,27 @@ The public solar systems interface provides read-only access to solar system inf
 **Controller:** `SolarSystemsController`
 **Views:** Interactive solar system visualization with celestial body details
 
+**Controller Implementation:**
+
+```ruby
+class SolarSystemsController < ApplicationController
+  def index
+    @solar_systems = SolarSystem.includes(:stars, :celestial_bodies).order(:name)
+  end
+
+  def show
+    @solar_system = SolarSystem.includes(:galaxy, :stars, :celestial_bodies).find(params[:id])
+    @celestial_bodies = @solar_system.celestial_bodies.includes(:atmosphere).order(:name) if @solar_system
+  end
+end
+```
+
+**View Features:**
+- Interactive canvas-based solar system visualization
+- Celestial body data passed as JSON with parent_body relationships for satellites
+- Safe handling of missing body_type properties with fallback to class name
+- Responsive table display of celestial body properties
+
 ### 4. Galaxies (`/admin/galaxies`)
 
 #### Index (`/admin/galaxies`)
