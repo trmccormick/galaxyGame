@@ -52,7 +52,6 @@ module Admin
     # GET /admin/celestial_bodies/:id/monitor
     # Main monitoring interface with three-panel layout
     def monitor
-      @planet_map = @celestial_body.respond_to?(:planet_map) ? @celestial_body.planet_map : nil
       @geological_features = load_geological_features
       @ai_missions = load_ai_missions
       @sphere_summary = build_sphere_summary
