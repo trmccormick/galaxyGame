@@ -37,6 +37,14 @@ RSpec.describe UnitModuleAssemblyService, type: :service do
     # Make sure the settlement has adequate storage capacity
     allow(settlement).to receive(:surface_storage?).and_return(true)
     
+    # Mock lookup services to return valid data for test items
+    allow_any_instance_of(Lookup::ItemLookupService).to receive(:find_item).and_call_original
+    allow_any_instance_of(Lookup::ItemLookupService).to receive(:find_item).with('basic_engine').and_return({'name' => 'Basic Engine', 'type' => 'unit'})
+    allow_any_instance_of(Lookup::ItemLookupService).to receive(:find_item).with('life_support').and_return({'name' => 'Life Support', 'type' => 'unit'})
+    allow_any_instance_of(Lookup::ItemLookupService).to receive(:find_item).with('efficiency_module').and_return({'name' => 'Efficiency Module', 'type' => 'module'})
+    allow_any_instance_of(Lookup::ItemLookupService).to receive(:find_item).with('cargo_expander').and_return({'name' => 'Cargo Expander', 'type' => 'rig'})
+    allow_any_instance_of(Lookup::ItemLookupService).to receive(:find_item).with('landing_gear').and_return({'name' => 'Landing Gear', 'type' => 'unit'})
+    
     # Add items to inventory - explicitly set the player as owner for each item
     inventory.add_item('basic_engine', 2, player)
     inventory.add_item('life_support', 1, player)
