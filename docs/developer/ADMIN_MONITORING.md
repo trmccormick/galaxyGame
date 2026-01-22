@@ -25,11 +25,13 @@ Where `:id` is the ID of the celestial body you want to monitor.
 - **View Layers**: Toggle map visualization layers (terrain, water, biomes, features, temperature, resources)
 - **Geological Features**: Quick reference to planetary geological features
 
-#### Center Panel: Interactive Map
-- Real-time planet map visualization
-- Integrates with existing PlanetMap system
-- Layer-based rendering (terrain, water, biomes, geological features)
-- Click-to-inspect tile functionality
+#### Center Panel: Interactive Planetary Map
+- **Real-time planet map visualization** with SimEarth-style interface
+- **Layer-based rendering**: Toggle terrain, water, biomes, geological features, temperature, and resource overlays
+- **Interactive features**: Click-to-inspect tiles and geological features with detailed information
+- **Zoom controls**: Adjustable zoom level for detailed exploration
+- **Geological markers**: Color-coded features (lava tubes, craters, strategic sites) with priority indicators
+- **Coordinate display**: Latitude/longitude information for clicked locations
 
 #### Right Panel: Sphere Data
 - **Atmosphere**: Pressure, temperature, composition, total mass, habitability
