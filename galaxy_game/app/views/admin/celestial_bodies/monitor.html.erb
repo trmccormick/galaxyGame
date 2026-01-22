@@ -137,7 +137,7 @@
                         <div class="data-row">
                             <span class="data-label">Distance from Star:</span>
                             <span class="data-value">
-                                <% if @celestial_body.solar_system&.star %>
+                                <% if @celestial_body.solar_system&.primary_star %>
                                     <%= number_to_human(@celestial_body.distance_from_star || 0, precision: 2) %> km
                                 <% else %>
                                     N/A
