@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_dependency 'celestial_bodies/celestial_body'
+
 module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
@@ -9,9 +11,9 @@ module Admin
     # GET /admin/celestial_bodies
     # Index page listing all celestial bodies for monitoring selection
     def index
-      @celestial_bodies = CelestialBodies::CelestialBody.all.order(:name)
+      @celestial_bodies = ::CelestialBodies::CelestialBody.all.order(:name)
       @bodies = @celestial_bodies # Alias for view compatibility
-      @total_bodies = @celestial_bodies.count + CelestialBodies::Star.count
+      @total_bodies = @celestial_bodies.count + ::CelestialBodies::Star.count
       @bodies_by_type = @celestial_bodies.group_by(&:body_category)
 
       # Calculate habitable count
@@ -21,7 +23,7 @@ module Admin
 
       # Calculate statistics for major categories
       @category_stats = {
-        stars: CelestialBodies::Star.count,
+        stars: ::CelestialBodies::Star.count,
         brown_dwarfs: @bodies_by_type['brown_dwarf']&.count || 0,
         planets: count_planet_types,
         moons: count_moon_types,
@@ -129,7 +131,7 @@ module Admin
     private
 
     def set_celestial_body
-      @celestial_body = CelestialBodies::CelestialBody.find(params[:id])
+      @celestial_body = ::CelestialBodies::CelestialBody.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       redirect_to root_path, alert: 'Celestial body not found'
     end
