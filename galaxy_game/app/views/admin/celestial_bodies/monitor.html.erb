@@ -103,18 +103,104 @@
             <% end %>
         </div>
         
-        <!-- Center Panel: Map Canvas -->
+        <!-- Center Panel: Planet Overview -->
         <div id="canvasWrapper">
-            <% if @planet_map %>
-                <!-- Include existing map canvas -->
-                <%= render partial: 'celestial_bodies/map_canvas', locals: { celestial_body: @celestial_body, planet_map: @planet_map } %>
-            <% else %>
-                <canvas id="mapCanvas" width="800" height="600"></canvas>
-                <div id="noMapMessage">
-                    <p>No planet map generated.</p>
-                    <button class="tool-button" onclick="generateMap()">Generate Map</button>
+            <div id="planetOverview">
+                <h2>Planet Overview</h2>
+                <div class="overview-grid">
+                    <div class="overview-item">
+                        <h3>Physical Characteristics</h3>
+                        <div class="data-row">
+                            <span class="data-label">Type:</span>
+                            <span class="data-value"><%= @celestial_body.body_category&.humanize || 'Unknown' %></span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Radius:</span>
+                            <span class="data-value"><%= number_to_human(@celestial_body.radius, precision: 2) %> m</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Gravity:</span>
+                            <span class="data-value"><%= number_with_precision(@celestial_body.gravity, precision: 3) %>g</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Surface Temp:</span>
+                            <span class="data-value"><%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %> K</span>
+                        </div>
+                    </div>
+
+                    <div class="overview-item">
+                        <h3>Orbital Characteristics</h3>
+                        <div class="data-row">
+                            <span class="data-label">Solar System:</span>
+                            <span class="data-value"><%= @celestial_body.solar_system&.name || 'N/A' %></span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Distance from Star:</span>
+                            <span class="data-value">
+                                <% if @celestial_body.solar_system&.star %>
+                                    <%= number_to_human(@celestial_body.distance_from_star || 0, precision: 2) %> km
+                                <% else %>
+                                    N/A
+                                <% end %>
+                            </span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Orbital Period:</span>
+                            <span class="data-value">
+                                <% if @celestial_body.orbital_period %>
+                                    <%= number_with_precision(@celestial_body.orbital_period, precision: 1) %> Earth days
+                                <% else %>
+                                    Unknown
+                                <% end %>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="overview-item">
+                        <h3>Habitability Status</h3>
+                        <div class="data-row">
+                            <span class="data-label">Atmosphere:</span>
+                            <span class="data-value <%= @celestial_body.atmosphere ? 'good' : 'warning' %>">
+                                <%= @celestial_body.atmosphere ? 'Present' : 'None' %>
+                            </span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Hydrosphere:</span>
+                            <span class="data-value <%= (@celestial_body.hydrosphere || @celestial_body.subsurface_hydrosphere) ? 'good' : 'warning' %>">
+                                <%= (@celestial_body.hydrosphere || @celestial_body.subsurface_hydrosphere) ? 'Present' : 'None' %>
+                            </span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Biosphere:</span>
+                            <span class="data-value <%= @celestial_body.biosphere ? 'good' : 'neutral' %>">
+                                <%= @celestial_body.biosphere ? 'Present' : 'None' %>
+                            </span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Colonies:</span>
+                            <span class="data-value"><%= @celestial_body.colonies.count %></span>
+                        </div>
+                    </div>
                 </div>
-            <% end %>
+
+                <div class="planet-status">
+                    <h3>System Status</h3>
+                    <div id="statusIndicators">
+                        <div class="status-item">
+                            <span class="status-label">AI Missions:</span>
+                            <span class="status-value"><%= @ai_missions.count %></span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Active Missions:</span>
+                            <span class="status-value"><%= @ai_missions.count { |m| m[:status] == 'active' } %></span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Geological Features:</span>
+                            <span class="status-value"><%= @geological_features.count %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Right Panel: Sphere Data -->
