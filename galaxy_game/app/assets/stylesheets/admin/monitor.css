@@ -342,11 +342,53 @@ body {
     background: #0ff;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    #mainContainer {
-        grid-template-columns: 200px 1fr 250px;
-    }
+/* Management Controls */
+.management-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+    justify-content: flex-end;
+}
+
+.btn-small {
+    padding: 3px 8px;
+    background: #222;
+    border: 1px solid #333;
+    color: #888;
+    cursor: pointer;
+    font-size: 10px;
+    font-family: inherit;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-small:hover {
+    border-color: #0f0;
+    color: #0f0;
+}
+
+.btn-small.create-sphere {
+    background: #1a2a1a;
+    border-color: #0f0;
+    color: #0f0;
+}
+
+.btn-small.edit-sphere {
+    background: #1a1a2a;
+    border-color: #0ff;
+    color: #0ff;
+}
+
+.btn-small.delete-sphere {
+    background: #2a1a1a;
+    border-color: #f00;
+    color: #f00;
+}
+
+.btn-small.delete-sphere:hover {
+    background: #f00;
+    color: #000;
 }
 
 @media (max-width: 900px) {
@@ -399,4 +441,22 @@ body {
     #mainContainer {
         height: auto;
     }
+}
+
+/* Management Mode Styles */
+.management-notice {
+    background: #330000;
+    border: 1px solid #ff4444;
+    color: #ffaaaa;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    text-align: center;
+}
+
+.tool-button.active {
+    background: #ff4444 !important;
+    border-color: #ff6666 !important;
+    color: #000 !important;
 }
