@@ -108,7 +108,7 @@ module Admin
 
       def sphere_params_for_type(sphere_type)
         base_params = params.require(:sphere).permit(
-          :temperature, :pressure, :thickness, :shell_type, :artificial,
+          :temperature, :pressure, :shell_type, :artificial,
           :total_liquid_mass, :total_water_mass, :total_atmospheric_mass,
           :total_crust_mass, :total_mantle_mass, :total_core_mass,
           :geological_activity, :habitable, :oxygen_percentage,
@@ -124,7 +124,7 @@ module Admin
         when 'hydrosphere', 'subsurface_hydrosphere'
           base_params.merge(params.require(:sphere).permit(:salinity, :ph_level, :dissolved_oxygen))
         when 'cryosphere'
-          base_params.merge(params.require(:sphere).permit(:thermal_conductivity, :density))
+          base_params.merge(params.require(:sphere).permit(:thickness, :thermal_conductivity, :density))
         when 'geosphere'
           base_params.merge(params.require(:sphere).permit(:stored_volatiles))
         when 'biosphere'
