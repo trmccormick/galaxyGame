@@ -444,19 +444,13 @@ body {
 }
 
 /* Management Mode Styles */
-.management-notice {
-    background: #330000;
-    border: 1px solid #ff4444;
-    color: #ffaaaa;
+.info-notice {
+    background: #002200;
+    border: 1px solid #00aa00;
+    color: #aaffaa;
     padding: 8px;
     margin-top: 10px;
     border-radius: 3px;
     font-size: 11px;
     text-align: center;
-}
-
-.tool-button.active {
-    background: #ff4444 !important;
-    border-color: #ff6666 !important;
-    color: #000 !important;
 }
