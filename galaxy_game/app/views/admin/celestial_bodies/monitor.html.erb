@@ -81,7 +81,7 @@
                     <button class="layer-btn active" data-layer="terrain">Terrain</button>
                     <button class="layer-btn active" data-layer="water">Water</button>
                     <button class="layer-btn active" data-layer="biomes">Biomes</button>
-                    <button class="layer-btn" data-layer="features">Features</button>
+                    <button class="layer-btn active" data-layer="features">Features</button>
                     <button class="layer-btn" data-layer="temperature">Temp</button>
                     <button class="layer-btn" data-layer="resources">Resources</button>
                 </div>
@@ -105,8 +105,8 @@
         
         <!-- Center Panel: Planetary Map -->
         <div id="canvasWrapper">
-            <div id="mapHeader">
-                <h2><%= @celestial_body.name %> - PLANETARY MAP</h2>
+            <div id="mapOverlay">
+                <div id="mapTitle"><%= @celestial_body.name %> - PLANETARY MAP</div>
                 <div id="mapControls">
                     <div class="control-group">
                         <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
@@ -115,9 +115,8 @@
                 </div>
             </div>
             <canvas id="planetCanvas" width="800" height="400"></canvas>
-            <div id="featureInfo">
-                <h3>Tile Information</h3>
-                <div id="tileDetails">Click on the map to inspect tiles</div>
+            <div id="featureTooltip" class="hidden">
+                <div id="tooltipContent"></div>
             </div>
         </div>
         
@@ -330,7 +329,6 @@
         // Initialize monitoring
         document.addEventListener('DOMContentLoaded', function() {
             setupAITestButtons();
-            setupLayerToggles();
             startDataPolling();
             logConsole('System initialized', 'info');
         });
@@ -371,14 +369,6 @@
             });
         }
 
-        // Setup layer toggles
-        function setupLayerToggles() {
-            document.querySelectorAll('.layer-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    const layer = this.dataset.layer;
-                    logConsole(`Layer ${layer} ${this.classList.contains('active') ? 'enabled' : 'disabled'}`, 'info');
-                });
             });
         }
 
@@ -540,27 +530,53 @@
             if (updateInterval) clearInterval(updateInterval);
         });
 
-        // Planetary Map Class
+        // Planetary Map Class - SimEarth Style Height Map
         class PlanetMap {
             constructor(canvasId, celestialBodyId) {
                 this.canvas = document.getElementById(canvasId);
                 this.ctx = this.canvas.getContext('2d');
                 this.celestialBodyId = celestialBodyId;
                 this.zoom = 1;
-                this.mapData = null;
+                this.tooltip = document.getElementById('featureTooltip');
                 
+                // Layer visibility
                 this.layers = {
-                    lavaTubes: true,
-                    craters: true,
-                    strategicSites: true
+                    terrain: true,
+                    water: true,
+                    biomes: true,
+                    features: true,
+                    temperature: false,
+                    resources: false
                 };
                 
-                this.init();
+                // Generate terrain data
+                this.generateTerrain();
+                this.setupEventListeners();
+                this.render();
             }
             
-            init() {
-                this.setupEventListeners();
-                this.loadMapData();
+            generateTerrain() {
+                // Create height map data
+                this.heightMap = [];
+                const resolution = 200;
+                
+                for (let y = 0; y < resolution; y++) {
+                    this.heightMap[y] = [];
+                    for (let x = 0; x < resolution * 2; x++) {
+                        // Multiple octaves of noise for realistic terrain
+                        const nx = x / resolution - 1;
+                        const ny = y / resolution - 0.5;
+                        
+                        let height = 0;
+                        height += Math.sin(nx * Math.PI * 4) * Math.cos(ny * Math.PI * 2) * 0.5;
+                        height += Math.sin(nx * Math.PI * 8) * Math.cos(ny * Math.PI * 4) * 0.25;
+                        height += Math.sin(nx * Math.PI * 16) * Math.cos(ny * Math.PI * 8) * 0.125;
+                        
+                        // Normalize to 0-1
+                        height = (height + 1) / 2;
+                        this.heightMap[y][x] = Math.max(0, Math.min(1, height));
+                    }
+                }
             }
             
             setupEventListeners() {
@@ -570,246 +586,234 @@
                     zoomInput.addEventListener('input', (e) => {
                         this.zoom = parseFloat(e.target.value);
                         document.getElementById('zoomValue').textContent = `${this.zoom.toFixed(1)}x`;
-                        this.render();
                     });
                 }
                 
-                // Canvas click
-                this.canvas.addEventListener('click', (e) => this.handleClick(e));
+                // Mouse events for tooltip
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseleave', () => this.hideTooltip());
                 
                 // Layer toggles
                 document.querySelectorAll('.layer-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const layer = e.target.dataset.layer;
-                        this.toggleLayer(layer);
+                        this.layers[layer] = !this.layers[layer];
                         e.target.classList.toggle('active');
+                        this.render();
                     });
                 });
             }
             
-            toggleLayer(layer) {
-                switch(layer) {
-                    case 'terrain':
-                        // Terrain layer toggle
-                        break;
-                    case 'water':
-                        // Water layer toggle
-                        break;
-                    case 'biomes':
-                        // Biomes layer toggle
-                        break;
-                    case 'features':
-                        this.layers.lavaTubes = !this.layers.lavaTubes;
-                        this.layers.craters = !this.layers.craters;
-                        break;
-                    case 'temperature':
-                        // Temperature layer toggle
-                        break;
-                    case 'resources':
-                        // Resources layer toggle
-                        break;
-                }
-                this.render();
-            }
-            
-            async loadMapData() {
-                try {
-                    const response = await fetch(`/celestial_bodies/${this.celestialBodyId}/geological_features`);
-                    if (!response.ok) {
-                        throw new Error('Failed to load geological features');
-                    }
-                    this.mapData = await response.json();
-                    this.render();
-                } catch (error) {
-                    console.error('Error loading map data:', error);
-                    document.getElementById('tileDetails').innerHTML = 
-                        '<span style="color: #e94560">Error loading map data</span>';
-                }
-            }
-            
-            latLonToPixel(lat, lon) {
-                // Equirectangular projection
-                const x = ((lon + 180) / 360) * this.canvas.width;
-                const y = ((90 - lat) / 180) * this.canvas.height;
-                return { x, y };
-            }
-            
-            pixelToLatLon(x, y) {
-                const lat = 90 - (y / this.canvas.height) * 180;
-                const lon = (x / this.canvas.width) * 360 - 180;
-                return { lat, lon };
-            }
-            
             render() {
-                if (!this.mapData) return;
-                
                 // Clear canvas
-                this.ctx.fillStyle = '#000';
+                this.ctx.fillStyle = '#000011';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Draw grid lines for reference
-                this.drawGrid();
-                
-                // Draw features
-                if (this.layers.lavaTubes && this.mapData.lava_tubes) {
-                    this.drawFeatures(this.mapData.lava_tubes, '#00ffff');
+                // Render terrain base
+                if (this.layers.terrain) {
+                    this.renderTerrain();
                 }
                 
-                if (this.layers.craters && this.mapData.craters) {
-                    this.drawFeatures(this.mapData.craters, '#ffff00');
+                // Render water
+                if (this.layers.water) {
+                    this.renderWater();
                 }
                 
-                if (this.layers.strategicSites && this.mapData.strategic_sites) {
-                    this.drawFeatures(this.mapData.strategic_sites, '#ff00ff');
+                // Render biomes
+                if (this.layers.biomes) {
+                    this.renderBiomes();
+                }
+                
+                // Render temperature
+                if (this.layers.temperature) {
+                    this.renderTemperature();
+                }
+                
+                // Render resources
+                if (this.layers.resources) {
+                    this.renderResources();
+                }
+                
+                // Render coordinate grid
+                this.renderGrid();
+            }
+            
+            renderTerrain() {
+                const imageData = this.ctx.createImageData(this.canvas.width, this.canvas.height);
+                const data = imageData.data;
+                
+                for (let y = 0; y < this.canvas.height; y++) {
+                    for (let x = 0; x < this.canvas.width; x++) {
+                        const height = this.getHeightAtPixel(x, y);
+                        
+                        // Height-based coloring (darker = lower, lighter = higher)
+                        const intensity = height;
+                        const r = Math.floor(intensity * 180 + 20);
+                        const g = Math.floor(intensity * 200 + 30);
+                        const b = Math.floor(intensity * 150 + 10);
+                        
+                        const pixelIndex = (y * this.canvas.width + x) * 4;
+                        data[pixelIndex] = r;
+                        data[pixelIndex + 1] = g;
+                        data[pixelIndex + 2] = b;
+                        data[pixelIndex + 3] = 255;
+                    }
+                }
+                
+                this.ctx.putImageData(imageData, 0, 0);
+            }
+            
+            renderWater() {
+                this.ctx.globalCompositeOperation = 'multiply';
+                this.ctx.fillStyle = 'rgba(0, 50, 150, 0.4)';
+                
+                for (let y = 0; y < this.canvas.height; y += 2) {
+                    for (let x = 0; x < this.canvas.width; x += 2) {
+                        const height = this.getHeightAtPixel(x, y);
+                        if (height < 0.3) {
+                            this.ctx.fillRect(x, y, 2, 2);
+                        }
+                    }
+                }
+                
+                this.ctx.globalCompositeOperation = 'source-over';
+            }
+            
+            renderBiomes() {
+                this.ctx.globalCompositeOperation = 'overlay';
+                
+                for (let y = 0; y < this.canvas.height; y += 4) {
+                    for (let x = 0; x < this.canvas.width; x += 4) {
+                        const height = this.getHeightAtPixel(x, y);
+                        let color = 'rgba(50, 100, 50, 0.3)'; // Default green
+                        
+                        if (height < 0.3) {
+                            color = 'rgba(0, 50, 150, 0.4)'; // Water
+                        } else if (height > 0.8) {
+                            color = 'rgba(120, 120, 120, 0.4)'; // Mountains
+                        } else if (height > 0.6) {
+                            color = 'rgba(150, 100, 50, 0.3)'; // Hills
+                        }
+                        
+                        this.ctx.fillStyle = color;
+                        this.ctx.fillRect(x, y, 4, 4);
+                    }
+                }
+                
+                this.ctx.globalCompositeOperation = 'source-over';
+            }
+            
+            renderTemperature() {
+                this.ctx.globalCompositeOperation = 'screen';
+                
+                for (let y = 0; y < this.canvas.height; y++) {
+                    // Temperature gradient from equator to poles
+                    const lat = ((y / this.canvas.height) - 0.5) * 180;
+                    const tempFactor = Math.cos(lat * Math.PI / 180);
+                    const intensity = (tempFactor + 1) / 2;
+                    
+                    const r = Math.floor(intensity * 255);
+                    const g = Math.floor(intensity * 150);
+                    const b = Math.floor((1 - intensity) * 255);
+                    
+                    this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.2)`;
+                    this.ctx.fillRect(0, y, this.canvas.width, 1);
+                }
+                
+                this.ctx.globalCompositeOperation = 'source-over';
+            }
+            
+            renderResources() {
+                this.ctx.fillStyle = 'rgba(255, 215, 0, 0.6)'; // Gold deposits
+                
+                // Scatter some resource indicators
+                for (let i = 0; i < 15; i++) {
+                    const x = Math.random() * this.canvas.width;
+                    const y = Math.random() * this.canvas.height;
+                    const height = this.getHeightAtPixel(x, y);
+                    
+                    if (height > 0.4) { // Resources on land
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, 2, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
                 }
             }
             
-            drawGrid() {
-                this.ctx.strokeStyle = '#1a1a3e';
+            renderGrid() {
+                this.ctx.strokeStyle = '#001122';
                 this.ctx.lineWidth = 1;
                 
-                // Latitude lines (every 30 degrees)
+                // Latitude lines
                 for (let lat = -90; lat <= 90; lat += 30) {
-                    const start = this.latLonToPixel(lat, -180);
-                    const end = this.latLonToPixel(lat, 180);
+                    const y = ((90 - lat) / 180) * this.canvas.height;
                     this.ctx.beginPath();
-                    this.ctx.moveTo(start.x, start.y);
-                    this.ctx.lineTo(end.x, end.y);
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
                     this.ctx.stroke();
                 }
                 
-                // Longitude lines (every 30 degrees)
+                // Longitude lines
                 for (let lon = -180; lon <= 180; lon += 30) {
-                    const start = this.latLonToPixel(-90, lon);
-                    const end = this.latLonToPixel(90, lon);
+                    const x = ((lon + 180) / 360) * this.canvas.width;
                     this.ctx.beginPath();
-                    this.ctx.moveTo(start.x, start.y);
-                    this.ctx.lineTo(end.x, end.y);
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
                     this.ctx.stroke();
                 }
             }
             
-            drawFeatures(features, defaultColor) {
-                features.forEach(feature => {
-                    if (!feature.lat || !feature.lon) return;
-                    
-                    const pos = this.latLonToPixel(feature.lat, feature.lon);
-                    
-                    // Determine color based on priority
-                    let color = defaultColor;
-                    if (feature.priority === 'critical') color = '#ff00ff';
-                    else if (feature.priority === 'high') color = '#00ff00';
-                    else if (feature.priority === 'medium') color = '#ffff00';
-                    
-                    // Draw marker
-                    this.ctx.fillStyle = color;
-                    this.ctx.beginPath();
-                    this.ctx.arc(pos.x, pos.y, 5 * this.zoom, 0, Math.PI * 2);
-                    this.ctx.fill();
-                    
-                    // Draw border
-                    this.ctx.strokeStyle = '#fff';
-                    this.ctx.lineWidth = 1;
-                    this.ctx.stroke();
-                    
-                    // Draw label for high-priority features
-                    if (feature.priority === 'critical' || feature.priority === 'high') {
-                        this.ctx.fillStyle = '#fff';
-                        this.ctx.font = `${10 * this.zoom}px Arial`;
-                        this.ctx.fillText(feature.name, pos.x + 8, pos.y + 4);
-                    }
-                });
+            getHeightAtPixel(x, y) {
+                // Convert pixel coordinates to height map coordinates
+                const mapX = Math.floor((x / this.canvas.width) * this.heightMap[0].length);
+                const mapY = Math.floor((y / this.canvas.height) * this.heightMap.length);
+                
+                if (this.heightMap[mapY] && this.heightMap[mapY][mapX] !== undefined) {
+                    return this.heightMap[mapY][mapX];
+                }
+                return 0.5;
             }
             
-            handleClick(event) {
-                if (!this.mapData) return;
-                
+            handleMouseMove(event) {
                 const rect = this.canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
                 
-                // Check all features for clicks
-                const clickedFeature = this.findFeatureAtPoint(x, y);
+                // Update tooltip position
+                this.tooltip.style.left = `${event.clientX + 10}px`;
+                this.tooltip.style.top = `${event.clientY - 10}px`;
                 
-                if (clickedFeature) {
-                    this.showFeatureInfo(clickedFeature);
-                } else {
-                    const coords = this.pixelToLatLon(x, y);
-                    document.getElementById('tileDetails').innerHTML = 
-                        `<strong>Coordinates:</strong><br>` +
-                        `Lat: ${coords.lat.toFixed(2)}°<br>` +
-                        `Lon: ${coords.lon.toFixed(2)}°`;
-                }
+                // Show coordinate and terrain info
+                const lat = 90 - (y / this.canvas.height) * 180;
+                const lon = (x / this.canvas.width) * 360 - 180;
+                const height = this.getHeightAtPixel(x, y);
+                
+                const biome = this.getBiomeAtHeight(height);
+                const temp = this.getTemperatureAtLat(lat);
+                
+                document.getElementById('tooltipContent').innerHTML = 
+                    `<strong>Coordinates:</strong> ${lat.toFixed(1)}°, ${lon.toFixed(1)}°<br>` +
+                    `<strong>Elevation:</strong> ${(height * 100).toFixed(1)}%<br>` +
+                    `<strong>Biome:</strong> ${biome}<br>` +
+                    `<strong>Temperature:</strong> ${temp}`;
+                
+                this.tooltip.classList.remove('hidden');
             }
             
-            findFeatureAtPoint(x, y) {
-                const threshold = 10 * this.zoom; // Click detection radius
-                
-                const allFeatures = [
-                    ...(this.layers.lavaTubes ? this.mapData.lava_tubes : []),
-                    ...(this.layers.craters ? this.mapData.craters : []),
-                    ...(this.layers.strategicSites ? this.mapData.strategic_sites : [])
-                ];
-                
-                for (const feature of allFeatures) {
-                    if (!feature.lat || !feature.lon) continue;
-                    
-                    const pos = this.latLonToPixel(feature.lat, feature.lon);
-                    const distance = Math.sqrt((pos.x - x) ** 2 + (pos.y - y) ** 2);
-                    
-                    if (distance <= threshold) {
-                        return feature;
-                    }
-                }
-                
-                return null;
+            hideTooltip() {
+                this.tooltip.classList.add('hidden');
             }
             
-            showFeatureInfo(feature) {
-                let html = `
-                    <strong>${feature.name}</strong><br>
-                    <strong>Type:</strong> ${feature.type}<br>
-                    <strong>Coordinates:</strong> ${feature.lat.toFixed(2)}°, ${feature.lon.toFixed(2)}°<br>
-                    <strong>Priority:</strong> <span style="color: ${this.getPriorityColor(feature.priority)}">${feature.priority || 'N/A'}</span><br>
-                `;
-                
-                if (feature.dimensions) {
-                    html += `<br><strong>Dimensions:</strong><br>`;
-                    if (feature.dimensions.diameter_m) {
-                        html += `Diameter: ${feature.dimensions.diameter_m.toLocaleString()} m<br>`;
-                    }
-                    if (feature.dimensions.depth_m) {
-                        html += `Depth: ${feature.dimensions.depth_m.toLocaleString()} m<br>`;
-                    }
-                    if (feature.dimensions.estimated_volume_m3) {
-                        html += `Volume: ${(feature.dimensions.estimated_volume_m3 / 1000000).toFixed(2)} million m³<br>`;
-                    }
-                }
-                
-                if (feature.resources) {
-                    html += `<br><strong>Resources:</strong><br>`;
-                    Object.entries(feature.resources).forEach(([key, value]) => {
-                        html += `${key}: ${value.toLocaleString()}<br>`;
-                    });
-                }
-                
-                if (feature.strategic_value && feature.strategic_value.length > 0) {
-                    html += `<br><strong>Strategic Value:</strong><br>`;
-                    feature.strategic_value.forEach(value => {
-                        html += `• ${value}<br>`;
-                    });
-                }
-                
-                document.getElementById('tileDetails').innerHTML = html;
+            getBiomeAtHeight(height) {
+                if (height < 0.3) return 'Ocean';
+                if (height > 0.8) return 'Mountains';
+                if (height > 0.6) return 'Hills';
+                return 'Plains';
             }
             
-            getPriorityColor(priority) {
-                switch(priority) {
-                    case 'critical': return '#ff00ff';
-                    case 'high': return '#00ff00';
-                    case 'medium': return '#ffff00';
-                    default: return '#aaa';
-                }
+            getTemperatureAtLat(lat) {
+                const temp = 30 * Math.cos(lat * Math.PI / 180);
+                return temp > 0 ? `${temp.toFixed(0)}°C` : `${temp.toFixed(0)}°C`;
             }
         }
 
