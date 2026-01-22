@@ -21,7 +21,11 @@ RSpec.describe Craft::BaseCraft, type: :model do
 
     # Create Celestial Body, Location, and Settlement locally for this spec.
     # Ensure factories for these models use `sequence` for identifiers to prevent conflicts.
-    @celestial_body_instance = FactoryBot.create(:large_moon, :luna)
+    solar_system = FactoryBot.create(:solar_system)
+    @celestial_body_instance = FactoryBot.create(:large_moon, 
+      identifier: "TEST-LUNA-#{SecureRandom.hex(4)}",
+      solar_system: solar_system
+    )
     
     @shackleton_crater_location_instance = FactoryBot.create(:celestial_location, 
       name: "Shackleton Crater Base", 
@@ -33,7 +37,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
       name: "Alpha Base",
       current_population: 100,
       location: @shackleton_crater_location_instance,
-      owner: FactoryBot.create(:organization) # Create an owner organization for the settlement
+      owner: FactoryBot.create(:organization, identifier: "BASE_CRAFT_TEST_ORG") # Create an owner organization for the settlement
     )
 
     # Create the main craft instance for this spec suite
@@ -378,5 +382,22 @@ RSpec.describe Craft::BaseCraft, type: :model do
       craft_with_settlement.reload
       expect(settlement.base_units).to include(robot_unit)
     end
+  end
+
+  # Clean up data created in before(:all) since transactional fixtures don't apply
+  after(:all) do
+    if @craft_instance && @craft_instance.persisted?
+      @craft_instance.destroy
+    end
+    if @alpha_base_settlement_instance && @alpha_base_settlement_instance.persisted?
+      @alpha_base_settlement_instance.destroy
+    end
+    if @shackleton_crater_location_instance && @shackleton_crater_location_instance.persisted?
+      @shackleton_crater_location_instance.destroy
+    end
+    if @celestial_body_instance && @celestial_body_instance.persisted?
+      @celestial_body_instance.destroy
+    end
+    # Note: Don't destroy currencies as they may be used by other specs
   end
 end
