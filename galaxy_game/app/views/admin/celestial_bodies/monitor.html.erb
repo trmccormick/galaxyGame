@@ -241,8 +241,7 @@
                     <% end %>
                 <% else %>
                     <div class="data-row">
-                        <span class="data-label">Status:</span>
-                        <span class="data-value warning">No Atmosphere</span>
+                        <span class="data-value warning">Not Present</span>
                     </div>
                 <% end %>
             </div>
@@ -271,8 +270,7 @@
                     </div>
                 <% else %>
                     <div class="data-row">
-                        <span class="data-label">Status:</span>
-                        <span class="data-value warning">No Hydrosphere</span>
+                        <span class="data-value warning">Not Present</span>
                     </div>
                 <% end %>
             </div>
@@ -299,8 +297,7 @@
                     </div>
                 <% else %>
                     <div class="data-row">
-                        <span class="data-label">Status:</span>
-                        <span class="data-value warning">No Subsurface Hydrosphere</span>
+                        <span class="data-value warning">Not Present</span>
                     </div>
                 <% end %>
             </div>
@@ -329,8 +326,7 @@
                     </div>
                 <% else %>
                     <div class="data-row">
-                        <span class="data-label">Status:</span>
-                        <span class="data-value warning">No Cryosphere</span>
+                        <span class="data-value warning">Not Present</span>
                     </div>
                 <% end %>
             </div>
@@ -367,16 +363,15 @@
                     </div>
                 <% else %>
                     <div class="data-row">
-                        <span class="data-label">Status:</span>
-                        <span class="data-value warning">No Biosphere</span>
+                        <span class="data-value warning">Not Present</span>
                     </div>
                 <% end %>
             </div>
             
             <!-- Geosphere Section -->
-            <div class="data-section">
-                <h3>GEOSPHERE</h3>
-                <% if @celestial_body.geosphere %>
+            <% if @celestial_body.geosphere %>
+                <div class="data-section">
+                    <h3>GEOSPHERE</h3>
                     <div class="data-row">
                         <span class="data-label">Geological Activity:</span>
                         <span class="data-value" id="geo-activity">
@@ -395,13 +390,8 @@
                             <%= number_to_human(@celestial_body.geosphere.total_core_mass || 0, precision: 2) %> kg
                         </span>
                     </div>
-                <% else %>
-                    <div class="data-row">
-                        <span class="data-label">Status:</span>
-                        <span class="data-value warning">No Geosphere</span>
-                    </div>
-                <% end %>
-            </div>
+                </div>
+            <% end %>
         </div>
         
         <!-- Bottom Panel: Console -->

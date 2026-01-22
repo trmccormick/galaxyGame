@@ -34,8 +34,12 @@ Where `:id` is the ID of the celestial body you want to monitor.
 #### Right Panel: Sphere Data
 - **Atmosphere**: Pressure, temperature, composition, total mass, habitability
 - **Hydrosphere**: Water coverage, ocean mass, ice mass, average depth
+- **Subsurface Hydrosphere**: Deep ocean composition and temperature
+- **Cryosphere**: Ice shell type, thickness, and artificial status
 - **Biosphere**: Biodiversity index, habitability ratio, life forms count
 - **Geosphere**: Geological activity, tectonic status, volcanic activity
+
+*Note: All sphere sections are always displayed. When a sphere does not exist on the celestial body, the section shows "Not Present" in orange text.*
 
 ### 2. Bottom Console Panel
 - Real-time activity logging
