@@ -121,8 +121,8 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 - **Water (Blue)**: Ocean, deep_sea → #0088FF (bright blue)
 - **Biomes (Green)**: Forest, jungle, grasslands, plains, swamp → #00FF00 (bright green for vegetation/fertile land)
 - **Features (Brown)**: Boreal (hills), mountains, rock → #8B4513 (saddle brown for geological features)
-- **Temperature (White)**: Arctic, tundra, desert → #FFFFFF (white for extreme temperature zones)
-- **Resources (Gold)**: Rock, desert (mineral-rich terrain) → #FFD700 (gold for resource potential)
+- **Temperature (White)**: Arctic, tundra → #FFFFFF (white for extreme cold climates)
+- **Resources (Gold)**: Rock, desert (mineral-rich/arid terrain) → #FFD700 (gold for resource potential)
 
 **Technical Details:**
 - Layer visibility stored in `visibleLayers` Set
