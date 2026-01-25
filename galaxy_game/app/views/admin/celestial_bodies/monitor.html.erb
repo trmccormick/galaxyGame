@@ -432,6 +432,7 @@
                     if (visibleLayers.size > 0) {
                         for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                             if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
+                                console.log(`Layer ${layerName} overlay applied to ${terrainType}: ${overlay.terrainColors[terrainType]}`);
                                 finalColor = overlay.terrainColors[terrainType];
                                 break; // First matching layer wins
                             }
@@ -453,8 +454,10 @@
                 }
             }
 
+            const uniqueTerrains = grid.flat().filter((v, i, a) => a.indexOf(v) === i);
             console.log(`Rendered ${width}x${height} terrain map with ${Object.keys(colors).length} terrain types`);
-            logConsole(`Terrain map rendered: ${width}x${height} (${grid.flat().filter((v, i, a) => a.indexOf(v) === i).length} unique terrain types)`, 'success');
+            console.log('Terrain types found:', uniqueTerrains);
+            logConsole(`Terrain map rendered: ${width}x${height} (${uniqueTerrains.length} unique terrain types: ${uniqueTerrains.join(', ')})`, 'success');
         }
 
         // Setup AI test buttons
@@ -643,8 +646,8 @@
             },
             temperature: {
                 terrainColors: {
-                    'arctic': '#ffffff',  // White for ice/snow
-                    'tundra': '#f8f8ff'   // Slightly off-white for tundra
+                    'desert': '#ffff88',  // Yellow-white for hot deserts
+                    'boreal': '#88ffff'   // Blue-white for cold mountains
                 }
             },
             resources: {
