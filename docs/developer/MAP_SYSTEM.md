@@ -127,9 +127,9 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
   - Always visible foundation layer
   - Other layers paint over this elevation base
 - **Water (Blue Overlay)**: Ocean (#0088FF), deep_sea (#004488) → Blue highlights on elevation
-- **Biomes (Green Overlay)**: Forest/jungle (#00FF00/#00DD00), grasslands/plains (#88FF88/#AAFFAA), swamp (#66AA66) → Green highlights on elevation
-- **Features (Brown/Gray Overlay)**: Boreal/mountains (#8B4513/#654321), rock (#696969) → Geological highlights on elevation
-- **Temperature (White Overlay)**: Desert (#FFFF88 yellow-white hot), boreal (#88FFFF blue-white cold) → Temperature variations across biomes
+- **Biomes (Green Overlay)**: Forest/jungle (#00FF00/#00DD00), grasslands/plains (#88FF88/#AAFFAA), swamp (#66AA66), boreal (#448844) → Green highlights on elevation
+- **Features (Brown/Gray Overlay)**: Rock (#696969) → Geological highlights on elevation
+- **Temperature (White Overlay)**: Desert (#FFFF88 yellow-white hot), rock (#88FFFF blue-white cold) → Temperature variations across biomes
 - **Resources (Gold Overlay)**: Rock/desert (#FFD700/#DAA520) → Mineral highlights on elevation
 
 **Technical Details:**
