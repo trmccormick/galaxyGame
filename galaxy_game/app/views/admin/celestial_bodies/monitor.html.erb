@@ -87,6 +87,7 @@
                     <button class="layer-btn" data-layer="biomes">Biomes</button>
                     <button class="layer-btn" data-layer="features">Features</button>
                     <button class="layer-btn" data-layer="temperature">Temp</button>
+                    <button class="layer-btn" data-layer="rainfall">Rainfall</button>
                     <button class="layer-btn" data-layer="resources">Resources</button>
                 </div>
             </div>
@@ -377,7 +378,7 @@
                 ocean: '#0066cc',
                 deep_sea: '#003366',
                 arctic: '#ffffff',
-                tundra: '#cccccc',
+                tundra: '#666666',
                 grasslands: '#66cc66',
                 plains: '#99cc99',
                 forest: '#006600',
@@ -635,7 +636,8 @@
                     'grasslands': '#88ff88', // Lighter green for grasslands
                     'plains': '#aaffaa',   // Light green for plains
                     'swamp': '#66aa66',    // Muted green for swamps
-                    'boreal': '#448844'    // Dark green for boreal forests/taiga
+                    'boreal': '#448844',   // Dark green for boreal forests/taiga
+                    'arctic': '#ffffff'    // White for polar ice caps (cryosphere biome)
                 }
             },
             features: {
@@ -645,8 +647,17 @@
             },
             temperature: {
                 terrainColors: {
-                    'desert': '#ffff88',  // Yellow-white for hot deserts
-                    'rock': '#88ffff'     // Blue-white for cold rocky highlands
+                    'desert': '#ff6600',  // Red-orange for hot deserts (SimEarth style)
+                    'rock': '#0088ff'     // Blue for cold rocky highlands
+                }
+            },
+            rainfall: {
+                terrainColors: {
+                    'jungle': '#0066ff',   // Dark blue for high rainfall tropics
+                    'swamp': '#0044ff',   // Very dark blue for wetlands
+                    'forest': '#4488ff',  // Medium blue for moderate rainfall forests
+                    'boreal': '#88aaff',  // Light blue for temperate rainfall
+                    'desert': '#ffff00'   // Yellow for arid/low rainfall
                 }
             },
             resources: {
