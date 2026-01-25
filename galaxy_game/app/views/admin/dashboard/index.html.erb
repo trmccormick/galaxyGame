@@ -120,7 +120,7 @@
         
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
         }
         
@@ -149,6 +149,12 @@
                 <h3>🎯 ADMIN SECTIONS</h3>
                 <button class="tool-button" onclick="window.location.href='/admin/ai_manager/missions'">
                     🤖 AI Manager
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/galaxies'">
+                    🌌 Galaxies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/solar_systems'">
+                    ☀️ Solar Systems
                 </button>
                 <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies'">
                     🌍 Celestial Bodies
@@ -237,8 +243,68 @@
                         <div class="stat-value"><%= @system_stats[:ai_missions_running] %></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">System Uptime</div>
-                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:uptime] %></div>
+                        <div class="stat-label">GCC Generation</div>
+                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:gcc_generation] %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">AI Status</div>
+                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:ai_status] %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Economic Autonomy</div>
+                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:economic_autonomy] %></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Manager Status -->
+            <div class="tool-section">
+                <h3>🤖 AI MANAGER STATUS</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Manager Status</div>
+                        <div class="stat-value" style="font-size: 18px; color: <%= @ai_status[:manager_status] == 'online' ? '#0f0' : '#f00' %>;">
+                            <%= @ai_status[:manager_status].upcase %>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Bootstrap Capable</div>
+                        <div class="stat-value" style="font-size: 18px; color: <%= @ai_status[:bootstrap_capable] ? '#0f0' : '#f00' %>;">
+                            <%= @ai_status[:bootstrap_capable] ? 'YES' : 'NO' %>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Learned Patterns</div>
+                        <div class="stat-value"><%= @ai_status[:learned_patterns] %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Last Decision</div>
+                        <div class="stat-value" style="font-size: 14px;">
+                            <%= time_ago_in_words(@ai_status[:last_decision]) %> ago
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Economic Indicators -->
+            <div class="tool-section">
+                <h3>💰 ECONOMIC INDICATORS</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total GCC</div>
+                        <div class="stat-value"><%= number_with_precision(@economic_indicators[:total_gcc], precision: 2) %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">USD Balance</div>
+                        <div class="stat-value">$<%= number_with_delimiter(@economic_indicators[:usd_balance]) %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Trades</div>
+                        <div class="stat-value"><%= @economic_indicators[:active_trades] %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Bootstrap Progress</div>
+                        <div class="stat-value"><%= @economic_indicators[:bootstrap_progress] %>%</div>
                     </div>
                 </div>
             </div>
@@ -296,6 +362,42 @@
                         <% end %>
                     </div>
                 </div>
+                
+                <!-- AI Activity Feed -->
+                <div class="tool-section">
+                    <h3>🧠 AI ACTIVITY FEED</h3>
+                    <div class="activity-log">
+                        <% @ai_activity_feed.each do |activity| %>
+                            <div class="activity-item <%= activity[:level] %>">
+                                <span class="activity-time">
+                                    <%= time_ago_in_words(activity[:timestamp]) %> ago
+                                </span>
+                                <span class="activity-message">
+                                    [<%= activity[:type].upcase %>] <%= activity[:message] %>
+                                </span>
+                                <% if activity[:details] %>
+                                    <div style="margin-top: 5px; font-size: 10px; color: #666;">
+                                        <%= activity[:details] %>
+                                    </div>
+                                <% end %>
+                            </div>
+                        <% end %>
+                    </div>
+                    
+                    <!-- AI Testing Controls -->
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
+                        <h4 style="margin: 0 0 10px 0; color: #0ff;">AI BOOTSTRAP TESTING</h4>
+                        <button class="tool-button" onclick="runGccBootstrapTest()" style="width: 100%; margin-bottom: 5px;">
+                            🚀 Test GCC Bootstrap
+                        </button>
+                        <button class="tool-button" onclick="runAiAnalysis()" style="width: 100%; margin-bottom: 5px;">
+                            🔍 Run AI System Analysis
+                        </button>
+                        <button class="tool-button" onclick="clearAiActivity()" style="width: 100%;">
+                            🗑️ Clear Activity Feed
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -308,6 +410,30 @@
         function runGlobalTest(testType) {
             // For now, just show an alert. Later, this could run tests across multiple bodies
             alert(`Global ${testType} test not yet implemented.\n\nPlease use individual body monitors for AI testing.`);
+        }
+        
+        function runGccBootstrapTest() {
+            if (confirm('Run GCC Bootstrap Test?\n\nThis will test the AI Manager\'s ability to autonomously deploy a mining satellite to bootstrap cryptocurrency generation.')) {
+                // For now, redirect to a celestial body monitor. Later, this could run globally
+                const earthBody = <%= @celestial_bodies.find { |b| b.name == 'Earth' }&.id || @celestial_bodies.first&.id %>;
+                if (earthBody) {
+                    window.location.href = `/admin/celestial_bodies/${earthBody}/monitor`;
+                } else {
+                    alert('No celestial bodies available for testing. Please initialize the simulation first.');
+                }
+            }
+        }
+        
+        function runAiAnalysis() {
+            alert('AI System Analysis\n\nThis feature will analyze the current state of the AI Manager and provide recommendations for bootstrap actions.\n\nFeature coming soon!');
+        }
+        
+        function clearAiActivity() {
+            if (confirm('Clear AI Activity Feed?\n\nThis will remove all AI activity entries from the dashboard.')) {
+                // TODO: Implement actual clearing functionality
+                alert('AI Activity Feed cleared (simulation).');
+                location.reload();
+            }
         }
         
         // Auto-refresh stats every 30 seconds
