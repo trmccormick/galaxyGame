@@ -390,23 +390,48 @@
                 swamp: '#4a5d23'
             };
 
-            // Elevation-based gray scale for terrain layer (SimEarth style)
-            // Maps terrain types to relative elevation (0.0 = lowest, 1.0 = highest)
-            const terrainElevation = {
-                deep_sea: 0.05,    // Ocean trenches - lowest
-                ocean: 0.10,       // Sea level - low
-                plains: 0.25,      // Lowlands - low-medium
-                grasslands: 0.30,  // Prairies - low-medium
-                swamp: 0.20,       // Wetlands - low
-                desert: 0.40,      // Arid basins/plateaus - medium
-                forest: 0.50,      // Forested hills - medium
-                jungle: 0.55,      // Tropical highlands - medium-high
-                boreal: 0.75,      // Hills/mountains - high
-                mountains: 0.90,   // Mountain peaks - highest
-                rock: 0.70,        // Rocky terrain - high
-                tundra: 0.80,      // Polar highlands - very high
-                arctic: 0.85       // Ice caps - very high
-            };
+            // TerraSim-style climate zone calculations
+            const planetTemp = <%= @celestial_body.atmosphere&.temperature || @celestial_body.surface_temperature || 288 %>; // Global surface temperature in K
+            const planetPressure = <%= @celestial_body.atmosphere&.pressure || 1.0 %>; // Atmospheric pressure in bar
+            
+            // Calculate climate zones using TerraSim biosphere logic
+            function calculateClimateZones(tempK, pressureBar) {
+                // Simplified TerraSim calculations
+                const Ts = tempK; // Surface temperature
+                const Tp = Ts - 75 / (1 + 5 * pressureBar); // Polar temperature (TerraSim formula)
+                const Tt = Ts * 1.1; // Tropical temperature
+                
+                let iceLat = 0; // Ice latitude in degrees
+                let habRatio = 0; // Habitable ratio
+                
+                if (Tt > 273 && Tp < 273) {
+                    // Partial ice coverage
+                    habRatio = Math.pow((Tt - 273) / (Tt - Tp), 0.666667);
+                    iceLat = Math.asin(habRatio) * 180 / Math.PI; // Convert to degrees
+                } else if (Tt < 273) {
+                    // Completely frozen
+                    habRatio = 0;
+                    iceLat = 90;
+                } else {
+                    // No ice
+                    habRatio = 1;
+                    iceLat = 0;
+                }
+                
+                return {
+                    surfaceTemp: Ts,
+                    polarTemp: Tp,
+                    tropicalTemp: Tt,
+                    iceLatitude: iceLat,
+                    habitableRatio: habRatio,
+                    // Climate zone boundaries
+                    polarZone: iceLat,
+                    temperateZone: Math.max(iceLat + 30, 45),
+                    tropicalZone: Math.max(iceLat + 60, 75)
+                };
+            }
+            
+            const climate = calculateClimateZones(planetTemp, planetPressure);
 
             // Clear canvas
             ctx.fillStyle = '#000000';
@@ -433,8 +458,17 @@
                     if (visibleLayers.size > 0) {
                         for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                             if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
-                                console.log(`Layer ${layerName} overlay applied to ${terrainType}: ${overlay.terrainColors[terrainType]}`);
-                                finalColor = overlay.terrainColors[terrainType];
+                                let overlayColor = overlay.terrainColors[terrainType];
+                                
+                                // Handle function-based colors (for climate-aware desert rendering)
+                                if (typeof overlayColor === 'function') {
+                                    // Calculate approximate latitude based on y position (0 = north pole, height-1 = south pole)
+                                    const latitude = ((y / (height - 1)) - 0.5) * 180; // Convert to degrees (-90 to +90)
+                                    overlayColor = overlayColor(latitude);
+                                }
+                                
+                                console.log(`Layer ${layerName} overlay applied to ${terrainType}: ${overlayColor}`);
+                                finalColor = overlayColor;
                                 break; // First matching layer wins
                             }
                         }
@@ -638,7 +672,16 @@
                     'swamp': '#66aa66',    // Muted green for swamps
                     'boreal': '#448844',   // Dark green for boreal forests/taiga
                     'arctic': '#ffffff',   // White for polar ice caps (cryosphere biome)
-                    'desert': '#ffdd44'    // Yellow for desert biomes (arid ecosystems)
+                    'desert': function(lat) { // Climate-based desert coloring
+                        // Use latitude to determine desert temperature type
+                        // Deserts near poles are cold (white/beige), equatorial deserts are warm (yellow)
+                        const absLat = Math.abs(lat);
+                        if (absLat > climate.iceLatitude + 20) {
+                            return '#ffeedd'; // Cold desert (beige-white)
+                        } else {
+                            return '#ffdd44'; // Warm desert (yellow)
+                        }
+                    }
                 }
             },
             features: {
