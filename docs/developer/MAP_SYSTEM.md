@@ -114,13 +114,10 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 
 ### Layer Controls (SimEarth-Style with Elevation)
 - **Terrain Layer**: Elevation-based gray scale when selected alone
-  - Deep sea/ocean: Very dark gray (lowest elevation)
-  - Plains/grasslands: Medium-dark gray (low elevation)
-  - Forests/jungles: Medium gray (medium elevation)
-  - Hills/boreal: Medium-light gray (high elevation)
-  - Mountains: Light gray (highest elevation)
-  - Arctic/tundra: Very light gray (polar highlands)
-- **Other Layers**: Complete color replacement with terrain-specific shades
+  - Shows all terrain as gray scale based on elevation
+- **Other Layers**: Exclusive color replacement - only shows colors for terrains belonging to active layers
+  - Terrains not in active layers appear black
+  - Multiple layers can be combined for overlay effects
 
 **Available Layers:**
 - **Terrain (Gray Scale)**: Elevation-based visualization - darker = lower elevation, lighter = higher elevation

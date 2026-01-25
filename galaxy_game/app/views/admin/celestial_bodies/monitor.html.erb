@@ -415,8 +415,8 @@
                 for (let x = 0; x < width; x++) {
                     const terrainType = grid[y][x];
 
-                    // Determine final color: check enabled layers first, then fall back to base terrain
-                    let finalColor = colors[terrainType] || '#999999'; // Default to base terrain color
+                    // Determine final color based on active layers
+                    let finalColor = '#000000'; // Default to black for non-matching terrain
 
                     // Special case: if only terrain layer is active, use elevation-based gray scale (SimEarth style)
                     if (visibleLayers.has('terrain') && visibleLayers.size === 1) {
@@ -424,14 +424,24 @@
                         const grayValue = Math.floor(elevation * 255);
                         finalColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
                     }
-                    // Otherwise check if any other enabled layer should override this terrain type
-                    else {
+                    // If other layers are active, only show colors for terrains that belong to active layers
+                    else if (visibleLayers.size > 0) {
+                        let foundMatch = false;
                         for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                             if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
                                 finalColor = overlay.terrainColors[terrainType];
+                                foundMatch = true;
                                 break; // First matching layer wins
                             }
                         }
+                        // If no layer matches this terrain, keep it black
+                        if (!foundMatch) {
+                            finalColor = '#000000';
+                        }
+                    }
+                    // If no layers are active, show base terrain colors
+                    else {
+                        finalColor = colors[terrainType] || '#999999';
                     }
 
                     ctx.fillStyle = finalColor;
