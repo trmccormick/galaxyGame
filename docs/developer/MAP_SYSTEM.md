@@ -112,17 +112,23 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
   - Interactive tooltips showing tile data
   - Zoom controls and grid overlays
 
-### Layer Controls (SimEarth-Style)
-- **Implementation**: Complete color replacement system (not transparency overlays)
-- **Behavior**: When enabled, layers replace base terrain colors for specific terrain types
-- **State Management**: JavaScript Set tracks visible layers, triggers canvas re-rendering
+### Layer Controls (SimEarth-Style with Elevation)
+- **Terrain Layer**: Elevation-based gray scale when selected alone
+  - Deep sea/ocean: Very dark gray (lowest elevation)
+  - Plains/grasslands: Medium-dark gray (low elevation)
+  - Forests/jungles: Medium gray (medium elevation)
+  - Hills/boreal: Medium-light gray (high elevation)
+  - Mountains: Light gray (highest elevation)
+  - Arctic/tundra: Very light gray (polar highlands)
+- **Other Layers**: Complete color replacement with terrain-specific shades
 
 **Available Layers:**
-- **Water (Blue)**: Ocean (#0088FF bright), deep_sea (#004488 dark) → Blue gradient for water depth
-- **Biomes (Green)**: Forest/jungle (#00FF00/#00DD00 dark), grasslands/plains (#88FF88/#AAFFAA light), swamp (#66AA66 muted) → Green spectrum for vegetation density
-- **Features (Brown)**: Boreal/mountains (#8B4513/#654321 dark), rock (#696969 gray) → Brown/gray for geological formations
-- **Temperature (White)**: Arctic/tundra (#FFFFFF/#F8F8FF off-white) → White tones for cold climates
-- **Resources (Gold)**: Rock/desert (#FFD700/#DAA520 dark gold) → Gold tones for mineral potential
+- **Terrain (Gray Scale)**: Elevation-based visualization - darker = lower elevation, lighter = higher elevation
+- **Water (Blue Gradient)**: Ocean (#0088FF bright), deep_sea (#004488 dark) → Blue depth gradient
+- **Biomes (Green Spectrum)**: Forest/jungle (#00FF00/#00DD00 dark), grasslands/plains (#88FF88/#AAFFAA light), swamp (#66AA66 muted) → Green vegetation density
+- **Features (Brown/Gray)**: Boreal/mountains (#8B4513/#654321 dark), rock (#696969 gray) → Geological formations
+- **Temperature (White Tones)**: Arctic/tundra (#FFFFFF/#F8F8FF off-white) → Cold climate zones
+- **Resources (Gold Tones)**: Rock/desert (#FFD700/#DAA520 dark gold) → Mineral potential
 
 **Technical Details:**
 - Layer visibility stored in `visibleLayers` Set

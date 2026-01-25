@@ -388,6 +388,24 @@
                 swamp: '#4a5d23'
             };
 
+            // Elevation-based gray scale for terrain layer (SimEarth style)
+            // Maps terrain types to relative elevation (0.0 = lowest, 1.0 = highest)
+            const terrainElevation = {
+                deep_sea: 0.05,    // Ocean trenches - lowest
+                ocean: 0.10,       // Sea level - low
+                plains: 0.25,      // Lowlands - low-medium
+                grasslands: 0.30,  // Prairies - low-medium
+                swamp: 0.20,       // Wetlands - low
+                desert: 0.40,      // Arid basins/plateaus - medium
+                forest: 0.50,      // Forested hills - medium
+                jungle: 0.55,      // Tropical highlands - medium-high
+                boreal: 0.75,      // Hills/mountains - high
+                mountains: 0.90,   // Mountain peaks - highest
+                rock: 0.70,        // Rocky terrain - high
+                tundra: 0.80,      // Polar highlands - very high
+                arctic: 0.85       // Ice caps - very high
+            };
+
             // Clear canvas
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -400,11 +418,19 @@
                     // Determine final color: check enabled layers first, then fall back to base terrain
                     let finalColor = colors[terrainType] || '#999999'; // Default to base terrain color
 
-                    // Check if any enabled layer should override this terrain type
-                    for (const [layerName, overlay] of Object.entries(layerOverlays)) {
-                        if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
-                            finalColor = overlay.terrainColors[terrainType];
-                            break; // First matching layer wins
+                    // Special case: if only terrain layer is active, use elevation-based gray scale (SimEarth style)
+                    if (visibleLayers.has('terrain') && visibleLayers.size === 1) {
+                        const elevation = terrainElevation[terrainType] || 0.5; // Default to medium elevation
+                        const grayValue = Math.floor(elevation * 255);
+                        finalColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                    }
+                    // Otherwise check if any other enabled layer should override this terrain type
+                    else {
+                        for (const [layerName, overlay] of Object.entries(layerOverlays)) {
+                            if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
+                                finalColor = overlay.terrainColors[terrainType];
+                                break; // First matching layer wins
+                            }
                         }
                     }
 
