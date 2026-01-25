@@ -353,8 +353,21 @@
             const terrainData = <%= raw @celestial_body&.geosphere&.terrain_map&.to_json || (@celestial_body&.properties&.dig('terrain_grid') ? { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }.to_json : 'null') %>;
 
             if (!terrainData || (!terrainData.grid && !terrainData.terrain_grid)) {
-                console.warn('No terrain data available - canvas will remain black');
+                console.warn('No terrain data available - displaying message on canvas');
                 logConsole('No terrain data available for rendering', 'warning');
+                
+                // Clear canvas and show message
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw message
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '16px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('NO TERRAIN DATA', canvas.width / 2, canvas.height / 2 - 20);
+                ctx.fillText('AVAILABLE', canvas.width / 2, canvas.height / 2 + 10);
+                ctx.fillText('Generate terrain map to view planetary surface', canvas.width / 2, canvas.height / 2 + 40);
+                
                 return;
             }
 
@@ -390,10 +403,6 @@
                 swamp: '#4a5d23'
             };
 
-            // TerraSim-style climate zone calculations
-            const planetTemp = <%= @celestial_body.atmosphere&.temperature || @celestial_body.surface_temperature || 288 %>; // Global surface temperature in K
-            const planetPressure = <%= @celestial_body.atmosphere&.pressure || 1.0 %>; // Atmospheric pressure in bar
-            
             // Calculate climate zones using TerraSim biosphere logic
             function calculateClimateZones(tempK, pressureBar) {
                 // Simplified TerraSim calculations
@@ -431,8 +440,6 @@
                 };
             }
             
-            const climate = calculateClimateZones(planetTemp, planetPressure);
-
             // Clear canvas
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -654,6 +661,12 @@
 
         // Layer visibility state
         let visibleLayers = new Set(['terrain']); // Start with base terrain only
+
+        // TerraSim-style climate zone calculations
+        const planetTemp = <%= @celestial_body.atmosphere&.temperature || @celestial_body.surface_temperature || 288 %>; // Global surface temperature in K
+        const planetPressure = <%= @celestial_body.atmosphere&.pressure || 1.0 %>; // Atmospheric pressure in bar
+        
+        const climate = calculateClimateZones(planetTemp, planetPressure);
 
         // Layer overlay colors (complete replacement with terrain-specific shades)
         const layerOverlays = {
