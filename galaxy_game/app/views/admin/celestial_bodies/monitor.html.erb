@@ -402,8 +402,8 @@
 
                     // Check if any enabled layer should override this terrain type
                     for (const [layerName, overlay] of Object.entries(layerOverlays)) {
-                        if (visibleLayers.has(layerName) && overlay.terrains.includes(terrainType)) {
-                            finalColor = overlay.color;
+                        if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
+                            finalColor = overlay.terrainColors[terrainType];
                             break; // First matching layer wins
                         }
                     }
@@ -582,27 +582,41 @@
         // Layer visibility state
         let visibleLayers = new Set(['terrain']); // Start with base terrain only
 
-        // Layer overlay colors (complete replacement, not transparency)
+        // Layer overlay colors (complete replacement with terrain-specific shades)
         const layerOverlays = {
             water: {
-                terrains: ['ocean', 'deep_sea'],
-                color: '#0088ff'  // Bright blue for water
+                terrainColors: {
+                    'ocean': '#0088ff',    // Bright blue for surface water
+                    'deep_sea': '#004488'  // Darker blue for deep ocean
+                }
             },
             biomes: {
-                terrains: ['forest', 'jungle', 'grasslands', 'plains', 'swamp'],
-                color: '#00ff00'  // Bright green for vegetation/fertile land
+                terrainColors: {
+                    'forest': '#00ff00',   // Bright green for forests
+                    'jungle': '#00dd00',   // Slightly darker for dense jungle
+                    'grasslands': '#88ff88', // Lighter green for grasslands
+                    'plains': '#aaffaa',   // Light green for plains
+                    'swamp': '#66aa66'    // Muted green for swamps
+                }
             },
             features: {
-                terrains: ['boreal', 'mountains', 'rock'],
-                color: '#8b4513'  // Brown for mountains/rocks
+                terrainColors: {
+                    'boreal': '#8b4513',   // Brown for mountains/hills
+                    'mountains': '#654321', // Darker brown for high mountains
+                    'rock': '#696969'     // Gray for bare rock
+                }
             },
             temperature: {
-                terrains: ['arctic', 'tundra'], // Extreme cold climates
-                color: '#ffffff'  // White for ice/snow/cold
+                terrainColors: {
+                    'arctic': '#ffffff',  // White for ice/snow
+                    'tundra': '#f8f8ff'   // Slightly off-white for tundra
+                }
             },
             resources: {
-                terrains: ['rock', 'desert'], // Mineral-rich terrain
-                color: '#ffd700'  // Gold for resources
+                terrainColors: {
+                    'rock': '#ffd700',    // Gold for mineral-rich rock
+                    'desert': '#daa520'   // Darker gold for desert minerals
+                }
             }
         };
 
