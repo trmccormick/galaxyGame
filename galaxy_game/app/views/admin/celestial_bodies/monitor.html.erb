@@ -83,8 +83,8 @@
                 <h3>MAP LAYERS</h3>
                 <div class="layer-selector">
                     <button class="layer-btn active" data-layer="terrain">Terrain</button>
-                    <button class="layer-btn active" data-layer="water">Water</button>
-                    <button class="layer-btn active" data-layer="biomes">Biomes</button>
+                    <button class="layer-btn" data-layer="water">Water</button>
+                    <button class="layer-btn" data-layer="biomes">Biomes</button>
                     <button class="layer-btn" data-layer="features">Features</button>
                     <button class="layer-btn" data-layer="temperature">Temp</button>
                     <button class="layer-btn" data-layer="resources">Resources</button>
@@ -334,6 +334,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             setupAITestButtons();
             setupLayerToggles();
+            updateLayerButtons(); // Initialize button states
             setupZoomControl();
             startDataPolling();
             renderTerrainMap(); // Add terrain rendering
@@ -418,29 +419,27 @@
                     // Determine final color based on active layers
                     let finalColor = '#000000'; // Default to black for non-matching terrain
 
-                    // If terrain layer is active, always use elevation-based gray scale (SimEarth style)
+                    // Start with elevation-based gray scale if terrain layer is active
+                    let baseColor = null;
                     if (visibleLayers.has('terrain')) {
                         const elevation = terrainElevation[terrainType] || 0.5; // Default to medium elevation
                         const grayValue = Math.floor(elevation * 255);
-                        finalColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                        baseColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                        finalColor = baseColor;
                     }
-                    // If other layers are active (but terrain is not), only show colors for terrains that belong to active layers
-                    else if (visibleLayers.size > 0) {
-                        let foundMatch = false;
+
+                    // Overlay layer colors on top of base color for terrains that match active layers
+                    if (visibleLayers.size > 0) {
                         for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                             if (visibleLayers.has(layerName) && overlay.terrainColors[terrainType]) {
                                 finalColor = overlay.terrainColors[terrainType];
-                                foundMatch = true;
                                 break; // First matching layer wins
                             }
                         }
-                        // If no layer matches this terrain, keep it black
-                        if (!foundMatch) {
-                            finalColor = '#000000';
-                        }
                     }
-                    // If no layers are active, show base terrain colors
-                    else {
+
+                    // If no layers are active and no base color, show base terrain colors
+                    if (!baseColor && visibleLayers.size === 0) {
                         finalColor = colors[terrainType] || '#999999';
                     }
 

@@ -113,28 +113,30 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
   - Zoom controls and grid overlays
 
 ### Layer Controls (SimEarth-Style with Elevation)
-- **Terrain Layer**: Elevation-based gray scale when active (overrides other layers)
-  - Shows all terrain as gray scale based on elevation regardless of other active layers
-  - When terrain is on, other layers provide overlay information on the elevation base
-- **Other Layers**: Exclusive color replacement when terrain is off - only shows colors for terrains belonging to active layers
-  - Terrains not in active layers appear black
-  - Multiple layers can be combined for overlay effects
+- **Terrain Layer**: Elevation-based gray scale base layer (always active)
+  - Provides elevation context for all terrains
+  - Cannot be turned off - serves as foundation for other layers
+- **Overlay Layers**: Color overlays on elevation base
+  - Water, biomes, features, temperature, resources overlay their specific colors
+  - Only terrains matching active layers show overlay colors
+  - Non-matching terrains keep elevation gray scale
+  - Multiple layers can be combined for complex analysis
 
 **Available Layers:**
-- **Terrain (Gray Scale)**: Elevation-based visualization - darker = lower elevation, lighter = higher elevation
-  - Always shows when active, providing base elevation context
-  - Other layers overlay on this elevation foundation
-- **Water (Blue Gradient)**: Ocean (#0088FF bright), deep_sea (#004488 dark) → Blue depth gradient
-- **Biomes (Green Spectrum)**: Forest/jungle (#00FF00/#00DD00 dark), grasslands/plains (#88FF88/#AAFFAA light), swamp (#66AA66 muted) → Green vegetation density
-- **Features (Brown/Gray)**: Boreal/mountains (#8B4513/#654321 dark), rock (#696969 gray) → Geological formations
-- **Temperature (White Tones)**: Arctic/tundra (#FFFFFF/#F8F8FF off-white) → Cold climate zones
-- **Resources (Gold Tones)**: Rock/desert (#FFD700/#DAA520 dark gold) → Mineral potential
+- **Terrain (Gray Scale Base)**: Elevation-based visualization - darker = lower elevation, lighter = higher elevation
+  - Always visible foundation layer
+  - Other layers paint over this elevation base
+- **Water (Blue Overlay)**: Ocean (#0088FF), deep_sea (#004488) → Blue highlights on elevation
+- **Biomes (Green Overlay)**: Forest/jungle (#00FF00/#00DD00), grasslands/plains (#88FF88/#AAFFAA), swamp (#66AA66) → Green highlights on elevation
+- **Features (Brown/Gray Overlay)**: Boreal/mountains (#8B4513/#654321), rock (#696969) → Geological highlights on elevation
+- **Temperature (White Overlay)**: Arctic/tundra (#FFFFFF/#F8F8FF) → Cold zone highlights on elevation
+- **Resources (Gold Overlay)**: Rock/desert (#FFD700/#DAA520) → Mineral highlights on elevation
 
 **Technical Details:**
-- Layer visibility stored in `visibleLayers` Set
-- `layerOverlays` object maps terrain types to layer colors
-- `toggleLayer()` function manages state and UI updates
-- `renderTerrainMap()` prioritizes terrain layer for elevation context, then applies overlays
+- Layer visibility stored in `visibleLayers` Set (terrain always included)
+- `layerOverlays` object maps terrain types to overlay colors
+- `toggleLayer()` manages overlay state (terrain cannot be toggled)
+- `renderTerrainMap()` applies elevation base, then overlays matching layer colors
 
 ### Tileset Assets
 - **Location**: `public/tilesets/`
