@@ -118,11 +118,11 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 - **State Management**: JavaScript Set tracks visible layers, triggers canvas re-rendering
 
 **Available Layers:**
-- **Water (Blue)**: Ocean, deep_sea → #0066CC (navy blue)
-- **Biomes (Green)**: Grassland, plains, forest, jungle → #00AA00 (green)
-- **Features (Brown)**: Hills, mountains, swamp → #8B4513 (saddle brown)
-- **Temperature (White)**: Arctic, desert → #FFFFFF (white)
-- **Resources (Gold)**: Mineral-rich terrain types → #FFD700 (gold)
+- **Water (Blue)**: Ocean, deep_sea → #0088FF (bright blue)
+- **Biomes (Green)**: Forest, jungle, grasslands, plains, swamp → #00FF00 (bright green for vegetation/fertile land)
+- **Features (Brown)**: Boreal (hills), mountains, rock → #8B4513 (saddle brown for geological features)
+- **Temperature (White)**: Arctic, tundra, desert → #FFFFFF (white for extreme temperature zones)
+- **Resources (Gold)**: Rock, desert (mineral-rich terrain) → #FFD700 (gold for resource potential)
 
 **Technical Details:**
 - Layer visibility stored in `visibleLayers` Set
