@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
     <title>Admin Monitor - <%= @celestial_body.name %></title>
     <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <%= javascript_include_tag 'tileset_loader' %>
 </head>
 <body>
     <div id="mainContainer">
@@ -33,6 +34,9 @@
                 </button>
                 <button class="tool-button" data-test="isru_pipeline">
                     🏭 Test ISRU Pipeline
+                </button>
+                <button class="tool-button" data-test="gcc_bootstrap">
+                    🚀 Test GCC Bootstrap
                 </button>
                 <button class="tool-button" onclick="window.location.href='/celestial_bodies/<%= @celestial_body.id %>'">
                     👁️ View Public Page
@@ -81,7 +85,7 @@
                     <button class="layer-btn active" data-layer="terrain">Terrain</button>
                     <button class="layer-btn active" data-layer="water">Water</button>
                     <button class="layer-btn active" data-layer="biomes">Biomes</button>
-                    <button class="layer-btn active" data-layer="features">Features</button>
+                    <button class="layer-btn" data-layer="features">Features</button>
                     <button class="layer-btn" data-layer="temperature">Temp</button>
                     <button class="layer-btn" data-layer="resources">Resources</button>
                 </div>
@@ -329,9 +333,94 @@
         // Initialize monitoring
         document.addEventListener('DOMContentLoaded', function() {
             setupAITestButtons();
+            setupLayerToggles();
+            setupZoomControl();
             startDataPolling();
+            renderTerrainMap(); // Add terrain rendering
             logConsole('System initialized', 'info');
         });
+
+        // Simple terrain map renderer
+        function renderTerrainMap() {
+            const canvas = document.getElementById('planetCanvas');
+            if (!canvas) {
+                console.error('Canvas element not found');
+                return;
+            }
+
+            const terrainData = <%= raw @celestial_body&.geosphere&.terrain_map&.to_json || (@celestial_body&.properties&.dig('terrain_grid') ? { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }.to_json : 'null') %>;
+
+            if (!terrainData || (!terrainData.grid && !terrainData.terrain_grid)) {
+                console.warn('No terrain data available - canvas will remain black');
+                logConsole('No terrain data available for rendering', 'warning');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            const grid = terrainData.grid || terrainData.terrain_grid;
+            const width = terrainData.width || grid[0]?.length || 0;
+            const height = terrainData.height || grid.length;
+
+            if (width === 0 || height === 0) {
+                console.error('Invalid terrain dimensions');
+                return;
+            }
+
+            // Set canvas size based on terrain data
+            const tileSize = 8; // 8px per tile
+            canvas.width = width * tileSize;
+            canvas.height = height * tileSize;
+
+            // Color map for terrain types (matches SampleTerrainGenerator)
+            const colors = {
+                ocean: '#0066cc',
+                deep_sea: '#003366',
+                arctic: '#ffffff',
+                tundra: '#cccccc',
+                grasslands: '#66cc66',
+                plains: '#99cc99',
+                forest: '#006600',
+                jungle: '#004400',
+                desert: '#ffcc66',
+                mountains: '#8b4513',
+                rock: '#666666',
+                boreal: '#8b7355',
+                swamp: '#4a5d23'
+            };
+
+            // Clear canvas
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Render each tile
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const terrainType = grid[y][x];
+
+                    // Determine final color: check enabled layers first, then fall back to base terrain
+                    let finalColor = colors[terrainType] || '#999999'; // Default to base terrain color
+
+                    // Check if any enabled layer should override this terrain type
+                    for (const [layerName, overlay] of Object.entries(layerOverlays)) {
+                        if (visibleLayers.has(layerName) && overlay.terrains.includes(terrainType)) {
+                            finalColor = overlay.color;
+                            break; // First matching layer wins
+                        }
+                    }
+
+                    ctx.fillStyle = finalColor;
+                    ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+                    // Add subtle border for tile definition
+                    ctx.strokeStyle = '#333333';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                }
+            }
+
+            console.log(`Rendered ${width}x${height} terrain map with ${Object.keys(colors).length} terrain types`);
+            logConsole(`Terrain map rendered: ${width}x${height} (${grid.flat().filter((v, i, a) => a.indexOf(v) === i).length} unique terrain types)`, 'success');
+        }
 
         // Setup AI test buttons
         function setupAITestButtons() {
@@ -369,7 +458,32 @@
             });
         }
 
+        // Setup zoom control
+        function setupZoomControl() {
+            const zoomInput = document.getElementById('zoom');
+            const zoomValue = document.getElementById('zoomValue');
+            const canvas = document.getElementById('planetCanvas');
+            const canvasWrapper = document.getElementById('canvasWrapper');
+            
+            zoomInput.addEventListener('input', function() {
+                const zoom = parseFloat(this.value);
+                zoomValue.textContent = zoom.toFixed(1) + 'x';
+                
+                // Use CSS transform to zoom the canvas
+                if (zoom === 1.0) {
+                    canvas.style.transform = 'none';
+                    canvasWrapper.style.overflow = 'auto'; // Allow scrolling for large maps
+                } else {
+                    canvas.style.transform = `scale(${zoom})`;
+                    canvas.style.transformOrigin = 'top left';
+                    canvasWrapper.style.overflow = 'auto'; // Enable scrolling when zoomed
+                }
             });
+            
+            // Initialize at 1.0x
+            zoomValue.textContent = '1.0x';
+            canvas.style.transform = 'none';
+            canvasWrapper.style.overflow = 'auto';
         }
 
         // Start polling for data updates
@@ -454,8 +568,71 @@
             }
         }
 
-        // Setup sphere management controls
-        // Setup sphere management (hidden by default)
+        // Setup layer toggles
+        function setupLayerToggles() {
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const layer = this.dataset.layer;
+                    toggleLayer(layer);
+                    updateLayerButtons();
+                });
+            });
+        }
+
+        // Layer visibility state
+        let visibleLayers = new Set(['terrain']); // Start with base terrain only
+
+        // Layer overlay colors (complete replacement, not transparency)
+        const layerOverlays = {
+            water: {
+                terrains: ['ocean', 'deep_sea'],
+                color: '#0088ff'  // Bright blue for water
+            },
+            biomes: {
+                terrains: ['forest', 'jungle', 'grasslands', 'swamp'],
+                color: '#00ff00'  // Bright green for vegetation
+            },
+            features: {
+                terrains: ['boreal'],
+                color: '#8b4513'  // Brown for mountains
+            },
+            temperature: {
+                terrains: ['arctic', 'tundra'],
+                color: '#ffffff'  // White for ice/snow
+            },
+            resources: {
+                terrains: ['desert', 'rock'],
+                color: '#ffd700'  // Gold for resources
+            }
+        };
+
+        // Toggle layer visibility
+        function toggleLayer(layerName) {
+            if (layerName === 'terrain') {
+                // Terrain is always visible as base layer
+                return;
+            }
+
+            if (visibleLayers.has(layerName)) {
+                visibleLayers.delete(layerName);
+            } else {
+                visibleLayers.add(layerName);
+            }
+
+            renderTerrainMap(); // Re-render with new layer state
+        }
+
+        // Update button active states
+        function updateLayerButtons() {
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                const layer = btn.dataset.layer;
+                if (layer === 'terrain' || visibleLayers.has(layer)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
 
 
 
@@ -530,297 +707,9 @@
             if (updateInterval) clearInterval(updateInterval);
         });
 
-        // Planetary Map Class - SimEarth Style Height Map
-        class PlanetMap {
-            constructor(canvasId, celestialBodyId) {
-                this.canvas = document.getElementById(canvasId);
-                this.ctx = this.canvas.getContext('2d');
-                this.celestialBodyId = celestialBodyId;
-                this.zoom = 1;
-                this.tooltip = document.getElementById('featureTooltip');
-                
-                // Layer visibility
-                this.layers = {
-                    terrain: true,
-                    water: true,
-                    biomes: true,
-                    features: true,
-                    temperature: false,
-                    resources: false
-                };
-                
-                // Generate terrain data
-                this.generateTerrain();
-                this.setupEventListeners();
-                this.render();
-            }
-            
-            generateTerrain() {
-                // Create height map data
-                this.heightMap = [];
-                const resolution = 200;
-                
-                for (let y = 0; y < resolution; y++) {
-                    this.heightMap[y] = [];
-                    for (let x = 0; x < resolution * 2; x++) {
-                        // Multiple octaves of noise for realistic terrain
-                        const nx = x / resolution - 1;
-                        const ny = y / resolution - 0.5;
-                        
-                        let height = 0;
-                        height += Math.sin(nx * Math.PI * 4) * Math.cos(ny * Math.PI * 2) * 0.5;
-                        height += Math.sin(nx * Math.PI * 8) * Math.cos(ny * Math.PI * 4) * 0.25;
-                        height += Math.sin(nx * Math.PI * 16) * Math.cos(ny * Math.PI * 8) * 0.125;
-                        
-                        // Normalize to 0-1
-                        height = (height + 1) / 2;
-                        this.heightMap[y][x] = Math.max(0, Math.min(1, height));
-                    }
-                }
-            }
-            
-            setupEventListeners() {
-                // Zoom control
-                const zoomInput = document.getElementById('zoom');
-                if (zoomInput) {
-                    zoomInput.addEventListener('input', (e) => {
-                        this.zoom = parseFloat(e.target.value);
-                        document.getElementById('zoomValue').textContent = `${this.zoom.toFixed(1)}x`;
-                    });
-                }
-                
-                // Mouse events for tooltip
-                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-                this.canvas.addEventListener('mouseleave', () => this.hideTooltip());
-                
-                // Layer toggles
-                document.querySelectorAll('.layer-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const layer = e.target.dataset.layer;
-                        this.layers[layer] = !this.layers[layer];
-                        e.target.classList.toggle('active');
-                        this.render();
-                    });
-                });
-            }
-            
-            render() {
-                // Clear canvas
-                this.ctx.fillStyle = '#000011';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // Render terrain base
-                if (this.layers.terrain) {
-                    this.renderTerrain();
-                }
-                
-                // Render water
-                if (this.layers.water) {
-                    this.renderWater();
-                }
-                
-                // Render biomes
-                if (this.layers.biomes) {
-                    this.renderBiomes();
-                }
-                
-                // Render temperature
-                if (this.layers.temperature) {
-                    this.renderTemperature();
-                }
-                
-                // Render resources
-                if (this.layers.resources) {
-                    this.renderResources();
-                }
-                
-                // Render coordinate grid
-                this.renderGrid();
-            }
-            
-            renderTerrain() {
-                const imageData = this.ctx.createImageData(this.canvas.width, this.canvas.height);
-                const data = imageData.data;
-                
-                for (let y = 0; y < this.canvas.height; y++) {
-                    for (let x = 0; x < this.canvas.width; x++) {
-                        const height = this.getHeightAtPixel(x, y);
-                        
-                        // Height-based coloring (darker = lower, lighter = higher)
-                        const intensity = height;
-                        const r = Math.floor(intensity * 180 + 20);
-                        const g = Math.floor(intensity * 200 + 30);
-                        const b = Math.floor(intensity * 150 + 10);
-                        
-                        const pixelIndex = (y * this.canvas.width + x) * 4;
-                        data[pixelIndex] = r;
-                        data[pixelIndex + 1] = g;
-                        data[pixelIndex + 2] = b;
-                        data[pixelIndex + 3] = 255;
-                    }
-                }
-                
-                this.ctx.putImageData(imageData, 0, 0);
-            }
-            
-            renderWater() {
-                this.ctx.globalCompositeOperation = 'multiply';
-                this.ctx.fillStyle = 'rgba(0, 50, 150, 0.4)';
-                
-                for (let y = 0; y < this.canvas.height; y += 2) {
-                    for (let x = 0; x < this.canvas.width; x += 2) {
-                        const height = this.getHeightAtPixel(x, y);
-                        if (height < 0.3) {
-                            this.ctx.fillRect(x, y, 2, 2);
-                        }
-                    }
-                }
-                
-                this.ctx.globalCompositeOperation = 'source-over';
-            }
-            
-            renderBiomes() {
-                this.ctx.globalCompositeOperation = 'overlay';
-                
-                for (let y = 0; y < this.canvas.height; y += 4) {
-                    for (let x = 0; x < this.canvas.width; x += 4) {
-                        const height = this.getHeightAtPixel(x, y);
-                        let color = 'rgba(50, 100, 50, 0.3)'; // Default green
-                        
-                        if (height < 0.3) {
-                            color = 'rgba(0, 50, 150, 0.4)'; // Water
-                        } else if (height > 0.8) {
-                            color = 'rgba(120, 120, 120, 0.4)'; // Mountains
-                        } else if (height > 0.6) {
-                            color = 'rgba(150, 100, 50, 0.3)'; // Hills
-                        }
-                        
-                        this.ctx.fillStyle = color;
-                        this.ctx.fillRect(x, y, 4, 4);
-                    }
-                }
-                
-                this.ctx.globalCompositeOperation = 'source-over';
-            }
-            
-            renderTemperature() {
-                this.ctx.globalCompositeOperation = 'screen';
-                
-                for (let y = 0; y < this.canvas.height; y++) {
-                    // Temperature gradient from equator to poles
-                    const lat = ((y / this.canvas.height) - 0.5) * 180;
-                    const tempFactor = Math.cos(lat * Math.PI / 180);
-                    const intensity = (tempFactor + 1) / 2;
-                    
-                    const r = Math.floor(intensity * 255);
-                    const g = Math.floor(intensity * 150);
-                    const b = Math.floor((1 - intensity) * 255);
-                    
-                    this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.2)`;
-                    this.ctx.fillRect(0, y, this.canvas.width, 1);
-                }
-                
-                this.ctx.globalCompositeOperation = 'source-over';
-            }
-            
-            renderResources() {
-                this.ctx.fillStyle = 'rgba(255, 215, 0, 0.6)'; // Gold deposits
-                
-                // Scatter some resource indicators
-                for (let i = 0; i < 15; i++) {
-                    const x = Math.random() * this.canvas.width;
-                    const y = Math.random() * this.canvas.height;
-                    const height = this.getHeightAtPixel(x, y);
-                    
-                    if (height > 0.4) { // Resources on land
-                        this.ctx.beginPath();
-                        this.ctx.arc(x, y, 2, 0, Math.PI * 2);
-                        this.ctx.fill();
-                    }
-                }
-            }
-            
-            renderGrid() {
-                this.ctx.strokeStyle = '#001122';
-                this.ctx.lineWidth = 1;
-                
-                // Latitude lines
-                for (let lat = -90; lat <= 90; lat += 30) {
-                    const y = ((90 - lat) / 180) * this.canvas.height;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(0, y);
-                    this.ctx.lineTo(this.canvas.width, y);
-                    this.ctx.stroke();
-                }
-                
-                // Longitude lines
-                for (let lon = -180; lon <= 180; lon += 30) {
-                    const x = ((lon + 180) / 360) * this.canvas.width;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(x, 0);
-                    this.ctx.lineTo(x, this.canvas.height);
-                    this.ctx.stroke();
-                }
-            }
-            
-            getHeightAtPixel(x, y) {
-                // Convert pixel coordinates to height map coordinates
-                const mapX = Math.floor((x / this.canvas.width) * this.heightMap[0].length);
-                const mapY = Math.floor((y / this.canvas.height) * this.heightMap.length);
-                
-                if (this.heightMap[mapY] && this.heightMap[mapY][mapX] !== undefined) {
-                    return this.heightMap[mapY][mapX];
-                }
-                return 0.5;
-            }
-            
-            handleMouseMove(event) {
-                const rect = this.canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                
-                // Update tooltip position
-                this.tooltip.style.left = `${event.clientX + 10}px`;
-                this.tooltip.style.top = `${event.clientY - 10}px`;
-                
-                // Show coordinate and terrain info
-                const lat = 90 - (y / this.canvas.height) * 180;
-                const lon = (x / this.canvas.width) * 360 - 180;
-                const height = this.getHeightAtPixel(x, y);
-                
-                const biome = this.getBiomeAtHeight(height);
-                const temp = this.getTemperatureAtLat(lat);
-                
-                document.getElementById('tooltipContent').innerHTML = 
-                    `<strong>Coordinates:</strong> ${lat.toFixed(1)}°, ${lon.toFixed(1)}°<br>` +
-                    `<strong>Elevation:</strong> ${(height * 100).toFixed(1)}%<br>` +
-                    `<strong>Biome:</strong> ${biome}<br>` +
-                    `<strong>Temperature:</strong> ${temp}`;
-                
-                this.tooltip.classList.remove('hidden');
-            }
-            
-            hideTooltip() {
-                this.tooltip.classList.add('hidden');
-            }
-            
-            getBiomeAtHeight(height) {
-                if (height < 0.3) return 'Ocean';
-                if (height > 0.8) return 'Mountains';
-                if (height > 0.6) return 'Hills';
-                return 'Plains';
-            }
-            
-            getTemperatureAtLat(lat) {
-                const temp = 30 * Math.cos(lat * Math.PI / 180);
-                return temp > 0 ? `${temp.toFixed(0)}°C` : `${temp.toFixed(0)}°C`;
-            }
-        }
-
         // Initialize map on page load
         window.addEventListener('load', () => {
-            const celestialBodyId = <%= @celestial_body.id %>;
-            new PlanetMap('planetCanvas', celestialBodyId);
+            renderTerrainMap();
         });
     </script>
 </body>
