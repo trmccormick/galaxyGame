@@ -253,10 +253,11 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 
 **All map system changes must update documentation:**
 
-1. **Terrain Data Updates**: When importing new maps or modifying terrain, update the CelestialBody JSON with new terrain_map data
-2. **Service Changes**: Document any changes to import/conversion services in this file
-3. **UI Modifications**: Update layer control documentation when adding new toggles
-4. **Asset Additions**: Document new tilesets or elevation datasets added to the system
+1. **Terrain Data Storage**: Terrain maps are stored in `geosphere.terrain_map` JSONB field. The controller automatically creates a geosphere if one doesn't exist during terrain import to ensure data persistence.
+2. **Terrain Data Updates**: When importing new maps or modifying terrain, update the CelestialBody's geosphere with new terrain_map data
+3. **Service Changes**: Document any changes to import/conversion services in this file
+4. **UI Modifications**: Update layer control documentation when adding new toggles
+5. **Asset Additions**: Document new tilesets or elevation datasets added to the system
 
 ## Testing Requirements
 
