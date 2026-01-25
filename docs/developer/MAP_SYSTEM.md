@@ -113,14 +113,17 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
   - Zoom controls and grid overlays
 
 ### Layer Controls (SimEarth-Style with Elevation)
-- **Terrain Layer**: Elevation-based gray scale when selected alone
-  - Shows all terrain as gray scale based on elevation
-- **Other Layers**: Exclusive color replacement - only shows colors for terrains belonging to active layers
+- **Terrain Layer**: Elevation-based gray scale when active (overrides other layers)
+  - Shows all terrain as gray scale based on elevation regardless of other active layers
+  - When terrain is on, other layers provide overlay information on the elevation base
+- **Other Layers**: Exclusive color replacement when terrain is off - only shows colors for terrains belonging to active layers
   - Terrains not in active layers appear black
   - Multiple layers can be combined for overlay effects
 
 **Available Layers:**
 - **Terrain (Gray Scale)**: Elevation-based visualization - darker = lower elevation, lighter = higher elevation
+  - Always shows when active, providing base elevation context
+  - Other layers overlay on this elevation foundation
 - **Water (Blue Gradient)**: Ocean (#0088FF bright), deep_sea (#004488 dark) → Blue depth gradient
 - **Biomes (Green Spectrum)**: Forest/jungle (#00FF00/#00DD00 dark), grasslands/plains (#88FF88/#AAFFAA light), swamp (#66AA66 muted) → Green vegetation density
 - **Features (Brown/Gray)**: Boreal/mountains (#8B4513/#654321 dark), rock (#696969 gray) → Geological formations
@@ -131,7 +134,7 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 - Layer visibility stored in `visibleLayers` Set
 - `layerOverlays` object maps terrain types to layer colors
 - `toggleLayer()` function manages state and UI updates
-- `renderTerrainMap()` checks enabled layers before applying base colors
+- `renderTerrainMap()` prioritizes terrain layer for elevation context, then applies overlays
 
 ### Tileset Assets
 - **Location**: `public/tilesets/`
