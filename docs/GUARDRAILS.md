@@ -130,7 +130,88 @@
 
 This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
 
+## 🐳 10. Environment & Container Management Guardrails
+
+**Context:** Development Environment Integrity  
+**Mandate:** Protect running applications and collaborative work sessions from unintended disruptions.
+
+### 🚫 Container Restart Prohibition
+- **No Autonomous Restarts:** Do NOT restart, rebuild, or stop Docker containers without explicit user permission, unless operating in autonomous "Grinder" mode for overnight batch processing.
+- **Interactive Mode Default:** In interactive sessions (Quick-Fix Protocol, manual code review), assume containers are running correctly and other agents may be active.
+- **Verification First:** Before suggesting any container operations, ask "Are the containers currently running?" or check status with `docker-compose ps`.
+- **Exception - Grinder Mode:** Autonomous Nightly Grinder may perform container operations as part of its scripted workflow, but must log all actions and provide rollback instructions.
+
+### 🔍 Environment State Preservation
+- **Running Application Assumption:** Assume the Rails application is running unless explicitly told otherwise. Do not assume container state from tool outputs alone.
+- **Collaborative Awareness:** Multiple agents may be working simultaneously. Container operations affect all agents - coordinate or ask first.
+- **Minimal Intervention:** Prefer code-only fixes that don't require service restarts. Rails development mode reloads most changes automatically.
+
+### ✅ Permitted Container Operations
+- **Status Checks:** `docker-compose ps`, `docker ps` - safe informational commands
+- **Log Inspection:** `docker-compose logs` - safe for debugging
+- **Database Queries:** Container-based Rails commands for data inspection
+- **Test Execution:** Running RSpec inside containers (with proper environment isolation)
+- **Grinder Mode:** Full container lifecycle management during autonomous batch processing
+
+### � Configuration Change Prohibition
+- **No Autonomous Config Changes:** Do NOT suggest or make changes to Docker Compose files, .gitignore, environment files, or other infrastructure configurations without explicit user permission.
+- **Interactive Mode Restriction:** In interactive sessions, assume all configurations are correct and do not propose modifications unless directly requested.
+- **Documentation First:** Any proposed config changes must be documented and approved before implementation.
+- **Exception - Grinder Mode:** Autonomous mode may propose config changes as part of scripted workflows, but must provide clear rollback instructions and require approval.
+
+### 🚨 Incident Response [2026-01-23]
+- **Root Cause:** Unintended configuration changes during file review session
+- **Impact:** Disrupted user workflow and required manual reversion
+- **Prevention:** Added explicit prohibition on config changes without permission
+- **Recovery:** Always confirm user intent before suggesting file modifications
+
+### 🗄️ 11. Database Environment Protection Guardrails
+
+**Context:** Database Integrity and Test Isolation  
+**Mandate:** Prevent accidental corruption of development database through improper test execution.
+
+#### 🚫 Test Environment Violation Prohibition
+- **RAILS_ENV=test Mandate:** ALL RSpec test executions MUST use `RAILS_ENV=test` to prevent development database corruption.
+- **DATABASE_URL Unset Requirement:** ALL test commands MUST prefix with `unset DATABASE_URL` to avoid environment bleed.
+- **Safety Check First:** Before any test run, verify database context:
+  ```bash
+  docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"'
+  # Expected: galaxy_game_test
+  # ❌ STOP if shows galaxy_game_development
+  ```
+
+#### 🚨 Development Database Corruption Response
+- **Immediate Stop:** If tests run against development database, STOP all operations immediately.
+- **Corruption Assessment:** Check for data anomalies or missing records in development database.
+- **Recovery Protocol:** Reseed development database if corruption detected:
+  ```bash
+  # Kill any running processes
+  docker exec -it web pkill -f rails
+  
+  # Drop and recreate development database
+  docker-compose -f docker-compose.dev.yml exec web rails db:drop db:create db:migrate db:seed
+  
+  # Verify data integrity
+  docker-compose -f docker-compose.dev.yml exec web rails runner "puts 'Celestial bodies: #{CelestialBodies::CelestialBody.count}'"
+  ```
+- **Prevention Logging:** Document incident in commit message and update guardrails.
+
+#### ✅ Correct Test Execution Pattern
+```bash
+# ❌ WRONG - Corrupts development database
+docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
+
+# ✅ CORRECT - Safe test execution
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+```
+
+#### 📊 Incident Precedent [2026-01-24]
+- **Root Cause:** RSpec executed without RAILS_ENV=test, potentially corrupting development database
+- **Impact:** Development database may contain test artifacts or corrupted data
+- **Prevention:** Added explicit database environment protection guardrails
+- **Recovery:** Development database reseeding required to restore clean state
+
 ---
 
-*Last Updated: January 20, 2026*  
-*Status: Active - Integrate into world generation and AI quips*
+*Last Updated: January 24, 2026*  
+*Status: Active - Database environment protection protocols enforced*

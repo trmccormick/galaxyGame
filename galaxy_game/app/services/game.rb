@@ -78,12 +78,14 @@ class Game
     hours_elapsed = time_skipped * 24
     
     # Process material processing jobs
-    # MaterialProcessingJob.active.each do |job|
-    #   job.process_tick(hours_elapsed)
-    # end
+    MaterialProcessingJob.active.each do |job|
+      job.start! if job.status == 'pending'
+      job.process_tick(hours_elapsed)
+    end
     
     # Process component production jobs
     ComponentProductionJob.active.each do |job|
+      job.start! if job.status == 'pending'
       job.process_tick(hours_elapsed)
       
       if job.status == 'completed'
@@ -93,9 +95,17 @@ class Game
       end
     end
     
-    # Process shell printing jobs (NEW!)
-    # ShellPrintingJob.active.each do |job|
-    #   job.process_tick(hours_elapsed)
+    # Process shell printing jobs
+    ShellPrintingJob.active.each do |job|
+      job.start! if job.status == 'pending'
+      job.process_tick(hours_elapsed)
+      
+      if job.status == 'completed'
+        settlement = job.settlement
+        service = Manufacturing::ShellPrintingService.new(settlement)
+        service.complete_job(job)
+      end
+    end
       
     #   if job.reload.status == 'completed'
     #     settlement = job.settlement

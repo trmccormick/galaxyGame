@@ -31,6 +31,11 @@ module Manufacturing
       create_shell_printing_job(inflatable_tank, printer_unit, production_time, materials_needed)
     end
 
+    # Alias for backward compatibility with tests
+    def print_shell(inflatable_tank, printer_unit)
+      enclose_inflatable(inflatable_tank, printer_unit)
+    end
+
     def complete_job(job)
       # 1. Mark tank as enclosed
       job.inflatable_tank.update!(
@@ -63,19 +68,26 @@ module Manufacturing
     end
 
     def calculate_shell_materials(inflatable_tank)
-      # Get tank blueprint to find shell requirements
-      tank_blueprint = @blueprint_lookup.find_blueprint(inflatable_tank.unit_type)
-      raise "Tank blueprint not found" unless tank_blueprint
-      
-      # Shell requirements should be in the blueprint's shell_requirements section
-      shell_requirements = tank_blueprint['shell_requirements']
-      raise "No shell requirements defined for #{inflatable_tank.unit_type}" unless shell_requirements
+      # Check if tank has shell requirements in operational_data first
+      if inflatable_tank.operational_data['shell_requirements']
+        shell_requirements = inflatable_tank.operational_data['shell_requirements']
+      else
+        # Fallback to blueprint lookup
+        tank_blueprint = @blueprint_lookup.find_blueprint(inflatable_tank.unit_type)
+        raise "Tank blueprint not found" unless tank_blueprint
+        
+        shell_requirements = tank_blueprint['shell_requirements']
+        raise "No shell requirements defined for #{inflatable_tank.unit_type}" unless shell_requirements
+      end
       
       materials = {}
       
       shell_requirements['material_requirements'].each do |req|
         material_name = req['material']
-        needed_amount = req['quantity']
+        needed_amount = req['quantity'] || req['amount']  # Support both 'quantity' and 'amount' keys
+        
+        # Skip if quantity is not specified or invalid
+        next unless needed_amount && needed_amount.is_a?(Numeric) && needed_amount > 0
         
         item = @settlement.inventory.items.find_by(name: material_name)
         
@@ -130,9 +142,14 @@ module Manufacturing
     end
 
     def calculate_production_time(inflatable_tank, printer_unit)
-      # Get tank blueprint for base printing time
-      tank_blueprint = @blueprint_lookup.find_blueprint(inflatable_tank.unit_type)
-      shell_requirements = tank_blueprint['shell_requirements']
+      # Check if tank has shell requirements in operational_data first
+      if inflatable_tank.operational_data['shell_requirements']
+        shell_requirements = inflatable_tank.operational_data['shell_requirements']
+      else
+        # Fallback to blueprint lookup
+        tank_blueprint = @blueprint_lookup.find_blueprint(inflatable_tank.unit_type)
+        shell_requirements = tank_blueprint['shell_requirements']
+      end
       
       base_time = shell_requirements['printing_time_hours'] || 10.0
       
