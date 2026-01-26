@@ -12,6 +12,7 @@ services:
       - ./galaxy_game:/home/galaxy_game
       - ./data/json-data:/home/galaxy_game/app/data
       - "./data/freeCiv Maps:/home/galaxy_game/freeCiv_maps"
+      - ./data/Civ4_Maps:/home/galaxy_game/Civ4_Maps
       - ./data/tilesets:/home/galaxy_game/tilesets
       - ./data/topology\ maps:/home/galaxy_game/topology_maps
       - ./data/bundle:/usr/local/bundle # cache bundle install
