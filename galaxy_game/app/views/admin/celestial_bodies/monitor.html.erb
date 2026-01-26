@@ -351,9 +351,17 @@
             }
 
             // Load terrain data from geosphere or properties
-            let terrainData = <%= raw @celestial_body&.geosphere&.terrain_map&.to_json || 'null' %>;
+            <%
+              terrain_map_data = @celestial_body&.geosphere&.terrain_map
+              terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
+            %>
+            const terrainData = <%= raw terrain_json %>;
             if (!terrainData && <%= @celestial_body&.properties&.dig('terrain_grid').present?.to_s %>) {
-                terrainData = <%= raw ({ grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }.to_json) if @celestial_body&.properties&.dig('terrain_grid').present? %>;
+                <%
+                  props_data = { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }
+                  props_json = props_data.to_json
+                %>
+                terrainData = <%= raw props_json %>;
             }
 
             console.log('Celestial body:', <%= @celestial_body.name.to_json %>);
