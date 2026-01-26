@@ -6,7 +6,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body]
+    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body]
 
     # GET /admin/celestial_bodies
     # Index page listing all celestial bodies for monitoring selection
@@ -260,6 +260,139 @@ module Admin
       end
     end
 
+    # GET /admin/celestial_bodies/import_civ4
+    # Show Civ4 WBS file import interface
+    def import_civ4
+      @solar_systems = ::SolarSystem.all.order(:name)
+    end
+
+    # POST /admin/celestial_bodies/import_civ4
+    # Process uploaded Civ4 WBS file and create planetary body
+    def process_civ4_import
+      uploaded_file = params[:wbs_file]
+      planet_name = params[:planet_name].presence || "Imported Civ4 World"
+      solar_system_id = params[:solar_system_id]
+
+      unless uploaded_file.present?
+        redirect_to import_civ4_admin_celestial_bodies_path,
+                    alert: 'Please select a WBS file to upload.'
+        return
+      end
+
+      unless solar_system_id.present?
+        redirect_to import_civ4_admin_celestial_bodies_path,
+                    alert: 'Please select a solar system for the imported planet.'
+        return
+      end
+
+      # Save uploaded file temporarily
+      temp_file = save_uploaded_file(uploaded_file)
+
+      begin
+        # Parse the WBS file
+        import_service = Import::Civ4WbsImportService.new(temp_file.path)
+        civ4_data = import_service.import
+
+        unless civ4_data
+          redirect_to import_civ4_admin_celestial_bodies_path,
+                      alert: "Failed to parse WBS file: #{import_service.errors.join(', ')}"
+          return
+        end
+
+        # Convert to Galaxy Game format
+        converter = Import::Civ4ToGalaxyConverter.new(civ4_data)
+        planet_data = converter.convert_to_planetary_body(
+          name: planet_name,
+          solar_system: ::SolarSystem.find(solar_system_id)
+        )
+
+        unless planet_data
+          redirect_to import_civ4_admin_celestial_bodies_path,
+                      alert: "Failed to convert terrain data: #{converter.errors.join(', ')}"
+          return
+        end
+
+        # Create the planetary body using SystemBuilderService
+        builder = StarSim::SystemBuilderService.new(name: planet_name, debug_mode: true)
+
+        # Manually create the celestial body since we're importing
+        create_imported_planetary_body(planet_data)
+
+        redirect_to admin_celestial_bodies_path,
+                    notice: "Successfully imported Civ4 world '#{planet_name}' with #{civ4_data[:width]}x#{civ4_data[:height]} terrain grid."
+
+      rescue => e
+        Rails.logger.error "Civ4 import error: #{e.message}\n#{e.backtrace.join("\n")}"
+        redirect_to import_civ4_admin_celestial_bodies_path,
+                    alert: "Import failed: #{e.message}"
+      ensure
+        # Clean up temp file
+        temp_file.unlink if temp_file
+      end
+    end
+
+    # POST /admin/celestial_bodies/:id/import_civ4_for_body
+    # Import Civ4 terrain data for an existing celestial body
+    def import_civ4_for_body
+      uploaded_file = params[:wbs_file]
+
+      unless uploaded_file.present?
+        redirect_to edit_admin_celestial_body_path(@celestial_body),
+                    alert: 'Please select a WBS file to upload.'
+        return
+      end
+
+      # Save uploaded file temporarily
+      temp_file = save_uploaded_file(uploaded_file)
+
+      begin
+        # Parse the WBS file (this contains terraformed terrain)
+        import_service = Import::Civ4WbsImportService.new(temp_file.path)
+        terraformed_data = import_service.import
+
+        unless terraformed_data
+          redirect_to edit_admin_celestial_body_path(@celestial_body),
+                      alert: "Failed to parse WBS file: #{import_service.errors.join(', ')}"
+          return
+        end
+
+        # Update the existing celestial body with the new terrain data
+        @celestial_body.properties['terrain_grid'] = terraformed_data[:grid]
+        @celestial_body.properties['source'] = 'civ4_import'
+        @celestial_body.properties['original_format'] = 'wbs'
+        @celestial_body.properties['grid_width'] = terraformed_data[:width]
+        @celestial_body.properties['grid_height'] = terraformed_data[:height]
+        @celestial_body.properties['biome_counts'] = terraformed_data[:biome_counts]
+
+        # Update terrain analysis if the converter can provide it
+        converter = Import::Civ4ToGalaxyConverter.new(terraformed_data)
+        if converter.valid_data?
+          terrain_analysis = converter.send(:analyze_terrain_composition)
+          @celestial_body.properties['terrain_analysis'] = terrain_analysis
+        end
+
+        @celestial_body.save!
+
+        # Generate barren terrain for comparison (original state)
+        barren_generator = Terrain::BarrenTerrainGenerator.new(
+          width: terraformed_data[:width],
+          height: terraformed_data[:height]
+        )
+        barren_data = barren_generator.generate
+
+        redirect_to monitor_admin_celestial_body_path(@celestial_body),
+                    notice: "Successfully imported terraformed blueprint for '#{@celestial_body.name}'. Barren terrain generated with #{barren_data[:width]}x#{barren_data[:height]} grid. Game will terraform naturally toward target state."
+
+      rescue => e
+        Rails.logger.error "Civ4 import for body error: #{e.message}\n#{e.backtrace.join("\n")}"
+        redirect_to edit_admin_celestial_body_path(@celestial_body),
+                    alert: "Import failed: #{e.message}"
+      ensure
+        # Clean up temp file
+        temp_file.unlink if temp_file
+      end
+    end
+
     private
 
     def set_celestial_body
@@ -370,13 +503,13 @@ module Admin
     def load_geological_features
       return [] unless @celestial_body.geosphere
 
-      service = Lookup::PlanetaryGeologicalFeatureLookupService.new
-      features = service.features_for_body_type(@celestial_body.type)
+      service = Lookup::PlanetaryGeologicalFeatureLookupService.new(@celestial_body)
+      features = service.all_features
 
       features.map do |feature|
         {
           name: feature['name'],
-          type: feature['type'],
+          type: feature['feature_type'],
           description: feature['description'],
           formation: feature['formation_process']
         }
