@@ -776,12 +776,6 @@
         // Layer visibility state
         let visibleLayers = new Set(['terrain']); // Start with base terrain only
 
-        // TerraSim-style climate zone calculations
-        const planetTemp = <%= @celestial_body.atmosphere&.temperature || @celestial_body.surface_temperature || 288 %>; // Global surface temperature in K
-        const planetPressure = <%= @celestial_body.atmosphere&.pressure || 1.0 %>; // Atmospheric pressure in bar
-        
-        const climate = calculateClimateZones(planetTemp, planetPressure);
-
         // Toggle layer visibility
         function toggleLayer(layerName) {
             if (layerName === 'terrain') {
