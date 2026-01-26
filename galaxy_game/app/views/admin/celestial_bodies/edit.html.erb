@@ -7,7 +7,7 @@
     <title>Edit <%= @celestial_body.name %> - Admin Celestial Body</title>
     <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
 </head>
-<body>
+<body style="overflow-y: auto;">
     <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
         <!-- Header -->
         <div id="header" style="grid-column: 1 / -1;">
@@ -100,7 +100,89 @@
             </div>
 
             <div class="content-section">
-                <h3>🔒 Protected Properties</h3>
+                <h2>🗺️ Import FreeCiv Terrain Map</h2>
+                <div class="import-info">
+                    <p>Import a terraformed FreeCiv SAV file as a blueprint. The system will generate barren terrain for gameplay and use the terraformed map as a target for natural terraforming progression.</p>
+                    
+                    <div class="import-notes">
+                        <strong>How it works:</strong>
+                        <ul>
+                            <li>Upload a terraformed/habitable map from FreeCiv</li>
+                            <li>System generates barren terrain based on planetary characteristics</li>
+                            <li>Game progresses through natural terraforming toward the target state</li>
+                            <li>Terraforming target metadata is stored for reference</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="terrain-status">
+                        <h4>Current Terrain Status:</h4>
+                        <% if @celestial_body.geosphere&.terrain_map.present? %>
+                            <span class="status-loaded">✅ Terrain map loaded (<%= @celestial_body.geosphere.terrain_map['width'] %>x<%= @celestial_body.geosphere.terrain_map['height'] %>)</span>
+                        <% elsif @celestial_body.properties['terrain_grid'].present? %>
+                            <span class="status-backup">⚠️ Terrain data in backup (not displayed)</span>
+                        <% else %>
+                            <span class="status-missing">❌ No terrain data</span>
+                        <% end %>
+                        
+                        <% if @celestial_body.properties['terraforming_target'].present? %>
+                            <div class="terraforming-target">
+                                <h4>🌱 Terraforming Target:</h4>
+                                <span class="status-target">🎯 Target blueprint available</span>
+                                <% target = @celestial_body.properties['terraforming_target'] %>
+                                <% if target['file_path'].present? %>
+                                    <div class="target-details">
+                                        <strong>Source:</strong> <%= File.basename(target['file_path']) %><br>
+                                        <% if target['original_biome_counts'].present? %>
+                                            <strong>Target Biomes:</strong> <%= target['original_biome_counts'].keys.join(', ') %>
+                                        <% end %>
+                                        <% progress = @celestial_body.properties['terraforming_progress'] || 0.0 %>
+                                        <strong>Progress:</strong> <%= number_to_percentage(progress * 100, precision: 1) %>
+                                    </div>
+                                <% end %>
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+
+                <%= form_with url: import_freeciv_for_body_admin_celestial_body_path(@celestial_body), method: :post, multipart: true, id: 'importForm' do |form| %>
+                    <div class="form-group">
+                        <%= form.label :sav_file, "FreeCiv SAV File", class: 'form-label' %>
+                        <%= form.file_field :sav_file, accept: ".sav", required: true, class: 'form-input' %>
+                        <div class="form-help">
+                            Select a .sav file exported from FreeCiv to replace this body's terrain
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <%= form.submit 'Import & Replace Terrain', class: 'action-btn primary', 
+                            data: { confirm: 'This will replace the existing terrain data. Continue?' } %>
+                        <%= link_to 'Cancel', monitor_admin_celestial_body_path(@celestial_body), class: 'action-btn secondary' %>
+                    </div>
+                <% end %>
+            </div>
+
+            <div class="content-section">
+                <h3>�️ Import Civ4 Terrain</h3>
+                <div class="import-section">
+                    <%= form_with url: import_civ4_for_body_admin_celestial_body_path(@celestial_body), method: :post, multipart: true, id: 'civ4ImportForm' do |form| %>
+                        <div class="form-group">
+                            <%= form.label :wbs_file, "Civ4 WBS File", class: 'form-label' %>
+                            <%= form.file_field :wbs_file, accept: ".Civ4WorldBuilderSave,.CivBeyondSwordWBSave,.CivWarlordsWBSave", required: true, class: 'form-input' %>
+                            <div class="form-help">
+                                Select a Civ4 World Builder Save file (.Civ4WorldBuilderSave, .CivBeyondSwordWBSave, or .CivWarlordsWBSave)
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <%= form.submit 'Import Civ4 Terrain', class: 'action-btn primary', 
+                                data: { confirm: 'This will replace the existing terrain data with Civ4 terrain. Continue?' } %>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3>�🔒 Protected Properties</h3>
                 <div class="protected-properties">
                     <p>The following properties cannot be edited through this interface:</p>
                     <ul>
@@ -231,6 +313,38 @@
             color: #ff8800;
             font-size: 0.9em;
             line-height: 1.4;
+        }
+
+        .import-info {
+            background: #001122;
+            border: 1px solid #00aaff;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .terrain-status {
+            margin-top: 1rem;
+        }
+
+        .terrain-status h4 {
+            color: #0ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-loaded {
+            color: #44ff44;
+            font-weight: bold;
+        }
+
+        .status-backup {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+
+        .status-missing {
+            color: #ff4444;
+            font-weight: bold;
         }
     </style>
 </body>

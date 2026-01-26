@@ -51,6 +51,14 @@ body {
     border-right: 2px solid #0f0;
 }
 
+/* Main Content Panel */
+#contentPanel {
+    background: #1a1a1a;
+    padding: 15px;
+    overflow-y: auto;
+    border-right: 2px solid #0f0;
+}
+
 .tool-section {
     margin-bottom: 20px;
     border: 1px solid #333;
@@ -804,4 +812,13 @@ canvas {
 .intervention-btn.disaster-btn:active {
     background: #f00;
     color: #000;
+}
+
+/* Import Section Styles */
+.import-section {
+    background: #001122;
+    border: 1px solid #00aaff;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
 }
