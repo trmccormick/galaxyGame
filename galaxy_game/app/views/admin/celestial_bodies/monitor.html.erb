@@ -354,15 +354,18 @@
             <%
               terrain_map_data = @celestial_body&.geosphere&.terrain_map
               terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
+              has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
             %>
             const terrainData = <%= raw terrain_json %>;
-            if (!terrainData && <%= @celestial_body&.properties&.dig('terrain_grid').present?.to_s %>) {
+            <% if has_properties_grid %>
+            if (!terrainData) {
                 <%
                   props_data = { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }
                   props_json = props_data.to_json
                 %>
                 terrainData = <%= raw props_json %>;
             }
+            <% end %>
 
             console.log('Celestial body:', <%= @celestial_body.name.to_json %>);
             console.log('Geosphere present:', <%= (@celestial_body.geosphere.present? rescue false).to_json %>);
