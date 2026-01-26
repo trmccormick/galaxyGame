@@ -272,11 +272,13 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 
 #### Edit (`/admin/celestial_bodies/:id/edit`)
 
-Admin-only interface for editing celestial body names and aliases.
+Admin-only interface for editing celestial body names and aliases, plus terrain import capabilities.
 
 **Features:**
 - Name editing with validation
 - Alias management (add/remove alternative names)
+- FreeCiv SAV file import for terraformed terrain
+- Civ4 WBS file import for elevation-based terrain
 - Clear warnings about protected properties
 - Restricted to admin users only
 
@@ -286,8 +288,29 @@ Admin-only interface for editing celestial body names and aliases.
 - `name` - Primary celestial body name
 - `aliases` - Array of alternative names
 
+**Terrain Import Features:**
+
+**FreeCiv Import:**
+- Upload FreeCiv SAV files containing terraformed terrain
+- Generates barren terrain for gameplay with terraformed areas as target zones
+- Route: `POST /admin/celestial_bodies/:id/import_freeciv_for_body`
+- Controller: `Admin::CelestialBodiesController#import_freeciv_for_body`
+
+**Civ4 Import:**
+- Upload Civ4 World Builder Save (WBS) files
+- Imports dual terrain system (elevation + biome) for realistic planetary generation
+- Supports .Civ4WorldBuilderSave, .CivBeyondSwordWBSave, .CivWarlordsWBSave formats
+- Route: `POST /admin/celestial_bodies/:id/import_civ4_for_body`
+- Controller: `Admin::CelestialBodiesController#import_civ4_for_body`
+
+**Services Used:**
+- `Import::FreecivSavImportService` - Parses FreeCiv SAV files
+- `Import::FreecivToGalaxyConverter` - Converts FreeCiv data to Galaxy format
+- `Import::Civ4WbsImportService` - Parses Civ4 WBS files
+- `Import::Civ4ToGalaxyConverter` - Converts Civ4 data to Galaxy format
+
 **Protected Properties:**
-All physical and astronomical properties (mass, radius, temperature, atmosphere, etc.) are read-only and sourced from authoritative data (JSON/StarSim generation). Only metadata (names/aliases) can be edited through this interface.
+All physical and astronomical properties (mass, radius, temperature, atmosphere, etc.) are read-only and sourced from authoritative data (JSON/StarSim generation). Only metadata (names/aliases) and terrain data can be edited through this interface.
 
 ### 3. Solar Systems (`/admin/solar_systems`)
 
