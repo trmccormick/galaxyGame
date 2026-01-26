@@ -515,6 +515,8 @@
                 return;
             }
 
+            const ctx = canvas.getContext('2d');
+
             // Load terrain data from geosphere or properties
             <%
               terrain_map_data = @celestial_body&.geosphere&.terrain_map
@@ -556,8 +558,6 @@
                 
                 return;
             }
-
-            const ctx = canvas.getContext('2d');
             const grid = terrainData.grid || terrainData.terrain_grid;
             const width = terrainData.width || grid[0]?.length || 0;
             const height = terrainData.height || grid.length;
@@ -698,11 +698,12 @@
                         }
                     } else {
                         // Earth: topographic colors (SimEarth style)
-                        if (terrainType === 'ocean' || terrainType === 'deep_sea') {
-                            // Ocean: blue gradient based on depth - darker like SimEarth
-                            const depth = terrainType === 'deep_sea' ? 0.9 : 0.4;
-                            const blueIntensity = Math.floor(50 + depth * 100); // Much darker base
-                            baseColor = `rgb(${Math.max(0, blueIntensity - 40)}, ${Math.max(0, blueIntensity - 20)}, ${blueIntensity})`;
+                        if (terrainType === 'ocean') {
+                            // Ocean: pure blue like SimEarth
+                            baseColor = colors.ocean;
+                        } else if (terrainType === 'deep_sea') {
+                            // Deep sea: darker blue like SimEarth
+                            baseColor = colors.deep_sea;
                         } else {
                             // Land: brown gradient based on elevation, with polar variations
                             if (Math.abs(latitude) > 70) {
