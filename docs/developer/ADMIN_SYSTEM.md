@@ -232,15 +232,33 @@ Global celestial body catalog showing all bodies in the game database for monito
 
 #### Monitor (`/admin/celestial_bodies/:id/monitor`)
 
-Real-time planetary monitoring with sphere-based data visualization.
+Real-time planetary monitoring with sphere-based data visualization and terrain rendering.
 
 **Features:**
 - Live planetary sphere data (atmosphere, hydrosphere, geosphere, biosphere)
+- Interactive terrain map with FreeCiv-style rendering (180x90 grid, 8px tiles)
+- Climate-based desert coloring using TerraSim biosphere logic
+- Layer toggles for terrain, water, biomes, temperature, rainfall, and resources
 - AI mission log for planet-specific missions
 - AI testing console with predefined test scenarios
 - Geological features tracking
 
 **Controller:** `Admin::CelestialBodiesController#monitor`
+
+**Terrain Rendering System:**
+- **Canvas Size**: 180x90 grid with 8px tiles (1440x720px total)
+- **Climate Calculations**: TerraSim-style temperature/pressure analysis for ice coverage and habitable zones
+- **Desert Coloring**: Latitude-based temperature variation (yellow near equator, beige near poles)
+- **Layer System**: Toggle-able overlays for different terrain aspects
+- **Data Source**: PostgreSQL JSONB terrain data from FreeCiv SAV file imports
+
+**Layer Types:**
+- **Terrain**: Base terrain colors (ocean, deep_sea, forest, jungle, grasslands, plains, swamp, boreal, arctic, desert, rock)
+- **Water**: Surface water and deep ocean visualization
+- **Biomes**: Climate-based biome coloring with desert temperature gradients
+- **Temperature**: Red-orange hot deserts, blue cold rocky highlands
+- **Rainfall**: Blue gradient from jungle tropics to desert arid regions
+- **Resources**: Gold highlights for mineral-rich areas
 
 **Data Endpoints:**
 - `GET /admin/celestial_bodies/:id/sphere_data.json` - Live sphere metrics

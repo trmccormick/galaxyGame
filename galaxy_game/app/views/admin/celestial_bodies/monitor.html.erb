@@ -331,6 +331,105 @@
         const planetId = <%= @celestial_body.id %>;
         let updateInterval = null;
 
+        // TerraSim-style climate zone calculations
+        function calculateClimateZones(tempK, pressureBar) {
+            // Simplified TerraSim calculations
+            const Ts = tempK; // Surface temperature
+            const Tp = Ts - 75 / (1 + 5 * pressureBar); // Polar temperature (TerraSim formula)
+            const Tt = Ts * 1.1; // Tropical temperature
+            
+            let iceLat = 0; // Ice latitude in degrees
+            let habRatio = 0; // Habitable ratio
+            
+            if (Tt > 273 && Tp < 273) {
+                // Partial ice coverage
+                habRatio = Math.pow((Tt - 273) / (Tt - Tp), 0.666667);
+                iceLat = Math.asin(habRatio) * 180 / Math.PI; // Convert to degrees
+            } else if (Tt < 273) {
+                // Completely frozen
+                habRatio = 0;
+                iceLat = 90;
+            } else {
+                // No ice
+                habRatio = 1;
+                iceLat = 0;
+            }
+            
+            return {
+                surfaceTemp: Ts,
+                polarTemp: Tp,
+                tropicalTemp: Tt,
+                iceLatitude: iceLat,
+                habitableRatio: habRatio,
+                // Climate zone boundaries
+                polarZone: iceLat,
+                temperateZone: Math.max(iceLat + 30, 45),
+                tropicalZone: Math.max(iceLat + 60, 75)
+            };
+        }
+
+        // Global climate data
+        const planetTemp = <%= @celestial_body.atmosphere&.temperature || @celestial_body.surface_temperature || 288 %>; // Global surface temperature in K
+        const planetPressure = <%= @celestial_body.atmosphere&.pressure || 1.0 %>; // Atmospheric pressure in bar
+        const climate = calculateClimateZones(planetTemp, planetPressure);
+
+        // Layer overlay colors (complete replacement with terrain-specific shades)
+        const layerOverlays = {
+            water: {
+                terrainColors: {
+                    'ocean': '#0088ff',    // Bright blue for surface water
+                    'deep_sea': '#004488'  // Darker blue for deep ocean
+                }
+            },
+            biomes: {
+                terrainColors: {
+                    'forest': '#00ff00',   // Bright green for forests
+                    'jungle': '#00dd00',   // Slightly darker for dense jungle
+                    'grasslands': '#88ff88', // Lighter green for grasslands
+                    'plains': '#aaffaa',   // Light green for plains
+                    'swamp': '#66aa66',    // Muted green for swamps
+                    'boreal': '#448844',   // Dark green for boreal forests/taiga
+                    'arctic': '#ffffff',   // White for polar ice caps (cryosphere biome)
+                    'desert': function(lat) { // Climate-based desert coloring
+                        // Use latitude to determine desert temperature type
+                        // Deserts near poles are cold (white/beige), equatorial deserts are warm (yellow)
+                        const absLat = Math.abs(lat);
+                        if (absLat > climate.iceLatitude + 20) {
+                            return '#ffeedd'; // Cold desert (beige-white)
+                        } else {
+                            return '#ffdd44'; // Warm desert (yellow)
+                        }
+                    }
+                }
+            },
+            features: {
+                terrainColors: {
+                    'rock': '#696969'     // Gray for bare rock
+                }
+            },
+            temperature: {
+                terrainColors: {
+                    'desert': '#ff6600',  // Red-orange for hot deserts (SimEarth style)
+                    'rock': '#0088ff'     // Blue for cold rocky highlands
+                }
+            },
+            rainfall: {
+                terrainColors: {
+                    'jungle': '#0066ff',   // Dark blue for high rainfall tropics
+                    'swamp': '#0044ff',   // Very dark blue for wetlands
+                    'forest': '#4488ff',  // Medium blue for moderate rainfall forests
+                    'boreal': '#88aaff',  // Light blue for temperate rainfall
+                    'desert': '#ffff00'   // Yellow for arid/low rainfall
+                }
+            },
+            resources: {
+                terrainColors: {
+                    'rock': '#ffd700',    // Gold for mineral-rich rock
+                    'desert': '#daa520'   // Darker gold for desert minerals
+                }
+            }
+        };
+
         // Initialize monitoring
         document.addEventListener('DOMContentLoaded', function() {
             setupAITestButtons();
@@ -367,10 +466,10 @@
             }
             <% end %>
 
-            console.log('Celestial body:', <%= @celestial_body.name.to_json %>);
-            console.log('Geosphere present:', <%= (@celestial_body.geosphere.present? rescue false).to_json %>);
-            console.log('Terrain map in geosphere:', <%= (@celestial_body.geosphere&.terrain_map.present? rescue false).to_json %>);
-            console.log('Terrain grid in properties:', <%= (@celestial_body.properties&.dig('terrain_grid').present? rescue false).to_json %>);
+            console.log('Celestial body:', <%= raw @celestial_body.name.to_json %>);
+            console.log('Geosphere present:', <%= raw (@celestial_body.geosphere.present? rescue false).to_json %>);
+            console.log('Terrain map in geosphere:', <%= raw (@celestial_body.geosphere&.terrain_map.present? rescue false).to_json %>);
+            console.log('Terrain grid in properties:', <%= raw (@celestial_body.properties&.dig('terrain_grid').present? rescue false).to_json %>);
             console.log('Terrain data loaded:', terrainData);
 
             if (!terrainData || (!terrainData.grid && !terrainData.terrain_grid)) {
@@ -449,43 +548,6 @@
                 boreal: '#8b7355',
                 swamp: '#4a5d23'
             };
-
-            // Calculate climate zones using TerraSim biosphere logic
-            function calculateClimateZones(tempK, pressureBar) {
-                // Simplified TerraSim calculations
-                const Ts = tempK; // Surface temperature
-                const Tp = Ts - 75 / (1 + 5 * pressureBar); // Polar temperature (TerraSim formula)
-                const Tt = Ts * 1.1; // Tropical temperature
-                
-                let iceLat = 0; // Ice latitude in degrees
-                let habRatio = 0; // Habitable ratio
-                
-                if (Tt > 273 && Tp < 273) {
-                    // Partial ice coverage
-                    habRatio = Math.pow((Tt - 273) / (Tt - Tp), 0.666667);
-                    iceLat = Math.asin(habRatio) * 180 / Math.PI; // Convert to degrees
-                } else if (Tt < 273) {
-                    // Completely frozen
-                    habRatio = 0;
-                    iceLat = 90;
-                } else {
-                    // No ice
-                    habRatio = 1;
-                    iceLat = 0;
-                }
-                
-                return {
-                    surfaceTemp: Ts,
-                    polarTemp: Tp,
-                    tropicalTemp: Tt,
-                    iceLatitude: iceLat,
-                    habitableRatio: habRatio,
-                    // Climate zone boundaries
-                    polarZone: iceLat,
-                    temperateZone: Math.max(iceLat + 30, 45),
-                    tropicalZone: Math.max(iceLat + 60, 75)
-                };
-            }
             
             // Clear canvas
             ctx.fillStyle = '#000000';
@@ -719,63 +781,6 @@
         const planetPressure = <%= @celestial_body.atmosphere&.pressure || 1.0 %>; // Atmospheric pressure in bar
         
         const climate = calculateClimateZones(planetTemp, planetPressure);
-
-        // Layer overlay colors (complete replacement with terrain-specific shades)
-        const layerOverlays = {
-            water: {
-                terrainColors: {
-                    'ocean': '#0088ff',    // Bright blue for surface water
-                    'deep_sea': '#004488'  // Darker blue for deep ocean
-                }
-            },
-            biomes: {
-                terrainColors: {
-                    'forest': '#00ff00',   // Bright green for forests
-                    'jungle': '#00dd00',   // Slightly darker for dense jungle
-                    'grasslands': '#88ff88', // Lighter green for grasslands
-                    'plains': '#aaffaa',   // Light green for plains
-                    'swamp': '#66aa66',    // Muted green for swamps
-                    'boreal': '#448844',   // Dark green for boreal forests/taiga
-                    'arctic': '#ffffff',   // White for polar ice caps (cryosphere biome)
-                    'desert': function(lat) { // Climate-based desert coloring
-                        // Use latitude to determine desert temperature type
-                        // Deserts near poles are cold (white/beige), equatorial deserts are warm (yellow)
-                        const absLat = Math.abs(lat);
-                        if (absLat > climate.iceLatitude + 20) {
-                            return '#ffeedd'; // Cold desert (beige-white)
-                        } else {
-                            return '#ffdd44'; // Warm desert (yellow)
-                        }
-                    }
-                }
-            },
-            features: {
-                terrainColors: {
-                    'rock': '#696969'     // Gray for bare rock
-                }
-            },
-            temperature: {
-                terrainColors: {
-                    'desert': '#ff6600',  // Red-orange for hot deserts (SimEarth style)
-                    'rock': '#0088ff'     // Blue for cold rocky highlands
-                }
-            },
-            rainfall: {
-                terrainColors: {
-                    'jungle': '#0066ff',   // Dark blue for high rainfall tropics
-                    'swamp': '#0044ff',   // Very dark blue for wetlands
-                    'forest': '#4488ff',  // Medium blue for moderate rainfall forests
-                    'boreal': '#88aaff',  // Light blue for temperate rainfall
-                    'desert': '#ffff00'   // Yellow for arid/low rainfall
-                }
-            },
-            resources: {
-                terrainColors: {
-                    'rock': '#ffd700',    // Gold for mineral-rich rock
-                    'desert': '#daa520'   // Darker gold for desert minerals
-                }
-            }
-        };
 
         // Toggle layer visibility
         function toggleLayer(layerName) {
