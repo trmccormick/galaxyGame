@@ -367,7 +367,7 @@ module Admin
         # Update terrain analysis if the converter can provide it
         converter = Import::Civ4ToGalaxyConverter.new(terraformed_data)
         if converter.valid_data?
-          terrain_analysis = converter.send(:analyze_terrain_composition)
+          terrain_analysis = converter.analyze_terrain_composition
           @celestial_body.properties['terrain_analysis'] = terrain_analysis
         end
 
