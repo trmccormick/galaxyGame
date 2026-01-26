@@ -407,6 +407,23 @@
             canvas.width = width * tileSize;
             canvas.height = height * tileSize;
 
+            // Elevation map for terrain types (0-1 scale for gray scale rendering)
+            const terrainElevation = {
+                ocean: 0.0,
+                deep_sea: 0.0,
+                arctic: 0.1,
+                tundra: 0.2,
+                grasslands: 0.3,
+                plains: 0.4,
+                forest: 0.5,
+                jungle: 0.5,
+                desert: 0.4,
+                mountains: 0.9,
+                rock: 0.7,
+                boreal: 0.6,
+                swamp: 0.1
+            };
+
             // Color map for terrain types (matches SampleTerrainGenerator)
             const colors = {
                 ocean: '#0066cc',
@@ -417,7 +434,16 @@
                 plains: '#99cc99',
                 forest: '#006600',
                 jungle: '#004400',
-                desert: '#ffcc66',
+                desert: function(lat) { // Climate-based desert coloring
+                    // Use latitude to determine desert temperature type
+                    // Deserts near poles are cold (beige), equatorial deserts are warm (yellow)
+                    const absLat = Math.abs(lat);
+                    if (absLat > climate.iceLatitude + 20) {
+                        return '#ffeedd'; // Cold desert (beige)
+                    } else {
+                        return '#ffdd44'; // Warm desert (yellow)
+                    }
+                },
                 mountains: '#8b4513',
                 rock: '#666666',
                 boreal: '#8b7355',
@@ -473,12 +499,17 @@
                     // Determine final color based on active layers
                     let finalColor = '#000000'; // Default to black for non-matching terrain
 
-                    // Start with elevation-based gray scale if terrain layer is active
+                    // Start with base terrain colors if terrain layer is active
                     let baseColor = null;
                     if (visibleLayers.has('terrain')) {
-                        const elevation = terrainElevation[terrainType] || 0.5; // Default to medium elevation
-                        const grayValue = Math.floor(elevation * 255);
-                        baseColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                        let terrainColor = colors[terrainType] || '#999999';
+                        // Handle function-based colors (for climate-aware rendering)
+                        if (typeof terrainColor === 'function') {
+                            // Calculate approximate latitude based on y position (0 = north pole, height-1 = south pole)
+                            const latitude = ((y / (height - 1)) - 0.5) * 180; // Convert to degrees (-90 to +90)
+                            terrainColor = terrainColor(latitude);
+                        }
+                        baseColor = terrainColor;
                         finalColor = baseColor;
                     }
 
