@@ -350,12 +350,16 @@
                 return;
             }
 
-            const terrainData = <%= raw @celestial_body&.geosphere&.terrain_map&.to_json || (@celestial_body&.properties&.dig('terrain_grid') ? { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }.to_json : 'null') %>;
+            // Load terrain data from geosphere or properties
+            let terrainData = <%= raw @celestial_body&.geosphere&.terrain_map&.to_json || 'null' %>;
+            if (!terrainData && <%= @celestial_body&.properties&.dig('terrain_grid').present?.to_s %>) {
+                terrainData = <%= raw ({ grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }.to_json) if @celestial_body&.properties&.dig('terrain_grid').present? %>;
+            }
 
-            console.log('Celestial body:', <%= @celestial_body.name.inspect %>);
-            console.log('Geosphere present:', <%= @celestial_body.geosphere.present?.inspect %>);
-            console.log('Terrain map in geosphere:', <%= @celestial_body.geosphere&.terrain_map.present?.inspect %>);
-            console.log('Terrain grid in properties:', <%= @celestial_body.properties&.dig('terrain_grid').present?.inspect %>);
+            console.log('Celestial body:', <%= @celestial_body.name.to_json %>);
+            console.log('Geosphere present:', <%= (@celestial_body.geosphere.present? rescue false).to_json %>);
+            console.log('Terrain map in geosphere:', <%= (@celestial_body.geosphere&.terrain_map.present? rescue false).to_json %>);
+            console.log('Terrain grid in properties:', <%= (@celestial_body.properties&.dig('terrain_grid').present? rescue false).to_json %>);
             console.log('Terrain data loaded:', terrainData);
 
             if (!terrainData || (!terrainData.grid && !terrainData.terrain_grid)) {
