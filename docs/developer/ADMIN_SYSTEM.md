@@ -237,7 +237,8 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 **Features:**
 - Live planetary sphere data (atmosphere, hydrosphere, geosphere, biosphere)
 - Interactive terrain map with FreeCiv-style rendering (180x90 grid, 8px tiles)
-- Climate-based desert coloring using TerraSim biosphere logic
+- Data-driven atmospheric rendering based on planetary conditions (temperature, pressure, composition)
+- Planet-specific visual effects (Mars red tint, Venus volcanic haze)
 - Layer toggles for terrain, water, biomes, temperature, rainfall, and resources
 - AI mission log for planet-specific missions
 - AI testing console with predefined test scenarios
@@ -247,10 +248,24 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 
 **Terrain Rendering System:**
 - **Canvas Size**: 180x90 grid with 8px tiles (1440x720px total)
+- **Atmospheric Analysis**: JavaScript functions analyze planetary temperature, pressure, and composition for realistic rendering
+- **Planet-Specific Rendering**: Conditional logic for Mars (red-tinted terrain), Venus (volcanic colors), and generic planets
 - **Climate Calculations**: TerraSim-style temperature/pressure analysis for ice coverage and habitable zones
 - **Desert Coloring**: Latitude-based temperature variation (yellow near equator, beige near poles)
 - **Layer System**: Toggle-able overlays for different terrain aspects
 - **Data Source**: PostgreSQL JSONB terrain data from FreeCiv SAV file imports
+
+**Atmospheric Condition Analysis:**
+- **Temperature**: Retrieved from `celestial_body.temperature` (surface temperature with fallbacks)
+- **Pressure**: Retrieved from `celestial_body.pressure` (atmospheric pressure with fallbacks)
+- **Composition**: Retrieved from `celestial_body.atmosphere_composition` (gas ratios and concentrations)
+- **analyzeAtmosphericConditions()**: JavaScript function that analyzes temperature, pressure, and composition to determine:
+  - Atmospheric presence (>0.01 bar pressure threshold)
+  - Planetary habitability (oxygen levels 19.5-23.5% in nitrogen atmosphere)
+  - Dominant gas identification (CO2, N2, O2, CH4, etc.)
+  - Visual effects (haze levels, color tinting, aurora potential)
+- **Elevation Calculation**: Dynamic terrain elevation based on biome type, latitude, and planetary conditions
+- **Color Blending**: Multi-layer color application with opacity controls for realistic atmospheric effects
 
 **Layer Types:**
 - **Terrain**: Base terrain colors (ocean, deep_sea, forest, jungle, grasslands, plains, swamp, boreal, arctic, desert, rock)
