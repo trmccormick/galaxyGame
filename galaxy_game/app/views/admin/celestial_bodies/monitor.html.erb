@@ -735,6 +735,33 @@
                 boreal: '#8b7355',
                 swamp: '#4a5d23'
             };
+
+            // FreeCiv terrain code to terrain type mapping
+            const freecivTerrainMap = {
+                ' ': 'ocean',      // Ocean
+                'a': 'arctic',     // Arctic
+                't': 'tundra',     // Tundra
+                'f': 'forest',     // Forest
+                'g': 'grasslands', // Grassland
+                'p': 'plains',     // Plains
+                'd': 'desert',     // Desert
+                'h': 'mountains',  // Hills (mapped to mountains)
+                'm': 'mountains',  // Mountains
+                'j': 'jungle',     // Jungle
+                's': 'swamp',      // Swamp
+                'r': 'rock',       // Rock (if present)
+                'b': 'boreal'      // Boreal (if present)
+            };
+
+            // Function to normalize terrain type from FreeCiv data
+            function normalizeTerrainType(terrainCode) {
+                // If it's already a full name, return as-is
+                if (colors[terrainCode]) {
+                    return terrainCode;
+                }
+                // Otherwise map from FreeCiv code
+                return freecivTerrainMap[terrainCode] || 'plains'; // Default to plains
+            }
             
             // Clear canvas
             ctx.fillStyle = '#000000';
@@ -743,7 +770,8 @@
             // Render each tile
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
-                    const terrainType = grid[y][x];
+                    const rawTerrainType = grid[y][x];
+                    const terrainType = normalizeTerrainType(rawTerrainType);
 
                     // Calculate latitude for this tile (-90 to +90)
                     const latitude = ((y / (height - 1)) - 0.5) * 180;
