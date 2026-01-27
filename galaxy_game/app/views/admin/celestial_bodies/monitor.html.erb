@@ -504,7 +504,94 @@
             const b = Math.round(base.b * (1 - alpha) + overlay.b * alpha);
             
             // Convert back to hex
-            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+        }
+
+        // Analyze atmospheric conditions for planetary rendering effects
+        function analyzeAtmosphericConditions(temperature, pressure, composition) {
+            // Default values for airless bodies
+            let hasAtmosphere = false;
+            let isHabitable = false;
+            let dominantGas = 'none';
+            let visualEffects = {
+                haze: 0,
+                colorTint: null,
+                aurora: false
+            };
+
+            // Check if planet has significant atmosphere
+            if (pressure > 0.01) { // More than trace atmosphere
+                hasAtmosphere = true;
+
+                // Analyze composition if available
+                if (composition && typeof composition === 'object') {
+                    let maxPercentage = 0;
+                    let dominantGasKey = null;
+
+                    // Find dominant gas
+                    Object.keys(composition).forEach(gas => {
+                        const gasData = composition[gas];
+                        const percentage = gasData.percentage || gasData;
+                        if (percentage > maxPercentage) {
+                            maxPercentage = percentage;
+                            dominantGasKey = gas;
+                        }
+                    });
+
+                    if (dominantGasKey) {
+                        dominantGas = dominantGasKey;
+                        const gasData = composition[dominantGasKey];
+                        const commonName = gasData.common_name || dominantGasKey;
+
+                        // Determine visual effects based on dominant gas and conditions
+                        if (dominantGasKey === 'CO2') {
+                            visualEffects.haze = 0.8; // Thick CO2 atmosphere creates haze
+                            visualEffects.colorTint = '#ffaaaa'; // Slight reddish tint
+                        } else if (dominantGasKey === 'N2' && composition['O2']) {
+                            // Nitrogen-oxygen atmosphere (Earth-like)
+                            const oxygenPercent = composition['O2'].percentage || composition['O2'];
+                            if (oxygenPercent >= 19.5 && oxygenPercent <= 23.5) {
+                                isHabitable = true;
+                                visualEffects.haze = 0.1; // Clear atmosphere
+                            }
+                        } else if (dominantGasKey === 'CH4') {
+                            visualEffects.haze = 0.6; // Methane atmosphere
+                            visualEffects.colorTint = '#ffffaa'; // Slight yellowish tint
+                        }
+                    }
+                }
+
+                // Temperature-based effects
+                if (temperature < 273) { // Below freezing
+                    visualEffects.haze += 0.2; // Cold atmospheres can be hazy
+                } else if (temperature > 400) { // Hot planet
+                    visualEffects.haze += 0.3; // Hot atmospheres distort light
+                }
+
+                // Pressure-based effects
+                if (pressure > 5) {
+                    visualEffects.haze += 0.4; // High pressure creates thick atmosphere
+                }
+
+                // Clamp haze to reasonable range
+                visualEffects.haze = Math.max(0, Math.min(1, visualEffects.haze));
+
+                // Aurora effects for magnetic planets with atmosphere
+                if (hasAtmosphere && temperature > 200 && pressure > 0.1) {
+                    visualEffects.aurora = true;
+                }
+            }
+
+            return {
+                hasAtmosphere: hasAtmosphere,
+                isHabitable: isHabitable,
+                dominantGas: dominantGas,
+                visualEffects: visualEffects,
+                // Raw data for debugging
+                temperature: temperature,
+                pressure: pressure,
+                composition: composition
+            };
         }
 
         // Simple terrain map renderer
@@ -524,15 +611,18 @@
               has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
             %>
             let terrainData = <%= raw terrain_json %>;
-            <% if has_properties_grid %>
-            if (!terrainData) {
+            
+            // Prefer decomposed layers if available (shows current planetary conditions)
+            if (terrainData && terrainData.decomposed_layers) {
+                terrainData = terrainData.decomposed_layers;
+                console.log('Using decomposed terrain layers (planetary conditions applied)');
+            } else if (!terrainData && has_properties_grid) {
                 <%
                   props_data = { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }
                   props_json = props_data.to_json
                 %>
                 terrainData = <%= raw props_json %>;
             }
-            <% end %>
 
             console.log('Celestial body:', <%= raw @celestial_body.name.to_json %>);
             console.log('Geosphere present:', <%= raw (@celestial_body.geosphere.present? rescue false).to_json %>);
@@ -574,7 +664,12 @@
 
             // Planet identification for special rendering
             const planetName = <%= raw @celestial_body.name.to_json %>;
-            const isMars = planetName.toLowerCase().includes('mars');
+// Analyze planetary conditions for data-driven rendering
+            const planetaryConditions = analyzeAtmosphericConditions(
+                <%= raw @celestial_body.temperature.to_json %>,
+                <%= raw @celestial_body.pressure.to_json %>,
+                <%= raw @celestial_body.atmosphere_composition.to_json %>
+            );
             
             // Dynamic elevation calculation based on biome and planetary conditions
             function calculateElevation(terrainType, latitude, temperature, pressure) {
@@ -661,6 +756,7 @@
                     
                     // Terrain is ALWAYS the base layer - topographic colors (SimEarth style)
                     const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
+                    const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
                     
                     if (isMars) {
                         // Mars: red-tinted topographic colors
@@ -668,73 +764,14 @@
                             // Mars water: reddish-brown (rare/dried up)
                             const depth = terrainType === 'deep_sea' ? 0.8 : 0.5;
                             const redValue = Math.floor(100 + depth * 100);
-                            baseColor = `rgb(${redValue}, ${Math.max(0, redValue - 40)}, ${Math.max(0, redValue - 60)})`;
                         } else {
-                            // Mars terrain: red-tinted browns/greys based on elevation
-                            if (Math.abs(latitude) > 70) {
-                                // Polar regions: reddish ice
-                                if (elevation > 0.6) {
-                                    // High polar peaks: reddish-white
-                                    const iceValue = Math.floor(220 + elevation * 35);
-                                    baseColor = `rgb(${Math.min(255, iceValue + 20)}, ${Math.max(0, iceValue - 10)}, ${Math.max(0, iceValue - 20)})`;
-                                } else {
-                                    // Polar lowlands: reddish-grey
-                                    const polarValue = Math.floor(150 + elevation * 60);
-                                    baseColor = `rgb(${Math.min(255, polarValue + 30)}, ${Math.max(0, polarValue - 5)}, ${Math.max(0, polarValue - 15)})`;
-                                }
-                            } else if (elevation > 0.7) {
-                                // High mountains: reddish-grey
-                                const greyValue = Math.floor(180 + elevation * 40);
-                                baseColor = `rgb(${Math.min(255, greyValue + 30)}, ${Math.max(0, greyValue - 20)}, ${Math.max(0, greyValue - 40)})`;
-                            } else if (elevation > 0.4) {
-                                // Medium elevation: red-brown
-                                const brownValue = Math.floor(80 + elevation * 80);
-                                baseColor = `rgb(${Math.min(255, brownValue + 60)}, ${Math.max(0, brownValue - 10)}, ${Math.max(0, brownValue - 30)})`;
-                            } else {
-                                // Low elevation: dark red-brown
-                                const darkValue = Math.floor(40 + elevation * 60);
-                                baseColor = `rgb(${Math.min(255, darkValue + 50)}, ${Math.max(0, darkValue - 5)}, ${Math.max(0, darkValue - 20)})`;
-                            }
+                            // Mars land: red-tinted terrain colors
+                            baseColor = '#cd853f'; // Sandy brown with red tint
                         }
                     } else {
-                        // Earth: topographic colors (SimEarth style)
-                        if (terrainType === 'ocean') {
-                            // Ocean: pure blue like SimEarth
-                            baseColor = colors.ocean;
-                        } else if (terrainType === 'deep_sea') {
-                            // Deep sea: darker blue like SimEarth
-                            baseColor = colors.deep_sea;
-                        } else {
-                            // Land: brown gradient based on elevation, with polar variations
-                            if (Math.abs(latitude) > 70) {
-                                // Polar regions: icy colors instead of pure white
-                                if (elevation > 0.6) {
-                                    // High polar peaks: bluish-white
-                                    const iceValue = Math.floor(220 + elevation * 35);
-                                    baseColor = `rgb(${iceValue}, ${iceValue}, ${Math.min(255, iceValue + 20)})`;
-                                } else {
-                                    // Polar lowlands: grey-blue
-                                    const polarValue = Math.floor(150 + elevation * 60);
-                                    baseColor = `rgb(${polarValue}, ${polarValue}, ${Math.min(255, polarValue + 30)})`;
-                                }
-                            } else if (elevation > 0.7) {
-                                // High mountains: light grey/white
-                                const greyValue = Math.floor(200 + elevation * 55);
-                                baseColor = `rgb(${greyValue}, ${greyValue}, ${greyValue})`;
-                            } else if (elevation > 0.4) {
-                                // Medium elevation: brown
-                                const brownIntensity = Math.floor(100 + elevation * 100);
-                                baseColor = `rgb(${brownIntensity}, ${Math.max(0, brownIntensity - 30)}, ${Math.max(0, brownIntensity - 60)})`;
-                            } else {
-                                // Low elevation: darker brown
-                                const darkBrown = Math.floor(60 + elevation * 80);
-                                baseColor = `rgb(${darkBrown}, ${Math.max(0, darkBrown - 20)}, ${Math.max(0, darkBrown - 40)})`;
-                            }
-                        }
+                        // Generic planet: use standard terrain colors
+                        baseColor = colors[terrainType] || '#000000';
                     }
-
-                    // Apply layer overlays (terrain is always base, others overlay on top)
-                    let finalColor = baseColor;
                     let hasOverlay = false;
 
                     // Temperature overlay (global, always available as overlay)
