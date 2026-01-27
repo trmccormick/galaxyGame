@@ -953,50 +953,41 @@
             });
         }
 
-        // Layer visibility state
-        let visibleLayers = new Set(['terrain']); // Start with terrain as base
+        // Layer visibility state - terrain ALWAYS visible as geological base
+        let visibleLayers = new Set(['terrain']); // Terrain is permanent lithosphere base
 
-        // Toggle layer visibility
+        // Toggle layer visibility (ADDITIVE overlays, not exclusive modes)
+        // SimEarth Behavior: Multiple layers can be active simultaneously
         function toggleLayer(layerName) {
             if (layerName === 'terrain') {
-                // Terrain is always the base layer - can't be toggled off
-                // But clicking it should ensure no other layers are primary
+                // Terrain is the geological base (lithosphere) - cannot be turned off
+                // Clicking it resets view to bare planet (removes all overlays)
                 visibleLayers.clear();
                 visibleLayers.add('terrain');
+                logConsole('Reset to base terrain (bare planet lithosphere)', 'info');
             } else {
+                // All other layers are ADDITIVE overlays on the base terrain
                 if (visibleLayers.has(layerName)) {
+                    // Remove this overlay
                     visibleLayers.delete(layerName);
-                    // If no layers left, default to terrain
-                    if (visibleLayers.size === 0) {
-                        visibleLayers.add('terrain');
-                    }
+                    logConsole(`${layerName} overlay hidden`, 'info');
                 } else {
-                    // If this is a base layer type, make it the primary view
-                    if (['biomes', 'water', 'features'].includes(layerName)) {
-                        visibleLayers.clear();
-                        visibleLayers.add('terrain'); // Keep terrain as base
-                    }
+                    // Add this overlay (terrain stays visible underneath)
                     visibleLayers.add(layerName);
+                    logConsole(`${layerName} overlay shown`, 'info');
                 }
             }
 
-            renderTerrainMap(); // Re-render with new layer state
+            renderTerrainMap(); // Re-render with new layer configuration
+            updateLayerButtons();
         }
 
         // Update button active states
+        // Buttons show active when their layer is visible
         function updateLayerButtons() {
-            // Determine which layer is the current base layer
-            let activeBaseLayer = 'terrain';
-            for (const layerName of ['biomes', 'water', 'features']) {
-                if (visibleLayers.has(layerName)) {
-                    activeBaseLayer = layerName;
-                    break;
-                }
-            }
-            
             document.querySelectorAll('.layer-btn').forEach(btn => {
                 const layer = btn.dataset.layer;
-                if (layer === activeBaseLayer || (layer !== 'terrain' && visibleLayers.has(layer))) {
+                if (visibleLayers.has(layer)) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
