@@ -764,6 +764,7 @@
                             // Mars water: reddish-brown (rare/dried up)
                             const depth = terrainType === 'deep_sea' ? 0.8 : 0.5;
                             const redValue = Math.floor(100 + depth * 100);
+                            baseColor = `rgb(${redValue}, ${Math.floor(redValue * 0.6)}, ${Math.floor(redValue * 0.4)})`;
                         } else {
                             // Mars land: red-tinted terrain colors
                             baseColor = '#cd853f'; // Sandy brown with red tint
@@ -774,7 +775,8 @@
                     }
                     let hasOverlay = false;
 
-                    // Temperature overlay (global, always available as overlay)
+                    // Initialize final color to base color
+                    let finalColor = baseColor;
                     if (visibleLayers.has('temperature')) {
                         const tempOverlay = layerOverlays.temperature;
                         let tempColor;
