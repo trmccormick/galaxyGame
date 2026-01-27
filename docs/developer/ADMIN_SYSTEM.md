@@ -254,6 +254,7 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - **Desert Coloring**: Latitude-based temperature variation (yellow near equator, beige near poles)
 - **Layer System**: Toggle-able overlays for different terrain aspects
 - **Data Source**: PostgreSQL JSONB terrain data from FreeCiv SAV file imports
+- **Terrain Code Mapping**: FreeCiv single-character terrain codes ('a', 't', 'f', 'g', etc.) are mapped to full terrain type names for proper color rendering
 
 **Atmospheric Condition Analysis:**
 - **Temperature**: Retrieved from `celestial_body.temperature` (surface temperature with fallbacks)
