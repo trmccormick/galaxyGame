@@ -518,6 +518,11 @@
             const ctx = canvas.getContext('2d');
 
             // Load terrain data from geosphere or properties
+            <%
+              terrain_map_data = @celestial_body&.geosphere&.terrain_map
+              terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
+              has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
+            %>
             let terrainData = <%= raw terrain_json %>;
             <% if has_properties_grid %>
             if (!terrainData) {
