@@ -51,7 +51,78 @@ The system supports any liquid material through:
 }
 ```
 
+## Terrain Analysis Integration
+
+### TerrainDecompositionService
+
+The `TerrainAnalysis::TerrainDecompositionService` decomposes mixed terrain data from Civ4/FreeCiv maps into separate dynamic layers, enabling realistic terraforming with independent geological, hydrological, and biological systems.
+
+#### Key Features
+
+- **Layer Separation**: Divides terrain into geological (rocky, mountains), hydrological (ocean, coast), and biological (grasslands, forest) layers
+- **Elevation Generation**: Creates realistic elevation maps from terrain types using predefined ranges
+- **Water Volume Calculation**: Calculates initial water volume based on hydrological terrain distribution
+- **Dynamic Integration**: Applies `HydrosphereVolumeService` for volume-based water distribution
+
+#### Decomposition Process
+
+```ruby
+service = TerrainAnalysis::TerrainDecompositionService.new(terrain_data)
+result = service.decompose
+
+# Returns:
+{
+  'width' => 10,
+  'height' => 10,
+  'elevation' => [[0.1, 0.2, ...], ...],  # 2D elevation map
+  'water_volume' => 0.3,                   # 30% water coverage
+  'layers' => {
+    'geological' => [...],                 # Rocky, mountains, etc.
+    'hydrological' => [...],               # Ocean, coast, swamp
+    'biological' => [...]                  # Grasslands, forest, etc.
+  },
+  'grid' => [...],                         # Dynamic water distribution
+  'sea_level' => 0.4,                      # Calculated sea level
+  'water_coverage' => 0.3                  # Actual water coverage
+}
+```
+
+### HydrosphereVolumeService
+
+The `TerrainAnalysis::HydrosphereVolumeService` provides volume-based water distribution for terraforming simulations, replacing static tile assignments with dynamic elevation-based calculations.
+
+#### Core Functionality
+
+- **Sea Level Calculation**: Determines water level based on total volume and elevation distribution
+- **Dynamic Distribution**: Updates terrain grid to reflect current water volume and sea level
+- **Terraforming Support**: Allows adding/removing water volume (e.g., from KBO impacts)
+- **Elevation-Based Rendering**: Enables realistic Mars terraforming with rising water levels
+
+#### Volume-Based Water Distribution
+
+```ruby
+service = TerrainAnalysis::HydrosphereVolumeService.new(terrain_map)
+
+# Calculate sea level for current water volume
+sea_level = service.calculate_sea_level(0.5)  # 50% water coverage
+
+# Update terrain with dynamic water distribution
+updated_map = service.update_water_bodies
+
+# Add water from KBO impact
+terraformed_map = service.add_water_volume(0.2)  # +20% water
+```
+
+#### Water Volume Management
+
+- **add_water_volume(volume_increase)**: Increases water volume and recalculates distribution
+- **remove_water_volume(volume_decrease)**: Decreases water volume and recalculates distribution
+- **Automatic Capping**: Water volume constrained between 0.0 and 1.0
+- **Elevation Integration**: Sea level rises/falls based on elevation map and water volume
+
 ## Simulation Engine (HydrosphereConcern)
+
+````
 
 ### HydrosphereSimulationService
 
