@@ -430,10 +430,11 @@ module Units
     end
 
     def operational?
-      # Simple operational check - unit exists and has valid operational_data
-      operational_data.present? && 
-      operational_data.is_a?(Hash) && 
-      !operational_data.empty?
+      # Check test override first
+      return operational_data['test_operational'] if operational_data.key?('test_operational')
+      
+      # Fall back to deployment status
+      operational_data.dig('operational_properties', 'deployment', 'current_stage') == 'operational'
     end
 
     private

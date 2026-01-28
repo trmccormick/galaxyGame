@@ -8,6 +8,26 @@ FactoryBot.define do
     association :owner, factory: :organization
     attachable { nil }
 
+    # Allow setting settlement which sets attachable
+    transient do
+      settlement { nil }
+      operational { nil }
+    end
+
+    after(:create) do |unit, evaluator|
+      if evaluator.settlement
+        unit.attachable = evaluator.settlement
+        unit.owner = evaluator.settlement.owner if evaluator.settlement.owner
+      end
+      if evaluator.operational == false
+        unit.operational_data = (unit.operational_data || {}).merge('test_operational' => false)
+        unit.save!
+      elsif evaluator.operational || unit.operational_data.blank?
+        unit.operational_data = (unit.operational_data || {}).merge('test_operational' => true)
+        unit.save!
+      end
+    end
+
     # Existing traits from your definition
     trait :housing do
       unit_type { "inflatable_habitat" }
