@@ -233,12 +233,12 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - **Planet Classification:** Arid (Mars-like), Oceanic (Earth-like), Temperate, Ice World transformation rules
 
 ### Layer Overlay Definitions
-- **Water Layer:** Blue highlights for ocean/deep_sea terrain types
-- **Biomes Layer:** Green vegetation overlays with climate-based desert coloring
+- **Water Layer:** Blue highlights for ocean/deep_sea terrain types from FreeCiv water layer data
+- **Biomes Layer:** Vegetation/climate overlays using Civ4 biome extraction (forest, jungle, grasslands, plains, tundra, arctic, swamp, boreal) with terrain-specific colors
 - **Features Layer:** Geological highlights (rocky areas)
-- **Temperature Layer:** SimEarth-style red/blue thermal gradients
-- **Rainfall Layer:** Blue wetness indicators for jungle/swamp/forest
-- **Resources Layer:** Gold highlights for mineral-rich terrain
+- **Temperature Layer:** SimEarth-style red/blue thermal gradients based on planetary conditions
+- **Rainfall Layer:** Blue wetness indicators for jungle/swamp/forest terrain types
+- **Resources Layer:** Gold highlights for mineral-rich terrain from Civ4 resource layer data
 
 ### Performance Considerations
 - **Tile Size:** Fixed 8px tiles for consistent rendering across zoom levels

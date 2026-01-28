@@ -340,12 +340,12 @@
             },
             biomes: {
                 terrainColors: {
-                    'forest': '#00ff00',   // Bright green for forests
-                    'jungle': '#00dd00',   // Slightly darker for dense jungle
-                    'grasslands': '#88ff88', // Lighter green for grasslands
-                    'plains': '#aaffaa',   // Light green for plains
-                    'swamp': '#66aa66',    // Muted green for swamps
-                    'boreal': '#448844',   // Dark green for boreal forests/taiga
+                    'forest': '#228B22',   // Forest green for forests
+                    'jungle': '#006400',   // Dark green for dense jungle
+                    'grasslands': '#32CD32', // Lime green for grasslands
+                    'plains': '#FFFF00',   // Yellow for plains
+                    'swamp': '#808000',    // Olive for swamps
+                    'boreal': '#228B22',   // Forest green for boreal forests/taiga
                     'arctic': '#ffffff',   // White for polar ice caps (cryosphere biome)
                     'desert': function(lat) { // Climate-based desert coloring
                         // Use latitude to determine desert temperature type
@@ -749,7 +749,7 @@
             // Use terrain layer by default, fallback to terrainData
             let activeTerrainData = layers.terrain || terrainData;
 
-            if (!activeTerrainData || (!activeTerrainData.grid && !activeTerrainData.terrain_grid)) {
+            if (!activeTerrainData || (!activeTerrainData.grid && !activeTerrainData.terrain_grid && !activeTerrainData.terrain)) {
                 console.warn('No terrain data available - displaying message on canvas');
                 logConsole('No terrain data available for rendering', 'warning');
                 
@@ -767,7 +767,7 @@
                 
                 return;
             }
-            const grid = activeTerrainData.grid || activeTerrainData.terrain_grid;
+            const grid = activeTerrainData.grid || activeTerrainData.terrain_grid || activeTerrainData.terrain;
             const width = activeTerrainData.width || grid[0]?.length || 0;
             const height = activeTerrainData.height || grid.length;
 
@@ -785,9 +785,9 @@
             const planetName = <%= raw @celestial_body.name.to_json %>;
 // Analyze planetary conditions for data-driven rendering
             const planetaryConditions = analyzeAtmosphericConditions(
-                <%= raw @celestial_body.temperature.to_json %>,
-                <%= raw @celestial_body.pressure.to_json %>,
-                <%= raw @celestial_body.atmosphere_composition.to_json %>
+                <%= raw (@celestial_body.atmosphere&.temperature || @celestial_body.temperature || 288).to_json %>,
+                <%= raw (@celestial_body.atmosphere&.pressure || 1.0).to_json %>,
+                <%= raw @celestial_body.atmospheric_composition.to_json %>
             );
             
             // Dynamic elevation calculation based on biome and planetary conditions
@@ -847,15 +847,16 @@
                 deep_sea: '#003366',     // Deep ocean blue
                 arctic: '#e8e8e8',       // Light gray (ice/snow surface, not white)
                 tundra: '#b8b8b8',       // Medium gray (permafrost/gravel)
-                grasslands: '#8b7355',   // Brown (soil/dirt)
-                plains: '#a08050',      // Tan (dry plains)
-                forest: '#654321',      // Dark brown (tree trunks/soil)
-                jungle: '#4a3c28',      // Very dark brown (dense vegetation soil)
-                desert: '#c4a484',      // Sandy brown (sand/dunes)
+                grasslands: '#90EE90',   // Light green (grass/vegetation)
+                plains: '#F0E68C',      // Khaki (dry plains)
+                forest: '#228B22',      // Forest green (trees)
+                jungle: '#006400',      // Dark green (dense jungle)
+                desert: '#F4A460',      // Sandy brown (sand/dunes)
                 mountains: '#696969',   // Dim gray (rock)
                 rock: '#808080',        // Gray (bare rock)
-                boreal: '#8b7355',      // Brown (coniferous forest soil)
-                swamp: '#654321'        // Dark brown (wet soil/mud)
+                rocky: '#808080',       // Gray (rocky terrain)
+                boreal: '#228B22',      // Forest green (coniferous)
+                swamp: '#556B2F'        // Dark olive green (wetlands)
             };
 
             // FreeCiv terrain code to terrain type mapping
@@ -951,16 +952,25 @@
                     for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                         if (layerName === 'temperature') continue; // Already handled above
                         
-                        if (visibleLayers.has(layerName) && overlay.terrainColors && overlay.terrainColors[terrainType]) {
-                            let overlayColor = overlay.terrainColors[terrainType];
+                        if (visibleLayers.has(layerName) && overlay.terrainColors) {
+                            let overlayTerrainType = terrainType; // Default to base terrain type
                             
-                            if (typeof overlayColor === 'function') {
-                                overlayColor = overlayColor(latitude);
+                            // For layer-specific overlays, use the layer's grid data instead of base terrain
+                            if (layers[layerName] && layers[layerName].grid && layers[layerName].grid[y] && layers[layerName].grid[y][x] !== null) {
+                                overlayTerrainType = layers[layerName].grid[y][x];
                             }
                             
-                            // Blend overlay with current final color
-                            finalColor = blendColors(finalColor, overlayColor, 0.7);
-                            hasOverlay = true;
+                            if (overlay.terrainColors[overlayTerrainType]) {
+                                let overlayColor = overlay.terrainColors[overlayTerrainType];
+                                
+                                if (typeof overlayColor === 'function') {
+                                    overlayColor = overlayColor(latitude);
+                                }
+                                
+                                // Blend overlay with current final color
+                                finalColor = blendColors(finalColor, overlayColor, 0.7);
+                                hasOverlay = true;
+                            }
                         }
                     }
 
