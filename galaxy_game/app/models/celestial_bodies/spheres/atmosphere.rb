@@ -2,6 +2,7 @@
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
+      self.table_name = 'atmospheres'
       include AtmosphereConcern
       include MaterialTransferable
       

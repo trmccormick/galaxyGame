@@ -1,6 +1,7 @@
 module CelestialBodies
   module Spheres
     class Geosphere < ApplicationRecord
+      self.table_name = 'geospheres'
       include MaterialTransferable
       include GeosphereConcern  # This should provide all the shared methods
       
