@@ -78,11 +78,39 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 
 ## Services
 
+### MapLayerService
+- **Purpose**: Unified interface for processing Civ4 and FreeCiv maps into elevation/terrain/biome layers
+- **Input**: .sav file path, processing method (civ4 or freeciv)
+- **Output**: Normalized elevation grid (0-1), terrain types, biome data stored in JSONB
+- **Location**: `app/services/map_layer_service.rb`
+- **Methods**:
+  - `process_civ4_map(file_path)`: Extract elevation from Civ4 PlotType data
+  - `process_freeciv_map(file_path)`: Generate biome-constrained elevation
+  - `store_in_geosphere(geosphere, elevation, terrain, biomes, quality, method)`: Save to database
+
 ### FreecivSavImportService
 - **Purpose**: Parse FreeCiv .sav files into terrain grids
 - **Input**: .sav file path
 - **Output**: 2D terrain character array + biome counts
 - **Location**: `app/services/import/freeciv_sav_import_service.rb`
+
+### Civ4WbsImportService
+- **Purpose**: Parse Civ4 .sav files for PlotType elevation data
+- **Input**: .sav file path
+- **Output**: 2D PlotType grid (0-3 elevation levels)
+- **Location**: `app/services/import/civ4_wbs_import_service.rb`
+
+### FreecivElevationGenerator
+- **Purpose**: Generate elevation data constrained by FreeCiv biome types
+- **Input**: Biome grid from FreeCiv import
+- **Output**: 2D elevation array (0-1 normalized) within biome-appropriate ranges
+- **Location**: `app/services/import/freeciv_elevation_generator.rb`
+
+### Civ4ElevationExtractor
+- **Purpose**: Extract elevation from Civ4 PlotType data (70-80% accuracy)
+- **Input**: PlotType grid from Civ4 import
+- **Output**: 2D elevation array (0-1 normalized) from discrete PlotType levels
+- **Location**: `app/services/import/civ4_elevation_extractor.rb`
 
 ### FreecivToGalaxyConverter
 - **Purpose**: Convert terrain data to planetary characteristics
@@ -96,9 +124,9 @@ The Galaxy Game planetary map system provides a SimEarth-style visualization of 
 - **Output**: Tile image data and coordinates
 - **Location**: `app/services/tileset/freeciv_tileset_service.rb`
 
-### ElevationImportService (Planned)
+### ElevationImportService (Future - NASA Data)
 - **Purpose**: Convert NASA elevation data to terrain grids
-- **Input**: GeoTIFF files or elevation arrays
+- **Input**: GeoTIFF files or elevation arrays from SRTM/MOLA/LOLA/Magellan
 - **Output**: Terrain classification based on elevation thresholds
 - **Location**: `app/services/import/elevation_import_service.rb`
 

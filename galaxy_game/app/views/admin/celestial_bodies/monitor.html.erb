@@ -729,12 +729,13 @@
             let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
             let civ4Data = <%= raw civ4_map_data ? civ4_map_data.to_json : 'null' %>;
 
-            // Layer extraction system - separate terrain, water, biomes from different map sources
+            // Layer extraction system - separate terrain, water, biomes, elevation from different map sources
             let layers = {
                 terrain: null,    // Bare topographic terrain (from FreeCiv)
                 water: null,      // Water bodies (from FreeCiv)
                 biomes: null,     // Vegetation/climate zones (from Civ4)
-                resources: null   // Mineral deposits (from Civ4)
+                resources: null,  // Mineral deposits (from Civ4)
+                elevation: null   // Elevation data (from processed maps)
             };
 
             // Extract layers from available map data
@@ -750,6 +751,19 @@
                 layers.biomes = extractBiomeLayer(civ4Data);
                 layers.resources = extractResourceLayer(civ4Data);
                 console.log('Extracted biome and resource layers from Civ4 map');
+            }
+
+            // Extract elevation from terrain_map if available
+            if (terrainData && terrainData.elevation) {
+                layers.elevation = {
+                    grid: terrainData.elevation,
+                    width: terrainData.width || terrainData.elevation[0]?.length || 0,
+                    height: terrainData.height || terrainData.elevation.length,
+                    layer_type: 'elevation',
+                    quality: terrainData.quality || 'unknown',
+                    method: terrainData.method || 'unknown'
+                };
+                console.log('Using elevation data from terrain_map:', layers.elevation.quality, layers.elevation.method);
             }
 
             // Prefer decomposed layers if available (shows current planetary conditions)
@@ -822,7 +836,19 @@
             );
             
             // Dynamic elevation calculation based on biome and planetary conditions
-            function calculateElevation(terrainType, latitude, temperature, pressure) {
+            function calculateElevation(terrainType, latitude, temperature, pressure, x, y) {
+                // First priority: Use actual elevation data from processed maps
+                if (layers.elevation && layers.elevation.grid && layers.elevation.grid[y] && layers.elevation.grid[y][x] !== undefined) {
+                    const elevationValue = layers.elevation.grid[y][x];
+                    
+                    // Elevation data is already normalized to 0-1 scale from MapLayerService
+                    // Just ensure it's clamped to valid range
+                    return Math.max(0, Math.min(1, elevationValue));
+                }
+                
+                // Fallback: Calculate elevation from terrain type (legacy method)
+                console.warn('Using fallback elevation calculation for', terrainType, 'at', x, y);
+                
                 // Base elevation by terrain type (0-1 scale)
                 const baseElevations = {
                     ocean: 0.0,      // Sea level
@@ -918,7 +944,7 @@
                     const latitude = ((y / (height - 1)) - 0.5) * 180;
                     
                     // Calculate elevation for this terrain type and location
-                    const elevation = calculateElevation(terrainType, latitude, planetTemp, planetPressure);
+                    const elevation = calculateElevation(terrainType, latitude, planetTemp, planetPressure, x, y);
 
                     // Start with base color - ALWAYS terrain as base
                     let baseColor = '#000000'; // Default black
