@@ -181,13 +181,13 @@
                     <div class="data-row">
                         <span class="data-label">Ocean Mass:</span>
                         <span class="data-value" id="hydro-ocean">
-                            <%= number_to_human(oceans_value(@celestial_body.hydrosphere.oceans), precision: 2) %> kg
+                            <%= number_to_human(@celestial_body.hydrosphere.oceans || 0, precision: 2) %> kg
                         </span>
                     </div>
                     <div class="data-row">
                         <span class="data-label">Ice Mass:</span>
                         <span class="data-value" id="hydro-ice">
-                            <%= number_to_human(ice_caps_value(@celestial_body.hydrosphere.ice_caps), precision: 2) %> kg
+                            <%= number_to_human(@celestial_body.hydrosphere.ice_caps || 0, precision: 2) %> kg
                         </span>
                     </div>
                 <% else %>
