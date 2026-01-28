@@ -197,49 +197,15 @@
                 <% end %>
             </div>
             
-            <!-- Subsurface Hydrosphere Section -->
-            <div class="data-section">
-                <h3>SUBSURFACE HYDROSPHERE</h3>
-                <% if @celestial_body.subsurface_hydrosphere %>
-                    <div class="data-row">
-                        <span class="data-label">Deep Ocean:</span>
-                        <span class="data-value" id="subsurface-type">Liquid Layer</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Composition:</span>
-                        <span class="data-value" id="subsurface-composition">
-                            <%= @celestial_body.subsurface_hydrosphere.composition&.map { |k,v| "#{k}: #{v}%" }&.join(', ') || 'Unknown' %>
-                        </span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Temperature:</span>
-                        <span class="data-value" id="subsurface-temp">
-                            <%= number_with_precision(@celestial_body.subsurface_hydrosphere.temperature, precision: 1) %> K
-                        </span>
-                    </div>
-                <% else %>
-                    <div class="data-row">
-                        <span class="data-value warning">Not Present</span>
-                    </div>
-                <% end %>
-            </div>
-            
-            <!-- Cryosphere Section -->
+            <!-- Cryosphere Section - Not Implemented -->
+            <!--
             <div class="data-section">
                 <h3>CRYOSPHERE</h3>
-                <% if @celestial_body.cryosphere %>
-                    <div class="data-row">
-                        <span class="data-label">Shell Type:</span>
-                        <span class="data-value" id="cryo-type">
-                            <%= @celestial_body.cryosphere.shell_type&.humanize || 'Unknown' %>
-                        </span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Thickness:</span>
-                        <span class="data-value" id="cryo-thickness">
-                            <%= @celestial_body.cryosphere.thickness ? "#{number_with_precision(@celestial_body.cryosphere.thickness / 1000.0, precision: 1)} km" : 'Unknown' %>
-                        </span>
-                    </div>
+                <div class="data-row">
+                    <span class="data-value warning">Not Implemented</span>
+                </div>
+            </div>
+            -->
                     <div class="data-row">
                         <span class="data-label">Artificial:</span>
                         <span class="data-value" id="cryo-artificial">
