@@ -73,6 +73,8 @@ Rails.application.routes.draw do
         post :run_ai_test           # Trigger AI Manager test
         get :edit                   # Admin name/alias editing only
         patch :update               # Update name/aliases only
+        post :import_freeciv_for_body  # Import FreeCiv terrain data
+        post :import_civ4_for_body     # Import Civ4 terrain data
       end
     end
     
