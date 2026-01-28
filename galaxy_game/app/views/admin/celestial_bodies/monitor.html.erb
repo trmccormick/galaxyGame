@@ -594,6 +594,119 @@
             };
         }
 
+        // Layer extraction functions for multi-map terrain processing
+        function extractTerrainLayer(mapData) {
+            // Extract bare terrain (topography) from FreeCiv map
+            // Remove vegetation and focus on physical terrain features
+            const grid = mapData.grid || mapData.terrain_grid;
+            const width = mapData.width || grid[0]?.length || 0;
+            const height = mapData.height || grid.length;
+            const terrainGrid = [];
+
+            for (let y = 0; y < height; y++) {
+                terrainGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    const rawCode = grid[y][x];
+                    let terrainType = normalizeTerrainType(rawCode);
+
+                    // Convert vegetation to underlying terrain for bare terrain layer
+                    switch (terrainType) {
+                        case 'forest':
+                        case 'jungle':
+                        case 'boreal':
+                            terrainType = 'plains'; // Vegetation grows on plains
+                            break;
+                        case 'grasslands':
+                            terrainType = 'plains'; // Grasslands are plains with vegetation
+                            break;
+                        case 'swamp':
+                            terrainType = 'plains'; // Swamps are wet plains
+                            break;
+                        case 'arctic':
+                            terrainType = 'tundra'; // Arctic is icy tundra
+                            break;
+                    }
+
+                    terrainGrid[y][x] = terrainType;
+                }
+            }
+
+            return {
+                grid: terrainGrid,
+                width: width,
+                height: height,
+                layer_type: 'terrain'
+            };
+        }
+
+        function extractWaterLayer(mapData) {
+            // Extract water bodies from FreeCiv map
+            const grid = mapData.grid || mapData.terrain_grid;
+            const width = mapData.width || grid[0]?.length || 0;
+            const height = mapData.height || grid.length;
+            const waterGrid = [];
+
+            for (let y = 0; y < height; y++) {
+                waterGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    const rawCode = grid[y][x];
+                    const terrainType = normalizeTerrainType(rawCode);
+
+                    // Only water features
+                    if (terrainType === 'ocean' || terrainType === 'deep_sea') {
+                        waterGrid[y][x] = terrainType;
+                    } else {
+                        waterGrid[y][x] = null; // No water
+                    }
+                }
+            }
+
+            return {
+                grid: waterGrid,
+                width: width,
+                height: height,
+                layer_type: 'water'
+            };
+        }
+
+        function extractBiomeLayer(mapData) {
+            // Extract biomes/vegetation from Civ4 map
+            const grid = mapData.grid || mapData.terrain_grid;
+            const width = mapData.width || grid[0]?.length || 0;
+            const height = mapData.height || grid.length;
+            const biomeGrid = [];
+
+            for (let y = 0; y < height; y++) {
+                biomeGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    const rawCode = grid[y][x];
+                    const terrainType = normalizeTerrainType(rawCode);
+
+                    // Focus on vegetation/climate features
+                    if (['forest', 'jungle', 'grasslands', 'plains', 'tundra', 'arctic', 'swamp', 'boreal'].includes(terrainType)) {
+                        biomeGrid[y][x] = terrainType;
+                    } else {
+                        biomeGrid[y][x] = null; // No biome data
+                    }
+                }
+            }
+
+            return {
+                grid: biomeGrid,
+                width: width,
+                height: height,
+                layer_type: 'biomes'
+            };
+        }
+
+        function extractResourceLayer(mapData) {
+            // Extract resource/mineral deposits from Civ4 map
+            // This would need more sophisticated analysis of terrain patterns
+            // For now, return null to indicate not implemented
+            console.log('Resource layer extraction not yet implemented');
+            return null;
+        }
+
         // Simple terrain map renderer
         function renderTerrainMap() {
             const canvas = document.getElementById('planetCanvas');
@@ -604,14 +717,41 @@
 
             const ctx = canvas.getContext('2d');
 
-            // Load terrain data from geosphere or properties
+            // Load terrain data from multiple sources
             <%
               terrain_map_data = @celestial_body&.geosphere&.terrain_map
               terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
+              freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
+              civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
               has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
             %>
             let terrainData = <%= raw terrain_json %>;
-            
+            let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
+            let civ4Data = <%= raw civ4_map_data ? civ4_map_data.to_json : 'null' %>;
+
+            // Layer extraction system - separate terrain, water, biomes from different map sources
+            let layers = {
+                terrain: null,    // Bare topographic terrain (from FreeCiv)
+                water: null,      // Water bodies (from FreeCiv)
+                biomes: null,     // Vegetation/climate zones (from Civ4)
+                resources: null   // Mineral deposits (from Civ4)
+            };
+
+            // Extract layers from available map data
+            if (freecivData && freecivData.grid) {
+                // FreeCiv map: Use for terrain and water layers
+                layers.terrain = extractTerrainLayer(freecivData);
+                layers.water = extractWaterLayer(freecivData);
+                console.log('Extracted terrain and water layers from FreeCiv map');
+            }
+
+            if (civ4Data && civ4Data.grid) {
+                // Civ4 map: Use for biome and resource layers
+                layers.biomes = extractBiomeLayer(civ4Data);
+                layers.resources = extractResourceLayer(civ4Data);
+                console.log('Extracted biome and resource layers from Civ4 map');
+            }
+
             // Prefer decomposed layers if available (shows current planetary conditions)
             if (terrainData && terrainData.decomposed_layers) {
                 terrainData = terrainData.decomposed_layers;
@@ -624,13 +764,23 @@
                 terrainData = <%= raw props_json %>;
             }
 
+            // Fallback: use terrainData if no layers extracted
+            if (!layers.terrain && terrainData) {
+                layers.terrain = terrainData;
+            }
+
             console.log('Celestial body:', <%= raw @celestial_body.name.to_json %>);
             console.log('Geosphere present:', <%= raw (@celestial_body.geosphere.present? rescue false).to_json %>);
             console.log('Terrain map in geosphere:', <%= raw (@celestial_body.geosphere&.terrain_map.present? rescue false).to_json %>);
+            console.log('FreeCiv map available:', <%= raw (@celestial_body.properties&.dig('freeciv_map').present? rescue false).to_json %>);
+            console.log('Civ4 map available:', <%= raw (@celestial_body.properties&.dig('civ4_map').present? rescue false).to_json %>);
             console.log('Terrain grid in properties:', <%= raw (@celestial_body.properties&.dig('terrain_grid').present? rescue false).to_json %>);
-            console.log('Terrain data loaded:', terrainData);
+            console.log('Layers extracted:', layers);
 
-            if (!terrainData || (!terrainData.grid && !terrainData.terrain_grid)) {
+            // Use terrain layer by default, fallback to terrainData
+            let activeTerrainData = layers.terrain || terrainData;
+
+            if (!activeTerrainData || (!activeTerrainData.grid && !activeTerrainData.terrain_grid)) {
                 console.warn('No terrain data available - displaying message on canvas');
                 logConsole('No terrain data available for rendering', 'warning');
                 
@@ -648,9 +798,9 @@
                 
                 return;
             }
-            const grid = terrainData.grid || terrainData.terrain_grid;
-            const width = terrainData.width || grid[0]?.length || 0;
-            const height = terrainData.height || grid.length;
+            const grid = activeTerrainData.grid || activeTerrainData.terrain_grid;
+            const width = activeTerrainData.width || grid[0]?.length || 0;
+            const height = activeTerrainData.height || grid.length;
 
             if (width === 0 || height === 0) {
                 console.error('Invalid terrain dimensions');
@@ -710,30 +860,21 @@
                 return Math.max(0, Math.min(1, elevation));
             }
 
-            // Color map for terrain types (matches SampleTerrainGenerator) - used when no layers active
+            // Color map for terrain types (BARE TERRAIN - topographic colors only, no biome colors)
             const colors = {
-                ocean: '#0066cc',
-                deep_sea: '#003366',
-                arctic: '#ffffff',
-                tundra: '#666666',
-                grasslands: '#66cc66',
-                plains: '#99cc99',
-                forest: '#006600',
-                jungle: '#004400',
-                desert: function(lat) { // Climate-based desert coloring
-                    // Use latitude to determine desert temperature type
-                    // Deserts near poles are cold (beige), equatorial deserts are warm (yellow)
-                    const absLat = Math.abs(lat);
-                    if (absLat > climate.iceLatitude + 20) {
-                        return '#ffeedd'; // Cold desert (beige)
-                    } else {
-                        return '#ffdd44'; // Warm desert (yellow)
-                    }
-                },
-                mountains: '#8b4513',
-                rock: '#666666',
-                boreal: '#8b7355',
-                swamp: '#4a5d23'
+                ocean: '#0066cc',        // Ocean blue
+                deep_sea: '#003366',     // Deep ocean blue
+                arctic: '#e8e8e8',       // Light gray (ice/snow surface, not white)
+                tundra: '#b8b8b8',       // Medium gray (permafrost/gravel)
+                grasslands: '#8b7355',   // Brown (soil/dirt)
+                plains: '#a08050',      // Tan (dry plains)
+                forest: '#654321',      // Dark brown (tree trunks/soil)
+                jungle: '#4a3c28',      // Very dark brown (dense vegetation soil)
+                desert: '#c4a484',      // Sandy brown (sand/dunes)
+                mountains: '#696969',   // Dim gray (rock)
+                rock: '#808080',        // Gray (bare rock)
+                boreal: '#8b7355',      // Brown (coniferous forest soil)
+                swamp: '#654321'        // Dark brown (wet soil/mud)
             };
 
             // FreeCiv terrain code to terrain type mapping

@@ -255,6 +255,14 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - **Layer System**: Toggle-able overlays for different terrain aspects
 - **Data Source**: PostgreSQL JSONB terrain data from FreeCiv SAV file imports
 - **Terrain Code Mapping**: FreeCiv single-character terrain codes ('a', 't', 'f', 'g', etc.) are mapped to full terrain type names for proper color rendering
+- **Multi-Map Layer Extraction**: FreeCiv maps for terrain/water, Civ4 maps for biomes/resources
+
+**Multi-Map Layer Extraction System:**
+- **FreeCiv Maps**: Used for terrain and water layer extraction (physical geography)
+- **Civ4 Maps**: Used for biome and resource layer extraction (ecological/climatic features)
+- **Layer Separation**: Terrain (bare earth), Water (hydrosphere), Biomes (biosphere), Resources (geological)
+- **Automatic Processing**: Maps are automatically processed to extract relevant layers
+- **Fallback Support**: Single map sources work with appropriate layer extraction
 
 **Atmospheric Condition Analysis:**
 - **Temperature**: Retrieved from `celestial_body.temperature` (surface temperature with fallbacks)
@@ -268,13 +276,29 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - **Elevation Calculation**: Dynamic terrain elevation based on biome type, latitude, and planetary conditions
 - **Color Blending**: Multi-layer color application with opacity controls for realistic atmospheric effects
 
-**Layer Types:**
-- **Terrain**: Base terrain colors (ocean, deep_sea, forest, jungle, grasslands, plains, swamp, boreal, arctic, desert, rock)
-- **Water**: Surface water and deep ocean visualization
-- **Biomes**: Climate-based biome coloring with desert temperature gradients
-- **Temperature**: Red-orange hot deserts, blue cold rocky highlands
-- **Rainfall**: Blue gradient from jungle tropics to desert arid regions
-- **Resources**: Gold highlights for mineral-rich areas
+- **Terrain Layer**: Shows bare topographic colors (browns, grays, tans) representing physical terrain types, not biomes or vegetation
+- **Biome Layer**: Separate overlay showing vegetation/climate zones (green grasslands, white arctic, etc.)
+- **Water Layer**: Ocean and freshwater visualization
+- **Temperature Layer**: Thermal visualization overlay
+- **Rainfall Layer**: Precipitation pattern overlay
+- **Resources Layer**: Mineral deposit highlighting
+
+**Terrain Color Mapping (Bare Earth):**
+- **Ocean**: Blue (`#0066cc`) - Water bodies
+- **Deep Sea**: Dark blue (`#003366`) - Ocean trenches
+- **Arctic**: Light gray (`#e8e8e8`) - Ice/snow surface
+- **Tundra**: Medium gray (`#b8b8b8`) - Permafrost/gravel
+- **Grasslands**: Brown (`#8b7355`) - Soil/dirt
+- **Plains**: Tan (`#a08050`) - Dry plains
+- **Forest**: Dark brown (`#654321`) - Tree trunks/soil
+- **Jungle**: Very dark brown (`#4a3c28`) - Dense vegetation soil
+- **Desert**: Sandy brown (`#c4a484`) - Sand/dunes
+- **Mountains**: Dim gray (`#696969`) - Rock
+- **Rock**: Gray (`#808080`) - Bare rock
+- **Boreal**: Brown (`#8b7355`) - Coniferous forest soil
+- **Swamp**: Dark brown (`#654321`) - Wet soil/mud
+
+**Layer System:**
 
 **Data Endpoints:**
 - `GET /admin/celestial_bodies/:id/sphere_data.json` - Live sphere metrics
