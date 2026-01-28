@@ -22,5 +22,9 @@ module GalaxyGame
     # Ensure services are autoloaded
     config.autoload_paths << Rails.root.join('app/services')
     config.eager_load_paths << Rails.root.join('app/services')
+    
+    # Ensure lib modules are autoloaded
+    config.autoload_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join('lib')
   end
 end

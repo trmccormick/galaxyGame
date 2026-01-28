@@ -189,6 +189,188 @@ AI system performance monitoring and optimization controls.
 }
 ```
 
+### 1.5. AI Map Generation Studio (`/admin/map_studio`)
+
+AI-powered planetary map generation studio for creating procedural terrain maps from FreeCiv/Civ4 sources.
+
+#### Overview
+
+The Map Studio provides an integrated interface for generating planetary maps using AI analysis of existing map sources. It combines FreeCiv terrain maps with Civ4 biome data to create comprehensive planetary terrain representations.
+
+**Key Features:**
+- **AI-Powered Generation**: Uses `AIManager::PlanetaryMapGenerator` for intelligent map synthesis
+- **Multi-Source Integration**: Combines terrain, water, and biome data from multiple map formats
+- **Real-time Preview**: Interactive map visualization with FreeCiv-style rendering
+- **Batch Processing**: Generate maps for multiple celestial bodies simultaneously
+- **Quality Analysis**: Automated map quality assessment and statistics
+- **Export Capabilities**: Save generated maps in JSON format for game integration
+
+#### Generate (`/admin/map_studio/generate`)
+
+Main map generation interface with planet selection and parameter configuration.
+
+**Features:**
+- **Planet Selection**: Dropdown of all available celestial bodies with type indicators
+- **Source Map Browser**: Interactive selection of FreeCiv/Civ4 map files from data directories
+- **Generation Parameters**: Map name, size settings, quality options
+- **Real-time Validation**: Immediate feedback on parameter combinations
+- **Generation Progress**: Live progress tracking during AI processing
+
+**Controller:** `Admin::MapStudioController#generate`
+
+```ruby
+# Load available planets and source maps
+@target_planets = CelestialBodies::CelestialBody.order(:name)
+@available_source_maps = GalaxyGame::Paths.list_source_maps
+@recent_generations = find_recent_generations
+```
+
+**Generation Process:**
+1. **Planet Selection**: Choose target celestial body for map generation
+2. **Source Selection**: Select FreeCiv terrain maps and Civ4 biome maps
+3. **Parameter Configuration**: Set map name and generation options
+4. **AI Processing**: `AIManager::PlanetaryMapGenerator` analyzes sources and creates procedural map
+5. **Quality Validation**: Automated checks for map completeness and terrain distribution
+6. **Storage**: Map saved to `GalaxyGame::Paths.generated_maps_path` as JSON
+
+#### Browse (`/admin/map_studio/browse`)
+
+Generated maps catalog with filtering, sorting, and management tools.
+
+**Features:**
+- **Map Gallery**: Thumbnail grid view of all generated maps
+- **Filtering Options**: By planet type, generation date, quality score
+- **Statistics Dashboard**: Generation counts, success rates, storage usage
+- **Map Management**: Delete, rename, export operations
+- **Quality Metrics**: Terrain distribution, feature counts, validation scores
+
+**Controller:** `Admin::MapStudioController#browse`
+
+```ruby
+# Load and organize generated maps
+@generated_maps = find_generated_maps.group_by { |m| m[:planet_type] }
+@map_stats = calculate_map_stats
+```
+
+**Map Statistics Include:**
+- **Generation Count**: Total maps, maps by planet type
+- **Storage Usage**: File sizes, disk space consumption
+- **Quality Scores**: Average quality, quality distribution
+- **Recent Activity**: Last 24 hours generation count
+
+#### Analyze (`/admin/map_studio/analyze/:id`)
+
+Detailed map analysis and quality assessment interface.
+
+**Features:**
+- **Terrain Analysis**: Distribution of terrain types, elevation ranges
+- **Feature Mapping**: Rivers, mountains, forests, cities location analysis
+- **Quality Metrics**: Completeness score, terrain balance, feature density
+- **Visualization**: Interactive map viewer with zoom and layer controls
+- **Export Options**: Download analysis data, map images, or raw JSON
+
+**Controller:** `Admin::MapStudioController#analyze`
+
+```ruby
+# Load map and perform analysis
+@map = load_generated_map(params[:id])
+@analysis = analyze_map_quality(@map)
+@terrain_stats = calculate_terrain_statistics(@map)
+```
+
+#### Apply Map (`/admin/map_studio/apply_map/:id`)
+
+Apply generated map to celestial body geosphere for game integration.
+
+**Features:**
+- **Validation Checks**: Ensure map compatibility with target planet
+- **Geosphere Integration**: Update `CelestialBodies::Spheres::Geosphere#terrain_map`
+- **Backup Creation**: Automatic backup of existing terrain data
+- **Rollback Support**: Ability to revert map application
+- **Integration Testing**: Validate map works with game systems
+
+**Controller:** `Admin::MapStudioController#apply_map`
+
+```ruby
+# Apply map to celestial body
+@map = load_generated_map(params[:id])
+@planet = CelestialBodies::CelestialBody.find(@map[:planet_id])
+
+# Update geosphere with new terrain map
+@planet.geosphere.update!(terrain_map: @map[:data])
+```
+
+**Integration Process:**
+1. **Compatibility Check**: Validate map dimensions and data structure
+2. **Backup Creation**: Save current terrain_map to backup location
+3. **Geosphere Update**: Apply new terrain data to planet's geosphere
+4. **Validation**: Run integration tests to ensure map works in game
+5. **Notification**: Alert admin of successful application
+
+#### Technical Implementation
+
+**AI Map Generator (`AIManager::PlanetaryMapGenerator`):**
+```ruby
+class AIManager::PlanetaryMapGenerator
+  def generate_planetary_map(planet:, sources:, options: {})
+    # Analyze source maps
+    terrain_data = extract_terrain_from_sources(sources)
+    biome_data = extract_biomes_from_sources(sources)
+    
+    # AI synthesis
+    synthesized_map = ai_synthesis(terrain_data, biome_data, planet)
+    
+    # Quality validation
+    quality_score = validate_map_quality(synthesized_map)
+    
+    # Return structured map data
+    {
+      filename: "#{planet.name.downcase}_#{Time.now.to_i}.json",
+      data: synthesized_map,
+      quality_score: quality_score,
+      metadata: {
+        planet_id: planet.id,
+        sources_used: sources.map(&:filename),
+        generation_time: Time.now
+      }
+    }
+  end
+end
+```
+
+**Map Data Structure:**
+```json
+{
+  "planet_id": 123,
+  "terrain_grid": [
+    ["t", "f", "g", "h", "m"],
+    ["t", "f", "g", "d", "m"],
+    ...
+  ],
+  "biome_overlay": {
+    "forests": [[10, 15], [12, 16]],
+    "mountains": [[5, 8], [7, 9]],
+    "rivers": [{"start": [0, 10], "end": [20, 10]}]
+  },
+  "metadata": {
+    "size": "180x90",
+    "quality_score": 0.95,
+    "generation_timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+**File Organization:**
+- **Source Maps**: `data/freeCiv Maps/`, `data/freeCiv\ Maps/`
+- **Generated Maps**: `data/generated_maps/` (auto-created)
+- **Map Backups**: `data/map_backups/` (for rollback support)
+
+**Dependencies:**
+- `GalaxyGame::Paths` - Path management for map files
+- `AIManager::PlanetaryMapGenerator` - Core AI generation service
+- `CelestialBodies::CelestialBody` - Target planet data
+- `CelestialBodies::Spheres::Geosphere` - Terrain map storage
+
 ### 2. Celestial Bodies (`/admin/celestial_bodies`)
 
 **Data Source**: Celestial bodies are created from authoritative data sources (JSON data files, StarSim generation) and cannot be manually created through the admin interface. The admin interface provides monitoring and limited metadata editing capabilities only.

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Generate Planetary Map</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        html, body {
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            padding-bottom: 50px; /* Extra padding for bottom spacing */
+        }
+        .generation-form {
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+
+        .section-title {
+            color: #0ff;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            color: #ccc;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #0f0;
+            outline: none;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .map-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .map-option {
+            background: #222;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .map-option:hover {
+            border-color: #0f0;
+        }
+
+        .map-option.selected {
+            border-color: #0ff;
+            background: #1a2a1a;
+        }
+
+        .map-name {
+            color: #0ff;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .map-details {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .generation-progress {
+            display: none;
+            background: #1a1a1a;
+            border: 2px solid #ffa500;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #0ff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: #0ff;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .generate-button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .generate-button:hover {
+            background: #0ff;
+            transform: scale(1.02);
+        }
+
+        .generate-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-button {
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="<%= admin_map_studio_path %>" class="back-button">← Back to Map Studio</a>
+
+        <div class="generation-form">
+            <h2 class="form-title">🤖 Generate Planetary Map</h2>
+
+            <%= form_with url: admin_map_studio_generate_map_path, method: :post, id: 'map-generation-form' do |f| %>
+                <div class="form-section">
+                    <h3 class="section-title">📋 Basic Information</h3>
+
+                    <div class="form-group">
+                        <%= f.label :map_name, 'Map Name', class: 'form-label' %>
+                        <%= f.text_field :map_name, class: 'form-input', placeholder: 'e.g., Earth-like Planet Alpha', required: true %>
+                    </div>
+
+                    <div class="form-group">
+                        <%= f.label :target_celestial_body_id, 'Target Celestial Body (Optional)', class: 'form-label' %>
+                        <%= f.select :target_celestial_body_id, options_for_select(@celestial_bodies_options), { include_blank: 'Select a celestial body...' }, class: 'form-select' %>
+                        <small style="color: #888;">Leave blank to generate a generic planetary map</small>
+                    </div>
+
+                    <div class="form-group">
+                        <%= f.label :description, 'Description', class: 'form-label' %>
+                        <%= f.text_area :description, class: 'form-textarea', placeholder: 'Describe the desired planetary characteristics, terrain types, climate, etc.' %>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">🗺️ Source Map Selection</h3>
+                    <p style="color: #ccc; margin-bottom: 15px;">Choose one or more source maps to use as inspiration for the AI generation:</p>
+
+                    <div class="map-selection" id="source-maps">
+                        <% @available_source_maps.each do |map| %>
+                            <div class="map-option" data-map-id="<%= map[:id] %>">
+                                <div class="map-name"><%= map[:name] %></div>
+                                <div class="map-details">
+                                    <%= map[:type] %> • <%= map[:size] %> tiles<br>
+                                    <%= map[:description] %>
+                                </div>
+                                <input type="checkbox" name="source_map_ids[]" value="<%= map[:id] %>" style="display: none;">
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">⚙️ Generation Parameters</h3>
+
+                    <div class="form-group">
+                        <%= f.label :complexity, 'Terrain Complexity', class: 'form-label' %>
+                        <%= f.select :complexity, [['Simple (Fast)', 'simple'], ['Normal', 'normal'], ['Complex (Slow)', 'complex']], { selected: 'normal' }, class: 'form-select' %>
+                    </div>
+
+                    <div class="form-group">
+                        <%= f.label :biome_preference, 'Biome Focus', class: 'form-label' %>
+                        <%= f.select :biome_preference, [['Balanced', 'balanced'], ['Oceanic', 'oceanic'], ['Continental', 'continental'], ['Arid', 'arid'], ['Arctic', 'arctic']], { selected: 'balanced' }, class: 'form-select' %>
+                    </div>
+
+                    <div class="form-group">
+                        <%= f.label :ai_instructions, 'AI Instructions', class: 'form-label' %>
+                        <%= f.text_area :ai_instructions, class: 'form-textarea', placeholder: 'Additional instructions for the AI (e.g., "Focus on realistic mountain ranges", "Include volcanic activity", "Create diverse biomes")' %>
+                    </div>
+                </div>
+
+                <%= f.submit '🚀 Generate Planetary Map', class: 'generate-button', id: 'generate-btn' %>
+            <% end %>
+        </div>
+
+        <div class="generation-progress" id="progress-container">
+            <h3 style="color: #ffa500; text-align: center;">🔄 Generating Map...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">Initializing AI generation...</div>
+        </div>
+    </div>
+
+    <script>
+        // Map selection handling
+        document.querySelectorAll('.map-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('selected');
+            });
+        });
+
+        // Form submission handling
+        document.getElementById('map-generation-form').addEventListener('submit', function(e) {
+            const selectedMaps = document.querySelectorAll('input[name="source_map_ids[]"]:checked');
+            if (selectedMaps.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one source map.');
+                return;
+            }
+
+            // Show progress and disable form
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('generate-btn').disabled = true;
+            document.getElementById('generate-btn').textContent = 'Generating...';
+
+            // Simulate progress (in real implementation, this would be WebSocket or polling)
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+
+                document.getElementById('progress-fill').style.width = progress + '%';
+                document.getElementById('progress-text').textContent =
+                    progress < 30 ? 'Analyzing source maps...' :
+                    progress < 60 ? 'Running AI generation...' :
+                    progress < 90 ? 'Processing terrain data...' :
+                    'Finalizing planetary map...';
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    document.getElementById('progress-text').textContent = 'Complete! Redirecting...';
+                    // Form will submit naturally
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

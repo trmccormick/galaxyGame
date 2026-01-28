@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Analyze Map</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        html, body {
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            padding-bottom: 50px; /* Extra padding for bottom spacing */
+        }
+
+        .analysis-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        .map-preview-section {
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .map-title {
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .map-meta {
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .map-preview-large {
+            height: 400px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-section {
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .analysis-title {
+            color: #0ff;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .quality-score {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#0f0 <%= @map[:quality_score] * 36 %>deg, #333 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0ff;
+        }
+
+        .score-label {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .analysis-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .metric-label {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .terrain-breakdown {
+            margin-bottom: 20px;
+        }
+
+        .terrain-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .terrain-name {
+            color: #ccc;
+        }
+
+        .terrain-percentage {
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .recommendations {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .recommendation-title {
+            color: #ffa500;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .recommendation-item {
+            color: #ccc;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #0f0;
+            background: #222;
+            color: #0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .action-button:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .primary-action {
+            background: #0f0;
+            color: #000;
+        }
+
+        .primary-action:hover {
+            background: #0ff;
+        }
+
+        .back-button {
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="<%= admin_map_studio_browse_path %>" class="back-button">← Back to Map Library</a>
+
+        <div class="analysis-container">
+            <div class="map-preview-section">
+                <h2 class="map-title"><%= @map[:name] %></h2>
+                <div class="map-meta">
+                    Generated: <%= @map[:created_at] %><br>
+                    Based on: <%= @map[:source_maps].join(', ') %><br>
+                    Target: <%= @map[:target_body] || 'Generic Planet' %>
+                </div>
+
+                <div class="map-preview-large">
+                    🗺️ Large Map Preview<br>
+                    <small style="color: #666;">Interactive preview would be displayed here</small>
+                </div>
+
+                <div style="color: #ccc; line-height: 1.6;">
+                    <strong>Description:</strong><br>
+                    <%= @map[:description] %>
+                </div>
+            </div>
+
+            <div class="analysis-section">
+                <h3 class="analysis-title">📊 Analysis Results</h3>
+
+                <div class="quality-score">
+                    <div class="score-circle"><%= @map[:quality_score] %>/10</div>
+                    <div class="score-label">Overall Quality Score</div>
+                </div>
+
+                <div class="analysis-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value"><%= @map[:terrain_diversity] %>%</div>
+                        <div class="metric-label">Terrain Diversity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value"><%= @map[:biome_balance] %>%</div>
+                        <div class="metric-label">Biome Balance</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value"><%= @map[:resource_richness] %></div>
+                        <div class="metric-label">Resource Richness</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value"><%= @map[:playability_score] %>%</div>
+                        <div class="metric-label">Playability</div>
+                    </div>
+                </div>
+
+                <div class="terrain-breakdown">
+                    <h4 style="color: #0ff; margin-bottom: 10px;">🗺️ Terrain Composition</h4>
+                    <% @map[:terrain_breakdown].each do |terrain, percentage| %>
+                        <div class="terrain-item">
+                            <span class="terrain-name"><%= terrain %></span>
+                            <span class="terrain-percentage"><%= percentage %>%</span>
+                        </div>
+                    <% end %>
+                </div>
+
+                <div class="recommendations">
+                    <div class="recommendation-title">💡 Recommendations</div>
+                    <% @map[:recommendations].each do |rec| %>
+                        <div class="recommendation-item">• <%= rec %></div>
+                    <% end %>
+                </div>
+
+                <div class="action-buttons">
+                    <%= button_to '🌍 Apply to Planet', admin_map_studio_apply_map_path(@map[:id]),
+                        method: :post, class: 'action-button primary-action',
+                        data: { confirm: 'Apply this map to a celestial body?' } %>
+                    <a href="<%= admin_map_studio_generate_path %>" class="action-button">
+                        🔄 Generate Similar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
