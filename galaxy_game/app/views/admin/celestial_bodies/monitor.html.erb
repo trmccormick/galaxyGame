@@ -1138,7 +1138,6 @@
                     }
 
                     // Apply atmospheric tinting for non-Earth worlds to make them look more realistic
-                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
                     if (!isEarth) {
                         const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
                         const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
