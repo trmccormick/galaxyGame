@@ -619,9 +619,12 @@
         }
 
         // Layer extraction functions for multi-map terrain processing
-        function extractTerrainLayer(mapData) {
-            // Extract bare terrain (topography) from FreeCiv map
-            // Remove vegetation and focus on physical terrain features
+        function extractTerrainLayer(mapData, options = {}) {
+            // Extract terrain layer from map data
+            // options.stripVegetation: if true, converts vegetation to underlying terrain (for bare lithosphere view)
+            // options.preserveVariety: if true, keeps all terrain types as-is (default)
+            
+            const stripVegetation = options.stripVegetation || false;
             const grid = mapData.grid || mapData.terrain_grid;
             const width = mapData.width || grid[0]?.length || 0;
             const height = mapData.height || grid.length;
@@ -633,23 +636,27 @@
                     const rawCode = grid[y][x];
                     let terrainType = normalizeTerrainType(rawCode);
 
-                    // Convert vegetation to underlying terrain for bare terrain layer
-                    switch (terrainType) {
-                        case 'forest':
-                        case 'jungle':
-                        case 'boreal':
-                            terrainType = 'plains'; // Vegetation grows on plains
-                            break;
-                        case 'grasslands':
-                            terrainType = 'plains'; // Grasslands are plains with vegetation
-                            break;
-                        case 'swamp':
-                            terrainType = 'plains'; // Swamps are wet plains
-                            break;
-                        case 'arctic':
-                            terrainType = 'tundra'; // Arctic is icy tundra
-                            break;
+                    // Only strip vegetation if explicitly requested (for bare lithosphere layer mode)
+                    if (stripVegetation) {
+                        // Convert vegetation to underlying terrain
+                        switch (terrainType) {
+                            case 'forest':
+                            case 'jungle':
+                            case 'boreal':
+                                terrainType = 'plains'; // Vegetation grows on plains
+                                break;
+                            case 'grasslands':
+                                terrainType = 'plains'; // Grasslands are plains with vegetation
+                                break;
+                            case 'swamp':
+                                terrainType = 'plains'; // Swamps are wet plains
+                                break;
+                            case 'arctic':
+                                terrainType = 'tundra'; // Arctic is icy tundra
+                                break;
+                        }
                     }
+                    // Otherwise, preserve the terrain type as-is for full variety display
 
                     terrainGrid[y][x] = terrainType;
                 }
@@ -659,7 +666,8 @@
                 grid: terrainGrid,
                 width: width,
                 height: height,
-                layer_type: 'terrain'
+                layer_type: 'terrain',
+                vegetation_stripped: stripVegetation
             };
         }
 
@@ -694,7 +702,8 @@
         }
 
         function extractBiomeLayer(mapData) {
-            // Extract biomes/vegetation from Civ4 map
+            // Extract biomes/vegetation from map data
+            // Preserves all terrain types that represent biomes/vegetation
             const grid = mapData.grid || mapData.terrain_grid;
             const width = mapData.width || grid[0]?.length || 0;
             const height = mapData.height || grid.length;
@@ -706,12 +715,9 @@
                     const rawCode = grid[y][x];
                     const terrainType = normalizeTerrainType(rawCode);
 
-                    // Focus on vegetation/climate features
-                    if (['forest', 'jungle', 'grasslands', 'plains', 'tundra', 'arctic', 'swamp', 'boreal'].includes(terrainType)) {
-                        biomeGrid[y][x] = terrainType;
-                    } else {
-                        biomeGrid[y][x] = null; // No biome data
-                    }
+                    // Include all terrain types (not just vegetation)
+                    // Each represents a different biome/climate zone
+                    biomeGrid[y][x] = terrainType;
                 }
             }
 
@@ -795,16 +801,16 @@
                 console.log('Using terrain layer from geosphere (generated map)');
             } else if (freecivData && freecivData.grid) {
                 // FreeCiv map: Fallback for terrain and water layers
-                layers.terrain = extractTerrainLayer(freecivData);
+                // Default: preserve variety (don't strip vegetation)
+                layers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
                 layers.water = extractWaterLayer(freecivData);
-                console.log('Using terrain and water layers from FreeCiv properties');
-            }
-
-            // Civ4 data for biomes (if available and different from terrain source)
-            if (civ4Data && civ4Data.grid && civ4Data !== terrainData) {
+                console.log('Extracted terrain and water layers from FreeCiv properties (variety preserved)');
+            } else if (civ4Data && civ4Data.grid) {
+                // Civ4 map: Use for terrain and biome layers
+                layers.terrain = extractTerrainLayer(civ4Data, { stripVegetation: false });
                 layers.biomes = extractBiomeLayer(civ4Data);
                 layers.resources = extractResourceLayer(civ4Data);
-                console.log('Using biome and resource layers from Civ4 properties');
+                console.log('Extracted terrain, biome and resource layers from Civ4 properties');
             }
 
             // Extract elevation from terrain_map if available
