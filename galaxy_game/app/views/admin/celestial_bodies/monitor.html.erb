@@ -1104,9 +1104,16 @@
                     }
 
                     // Apply other layer overlays (water, biomes, features overlay on terrain)
-                    // All planets can show their available data layers
+                    // Earth shows bare terrain (lithosphere only); other planets show available layers
+                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
+                    
                     for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                         if (layerName === 'temperature') continue; // Already handled above
+                        
+                        // Earth shows bare terrain - skip water and biome overlays
+                        if (isEarth && (layerName === 'water' || layerName === 'biomes')) {
+                            continue; // Earth shows only lithosphere (bare terrain)
+                        }
                         
                         if (visibleLayers.has(layerName) && overlay.terrainColors) {
                             let overlayTerrainType = terrainType; // Default to base terrain type
