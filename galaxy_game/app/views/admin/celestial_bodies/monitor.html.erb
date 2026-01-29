@@ -969,32 +969,9 @@
                     // Start with base color - ALWAYS terrain as base
                     let baseColor = '#000000'; // Default black
                     
-                    // Terrain is ALWAYS the base layer - topographic colors (SimEarth style)
-                    const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
-                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
-                    const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
-                    
-                    if (isEarth) {
-                        // Earth: SimEarth-style bare topographic terrain (shades of brown/grey)
-                        // Base color from elevation (0-1) mapped to brown/grey scale
-                        const elevationBrightness = Math.floor(100 + elevation * 155); // 100-255 range
-                        const greyValue = Math.floor(elevationBrightness * 0.8); // Slightly desaturated
-                        baseColor = `rgb(${elevationBrightness}, ${greyValue}, ${Math.floor(greyValue * 0.9)})`;
-                    } else if (isMars) {
-                        // Mars: red-tinted topographic colors
-                        if (terrainType === 'ocean' || terrainType === 'deep_sea') {
-                            // Mars water: reddish-brown (rare/dried up)
-                            const depth = terrainType === 'deep_sea' ? 0.8 : 0.5;
-                            const redValue = Math.floor(100 + depth * 100);
-                            baseColor = `rgb(${redValue}, ${Math.floor(redValue * 0.6)}, ${Math.floor(redValue * 0.4)})`;
-                        } else {
-                            // Mars land: red-tinted terrain colors
-                            baseColor = '#cd853f'; // Sandy brown with red tint
-                        }
-                    } else {
-                        // Generic planet: use standard terrain colors
-                        baseColor = colors[terrainType] || '#000000';
-                    }
+                    // Terrain is ALWAYS the base layer - use standard terrain colors for all planets
+                    // Earth shows full detail as it's habitable; other worlds get atmospheric tinting
+                    baseColor = colors[terrainType] || '#000000';
 
                     // Debug: log first few tiles
                     if (y === 0 && x < 5) {
@@ -1026,21 +1003,9 @@
                     }
 
                     // Apply other layer overlays (water, biomes, features overlay on terrain)
-                    // But respect planetary conditions - some planets don't support certain features
+                    // All planets can show their available data layers
                     for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                         if (layerName === 'temperature') continue; // Already handled above
-                        
-                        // Skip overlays that don't make sense for certain planets
-                        const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
-                        const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
-                        
-                        if (isMars && (layerName === 'biomes' || layerName === 'rainfall' || layerName === 'resources')) {
-                            continue; // Mars has no biomes, rainfall, or resources
-                        }
-                        
-                        if (isEarth && (layerName === 'water' || layerName === 'biomes')) {
-                            continue; // Earth should show bare topographic terrain (SimEarth style)
-                        }
                         
                         if (visibleLayers.has(layerName) && overlay.terrainColors) {
                             let overlayTerrainType = terrainType; // Default to base terrain type
@@ -1061,6 +1026,30 @@
                                 finalColor = blendColors(finalColor, overlayColor, 0.7);
                                 hasOverlay = true;
                             }
+                        }
+                    }
+
+                    // Apply atmospheric tinting for non-Earth worlds to make them look more realistic
+                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
+                    if (!isEarth) {
+                        const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
+                        const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
+                        const isTitan = planetName.toLowerCase().includes('titan') || planetType.toLowerCase().includes('titan');
+                        
+                        if (isMars) {
+                            // Mars: reddish atmospheric tint
+                            finalColor = blendColors(finalColor, '#CD853F', 0.3); // Sandy brown tint
+                        } else if (isVenus) {
+                            // Venus: yellowish atmospheric tint
+                            finalColor = blendColors(finalColor, '#FFD700', 0.4); // Gold tint
+                        } else if (isTitan) {
+                            // Titan: orange atmospheric tint
+                            finalColor = blendColors(finalColor, '#FFA500', 0.35); // Orange tint
+                        } else {
+                            // Generic non-Earth world: subtle atmospheric tint based on temperature
+                            const tempTint = planetTemp > 288 ? '#FFFF99' : '#E0E0FF'; // Warm = yellow, cool = blue
+                            const tintStrength = Math.abs(planetTemp - 288) / 200; // Temperature difference affects tint strength
+                            finalColor = blendColors(finalColor, tempTint, Math.min(tintStrength, 0.2));
                         }
                     }
 
