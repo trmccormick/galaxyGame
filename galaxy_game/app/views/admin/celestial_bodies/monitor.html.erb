@@ -1067,16 +1067,26 @@
                     // Calculate elevation for this terrain type and location
                     const elevation = calculateElevation(terrainType, latitude, planetTemp, planetPressure, x, y);
 
-                    // Start with base color - ALWAYS terrain as base
+                    // Start with base color - elevation-based topographic colors (SimEarth Alt view)
                     let baseColor = '#000000'; // Default black
                     
-                    // Terrain is ALWAYS the base layer - use standard terrain colors for all planets
-                    // Earth shows full detail as it's habitable; other worlds get atmospheric tinting
-                    baseColor = colors[terrainType] || '#000000';
+                    // Use elevation-based colors for bare terrain (SimEarth style)
+                    // Higher elevations = grey, lower elevations = dark brown
+                    if (elevation > 0.8) {
+                        baseColor = '#808080'; // High mountains - grey
+                    } else if (elevation > 0.6) {
+                        baseColor = '#708090'; // Medium-high - slate grey
+                    } else if (elevation > 0.4) {
+                        baseColor = '#A0522D'; // Medium elevation - sienna brown
+                    } else if (elevation > 0.2) {
+                        baseColor = '#8B4513'; // Low-medium - saddle brown
+                    } else {
+                        baseColor = '#654321'; // Low elevation - dark brown
+                    }
 
                     // Debug: log first few tiles
                     if (y === 0 && x < 5) {
-                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> ${terrainType} -> ${baseColor}`);
+                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> ${baseColor}`);
                     }
 
                     let hasOverlay = false;
