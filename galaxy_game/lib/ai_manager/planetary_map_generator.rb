@@ -56,6 +56,24 @@ module AIManager
     def combine_source_maps(sources, planet, options)
       Rails.logger.info "[PlanetaryMapGenerator] Combining #{sources.size} source maps"
 
+      # === EMERGENCY DEBUG: Check source biome variety ===
+      Rails.logger.info "=== SOURCE MAP BIOME DEBUG ==="
+      sources.each_with_index do |source, i|
+        source_biomes = source.dig(:data, :biomes)
+        
+        if source_biomes
+          sample = source_biomes[0].first(10) rescue []
+          unique = source_biomes.flatten.uniq rescue []
+          
+          Rails.logger.info "Source #{i}: #{source[:filename]}"
+          Rails.logger.info "  Sample row: #{sample.inspect}"
+          Rails.logger.info "  Unique biomes: #{unique.inspect} (#{unique.size} types)"
+        else
+          Rails.logger.warn "Source #{i}: No biomes data found!"
+        end
+      end
+      Rails.logger.info "=== END SOURCE DEBUG ==="
+
       # Use the first source as base and combine others
       base_source = sources.first
       base_data = base_source[:data]
@@ -118,6 +136,15 @@ module AIManager
       # Extract strategic markers (simplified)
       strategic_markers = extract_strategic_markers(terrain_grid)
 
+      # === EMERGENCY DEBUG: Final terrain grid analysis ===
+      sample_row = terrain_grid[0].first(20) rescue []
+      unique_codes = terrain_grid.flatten.uniq rescue []
+      Rails.logger.info "=== FINAL TERRAIN GRID DEBUG ==="
+      Rails.logger.info "Sample first row: #{sample_row.inspect}"
+      Rails.logger.info "Unique terrain codes: #{unique_codes.inspect} (#{unique_codes.size} types)"
+      Rails.logger.info "Biome counts: #{biome_counts.inspect}"
+      Rails.logger.info "=== END FINAL DEBUG ==="
+
       {
         terrain_grid: terrain_grid,
         elevation_data: elevation_grid,
@@ -166,6 +193,11 @@ module AIManager
           
           # Convert biome to code if it's a symbol
           biome_code = biome.is_a?(Symbol) ? convert_biome_to_code(biome) : biome
+          
+          # === EMERGENCY DEBUG: Log biome conversion ===
+          if target_y == 0 && target_x < 10  # First 10 cells of first row
+            Rails.logger.info "[BIOME CONVERSION] Cell [#{target_y},#{target_x}]: #{biome.inspect} (#{biome.class}) → #{biome_code.inspect}"
+          end
           
           # Blend biomes (prefer first source, blend others with probability)
           if source_index == 0 || rand < 0.7

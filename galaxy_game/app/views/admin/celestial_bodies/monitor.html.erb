@@ -586,12 +586,26 @@
 
         // Function to normalize terrain type from FreeCiv data
         function normalizeTerrainType(terrainCode) {
-            // If it's already a full name, return as-is
-            if (colors[terrainCode]) {
-                return terrainCode;
+            // Handle null/undefined
+            if (!terrainCode) return 'plains';
+            
+            // Convert to string and trim
+            const code = terrainCode.toString().trim();
+            
+            // First check if it's already a full terrain name
+            if (colors[code]) {
+                return code;
             }
-            // Otherwise map from FreeCiv code
-            return freecivTerrainMap[terrainCode] || 'plains'; // Default to plains
+            
+            // Otherwise convert from FreeCiv code to full name
+            const fullName = freecivTerrainMap[code];
+            if (fullName) {
+                return fullName;
+            }
+            
+            // Default fallback
+            console.warn("Unknown terrain code:", code, "- defaulting to plains");
+            return 'plains';
         }
 
         // Layer extraction functions for multi-map terrain processing
@@ -717,22 +731,30 @@
 
             const ctx = canvas.getContext('2d');
 
-            // Load terrain data from multiple sources
+            // Load terrain data from multiple sources - PRIORITIZE GEOSPHERE DATA
             <%
               terrain_map_data = @celestial_body&.geosphere&.terrain_map
               terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
-              freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
-              civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
-              has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
-              # Load Civ4 data from properties if available (for imported Civ4 maps)
+              
+              # Only load from properties as fallback if no geosphere data
+              freeciv_map_data = nil
+              civ4_map_data = nil
               civ4_properties_data = nil
-              if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import'
-                civ4_properties_data = {
-                  grid: @celestial_body.properties['terrain_grid'],
-                  width: @celestial_body.properties['grid_width'],
-                  height: @celestial_body.properties['grid_height'],
-                  biome_counts: @celestial_body.properties['biome_counts'] || {}
-                }
+              
+              if !terrain_map_data
+                freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
+                civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
+                has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
+                
+                # Only load Civ4 properties data if no other Civ4 data and it's from import
+                if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import' && !civ4_map_data
+                  civ4_properties_data = {
+                    grid: @celestial_body.properties['terrain_grid'],
+                    width: @celestial_body.properties['grid_width'],
+                    height: @celestial_body.properties['grid_height'],
+                    biome_counts: @celestial_body.properties['biome_counts'] || {}
+                  }
+                end
               end
             %>
             let terrainData = <%= raw terrain_json %>;
@@ -748,9 +770,13 @@
                 elevation: null   // Elevation data (from processed maps)
             };
 
-            // Extract layers from available map data
-            if (freecivData && freecivData.grid) {
-                // FreeCiv map: Use for terrain and water layers
+            // Extract layers from available map data - PRIORITIZE GEOSPHERE
+            if (terrainData && terrainData.grid) {
+                // Geosphere terrain map: Use for terrain layer (primary source)
+                layers.terrain = extractTerrainLayer(terrainData);
+                console.log('Extracted terrain layer from geosphere data');
+            } else if (freecivData && freecivData.grid) {
+                // FreeCiv map: Use for terrain and water layers (fallback)
                 layers.terrain = extractTerrainLayer(freecivData);
                 layers.water = extractWaterLayer(freecivData);
                 console.log('Extracted terrain and water layers from FreeCiv map');
