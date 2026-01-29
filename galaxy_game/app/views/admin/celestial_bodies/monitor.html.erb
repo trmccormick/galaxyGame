@@ -1100,7 +1100,7 @@
 
                     // Debug: log first few tiles
                     if (y === 0 && x < 5) {
-                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> base:${baseColor} -> final:${finalColor}`);
+                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> base:${baseColor}`);
                     }
 
                     let hasOverlay = false;
@@ -1120,6 +1120,9 @@
                         } else {
                             // Use global temperature calculation based on latitude, elevation, and planetary conditions
                             tempColor = tempOverlay.getOverlayColor(latitude, elevation, planetTemp, planetPressure);
+                            if (y === 0 && x < 2) {
+                                console.log(`Tile ${x},${y} temp calc: lat=${latitude.toFixed(1)}, elev=${elevation.toFixed(2)}, tempColor=${tempColor}`);
+                            }
                         }
                         
                         // Blend temperature overlay with base color (40% opacity for SimEarth style)
@@ -1180,6 +1183,11 @@
                     // Ensure we never have black tiles (fallback to light brown)
                     if (finalColor === '#000000' || finalColor === 'rgb(0, 0, 0)') {
                         finalColor = '#4a3c28'; // Dark brown fallback
+                    }
+
+                    // Debug: log final colors for first few tiles
+                    if (y === 0 && x < 5) {
+                        console.log(`Tile ${x},${y} FINAL: base:${baseColor} -> final:${finalColor}`);
                     }
 
                     ctx.fillStyle = finalColor;
