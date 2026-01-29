@@ -907,24 +907,38 @@
                 }
             }
 
-            // Extract layers - GEOSPHERE DATA TAKES PRIORITY
+            // Extract layers - GEOSPHERE DATA TAKES PRIORITY for terrain, but overlays from best available source
             if (terrainData && terrainData.grid) {
                 // Geosphere terrain map: Primary source for terrain
                 layers.terrain = extractTerrainLayer(terrainData);
                 console.log('Using terrain layer from geosphere (generated map)');
-            } else if (freecivData && freecivData.grid) {
-                // FreeCiv map: Fallback for terrain and water layers
-                // Default: preserve variety (don't strip vegetation)
-                layers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
-                layers.water = extractWaterLayer(freecivData, layers.elevation, hydrosphereData);
-                console.log('Extracted terrain and water layers from FreeCiv properties (variety preserved)');
-            } else if (civ4Data && civ4Data.grid) {
-                // Civ4 map: Use for terrain and biome layers
-                layers.terrain = extractTerrainLayer(civ4Data, { stripVegetation: false });
-                layers.water = extractWaterLayer(civ4Data, layers.elevation, hydrosphereData);
+            }
+            
+            // Extract overlay layers from best available source (Civ4 has biomes, FreeCiv has water)
+            if (civ4Data && civ4Data.grid) {
+                // Civ4 map: Best source for biome layers
                 layers.biomes = extractBiomeLayer(civ4Data);
                 layers.resources = extractResourceLayer(civ4Data);
-                console.log('Extracted terrain, water, biome and resource layers from Civ4 properties');
+                console.log('Extracted biome and resource layers from Civ4 map');
+            }
+            
+            if (freecivData && freecivData.grid) {
+                // FreeCiv map: Best source for water layers
+                layers.water = extractWaterLayer(freecivData, layers.elevation, hydrosphereData);
+                console.log('Extracted water layer from FreeCiv map');
+            } else if (civ4Data && civ4Data.grid && !layers.water) {
+                // Fallback: extract water from Civ4 if no FreeCiv data
+                layers.water = extractWaterLayer(civ4Data, layers.elevation, hydrosphereData);
+                console.log('Extracted water layer from Civ4 map (fallback)');
+            }
+            
+            // Final fallback for terrain if no geosphere data
+            if (!layers.terrain && freecivData && freecivData.grid) {
+                layers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
+                console.log('Using terrain layer from FreeCiv properties (fallback)');
+            } else if (!layers.terrain && civ4Data && civ4Data.grid) {
+                layers.terrain = extractTerrainLayer(civ4Data, { stripVegetation: false });
+                console.log('Using terrain layer from Civ4 properties (fallback)');
             }
 
             // Prefer decomposed layers if available (shows current planetary conditions)
@@ -1071,13 +1085,13 @@
                     let baseColor = '#000000'; // Default black
                     
                     // Use elevation-based colors for bare terrain (SimEarth style)
-                    // Higher elevations = grey, lower elevations = dark brown
+                    // Higher elevations = grey, lower elevations = dark brown with better contrast
                     if (elevation > 0.8) {
-                        baseColor = '#808080'; // High mountains - grey
+                        baseColor = '#C0C0C0'; // High mountains - light grey
                     } else if (elevation > 0.6) {
-                        baseColor = '#708090'; // Medium-high - slate grey
+                        baseColor = '#808080'; // Medium-high - grey
                     } else if (elevation > 0.4) {
-                        baseColor = '#A0522D'; // Medium elevation - sienna brown
+                        baseColor = '#696969'; // Medium elevation - dim grey
                     } else if (elevation > 0.2) {
                         baseColor = '#8B4513'; // Low-medium - saddle brown
                     } else {
@@ -1114,16 +1128,8 @@
                     }
 
                     // Apply other layer overlays (water, biomes, features overlay on terrain)
-                    // Earth shows bare terrain (lithosphere only); other planets show available layers
-                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
-                    
                     for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                         if (layerName === 'temperature') continue; // Already handled above
-                        
-                        // Earth shows bare terrain - skip water and biome overlays
-                        if (isEarth && (layerName === 'water' || layerName === 'biomes')) {
-                            continue; // Earth shows only lithosphere (bare terrain)
-                        }
                         
                         if (visibleLayers.has(layerName) && overlay.terrainColors) {
                             let overlayTerrainType = terrainType; // Default to base terrain type
