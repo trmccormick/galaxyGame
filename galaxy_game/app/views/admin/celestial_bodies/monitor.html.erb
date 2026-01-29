@@ -549,6 +549,51 @@
             };
         }
 
+        // Color map for terrain types (BARE TERRAIN - topographic colors only, no biome colors)
+        const colors = {
+            ocean: '#0066cc',        // Ocean blue
+            deep_sea: '#003366',     // Deep ocean blue
+            arctic: '#e8e8e8',       // Light gray (ice/snow surface, not white)
+            tundra: '#b8b8b8',       // Medium gray (permafrost/gravel)
+            grasslands: '#90EE90',   // Light green (grass/vegetation)
+            plains: '#F0E68C',      // Khaki (dry plains)
+            forest: '#228B22',      // Forest green (trees)
+            jungle: '#006400',      // Dark green (dense jungle)
+            desert: '#F4A460',      // Sandy brown (sand/dunes)
+            mountains: '#696969',   // Dim gray (rock)
+            rock: '#808080',        // Gray (bare rock)
+            rocky: '#808080',       // Gray (rocky terrain)
+            boreal: '#228B22',      // Forest green (coniferous)
+            swamp: '#556B2F'        // Dark olive green (wetlands)
+        };
+
+        // FreeCiv terrain code to terrain type mapping
+        const freecivTerrainMap = {
+            ' ': 'ocean',      // Ocean
+            'a': 'arctic',     // Arctic
+            't': 'tundra',     // Tundra
+            'f': 'forest',     // Forest
+            'g': 'grasslands', // Grassland
+            'p': 'plains',     // Plains
+            'd': 'desert',     // Desert
+            'h': 'mountains',  // Hills (mapped to mountains)
+            'm': 'mountains',  // Mountains
+            'j': 'jungle',     // Jungle
+            's': 'swamp',      // Swamp
+            'r': 'rock',       // Rock (if present)
+            'b': 'boreal'      // Boreal (if present)
+        };
+
+        // Function to normalize terrain type from FreeCiv data
+        function normalizeTerrainType(terrainCode) {
+            // If it's already a full name, return as-is
+            if (colors[terrainCode]) {
+                return terrainCode;
+            }
+            // Otherwise map from FreeCiv code
+            return freecivTerrainMap[terrainCode] || 'plains'; // Default to plains
+        }
+
         // Layer extraction functions for multi-map terrain processing
         function extractTerrainLayer(mapData) {
             // Extract bare terrain (topography) from FreeCiv map
@@ -855,51 +900,6 @@
                 return Math.max(0, Math.min(1, elevation));
             }
 
-            // Color map for terrain types (BARE TERRAIN - topographic colors only, no biome colors)
-            const colors = {
-                ocean: '#0066cc',        // Ocean blue
-                deep_sea: '#003366',     // Deep ocean blue
-                arctic: '#e8e8e8',       // Light gray (ice/snow surface, not white)
-                tundra: '#b8b8b8',       // Medium gray (permafrost/gravel)
-                grasslands: '#90EE90',   // Light green (grass/vegetation)
-                plains: '#F0E68C',      // Khaki (dry plains)
-                forest: '#228B22',      // Forest green (trees)
-                jungle: '#006400',      // Dark green (dense jungle)
-                desert: '#F4A460',      // Sandy brown (sand/dunes)
-                mountains: '#696969',   // Dim gray (rock)
-                rock: '#808080',        // Gray (bare rock)
-                rocky: '#808080',       // Gray (rocky terrain)
-                boreal: '#228B22',      // Forest green (coniferous)
-                swamp: '#556B2F'        // Dark olive green (wetlands)
-            };
-
-            // FreeCiv terrain code to terrain type mapping
-            const freecivTerrainMap = {
-                ' ': 'ocean',      // Ocean
-                'a': 'arctic',     // Arctic
-                't': 'tundra',     // Tundra
-                'f': 'forest',     // Forest
-                'g': 'grasslands', // Grassland
-                'p': 'plains',     // Plains
-                'd': 'desert',     // Desert
-                'h': 'mountains',  // Hills (mapped to mountains)
-                'm': 'mountains',  // Mountains
-                'j': 'jungle',     // Jungle
-                's': 'swamp',      // Swamp
-                'r': 'rock',       // Rock (if present)
-                'b': 'boreal'      // Boreal (if present)
-            };
-
-            // Function to normalize terrain type from FreeCiv data
-            function normalizeTerrainType(terrainCode) {
-                // If it's already a full name, return as-is
-                if (colors[terrainCode]) {
-                    return terrainCode;
-                }
-                // Otherwise map from FreeCiv code
-                return freecivTerrainMap[terrainCode] || 'plains'; // Default to plains
-            }
-            
             // Clear canvas
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);

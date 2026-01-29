@@ -35,8 +35,16 @@ module Admin
     # Generate a new planetary map using AI analysis
     def generate_map
       planet_id = params[:planet_id]
-      selected_maps = params[:selected_maps] || []
+      # Accept both parameter names for compatibility
+      selected_maps = params[:selected_maps] || params[:source_map_ids] || []
       generation_options = params[:generation_options] || {}
+
+      # Add debug logging
+      Rails.logger.info "=== MAP GENERATION DEBUG ==="
+      Rails.logger.info "Received parameters: #{params.inspect}"
+      Rails.logger.info "selected_maps: #{params[:selected_maps].inspect}"
+      Rails.logger.info "source_map_ids: #{params[:source_map_ids].inspect}"
+      Rails.logger.info "Using: #{selected_maps.inspect}"
 
       unless planet_id.present?
         redirect_to admin_map_studio_generate_path,
@@ -55,6 +63,17 @@ module Admin
         # Prepare source maps
         sources = prepare_map_sources(selected_maps)
 
+        # Add logging
+        Rails.logger.info "Prepared #{sources.size} sources"
+
+        # Validate sources
+        if sources.empty? && selected_maps.any?
+          # User selected maps but none processed successfully
+          redirect_to admin_map_studio_generate_path,
+                      alert: "Failed to process selected maps. Please check map files."
+          return
+        end
+
         # Generate planetary map
         generated_map = generator.generate_planetary_map(
           planet: planet,
@@ -65,8 +84,13 @@ module Admin
         # Save generated map
         saved_map = save_generated_map(generated_map, planet, sources)
 
-        redirect_to admin_map_studio_path,
-                    notice: "Successfully generated #{planet.name} map using #{sources.size} source maps. Map saved as '#{saved_map[:filename]}'."
+        notice_message = if sources.empty?
+          "Generated procedural map for #{planet.name}. No source maps used. Map saved as '#{saved_map[:filename]}'."
+        else
+          "Successfully generated #{planet.name} map using #{sources.size} source map(s). Map saved as '#{saved_map[:filename]}'."
+        end
+
+        redirect_to admin_map_studio_path, notice: notice_message
 
       rescue => e
         Rails.logger.error "Map generation error: #{e.message}\n#{e.backtrace.join("\n")}"
@@ -78,19 +102,27 @@ module Admin
     # GET /admin/map_studio/browse
     # Browse all generated maps
     def browse
-      @generated_maps = find_generated_maps.group_by { |m| m[:planet_type] }
+      @generated_maps = find_generated_maps
       @map_stats = calculate_map_stats
     end
 
-    # POST /admin/map_studio/apply_map
+    # POST /admin/map_studio/apply_map/:id
     # Apply a generated map to a celestial body
     def apply_map
-      map_filename = params[:map_filename]
+      map_filename = params[:id] || params[:map_filename]
       celestial_body_id = params[:celestial_body_id]
 
-      unless map_filename.present? && celestial_body_id.present?
+      # If no celestial body selected, show selection form
+      unless celestial_body_id.present?
+        @map_filename = map_filename
+        @celestial_bodies = ::CelestialBodies::CelestialBody.all.order(:name)
+        render :select_celestial_body_for_map
+        return
+      end
+
+      unless map_filename.present?
         redirect_to admin_map_studio_browse_path,
-                    alert: 'Map filename and celestial body are required.'
+                    alert: 'Map filename is required.'
         return
       end
 
@@ -118,7 +150,15 @@ module Admin
     def analyze
       map_id = params[:id]
       @map = load_generated_map_by_id(map_id)
+      @map[:id] = map_id # Add id for view compatibility
+      @map[:quality_score] = calculate_map_quality(@map) # Add quality score for view
+      @map[:description] = generate_map_description(@map, {}) # Add description for view
       @analysis = analyze_map_quality(@map) if @map
+
+      respond_to do |format|
+        format.html # renders analyze.html.erb
+        format.json { render json: { map: @map, analysis: @analysis } }
+      end
     end
 
     private
@@ -175,18 +215,31 @@ module Admin
         filename = File.basename(file_path)
         metadata = extract_map_metadata(filename)
 
+        # Load the actual map data to get more details
+        map_data = begin
+          JSON.parse(File.read(file_path), symbolize_names: true)
+        rescue
+          {}
+        end
+
         {
+          id: filename, # Use filename as ID
+          name: metadata[:planet_name],
           filename: filename,
           path: file_path,
           size: File.size(file_path),
-          created: File.ctime(file_path),
-          modified: File.mtime(file_path),
+          created_at: File.ctime(file_path),
+          modified_at: File.mtime(file_path),
           planet_name: metadata[:planet_name],
           planet_type: metadata[:planet_type],
-          source_maps: metadata[:source_maps],
-          generation_options: metadata[:generation_options]
+          source_maps: map_data.dig(:metadata, :source_maps) || [],
+          generation_options: map_data.dig(:metadata, :generation_options) || {},
+          quality_score: calculate_map_quality(map_data),
+          description: generate_map_description(map_data, metadata),
+          biome_focus: determine_biome_focus(map_data),
+          complexity: determine_complexity(map_data)
         }
-      end.sort_by { |m| m[:created] }.reverse
+      end.sort_by { |m| m[:created_at] }.reverse
     end
 
     def calculate_generation_stats
@@ -321,6 +374,70 @@ module Admin
       end
     end
 
+    def calculate_map_quality(map_data)
+      return 8 if map_data.empty? # Default quality for maps without detailed data
+
+      quality = 5 # Base quality
+
+      # Check for terrain grid
+      quality += 2 if map_data[:terrain_grid].is_a?(Array) && !map_data[:terrain_grid].empty?
+
+      # Check for biome data
+      quality += 1 if map_data[:biome_counts].is_a?(Hash) && !map_data[:biome_counts].empty?
+
+      # Check for metadata
+      quality += 1 if map_data[:metadata].is_a?(Hash)
+
+      # Check for source maps
+      quality += 1 if map_data.dig(:metadata, :source_maps).is_a?(Array) && !map_data.dig(:metadata, :source_maps).empty?
+
+      [quality, 10].min # Cap at 10
+    end
+
+    def generate_map_description(map_data, metadata)
+      sources = map_data.dig(:metadata, :source_maps) || []
+      source_count = sources.size
+
+      description = "AI-generated planetary map for #{metadata[:planet_name]}"
+      description += " using #{source_count} source map#{source_count == 1 ? '' : 's'}"
+
+      if map_data[:terrain_grid]
+        height = map_data[:terrain_grid].size
+        width = map_data[:terrain_grid].first&.size || 0
+        description += ". Terrain grid: #{width}x#{height}"
+      end
+
+      if map_data[:biome_counts]
+        biome_count = map_data[:biome_counts].size
+        description += ". #{biome_count} biome type#{biome_count == 1 ? '' : 's'} detected"
+      end
+
+      description
+    end
+
+    def determine_biome_focus(map_data)
+      biomes = map_data[:biome_counts] || {}
+      return "Unknown" if biomes.empty?
+
+      # Find the most common biome
+      primary_biome = biomes.max_by { |k, v| v }&.first
+      primary_biome&.to_s&.humanize || "Mixed"
+    end
+
+    def determine_complexity(map_data)
+      grid = map_data[:terrain_grid]
+      return "Low" unless grid.is_a?(Array)
+
+      size = grid.size * (grid.first&.size || 0)
+      biomes = (map_data[:biome_counts] || {}).size
+
+      case
+      when size > 10000 && biomes > 5 then "High"
+      when size > 5000 && biomes > 3 then "Medium"
+      else "Low"
+      end
+    end
+
     def calculate_map_stats
       maps = find_generated_maps
       {
@@ -438,35 +555,9 @@ module Admin
     end
 
     def load_generated_map_by_id(map_id)
-      # Placeholder implementation - in a real system this would load from database/files
-      # For now, return a mock map object
-      {
-        id: map_id,
-        name: "Generated Map #{map_id}",
-        description: "AI-generated planetary map based on FreeCiv and Civ4 sources",
-        created_at: "2024-01-28 12:00:00",
-        source_maps: ["earth.sav", "mars.Civ4WorldBuilderSave"],
-        target_body: "Earth-like Planet",
-        quality_score: 8,
-        biome_focus: "Balanced",
-        complexity: "Normal",
-        terrain_diversity: 85,
-        biome_balance: 78,
-        resource_richness: 92,
-        playability_score: 82,
-        terrain_breakdown: {
-          "Ocean" => 45,
-          "Continent" => 35,
-          "Mountain" => 12,
-          "Desert" => 5,
-          "Forest" => 3
-        },
-        recommendations: [
-          "Excellent terrain diversity for gameplay",
-          "Good balance between land and water masses",
-          "Consider adding more strategic resource locations"
-        ]
-      }
+      # Ensure the map_id includes .json extension
+      filename = map_id.end_with?('.json') ? map_id : "#{map_id}.json"
+      load_generated_map(filename)
     end
   end
 end
