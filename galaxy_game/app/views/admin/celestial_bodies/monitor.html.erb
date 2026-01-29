@@ -1100,7 +1100,7 @@
 
                     // Debug: log first few tiles
                     if (y === 0 && x < 5) {
-                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> ${baseColor}`);
+                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> base:${baseColor} -> final:${finalColor}`);
                     }
 
                     let hasOverlay = false;
@@ -1154,6 +1154,7 @@
                     }
 
                     // Apply atmospheric tinting for non-Earth worlds to make them look more realistic
+                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
                     if (!isEarth) {
                         const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
                         const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
