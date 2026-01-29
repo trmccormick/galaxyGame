@@ -618,7 +618,55 @@
             return 'plains';
         }
 
-        // Layer extraction functions for multi-map terrain processing
+        function generateBasicElevation(mapData) {
+            // Generate basic elevation data from terrain types for water calculation
+            // Uses the same elevation ranges as TerrainDecompositionService
+            const grid = mapData.grid || mapData.terrain_grid;
+            const width = mapData.width || grid[0]?.length || 0;
+            const height = mapData.height || grid.length;
+            const elevationGrid = [];
+
+            // Elevation ranges for different terrain types (normalized 0.0-1.0)
+            const elevationRanges = {
+                deep_sea: [0.0, 0.1],
+                coast: [0.1, 0.2],
+                plains: [0.2, 0.4],
+                grasslands: [0.3, 0.5],
+                forest: [0.4, 0.6],
+                jungle: [0.4, 0.6],
+                desert: [0.2, 0.7],
+                rocky: [0.3, 0.8],
+                mountains: [0.7, 1.0],
+                tundra: [0.5, 0.8],
+                arctic: [0.8, 1.0],
+                swamp: [0.1, 0.3],
+                boreal: [0.5, 0.8],
+                ocean: [0.0, 0.2]  // Ocean can be various depths
+            };
+
+            for (let y = 0; y < height; y++) {
+                elevationGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    const rawCode = grid[y][x];
+                    const terrainType = normalizeTerrainType(rawCode);
+                    const range = elevationRanges[terrainType] || [0.2, 0.6]; // Default to plains range
+
+                    // Add some randomness within the range for natural variation
+                    const minElev = range[0];
+                    const maxElev = range[1];
+                    elevationGrid[y][x] = minElev + (Math.random() * (maxElev - minElev));
+                }
+            }
+
+            return {
+                grid: elevationGrid,
+                width: width,
+                height: height,
+                layer_type: 'elevation',
+                quality: 'basic_generated',
+                method: 'terrain_type_based'
+            };
+        }
         function extractTerrainLayer(mapData, options = {}) {
             // Extract terrain layer from map data
             // options.stripVegetation: if true, converts vegetation to underlying terrain (for bare lithosphere view)
@@ -671,24 +719,65 @@
             };
         }
 
-        function extractWaterLayer(mapData) {
-            // Extract water bodies from FreeCiv map
+        function extractWaterLayer(mapData, elevationData, hydrosphereData) {
+            // Dynamic water layer extraction using SimEarth bathtub system
+            // Water fills from lowest elevations based on hydrosphere mass
             const grid = mapData.grid || mapData.terrain_grid;
             const width = mapData.width || grid[0]?.length || 0;
             const height = mapData.height || grid.length;
             const waterGrid = [];
 
+            // Get hydrosphere data for water volume calculation
+            const totalWaterMass = hydrosphereData?.total_water_mass || hydrosphereData?.total_liquid_mass || 0;
+            const planetName = <%= raw @celestial_body.name.to_json %>;
+
+            // Calculate water volume as percentage (0.0 to 1.0)
+            // Earth has significant water, Mars starts minimal
+            let waterVolume = 0.0;
+            if (planetName.toLowerCase().includes('earth')) {
+                // Earth: Use actual hydrosphere data or default to ~70% water coverage
+                waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1.4e21, 1.0) : 0.7; // 1.4e21 kg is Earth's water
+            } else if (planetName.toLowerCase().includes('mars')) {
+                // Mars: Minimal water, can increase with terraforming
+                waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1e18, 0.1) : 0.01; // Much less water
+            } else {
+                // Other planets: Minimal water by default
+                waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1e20, 0.05) : 0.0;
+            }
+
+            // Calculate sea level using elevation data (SimEarth bathtub system)
+            let seaLevel = 0.5; // Default sea level (mid-elevation)
+            if (elevationData && elevationData.grid && waterVolume > 0) {
+                // Flatten and sort elevations to find water distribution
+                const elevations = elevationData.grid.flat().filter(e => e !== null && e !== undefined);
+                if (elevations.length > 0) {
+                    elevations.sort((a, b) => a - b);
+                    const waterTiles = Math.floor(waterVolume * elevations.length);
+                    seaLevel = waterTiles > 0 && waterTiles < elevations.length ?
+                        elevations[waterTiles - 1] : elevations[Math.floor(elevations.length * waterVolume)] || 0.5;
+                }
+            }
+
+            console.log(`Water layer: ${planetName}, volume=${waterVolume.toFixed(3)}, seaLevel=${seaLevel.toFixed(3)}`);
+
             for (let y = 0; y < height; y++) {
                 waterGrid[y] = [];
                 for (let x = 0; x < width; x++) {
-                    const rawCode = grid[y][x];
-                    const terrainType = normalizeTerrainType(rawCode);
+                    const elevation = elevationData?.grid?.[y]?.[x] || 0.5; // Default mid-elevation
 
-                    // Only water features
-                    if (terrainType === 'ocean' || terrainType === 'deep_sea') {
-                        waterGrid[y][x] = terrainType;
+                    if (elevation < seaLevel) {
+                        // Underwater - determine water type based on depth
+                        const depth = seaLevel - elevation;
+
+                        if (depth < 0.1) {
+                            waterGrid[y][x] = 'coast'; // Shallow coastal water
+                        } else if (depth < 0.3) {
+                            waterGrid[y][x] = 'ocean'; // Normal ocean
+                        } else {
+                            waterGrid[y][x] = 'deep_sea'; // Deep ocean
+                        }
                     } else {
-                        waterGrid[y][x] = null; // No water
+                        waterGrid[y][x] = null; // Above water
                     }
                 }
             }
@@ -697,7 +786,10 @@
                 grid: waterGrid,
                 width: width,
                 height: height,
-                layer_type: 'water'
+                layer_type: 'water',
+                sea_level: seaLevel,
+                water_volume: waterVolume,
+                dynamic: true
             };
         }
 
@@ -771,6 +863,7 @@
             let terrainData = <%= raw terrain_json %>;
             let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
             let civ4Data = <%= raw (civ4_map_data || civ4_properties_data) ? (civ4_map_data || civ4_properties_data).to_json : 'null' %>;
+            let hydrosphereData = <%= raw @celestial_body&.hydrosphere ? @celestial_body.hydrosphere.attributes.to_json : 'null' %>;
 
             // DEBUG: Log what data sources are loaded
             console.log('=== DATA SOURCE DEBUG ===');
@@ -794,26 +887,7 @@
                 elevation: null   // Elevation data (from processed maps)
             };
 
-            // Extract layers - GEOSPHERE DATA TAKES PRIORITY
-            if (terrainData && terrainData.grid) {
-                // Geosphere terrain map: Primary source for terrain
-                layers.terrain = extractTerrainLayer(terrainData);
-                console.log('Using terrain layer from geosphere (generated map)');
-            } else if (freecivData && freecivData.grid) {
-                // FreeCiv map: Fallback for terrain and water layers
-                // Default: preserve variety (don't strip vegetation)
-                layers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
-                layers.water = extractWaterLayer(freecivData);
-                console.log('Extracted terrain and water layers from FreeCiv properties (variety preserved)');
-            } else if (civ4Data && civ4Data.grid) {
-                // Civ4 map: Use for terrain and biome layers
-                layers.terrain = extractTerrainLayer(civ4Data, { stripVegetation: false });
-                layers.biomes = extractBiomeLayer(civ4Data);
-                layers.resources = extractResourceLayer(civ4Data);
-                console.log('Extracted terrain, biome and resource layers from Civ4 properties');
-            }
-
-            // Extract elevation from terrain_map if available
+            // Extract elevation from terrain_map FIRST (needed for water layer calculation)
             if (terrainData && terrainData.elevation) {
                 layers.elevation = {
                     grid: terrainData.elevation,
@@ -824,6 +898,33 @@
                     method: terrainData.method || 'unknown'
                 };
                 console.log('Using elevation data from terrain_map:', layers.elevation.quality, layers.elevation.method);
+            } else {
+                // Generate basic elevation from terrain types (fallback for water calculation)
+                const elevationSource = terrainData || freecivData || civ4Data;
+                if (elevationSource && elevationSource.grid) {
+                    layers.elevation = generateBasicElevation(elevationSource);
+                    console.log('Generated basic elevation data for water calculation');
+                }
+            }
+
+            // Extract layers - GEOSPHERE DATA TAKES PRIORITY
+            if (terrainData && terrainData.grid) {
+                // Geosphere terrain map: Primary source for terrain
+                layers.terrain = extractTerrainLayer(terrainData);
+                console.log('Using terrain layer from geosphere (generated map)');
+            } else if (freecivData && freecivData.grid) {
+                // FreeCiv map: Fallback for terrain and water layers
+                // Default: preserve variety (don't strip vegetation)
+                layers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
+                layers.water = extractWaterLayer(freecivData, layers.elevation, hydrosphereData);
+                console.log('Extracted terrain and water layers from FreeCiv properties (variety preserved)');
+            } else if (civ4Data && civ4Data.grid) {
+                // Civ4 map: Use for terrain and biome layers
+                layers.terrain = extractTerrainLayer(civ4Data, { stripVegetation: false });
+                layers.water = extractWaterLayer(civ4Data, layers.elevation, hydrosphereData);
+                layers.biomes = extractBiomeLayer(civ4Data);
+                layers.resources = extractResourceLayer(civ4Data);
+                console.log('Extracted terrain, water, biome and resource layers from Civ4 properties');
             }
 
             // Prefer decomposed layers if available (shows current planetary conditions)
