@@ -731,35 +731,43 @@
 
             const ctx = canvas.getContext('2d');
 
-            // Load terrain data from multiple sources - PRIORITIZE GEOSPHERE DATA
+            // Load terrain data - ALWAYS prioritize geosphere data over properties
             <%
               terrain_map_data = @celestial_body&.geosphere&.terrain_map
               terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
               
-              # Only load from properties as fallback if no geosphere data
-              freeciv_map_data = nil
-              civ4_map_data = nil
-              civ4_properties_data = nil
+              # Load properties data for additional layers only
+              freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
+              civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
+              has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
               
-              if !terrain_map_data
-                freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
-                civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
-                has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
-                
-                # Only load Civ4 properties data if no other Civ4 data and it's from import
-                if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import' && !civ4_map_data
-                  civ4_properties_data = {
-                    grid: @celestial_body.properties['terrain_grid'],
-                    width: @celestial_body.properties['grid_width'],
-                    height: @celestial_body.properties['grid_height'],
-                    biome_counts: @celestial_body.properties['biome_counts'] || {}
-                  }
-                end
+              # Only load Civ4 properties data if it's from import and no other Civ4 data
+              civ4_properties_data = nil
+              if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import' && !civ4_map_data
+                civ4_properties_data = {
+                  grid: @celestial_body.properties['terrain_grid'],
+                  width: @celestial_body.properties['grid_width'],
+                  height: @celestial_body.properties['grid_height'],
+                  biome_counts: @celestial_body.properties['biome_counts'] || {}
+                }
               end
             %>
             let terrainData = <%= raw terrain_json %>;
             let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
             let civ4Data = <%= raw (civ4_map_data || civ4_properties_data) ? (civ4_map_data || civ4_properties_data).to_json : 'null' %>;
+
+            // DEBUG: Log what data sources are loaded
+            console.log('=== DATA SOURCE DEBUG ===');
+            console.log('terrainData (geosphere):', terrainData ? 'LOADED' : 'null');
+            console.log('freecivData (properties):', freecivData ? 'LOADED' : 'null');  
+            console.log('civ4Data (properties):', civ4Data ? 'LOADED' : 'null');
+            if (terrainData && terrainData.grid) {
+                console.log('Geosphere grid sample:', terrainData.grid[0]?.slice(0, 10));
+            }
+            if (civ4Data && civ4Data.grid) {
+                console.log('Civ4 properties grid sample:', civ4Data.grid[0]?.slice(0, 10));
+            }
+            console.log('=== END DATA DEBUG ===');
 
             // Layer extraction system - separate terrain, water, biomes, elevation from different map sources
             let layers = {
@@ -770,23 +778,23 @@
                 elevation: null   // Elevation data (from processed maps)
             };
 
-            // Extract layers from available map data - PRIORITIZE GEOSPHERE
+            // Extract layers - GEOSPHERE DATA TAKES PRIORITY
             if (terrainData && terrainData.grid) {
-                // Geosphere terrain map: Use for terrain layer (primary source)
+                // Geosphere terrain map: Primary source for terrain
                 layers.terrain = extractTerrainLayer(terrainData);
-                console.log('Extracted terrain layer from geosphere data');
+                console.log('Using terrain layer from geosphere (generated map)');
             } else if (freecivData && freecivData.grid) {
-                // FreeCiv map: Use for terrain and water layers (fallback)
+                // FreeCiv map: Fallback for terrain and water layers
                 layers.terrain = extractTerrainLayer(freecivData);
                 layers.water = extractWaterLayer(freecivData);
-                console.log('Extracted terrain and water layers from FreeCiv map');
+                console.log('Using terrain and water layers from FreeCiv properties');
             }
 
-            if (civ4Data && civ4Data.grid) {
-                // Civ4 map: Use for biome and resource layers
+            // Civ4 data for biomes (if available and different from terrain source)
+            if (civ4Data && civ4Data.grid && civ4Data !== terrainData) {
                 layers.biomes = extractBiomeLayer(civ4Data);
                 layers.resources = extractResourceLayer(civ4Data);
-                console.log('Extracted biome and resource layers from Civ4 map');
+                console.log('Using biome and resource layers from Civ4 properties');
             }
 
             // Extract elevation from terrain_map if available
