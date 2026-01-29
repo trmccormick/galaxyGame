@@ -971,9 +971,16 @@
                     
                     // Terrain is ALWAYS the base layer - topographic colors (SimEarth style)
                     const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
+                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
                     const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
                     
-                    if (isMars) {
+                    if (isEarth) {
+                        // Earth: SimEarth-style bare topographic terrain (shades of brown/grey)
+                        // Base color from elevation (0-1) mapped to brown/grey scale
+                        const elevationBrightness = Math.floor(100 + elevation * 155); // 100-255 range
+                        const greyValue = Math.floor(elevationBrightness * 0.8); // Slightly desaturated
+                        baseColor = `rgb(${elevationBrightness}, ${greyValue}, ${Math.floor(greyValue * 0.9)})`;
+                    } else if (isMars) {
                         // Mars: red-tinted topographic colors
                         if (terrainType === 'ocean' || terrainType === 'deep_sea') {
                             // Mars water: reddish-brown (rare/dried up)
@@ -1019,8 +1026,21 @@
                     }
 
                     // Apply other layer overlays (water, biomes, features overlay on terrain)
+                    // But respect planetary conditions - some planets don't support certain features
                     for (const [layerName, overlay] of Object.entries(layerOverlays)) {
                         if (layerName === 'temperature') continue; // Already handled above
+                        
+                        // Skip overlays that don't make sense for certain planets
+                        const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
+                        const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
+                        
+                        if (isMars && (layerName === 'biomes' || layerName === 'rainfall' || layerName === 'resources')) {
+                            continue; // Mars has no biomes, rainfall, or resources
+                        }
+                        
+                        if (isEarth && (layerName === 'water' || layerName === 'biomes')) {
+                            continue; // Earth should show bare topographic terrain (SimEarth style)
+                        }
                         
                         if (visibleLayers.has(layerName) && overlay.terrainColors) {
                             let overlayTerrainType = terrainType; // Default to base terrain type
@@ -1050,12 +1070,12 @@
                     }
 
                     ctx.fillStyle = finalColor;
-                    ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    ctx.fillRect(x * tileSize, (height - 1 - y) * tileSize, tileSize, tileSize);
 
                     // Add subtle border for tile definition
                     ctx.strokeStyle = '#333333';
                     ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    ctx.strokeRect(x * tileSize, (height - 1 - y) * tileSize, tileSize, tileSize);
                 }
             }
 
