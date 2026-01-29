@@ -282,6 +282,16 @@
     </div>
 
     <script>
+        // Prevent multiple script executions (Turbo navigation issue)
+        if (window.monitorScriptLoaded) {
+            console.log('Monitor script already loaded, skipping...');
+            // Clean up any existing intervals
+            if (window.monitorUpdateInterval) {
+                clearInterval(window.monitorUpdateInterval);
+            }
+        } else {
+            window.monitorScriptLoaded = true;
+
         // Admin monitoring interface JavaScript
         const planetId = <%= @celestial_body.id %>;
         const planetName = '<%= @celestial_body.name %>';
@@ -1319,12 +1329,17 @@
         // Cleanup on page unload
         window.addEventListener('beforeunload', function() {
             if (updateInterval) clearInterval(updateInterval);
+            window.monitorUpdateInterval = null;
         });
+
+        // Store interval globally for cleanup
+        window.monitorUpdateInterval = updateInterval;
 
         // Initialize map on page load
         window.addEventListener('load', () => {
             renderTerrainMap();
         });
+        } // End of script execution check
     </script>
 </body>
 </html>
