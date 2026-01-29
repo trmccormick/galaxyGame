@@ -344,6 +344,7 @@
         const layerOverlays = {
             water: {
                 terrainColors: {
+                    'coast': '#004466',    // Medium blue for coastal water
                     'ocean': '#002244',    // Much darker blue for surface water (SimEarth style)
                     'deep_sea': '#001122'  // Very dark blue for deep ocean
                 }
@@ -759,6 +760,16 @@
             }
 
             console.log(`Water layer: ${planetName}, volume=${waterVolume.toFixed(3)}, seaLevel=${seaLevel.toFixed(3)}`);
+            
+            // Debug: Count water types
+            const waterCounts = { coast: 0, ocean: 0, deep_sea: 0, null: 0 };
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const waterType = waterGrid[y][x];
+                    waterCounts[waterType] = (waterCounts[waterType] || 0) + 1;
+                }
+            }
+            console.log('Water layer distribution:', waterCounts);
 
             for (let y = 0; y < height; y++) {
                 waterGrid[y] = [];
@@ -1140,6 +1151,11 @@
                             // For layer-specific overlays, use the layer's grid data instead of base terrain
                             if (layers[layerName] && layers[layerName].grid && layers[layerName].grid[y] && layers[layerName].grid[y][x] !== null) {
                                 overlayTerrainType = layers[layerName].grid[y][x];
+                                
+                                // Debug water overlay application
+                                if (layerName === 'water' && y === 0 && x < 5) {
+                                    console.log(`Water overlay at ${x},${y}: base=${terrainType}, water=${overlayTerrainType}, hasColor=${!!overlay.terrainColors[overlayTerrainType]}`);
+                                }
                             }
                             
                             if (overlay.terrainColors[overlayTerrainType]) {
@@ -1364,7 +1380,12 @@
         }
 
         // Layer visibility state - terrain ALWAYS visible as geological base
+        // For Earth, also show biomes by default (biosphere layer)
+        const planetName = <%= raw @celestial_body.name.to_json %>;
         let visibleLayers = new Set(['terrain']); // Terrain is permanent lithosphere base
+        if (planetName.toLowerCase().includes('earth')) {
+            visibleLayers.add('biomes'); // Earth shows biosphere by default
+        }
 
         // Toggle layer visibility (ADDITIVE overlays, not exclusive modes)
         // SimEarth Behavior: Multiple layers can be active simultaneously
