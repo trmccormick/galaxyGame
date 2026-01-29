@@ -679,10 +679,20 @@
               freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
               civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
               has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
+              # Load Civ4 data from properties if available (for imported Civ4 maps)
+              civ4_properties_data = nil
+              if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import'
+                civ4_properties_data = {
+                  grid: @celestial_body.properties['terrain_grid'],
+                  width: @celestial_body.properties['grid_width'],
+                  height: @celestial_body.properties['grid_height'],
+                  biome_counts: @celestial_body.properties['biome_counts'] || {}
+                }
+              end
             %>
             let terrainData = <%= raw terrain_json %>;
             let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
-            let civ4Data = <%= raw civ4_map_data ? civ4_map_data.to_json : 'null' %>;
+            let civ4Data = <%= raw (civ4_map_data || civ4_properties_data) ? (civ4_map_data || civ4_properties_data).to_json : 'null' %>;
 
             // Layer extraction system - separate terrain, water, biomes, elevation from different map sources
             let layers = {
@@ -743,6 +753,7 @@
             console.log('Terrain map in geosphere:', <%= raw (@celestial_body.geosphere&.terrain_map.present? rescue false).to_json %>);
             console.log('FreeCiv map available:', <%= raw (@celestial_body.properties&.dig('freeciv_map').present? rescue false).to_json %>);
             console.log('Civ4 map available:', <%= raw (@celestial_body.properties&.dig('civ4_map').present? rescue false).to_json %>);
+            console.log('Civ4 data from properties:', <%= raw (civ4_properties_data.present? rescue false).to_json %>);
             console.log('Terrain grid in properties:', <%= raw (@celestial_body.properties&.dig('terrain_grid').present? rescue false).to_json %>);
             console.log('Layers extracted:', layers);
 
@@ -770,6 +781,9 @@
             const grid = activeTerrainData.grid || activeTerrainData.terrain_grid || activeTerrainData.terrain;
             const width = activeTerrainData.width || grid[0]?.length || 0;
             const height = activeTerrainData.height || grid.length;
+
+            console.log('Rendering terrain map:', width, 'x', height);
+            console.log('Sample grid data:', grid[0]?.slice(0, 5), grid[30]?.slice(0, 5));
 
             if (width === 0 || height === 0) {
                 console.error('Invalid terrain dimensions');
@@ -924,6 +938,12 @@
                         // Generic planet: use standard terrain colors
                         baseColor = colors[terrainType] || '#000000';
                     }
+
+                    // Debug: log first few tiles
+                    if (y === 0 && x < 5) {
+                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> ${terrainType} -> ${baseColor}`);
+                    }
+
                     let hasOverlay = false;
 
                     // Initialize final color to base color
