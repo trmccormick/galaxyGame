@@ -571,6 +571,60 @@ ls -la /Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-20
 - **Testing:** All game controller tests pass (27 examples, 0 failures)
 - **Log:** `./data/logs/rspec_game_controller_1769038978.log`
 
+## Terrain Data Organization and Path Configuration
+
+### Data Directory Structure
+**Critical:** Terrain data files must be stored outside the git repository for proper Docker volume mounting.
+
+**❌ WRONG - Files in git-tracked location:**
+```
+galaxy_game/data/geotiff/processed/*.asc.gz  # Inside Rails app, tracked by git
+```
+
+**✅ CORRECT - Files in data mount location:**
+```
+data/geotiff/processed/*.asc.gz              # Root data/ directory, gitignored
+data/processed/*.asc.gz                      # Accessible via Docker volume mount
+```
+
+### Path Configuration Standards
+**ALL data paths must use `GalaxyGame::Paths` constants** instead of hardcoded paths.
+
+**❌ WRONG - Hardcoded paths:**
+```ruby
+# In terrain generators or scripts
+pattern_file = Rails.root.join("app/data/ai_manager/geotiff_patterns_#{body}.json")
+```
+
+**✅ CORRECT - Configured paths:**
+```ruby
+# Use GalaxyGame::Paths constants
+pattern_file = GalaxyGame::Paths::AI_MANAGER_PATH.join("geotiff_patterns_#{body}.json")
+```
+
+### Docker Volume Mount Mapping
+- **Host:** `./data/` → **Container:** `/home/galaxy_game/app/data`
+- **Rails JSON_DATA:** `Rails.root.join('app', 'data')` = `/home/galaxy_game/app/data`
+- **AI Manager Path:** `GalaxyGame::Paths::AI_MANAGER_PATH` = `/home/galaxy_game/app/data/ai_manager`
+
+### Terrain Data File Locations
+- **Elevation Data:** `data/geotiff/processed/` (luna_1800x900.asc.gz, mars_1800x900.asc.gz)
+- **Pattern Files:** `data/json-data/ai_manager/` (geotiff_patterns_*.json)
+- **Scripts:** Use `PROJECT_ROOT` variable for shell scripts to work from any directory
+
+### Verification Commands
+```bash
+# Check terrain data exists in correct location
+ls -la data/geotiff/processed/*.asc.gz
+ls -la data/processed/*.asc.gz
+
+# Verify path constants work
+docker exec -it web bash -c "bundle exec rails runner \"puts GalaxyGame::Paths::AI_MANAGER_PATH\""
+
+# Test terrain generation
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/terrain/ --format documentation'
+```
+
 ## Optional: Alpha Centauri JSON Generator Template
 - Goal: Provide generator for Alpha Centauri system files.
 - Suggested placement: `scripts/alpha_centauri_generator.rb` or JSON build script under `galaxy_game/json-build-scripts/`.

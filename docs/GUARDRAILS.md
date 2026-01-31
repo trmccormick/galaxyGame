@@ -39,7 +39,15 @@
 - **Gold Standard Reference:** `wormhole_spec.rb` serves as the canonical example of proper namespace testing. All future model specs must use fully qualified class names (e.g., `Location::SpatialLocation`) in both instantiation and association expectations.
 - **Sabatier Bug Fix [2026-01-15]:** Resolved critical implementation gap in `WormholeMaintenanceJob` where `sabatier_offset_active` contract flags were configured but not executed. Added 40% tax reduction logic for local fuel production offsets. Ensures future job updates properly parse and apply all contract configuration flags to prevent silent feature failures.
 
-## 💵 7. Economic System Guardrails
+## �️ 7. Path Configuration Standards
+- **Centralized Path Management:** All data file paths must be defined in `galaxy_game/config/initializers/game_data_paths.rb` using `GalaxyGame::Paths` constants.
+- **No Hardcoded Paths:** Never use `Rails.root.join('app/data/...')` directly in application code. Always use `GalaxyGame::Paths::CONSTANT`.
+- **Docker Volume Awareness:** Data files must be stored in root `data/` directory (gitignored) for proper Docker volume mounting, not in `galaxy_game/data/` (git-tracked).
+- **Script Portability:** Shell scripts must use `PROJECT_ROOT` variable to work from any directory.
+- **Directory Name Consistency:** Path constants must match actual directory names (e.g., `ai_manager` not `ai-manager`).
+- **Path Resolution:** `GalaxyGame::Paths::JSON_DATA` resolves to `/home/galaxy_game/app/data` in container (mounted from host `./data/`).
+
+## 💵 8. Economic System Guardrails
 
 ### Contract Ceiling Limits
 - **Maximum Contract Value**: No single player contract may exceed 10% of current GCC money supply to prevent economic distortion
@@ -66,7 +74,7 @@
 - **Price Stabilization**: Automatic purchase/sale of commodities when prices deviate >20% from 30-day average
 - **Anti-Manipulation**: Any entity attempting to manipulate markets faces permanent ban and asset forfeiture
 
-## 🎮 8. Player Experience Boundaries
+## 🎮 9. Player Experience Boundaries
 
 ### Economic Transparency
 - **Contract Clarity**: All contracts must display clear GCC earnings, risk levels, and completion timeframes
@@ -83,7 +91,7 @@
 - **Economic Multipliers**: Player contracts provide 1.5x GCC rewards vs NPC execution
 - **Influence Mechanisms**: GCC investment allows players to influence AI Manager priorities
 
-## 🚀 9. Sci-Fi Easter Eggs (Love Letter to the Genre)
+## 🚀 10. Sci-Fi Easter Eggs (Love Letter to the Genre)
 
 **Context:** Game World Flavor & Immersion  
 **Mandate:** Transform the game into a "love letter" to sci-fi by including subtle nods to shows, books, and movies that inspired the project. These must remain non-infringing and feel natural to casual players while providing "eureka" moments for fans.
@@ -130,7 +138,7 @@
 
 This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
 
-## 🐳 10. Environment & Container Management Guardrails
+## 🐳 11. Environment & Container Management Guardrails
 
 **Context:** Development Environment Integrity  
 **Mandate:** Protect running applications and collaborative work sessions from unintended disruptions.
@@ -165,7 +173,7 @@ This strategy ensures the game honors sci-fi's legacy while maintaining focus on
 - **Prevention:** Added explicit prohibition on config changes without permission
 - **Recovery:** Always confirm user intent before suggesting file modifications
 
-### 🗄️ 11. Database Environment Protection Guardrails
+### 🗄️ 13. Database Environment Protection Guardrails
 
 **Context:** Database Integrity and Test Isolation  
 **Mandate:** Prevent accidental corruption of development database through improper test execution.
@@ -211,7 +219,7 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - **Prevention:** Added explicit database environment protection guardrails
 - **Recovery:** Development database reseeding required to restore clean state
 
-## 🖥️ 11. Monitor Interface & Layer System Guardrails
+## 🖥️ 12. Monitor Interface & Layer System Guardrails
 
 ### Layer Toggle Logic - SimEarth Additive Overlays
 - **Terrain Base Layer:** Terrain is ALWAYS visible as the geological foundation (lithosphere) and cannot be toggled off.
