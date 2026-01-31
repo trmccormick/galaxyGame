@@ -237,13 +237,21 @@ module GalaxyGame
     EVENTS_MISSIONS_PATH = MISSIONS_PATH.join('events').freeze
 
     # === AI Manager Paths ===
-    AI_MANAGER_PATH = JSON_DATA.join('ai-manager').freeze
+    AI_MANAGER_PATH = JSON_DATA.join('ai_manager').freeze
     AI_PATTERNS_PATH = AI_MANAGER_PATH.join('learned_patterns.json').freeze
     AI_MISSION_PATTERNS_PATH = AI_MANAGER_PATH.join('mission_profile_patterns.json').freeze
     AI_PERFORMANCE_PATH = AI_MANAGER_PATH.join('performance').freeze
     AI_SETTLEMENT_PATTERNS_PATH = AI_MANAGER_PATH.join('settlement-patterns').freeze
     AI_ADAPTATION_RULES_PATH = AI_MANAGER_PATH.join('adaptation_rules.json').freeze
     AI_EXECUTION_PATTERNS_PATH = AI_MANAGER_PATH.join('execution_patterns.json').freeze
+
+    # === Map Data Paths ===
+    MAPS_PATH = JSON_DATA.join('maps').freeze
+    FREECIV_MAPS_PATH = MAPS_PATH.join('freeciv').freeze
+    CIV4_MAPS_PATH = MAPS_PATH.join('civ4').freeze
+    PARTIAL_PLANETARY_MAPS_PATH = MAPS_PATH.join('partial_planetary').freeze
+    TOPOLOGY_MAPS_PATH = MAPS_PATH.join('topology_maps').freeze
+    GENERATED_MAPS_PATH = MAPS_PATH.join('galaxy_game').freeze
 
     # === Helper methods for path generation ===
     def self.material_path(category, subcategory, material_id)
