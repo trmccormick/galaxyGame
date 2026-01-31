@@ -47,6 +47,30 @@
 - **Directory Name Consistency:** Path constants must match actual directory names (e.g., `ai_manager` not `ai-manager`).
 - **Path Resolution:** `GalaxyGame::Paths::JSON_DATA` resolves to `/home/galaxy_game/app/data` in container (mounted from host `./data/`).
 
+## 🏔️ 7.5. Terrain Generation & Rendering Architecture
+
+### Separation of Concerns
+- **Generation Layer:** Produces pure elevation data only (height maps). No biome classification.
+- **Rendering Layer:** Applies biome/water classification based on elevation, temperature, and FreeCiv/Civ4 data.
+- **Data Storage:** `geosphere.terrain_map` contains `elevation` (2D numeric grid) and `grid` (nil or normalized values for rendering).
+
+### Sol System Terrain Sources
+- **Known Height Maps:** NASA GeoTIFF data processed into elevation patterns stored in `data/ai_manager/geotiff_patterns_*.json`
+- **Biome Integration:** FreeCiv/Civ4 map data provides terrain type distribution and water features
+- **Fallback Prevention:** Sol worlds (Earth, Mars, Luna) must use `Terrain::MultiBodyTerrainGenerator` with NASA patterns, not procedural generation
+
+### Terrain Data Integrity
+- **Grid Content:** Never store biome letters/symbols in `terrain_map['grid']`. Use `nil` or normalized elevation values (0.0-1.0).
+- **Elevation Variation:** Must show realistic height variation (-10000 to +8000m for Earth-like planets).
+- **Pattern Files:** Required for Sol worlds: `geotiff_patterns_earth.json`, `geotiff_patterns_mars.json`, `geotiff_patterns_luna.json`
+- **Rendering Default:** 0.5 values in grid default to "plains" - ensure proper elevation-to-biome mapping in renderer
+
+### Current Issue Resolution [2026-01-31]
+- **Root Cause:** Earth's terrain generated via procedural method (uniform 0.5 grid) instead of NASA patterns
+- **Impact:** Maps show uniform plains despite varied elevation data
+- **Fix Required:** Modify `AutomaticTerrainGenerator#generate_sol_world_terrain` to use `MultiBodyTerrainGenerator` for elevation-only generation
+- **Missing Component:** `geotiff_patterns_earth.json` pattern file for Earth NASA data
+
 ## 💵 8. Economic System Guardrails
 
 ### Contract Ceiling Limits
