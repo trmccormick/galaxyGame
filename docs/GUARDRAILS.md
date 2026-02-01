@@ -68,13 +68,14 @@
 ### Current Issue Resolution [2026-01-31]
 - **Root Cause:** Mars terrain generated via procedural fallback due to broken `generate_mars_terrain` method with stub implementations
 - **Impact:** Mars maps showed uniform procedural noise instead of realistic NASA/Civ4/FreeCiv data
-- **Fix Implemented:** Three-layer Mars terrain generation system:
-  - **Layer 1:** NASA elevation base (1800x900) using `MultiBodyTerrainGenerator` with blueprint water constraints
-  - **Layer 2:** Civ4 current-state overlay (scaled from 80x57 to 1800x900) for terrain features
-  - **Layer 3:** FreeCiv terraforming targets (scaled from 133x64 to 1800x900) for future mission planning
-- **Integration:** Blueprint water constraints from Civ4 data applied to NASA base elevation
+- **Fix Implemented:** Three-layer Mars terrain generation system with corrected architecture:
+  - **Layer 1:** NASA elevation base (1800x900) using `MultiBodyTerrainGenerator` - pure topographic data, no constraints
+  - **Layer 2:** Civ4 terraforming scenario overlay (scaled from 80x57 to 1800x900) - represents "Mars After Terraforming" with habitable biomes, cities, and resources for AI planning
+  - **Layer 3:** FreeCiv complete terraforming targets (scaled from 133x64 to 1800x900) - represents fully terraformed Mars with 40% ocean coverage for TerraSim simulations
+- **Architecture Correction:** Removed blueprint water constraints from NASA base; Civ4/FreeCiv data now stored as future possibility spaces for AI Manager/TerraSim planning, not elevation constraints
+- **Integration:** Civ4 biomes represent achievable future states (cities, settlements, resources); FreeCiv represents complete terraforming success
 - **Scaling:** Nearest-neighbor interpolation for coordinate transformation between different grid sizes
-- **Result:** Mars terrain now uses all available data sources with proper separation of concerns
+- **Result:** Mars terrain uses all available data sources with proper separation of concerns and future-state planning capabilities
 
 ## 💵 8. Economic System Guardrails
 

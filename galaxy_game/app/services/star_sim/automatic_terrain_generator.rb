@@ -477,17 +477,19 @@ module StarSim
     def generate_mars_terrain(body)
       Rails.logger.info "[AutomaticTerrainGenerator] Generating Mars terrain using three-layer system"
 
-      # Layer 1: NASA elevation base (1800x900)
+      # Layer 1: NASA elevation base (1800x900) - pure topographic data
       nasa_elevation = generate_nasa_base_elevation(body)
 
-      # Layer 2: Civ4 current-state overlay (scaled to 1800x900)
-      civ4_overlay = generate_civ4_current_state_overlay(body)
+      # Layer 2: Civ4 terraforming scenario overlay (scaled to 1800x900)
+      # This represents "Mars After Terraforming" - a habitable future state
+      civ4_terraforming_scenario = generate_civ4_terraforming_scenario(body)
 
-      # Layer 3: FreeCiv terraforming target storage (scaled to 1800x900)
-      freeciv_targets = generate_freeciv_terraforming_targets(body)
+      # Layer 3: FreeCiv full terraforming target storage (scaled to 1800x900)
+      # This represents complete terraforming with 40% ocean coverage
+      freeciv_complete_targets = generate_freeciv_complete_targets(body)
 
-      # Combine layers: NASA base + Civ4 overlay adjustments
-      combined_elevation = combine_elevation_layers(nasa_elevation, civ4_overlay)
+      # Combine layers: NASA base with Civ4 scenario overlay for current representation
+      combined_elevation = combine_elevation_layers(nasa_elevation, civ4_terraforming_scenario)
 
       terrain_data = {
         grid: nil,  # No biome grid - handled in rendering layer
@@ -496,12 +498,17 @@ module StarSim
         resource_grid: generate_mars_resource_grid(combined_elevation),
         strategic_markers: generate_mars_strategic_markers(combined_elevation),
         resource_counts: generate_mars_resource_counts(combined_elevation),
-        terraforming_targets: freeciv_targets,  # Store FreeCiv targets for future use
+        # Store future terraforming possibilities for AI Manager/TerraSim planning
+        terraforming_scenarios: {
+          civ4_partial_habitable: civ4_terraforming_scenario,  # Partially terraformed Mars
+          freeciv_complete_terraformed: freeciv_complete_targets  # Fully terraformed Mars
+        },
         generation_metadata: {
-          layers_used: [:nasa_base, :civ4_overlay, :freeciv_targets],
+          layers_used: [:nasa_base, :civ4_scenario_overlay, :freeciv_targets_storage],
           nasa_source: 'geotiff_patterns_mars.json',
           civ4_source: find_mars_civ4_map,
-          freeciv_source: find_mars_freeciv_map
+          freeciv_source: find_mars_freeciv_map,
+          architecture: 'future_possibility_spaces'
         }
       }
 
@@ -513,29 +520,17 @@ module StarSim
     def generate_nasa_base_elevation(body)
       Rails.logger.info "[AutomaticTerrainGenerator] Generating NASA base elevation for Mars"
 
-      # Get blueprint data from Civ4 for water constraints
-      blueprint_data = nil
-      civ4_path = find_mars_civ4_map
-      if civ4_path
-        begin
-          processor = Import::Civ4MapProcessor.new
-          blueprint_data = processor.process(civ4_path, mode: :mars_blueprint)
-          Rails.logger.info "[AutomaticTerrainGenerator] Loaded Civ4 blueprint data for water constraints"
-        rescue => e
-          Rails.logger.warn "[AutomaticTerrainGenerator] Failed to load Civ4 blueprint data: #{e.message}"
-        end
-      end
-
-      # Use MultiBodyTerrainGenerator for NASA patterns
+      # Use MultiBodyTerrainGenerator for NASA patterns - NO blueprint constraints
       generator = Terrain::MultiBodyTerrainGenerator.new
-      mars_data = generator.generate_terrain('mars', width: 1800, height: 900, options: { blueprint_data: blueprint_data })
+      mars_data = generator.generate_terrain('mars', width: 1800, height: 900, options: {})
 
       mars_data[:elevation]
     end
 
     # Generate Civ4 current-state overlay
-    def generate_civ4_current_state_overlay(body)
-      Rails.logger.info "[AutomaticTerrainGenerator] Generating Civ4 current-state overlay"
+    # Generate Civ4 terraforming scenario (partially habitable Mars future state)
+    def generate_civ4_terraforming_scenario(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating Civ4 terraforming scenario"
 
       civ4_path = find_mars_civ4_map
       return nil unless civ4_path
@@ -560,9 +555,9 @@ module StarSim
       end
     end
 
-    # Generate FreeCiv terraforming targets
-    def generate_freeciv_terraforming_targets(body)
-      Rails.logger.info "[AutomaticTerrainGenerator] Generating FreeCiv terraforming targets"
+    # Generate FreeCiv complete terraforming targets (fully terraformed Mars with 40% oceans)
+    def generate_freeciv_complete_targets(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating FreeCiv complete terraforming targets"
 
       freeciv_path = find_mars_freeciv_map
       return nil unless freeciv_path
@@ -579,7 +574,7 @@ module StarSim
           1800, 900
         )
 
-        # Return terraforming targets data structure
+        # Return complete terraforming targets data structure for TerraSim
         {
           elevation: scaled_elevation,
           biomes: freeciv_data[:biomes],
@@ -588,7 +583,8 @@ module StarSim
           scaling_info: {
             original_size: "#{freeciv_data[:lithosphere][:width]}x#{freeciv_data[:lithosphere][:height]}",
             scaled_size: "1800x900"
-          }
+          },
+          terraforming_state: 'complete_40_percent_oceans'
         }
       rescue => e
         Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process FreeCiv data: #{e.message}"
@@ -596,9 +592,9 @@ module StarSim
       end
     end
 
-    # Combine NASA base elevation with Civ4 overlay
-    def combine_elevation_layers(nasa_base, civ4_overlay)
-      return nasa_base unless civ4_overlay
+    # Combine NASA base elevation with Civ4 terraforming scenario overlay
+    def combine_elevation_layers(nasa_base, civ4_scenario)
+      return nasa_base unless civ4_scenario
 
       Rails.logger.info "[AutomaticTerrainGenerator] Combining elevation layers"
 
@@ -608,10 +604,10 @@ module StarSim
       combined = Array.new(height) do |y|
         Array.new(width) do |x|
           nasa_elev = nasa_base[y][x]
-          civ4_elev = civ4_overlay[y][x]
+          civ4_elev = civ4_scenario[y][x]
 
-          # Blend NASA base with Civ4 overlay (70% NASA, 30% Civ4 for current state)
-          # This preserves NASA realism while incorporating Civ4 terrain features
+          # Blend NASA base with Civ4 scenario overlay (70% NASA, 30% Civ4 for future terraforming representation)
+          # This preserves NASA realism while incorporating Civ4 terraforming possibilities
           (nasa_elev * 0.7) + (civ4_elev * 0.3)
         end
       end
