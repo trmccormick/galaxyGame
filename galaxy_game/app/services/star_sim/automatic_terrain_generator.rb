@@ -2,6 +2,10 @@
 # Automatic terrain generation for new star systems based on planetary properties
 # Integrates AI-learned patterns with realistic planet characteristics
 
+require 'import/freeciv_map_processor'
+require 'import/civ4_map_processor'
+require 'terrain/multi_body_terrain_generator'
+
 module StarSim
   class AutomaticTerrainGenerator
     def initialize
@@ -27,6 +31,11 @@ module StarSim
       # Skip if body already has terrain or isn't a planet/moon
       return if celestial_body.geosphere&.terrain_map.present?
       return unless should_generate_terrain?(celestial_body)
+
+      # Special handling for Sol system worlds with known data
+      if sol_system_world?(celestial_body)
+        return generate_sol_world_terrain(celestial_body)
+      end
 
       # Analyze planet properties to determine terrain parameters
       terrain_params = analyze_planet_properties(celestial_body)
@@ -184,8 +193,8 @@ module StarSim
 
       # Transform into expected format
       {
-        grid: raw_terrain[:elevation_data],  # The biome grid
-        elevation: generate_elevation_data(raw_terrain[:elevation_data]),  # Elevation values
+        grid: raw_terrain[:terrain_grid],  # The terrain grid with biome letters
+        elevation: generate_elevation_data_from_grid(raw_terrain[:terrain_grid]),  # Elevation values (2D)
         biomes: raw_terrain[:biome_counts],  # Biome counts
         resource_grid: generate_resource_grid(body, raw_terrain),
         strategic_markers: generate_strategic_markers(body, raw_terrain),
@@ -205,11 +214,78 @@ module StarSim
         'p' => 800   # plains - medium elevation
       }
 
-      biome_grid.map do |biome|
+      # Assume a roughly square grid for 2D conversion
+      grid_size = biome_grid.size
+      side_length = Math.sqrt(grid_size).ceil
+      elevation_grid = Array.new(side_length) { Array.new(side_length) }
+
+      biome_grid.each_with_index do |biome, index|
+        row = index / side_length
+        col = index % side_length
+        next if row >= side_length || col >= side_length
+
         base_elevation = elevation_map[biome] || 0
         # Add some random variation to avoid NaN in statistical calculations
-        base_elevation + rand(-50..50)
+        elevation_grid[row][col] = base_elevation + rand(-50..50)
       end
+
+      elevation_grid
+    end
+
+    # Generate elevation data from 2D terrain grid
+    def generate_elevation_data_from_grid(terrain_grid_2d)
+      return [] unless terrain_grid_2d.is_a?(Array) && terrain_grid_2d.first.is_a?(Array)
+
+      height = terrain_grid_2d.size
+      width = terrain_grid_2d.first.size
+
+      # Elevation mapping for different terrain types
+      elevation_map = {
+        'o' => -200,  # ocean - below sea level
+        'd' => 0,     # desert - low elevation
+        'p' => 800,   # plains - medium elevation
+        'g' => 1000,  # grassland - medium-high
+        'f' => 500,   # forest - medium elevation
+        'j' => 600,   # jungle - medium elevation
+        'm' => 1500,  # mountains - high elevation
+        'h' => 1200,  # hills - medium-high
+        'a' => 800,   # arctic - medium (ice caps)
+        't' => 900,   # tundra - medium-high
+        's' => 100,   # swamp - low elevation
+        'r' => 1100,  # rock - medium-high
+        'b' => 700    # boreal - medium
+      }
+
+      elevation_grid = Array.new(height) { Array.new(width) }
+
+      height.times do |y|
+        width.times do |x|
+          biome = terrain_grid_2d[y][x]
+          base_elevation = elevation_map[biome] || 0
+          # Add random variation for realism
+          elevation_grid[y][x] = base_elevation + rand(-50..50)
+        end
+      end
+
+      elevation_grid
+    end
+
+    # Convert 1D array to 2D grid
+    def convert_to_2d_grid(data_1d)
+      return data_1d if data_1d.first.is_a?(Array) # Already 2D
+
+      grid_size = data_1d.size
+      side_length = Math.sqrt(grid_size).ceil
+      grid_2d = Array.new(side_length) { Array.new(side_length) }
+
+      data_1d.each_with_index do |value, index|
+        row = index / side_length
+        col = index % side_length
+        next if row >= side_length || col >= side_length
+        grid_2d[row][col] = value
+      end
+
+      grid_2d
     end
 
     # Generate resource grid based on terrain
@@ -308,12 +384,13 @@ module StarSim
       quality_scores = quality_assessor.assess_terrain_quality(terrain_data, planet_properties)
 
       geosphere.update!(
-        terrain_map: terrain_data[:grid],
-        elevation_data: terrain_data[:elevation],
-        biome_data: terrain_data[:biomes],
-        resource_data: terrain_data[:resource_grid],
-        strategic_markers: terrain_data[:strategic_markers],
-        terrain_metadata: {
+        terrain_map: {
+          grid: terrain_data[:grid],
+          elevation: terrain_data[:elevation],
+          biomes: terrain_data[:biomes],
+          resource_grid: terrain_data[:resource_grid],
+          strategic_markers: terrain_data[:strategic_markers],
+          resource_counts: terrain_data[:resource_counts],
           generation_method: 'automatic_ai_driven',
           generation_date: Time.current,
           source: 'planetary_properties_analysis',
@@ -351,6 +428,322 @@ module StarSim
     def find_nasa_data(planet_name)
       # Placeholder for NASA data lookup
       nil
+    end
+
+    # Check if this is a Sol system world with known data sources
+    def sol_system_world?(body)
+      sol_worlds = ['earth', 'mars', 'luna', 'moon']
+      sol_worlds.include?(body.name.downcase)
+    end
+
+    # Generate terrain for Sol system worlds using known data sources
+    def generate_sol_world_terrain(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating terrain for Sol world: #{body.name}"
+
+      case body.name.downcase
+      when 'earth'
+        generate_earth_terrain(body)
+      when 'mars'
+        generate_mars_terrain(body)
+      when 'luna', 'moon'
+        generate_luna_terrain(body)
+      else
+        # Fallback to procedural generation
+        terrain_params = analyze_planet_properties(body)
+        generate_base_terrain(body, terrain_params)
+      end
+    end
+
+    # Generate Earth terrain using FreeCiv/Civ4 data
+    def generate_earth_terrain(body)
+      processor = Import::EarthMapProcessor.new
+      earth_data = processor.process
+
+      # Convert to terrain format - elevation only, no biome classification
+      terrain_data = {
+        grid: nil,  # No biome grid for terrain generation layer
+        elevation: earth_data[:lithosphere][:elevation],
+        biomes: {},  # Empty - biomes handled in rendering layer
+        resource_grid: generate_resource_grid_from_earth_data(earth_data),
+        strategic_markers: generate_strategic_markers_from_earth_data(earth_data),
+        resource_counts: generate_resource_counts_from_earth_data(earth_data)
+      }
+
+      store_generated_terrain(body, terrain_data)
+      terrain_data
+    end
+
+    # Generate Mars terrain using FreeCiv/Civ4 and NASA data
+    def generate_mars_terrain(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating Mars terrain using three-layer system"
+
+      # Layer 1: NASA elevation base (1800x900)
+      nasa_elevation = generate_nasa_base_elevation(body)
+
+      # Layer 2: Civ4 current-state overlay (scaled to 1800x900)
+      civ4_overlay = generate_civ4_current_state_overlay(body)
+
+      # Layer 3: FreeCiv terraforming target storage (scaled to 1800x900)
+      freeciv_targets = generate_freeciv_terraforming_targets(body)
+
+      # Combine layers: NASA base + Civ4 overlay adjustments
+      combined_elevation = combine_elevation_layers(nasa_elevation, civ4_overlay)
+
+      terrain_data = {
+        grid: nil,  # No biome grid - handled in rendering layer
+        elevation: combined_elevation,
+        biomes: {},  # Empty - biomes handled in rendering layer
+        resource_grid: generate_mars_resource_grid(combined_elevation),
+        strategic_markers: generate_mars_strategic_markers(combined_elevation),
+        resource_counts: generate_mars_resource_counts(combined_elevation),
+        terraforming_targets: freeciv_targets,  # Store FreeCiv targets for future use
+        generation_metadata: {
+          layers_used: [:nasa_base, :civ4_overlay, :freeciv_targets],
+          nasa_source: 'geotiff_patterns_mars.json',
+          civ4_source: find_mars_civ4_map,
+          freeciv_source: find_mars_freeciv_map
+        }
+      }
+
+      store_generated_terrain(body, terrain_data)
+      terrain_data
+    end
+
+    # Generate NASA base elevation using MultiBodyTerrainGenerator
+    def generate_nasa_base_elevation(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating NASA base elevation for Mars"
+
+      # Get blueprint data from Civ4 for water constraints
+      blueprint_data = nil
+      civ4_path = find_mars_civ4_map
+      if civ4_path
+        begin
+          processor = Import::Civ4MapProcessor.new
+          blueprint_data = processor.process(civ4_path, mode: :mars_blueprint)
+          Rails.logger.info "[AutomaticTerrainGenerator] Loaded Civ4 blueprint data for water constraints"
+        rescue => e
+          Rails.logger.warn "[AutomaticTerrainGenerator] Failed to load Civ4 blueprint data: #{e.message}"
+        end
+      end
+
+      # Use MultiBodyTerrainGenerator for NASA patterns
+      generator = Terrain::MultiBodyTerrainGenerator.new
+      mars_data = generator.generate_terrain('mars', width: 1800, height: 900, options: { blueprint_data: blueprint_data })
+
+      mars_data[:elevation]
+    end
+
+    # Generate Civ4 current-state overlay
+    def generate_civ4_current_state_overlay(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating Civ4 current-state overlay"
+
+      civ4_path = find_mars_civ4_map
+      return nil unless civ4_path
+
+      begin
+        processor = Import::Civ4MapProcessor.new
+        civ4_data = processor.process(civ4_path, mode: :terrain)
+
+        # Scale Civ4 elevation (typically 80x57) to 1800x900 grid
+        scaled_elevation = scale_grid_to_target(
+          civ4_data[:lithosphere][:elevation],
+          civ4_data[:lithosphere][:width],
+          civ4_data[:lithosphere][:height],
+          1800, 900
+        )
+
+        Rails.logger.info "[AutomaticTerrainGenerator] Scaled Civ4 elevation from #{civ4_data[:lithosphere][:width]}x#{civ4_data[:lithosphere][:height]} to 1800x900"
+        scaled_elevation
+      rescue => e
+        Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process Civ4 data: #{e.message}"
+        nil
+      end
+    end
+
+    # Generate FreeCiv terraforming targets
+    def generate_freeciv_terraforming_targets(body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating FreeCiv terraforming targets"
+
+      freeciv_path = find_mars_freeciv_map
+      return nil unless freeciv_path
+
+      begin
+        processor = Import::FreecivMapProcessor.new
+        freeciv_data = processor.process(freeciv_path)
+
+        # Scale FreeCiv data (typically 133x64) to 1800x900 grid
+        scaled_elevation = scale_grid_to_target(
+          freeciv_data[:lithosphere][:elevation],
+          freeciv_data[:lithosphere][:width],
+          freeciv_data[:lithosphere][:height],
+          1800, 900
+        )
+
+        # Return terraforming targets data structure
+        {
+          elevation: scaled_elevation,
+          biomes: freeciv_data[:biomes],
+          strategic_markers: freeciv_data[:strategic_markers],
+          source_file: freeciv_path,
+          scaling_info: {
+            original_size: "#{freeciv_data[:lithosphere][:width]}x#{freeciv_data[:lithosphere][:height]}",
+            scaled_size: "1800x900"
+          }
+        }
+      rescue => e
+        Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process FreeCiv data: #{e.message}"
+        nil
+      end
+    end
+
+    # Combine NASA base elevation with Civ4 overlay
+    def combine_elevation_layers(nasa_base, civ4_overlay)
+      return nasa_base unless civ4_overlay
+
+      Rails.logger.info "[AutomaticTerrainGenerator] Combining elevation layers"
+
+      height = nasa_base.size
+      width = nasa_base.first.size
+
+      combined = Array.new(height) do |y|
+        Array.new(width) do |x|
+          nasa_elev = nasa_base[y][x]
+          civ4_elev = civ4_overlay[y][x]
+
+          # Blend NASA base with Civ4 overlay (70% NASA, 30% Civ4 for current state)
+          # This preserves NASA realism while incorporating Civ4 terrain features
+          (nasa_elev * 0.7) + (civ4_elev * 0.3)
+        end
+      end
+
+      combined
+    end
+
+    # Scale a grid from source dimensions to target dimensions using nearest neighbor
+    def scale_grid_to_target(source_grid, source_width, source_height, target_width, target_height)
+      return source_grid if source_width == target_width && source_height == target_height
+
+      Rails.logger.info "[AutomaticTerrainGenerator] Scaling grid from #{source_width}x#{source_height} to #{target_width}x#{target_height}"
+
+      scaled_grid = Array.new(target_height) do |target_y|
+        Array.new(target_width) do |target_x|
+          # Map target coordinates to source coordinates
+          source_x = (target_x.to_f / (target_width - 1)) * (source_width - 1)
+          source_y = (target_y.to_f / (target_height - 1)) * (source_height - 1)
+
+          # Use nearest neighbor interpolation
+          nearest_x = source_x.round.clamp(0, source_width - 1)
+          nearest_y = source_y.round.clamp(0, source_height - 1)
+
+          source_grid[nearest_y][nearest_x]
+        end
+      end
+
+      scaled_grid
+    end
+
+    # Generate Luna terrain using Civ4 and NASA data
+    def generate_luna_terrain(body)
+      # Use Civ4 Luna map as primary source
+      civ4_path = find_luna_civ4_map
+      nasa_path = find_luna_nasa_data
+
+      elevation_data = nil
+
+      if civ4_path
+        civ4_data = Civ4WbsImportService.new(civ4_path).import
+        elevation_extractor = Civ4ElevationExtractor.new
+        elevation_data = elevation_extractor.extract(civ4_data) if civ4_data
+      end
+
+      # Use NASA data if available and no Civ4 elevation
+      if nasa_path && elevation_data.nil?
+        elevation_data = load_nasa_elevation_data(nasa_path)
+      end
+
+      # Fallback to procedural if no data
+      elevation_data ||= generate_procedural_elevation(body, 80, 50)
+
+      terrain_data = {
+        grid: nil,  # No biome grid
+        elevation: elevation_data,
+        biomes: {},  # Empty
+        resource_grid: generate_luna_resource_grid(elevation_data),
+        strategic_markers: generate_luna_strategic_markers(elevation_data),
+        resource_counts: generate_luna_resource_counts(elevation_data)
+      }
+
+      store_generated_terrain(body, terrain_data)
+      terrain_data
+    end
+
+    # Helper methods for finding Sol world data sources
+    def find_mars_freeciv_map
+      Dir.glob(File.join(Rails.root, 'data', 'maps', 'freeciv', 'mars', '*.sav')).first
+    end
+
+    def find_mars_civ4_map
+      Dir.glob(File.join(Rails.root, 'data', 'maps', 'civ4', 'mars', '*.Civ4WorldBuilderSave')).first
+    end
+
+    def find_mars_nasa_data
+      File.join(Rails.root, 'data', 'geotiff', 'processed', 'mars_1800x900.tif')
+    end
+
+    def find_luna_civ4_map
+      candidates = Dir.glob(File.join(Rails.root, 'data', 'maps', 'civ4', 'luna', '*.Civ4WorldBuilderSave'))
+      candidates.max_by { |path| File.basename(path).match(/(\d+)x(\d+)/)&.captures&.map(&:to_i)&.inject(:*) || 0 }
+    end
+
+    def find_luna_nasa_data
+      File.join(Rails.root, 'data', 'geotiff', 'processed', 'luna_1800x900.tif')
+    end
+
+    # Resource and strategic marker generation for Sol worlds
+    def generate_resource_grid_from_earth_data(earth_data)
+      # Generate resource grid based on Earth data
+      # Simplified implementation
+      {}
+    end
+
+    def generate_strategic_markers_from_earth_data(earth_data)
+      # Generate strategic markers for Earth
+      []
+    end
+
+    def generate_resource_counts_from_earth_data(earth_data)
+      # Generate resource counts for Earth
+      {}
+    end
+
+    def generate_mars_resource_grid(elevation_data)
+      # Generate resource grid for Mars based on elevation
+      {}
+    end
+
+    def generate_mars_strategic_markers(elevation_data)
+      # Generate strategic markers for Mars
+      []
+    end
+
+    def generate_mars_resource_counts(elevation_data)
+      # Generate resource counts for Mars
+      {}
+    end
+
+    def generate_luna_resource_grid(elevation_data)
+      # Generate resource grid for Luna based on elevation
+      {}
+    end
+
+    def generate_luna_strategic_markers(elevation_data)
+      # Generate strategic markers for Luna
+      []
+    end
+
+    def generate_luna_resource_counts(elevation_data)
+      # Generate resource counts for Luna
+      {}
     end
 
     # Check if planet is Earth-like based on properties

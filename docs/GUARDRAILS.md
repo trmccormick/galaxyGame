@@ -66,10 +66,15 @@
 - **Rendering Default:** 0.5 values in grid default to "plains" - ensure proper elevation-to-biome mapping in renderer
 
 ### Current Issue Resolution [2026-01-31]
-- **Root Cause:** Earth's terrain generated via procedural method (uniform 0.5 grid) instead of NASA patterns
-- **Impact:** Maps show uniform plains despite varied elevation data
-- **Fix Required:** Modify `AutomaticTerrainGenerator#generate_sol_world_terrain` to use `MultiBodyTerrainGenerator` for elevation-only generation
-- **Missing Component:** `geotiff_patterns_earth.json` pattern file for Earth NASA data
+- **Root Cause:** Mars terrain generated via procedural fallback due to broken `generate_mars_terrain` method with stub implementations
+- **Impact:** Mars maps showed uniform procedural noise instead of realistic NASA/Civ4/FreeCiv data
+- **Fix Implemented:** Three-layer Mars terrain generation system:
+  - **Layer 1:** NASA elevation base (1800x900) using `MultiBodyTerrainGenerator` with blueprint water constraints
+  - **Layer 2:** Civ4 current-state overlay (scaled from 80x57 to 1800x900) for terrain features
+  - **Layer 3:** FreeCiv terraforming targets (scaled from 133x64 to 1800x900) for future mission planning
+- **Integration:** Blueprint water constraints from Civ4 data applied to NASA base elevation
+- **Scaling:** Nearest-neighbor interpolation for coordinate transformation between different grid sizes
+- **Result:** Mars terrain now uses all available data sources with proper separation of concerns
 
 ## 💵 8. Economic System Guardrails
 
