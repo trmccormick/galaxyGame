@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FreeCiv SAV Import - Galaxy Game Admin</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #0ff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #111;
+      border: 1px solid #0ff;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #0ff;
+      text-align: center;
+      border-bottom: 1px solid #0ff;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin: 20px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #0ff;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px;
+      background: #222;
+      border: 1px solid #0ff;
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+      color: #0ff;
+    }
+
+    .tool-button {
+      background: #222;
+      color: #0ff;
+      border: 1px solid #0ff;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      margin: 5px;
+    }
+
+    .tool-button:hover {
+      background: #0ff;
+      color: #000;
+    }
+
+    .info-box {
+      background: #001122;
+      border: 1px solid #00aaff;
+      padding: 15px;
+      margin: 20px 0;
+    }
+
+    .warning {
+      color: #ffaa00;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #ff4444;
+    }
+
+    .success {
+      color: #44ff44;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #0ff;
+      text-decoration: none;
+      border: 1px solid #0ff;
+      padding: 5px 10px;
+    }
+
+    .back-link:hover {
+      background: #0ff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="<%= admin_celestial_bodies_path %>" class="back-link">← Back to Celestial Bodies</a>
+
+    <h1>FreeCiv SAV File Import</h1>
+
+    <div class="info-box">
+      <h3>Import FreeCiv Terrain Maps</h3>
+      <p>Upload a FreeCiv SAV file to convert it into a Galaxy Game planetary body. The terrain data will be analyzed and converted into appropriate planetary characteristics.</p>
+
+      <h4>Supported Terrain Types:</h4>
+      <ul>
+        <li><strong>Arctic (a)</strong> - Cold, icy regions</li>
+        <li><strong>Deep Sea (:)</strong> - Ocean depths</li>
+        <li><strong>Desert (d)</strong> - Arid, sandy areas</li>
+        <li><strong>Forest (f)</strong> - Wooded regions</li>
+        <li><strong>Plains (p)</strong> - Grassland areas</li>
+        <li><strong>Grasslands (g)</strong> - Fertile plains</li>
+        <li><strong>Boreal (h/m)</strong> - Hills/mountains</li>
+        <li><strong>Jungle (j)</strong> - Tropical forests</li>
+        <li><strong>Ocean (+/ /)</strong> - Water bodies</li>
+        <li><strong>Swamp (s)</strong> - Wetland areas</li>
+        <li><strong>Tundra (t)</strong> - Cold plains</li>
+        <li><strong>Rock</strong> - Default terrain</li>
+      </ul>
+    </div>
+
+    <%= form_with url: process_freeciv_import_admin_celestial_bodies_path, method: :post, multipart: true do |form| %>
+      <div class="form-group">
+        <%= form.label :planet_name, "Planet Name" %>
+        <%= form.text_field :planet_name, placeholder: "Enter planet name (e.g., FreeCiv World)", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :solar_system_id, "Solar System" %>
+        <%= form.select :solar_system_id, @solar_systems.map { |ss| [ss.name, ss.id] }, { prompt: "Select a solar system" }, required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :sav_file, "FreeCiv SAV File" %>
+        <%= form.file_field :sav_file, accept: ".sav", required: true %>
+        <div style="margin-top: 5px; font-size: 0.9em; color: #aaa;">
+          Select a .sav file exported from FreeCiv
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <%= form.submit "Import FreeCiv World", class: "tool-button" %>
+      </div>
+    <% end %>
+
+    <div class="info-box">
+      <h4>How It Works:</h4>
+      <ol>
+        <li>The SAV file is parsed to extract terrain data</li>
+        <li>Terrain composition is analyzed to determine planet type</li>
+        <li>Atmosphere, hydrosphere, and other planetary characteristics are generated</li>
+        <li>A new celestial body is created with the imported terrain data</li>
+        <li>The terrain grid is stored for future visualization</li>
+      </ol>
+
+      <div class="warning">
+        <strong>Note:</strong> This creates a new planetary body. The terrain data will be available for visualization but may not be fully integrated with all game systems yet.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

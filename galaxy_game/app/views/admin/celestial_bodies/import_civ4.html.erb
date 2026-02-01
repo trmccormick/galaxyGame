@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Civ4 WBS Import - Galaxy Game Admin</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #0ff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #111;
+      border: 1px solid #0ff;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #0ff;
+      text-align: center;
+      border-bottom: 1px solid #0ff;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin: 20px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #0ff;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px;
+      background: #222;
+      border: 1px solid #0ff;
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+      color: #0ff;
+    }
+
+    .tool-button {
+      background: #222;
+      color: #0ff;
+      border: 1px solid #0ff;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      margin: 5px;
+    }
+
+    .tool-button:hover {
+      background: #0ff;
+      color: #000;
+    }
+
+    .info-box {
+      background: #001122;
+      border: 1px solid #00aaff;
+      padding: 15px;
+      margin: 20px 0;
+    }
+
+    .warning {
+      color: #ffaa00;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #ff4444;
+    }
+
+    .success {
+      color: #44ff44;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #0ff;
+      text-decoration: none;
+      border: 1px solid #0ff;
+      padding: 5px 10px;
+    }
+
+    .back-link:hover {
+      background: #0ff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="<%= admin_celestial_bodies_path %>" class="back-link">← Back to Celestial Bodies</a>
+
+    <h1>Civ4 World Builder Save Import</h1>
+
+    <div class="info-box">
+      <h3>Import Civ4 Terrain Maps</h3>
+      <p>Upload a Civ4 World Builder Save (WBS) file to convert it into a Galaxy Game planetary body. The terrain data will be analyzed and converted into appropriate planetary characteristics.</p>
+
+      <h4>Civ4 Terrain System:</h4>
+      <ul>
+        <li><strong>PlotType (Elevation)</strong>: 0=Flat, 1=Coastal, 2=Hills, 3=Mountains</li>
+        <li><strong>TerrainType (Biome)</strong>: Grass, Plains, Desert, Tundra, Snow, Coast, Ocean</li>
+        <li><strong>Combined Logic</strong>: Elevation + Biome = Galaxy terrain type</li>
+      </ul>
+
+      <h4>Conversion Examples:</h4>
+      <ul>
+        <li><strong>Hills + Grass</strong> → Boreal Forest</li>
+        <li><strong>Mountains + Plains</strong> → Rocky</li>
+        <li><strong>Coastal + Ocean</strong> → Ocean</li>
+        <li><strong>Flat + Tundra</strong> → Tundra</li>
+        <li><strong>Peaks + Snow</strong> → Arctic</li>
+      </ul>
+    </div>
+
+    <%= form_with url: process_civ4_import_admin_celestial_bodies_path, method: :post, multipart: true do |form| %>
+      <div class="form-group">
+        <%= form.label :planet_name, "Planet Name" %>
+        <%= form.text_field :planet_name, placeholder: "Enter planet name (e.g., Civ4 World)", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :solar_system_id, "Solar System" %>
+        <%= form.select :solar_system_id, @solar_systems.map { |ss| [ss.name, ss.id] }, { prompt: "Select a solar system" }, required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :wbs_file, "Civ4 WBS File" %>
+        <%= form.file_field :wbs_file, accept: ".Civ4WorldBuilderSave,.CivBeyondSwordWBSave,.CivWarlordsWBSave", required: true %>
+        <div style="margin-top: 5px; font-size: 0.9em; color: #aaa;">
+          Select a .Civ4WorldBuilderSave, .CivBeyondSwordWBSave, or .CivWarlordsWBSave file
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <%= form.submit "Import Civ4 World", class: "tool-button" %>
+      </div>
+    <% end %>
+
+    <div class="info-box">
+      <h4>How It Works:</h4>
+      <ol>
+        <li>The WBS file is parsed to extract plot coordinates, elevation, and biome data</li>
+        <li>Each plot's PlotType + TerrainType combination is converted to Galaxy terrain</li>
+        <li>Terrain composition is analyzed to determine planet type and characteristics</li>
+        <li>Atmosphere, hydrosphere, and other planetary properties are generated</li>
+        <li>A new celestial body is created with the imported terrain grid</li>
+      </ol>
+
+      <div class="warning">
+        <strong>Note:</strong> This creates a new planetary body. Civ4's rich terrain system provides more realistic elevation modeling than FreeCiv's single-character approach.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

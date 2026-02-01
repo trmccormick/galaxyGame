@@ -75,8 +75,20 @@ Rails.application.routes.draw do
         patch :update               # Update name/aliases only
         post :import_freeciv_for_body  # Import FreeCiv terrain data
         post :import_civ4_for_body     # Import Civ4 terrain data
+        post :generate_earth_map       # Generate Earth map with AI learning
+      end
+      collection do
+        get :select_maps_for_analysis  # Select FreeCiv/Civ4 maps for AI analysis
       end
     end
+    
+    # Map Studio routes - AI-powered planetary map generation and management
+    get 'map_studio', to: 'map_studio#index', as: 'map_studio'
+    get 'map_studio/generate', to: 'map_studio#generate', as: 'map_studio_generate'
+    post 'map_studio/generate_map', to: 'map_studio#generate_map', as: 'map_studio_generate_map'
+    get 'map_studio/browse', to: 'map_studio#browse', as: 'map_studio_browse'
+    post 'map_studio/apply_map/:id', to: 'map_studio#apply_map', as: 'map_studio_apply_map'
+    get 'map_studio/analyze/:id', to: 'map_studio#analyze', as: 'map_studio_analyze'
     
     # Solar Systems routes
     resources :solar_systems, only: [:index, :show]

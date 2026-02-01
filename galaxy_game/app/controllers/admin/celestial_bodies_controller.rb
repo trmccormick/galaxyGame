@@ -6,7 +6,12 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body]
+    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map]
+
+    def select_maps_for_analysis
+      @available_maps = find_available_maps || []
+      @learning_stats = 0 # Temporarily set to 0 until EarthMapGenerator is fixed
+    end
 
     # GET /admin/celestial_bodies
     # Index page listing all celestial bodies for monitoring selection
@@ -1032,6 +1037,224 @@ module Admin
       initial_mining = mining_units.sum { |unit| unit.operational_data.dig('mining', 'base_yield') || 0 }
 
       { mining_rate: initial_mining, units: mining_units.size }
+    end
+
+    # GET /admin/celestial_bodies/:id/select_maps_for_analysis
+    # Show interface for selecting FreeCiv/Civ4 maps for AI analysis
+
+    # POST /admin/celestial_bodies/:id/generate_earth_map
+    # Generate Earth map using AI analysis of selected FreeCiv/Civ4 maps
+    def generate_earth_map
+      selected_maps = params[:selected_maps] || []
+
+      if selected_maps.empty?
+        redirect_to select_maps_for_analysis_admin_celestial_body_path(@celestial_body),
+                    alert: 'Please select at least one map for analysis.'
+        return
+      end
+
+      # Prepare sources for AI analysis
+      sources = prepare_map_sources(selected_maps)
+
+      begin
+        # Initialize Earth map generator
+        earth_generator = AIManager::EarthMapGenerator.new
+
+        # Generate Earth map with AI learning
+        earth_map_json = earth_generator.generate_earth_map(
+          sources: sources,
+          planet_conditions: earth_planet_conditions
+        )
+
+        # Save the generated map to the celestial body
+        save_generated_earth_map(@celestial_body, earth_map_json)
+
+        # Analyze each source map for learning
+        sources.each do |source|
+          analysis = earth_generator.analyze_imported_map(
+            source[:data],
+            source[:type],
+            earth_planet_conditions
+          )
+          Rails.logger.info "[Earth Map Generation] Analysis for #{source[:file_path]}: #{analysis.keys.join(', ')}"
+        end
+
+        redirect_to monitor_admin_celestial_body_path(@celestial_body),
+                    notice: "Successfully generated Earth map using AI analysis of #{sources.size} source maps. Learning data updated."
+
+      rescue => e
+        Rails.logger.error "Earth map generation error: #{e.message}\n#{e.backtrace.join("\n")}"
+        redirect_to select_maps_for_analysis_admin_celestial_body_path(@celestial_body),
+                    alert: "Earth map generation failed: #{e.message}"
+      end
+    end
+
+    private
+
+    def find_available_maps
+      maps = []
+
+      # Find FreeCiv maps (including subdirectories)
+      freeciv_dir = GalaxyGame::Paths::FREECIV_MAPS_PATH
+      puts "[Map Discovery] Checking FreeCiv directory: #{freeciv_dir}"
+      if Dir.exist?(freeciv_dir)
+        sav_files = Dir.glob("#{freeciv_dir}/**/*.sav")
+        puts "[Map Discovery] Found #{sav_files.size} FreeCiv .sav files"
+        sav_files.each do |file_path|
+          puts "[Map Discovery] Processing: #{file_path}"
+          # Get relative path for better naming
+          relative_path = Pathname.new(file_path).relative_path_from(freeciv_dir).to_s
+          base_name = File.basename(file_path, '.sav')
+
+          # Create a descriptive name that includes subfolder if present
+          display_name = if relative_path.include?('/')
+                           folder_name = File.dirname(relative_path).gsub('/', ' - ')
+                           "#{folder_name} - #{base_name}".humanize
+                         else
+                           base_name.humanize
+                         end
+
+          maps << {
+            type: :freeciv,
+            name: display_name,
+            file_path: file_path,
+            size: File.size(file_path),
+            modified: File.mtime(file_path),
+            folder: File.dirname(relative_path) == '.' ? nil : File.dirname(relative_path)
+          }
+        end
+      else
+        puts "[Map Discovery] FreeCiv directory not found: #{freeciv_dir}"
+      end
+
+      # Find Civ4 maps (including subdirectories and multiple file extensions)
+      civ4_dir = GalaxyGame::Paths::CIV4_MAPS_PATH
+      Rails.logger.info "[Map Discovery] Checking Civ4 directory: #{civ4_dir}"
+      if Dir.exist?(civ4_dir)
+        # Support multiple Civ4 save file extensions
+        civ4_patterns = ['*.Civ4WorldBuilderSave', '*.CivBeyondSwordWBSave', '*.CivWarlordsWBSave']
+        civ4_files = civ4_patterns.flat_map { |pattern| Dir.glob("#{civ4_dir}/**/#{pattern}") }
+        Rails.logger.info "[Map Discovery] Found #{civ4_files.size} Civ4 save files"
+        civ4_files.each do |file_path|
+          # Get relative path for better naming
+          relative_path = Pathname.new(file_path).relative_path_from(civ4_dir).to_s
+          extension = File.extname(file_path)
+          base_name = File.basename(file_path, extension)
+
+          # Create a descriptive name that includes subfolder if present
+          display_name = if relative_path.include?('/')
+                           folder_name = File.dirname(relative_path).gsub('/', ' - ')
+                           "#{folder_name} - #{base_name}".humanize
+                         else
+                           base_name.humanize
+                         end
+
+          maps << {
+            type: :civ4,
+            name: display_name,
+            file_path: file_path,
+            size: File.size(file_path),
+            modified: File.mtime(file_path),
+            folder: File.dirname(relative_path) == '.' ? nil : File.dirname(relative_path)
+          }
+        end
+      else
+        Rails.logger.warn "[Map Discovery] Civ4 directory not found: #{civ4_dir}"
+      end
+
+      puts "[Map Discovery] Total maps found: #{maps.size}"
+      maps.sort_by { |m| m[:modified] }.reverse
+    rescue => e
+      puts "[Map Discovery] Error finding maps: #{e.message}"
+      puts e.backtrace.join("\n")
+      [] # Return empty array on error
+    end
+
+    def prepare_map_sources(selected_maps)
+      sources = []
+
+      selected_maps.each do |map_identifier|
+        type, filename = map_identifier.split(':', 2)
+        next unless type && filename
+
+        # Find the actual file path
+        file_path = find_map_file_path(type.to_sym, filename)
+
+        next unless file_path && File.exist?(file_path)
+
+        # Process the map based on type
+        begin
+          case type.to_sym
+          when :freeciv
+            processor = Import::FreecivMapProcessor.new
+            map_data = processor.process(file_path)
+          when :civ4
+            processor = Import::Civ4MapProcessor.new
+            map_data = processor.process(file_path)
+          else
+            next
+          end
+
+          sources << {
+            type: type.to_sym,
+            file_path: file_path,
+            data: map_data
+          }
+        rescue => e
+          Rails.logger.warn "Failed to process map #{file_path}: #{e.message}"
+        end
+      end
+
+      sources
+    end
+
+    def find_map_file_path(type, filename)
+      base_dir = case type
+                 when :freeciv
+                   Rails.root.join('data', 'maps', 'freeciv')
+                 when :civ4
+                   Rails.root.join('data', 'maps', 'civ4')
+                 else
+                   return nil
+                 end
+
+      # Search recursively for the file
+      Dir.glob("#{base_dir}/**/#{filename}").first
+    end
+
+    def earth_planet_conditions
+      {
+        surface_temperature: 288.0, # Kelvin
+        atmospheric_pressure: 1.0,  # bar
+        atmospheric_composition: {
+          N2: 78.0,
+          O2: 21.0,
+          Ar: 0.9,
+          CO2: 0.04
+        },
+        hydrosphere_coverage: 71.0, # percentage
+        biosphere_density: 1.0,     # fully habitable
+        geological_activity: 'moderate',
+        habitability_class: 'terrestrial_habitable'
+      }
+    end
+
+    def save_generated_earth_map(celestial_body, earth_map_json)
+      # Update the celestial body's geosphere with the generated Earth map
+      geosphere = celestial_body.geosphere || celestial_body.build_geosphere
+
+      # Store the complete Earth map data
+      geosphere.terrain_map = earth_map_json
+
+      # Set metadata
+      geosphere.properties ||= {}
+      geosphere.properties['earth_map_generated'] = true
+      geosphere.properties['generation_timestamp'] = Time.current
+      geosphere.properties['ai_learning_applied'] = true
+
+      geosphere.save!
+
+      Rails.logger.info "[Earth Map Generation] Saved generated Earth map to #{celestial_body.name}"
     end
   end
 end

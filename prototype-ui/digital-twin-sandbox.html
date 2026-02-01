@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Twin Sandbox - SimEarth Planetary Simulation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            overflow: hidden;
+        }
+        
+        #mainContainer {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 60px 1fr 200px;
+            height: 100vh;
+            gap: 2px;
+            background: #111;
+        }
+        
+        #header {
+            grid-column: 1 / -1;
+            background: #1a1a1a;
+            padding: 15px;
+            border-bottom: 2px solid #0f0;
+        }
+        
+        #header h1 {
+            font-size: 24px;
+            color: #0ff;
+        }
+        
+        #header .subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        #toolPanel {
+            background: #1a1a1a;
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 2px solid #0f0;
+        }
+        
+        .tool-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+        
+        .tool-section h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        
+        .tool-button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        
+        .tool-button:hover {
+            background: #0f0;
+            color: #000;
+        }
+        
+        .tool-button.active {
+            background: #0ff;
+            color: #000;
+            border-color: #0ff;
+        }
+        
+        #mapCanvas {
+            background: #000;
+            cursor: crosshair;
+            border: 2px solid #0f0;
+        }
+        
+        #dataPanel {
+            background: #1a1a1a;
+            padding: 15px;
+            overflow-y: auto;
+            border-left: 2px solid #0f0;
+        }
+        
+        .data-section {
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+        
+        .data-section h3 {
+            color: #0ff;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin: 3px 0;
+            padding: 2px 0;
+        }
+        
+        .data-label {
+            color: #888;
+        }
+        
+        .data-value {
+            color: #0f0;
+        }
+        
+        .data-value.warning {
+            color: #ff0;
+        }
+        
+        .data-value.critical {
+            color: #f00;
+        }
+        
+        #console {
+            grid-column: 1 / -1;
+            background: #0a0a0a;
+            padding: 10px;
+            overflow-y: auto;
+            border-top: 2px solid #0f0;
+            font-size: 11px;
+        }
+        
+        .console-line {
+            margin: 2px 0;
+            color: #0f0;
+        }
+        
+        .console-line.info { color: #0ff; }
+        .console-line.warning { color: #ff0; }
+        .console-line.error { color: #f00; }
+        
+        .layer-selector {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .layer-btn {
+            padding: 5px 10px;
+            background: #222;
+            border: 1px solid #333;
+            color: #888;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .layer-btn.active {
+            background: #0f0;
+            color: #000;
+            border-color: #0f0;
+        }
+        
+        .slider-control {
+            margin: 10px 0;
+        }
+        
+        .slider-control label {
+            display: block;
+            color: #888;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+        
+        .slider-control input[type="range"] {
+            width: 100%;
+        }
+        
+        .slider-value {
+            color: #0f0;
+            font-size: 11px;
+        }
+        
+        #timeControls {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #222;
+            border: 1px solid #333;
+            margin: 5px 0;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #0ff);
+            transition: width 0.3s;
+        }
+        
+        .progress-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            line-height: 20px;
+            color: #000;
+            mix-blend-mode: difference;
+        }
+
+        .intervention-panel {
+            display: none;
+        }
+
+        .intervention-panel.active {
+            display: block;
+        }
+
+        .scenario-selector {
+            margin: 10px 0;
+        }
+
+        .scenario-selector select {
+            width: 100%;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer">
+        <div id="header">
+            <h1 id="twinName">Digital Twin Sandbox</h1>
+            <div class="subtitle" id="twinInfo">Select a celestial body to clone and simulate</div>
+        </div>
+        
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>DIGITAL TWIN SETUP</h3>
+                <div class="scenario-selector">
+                    <label>Target Planet:</label>
+                    <select id="planetSelector">
+                        <option value="">Select Planet...</option>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <button class="tool-button" onclick="createTwin()">🌀 Create Digital Twin</button>
+                <button class="tool-button" onclick="loadTwin()">📁 Load Existing Twin</button>
+                <button class="tool-button" onclick="saveTwin()">💾 Save Twin State</button>
+            </div>
+
+            <div class="tool-section">
+                <h3>VIEW LAYERS</h3>
+                <div class="layer-selector">
+                    <button class="layer-btn active" data-layer="topography">Terrain</button>
+                    <button class="layer-btn active" data-layer="water">Water</button>
+                    <button class="layer-btn active" data-layer="biomes">Biomes</button>
+                    <button class="layer-btn" data-layer="temperature">Temp</button>
+                    <button class="layer-btn" data-layer="pressure">Pressure</button>
+                    <button class="layer-btn" data-layer="atmosphere">Atmosphere</button>
+                    <button class="layer-btn" data-layer="biosphere">Life</button>
+                    <button class="layer-btn" data-layer="settlement">Settlement</button>
+                </div>
+            </div>
+            
+            <div class="tool-section">
+                <h3>SYSTEM CONTROLS</h3>
+                <div class="slider-control">
+                    <label>Geosphere Activity</label>
+                    <input type="range" id="geoActivity" min="0" max="100" value="50" step="1">
+                    <span class="slider-value" id="geoActivityValue">50%</span>
+                </div>
+                <div class="slider-control">
+                    <label>Atmosphere CO₂</label>
+                    <input type="range" id="atmoCO2" min="0" max="100" value="20" step="1">
+                    <span class="slider-value" id="atmoCO2Value">20%</span>
+                </div>
+                <div class="slider-control">
+                    <label>Biosphere Mutation Rate</label>
+                    <input type="range" id="bioMutation" min="0" max="200" value="100" step="5">
+                    <span class="slider-value" id="bioMutationValue">100%</span>
+                </div>
+                <div class="slider-control">
+                    <label>Anthroposphere Tech Level</label>
+                    <input type="range" id="anthroTech" min="0" max="100" value="0" step="1">
+                    <span class="slider-value" id="anthroTechValue">0%</span>
+                </div>
+                <button class="tool-button" onclick="applySystemChanges()">Apply System Changes</button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>INTERVENTIONS</h3>
+                <button class="tool-button" data-tool="inspect">🔍 Inspect</button>
+                <button class="tool-button" data-tool="terraform">🌍 Terraform</button>
+                <button class="tool-button" data-tool="settlement">🏘️ Settlement</button>
+                <button class="tool-button" data-tool="disaster">💥 Disaster</button>
+                <button class="tool-button" data-tool="seed-life">🦠 Seed Life</button>
+                <button class="tool-button" data-tool="augment-life">🧬 Augment Life</button>
+            </div>
+
+            <div class="tool-section intervention-panel" id="settlementPanel">
+                <h3>SETTLEMENT ESTABLISHMENT</h3>
+                <p style="font-size: 10px; color: #888; margin-bottom: 10px;">Establish human settlement on selected biome</p>
+                <select id="settlementBiome">
+                    <option value="tropical">Tropical Forest</option>
+                    <option value="temperate">Temperate Plains</option>
+                    <option value="desert">Desert</option>
+                    <option value="arctic">Arctic Tundra</option>
+                    <option value="coastal">Coastal Region</option>
+                </select>
+                <button class="tool-button" onclick="placeSettlement()">Establish Settlement</button>
+            </div>
+
+            <div class="tool-section intervention-panel" id="augmentPanel">
+                <h3>LIFE AUGMENTATION</h3>
+                <p style="font-size: 10px; color: #888; margin-bottom: 10px;">Enhance existing life forms for settlement compatibility</p>
+                <select id="augmentType">
+                    <option value="oxygen-production">Increase Oxygen Production</option>
+                    <option value="nutrient-fixation">Enhance Nutrient Fixation</option>
+                    <option value="radiation-resistance">Radiation Resistance</option>
+                    <option value="temperature-tolerance">Temperature Tolerance</option>
+                    <option value="hybridization">Species Hybridization</option>
+                </select>
+                <button class="tool-button" onclick="augmentLife()">Apply Augmentation</button>
+            </div>
+
+            <div class="tool-section intervention-panel" id="disasterPanel">
+                <h3>DISASTER STRIKE</h3>
+                <p style="font-size: 10px; color: #888; margin-bottom: 10px;">Unleash planetary catastrophe</p>
+                <select id="disasterType">
+                    <option value="meteor">Meteor Impact</option>
+                    <option value="volcano">Volcanic Eruption</option>
+                    <option value="plague">Biosphere Plague</option>
+                    <option value="nuclear">Nuclear Winter</option>
+                    <option value="ice-age">Ice Age</option>
+                </select>
+                <div class="slider-control">
+                    <label>Severity</label>
+                    <input type="range" id="disasterSeverity" min="1" max="10" value="5">
+                    <span class="slider-value" id="disasterSeverityValue">5</span>
+                </div>
+                <button class="tool-button" onclick="triggerDisaster()">Unleash Disaster</button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>SIMULATION</h3>
+                <div id="timeControls">
+                    <button class="tool-button" onclick="sim.pause()">⏸️ Pause</button>
+                    <button class="tool-button" onclick="sim.play()">▶️ Play</button>
+                    <button class="tool-button" onclick="sim.fast()">⏩ Fast</button>
+                    <button class="tool-button" onclick="sim.reset()">🔄 Reset</button>
+                </div>
+                <div class="slider-control">
+                    <label>Sim Speed</label>
+                    <input type="range" id="simSpeed" min="1" max="1000" value="10">
+                    <span class="slider-value" id="simSpeedValue">10 days/sec</span>
+                </div>
+                <div class="slider-control">
+                    <label>Duration (years)</label>
+                    <input type="range" id="simDuration" min="1" max="1000" value="100">
+                    <span class="slider-value" id="simDurationValue">100 years</span>
+                </div>
+                <button class="tool-button" onclick="runSimulation()">🚀 Run Simulation</button>
+            </div>
+        </div>
+        
+        <canvas id="mapCanvas" width="800" height="600"></canvas>
+        
+        <div id="dataPanel">
+            <div class="data-section">
+                <h3>ATMOSPHERE</h3>
+                <div class="data-row">
+                    <span class="data-label">Pressure:</span>
+                    <span class="data-value" id="atmo-pressure">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Temperature:</span>
+                    <span class="data-value" id="atmo-temp">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">O₂:</span>
+                    <span class="data-value" id="atmo-o2">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">CO₂:</span>
+                    <span class="data-value" id="atmo-co2">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">N₂:</span>
+                    <span class="data-value" id="atmo-n2">--</span>
+                </div>
+            </div>
+            
+            <div class="data-section">
+                <h3>HYDROSPHERE</h3>
+                <div class="data-row">
+                    <span class="data-label">Water Coverage:</span>
+                    <span class="data-value" id="hydro-coverage">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Ocean Mass:</span>
+                    <span class="data-value" id="hydro-ocean">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Ice Mass:</span>
+                    <span class="data-value" id="hydro-ice">--</span>
+                </div>
+            </div>
+            
+            <div class="data-section">
+                <h3>BIOSPHERE</h3>
+                <div class="data-row">
+                    <span class="data-label">Biodiversity:</span>
+                    <span class="data-value" id="bio-diversity">--</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="bio-diversity-bar" style="width: 0%"></div>
+                    <div class="progress-label">0%</div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Habitability:</span>
+                    <span class="data-value" id="bio-habitability">--</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="bio-habitability-bar" style="width: 0%"></div>
+                    <div class="progress-label">0%</div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Life Forms:</span>
+                    <span class="data-value" id="bio-lifeforms">--</span>
+                </div>
+            </div>
+            
+            <div class="data-section">
+                <h3>GEOSPHERE</h3>
+                <div class="data-row">
+                    <span class="data-label">Geological Activity:</span>
+                    <span class="data-value" id="geo-activity">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Tectonic Active:</span>
+                    <span class="data-value" id="geo-tectonic">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Volcanism:</span>
+                    <span class="data-value" id="geo-volcano">--</span>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <h3>SETTLEMENT</h3>
+                <div class="data-row">
+                    <span class="data-label">Colonies:</span>
+                    <span class="data-value" id="anthro-civs">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Infrastructure:</span>
+                    <span class="data-value" id="anthro-tech">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Population:</span>
+                    <span class="data-value" id="anthro-pop">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">GCC Economy:</span>
+                    <span class="data-value" id="anthro-gcc">--</span>
+                </div>
+            </div>
+            
+            <div class="data-section">
+                <h3>SIMULATION STATUS</h3>
+                <div class="data-row">
+                    <span class="data-label">Status:</span>
+                    <span class="data-value" id="sim-status">Ready</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Current Year:</span>
+                    <span class="data-value" id="sim-year">0</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Progress:</span>
+                    <span class="data-value" id="sim-progress">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="sim-progress-bar" style="width: 0%"></div>
+                    <div class="progress-label">0%</div>
+                </div>
+            </div>
+            
+            <div class="data-section">
+                <h3>SELECTED TILE</h3>
+                <div class="data-row">
+                    <span class="data-label">Coordinates:</span>
+                    <span class="data-value" id="tile-coords">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Elevation:</span>
+                    <span class="data-value" id="tile-elevation">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Biome:</span>
+                    <span class="data-value" id="tile-biome">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Temperature:</span>
+                    <span class="data-value" id="tile-temp">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Life Present:</span>
+                    <span class="data-value" id="tile-life">--</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="console">
+            <div class="console-line info">&gt; Digital Twin Sandbox initialized. Select a planet to begin simulation.</div>
+            <div class="console-line info">&gt; Remember: Changes here do not affect live game data.</div>
+        </div>
+    </div>
+
+    <script>
+        // Digital Twin Simulation Controller
+        class DigitalTwinSimulation {
+            constructor() {
+                this.twinId = null;
+                this.planetData = null;
+                this.canvas = document.getElementById('mapCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.selectedTool = 'inspect';
+                this.activeLayers = new Set(['topography', 'water', 'biomes', 'biosphere']);
+                this.simulating = false;
+                this.simSpeed = 10;
+                this.simYear = 0;
+                this.simProgress = 0;
+                
+                this.init();
+            }
+            
+            async init() {
+                this.setupEventListeners();
+                this.loadPlanetList();
+                this.render();
+                this.updateDataPanel();
+            }
+            
+            setupEventListeners() {
+                // Layer toggles
+                document.querySelectorAll('.layer-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const layer = e.target.dataset.layer;
+                        e.target.classList.toggle('active');
+                        
+                        if (this.activeLayers.has(layer)) {
+                            this.activeLayers.delete(layer);
+                        } else {
+                            this.activeLayers.add(layer);
+                        }
+                        this.render();
+                    });
+                });
+                
+                // Tool buttons
+                document.querySelectorAll('.tool-button[data-tool]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.tool-button[data-tool]').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('.intervention-panel').forEach(p => p.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.selectedTool = e.target.dataset.tool;
+                        
+                        // Show intervention panels
+                        if (this.selectedTool === 'settlement') {
+                            document.getElementById('settlementPanel').classList.add('active');
+                        } else if (this.selectedTool === 'disaster') {
+                            document.getElementById('disasterPanel').classList.add('active');
+                        } else if (this.selectedTool === 'augment-life') {
+                            document.getElementById('augmentPanel').classList.add('active');
+                        }
+                    });
+                });
+                
+                // Canvas click
+                this.canvas.addEventListener('click', (e) => this.handleMapClick(e));
+                
+                // Sliders
+                document.getElementById('geoActivity').addEventListener('input', (e) => {
+                    document.getElementById('geoActivityValue').textContent = `${e.target.value}%`;
+                });
+                
+                document.getElementById('atmoCO2').addEventListener('input', (e) => {
+                    document.getElementById('atmoCO2Value').textContent = `${e.target.value}%`;
+                });
+                
+                document.getElementById('bioMutation').addEventListener('input', (e) => {
+                    document.getElementById('bioMutationValue').textContent = `${e.target.value}%`;
+                });
+                
+                document.getElementById('anthroTech').addEventListener('input', (e) => {
+                    document.getElementById('anthroTechValue').textContent = `${e.target.value}%`;
+                });
+                
+                document.getElementById('simSpeed').addEventListener('input', (e) => {
+                    this.simSpeed = parseInt(e.target.value);
+                    document.getElementById('simSpeedValue').textContent = `${e.target.value} days/sec`;
+                });
+                
+                document.getElementById('simDuration').addEventListener('input', (e) => {
+                    document.getElementById('simDurationValue').textContent = `${e.target.value} years`;
+                });
+                
+                document.getElementById('disasterSeverity').addEventListener('input', (e) => {
+                    document.getElementById('disasterSeverityValue').textContent = e.target.value;
+                });
+            }
+            
+            async loadPlanetList() {
+                // Stub: Load available planets for cloning
+                const planets = [
+                    { id: 1, name: 'Earth', type: 'terrestrial' },
+                    { id: 2, name: 'Mars', type: 'terrestrial' },
+                    { id: 3, name: 'Venus', type: 'terrestrial' },
+                    { id: 4, name: 'Jupiter', type: 'gas_giant' }
+                ];
+                
+                const selector = document.getElementById('planetSelector');
+                planets.forEach(planet => {
+                    const option = document.createElement('option');
+                    option.value = planet.id;
+                    option.textContent = `${planet.name} (${planet.type})`;
+                    selector.appendChild(option);
+                });
+                
+                this.log('Planet list loaded', 'info');
+            }
+            
+            render() {
+                const { width, height } = this.canvas;
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, width, height);
+                
+                if (!this.planetData) {
+                    // Show placeholder when no twin loaded
+                    this.ctx.fillStyle = '#333';
+                    this.ctx.font = '20px Courier New';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('No Digital Twin Loaded', width / 2, height / 2);
+                    this.ctx.fillText('Create or load a twin to begin', width / 2, height / 2 + 30);
+                    return;
+                }
+                
+                // Simple globe projection (same as planet-view.html)
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const radius = Math.min(width, height) * 0.4;
+                
+                // Draw planet sphere
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance <= radius) {
+                            // Convert to lat/lon
+                            const lat = Math.asin(dy / radius) * (180 / Math.PI);
+                            const lon = Math.atan2(dx, Math.sqrt(radius * radius - dx * dx - dy * dy)) * (180 / Math.PI);
+                            
+                            const color = this.getPixelColor(lat, lon);
+                            this.ctx.fillStyle = color;
+                            this.ctx.fillRect(x, y, 1, 1);
+                        }
+                    }
+                }
+                
+                // Draw atmosphere glow
+                this.ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                this.ctx.lineWidth = 10;
+                this.ctx.beginPath();
+                this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                this.ctx.stroke();
+            }
+            
+            getPixelColor(lat, lon) {
+                // Enhanced color determination with biosphere and settlement layers
+                const absLat = Math.abs(lat);
+                
+                // Base terrain color
+                let r = 80, g = 60, b = 40; // Rocky default
+                
+                if (this.activeLayers.has('topography')) {
+                    // Elevation-based coloring
+                    const elevation = Math.sin(lat * Math.PI / 180) * 3000;
+                    if (elevation > 2000) {
+                        r = 200; g = 200; b = 200; // Mountains
+                    } else if (elevation > 500) {
+                        r = 139; g = 90; b = 43; // Hills
+                    }
+                }
+                
+                if (this.activeLayers.has('water')) {
+                    // Water coverage
+                    const waterCoverage = this.planetData?.hydrosphere?.water_coverage || 0;
+                    if (Math.random() * 100 < waterCoverage) {
+                        r = 0; g = 50; b = 150; // Ocean
+                    }
+                }
+                
+                if (this.activeLayers.has('biomes')) {
+                    // Biome coloring
+                    if (absLat > 66) {
+                        r = 240; g = 240; b = 255; // Polar ice
+                    } else if (absLat > 50) {
+                        r = 34; g = 139; b = 34; // Taiga
+                    } else if (absLat > 30) {
+                        r = 124; g = 252; b = 0; // Grassland
+                    } else {
+                        r = 0; g = 100; b = 0; // Tropical
+                    }
+                }
+                
+                if (this.activeLayers.has('temperature')) {
+                    const temp = this.planetData?.atmosphere?.temperature || 288;
+                    const tempColor = Math.floor((temp - 200) / 200 * 255);
+                    r = tempColor; g = 0; b = 255 - tempColor;
+                }
+                
+                if (this.activeLayers.has('biosphere')) {
+                    // Life presence overlay
+                    const lifeDensity = Math.random(); // Stub
+                    if (lifeDensity > 0.7) {
+                        r = Math.floor(r * 0.7 + 0 * 0.3);
+                        g = Math.floor(g * 0.7 + 255 * 0.3);
+                        b = Math.floor(b * 0.7 + 0 * 0.3);
+                    }
+                }
+                
+                if (this.activeLayers.has('settlement')) {
+                    // Settlement overlay
+                    const settlementLevel = Math.random(); // Stub
+                    if (settlementLevel > 0.8) {
+                        r = Math.floor(r * 0.5 + 255 * 0.5);
+                        g = Math.floor(g * 0.5 + 255 * 0.5);
+                        b = Math.floor(b * 0.5 + 0 * 0.5);
+                    }
+                }
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            handleMapClick(e) {
+                if (!this.planetData) return;
+                
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                const dx = x - centerX;
+                const dy = y - centerY;
+                const radius = Math.min(this.canvas.width, this.canvas.height) * 0.4;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance <= radius) {
+                    const lat = Math.asin(dy / radius) * (180 / Math.PI);
+                    const lon = Math.atan2(dx, Math.sqrt(radius * radius - dx * dx - dy * dy)) * (180 / Math.PI);
+                    
+                    this.handleToolAction(lat, lon);
+                }
+            }
+            
+            async handleToolAction(lat, lon) {
+                switch(this.selectedTool) {
+                    case 'inspect':
+                        this.inspectTile(lat, lon);
+                        break;
+                    case 'terraform':
+                        this.log(`Terraform selected at (${lat.toFixed(1)}, ${lon.toFixed(1)})`, 'info');
+                        break;
+                    case 'monolith':
+                        this.log(`Monolith placement mode at (${lat.toFixed(1)}, ${lon.toFixed(1)})`, 'info');
+                        break;
+                    case 'disaster':
+                        this.log(`Disaster targeting at (${lat.toFixed(1)}, ${lon.toFixed(1)})`, 'info');
+                        break;
+                    case 'seed-life':
+                        await this.seedLife(lat, lon);
+                        break;
+                }
+            }
+            
+            inspectTile(lat, lon) {
+                document.getElementById('tile-coords').textContent = `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`;
+                document.getElementById('tile-elevation').textContent = `${(Math.sin(lat * Math.PI / 180) * 3000).toFixed(0)}m`;
+                document.getElementById('tile-biome').textContent = this.getBiomeName(lat);
+                document.getElementById('tile-temp').textContent = `${(this.planetData?.atmosphere?.temperature - Math.abs(lat) * 0.5 || 288).toFixed(1)}K`;
+                document.getElementById('tile-life').textContent = Math.random() > 0.5 ? 'Present' : 'Absent';
+            }
+            
+            getBiomeName(lat) {
+                const absLat = Math.abs(lat);
+                if (absLat > 66) return 'Polar Ice';
+                if (absLat > 50) return 'Tundra';
+                if (absLat > 30) return 'Temperate';
+                return 'Tropical';
+            }
+            
+            async seedLife(lat, lon) {
+                // Stub for seeding life
+                this.log(`Life seeded at (${lat.toFixed(1)}, ${lon.toFixed(1)})`, 'info');
+                // In real implementation: POST to /admin/digital_twins/:id/biosphere/seed_life
+            }
+            
+            updateDataPanel() {
+                if (!this.planetData) {
+                    // Clear all data when no twin loaded
+                    document.querySelectorAll('.data-value').forEach(el => {
+                        el.textContent = '--';
+                    });
+                    document.querySelectorAll('.progress-fill').forEach(el => {
+                        el.style.width = '0%';
+                    });
+                    return;
+                }
+                
+                // Atmosphere
+                const atmo = this.planetData.atmosphere || {};
+                document.getElementById('atmo-pressure').textContent = `${(atmo.pressure || 0).toFixed(2)} bar`;
+                document.getElementById('atmo-temp').textContent = `${(atmo.temperature || 0).toFixed(1)} K`;
+                document.getElementById('atmo-o2').textContent = `${(atmo.composition?.O2 || 0).toFixed(1)}%`;
+                document.getElementById('atmo-co2').textContent = `${(atmo.composition?.CO2 || 0).toFixed(1)}%`;
+                document.getElementById('atmo-n2').textContent = `${(atmo.composition?.N2 || 0).toFixed(1)}%`;
+                
+                // Hydrosphere
+                const hydro = this.planetData.hydrosphere || {};
+                document.getElementById('hydro-coverage').textContent = `${(hydro.water_coverage || 0).toFixed(1)}%`;
+                document.getElementById('hydro-ocean').textContent = `${this.formatMass(hydro.liquid_bodies?.oceans || 0)}`;
+                document.getElementById('hydro-ice').textContent = `${this.formatMass(hydro.liquid_bodies?.ice_caps || 0)}`;
+                
+                // Biosphere
+                const bio = this.planetData.biosphere || {};
+                const biodiversity = (bio.biodiversity_index || 0) * 100;
+                const habitability = (bio.habitable_ratio || 0) * 100;
+                
+                document.getElementById('bio-diversity').textContent = `${biodiversity.toFixed(1)}%`;
+                document.getElementById('bio-diversity-bar').style.width = `${biodiversity}%`;
+                document.getElementById('bio-habitability').textContent = `${habitability.toFixed(1)}%`;
+                document.getElementById('bio-habitability-bar').style.width = `${habitability}%`;
+                document.getElementById('bio-lifeforms').textContent = bio.life_forms_count || 0;
+                
+                // Geosphere
+                const geo = this.planetData.geosphere || {};
+                document.getElementById('geo-activity').textContent = `${geo.geological_activity || 0}/100`;
+                document.getElementById('geo-tectonic').textContent = geo.tectonic_activity ? 'Yes' : 'No';
+                document.getElementById('geo-volcano').textContent = geo.volcanic_activity || 'None';
+                
+                // Settlement
+                const settlement = this.planetData.settlement || {};
+                document.getElementById('anthro-civs').textContent = settlement.colonies_count || 0;
+                document.getElementById('anthro-tech').textContent = `${(settlement.infrastructure_level || 0).toFixed(1)}%`;
+                document.getElementById('anthro-pop').textContent = this.formatPopulation(settlement.total_population || 0);
+                document.getElementById('anthro-gcc').textContent = this.formatCurrency(settlement.economy_gcc || 0);
+                
+                // Simulation status
+                document.getElementById('sim-status').textContent = this.simulating ? 'Running' : 'Ready';
+                document.getElementById('sim-year').textContent = this.simYear;
+                document.getElementById('sim-progress').textContent = `${this.simProgress.toFixed(1)}%`;
+                document.getElementById('sim-progress-bar').style.width = `${this.simProgress}%`;
+            }
+            
+            formatMass(mass) {
+                if (mass > 1e18) return `${(mass / 1e18).toFixed(2)} Eg`;
+                if (mass > 1e15) return `${(mass / 1e15).toFixed(2)} Pg`;
+                if (mass > 1e12) return `${(mass / 1e12).toFixed(2)} Tg`;
+                return `${mass.toFixed(2)} kg`;
+            }
+            
+            formatPopulation(pop) {
+                if (pop > 1e12) return `${(pop / 1e12).toFixed(2)}T`;
+                if (pop > 1e9) return `${(pop / 1e9).toFixed(2)}B`;
+                if (pop > 1e6) return `${(pop / 1e6).toFixed(2)}M`;
+                return pop.toString();
+            }
+            
+            formatCurrency(gcc) {
+                if (gcc > 1e12) return `${(gcc / 1e12).toFixed(2)}T GCC`;
+                if (gcc > 1e9) return `${(gcc / 1e9).toFixed(2)}B GCC`;
+                if (gcc > 1e6) return `${(gcc / 1e6).toFixed(2)}M GCC`;
+                return `${gcc} GCC`;
+            }
+            
+            log(message, type = 'info') {
+                const console = document.getElementById('console');
+                const line = document.createElement('div');
+                line.className = `console-line ${type}`;
+                line.textContent = `> ${message}`;
+                console.appendChild(line);
+                console.scrollTop = console.scrollHeight;
+            }
+            
+            play() {
+                if (!this.planetData) {
+                    this.log('No digital twin loaded. Create or load a twin first.', 'warning');
+                    return;
+                }
+                if (!this.simulating) {
+                    this.simulating = true;
+                    this.log('Simulation started', 'info');
+                    this.simulationLoop();
+                }
+            }
+            
+            pause() {
+                this.simulating = false;
+                this.log('Simulation paused', 'warning');
+            }
+            
+            fast() {
+                this.simSpeed = 1000;
+                document.getElementById('simSpeed').value = 1000;
+                document.getElementById('simSpeedValue').textContent = '1000 days/sec';
+                this.play();
+            }
+            
+            reset() {
+                this.simulating = false;
+                this.simYear = 0;
+                this.simProgress = 0;
+                this.log('Simulation reset', 'info');
+                this.updateDataPanel();
+            }
+            
+            async simulationLoop() {
+                if (!this.simulating) return;
+                
+                this.simYear += this.simSpeed / 365; // Convert days to years
+                this.simProgress = Math.min(100, (this.simYear / parseInt(document.getElementById('simDuration').value)) * 100);
+                
+                // Stub: Call simulation API
+                this.log(`Simulation year: ${this.simYear.toFixed(1)}, progress: ${this.simProgress.toFixed(1)}%`, 'info');
+                
+                this.updateDataPanel();
+                this.render();
+                
+                setTimeout(() => this.simulationLoop(), 1000);
+            }
+        }
+        
+        // Global functions and stubs
+        let sim;
+        
+        async function createTwin() {
+            const planetId = document.getElementById('planetSelector').value;
+            if (!planetId) {
+                sim.log('Please select a planet to clone', 'warning');
+                return;
+            }
+            
+            // Stub: Create digital twin
+            sim.log(`Creating digital twin for planet ${planetId}...`, 'info');
+            
+            // Simulate loading planet data
+            sim.planetData = {
+                name: `Digital Twin - Planet ${planetId}`,
+                type: 'terrestrial',
+                radius: 6371000,
+                atmosphere: {
+                    pressure: 1.0,
+                    temperature: 288,
+                    composition: { O2: 21.0, CO2: 0.04, N2: 78.0 }
+                },
+                hydrosphere: {
+                    water_coverage: 71.0,
+                    liquid_bodies: { oceans: 1.35e18, ice_caps: 2.85e19 }
+                },
+                biosphere: {
+                    biodiversity_index: 0.85,
+                    habitable_ratio: 0.65,
+                    life_forms_count: 8500000
+                },
+                geosphere: {
+                    geological_activity: 45,
+                    tectonic_activity: true,
+                    volcanic_activity: 'Moderate'
+                },
+                settlement: {
+                    colonies_count: 0,
+                    infrastructure_level: 0,
+                    total_population: 0,
+                    economy_gcc: 0
+                }
+            };
+            
+            document.getElementById('twinName').textContent = sim.planetData.name;
+            document.getElementById('twinInfo').textContent = `Isolated simulation - changes do not affect live data`;
+            
+            sim.twinId = `twin_${Date.now()}`;
+            sim.log(`Digital twin created: ${sim.twinId}`, 'info');
+            sim.updateDataPanel();
+            sim.render();
+        }
+        
+        async function loadTwin() {
+            // Stub: Load existing twin
+            sim.log('Loading existing digital twin...', 'info');
+            // In real implementation: GET /admin/digital_twins and populate selector
+        }
+        
+        async function saveTwin() {
+            if (!sim.twinId) {
+                sim.log('No digital twin to save', 'warning');
+                return;
+            }
+            // Stub: Save twin state
+            sim.log(`Saving digital twin state: ${sim.twinId}`, 'info');
+            // In real implementation: POST /admin/digital_twins/:id/save
+        }
+        
+        async function applySystemChanges() {
+            if (!sim.planetData) return;
+            
+            const geoActivity = parseInt(document.getElementById('geoActivity').value);
+            const atmoCO2 = parseInt(document.getElementById('atmoCO2').value);
+            const bioMutation = parseInt(document.getElementById('bioMutation').value);
+            const anthroTech = parseInt(document.getElementById('anthroTech').value);
+            
+            // Stub: Apply system parameter changes
+            sim.log(`Applying system changes: Geo ${geoActivity}%, CO2 ${atmoCO2}%, Mutation ${bioMutation}%, Tech ${anthroTech}%`, 'info');
+            
+            // Simulate effects
+            sim.planetData.geosphere.geological_activity = geoActivity;
+            sim.planetData.atmosphere.composition.CO2 = atmoCO2 / 100;
+            sim.planetData.biosphere.biodiversity_index = Math.min(1.0, bioMutation / 100);
+            sim.planetData.anthroposphere.tech_level = anthroTech / 100;
+            
+            sim.updateDataPanel();
+            sim.render();
+        }
+        
+        async function placeSettlement() {
+            const biome = document.getElementById('settlementBiome').value;
+            sim.log(`Establishing settlement in ${biome} biome...`, 'info');
+            // Stub: POST /admin/digital_twins/:id/settlements
+            // Simulate settlement establishment
+            setTimeout(() => {
+                sim.planetData.settlement.colonies_count += 1;
+                sim.planetData.settlement.infrastructure_level += 0.1;
+                sim.log(`Settlement established! Colony infrastructure at ${(sim.planetData.settlement.infrastructure_level * 100).toFixed(1)}%`, 'info');
+                sim.updateDataPanel();
+            }, 2000);
+        }
+        
+        async function augmentLife() {
+            const type = document.getElementById('augmentType').value;
+            sim.log(`Augmenting life with ${type}...`, 'info');
+            // Stub: POST /admin/digital_twins/:id/biosphere/augment
+            // Simulate life augmentation
+            setTimeout(() => {
+                if (type === 'oxygen-production') {
+                    sim.planetData.atmosphere.composition.O2 += 2.0;
+                    sim.log(`Oxygen production increased to ${(sim.planetData.atmosphere.composition.O2).toFixed(1)}%`, 'info');
+                } else if (type === 'nutrient-fixation') {
+                    sim.planetData.biosphere.biodiversity_index += 0.1;
+                    sim.log(`Nutrient fixation enhanced. Biodiversity at ${(sim.planetData.biosphere.biodiversity_index * 100).toFixed(1)}%`, 'info');
+                } else if (type === 'radiation-resistance') {
+                    sim.planetData.biosphere.habitable_ratio += 0.05;
+                    sim.log(`Radiation resistance improved. Habitability at ${(sim.planetData.biosphere.habitable_ratio * 100).toFixed(1)}%`, 'info');
+                } else if (type === 'temperature-tolerance') {
+                    sim.planetData.biosphere.habitable_ratio += 0.05;
+                    sim.log(`Temperature tolerance enhanced. Habitability at ${(sim.planetData.biosphere.habitable_ratio * 100).toFixed(1)}%`, 'info');
+                } else if (type === 'hybridization') {
+                    sim.planetData.biosphere.life_forms_count += 10000;
+                    sim.log(`Species hybridization successful. Life forms count: ${sim.planetData.biosphere.life_forms_count}`, 'info');
+                }
+                sim.updateDataPanel();
+                sim.render();
+            }, 2000);
+        }
+        
+        async function runSimulation() {
+            if (!sim.planetData) {
+                sim.log('No digital twin loaded', 'warning');
+                return;
+            }
+            
+            const duration = parseInt(document.getElementById('simDuration').value);
+            sim.log(`Running ${duration}-year simulation...`, 'info');
+            
+            // Reset simulation state
+            sim.simYear = 0;
+            sim.simProgress = 0;
+            sim.simulating = true;
+            
+            // Stub: POST /admin/digital_twins/:id/simulate
+            sim.simulationLoop();
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            sim = new DigitalTwinSimulation();
+        });
+    </script>
+</body>
+</html>

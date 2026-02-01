@@ -161,31 +161,49 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
       end
 
       it 'requests terraformed names for template-based planets' do
-        allow(generator).to receive(:rand).and_return(0.3) # Use template
+        allow_any_instance_of(Object).to receive(:rand).and_return(0.3) # Below 0.4 threshold = template
+        allow(generator).to receive(:generate_moons_for_planet) # Prevent moon generation
+        allow(generator).to receive(:generate_optimized_orbital_parameters).and_return({
+          semi_major_axis_au: 1.0,
+          eccentricity: 0.01,
+          inclination_deg: 0.5,
+          orbital_period_days: 365.25
+        })
 
-        planets = generator.send(:generate_terrestrial_planets, 1, 'TEST-SYSTEM')
+        mock_star = { "r_ecosphere" => 1.0, "name" => "Test Star", "type" => "G" }
+        planets = generator.send(:generate_planets_for_star, mock_star, 'TEST-SYSTEM', 1)
 
         expect(mock_planet_name_service).to have_received(:generate_planet_name).with(
           terraformable: true,
           system_identifier: 'TEST-SYSTEM',
-          index: 1
+          index: 1,
+          world_composition: 'terrestrial'
         )
       end
 
       it 'requests neutral names for procedural planets' do
-        allow(generator).to receive(:rand).and_return(0.5) # Procedural
+        allow_any_instance_of(Object).to receive(:rand) do |*args|
+          if args.empty?
+            0.5
+          else
+            2
+          end
+        end
 
-        planets = generator.send(:generate_terrestrial_planets, 1, 'TEST-SYSTEM')
+        mock_star = { "r_ecosphere" => 1.0, "name" => "Test Star", "type" => "G" }
+        planets = generator.send(:generate_planets_for_star, mock_star, 'TEST-SYSTEM', 1)
 
         expect(mock_planet_name_service).to have_received(:generate_planet_name).with(
           terraformable: false,
           system_identifier: 'TEST-SYSTEM',
-          index: 1
+          index: 1,
+          world_composition: 'rocky'
         )
       end
 
       it 'applies orbital optimization for template-based planets' do
-        allow(generator).to receive(:rand).and_return(0.3) # Use template
+        allow_any_instance_of(Object).to receive(:rand).and_return(0.3)
+        allow(generator).to receive(:generate_moons_for_planet) # Prevent moon generation that causes test failure
         allow(generator).to receive(:generate_optimized_orbital_parameters).and_return({
           semi_major_axis_au: 1.0,
           eccentricity: 0.01,
@@ -199,7 +217,13 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
       end
 
       it 'generates procedural planets when not using templates' do
-        allow(generator).to receive(:rand).and_return(0.5) # Above 0.4 threshold = procedural
+        allow_any_instance_of(Object).to receive(:rand) do |*args|
+          if args.empty?
+            0.5
+          else
+            2
+          end
+        end
 
         planets = generator.send(:generate_terrestrial_planets, 1, 'TEST-SYSTEM')
 

@@ -72,13 +72,18 @@ module StarSim
 
     # Analyze planet properties to determine terrain generation parameters
     def analyze_planet_properties(body)
+      # Calculate diameter-based grid dimensions for proper scaling
+      grid_dimensions = calculate_diameter_based_grid_size(body)
+
       params = {
         terrain_complexity: calculate_terrain_complexity(body),
         biome_density: calculate_biome_density(body),
         elevation_scale: calculate_elevation_scale(body),
         water_coverage: body.hydrosphere&.water_coverage || 0,
         atmospheric_pressure: body.atmosphere&.pressure || 0,
-        surface_temperature: body.surface_temperature || 288
+        surface_temperature: body.surface_temperature || 288,
+        grid_width: grid_dimensions[:width],
+        grid_height: grid_dimensions[:height]
       }
 
       # Adjust for planet type
@@ -168,6 +173,53 @@ module StarSim
       scale.clamp(0.5, 2.0)
     end
 
+    # Calculate diameter-based grid dimensions for proper FreeCiv tileset compatibility
+    def calculate_diameter_based_grid_size(body)
+      diameter_km = (body.radius.to_f / 1000) * 2  # Convert radius to diameter
+      earth_diameter_km = 12742  # Earth's diameter in km
+
+      # Base grid size on Earth's 1800x900 as reference
+      # Scale proportionally but with bounds for FreeCiv compatibility
+      scale_factor = (diameter_km / earth_diameter_km.to_f)
+
+      # FreeCiv tilesets work best with certain grid sizes
+      # Small bodies (asteroids, small moons): 40x20 to 80x40
+      # Medium bodies (Mars, Venus, large moons): 120x60 to 160x80
+      # Large bodies (Earth, super-Earths): 180x90 and up
+
+      if diameter_km < 1000  # Small asteroids/moons
+        base_width = 60
+        base_height = 30
+        max_scale = 2.0  # Allow some scaling up for larger small bodies
+      elsif diameter_km < 5000  # Mars-sized bodies
+        base_width = 120
+        base_height = 60
+        max_scale = 3.0  # Allow scaling up to Earth-like for larger terrestrial planets
+      else  # Earth-sized and larger
+        base_width = 180
+        base_height = 90
+        max_scale = 4.0  # Allow significant scaling for gas giants/super-Earths
+      end
+
+      # Apply scaling with bounds
+      scaled_width = (base_width * [scale_factor, max_scale].min).round
+      scaled_height = (base_height * [scale_factor, max_scale].min).round
+
+      # Ensure minimum viable size for FreeCiv gameplay
+      final_width = [scaled_width, 40].max   # Minimum 40 tiles wide
+      final_height = [scaled_height, 20].max # Minimum 20 tiles high
+
+      # Cap at reasonable maximum for performance
+      final_width = [final_width, 3600].min  # Maximum 3600 tiles wide
+      final_height = [final_height, 1800].min # Maximum 1800 tiles high
+
+      Rails.logger.info "[AutomaticTerrainGenerator] Calculated grid size for #{body.name}: " \
+                       "#{final_width}x#{final_height} (diameter: #{diameter_km.round}km, " \
+                       "scale_factor: #{scale_factor.round(3)})"
+
+      { width: final_width, height: final_height }
+    end
+
     # Generate base terrain using PlanetaryMapGenerator
     def generate_base_terrain(body, params)
       generator_params = {
@@ -176,7 +228,9 @@ module StarSim
         complexity: params[:terrain_complexity],
         elevation_scale: params[:elevation_scale],
         water_coverage: params[:water_coverage],
-        temperature: params[:surface_temperature]
+        temperature: params[:surface_temperature],
+        width: params[:grid_width],
+        height: params[:grid_height]
       }
 
       # Use NASA data if available for this planet
@@ -506,9 +560,10 @@ module StarSim
         generation_metadata: {
           layers_used: [:nasa_base, :civ4_scenario_overlay, :freeciv_targets_storage],
           nasa_source: 'geotiff_patterns_mars.json',
-          civ4_source: find_mars_civ4_map,
-          freeciv_source: find_mars_freeciv_map,
-          architecture: 'future_possibility_spaces'
+          civ4_source: find_civ4_map_for_body(body),
+          freeciv_source: find_freeciv_map_for_body(body),
+          architecture: 'future_possibility_spaces',
+          grid_dimensions: calculate_diameter_based_grid_size(body)
         }
       }
 
@@ -518,60 +573,73 @@ module StarSim
 
     # Generate NASA base elevation using MultiBodyTerrainGenerator
     def generate_nasa_base_elevation(body)
-      Rails.logger.info "[AutomaticTerrainGenerator] Generating NASA base elevation for Mars"
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating NASA base elevation for #{body.name}"
+
+      # Calculate appropriate grid size based on planet diameter
+      grid_size = calculate_diameter_based_grid_size(body)
 
       # Use MultiBodyTerrainGenerator for NASA patterns - NO blueprint constraints
       generator = Terrain::MultiBodyTerrainGenerator.new
-      mars_data = generator.generate_terrain('mars', width: 1800, height: 900, options: {})
+      nasa_data = generator.generate_terrain(body.name.downcase.to_sym,
+                                           width: grid_size[:width],
+                                           height: grid_size[:height],
+                                           options: {})
 
-      mars_data[:elevation]
+      nasa_data[:elevation]
     end
 
-    # Generate Civ4 current-state overlay
     # Generate Civ4 terraforming scenario (partially habitable Mars future state)
     def generate_civ4_terraforming_scenario(body)
-      Rails.logger.info "[AutomaticTerrainGenerator] Generating Civ4 terraforming scenario"
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating Civ4 terraforming scenario for #{body.name}"
 
-      civ4_path = find_mars_civ4_map
+      civ4_path = find_civ4_map_for_body(body)
       return nil unless civ4_path
 
       begin
         processor = Import::Civ4MapProcessor.new
         civ4_data = processor.process(civ4_path, mode: :terrain)
 
-        # Scale Civ4 elevation (typically 80x57) to 1800x900 grid
+        # Calculate target grid size based on planet diameter
+        target_size = calculate_diameter_based_grid_size(body)
+
+        # Scale Civ4 elevation to target grid size
         scaled_elevation = scale_grid_to_target(
           civ4_data[:lithosphere][:elevation],
           civ4_data[:lithosphere][:width],
           civ4_data[:lithosphere][:height],
-          1800, 900
+          target_size[:width],
+          target_size[:height]
         )
 
-        Rails.logger.info "[AutomaticTerrainGenerator] Scaled Civ4 elevation from #{civ4_data[:lithosphere][:width]}x#{civ4_data[:lithosphere][:height]} to 1800x900"
+        Rails.logger.info "[AutomaticTerrainGenerator] Scaled Civ4 elevation from #{civ4_data[:lithosphere][:width]}x#{civ4_data[:lithosphere][:height]} to #{target_size[:width]}x#{target_size[:height]}"
         scaled_elevation
       rescue => e
-        Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process Civ4 data: #{e.message}"
+        Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process Civ4 data for #{body.name}: #{e.message}"
         nil
       end
     end
 
-    # Generate FreeCiv complete terraforming targets (fully terraformed Mars with 40% oceans)
+    # Generate FreeCiv complete terraforming targets (fully terraformed future state)
     def generate_freeciv_complete_targets(body)
-      Rails.logger.info "[AutomaticTerrainGenerator] Generating FreeCiv complete terraforming targets"
+      Rails.logger.info "[AutomaticTerrainGenerator] Generating FreeCiv complete terraforming targets for #{body.name}"
 
-      freeciv_path = find_mars_freeciv_map
+      freeciv_path = find_freeciv_map_for_body(body)
       return nil unless freeciv_path
 
       begin
         processor = Import::FreecivMapProcessor.new
         freeciv_data = processor.process(freeciv_path)
 
-        # Scale FreeCiv data (typically 133x64) to 1800x900 grid
+        # Calculate target grid size based on planet diameter
+        target_size = calculate_diameter_based_grid_size(body)
+
+        # Scale FreeCiv data to target grid size
         scaled_elevation = scale_grid_to_target(
           freeciv_data[:lithosphere][:elevation],
           freeciv_data[:lithosphere][:width],
           freeciv_data[:lithosphere][:height],
-          1800, 900
+          target_size[:width],
+          target_size[:height]
         )
 
         # Return complete terraforming targets data structure for TerraSim
@@ -582,12 +650,12 @@ module StarSim
           source_file: freeciv_path,
           scaling_info: {
             original_size: "#{freeciv_data[:lithosphere][:width]}x#{freeciv_data[:lithosphere][:height]}",
-            scaled_size: "1800x900"
+            scaled_size: "#{target_size[:width]}x#{target_size[:height]}"
           },
           terraforming_state: 'complete_40_percent_oceans'
         }
       rescue => e
-        Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process FreeCiv data: #{e.message}"
+        Rails.logger.warn "[AutomaticTerrainGenerator] Failed to process FreeCiv data for #{body.name}: #{e.message}"
         nil
       end
     end
@@ -740,6 +808,39 @@ module StarSim
     def generate_luna_resource_counts(elevation_data)
       # Generate resource counts for Luna
       {}
+    end
+
+    # Find Civ4 map for any celestial body
+    def find_civ4_map_for_body(body)
+      body_name = body.name.downcase
+      map_dir = File.join(Rails.root, 'data', 'maps', 'civ4', body_name)
+
+      return nil unless Dir.exist?(map_dir)
+
+      # Find the largest map file (by grid size in filename if available)
+      candidates = Dir.glob(File.join(map_dir, '*.Civ4WorldBuilderSave'))
+      candidates.max_by { |path| File.basename(path).match(/(\d+)x(\d+)/)&.captures&.map(&:to_i)&.inject(:*) || 0 }
+    end
+
+    # Find FreeCiv map for any celestial body
+    def find_freeciv_map_for_body(body)
+      body_name = body.name.downcase
+      map_dir = File.join(Rails.root, 'data', 'maps', 'freeciv', body_name)
+
+      return nil unless Dir.exist?(map_dir)
+
+      # Find the most recent .sav file
+      candidates = Dir.glob(File.join(map_dir, '*.sav'))
+      candidates.max_by { |path| File.mtime(path) }
+    end
+
+    # Legacy methods for backward compatibility
+    def find_mars_civ4_map
+      find_civ4_map_for_body(OpenStruct.new(name: 'mars'))
+    end
+
+    def find_mars_freeciv_map
+      find_freeciv_map_for_body(OpenStruct.new(name: 'mars'))
     end
 
     # Check if planet is Earth-like based on properties

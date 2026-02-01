@@ -194,10 +194,17 @@ class Inventory < ApplicationRecord
     end
   end
 
-  def determine_item_type(name)
-    material = Lookup::MaterialLookupService.new.find_material(name)
-    material&.dig('state') || 'solid'
+  public
+
+  def create_surface_storage!(celestial_body:, capacity: nil, item_type:)
+    build_surface_storage(
+      celestial_body: celestial_body,
+      settlement: inventoryable,
+      item_type: item_type
+    ).save!
   end
+
+  private
 
   def capacity_exceeded?(amount)
     return false if inventoryable.respond_to?(:surface_storage?) && inventoryable.surface_storage?
@@ -216,5 +223,16 @@ class Inventory < ApplicationRecord
       return storage_units.sum { |unit| unit.operational_data['storage']['capacity'].to_i }
     end
     0
+  end
+
+  def determine_item_type(name)
+    # Determine item type based on material properties
+    material_type = lookup_material_type(name)
+    case material_type
+    when 'liquid', 'gas', 'fuel'
+      'specialized'
+    else
+      'bulk'
+    end
   end
 end

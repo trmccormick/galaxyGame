@@ -64,17 +64,15 @@ Galaxy Game integrates elevation data from Civ4 and FreeCiv map sources to provi
 - **Accuracy**: 70-80% based on Civ4's terrain generation algorithms
 - **Output**: Normalized 0-1 elevation values
 
-**PlotType to Elevation Mapping**:
-- **PlotType 0 (Flat Land)**: Base elevation 0.65, represents low-lying plains and coastal areas
-- **PlotType 1 (Coastal)**: Base elevation 0.55, represents shorelines and coastal elevations  
-- **PlotType 2 (Hills)**: Base elevation 0.80, represents elevated hilly terrain
-- **PlotType 3 (Water/Mountains)**: Variable based on TerrainType:
-  - Ocean/Coast: 0.35-0.45 (shallow to deep water)
-  - Snow/Grass/Plains/Tundra/Desert: 0.75-0.90 (mountain peaks)
+**PlotType to Elevation Mapping (Strict Separation for AI Training):**
+- **PlotType 0 (Flat Land)**: Base elevation 0.65, always land, biomes applied
+- **PlotType 1 (Coastal Land)**: Base elevation 0.55, always land, biomes applied  
+- **PlotType 2 (Hills)**: Base elevation 0.80, always land, biomes applied
+- **PlotType 3 (Water)**: Base elevation 0.35, always underwater, no biomes applied
 
-**Land Protection Logic**: Non-water terrain types are guaranteed minimum elevation of 0.50 to prevent biomes from appearing underwater.
+**Strict Water/Land Separation**: PlotType determines elevation category - water areas stay underwater, land areas stay above water. This provides clean training data for AI terrain generation.
 
-**Variation**: ±3% random variation applied to create natural terrain diversity without extreme elevations.
+**Biome Application**: Biomes are only applied to land areas (PlotType 0,1,2), ensuring water areas remain biome-free for proper visual separation.
 
 #### FreeCiv Biome-Constrained Generation
 - **Source**: FreeCiv .sav files with character-based biome mapping

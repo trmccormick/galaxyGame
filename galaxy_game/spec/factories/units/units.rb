@@ -5,20 +5,23 @@ FactoryBot.define do
     sequence(:name) { |n| "Test Unit #{n}" }
     unit_type { "basic_unit" } # Default to a generic unit type
     operational_data { {} }
-    association :owner, factory: :organization
+    # association :owner, factory: :player  # Will be set in after(:create)
     attachable { nil }
 
-    # Allow setting settlement which sets attachable
+    # Allow setting settlement which sets attachable and owner
     transient do
       settlement { nil }
       operational { nil }
     end
 
-    after(:create) do |unit, evaluator|
+    after(:build) do |unit, evaluator|
       if evaluator.settlement
+        unit.owner = evaluator.settlement.owner
         unit.attachable = evaluator.settlement
-        unit.owner = evaluator.settlement.owner if evaluator.settlement.owner
       end
+    end
+
+    after(:create) do |unit, evaluator|
       if evaluator.operational == false
         unit.operational_data = (unit.operational_data || {}).merge('test_operational' => false)
         unit.save!
@@ -166,5 +169,9 @@ FactoryBot.define do
         }
       end
     end
+  end
+
+  # Alias for backward compatibility
+  factory :unit, parent: :base_unit do
   end
 end

@@ -116,8 +116,7 @@ RSpec.describe Admin::MapStudioController, type: :controller do
       maps = [{ planet_type: 'terrestrial', filename: 'map1.json' }]
       allow_any_instance_of(described_class).to receive(:find_generated_maps).and_return(maps)
       get :browse
-      expect(assigns(:generated_maps)).to be_a(Hash)
-      expect(assigns(:generated_maps)['terrestrial']).to include(maps.first)
+      expect(assigns(:generated_maps)).to eq(maps)
     end
   end
 

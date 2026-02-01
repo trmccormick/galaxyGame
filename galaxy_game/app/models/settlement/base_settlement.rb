@@ -27,6 +27,7 @@ module Settlement
              inverse_of: :docked_at
 
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
+    alias_attribute :units, :base_units
     has_many :structures, class_name: 'Structures::BaseStructure', foreign_key: 'settlement_id'
 
     has_many :orbital_construction_projects, class_name: 'OrbitalConstructionProject', foreign_key: 'station_id'

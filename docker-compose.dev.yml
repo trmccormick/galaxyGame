@@ -11,10 +11,8 @@ services:
       - ./scripts:/home/galaxy_game/scripts
       - ./galaxy_game:/home/galaxy_game
       - ./data/json-data:/home/galaxy_game/app/data
-      - "./data/freeCiv Maps:/home/galaxy_game/freeCiv_maps"
-      - ./data/Civ4_Maps:/home/galaxy_game/Civ4_Maps
-      - ./data/tilesets:/home/galaxy_game/tilesets
-      - ./data/topology\ maps:/home/galaxy_game/topology_maps
+      - ./data/maps:/home/galaxy_game/app/data/maps
+      - ./data/tilesets:/home/galaxy_game/app/data/tilesets
       - ./data/bundle:/usr/local/bundle # cache bundle install
       - ./data/node_modules:/home/galaxy_game/node_modules # Assuming you might have Node.js assets
       - ./data/logs:/home/galaxy_game/log

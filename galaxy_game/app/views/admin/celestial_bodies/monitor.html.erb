@@ -592,7 +592,9 @@
             'j': 'jungle',     // Jungle
             's': 'swamp',      // Swamp
             'r': 'rock',       // Rock (if present)
-            'b': 'boreal'      // Boreal (if present)
+            'b': 'boreal',     // Boreal (if present)
+            // Additional mappings for PlanetaryMapGenerator codes
+            'o': 'ocean'       // Ocean (used by PlanetaryMapGenerator)
         };
 
         // Function to normalize terrain type from FreeCiv data
@@ -733,11 +735,29 @@
             const planetName = <%= raw @celestial_body.name.to_json %>;
 
             // Calculate water volume as percentage (0.0 to 1.0)
-            // Earth has significant water, Mars starts minimal
+            // For Civ4 maps, be more adaptive based on elevation distribution
             let waterVolume = 0.0;
             if (planetName.toLowerCase().includes('earth')) {
-                // Earth: Use actual hydrosphere data or default to ~70% water coverage
-                waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1.4e21, 1.0) : 0.7; // 1.4e21 kg is Earth's water
+                // Earth: Check if we have elevation data to make water volume adaptive
+                if (elevationData && elevationData.grid) {
+                    // Analyze elevation distribution to estimate realistic water coverage
+                    const elevations = elevationData.grid.flat().filter(e => e !== null && e !== undefined);
+                    if (elevations.length > 0) {
+                        // Count tiles below 0.3 (likely water in Civ4 maps)
+                        const lowElevationTiles = elevations.filter(e => e < 0.3).length;
+                        const estimatedWaterFraction = lowElevationTiles / elevations.length;
+                        
+                        // Use estimated fraction, but cap at reasonable Earth values
+                        waterVolume = Math.max(0.3, Math.min(estimatedWaterFraction * 1.2, 0.6));
+                        console.log(`Adaptive water volume for Earth: ${waterVolume.toFixed(3)} (estimated from ${estimatedWaterFraction.toFixed(3)} low elevation tiles)`);
+                    } else {
+                        // Fallback to hydrosphere data
+                        waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1.4e21, 1.0) : 0.4;
+                    }
+                } else {
+                    // No elevation data yet, use conservative estimate
+                    waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1.4e21, 1.0) : 0.4;
+                }
             } else if (planetName.toLowerCase().includes('mars')) {
                 // Mars: Minimal water, can increase with terraforming
                 waterVolume = totalWaterMass > 0 ? Math.min(totalWaterMass / 1e18, 0.1) : 0.01; // Much less water
@@ -754,22 +774,28 @@
                 if (elevations.length > 0) {
                     elevations.sort((a, b) => a - b);
                     const waterTiles = Math.floor(waterVolume * elevations.length);
-                    seaLevel = waterTiles > 0 && waterTiles < elevations.length ?
+                    const proposedSeaLevel = waterTiles > 0 && waterTiles < elevations.length ?
                         elevations[waterTiles - 1] : elevations[Math.floor(elevations.length * waterVolume)] || 0.5;
+                    
+                    // Check if proposed sea level would flood too much land
+                    // Count tiles that would be underwater but are clearly land (elevation > 0.6)
+                    const highLandUnderwater = elevations.filter(e => e >= 0.6 && e < proposedSeaLevel).length;
+                    const highLandPercentage = highLandUnderwater / elevations.length;
+                    
+                    if (highLandPercentage > 0.1) { // If >10% of high land would be underwater
+                        // Adjust sea level down to protect land
+                        const landTiles = elevations.filter(e => e >= 0.6).length;
+                        const targetWaterTiles = Math.floor((waterVolume - highLandPercentage) * elevations.length);
+                        seaLevel = targetWaterTiles > 0 && targetWaterTiles < elevations.length ?
+                            elevations[targetWaterTiles - 1] : proposedSeaLevel * 0.8; // Reduce by 20%
+                        console.log(`Adjusted sea level to protect land: ${proposedSeaLevel.toFixed(3)} → ${seaLevel.toFixed(3)} (${highLandPercentage.toFixed(3)} high land was underwater)`);
+                    } else {
+                        seaLevel = proposedSeaLevel;
+                    }
                 }
             }
 
             console.log(`Water layer: ${planetName}, volume=${waterVolume.toFixed(3)}, seaLevel=${seaLevel.toFixed(3)}`);
-            
-            // Debug: Count water types
-            const waterCounts = { coast: 0, ocean: 0, deep_sea: 0, null: 0 };
-            for (let y = 0; y < height; y++) {
-                for (let x = 0; x < width; x++) {
-                    const waterType = waterGrid[y][x];
-                    waterCounts[waterType] = (waterCounts[waterType] || 0) + 1;
-                }
-            }
-            console.log('Water layer distribution:', waterCounts);
 
             for (let y = 0; y < height; y++) {
                 waterGrid[y] = [];
@@ -899,16 +925,30 @@
             };
 
             // Extract elevation from terrain_map FIRST (needed for water layer calculation)
-            if (terrainData && terrainData.elevation) {
+            if (terrainData && (terrainData.elevation || terrainData.elevation_data)) {
+                const elevData = terrainData.elevation || terrainData.elevation_data;
                 layers.elevation = {
-                    grid: terrainData.elevation,
-                    width: terrainData.width || terrainData.elevation[0]?.length || 0,
-                    height: terrainData.height || terrainData.elevation.length,
+                    grid: elevData,
+                    width: terrainData.width || elevData[0]?.length || 0,
+                    height: terrainData.height || elevData.length,
                     layer_type: 'elevation',
                     quality: terrainData.quality || 'unknown',
                     method: terrainData.method || 'unknown'
                 };
                 console.log('Using elevation data from terrain_map:', layers.elevation.quality, layers.elevation.method);
+
+                // ADD THESE DEBUG LINES:
+                console.log('Elevation source field:', terrainData.elevation ? 'elevation' : 'elevation_data');
+                console.log('Elevation grid sample:', layers.elevation.grid[0]?.slice(0, 5));
+
+                // Check elevation range
+                if (layers.elevation && layers.elevation.grid) {
+                    const allElevations = layers.elevation.grid.flat();
+                    const min = Math.min(...allElevations);
+                    const max = Math.max(...allElevations);
+                    const avg = allElevations.reduce((a,b) => a+b) / allElevations.length;
+                    console.log('Elevation range:', { min: min.toFixed(2), max: max.toFixed(2), avg: avg.toFixed(2) });
+                }
             } else {
                 // Generate basic elevation from terrain types (fallback for water calculation)
                 const elevationSource = terrainData || freecivData || civ4Data;
@@ -1016,9 +1056,8 @@
             canvas.width = width * tileSize;
             canvas.height = height * tileSize;
 
-            // Planet identification for special rendering
-            const planetName = <%= raw @celestial_body.name.to_json %>;
-// Analyze planetary conditions for data-driven rendering
+            // Planet identification for special rendering (planetName already declared globally)
+            // Analyze planetary conditions for data-driven rendering
             const planetaryConditions = analyzeAtmosphericConditions(
                 <%= raw (@celestial_body.atmosphere&.temperature || @celestial_body.temperature || 288).to_json %>,
                 <%= raw (@celestial_body.atmosphere&.pressure || 1.0).to_json %>,
@@ -1037,7 +1076,7 @@
                 }
                 
                 // Fallback: Calculate elevation from terrain type (legacy method)
-                console.warn('Using fallback elevation calculation for', terrainType, 'at', x, y);
+                // Note: This fallback is used when no elevation data is available from processed maps
                 
                 // Base elevation by terrain type (0-1 scale)
                 const baseElevations = {
@@ -1089,35 +1128,52 @@
                     // Calculate latitude for this tile (-90 to +90)
                     const latitude = ((y / (height - 1)) - 0.5) * 180;
                     
-                    // Calculate elevation for this terrain type and location
-                    const elevation = calculateElevation(terrainType, latitude, planetTemp, planetPressure, x, y);
+                    // Use ACTUAL elevation data if available, otherwise calculate
+                    const elevation = layers.elevation?.grid?.[y]?.[x] !== undefined 
+                        ? layers.elevation.grid[y][x]
+                        : calculateElevation(terrainType, latitude, planetTemp, planetPressure, x, y);
+
+                    // Debug output for first tile only
+                    if (y === 0 && x === 0) {
+                        console.log(`Tile [${x},${y}]:`, {
+                            terrainType: terrainType,
+                            elevationFromData: layers.elevation?.grid?.[y]?.[x],
+                            elevationUsed: elevation,
+                            usingActualData: layers.elevation?.grid?.[y]?.[x] !== undefined
+                        });
+                    }
 
                     // Start with base color - elevation-based topographic colors (SimEarth Alt view)
                     let baseColor = '#000000'; // Default black
                     
                     // Use elevation-based colors for bare terrain (SimEarth style)
-                    // Higher elevations = grey, lower elevations = dark brown with better contrast
-                    if (elevation > 0.8) {
-                        baseColor = '#C0C0C0'; // High mountains - light grey
-                    } else if (elevation > 0.6) {
-                        baseColor = '#808080'; // Medium-high - grey
+                    // Use warm earth-tone gradient (better contrast than grey)
+                    if (elevation > 0.85) {
+                        baseColor = '#EFEFEF';  // Very high peaks - white/light grey
+                    } else if (elevation > 0.7) {
+                        baseColor = '#D2B48C';  // High mountains - light tan
+                    } else if (elevation > 0.55) {
+                        baseColor = '#C9A777';  // Hills - medium tan/beige
                     } else if (elevation > 0.4) {
-                        baseColor = '#696969'; // Medium elevation - dim grey
-                    } else if (elevation > 0.2) {
-                        baseColor = '#8B4513'; // Low-medium - saddle brown
+                        baseColor = '#A0826D';  // Highlands - brown-tan
+                    } else if (elevation > 0.25) {
+                        baseColor = '#8B7355';  // Plains - medium brown
+                    } else if (elevation > 0.15) {
+                        baseColor = '#654321';  // Lowlands - dark brown
                     } else {
-                        baseColor = '#654321'; // Low elevation - dark brown
+                        baseColor = '#3D2817';  // Ocean floor / very low - very dark brown
                     }
 
-                    // Debug: log first few tiles
-                    if (y === 0 && x < 5) {
+                    // Debug: log first tile only
+                    if (y === 0 && x === 0) {
                         console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> base:${baseColor}`);
                     }
 
                     let hasOverlay = false;
 
                     // Initialize final color to base color
-                    let finalColor = baseColor;
+                    let finalColor;
+                    finalColor = baseColor;
                     if (visibleLayers.has('temperature')) {
                         const tempOverlay = layerOverlays.temperature;
                         let tempColor;
@@ -1131,9 +1187,7 @@
                         } else {
                             // Use global temperature calculation based on latitude, elevation, and planetary conditions
                             tempColor = tempOverlay.getOverlayColor(latitude, elevation, planetTemp, planetPressure);
-                            if (y === 0 && x < 2) {
-                                console.log(`Tile ${x},${y} temp calc: lat=${latitude.toFixed(1)}, elev=${elevation.toFixed(2)}, tempColor=${tempColor}`);
-                            }
+                            // Removed verbose debug logging to prevent performance issues
                         }
                         
                         // Blend temperature overlay with base color (40% opacity for SimEarth style)
@@ -1151,11 +1205,6 @@
                             // For layer-specific overlays, use the layer's grid data instead of base terrain
                             if (layers[layerName] && layers[layerName].grid && layers[layerName].grid[y] && layers[layerName].grid[y][x] !== null) {
                                 overlayTerrainType = layers[layerName].grid[y][x];
-                                
-                                // Debug water overlay application
-                                if (layerName === 'water' && y === 0 && x < 5) {
-                                    console.log(`Water overlay at ${x},${y}: base=${terrainType}, water=${overlayTerrainType}, hasColor=${!!overlay.terrainColors[overlayTerrainType]}`);
-                                }
                             }
                             
                             if (overlay.terrainColors[overlayTerrainType]) {
@@ -1201,8 +1250,8 @@
                         finalColor = '#4a3c28'; // Dark brown fallback
                     }
 
-                    // Debug: log final colors for first few tiles
-                    if (y === 0 && x < 5) {
+                    // Debug: log final colors for first tile only
+                    if (y === 0 && x === 0) {
                         console.log(`Tile ${x},${y} FINAL: base:${baseColor} -> final:${finalColor}`);
                     }
 
@@ -1381,7 +1430,7 @@
 
         // Layer visibility state - terrain ALWAYS visible as geological base
         // For Earth, also show biomes by default (biosphere layer)
-        const planetName = <%= raw @celestial_body.name.to_json %>;
+        // planetName already declared globally
         let visibleLayers = new Set(['terrain']); // Terrain is permanent lithosphere base
         if (planetName.toLowerCase().includes('earth')) {
             visibleLayers.add('biomes'); // Earth shows biosphere by default

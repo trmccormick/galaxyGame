@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Select Celestial Body for Map Application</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        html, body {
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            padding-bottom: 50px;
+        }
+
+        .selection-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        .selection-title {
+            color: #0ff;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .map-info {
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .map-name {
+            color: #0ff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .map-details {
+            color: #ccc;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #0ff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .form-select:focus {
+            border-color: #0f0;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .primary-action {
+            background: #0f0;
+            color: #000;
+        }
+
+        .primary-action:hover {
+            background: #0c0;
+            transform: translateY(-2px);
+        }
+
+        .secondary-action {
+            background: #333;
+            color: #fff;
+            border: 2px solid #555;
+        }
+
+        .secondary-action:hover {
+            background: #444;
+            border-color: #777;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #0ff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="<%= admin_map_studio_browse_path %>" class="back-button">← Back to Map Library</a>
+
+    <div class="container">
+        <div class="selection-container">
+            <h1 class="selection-title">🌍 Apply Map to Celestial Body</h1>
+
+            <div class="map-info">
+                <div class="map-name">Applying Map: <%= @map_filename %></div>
+                <div class="map-details">
+                    This map will be applied to the selected celestial body, replacing any existing terrain data.
+                </div>
+            </div>
+
+            <%= form_with url: admin_map_studio_apply_map_path(@map_filename), method: :post do |f| %>
+                <div class="form-group">
+                    <label class="form-label" for="celestial_body_id">Select Celestial Body</label>
+                    <%= select_tag :celestial_body_id,
+                        options_for_select(@celestial_bodies.map { |cb| [cb.name, cb.id] }),
+                        { class: 'form-select', required: true, prompt: 'Choose a celestial body...' } %>
+                </div>
+
+                <div class="button-group">
+                    <%= f.submit 'Apply Map', class: 'action-button primary-action' %>
+                    <%= link_to 'Cancel', admin_map_studio_browse_path, class: 'action-button secondary-action' %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</body>
+</html>

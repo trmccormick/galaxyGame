@@ -1,0 +1,83 @@
+[tilespec]
+
+; Basic tileset specification for Galaxy Game integration
+; Based on FreeCiv tilespec format
+
+name = "trident"
+version = "1.0"
+
+; Tile dimensions
+normal_tile_width = 64
+normal_tile_height = 64
+
+; Files section - defines tile image files
+[files]
+file = "terrain1.png"
+width = 64
+height = 64
+
+file = "terrain2.png"
+width = 64
+height = 64
+
+; Tiles section - defines individual tiles
+[tiles]
+; Grassland tile
+grassland =
+    file = "terrain1.png"
+    x = 0
+    y = 0
+
+; Plains tile
+plains =
+    file = "terrain1.png"
+    x = 64
+    y = 0
+
+; Desert tile
+desert =
+    file = "terrain1.png"
+    x = 128
+    y = 0
+
+; Forest tile
+forest =
+    file = "terrain1.png"
+    x = 0
+    y = 64
+
+; Ocean tile
+ocean =
+    file = "terrain2.png"
+    x = 0
+    y = 0
+
+; Deep ocean tile
+deep_ocean =
+    file = "terrain2.png"
+    x = 64
+    y = 0
+
+; Mountain/Rock tile
+mountains =
+    file = "terrain2.png"
+    x = 128
+    y = 0
+
+; Tundra tile
+tundra =
+    file = "terrain2.png"
+    x = 0
+    y = 64
+
+; Jungle tile
+jungle =
+    file = "terrain2.png"
+    x = 64
+    y = 64
+
+; Swamp tile
+swamp =
+    file = "terrain2.png"
+    x = 128
+    y = 64

@@ -18,19 +18,31 @@ module AIManager
       # Combine source maps into a planetary map
       combined_data = combine_source_maps(sources, planet, options)
 
+      # Apply AI-powered resource positioning using learned patterns
+      resource_service = AIManager::ResourcePositioningService.new
+      enhanced_data = resource_service.place_resources_on_map(
+        combined_data,
+        planet_name: planet.name,
+        options: options
+      )
+
       # Return comprehensive map data structure
       # Include BOTH old format (terrain_grid) AND new format (elevation, biomes) for compatibility
       {
         # Original format (for JSON storage)
-        terrain_grid: combined_data[:terrain_grid],
+        terrain_grid: enhanced_data[:terrain_grid] || combined_data[:terrain_grid],
         biome_counts: combined_data[:biome_counts],
         elevation_data: combined_data[:elevation_data],
-        strategic_markers: combined_data[:strategic_markers],
+        strategic_markers: enhanced_data[:strategic_markers] || combined_data[:strategic_markers],
         
         # Monitor-compatible format (aliases)
         elevation: combined_data[:elevation_data],  # Monitor expects this name
         terrain: combined_data[:terrain_grid],      # Could be different from biomes later
         biomes: combined_data[:terrain_grid],       # Same for now
+        
+        # Resource positioning data
+        resource_grid: enhanced_data[:resource_grid],
+        resource_counts: enhanced_data[:resource_counts],
         
         # Planet info
         planet_name: planet.name,
@@ -46,7 +58,8 @@ module AIManager
           quality: combined_data[:quality],
           planet_name: planet.name,
           planet_type: planet.type,
-          planet_id: planet.id
+          planet_id: planet.id,
+          resources_placed: enhanced_data[:resource_counts]&.keys&.any? || false
         }
       }
     end
@@ -60,20 +73,23 @@ module AIManager
       base_source = sources.first
       base_data = base_source[:data]
 
-      # Get dimensions (check multiple locations)
-      width = options[:width] ||
-              base_data[:width] || 
-              base_data.dig(:lithosphere, :width) || 
-              base_data[:biomes]&.first&.size || 
-              80
-              
-      height = options[:height] ||
-               base_data[:height] || 
-               base_data.dig(:lithosphere, :height) || 
-               base_data[:biomes]&.size || 
-               50
+      # Get base dimensions from source or options
+      base_width = options[:width] ||
+                   base_data[:width] || 
+                   base_data.dig(:lithosphere, :width) || 
+                   base_data[:biomes]&.first&.size || 
+                   80
+                   
+      base_height = options[:height] ||
+                    base_data[:height] || 
+                    base_data.dig(:lithosphere, :height) || 
+                    base_data[:biomes]&.size || 
+                    50
 
-      Rails.logger.info "[PlanetaryMapGenerator] Target dimensions: #{width}x#{height}"
+      # Scale dimensions based on planetary radius (Earth = baseline)
+      width, height = scale_dimensions_for_planet(base_width, base_height, planet)
+      
+      Rails.logger.info "[PlanetaryMapGenerator] Base dimensions: #{base_width}x#{base_height}, Scaled for #{planet.name}: #{width}x#{height}"
 
       # Initialize combined grid
       terrain_grid = Array.new(height) { Array.new(width, 'p') } # default to plains
@@ -231,10 +247,52 @@ module AIManager
       Rails.logger.info "[PlanetaryMapGenerator] Generating procedural map for #{planet.name}"
 
       # Generate a simple procedural map when no sources available
-      width = options[:width] || 80
-      height = options[:height] || 50
+      base_width = options[:width] || 80
+      base_height = options[:height] || 50
 
+      # Scale dimensions based on planetary radius
+      width, height = scale_dimensions_for_planet(base_width, base_height, planet)
+
+      # Try to use NASA-derived multi-body terrain generator first
+      body_type = planet_body_type(planet)
+      if body_type && defined?(Terrain::MultiBodyTerrainGenerator)
+        begin
+          Rails.logger.info "[PlanetaryMapGenerator] Using NASA-derived terrain for #{body_type}"
+          terrain_generator = Terrain::MultiBodyTerrainGenerator.new
+          terrain_data = terrain_generator.generate_terrain(body_type, width: width, height: height)
+
+          # Convert to expected format
+          terrain_grid = terrain_data[:grid]
+          elevation_grid = terrain_data[:elevation]
+          biome_counts = count_biomes(terrain_grid)
+
+          return {
+            terrain_grid: terrain_grid,
+            biome_counts: biome_counts,
+            elevation_data: elevation_grid,
+            strategic_markers: [],
+            planet_name: planet.name,
+            planet_type: planet.type,
+            metadata: {
+              generated_at: Time.current.iso8601,
+              source_maps: [],
+              generation_options: options,
+              width: width,
+              height: height,
+              generator: 'MultiBodyTerrainGenerator',
+              body_type: body_type,
+              nasa_derived: true
+            }
+          }
+        rescue => e
+          Rails.logger.warn "[PlanetaryMapGenerator] NASA terrain generation failed: #{e.message}, falling back to procedural"
+        end
+      end
+
+      # Fallback to simple procedural generation
+      Rails.logger.info "[PlanetaryMapGenerator] Using fallback procedural terrain generation"
       terrain_grid = Array.new(height) { Array.new(width) }
+      elevation_grid = Array.new(height) { Array.new(width) }
       biome_counts = Hash.new(0)
 
       # Simple procedural generation
@@ -253,13 +311,24 @@ module AIManager
 
           terrain_grid[y][x] = biome
           biome_counts[biome] += 1
+
+          # Generate corresponding elevation
+          elevation_grid[y][x] = case biome
+          when 'o' then 0.2 + rand * 0.2  # Ocean: 0.2-0.4
+          when 'g' then 0.4 + rand * 0.2  # Grasslands: 0.4-0.6
+          when 'p' then 0.5 + rand * 0.2  # Plains: 0.5-0.7
+          when 'f' then 0.6 + rand * 0.2  # Forest: 0.6-0.8
+          when 'd' then 0.3 + rand * 0.3  # Desert: 0.3-0.6
+          else 0.5
+          end
         end
       end
 
-      {
+      # Create base map data
+      base_data = {
         terrain_grid: terrain_grid,
         biome_counts: biome_counts,
-        elevation_data: Array.new(height) { Array.new(width, 0.5) },
+        elevation_data: elevation_grid,
         strategic_markers: [],
         planet_name: planet.name,
         planet_type: planet.type,
@@ -272,6 +341,131 @@ module AIManager
           quality: 'procedural_generated'
         }
       }
+
+      # Apply resource positioning even to procedural maps
+      resource_service = AIManager::ResourcePositioningService.new
+      enhanced_data = resource_service.place_resources_on_map(
+        base_data,
+        planet_name: planet.name,
+        options: options
+      )
+
+      # Return enhanced data
+      base_data.merge(
+        resource_grid: enhanced_data[:resource_grid],
+        resource_counts: enhanced_data[:resource_counts],
+        strategic_markers: enhanced_data[:strategic_markers],
+        metadata: base_data[:metadata].merge(resources_placed: enhanced_data[:resource_counts]&.keys&.any? || false)
+      )
+    end
+
+    # Add NASA DEM data as training source for realistic terrain generation
+    def add_nasa_dem_training_source(dem_file_path, planet_name: nil, options: {})
+      Rails.logger.info "[PlanetaryMapGenerator] Adding NASA DEM training source: #{dem_file_path}"
+
+      begin
+        dem_importer = Import::NasaDemImporter.new
+        dem_data = dem_importer.import_dem_file(dem_file_path, planet_name: planet_name, options: options)
+
+        # Return in format compatible with combine_source_maps
+        {
+          type: 'nasa_dem',
+          filename: File.basename(dem_file_path),
+          data: {
+            biomes: dem_data[:biomes],
+            lithosphere: {
+              elevation: dem_data[:elevation]
+            },
+            metadata: dem_data[:metadata]
+          }
+        }
+      rescue => e
+        Rails.logger.error "[PlanetaryMapGenerator] Failed to import NASA DEM #{dem_file_path}: #{e.message}"
+        nil
+      end
+    end
+
+    # Enhanced generation with NASA DEM training data
+    def generate_with_nasa_training(planet:, civ4_sources: [], freeciv_sources: [], nasa_dem_files: [], options: {})
+      Rails.logger.info "[PlanetaryMapGenerator] Generating with NASA training data for #{planet.name}"
+
+      # Combine all training sources
+      all_sources = []
+
+      # Add Civ4 sources
+      civ4_sources.each do |source|
+        all_sources << source.merge(type: 'civ4')
+      end
+
+      # Add FreeCiv sources
+      freeciv_sources.each do |source|
+        all_sources << source.merge(type: 'freeciv')
+      end
+
+      # Add NASA DEM sources
+      nasa_dem_files.each do |dem_file|
+        dem_source = add_nasa_dem_training_source(dem_file, planet_name: planet.name)
+        all_sources << dem_source if dem_source
+      end
+
+      # Generate using combined training data
+      generate_planetary_map(planet: planet, sources: all_sources, options: options)
+    end
+
+    # Scale map dimensions based on planetary radius for realistic proportions
+    def scale_dimensions_for_planet(base_width, base_height, planet)
+      return [base_width, base_height] unless planet.respond_to?(:radius) && planet.radius && planet.radius > 0
+
+      # Earth's radius in meters (baseline for scaling)
+      earth_radius = 6_371_000.0
+      planet_radius = planet.radius.to_f
+
+      # Calculate scaling factor based on planetary radius
+      # Use square root of radius ratio for 2D map area scaling
+      radius_ratio = planet_radius / earth_radius
+      scaling_factor = Math.sqrt(radius_ratio)
+
+      # Apply scaling with minimum size constraints
+      scaled_width = (base_width * scaling_factor).round
+      scaled_height = (base_height * scaling_factor).round
+
+      # Ensure minimum viable map size
+      min_dimension = 20
+      scaled_width = [scaled_width, min_dimension].max
+      scaled_height = [scaled_height, min_dimension].max
+
+      Rails.logger.info "[PlanetaryMapGenerator] Planet #{planet.name}: radius #{planet_radius}m (#{radius_ratio.round(3)}x Earth), scaling factor #{scaling_factor.round(3)}"
+
+      [scaled_width, scaled_height]
+    end
+
+    def planet_body_type(planet)
+      # Map planet names/types to body types for terrain generation
+      name = planet.name.downcase
+      type = planet.type.to_s.downcase
+
+      case name
+      when /moon|luna/i then 'luna'
+      when /mars/i then 'mars'
+      when /earth|terra/i then 'earth'
+      else
+        case type
+        when /terrestrial|rocky/i then 'mars'  # Default to Mars-like for terrestrial planets
+        when /airless|cratered/i then 'luna'   # Default to Luna-like for airless bodies
+        else nil
+        end
+      end
+    end
+
+    def count_biomes(terrain_grid)
+      # Count occurrences of each biome type in the terrain grid
+      counts = Hash.new(0)
+      terrain_grid.each do |row|
+        row.each do |biome|
+          counts[biome] += 1
+        end
+      end
+      counts
     end
   end
 end

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Galaxy Game - Admin Galaxies</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        /* Galaxies specific styles */
+        .galaxies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .galaxy-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .galaxy-card:hover {
+            border-color: #0f0;
+            background: #222;
+        }
+
+        .galaxy-name {
+            color: #0ff;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .galaxy-type {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .galaxy-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .galaxy-details {
+            color: #0f0;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .galaxy-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            background: #222;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value-large {
+            font-size: 36px;
+            color: #0ff;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label-large {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .type-breakdown {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .type-item {
+            text-align: center;
+            padding: 10px;
+            background: #111;
+            border: 1px solid #333;
+        }
+
+        .type-name {
+            color: #0ff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .type-count {
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header" style="grid-column: 1 / -1;">
+            <h1>GALAXY GAME - GALAXIES ADMIN</h1>
+            <div id="planetInfo">
+                Universe Overview: <%= @galaxy_stats[:total_galaxies] %> Galaxies | <%= @galaxy_stats[:total_systems] %> Solar Systems |
+                Avg <%= @galaxy_stats[:avg_systems_per_galaxy] %> Systems/Galaxy
+            </div>
+        </div>
+
+        <!-- Left Panel: Admin Navigation -->
+        <div id="toolPanel">
+            <div class="tool-section">
+                <h3>🎯 ADMIN SECTIONS</h3>
+                <button class="tool-button" onclick="window.location.href='/admin'">
+                    📊 Dashboard
+                </button>
+                <button class="tool-button active" onclick="window.location.href='/admin/galaxies'">
+                    🌌 Galaxies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/solar_systems'">
+                    ☀️ Solar Systems
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies'">
+                    🌍 Celestial Bodies
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/organizations'">
+                    🏢 Organizations
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/ai_manager/missions'">
+                    🤖 AI Manager
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>📊 GALAXY TYPES</h3>
+                <div class="type-breakdown">
+                    <div class="type-grid">
+                        <% @galaxy_stats[:galaxy_types].each do |type, count| %>
+                            <div class="type-item">
+                                <div class="type-name"><%= type %></div>
+                                <div class="type-count"><%= count %></div>
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            <!-- Statistics Overview -->
+            <div class="tool-section">
+                <h3>🌌 GALAXY STATISTICS</h3>
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-label-large">Total Galaxies</div>
+                        <div class="stat-value-large"><%= @galaxy_stats[:total_galaxies] %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label-large">Total Systems</div>
+                        <div class="stat-value-large"><%= @galaxy_stats[:total_systems] %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label-large">Avg Systems/Galaxy</div>
+                        <div class="stat-value-large"><%= @galaxy_stats[:avg_systems_per_galaxy] %></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Galaxies List -->
+            <div class="tool-section">
+                <h3>🌌 GALAXIES</h3>
+                <div class="galaxies-grid">
+                    <% @galaxies.each do |galaxy| %>
+                        <div class="galaxy-card">
+                            <div class="galaxy-name"><%= galaxy.name %></div>
+                            <div class="galaxy-type">
+                                <%= galaxy.galaxy_type&.humanize || 'Unknown Type' %> Galaxy
+                            </div>
+                            <div class="galaxy-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value"><%= galaxy.solar_systems.count %></div>
+                                    <div class="stat-label">Solar Systems</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value"><%= galaxy.solar_systems.joins(:celestial_bodies).count %></div>
+                                    <div class="stat-label">Total Bodies</div>
+                                </div>
+                            </div>
+                            <div class="galaxy-details">
+                                Identifier: <%= galaxy.identifier %><br>
+                                <% if galaxy.mass %>
+                                    Mass: <%= number_with_precision(galaxy.mass, precision: 2) %> × 10^12 M☉<br>
+                                <% end %>
+                                Created: <%= galaxy.created_at.strftime('%Y-%m-%d') %>
+                            </div>
+                            <div class="galaxy-actions">
+                                <button class="action-btn" onclick="window.location.href='/admin/galaxies/<%= galaxy.id %>'">
+                                    View Systems
+                                </button>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+
+                <% if @galaxies.empty? %>
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        No galaxies found.<br>
+                        <button class="tool-button" style="margin-top: 20px;" onclick="window.location.href='/simulation'">
+                            Initialize Simulation
+                        </button>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

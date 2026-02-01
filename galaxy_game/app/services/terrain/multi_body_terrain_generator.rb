@@ -30,17 +30,14 @@ module Terrain
       when 'luna'
         elevation_grid = apply_lunar_characteristics(elevation_grid, crater_patterns, width, height)
       when 'mars'
-        elevation_grid = apply_mars_characteristics(elevation_grid, pattern_data['patterns'], width, height)
+        elevation_grid = apply_mars_characteristics(elevation_grid, pattern_data['patterns'], width, height, options[:blueprint_data])
       when 'earth'
         elevation_grid = apply_earth_characteristics(elevation_grid, width, height)
       end
 
-      # Convert elevation to terrain types
-      terrain_grid = elevation_to_terrain_types(elevation_grid, body_type)
-
-      # Generate comprehensive terrain data
+      # Generate comprehensive terrain data (elevation only)
       terrain_data = {
-        grid: terrain_grid,
+        grid: nil,  # No biome grid - handled in rendering layer
         elevation: elevation_grid,
         width: width,
         height: height,
@@ -51,7 +48,7 @@ module Terrain
         characteristics: pattern_data['characteristics']
       }
 
-      puts "✅ Generated #{body_type.upcase} terrain: #{width}x#{height} with #{terrain_grid.flatten.uniq.size} terrain types"
+      puts "✅ Generated #{body_type.upcase} terrain: #{width}x#{height} with #{elevation_grid.flatten.uniq.size} elevation values"
       terrain_data
     end
 
@@ -124,8 +121,8 @@ module Terrain
       grid
     end
 
-    def apply_mars_characteristics(elevation_grid, patterns, width, height)
-      # Apply Mars-specific features: volcanoes, dichotomy, craters
+    def apply_mars_characteristics(elevation_grid, patterns, width, height, blueprint_data = nil)
+      # Apply Mars-specific features: volcanoes, dichotomy, craters, and blueprint constraints
       grid = elevation_grid.map(&:dup)
 
       # Add volcanic features
@@ -133,6 +130,11 @@ module Terrain
 
       # Add hemispheric dichotomy
       add_mars_dichotomy(grid, width, height)
+
+      # Apply blueprint water level constraints if available
+      if blueprint_data && blueprint_data[:historical_water_levels]
+        apply_blueprint_water_constraints(grid, blueprint_data[:historical_water_levels], width, height)
+      end
 
       grid
     end
@@ -253,74 +255,89 @@ module Terrain
       end
     end
 
-    def elevation_to_terrain_types(elevation_grid, body_type)
-      # Convert elevation values to terrain type symbols
-      grid = elevation_grid.map do |row|
-        row.map do |elev|
-          case body_type.to_s
-          when 'luna'
-            lunar_elevation_to_terrain(elev)
-          when 'mars'
-            mars_elevation_to_terrain(elev)
-          when 'earth'
-            earth_elevation_to_terrain(elev)
-          else
-            :plains  # Default
-          end
+    def apply_blueprint_water_constraints(grid, historical_water_levels, width, height)
+      puts "🌊 Applying blueprint water level constraints from historical shorelines..."
+
+      water_features = historical_water_levels[:features] || []
+      ocean_coverage = historical_water_levels[:estimated_ocean_coverage] || 0
+
+      puts "   Found #{water_features.size} water features with #{ocean_coverage}% ocean coverage"
+
+      # Scale blueprint coordinates to match grid dimensions
+      # Assume blueprint uses Civ4 coordinate system (typically smaller than our grid)
+      blueprint_width = water_features.map { |f| f[:x] }.max || 100
+      blueprint_height = water_features.map { |f| f[:y] }.max || 100
+
+      scale_x = width.to_f / blueprint_width
+      scale_y = height.to_f / blueprint_height
+
+      # Apply water level constraints
+      water_features.each do |feature|
+        # Scale coordinates to our grid
+        grid_x = (feature[:x] * scale_x).to_i
+        grid_y = (feature[:y] * scale_y).to_i
+
+        next unless grid_x >= 0 && grid_x < width && grid_y >= 0 && grid_y < height
+
+        # Apply elevation constraint based on water type
+        elevation_adjustment = feature[:elevation_adjustment] || -0.2
+
+        # Convert normalized elevation adjustment to actual elevation change
+        # Assuming grid elevations are in meters, water should be at ~0 elevation
+        current_elev = grid[grid_y][grid_x]
+        target_elev = elevation_adjustment * 1000  # Convert to meters (assuming -200m for ancient shorelines)
+
+        # Blend current elevation with water-constrained elevation
+        blend_factor = 0.7  # Strong influence from blueprint
+        constrained_elev = current_elev * (1 - blend_factor) + target_elev * blend_factor
+
+        grid[grid_y][grid_x] = constrained_elev
+
+        # Also affect neighboring cells for shoreline smoothing
+        apply_shoreline_smoothing(grid, grid_x, grid_y, target_elev, width, height)
+      end
+
+      puts "   Applied water constraints to #{water_features.size} locations"
+    end
+
+    def apply_shoreline_smoothing(grid, center_x, center_y, target_elev, width, height)
+      # Smooth shoreline transitions over neighboring cells
+      radius = 3  # Affect nearby cells
+
+      ((center_y - radius)..(center_y + radius)).each do |y|
+        next if y < 0 || y >= height
+        ((center_x - radius)..(center_x + radius)).each do |x|
+          next if x < 0 || x >= width
+          next if x == center_x && y == center_y  # Skip center
+
+          distance = Math.sqrt((x - center_x)**2 + (y - center_y)**2)
+          next if distance > radius
+
+          # Apply diminishing influence with distance
+          influence = (radius - distance) / radius * 0.3  # Max 30% influence
+          current_elev = grid[y][x]
+          smoothed_elev = current_elev * (1 - influence) + target_elev * influence
+
+          grid[y][x] = smoothed_elev
         end
-      end
-
-      grid
-    end
-
-    def lunar_elevation_to_terrain(elevation)
-      # Lunar terrain based on elevation
-      case elevation
-      when -2000..-500 then :maria      # Low-lying lava plains
-      when -500..1000 then :highlands  # Lunar highlands
-      else :mountains  # Peaks and crater rims
-      end
-    end
-
-    def mars_elevation_to_terrain(elevation)
-      # Martian terrain based on elevation
-      case elevation
-      when -8000..-2000 then :lowlands   # Vast northern plains
-      when -2000..2000 then :plains     # Mid-elevation plains
-      when 2000..8000 then :highlands   # Southern highlands
-      else :mountains  # Volcanic peaks
-      end
-    end
-
-    def earth_elevation_to_terrain(elevation)
-      # Earth-like terrain based on elevation
-      case elevation
-      when -10000..-100 then :ocean
-      when -100..0 then :coast
-      when 0..500 then :plains
-      when 500..1500 then :grasslands
-      when 1500..3000 then :mountains
-      else :arctic
       end
     end
 
     def generate_fallback_terrain(body_type, width, height)
       puts "⚠️  Using fallback terrain generation for #{body_type}"
 
-      # Simple procedural generation as fallback
-      grid = Array.new(height) do |y|
+      # Simple procedural elevation generation as fallback
+      elevation_grid = Array.new(height) do |y|
         Array.new(width) do |x|
-          case body_type.to_s
-          when 'luna' then [:maria, :highlands, :mountains].sample
-          when 'mars' then [:lowlands, :plains, :highlands, :mountains].sample
-          when 'earth' then [:ocean, :plains, :mountains].sample
-          else :plains
-          end
+          # Simple noise-based elevation
+          base_elevation = Math.sin(x * 0.01) * Math.cos(y * 0.01) * 1000
+          base_elevation.round(2)
         end
       end
 
       {
-        grid: grid,
+        grid: nil,  # No biome grid
+        elevation: elevation_grid,
         width: width,
         height: height,
         body_type: body_type,

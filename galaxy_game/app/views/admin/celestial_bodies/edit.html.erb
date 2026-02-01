@@ -181,8 +181,49 @@
                 </div>
             </div>
 
-            <div class="content-section">
-                <h3>�🔒 Protected Properties</h3>
+            <div class="content-section">                <h3>🤖 AI-Powered Earth Map Generation</h3>
+                <div class="ai-generation-section">
+                    <div class="ai-info">
+                        <p><strong>Advanced Feature:</strong> Use AI Manager to analyze multiple FreeCiv and Civ4 maps simultaneously, extracting strategic patterns and learning from terraforming examples to generate comprehensive Earth terrain.</p>
+
+                        <div class="ai-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🧠</span>
+                                <div class="feature-content">
+                                    <strong>Pattern Learning</strong>
+                                    <p>AI analyzes resource placement, settlement sites, and terrain optimization from historical maps</p>
+                                </div>
+                            </div>
+
+                            <div class="feature-item">
+                                <span class="feature-icon">🌍</span>
+                                <div class="feature-content">
+                                    <strong>Earth-Specific Generation</strong>
+                                    <p>Combines multiple map sources to create authentic Earth-like terrain with proper continental features</p>
+                                </div>
+                            </div>
+
+                            <div class="feature-item">
+                                <span class="feature-icon">📚</span>
+                                <div class="feature-content">
+                                    <strong>Continuous Learning</strong>
+                                    <p>Each generation improves AI understanding for future map creation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-actions">
+                        <%= link_to '🚀 Generate Earth Map with AI',
+                            select_maps_for_analysis_admin_celestial_bodies_path,
+                            class: 'action-btn ai-primary',
+                            title: 'Analyze multiple maps with AI to generate comprehensive Earth terrain' %>
+                        <p class="ai-note">Select from available FreeCiv and Civ4 maps for AI analysis and pattern extraction</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">                <h3>�🔒 Protected Properties</h3>
                 <div class="protected-properties">
                     <p>The following properties cannot be edited through this interface:</p>
                     <ul>
@@ -307,6 +348,90 @@
             padding: 0.5rem;
             background: #001100;
             border-radius: 4px;
+        }
+
+        /* AI Generation Section Styles */
+        .ai-generation-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .ai-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-info p {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .ai-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .feature-content strong {
+            color: #00d4ff;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-content p {
+            color: #b8c5d6;
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .ai-actions {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .action-btn.ai-primary {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+        }
+
+        .action-btn.ai-primary:hover {
+            background: linear-gradient(135deg, #33e0ff 0%, #00ccff 100%);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .ai-note {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-style: italic;
         }
 
         .warning-text {

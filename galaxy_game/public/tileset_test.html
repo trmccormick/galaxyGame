@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tileset Test</title>
+    <script src="/assets/tileset_loader.js"></script>
+</head>
+<body>
+    <h1>Tileset Loader Test</h1>
+    <canvas id="testCanvas" width="400" height="400"></canvas>
+    <div id="status"></div>
+
+    <script>
+        async function testTileset() {
+            const status = document.getElementById('status');
+            const canvas = document.getElementById('testCanvas');
+            const ctx = canvas.getContext('2d');
+
+            status.textContent = 'Loading tileset...';
+
+            const loader = new TilesetLoader('trident');
+            const success = await loader.loadTileset();
+
+            if (success) {
+                status.textContent = 'Tileset loaded successfully!';
+
+                // Test rendering different terrain types
+                const terrains = ['grassland', 'plains', 'desert', 'forest', 'ocean'];
+                terrains.forEach((terrain, index) => {
+                    const tileData = loader.getTerrainTile(terrain);
+                    if (tileData) {
+                        ctx.drawImage(
+                            tileData.image,
+                            tileData.x, tileData.y, tileData.width, tileData.height,
+                            index * 64, 0, 64, 64
+                        );
+                        ctx.fillStyle = 'white';
+                        ctx.font = '12px Arial';
+                        ctx.fillText(terrain, index * 64 + 5, 80);
+                    }
+                });
+            } else {
+                status.textContent = 'Failed to load tileset';
+            }
+        }
+
+        window.addEventListener('load', testTileset);
+    </script>
+</body>
+</html>

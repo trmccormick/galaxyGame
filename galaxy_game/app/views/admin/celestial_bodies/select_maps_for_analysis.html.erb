@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>AI Map Selection - Digital Twin Analysis Interface</title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <style>
+        /* Additional styles for map selection page */
+        .content-panel {
+            background: #1a1a1a;
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            color: #0ff;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .ai-learning-stats {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ai-learning-stats h3 {
+            color: #0ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .stat-value {
+            color: #0f0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .map-selection-section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .map-selection-section h3 {
+            color: #0ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .map-selection-section p {
+            color: #ccc;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .no-maps-message {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+        }
+
+        .no-maps-message ul {
+            text-align: left;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .no-maps-message code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #0f0;
+        }
+
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .map-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .map-card:hover {
+            border-color: #0f0;
+        }
+
+        .map-card.freeciv {
+            border-left: 4px solid #0f0;
+        }
+
+        .map-card.civ4 {
+            border-left: 4px solid #0ff;
+        }
+
+        .map-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .map-checkbox {
+            margin-top: 2px;
+        }
+
+        .map-header h4 {
+            color: #0ff;
+            margin: 0;
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .map-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .map-type, .map-folder {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .map-type.freeciv {
+            background: #0f0;
+            color: #000;
+        }
+
+        .map-type.civ4 {
+            background: #0ff;
+            color: #000;
+        }
+
+        .map-folder {
+            background: #333;
+            color: #ccc;
+        }
+
+        .map-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .detail-item .label {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .detail-item .value {
+            color: #0f0;
+            font-size: 12px;
+        }
+
+        .map-description {
+            color: #ccc;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .selection-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .selection-controls button {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #0f0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .selection-controls button:hover {
+            background: #0f0;
+            color: #000;
+            border-color: #0f0;
+        }
+
+        .generation-controls {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .generation-controls h3 {
+            color: #0ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .option-group {
+            margin-bottom: 20px;
+        }
+
+        .option-group label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: #0f0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .option-group input[type="checkbox"] {
+            margin-top: 2px;
+        }
+
+        .option-description {
+            color: #888;
+            font-size: 12px;
+            margin-left: 24px;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .generate-btn, .cancel-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .generate-btn {
+            background: #0f0;
+            color: #000;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            background: #0a0;
+        }
+
+        .generate-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .cancel-btn {
+            background: #333;
+            color: #ccc;
+            border: 1px solid #666;
+        }
+
+        .cancel-btn:hover {
+            background: #444;
+            border-color: #888;
+        }
+
+        /* Ensure scrolling works */
+        body {
+            overflow-y: auto !important;
+        }
+
+        .content-panel {
+            max-height: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="grid-template-columns: 1fr; grid-template-rows: 80px 1fr;">
+        <!-- Header -->
+        <div id="header">
+            <h1>ADMIN MAP SELECTION: AI ANALYSIS INTERFACE</h1>
+            <div id="planetInfo">
+                AI-Powered Map Analysis for Planetary Development |
+                <%= link_to '← Back to Celestial Bodies', admin_celestial_bodies_path, style: 'color: #0ff; text-decoration: none;' %>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-panel">
+            <div class="page-header">
+                <h1>AI Map Analysis Interface</h1>
+                <p class="page-subtitle">Select FreeCiv and Civ4 maps for AI analysis and planetary development planning</p>
+            </div>
+
+  <div class="ai-learning-stats">
+    <h3>AI Learning Status</h3>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-label">Learning Entries:</span>
+        <span class="stat-value"><%= @learning_stats || 0 %></span>
+      </div>
+      <% available_maps = @available_maps || [] %>
+      <div class="stat-item">
+        <span class="stat-label">Available Maps:</span>
+        <span class="stat-value"><%= available_maps.size %></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">FreeCiv Maps:</span>
+        <span class="stat-value"><%= available_maps.count { |m| m[:type] == :freeciv } %></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Civ4 Maps:</span>
+        <span class="stat-value"><%= available_maps.count { |m| m[:type] == :civ4 } %></span>
+      </div>
+    </div>
+  </div>
+
+  <%= form_with url: "#", method: :post, local: true do |form| %>
+    <div class="map-selection-section">
+      <h3>Select Maps for AI Analysis</h3>
+      <p>The Digital Twin simulation system will analyze these maps to extract strategic patterns, terrain features, and development insights. This learning data will be used for planetary development planning and "what-if" scenario simulations.</p>
+
+      <% available_maps = @available_maps || [] %>
+      <% if available_maps.empty? %>
+        <div class="no-maps-message">
+          <p>No maps found in the expected directories:</p>
+          <ul>
+            <li><code>data/maps/freeciv/</code> (for .sav files)</li>
+            <li><code>data/maps/civ4/</code> (for .Civ4WorldBuilderSave files)</li>
+          </ul>
+          <p>Please ensure map files are placed in these directories.</p>
+        </div>
+      <% else %>
+        <div class="maps-grid">
+          <% available_maps.each do |map| %>
+            <div class="map-card <%= map[:type] %>">
+              <div class="map-header">
+                <%= check_box_tag "selected_maps[]", "#{map[:type]}:#{File.basename(map[:file_path])}", false, class: 'map-checkbox' %>
+                <h4><%= map[:name] %></h4>
+                <div class="map-badges">
+                  <span class="map-type <%= map[:type] %>"><%= map[:type].to_s.upcase %></span>
+                  <% if map[:folder] %>
+                    <span class="map-folder"><%= map[:folder].titleize %></span>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="map-details">
+                <div class="detail-item">
+                  <span class="label">File:</span>
+                  <span class="value"><%= File.basename(map[:file_path]) %></span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Size:</span>
+                  <span class="value"><%= number_to_human_size(map[:size]) %></span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Modified:</span>
+                  <span class="value"><%= map[:modified].strftime('%Y-%m-%d %H:%M') %></span>
+                </div>
+              </div>
+
+              <div class="map-description">
+                <% if map[:type] == :freeciv %>
+                  <p>FreeCiv scenario file with biome-based terrain. AI will extract terrain patterns and infer strategic features.</p>
+                <% else %>
+                  <p>Civ4 WorldBuilder save with detailed elevation and terrain data. AI will extract comprehensive strategic analysis.</p>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="selection-controls">
+          <button type="button" class="select-all-btn" onclick="selectAllMaps()">Select All</button>
+          <button type="button" class="select-none-btn" onclick="selectNoMaps()">Select None</button>
+          <button type="button" class="select-freeciv-btn" onclick="selectByType('freeciv')">Select FreeCiv Only</button>
+          <button type="button" class="select-civ4-btn" onclick="selectByType('civ4')">Select Civ4 Only</button>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="generation-controls">
+      <h3>Analysis Options</h3>
+
+      <div class="option-group">
+        <label>
+          <%= check_box_tag :apply_pattern_learning, true, true %>
+          Apply Pattern Learning & Analysis
+        </label>
+        <p class="option-description">Extract terrain patterns, settlement locations, and strategic features from selected maps for use in Digital Twin simulations.</p>
+      </div>
+
+      <div class="option-group">
+        <label>
+          <%= check_box_tag :include_terrain_analysis, true, true %>
+          Include Terrain Analysis
+        </label>
+        <p class="option-description">Analyze elevation, biome distribution, and geographical features for planetary development planning.</p>
+      </div>
+
+      <div class="option-group">
+        <label>
+          <%= check_box_tag :generate_scenario_templates, true, true %>
+          Generate Scenario Templates
+        </label>
+        <p class="option-description">Create reusable templates for "what-if" terraforming scenarios and development simulations.</p>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <%= form.submit "Analyze Selected Maps", class: 'generate-btn', disabled: available_maps.empty? %>
+      <%= link_to "Cancel", admin_celestial_bodies_path, class: 'cancel-btn' %>
+    </div>
+  <% end %>
+
+    <script>
+    // Map selection JavaScript functions
+    function selectAllMaps() {
+      document.querySelectorAll('.map-checkbox').forEach(cb => cb.checked = true);
+    }
+
+    function selectNoMaps() {
+      document.querySelectorAll('.map-checkbox').forEach(cb => cb.checked = false);
+    }
+
+    function selectByType(type) {
+      document.querySelectorAll('.map-checkbox').forEach(cb => {
+        const card = cb.closest('.map-card');
+        const shouldCheck = card.classList.contains(type);
+        cb.checked = shouldCheck;
+      });
+    }
+
+    // Auto-select Earth-related maps if available
+    document.addEventListener('DOMContentLoaded', function() {
+      const earthMaps = ['earth', 'world', 'continents'];
+      document.querySelectorAll('.map-card').forEach(card => {
+        const mapName = card.querySelector('h4').textContent.toLowerCase();
+        const isEarthMap = earthMaps.some(keyword => mapName.includes(keyword));
+        if (isEarthMap) {
+          card.querySelector('.map-checkbox').checked = true;
+          card.style.borderColor = '#28a745';
+        }
+      });
+    });
+    </script>
+</body>
+</html>

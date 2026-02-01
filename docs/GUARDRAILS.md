@@ -74,7 +74,12 @@
   - **Layer 3:** FreeCiv complete terraforming targets (scaled from 133x64 to 1800x900) - represents fully terraformed Mars with 40% ocean coverage for TerraSim simulations
 - **Architecture Correction:** Removed blueprint water constraints from NASA base; Civ4/FreeCiv data now stored as future possibility spaces for AI Manager/TerraSim planning, not elevation constraints
 - **Integration:** Civ4 biomes represent achievable future states (cities, settlements, resources); FreeCiv represents complete terraforming success
-- **Scaling:** Nearest-neighbor interpolation for coordinate transformation between different grid sizes
+- **Scaling:** Diameter-based grid sizing with nearest-neighbor interpolation for coordinate transformation between different source sizes
+- **Grid Dimensions:** Calculated based on planetary diameter relative to Earth (12742km):
+  - Small bodies (<1000km diameter): 60×30 to 120×60 tiles
+  - Medium bodies (1000-5000km diameter): 120×60 to 360×180 tiles  
+  - Large bodies (>5000km diameter): 180×90 to 720×360 tiles
+  - FreeCiv tileset compatibility maintained across all sizes
 - **Result:** Mars terrain uses all available data sources with proper separation of concerns and future-state planning capabilities
 
 ## 💵 8. Economic System Guardrails

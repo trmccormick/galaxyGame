@@ -74,5 +74,4 @@ RSpec.describe DigitalTwinService do
     # it 'returns current twin state'
     # it 'includes simulation progress if running'
   end
-end</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/galaxy_game/spec/services/digital_twin_service_spec.rb
+end

@@ -292,6 +292,9 @@ module StarSim
         # Always create a biosphere, using seed data if present, or defaults if not
         create_biosphere(body, body_data[:biosphere])
 
+        # Generate automatic terrain for planets that don't have it
+        generate_automatic_terrain(body) if should_generate_terrain?(body)
+
         body
       else
         puts "ERROR: Failed to create #{body_name} (#{model_class.name}): #{body.errors.full_messages.join(', ')}" if @debug_mode
@@ -556,6 +559,41 @@ module StarSim
       biosphere.skip_simulation = true if biosphere.respond_to?(:skip_simulation=)
       biosphere.save!
       puts "Created biosphere for #{body.name}." if @debug_mode
-    end  
+    end
+
+    # Generate automatic terrain for newly created celestial bodies
+    # @param body [CelestialBodies::CelestialBody] The body to generate terrain for.
+    def generate_automatic_terrain(body)
+      return unless should_generate_terrain?(body)
+
+      begin
+        terrain_generator = StarSim::AutomaticTerrainGenerator.new
+        terrain_generator.generate_terrain_for_body(body)
+        puts "Generated automatic terrain for #{body.name}." if @debug_mode
+      rescue => e
+        puts "WARNING: Failed to generate automatic terrain for #{body.name}: #{e.message}" if @debug_mode
+        Rails.logger.warn "[SystemBuilderService] Terrain generation failed for #{body.name}: #{e.message}"
+      end
+    end
+
+    # Determine if this body should get automatic terrain generation
+    # @param body [CelestialBodies::CelestialBody] The body to check.
+    # @return [Boolean] True if terrain should be generated.
+    def should_generate_terrain?(body)
+      # Only generate terrain for planets/moons that don't already have it
+      return false if body.geosphere&.terrain_map.present?
+
+      # Generate terrain for terrestrial planets and major moons
+      case body.class.name
+      when /TerrestrialPlanet/, /SuperEarth/, /CarbonPlanet/, /LavaWorld/, /OceanPlanet/
+        true
+      when /Moon/
+        # Only major moons get detailed terrain
+        major_moons = ['Luna', 'Titan', 'Ganymede', 'Callisto', 'Io', 'Europa', 'Rhea', 'Iapetus', 'Dione', 'Tethys', 'Enceladus', 'Mimas']
+        major_moons.include?(body.name) || body.mass.to_f > 1e20
+      else
+        false
+      end
+    end
   end
 end

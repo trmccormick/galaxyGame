@@ -42,41 +42,24 @@ module Import
       terrain_type = plot[:terrain_type]
       feature_type = plot[:feature_type]
 
-      # Base elevation from PlotType (4 discrete levels)
+      # Base elevation from PlotType (4 discrete levels) - STRICT SEPARATION FOR AI TRAINING
       base_elevation = case plot_type
-      when 0 then 0.65  # Flat land - above water but more reasonable
-      when 1 then 0.55  # Coastal - elevated shore
-      when 2 then 0.80  # Hills - clearly elevated
-      when 3 then        # Water OR mountain peaks (ambiguous!)
-        # Disambiguate using TerrainType
-        case terrain_type
-        when 'TERRAIN_OCEAN' then 0.35  # Deep ocean basin (raised from 0.10)
-        when 'TERRAIN_COAST' then 0.45  # Shallow coastal water (raised from 0.20)
-        when 'TERRAIN_SNOW' then 0.90   # Snow-capped mountain peaks
-        when 'TERRAIN_GRASS' then 0.85  # High grass-covered peaks
-        when 'TERRAIN_PLAINS' then 0.80 # High plains peaks
-        when 'TERRAIN_TUNDRA' then 0.85 # High tundra peaks
-        when 'TERRAIN_DESERT' then 0.75 # High desert peaks
-        else 0.15  # Default to water
-        end
+      when 0 then 0.65  # Flat land - always above water
+      when 1 then 0.55  # Coastal land - elevated shore
+      when 2 then 0.80  # Hills - clearly elevated land
+      when 3 then 0.35  # WATER - always underwater regardless of terrain type
       else 0.50  # Fallback
       end
 
-      # TerrainType refinements for land plots
+      # TerrainType refinements for land plots ONLY (PlotType 0,1,2)
+      # Water areas (PlotType 3) keep their base water elevation
       if plot_type != 3 && terrain_type
         base_elevation = refine_elevation_for_terrain(base_elevation, terrain_type)
       end
 
-      # FeatureType adjustments
-      if feature_type
+      # FeatureType adjustments (for land areas only)
+      if feature_type && plot_type != 3
         base_elevation = apply_feature_adjustment(base_elevation, feature_type)
-      end
-
-      # CRITICAL: Ensure land areas (non-water terrain) are always above sea level
-      # If an area has biomes/terrain, it cannot be underwater
-      is_water_terrain = ['TERRAIN_OCEAN', 'TERRAIN_COAST'].include?(terrain_type)
-      if !is_water_terrain && plot_type != 3
-        base_elevation = [base_elevation, 0.50].max  # Reasonable minimum elevation for land
       end
 
       # Clamp to valid range

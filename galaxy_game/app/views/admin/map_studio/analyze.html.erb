@@ -81,7 +81,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: conic-gradient(#0f0 <%= @map[:quality_score] * 36 %>deg, #333 0deg);
+            background: conic-gradient(#0f0 <%= (@map[:quality_score] || 5) * 36 %>deg, #333 0deg);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -218,11 +218,11 @@
 
         <div class="analysis-container">
             <div class="map-preview-section">
-                <h2 class="map-title"><%= @map[:name] %></h2>
+                <h2 class="map-title"><%= @map[:planet_name] || "Generated Map" %></h2>
                 <div class="map-meta">
-                    Generated: <%= @map[:created_at] %><br>
-                    Based on: <%= @map[:source_maps].join(', ') %><br>
-                    Target: <%= @map[:target_body] || 'Generic Planet' %>
+                    Generated: <%= @map.dig(:metadata, :generated_at) ? Time.parse(@map.dig(:metadata, :generated_at)).strftime('%Y-%m-%d %H:%M') : 'Unknown' %><br>
+                    Based on: <%= @map.dig(:metadata, :source_maps)&.join(', ') || 'Procedural generation' %><br>
+                    Target: <%= @map[:planet_name] || 'Generic Planet' %>
                 </div>
 
                 <div class="map-preview-large">
@@ -240,42 +240,61 @@
                 <h3 class="analysis-title">📊 Analysis Results</h3>
 
                 <div class="quality-score">
-                    <div class="score-circle"><%= @map[:quality_score] %>/10</div>
+                    <div class="score-circle"><%= @map[:quality_score] || 5 %>/10</div>
                     <div class="score-label">Overall Quality Score</div>
                 </div>
 
                 <div class="analysis-metrics">
                     <div class="metric-card">
-                        <div class="metric-value"><%= @map[:terrain_diversity] %>%</div>
+                        <div class="metric-value"><%= (@analysis[:terrain_diversity] * 100).round %>%</div>
                         <div class="metric-label">Terrain Diversity</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value"><%= @map[:biome_balance] %>%</div>
+                        <div class="metric-value"><%= (@analysis[:resource_balance] * 100).round %>%</div>
                         <div class="metric-label">Biome Balance</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value"><%= @map[:resource_richness] %></div>
+                        <div class="metric-value"><%= @analysis[:strategic_features][:coastal_sites] %></div>
                         <div class="metric-label">Resource Richness</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value"><%= @map[:playability_score] %>%</div>
+                        <div class="metric-value"><%= (@analysis[:overall_score] * 100).round %>%</div>
                         <div class="metric-label">Playability</div>
                     </div>
                 </div>
 
                 <div class="terrain-breakdown">
                     <h4 style="color: #0ff; margin-bottom: 10px;">🗺️ Terrain Composition</h4>
-                    <% @map[:terrain_breakdown].each do |terrain, percentage| %>
-                        <div class="terrain-item">
-                            <span class="terrain-name"><%= terrain %></span>
-                            <span class="terrain-percentage"><%= percentage %>%</span>
-                        </div>
+                    <% if @map[:biome_counts] %>
+                        <% total_tiles = @map[:biome_counts].values.sum %>
+                        <% @map[:biome_counts].each do |biome, count| %>
+                            <div class="terrain-item">
+                                <span class="terrain-name"><%= biome.upcase %></span>
+                                <span class="terrain-percentage"><%= ((count.to_f / total_tiles) * 100).round %>%</span>
+                            </div>
+                        <% end %>
+                    <% else %>
+                        <div class="terrain-item">No terrain data available</div>
                     <% end %>
                 </div>
 
                 <div class="recommendations">
                     <div class="recommendation-title">💡 Recommendations</div>
-                    <% @map[:recommendations].each do |rec| %>
+                    <% recommendations = [] %>
+                    <% if @analysis[:terrain_diversity] > 0.3 %>
+                        <% recommendations << "Good terrain diversity for varied gameplay" %>
+                    <% else %>
+                        <% recommendations << "Consider adding more terrain types for variety" %>
+                    <% end %>
+                    <% if @map[:terrain_grid] && @map[:terrain_grid].size > 50 %>
+                        <% recommendations << "Large map size suitable for extensive exploration" %>
+                    <% end %>
+                    <% if @map.dig(:metadata, :source_maps)&.any? %>
+                        <% recommendations << "Based on #{(@map.dig(:metadata, :source_maps) || []).size} source maps for authenticity" %>
+                    <% else %>
+                        <% recommendations << "Procedurally generated - consider combining with source maps" %>
+                    <% end %>
+                    <% recommendations.each do |rec| %>
                         <div class="recommendation-item">• <%= rec %></div>
                     <% end %>
                 </div>

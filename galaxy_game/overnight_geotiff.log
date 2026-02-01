@@ -1,0 +1,373 @@
+2026-01-30 04:12:16 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:12:16 - Starting Phase 1: Data Acquisition
+2026-01-30 04:12:16 - Downloading ETOPO 2022 (70MB)...
+[0;34m📋 Downloading ETOPO 2022 elevation data...[0m
+[0;31m❌ ERROR: Failed to download ETOPO data[0m
+2026-01-30 04:13:11 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:13:11 - Starting Phase 1: Data Acquisition
+2026-01-30 04:13:11 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 04:13:11 - Converting NetCDF to GeoTIFF...
+[0;34m📋 Converting to GeoTIFF format...[0m
+[0;31m❌ ERROR: Failed to convert NetCDF to GeoTIFF[0m
+2026-01-30 04:13:33 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:13:33 - Starting Phase 1: Data Acquisition
+2026-01-30 04:13:33 - Downloading ETOPO 2022 (70MB)...
+[0;34m📋 Downloading ETOPO 2022 elevation data...[0m
+[0;31m❌ ERROR: Failed to download ETOPO data[0m
+2026-01-30 04:13:41 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:13:41 - Starting Phase 1: Data Acquisition
+2026-01-30 04:13:41 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 04:13:41 - Converting NetCDF to GeoTIFF...
+[0;34m📋 Converting to GeoTIFF format...[0m
+[0;31m❌ ERROR: Failed to convert NetCDF to GeoTIFF[0m
+2026-01-30 04:13:45 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:13:45 - Starting Phase 1: Data Acquisition
+2026-01-30 04:13:45 - Downloading ETOPO 2022 (70MB)...
+[0;34m📋 Downloading ETOPO 2022 elevation data...[0m
+[0;32m✅ ETOPO data downloaded successfully[0m
+2026-01-30 04:16:37 - Converting NetCDF to GeoTIFF...
+[0;34m📋 Converting to GeoTIFF format...[0m
+[0;32m✅ GeoTIFF conversion completed[0m
+2026-01-30 04:17:51 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 04:17:51 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 04:17:51 - Testing GeoTIFF reader...
+[0;31m❌ ERROR: GeoTIFF reader test failed[0m
+2026-01-30 04:17:57 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:17:58 - Starting Phase 1: Data Acquisition
+2026-01-30 04:17:58 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 04:17:58 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 04:17:58 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 04:17:58 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 04:17:58 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 04:17:59 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 04:17:59 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 04:18:13 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:18:13 - Starting Phase 1: Data Acquisition
+2026-01-30 04:18:13 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 04:18:13 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 04:18:13 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 04:18:14 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 04:18:14 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 04:18:14 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 04:18:14 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 04:18:24 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:18:24 - Starting Phase 1: Data Acquisition
+2026-01-30 04:18:24 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 04:18:24 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 04:18:24 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 04:18:24 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 04:18:24 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 04:18:24 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 04:18:24 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 04:18:37 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 04:18:37 - Starting Phase 1: Data Acquisition
+2026-01-30 04:18:37 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 04:18:37 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 04:18:37 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 04:18:37 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 04:18:37 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 04:18:38 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 04:18:38 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 05:32:16 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 05:32:16 - Starting Phase 1: Data Acquisition
+2026-01-30 05:32:16 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 05:32:16 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 05:32:16 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 05:32:17 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 05:32:17 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 05:32:17 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 05:32:17 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 06:24:53 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 06:24:53 - Starting Phase 1: Data Acquisition
+2026-01-30 06:24:53 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 06:24:53 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 06:24:53 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 06:24:53 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 06:24:53 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 06:24:56 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 06:24:56 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 06:41:52 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 06:41:52 - Starting Phase 1: Data Acquisition
+2026-01-30 06:41:52 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 06:41:52 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 06:41:52 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 06:41:53 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 06:41:53 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 06:41:53 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 06:41:53 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction completed but file is missing or empty[0m
+2026-01-30 13:47:25 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 13:47:25 - Starting Phase 1: Data Acquisition
+2026-01-30 13:47:25 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 13:47:25 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 13:47:25 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 13:47:25 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 13:47:25 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 13:47:26 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 13:47:26 - Running pattern extraction...
+[0;32m✅ Elevation patterns extracted and saved[0m
+[0;32m✅ PHASE 3 COMPLETE: Elevation patterns extracted[0m
+[0;34m📋 BONUS: Generating Test Map[0m
+2026-01-30 13:51:52 - Generating test map with new patterns
+2026-01-30 13:51:52 - Generating test map...
+[0;31m❌ ERROR: Test map generation failed[0m
+2026-01-30 13:53:47 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 13:53:47 - Starting Phase 1: Data Acquisition
+2026-01-30 13:53:47 - Downloading ETOPO 2022 (70MB)...
+[0;34m📋 Downloading ETOPO 2022 elevation data...[0m
+2026-01-30 13:54:40 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 13:54:40 - Starting Phase 1: Data Acquisition
+2026-01-30 13:54:40 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 13:54:40 - Converting NetCDF to GeoTIFF...
+[0;34m📋 Converting to GeoTIFF format...[0m
+[0;31m❌ ERROR: Failed to convert NetCDF to GeoTIFF[0m
+2026-01-30 13:54:47 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 13:54:47 - Starting Phase 1: Data Acquisition
+2026-01-30 13:54:47 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 13:54:47 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 13:54:47 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 13:54:48 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 13:54:48 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 13:54:48 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 13:54:48 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 13:55:14 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 13:55:14 - Starting Phase 1: Data Acquisition
+2026-01-30 13:55:14 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 13:55:14 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 13:55:14 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 13:55:15 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 13:55:15 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 13:55:15 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 13:55:15 - Running pattern extraction...
+[0;31m❌ ERROR: Pattern extraction failed[0m
+2026-01-30 13:55:40 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 13:55:40 - Starting Phase 1: Data Acquisition
+2026-01-30 13:55:40 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 13:55:40 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 13:55:40 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 13:55:40 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 13:55:40 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 13:55:41 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 13:55:41 - Running pattern extraction...
+[0;32m✅ ETOPO data downloaded successfully[0m
+2026-01-30 13:56:22 - Converting NetCDF to GeoTIFF...
+[0;34m📋 Converting to GeoTIFF format...[0m
+[0;31m❌ ERROR: Failed to convert NetCDF to GeoTIFF[0m
+[0;32m✅ Elevation patterns extracted and saved[0m
+[0;32m✅ PHASE 3 COMPLETE: Elevation patterns extracted[0m
+[0;34m📋 BONUS: Generating Test Map[0m
+2026-01-30 14:16:14 - Generating test map with new patterns
+2026-01-30 14:16:14 - Generating test map...
+[0;31m❌ ERROR: Test map generation failed[0m
+2026-01-30 14:16:27 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 14:16:27 - Starting Phase 1: Data Acquisition
+2026-01-30 14:16:27 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 14:16:27 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 14:16:27 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 14:16:27 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 14:16:27 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 14:16:28 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 14:16:28 - Running pattern extraction...
+[0;32m✅ Elevation patterns extracted and saved[0m
+[0;32m✅ PHASE 3 COMPLETE: Elevation patterns extracted[0m
+[0;34m📋 BONUS: Generating Test Map[0m
+2026-01-30 14:20:29 - Generating test map with new patterns
+2026-01-30 14:20:29 - Generating test map...
+[0;31m❌ ERROR: Test map generation failed[0m
+2026-01-30 14:21:13 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 14:21:13 - Starting Phase 1: Data Acquisition
+2026-01-30 14:21:13 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 14:21:13 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 14:21:13 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 14:21:13 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 14:21:13 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 14:21:14 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 14:21:14 - Running pattern extraction...
+[0;32m✅ Elevation patterns extracted and saved[0m
+[0;32m✅ PHASE 3 COMPLETE: Elevation patterns extracted[0m
+[0;34m📋 BONUS: Generating Test Map[0m
+2026-01-30 14:25:05 - Generating test map with new patterns
+2026-01-30 14:25:06 - 🌙 Overnight task completed successfully!
+[0;32m✅ OVERNIGHT TASK COMPLETE - Ready for morning review![0m
+2026-01-30 14:25:32 - 🌙 Starting overnight GeoTIFF setup...
+[0;34m📋 Creating directories...[0m
+[0;34m📋 PHASE 1: Data Acquisition[0m
+2026-01-30 14:25:32 - Starting Phase 1: Data Acquisition
+2026-01-30 14:25:32 - ETOPO file already exists, skipping download
+[0;34m📋 ETOPO data already downloaded[0m
+2026-01-30 14:25:32 - GeoTIFF file already exists, skipping conversion
+[0;34m📋 GeoTIFF conversion already completed[0m
+2026-01-30 14:25:32 - Verifying GeoTIFF data...
+[0;32m✅ GeoTIFF data verified[0m
+[0;32m✅ PHASE 1 COMPLETE: Data acquisition finished[0m
+[0;34m📋 PHASE 2: GeoTIFF Reader Test[0m
+2026-01-30 14:25:33 - Starting Phase 2: GeoTIFF Reader Test
+2026-01-30 14:25:33 - Testing GeoTIFF reader...
+[0;32m✅ GeoTIFF reader test passed[0m
+[0;32m✅ PHASE 2 COMPLETE: GeoTIFF reader verified[0m
+[0;34m📋 PHASE 3: Elevation Pattern Extraction (Improved with Beta Distribution)[0m
+2026-01-30 14:25:34 - Starting Phase 3: Elevation Pattern Extraction using improved extractors
+2026-01-30 14:25:34 - Running pattern extraction...
+[0;32m✅ Elevation patterns extracted and saved[0m
+[0;32m✅ PHASE 3 COMPLETE: Elevation patterns extracted[0m
+[0;34m📋 BONUS: Generating Test Map[0m
+2026-01-30 14:29:30 - Generating test map with new patterns
+2026-01-30 14:29:30 - 🌙 Overnight task completed successfully!
+[0;32m✅ OVERNIGHT TASK COMPLETE - Ready for morning review![0m

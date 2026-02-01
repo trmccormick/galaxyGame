@@ -1,0 +1,54 @@
+Step 1: Downloading Lunar DEM from USGS...
+  Source: LRO LOLA Global DEM (118m resolution)
+  Size: ~350MB (this will take a few minutes)
+
+** Resuming transfer from byte position 8494203833
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   286    0   286    0     0    433      0 --:--:-- --:--:-- --:--:--   433
+100   385    0   385    0     0    426      0 --:--:-- --:--:-- --:--:--   426
+✓ Luna DEM downloaded successfully
+-rw-r--r--  1 tam0013  staff   7.9G Jan 30 20:59 data/geotiff/raw/luna_lola_118m.tif
+
+Step 2: Downloading Mars DEM from USGS...
+  Source: MGS MOLA Global DEM (463m resolution)
+  Size: ~180MB (this will take a few minutes)
+
+** Resuming transfer from byte position 2125771142
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   283    0   283    0     0    435      0 --:--:-- --:--:-- --:--:--   435
+100   365    0   365    0     0    415      0 --:--:-- --:--:-- --:--:--   415
+✓ Mars DEM downloaded successfully
+-rw-r--r--  1 tam0013  staff   2.0G Jan 30 21:03 data/geotiff/raw/mars_mola_463m.tif
+
+Step 3: Processing Luna to 1800x900 resolution...
+Input file size is 92160, 46080
+0...10...20...30...40...50...60...70...80...90...100 - done in 00:00:49.
+✓ Luna processed
+-rw-r--r--  1 tam0013  staff   2.5M Jan 30 21:46 data/geotiff/processed/luna_1800x900.tif
+
+Step 4: Processing Mars to 1800x900 resolution...
+Input file size is 46080, 23040
+0...10...20...30...40...50...60...70...80...90...100 - done in 00:00:14.
+✓ Mars processed
+-rw-r--r--  1 tam0013  staff   2.0M Jan 30 21:46 data/geotiff/processed/mars_1800x900.tif
+
+Step 5: Converting to ASCII format for Ruby...
+Input file size is 1800, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+✓ Luna ASCII created
+Input file size is 1800, 900
+0...10...20...30...40...50...60...70...80...90...100 - done.
+✓ Mars ASCII created
+
+==========================================
+DOWNLOAD & PROCESSING COMPLETE!
+Finished at: Fri Jan 30 21:46:50 EST 2026
+==========================================
+
+Files ready:
+-rw-r--r--  1 tam0013  staff   3.4M Jan 30 21:46 data/geotiff/processed/luna_1800x900.asc.gz
+-rw-r--r--  1 tam0013  staff   2.9M Jan 30 21:46 data/geotiff/processed/mars_1800x900.asc.gz
+
+Ready for Night 2 multi-body pattern extraction

@@ -659,6 +659,38 @@ module CelestialBodies
       self.properties['has_magnetosphere'] = value
     end
 
+    # Return magnetic field strength in Gauss
+    # Used by terrain generation and atmospheric modeling
+    def magnetic_field
+      return magnetic_field_strength if respond_to?(:magnetic_field_strength)
+      
+      # For bodies with magnetospheres, estimate field strength
+      if has_magnetosphere
+        # Base field strength depends on body type and mass
+        base_field = case body_category
+        when 'terrestrial_planet'
+          # Earth-like: ~0.25-0.65 Gauss
+          mass_factor = (mass.to_f / 5.97e24) ** 0.3  # Earth mass reference
+          rotation_factor = rotational_period.present? ? [24.0 / rotational_period.to_f, 0.1].max : 1.0
+          0.5 * mass_factor * rotation_factor
+        when 'gas_giant'
+          # Gas giants: ~1-10 Gauss
+          mass_factor = (mass.to_f / 1.898e27) ** 0.2  # Jupiter mass reference
+          4.0 * mass_factor
+        when 'ice_giant'
+          # Ice giants: ~0.1-1 Gauss
+          mass_factor = (mass.to_f / 2.5e26) ** 0.2  # Uranus/Neptune reference
+          0.5 * mass_factor
+        else
+          # Default for other magnetized bodies
+          0.1
+        end
+        base_field.clamp(0.01, 50.0)  # Reasonable bounds
+      else
+        0.0  # No magnetic field
+      end
+    end
+
     private
 
     def set_defaults

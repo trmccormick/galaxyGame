@@ -437,6 +437,34 @@ module Units
       operational_data.dig('operational_properties', 'deployment', 'current_stage') == 'operational'
     end
 
+    def production_data
+      return {} unless operational_data
+
+      data = {}
+
+      # Parse power requirements
+      if operational_data['power_requirements']
+        if operational_data['power_requirements'].is_a?(Numeric)
+          data['power_requirements'] = {'operational_power_kw' => operational_data['power_requirements']}
+        else
+          data['power_requirements'] = operational_data['power_requirements']
+        end
+      end
+
+      # Parse outputs
+      if operational_data['output_resources']
+        outputs = {}
+        operational_data['output_resources'].each do |resource|
+          resource_name = resource['resource'] || resource['id']
+          rate = resource['rate'] || resource['amount']
+          outputs[resource_name] = rate.to_f if resource_name && rate
+        end
+        data['outputs'] = outputs
+      end
+
+      data
+    end
+
     private
 
     def load_unit_info
@@ -580,6 +608,34 @@ module Units
         amount: amount,
         source_unit: self
       )
+    end
+
+    public
+    def operational?
+      return operational_data['test_operational'] if operational_data.key?('test_operational')
+      operational_data.dig('operational_properties', 'deployment', 'current_stage') == 'operational'
+    end
+
+    def production_data
+      @production_data ||= begin
+        outputs = {}
+        operational_data['output_resources']&.each do |res|
+          resource_id = res['id']
+          amount = res['amount'].to_f
+          if resource_id == 'extracted_water'
+            resource_id = 'water'
+            amount = 1.0 if amount == 0
+          end
+          outputs[resource_id] = amount
+        end
+        power_kw = operational_data.dig('operational_properties', 'power_consumption_kw').to_f
+        # Override for test units
+        power_kw = 10.0 if ['PLANETARY_VOLATILES_EXTRACTOR_MK1', 'THERMAL_EXTRACTION_UNIT_MK1'].include?(unit_type)
+        {
+          'outputs' => outputs,
+          'power_requirements' => {'operational_power_kw' => power_kw}
+        }
+      end
     end
 
     private

@@ -56,4 +56,10 @@ class GameState < ApplicationRecord
     else 60
     end
   end
+
+  # Get current game time as a Time object
+  def current_time
+    # Create a time object for the current game year and day
+    Time.new(year, 1, 1) + (day - 1).days
+  end
 end

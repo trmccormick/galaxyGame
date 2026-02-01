@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_23_174416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -392,6 +392,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
     t.index ["material_id"], name: "index_celestial_bodies_materials_on_material_id"
   end
 
+  create_table "celestial_bodies_spheres_cryospheres", force: :cascade do |t|
+    t.bigint "celestial_body_id", null: false
+    t.float "thickness"
+    t.json "composition"
+    t.boolean "artificial", default: false
+    t.string "shell_type"
+    t.float "thermal_conductivity"
+    t.float "density"
+    t.boolean "convecting", default: false
+    t.json "properties"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["celestial_body_id"], name: "index_celestial_bodies_spheres_cryospheres_on_celestial_body_id"
+  end
+
   create_table "celestial_locations", force: :cascade do |t|
     t.string "name", null: false
     t.string "coordinates", null: false
@@ -577,20 +592,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
     t.index ["to_currency_id"], name: "index_exchange_rates_on_to_currency_id"
   end
 
-  create_table "exotic_materials", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "state"
-    t.bigint "geosphere_id", null: false
-    t.integer "rarity", default: 0
-    t.integer "stability", default: 0
-    t.decimal "percentage", precision: 10, scale: 4
-    t.decimal "mass", precision: 20, scale: 4
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["geosphere_id", "name"], name: "index_exotic_materials_on_geosphere_id_and_name", unique: true
-    t.index ["geosphere_id"], name: "index_exotic_materials_on_geosphere_id"
-  end
-
   create_table "galaxies", force: :cascade do |t|
     t.string "name"
     t.string "identifier", null: false
@@ -667,6 +668,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
     t.json "stored_volatiles"
     t.boolean "ice_tectonic_enabled", default: false
     t.float "total_geosphere_mass", default: 0.0
+    t.jsonb "terrain_map"
     t.index ["celestial_body_id"], name: "index_geospheres_on_celestial_body_id"
   end
 
@@ -1528,6 +1530,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
   add_foreign_key "celestial_bodies_alien_life_forms", "biospheres"
   add_foreign_key "celestial_bodies_materials", "celestial_bodies"
   add_foreign_key "celestial_bodies_materials", "materials"
+  add_foreign_key "celestial_bodies_spheres_cryospheres", "celestial_bodies"
   add_foreign_key "celestial_locations", "celestial_bodies"
   add_foreign_key "colonies", "celestial_bodies"
   add_foreign_key "component_production_jobs", "base_settlements", column: "settlement_id"
@@ -1542,7 +1545,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_20_000001) do
   add_foreign_key "environments", "celestial_bodies", column: "celestial_bodies_id"
   add_foreign_key "exchange_rates", "currencies", column: "from_currency_id"
   add_foreign_key "exchange_rates", "currencies", column: "to_currency_id"
-  add_foreign_key "exotic_materials", "geospheres"
   add_foreign_key "gases", "atmospheres"
   add_foreign_key "geological_materials", "geospheres"
   add_foreign_key "geospheres", "celestial_bodies"
