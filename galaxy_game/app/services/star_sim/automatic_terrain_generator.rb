@@ -173,49 +173,34 @@ module StarSim
       scale.clamp(0.5, 2.0)
     end
 
-    # Calculate diameter-based grid dimensions for proper FreeCiv tileset compatibility
+    # Calculate diameter-based grid dimensions using FreeCiv Earth map as reference
     def calculate_diameter_based_grid_size(body)
-      diameter_km = (body.radius.to_f / 1000) * 2  # Convert radius to diameter
-      earth_diameter_km = 12742  # Earth's diameter in km
+      # Use FreeCiv Earth map dimensions as reference (180x90 tiles for Earth-sized planets)
+      earth_diameter_km = 12742.0  # Earth's diameter in km
+      freeciv_earth_width = 180
+      freeciv_earth_height = 90
 
-      # Base grid size on Earth's 1800x900 as reference
-      # Scale proportionally but with bounds for FreeCiv compatibility
-      scale_factor = (diameter_km / earth_diameter_km.to_f)
+      # Calculate planet's diameter
+      planet_diameter_km = (body.radius.to_f / 1000) * 2  # Convert radius to diameter
 
-      # FreeCiv tilesets work best with certain grid sizes
-      # Small bodies (asteroids, small moons): 40x20 to 80x40
-      # Medium bodies (Mars, Venus, large moons): 120x60 to 160x80
-      # Large bodies (Earth, super-Earths): 180x90 and up
+      # Scale proportionally to Earth's FreeCiv map size
+      scale_factor = planet_diameter_km / earth_diameter_km
 
-      if diameter_km < 1000  # Small asteroids/moons
-        base_width = 60
-        base_height = 30
-        max_scale = 2.0  # Allow some scaling up for larger small bodies
-      elsif diameter_km < 5000  # Mars-sized bodies
-        base_width = 120
-        base_height = 60
-        max_scale = 3.0  # Allow scaling up to Earth-like for larger terrestrial planets
-      else  # Earth-sized and larger
-        base_width = 180
-        base_height = 90
-        max_scale = 4.0  # Allow significant scaling for gas giants/super-Earths
-      end
+      # Apply scaling with minimum and maximum bounds for FreeCiv compatibility
+      scaled_width = (freeciv_earth_width * scale_factor).round
+      scaled_height = (freeciv_earth_height * scale_factor).round
 
-      # Apply scaling with bounds
-      scaled_width = (base_width * [scale_factor, max_scale].min).round
-      scaled_height = (base_height * [scale_factor, max_scale].min).round
+      # Ensure minimum viable size for FreeCiv gameplay (at least 40x20)
+      final_width = [scaled_width, 40].max
+      final_height = [scaled_height, 20].max
 
-      # Ensure minimum viable size for FreeCiv gameplay
-      final_width = [scaled_width, 40].max   # Minimum 40 tiles wide
-      final_height = [scaled_height, 20].max # Minimum 20 tiles high
-
-      # Cap at reasonable maximum for performance
-      final_width = [final_width, 3600].min  # Maximum 3600 tiles wide
-      final_height = [final_height, 1800].min # Maximum 1800 tiles high
+      # Cap at reasonable maximum for performance (max 720x360, 4x Earth size)
+      final_width = [final_width, 720].min
+      final_height = [final_height, 360].min
 
       Rails.logger.info "[AutomaticTerrainGenerator] Calculated grid size for #{body.name}: " \
-                       "#{final_width}x#{final_height} (diameter: #{diameter_km.round}km, " \
-                       "scale_factor: #{scale_factor.round(3)})"
+                       "#{final_width}x#{final_height} (diameter: #{planet_diameter_km.round}km, " \
+                       "scale_factor: #{scale_factor.round(3)} vs FreeCiv Earth reference)"
 
       { width: final_width, height: final_height }
     end
