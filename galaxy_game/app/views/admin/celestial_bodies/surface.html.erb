@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Surface View - <%= @celestial_body.name %></title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <%= javascript_include_tag 'tileset_loader' %>
+</head>
+<body>
+    <div id="mainContainer">
+        <!-- Header -->
+        <div id="header">
+            <h1 id="planetName"><%= @celestial_body.name %> - SURFACE VIEW</h1>
+            <div id="planetInfo">
+                <%= @celestial_body.type %> | Tileset: <%= @tileset_name %> |
+                Radius: <%= number_to_human(@celestial_body.radius, precision: 2) %> m |
+                Gravity: <%= number_with_precision(@celestial_body.gravity, precision: 3) %>g |
+                Temp: <%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %>K
+            </div>
+        </div>
+
+        <!-- Left Panel: Surface Controls -->
+        <div id="toolPanel">
+            <!-- Navigation Section -->
+            <div class="tool-section">
+                <h3>SURFACE NAVIGATION</h3>
+                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/monitor'">
+                    🖥️ Monitor View
+                </button>
+                <button class="tool-button" onclick="window.location.href='/celestial_bodies/<%= @celestial_body.id %>'">
+                    👁️ Public Page
+                </button>
+                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/edit'">
+                    ⚙️ Edit Body
+                </button>
+            </div>
+
+            <!-- Tileset Controls -->
+            <div class="tool-section">
+                <h3>TILESET CONTROLS</h3>
+                <div class="tileset-selector">
+                    <label>Tileset:</label>
+                    <select id="tilesetSelect">
+                        <option value="trident" <%= 'selected' if @tileset_name == 'trident' %>>Trident</option>
+                        <option value="hexemplar" <%= 'selected' if @tileset_name == 'hexemplar' %>>Hexemplar</option>
+                        <option value="isophex" <%= 'selected' if @tileset_name == 'isophex' %>>Isophex</option>
+                    </select>
+                </div>
+                <button class="tool-button" id="reloadTileset">
+                    🔄 Reload Tileset
+                </button>
+            </div>
+
+            <!-- Layer Controls -->
+            <div class="tool-section">
+                <h3>MAP LAYERS</h3>
+                <div class="layer-selector">
+                    <button class="layer-btn active" data-layer="terrain">Terrain</button>
+                    <button class="layer-btn" data-layer="water">Water</button>
+                    <button class="layer-btn" data-layer="biomes">Biomes</button>
+                    <button class="layer-btn" data-layer="features">Features</button>
+                    <button class="layer-btn" data-layer="resources">Resources</button>
+                    <button class="layer-btn" data-layer="elevation">Elevation</button>
+                </div>
+            </div>
+
+            <!-- Geological Features -->
+            <% if @geological_features.any? %>
+                <div class="tool-section">
+                    <h3>GEOLOGICAL FEATURES</h3>
+                    <div class="feature-list">
+                        <% @geological_features.take(5).each do |feature| %>
+                            <div class="feature-item">
+                                <strong><%= feature[:name] %></strong>
+                                <span class="feature-type"><%= feature[:type] %></span>
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+            <% end %>
+        </div>
+
+        <!-- Center Panel: Surface Map -->
+        <div id="canvasWrapper">
+            <div id="mapOverlay">
+                <div id="mapTitle"><%= @celestial_body.name %> - SURFACE MAP</div>
+                <div id="mapControls">
+                    <div class="control-group">
+                        <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
+                        <input type="range" id="zoom" min="0.5" max="4" step="0.1" value="1">
+                    </div>
+                    <div class="control-group">
+                        <label>Tile Size: <span id="tileSizeValue" class="value-display">64px</span></label>
+                        <input type="range" id="tileSize" min="16" max="128" step="8" value="64">
+                    </div>
+                </div>
+            </div>
+            <canvas id="surfaceCanvas" width="800" height="400"></canvas>
+            <div id="tileTooltip" class="hidden">
+                <div id="tileTooltipContent"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Surface Data -->
+        <div id="dataPanel">
+            <!-- Surface Statistics -->
+            <div class="data-section">
+                <h3>SURFACE STATISTICS</h3>
+                <div class="data-row">
+                    <span class="data-label">Tiles Rendered:</span>
+                    <span class="data-value" id="tilesRendered">0</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Tileset Status:</span>
+                    <span class="data-value" id="tilesetStatus">Loading...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Render Time:</span>
+                    <span class="data-value" id="renderTime">0ms</span>
+                </div>
+            </div>
+
+            <!-- Terrain Distribution -->
+            <div class="data-section">
+                <h3>TERRAIN DISTRIBUTION</h3>
+                <div id="terrainStats">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Atmosphere Section -->
+            <div class="data-section">
+                <h3>ATMOSPHERE</h3>
+                <% if @celestial_body.atmosphere %>
+                    <div class="data-row">
+                        <span class="data-label">Pressure:</span>
+                        <span class="data-value" id="atmo-pressure">
+                            <%= number_with_precision(@celestial_body.atmosphere.pressure, precision: 4) %> bar
+                        </span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Temperature:</span>
+                        <span class="data-value" id="atmo-temp">
+                            <%= number_with_precision(@celestial_body.atmosphere.temperature, precision: 1) %> K
+                        </span>
+                    </div>
+                <% else %>
+                    <div class="data-row">
+                        <span class="data-value warning">Not Present</span>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let tilesetLoader = null;
+        let surfaceCanvas = null;
+        let surfaceCtx = null;
+        let currentTileset = '<%= @tileset_name %>';
+        let currentLayer = 'terrain';
+        let tileSize = 64;
+        let zoom = 1.0;
+        let mapData = null;
+        let layers = {};
+        let visibleLayers = new Set(['terrain']);
+
+        // Planet data from Rails
+        const planetId = <%= @celestial_body.id %>;
+        const planetName = <%= raw @celestial_body.name.to_json %>;
+
+        // Initialize surface view
+        async function initSurfaceView() {
+            console.log('Initializing Surface View...');
+
+            // Get canvas
+            surfaceCanvas = document.getElementById('surfaceCanvas');
+            surfaceCtx = surfaceCanvas.getContext('2d');
+
+            // Initialize tileset loader
+            tilesetLoader = new TilesetLoader(currentTileset);
+
+            // Load tileset
+            const tilesetLoaded = await tilesetLoader.loadTileset();
+            updateTilesetStatus(tilesetLoaded);
+
+            if (tilesetLoaded) {
+                // Load map data
+                await loadMapData();
+                // Render surface
+                renderSurface();
+            }
+
+            // Setup controls
+            setupControls();
+        }
+
+        // Load map data from server
+        async function loadMapData() {
+            try {
+                console.log('Loading map data...');
+
+                // Load terrain data (same as monitor view)
+                <% terrain_map_data = @celestial_body.terrain_map_data %>
+                <% freeciv_map_data = @celestial_body.freeciv_map_data %>
+                <% civ4_map_data = @celestial_body.civ4_map_data %>
+                <% has_properties_grid = @celestial_body.has_properties_grid? %>
+
+                let terrainData = <%= raw terrain_map_data ? terrain_map_data.to_json : 'null' %>;
+                let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
+                let civ4Data = <%= raw (civ4_map_data || @celestial_body.civ4_properties_data) ? (civ4_map_data || @celestial_body.civ4_properties_data).to_json : 'null' %>;
+                let hasPropertiesGrid = <%= raw has_properties_grid ? 'true' : 'false' %>;
+                let hydrosphereData = <%= raw @celestial_body&.hydrosphere ? @celestial_body.hydrosphere.attributes.to_json : 'null' %>;
+
+                // Extract layers (same logic as monitor view)
+                layers = extractLayers(terrainData, freecivData, civ4Data, hasPropertiesGrid, hydrosphereData);
+
+                console.log('Map data loaded:', {
+                    terrain: !!layers.terrain,
+                    water: !!layers.water,
+                    biomes: !!layers.biomes,
+                    elevation: !!layers.elevation
+                });
+
+            } catch (error) {
+                console.error('Error loading map data:', error);
+            }
+        }
+
+        // Extract map layers (simplified version of monitor logic)
+        function extractLayers(terrainData, freecivData, civ4Data, hasPropertiesGrid, hydrosphereData) {
+            const extractedLayers = {
+                terrain: null,
+                water: null,
+                biomes: null,
+                resources: null,
+                elevation: null
+            };
+
+            // Extract elevation first
+            if (terrainData && (terrainData.elevation || terrainData.elevation_data)) {
+                const elevData = terrainData.elevation || terrainData.elevation_data;
+                extractedLayers.elevation = {
+                    grid: elevData,
+                    width: terrainData.width || elevData[0]?.length || 0,
+                    height: terrainData.height || elevData.length,
+                    layer_type: 'elevation'
+                };
+            }
+
+            // Extract terrain layer
+            if (terrainData && terrainData.grid) {
+                extractedLayers.terrain = extractTerrainLayer(terrainData);
+            } else if (freecivData && freecivData.grid) {
+                extractedLayers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
+            }
+
+            // Extract water layer
+            if (freecivData && freecivData.grid) {
+                extractedLayers.water = extractWaterLayer(freecivData, extractedLayers.elevation, hydrosphereData);
+            } else if (civ4Data && civ4Data.grid) {
+                extractedLayers.water = extractWaterLayer(civ4Data, extractedLayers.elevation, hydrosphereData);
+            }
+
+            return extractedLayers;
+        }
+
+        // Extract terrain layer
+        function extractTerrainLayer(mapData, options = {}) {
+            const grid = mapData.grid || mapData.terrain_grid;
+            const width = mapData.width || grid[0]?.length || 0;
+            const height = mapData.height || grid.length;
+            const terrainGrid = [];
+            const stripVegetation = options.stripVegetation !== false;
+
+            for (let y = 0; y < height; y++) {
+                terrainGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    let terrainType = grid[y][x];
+
+                    // Normalize terrain type
+                    terrainType = normalizeTerrainType(terrainType);
+
+                    // Strip vegetation if requested (for bare terrain view)
+                    if (stripVegetation) {
+                        switch (terrainType) {
+                            case 'forest':
+                                terrainType = 'plains';
+                                break;
+                            case 'jungle':
+                                terrainType = 'plains';
+                                break;
+                            case 'swamp':
+                                terrainType = 'plains';
+                                break;
+                        }
+                    }
+
+                    terrainGrid[y][x] = terrainType;
+                }
+            }
+
+            return {
+                grid: terrainGrid,
+                width: width,
+                height: height,
+                layer_type: 'terrain',
+                vegetation_stripped: stripVegetation
+            };
+        }
+
+        // Extract water layer
+        function extractWaterLayer(mapData, elevationData, hydrosphereData) {
+            const grid = mapData.grid || mapData.terrain_grid;
+            const width = mapData.width || grid[0]?.length || 0;
+            const height = mapData.height || grid.length;
+            const waterGrid = [];
+
+            // Simple water detection based on terrain type
+            for (let y = 0; y < height; y++) {
+                waterGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    const terrainType = grid[y][x];
+                    // Mark ocean and deep_sea as water
+                    waterGrid[y][x] = (terrainType === 'ocean' || terrainType === 'deep_sea') ? 1 : 0;
+                }
+            }
+
+            return {
+                grid: waterGrid,
+                width: width,
+                height: height,
+                layer_type: 'water'
+            };
+        }
+
+        // Normalize terrain type
+        function normalizeTerrainType(terrainCode) {
+            const mapping = {
+                ' ': 'ocean',
+                'a': 'arctic',
+                't': 'tundra',
+                'f': 'forest',
+                'g': 'grasslands',
+                'p': 'plains',
+                'd': 'desert',
+                'h': 'mountains',
+                'm': 'mountains',
+                'j': 'jungle',
+                's': 'swamp',
+                'r': 'rock',
+                'b': 'boreal',
+                'o': 'ocean'
+            };
+
+            return mapping[terrainCode] || mapping[terrainCode.toLowerCase()] || 'plains';
+        }
+
+        // Render surface with tiles
+        function renderSurface() {
+            if (!surfaceCtx || !layers.terrain) return;
+
+            const startTime = performance.now();
+
+            // Clear canvas
+            surfaceCtx.fillStyle = '#000000';
+            surfaceCtx.fillRect(0, 0, surfaceCanvas.width, surfaceCanvas.height);
+
+            const terrainLayer = layers.terrain;
+            const width = Math.min(terrainLayer.width, Math.floor(surfaceCanvas.width / tileSize));
+            const height = Math.min(terrainLayer.height, Math.floor(surfaceCanvas.height / tileSize));
+
+            let tilesRendered = 0;
+            const terrainCounts = {};
+
+            // Render tiles
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const terrainType = terrainLayer.grid[y][x];
+
+                    // Count terrain types
+                    terrainCounts[terrainType] = (terrainCounts[terrainType] || 0) + 1;
+
+                    // Get tile from tileset
+                    const tileData = tilesetLoader.getTerrainTile(terrainType);
+
+                    if (tileData) {
+                        // Draw tile
+                        const destX = x * tileSize * zoom;
+                        const destY = y * tileSize * zoom;
+                        const destSize = tileSize * zoom;
+
+                        surfaceCtx.drawImage(
+                            tileData.image,
+                            tileData.x, tileData.y, tileData.width, tileData.height,
+                            destX, destY, destSize, destSize
+                        );
+                        tilesRendered++;
+                    } else {
+                        // Fallback: draw colored rectangle
+                        surfaceCtx.fillStyle = getTerrainColor(terrainType);
+                        surfaceCtx.fillRect(x * tileSize * zoom, y * tileSize * zoom, tileSize * zoom, tileSize * zoom);
+                        tilesRendered++;
+                    }
+                }
+            }
+
+            const endTime = performance.now();
+            const renderTime = Math.round(endTime - startTime);
+
+            // Update statistics
+            updateRenderStats(tilesRendered, renderTime, terrainCounts);
+        }
+
+        // Get fallback color for terrain type
+        function getTerrainColor(terrainType) {
+            const colors = {
+                ocean: '#0066cc',
+                deep_sea: '#003366',
+                arctic: '#e8e8e8',
+                tundra: '#b8b8b8',
+                grasslands: '#90EE90',
+                plains: '#F0E68C',
+                forest: '#228B22',
+                jungle: '#006400',
+                desert: '#F4A460',
+                mountains: '#696969',
+                rock: '#808080',
+                rocky: '#808080',
+                boreal: '#228B22',
+                swamp: '#556B2F'
+            };
+            return colors[terrainType] || '#808080';
+        }
+
+        // Update render statistics
+        function updateRenderStats(tilesRendered, renderTime, terrainCounts) {
+            document.getElementById('tilesRendered').textContent = tilesRendered;
+            document.getElementById('renderTime').textContent = `${renderTime}ms`;
+
+            // Update terrain distribution
+            const statsDiv = document.getElementById('terrainStats');
+            statsDiv.innerHTML = '';
+
+            Object.entries(terrainCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 8)
+                .forEach(([terrain, count]) => {
+                    const row = document.createElement('div');
+                    row.className = 'data-row';
+                    row.innerHTML = `
+                        <span class="data-label">${terrain}:</span>
+                        <span class="data-value">${count}</span>
+                    `;
+                    statsDiv.appendChild(row);
+                });
+        }
+
+        // Update tileset status
+        function updateTilesetStatus(loaded) {
+            const statusEl = document.getElementById('tilesetStatus');
+            statusEl.textContent = loaded ? 'Loaded' : 'Failed to Load';
+            statusEl.className = loaded ? 'data-value' : 'data-value warning';
+        }
+
+        // Setup controls
+        function setupControls() {
+            // Zoom control
+            const zoomInput = document.getElementById('zoom');
+            const zoomValue = document.getElementById('zoomValue');
+
+            zoomInput.addEventListener('input', function() {
+                zoom = parseFloat(this.value);
+                zoomValue.textContent = zoom.toFixed(1) + 'x';
+                renderSurface();
+            });
+
+            // Tile size control
+            const tileSizeInput = document.getElementById('tileSize');
+            const tileSizeValue = document.getElementById('tileSizeValue');
+
+            tileSizeInput.addEventListener('input', function() {
+                tileSize = parseInt(this.value);
+                tileSizeValue.textContent = tileSize + 'px';
+                renderSurface();
+            });
+
+            // Tileset selector
+            const tilesetSelect = document.getElementById('tilesetSelect');
+            tilesetSelect.addEventListener('change', async function() {
+                currentTileset = this.value;
+                tilesetLoader = new TilesetLoader(currentTileset);
+                const loaded = await tilesetLoader.loadTileset();
+                updateTilesetStatus(loaded);
+                if (loaded) {
+                    renderSurface();
+                }
+            });
+
+            // Reload tileset button
+            document.getElementById('reloadTileset').addEventListener('click', async function() {
+                const loaded = await tilesetLoader.loadTileset();
+                updateTilesetStatus(loaded);
+                if (loaded) {
+                    renderSurface();
+                }
+            });
+
+            // Layer buttons
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const layer = this.dataset.layer;
+
+                    // Toggle active state
+                    if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                        visibleLayers.delete(layer);
+                    } else {
+                        this.classList.add('active');
+                        visibleLayers.add(layer);
+                    }
+
+                    currentLayer = layer;
+                    renderSurface();
+                });
+            });
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initSurfaceView);
+    </script>
+</body>
+</html>

@@ -68,6 +68,7 @@ Rails.application.routes.draw do
     resources :celestial_bodies, only: [:index] do
       member do
         get :monitor                 # Main monitoring interface
+        get :surface                 # Surface view with tilesets
         get :sphere_data            # JSON: Real-time sphere data
         get :mission_log            # JSON: AI mission activity
         post :run_ai_test           # Trigger AI Manager test

@@ -62,6 +62,15 @@ module Admin
       @sphere_summary = build_sphere_summary
     end
 
+    # GET /admin/celestial_bodies/:id/surface
+    # Surface view with tileset-based planetary mapping
+    def surface
+      @geological_features = load_geological_features
+      @ai_missions = load_ai_missions
+      @sphere_summary = build_sphere_summary
+      @tileset_name = params[:tileset] || 'trident'
+    end
+
     # GET /admin/celestial_bodies/:id/sphere_data
     # JSON endpoint for real-time sphere data updates
     def sphere_data
