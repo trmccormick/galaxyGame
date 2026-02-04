@@ -10,6 +10,44 @@ The **Asteroid Relocation Tug** is a specialized spacecraft designed for repeata
 - **Technology Progression**: Nuclear thermal → Fusion → Continuous fusion
 - **Economic Model**: 50M GCC purchase cost, 7M GCC per mission, break-even at 3 missions
 
+## Construction and Validation
+
+### L1 Tug Construction Mission Profile
+The tug construction process is defined in the L1 Tug Construction mission profile (`l1_tug_construction_profile_v1.json`) and manifest (`l1_tug_construction_manifest_v1.1.json`), located in `data/json-data/missions/orbital-construction/`.
+
+**Mission Phases:**
+1. **Material Procurement**: Sourcing required materials (titanium alloy, stainless steel, electronics, etc.)
+2. **Tug Assembly**: Orbital construction at L1 shipyard
+3. **Environmental Adaptation**: Radiation shielding and thermal management systems
+4. **Quality Assurance**: Full system testing and certification
+
+**Material Requirements:**
+- Titanium Alloy: 800,000 units
+- Stainless Steel: 1,200,000 units
+- Electronics: 50,000 units
+- Thermal Protection: 100,000 units
+- Carbon Fiber: 200,000 units
+- Superconductors: 25,000 units
+- Radiation Shielding: 150,000 units
+
+### Integration Test Validation
+The tug construction system is validated through comprehensive integration testing in `spec/integration/tug_construction_integration_spec.rb`, which tests the complete workflow from mission loading to deployment.
+
+**Test Coverage:**
+- Mission profile loading and validation
+- Material procurement simulation
+- Orbital construction project management
+- Environmental adaptations application
+- Quality assurance and rework handling
+- Final deployment and operational readiness
+
+**Test Scenarios:**
+1. Complete tug construction workflow
+2. Material delivery and project status updates
+3. Environmental adaptation requirements
+4. Quality issue detection and resolution
+5. Successful deployment verification
+
 ### Technology Progression
 
 #### Phase 1: Nuclear Thermal Propulsion
