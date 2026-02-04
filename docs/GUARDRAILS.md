@@ -102,10 +102,12 @@
 - **Minting Limits**: LDC limited to 5% annual GCC supply increase to control inflation
 - **Burn Mechanisms**: Automatic GCC destruction for Earth exports to maintain supply equilibrium
 
-### Market Intervention Rules
-- **LDC Market Operations**: Lunar Development Corporation may intervene in currency markets only when exchange rate exceeds ±10% band
-- **Price Stabilization**: Automatic purchase/sale of commodities when prices deviate >20% from 30-day average
-- **Anti-Manipulation**: Any entity attempting to manipulate markets faces permanent ban and asset forfeiture
+### NPC Debt Decision Influence
+- **Virtual Ledger Trading:** NPCs can trade among themselves without GCC limitations using the virtual ledger, allowing inter-NPC debt accumulation
+- **Expansion Restrictions:** High debt levels (>30% of assets) prevent NPC base construction and new settlement establishment
+- **Procurement Conservatism:** NPCs with corporate debt exceeding 30% of total assets become conservative buyers, refusing purchases from players to preserve capital
+- **AI Manager Integration:** Debt levels are continuously monitored and influence OperationalManager decision-making for resource allocation and expansion planning
+- **Expected Behavior:** Inter-NPC debt is normal and expected for efficient resource distribution, but excessive debt triggers conservative decision-making
 
 ## 🎮 9. Player Experience Boundaries
 
@@ -286,3 +288,38 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - **Canvas Dimensions:** Dynamically calculated from terrain grid dimensions
 - **Elevation Calculation:** Planet-specific algorithms considering temperature, pressure, latitude
 - **Color Blending:** Alpha compositing for smooth layer overlays
+
+## 🔧 13. Sphere Creation Optimization Plan
+
+### Current Issue Analysis
+- **Universal Biosphere Creation:** SystemBuilderService creates biosphere for every celestial body regardless of habitability
+- **Database Bloat:** Unnecessary biosphere records for Mercury, Venus, Luna, and other barren worlds
+- **Conceptual Confusion:** Biosphere existence should imply confirmed biological potential
+
+### Optimization Strategy
+
+#### Phase 1: Conditional Biosphere Creation (Immediate)
+- **Criteria:** Only create biosphere for Earth initially (confirmed life-bearing world)
+- **Implementation:** Modify `SystemBuilderService#create_celestial_body_record` to check `body.name.downcase == 'earth'`
+- **Impact:** ~30-50% reduction in unnecessary sphere records during initial seeding
+
+#### Phase 2: Enhanced Habitability Detection (Future)
+- **Temperature Range:** Liquid water range (273-373K) + extended habitable range (200-400K)
+- **Water Presence:** Confirmed hydrosphere with liquid water (not just theoretical subsurface)
+- **Atmospheric Factors:** Pressure > 0.01 bar + magnetic field protection
+- **Data Sources:** JSON biosphere data or explicit habitability confirmation
+
+#### Phase 3: Subsurface Sphere Validation (Future)
+- **Hydrosphere:** Only create when confirmed liquid water exists (Europa subsurface ocean requires confirmation)
+- **Geosphere Layers:** Only populate mantle/core when geological data confirms complex structure
+- **Material Transfer:** Preserve layered architecture for confirmed subsurface features
+
+### Barren Terrain Default Preservation
+- **Biome Density Logic:** When `biome_density = 0.0`, terrain displays bare geological features
+- **Storage Optimization:** Barren worlds use summary hashes instead of full 2D grids
+- **Rendering:** Elevation-based topographic colors without forced biome overlays
+
+### Implementation Status
+- **Phase 1:** ✅ Implemented - Biosphere creation limited to Earth
+- **Phase 2:** 📋 Planned - Enhanced habitability detection system
+- **Phase 3:** 📋 Planned - Subsurface sphere confirmation requirements

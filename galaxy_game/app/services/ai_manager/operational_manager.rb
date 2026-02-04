@@ -319,6 +319,29 @@ require_relative 'scout_logic'
       end
     end
 
+    def consider_expansion
+      # Evaluate if local expansion (building new bases) is worthwhile
+      # High debt levels should prevent expansion to avoid further financial strain
+
+      if expansion_feasible?
+        # Find the best expansion pattern available
+        pattern = find_expansion_pattern
+
+        if pattern
+          {
+            action: :expansion,
+            pattern: pattern[:name],
+            reason: "pattern_match",
+            estimated_cost: pattern[:estimated_cost] || 50000
+          }
+        else
+          { action: :maintain, reason: "no_suitable_expansion" }
+        end
+      else
+        { action: :maintain, reason: "expansion_not_feasible" }
+      end
+    end
+
     def determine_dc_type(world_analysis)
       # Hierarchical DC formation: Major worlds get their own DCs, aligned with regional powers
       world_name = world_analysis[:world_name] || @settlement.celestial_body&.name || "unknown"
@@ -685,7 +708,7 @@ require_relative 'scout_logic'
     end
 
     def expansion_feasible?
-      settlement_stable? && funds_available_for_expansion?
+      settlement_stable? && funds_available_for_expansion? && !corporate_high_debt?
     end
 
     def scouting_feasible?
@@ -741,11 +764,27 @@ require_relative 'scout_logic'
     end
 
     def outstanding_debt
-      0 # Placeholder
+      settlement.account&.balance&.negative? ? settlement.account.balance.abs : 0
     end
 
     def settlement_funds
-      100000 # Placeholder
+      [settlement.account&.balance || 0, 0].max
+    end
+
+    def corporate_debt_level
+      return 0 unless settlement.owner&.is_a?(Organizations::BaseOrganization)
+      
+      corporation = settlement.owner
+      # Calculate total debt across all corporation accounts
+      corporation.accounts.sum do |account|
+        account.balance.negative? ? account.balance.abs : 0
+      end
+    end
+
+    def corporate_high_debt?
+      # Consider high debt if corporate debt exceeds 50% of total corporate assets
+      total_assets = settlement.owner&.accounts&.sum { |account| [account.balance, 0].max } || 0
+      corporate_debt_level > total_assets * 0.5
     end
 
     def resource_shortage
