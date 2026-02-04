@@ -109,6 +109,13 @@
 - **AI Manager Integration:** Debt levels are continuously monitored and influence OperationalManager decision-making for resource allocation and expansion planning
 - **Expected Behavior:** Inter-NPC debt is normal and expected for efficient resource distribution, but excessive debt triggers conservative decision-making
 
+### Development Corporation Structure
+- **Non-Profit Status:** Development Corporations (DCs) are non-profit entities formed for each world to establish base-level infrastructure
+- **Profit Reinvestment:** DCs generate profits but reinvest them entirely rather than distributing dividends, focusing on expansion rather than profit extraction
+- **Inter-DC Interest Exemption:** DCs do not charge interest to other DCs for loans or services, prioritizing collective expansion over individual profit
+- **For-Profit NPC Corporations:** AstroLift and other NPC corporations are for-profit entities essential for logistics and specialized services
+- **Infrastructure Focus:** DCs prioritize base infrastructure establishment while for-profit NPCs handle commercial logistics and transportation
+
 ## 🎮 9. Player Experience Boundaries
 
 ### Economic Transparency
