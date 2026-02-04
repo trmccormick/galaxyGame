@@ -43,6 +43,7 @@
                 <div class="tileset-selector">
                     <label>Tileset:</label>
                     <select id="tilesetSelect">
+                        <option value="bigtrident" <%= 'selected' if @tileset_name == 'bigtrident' %>>BigTrident</option>
                         <option value="trident" <%= 'selected' if @tileset_name == 'trident' %>>Trident</option>
                         <option value="hexemplar" <%= 'selected' if @tileset_name == 'hexemplar' %>>Hexemplar</option>
                         <option value="isophex" <%= 'selected' if @tileset_name == 'isophex' %>>Isophex</option>
@@ -160,7 +161,7 @@
         let tilesetLoader = null;
         let surfaceCanvas = null;
         let surfaceCtx = null;
-        let currentTileset = '<%= @tileset_name %>';
+        let currentTileset = '<%= @tileset_name || 'bigtrident' %>';
         let currentLayer = 'terrain';
         let tileSize = 64;
         let zoom = 1.0;
@@ -204,14 +205,25 @@
                 console.log('Loading map data...');
 
                 // Load terrain data (same as monitor view)
-                <% terrain_map_data = @celestial_body.terrain_map_data %>
-                <% freeciv_map_data = @celestial_body.freeciv_map_data %>
-                <% civ4_map_data = @celestial_body.civ4_map_data %>
-                <% has_properties_grid = @celestial_body.has_properties_grid? %>
+                <% terrain_map_data = @celestial_body&.geosphere&.terrain_map %>
+                <% freeciv_map_data = terrain_map_data&.dig('freeciv_terraforming_target') || @celestial_body&.properties&.dig('freeciv_map') %>
+                <% civ4_map_data = terrain_map_data&.dig('civ4_current_state') || @celestial_body&.properties&.dig('civ4_map') %>
+                <% has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present? %>
+
+                // Only load Civ4 properties data if it's from import and no other Civ4 data
+                <% civ4_properties_data = nil %>
+                <% if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import' && !civ4_map_data %>
+                <% civ4_properties_data = {
+                  grid: @celestial_body.properties['terrain_grid'],
+                  width: @celestial_body.properties['grid_width'],
+                  height: @celestial_body.properties['grid_height'],
+                  biome_counts: @celestial_body.properties['biome_counts'] || {}
+                } %>
+                <% end %>
 
                 let terrainData = <%= raw terrain_map_data ? terrain_map_data.to_json : 'null' %>;
                 let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
-                let civ4Data = <%= raw (civ4_map_data || @celestial_body.civ4_properties_data) ? (civ4_map_data || @celestial_body.civ4_properties_data).to_json : 'null' %>;
+                let civ4Data = <%= raw (civ4_map_data || civ4_properties_data) ? (civ4_map_data || civ4_properties_data).to_json : 'null' %>;
                 let hasPropertiesGrid = <%= raw has_properties_grid ? 'true' : 'false' %>;
                 let hydrosphereData = <%= raw @celestial_body&.hydrosphere ? @celestial_body.hydrosphere.attributes.to_json : 'null' %>;
 
