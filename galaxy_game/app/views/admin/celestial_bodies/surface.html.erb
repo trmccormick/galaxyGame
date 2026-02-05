@@ -43,6 +43,7 @@
                 <div class="tileset-selector">
                     <label>Tileset:</label>
                     <select id="tilesetSelect">
+                        <option value="alio" <%= 'selected' if @tileset_name == 'alio' %>>Alio (Sci-Fi)</option>
                         <option value="bigtrident" <%= 'selected' if @tileset_name == 'bigtrident' %>>BigTrident</option>
                         <option value="trident" <%= 'selected' if @tileset_name == 'trident' %>>Trident</option>
                         <option value="hexemplar" <%= 'selected' if @tileset_name == 'hexemplar' %>>Hexemplar</option>
@@ -157,21 +158,42 @@
     </div>
 
     <script>
-        // Global variables
-        let tilesetLoader = null;
-        let surfaceCanvas = null;
-        let surfaceCtx = null;
-        let currentTileset = '<%= @tileset_name || 'bigtrident' %>';
-        let currentLayer = 'terrain';
-        let tileSize = 64;
-        let zoom = 1.0;
-        let mapData = null;
-        let layers = {};
-        let visibleLayers = new Set(['terrain']);
+        // Global variables - check if already declared to avoid redeclaration errors
+        if (typeof tilesetLoader === 'undefined') {
+            var tilesetLoader = null;
+        }
+        if (typeof surfaceCanvas === 'undefined') {
+            var surfaceCanvas = null;
+        }
+        if (typeof surfaceCtx === 'undefined') {
+            var surfaceCtx = null;
+        }
+        if (typeof currentTileset === 'undefined') {
+            var currentTileset = '<%= @tileset_name || 'bigtrident' %>';
+        }
+        if (typeof currentLayer === 'undefined') {
+            var currentLayer = 'terrain';
+        }
+        if (typeof tileSize === 'undefined') {
+            var tileSize = 64;
+        }
+        if (typeof zoom === 'undefined') {
+            var zoom = 1.0;
+        }
+        if (typeof mapData === 'undefined') {
+            var mapData = null;
+        }
+        if (typeof layers === 'undefined') {
+            var layers = {};
+        }
+        if (typeof visibleLayers === 'undefined') {
+            var visibleLayers = new Set(['terrain']);
+        }
 
         // Planet data from Rails
         const planetId = <%= @celestial_body.id %>;
         const planetName = <%= raw @celestial_body.name.to_json %>;
+        const alioTileConfig = <%= raw @alio_tile_config ? @alio_tile_config.to_json : 'null' %>;
 
         // Initialize surface view
         async function initSurfaceView() {
@@ -182,7 +204,11 @@
             surfaceCtx = surfaceCanvas.getContext('2d');
 
             // Initialize tileset loader
-            tilesetLoader = new TilesetLoader(currentTileset);
+            if (currentTileset === 'alio') {
+                tilesetLoader = new AlioTilesetLoader(alioTileConfig);
+            } else {
+                tilesetLoader = new TilesetLoader(currentTileset);
+            }
 
             // Load tileset
             const tilesetLoaded = await tilesetLoader.loadTileset();
@@ -371,6 +397,20 @@
             return mapping[terrainCode] || mapping[terrainCode.toLowerCase()] || 'plains';
         }
 
+        // Get adjacent tiles for auto-tiling (used by Alio tileset)
+        function getAdjacentTiles(grid, x, y, width, height) {
+            return {
+                northwest: (x > 0 && y > 0) ? grid[y-1][x-1] : null,
+                north: (y > 0) ? grid[y-1][x] : null,
+                northeast: (x < width-1 && y > 0) ? grid[y-1][x+1] : null,
+                west: (x > 0) ? grid[y][x-1] : null,
+                east: (x < width-1) ? grid[y][x+1] : null,
+                southwest: (x > 0 && y < height-1) ? grid[y+1][x-1] : null,
+                south: (y < height-1) ? grid[y+1][x] : null,
+                southeast: (x < width-1 && y < height-1) ? grid[y+1][x+1] : null
+            };
+        }
+
         // Render surface with tiles
         function renderSurface() {
             if (!surfaceCtx || !layers.terrain) return;
@@ -397,7 +437,14 @@
                     terrainCounts[terrainType] = (terrainCounts[terrainType] || 0) + 1;
 
                     // Get tile from tileset
-                    const tileData = tilesetLoader.getTerrainTile(terrainType);
+                    let tileData;
+                    if (tilesetLoader instanceof AlioTilesetLoader) {
+                        // For Alio tileset, pass adjacent tiles for auto-tiling
+                        const adjacentTiles = getAdjacentTiles(terrainLayer.grid, x, y, width, height);
+                        tileData = tilesetLoader.getTerrainTile(terrainType, adjacentTiles);
+                    } else {
+                        tileData = tilesetLoader.getTerrainTile(terrainType);
+                    }
 
                     if (tileData) {
                         // Draw tile
@@ -504,7 +551,11 @@
             const tilesetSelect = document.getElementById('tilesetSelect');
             tilesetSelect.addEventListener('change', async function() {
                 currentTileset = this.value;
-                tilesetLoader = new TilesetLoader(currentTileset);
+                if (currentTileset === 'alio') {
+                    tilesetLoader = new AlioTilesetLoader(alioTileConfig);
+                } else {
+                    tilesetLoader = new TilesetLoader(currentTileset);
+                }
                 const loaded = await tilesetLoader.loadTileset();
                 updateTilesetStatus(loaded);
                 if (loaded) {
