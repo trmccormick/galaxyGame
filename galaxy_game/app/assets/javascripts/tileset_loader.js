@@ -1,7 +1,7 @@
 // app/assets/javascripts/tileset_loader.js
-if (typeof window.TilesetLoader === 'undefined') {
+console.log('Loading tileset_loader.js...');
 
-// app/assets/javascripts/tileset_loader.js
+// Always define TilesetLoader - JavaScript allows class redefinition
 class TilesetLoader {
     constructor(tilesetName = 'trident') {
         this.tilesetName = tilesetName;
@@ -259,14 +259,12 @@ class TilesetLoader {
     }
 }
 
-} // End of TilesetLoader guard
-
 // Assign to window to ensure global availability
 window.TilesetLoader = TilesetLoader;
+console.log('TilesetLoader assigned to window:', typeof window.TilesetLoader);
 
 // AlioTilesetLoader for sci-fi planetary rendering with burrow tubes
-if (typeof window.AlioTilesetLoader === 'undefined') {
-
+console.log('Defining AlioTilesetLoader...');
 class AlioTilesetLoader {
     constructor(alioTileConfig = null) {
         this.alioTileConfig = alioTileConfig;
@@ -530,7 +528,6 @@ class AlioTilesetLoader {
     }
 }
 
-} // End of AlioTilesetLoader guard
-
 // Assign to window to ensure global availability
 window.AlioTilesetLoader = AlioTilesetLoader;
+console.log('AlioTilesetLoader assigned to window:', typeof window.AlioTilesetLoader);
