@@ -62,6 +62,46 @@ RSpec.describe Admin::CelestialBodiesController, type: :controller do
     end
   end
 
+  describe 'GET #surface' do
+    it 'renders the surface view successfully' do
+      get :surface, params: { id: terrestrial_planet.id }
+      expect(response).to have_http_status(:success)
+      expect(response).to render_template(:surface)
+    end
+
+    it 'assigns @celestial_body' do
+      get :surface, params: { id: terrestrial_planet.id }
+      expect(assigns(:celestial_body)).to eq(terrestrial_planet)
+    end
+
+    it 'assigns default tileset name' do
+      get :surface, params: { id: terrestrial_planet.id }
+      expect(assigns(:tileset_name)).to eq('alio')
+    end
+
+    it 'accepts custom tileset parameter' do
+      get :surface, params: { id: terrestrial_planet.id, tileset: 'hexemplar' }
+      expect(assigns(:tileset_name)).to eq('hexemplar')
+    end
+
+    it 'loads geological features' do
+      get :surface, params: { id: terrestrial_planet.id }
+      expect(assigns(:geological_features)).to be_an(Array)
+    end
+
+    it 'loads AI missions' do
+      get :surface, params: { id: terrestrial_planet.id }
+      expect(assigns(:ai_missions)).to be_an(Array)
+    end
+
+    context 'when celestial body not found' do
+      it 'redirects to root path' do
+        get :surface, params: { id: 99999 }
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
   describe 'GET #sphere_data' do
     it 'returns JSON with sphere data' do
       get :sphere_data, params: { id: terrestrial_planet.id }, format: :json
