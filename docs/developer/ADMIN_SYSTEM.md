@@ -429,58 +429,44 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 **Controller:** `Admin::CelestialBodiesController#monitor`
 
 **Terrain Rendering System:**
-- **Canvas Size**: 180x90 grid with 8px tiles (1440x720px total)
+- **Canvas Size**: 180x90 grid with 8px tiles (1440x720px total) - downsampled from NASA 1800x900 resolution
+- **Data Source**: NASA GeoTIFF elevation data from `geosphere.terrain_map` (elevation, biomes, resource_grid keys)
+- **Elevation Layer**: Primary layer using real NASA elevation data (Olympus Mons at +21km, Hellas Basin at -8km)
+- **Biome Layer**: NASA-derived biome classification (desert, grassland, forest, etc.)
+- **Water Layer**: Hydrosphere-based bathtub logic using `hydrosphere.total_water_mass` and elevation data
+- **Resource Layer**: Geological resource deposits from NASA resource_grid data
 - **Atmospheric Analysis**: JavaScript functions analyze planetary temperature, pressure, and composition for realistic rendering
 - **Planet-Specific Rendering**: Conditional logic for Mars (red-tinted terrain), Venus (volcanic colors), and generic planets
 - **Climate Calculations**: TerraSim-style temperature/pressure analysis for ice coverage and habitable zones
 - **Desert Coloring**: Latitude-based temperature variation (yellow near equator, beige near poles)
 - **Layer System**: Toggle-able overlays for different terrain aspects
-- **Data Source**: PostgreSQL JSONB terrain data from FreeCiv SAV file imports
-- **Terrain Code Mapping**: FreeCiv single-character terrain codes ('a', 't', 'f', 'g', etc.) are mapped to full terrain type names for proper color rendering
-- **Multi-Map Layer Extraction**: FreeCiv maps for terrain/water, Civ4 maps for biomes/resources
 
-**Multi-Map Layer Extraction System:**
-- **FreeCiv Maps**: Used for terrain and water layer extraction (physical geography)
-- **Civ4 Maps**: Used for biome and resource layer extraction (ecological/climatic features)
-- **Layer Separation**: Terrain (bare earth), Water (hydrosphere), Biomes (biosphere), Resources (geological)
-- **Automatic Processing**: Maps are automatically processed to extract relevant layers
-- **Fallback Support**: Single map sources work with appropriate layer extraction
-
-**Atmospheric Condition Analysis:**
-- **Temperature**: Retrieved from `celestial_body.temperature` (surface temperature with fallbacks)
-- **Pressure**: Retrieved from `celestial_body.pressure` (atmospheric pressure with fallbacks)
-- **Composition**: Retrieved from `celestial_body.atmosphere_composition` (gas ratios and concentrations)
-- **analyzeAtmosphericConditions()**: JavaScript function that analyzes temperature, pressure, and composition to determine:
-  - Atmospheric presence (>0.01 bar pressure threshold)
-  - Planetary habitability (oxygen levels 19.5-23.5% in nitrogen atmosphere)
-  - Dominant gas identification (CO2, N2, O2, CH4, etc.)
-  - Visual effects (haze levels, color tinting, aurora potential)
-- **Elevation Calculation**: Dynamic terrain elevation based on biome type, latitude, and planetary conditions
-- **Color Blending**: Multi-layer color application with opacity controls for realistic atmospheric effects
-
-- **Terrain Layer**: Shows bare topographic colors (browns, grays, tans) representing physical terrain types, not biomes or vegetation
-- **Biome Layer**: Separate overlay showing vegetation/climate zones (green grasslands, white arctic, etc.)
-- **Water Layer**: Ocean and freshwater visualization
-- **Temperature Layer**: Thermal visualization overlay
-- **Rainfall Layer**: Precipitation pattern overlay
-- **Resources Layer**: Mineral deposit highlighting
-
-**Terrain Color Mapping (Bare Earth):**
-- **Ocean**: Blue (`#0066cc`) - Water bodies
-- **Deep Sea**: Dark blue (`#003366`) - Ocean trenches
-- **Arctic**: Light gray (`#e8e8e8`) - Ice/snow surface
-- **Tundra**: Medium gray (`#b8b8b8`) - Permafrost/gravel
-- **Grasslands**: Brown (`#8b7355`) - Soil/dirt
-- **Plains**: Tan (`#a08050`) - Dry plains
-- **Forest**: Dark brown (`#654321`) - Tree trunks/soil
-- **Jungle**: Very dark brown (`#4a3c28`) - Dense vegetation soil
-- **Desert**: Sandy brown (`#c4a484`) - Sand/dunes
-- **Mountains**: Dim gray (`#696969`) - Rock
-- **Rock**: Gray (`#808080`) - Bare rock
-- **Boreal**: Brown (`#8b7355`) - Coniferous forest soil
-- **Swamp**: Dark brown (`#654321`) - Wet soil/mud
+**NASA Terrain Data Hierarchy:**
+- **Elevation (Primary)**: Real topographic data from NASA GeoTIFF files (mars_1800x900.asc.gz, luna_1800x900.asc.gz, etc.)
+- **Biomes**: NASA-derived classification (ocean, desert, grassland, forest, tundra, mountain, ice, volcanic)
+- **Water**: Calculated from hydrosphere data using bathtub logic (fills lowest elevations first)
+- **Resources**: Geological deposits identified from terrain patterns
+- **Legacy FreeCiv/Civ4**: No longer used for terrain rendering - reserved for AI Manager training data only
 
 **Layer System:**
+- **Elevation Layer**: Always ON - NASA elevation data rendered as height map (SimEarth style)
+- **Biome Layer**: Toggleable - NASA biome classification overlay
+- **Water Layer**: Toggleable - Hydrosphere-based water coverage
+- **Resource Layer**: Toggleable - Geological resource highlighting
+
+**Terrain Color Mapping (NASA-First):**
+- **Elevation-Based Height Map**: Brown gradient from low (dark brown) to high (light tan/white peaks)
+- **Biome Overlay**: 
+  - Ocean: `#001122` (dark blue)
+  - Desert: `#DAA520` (goldenrod)
+  - Grassland: `#228B22` (forest green)
+  - Forest: `#006400` (dark green)
+  - Tundra: `#F0F8FF` (alice blue)
+  - Mountain: `#696969` (dim gray)
+  - Ice: `#FFFFFF` (white)
+  - Volcanic: `#8B0000` (dark red)
+- **Water Layer**: Blue shades based on depth (coast, ocean, deep_sea)
+- **Resource Layer**: Yellow highlights for mineral deposits
 
 **Data Endpoints:**
 - `GET /admin/celestial_bodies/:id/sphere_data.json` - Live sphere metrics

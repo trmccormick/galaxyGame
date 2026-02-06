@@ -6,7 +6,6 @@
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
     <title>Admin Monitor - <%= @celestial_body.name %></title>
     <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
-    <%= javascript_include_tag 'tileset_loader' %>
 </head>
 <body>
     <div id="mainContainer">
@@ -830,6 +829,68 @@
             };
         }
 
+        // NASA-first: Calculate water layer from hydrosphere data using bathtub logic
+        function calculateWaterLayerFromHydrosphere(hydrosphereData, elevationData) {
+            if (!hydrosphereData || !elevationData || !elevationData.grid) {
+                return null;
+            }
+
+            const width = elevationData.width;
+            const height = elevationData.height;
+            const waterGrid = [];
+
+            // Get water coverage percentage from hydrosphere
+            const waterCoverage = hydrosphereData.water_coverage || hydrosphereData.liquid_coverage || 0;
+            const planetName = <%= raw @celestial_body.name.to_json %>;
+
+            // Calculate sea level using bathtub logic (fill from lowest elevations)
+            let seaLevel = 0.5; // Default
+            if (waterCoverage > 0) {
+                // Flatten and sort elevations to find sea level
+                const elevations = elevationData.grid.flat().filter(e => e !== null && e !== undefined);
+                if (elevations.length > 0) {
+                    elevations.sort((a, b) => a - b);
+                    const waterTiles = Math.floor(waterCoverage / 100.0 * elevations.length);
+                    seaLevel = waterTiles > 0 && waterTiles < elevations.length ?
+                        elevations[waterTiles - 1] : elevations[Math.floor(elevations.length * waterCoverage / 100.0)] || 0.5;
+                }
+            }
+
+            console.log(`NASA water layer: ${planetName}, coverage=${waterCoverage}%, seaLevel=${seaLevel.toFixed(3)}`);
+
+            for (let y = 0; y < height; y++) {
+                waterGrid[y] = [];
+                for (let x = 0; x < width; x++) {
+                    const elevation = elevationData.grid[y][x] || 0.5;
+
+                    if (elevation < seaLevel) {
+                        // Underwater - determine water type
+                        const depth = seaLevel - elevation;
+
+                        if (depth < 0.1) {
+                            waterGrid[y][x] = 'coast';
+                        } else if (depth < 0.3) {
+                            waterGrid[y][x] = 'ocean';
+                        } else {
+                            waterGrid[y][x] = 'deep_sea';
+                        }
+                    } else {
+                        waterGrid[y][x] = null; // Above water
+                    }
+                }
+            }
+
+            return {
+                grid: waterGrid,
+                width: width,
+                height: height,
+                layer_type: 'water',
+                sea_level: seaLevel,
+                water_volume: waterCoverage / 100.0,
+                dynamic: true
+            };
+        }
+
         function extractBiomeLayer(mapData) {
             // Extract biomes/vegetation from map data
             // Preserves all terrain types that represent biomes/vegetation
@@ -876,30 +937,22 @@
 
             const ctx = canvas.getContext('2d');
 
-            // Load terrain data - ALWAYS prioritize geosphere data over properties
+            // Load terrain data - NASA-first hierarchy
             <%
               terrain_map_data = @celestial_body&.geosphere&.terrain_map
               terrain_json = terrain_map_data ? terrain_map_data.to_json : 'null'
               
-              # Load properties data for additional layers only
-              freeciv_map_data = @celestial_body&.properties&.dig('freeciv_map')
-              civ4_map_data = @celestial_body&.properties&.dig('civ4_map')
-              has_properties_grid = @celestial_body&.properties&.dig('terrain_grid').present?
-              
-              # Only load Civ4 properties data if it's from import and no other Civ4 data
+              # NASA terrain data is now stored directly in geosphere.terrain_map
+              # No need to look for FreeCiv/Civ4 data as primary sources
+              freeciv_map_data = nil  # Not used in NASA-first system
+              civ4_map_data = nil     # Not used in NASA-first system
+              has_properties_grid = false
               civ4_properties_data = nil
-              if has_properties_grid && @celestial_body.properties['source'] == 'civ4_import' && !civ4_map_data
-                civ4_properties_data = {
-                  grid: @celestial_body.properties['terrain_grid'],
-                  width: @celestial_body.properties['grid_width'],
-                  height: @celestial_body.properties['grid_height'],
-                  biome_counts: @celestial_body.properties['biome_counts'] || {}
-                }
-              end
             %>
             let terrainData = <%= raw terrain_json %>;
-            let freecivData = <%= raw freeciv_map_data ? freeciv_map_data.to_json : 'null' %>;
-            let civ4Data = <%= raw (civ4_map_data || civ4_properties_data) ? (civ4_map_data || civ4_properties_data).to_json : 'null' %>;
+            let freecivData = null;  // NASA-first: FreeCiv data not used for terrain rendering
+            let civ4Data = null;     // NASA-first: Civ4 data not used for terrain rendering
+            let hasPropertiesGrid = false;
             let hydrosphereData = <%= raw @celestial_body&.hydrosphere ? @celestial_body.hydrosphere.attributes.to_json : 'null' %>;
 
             // DEBUG: Log what data sources are loaded
@@ -915,88 +968,61 @@
             }
             console.log('=== END DATA DEBUG ===');
 
-            // Layer extraction system - separate terrain, water, biomes, elevation from different map sources
+            // Layer extraction system - NASA-first: use terrainData directly
             let layers = {
-                terrain: null,    // Bare topographic terrain (from FreeCiv)
-                water: null,      // Water bodies (from FreeCiv)
-                biomes: null,     // Vegetation/climate zones (from Civ4)
-                resources: null,  // Mineral deposits (from Civ4)
-                elevation: null   // Elevation data (from processed maps)
+                terrain: null,    // Not used in NASA-first system
+                water: null,      // Calculated from hydrosphere data
+                biomes: null,     // From terrainData.biomes
+                resources: null,  // From terrainData.resource_grid
+                elevation: null   // From terrainData.elevation (PRIMARY SOURCE)
             };
 
-            // Extract elevation from terrain_map FIRST (needed for water layer calculation)
-            if (terrainData && (terrainData.elevation || terrainData.elevation_data)) {
-                const elevData = terrainData.elevation || terrainData.elevation_data;
+            // NASA-first: Extract elevation directly from terrainData
+            if (terrainData && terrainData.elevation) {
                 layers.elevation = {
-                    grid: elevData,
-                    width: terrainData.width || elevData[0]?.length || 0,
-                    height: terrainData.height || elevData.length,
+                    grid: terrainData.elevation,
+                    width: terrainData.elevation[0]?.length || 0,
+                    height: terrainData.elevation.length,
                     layer_type: 'elevation',
-                    quality: terrainData.quality || 'unknown',
-                    method: terrainData.method || 'unknown'
+                    quality: terrainData.quality_score || 'nasa',
+                    method: terrainData.generation_method || 'nasa_geotiff'
                 };
-                console.log('Using elevation data from terrain_map:', layers.elevation.quality, layers.elevation.method);
-
-                // ADD THESE DEBUG LINES:
-                console.log('Elevation source field:', terrainData.elevation ? 'elevation' : 'elevation_data');
-                console.log('Elevation grid sample:', layers.elevation.grid[0]?.slice(0, 5));
-
-                // Check elevation range
-                if (layers.elevation && layers.elevation.grid) {
-                    const allElevations = layers.elevation.grid.flat();
-                    const min = Math.min(...allElevations);
-                    const max = Math.max(...allElevations);
-                    const avg = allElevations.reduce((a,b) => a+b) / allElevations.length;
-                    console.log('Elevation range:', { min: min.toFixed(2), max: max.toFixed(2), avg: avg.toFixed(2) });
-                }
-            } else {
-                // Generate basic elevation from terrain types (fallback for water calculation)
-                const elevationSource = terrainData || freecivData || civ4Data;
-                if (elevationSource && elevationSource.grid) {
-                    layers.elevation = generateBasicElevation(elevationSource);
-                    console.log('Generated basic elevation data for water calculation');
-                }
+                console.log('Using NASA elevation data:', layers.elevation.quality, layers.elevation.method);
             }
 
-            // Extract layers - GEOSPHERE DATA TAKES PRIORITY for terrain, but overlays from best available source
-            if (terrainData && terrainData.grid) {
-                // Geosphere terrain map: Primary source for terrain
-                layers.terrain = extractTerrainLayer(terrainData);
-                console.log('Using terrain layer from geosphere (generated map)');
+            // NASA-first: Extract biomes directly from terrainData
+            if (terrainData && terrainData.biomes) {
+                layers.biomes = {
+                    grid: terrainData.biomes,
+                    width: terrainData.biomes[0]?.length || 0,
+                    height: terrainData.biomes.length,
+                    layer_type: 'biomes'
+                };
+                console.log('Using NASA biome data');
             }
-            
-            // Extract overlay layers from best available source (Civ4 has biomes, FreeCiv has water)
-            if (civ4Data && civ4Data.grid) {
-                // Civ4 map: Best source for biome layers
-                layers.biomes = extractBiomeLayer(civ4Data);
-                layers.resources = extractResourceLayer(civ4Data);
-                console.log('Extracted biome and resource layers from Civ4 map');
+
+            // NASA-first: Extract resources directly from terrainData
+            if (terrainData && terrainData.resource_grid) {
+                layers.resources = {
+                    grid: terrainData.resource_grid,
+                    width: terrainData.resource_grid[0]?.length || 0,
+                    height: terrainData.resource_grid.length,
+                    layer_type: 'resources'
+                };
+                console.log('Using NASA resource data');
             }
-            
-            if (freecivData && freecivData.grid) {
-                // FreeCiv map: Best source for water layers
-                layers.water = extractWaterLayer(freecivData, layers.elevation, hydrosphereData);
-                console.log('Extracted water layer from FreeCiv map');
-            } else if (civ4Data && civ4Data.grid && !layers.water) {
-                // Fallback: extract water from Civ4 if no FreeCiv data
-                layers.water = extractWaterLayer(civ4Data, layers.elevation, hydrosphereData);
-                console.log('Extracted water layer from Civ4 map (fallback)');
-            }
-            
-            // Final fallback for terrain if no geosphere data
-            if (!layers.terrain && freecivData && freecivData.grid) {
-                layers.terrain = extractTerrainLayer(freecivData, { stripVegetation: false });
-                console.log('Using terrain layer from FreeCiv properties (fallback)');
-            } else if (!layers.terrain && civ4Data && civ4Data.grid) {
-                layers.terrain = extractTerrainLayer(civ4Data, { stripVegetation: false });
-                console.log('Using terrain layer from Civ4 properties (fallback)');
+
+            // Calculate water layer from hydrosphere data (not from FreeCiv/Civ4)
+            if (hydrosphereData && layers.elevation) {
+                layers.water = calculateWaterLayerFromHydrosphere(hydrosphereData, layers.elevation);
+                console.log('Calculated water layer from hydrosphere data');
             }
 
             // Prefer decomposed layers if available (shows current planetary conditions)
             if (terrainData && terrainData.decomposed_layers) {
                 terrainData = terrainData.decomposed_layers;
                 console.log('Using decomposed terrain layers (planetary conditions applied)');
-            } else if (!terrainData && has_properties_grid) {
+            } else if (!terrainData && hasPropertiesGrid) {
                 <%
                   props_data = { grid: @celestial_body.properties['terrain_grid'], width: @celestial_body.properties['grid_width'], height: @celestial_body.properties['grid_height'], biome_counts: @celestial_body.properties['biome_counts'] }
                   props_json = props_data.to_json
@@ -1018,12 +1044,10 @@
             console.log('Terrain grid in properties:', <%= raw (@celestial_body.properties&.dig('terrain_grid').present? rescue false).to_json %>);
             console.log('Layers extracted:', layers);
 
-            // Use terrain layer by default, fallback to terrainData
-            let activeTerrainData = layers.terrain || terrainData;
-
-            if (!activeTerrainData || (!activeTerrainData.grid && !activeTerrainData.terrain_grid && !activeTerrainData.terrain)) {
-                console.warn('No terrain data available - displaying message on canvas');
-                logConsole('No terrain data available for rendering', 'warning');
+            // NASA-first rendering: Use layers directly
+            if (!layers.elevation) {
+                console.warn('No elevation data available - displaying message on canvas');
+                logConsole('No elevation data available for rendering', 'warning');
                 
                 // Clear canvas and show message
                 ctx.fillStyle = '#000000';
@@ -1039,22 +1063,42 @@
                 
                 return;
             }
-            const grid = activeTerrainData.grid || activeTerrainData.terrain_grid || activeTerrainData.terrain;
-            const width = activeTerrainData.width || grid[0]?.length || 0;
-            const height = activeTerrainData.height || grid.length;
 
-            console.log('Rendering terrain map:', width, 'x', height);
-            console.log('Sample grid data:', grid[0]?.slice(0, 5), grid[30]?.slice(0, 5));
+            // Use elevation layer for dimensions and primary rendering
+            const width = layers.elevation.width;
+            const height = layers.elevation.height;
+            const elevationData = layers.elevation.grid;
+
+            console.log('NASA-first rendering:', width, 'x', height);
+            console.log('Elevation sample:', elevationData[0]?.slice(0, 5));
 
             if (width === 0 || height === 0) {
                 console.error('Invalid terrain dimensions');
                 return;
             }
 
-            // Set canvas size based on terrain data
+            // Set canvas size
             const tileSize = 8; // 8px per tile
             canvas.width = width * tileSize;
             canvas.height = height * tileSize;
+
+            // Calculate min/max elevation for normalization
+            let minElevation = Infinity;
+            let maxElevation = -Infinity;
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const elev = elevationData[y][x];
+                    if (elev !== null && elev !== undefined) {
+                        minElevation = Math.min(minElevation, elev);
+                        maxElevation = Math.max(maxElevation, elev);
+                    }
+                }
+            }
+            // Fallback if no valid elevations
+            if (minElevation === Infinity) minElevation = 0;
+            if (maxElevation === -Infinity) maxElevation = 1000;
+
+            console.log('Elevation range:', minElevation, 'to', maxElevation);
 
             // Planet identification for special rendering (planetName already declared globally)
             // Analyze planetary conditions for data-driven rendering
@@ -1118,157 +1162,128 @@
             // Clear canvas
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Get water coverage for sea level calculation (bathtub model)
+            let waterCoverage = <%= raw (@celestial_body.hydrosphere&.water_coverage || 0).to_json %>;
+            // Normalize to 0-1 if it's a percentage (> 1)
+            if (waterCoverage > 1) {
+                waterCoverage = waterCoverage / 100;
+            }
+            let seaLevel = 0; // Default sea level in raw elevation units (meters)
+            
+            // Calculate sea level based on water coverage using bathtub model
+            // If we have elevation data, find the elevation that gives us the target water coverage
+            if (elevationData && waterCoverage > 0) {
+                // Collect all elevation values and sort them
+                const allElevations = [];
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        allElevations.push(elevationData[y][x]);
+                    }
+                }
+                allElevations.sort((a, b) => a - b);
+                
+                // Find the elevation at the water coverage percentile
+                // e.g., if water coverage is 0.71 (71%), find elevation at 71% from bottom
+                const seaLevelIndex = Math.floor(allElevations.length * waterCoverage);
+                seaLevel = allElevations[Math.min(seaLevelIndex, allElevations.length - 1)];
+                console.log('Calculated sea level:', seaLevel, 'meters for water coverage:', (waterCoverage * 100).toFixed(1) + '%');
+            }
 
-            // Render each tile
+            // NASA-first rendering loop: Use layers directly
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
-                    const rawTerrainType = grid[y][x];
-                    const terrainType = normalizeTerrainType(rawTerrainType);
-
-                    // Calculate latitude for this tile (-90 to +90)
-                    const latitude = ((y / (height - 1)) - 0.5) * 180;
+                    // Get elevation value (primary layer)
+                    const elevation = elevationData[y][x];
                     
-                    // Use ACTUAL elevation data if available, otherwise calculate
-                    const elevation = layers.elevation?.grid?.[y]?.[x] !== undefined 
-                        ? layers.elevation.grid[y][x]
-                        : calculateElevation(terrainType, latitude, planetTemp, planetPressure, x, y);
-
-                    // Debug output for first tile only
-                    if (y === 0 && x === 0) {
-                        console.log(`Tile [${x},${y}]:`, {
-                            terrainType: terrainType,
-                            elevationFromData: layers.elevation?.grid?.[y]?.[x],
-                            elevationUsed: elevation,
-                            usingActualData: layers.elevation?.grid?.[y]?.[x] !== undefined
-                        });
+                    // Get biome if available
+                    let biome = null;
+                    if (layers.biomes && layers.biomes.grid && layers.biomes.grid[y] && layers.biomes.grid[y][x]) {
+                        biome = layers.biomes.grid[y][x];
                     }
-
-                    // Start with base color - elevation-based topographic colors (SimEarth Alt view)
-                    let baseColor = '#000000'; // Default black
                     
-                    // Use elevation-based colors for bare terrain (SimEarth style)
-                    // Use warm earth-tone gradient (better contrast than grey)
-                    if (elevation > 0.85) {
-                        baseColor = '#EFEFEF';  // Very high peaks - white/light grey
-                    } else if (elevation > 0.7) {
-                        baseColor = '#D2B48C';  // High mountains - light tan
-                    } else if (elevation > 0.55) {
-                        baseColor = '#C9A777';  // Hills - medium tan/beige
-                    } else if (elevation > 0.4) {
-                        baseColor = '#A0826D';  // Highlands - brown-tan
-                    } else if (elevation > 0.25) {
-                        baseColor = '#8B7355';  // Plains - medium brown
-                    } else if (elevation > 0.15) {
-                        baseColor = '#654321';  // Lowlands - dark brown
-                    } else {
-                        baseColor = '#3D2817';  // Ocean floor / very low - very dark brown
+                    // Get water if available
+                    let water = null;
+                    if (layers.water && layers.water.grid && layers.water.grid[y] && layers.water.grid[y][x]) {
+                        water = layers.water.grid[y][x];
+                    }
+                    
+                    // Get resources if available
+                    let resource = null;
+                    if (layers.resources && layers.resources.grid && layers.resources.grid[y] && layers.resources.grid[y][x]) {
+                        resource = layers.resources.grid[y][x];
                     }
 
-                    // Debug: log first tile only
-                    if (y === 0 && x === 0) {
-                        console.log(`Tile ${x},${y}: ${rawTerrainType} -> elevation ${elevation.toFixed(2)} -> base:${baseColor}`);
+                    // Determine color based on layers (NASA-first priority)
+                    let color = '#000000'; // Default black
+                    
+                    // Water layer takes priority (blue)
+                    if (water && water > 0) {
+                        // Water depth affects shade of blue
+                        const depth = Math.min(water / 1000, 1); // Normalize to 0-1
+                        const blueValue = Math.floor(100 + (depth * 155)); // 100-255
+                        color = `rgb(0, 0, ${blueValue})`;
                     }
-
-                    let hasOverlay = false;
-
-                    // Initialize final color to base color
-                    let finalColor;
-                    finalColor = baseColor;
-                    if (visibleLayers.has('temperature')) {
-                        const tempOverlay = layerOverlays.temperature;
-                        let tempColor;
-                        
-                        // Check if terrain has specific temperature override (rare)
-                        if (tempOverlay.terrainColors && tempOverlay.terrainColors[terrainType]) {
-                            tempColor = tempOverlay.terrainColors[terrainType];
-                            if (typeof tempColor === 'function') {
-                                tempColor = tempColor(latitude);
-                            }
+                    // Biome layer (NASA-first biomes)
+                    else if (biome) {
+                        // Map NASA biome types to colors
+                        switch (biome) {
+                            case 'ocean': color = '#001122'; break;
+                            case 'desert': color = '#DAA520'; break;
+                            case 'grassland': color = '#228B22'; break;
+                            case 'forest': color = '#006400'; break;
+                            case 'tundra': color = '#F0F8FF'; break;
+                            case 'mountain': color = '#696969'; break;
+                            case 'ice': color = '#FFFFFF'; break;
+                            case 'volcanic': color = '#8B0000'; break;
+                            default: color = '#8B4513'; // Default brown
+                        }
+                    }
+                    // Elevation-based height map (SimEarth style)
+                    else if (elevation !== undefined && elevation !== null) {
+                        // Height map coloring based on elevation
+                        const normalizedElevation = (elevation - minElevation) / (maxElevation - minElevation);
+                        if (normalizedElevation < 0.3) {
+                            // Low elevation - blue/green (water/coastal)
+                            const blue = Math.floor(normalizedElevation * 255);
+                            color = `rgb(0, ${blue}, ${Math.floor(blue * 0.5)})`;
+                        } else if (normalizedElevation < 0.6) {
+                            // Mid elevation - green (land)
+                            const green = Math.floor(128 + (normalizedElevation - 0.3) * 255);
+                            color = `rgb(0, ${green}, 0)`;
                         } else {
-                            // Use global temperature calculation based on latitude, elevation, and planetary conditions
-                            tempColor = tempOverlay.getOverlayColor(latitude, elevation, planetTemp, planetPressure);
-                            // Removed verbose debug logging to prevent performance issues
-                        }
-                        
-                        // Blend temperature overlay with base color (40% opacity for SimEarth style)
-                        finalColor = blendColors(baseColor, tempColor, 0.4);
-                        hasOverlay = true;
-                    }
-
-                    // Apply other layer overlays (water, biomes, features overlay on terrain)
-                    for (const [layerName, overlay] of Object.entries(layerOverlays)) {
-                        if (layerName === 'temperature') continue; // Already handled above
-                        
-                        if (visibleLayers.has(layerName) && overlay.terrainColors) {
-                            let overlayTerrainType = terrainType; // Default to base terrain type
-                            
-                            // For layer-specific overlays, use the layer's grid data instead of base terrain
-                            if (layers[layerName] && layers[layerName].grid && layers[layerName].grid[y] && layers[layerName].grid[y][x] !== null) {
-                                overlayTerrainType = layers[layerName].grid[y][x];
-                            }
-                            
-                            if (overlay.terrainColors[overlayTerrainType]) {
-                                let overlayColor = overlay.terrainColors[overlayTerrainType];
-                                
-                                if (typeof overlayColor === 'function') {
-                                    overlayColor = overlayColor(latitude);
-                                }
-                                
-                                // Blend overlay with current final color
-                                finalColor = blendColors(finalColor, overlayColor, 0.7);
-                                hasOverlay = true;
-                            }
+                            // High elevation - brown/gray (mountains)
+                            const gray = Math.floor(139 + (normalizedElevation - 0.6) * 116);
+                            color = `rgb(${gray}, ${gray - 20}, ${gray - 40})`;
                         }
                     }
-
-                    // Apply atmospheric tinting for non-Earth worlds to make them look more realistic
-                    const isEarth = planetName.toLowerCase().includes('earth') || planetType.toLowerCase().includes('earth');
-                    if (!isEarth) {
-                        const isMars = planetName.toLowerCase().includes('mars') || planetType.toLowerCase().includes('mars');
-                        const isVenus = planetName.toLowerCase().includes('venus') || planetType.toLowerCase().includes('venus');
-                        const isTitan = planetName.toLowerCase().includes('titan') || planetType.toLowerCase().includes('titan');
-                        
-                        if (isMars) {
-                            // Mars: reddish atmospheric tint
-                            finalColor = blendColors(finalColor, '#CD853F', 0.3); // Sandy brown tint
-                        } else if (isVenus) {
-                            // Venus: yellowish atmospheric tint
-                            finalColor = blendColors(finalColor, '#FFD700', 0.4); // Gold tint
-                        } else if (isTitan) {
-                            // Titan: orange atmospheric tint
-                            finalColor = blendColors(finalColor, '#FFA500', 0.35); // Orange tint
-                        } else {
-                            // Generic non-Earth world: subtle atmospheric tint based on temperature
-                            const tempTint = planetTemp > 288 ? '#FFFF99' : '#E0E0FF'; // Warm = yellow, cool = blue
-                            const tintStrength = Math.abs(planetTemp - 288) / 200; // Temperature difference affects tint strength
-                            finalColor = blendColors(finalColor, tempTint, Math.min(tintStrength, 0.2));
-                        }
+                    
+                    // Resources overlay (yellow highlights)
+                    if (resource && resource !== 'none') {
+                        // Add yellow tint for resources
+                        color = blendColors(color, '#FFFF00', 0.3);
                     }
 
-                    // Ensure we never have black tiles (fallback to light brown)
-                    if (finalColor === '#000000' || finalColor === 'rgb(0, 0, 0)') {
-                        finalColor = '#4a3c28'; // Dark brown fallback
-                    }
-
-                    // Debug: log final colors for first tile only
-                    if (y === 0 && x === 0) {
-                        console.log(`Tile ${x},${y} FINAL: base:${baseColor} -> final:${finalColor}`);
-                    }
-
-                    ctx.fillStyle = finalColor;
-                    ctx.fillRect(x * tileSize, (height - 1 - y) * tileSize, tileSize, tileSize);
-
-                    // Add subtle border for tile definition
-                    ctx.strokeStyle = '#333333';
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x * tileSize, (height - 1 - y) * tileSize, tileSize, tileSize);
+                    // Draw the tile
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
                 }
             }
 
-            const uniqueTerrains = grid.flat().filter((v, i, a) => a.indexOf(v) === i);
-            console.log(`Rendered ${width}x${height} terrain map with ${Object.keys(colors).length} terrain types`);
-            console.log('Terrain types found:', uniqueTerrains);
-            logConsole(`Terrain map rendered: ${width}x${height} (${uniqueTerrains.length} unique terrain types: ${uniqueTerrains.join(', ')})`, 'success');
+            // Log terrain summary (handle elevation-only mode)
+            if (elevationOnlyMode) {
+                const elevations = elevationData.flat();
+                const minElev = Math.min(...elevations);
+                const maxElev = Math.max(...elevations);
+                console.log(`Rendered ${width}x${height} elevation height map`);
+                console.log('Elevation range:', minElev, 'to', maxElev);
+                logConsole(`Elevation height map rendered: ${width}x${height} (elevation range: ${minElev.toFixed(0)} to ${maxElev.toFixed(0)} meters)`, 'success');
+            } else if (grid) {
+                const uniqueTerrains = grid.flat().filter((v, i, a) => a.indexOf(v) === i);
+                console.log(`Rendered ${width}x${height} terrain map with ${Object.keys(colors).length} terrain types`);
+                console.log('Terrain types found:', uniqueTerrains);
+                logConsole(`Terrain map rendered: ${width}x${height} (${uniqueTerrains.length} unique terrain types: ${uniqueTerrains.join(', ')})`, 'success');
+            }
         }
 
         // Setup AI test buttons

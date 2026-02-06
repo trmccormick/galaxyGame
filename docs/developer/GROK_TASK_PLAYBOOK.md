@@ -328,27 +328,38 @@ mkdir -p ./log/archive && mv ./log/rspec_full_*.log ./log/archive/
 docker-compose -f docker-compose.dev.yml exec web rm -f tmp/rspec_examples.txt
 ```
 - Clear test database deadlocks (container):
-```Progress Tracking
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:test:prepare'
+```
+- Sync docs: Ensure `README.md` or system_architecture.md reflects current state.
 
-### Current Status (2026-01-17 Evening)
-- **Baseline:** Starting from ~415 failures (Nightly Grinder baseline)
-- **Session Fixes (Backup Restoration):**
-  - BaseSettlement: Restored manage_shared_services! with power/data/robot service management
-  - CelestialBody: Made can_generate_locally? public (was accidentally private)
-  - CelestialBody: Restored density method to check column before calculating
-  - CelestialBody: Added magnetosphere_protection? and has_magnetosphere accessors
-  - BaseStructure factory: Restored :operational and :non_operational traits
-- **Strategy:** Systematic backup comparison (Jan 8th) to identify missing/regressed functionality
-- **Next:** Fresh full suite run to establish new baseline after restoration work
+### Current Status (2026-02-05)
+- **✅ COMPLETED: Tug Construction Integration Test**
+  - Full end-to-end validation of tug construction workflow
+  - Mission profile loading, material procurement, orbital construction
+  - Environmental adaptations, quality assurance, deployment
+  - Test stable: 0 failures across multiple runs (4+ minutes execution)
+  - Documentation updated in `docs/crafts/asteroid_relocation_tug_guide.md`
+  - Mission profiles created: `l1_tug_construction_profile_v1.json` and manifest
 
-### Failure Count Log
-Track progress here after each Grinder run:
+- **🎯 NEXT PRIORITY: Alio Tileset Surface View Integration**
+  - Wire FreeCiv Alio tileset (GPL-2.0+) into Surface View rendering
+  - Complete AlioTilesetService already implemented and tested
+  - Add tileset selector, JavaScript loader, and body-specific configurations
+  - Enable sci-fi planetary rendering with burrow tubes, thermal vents, etc.
 
-| Date | Failures | Change | Notes |
-|------|----------|--------|-------|
-| 2026-01-17 PM | TBD | TBD | Backup restoration session - BaseSettlement, CelestialBody, BaseStructure factory |
-| 2026-01-17 AM | 393 | -27 | GameController, ShellPrintingJob, PrecursorCapability fixes |
-| [Next] | | | |
+- **Strategy:** Sequential task completion with full testing and documentation
+- **Next:** Complete Alio tileset integration, then evaluate AI Manager learning patterns
+
+### Task Completion Log
+Track progress here after each major task:
+
+| Date | Task | Status | Notes |
+|------|------|--------|-------|
+| 2026-02-05 | Tug Construction Integration Test | ✅ COMPLETED | 4 examples, 0 failures, stable across runs |
+| 2026-02-05 | Alio Tileset Surface View Integration | 🎯 IN PROGRESS | Service complete, need controller/view/JS integration |
+| 2026-01-17 | Backup Restoration Session | ✅ COMPLETED | BaseSettlement, CelestialBody, BaseStructure factory fixes |
+| 2026-01-17 | GameController/ShellPrintingJob Fixes | ✅ COMPLETED | 393 → 366 failures (-27) |
 
 ## bash
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:test:prepare'
@@ -391,6 +402,14 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - Run database cleanup between major test runs
 
 ## Assignment Templates (Small, Delegable Tasks)
+
+### Section Index
+| Section | Focus Area | Priority Tasks |
+|---------|------------|----------------|
+| A-E | Core fixes, costs, economics | Spec fixes, blueprint migration, EAP calculator |
+| F | Mission & Discovery | Mission profiles, folder structure, Anchor Law |
+| G | Market Impact | Mission triggers, resource transformation |
+| **H** | **Terrain & Maps [NEW 2026-02-05]** | **NASA GeoTIFF loader, hydrosphere colors, geological data** |
 
 ### A) Fix Single Failing Spec (Atomic)
 - Steps:
@@ -624,6 +643,142 @@ docker exec -it web bash -c "bundle exec rails runner \"puts GalaxyGame::Paths::
 # Test terrain generation
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/terrain/ --format documentation'
 ```
+
+## Section H: Terrain & Map System Fixes [2026-02-05]
+
+### View Types Distinction
+
+**Monitor View (Admin/Debug):**
+- SimEarth-style layered rendering with toggleable overlays
+- Terrain layer always ON as foundation (cannot be disabled)
+- Body-specific color gradients (Luna=grey, Mars=rust, Earth=green-brown)
+- Location: `app/views/admin/celestial_bodies/monitor.html.erb`
+
+**Surface View (Gameplay):**
+- Uses FreeCiv tileset sprites for proper game UI
+- Requires 2:1 aspect ratio grid for cylindrical wrap
+- Tile pixel size must match tileset (64×64 for Trident)
+- Location: `app/views/admin/celestial_bodies/surface.html.erb`
+
+### H1) NASA GeoTIFF Loader for Monitor View (✅ COMPLETED 2026-02-06)
+
+**Goal:** Replace incorrect FreeCiv-derived elevation display with real NASA GeoTIFF data in the monitor view.
+
+**Background:** Current monitor view converts FreeCiv terrain characters to arbitrary elevation values (279-322m uniform range). Real elevation data exists at `data/geotiff/processed/*.asc.gz` with 1800×900 resolution.
+
+**Note:** The SimEarth-style layer system is correct - only the DATA SOURCE needs fixing. Terrain layer should remain always-on as the base.
+
+**Layer System (Preserve This):**
+- Layer 0 (Terrain/Lithosphere): Always ON - elevation-based body colors
+- Layer 1 (Hydrosphere): Toggleable - liquid coverage overlay
+- Layer 2 (Biosphere): Toggleable - vegetation/life overlay  
+- Layer 3 (Infrastructure): Toggleable - stations/depots overlay
+
+**Implementation:**
+1. ✅ Updated `app/views/admin/celestial_bodies/monitor.html.erb` to load NASA terrain data directly from `geosphere.terrain_map`
+2. ✅ Replaced FreeCiv data source with NASA elevation/biomes/resource_grid extraction
+3. ✅ Added NASA-first water calculation using hydrosphere bathtub logic
+4. ✅ Updated rendering loop to use layers.elevation, layers.biomes, layers.water, layers.resources
+5. ✅ Maintained existing layer toggle system and SimEarth aesthetic
+6. ✅ Updated documentation in ADMIN_SYSTEM.md to reflect NASA-first architecture
+
+**Files Modified:**
+- `app/views/admin/celestial_bodies/monitor.html.erb` - Complete NASA-first rendering implementation
+- `docs/developer/ADMIN_SYSTEM.md` - Updated documentation for NASA terrain system
+
+**Acceptance:**
+- ✅ Terrain layer shows real elevation variation (Olympus Mons bright, Hellas dark)
+- ✅ Layer toggles still work (Hydrosphere, Biosphere, etc.)
+- ✅ Body-specific colors render correctly using NASA data
+- ✅ Controller tests pass (169 examples, 0 failures)
+
+**References:**
+- [GUARDRAILS.md §7.5](../GUARDRAILS.md) - Terrain architecture principles
+- [ELEVATION_DATA.md](ELEVATION_DATA.md) - Data sources
+- [SURFACE_VIEW_IMPLEMENTATION_PLAN.md](SURFACE_VIEW_IMPLEMENTATION_PLAN.md) - Full task list
+
+### H2) Hydrosphere Composition Colors (MEDIUM PRIORITY)
+
+**Goal:** Render hydrosphere with composition-appropriate colors, not always blue.
+
+**Background:** Some bodies have non-water hydrospheres (Titan has methane/ethane lakes). The `liquid_name` attribute in seed data specifies composition but isn't used for coloring.
+
+**Steps:**
+1. Fix `primary_liquid` method in `CelestialBodyHydrosphere` model
+2. Check `hydrosphere.liquid_name` attribute first, fall back to `hydrosphere.liquids`
+3. Add composition→color mapping:
+   - H2O → blue (#0066cc)
+   - CH4/C2H6 (methane/ethane) → orange (#cc6600)
+   - NH3 (ammonia) → yellow-green (#99cc00)
+   - N2 (nitrogen) → pale pink (#ffcccc)
+4. Apply to hydrosphere rendering in map views
+
+**Files to Modify:**
+- `app/models/celestial_body_hydrosphere.rb` - Fix `primary_liquid` method
+- `app/helpers/map_helper.rb` - Add composition color method
+- `spec/models/celestial_body_hydrosphere_spec.rb` - Test liquid detection
+
+**Acceptance:**
+- Titan's hydrosphere renders orange, not blue
+- Earth's oceans render blue
+- Method correctly reads `liquid_name` attribute
+
+### H3) Remove FreeCiv-to-Elevation Conversion (HIGH PRIORITY)
+
+**Goal:** Stop treating FreeCiv terrain types as elevation data.
+
+**Background:** Code currently maps FreeCiv terrain characters (d,p,g,f,h,m) to elevation ranges. This is architecturally wrong - FreeCiv terrain represents biomes/classification, not topography.
+
+**Steps:**
+1. Remove elevation conversion tables from monitor view
+2. Remove terrain-to-elevation mapping from any services
+3. Keep FreeCiv maps accessible for AI Manager training only
+4. Update any code that relies on FreeCiv for elevation
+
+**Files to Modify:**
+- `app/views/admin/monitor.html.erb` - Remove terrain→elevation conversion
+- Search for any `terrain_to_elevation` or similar methods
+
+**Acceptance:**
+- No code converts FreeCiv terrain characters to elevation numbers
+- FreeCiv data only used by AI Manager for training/pattern learning
+
+### H4) Complete Geological Data for Mars & Luna (LOW PRIORITY)
+
+**Goal:** Add missing geological feature categories to validation data.
+
+**Background:** Civ4 Mars map has 30 labeled features. Our geological data is missing key categories that prevent complete validation.
+
+**Missing Data Files to Create:**
+```
+data/json-data/star_systems/sol/celestial_bodies/mars/features/
+├── volcanoes.json     # Olympus Mons, Elysium Mons, Pavonis, Arsia, Ascraeus
+├── planitia.json      # Hellas, Amazonis, Arcadia, Acidalia, Utopia
+├── terrae.json        # Terra Sabaea, Terra Cimmeria, etc.
+└── tholus.json        # Albor Tholus, Hecates Tholus
+
+data/json-data/star_systems/sol/celestial_bodies/luna/features/
+├── maria.json         # Mare Imbrium, Tranquillitatis, Serenitatis, etc.
+└── montes.json        # Apenninus, Carpatus, Haemus, etc.
+```
+
+**Steps:**
+1. Extract feature names from Civ4 Mars map (30 labels)
+2. Cross-reference with NASA/USGS nomenclature
+3. Add lat/lon coordinates for each feature
+4. Validate against FreeCiv Mars map (50+ labels)
+5. Create JSON files matching existing format (see craters.json for template)
+
+**Acceptance:**
+- All Civ4 Mars labels have corresponding geological data entries
+- Coordinates match real positions (within reasonable tolerance)
+- AI Manager can validate feature completeness
+
+**References:**
+- Civ4 Mars: `data/Civ4_Maps/MARS1.22b.Civ4WorldBuilderSave`
+- FreeCiv Mars: `data/maps/mars-terraformed-133x64-v2.0.sav`
+
+---
 
 ## Optional: Alpha Centauri JSON Generator Template
 - Goal: Provide generator for Alpha Centauri system files.
