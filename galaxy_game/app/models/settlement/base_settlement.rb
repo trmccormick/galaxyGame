@@ -8,6 +8,9 @@ module Settlement
     include EnergyManagement
     include FinancialManagement
     
+    # Life support consumption rates
+    attr_accessor :food_per_person, :water_per_person, :energy_per_person
+    
     belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
     belongs_to :owner, polymorphic: true, optional: true
     has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account'
@@ -29,6 +32,7 @@ module Settlement
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
     alias_attribute :units, :base_units
     has_many :structures, class_name: 'Structures::BaseStructure', foreign_key: 'settlement_id'
+    has_many :missions, class_name: 'Mission', foreign_key: 'settlement_id'
 
     has_many :orbital_construction_projects, class_name: 'OrbitalConstructionProject', foreign_key: 'station_id'
 
@@ -38,12 +42,18 @@ module Settlement
     validates :name, presence: true
     validates :current_population, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :settlement_type, presence: true
+    
+    # Life support validations
+    validates :food_per_person, numericality: { greater_than: 0 }, allow_nil: true
+    validates :water_per_person, numericality: { greater_than: 0 }, allow_nil: true
+    validates :energy_per_person, numericality: { greater_than: 0 }, allow_nil: true
 
     enum settlement_type: { base: 0, outpost: 1, settlement: 2, city: 3, station: 4 }
 
     after_create :create_account_and_inventory
     after_update :adjust_settlement_type_based_on_population, if: :saved_change_to_current_population?
     after_create :build_units_and_modules
+    after_initialize :set_life_support_defaults
 
     # FIXED: Remove override of operational_data getter - let Rails handle it
     # The attribute accessor works fine with jsonb columns
@@ -193,6 +203,23 @@ module Settlement
 
     def resource_requirements
       calculate_life_support_requirements
+    end
+
+    def calculate_life_support_requirements
+      {
+        food: current_population * (food_per_person || 0),
+        water: current_population * (water_per_person || 0),
+        energy: current_population * (energy_per_person || 0),
+        waste_processing: current_population * 0.6
+      }
+    end
+
+    def calculate_life_support_requirements
+      {
+        food: current_population * (food_per_person || 0),
+        water: current_population * (water_per_person || 0),
+        energy: current_population * (energy_per_person || 0)
+      }
     end
 
     def check_resource_availability
@@ -352,6 +379,15 @@ module Settlement
         end
 
       (current_population * per_person_daily * days).ceil
+    end
+
+    def calculate_life_support_requirements
+      {
+        food: current_population * food_per_person,
+        water: current_population * water_per_person,
+        energy: current_population * energy_per_person,
+        waste_processing: current_population * 0.6
+      }
     end
 
     private
