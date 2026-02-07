@@ -1,0 +1,1017 @@
+/**
+ * Admin Monitor - Planetary Visualization Module
+ * 
+ * SimEarth-style planetary monitor with layered terrain rendering.
+ * Extracted from inline ERB for proper separation of concerns.
+ * 
+ * Data is injected via #monitor-data JSON element in the view.
+ */
+
+// Namespace to avoid global pollution
+window.AdminMonitor = (function() {
+  'use strict';
+
+  // Module state
+  let planetId = null;
+  let planetName = '';
+  let planetType = '';
+  let updateInterval = null;
+  let climate = null;
+  let planetData = null;
+  let terrainData = null;
+  let layers = {};
+  let visibleLayers = new Set(['terrain']);
+
+  // Layer overlay colors (complete replacement with terrain-specific shades)
+  const layerOverlays = {
+    water: {
+      terrainColors: {
+        'coast': '#87CEEB',
+        'ocean': '#1e3a8a',
+        'deep_sea': '#000080'
+      }
+    },
+    biomes: {
+      terrainColors: {
+        'forest': '#228B22',
+        'jungle': '#006400',
+        'grasslands': '#32CD32',
+        'plains': '#FFFF00',
+        'swamp': '#808000',
+        'boreal': '#228B22',
+        'arctic': '#ffffff',
+        'desert': function(lat, climate) {
+          const absLat = Math.abs(lat);
+          if (absLat > climate.iceLatitude + 20) {
+            return '#ffeedd';
+          } else {
+            return '#ffdd44';
+          }
+        }
+      }
+    },
+    features: {
+      terrainColors: {
+        'rock': '#696969'
+      }
+    },
+    temperature: {
+      getOverlayColor: function(latitude, elevation, globalTemp, pressure) {
+        const absLat = Math.abs(latitude);
+        let baseTemp;
+        if (absLat < 30) {
+          baseTemp = globalTemp - 273.15 + 20 - (absLat / 30) * 10;
+        } else if (absLat < 60) {
+          baseTemp = globalTemp - 273.15 - ((absLat - 30) / 30) * 20;
+        } else {
+          baseTemp = globalTemp - 273.15 - 20 - ((absLat - 60) / 30) * 30;
+        }
+        const elevationTemp = baseTemp - (elevation * 20);
+        const pressureTemp = elevationTemp * (0.5 + pressure * 0.5);
+        
+        if (pressureTemp > 30) return '#ff0000';
+        else if (pressureTemp > 15) return '#ff6600';
+        else if (pressureTemp > 0) return '#ffff00';
+        else if (pressureTemp > -15) return '#aa6600';
+        else return '#0088ff';
+      },
+      terrainColors: {}
+    },
+    rainfall: {
+      terrainColors: {
+        'jungle': '#0066ff',
+        'swamp': '#0044ff',
+        'forest': '#4488ff',
+        'boreal': '#88aaff',
+        'desert': '#ffff00'
+      }
+    },
+    resources: {
+      terrainColors: {
+        'rock': '#ffd700',
+        'desert': '#daa520'
+      }
+    }
+  };
+
+  // Color map for terrain types
+  const colors = {
+    ocean: '#0066cc',
+    deep_sea: '#003366',
+    arctic: '#e8e8e8',
+    tundra: '#b8b8b8',
+    grasslands: '#90EE90',
+    plains: '#F0E68C',
+    forest: '#228B22',
+    jungle: '#006400',
+    desert: '#F4A460',
+    mountains: '#696969',
+    rock: '#808080',
+    rocky: '#808080',
+    boreal: '#228B22',
+    swamp: '#556B2F'
+  };
+
+  // ============================================
+  // Utility Functions
+  // ============================================
+
+  function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  function blendColors(baseColor, overlayColor, alpha) {
+    const base = hexToRgb(baseColor);
+    const overlay = hexToRgb(overlayColor);
+    
+    if (!base || !overlay) return baseColor;
+    
+    const r = Math.round(base.r * (1 - alpha) + overlay.r * alpha);
+    const g = Math.round(base.g * (1 - alpha) + overlay.g * alpha);
+    const b = Math.round(base.b * (1 - alpha) + overlay.b * alpha);
+    
+    return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+  }
+
+  function formatMass(mass) {
+    if (mass > 1e18) return `${(mass / 1e18).toFixed(2)} Eg`;
+    if (mass > 1e15) return `${(mass / 1e15).toFixed(2)} Pg`;
+    if (mass > 1e12) return `${(mass / 1e12).toFixed(2)} Tg`;
+    if (mass > 1e9) return `${(mass / 1e9).toFixed(2)} Gg`;
+    return `${mass.toFixed(2)} kg`;
+  }
+
+  // ============================================
+  // Climate Calculations (TerraSim-style)
+  // ============================================
+
+  function calculateClimateZones(tempK, pressureBar) {
+    const Ts = tempK;
+    const Tp = Ts - 75 / (1 + 5 * pressureBar);
+    const Tt = Ts * 1.1;
+    
+    let iceLat = 0;
+    let habRatio = 0;
+    
+    if (Tt > 273 && Tp < 273) {
+      habRatio = Math.pow((Tt - 273) / (Tt - Tp), 0.666667);
+      iceLat = Math.asin(habRatio) * 180 / Math.PI;
+    } else if (Tt < 273) {
+      habRatio = 0;
+      iceLat = 90;
+    } else {
+      habRatio = 1;
+      iceLat = 0;
+    }
+    
+    return {
+      surfaceTemp: Ts,
+      polarTemp: Tp,
+      tropicalTemp: Tt,
+      iceLatitude: iceLat,
+      habitableRatio: habRatio,
+      polarZone: iceLat,
+      temperateZone: Math.max(iceLat + 30, 45),
+      tropicalZone: Math.max(iceLat + 60, 75)
+    };
+  }
+
+  // ============================================
+  // Color Classification Functions
+  // ============================================
+
+  function getTerrainColorScheme(pData) {
+    const type = pData.type;
+    const atmosphere = pData.atmosphere;
+    const surfaceTemp = pData.surface_temperature || pData.temperature || 288;
+    const geologicalActivity = pData.geological_activity || pData.geosphere_attributes?.geological_activity || 50;
+    const gravity = pData.gravity || 1.0;
+    const name = (pData.name || '').toLowerCase();
+    
+    // Red/Black (lava worlds)
+    if (surfaceTemp > 700 && geologicalActivity > 80) {
+      return { low: '#1a0000', high: '#ff4500' };
+    }
+    
+    // Orange (Venus-like)
+    if (atmosphere && atmosphere.pressure > 10 && surfaceTemp > 400) {
+      return { low: '#8b4513', high: '#ffa500' };
+    }
+    
+    // Rust (Mars-like)
+    if (name === 'mars' || 
+        (atmosphere && atmosphere.pressure > 0.001 && atmosphere.pressure < 0.1 && 
+         surfaceTemp < 280 && surfaceTemp > 150 && gravity > 2 && gravity < 5)) {
+      return { low: '#4a2810', high: '#cd5c3c' };
+    }
+    
+    // Grey (truly airless)
+    if ((atmosphere && atmosphere.pressure < 0.001) || 
+        (!atmosphere) ||
+        gravity < 0.3 || 
+        type?.includes('moon') || 
+        type?.includes('asteroid') || 
+        type?.includes('dwarf_planet') ||
+        name === 'luna' || name === 'moon' || name === 'mercury') {
+      return { low: '#4a4a4a', high: '#d0d0d0' };
+    }
+    
+    // Dark Grey (carbon worlds)
+    if (type?.includes('carbon') || pData.crust_composition?.elements?.C > 25) {
+      return { low: '#2f2f2f', high: '#696969' };
+    }
+    
+    // Brown (Earth-like default)
+    return { low: '#2d1810', high: '#d2b48c' };
+  }
+
+  function getElevationColor(normalizedElevation, pData) {
+    if (normalizedElevation === null || normalizedElevation === undefined) {
+      return '#000000';
+    }
+    
+    const colorScheme = getTerrainColorScheme(pData);
+    const lowRgb = hexToRgb(colorScheme.low);
+    const highRgb = hexToRgb(colorScheme.high);
+    
+    if (!lowRgb || !highRgb) return '#808080';
+    
+    const r = Math.round(lowRgb.r + (highRgb.r - lowRgb.r) * normalizedElevation);
+    const g = Math.round(lowRgb.g + (highRgb.g - lowRgb.g) * normalizedElevation);
+    const b = Math.round(lowRgb.b + (highRgb.b - lowRgb.b) * normalizedElevation);
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  function getBiomeColor(biome) {
+    switch (biome) {
+      case 'desert': return '#DAA520';
+      case 'grassland': return '#228B22';
+      case 'forest': return '#006400';
+      case 'tundra': return '#F0F8FF';
+      case 'mountain': return '#696969';
+      case 'ice': return '#FFFFFF';
+      case 'volcanic': return '#8B0000';
+      case 'plains': return '#8B4513';
+      case 'peaks': return '#D3D3D3';
+      case 'jungle': return '#004400';
+      case 'swamp': return '#556B2F';
+      case 'arctic': return '#E8E8E8';
+      case 'boreal': return '#228B22';
+      default: return '#8B4513';
+    }
+  }
+
+  /**
+   * Get hydrosphere color based on liquid composition
+   * Mars = ice caps, Titan = orange methane, Earth = blue water
+   */
+  function getHydrosphereColor(waterDepth, pData) {
+    const name = (pData.name || '').toLowerCase();
+    const liquid = (pData.liquid_name || 'H2O').toUpperCase();
+    const temp = pData.surface_temperature || pData.temperature || 288;
+    
+    // Depth-based intensity
+    const intensity = Math.min(1, 0.4 + (waterDepth / 2000) * 0.6);
+    
+    // Mars - ice caps (frozen H2O/CO2)
+    if (name === 'mars' || name.includes('mars')) {
+      const iceValue = Math.round(200 + intensity * 55);
+      return `rgba(${iceValue}, ${iceValue}, 255, 0.85)`;
+    }
+    
+    // Titan - methane/ethane lakes (orange)
+    if (name === 'titan' || liquid === 'CH4' || liquid === 'C2H6' || 
+        liquid.includes('METHANE') || liquid.includes('ETHANE')) {
+      const r = Math.round(180 + intensity * 75);
+      const g = Math.round(80 + intensity * 40);
+      return `rgba(${r}, ${g}, 0, 0.8)`;
+    }
+    
+    // Europa/Enceladus - subsurface ocean (pale blue-white ice)
+    if (name === 'europa' || name === 'enceladus') {
+      const iceBlue = Math.round(220 + intensity * 35);
+      return `rgba(${iceBlue}, ${iceBlue}, 255, 0.7)`;
+    }
+    
+    // Nitrogen ice (Pluto/Triton)
+    if (liquid === 'N2' || name === 'pluto' || name === 'triton') {
+      const r = Math.round(230 + intensity * 25);
+      const g = Math.round(200 + intensity * 30);
+      const b = Math.round(200 + intensity * 30);
+      return `rgba(${r}, ${g}, ${b}, 0.75)`;
+    }
+    
+    // Default: H2O water (blue)
+    const blueIntensity = Math.round(100 + intensity * 155);
+    return `rgba(0, 0, ${blueIntensity}, 0.8)`;
+  }
+
+  // ============================================
+  // Atmospheric Analysis
+  // ============================================
+
+  function analyzeAtmosphericConditions(temperature, pressure, composition) {
+    let hasAtmosphere = false;
+    let isHabitable = false;
+    let dominantGas = 'none';
+    let visualEffects = {
+      haze: 0,
+      colorTint: null,
+      aurora: false
+    };
+
+    if (pressure > 0.01) {
+      hasAtmosphere = true;
+
+      if (composition && typeof composition === 'object') {
+        let maxPercentage = 0;
+        let dominantGasKey = null;
+
+        Object.keys(composition).forEach(gas => {
+          const gasData = composition[gas];
+          const percentage = gasData.percentage || gasData;
+          if (percentage > maxPercentage) {
+            maxPercentage = percentage;
+            dominantGasKey = gas;
+          }
+        });
+
+        if (dominantGasKey) {
+          dominantGas = dominantGasKey;
+
+          if (dominantGasKey === 'CO2') {
+            visualEffects.haze = 0.8;
+            visualEffects.colorTint = '#ffaaaa';
+          } else if (dominantGasKey === 'N2' && composition['O2']) {
+            const oxygenPercent = composition['O2'].percentage || composition['O2'];
+            if (oxygenPercent >= 19.5 && oxygenPercent <= 23.5) {
+              isHabitable = true;
+              visualEffects.haze = 0.1;
+            }
+          } else if (dominantGasKey === 'CH4') {
+            visualEffects.haze = 0.6;
+            visualEffects.colorTint = '#ffffaa';
+          }
+        }
+      }
+
+      if (temperature < 273) {
+        visualEffects.haze += 0.2;
+      } else if (temperature > 400) {
+        visualEffects.haze += 0.3;
+      }
+
+      if (pressure > 5) {
+        visualEffects.haze += 0.4;
+      }
+
+      visualEffects.haze = Math.max(0, Math.min(1, visualEffects.haze));
+
+      if (hasAtmosphere && temperature > 200 && pressure > 0.1) {
+        visualEffects.aurora = true;
+      }
+    }
+
+    return {
+      hasAtmosphere,
+      isHabitable,
+      dominantGas,
+      visualEffects,
+      temperature,
+      pressure,
+      composition
+    };
+  }
+
+  // ============================================
+  // Water Layer Calculation (Bathtub Model)
+  // ============================================
+
+  function calculateWaterLayerFromHydrosphere(hydrosphereData, elevationLayer) {
+    if (!elevationLayer || !elevationLayer.grid) {
+      return null;
+    }
+
+    const width = elevationLayer.width;
+    const height = elevationLayer.height;
+    const elevationGrid = elevationLayer.grid;
+
+    let waterCoverage = 0.3;
+    if (waterCoverage > 1) {
+      waterCoverage = waterCoverage / 100;
+    }
+
+    let seaLevel = 0;
+    if (waterCoverage > 0) {
+      const allElevations = [];
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const elev = elevationGrid[y][x];
+          if (elev !== null && elev !== undefined) {
+            allElevations.push(elev);
+          }
+        }
+      }
+      allElevations.sort((a, b) => a - b);
+
+      const seaLevelIndex = Math.floor(allElevations.length * waterCoverage);
+      seaLevel = allElevations[Math.min(seaLevelIndex, allElevations.length - 1)];
+    }
+
+    const waterGrid = [];
+    for (let y = 0; y < height; y++) {
+      waterGrid[y] = [];
+      for (let x = 0; x < width; x++) {
+        const elevation = elevationGrid[y][x];
+        if (elevation !== null && elevation !== undefined && elevation < seaLevel) {
+          waterGrid[y][x] = seaLevel - elevation;
+        } else {
+          waterGrid[y][x] = 0;
+        }
+      }
+    }
+
+    return {
+      grid: waterGrid,
+      width: width,
+      height: height,
+      layer_type: 'water',
+      sea_level: seaLevel,
+      water_coverage: waterCoverage
+    };
+  }
+
+  // ============================================
+  // Elevation Calculation
+  // ============================================
+
+  function calculateElevation(terrainType, latitude, temperature, pressure, x, y) {
+    if (layers.elevation && layers.elevation.grid && 
+        layers.elevation.grid[y] && layers.elevation.grid[y][x] !== undefined) {
+      const elevationValue = layers.elevation.grid[y][x];
+      return Math.max(0, Math.min(1, elevationValue));
+    }
+    
+    const baseElevations = {
+      ocean: 0.0,
+      deep_sea: -0.1,
+      arctic: 0.1,
+      tundra: 0.2,
+      grasslands: 0.3,
+      plains: 0.4,
+      forest: 0.5,
+      jungle: 0.5,
+      desert: 0.4,
+      mountains: 0.9,
+      rock: 0.7,
+      boreal: 0.6,
+      swamp: 0.1
+    };
+    
+    let elevation = baseElevations[terrainType] || 0.5;
+    elevation += (pressure - 1.0) * 0.1;
+    
+    const tempOffset = (temperature - 288) / 200;
+    elevation += tempOffset * 0.2;
+    
+    const latFactor = Math.abs(latitude) / 90;
+    const polarVariation = Math.sin(latitude * Math.PI / 180 * 4) * 0.2;
+    elevation += latFactor * 0.05 + polarVariation;
+    
+    return Math.max(0, Math.min(1, elevation));
+  }
+
+  // ============================================
+  // Main Terrain Rendering
+  // ============================================
+
+  function renderTerrainMap() {
+    const canvas = document.getElementById('planetCanvas');
+    if (!canvas) {
+      console.error('Canvas element not found');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    console.log('=== NASA TERRAIN DATA DEBUG ===');
+    console.log('terrainData:', terrainData ? 'LOADED' : 'null');
+    if (terrainData && terrainData.grid) {
+      console.log('Geosphere grid sample:', terrainData.grid[0]?.slice(0, 10));
+    }
+    console.log('=== END NASA DATA DEBUG ===');
+
+    // Reset layers
+    layers = {
+      terrain: null,
+      water: null,
+      biomes: null,
+      resources: null,
+      elevation: null
+    };
+
+    // NASA-first: Extract elevation
+    if (terrainData && terrainData.elevation) {
+      layers.elevation = {
+        grid: terrainData.elevation,
+        width: terrainData.elevation[0]?.length || 0,
+        height: terrainData.elevation.length,
+        layer_type: 'elevation',
+        quality: terrainData.quality_score || 'nasa',
+        method: terrainData.generation_method || 'nasa_geotiff'
+      };
+      console.log('Using NASA elevation data:', layers.elevation.quality, layers.elevation.method);
+    }
+
+    // NASA-first: Extract biomes
+    if (terrainData && terrainData.biomes && Array.isArray(terrainData.biomes) && 
+        terrainData.biomes.length > 0 && Array.isArray(terrainData.biomes[0]) &&
+        layers.elevation && terrainData.biomes.length === layers.elevation.height && 
+        terrainData.biomes[0].length === layers.elevation.width) {
+      layers.biomes = {
+        grid: terrainData.biomes,
+        width: terrainData.biomes[0].length,
+        height: terrainData.biomes.length,
+        layer_type: 'biomes'
+      };
+      console.log('Using NASA biome grid data');
+    } else {
+      console.log('Biomes grid missing - will show pure elevation heightmap');
+    }
+
+    // NASA-first: Extract resources
+    if (terrainData && terrainData.resource_grid) {
+      layers.resources = {
+        grid: terrainData.resource_grid,
+        width: terrainData.resource_grid[0]?.length || 0,
+        height: terrainData.resource_grid.length,
+        layer_type: 'resources'
+      };
+      console.log('Using NASA resource data');
+    }
+
+    // Calculate water layer from hydrosphere
+    if (layers.elevation) {
+      layers.water = calculateWaterLayerFromHydrosphere(null, layers.elevation);
+      console.log('Calculated water layer from hydrosphere data');
+    }
+
+    // Use decomposed layers if available
+    if (terrainData && terrainData.decomposed_layers) {
+      terrainData = terrainData.decomposed_layers;
+      console.log('Using decomposed terrain layers');
+    }
+
+    // Fallback
+    if (!layers.terrain && terrainData) {
+      layers.terrain = terrainData;
+    }
+
+    console.log('Celestial body:', planetName);
+    console.log('Layers extracted:', layers);
+
+    // No elevation data - show message
+    if (!layers.elevation) {
+      console.warn('No elevation data available');
+      logConsole('No elevation data available for rendering', 'warning');
+      
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('NO TERRAIN DATA', canvas.width / 2, canvas.height / 2 - 20);
+      ctx.fillText('AVAILABLE', canvas.width / 2, canvas.height / 2 + 10);
+      ctx.fillText('Generate terrain map to view planetary surface', canvas.width / 2, canvas.height / 2 + 40);
+      
+      return;
+    }
+
+    const width = layers.elevation.width;
+    const height = layers.elevation.height;
+    const elevationData = layers.elevation.grid;
+
+    console.log('NASA-first rendering:', width, 'x', height);
+    console.log('Elevation sample:', elevationData[0]?.slice(0, 5));
+
+    if (width === 0 || height === 0) {
+      console.error('Invalid terrain dimensions');
+      return;
+    }
+
+    const tileSize = 8;
+    canvas.width = width * tileSize;
+    canvas.height = height * tileSize;
+
+    // Calculate min/max elevation
+    let minElevation = Infinity;
+    let maxElevation = -Infinity;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const elev = elevationData[y][x];
+        if (elev !== null && elev !== undefined) {
+          minElevation = Math.min(minElevation, elev);
+          maxElevation = Math.max(maxElevation, elev);
+        }
+      }
+    }
+    if (minElevation === Infinity) minElevation = 0;
+    if (maxElevation === -Infinity) maxElevation = 1000;
+
+    console.log('Elevation range:', minElevation, 'to', maxElevation);
+
+    // Clear canvas
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Get water coverage for sea level
+    let waterCoverage = planetData.water_coverage || 0;
+    if (waterCoverage > 1) {
+      waterCoverage = waterCoverage / 100;
+    }
+    let seaLevel = 0;
+
+    if (elevationData && waterCoverage > 0) {
+      const allElevations = [];
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          allElevations.push(elevationData[y][x]);
+        }
+      }
+      allElevations.sort((a, b) => a - b);
+      
+      const seaLevelIndex = Math.floor(allElevations.length * waterCoverage);
+      seaLevel = allElevations[Math.min(seaLevelIndex, allElevations.length - 1)];
+      console.log('Calculated sea level:', seaLevel, 'for water coverage:', (waterCoverage * 100).toFixed(1) + '%');
+    }
+
+    // SimEarth-style layered rendering
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const rawElevation = elevationData[y][x];
+        const elevationRange = maxElevation - minElevation;
+        const normalizedElevation = elevationRange > 0 ? (rawElevation - minElevation) / elevationRange : 0.5;
+
+        // BASE LAYER: Pure elevation heightmap
+        let color = getElevationColor(normalizedElevation, planetData);
+
+        // LAYER 1: Water overlay
+        if (visibleLayers.has('water') && layers.water && layers.water.grid[y][x] > 0) {
+          const waterDepth = layers.water.grid[y][x];
+          color = getHydrosphereColor(waterDepth, planetData);
+        }
+
+        // LAYER 2: Biome overlay
+        if (visibleLayers.has('biomes') && layers.biomes && layers.biomes.grid[y][x]) {
+          const biome = layers.biomes.grid[y][x];
+          if (biome && biome !== 'ocean' && biome !== 'none') {
+            const isUnderwater = visibleLayers.has('water') && layers.water && layers.water.grid[y][x] > 0;
+            if (!isUnderwater) {
+              color = getBiomeColor(biome);
+            }
+          }
+        }
+
+        // LAYER 3: Resources overlay
+        if (visibleLayers.has('resources') && layers.resources && layers.resources.grid[y][x]) {
+          const resource = layers.resources.grid[y][x];
+          if (resource && resource !== 'none') {
+            color = blendColors(color, '#FFFF00', 0.4);
+          }
+        }
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+      }
+    }
+
+    // Log summary
+    const elevations = elevationData.flat();
+    const minElev = Math.min(...elevations);
+    const maxElev = Math.max(...elevations);
+    console.log(`NASA-first terrain rendered: ${width}x${height}`);
+    logConsole(`NASA terrain rendered: ${width}x${height} (elevation: ${minElev.toFixed(0)}-${maxElev.toFixed(0)}m)`, 'success');
+  }
+
+  // ============================================
+  // UI Setup Functions
+  // ============================================
+
+  function setupAITestButtons() {
+    document.querySelectorAll('.tool-button[data-test]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const testType = this.dataset.test;
+        runAITest(testType);
+      });
+    });
+  }
+
+  function runAITest(testType) {
+    logConsole(`Starting AI test: ${testType}`, 'info');
+    
+    fetch(`/admin/celestial_bodies/${planetId}/run_ai_test`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ test_type: testType })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        logConsole(data.message, 'success');
+        logConsole(`Test completed: ${JSON.stringify(data)}`, 'info');
+      } else {
+        logConsole(`Test failed: ${data.error}`, 'error');
+      }
+    })
+    .catch(error => {
+      logConsole(`Error running test: ${error.message}`, 'error');
+    });
+  }
+
+  function setupZoomControl() {
+    const zoomInput = document.getElementById('zoom');
+    const zoomValue = document.getElementById('zoomValue');
+    const canvas = document.getElementById('planetCanvas');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    
+    if (!zoomInput) return;
+    
+    zoomInput.addEventListener('input', function() {
+      const zoom = parseFloat(this.value);
+      zoomValue.textContent = zoom.toFixed(1) + 'x';
+      
+      if (zoom === 1.0) {
+        canvas.style.transform = 'none';
+      } else {
+        canvas.style.transform = `scale(${zoom})`;
+        canvas.style.transformOrigin = 'top left';
+      }
+      canvasWrapper.style.overflow = 'auto';
+    });
+    
+    zoomValue.textContent = '1.0x';
+    canvas.style.transform = 'none';
+    canvasWrapper.style.overflow = 'auto';
+  }
+
+  function setupLayerToggles() {
+    document.querySelectorAll('.layer-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const layer = this.dataset.layer;
+        toggleLayer(layer);
+        updateLayerButtons();
+      });
+    });
+  }
+
+  function toggleLayer(layerName) {
+    if (layerName === 'terrain') {
+      visibleLayers.clear();
+      visibleLayers.add('terrain');
+      logConsole('Reset to base terrain (bare planet lithosphere)', 'info');
+    } else {
+      if (visibleLayers.has(layerName)) {
+        visibleLayers.delete(layerName);
+        logConsole(`${layerName} overlay hidden`, 'info');
+      } else {
+        visibleLayers.add(layerName);
+        logConsole(`${layerName} overlay shown`, 'info');
+      }
+    }
+
+    renderTerrainMap();
+    updateLayerButtons();
+  }
+
+  function updateLayerButtons() {
+    document.querySelectorAll('.layer-btn').forEach(btn => {
+      const layer = btn.dataset.layer;
+      if (visibleLayers.has(layer)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  function startDataPolling() {
+    updateInterval = setInterval(updateSphereData, 5000);
+  }
+
+  function updateSphereData() {
+    fetch(`/admin/celestial_bodies/${planetId}/sphere_data`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.atmosphere.pressure !== undefined) {
+          updateElement('atmo-pressure', `${data.atmosphere.pressure.toFixed(4)} bar`);
+          updateElement('atmo-temp', `${data.atmosphere.temperature.toFixed(1)} K`);
+          updateElement('atmo-mass', formatMass(data.atmosphere.total_mass));
+        }
+        
+        if (data.hydrosphere.water_coverage !== undefined) {
+          updateElement('hydro-coverage', `${data.hydrosphere.water_coverage.toFixed(1)}%`);
+          updateElement('hydro-ocean', formatMass(data.hydrosphere.ocean_mass));
+          updateElement('hydro-ice', formatMass(data.hydrosphere.ice_mass));
+        }
+        
+        if (data.biosphere.biodiversity_index !== undefined) {
+          updateElement('bio-diversity', `${data.biosphere.biodiversity_index.toFixed(1)}%`);
+          updateProgressBar('bio-diversity-bar', data.biosphere.biodiversity_index);
+          updateElement('bio-habitability', `${data.biosphere.habitable_ratio.toFixed(1)}%`);
+          updateProgressBar('bio-habitability-bar', data.biosphere.habitable_ratio);
+          updateElement('bio-lifeforms', data.biosphere.life_forms_count);
+        }
+        
+        if (data.geosphere.geological_activity !== undefined) {
+          updateElement('geo-activity', `${data.geosphere.geological_activity}/100`);
+          updateElement('geo-tectonic', data.geosphere.tectonic_active ? 'Yes' : 'No');
+          updateElement('geo-volcano', data.geosphere.volcanic_activity);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating sphere data:', error);
+      });
+  }
+
+  function updateElement(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  }
+
+  function updateProgressBar(id, percentage) {
+    const element = document.getElementById(id);
+    if (element) element.style.width = `${percentage}%`;
+  }
+
+  function logConsole(message, type = 'info') {
+    const consoleEl = document.getElementById('console');
+    if (!consoleEl) return;
+    
+    const line = document.createElement('div');
+    line.className = `console-line ${type}`;
+    const timestamp = new Date().toLocaleTimeString();
+    line.textContent = `[${timestamp}] > ${message}`;
+    consoleEl.appendChild(line);
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+    
+    while (consoleEl.children.length > 50) {
+      consoleEl.removeChild(consoleEl.firstChild);
+    }
+  }
+
+  // ============================================
+  // Sphere CRUD Operations
+  // ============================================
+
+  function createSphere(sphereType) {
+    logConsole(`Creating ${sphereType}...`, 'info');
+    
+    fetch(`/admin/celestial_bodies/${planetId}/spheres`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ 
+        sphere_type: sphereType,
+        sphere: { 
+          temperature: sphereType.includes('hydro') ? 300 : 200,
+          pressure: sphereType === 'atmosphere' ? 1.0 : 0,
+          thickness: sphereType === 'cryosphere' ? 10000 : null
+        }
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        logConsole(`${sphereType} created successfully`, 'success');
+        location.reload();
+      } else {
+        logConsole(`Failed to create ${sphereType}: ${data.error}`, 'error');
+      }
+    })
+    .catch(error => {
+      logConsole(`Error creating ${sphereType}: ${error.message}`, 'error');
+    });
+  }
+
+  function editSphere(sphereId, sphereType) {
+    logConsole(`Editing ${sphereType}...`, 'info');
+    window.location.href = `/admin/celestial_bodies/${planetId}/spheres/${sphereId}/edit?type=${sphereType}`;
+  }
+
+  function deleteSphere(sphereId, sphereType) {
+    logConsole(`Deleting ${sphereType}...`, 'warning');
+    
+    fetch(`/admin/celestial_bodies/${planetId}/spheres/${sphereId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        logConsole(`${sphereType} deleted successfully`, 'success');
+        location.reload();
+      } else {
+        logConsole(`Failed to delete ${sphereType}: ${data.error}`, 'error');
+      }
+    })
+    .catch(error => {
+      logConsole(`Error deleting ${sphereType}: ${error.message}`, 'error');
+    });
+  }
+
+  // ============================================
+  // Initialization
+  // ============================================
+
+  function init() {
+    // Prevent multiple initializations
+    if (window.monitorScriptLoaded) {
+      console.log('Monitor script already loaded, skipping...');
+      if (window.monitorUpdateInterval) {
+        clearInterval(window.monitorUpdateInterval);
+      }
+      return;
+    }
+    window.monitorScriptLoaded = true;
+
+    // Load data from JSON element
+    const dataElement = document.getElementById('monitor-data');
+    if (!dataElement) {
+      console.error('Monitor data element not found');
+      return;
+    }
+
+    try {
+      const data = JSON.parse(dataElement.textContent);
+      
+      planetId = data.planet_id;
+      planetName = data.planet_name;
+      planetType = data.planet_type;
+      terrainData = data.terrain_data;
+      planetData = data.planet_data;
+      
+      // Calculate climate zones
+      const planetTemp = data.atmosphere_temperature || data.surface_temperature || 288;
+      const planetPressure = data.atmosphere_pressure || 1.0;
+      climate = calculateClimateZones(planetTemp, planetPressure);
+      
+      console.log('Monitor initialized for:', planetName);
+    } catch (e) {
+      console.error('Error parsing monitor data:', e);
+      return;
+    }
+
+    // Setup UI
+    setupAITestButtons();
+    setupLayerToggles();
+    updateLayerButtons();
+    setupZoomControl();
+    startDataPolling();
+    renderTerrainMap();
+    logConsole('System initialized', 'info');
+
+    // Cleanup on unload
+    window.addEventListener('beforeunload', function() {
+      if (updateInterval) clearInterval(updateInterval);
+      window.monitorUpdateInterval = null;
+    });
+
+    window.monitorUpdateInterval = updateInterval;
+  }
+
+  // Public API
+  return {
+    init: init,
+    renderTerrainMap: renderTerrainMap,
+    toggleLayer: toggleLayer,
+    createSphere: createSphere,
+    editSphere: editSphere,
+    deleteSphere: deleteSphere,
+    logConsole: logConsole
+  };
+
+})();
+
+// Auto-initialize on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  AdminMonitor.init();
+});
+
+// Also initialize on Turbo load (for Rails 7+)
+document.addEventListener('turbo:load', function() {
+  AdminMonitor.init();
+});
