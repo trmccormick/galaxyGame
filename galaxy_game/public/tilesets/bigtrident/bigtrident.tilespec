@@ -1,0 +1,161 @@
+
+[tilespec]
+
+; Basic tileset specification for Galaxy Game integration
+; Based on FreeCiv tilespec format
+
+name = "bigtrident"
+version = "1.0"
+
+; Tile dimensions
+normal_tile_width = 60
+normal_tile_height = 60
+
+; Files section - defines tile image files
+[files]
+file = "earth.png"
+width = 60
+height = 60
+
+; Tiles section - defines individual tiles
+[tiles]
+; Grassland tile
+grassland =
+    file = "earth.png"
+    x = 0
+    y = 0
+
+; Plains tile
+plains =
+    file = "earth.png"
+    x = 60
+    y = 0
+
+; Desert tile
+desert =
+    file = "earth.png"
+    x = 120
+    y = 0
+
+; Forest tile
+forest =
+    file = "earth.png"
+    x = 0
+    y = 60
+
+; Ocean tile
+ocean =
+    file = "earth.png"
+    x = 60
+    y = 60
+
+; Deep ocean tile
+deep_ocean =
+    file = "earth.png"
+    x = 120
+    y = 60
+
+; Mountain/Rock tile
+mountains =
+    file = "earth.png"
+    x = 0
+    y = 0
+
+; Tundra tile
+tundra =
+    file = "earth.png"
+    x = 60
+    y = 0
+
+; Jungle tile
+jungle =
+    file = "earth.png"
+    x = 120
+    y = 0
+
+; Swamp tile
+swamp =
+    file = "earth.png"
+    x = 0
+    y = 60
+num_layers = 3
+layer0_match_type = "water"
+layer1_match_type = "water"
+layer1_match_with = "water"
+layer2_match_type = "water"
+layer2_match_with = "water"
+layer2_sprite_type = "corner"
+
+[tile_floor]
+is_blended = 0
+num_layers = 3
+layer0_match_type = "water"
+layer1_match_type = "water"
+layer1_match_with = "water"
+layer2_match_type = "water"
+layer2_match_with = "water"
+layer2_sprite_type = "corner"
+
+[tile_arctic]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "arctic"
+layer0_match_with = "arctic"
+mine_sprite = "tx.oil_mine"
+
+[tile_desert]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "desert"
+layer0_match_with = "desert"
+mine_sprite = "tx.oil_mine"
+
+[tile_forest]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "forest"
+layer0_match_with = "forest"
+
+[tile_grassland]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "grassland"
+layer0_match_with = "grassland"
+
+[tile_hills]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "hills"
+layer0_match_with = "hills"
+mine_sprite = "tx.mine"
+
+[tile_jungle]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "jungle"
+layer0_match_with = "jungle"
+
+[tile_mountains]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "mountains"
+layer0_match_with = "mountains"
+mine_sprite = "tx.mine"
+
+[tile_plains]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "plains"
+layer0_match_with = "plains"
+
+[tile_swamp]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "swamp"
+layer0_match_with = "swamp"
+
+[tile_tundra]
+is_blended = 0
+num_layers = 1
+layer0_match_type = "tundra"
+layer0_match_with = "tundra"
