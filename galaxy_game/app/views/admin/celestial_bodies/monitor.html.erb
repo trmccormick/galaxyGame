@@ -32,7 +32,7 @@
           gravity: @celestial_body.gravity,
           geosphere_attributes: @celestial_body.geosphere&.attributes,
           crust_composition: @celestial_body.geosphere&.crust_composition,
-          liquid_name: @celestial_body.hydrosphere&.liquid_name || 'H2O',
+          liquid_name: (@celestial_body.respond_to?(:primary_liquid) ? @celestial_body.primary_liquid : nil) || 'H2O',
           water_coverage: @celestial_body.hydrosphere&.water_coverage || 0
         },
         geosphere_present: @celestial_body.geosphere.present?,
