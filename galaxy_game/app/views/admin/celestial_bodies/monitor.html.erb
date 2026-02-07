@@ -688,14 +688,19 @@
             }
 
             // NASA-first: Extract biomes directly from terrainData
-            if (terrainData && terrainData.biomes) {
+            if (terrainData && terrainData.biomes && Array.isArray(terrainData.biomes) && 
+                terrainData.biomes.length > 0 && Array.isArray(terrainData.biomes[0]) &&
+                layers.elevation && terrainData.biomes.length === layers.elevation.height && 
+                terrainData.biomes[0].length === layers.elevation.width) {
                 layers.biomes = {
                     grid: terrainData.biomes,
-                    width: terrainData.biomes[0]?.length || 0,
+                    width: terrainData.biomes[0].length,
                     height: terrainData.biomes.length,
                     layer_type: 'biomes'
                 };
                 console.log('Using NASA biome data');
+            } else {
+                console.log('Biomes data invalid or wrong dimensions, skipping biome layer');
             }
 
             // NASA-first: Extract resources directly from terrainData
