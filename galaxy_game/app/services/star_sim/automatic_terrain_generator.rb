@@ -1049,8 +1049,8 @@ module StarSim
       name = 'luna' if name == 'moon'
 
       paths = [
-        Rails.root.join('app', 'data', 'geotiff', 'processed', "#{name}_1800x900.tif"),
-        Rails.root.join('app', 'data', 'geotiff', 'temp', "#{name}_900x450.tif")
+        Rails.root.join('data', 'geotiff', 'processed', "#{name}_1800x900.tif"),
+        Rails.root.join('data', 'geotiff', 'temp', "#{name}_900x450.tif")
       ]
 
       paths.find { |p| File.exist?(p) }
