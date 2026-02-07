@@ -1094,6 +1094,14 @@ window.AdminMonitor = (function() {
       terrainData = data.terrain_data;
       planetData = data.planet_data;
       
+      // Set default visible layers based on planet
+      visibleLayers = new Set(['terrain']);
+      if (planetName.toLowerCase() === 'earth') {
+        // Earth shows water and biomes by default for realistic appearance
+        visibleLayers.add('water');
+        visibleLayers.add('biomes');
+      }
+      
       // Calculate climate zones
       const planetTemp = data.atmosphere_temperature || data.surface_temperature || 288;
       const planetPressure = data.atmosphere_pressure || 1.0;
