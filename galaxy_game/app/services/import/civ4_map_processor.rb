@@ -5,11 +5,7 @@ module Import
       Rails.logger.info "[Civ4MapProcessor] Processing Civ4 map: #{civ4_file_path} in #{mode} mode"
 
       # Step 1: Import raw Civ4 data
-      if mode == :mars_blueprint
-        @raw_data = Import::Civ4WbsImportService.new(civ4_file_path).send(:parse_wbs_file)
-      else
-        @raw_data = Import::Civ4WbsImportService.new(civ4_file_path).import
-      end
+      @raw_data = Import::Civ4WbsImportService.new(civ4_file_path).send(:parse_wbs_file)
 
       if mode == :mars_blueprint
         # Extract terraforming blueprint data instead of terrain
@@ -33,7 +29,10 @@ module Import
       # Step 6: Extract strategic markers for AI learning
       strategic_markers = extract_strategic_markers(@raw_data)
 
-      # Step 7: Return comprehensive data structure
+      # Step 7: Extract resources for AI Manager hints
+      resources = extract_resources(@raw_data)
+
+      # Step 8: Return comprehensive data structure
       {
         lithosphere: {
           elevation: elevation,
@@ -45,6 +44,7 @@ module Import
         biomes: biomes,
         features: features,
         strategic_markers: strategic_markers,
+        resources: resources,
         source_file: civ4_file_path,
         metadata: {
           format: 'civ4_worldbuilder_save',
@@ -231,6 +231,55 @@ module Import
       end
 
       markers
+    end
+
+    def extract_resources(raw_data)
+      resource_grid = Array.new(raw_data[:height]) do |y|
+        Array.new(raw_data[:width]) do |x|
+          plot = find_plot_at(raw_data[:plots], x, y)
+          if plot && plot[:bonus_type]
+            # Map Civ4 bonus type to Galaxy Game resource category
+            bonus_mapping = {
+              'BONUS_IRON' => :metal_ore,
+              'BONUS_COAL' => :carbon,
+              'BONUS_OIL' => :hydrocarbons,
+              'BONUS_ALUMINUM' => :metal_ore,
+              'BONUS_SILVER' => :precious_metal,
+              'BONUS_GOLD' => :precious_metal,
+              'BONUS_URANIUM' => :radioactive,
+              'BONUS_COPPER' => :metal_ore,
+              'BONUS_HORSE' => :organic,
+              'BONUS_COW' => :organic,
+              'BONUS_CORN' => :organic,
+              'BONUS_WHALE' => :organic,
+              'BONUS_PIG' => :organic,
+              'BONUS_FISH' => :organic,
+              'BONUS_CLAM' => :organic,
+              'BONUS_CRAB' => :organic,
+              'BONUS_RICE' => :organic,
+              'BONUS_WHEAT' => :organic,
+              'BONUS_DYE' => :organic,
+              'BONUS_FUR' => :organic,
+              'BONUS_IVORY' => :organic,
+              'BONUS_SILK' => :organic,
+              'BONUS_SPICE' => :organic,
+              'BONUS_SUGAR' => :organic,
+              'BONUS_TEA' => :organic,
+              'BONUS_TOBACCO' => :organic,
+              'BONUS_WINE' => :organic,
+              'BONUS_INCENSE' => :organic,
+              'BONUS_MARBLE' => :construction,
+              'BONUS_STONE' => :construction,
+              'BONUS_SALT' => :chemical
+            }
+            bonus_mapping[plot[:bonus_type]] || :unknown
+          else
+            nil
+          end
+        end
+      end
+
+      resource_grid
     end
 
     def map_civ4_resource_to_galaxy(plot)

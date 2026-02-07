@@ -22,6 +22,41 @@ module Import
       'FEATURE_OASIS' => :swamp        # Oasis → water collection
     }.freeze
 
+    # Civ4 BonusType mappings to Galaxy Game resource categories
+    BONUS_TYPE_MAPPING = {
+      'BONUS_IRON' => :metal_ore,
+      'BONUS_COAL' => :carbon,
+      'BONUS_OIL' => :hydrocarbons,
+      'BONUS_ALUMINUM' => :metal_ore,
+      'BONUS_SILVER' => :precious_metal,
+      'BONUS_GOLD' => :precious_metal,
+      'BONUS_URANIUM' => :radioactive,
+      'BONUS_COPPER' => :metal_ore,
+      'BONUS_HORSE' => :organic,
+      'BONUS_COW' => :organic,
+      'BONUS_CORN' => :organic,
+      'BONUS_WHALE' => :organic,
+      'BONUS_PIG' => :organic,
+      'BONUS_FISH' => :organic,
+      'BONUS_CLAM' => :organic,
+      'BONUS_CRAB' => :organic,
+      'BONUS_RICE' => :organic,
+      'BONUS_WHEAT' => :organic,
+      'BONUS_DYE' => :organic,
+      'BONUS_FUR' => :organic,
+      'BONUS_IVORY' => :organic,
+      'BONUS_SILK' => :organic,
+      'BONUS_SPICE' => :organic,
+      'BONUS_SUGAR' => :organic,
+      'BONUS_TEA' => :organic,
+      'BONUS_TOBACCO' => :organic,
+      'BONUS_WINE' => :organic,
+      'BONUS_INCENSE' => :organic,
+      'BONUS_MARBLE' => :construction,
+      'BONUS_STONE' => :construction,
+      'BONUS_SALT' => :chemical
+    }.freeze
+
     # Default terrain type for unrecognized combinations
     DEFAULT_TERRAIN = :rocky
 
@@ -38,6 +73,7 @@ module Import
 
       terrain_grid = []
       biome_counts = Hash.new(0)
+      resource_counts = Hash.new(0)
       map_data = parse_wbs_file
 
       return false unless map_data
@@ -46,8 +82,9 @@ module Import
       width = map_data[:width]
       height = map_data[:height]
 
-      # Initialize empty grid
+      # Initialize empty grids
       terrain_grid = Array.new(height) { Array.new(width) }
+      resource_grid = Array.new(height) { Array.new(width) }
 
       # Process each plot
       map_data[:plots].each do |plot|
@@ -60,8 +97,13 @@ module Import
         terrain_type = determine_terrain_type(plot)
         biome_counts[terrain_type] += 1
 
-        # Store in grid (note: Civ4 uses x,y but we want row,column)
+        # Determine resource type if present
+        resource_type = determine_resource_type(plot)
+        resource_counts[resource_type] += 1 if resource_type
+
+        # Store in grids (note: Civ4 uses x,y but we want row,column)
         terrain_grid[y][x] = terrain_type
+        resource_grid[y][x] = resource_type
       end
 
       # Validate we got some data
@@ -85,6 +127,8 @@ module Import
         width: width,
         height: height,
         biome_counts: biome_counts,
+        resource_grid: resource_grid,
+        resource_counts: resource_counts,
         source_file: @file_path
       }
 
@@ -257,6 +301,14 @@ module Import
 
       # STEP 4: Fallback to default
       DEFAULT_TERRAIN
+    end
+
+    # Determine Galaxy Game resource type from Civ4 bonus type
+    def determine_resource_type(plot)
+      bonus_type = plot[:bonus_type]
+      return nil unless bonus_type
+
+      BONUS_TYPE_MAPPING[bonus_type] || :unknown
     end
   end
 end

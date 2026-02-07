@@ -1083,8 +1083,8 @@ module StarSim
       civ4_path = find_civ4_map(body_name)
       return nil unless civ4_path
 
-      processor = Import::Civ4MapProcessor.new(civ4_path)
-      civ4_data = processor.parse
+      processor = Import::Civ4MapProcessor.new
+      civ4_data = processor.process(civ4_path, mode: :terrain)
 
       # Extract elevation using existing Civ4ElevationExtractor
       extractor = Import::Civ4ElevationExtractor.new
@@ -1425,15 +1425,30 @@ module StarSim
     end
 
     def generate_resource_grid_from_civ4_data(civ4_data)
-      {}
+      # Extract resource grid from Civ4MapProcessor output
+      if civ4_data && civ4_data[:resources]
+        civ4_data[:resources]
+      else
+        {}
+      end
     end
 
     def generate_strategic_markers_from_civ4_data(civ4_data)
-      []
+      # Extract strategic markers from Civ4MapProcessor output
+      if civ4_data && civ4_data[:strategic_markers]
+        civ4_data[:strategic_markers]
+      else
+        []
+      end
     end
 
     def generate_resource_counts_from_civ4_data(civ4_data)
-      {}
+      # Extract resource counts from Civ4MapProcessor output
+      if civ4_data && civ4_data[:resource_counts]
+        civ4_data[:resource_counts]
+      else
+        {}
+      end
     end
 
     def generate_biomes_from_freeciv_patterns(terrain_grid, elevation)
