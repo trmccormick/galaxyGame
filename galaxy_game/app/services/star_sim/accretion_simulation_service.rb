@@ -2,6 +2,7 @@ module StarSim
     class AccretionSimulationService
       def initialize(star, dust_disk)
         @star = star
+        @star_mass = star.is_a?(Hash) ? star["mass"] : star.mass
         @dust_disk = dust_disk # Array of DustBand objects
         @protoplanets = []
       end
@@ -32,19 +33,19 @@ module StarSim
       def grow_seed(seed)
         # Accretion loop based on StarGen logic
         while seed.can_grow?(@dust_disk)
-          seed.accrete_dust!(@dust_disk, @star.mass)
+          seed.accrete_dust!(@dust_disk, @star_mass)
         end
       end
-  
+
       def clear_band(seed)
         @dust_disk.each do |band|
-          band.clear_if_within(seed.orbit, seed.influence_zone(@star.mass))
+          band.clear_if_within(seed.orbit, seed.influence_zone(@star_mass))
         end
       end
-  
+
       def finalize_planets
         @protoplanets.map do |seed|
-          PlanetBuilder.new(seed, @star).build
+          PlanetBuilder.new(seed, @star).build_data
         end
       end
   
@@ -80,7 +81,7 @@ module StarSim
         stable = []
         @protoplanets.each do |planet|
           conflicting = stable.any? do |existing|
-            hill_distance = [planet.orbit, existing.orbit].min * (planet.mass / (3 * @star.mass))**(1/3.0)
+            hill_distance = [planet.orbit, existing.orbit].min * (planet.mass / (3 * @star_mass))**(1/3.0)
             (planet.orbit - existing.orbit).abs < hill_distance
           end
           stable << planet unless conflicting

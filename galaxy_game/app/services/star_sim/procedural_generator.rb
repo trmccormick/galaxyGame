@@ -2,6 +2,7 @@
 require 'json'
 require 'fileutils'
 require_relative '../name_generator_service'
+require_relative 'accretion_simulation_service'
 
 module StarSim
   class ProceduralGenerator
@@ -13,7 +14,8 @@ module StarSim
       hydrosphere_generator = nil,
       material_lookup = nil, # Add MaterialLookupService
       planet_name_service = nil,
-      force_complex_biosphere = false
+      force_complex_biosphere = false,
+      use_accretion = false
     )
       @solar_system = solar_system
       @name_generator = NameGeneratorService.new
@@ -28,6 +30,7 @@ module StarSim
       # Load terraformable planet templates
       @terraformable_templates = load_terraformable_templates
       @force_complex_biosphere = force_complex_biosphere
+      @use_accretion = use_accretion
     end
 
     def generate_system_seed_file(num_planets: 10, num_stars: 1)
@@ -63,7 +66,7 @@ module StarSim
           "naming_status" => "scientific_catalog"
         },
         "stars" => generate_stars(num_stars, system_identifier),
-        "celestial_bodies" => {
+        "celestial_bodies" => @use_accretion ? generate_celestial_bodies_via_accretion(system_data["stars"]) : {
           "terrestrial_planets" => generate_terrestrial_planets(num_planets, system_identifier),
           "gas_giants" => generate_gas_giants(rand(0..3)),
           "ice_giants" => generate_ice_giants(rand(0..2)),
@@ -1307,6 +1310,61 @@ module StarSim
       system_data['metadata']['original_scientific_id'] = system_data['solar_system']['identifier'].dup
       
       system_data
+    end
+
+    private
+
+    def create_dust_disk(star_mass)
+      # Create dust bands based on StarGen logic
+      bands = []
+      inner_limit = 0.1 # AU
+      outer_limit = 40.0 # AU
+      band_width = 0.5 # AU
+
+      current_inner = inner_limit
+      while current_inner < outer_limit
+        current_outer = [current_inner + band_width, outer_limit].min
+        # Density decreases with distance
+        density = 100.0 / (current_inner ** 1.5) # arbitrary units
+        bands << DustBand.new(inner_edge: current_inner, outer_edge: current_outer, density: density)
+        current_inner = current_outer
+      end
+
+      bands
+    end
+
+    def generate_celestial_bodies_via_accretion(stars)
+      terrestrial_planets = []
+      gas_giants = []
+      ice_giants = []
+      dwarf_planets = []
+
+      stars.each do |star|
+        dust_disk = create_dust_disk(star["mass"])
+        accretion = AccretionSimulationService.new(star, dust_disk)
+        planets = accretion.run
+
+        planets.each do |planet|
+          case planet["type"]
+          when "terrestrial"
+            terrestrial_planets << planet
+          when "gas_giant"
+            gas_giants << planet
+          when "ice_giant"
+            ice_giants << planet
+          when "dwarf_planet"
+            dwarf_planets << planet
+          end
+        end
+      end
+
+      {
+        "terrestrial_planets" => terrestrial_planets,
+        "gas_giants" => gas_giants,
+        "ice_giants" => ice_giants,
+        "dwarf_planets" => dwarf_planets,
+        "asteroids" => [] # No asteroids from accretion
+      }
     end
   end
 end

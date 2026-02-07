@@ -19,6 +19,36 @@ module StarSim
           celestial_star: @star
         )
       end
+
+      def build_data
+        {
+          "name" => generate_name,
+          "identifier" => generate_name.upcase.gsub(/\s+/, '-'),
+          "type" => classify_data,
+          "mass" => @seed.total_mass,
+          "radius" => estimate_radius / 6371.0, # in Earth radii
+          "density" => estimated_density,
+          "gravity" => calculate_gravity(@seed.total_mass, estimate_radius / 1000.0), # m/s²
+          "albedo" => rand(0.1..0.6),
+          "surface_temperature" => 288, # placeholder
+          "size" => estimate_radius / 6371.0,
+          "known_pressure" => gas_giant? ? nil : rand(0.1..2.0),
+          "geological_activity" => gas_giant? ? nil : rand(10..90),
+          "orbits" => [{
+            "around" => @star["name"] || @star.name,
+            "semi_major_axis_au" => @seed.orbit,
+            "eccentricity" => rand(0.0..0.1),
+            "inclination_deg" => rand(0.0..5.0),
+            "orbital_period_days" => orbital_period * 365.25,
+            "distance" => @seed.orbit
+          }],
+          "atmosphere_attributes" => gas_giant? ? nil : generate_atmosphere_data,
+          "hydrosphere_attributes" => gas_giant? ? nil : generate_hydrosphere_data,
+          "geosphere_attributes" => gas_giant? ? nil : generate_geosphere_data,
+          "biosphere_attributes" => gas_giant? ? nil : generate_biosphere_data,
+          "market_status" => "unclaimed_procedural"
+        }
+      end
   
       private
   
@@ -53,35 +83,57 @@ module StarSim
       def gas_giant?
         @seed.gas_mass > 0.1
       end
-  
-      def classify
+
+      def classify_data
         if gas_giant?
-          'CelestialBodies::GasGiant'
+          'gas_giant'
         elsif @seed.total_mass < 0.1
-          'CelestialBodies::DwarfPlanet'
+          'dwarf_planet'
         else
-          'Searched for regex `TerrestrialPlanet|GasGiant|IceGiant|Moon|DwarfPlanet` (`**/app/models/celestial_bodies/**/*.rb`), 20 results
-
-Searched for regex `module|class` (`**/app/models/celestial_bodies/**/*.rb`), 20 results
-
-Read [](file:///Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/models/celestial_bodies/celestial_body.rb#260-260), lines 260 to 300
-
-Searched for regex `module CelestialBodies|class TerrestrialPlanet|class GasGiant|class IceGiant|class Moon|class DwarfPlanet` (`**/app/models/celestial_bodies/**/*.rb`), 20 results
-
-Searched for regex `class TerrestrialPlanet|class GasGiant|class IceGiant` (`**/app/models/celestial_bodies/**/*.rb`), 3 results
-
-Searched for regex `module CelestialBodies` (`**/app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb`), 1 result
-
-Read [](file:///Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb#1-1), lines 1 to 20
-
-Searched for text `CelestialBodies::TerrestrialPlanet` (`**/app/models/celestial_bodies/**/*.rb`), 1 result
-
-Read [](file:///Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/models/celestial_bodies/celestial_body.rb#1-1), lines 1 to 40
-
-Read [](file:///Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb#1-1), lines 1 to 40
-
-The root cause of the failure is that the code references `CelestialBodies::TerrestrialPlanet`, but the actual class is defined as `CelestialBodies::Planets::Rocky::TerrestrialPlanet`. The same applies to `GasGiant`, '
+          'terrestrial'
         end
+      end
+
+      def calculate_gravity(mass_earth, radius_km)
+        # G * M / R^2, with Earth units
+        9.8 * mass_earth / (radius_km / 6371.0)**2
+      end
+
+      def generate_atmosphere_data
+        # Simple placeholder
+        {
+          "composition" => {
+            "N2" => { "percentage" => 78.0 },
+            "O2" => { "percentage" => 21.0 },
+            "CO2" => { "percentage" => 0.04 }
+          },
+          "pressure" => rand(0.5..1.5)
+        }
+      end
+
+      def generate_hydrosphere_data
+        {
+          "total_water_mass" => @seed.total_mass * rand(0.001..0.01),
+          "surface_coverage" => rand(0.0..1.0)
+        }
+      end
+
+      def generate_geosphere_data
+        {
+          "geological_activity" => rand(10..90),
+          "tectonic_activity" => rand < 0.4,
+          "total_crust_mass" => @seed.total_mass * rand(0.01..0.05),
+          "total_mantle_mass" => @seed.total_mass * rand(0.6..0.7),
+          "total_core_mass" => @seed.total_mass * rand(0.25..0.35)
+        }
+      end
+
+      def generate_biosphere_data
+        {
+          "biosphere_type" => "none",
+          "complexity" => 0,
+          "habitability_score" => rand(0.0..1.0)
+        }
       end
     end
 end

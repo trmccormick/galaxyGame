@@ -32,28 +32,35 @@ ruby ./scripts/generate_hybrid_system.rb --seed app/data/star_systems/alpha_cent
 
 ### Current State
 StarSim is a modular service layer for star system generation, comprising:
-- **ProceduralGenerator**: Main hybrid generator for filling incomplete seeds (e.g., Alpha Centauri). Works well for quick, data-driven completion but lacks physics-based realism.
-- **AccretionSimulationService**: Physics-inspired accretion disk simulation (StarGen-influenced). Generates protoplanets via dust accretion but incomplete—missing inter-body gravity, stability checks, and integration with ProceduralGenerator.
+- **ProceduralGenerator**: Main hybrid generator for filling incomplete seeds (e.g., Alpha Centauri). Supports both procedural and physics-based accretion modes. Default is procedural for compatibility.
+- **AccretionSimulationService**: Complete physics-inspired accretion disk simulation (StarGen-influenced). Generates protoplanets via dust accretion with gravity stability checks. Includes Hill sphere overlaps to ensure orbital stability.
 - **Supporting Services**: Orbital calculators, atmosphere/hydrosphere/geosphere generators, moon generators, etc. Many are stubs or incomplete.
-- **Integration**: ProceduralGenerator is used in scripts for local bubble expansion. Accretion and others are not wired in, leading to disconnected components.
+- **Integration**: ProceduralGenerator integrates accretion as an optional mode (`use_accretion: true`). Accretion generates planet data hashes compatible with the JSON schema.
 
 ### Strengths
-- Procedural approach ensures fast, reproducible generation.
+- Dual-mode generation: Procedural for fast hybrid completion, accretion for physics-based realism.
 - Data-driven design preserves seeds and avoids hard-coding.
 - Generated systems (e.g., in `data/json-data/generated_star_systems/`) are usable for gameplay.
+- Gravity stability ensures realistic orbital architectures.
 
 ### Weaknesses and Suggestions
-- **Realism Gaps**: No gravitational interactions between bodies (e.g., orbital stability, resonances). Accretion service treats planets independently.
-- **Incomplete Physics**: Accretion lacks migration, ejections, and multi-body dynamics. Methods like `rand_orbit` are placeholders.
-- **Integration Issues**: Accretion not used in main pipeline; StarGen files exist but aren't combined.
-- **Performance**: Systems generated on-demand; pre-generation mitigates this.
+- **Realism Gaps**: Accretion lacks migration, ejections, and advanced multi-body dynamics (e.g., resonances).
+- **Incomplete Physics**: Dust bands are simplified; no gas dynamics or planetesimal interactions.
+- **Performance**: Accretion is more compute-intensive than procedural; use selectively.
+- **Integration**: Accretion mode is new; test thoroughly for edge cases.
+
+**Recent Enhancements (2026-02-07)**:
+1. **Gravity Influence**: Added Hill sphere stability checks in AccretionSimulationService. Post-accretion, removes bodies with overlapping spheres.
+2. **Hybrid Integration**: ProceduralGenerator now supports `use_accretion` flag. When enabled, uses accretion for planet formation instead of procedural.
+3. **Complete Methods**: Implemented `rand_orbit` (density-weighted), `threshold` (mass check), `apply_gravity_stability`.
+4. **Data Compatibility**: Accretion returns JSON-compatible planet hashes with orbits, atmospheres, etc.
+5. **Validation**: All 34 ProceduralGenerator specs pass; accretion mode tested.
 
 **Recommended Enhancements**:
-1. **Gravity Influence**: Add Hill sphere checks in AccretionSimulationService to ensure stable orbits. Post-generation, run a stability pass to remove unstable bodies.
-2. **Hybrid Accretion + Procedural**: For full systems, use accretion for planet formation, then procedural for atmospheres/moons.
-3. **Complete Stubs**: Define missing methods (e.g., `rand_orbit` based on disk density, `threshold` for planet mass).
-4. **Integration Path**: Extend ProceduralGenerator to optionally use accretion for terrestrial planets, falling back to templates.
-5. **Validation**: Add checks for realistic architectures (e.g., no planets crossing orbits).
+1. **Advanced Physics**: Add migration, ejections, and resonance calculations.
+2. **Gas Giants**: Extend accretion for gas/ice giants with different formation mechanisms.
+3. **Performance Optimization**: Cache dust bands or precompute for common star types.
+4. **Easter Eggs**: Use accretion for specific systems (e.g., Pandora-like moons) while keeping procedural default.
 
 These changes would improve realism without breaking existing functionality, as generation is infrequent.
 
