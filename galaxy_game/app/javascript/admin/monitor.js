@@ -1070,13 +1070,42 @@ window.AdminMonitor = (function() {
   }
 
   function setupLayerToggles() {
+    // Get available layers from monitor data
+    const availableLayers = monitorData.available_layers || {
+      terrain: true,
+      water: true,
+      biomes: true,
+      features: true,
+      temperature: true,
+      rainfall: true,
+      resources: true
+    };
+    
     document.querySelectorAll('.layer-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const layer = this.dataset.layer;
-        toggleLayer(layer);
-        updateLayerButtons();
-      });
+      const layer = btn.dataset.layer;
+      
+      // Check if this layer is available for this planet
+      if (availableLayers[layer] === false) {
+        btn.disabled = true;
+        btn.classList.add('unavailable');
+        btn.title = getUnavailableReason(layer);
+      } else {
+        btn.addEventListener('click', function() {
+          toggleLayer(layer);
+          updateLayerButtons();
+        });
+      }
     });
+  }
+  
+  function getUnavailableReason(layer) {
+    const reasons = {
+      water: 'No hydrosphere detected on this body',
+      biomes: 'No biosphere present - barren world',
+      features: 'No biosphere present - no organic features',
+      rainfall: 'No biosphere or atmosphere for precipitation'
+    };
+    return reasons[layer] || 'Layer not available for this body';
   }
 
   function toggleLayer(layerName) {

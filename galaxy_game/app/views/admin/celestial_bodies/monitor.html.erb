@@ -13,6 +13,11 @@
     <%
       terrain_map_data = @celestial_body&.geosphere&.terrain_map
       
+      # Determine which layers should be available based on planetary conditions
+      has_hydrosphere = @celestial_body.hydrosphere.present? && (@celestial_body.hydrosphere.water_coverage.to_f > 0 || @celestial_body.hydrosphere.ocean_mass.to_f > 0 || @celestial_body.hydrosphere.ice_mass.to_f > 0)
+      has_biosphere = @celestial_body.biosphere.present?
+      has_atmosphere = @celestial_body.atmosphere.present? && @celestial_body.atmosphere.pressure.to_f > 0
+      
       monitor_data = {
         planet_id: @celestial_body.id,
         planet_name: @celestial_body.name,
@@ -34,11 +39,25 @@
           crust_composition: @celestial_body.geosphere&.crust_composition,
           liquid_name: (@celestial_body.respond_to?(:primary_liquid) ? @celestial_body.primary_liquid : nil) || 'H2O',
           water_coverage: @celestial_body.hydrosphere&.water_coverage || 0,
-          has_biosphere: @celestial_body.biosphere.present?
+          has_biosphere: has_biosphere,
+          has_hydrosphere: has_hydrosphere,
+          has_atmosphere: has_atmosphere
         },
         geosphere_present: @celestial_body.geosphere.present?,
-        biosphere_present: @celestial_body.biosphere.present?,
-        terrain_map_present: @celestial_body.geosphere&.terrain_map.present?
+        biosphere_present: has_biosphere,
+        hydrosphere_present: has_hydrosphere,
+        atmosphere_present: has_atmosphere,
+        terrain_map_present: @celestial_body.geosphere&.terrain_map.present?,
+        # Layer availability flags
+        available_layers: {
+          terrain: true,
+          water: has_hydrosphere,
+          biomes: has_biosphere,
+          features: has_biosphere,
+          temperature: true,
+          rainfall: has_biosphere && has_atmosphere,
+          resources: true
+        }
       }
     %>
     <%= raw monitor_data.to_json %>
