@@ -804,16 +804,13 @@ window.AdminMonitor = (function() {
         // Check for biosphere once per cell
         const hasBiosphere = planetData.has_biosphere || false;
 
-        // BASE LAYER: Pure elevation heightmap (only when water layer is not active)
-        let color = null; // transparent by default
+        // BASE LAYER: Pure elevation heightmap (default)
+        let color = getElevationColor(normalizedElevation, planetData);
         
-        // LAYER 1: Water overlay
-        if (visibleLayers.has('water') && layers.water && layers.water.grid[y][x] > 0) {
+        // LAYER 1: Water overlay (only if water data exists)
+        if (visibleLayers.has('water') && layers.water && layers.water.grid && layers.water.grid[y] && layers.water.grid[y][x] > 0) {
           const waterDepth = layers.water.grid[y][x];
           color = getHydrosphereColor(waterDepth, planetData);
-        } else if (!visibleLayers.has('water')) {
-          // Only show base terrain when water layer is not active
-          color = getElevationColor(normalizedElevation, planetData);
         }
 
         // LAYER 2: Biome overlay (only for planets with biospheres)
