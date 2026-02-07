@@ -393,7 +393,7 @@ window.AdminMonitor = (function() {
   // Water Layer Calculation (Bathtub Model)
   // ============================================
 
-  function calculateWaterLayerFromHydrosphere(hydrosphereData, elevationLayer) {
+  function calculateWaterLayerFromHydrosphere(waterCoveragePercent, elevationLayer) {
     if (!elevationLayer || !elevationLayer.grid) {
       return null;
     }
@@ -402,7 +402,7 @@ window.AdminMonitor = (function() {
     const height = elevationLayer.height;
     const elevationGrid = elevationLayer.grid;
 
-    let waterCoverage = 0.3;
+    let waterCoverage = waterCoveragePercent || 0;
     if (waterCoverage > 1) {
       waterCoverage = waterCoverage / 100;
     }
@@ -558,7 +558,7 @@ window.AdminMonitor = (function() {
 
     // Calculate water layer from hydrosphere
     if (layers.elevation) {
-      layers.water = calculateWaterLayerFromHydrosphere(null, layers.elevation);
+      layers.water = calculateWaterLayerFromHydrosphere(planetData.water_coverage, layers.elevation);
       console.log('Calculated water layer from hydrosphere data');
     }
 
@@ -630,27 +630,6 @@ window.AdminMonitor = (function() {
     // Clear canvas
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Get water coverage for sea level
-    let waterCoverage = planetData.water_coverage || 0;
-    if (waterCoverage > 1) {
-      waterCoverage = waterCoverage / 100;
-    }
-    let seaLevel = 0;
-
-    if (elevationData && waterCoverage > 0) {
-      const allElevations = [];
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          allElevations.push(elevationData[y][x]);
-        }
-      }
-      allElevations.sort((a, b) => a - b);
-      
-      const seaLevelIndex = Math.floor(allElevations.length * waterCoverage);
-      seaLevel = allElevations[Math.min(seaLevelIndex, allElevations.length - 1)];
-      console.log('Calculated sea level:', seaLevel, 'for water coverage:', (waterCoverage * 100).toFixed(1) + '%');
-    }
 
     // SimEarth-style layered rendering
     for (let y = 0; y < height; y++) {
