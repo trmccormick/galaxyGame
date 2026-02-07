@@ -62,7 +62,15 @@ Phase 10: Market Establishment & Player Entry Readiness
 
 ---
 
-**Required Mission**: `earth-moon-l1-station/l1_station_construction_profile_v1.json`
+### Phase 2: L1 Station/Depot Construction
+
+**Status**: ✅ **Blueprint exists - uses orbital depot construction**
+
+**Existing Blueprint**: `data/json-data/blueprints/structures/space_stations/orbital_depot_mk1_bp.json`
+
+**Documentation**: Blueprint includes construction materials, time (360 hours), and manufacturing requirements.
+
+**Mission Profile**: Uses standard orbital construction process (tested in `solar_system_mission_pipeline.rake`)
 
 **Phases Needed**:
 1. **L1 Positioning** - Deploy stabilization satellites, establish orbital position
@@ -70,9 +78,13 @@ Phase 10: Market Establishment & Player Entry Readiness
 3. **Station Framework** - Assemble I-beam skeleton (same Luna regolith methodology)
 4. **Manufacturing Setup** - Install cycler/tug construction bays
 5. **Depot Operations** - Activate storage, refueling, and orbital logistics
+
 **AI Manager Actions**:
-2. Establish L1 as ship construction hub (tugs, cyclers)
+1. Load `orbital_depot_mk1_bp.json` blueprint
+2. Execute construction using Luna-manufactured components
+3. Establish L1 as ship construction hub (tugs, cyclers)
 4. Set up logistics contracts for Earth-Luna-L1 transport
+
 **Success Criteria**:
 - ✅ L1 station operational at Earth-Moon Lagrange point
 - ✅ Ship construction bays active (tug/cycler fabrication)
@@ -80,39 +92,55 @@ Phase 10: Market Establishment & Player Entry Readiness
 - ✅ Logistics contracts linking Luna → L1 → Earth
 
 **Dependencies**:
-- ✅ Phase 1 complete (Luna base operational)
-- ✅ Luna I-beam and panel production (transport materials to L1)
+- ✅ Phase 1 complete (Luna base operational with manufacturing)
 
-**GUARDRAILS Reference**: [Anchor Law](../GUARDRAILS.md#-2-the-anchor-law-stability--infrastructure) - L1 requires gravitational anchor (Moon provides $7.35 \times 10^{22}$ kg mass)
+**Construction Testing**: Verified in `solar_system_mission_pipeline.rake` and `task_execution_engine_spec.rb`
 
 ---
 
 ### Phase 3: Tug Construction & Asteroid Operations
 
-**Status**: ❌ **MISSING - Mission profile needed**
+**Status**: ✅ **Mission profile exists - AI Manager learning required**
 
-**Required Mission**: `l1-tug-operations/tug_construction_and_deployment_profile_v1.json`
+**Existing Mission**: `data/json-data/missions/tasks/l1_tug_construction_profile_v1.json`
 
-**Phases Needed**:
-1. **Tug Fabrication** - Construct tugs at L1 station construction bays
-2. **Asteroid Survey** - Identify Phobos-sized asteroids ($\approx 1.0 \times 10^{16}$ kg minimum) for Venus
-3. **Capture Operations** - Deploy tugs to capture and relocate asteroids
-4. **Positioning** - Move asteroids to Venus orbit (artificial moon placement)
+**Phases**:
+- **Tug Design Preparation** - Blueprint and material sourcing
+- **Tug Assembly Testing** - Orbital construction and verification
+- **Cycler Construction (Repeatable)** - Shipyard fabrication process
 
-**AI Manager Actions**:
-1. Build tugs using L1 manufacturing capabilities
-2. Survey asteroid belt for suitable candidates (mass, composition, trajectory)
-3. Execute capture missions (attach tugs, delta-v calculations, orbital insertion)
-4. Position asteroids for Venus L1 points (2 artificial moons minimum)
+**AI Manager Learning Requirements**:
+- **Pattern Recognition**: Learn tug construction from `l1_tug_construction_profile_v1.json`
+- **Material Procurement**: Create buy orders for construction materials (ibeam, aluminum_alloy, etc.)
+- **Construction Sequencing**: Execute phases in correct order using task files
+- **Quality Assurance**: Verify tug operational capabilities post-construction
+
+**Construction Process**:
+1. **Material Acquisition**: AI Manager creates buy orders at L1 Depot for required materials
+2. **Fabrication**: Use L1 shipyard construction bays (enabled by Phase 2)
+3. **Testing**: Validate capture systems and propulsion capabilities
+4. **Deployment**: Position tugs for asteroid capture operations
+
+**Buy Order Integration**:
+- Construction projects should generate automatic buy orders for missing materials
+- Players and logistics companies can fill orders to accelerate construction
+- AI Manager monitors order fulfillment and adjusts procurement strategies
 
 **Success Criteria**:
 - ✅ Minimum 3 tugs operational from L1 construction
-- ✅ 2+ Phobos-sized asteroids identified for Venus
-- ✅ Asteroid capture and repositioning successful
-- ✅ Venus artificial moons in stable orbit
+- ✅ Asteroid survey capability established
+- ✅ Buy orders created and fulfilled for construction materials
+- ✅ AI Manager learns autonomous tug construction patterns
 
 **Dependencies**:
-- ✅ Phase 2 complete (L1 station with ship construction)
+- ✅ Phase 2 complete (L1 shipyard construction bays)
+- ✅ Market system operational (buy order creation/filling)
+
+**AI Learning Sources**:
+- `l1_tug_construction_profile_v1.json` - Mission structure
+- `orbital_shipyard_service_spec.rb` - Construction testing patterns
+- `ai_manager_teaching.rake` - Learning framework
+- `solar_system_mission_pipeline.rake` - Integration examples
 
 **GUARDRAILS Reference**: [Anchor Law](../GUARDRAILS.md#-2-the-anchor-law-stability--infrastructure) - Venus requires asteroid anchors (no natural moons)
 
@@ -120,55 +148,73 @@ Phase 10: Market Establishment & Player Entry Readiness
 
 ### Phase 4: Mars (Phobos/Deimos Small Moon Conversion)
 
-**Status**: ⚠️ **Partial - Mars missions exist, but Phobos/Deimos conversion profile missing**
+**Status**: ✅ **Mission profiles exist - uses standard asteroid conversion tasks**
 
 **Existing Mission**: `data/json-data/missions/mars_settlement/mars_genesis_phase4_gateway_shielding.json`
 
 **Documentation**: [mars_settlement/README.md#L48](../../data/json-data/missions/mars_settlement/README.md#L48) mentions "Phobos Hybrid Station: Lunar-style resource processing + L1-scale manufacturing"
 
-**Missing Mission**: `mars-phobos-deimos/phobos_deimos_conversion_profile_v1.json`
+**Mars Moon Repositioning Tasks**:
+- **Planning**: `data/json-data/missions/tasks/mars_phobos_deimos_repositioning/phases/mars_moon_repositioning_planning_v1.json`
+- **Operations**: `data/json-data/missions/tasks/mars_phobos_deimos_repositioning/phases/phobos_deimos_repositioning_operations_v1.json`
+
+**Standard Asteroid Conversion Tasks**:
+- **Phobos**: Uses `asteroid-conversion-orbital-depot` (small moon profile)
+  - Mission: `asteroid_conversion_orbital_depot_profile_v1.json`
+  - Adapts to "small_moon_phobos_like" environment
+- **Deimos**: Uses `asteroid-conversion-planetary-staging-hub` (major moon profile)  
+  - Mission: `asteroid_conversion_planetary_staging_hub_profile_v1.json`
+  - Adapts to "major_moon_deimos_like" environment
 
 **Phases Needed**:
-1. **Phobos Base Establishment** - Luna-style regolith processing on Phobos surface
-2. **Deimos Mining Operations** - Resource extraction from Deimos
-3. **Phobos L1 Manufacturing** - L1-scale ship construction bays
+1. **Phobos Base Establishment** - Apply orbital depot conversion to Phobos surface
+2. **Deimos Mining Operations** - Apply planetary staging hub conversion to Deimos
+3. **Phobos L1 Manufacturing** - L1-scale ship construction bays on Phobos
 4. **Mars-Phobos Logistics** - Establish transport routes to Mars surface
 
 **AI Manager Actions**:
-1. Apply Luna pattern to Phobos (regolith I-beams, panel production)
-2. Apply L1 pattern to Phobos (ship construction, depot operations)
+1. Apply `asteroid-conversion-orbital-depot` pattern to Phobos (orbital propellant depot)
+2. Apply `asteroid-conversion-planetary-staging-hub` pattern to Deimos (planetary operations hub)
 3. Create Phobos as Mars system hub (not just Mars surface base)
 4. Establish cycler construction capability for Earth-Mars routes
 
 **Success Criteria**:
-- ✅ Phobos base operational (Luna pattern applied)
-- ✅ Phobos L1-scale manufacturing active (ship construction)
-- ✅ Deimos mining operations online
+- ✅ Phobos converted to orbital depot (asteroid conversion pattern applied)
+- ✅ Deimos converted to planetary staging hub (asteroid conversion pattern applied)
 - ✅ Mars-Phobos logistics contracts established
+- ✅ Ship construction capability at both moons
 
 **Dependencies**:
 - ✅ Phase 2 complete (L1 pattern proven)
-- ✅ Phase 1 complete (Luna pattern proven)
-
-**Pattern Reuse**: Phobos = Luna pattern (surface ISRU) + L1 pattern (ship construction)
+- ✅ Asteroid conversion tasks available (reusable patterns)
 
 ---
 
 ### Phase 5: Cycler Route Establishment (Earth-Mars)
 
-**Status**: ❌ **MISSING - Mission profile needed**
+**Status**: ✅ **Blueprint exists - uses orbital shipyard construction**
 
-**Required Mission**: `earth-mars-cycler/cycler_route_establishment_profile_v1.json`
+**Existing Blueprints**:
+- `data/json-data/blueprints/crafts/space/spacecraft/earth_mars_cycler_bp.json` - Earth-Mars cycler construction
+- `data/json-data/blueprints/crafts/space/spacecraft/base_cycler_bp.json` - Base cycler platform
+- `data/json-data/blueprints/crafts/space/spacecraft/gas_giant_cycler_bp.json` - Gas giant cycler
 
-**Phases Needed**:
-1. **Cycler Construction** - Build cyclers at L1 or Phobos shipyards
-2. **Route Planning** - Calculate Hohmann transfer orbits, delta-v budgets
-3. **Cycler Deployment** - Launch cyclers into Earth-Mars transfer orbits
-4. **Rendezvous Protocol** - Establish ferry shuttle operations (tug-based transfers)
+**Construction Method**: Orbital Shipyard Service at L1 station (enabled by Phase 2)
+- Uses `Construction::OrbitalShipyardService.create_shipyard_project()` with blueprint_id 'earth_mars_cycler'
+- Materials delivered via AstroLift logistics from Luna
+- Construction tested in `orbital_shipyard_service_spec.rb`
+
+**Operational Data**: Multiple cycler configurations exist
+- `cycler_belt_operations_data.json` - Asteroid belt operations
+- `cycler_lunar_support_data.json` - Lunar construction support
+- `cycler_mars_constructor_data.json` - Mars depot construction
+- `cycler_titan_harvester_data.json` - Titan hydrocarbon harvesting
+- `cycler_venus_harvester_data.json` - Venus atmospheric processing
+- `cycler_kinetic_hammer_data.json` - Return configuration
 
 **AI Manager Actions**:
-1. Construct minimum 2 cyclers (bidirectional Earth-Mars traffic)
-2. Deploy cyclers into continuous Earth-Mars orbits
+1. Construct minimum 2 cyclers using L1 shipyard (bidirectional Earth-Mars traffic)
+2. Deploy cyclers into continuous Earth-Mars orbits using calculated Hohmann transfers
 3. Create ferry shuttle contracts (tugs move cargo/passengers to/from cyclers)
 4. Establish automated logistics for cargo movement
 
@@ -179,21 +225,25 @@ Phase 10: Market Establishment & Player Entry Readiness
 - ✅ Transit time reduction vs direct flight (proof of efficiency)
 
 **Dependencies**:
-- ✅ Phase 2 complete (L1 ship construction for cyclers)
+- ✅ Phase 2 complete (L1 shipyard construction enables cycler building)
 - ✅ Phase 3 complete (tugs for ferry operations)
 - ✅ Phase 4 complete (Phobos as Mars-side rendezvous point)
 
-**Reference**: [mars_settlement/README.md](../../data/json-data/missions/mars_settlement/README.md) mentions "Earth-Mars cycler ships for transport"
+**Testing**: Cycler construction and operations tested in:
+- `orbital_shipyard_service_spec.rb` - Shipyard service creates cycler projects
+- `cycler_spec.rb` - Cycler model validations and trajectory calculations
+- `solar_system_mission_pipeline.rake` - Integration testing with cycler infrastructure
+- `venus_mars_pipeline.rake` - Operational cycler simulations
 
 ---
 
 ### Phase 6: Venus Artificial Moon Positioning
 
-**Status**: ⚠️ **Partial - Venus mentions "Early Asteroid Relocation Option" but no mission profile**
+**Status**: ✅ **Mission task exists**
+
+**Existing Task**: `data/json-data/missions/tasks/venus_artificial_moon_positioning/phases/venus_moon_positioning_operations_v1.json`
 
 **Documentation**: [venus_settlement/README.md#L16](../../data/json-data/missions/venus_settlement/README.md#L16) mentions "Early Asteroid Relocation: Capture first Phobos/Deimos-sized asteroid for Venus's initial artificial moon"
-
-**Missing Mission**: `venus-asteroid-positioning/artificial_moon_deployment_profile_v1.json`
 
 **Phases Needed**:
 1. **Orbital Mechanics** - Calculate stable Venus L1/L2 positions for artificial moons
@@ -293,32 +343,38 @@ Phase 10: Market Establishment & Player Entry Readiness
 
 ### Phase 9: LEO Depot (2nd Earth Depot)
 
-**Status**: ❌ **MISSING - Mission profile needed**
+**Status**: ✅ **Blueprint exists - same as L1 depot construction**
 
-**Required Mission**: `earth-leo-depot/leo_depot_construction_profile_v1.json`
+**Existing Blueprint**: `data/json-data/blueprints/structures/space_stations/orbital_depot_mk1_bp.json` (same as Phase 2)
+
+**Documentation**: Blueprint includes construction materials, time (360 hours), and manufacturing requirements.
+
+**Mission Profile**: Uses standard orbital construction process (tested in `solar_system_mission_pipeline.rake`)
 
 **Purpose**: Reduce cost of moving mass up Earth's gravity well by creating refueling/storage depot in Low Earth Orbit (LEO). Ships leaving Earth refuel at LEO instead of carrying full fuel load from surface.
 
 **Phases Needed**:
 1. **LEO Positioning** - Establish stable LEO orbit (400-600 km altitude)
-2. **Depot Construction** - Apply L1 depot pattern (same design as Phase 2)
+2. **Depot Construction** - Apply orbital depot blueprint (same design as Phase 2)
 3. **Fuel Storage** - Deploy storage tanks for Earth-launched fuel (pre-L1 refuel)
 4. **Logistics Integration** - Create automated refueling contracts for Earth launches
 
 **AI Manager Actions**:
-1. Apply L1 depot pattern to LEO (proven design reuse)
-2. Position depot in stable LEO orbit
-3. Establish fuel pipeline from Earth surface to LEO
+1. Load `orbital_depot_mk1_bp.json` blueprint (same as L1)
+2. Execute construction using Luna-manufactured components
+3. Position depot in stable LEO orbit
 4. Create automated refueling for ships departing to L1, Luna, Mars, Venus
 
 **Success Criteria**:
-- ✅ LEO depot operational (L1 pattern applied)
+- ✅ LEO depot operational (same blueprint as L1 depot)
 - ✅ Fuel storage and refueling active
 - ✅ Automated contracts for Earth-LEO-L1 logistics
 - ✅ Cost reduction verified (delta-v savings from LEO refueling)
 
 **Dependencies**:
 - ✅ Phase 2 complete (L1 depot pattern proven and reusable)
+
+**Construction Testing**: Verified in `solar_system_mission_pipeline.rake` and `task_execution_engine_spec.rb`
 
 **Economic Benefit**: LEO depot reduces per-launch cost by ~30% (ships carry less fuel from surface, refuel in LEO). This creates profitable logistics contracts for players (Earth surface → LEO fuel transport).
 
@@ -509,6 +565,8 @@ For each missing mission, create:
 - **Luna pattern**: `data/json-data/missions/archived_missions/lunar-precursor/`
 - **L1 pattern**: (create new, but similar to Luna construction + ship manufacturing)
 - **Atmospheric pattern**: `data/json-data/missions/titan-resource-hub/`
+- **Asteroid/Moon Conversion**: `tasks/asteroid-conversion-orbital-depot/` (for Phobos-like moons) and `tasks/asteroid-conversion-planetary-staging-hub/` (for Deimos-like moons) - reusable for any small/large moons or asteroids
+- **Moon Repositioning**: `tasks/venus_artificial_moon_positioning/` (Venus artificial moons) and `tasks/mars_phobos_deimos_repositioning/` (Mars moon repositioning) - reusable for any moon repositioning operations
 
 ---
 
@@ -565,14 +623,13 @@ For each missing mission, create:
 
 ### Priority 1: Missing Mission Profiles (Blocking)
 
-1. **L1 Station Construction** - Critical for ship manufacturing
-2. **Tug Construction & Deployment** - Needed for asteroid relocation
-3. **LEO Depot** - Completes Earth infrastructure
+1. **Tug Construction & Deployment** - Needed for asteroid relocation (Phase 2/9 depots exist)
+2. **Cycler Route Establishment** - Earth-Mars logistics
 
 ### Priority 2: Conversion Missions (High Value)
 
-4. **Phobos/Deimos Conversion** - Mars hub infrastructure
-5. **Venus Artificial Moon Positioning** - Venus settlement prerequisite
+4. **Phobos/Deimos Conversion** - Mars hub infrastructure (conversion tasks exist, repositioning tasks exist)
+5. **Venus Artificial Moon Positioning** - Venus settlement prerequisite (task exists)
 
 ### Priority 3: Advanced Operations (Post-Launch)
 
@@ -623,8 +680,6 @@ For each missing mission, create:
 - ✅ Player-to-NPC trade ratio > 20% within first week (players engaged)
 - ✅ Player retention > 60% after wormhole discovery event (crisis drives engagement)
 
----
-
-**Last Updated**: 2026-01-18  
-**Status**: Draft - Awaiting mission profile creation and AI Manager integration  
-**Next Actions**: Create Priority 1 mission profiles (L1, Tug, LEO), implement SequentialDeploymentOrchestrator
+**Last Updated**: 2026-02-04  
+**Status**: Draft - Awaiting AI Manager tug construction learning and Phase 10 orchestration implementation  
+**Next Actions**: Run `ai:manager:teach:tug_construction` to teach AI Manager autonomous tug fabrication, implement SequentialDeploymentOrchestrator (Phase 10)

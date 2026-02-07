@@ -23,7 +23,7 @@ module Market
       end
 
       resource_name = item.respond_to?(:name) ? item.name : item.to_s
-      price = NPCPriceCalculator.calculate_ask(settlement, resource_name, demand: demand)
+      price = Market::NpcPriceCalculator.calculate_ask(settlement, resource_name, supply: demand)
       price || 0.0
     end
 
@@ -79,8 +79,8 @@ module Market
     def find_matching_orders(new_order)
       return [] unless new_order.order_type == 'Sell'
 
-      npc_price = settlement.npc_market_bid(new_order.resource)
-      npc_capacity = settlement.npc_buy_capacity(new_order.resource)
+      npc_price = Market::NpcPriceCalculator.calculate_bid(settlement, new_order.resource, demand: new_order.quantity)
+      npc_capacity = 1000 # Default NPC buy capacity - can be made dynamic later
       trade_volume = [new_order.quantity, npc_capacity].min
 
       return [] unless trade_volume > 0 && npc_price > 0
@@ -92,7 +92,7 @@ module Market
     # @param resource [String] The resource name
     # @return [Market::Condition, nil] The market condition or nil if not found
     def current_market_condition(resource)
-      market_conditions.find_by(resource: resource)
+      market_conditions.find_or_create_by!(resource: resource)
     end
 
     private

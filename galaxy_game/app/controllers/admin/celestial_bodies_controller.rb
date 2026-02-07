@@ -6,7 +6,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map]
+    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface]
 
     def select_maps_for_analysis
       @available_maps = find_available_maps || []
@@ -68,7 +68,14 @@ module Admin
       @geological_features = load_geological_features
       @ai_missions = load_ai_missions
       @sphere_summary = build_sphere_summary
-      @tileset_name = params[:tileset] || 'trident'
+      @tileset_name = params[:tileset] || 'alio'  # Changed default to Alio
+      
+      # NEW: Load Alio service for body-specific tile config
+      if @tileset_name == 'alio'
+        @alio_service = Tileset::AlioTilesetService.new
+        @alio_service.load
+        @alio_tile_config = @alio_service.tiles_for_body(@celestial_body.name)
+      end
     end
 
     # GET /admin/celestial_bodies/:id/sphere_data
@@ -1264,6 +1271,14 @@ module Admin
       geosphere.save!
 
       Rails.logger.info "[Earth Map Generation] Saved generated Earth map to #{celestial_body.name}"
+    end
+
+    private
+
+    def set_celestial_body
+      @celestial_body = ::CelestialBodies::CelestialBody.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to root_path, alert: "Celestial body not found"
     end
   end
 end

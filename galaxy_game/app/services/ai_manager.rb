@@ -44,4 +44,5 @@ module AIManager
   require_relative 'ai_manager/economic_forecaster_service'
   require_relative 'ai_manager/isru_evaluator'
   require_relative 'ai_manager/resource_flow_simulator'
+  require_relative 'ai_manager/resource_positioning_service'
 end

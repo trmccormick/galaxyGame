@@ -18,6 +18,9 @@ module Construction
       # Initialize material tracking
       initialize_material_tracking(project)
 
+      # Create buy orders for required materials
+      create_buy_orders_for_project(project, station)
+
       project
     end
 
@@ -54,18 +57,54 @@ module Construction
       spawn_completed_craft(project)
     end
 
-    private
+    def self.create_buy_orders_for_project(project, station)
+      # Create buy orders for each required material
+      marketplace = station.marketplace || create_marketplace_for_station(station)
+
+      project.required_materials.each do |material_id, required_qty|
+        # Calculate buy price using NPC pricing
+        buy_price = Market::NpcPriceCalculator.calculate_bid(station, material_id, demand: required_qty)
+
+        # Create buy order
+        marketplace.place_order(
+          orderable: station, # Station is buying
+          resource: material_id,
+          volume: required_qty,
+          order_type: :buy,
+          price: buy_price
+        )
+
+        Rails.logger.info("Created buy order for #{required_qty} #{material_id} at #{buy_price} GCC for #{project.craft_blueprint_id} construction")
+      end
+    end
+
+    def self.create_marketplace_for_station(station)
+      # Create marketplace if station doesn't have one
+      Market::Marketplace.create!(
+        settlement: station,
+        name: "#{station.name} Marketplace"
+      )
+    end
 
     def self.calculate_required_materials(blueprint_id)
-      # Load blueprint and calculate total materials needed
       blueprint = load_craft_blueprint(blueprint_id)
 
-      required = {}
-      blueprint['blueprint_data']['materials'].each do |material|
-        required[material['id']] = material['amount']
-      end
+      # Try different possible keys for materials
+      materials_data = blueprint['blueprint_data']&.[]('materials') ||
+                      blueprint['materials_required'] ||
+                      blueprint['required_materials'] ||
+                      []
 
-      required
+      # Convert array of material objects to hash
+      if materials_data.is_a?(Array)
+        materials_data.each_with_object({}) do |material, hash|
+          if material.is_a?(Hash) && material['id'] && material['amount']
+            hash[material['id']] = material['amount']
+          end
+        end
+      else
+        materials_data || {}
+      end
     end
 
     def self.initialize_material_tracking(project)

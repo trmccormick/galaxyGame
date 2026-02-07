@@ -1,5 +1,5 @@
 echo "Preparing Database"
-bin/rails db:drop db:create
+bin/rails db:drop:_unsafe db:create
 
 # if schema.rb exists load schema else run the migrations
 FILE="/home/databases/db/schema.rb"

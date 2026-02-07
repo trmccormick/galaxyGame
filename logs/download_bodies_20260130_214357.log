@@ -1,27 +1,0 @@
-Step 1: Downloading Lunar DEM from USGS...
-  Source: LRO LOLA Global DEM (118m resolution)
-  Size: ~350MB (this will take a few minutes)
-
-** Resuming transfer from byte position 8494203833
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   286    0   286    0     0    468      0 --:--:-- --:--:-- --:--:--   468
-100   397    0   397    0     0    448      0 --:--:-- --:--:-- --:--:--   448
-✓ Luna DEM downloaded successfully
--rw-r--r--  1 tam0013  staff   7.9G Jan 30 20:59 data/geotiff/raw/luna_lola_118m.tif
-
-Step 2: Downloading Mars DEM from USGS...
-  Source: MGS MOLA Global DEM (463m resolution)
-  Size: ~180MB (this will take a few minutes)
-
-** Resuming transfer from byte position 2125771142
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   283    0   283    0     0    441      0 --:--:-- --:--:-- --:--:--   440
-100   365    0   365    0     0    421      0 --:--:-- --:--:-- --:--:--   421
-✓ Mars DEM downloaded successfully
--rw-r--r--  1 tam0013  staff   2.0G Jan 30 21:03 data/geotiff/raw/mars_mola_463m.tif
-
-Step 3: Processing Luna to 1800x900 resolution...
-ERROR 3: luna_1800x900.tif: Free disk space available is 327.31 GB, whereas 29.79 TB are likely at least (probably more) necessary. You can disable this check by defining the CHECK_DISK_FREE_SPACE configuration option to FALSE.
-Creating output file that is 54582031P x 27291015L.

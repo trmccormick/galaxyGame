@@ -137,12 +137,14 @@ RSpec.describe Admin::MapStudioController, type: :controller do
 
   describe 'POST #apply_map' do
     let(:celestial_body) { create(:celestial_body) }
+    let(:map_data) { { 'terrain_grid' => [[1, 2], [3, 4]], 'metadata' => { 'width' => 2, 'height' => 2 } } }
 
     it 'redirects to celestial body monitor' do
-      # Since the action requires map_filename and celestial_body_id, and we're not providing them,
-      # it should redirect to browse page with an alert
-      post :apply_map, params: { id: '1' }
-      expect(response).to redirect_to(admin_map_studio_browse_path)
+      allow(File).to receive(:read).and_return(map_data.to_json)
+      allow_any_instance_of(described_class).to receive(:apply_map_to_celestial_body)
+
+      post :apply_map, params: { id: '1', celestial_body_id: celestial_body.id }
+      expect(response).to redirect_to(monitor_admin_celestial_body_path(celestial_body))
     end
   end
 end

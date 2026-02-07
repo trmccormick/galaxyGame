@@ -191,16 +191,16 @@ AI system performance monitoring and optimization controls.
 
 ### 1.5. AI Map Generation Studio (`/admin/map_studio`)
 
-AI-powered planetary map generation studio for creating procedural terrain maps from FreeCiv/Civ4 sources.
+AI-powered planetary map generation studio for creating procedural terrain maps from NASA GeoTIFF data sources.
 
 #### Overview
 
-The Map Studio provides an integrated interface for generating planetary maps using AI analysis of existing map sources. It combines FreeCiv terrain maps with Civ4 biome data to create comprehensive planetary terrain representations.
+The Map Studio provides an integrated interface for generating planetary maps using AI analysis of NASA elevation data. It combines real topographic data with AI-derived biome and resource classification to create comprehensive planetary terrain representations.
 
 **Key Features:**
-- **AI-Powered Generation**: Uses `AIManager::PlanetaryMapGenerator` for intelligent map synthesis
-- **Multi-Source Integration**: Combines terrain, water, and biome data from multiple map formats
-- **Real-time Preview**: Interactive map visualization with FreeCiv-style rendering
+- **AI-Powered Generation**: Uses `AIManager::PlanetaryMapGenerator` for intelligent map synthesis from NASA data
+- **NASA GeoTIFF Integration**: Processes real elevation data from NASA sources (Mars, Moon, Venus, etc.)
+- **Real-time Preview**: Interactive map visualization with NASA-accurate terrain rendering
 - **Batch Processing**: Generate maps for multiple celestial bodies simultaneously
 - **Quality Analysis**: Automated map quality assessment and statistics
 - **Export Capabilities**: Save generated maps in JSON format for game integration
@@ -211,7 +211,7 @@ Main map generation interface with planet selection and parameter configuration.
 
 **Features:**
 - **Planet Selection**: Dropdown of all available celestial bodies with type indicators
-- **Source Map Browser**: Interactive selection of FreeCiv/Civ4 map files from data directories
+- **NASA Data Browser**: Interactive selection of NASA GeoTIFF elevation files from data directories
 - **Generation Parameters**: Map name, size settings, quality options
 - **Real-time Validation**: Immediate feedback on parameter combinations
 - **Generation Progress**: Live progress tracking during AI processing
@@ -221,15 +221,15 @@ Main map generation interface with planet selection and parameter configuration.
 ```ruby
 # Load available planets and source maps
 @target_planets = CelestialBodies::CelestialBody.order(:name)
-@available_source_maps = GalaxyGame::Paths.list_source_maps
+@available_source_maps = GalaxyGame::Paths.list_nasa_geotiff_files
 @recent_generations = find_recent_generations
 ```
 
 **Generation Process:**
 1. **Planet Selection**: Choose target celestial body for map generation
-2. **Source Selection**: Select FreeCiv terrain maps and Civ4 biome maps
+2. **Source Selection**: Select NASA GeoTIFF elevation data files
 3. **Parameter Configuration**: Set map name and generation options
-4. **AI Processing**: `AIManager::PlanetaryMapGenerator` analyzes sources and creates procedural map
+4. **AI Processing**: `AIManager::PlanetaryMapGenerator` analyzes NASA elevation data and creates procedural map
 5. **Quality Validation**: Automated checks for map completeness and terrain distribution
 6. **Storage**: Map saved to `GalaxyGame::Paths.generated_maps_path` as JSON
 
@@ -312,13 +312,13 @@ Apply generated map to celestial body geosphere for game integration.
 **AI Map Generator (`AIManager::PlanetaryMapGenerator`):**
 ```ruby
 class AIManager::PlanetaryMapGenerator
-  def generate_planetary_map(planet:, sources:, options: {})
-    # Analyze source maps
-    terrain_data = extract_terrain_from_sources(sources)
-    biome_data = extract_biomes_from_sources(sources)
+  def generate_planetary_map(planet:, nasa_sources:, options: {})
+    # Analyze NASA GeoTIFF elevation data
+    elevation_data = extract_elevation_from_nasa_geotiff(nasa_sources)
+    derived_biomes = derive_biomes_from_elevation(elevation_data, planet)
     
     # AI synthesis
-    synthesized_map = ai_synthesis(terrain_data, biome_data, planet)
+    synthesized_map = ai_synthesis(elevation_data, derived_biomes, planet)
     
     # Quality validation
     quality_score = validate_map_quality(synthesized_map)
@@ -330,7 +330,7 @@ class AIManager::PlanetaryMapGenerator
       quality_score: quality_score,
       metadata: {
         planet_id: planet.id,
-        sources_used: sources.map(&:filename),
+        nasa_sources_used: nasa_sources.map(&:filename),
         generation_time: Time.now
       }
     }
@@ -361,12 +361,12 @@ end
 ```
 
 **File Organization:**
-- **Source Maps**: `data/freeCiv Maps/`, `data/freeCiv\ Maps/`
+- **NASA GeoTIFF Data**: `data/geotiff/` (mars_1800x900.asc.gz, luna_1800x900.asc.gz, etc.)
 - **Generated Maps**: `data/generated_maps/` (auto-created)
 - **Map Backups**: `data/map_backups/` (for rollback support)
 
 **Dependencies:**
-- `GalaxyGame::Paths` - Path management for map files
+- `GalaxyGame::Paths` - Path management for NASA GeoTIFF and map files
 - `AIManager::PlanetaryMapGenerator` - Core AI generation service
 - `CelestialBodies::CelestialBody` - Target planet data
 - `CelestialBodies::Spheres::Geosphere` - Terrain map storage
@@ -418,7 +418,7 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 
 **Features:**
 - Live planetary sphere data (atmosphere, hydrosphere, geosphere, biosphere)
-- Interactive terrain map with FreeCiv-style rendering (180x90 grid, 8px tiles)
+- Interactive terrain map with NASA-accurate rendering (180x90 grid, 8px tiles)
 - Data-driven atmospheric rendering based on planetary conditions (temperature, pressure, composition)
 - Planet-specific visual effects (Mars red tint, Venus volcanic haze)
 - Layer toggles for terrain, water, biomes, temperature, rainfall, and resources
@@ -480,13 +480,12 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 
 #### Edit (`/admin/celestial_bodies/:id/edit`)
 
-Admin-only interface for editing celestial body names and aliases, plus terrain import capabilities.
+Admin-only interface for editing celestial body names and aliases, plus NASA terrain data management.
 
 **Features:**
 - Name editing with validation
 - Alias management (add/remove alternative names)
-- FreeCiv SAV file import for terraformed terrain
-- Civ4 WBS file import for elevation-based terrain
+- NASA GeoTIFF terrain data upload and processing
 - Clear warnings about protected properties
 - Restricted to admin users only
 
@@ -496,29 +495,20 @@ Admin-only interface for editing celestial body names and aliases, plus terrain 
 - `name` - Primary celestial body name
 - `aliases` - Array of alternative names
 
-**Terrain Import Features:**
+**NASA Terrain Data Management:**
 
-**FreeCiv Import:**
-- Upload FreeCiv SAV files containing terraformed terrain
-- Generates barren terrain for gameplay with terraformed areas as target zones
-- Route: `POST /admin/celestial_bodies/:id/import_freeciv_for_body`
-- Controller: `Admin::CelestialBodiesController#import_freeciv_for_body`
-
-**Civ4 Import:**
-- Upload Civ4 World Builder Save (WBS) files
-- Imports dual terrain system (elevation + biome) for realistic planetary generation
-- Supports .Civ4WorldBuilderSave, .CivBeyondSwordWBSave, .CivWarlordsWBSave formats
-- Route: `POST /admin/celestial_bodies/:id/import_civ4_for_body`
-- Controller: `Admin::CelestialBodiesController#import_civ4_for_body`
+**NASA GeoTIFF Import:**
+- Upload NASA GeoTIFF elevation files (.asc.gz format)
+- Processes real topographic data for accurate planetary terrain
+- Route: `POST /admin/celestial_bodies/:id/import_nasa_geotiff`
+- Controller: `Admin::CelestialBodiesController#import_nasa_geotiff`
 
 **Services Used:**
-- `Import::FreecivSavImportService` - Parses FreeCiv SAV files
-- `Import::FreecivToGalaxyConverter` - Converts FreeCiv data to Galaxy format
-- `Import::Civ4WbsImportService` - Parses Civ4 WBS files
-- `Import::Civ4ToGalaxyConverter` - Converts Civ4 data to Galaxy format
+- `Import::NasaGeotiffImportService` - Parses NASA GeoTIFF elevation files
+- `Import::NasaToGalaxyConverter` - Converts NASA data to Galaxy terrain format
 
 **Protected Properties:**
-All physical and astronomical properties (mass, radius, temperature, atmosphere, etc.) are read-only and sourced from authoritative data (JSON/StarSim generation). Only metadata (names/aliases) and terrain data can be edited through this interface.
+All physical and astronomical properties (mass, radius, temperature, atmosphere, etc.) are read-only and sourced from authoritative data (JSON/StarSim generation). Only metadata (names/aliases) and NASA terrain data can be edited through this interface.
 
 ### 3. Solar Systems (`/admin/solar_systems`)
 

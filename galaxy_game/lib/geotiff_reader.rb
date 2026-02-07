@@ -3,57 +3,41 @@ require 'fileutils'
 
 class GeoTIFFReader
   def self.read_elevation(filepath)
-    # Get georeferencing info from GeoTIFF
+    # Get info from GeoTIFF
     gdalinfo_output = `gdalinfo "#{filepath}"`
     
-    # Extract dimensions and georeferencing
+    # Extract dimensions (required)
     size_match = gdalinfo_output.match(/Size is (\d+), (\d+)/)
-    origin_match = gdalinfo_output.match(/Origin = \(([^,]+),([^)]+)\)/)
-    pixel_size_match = gdalinfo_output.match(/Pixel Size = \(([^,]+),([^)]+)\)/)
-    nodata_match = gdalinfo_output.match(/NoData Value=([^)]+)/)
-    
-    unless size_match && origin_match && pixel_size_match
-      raise "Could not extract georeferencing information from GeoTIFF"
+    unless size_match
+      raise "Could not extract dimensions from GeoTIFF"
     end
     
     width = size_match[1].to_i
     height = size_match[2].to_i
-    origin_x = origin_match[1].to_f
-    origin_y = origin_match[2].to_f
-    pixel_x = pixel_size_match[1].to_f
-    pixel_y = pixel_size_match[2].to_f.abs  # Make positive
+    
+    # Georeferencing is optional - some planetary data may not have it
+    origin_match = gdalinfo_output.match(/Origin = \(([^,]+),([^)]+)\)/)
+    pixel_size_match = gdalinfo_output.match(/Pixel Size = \(([^,]+),([^)]+)\)/)
+    nodata_match = gdalinfo_output.match(/NoData Value=([^\s\n]+)/)
+    
+    # Use defaults if georeferencing not available
+    origin_x = origin_match ? origin_match[1].to_f : -180.0
+    origin_y = origin_match ? origin_match[2].to_f : 90.0
+    pixel_x = pixel_size_match ? pixel_size_match[1].to_f : (360.0 / width)
+    pixel_y = pixel_size_match ? pixel_size_match[2].to_f.abs : (180.0 / height)
     nodata_value = nodata_match ? nodata_match[1].to_f : -99999
     
-    # Use gdal_translate to convert to simple ASCII Grid format (no headers)
+    # Use gdal_translate to convert to AAIGrid format
+    # AAIGrid format already includes proper headers (ncols, nrows, xllcorner, yllcorner, cellsize, NODATA_value)
     temp_asc = "/tmp/elevation_#{Time.now.to_i}.asc"
     system("gdal_translate -of AAIGrid #{filepath} #{temp_asc}")
 
     if $?.success?
-      # Create header lines
-      header_lines = [
-        "ncols #{width}",
-        "nrows #{height}",
-        "xllcorner #{origin_x}",
-        "yllcorner #{origin_y - height * pixel_y}",  # Bottom-left corner
-        "cellsize #{pixel_x}",
-        "NODATA_value #{nodata_value}"
-      ]
+      # AAIGrid already has proper headers, parse it directly
+      data = parse_ascii_grid(temp_asc)
       
-      # Read the raw data
-      raw_data = File.read(temp_asc)
-      
-      # Combine header and data
-      full_content = header_lines.join("\n") + "\n" + raw_data
-      
-      # Write to temp file with headers
-      temp_with_headers = "/tmp/elevation_with_headers_#{Time.now.to_i}.asc"
-      File.write(temp_with_headers, full_content)
-      
-      data = parse_ascii_grid(temp_with_headers)
-      
-      # Clean up temp files
+      # Clean up temp file
       File.delete(temp_asc) if File.exist?(temp_asc)
-      File.delete(temp_with_headers) if File.exist?(temp_with_headers)
       
       data
     else

@@ -5,7 +5,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Test Unit #{n}" }
     unit_type { "basic_unit" } # Default to a generic unit type
     operational_data { {} }
-    # association :owner, factory: :player  # Will be set in after(:create)
+    association :owner, factory: :player
     attachable { nil }
 
     # Allow setting settlement which sets attachable and owner

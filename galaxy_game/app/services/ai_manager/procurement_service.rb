@@ -57,7 +57,21 @@ module AIManager
     end
 
     def self.settlement_can_afford?(settlement, cost)
-      settlement_funds(settlement) >= cost
+      settlement_funds = settlement_funds(settlement)
+      
+      # Check corporate debt level - NPCs with high debt are more conservative
+      if settlement.owner&.is_a?(Organizations::BaseOrganization) && settlement.owner.is_npc?
+        corporate_debt = corporate_debt_level(settlement.owner)
+        total_assets = settlement.owner.accounts.sum { |account| [account.balance, 0].max }
+        
+        # If corporate debt exceeds 30% of assets, be more conservative with purchases
+        if corporate_debt > total_assets * 0.3
+          Rails.logger.info "[ProcurementService] High corporate debt detected (#{corporate_debt}), being conservative with purchases"
+          return false
+        end
+      end
+      
+      settlement_funds >= cost
     end
 
     def self.purchase_from_market(settlement, resource, amount, cost)
@@ -73,8 +87,14 @@ module AIManager
     end
 
     def self.settlement_funds(settlement)
-      # Placeholder
-      100000
+      [settlement.account&.balance || 0, 0].max
+    end
+
+    def self.corporate_debt_level(corporation)
+      # Calculate total debt across all corporation accounts
+      corporation.accounts.sum do |account|
+        account.balance.negative? ? account.balance.abs : 0
+      end
     end
   end
 end

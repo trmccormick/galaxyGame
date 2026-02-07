@@ -86,10 +86,8 @@ RSpec.describe TerraSim::GeosphereInitializer, type: :service do
     end
 
     it "sets up ice_tectonics_enabled for ice giants" do
-      pending "ice_tectonics_enabled attribute doesn't exist in Geosphere model"
-      # initializer.initialize_geosphere  # Don't call this since it will fail
-      # This test will be skipped
-      # expect(ice_giant.geosphere.ice_tectonics_enabled).to be true
+      initializer.initialize_geosphere
+      expect(ice_giant.geosphere.ice_tectonic_enabled).to be true
     end
     
     it "creates appropriate ice materials" do

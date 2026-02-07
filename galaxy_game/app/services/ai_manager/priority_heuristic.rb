@@ -23,6 +23,19 @@ module AIManager
       @settlement.account&.balance&.negative?
     end
 
+    # Check if corporation has high debt levels
+    def corporate_high_debt?
+      return false unless @settlement.owner&.is_a?(Organizations::BaseOrganization)
+      
+      corporation = @settlement.owner
+      total_debt = corporation.accounts.sum do |account|
+        account.balance.negative? ? account.balance.abs : 0
+      end
+      
+      total_assets = corporation.accounts.sum { |account| [account.balance, 0].max }
+      total_debt > total_assets * 0.5
+    end
+
     # Check if methane synthesis is possible and beneficial
     def can_synthesize_methane?
       # Check if CO is available (from production or storage)

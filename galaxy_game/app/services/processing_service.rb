@@ -55,7 +55,7 @@ class ProcessingService
     # If owner has a reference to a location name
     if @owner.respond_to?(:active_location) && @owner.active_location.present?
       # Try to find celestial location first
-      celestial_location = CelestialLocation.find_by(name: @owner.active_location)
+      celestial_location = Location::CelestialLocation.find_by(name: @owner.active_location)
       return celestial_location if celestial_location.present?
       
       # Then try spatial location

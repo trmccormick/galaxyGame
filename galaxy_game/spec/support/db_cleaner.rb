@@ -3,7 +3,7 @@ require 'database_cleaner'
 RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true
-    DatabaseCleaner.clean_with(:deletion)
+    DatabaseCleaner.strategy = :truncation  # Set default strategy
     
     # Ensure currencies exist after cleaning
     Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|

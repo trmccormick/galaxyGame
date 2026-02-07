@@ -369,7 +369,8 @@ window.AdminMonitor = (function() {
   }
 
   /**
-   * Get hydrosphere color based on liquid composition
+   * Get hydrosphere color based on liquid composition and depth
+   * Shallow water = light cyan/turquoise, Deep water = dark blue
    * Mars = ice caps, Titan = orange methane, Earth = blue water
    */
   function getHydrosphereColor(waterDepth, pData) {
@@ -377,11 +378,14 @@ window.AdminMonitor = (function() {
     const liquid = (pData.liquid_name || 'H2O').toUpperCase();
     const temp = pData.surface_temperature || pData.temperature || 288;
     
-    // Depth-based intensity
-    const intensity = Math.min(1, 0.4 + (waterDepth / 2000) * 0.6);
+    // Normalize depth: 0-200m = shallow, 200-2000m = mid, 2000m+ = deep
+    // waterDepth is in meters (difference between sea level and ocean floor)
+    const shallowThreshold = 200;
+    const deepThreshold = 4000;
     
     // Mars - ice caps (frozen H2O/CO2)
     if (name === 'mars' || name.includes('mars')) {
+      const intensity = Math.min(1, waterDepth / 1000);
       const iceValue = Math.round(200 + intensity * 55);
       return `rgba(${iceValue}, ${iceValue}, 255, 0.85)`;
     }
@@ -389,6 +393,7 @@ window.AdminMonitor = (function() {
     // Titan - methane/ethane lakes (orange)
     if (name === 'titan' || liquid === 'CH4' || liquid === 'C2H6' || 
         liquid.includes('METHANE') || liquid.includes('ETHANE')) {
+      const intensity = Math.min(1, waterDepth / 500);
       const r = Math.round(180 + intensity * 75);
       const g = Math.round(80 + intensity * 40);
       return `rgba(${r}, ${g}, 0, 0.8)`;
@@ -396,21 +401,48 @@ window.AdminMonitor = (function() {
     
     // Europa/Enceladus - subsurface ocean (pale blue-white ice)
     if (name === 'europa' || name === 'enceladus') {
+      const intensity = Math.min(1, waterDepth / 1000);
       const iceBlue = Math.round(220 + intensity * 35);
       return `rgba(${iceBlue}, ${iceBlue}, 255, 0.7)`;
     }
     
     // Nitrogen ice (Pluto/Triton)
     if (liquid === 'N2' || name === 'pluto' || name === 'triton') {
+      const intensity = Math.min(1, waterDepth / 500);
       const r = Math.round(230 + intensity * 25);
       const g = Math.round(200 + intensity * 30);
       const b = Math.round(200 + intensity * 30);
       return `rgba(${r}, ${g}, ${b}, 0.75)`;
     }
     
-    // Default: H2O water (blue)
-    const blueIntensity = Math.round(100 + intensity * 155);
-    return `rgba(0, 0, ${blueIntensity}, 0.8)`;
+    // Default: H2O water (Earth-like)
+    // Shallow = light cyan/turquoise, Deep = dark navy blue
+    if (waterDepth < shallowThreshold) {
+      // Shallow water: light cyan to medium blue
+      // 0m = rgb(100, 200, 255) light cyan
+      // 200m = rgb(50, 150, 220) medium blue
+      const t = waterDepth / shallowThreshold;
+      const r = Math.round(100 - t * 50);
+      const g = Math.round(200 - t * 50);
+      const b = Math.round(255 - t * 35);
+      return `rgba(${r}, ${g}, ${b}, 0.85)`;
+    } else if (waterDepth < deepThreshold) {
+      // Mid-depth: medium blue to dark blue
+      // 200m = rgb(50, 150, 220)
+      // 4000m = rgb(0, 50, 150) dark blue
+      const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+      const r = Math.round(50 - t * 50);
+      const g = Math.round(150 - t * 100);
+      const b = Math.round(220 - t * 70);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    } else {
+      // Deep ocean: dark navy blue
+      // 4000m+ = rgb(0, 20, 100) to rgb(0, 10, 80)
+      const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+      const g = Math.round(20 - t * 10);
+      const b = Math.round(100 - t * 20);
+      return `rgba(0, ${g}, ${b}, 0.95)`;
+    }
   }
 
   // ============================================
@@ -508,21 +540,39 @@ window.AdminMonitor = (function() {
       waterCoverage = waterCoverage / 100;
     }
 
-    let seaLevel = 0;
-    if (waterCoverage > 0) {
-      const allElevations = [];
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const elev = elevationGrid[y][x];
-          if (elev !== null && elev !== undefined) {
-            allElevations.push(elev);
-          }
+    // No water if coverage is 0 or less
+    if (waterCoverage <= 0) {
+      return null;
+    }
+
+    // Check if we have real elevation data (with negative values for ocean)
+    // NASA ETOPO data has negative elevations for ocean, positive for land
+    const allElevations = [];
+    let hasNegativeElevations = false;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const elev = elevationGrid[y][x];
+        if (elev !== null && elev !== undefined) {
+          allElevations.push(elev);
+          if (elev < 0) hasNegativeElevations = true;
         }
       }
-      allElevations.sort((a, b) => a - b);
+    }
 
+    let seaLevel = 0;
+    
+    if (hasNegativeElevations) {
+      // Real elevation data (NASA ETOPO style): sea level is 0m
+      // Negative elevations = underwater, positive = land
+      seaLevel = 0;
+      console.log('Using real elevation data: sea level = 0m');
+    } else {
+      // Normalized/synthetic data: use bathtub algorithm
+      // Sort elevations and find the level that covers the desired percentage
+      allElevations.sort((a, b) => a - b);
       const seaLevelIndex = Math.floor(allElevations.length * waterCoverage);
       seaLevel = allElevations[Math.min(seaLevelIndex, allElevations.length - 1)];
+      console.log(`Using bathtub algorithm: sea level = ${seaLevel} for ${(waterCoverage*100).toFixed(1)}% coverage`);
     }
 
     const waterGrid = [];
@@ -531,9 +581,10 @@ window.AdminMonitor = (function() {
       for (let x = 0; x < width; x++) {
         const elevation = elevationGrid[y][x];
         if (elevation !== null && elevation !== undefined && elevation < seaLevel) {
+          // Water depth is difference between sea level and ocean floor
           waterGrid[y][x] = seaLevel - elevation;
         } else {
-          waterGrid[y][x] = 0;
+          waterGrid[y][x] = 0;  // Land - no water
         }
       }
     }
@@ -659,8 +710,8 @@ window.AdminMonitor = (function() {
       console.log('Resource grid missing or empty - resources layer disabled');
     }
 
-    // Calculate water layer from hydrosphere
-    if (layers.elevation) {
+    // Calculate water layer from hydrosphere (only if there's water)
+    if (layers.elevation && planetData.water_coverage > 0) {
       layers.water = calculateWaterLayerFromHydrosphere(planetData.water_coverage, layers.elevation);
       console.log('Calculated water layer from hydrosphere data');
     }
@@ -741,18 +792,23 @@ window.AdminMonitor = (function() {
         const elevationRange = maxElevation - minElevation;
         const normalizedElevation = elevationRange > 0 ? (rawElevation - minElevation) / elevationRange : 0.5;
 
-        // BASE LAYER: Pure elevation heightmap
-        let color = getElevationColor(normalizedElevation, planetData);
+        // Check for biosphere once per cell
+        const hasBiosphere = planetData.has_biosphere || false;
 
+        // BASE LAYER: Pure elevation heightmap (only when water layer is not active)
+        let color = null; // transparent by default
+        
         // LAYER 1: Water overlay
         if (visibleLayers.has('water') && layers.water && layers.water.grid[y][x] > 0) {
           const waterDepth = layers.water.grid[y][x];
           color = getHydrosphereColor(waterDepth, planetData);
+        } else if (!visibleLayers.has('water')) {
+          // Only show base terrain when water layer is not active
+          color = getElevationColor(normalizedElevation, planetData);
         }
 
         // LAYER 2: Biome overlay (only for planets with biospheres)
         // Barren planets like Mars shouldn't show Earth-like green biomes
-        const hasBiosphere = planetData.has_biosphere || false;
         if (visibleLayers.has('biomes') && hasBiosphere && layers.biomes && layers.biomes.grid[y][x]) {
           const biome = layers.biomes.grid[y][x];
           if (biome && biome !== 'ocean' && biome !== 'none') {
@@ -786,7 +842,8 @@ window.AdminMonitor = (function() {
         }
 
         // LAYER 5: Rainfall overlay (biome-based precipitation estimate)
-        if (visibleLayers.has('rainfall') && layers.biomes && layers.biomes.grid[y][x]) {
+        // Only show rainfall on planets with biospheres
+        if (visibleLayers.has('rainfall') && hasBiosphere && layers.biomes && layers.biomes.grid[y][x]) {
           const biome = layers.biomes.grid[y][x];
           // Check if we have a direct mapping for this biome
           if (biome && layerOverlays.rainfall.terrainColors[biome]) {
@@ -808,7 +865,8 @@ window.AdminMonitor = (function() {
         }
 
         // LAYER 6: Features overlay (geological features - mountains, hills, volcanic)
-        if (visibleLayers.has('features')) {
+        // Only show features on planets with biospheres
+        if (visibleLayers.has('features') && hasBiosphere) {
           const biome = layers.biomes?.grid[y]?.[x];
           // Use helper function or direct check
           if (biome && layerOverlays.features.isFeature(biome)) {
@@ -821,8 +879,10 @@ window.AdminMonitor = (function() {
           }
         }
 
-        ctx.fillStyle = color;
-        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+        if (color) {
+          ctx.fillStyle = color;
+          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+        }
       }
     }
 

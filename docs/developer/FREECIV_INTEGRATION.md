@@ -2,7 +2,21 @@
 
 ## Overview
 
-Galaxy Game integrates FreeCiv tilesets and map formats to provide professional-quality planetary visualization without requiring custom graphics development. This leverages 25+ years of FreeCiv's tile art development.
+Galaxy Game uses FreeCiv tilesets for terrain visualization and FreeCiv/Civ4 map data as **training data for the AI Manager**. This leverages 25+ years of FreeCiv's tile art development while maintaining accurate terrain from NASA sources.
+
+## Important Architecture Note [2026-02-05]
+
+**FreeCiv/Civ4 maps are TRAINING DATA, not terrain sources.**
+
+| Use Case | Data Source |
+|----------|-------------|
+| Terrain elevation (Sol system) | NASA GeoTIFF |
+| Biome pattern learning | FreeCiv/Civ4 maps |
+| Geographic feature names | FreeCiv/Civ4 labels |
+| Settlement location hints | FreeCiv/Civ4 start positions |
+| Geological data validation | Cross-reference with map labels |
+
+**Do NOT convert FreeCiv terrain types to elevation values** - this produces unrealistic results (uniform 279-322m range instead of real topography).
 
 ## FreeCiv Assets
 
@@ -31,7 +45,7 @@ public/tilesets/
 - **Attribution Required**: Must credit FreeCiv project
 - **Distribution**: GPL requires source availability (already satisfied by GitHub)
 
-## SAV File Format
+## SAV File Format (Training Data)
 
 ### Structure
 FreeCiv .sav files contain terrain data as character grids:
@@ -42,20 +56,34 @@ t0001="a a : : : d d d d g g g"
 ...
 ```
 
-### Terrain Character Mapping
-| Character | Terrain Type | Galaxy Game Usage |
-|-----------|-------------|-------------------|
-| a | arctic | Ice/snow (Europa, polar regions) |
-| d | desert | Arid terrain (Mars, Venus) |
-| p | plains | Open terrain (Luna regolith) |
-| g | grassland | Fertile areas (post-terraforming) |
-| f | forest | Wooded regions (Earth-like) |
-| j | jungle | Dense vegetation (Venus post-terraforming) |
-| h | hills | Elevated terrain |
-| m | mountains | High peaks (Olympus Mons) |
-| s | swamp | Wet areas (Titan methane lakes) |
-| o | ocean | Water bodies (Earth, Europa) |
-| - | deep_sea | Deep trenches (Earth oceans) |
+### Terrain Character Mapping (For AI Learning)
+| Character | Terrain Type | AI Manager Pattern Learning |
+|-----------|-------------|----------------------------|
+| a | Arctic | Polar region biome placement |
+| d | Desert | Arid zone distribution patterns |
+| p | Plains | Lowland terrain patterns |
+| g | Grassland | Habitable zone placement |
+| f | Forest | Vegetation distribution |
+| j | Jungle | Dense vegetation patterns |
+| h | Hills | Elevated terrain placement |
+| m | Mountains | Peak distribution |
+| s | Swamp | Wetland patterns |
+| : | Deep Ocean | Basin/trench patterns |
+| (space) | Ocean | Water body shapes |
+| + | Lake | Inland water patterns |
+
+### What Maps Tell AI Manager
+
+**Mars Terraformed (133×64):**
+- Where biomes SHOULD go after terraforming
+- Labeled features: Olympus Mons, Hellas Sea, Valles Marineris, etc.
+- Settlement start positions (9 locations)
+- Represents FUTURE state, not current Mars
+
+**Civ4 Mars (80×57):**
+- 30 labeled geographic features
+- Resource placement hints (iron, copper, etc.)
+- Terrain type distribution for pattern learning
 
 ## Services
 

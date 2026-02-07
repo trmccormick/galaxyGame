@@ -1,21 +1,31 @@
-# Interplanetary Foundry Logic and Lunar Space Elevator Dependency
+# Interplanetary Foundry Logic and Orbital Access Systems
 
 ## Overview
 
-This document details the implementation of **Interplanetary Foundry Logic (Rule D)** and **Lunar Space Elevator Dependency** - a critical infrastructure linkage that connects Venus/Mars atmospheric processing with lunar construction capabilities.
+This document details the implementation of **Interplanetary Foundry Logic (Rule D)** and **Orbital Access Systems** - a critical infrastructure linkage that connects Venus/Mars atmospheric processing with lunar construction capabilities.
+
+**Orbital Access Systems** include:
+- **Space Elevators**: For Earth and Moon (fast planetary rotation provides centrifugal force)
+- **Skyhooks**: For Venus (slow rotation requires artificial centrifugal force via rotation)
+- **CNT Foundry Integration**: Carbon nanotube production enables both systems
 
 ## Implementation Summary
 
 ### Rule D: Interplanetary Foundry Logic
-**Purpose**: Enable Venus and Mars cyclers to function as mobile foundries, producing Carbon Nanotubes (CNTs) from atmospheric CO₂ for lunar infrastructure.
+**Purpose**: Enable Venus and Mars cyclers to function as mobile foundries, producing Carbon Nanotubes (CNTs) from atmospheric CO₂ for orbital access infrastructure.
 
 **Key Components**:
 - Production loops linking atmospheric processors to CNT fabricators
 - AI pattern recognition for foundry-equipped missions
-- Priority system for lunar elevator dependency fulfillment
+- Priority system for orbital access dependency fulfillment
 
-### Lunar Space Elevator Dependency
-**Purpose**: Create a prerequisite chain that requires CNT delivery from interplanetary foundries before lunar space elevator construction can begin.
+### Orbital Access Systems
+**Purpose**: Create prerequisite chains that require CNT delivery from interplanetary foundries before orbital access construction can begin.
+
+**System Selection by Planet**:
+- **Earth/Moon**: Space Elevators (equatorial rotation provides natural tension)
+- **Venus**: Skyhooks (243-day rotation too slow; requires artificial rotation)
+- **Mars**: Space Elevators (24.6-hour day provides adequate tension)
 
 ## Technical Implementation
 
@@ -42,11 +52,11 @@ This document details the implementation of **Interplanetary Foundry Logic (Rule
 1. Atmospheric processors extract CO₂ from Venus atmosphere
 2. CO₂ is processed and fed to CNT fabricator units
 3. CNTs are produced at 50 kg/hour per fabricator
-4. CNTs are stored for delivery to lunar construction sites
+4. CNTs are stored for delivery to orbital access construction sites
 
-### 2. Lunar Space Elevator Prerequisites
+### 2. Orbital Access System Prerequisites
 
-#### Lunar Support Cycler Configuration
+#### Lunar Space Elevator Configuration
 **File**: `data/json-data/operational_data/crafts/space/spacecraft/cycler_lunar_support_data.json`
 
 ```json
@@ -59,10 +69,39 @@ This document details the implementation of **Interplanetary Foundry Logic (Rule
 }
 ```
 
+#### Venus Skyhook Configuration
+**File**: `data/json-data/operational_data/crafts/space/spacecraft/cycler_venus_support_data.json`
+
+```json
+{
+  "prerequisites": {
+    "build_venus_skyhook": {
+      "requires": "cnt_delivery_from_venus_or_mars_foundry"
+    }
+  }
+}
+```
+
 **Dependency Logic**:
-- Lunar space elevator construction is blocked until CNT delivery is confirmed
+- Orbital access construction is blocked until CNT delivery is confirmed
 - CNTs must be delivered from Venus or Mars foundry operations
 - Creates economic incentive for interplanetary resource processing
+- **Venus Skyhook Specific**: Due to Venus's extremely slow rotation (243 Earth days), traditional space elevators cannot function. Skyhooks provide artificial centrifugal force through their own rotation.
+
+### 3. System-Specific Design Considerations
+
+#### Space Elevators (Earth, Moon, Mars)
+- **Rotation Advantage**: Fast planetary rotation provides natural centrifugal force
+- **Equatorial Positioning**: Must be located at planetary equator
+- **Cable Tension**: Maintained by planetary rotation + orbital mechanics
+- **Applications**: Earth (low-cost launch), Moon (surface-to-orbit), Mars (atmospheric access)
+
+#### Skyhooks (Venus)
+- **Rotation Independence**: Artificial centrifugal force via station rotation
+- **Flexible Positioning**: Can be placed at any latitude/longitude
+- **Cable Dynamics**: Station rotation (not planetary) provides tension
+- **Venus Advantages**: Compensates for planet's 6.5 km/h equatorial speed
+- **Design Requirements**: Higher rotation speeds, active stabilization systems
 
 ### 3. AI Pattern Recognition System
 
@@ -93,9 +132,9 @@ end
 
 **Priority System**:
 ```ruby
-# Prioritize foundry patterns when lunar elevator project is active
+# Prioritize foundry patterns when orbital access projects are active
 priority = if pattern[:pattern_id] == 'interplanetary_foundry'
-             'HIGH PRIORITY (Foundry for Lunar Elevator)'
+             'HIGH PRIORITY (Foundry for Orbital Access Systems)'
            else
              'Standard'
            end
@@ -112,23 +151,38 @@ priority = if pattern[:pattern_id] == 'interplanetary_foundry'
 2. **Production Phase**
    - Atmospheric harvesting at Venus/Mars
    - CO₂ → CNT conversion at 50 kg/hour per fabricator
-   - AI recognizes foundry pattern and prioritizes for lunar elevator support
+   - AI recognizes foundry pattern and prioritizes for orbital access support
 
 3. **Delivery Phase**
-   - CNTs transported to lunar construction site
-   - Prerequisites satisfied for space elevator construction
-   - Economic value realized through lunar infrastructure development
+   - CNTs transported to construction sites (Earth, Moon, Mars, Venus)
+   - Prerequisites satisfied for orbital access construction
+   - Economic value realized through planetary infrastructure development
+
+### System-Specific Deployment
+
+#### Space Elevator Deployment (Earth, Moon, Mars)
+- **Site Selection**: Equatorial location for maximum rotational advantage
+- **Cable Installation**: Stationary cable anchored to surface and counterweight
+- **Tension Source**: Planetary rotation provides natural centrifugal force
+- **Operational Timeline**: 24-36 months from CNT delivery to operational
+
+#### Skyhook Deployment (Venus)
+- **Site Selection**: Flexible positioning (any latitude/longitude)
+- **Cable Installation**: Rotating station with deployed cable
+- **Tension Source**: Station rotation provides artificial centrifugal force
+- **Operational Timeline**: 30-42 months (additional complexity from rotation systems)
+- **Venus-Specific Challenges**: Atmospheric density, thermal management, slow planetary rotation compensation
 
 ### AI Decision Making
 
 **Pattern Recognition**:
 - Scans mission inventories for atmospheric + CNT fabricator combinations
 - Classifies as `interplanetary_foundry` pattern
-- Elevates priority when lunar elevator project is detected
+- Elevates priority when orbital access projects are detected
 
 **Economic Analysis**:
 - Foundry missions valued at 75,000 GCC baseline
-- Additional priority weighting for lunar infrastructure support
+- Additional priority weighting for planetary infrastructure support
 - Resource flow optimization between planetary systems
 
 ## Integration Points
@@ -187,7 +241,8 @@ MissionProfileAnalyzer.extract_pattern_id(profile) # => 'interplanetary_foundry'
 - Resource flow tracking through manufacturing system
 
 ### Prerequisite System Testing
-- Lunar space elevator construction blocked without CNT delivery
+- Orbital access construction blocked without CNT delivery
+- Space elevators (Earth/Moon/Mars) and skyhooks (Venus) require CNT prerequisites
 - Prerequisite checking integrated with construction job system
 - Error messaging for missing dependencies
 
@@ -212,10 +267,10 @@ MissionProfileAnalyzer.extract_pattern_id(profile) # => 'interplanetary_foundry'
 ## Success Metrics
 
 ### Technical Metrics
-- ✅ Production loops functional in Venus harvester configuration
-- ✅ Prerequisites blocking lunar elevator construction appropriately
+- ✅ Production loops functional in Venus/Mars harvester configurations
+- ✅ Prerequisites blocking orbital access construction appropriately
 - ✅ AI pattern recognition identifying foundry missions correctly
-- ✅ Priority system elevating foundry patterns for lunar projects
+- ✅ Priority system elevating foundry patterns for planetary infrastructure projects
 
 ### Gameplay Integration
 - ✅ Economic incentives for interplanetary resource processing
@@ -223,5 +278,5 @@ MissionProfileAnalyzer.extract_pattern_id(profile) # => 'interplanetary_foundry'
 - ✅ AI learning system adapting to foundry mission patterns
 - ✅ Resource flow visualization showing interplanetary dependencies
 
-This implementation establishes a robust foundation for interplanetary industrial symbiosis, where Venus/Mars resource processing directly enables lunar infrastructure development through the critical CNT supply chain.</content>
+This implementation establishes a robust foundation for interplanetary industrial symbiosis, where Venus/Mars resource processing directly enables multi-planetary orbital access development through the critical CNT supply chain.</content>
 <parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/docs/architecture/foundry_logic_and_lunar_elevator.md

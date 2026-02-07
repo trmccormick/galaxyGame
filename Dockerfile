@@ -2,7 +2,7 @@
 FROM ruby:3.4.3
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs gdal-bin
 
 # Set the working directory
 WORKDIR /home/galaxy_game

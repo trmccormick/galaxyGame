@@ -2,77 +2,139 @@
 
 ## Overview
 
-The Galaxy Game planetary map system provides a SimEarth-style visualization of celestial bodies using FreeCiv tilesets and real elevation data. The system supports layered rendering with geological, hydrological, biological, and infrastructural overlays.
+The Galaxy Game planetary map system provides a SimEarth-style visualization of celestial bodies using FreeCiv tilesets and NASA elevation data. The system supports layered rendering with geological, hydrological, biological, and infrastructural overlays.
 
 ## Architecture
 
-### Data Sources
+### Data Source Hierarchy [Updated 2026-02-05]
 
-#### FreeCiv SAV Files
-- **Format**: Character-based terrain grids (a=arctic, d=desert, g=grassland, etc.)
-- **Source**: FreeCiv scenario files or custom generated maps
-- **Use Case**: Game-optimized terrain for strategy gameplay
-
-#### Real Elevation Data
-- **Sources**:
-  - NASA SRTM/ETOPO (Earth topography)
-  - NASA MOLA (Mars topography)
-  - NASA LOLA (Luna topography)
-  - NASA Magellan (Venus topography)
-- **Format**: GeoTIFF or converted elevation arrays
-- **Use Case**: Scientific accuracy for Sol system planets
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TERRAIN DATA SOURCES                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  PRIMARY (Ground Truth):                                         │
+│  └─ NASA GeoTIFF data at data/geotiff/processed/*.asc.gz        │
+│     - earth_1800x900.asc.gz                                      │
+│     - mars_1800x900.asc.gz                                       │
+│     - luna_1800x900.asc.gz                                       │
+│     - mercury_1800x900.asc.gz                                    │
+│                                                                  │
+│  TRAINING DATA (AI Manager Learning):                            │
+│  └─ FreeCiv/Civ4 maps at data/maps/                             │
+│     - Biome placement patterns                                   │
+│     - Geographic feature names & positions                       │
+│     - Settlement location hints                                  │
+│     - NOT for elevation (produces unrealistic 279-322m range)   │
+│                                                                  │
+│  GENERATED (Bodies Without NASA Data):                           │
+│  └─ AI Manager uses learned patterns + physical conditions       │
+│     - Titan, Europa, Venus, etc.                                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ### Layered Rendering System
 
-#### Layer 0: Lithosphere (Geological Base)
-- **Data**: terrain_type (FreeCiv classification)
-- **Visual**: Base tiles from FreeCiv tilesets
-- **Color Filters**:
-  - Mars: Oxide red tint (#B7410E)
-  - Venus: Sulfur yellow tint (#E3BB76)
-  - Luna: Regolith gray tint (#A9A9A9)
-  - Titan: Methane haze tint (#F8D664)
+#### Layer 0: Lithosphere (Terrain Base)
+- **Data Source**: NASA GeoTIFF elevation (downsampled to grid)
+- **Visual**: Height-based color gradient
+- **Body-Specific Colors**:
+  - Luna: Grey gradient (#4a4a4a → #d0d0d0)
+  - Mars: Rust gradient (#654321 → #cd853f)
+  - Mercury: Dark grey (#3a3a3a → #a9a9a9)
+  - Titan: Orange-brown (#8B4513 → #DEB887)
+  - Earth: Brown-green (#006400 → #ffffff)
 
-#### Layer 1: Hydrosphere (Water/Ice)
-- **Data**: Liquid water, ice caps, methane lakes
-- **Visual**: Blue/cyan overlays on base tiles
+#### Layer 1: Hydrosphere (Liquid/Ice)
+- **Data Source**: hydrosphere.water_coverage + elevation (bathtub logic)
+- **Label**: "Hydrosphere" not "Water" (supports non-H2O)
+- **Color by Composition**:
+  - H2O: Blue (#0077be)
+  - CH4/C2H6 (Titan): Orange (#ff6600)
+  - NH3: Purple (#9370db)
 - **Dynamic**: Changes with terraforming progress
 
 #### Layer 2: Biosphere (Life/Vegetation)
 - **Data**: bio_density (0.0 to 1.0 scale)
 - **Visual**: Green transparency overlays
 - **Behavior**: Gradual expansion, not binary switches
-- **Implementation**: Alpha channel overlays on base tiles
+- **Note**: Only for habitable zone worlds
 
 #### Layer 3: Infrastructure (Stations/Depots)
 - **Data**: Station locations, depot networks, L1 links
 - **Visual**: Industrial sprites overlaid on terrain
 - **Logic**: Luna Pattern resource harvesting, Super-Mars asteroid stations
 
+### Grid Sizing & FreeCiv Tileset Compatibility
+
+#### Key Concepts
+
+**Grid Dimensions vs Tile Pixel Size:**
+- **Grid Size** (e.g., 180×90) = number of tiles in the map (width × height)
+- **Tile Pixel Size** (e.g., 30×30, 45×45, 64×64) = how big each tile is rendered in pixels
+- FreeCiv tilesets work with ANY grid size - they just repeat sprites across the grid
+
+**FreeCiv Constraints:**
+1. **Aspect Ratio**: 2:1 (width:height) for proper cylindrical wrap (WRAPX topology)
+2. **Minimum Playable**: ~40×20 for meaningful gameplay
+3. **Tile Pixel Size**: Must match chosen tileset specification
+
+#### Available Tilesets
+
+| Tileset | Tile Size (px) | Style | Notes |
+|---------|---------------|-------|-------|
+| Trident (original) | 30×30 | Classic | Original FreeCiv look |
+| Trident (modified) | 64×64 | Classic | Our current version |
+| BigTrident | 60×60 | Classic | Double-size Trident |
+| Engels | 45×45 | Stylized | Community tileset |
+| Amplio | 96×96 | Detailed | High-res isometric |
+
+#### Grid Size Formula
+
+```ruby
+# Formula: Earth 180×90 as reference, maintains 2:1 aspect ratio
+scale_factor = body_diameter / 12742.0  # Earth diameter in km
+width = (180 * scale_factor).round.clamp(40, 720)
+height = (width / 2).round.clamp(20, 360)  # Enforce 2:1 ratio
+```
+
+| Body | Diameter (km) | Grid Size | FreeCiv Map Reference |
+|------|---------------|-----------|----------------------|
+| Earth | 12,742 | 180×90 | earth-180x90-v1-3.sav ✓ |
+| Mars | 6,779 | 96×48 | mars-133x64-v2.0.sav (terraformed) |
+| Luna | 3,474 | 50×25 | - |
+| Titan | 5,150 | 74×37 | - |
+| Mercury | 4,879 | 70×35 | - |
+
+**Note:** FreeCiv Mars (133×64) is a terraformed future state map, not sized by diameter. Our sizing reflects current actual body surface area proportionally.
+
+#### Canvas Size Calculation
+
+```javascript
+// Total canvas size = grid × tile pixel size
+const canvasWidth = gridWidth * tileSizePixels;   // e.g., 180 × 64 = 11,520px
+const canvasHeight = gridHeight * tileSizePixels; // e.g., 90 × 64 = 5,760px
+```
+
+For standard Trident (64×64):
+- Earth 180×90: 11,520 × 5,760 pixels
+- Mars 96×48: 6,144 × 3,072 pixels
+- Luna 50×25: 3,200 × 1,600 pixels
+
 ### Database Schema
 
 ```ruby
 # CelestialBody.geosphere.terrain_map
 {
-  grid: [
-    [
-      {
-        type: 'desert',           # FreeCiv terrain classification
-        elevation: 234,           # Real elevation in meters
-        bio_density: 0.3,         # Life coverage (0-1)
-        infrastructure: nil       # Station/depot data
-      }
-    ]
-  ],
-  width: 200,
-  height: 100,
-  source: 'freeciv_import',     # or 'elevation_import'
-  planet_type: 'mars',          # For rendering filters
-  map_metadata: {
-    resolution: '200x100',
-    projection: 'equirectangular',
-    source_data: 'NASA_MOLA_2026'
-  }
+  elevation: [[0.2, 0.3, 0.1], ...],  # 2D float array (normalized 0-1)
+  generation_metadata: {
+    nasa_source: "mars_1800x900.asc.gz",
+    generated_at: "2026-02-05T10:30:00Z",
+    method: "nasa_geotiff"  # or "ai_manager_generated"
+  },
+  width: 96,
+  height: 48
 }
 ```
 

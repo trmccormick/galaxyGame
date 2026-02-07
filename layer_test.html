@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Layer Rendering Test</title>
+</head>
+<body>
+    <h1>SimEarth-Style Layer Rendering Test</h1>
+    <div>
+        <button id="terrainBtn" class="active">Terrain (Base)</button>
+        <button id="waterBtn">Water</button>
+        <button id="biomesBtn">Biomes</button>
+    </div>
+    <canvas id="testCanvas" width="360" height="180" style="border: 1px solid black;"></canvas>
+    <script>
+        // Test elevation data (simplified Earth-like)
+        const testElevation = [
+            Array(360).fill().map((_, i) => -5000 + Math.sin(i * Math.PI / 180) * 2000), // Ocean trench to coastal
+            Array(360).fill().map((_, i) => Math.cos(i * Math.PI / 180) * 1000 + 100),  // Lowlands
+            Array(360).fill().map((_, i) => Math.sin(i * Math.PI / 90) * 2000 + 1500),  // Mountains
+        ];
+
+        // Test biome data
+        const testBiomes = [
+            Array(360).fill('ocean'),
+            Array(360).fill('plains'),
+            Array(360).fill('mountains'),
+        ];
+
+        // Test water data (depths)
+        const testWater = [
+            Array(360).fill(1000), // Deep water
+            Array(360).fill(0),    // Land
+            Array(360).fill(0),    // Land
+        ];
+
+        // Calculate min/max for normalization
+        let minElevation = Infinity, maxElevation = -Infinity;
+        testElevation.forEach(row => {
+            row.forEach(elev => {
+                minElevation = Math.min(minElevation, elev);
+                maxElevation = Math.max(maxElevation, elev);
+            });
+        });
+
+        console.log('Test elevation range:', minElevation, 'to', maxElevation);
+
+        // Layer visibility
+        let visibleLayers = new Set(['terrain']);
+
+        // Color blending utility
+        function blendColors(baseColor, overlayColor, alpha) {
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
+            const base = hexToRgb(baseColor);
+            const overlay = hexToRgb(overlayColor);
+
+            if (!base || !overlay) return baseColor;
+
+            const r = Math.round(base.r * (1 - alpha) + overlay.r * alpha);
+            const g = Math.round(base.g * (1 - alpha) + overlay.g * alpha);
+            const b = Math.round(base.b * (1 - alpha) + overlay.b * alpha);
+
+            return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+        }
+
+        // Pure elevation heightmap colors (SimEarth-style)
+        function getElevationColor(elevationMeters) {
+            if (elevationMeters === null || elevationMeters === undefined) {
+                return '#000000';
+            }
+
+            const normalized = (elevationMeters - minElevation) / (maxElevation - minElevation);
+
+            if (normalized < 0.2) {
+                // Very low elevation - dark blue/black (ocean basins)
+                const intensity = Math.floor(10 + (normalized / 0.2) * 40);
+                return `rgb(${intensity}, ${intensity}, ${Math.floor(intensity * 1.5)})`;
+            } else if (normalized < 0.4) {
+                // Low elevation - dark brown (coastal plains)
+                const intensity = Math.floor(40 + ((normalized - 0.2) / 0.2) * 60);
+                return `rgb(${intensity}, ${Math.floor(intensity * 0.7)}, ${Math.floor(intensity * 0.4)})`;
+            } else if (normalized < 0.6) {
+                // Mid elevation - brown (plains)
+                const intensity = Math.floor(100 + ((normalized - 0.4) / 0.2) * 55);
+                return `rgb(${intensity}, ${Math.floor(intensity * 0.8)}, ${Math.floor(intensity * 0.6)})`;
+            } else if (normalized < 0.8) {
+                // High elevation - tan/gray (mountains)
+                const intensity = Math.floor(155 + ((normalized - 0.6) / 0.2) * 40);
+                return `rgb(${intensity}, ${intensity}, ${Math.floor(intensity * 0.9)})`;
+            } else {
+                // Very high elevation - light gray/white (peaks)
+                const intensity = Math.floor(195 + ((normalized - 0.8) / 0.2) * 60);
+                return `rgb(${intensity}, ${intensity}, ${intensity})`;
+            }
+        }
+
+        // Biome overlay colors
+        function getBiomeColor(biome) {
+            switch (biome) {
+                case 'ocean': return '#001122';
+                case 'desert': return '#DAA520';
+                case 'grassland': return '#228B22';
+                case 'forest': return '#006400';
+                case 'plains': return '#8B4513';
+                case 'mountains': return '#696969';
+                case 'peaks': return '#D3D3D3';
+                default: return '#8B4513';
+            }
+        }
+
+        // Render function
+        function render() {
+            const canvas = document.getElementById('testCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = testElevation[0].length;
+            const height = testElevation.length;
+            const scale = 1;
+
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const elevation = testElevation[y][x];
+
+                    // BASE LAYER: Pure elevation heightmap (ALWAYS rendered)
+                    let color = getElevationColor(elevation);
+
+                    // LAYER 1: Water overlay (if enabled)
+                    if (visibleLayers.has('water') && testWater[y][x] > 0) {
+                        const waterDepth = testWater[y][x];
+                        const blueIntensity = Math.min(255, 100 + (waterDepth / 1000) * 155);
+                        color = `rgba(0, 0, ${Math.floor(blueIntensity)}, 0.8)`;
+                    }
+
+                    // LAYER 2: Biome overlay (if enabled)
+                    if (visibleLayers.has('biomes') && testBiomes[y][x]) {
+                        const biome = testBiomes[y][x];
+                        if (biome && biome !== 'ocean') {
+                            const isUnderwater = visibleLayers.has('water') && testWater[y][x] > 0;
+                            if (!isUnderwater) {
+                                color = getBiomeColor(biome);
+                            }
+                        }
+                    }
+
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x * scale, y * scale, scale, scale);
+                }
+            }
+
+            console.log('Rendered with layers:', Array.from(visibleLayers));
+        }
+
+        // Button handlers
+        document.getElementById('terrainBtn').addEventListener('click', () => {
+            visibleLayers.clear();
+            visibleLayers.add('terrain');
+            updateButtons();
+            render();
+        });
+
+        document.getElementById('waterBtn').addEventListener('click', () => {
+            if (visibleLayers.has('water')) {
+                visibleLayers.delete('water');
+            } else {
+                visibleLayers.add('water');
+            }
+            updateButtons();
+            render();
+        });
+
+        document.getElementById('biomesBtn').addEventListener('click', () => {
+            if (visibleLayers.has('biomes')) {
+                visibleLayers.delete('biomes');
+            } else {
+                visibleLayers.add('biomes');
+            }
+            updateButtons();
+            render();
+        });
+
+        function updateButtons() {
+            document.getElementById('terrainBtn').classList.toggle('active', visibleLayers.has('terrain'));
+            document.getElementById('waterBtn').classList.toggle('active', visibleLayers.has('water'));
+            document.getElementById('biomesBtn').classList.toggle('active', visibleLayers.has('biomes'));
+        }
+
+        // Initial render
+        render();
+    </script>
+    <style>
+        button { margin: 5px; padding: 5px 10px; }
+        .active { background: #ccc; }
+    </style>
+</body>
+</html></content>
+<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/layer_test.html

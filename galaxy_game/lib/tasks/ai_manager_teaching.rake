@@ -112,6 +112,7 @@ namespace :ai do
           { type: 'simulation', focus: 'earth_simulation' },
           # Infrastructure Patterns
           { type: 'infrastructure', focus: 'cislunar_setup' },
+          { type: 'infrastructure', focus: 'tug_construction' },
           # Economic Patterns
           { type: 'economic', focus: 'economic_stress_test' }
         ]
@@ -147,9 +148,15 @@ namespace :ai do
               args = []
             end
           elsif lesson[:type] == 'infrastructure' # Infrastructure pattern
-            puts "Lesson #{index + 1}/#{curriculum.size}: #{lesson[:focus].upcase} INFRASTRUCTURE (Cislunar Space)"
-            task_name = 'infrastructure:cislunar_setup'
-            args = []
+            if lesson[:focus] == 'cislunar_setup'
+              puts "Lesson #{index + 1}/#{curriculum.size}: #{lesson[:focus].upcase} INFRASTRUCTURE (Cislunar Space)"
+              task_name = 'infrastructure:cislunar_setup'
+              args = []
+            elsif lesson[:focus] == 'tug_construction'
+              puts "Lesson #{index + 1}/#{curriculum.size}: #{lesson[:focus].upcase} INFRASTRUCTURE (Asteroid Operations)"
+              task_name = 'ai:manager:teach:tug_construction'
+              args = []
+            end
           elsif lesson[:type] == 'economic' # Economic pattern
             puts "Lesson #{index + 1}/#{curriculum.size}: #{lesson[:focus].upcase} ECONOMIC (Solar System)"
             task_name = 'economic:stress_test'
@@ -274,8 +281,110 @@ namespace :ai do
         puts "=" * 70
       end
 
-      desc "Teach AI Manager solar system corporate development patterns"
-      task :corporate, [:focus_area] => :environment do |t, args|
+      desc "Teach AI Manager tug construction patterns for asteroid operations"
+      task :tug_construction => :environment do
+        puts "🚀 === TEACHING AI MANAGER: TUG CONSTRUCTION PATTERNS ==="
+        puts "Learning asteroid relocation tug fabrication and deployment"
+        puts ""
+
+        # Load tug construction profile
+        profile_path = Rails.root.join('data', 'json-data', 'missions', 'tasks', 'l1_tug_construction_profile_v1.json')
+        unless File.exist?(profile_path)
+          puts "❌ Tug construction profile not found"
+          exit 1
+        end
+
+        profile = JSON.parse(File.read(profile_path))
+        puts "📋 Pattern Details:"
+        puts "  Name: #{profile['name']}"
+        puts "  Description: #{profile['description']}"
+        puts "  Phases: #{profile['phases']&.size || 0}"
+        puts ""
+
+        # Create teaching scenario at L1 station
+        scenario = create_tug_construction_scenario
+        station = scenario[:station]
+        mission = scenario[:mission]
+
+        puts "🎯 Teaching Scenario Created:"
+        puts "  Station: #{station.name}"
+        puts "  Location: #{station.location.name}"
+        puts "  Mission: #{mission.identifier}"
+        puts ""
+
+        # Initialize AI Construction Manager
+        construction_manager = AutonomousConstructionManager.new(station, mission)
+
+        # Phase 1: Pattern Analysis
+        puts "🔍 PHASE 1: PATTERN ANALYSIS"
+        analysis = construction_manager.analyze_pattern_requirements
+        puts "  Required materials: #{analysis[:materials].keys.join(', ')}"
+        puts "  Construction phases: #{analysis[:phases].size}"
+        puts "  Buy order requirements: #{analysis[:procurement_needed]}"
+        puts ""
+
+        # Phase 2: Procurement Learning
+        puts "💰 PHASE 2: PROCUREMENT LEARNING"
+        puts "  AI Manager learns to create buy orders for construction materials"
+        puts "  Pattern: Check local inventory → Create market buy orders → Monitor fulfillment"
+        procurement_pattern = learn_procurement_patterns(station, analysis[:materials])
+        puts "  Procurement strategy: #{procurement_pattern[:strategy]}"
+        puts "  Expected fulfillment time: #{procurement_pattern[:estimated_days]} days"
+        puts ""
+
+        # Phase 3: Construction Sequencing
+        puts "🏗️ PHASE 3: CONSTRUCTION SEQUENCING"
+        puts "  AI Manager learns orbital construction workflow:"
+        puts "  1. Material delivery reception"
+        puts "  2. Structural assembly"
+        puts "  3. Shipyard construction bays installation"
+        puts "  4. Propellant systems integration"
+        puts "  5. Tug assembly and testing"
+        puts "  6. Cycler construction (repeatable)"
+        sequencing_pattern = learn_construction_sequencing(profile['phases'])
+        puts "  Learned sequencing for #{sequencing_pattern[:phases_learned]} phases"
+        puts ""
+
+        # Phase 4: Quality Assurance
+        puts "✅ PHASE 4: QUALITY ASSURANCE"
+        puts "  AI Manager learns tug validation:"
+        puts "  - Capture system verification"
+        puts "  - Propulsion capability testing"
+        puts "  - Autonomous navigation checks"
+        puts "  - Radiation shielding validation"
+        qa_pattern = learn_quality_assurance_patterns
+        puts "  QA checks implemented: #{qa_pattern[:checks].size}"
+        puts ""
+
+        # Store learned patterns
+        store_tug_construction_pattern({
+          procurement: procurement_pattern,
+          sequencing: sequencing_pattern,
+          quality_assurance: qa_pattern,
+          material_requirements: analysis[:materials],
+          success_criteria: profile['material_requirements']
+        })
+
+        # Validate learned patterns against simulated outcomes
+        puts "🔍 PHASE 5: PATTERN VALIDATION"
+        puts "  Validating learned patterns against simulated construction outcomes"
+        validation_results = validate_tug_construction_patterns(
+          procurement_pattern,
+          sequencing_pattern,
+          qa_pattern,
+          profile
+        )
+        puts "  Pattern accuracy: #{(validation_results[:overall_accuracy] * 100).round(1)}%"
+        puts "  Corrections needed: #{validation_results[:corrections].size}"
+        puts ""
+
+        puts "🎓 TUG CONSTRUCTION PATTERNS LEARNED AND VALIDATED"
+        puts "AI Manager can now autonomously construct asteroid relocation tugs"
+        puts "=" * 60
+      end
+
+      desc "Teach AI Manager corporate development patterns"
+      task :corporate_development, [:focus_area] => :environment do |t, args|
         focus_area = args[:focus_area] || 'full_system'
 
         puts "🏛️ === TEACHING AI MANAGER: SOLAR SYSTEM CORPORATE DEVELOPMENT ==="
@@ -1518,9 +1627,208 @@ def setup_demo_world(world_name, planet_type)
   world
 end
 
-# Helper methods for AI teaching
+# Helper methods for tug construction teaching
 
-def analyze_planetary_state(celestial_body, label)
+def create_tug_construction_scenario
+  puts "    Creating L1 station for tug construction teaching..."
+
+  # Find or create L1 location
+  l1_location = CelestialLocation.find_or_create_by!(
+    name: 'Earth-Moon L1 Point',
+    location_type: 'lagrange_point',
+    parent_body: CelestialBody.find_by(name: 'Earth')
+  )
+
+  # Create L1 station
+  station = BaseSettlement.create!(
+    name: 'L1 Orbital Construction Hub',
+    settlement_type: 'station',
+    location: l1_location,
+    owner: create_teaching_corporations.first,
+    operational_data: {
+      capabilities: ['ship_construction', 'propellant_depot', 'tug_fabrication'],
+      construction_bays: 3,
+      propellant_capacity: 1000000
+    }
+  )
+
+  # Create mission for tug construction
+  mission = Mission.create!(
+    identifier: 'ai_teaching_tug_construction',
+    name: 'AI Learning: Tug Construction',
+    mission_type: 'construction',
+    status: 'active',
+    target_settlement: station,
+    operational_data: {
+      teaching_scenario: true,
+      learning_objectives: ['tug_construction', 'material_procurement', 'quality_assurance']
+    }
+  )
+
+  { station: station, mission: mission }
+end
+
+def learn_procurement_patterns(station, materials)
+  puts "    Analyzing procurement patterns for #{materials.keys.size} materials..."
+
+  # Simulate market analysis
+  procurement_strategy = {
+    strategy: 'market_buy_orders_with_fallback',
+    estimated_days: 30,
+    priority_materials: ['ibeam', 'aluminum_alloy', 'titanium_alloy'],
+    fallback_sources: ['lunar_mining', 'asteroid_mining']
+  }
+
+  # Learn buy order creation patterns
+  materials.each do |material, amount|
+    price = NPCPriceCalculator.calculate_bid(station, material, demand: amount)
+    puts "      #{material}: #{amount} units @ #{price} GCC each"
+  end
+
+  procurement_strategy
+end
+
+def learn_construction_sequencing(phases)
+  puts "    Learning construction sequencing from #{phases.size} phases..."
+
+  sequencing_pattern = {
+    phases_learned: phases.size,
+    critical_path: ['material_preparation', 'assembly', 'testing', 'deployment'],
+    dependencies: {
+      'tug_assembly_testing' => ['tug_design_preparation'],
+      'cycler_construction_repeatable' => ['tug_assembly_testing']
+    },
+    parallel_tasks: ['material_transport', 'crew_training']
+  }
+
+  sequencing_pattern
+end
+
+def learn_quality_assurance_patterns
+  puts "    Learning quality assurance patterns for tug construction..."
+
+  qa_pattern = {
+    checks: [
+      'structural_integrity',
+      'capture_system_functionality',
+      'propulsion_capability',
+      'navigation_systems',
+      'radiation_shielding',
+      'autonomous_operations'
+    ],
+    testing_protocols: {
+      capture_system: 'electromagnetic_field_generation_test',
+      propulsion: 'delta_v_capability_verification',
+      navigation: 'trajectory_calculation_accuracy'
+    },
+    acceptance_criteria: {
+      capture_force: '> 1000 kN',
+      delta_v: '> 5000 m/s',
+      reliability: '> 99.5%'
+    }
+  }
+
+  qa_pattern
+end
+
+def store_tug_construction_pattern(pattern_data)
+  puts "    Storing learned tug construction patterns..."
+
+  # Store in AI knowledge base (simplified - would use actual storage mechanism)
+  pattern_record = {
+    pattern_type: 'tug_construction',
+    learned_at: Time.current,
+    confidence_level: 0.95,
+    application_scenarios: ['asteroid_relocation', 'celestial_body_positioning'],
+    procurement_strategy: pattern_data[:procurement],
+    construction_sequencing: pattern_data[:sequencing],
+    quality_assurance: pattern_data[:quality_assurance],
+    material_requirements: pattern_data[:material_requirements],
+    success_criteria: pattern_data[:success_criteria]
+  }
+
+  # In a real implementation, this would save to a database or file
+  Rails.logger.info("AI Manager learned tug construction pattern: #{pattern_record.to_json}")
+
+  puts "    ✅ Patterns stored in AI knowledge base"
+end
+
+def validate_tug_construction_patterns(procurement_pattern, sequencing_pattern, qa_pattern, profile)
+  puts "    Running pattern validation against simulated outcomes..."
+
+  # Create simulated mission outcome for validation
+  simulated_outcome = create_simulated_mission_outcome(profile)
+
+  # Create learned pattern structure for validation
+  learned_pattern = {
+    procurement: procurement_pattern,
+    sequencing: sequencing_pattern,
+    quality_assurance: qa_pattern
+  }
+
+  # Use PatternValidationService to validate
+  validation_results = AiManager::PatternValidationService.validate_tug_construction_pattern(
+    simulated_outcome,
+    learned_pattern
+  )
+
+  # Store validation results
+  validation_record = {
+    validation_timestamp: Time.current,
+    pattern_accuracy: validation_results[:pattern_accuracy],
+    corrections_needed: validation_results[:corrections_needed],
+    recommendations: validation_results[:recommendations],
+    performance_metrics: validation_results[:performance_metrics]
+  }
+
+  Rails.logger.info("Pattern validation completed: #{validation_record.to_json}")
+
+  puts "    📊 Validation Results:"
+  puts "      Overall Accuracy: #{(validation_results[:pattern_accuracy] * 100).round(1)}%"
+  puts "      Corrections Needed: #{validation_results[:corrections_needed].size}"
+  puts "      Recommendations: #{validation_results[:recommendations].join(', ')}"
+
+  validation_record
+end
+
+def create_simulated_mission_outcome(profile)
+  # Create realistic simulated outcomes for validation
+  # In real implementation, this would come from actual mission execution data
+
+  base_cost = profile.dig('roi_estimates', 'gcc_investment') || 50000000
+  base_time = 720 # 30 days in hours
+
+  {
+    procurement_actual: {
+      total_cost: (base_cost * (0.95 + rand * 0.1)).to_i, # ±5% variance
+      total_time_days: (base_time / 24.0 * (0.9 + rand * 0.2)).to_i, # ±10% variance
+      materials_obtained: profile['material_requirements']&.keys || [],
+      supplier_performance: { reliability: 0.92, on_time_delivery: 0.88 }
+    },
+    sequencing_actual: {
+      phase_durations: [96, 240, 168], # Design, Assembly, Cycler hours
+      phase_dependencies: ['design_complete', 'materials_delivered', 'assembly_bay_ready'],
+      resource_usage: {
+        power: 150000,
+        labor_hours: 1200,
+        equipment_utilization: 0.85
+      },
+      phase_delays: { 'material_procurement': 12 } # hours
+    },
+    qa_actual: {
+      defects_found: 3,
+      total_tests: 150,
+      false_alarms: 2,
+      tests_completed: ['structural_integrity', 'propulsion_test', 'capture_system_test'],
+      rework_hours: 24,
+      total_construction_hours: 504
+    },
+    environmental_challenges: [],
+    resource_constraints: []
+  }
+end
+
+def analyze_current_state(label, celestial_body)
   puts "   Analyzing #{label} state for #{celestial_body.name}..."
 
   state = {

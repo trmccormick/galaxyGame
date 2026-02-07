@@ -177,4 +177,18 @@ FactoryBot.define do
       }
     end
   end
+
+  factory :depot_tank, parent: :base_structure do
+    structure_type { 'depot_tank' }
+    operational_data do
+      {
+        "structure_type" => "depot_tank",
+        "gas_storage" => {},
+        "capacity" => 10000,
+        "connection_systems" => {
+          "power_distribution" => {"status" => "online", "efficiency" => 85}
+        }
+      }
+    end
+  end
 end

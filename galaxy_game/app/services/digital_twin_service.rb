@@ -97,5 +97,4 @@ class DigitalTwinService
 
     true
   end
-end</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/services/digital_twin_service.rb
+end

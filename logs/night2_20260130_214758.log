@@ -1,3 +1,0 @@
-Step 0: Verifying data availability...
-❌ ERROR: Earth data not found!
-Expected: app/data/geotiff/processed/earth_1800x900.asc.gz

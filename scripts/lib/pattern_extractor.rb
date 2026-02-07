@@ -18,6 +18,12 @@ class PatternExtractor
                  extract_lunar_patterns(elevation_data)
                when 'mars'
                  extract_mars_patterns(elevation_data)
+               when 'mercury'
+                 extract_mercury_patterns(elevation_data)
+               when 'venus'
+                 extract_venus_patterns(elevation_data)
+               when 'titan'
+                 extract_titan_patterns(elevation_data)
                else
                  raise "Unknown body type: #{body_type}"
                end
@@ -131,8 +137,147 @@ class PatternExtractor
     }
   end
   
-  # Pattern extraction helper methods
+  def self.extract_mercury_patterns(data)
+    {
+      body_type: 'airless_cratered_hot',
+      characteristics: {
+        erosion_level: 'none',
+        atmosphere: 'none',
+        crater_density: 'very_high',
+        water_coverage: 'none',
+        temperature: 'extreme',
+        features: ['craters', 'scarps', 'plains', 'impact_basins']
+      },
+      patterns: {
+        elevation: extract_elevation_distribution(data),
+        craters: extract_crater_patterns(data),
+        plains: extract_smooth_regions(data),
+        roughness: extract_terrain_roughness(data)
+      }
+    }
+  end
   
+  def self.extract_venus_patterns(data)
+    {
+      body_type: 'terrestrial_thick_atmosphere_volcanic',
+      characteristics: {
+        erosion_level: 'low',
+        atmosphere: 'very_thick',
+        crater_density: 'low',
+        water_coverage: 'none',
+        temperature: 'extreme',
+        volcanic_activity: 'high',
+        features: ['volcanoes', 'coronae', 'plains', 'tessera', 'lava_flows']
+      },
+      patterns: {
+        elevation: extract_elevation_distribution(data),
+        volcanoes: extract_volcanic_features(data),
+        plains: extract_smooth_regions(data),
+        roughness: extract_terrain_roughness(data)
+      }
+    }
+  end
+
+  def self.extract_titan_patterns(data)
+    {
+      body_type: 'icy_moon',
+      characteristics: {
+        erosion_level: 'active',                 # methane rain + rivers
+        atmosphere: 'very_thick',
+        crater_density: 'low',
+        hydrosphere_type: 'methane_ethane',
+        terraformed: false,
+        surface_composition: 'water_ice',
+        features: [
+          'methane_lakes',
+          'river_channels',
+          'icy_plains',
+          'low_relief_basins',
+          'organic_dune_fields'
+        ]
+      },
+      patterns: {
+        elevation: extract_elevation_distribution(data),
+
+        # Key Titan-specific signals
+        basins: extract_titan_basins(data),
+        smooth_terrain: extract_smooth_regions(data),
+        rough_terrain: extract_rough_regions(data),
+
+        # Craters exist but should not dominate AI learning
+        craters: extract_degraded_crater_patterns(data),
+
+        roughness: extract_terrain_roughness(data)
+      }
+    }
+  end
+  
+  # Pattern extraction helper methods
+
+  def self.extract_titan_lowlands(data)
+    flat = data[:data].flatten
+    mean = flat.sum / flat.size.to_f
+
+    lowland_threshold = mean - 0.1   # Titan basins are subtle
+    lowland_tiles = flat.count { |v| v < lowland_threshold }
+
+    {
+      lowland_fraction: lowland_tiles / flat.size.to_f,
+      mean_elevation: mean
+    }
+  end  
+
+  def self.extract_titan_basins(data)
+    basin_tiles = 0
+    elevation_cutoff = 0.35        # low relative elevation
+    variance_threshold = 0.008     # very flat
+
+    (2...data[:height]-2).each do |y|
+      (2...data[:width]-2).each do |x|
+        center = data[:data][y][x]
+        next unless center < elevation_cutoff
+
+        neighborhood = []
+        (-2..2).each do |dy|
+          (-2..2).each do |dx|
+            neighborhood << data[:data][y+dy][x+dx]
+          end
+        end
+
+        mean = neighborhood.sum / neighborhood.size
+        variance = neighborhood.map { |v| (v - mean)**2 }.sum / neighborhood.size
+
+        basin_tiles += 1 if variance < variance_threshold
+      end
+    end
+
+    {
+      basin_fraction: basin_tiles / (data[:width] * data[:height]).to_f,
+      interpretation: 'methane_liquid_or_dry_basin_candidates'
+    }
+  end
+
+  def self.extract_degraded_crater_patterns(data)
+    base = extract_crater_patterns(data)
+
+    {
+      crater_density: base[:crater_density] * 0.25,
+      avg_depth: base[:avg_depth] * 0.3,
+      preserved_count: (base[:count] * 0.25).to_i,
+      note: 'heavily eroded by atmospheric and liquid processes'
+    }
+  end
+  
+  def self.extract_softened_crater_patterns(data)
+    base = extract_crater_patterns(data)
+
+    {
+      crater_density: base[:crater_density] * 0.3,
+      avg_depth: base[:avg_depth] * 0.4,
+      preserved_count: (base[:count] * 0.3).to_i
+    }
+  end
+
   def self.extract_elevation_distribution(data)
     flat = data[:data].flatten
     sorted = flat.sort

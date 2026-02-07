@@ -76,19 +76,23 @@ module TerrainAnalysis
       resource_grid = terrain_data[:resource_grid]
       strategic_markers = terrain_data[:strategic_markers] || []
 
-      if resource_grid
+      if resource_grid.is_a?(Array) && !resource_grid.empty?
         # Check resource distribution
         total_cells = resource_grid.flatten.size
         resource_cells = resource_grid.flatten.compact.size
-        resource_ratio = resource_cells.to_f / total_cells
 
-        if resource_ratio.between?(0.05, 0.25)  # 5-25% resources
-          score += 0.2
+        if total_cells > 0
+          resource_ratio = resource_cells.to_f / total_cells
+
+          if resource_ratio.between?(0.05, 0.25)  # 5-25% resources
+            score += 0.2
+          end
         end
 
         # Check for resource clustering (not too spread out or clumped)
         resource_clusters = analyze_resource_clustering(resource_grid)
-        if resource_clusters[:average_cluster_size].between?(3, 15)
+        avg_cluster = resource_clusters[:average_cluster_size].to_f
+        if avg_cluster.between?(3.0, 15.0)
           score += 0.1
         end
       end

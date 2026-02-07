@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Terrain Rendering Test</title>
+</head>
+<body>
+    <h1>Terrain Rendering Test</h1>
+    <canvas id="testCanvas" width="360" height="180" style="border: 1px solid black;"></canvas>
+    <script>
+        // Test data - simplified Earth-like terrain
+        const testTerrainData = {
+            elevation: [
+                Array(360).fill().map((_, i) => Math.sin(i * Math.PI / 180) * 500 + 100), // Simple sine wave
+                Array(360).fill().map((_, i) => Math.cos(i * Math.PI / 180) * 300 + 200),
+                // ... more rows would be here
+            ].slice(0, 180) // Limit to 180 rows for simplicity
+        };
+
+        // Color blending utility function
+        function blendColors(baseColor, overlayColor, alpha) {
+            // Convert hex colors to RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
+            const base = hexToRgb(baseColor);
+            const overlay = hexToRgb(overlayColor);
+
+            if (!base || !overlay) return baseColor;
+
+            // Blend colors: result = base * (1-alpha) + overlay * alpha
+            const r = Math.round(base.r * (1 - alpha) + overlay.r * alpha);
+            const g = Math.round(base.g * (1 - alpha) + overlay.g * alpha);
+            const b = Math.round(base.b * (1 - alpha) + overlay.b * alpha);
+
+            // Convert back to hex
+            return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+        }
+
+        // Simplified terrain colors (BARE TERRAIN - topographic colors only, no biome colors)
+        const colors = {
+            ocean: '#003366',     // Deep ocean blue
+            plains: '#F0E68C',    // Khaki (dry plains)
+            mountains: '#696969', // Dim gray (rock)
+        };
+
+        // Test rendering function
+        function testRenderTerrain() {
+            const canvas = document.getElementById('testCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = testTerrainData.elevation[0].length;
+            const height = testTerrainData.elevation.length;
+            const tileSize = 1; // 1 pixel per tile for testing
+
+            // Set canvas size
+            canvas.width = width * tileSize;
+            canvas.height = height * tileSize;
+
+            // Calculate min/max elevation
+            let minElevation = Infinity;
+            let maxElevation = -Infinity;
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const elev = testTerrainData.elevation[y][x];
+                    if (elev !== null && elev !== undefined) {
+                        minElevation = Math.min(minElevation, elev);
+                        maxElevation = Math.max(maxElevation, elev);
+                    }
+                }
+            }
+
+            console.log('Elevation range:', minElevation, 'to', maxElevation);
+
+            // Render terrain
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const elevation = testTerrainData.elevation[y][x];
+                    if (elevation === null || elevation === undefined) continue;
+
+                    // Normalize elevation to 0-1
+                    const normalized = (elevation - minElevation) / (maxElevation - minElevation);
+
+                    // Simple biome classification based on elevation
+                    let color;
+                    if (normalized < 0.3) {
+                        color = colors.ocean;
+                    } else if (normalized < 0.7) {
+                        color = colors.plains;
+                    } else {
+                        color = colors.mountains;
+                    }
+
+                    // Test water blending - if it's "water" (low elevation), blend with blue
+                    if (normalized < 0.3) {
+                        const blueTint = Math.round(255 * (0.3 - normalized) / 0.3); // More blue for deeper water
+                        color = blendColors(color, `rgb(0, 0, ${blueTint})`, 0.6);
+                    }
+
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                }
+            }
+
+            console.log('Terrain rendering test completed');
+        }
+
+        // Run test when page loads
+        window.onload = testRenderTerrain;
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/test_terrain_rendering.html

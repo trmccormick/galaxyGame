@@ -301,7 +301,7 @@ module Market
         trade_count = Market::PriceHistory
           .joins(market_condition: :marketplace)
           .where('market_conditions.resource = ?', resource_name)
-          .where('marketplaces.settlement_id = ?', settlement.id)
+          .where('market_marketplaces.settlement_id = ?', settlement.id)
           .where('market_price_histories.created_at > ?', days.days.ago)
           .count
         

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # scripts/generate_sol_planetary_maps.rb
-# Generate and apply planetary maps for Sol system bodies (Earth, Mars)
+# Generate and apply planetary maps for Sol system bodies (Earth, Mars, Venus, Luna)
 
 require_relative '../config/environment'
 
@@ -16,8 +16,10 @@ end
 
 earth = ::CelestialBodies::CelestialBody.find_by(name: 'Earth')
 mars = ::CelestialBodies::CelestialBody.find_by(name: 'Mars')
+venus = ::CelestialBodies::CelestialBody.find_by(name: 'Venus')
+luna = ::CelestialBodies::CelestialBody.find_by(name: 'Luna')
 
-bodies_to_process = [earth, mars].compact
+bodies_to_process = [earth, mars, venus, luna].compact
 
 if bodies_to_process.empty?
   puts "❌ No Sol system bodies found to process"
@@ -96,5 +98,5 @@ end
 
 puts "\n" + "=" * 60
 puts "🎯 Sol System Planetary Map Generation Complete!"
-puts "The monitor page should now display terrain data for Earth and Mars."
+puts "The monitor page should now display terrain data for Earth, Mars, Venus, and Luna."
 puts "Visit: http://localhost:3000/admin/celestial_bodies to view the results."

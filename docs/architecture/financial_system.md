@@ -210,7 +210,7 @@ AI Manager decision flow for material sourcing:
 
 The financial system uses different decimal precision levels based on currency type and use case:
 
-### GCC (Galactic Credit Currency)
+### GCC (Galactic Crypto Currency)
 - **Precision**: 15 digits total, 8 decimal places (`decimal(15, 8)`)
 - **Range**: 0.00000001 to 9999999.99999999 GCC
 - **Rationale**: Cryptocurrency-style precision for micro-transactions

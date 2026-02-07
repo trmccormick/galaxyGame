@@ -2,101 +2,65 @@
 
 ## Overview
 
-Galaxy Game integrates elevation data from Civ4 and FreeCiv map sources to provide realistic terrain for initial game locations. This creates varied planetary surfaces using combined approaches: Civ4 PlotType elevation extraction (70-80% accuracy) and FreeCiv biome-constrained random generation.
+Galaxy Game uses **NASA GeoTIFF data as the primary source** for Sol system terrain elevation. FreeCiv and Civ4 map data serve as **training data for the AI Manager** to learn biome placement patterns, geographic feature locations, and settlement viability—but are NOT used directly for elevation.
 
-## Current Implementation
+## Architecture Correction [2026-02-05]
 
-### Map Processing Architecture
+### Previous (Incorrect) Approach
+- Converting FreeCiv terrain characters to elevation values
+- Converting Civ4 PlotType (0-3) to elevation
+- **Problem:** Produces unrealistic uniform elevation (279-322m range)
 
-#### MapLayerService
-**Location**: `app/services/map_layer_service.rb`
+### Current (Correct) Approach
+- **NASA GeoTIFF** = Ground truth elevation for Sol bodies
+- **FreeCiv/Civ4** = Training data only (biome patterns, feature names, settlement hints)
+- **AI Manager** = Generates terrain for bodies without NASA data
 
-**Purpose**: Combines Civ4 and FreeCiv extractors to process map data and generate elevation/terrain layers.
+## Data Sources
 
-**Key Methods**:
-- `process_civ4_map(file_path)`: Extracts PlotType elevation from Civ4 .sav files
-- `process_freeciv_map(file_path)`: Generates biome-constrained elevation from FreeCiv .sav files
-- `store_in_geosphere(geosphere, elevation, terrain, biomes, quality, method)`: Saves processed data to JSONB
+### NASA GeoTIFF (Primary Elevation Source)
+**Location:** `data/geotiff/processed/`
 
-#### Import Services
+| File | Body | Resolution | Elevation Range |
+|------|------|------------|-----------------|
+| `earth_1800x900.asc.gz` | Earth | 1800×900 | -10,994m to +8,848m |
+| `mars_1800x900.asc.gz` | Mars | 1800×900 | -8,200m to +21,229m |
+| `luna_1800x900.asc.gz` | Luna | 1800×900 | -9,000m to +10,786m |
+| `mercury_1800x900.asc.gz` | Mercury | 1800×900 | -5,380m to +4,480m |
 
-##### Civ4ElevationExtractor
-**Location**: `app/services/import/civ4_elevation_extractor.rb`
+### FreeCiv Maps (Training Data Only)
+**Location:** `data/maps/freeciv/`
 
-**Purpose**: Extracts elevation data from Civ4 PlotType values (0-3 discrete levels).
+| File | Body | Grid | Use |
+|------|------|------|-----|
+| `earth-180x90-v1-3.sav` | Earth | 180×90 | Biome patterns, continent shapes |
+| `mars-terraformed-133x64-v2.0.sav` | Mars | 133×64 | Terraforming targets, future state |
 
-**Key Methods**:
-- `extract_elevation(plot_type_grid)`: Converts PlotType to normalized elevation (0-1 range)
-- `process_plot_types(data)`: Parses Civ4 binary format for PlotType extraction
+**FreeCiv Terrain Character Mapping (for pattern learning):**
+| Char | Terrain | AI Manager Learning |
+|------|---------|---------------------|
+| `a` | Arctic | Polar region patterns |
+| `d` | Desert | Arid zone distribution |
+| `g` | Grassland | Habitable zone patterns |
+| `p` | Plains | Lowland placement |
+| `h` | Hills | Elevated terrain patterns |
+| `m` | Mountains | Peak placement |
+| `:` | Deep Ocean | Basin filling patterns |
+| ` ` | Ocean | Water body shapes |
 
-##### FreecivElevationGenerator
-**Location**: `app/services/import/freeciv_elevation_generator.rb`
+### Civ4 Maps (Training Data Only)
+**Location:** `data/maps/civ4/`
 
-**Purpose**: Generates elevation constrained by FreeCiv biome data.
+| File | Body | Grid | Use |
+|------|------|------|-----|
+| `Earth.Civ4WorldBuilderSave` | Earth | 124×68 | Feature labels, resources |
+| `MARS1.22b.Civ4WorldBuilderSave` | Mars | 80×57 | Feature labels (30), resources |
 
-**Key Methods**:
-- `generate_biome_constrained_elevation(biome_grid)`: Creates elevation within biome-appropriate ranges
-- `biome_elevation_ranges`: Defines elevation constraints per biome type
+**Civ4 PlotType (NOT for elevation):**
+- PlotType 0-3 are gameplay classifications, NOT topographic data
+- Use for: land/water separation patterns, hill/flat distribution
 
-#### Processing Script
-**Location**: `process_initial_maps.rb`
-
-**Purpose**: Batch processes initial game location maps during development.
-
-**Supported Locations**:
-- **Earth**: FreeCiv detailed map (180x90) with Civ4 elevation extraction
-- **Mars**: FreeCiv terraformed map (133x64) with biome-constrained generation
-- **Luna, Venus, Titan**: FreeCiv generation with biome constraints (future implementation)
-
-### Data Flow
-
-1. **Map Loading**: Load Civ4 or FreeCiv .sav files
-2. **Data Extraction**: Parse binary formats to extract terrain/biome data
-3. **Elevation Generation**: Apply appropriate elevation method based on source
-4. **Normalization**: Convert to 0-1 range for consistent rendering
-5. **Storage**: Save elevation/terrain/biomes arrays to geosphere.terrain_map JSONB
-
-### Elevation Methods
-
-#### Civ4 PlotType Extraction (70-80% Accuracy)
-- **Source**: Civ4 .sav files with PlotType data
-- **Process**: Extract 4 discrete elevation levels (0-3) from binary data
-- **Accuracy**: 70-80% based on Civ4's terrain generation algorithms
-- **Output**: Normalized 0-1 elevation values
-
-**PlotType to Elevation Mapping (Strict Separation for AI Training):**
-- **PlotType 0 (Flat Land)**: Base elevation 0.65, always land, biomes applied
-- **PlotType 1 (Coastal Land)**: Base elevation 0.55, always land, biomes applied  
-- **PlotType 2 (Hills)**: Base elevation 0.80, always land, biomes applied
-- **PlotType 3 (Water)**: Base elevation 0.35, always underwater, no biomes applied
-
-**Strict Water/Land Separation**: PlotType determines elevation category - water areas stay underwater, land areas stay above water. This provides clean training data for AI terrain generation.
-
-**Biome Application**: Biomes are only applied to land areas (PlotType 0,1,2), ensuring water areas remain biome-free for proper visual separation.
-
-#### FreeCiv Biome-Constrained Generation
-- **Source**: FreeCiv .sav files with character-based biome mapping
-- **Process**: Generate random elevation within biome-appropriate ranges
-- **Constraints**: Each biome type has defined min/max elevation ranges
-- **Quality**: 50-70% realism with biome-appropriate variation
-
-### Output Data Structure
-
-```ruby
-# Stored in geosphere.terrain_map JSONB
-{
-  "elevation": [[0.2, 0.3, 0.1], [0.4, 0.5, 0.6]],  # 2D float array (0-1 normalized)
-  "terrain": [["plains", "hills", "ocean"], ["mountains", "grassland", "forest"]],  # 2D string array
-  "biomes": [["temperate", "arid", "ocean"], ["mountain", "grassland", "forest"]],  # 2D string array
-  "quality": "generated_50_70_percent",  # Processing quality indicator
-  "method": "biome_constrained_random",  # Generation method used
-  "processed_at": "2026-01-28T04:48:06Z"  # Processing timestamp
-}
-```
-
-## Elevation to Terrain Conversion
-
-### Threshold-Based Classification
+## Implementation
 
 #### Ocean/Sea Classification
 | Elevation Range | Terrain Type | Description |
