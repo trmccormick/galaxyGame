@@ -157,7 +157,8 @@ module StarSim
           "gas_giants" => [],
           "ice_giants" => [],
           "dwarf_planets" => [],
-          "asteroids" => []
+          "asteroids" => [],
+          "moons" => []
         }
       }
 
@@ -181,6 +182,9 @@ module StarSim
           when 'asteroid'
             body["from_seed"] = true
             system_data["celestial_bodies"]["asteroids"] << body
+          when 'moon'
+            body["from_seed"] = true
+            system_data["celestial_bodies"]["moons"] << body
           else
             # Unknown type: default to terrestrial for completeness
             body["from_seed"] = true
@@ -505,19 +509,17 @@ module StarSim
         # Recalculate temperature based on actual orbit
         planet_data["surface_temperature"] = calculate_surface_temperature(orbital_parameters[:semi_major_axis_au])
         
-        # Generate atmosphere using existing generators - but only if not from template
-        if !planet_data["from_template"]
-          atmosphere_data = @atmosphere_generator.generate_composition_for_body(
-            planet_name,
-            planet_data["surface_temperature"],
-            planet_data["mass"],
-            planet_data["radius"],
-            orbital_parameters[:semi_major_axis_au],
-            star_for_planets&.type,
-            rand < 0.5
-          )
-          planet_data[:atmosphere] = atmosphere_data
-        end
+        # Generate atmosphere using existing generators
+        atmosphere_data = @atmosphere_generator.generate_composition_for_body(
+          planet_name,
+          planet_data["surface_temperature"],
+          planet_data["mass"],
+          planet_data["radius"],
+          orbital_parameters[:semi_major_axis_au],
+          star_for_planets&.type,
+          rand < 0.5
+        )
+        planet_data[:atmosphere] = atmosphere_data
         
         # Generate hydrosphere
         hydrosphere_data = @hydrosphere_generator.generate(planet_data)
@@ -525,7 +527,7 @@ module StarSim
 
         # Generate biosphere data
         biosphere_data = generate_biosphere_data(planet_data)
-        planet_data["biosphere_attributes"] = biosphere_data
+        planet_data[:biosphere] = biosphere_data
 
         # Generate moons for this planet (some planets have moons)
         if rand < 0.6 # 60% of terrestrial planets have moons
@@ -602,7 +604,7 @@ module StarSim
 
         # Generate biosphere data
         biosphere_data = generate_biosphere_data(planet_data)
-        planet_data["biosphere_attributes"] = biosphere_data
+        planet_data[:biosphere] = biosphere_data
 
         # Tag as procedural for market
         planet_data["market_status"] = "unclaimed_procedural"
@@ -1013,7 +1015,7 @@ module StarSim
 
     def generate_biosphere_data(planet_data)
       # Only generate biosphere data for terrestrial planets with atmosphere
-      return {} unless planet_data["type"] == 'terrestrial' && planet_data["atmosphere"]
+      return { biodiversity_index: 0.0, habitable_ratio: 0.0, biome_distribution: {} } unless planet_data["type"] == 'terrestrial' && planet_data["atmosphere"]
       
       # Get temperature and pressure
       temp = planet_data["surface_temperature"] || 288

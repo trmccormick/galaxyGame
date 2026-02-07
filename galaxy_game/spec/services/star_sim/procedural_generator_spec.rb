@@ -336,11 +336,11 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
   describe '#generate_biosphere_data' do
     it 'provides enhanced biosphere for template-based planets' do
       planet_data = {
-        type: 'terrestrial',
-        surface_temperature: 288,
-        atmosphere: { pressure: 1.0 },
-        gravity: 1.0,
-        from_template: true
+        "type" => 'terrestrial',
+        "surface_temperature" => 288,
+        "atmosphere" => { "pressure" => 1.0 },
+        "gravity" => 1.0,
+        "from_template" => true
       }
 
       result = generator.send(:generate_biosphere_data, planet_data)
