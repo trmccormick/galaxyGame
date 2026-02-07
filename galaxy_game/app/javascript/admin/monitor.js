@@ -750,8 +750,10 @@ window.AdminMonitor = (function() {
           color = getHydrosphereColor(waterDepth, planetData);
         }
 
-        // LAYER 2: Biome overlay
-        if (visibleLayers.has('biomes') && layers.biomes && layers.biomes.grid[y][x]) {
+        // LAYER 2: Biome overlay (only for planets with biospheres)
+        // Barren planets like Mars shouldn't show Earth-like green biomes
+        const hasBiosphere = planetData.has_biosphere || false;
+        if (visibleLayers.has('biomes') && hasBiosphere && layers.biomes && layers.biomes.grid[y][x]) {
           const biome = layers.biomes.grid[y][x];
           if (biome && biome !== 'ocean' && biome !== 'none') {
             // Check if this cell is underwater (regardless of whether water layer is visible)

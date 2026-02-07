@@ -33,9 +33,11 @@
           geosphere_attributes: @celestial_body.geosphere&.attributes,
           crust_composition: @celestial_body.geosphere&.crust_composition,
           liquid_name: (@celestial_body.respond_to?(:primary_liquid) ? @celestial_body.primary_liquid : nil) || 'H2O',
-          water_coverage: @celestial_body.hydrosphere&.water_coverage || 0
+          water_coverage: @celestial_body.hydrosphere&.water_coverage || 0,
+          has_biosphere: @celestial_body.biosphere.present?
         },
         geosphere_present: @celestial_body.geosphere.present?,
+        biosphere_present: @celestial_body.biosphere.present?,
         terrain_map_present: @celestial_body.geosphere&.terrain_map.present?
       }
     %>
