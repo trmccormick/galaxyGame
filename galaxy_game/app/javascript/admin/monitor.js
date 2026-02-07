@@ -763,6 +763,15 @@ window.AdminMonitor = (function() {
     const tileSize = 8;
     canvas.width = width * tileSize;
     canvas.height = height * tileSize;
+    
+    // Set container size to match canvas for proper scrolling
+    const canvasContainer = document.getElementById('canvasContainer');
+    if (canvasContainer) {
+      canvasContainer.style.width = canvas.width + 'px';
+      canvasContainer.style.height = canvas.height + 'px';
+    }
+    
+    console.log('Canvas size:', canvas.width, 'x', canvas.height);
 
     // Calculate min/max elevation
     let minElevation = Infinity;
@@ -892,6 +901,11 @@ window.AdminMonitor = (function() {
     const maxElev = Math.max(...elevations);
     console.log(`NASA-first terrain rendered: ${width}x${height}`);
     logConsole(`NASA terrain rendered: ${width}x${height} (elevation: ${minElev.toFixed(0)}-${maxElev.toFixed(0)}m)`, 'success');
+    
+    // Center the map view after rendering
+    setTimeout(() => {
+      centerMapView();
+    }, 50);
   }
 
   // ============================================
