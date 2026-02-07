@@ -754,7 +754,9 @@ window.AdminMonitor = (function() {
         if (visibleLayers.has('biomes') && layers.biomes && layers.biomes.grid[y][x]) {
           const biome = layers.biomes.grid[y][x];
           if (biome && biome !== 'ocean' && biome !== 'none') {
-            const isUnderwater = visibleLayers.has('water') && layers.water && layers.water.grid[y][x] > 0;
+            // Check if this cell is underwater (regardless of whether water layer is visible)
+            // This prevents biomes from rendering over ocean areas when hydrosphere is toggled off
+            const isUnderwater = layers.water && layers.water.grid[y] && layers.water.grid[y][x] > 0;
             if (!isUnderwater) {
               color = getBiomeColor(biome);
             }
