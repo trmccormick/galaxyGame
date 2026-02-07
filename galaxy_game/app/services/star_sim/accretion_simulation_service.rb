@@ -89,5 +89,29 @@ module StarSim
         @protoplanets = stable
       end
     end
+
+    class DustBand
+      attr_reader :inner_edge, :outer_edge, :density
+
+      def initialize(inner_edge, outer_edge, density: 1.0)
+        @inner_edge = inner_edge
+        @outer_edge = outer_edge
+        @density = density
+        @mass = 100.0 # Initial mass
+      end
+
+      def contains?(orbit)
+        orbit >= @inner_edge && orbit <= @outer_edge
+      end
+
+      def empty?
+        @mass <= 0
+      end
+
+      def remove_mass(amount)
+        @mass -= amount
+        @mass = 0 if @mass < 0
+      end
+    end
 end
   

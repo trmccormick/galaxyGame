@@ -23,7 +23,7 @@ module StarSim
       @planet_counter = 0
       @output_path = GalaxyGame::Paths::GENERATED_STAR_SYSTEMS_PATH
       FileUtils.mkdir_p(@output_path) unless File.directory?(@output_path)
-      @atmosphere_generator = atmosphere_generator || AtmosphereGeneratorService.new({}, material_lookup || Lookup::MaterialLookupService.new) # Default instance if not provided
+      @atmosphere_generator = atmosphere_generator || AtmosphereGeneratorService.new(material_lookup || Lookup::MaterialLookupService.new, {}) # Default instance if not provided
       @hydrosphere_generator = hydrosphere_generator || HydrosphereGeneratorService.new({}) # Default instance if not provided
       @material_lookup = material_lookup || Lookup::MaterialLookupService.new # Ensure MaterialLookupService is available
       
@@ -31,6 +31,17 @@ module StarSim
       @terraformable_templates = load_terraformable_templates
       @force_complex_biosphere = force_complex_biosphere
       @use_accretion = use_accretion
+    end
+
+    def generate_stars(num, system_identifier)
+      (1..num).map do |i|
+        {
+          "name" => "Star #{i}",
+          "identifier" => "#{system_identifier}-STAR#{i}",
+          "mass" => 1.0,
+          "galaxy" => "Milky Way"
+        }
+      end
     end
 
     def generate_system_seed_file(num_planets: 10, num_stars: 1)
