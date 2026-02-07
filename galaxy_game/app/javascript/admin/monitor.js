@@ -937,6 +937,7 @@ window.AdminMonitor = (function() {
     const zoomValue = document.getElementById('zoomValue');
     const canvas = document.getElementById('planetCanvas');
     const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvasContainer = document.getElementById('canvasContainer');
     
     if (!zoomInput) return;
     
@@ -950,12 +951,111 @@ window.AdminMonitor = (function() {
         canvas.style.transform = `scale(${zoom})`;
         canvas.style.transformOrigin = 'top left';
       }
-      canvasWrapper.style.overflow = 'auto';
+      
+      // Update container size to match scaled canvas for proper scrolling
+      if (canvasContainer) {
+        canvasContainer.style.width = (canvas.width * zoom) + 'px';
+        canvasContainer.style.height = (canvas.height * zoom) + 'px';
+      }
     });
     
     zoomValue.textContent = '1.0x';
     canvas.style.transform = 'none';
-    canvasWrapper.style.overflow = 'auto';
+  }
+
+  function setupPanControl() {
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvas = document.getElementById('planetCanvas');
+    
+    if (!canvasWrapper || !canvas) return;
+    
+    let isPanning = false;
+    let startX, startY, scrollLeft, scrollTop;
+    
+    // Mouse drag to pan
+    canvas.addEventListener('mousedown', (e) => {
+      isPanning = true;
+      canvas.style.cursor = 'grabbing';
+      startX = e.pageX - canvasWrapper.offsetLeft;
+      startY = e.pageY - canvasWrapper.offsetTop;
+      scrollLeft = canvasWrapper.scrollLeft;
+      scrollTop = canvasWrapper.scrollTop;
+    });
+    
+    canvas.addEventListener('mouseleave', () => {
+      isPanning = false;
+      canvas.style.cursor = 'grab';
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+      isPanning = false;
+      canvas.style.cursor = 'grab';
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isPanning) return;
+      e.preventDefault();
+      const x = e.pageX - canvasWrapper.offsetLeft;
+      const y = e.pageY - canvasWrapper.offsetTop;
+      const walkX = (x - startX) * 1.5; // Scroll speed multiplier
+      const walkY = (y - startY) * 1.5;
+      canvasWrapper.scrollLeft = scrollLeft - walkX;
+      canvasWrapper.scrollTop = scrollTop - walkY;
+    });
+    
+    // Reset view button
+    const resetBtn = document.getElementById('resetViewBtn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        resetMapView();
+      });
+    }
+    
+    // Center map initially after rendering
+    setTimeout(() => {
+      centerMapView();
+    }, 100);
+  }
+  
+  function centerMapView() {
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvas = document.getElementById('planetCanvas');
+    
+    if (!canvasWrapper || !canvas) return;
+    
+    // Center the scroll position
+    const scrollX = (canvas.width - canvasWrapper.clientWidth) / 2;
+    const scrollY = (canvas.height - canvasWrapper.clientHeight) / 2;
+    
+    canvasWrapper.scrollLeft = Math.max(0, scrollX);
+    canvasWrapper.scrollTop = Math.max(0, scrollY);
+  }
+  
+  function resetMapView() {
+    const zoomInput = document.getElementById('zoom');
+    const zoomValue = document.getElementById('zoomValue');
+    const canvas = document.getElementById('planetCanvas');
+    const canvasContainer = document.getElementById('canvasContainer');
+    
+    // Reset zoom to 1.0
+    if (zoomInput) {
+      zoomInput.value = 1;
+      zoomValue.textContent = '1.0x';
+    }
+    
+    if (canvas) {
+      canvas.style.transform = 'none';
+    }
+    
+    if (canvasContainer) {
+      canvasContainer.style.width = canvas.width + 'px';
+      canvasContainer.style.height = canvas.height + 'px';
+    }
+    
+    // Center the view
+    centerMapView();
+    
+    logConsole('Map view reset to center', 'info');
   }
 
   function setupLayerToggles() {
@@ -1182,6 +1282,7 @@ window.AdminMonitor = (function() {
     setupLayerToggles();
     updateLayerButtons();
     setupZoomControl();
+    setupPanControl();
     startDataPolling();
     renderTerrainMap();
     logConsole('System initialized', 'info');

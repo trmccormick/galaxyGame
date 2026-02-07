@@ -206,10 +206,26 @@ body {
     background: #1a1a1a;
     position: relative;
     overflow: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100%;
+    /* Remove flex centering - it breaks scrolling for large canvases */
+    /* Canvas will be positioned via JavaScript for proper scroll behavior */
+}
+
+/* Inner container for the canvas - allows proper scrolling */
+#canvasContainer {
+    display: inline-block;
+    position: relative;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+#planetCanvas {
+    display: block;
+    cursor: grab;
+}
+
+#planetCanvas:active {
+    cursor: grabbing;
 }
 
 #mapOverlay {
