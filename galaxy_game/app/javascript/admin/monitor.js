@@ -51,14 +51,31 @@ window.AdminMonitor = (function() {
       }
     },
     features: {
+      // Geological features - mountains, hills, volcanic
       terrainColors: {
-        'rock': '#696969'
+        'mountains': '#505050',
+        'mountain': '#505050',
+        'polar_mountains': '#a0a0a0',
+        'tropical_mountains': '#606060',
+        'hills': '#707050',
+        'peaks': '#c0c0c0',
+        'rock': '#696969',
+        'volcanic': '#8b0000',
+        'lava': '#ff4400'
+      },
+      // Helper function to check if biome is a geological feature
+      isFeature: function(biome) {
+        if (!biome) return false;
+        return biome.includes('mountain') || biome.includes('hill') || 
+               biome.includes('peak') || biome.includes('volcanic') ||
+               biome === 'rock' || biome === 'lava';
       }
     },
     temperature: {
       getOverlayColor: function(latitude, elevation, globalTemp, pressure) {
         const absLat = Math.abs(latitude);
         let baseTemp;
+        // Latitude-based temperature (equator hot, poles cold)
         if (absLat < 30) {
           baseTemp = globalTemp - 273.15 + 20 - (absLat / 30) * 10;
         } else if (absLat < 60) {
@@ -66,24 +83,52 @@ window.AdminMonitor = (function() {
         } else {
           baseTemp = globalTemp - 273.15 - 20 - ((absLat - 60) / 30) * 30;
         }
-        const elevationTemp = baseTemp - (elevation * 20);
-        const pressureTemp = elevationTemp * (0.5 + pressure * 0.5);
+        // Elevation cooling: ~6.5°C per 1000m (lapse rate)
+        // elevation is normalized 0-1, assume max elevation ~8000m
+        const elevationMeters = elevation * 8000;
+        const elevationCooling = (elevationMeters / 1000) * 6.5;
+        const elevationTemp = baseTemp - elevationCooling;
+        // Pressure effect (thin atmosphere = cooler)
+        const pressureTemp = elevationTemp * (0.5 + Math.min(pressure, 1.0) * 0.5);
         
-        if (pressureTemp > 30) return '#ff0000';
-        else if (pressureTemp > 15) return '#ff6600';
-        else if (pressureTemp > 0) return '#ffff00';
-        else if (pressureTemp > -15) return '#aa6600';
-        else return '#0088ff';
+        // Smoother color gradient
+        if (pressureTemp > 35) return '#ff0000';      // Hot red
+        else if (pressureTemp > 25) return '#ff4400'; // Warm orange-red
+        else if (pressureTemp > 15) return '#ff8800'; // Orange
+        else if (pressureTemp > 5) return '#ffcc00';  // Warm yellow
+        else if (pressureTemp > -5) return '#88cc44'; // Temperate green
+        else if (pressureTemp > -15) return '#44aaff';// Cool blue
+        else if (pressureTemp > -30) return '#2288ff';// Cold blue
+        else return '#0066cc';                        // Frigid deep blue
       },
       terrainColors: {}
     },
     rainfall: {
       terrainColors: {
-        'jungle': '#0066ff',
-        'swamp': '#0044ff',
-        'forest': '#4488ff',
-        'boreal': '#88aaff',
-        'desert': '#ffff00'
+        // High rainfall (blues)
+        'tropical_rainforest': '#0033ff',
+        'jungle': '#0044ff',
+        'swamp': '#0055ff',
+        'tropical_seasonal_forest': '#0066ff',
+        // Medium-high rainfall
+        'temperate_forest': '#2288ff',
+        'temperate_rainforest': '#1166ff',
+        'boreal_forest': '#4499ff',
+        'forest': '#3388ff',
+        'boreal': '#55aaff',
+        // Medium rainfall
+        'temperate_grassland': '#66bbff',
+        'grassland': '#77ccff',
+        'grasslands': '#77ccff',
+        'tropical_grassland': '#88ddff',
+        'plains': '#99eeff',
+        // Low rainfall
+        'tundra': '#aaddcc',
+        'polar_desert': '#ffee88',
+        'desert': '#ffcc00',
+        // Ocean (high water but not rainfall)
+        'ocean': '#004488',
+        'coast': '#006699'
       }
     },
     resources: {
@@ -249,29 +294,78 @@ window.AdminMonitor = (function() {
   }
 
   function getBiomeColor(biome) {
-    switch (biome) {
-      case 'desert': return '#DAA520';
-      case 'polar_desert': return '#F4E4BC'; // Sandy desert with polar tint
-      case 'grassland': return '#228B22';
-      case 'temperate_grassland': return '#32CD32'; // Lighter green
-      case 'tropical_grassland': return '#90EE90'; // Light green
-      case 'forest': return '#006400';
-      case 'temperate_forest': return '#228B22'; // Medium green
-      case 'tropical_seasonal_forest': return '#006400'; // Dark green
-      case 'tundra': return '#F0F8FF';
-      case 'mountain': return '#696969';
-      case 'mountains': return '#696969';
-      case 'hills': return '#8B7355'; // Brownish
-      case 'ice': return '#FFFFFF';
-      case 'volcanic': return '#8B0000';
-      case 'plains': return '#8B4513';
-      case 'peaks': return '#D3D3D3';
-      case 'jungle': return '#004400';
-      case 'swamp': return '#556B2F';
-      case 'arctic': return '#E8E8E8';
-      case 'boreal': return '#228B22';
-      default: return '#8B4513'; // Default brown
+    // Comprehensive biome color mapping for NASA + FreeCiv canonical names
+    const biomeColors = {
+      // Deserts (arid)
+      'desert': '#DAA520',
+      'polar_desert': '#E8DCC8',
+      'hot_desert': '#F4A460',
+      
+      // Grasslands
+      'grassland': '#7CCD7C',
+      'grasslands': '#7CCD7C',
+      'temperate_grassland': '#90EE90',
+      'tropical_grassland': '#98FB98',
+      'savanna': '#9ACD32',
+      
+      // Forests
+      'forest': '#228B22',
+      'temperate_forest': '#228B22',
+      'tropical_seasonal_forest': '#006400',
+      'tropical_rainforest': '#004000',
+      'boreal_forest': '#2E8B57',
+      'boreal': '#2E8B57',
+      'jungle': '#004400',
+      'temperate_rainforest': '#006633',
+      
+      // Cold biomes
+      'tundra': '#B8C4C8',
+      'arctic': '#E8E8E8',
+      'ice': '#FFFFFF',
+      'polar_ice': '#F0FFFF',
+      
+      // Wetlands
+      'swamp': '#556B2F',
+      'marsh': '#6B8E23',
+      'wetland': '#698B69',
+      
+      // Plains/steppe
+      'plains': '#C4B454',
+      'steppe': '#BDB76B',
+      
+      // Mountains/hills (terrain features rendered as biomes)
+      'mountains': '#696969',
+      'mountain': '#696969',
+      'polar_mountains': '#A9A9A9',
+      'tropical_mountains': '#505050',
+      'hills': '#8B7355',
+      'peaks': '#D3D3D3',
+      
+      // Volcanic
+      'volcanic': '#8B0000',
+      'lava': '#FF4500',
+      
+      // Water (shouldn't typically be rendered as biome)
+      'ocean': '#0066cc',
+      'coast': '#4682B4',
+      'deep_sea': '#003366'
+    };
+    
+    if (biome && biomeColors[biome]) {
+      return biomeColors[biome];
     }
+    
+    // Fallback: try to match partial biome names
+    if (biome) {
+      if (biome.includes('desert')) return '#DAA520';
+      if (biome.includes('forest')) return '#228B22';
+      if (biome.includes('grass')) return '#7CCD7C';
+      if (biome.includes('tundra')) return '#B8C4C8';
+      if (biome.includes('mountain')) return '#696969';
+      if (biome.includes('jungle') || biome.includes('rain')) return '#004400';
+    }
+    
+    return '#8B4513'; // Default brown for unknown biomes
   }
 
   /**
@@ -687,19 +781,39 @@ window.AdminMonitor = (function() {
           color = tempColor;
         }
 
-        // LAYER 5: Rainfall overlay
+        // LAYER 5: Rainfall overlay (biome-based precipitation estimate)
         if (visibleLayers.has('rainfall') && layers.biomes && layers.biomes.grid[y][x]) {
           const biome = layers.biomes.grid[y][x];
+          // Check if we have a direct mapping for this biome
           if (biome && layerOverlays.rainfall.terrainColors[biome]) {
             color = layerOverlays.rainfall.terrainColors[biome];
+          } else if (biome) {
+            // Fallback: estimate rainfall from biome name patterns
+            if (biome.includes('rain') || biome.includes('jungle')) {
+              color = '#0055ff';  // High rainfall
+            } else if (biome.includes('forest')) {
+              color = '#3388ff';  // Medium-high
+            } else if (biome.includes('grass') || biome.includes('plain')) {
+              color = '#77ccff';  // Medium
+            } else if (biome.includes('desert') || biome.includes('tundra')) {
+              color = '#ffcc00';  // Low rainfall
+            } else if (biome.includes('ocean') || biome.includes('coast')) {
+              color = '#004488';  // Ocean
+            }
           }
         }
 
-        // LAYER 6: Features overlay
-        if (visibleLayers.has('features') && layers.biomes && layers.biomes.grid[y][x]) {
-          const biome = layers.biomes.grid[y][x];
-          if (biome && (biome.includes('mountain') || biome.includes('peak') || biome.includes('volcanic'))) {
-            color = layerOverlays.features.terrainColors['rock'];
+        // LAYER 6: Features overlay (geological features - mountains, hills, volcanic)
+        if (visibleLayers.has('features')) {
+          const biome = layers.biomes?.grid[y]?.[x];
+          // Use helper function or direct check
+          if (biome && layerOverlays.features.isFeature(biome)) {
+            // Use specific color if available, otherwise rock gray
+            color = layerOverlays.features.terrainColors[biome] || 
+                    layerOverlays.features.terrainColors['rock'];
+          } else if (normalizedElevation > 0.85) {
+            // Also highlight very high elevations as features (peaks)
+            color = '#808080';  // Gray for high elevation
           }
         }
 
