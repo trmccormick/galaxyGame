@@ -218,9 +218,9 @@ module StarSim
       scaled_width = (freeciv_earth_width * scale_factor).round
       scaled_height = (freeciv_earth_height * scale_factor).round
 
-      # Ensure minimum viable size for FreeCiv gameplay (at least 40x20)
-      final_width = [scaled_width, 40].max
-      final_height = [scaled_height, 20].max
+      # Ensure minimum viable size for good terrain detail (at least 90x45 for smaller bodies)
+      final_width = [scaled_width, 90].max
+      final_height = [scaled_height, 45].max
 
       # Cap at reasonable maximum for performance (max 720x360, 4x Earth size)
       final_width = [final_width, 720].min
@@ -450,6 +450,14 @@ module StarSim
       }
       quality_scores = quality_assessor.assess_terrain_quality(terrain_data, planet_properties)
 
+      # Use generation_metadata from terrain_data if available (NASA/Civ4 sources)
+      # Otherwise fall back to default values
+      generation_metadata = terrain_data[:generation_metadata] || {}
+      source = generation_metadata[:source] || 'planetary_properties_analysis'
+      generation_method = generation_metadata[:source] || 'automatic_ai_driven'
+      
+      Rails.logger.info "[AutomaticTerrainGenerator] Storing terrain for #{body.name} - source: #{source}"
+
       geosphere.update!(
         terrain_map: {
           grid: terrain_data[:grid],
@@ -458,12 +466,13 @@ module StarSim
           resource_grid: terrain_data[:resource_grid],
           strategic_markers: terrain_data[:strategic_markers],
           resource_counts: terrain_data[:resource_counts],
-          generation_method: 'automatic_ai_driven',
+          generation_method: generation_method,
           generation_date: Time.current,
-          source: 'planetary_properties_analysis',
+          source: source,
           quality_score: calculate_terrain_quality(terrain_data),
           quality_assessment: quality_scores,
-          planet_properties: planet_properties
+          planet_properties: planet_properties,
+          generation_metadata: generation_metadata
         }
       )
     end
@@ -1048,12 +1057,20 @@ module StarSim
       name = body_name.downcase
       name = 'luna' if name == 'moon'
 
+      # Docker mounts data at app/data/, local dev uses data/
       paths = [
+        # Docker mounted path (primary)
+        Rails.root.join('app', 'data', 'geotiff', 'processed', "#{name}_1800x900.tif"),
+        # Local development path
         Rails.root.join('data', 'geotiff', 'processed', "#{name}_1800x900.tif"),
+        # Temp/alternative paths
+        Rails.root.join('app', 'data', 'geotiff', 'temp', "#{name}_900x450.tif"),
         Rails.root.join('data', 'geotiff', 'temp', "#{name}_900x450.tif")
       ]
 
-      paths.find { |p| File.exist?(p) }
+      found = paths.find { |p| File.exist?(p) }
+      Rails.logger.info "[AutomaticTerrainGenerator] GeoTIFF search for #{name}: #{found || 'NOT FOUND'}"
+      found
     end
 
     def nasa_geotiff_available?(body_name)
@@ -1226,7 +1243,7 @@ module StarSim
 
     # Helper methods for NASA data processing
     def downsample_elevation(elevation_data, target_width, target_height)
-      # Simple downsampling - in production would use proper interpolation
+      # Area-averaging downsampling for better terrain representation
       source_height = elevation_data.size
       source_width = elevation_data.first.size
 
@@ -1236,10 +1253,31 @@ module StarSim
       scale_x = source_width.to_f / target_width
 
       target_height.times do |y|
-        source_y = (y * scale_y).to_i
+        # Calculate source area for this target cell
+        src_y_start = (y * scale_y).to_i
+        src_y_end = [((y + 1) * scale_y).to_i, source_height].min
+        
         target_width.times do |x|
-          source_x = (x * scale_x).to_i
-          result[y][x] = elevation_data[source_y][source_x] if source_y < source_height && source_x < source_width
+          src_x_start = (x * scale_x).to_i
+          src_x_end = [((x + 1) * scale_x).to_i, source_width].min
+          
+          # Average all source pixels in this area, filtering NODATA values
+          # NODATA values are typically -99999, -32768, or similar large negatives
+          sum = 0.0
+          count = 0
+          (src_y_start...src_y_end).each do |sy|
+            (src_x_start...src_x_end).each do |sx|
+              val = elevation_data[sy][sx]
+              # Filter out NODATA values (typically -99999 or -32768)
+              # Valid Earth/planetary elevations are roughly -12000m to +9000m
+              if val && val > -50000 && val < 50000
+                sum += val
+                count += 1
+              end
+            end
+          end
+          
+          result[y][x] = count > 0 ? sum / count : 0.0
         end
       end
 

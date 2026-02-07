@@ -17,10 +17,11 @@
 - **Harvest First:** The AI Manager must prioritize local resource harvesting (ISRU) to build station components rather than importing them, unless the surface is strictly inaccessible.
 
 ## 💰 3. Market & GCC Integrity
-- **Taxation:** All maintenance jobs (e.g., `WormholeMaintenanceJob`) must deduct the `maintenance_tax_em` from the correct economy (Global vs. Local) as defined in `wormhole_contract.json`.
-- **ROI Validation:** The AI Manager should not initiate a phase if the `expected_roi` (calculated in `scout_logic.rb`) falls below the threshold defined in the current `ai_manager_tuning`.
+**Core Design Philosophy:** Player-first with NPC fallback ensures the solar system colonization continues regardless of player activity levels, while giving players meaningful opportunities to lead, profit, and shape development.
 
-## 🎯 4. Player-First Task Priority
+**AI Manager Implementation:** JSON mission files and strategies must be refined to enable AI Manager pattern matching and correction, allowing dynamic adaptation to maintain expansion momentum when players don't participate.
+
+### Contract Ceiling Limits
 - **Contract Assignment:** All harvesting, logistics, and construction contracts MUST be offered to players first with 24-48 hour timeout window before moving to NPC queue.
 - **NPC Fallback Mandate:** Game progression MUST NOT stall waiting for player acceptance. If player declines or timeout expires, task moves to NPC autonomous execution.
 - **GCC Economy:** Players earn Galactic Crypto Currency (GCC) for completed missions. NPCs use Virtual Ledger for internal accounting (no GCC).
@@ -49,36 +50,90 @@
 
 ## 🏔️ 7.5. Terrain Generation & Rendering Architecture
 
+### Core Principle: Data Source Hierarchy
+
+**NASA GeoTIFF = Ground Truth** for Sol bodies with real data.
+**FreeCiv/Civ4 = Training Data** for AI Manager pattern learning, NOT direct terrain sources.
+**AI Manager = Generator** for bodies without NASA data, using learned patterns + physical conditions.
+
 ### Separation of Concerns
 - **Generation Layer:** Produces pure elevation data only (height maps). No biome classification.
-- **Rendering Layer:** Applies biome/water classification based on elevation, temperature, and FreeCiv/Civ4 data.
-- **Data Storage:** `geosphere.terrain_map` contains `elevation` (2D numeric grid) and `grid` (nil or normalized values for rendering).
+- **Rendering Layer:** Applies visualization based on elevation and body properties.
+- **Data Storage:** `geosphere.terrain_map` contains `elevation` (2D numeric grid) and metadata.
 
 ### Sol System Terrain Sources
-- **Known Height Maps:** NASA GeoTIFF data processed into elevation patterns stored in `data/ai_manager/geotiff_patterns_*.json`
-- **Biome Integration:** FreeCiv/Civ4 map data provides terrain type distribution and water features
-- **Fallback Prevention:** Sol worlds (Earth, Mars, Luna) must use `Terrain::MultiBodyTerrainGenerator` with NASA patterns, not procedural generation
+
+| Body | NASA Data | Grid Size | Status |
+|------|-----------|-----------|--------|
+| Earth | `earth_1800x900.asc.gz` | 180×90 | ✅ Available |
+| Mars | `mars_1800x900.asc.gz` | 96×48 | ✅ Available |
+| Luna | `luna_1800x900.asc.gz` | 50×25 | ✅ Available |
+| Mercury | `mercury_1800x900.asc.gz` | 70×35 | ✅ Available |
+| Titan | None | 74×37 | ❌ AI Manager generates |
+| Venus | None | 172×86 | ❌ AI Manager generates |
+
+### Grid Sizing & FreeCiv Tileset Compatibility
+
+**Key Distinction:**
+- **Grid Size** (e.g., 180×90) = number of tiles in the map
+- **Tile Pixel Size** (e.g., 30×30, 64×64) = rendering size of each tile sprite
+- FreeCiv tilesets work with ANY grid size - they tile sprites across the grid
+
+**Grid Formula:** Diameter-based, maintains 2:1 aspect ratio for cylindrical wrap:
+```ruby
+scale_factor = body_diameter / 12742.0  # Earth as reference
+width = (180 * scale_factor).round.clamp(40, 720)
+height = (width / 2).round.clamp(20, 360)  # Enforce 2:1 aspect ratio
+```
+
+**Available Tilesets:**
+| Tileset | Tile Size | Notes |
+|---------|-----------|-------|
+| Trident (original) | 30×30 | Classic FreeCiv |
+| Trident (modified) | 64×64 | Current default |
+| BigTrident | 60×60 | Double-size |
+| Engels | 45×45 | Community |
+
+### FreeCiv/Civ4 as Training Data (NOT Direct Sources)
+
+**What FreeCiv/Civ4 Maps Provide:**
+- Geographic feature names and relative positions (Olympus Mons, Hellas Basin, etc.)
+- Biome placement patterns for AI Manager learning
+- Terraforming target visualization (what COULD exist after terraforming)
+- Settlement viability hints and resource distribution patterns
+- Geological feature checklist for data completeness validation
+
+**What FreeCiv/Civ4 Maps Do NOT Provide:**
+- Accurate elevation data (PlotType 0-3 is NOT real topography)
+- Current planetary state (both show post-terraforming scenarios)
+- Correct grid dimensions (sizes don't match our diameter-based grids)
+
+**IMPORTANT:** Converting FreeCiv terrain types to elevation produces unrealistic results
+(uniform 279-322m range instead of -8km to +21km for Mars). Always use NASA GeoTIFF.
 
 ### Terrain Data Integrity
-- **Grid Content:** Never store biome letters/symbols in `terrain_map['grid']`. Use `nil` or normalized elevation values (0.0-1.0).
-- **Elevation Variation:** Must show realistic height variation (-10000 to +8000m for Earth-like planets).
-- **Pattern Files:** Required for Sol worlds: `geotiff_patterns_earth.json`, `geotiff_patterns_mars.json`, `geotiff_patterns_luna.json`
-- **Rendering Default:** 0.5 values in grid default to "plains" - ensure proper elevation-to-biome mapping in renderer
+- **Grid Content:** Never store biome letters/symbols in `terrain_map['grid']`. Use normalized elevation values (0.0-1.0).
+- **Elevation Variation:** Must show realistic height variation (Mars: -8km to +21km, Earth: -10km to +8km).
+- **NASA Source Files:** Located at `data/geotiff/processed/*.asc.gz`
 
-### Current Issue Resolution [2026-01-31]
-- **Root Cause:** Mars terrain generated via procedural fallback due to broken `generate_mars_terrain` method with stub implementations
-- **Impact:** Mars maps showed uniform procedural noise instead of realistic NASA/Civ4/FreeCiv data
-- **Fix Implemented:** Three-layer Mars terrain generation system with corrected architecture:
-  - **Layer 1:** NASA elevation base (1800x900) using `MultiBodyTerrainGenerator` - pure topographic data, no constraints
-  - **Layer 2:** Civ4 terraforming scenario overlay (scaled from 80x57 to 1800x900) - represents "Mars After Terraforming" with habitable biomes, cities, and resources for AI planning
-  - **Layer 3:** FreeCiv complete terraforming targets (scaled from 133x64 to 1800x900) - represents fully terraformed Mars with 40% ocean coverage for TerraSim simulations
-- **Architecture Correction:** Removed blueprint water constraints from NASA base; Civ4/FreeCiv data now stored as future possibility spaces for AI Manager/TerraSim planning, not elevation constraints
-- **Integration:** Civ4 biomes represent achievable future states (cities, settlements, resources); FreeCiv represents complete terraforming success
-- **Scaling:** Diameter-based grid sizing using FreeCiv Earth map (180×90) as reference, scaled proportionally by planetary diameter relative to Earth (12742km)
-- **Grid Dimensions:** planet_diameter / earth_diameter × 180×90 tiles, with bounds:
-  - Minimum: 40×20 tiles (FreeCiv gameplay viability)
-  - Maximum: 720×360 tiles (4× Earth size for performance)
-- **Result:** Mars terrain uses all available data sources with proper separation of concerns and future-state planning capabilities
+### Hydrosphere Layer
+- **Label:** "Hydrosphere" not "Water" (supports non-H2O liquids)
+- **Color by Composition:** H2O=blue, CH4/C2H6=orange, NH3=purple
+- **Bathtub Logic:** Fill from lowest elevation based on coverage percentage
+- **Source:** `hydrosphere.liquid_name` attribute determines display
+
+### Body-Specific Rendering
+- **Luna:** Grey gradient (regolith)
+- **Mars:** Rust-red gradient (iron oxide)
+- **Mercury:** Dark grey gradient (basalt)
+- **Titan:** Orange-brown gradient (tholin deposits)
+- **Earth:** Brown-green gradient (varied biomes)
+
+### Architecture Correction [2026-02-05]
+- **Root Cause:** Monitor was loading FreeCiv/Civ4 data directly and converting terrain types to elevation
+- **Impact:** Unrealistic elevation range (279-322m instead of real topography)
+- **Fix Required:** Load NASA GeoTIFF data directly, use FreeCiv/Civ4 only for AI Manager training
+- **Hydrosphere Fix:** `primary_liquid` method must check `liquid_name` attribute first
 
 ## 💵 8. Economic System Guardrails
 
@@ -102,6 +157,45 @@
 - **Minting Limits**: LDC limited to 5% annual GCC supply increase to control inflation
 - **Burn Mechanisms**: Automatic GCC destruction for Earth exports to maintain supply equilibrium
 
+### Market Dynamics and Resource Flow
+- **Buy/Sell Order System**: All bases and stations maintain active buy and sell orders for essential materials, creating natural resource flow incentives
+- **Player Logistics Role**: Players and logistics NPCs bridge resource gaps by transporting materials from production sites to consumption sites as the game expands
+- **Multi-Modal Transport**: Cycler routes provide slow but reliable bulk transport, while players enable faster, more flexible logistics
+- **Construction Buy Orders**: Orbital stations and depots create buy orders for construction materials (e.g., L1 station buying 1000 3D printed ibeams), allowing players to participate in infrastructure development
+- **Player Supply Chain**: Players can build or purchase materials from locations like Luna and sell them at demand centers like L1 Station for profit
+- **NPC Fallback System**: If players don't fill orders within timeout windows, NPCs like AstroLift automatically fill them to maintain game progression
+- **Baseline Price Setting**: NPC order fulfillment establishes market prices and ensures economic activity continues even without player participation
+- **Early Game Critical**: NPC fallbacks are especially important early in the game when player logistics infrastructure is limited
+- **Economic Continuity**: System ensures construction and expansion never stall due to lack of material supply, whether through player participation or NPC automation
+- **Adaptive Cycler Logistics**: AI Manager loads cyclers with materials for specific destinations, but if no buy orders exist at arrival, cyclers can unload and place sell orders locally, then continue to next destination to prevent wasted trips and create market opportunities
+- **Pre-Destination Market Analysis**: AI Manager evaluates demand at upcoming cycler stops before arrival, deciding whether to deliver cargo, sell locally, or continue with current load
+- **Ownership-Based Decision Making**: Cargo handling depends on ownership - AstroLift-owned materials can be sold opportunistically, while TDC cargo is delivered as contracted regardless of local market conditions
+- **Mobile Production Platforms**: Cyclers function as moving space stations that can be configured for onboard production during transit, turning raw materials into processed goods to maximize value from long transit times
+- **Docked Craft Processing**: Craft docked with cyclers can continue onboard processing if they have sufficient power, raw materials, and storage capacity, allowing Venus skimmers to crack CO2 into O2 and CO during transit
+- **Cycler Gas Storage & Utilization**: Cyclers maintain their own gas storage capacity and have operational uses for various gases (propulsion, life support), enabling them to store and utilize processed gases from docked craft production
+- **Ownership-Based Value Capture**: Processing value during transit belongs to the owning company - if AstroLift owns both cycler and docked craft, they capture all processing value; mixed ownership requires inter-company agreements for revenue sharing and material ownership
+- **Station-Style Processing Services**: Docked craft extend cycler/base infrastructure with their processing systems, following station economics - owners can charge fees for others to use processing capabilities, allowing monetization of idle craft systems for GCC earnings
+### Market Dynamics and Resource Flow
+- **Buy/Sell Order System**: All bases and stations maintain active buy and sell orders for essential materials, creating natural resource flow incentives
+- **Player Logistics Role**: Players and logistics NPCs bridge resource gaps by transporting materials from production sites to consumption sites as the game expands
+- **Multi-Modal Transport**: Cycler routes provide slow but reliable bulk transport, while players enable faster, more flexible logistics
+- **Construction Buy Orders**: Orbital stations and depots create buy orders for construction materials (e.g., L1 station buying 1000 3D printed ibeams), allowing players to participate in infrastructure development
+- **Player Supply Chain**: Players can build or purchase materials from locations like Luna and sell them at demand centers like L1 Station for profit
+- **NPC Fallback System**: If players don't fill orders within timeout windows, NPCs like AstroLift automatically fill them to maintain game progression
+- **Baseline Price Setting**: NPC order fulfillment establishes market prices and ensures economic activity continues even without player participation
+- **Early Game Critical**: NPC fallbacks are especially important early in the game when player logistics infrastructure is limited
+- **Economic Continuity**: System ensures construction and expansion never stall due to lack of material supply, whether through player participation or NPC automation
+- **Adaptive Cycler Logistics**: AI Manager loads cyclers with materials for specific destinations, but if no buy orders exist at arrival, cyclers can unload and place sell orders locally, then continue to next destination to prevent wasted trips and create market opportunities
+- **Pre-Destination Market Analysis**: AI Manager evaluates demand at upcoming cycler stops before arrival, deciding whether to deliver cargo, sell locally, or continue with current load
+- **Ownership-Based Decision Making**: Cargo handling depends on ownership - AstroLift-owned materials can be sold opportunistically, while TDC cargo is delivered as contracted regardless of local market conditions
+- **Mobile Production Platforms**: Cyclers function as moving space stations that can be configured for onboard production during transit, turning raw materials into processed goods to maximize value from long transit times
+- **Docked Craft Processing**: Craft docked with cyclers can continue onboard processing if they have sufficient power, raw materials, and storage capacity, allowing Venus skimmers to crack CO2 into O2 and CO during transit
+- **Cycler Gas Storage & Utilization**: Cyclers maintain their own gas storage capacity and have operational uses for various gases (propulsion, life support), enabling them to store and utilize processed gases from docked craft production
+- **Ownership-Based Value Capture**: Processing value during transit belongs to the owning company - if AstroLift owns both cycler and docked craft, they capture all processing value; mixed ownership requires inter-company agreements for revenue sharing and material ownership
+- **Station-Style Processing Services**: Docked craft extend cycler/base infrastructure with their processing systems, following station economics - owners can charge fees for others to use processing capabilities, allowing monetization of idle craft systems for GCC earnings
+- **Player Infrastructure Contributions**: Players can add structures/units to NPC bases (if connections available) to expand storage or processing capabilities, earning GCC usage fees while paying rent to base owners for space utilization
+- **DC Infrastructure Foundation**: Development Corporations provide basic infrastructure and expand as needed if players do not contribute, following the player-first model with NPCs as backup to ensure continuous expansion
+
 ### NPC Debt Decision Influence
 - **Virtual Ledger Trading:** NPCs can trade among themselves without GCC limitations using the virtual ledger, allowing inter-NPC debt accumulation
 - **Expansion Restrictions:** High debt levels (>30% of assets) prevent NPC base construction and new settlement establishment
@@ -116,7 +210,31 @@
 - **For-Profit NPC Corporations:** AstroLift and other NPC corporations are for-profit entities essential for logistics and specialized services
 - **Infrastructure Focus:** DCs prioritize base infrastructure establishment while for-profit NPCs handle commercial logistics and transportation
 
-## 🎮 9. Player Experience Boundaries
+## 🤖 9. Sol as AI Training Data
+
+**Core Design Philosophy:** The Sol system serves as the primary training dataset for AI Manager autonomous decision-making in new system development. All patterns, economic dynamics, and infrastructure decisions learned from Sol must be applied to maintain consistent expansion quality and player-first economics.
+
+### Training Data Structure
+- **Mission Profiles:** JSON mission files (`l1_tug_construction_profile_v1.json`, cycler logistics manifests) provide pattern recognition templates for procurement, sequencing, and quality assurance workflows.
+- **Economic Patterns:** Player-first with NPC fallback dynamics, market-based pricing, and infrastructure rental systems establish baseline ROI expectations and participation incentives.
+- **Infrastructure Templates:** Orbital shipyards, cycler platforms, and development corporation foundations serve as architectural blueprints for new system deployment.
+
+### AI Manager Learning Objectives
+- **Pattern Matching:** Analyze Sol mission success rates, economic participation levels, and infrastructure ROI to identify optimal deployment strategies for new systems.
+- **Adaptive Decision-Making:** When building new systems, AI Manager must evaluate local conditions against Sol-trained patterns, adapting cycler logistics, market dynamics, and construction sequencing accordingly.
+- **Player Integration:** Maintain player-first economics by creating competitive opportunities in new systems, using Sol data to predict participation levels and adjust NPC fallback timing.
+
+### Implementation Requirements
+- **JSON Mission Refinement:** All Sol mission files must be structured for AI pattern recognition, including success criteria, ROI estimates, and adaptive parameters.
+- **Economic Continuity:** New systems must replicate Sol's market dynamics, ensuring players can profit from infrastructure contributions and logistics operations.
+- **Autonomous Expansion:** AI Manager uses Sol training data to make independent decisions about wormhole stability, resource prioritization, and development sequencing without requiring human intervention.
+
+### Validation Metrics
+- **Pattern Accuracy:** AI Manager decisions in new systems must achieve 85% success rate compared to Sol baseline performance.
+- **Economic Alignment:** Player participation rates and GCC earnings in new systems should match or exceed Sol system averages.
+- **Infrastructure Quality:** New system deployments must meet Sol-established standards for stability, resource availability, and expansion potential.
+
+## 🎮 10. Player Experience Boundaries
 
 ### Economic Transparency
 - **Contract Clarity**: All contracts must display clear GCC earnings, risk levels, and completion timeframes
@@ -133,7 +251,7 @@
 - **Economic Multipliers**: Player contracts provide 1.5x GCC rewards vs NPC execution
 - **Influence Mechanisms**: GCC investment allows players to influence AI Manager priorities
 
-## 🚀 10. Sci-Fi Easter Eggs (Love Letter to the Genre)
+## 🚀 11. Sci-Fi Easter Eggs (Love Letter to the Genre)
 
 **Context:** Game World Flavor & Immersion  
 **Mandate:** Transform the game into a "love letter" to sci-fi by including subtle nods to shows, books, and movies that inspired the project. These must remain non-infringing and feel natural to casual players while providing "eureka" moments for fans.
@@ -180,7 +298,7 @@
 
 This strategy ensures the game honors sci-fi's legacy while maintaining focus on realistic space colonization.
 
-## 🐳 11. Environment & Container Management Guardrails
+## 🐳 12. Environment & Container Management Guardrails
 
 **Context:** Development Environment Integrity  
 **Mandate:** Protect running applications and collaborative work sessions from unintended disruptions.
@@ -261,7 +379,7 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - **Prevention:** Added explicit database environment protection guardrails
 - **Recovery:** Development database reseeding required to restore clean state
 
-## 🖥️ 12. Monitor Interface & Layer System Guardrails
+## 🖥️ 14. Monitor Interface & Layer System Guardrails
 
 ### Layer Toggle Logic - SimEarth Additive Overlays
 - **Terrain Base Layer:** Terrain is ALWAYS visible as the geological foundation (lithosphere) and cannot be toggled off.

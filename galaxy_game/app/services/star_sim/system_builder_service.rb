@@ -129,8 +129,8 @@ module StarSim
       galaxy_name = galaxy_data[:name] || "Unknown Galaxy"
       galaxy_identifier = galaxy_data[:identifier] || @name_generator.generate_identifier
       
-      @galaxy = Galaxy.find_or_create_by!(name: galaxy_name) do |g|
-        g.identifier = galaxy_identifier
+      @galaxy = Galaxy.find_or_create_by!(identifier: galaxy_identifier) do |g|
+        g.name = galaxy_name
         puts "Creating galaxy: #{galaxy_name}" if @debug_mode
       end
     end
@@ -142,8 +142,9 @@ module StarSim
       system_name = solar_data[:name] || name
       system_identifier = solar_data[:identifier] || @name_generator.generate_identifier
       
-      @solar_system = SolarSystem.find_or_create_by!(name: system_name, galaxy: @galaxy) do |sys|
-        sys.identifier = system_identifier
+      @solar_system = SolarSystem.find_or_create_by!(identifier: system_identifier) do |sys|
+        sys.name = system_name
+        sys.galaxy = @galaxy
         puts "Creating solar system: #{system_name}" if @debug_mode
       end
     end
@@ -289,8 +290,8 @@ module StarSim
         create_atmosphere(body, body_data[:atmosphere]) if body_data[:atmosphere].present?
         create_hydrosphere(body, body_data[:hydrosphere]) if body_data[:hydrosphere].present?
         create_geosphere(body, body_data[:geosphere_attributes]) if body_data[:geosphere_attributes].present?
-        # Always create a biosphere, using seed data if present, or defaults if not
-        create_biosphere(body, body_data[:biosphere])
+        # Only create biosphere for Earth initially (where life is confirmed to exist)
+        create_biosphere(body, body_data[:biosphere]) if body.name.downcase == 'earth'
 
         # Generate automatic terrain for planets that don't have it
         generate_automatic_terrain(body) if should_generate_terrain?(body)
@@ -571,8 +572,9 @@ module StarSim
         terrain_generator.generate_terrain_for_body(body)
         puts "Generated automatic terrain for #{body.name}." if @debug_mode
       rescue => e
-        puts "WARNING: Failed to generate automatic terrain for #{body.name}: #{e.message}" if @debug_mode
-        Rails.logger.warn "[SystemBuilderService] Terrain generation failed for #{body.name}: #{e.message}"
+        puts "WARNING: Failed to generate automatic terrain for #{body.name}: #{e.class}: #{e.message}"
+        puts e.backtrace.first(10).join("\n")
+        Rails.logger.warn "[SystemBuilderService] Terrain generation failed for #{body.name}: #{e.class}: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
       end
     end
 

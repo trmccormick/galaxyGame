@@ -3,9 +3,32 @@ module Import
   class EarthMapProcessor
     # Special processor for Earth - combines FreeCiv and Civ4 data for full habitable rendering
 
+    def self.find_earth_freeciv_map
+      # Look for Earth FreeCiv maps in various locations
+      # Check in earth subfolder (primary location)
+      Dir.glob(File.join(GalaxyGame::Paths::FREECIV_MAPS_PATH, 'earth', 'earth*.sav')).first ||
+      Dir.glob(File.join(GalaxyGame::Paths::FREECIV_MAPS_PATH, 'earth*.sav')).first ||
+      Dir.glob(File.join(GalaxyGame::Paths::FREECIV_MAPS_PATH, '**', 'earth*.sav')).first ||
+      Dir.glob(File.join(GalaxyGame::Paths::PARTIAL_PLANETARY_MAPS_PATH, 'earth*.sav')).first ||
+      Dir.glob(File.join(Rails.root, 'data', 'maps', 'freeciv', 'earth', 'earth*.sav')).first ||
+      Dir.glob(File.join(Rails.root, 'data', 'maps', 'freeciv', 'earth*.sav')).first
+    end
+
+    def self.find_earth_civ4_map
+      # Look for Earth Civ4 maps (prefer larger/detailed ones)
+      # Check in earth subfolder first, then other locations
+      candidates = Dir.glob(File.join(GalaxyGame::Paths::CIV4_MAPS_PATH, 'earth', '*.Civ4WorldBuilderSave')) +
+                   Dir.glob(File.join(GalaxyGame::Paths::CIV4_MAPS_PATH, '*earth*.Civ4WorldBuilderSave')) +
+                   Dir.glob(File.join(GalaxyGame::Paths::CIV4_MAPS_PATH, '**', '*[Ee]arth*.Civ4WorldBuilderSave')) +
+                   Dir.glob('data/Civ4_Maps/*earth*.Civ4WorldBuilderSave')
+
+      # Prefer larger maps
+      candidates.max_by { |path| File.basename(path).match(/(\d+)x(\d+)/)&.captures&.map(&:to_i)&.inject(:*) || 0 }
+    end
+
     def initialize(freeciv_path: nil, civ4_path: nil)
-      @freeciv_path = freeciv_path
-      @civ4_path = civ4_path
+      @freeciv_path = freeciv_path || self.class.find_earth_freeciv_map
+      @civ4_path = civ4_path || self.class.find_earth_civ4_map
       @errors = []
     end
 
@@ -92,20 +115,30 @@ module Import
       water_mask
     end
 
-    # Generate elevation from Civ4 PlotType data
+    # Generate elevation from Civ4 data (either plots or grid format)
     def generate_elevation_from_civ4(civ4_data)
       width = civ4_data[:width]
       height = civ4_data[:height]
-      plots = civ4_data[:plots]
 
       elevation_map = Array.new(height) { Array.new(width, 0.5) }
 
-      plots.each do |plot|
-        x, y = plot[:x], plot[:y]
-        next if x >= width || y >= height || x < 0 || y < 0
+      # Handle grid-based format (from Civ4WbsImportService)
+      if civ4_data[:grid]
+        civ4_data[:grid].each_with_index do |row, y|
+          row.each_with_index do |terrain_type, x|
+            next if x >= width || y >= height
+            elevation_map[y][x] = base_elevation_for_terrain(terrain_type)
+          end
+        end
+      elsif civ4_data[:plots]
+        # Handle plots-based format (legacy)
+        civ4_data[:plots].each do |plot|
+          x, y = plot[:x], plot[:y]
+          next if x >= width || y >= height || x < 0 || y < 0
 
-        elevation = calculate_elevation_from_plot(plot)
-        elevation_map[y][x] = elevation
+          elevation = calculate_elevation_from_plot(plot)
+          elevation_map[y][x] = elevation
+        end
       end
 
       # Smooth for continuity
@@ -116,16 +149,27 @@ module Import
     def extract_biomes_from_civ4(civ4_data)
       width = civ4_data[:width]
       height = civ4_data[:height]
-      plots = civ4_data[:plots]
 
       biome_grid = Array.new(height) { Array.new(width, 0.0) }
 
-      plots.each do |plot|
-        x, y = plot[:x], plot[:y]
-        next if x >= width || y >= height || x < 0 || y < 0
+      # Handle grid-based format (from Civ4WbsImportService)
+      if civ4_data[:grid]
+        civ4_data[:grid].each_with_index do |row, y|
+          row.each_with_index do |terrain_type, x|
+            next if x >= width || y >= height
+            # Convert terrain type to biome density
+            biome_grid[y][x] = terrain_type == :ocean || terrain_type == :deep_sea ? 0.0 : 0.8
+          end
+        end
+      elsif civ4_data[:plots]
+        # Handle plots-based format (legacy)
+        civ4_data[:plots].each do |plot|
+          x, y = plot[:x], plot[:y]
+          next if x >= width || y >= height || x < 0 || y < 0
 
-        biome_density = calculate_biome_density_from_plot(plot)
-        biome_grid[y][x] = biome_density
+          biome_density = calculate_biome_density_from_plot(plot)
+          biome_grid[y][x] = biome_density
+        end
       end
 
       biome_grid
