@@ -251,10 +251,17 @@ window.AdminMonitor = (function() {
   function getBiomeColor(biome) {
     switch (biome) {
       case 'desert': return '#DAA520';
+      case 'polar_desert': return '#F4E4BC'; // Sandy desert with polar tint
       case 'grassland': return '#228B22';
+      case 'temperate_grassland': return '#32CD32'; // Lighter green
+      case 'tropical_grassland': return '#90EE90'; // Light green
       case 'forest': return '#006400';
+      case 'temperate_forest': return '#228B22'; // Medium green
+      case 'tropical_seasonal_forest': return '#006400'; // Dark green
       case 'tundra': return '#F0F8FF';
       case 'mountain': return '#696969';
+      case 'mountains': return '#696969';
+      case 'hills': return '#8B7355'; // Brownish
       case 'ice': return '#FFFFFF';
       case 'volcanic': return '#8B0000';
       case 'plains': return '#8B4513';
@@ -263,7 +270,7 @@ window.AdminMonitor = (function() {
       case 'swamp': return '#556B2F';
       case 'arctic': return '#E8E8E8';
       case 'boreal': return '#228B22';
-      default: return '#8B4513';
+      default: return '#8B4513'; // Default brown
     }
   }
 
@@ -546,7 +553,7 @@ window.AdminMonitor = (function() {
     }
 
     // NASA-first: Extract resources
-    if (terrainData && terrainData.resource_grid) {
+    if (terrainData && terrainData.resource_grid && Array.isArray(terrainData.resource_grid) && terrainData.resource_grid.length > 0) {
       layers.resources = {
         grid: terrainData.resource_grid,
         width: terrainData.resource_grid[0]?.length || 0,
@@ -554,6 +561,8 @@ window.AdminMonitor = (function() {
         layer_type: 'resources'
       };
       console.log('Using NASA resource data');
+    } else {
+      console.log('Resource grid missing or empty - resources layer disabled');
     }
 
     // Calculate water layer from hydrosphere
@@ -663,6 +672,34 @@ window.AdminMonitor = (function() {
           const resource = layers.resources.grid[y][x];
           if (resource && resource !== 'none') {
             color = blendColors(color, '#FFFF00', 0.4);
+          }
+        }
+
+        // LAYER 4: Temperature overlay
+        if (visibleLayers.has('temperature')) {
+          const latitude = (y / height - 0.5) * 180; // Convert y to latitude (-90 to 90)
+          const tempColor = layerOverlays.temperature.getOverlayColor(
+            latitude, 
+            normalizedElevation, 
+            planetData.surface_temperature || planetData.temperature || 288,
+            planetData.atmosphere?.pressure || 1.0
+          );
+          color = tempColor;
+        }
+
+        // LAYER 5: Rainfall overlay
+        if (visibleLayers.has('rainfall') && layers.biomes && layers.biomes.grid[y][x]) {
+          const biome = layers.biomes.grid[y][x];
+          if (biome && layerOverlays.rainfall.terrainColors[biome]) {
+            color = layerOverlays.rainfall.terrainColors[biome];
+          }
+        }
+
+        // LAYER 6: Features overlay
+        if (visibleLayers.has('features') && layers.biomes && layers.biomes.grid[y][x]) {
+          const biome = layers.biomes.grid[y][x];
+          if (biome && (biome.includes('mountain') || biome.includes('peak') || biome.includes('volcanic'))) {
+            color = layerOverlays.features.terrainColors['rock'];
           }
         }
 
