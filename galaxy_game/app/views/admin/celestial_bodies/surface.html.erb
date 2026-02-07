@@ -6,7 +6,622 @@
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
     <title>Surface View - <%= @celestial_body.name %></title>
     <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
-    <%= javascript_include_tag 'tileset_loader' %>
+    <script>
+// app/assets/javascripts/tileset_loader.js
+console.log('Loading tileset_loader.js...');
+
+// Always define TilesetLoader - check if already defined to handle Turbo reloads
+if (typeof window.TilesetLoader === 'undefined') {
+    console.log('Defining TilesetLoader...');
+    class TilesetLoader {
+    constructor(tilesetName = 'trident') {
+        this.tilesetName = tilesetName;
+        this.tilesetPath = `/tilesets/${tilesetName}/`;
+        this.tilespecData = null;
+        this.tileImages = new Map();
+        this.loaded = false;
+    }
+
+    // Load tileset specification and images
+    async loadTileset() {
+        if (this.loaded) return true;
+
+        try {
+            // Load tilespec
+            const tilespecResponse = await fetch(`${this.tilesetPath}${this.tilesetName}.tilespec`);
+            if (!tilespecResponse.ok) {
+                throw new Error(`Failed to load tilespec: ${tilespecResponse.status}`);
+            }
+
+            const tilespecText = await tilespecResponse.text();
+            this.tilespecData = this.parseTilespec(tilespecText);
+
+            // Load tile images
+            await this.loadTileImages();
+
+            this.loaded = true;
+            return true;
+        } catch (error) {
+            console.error('Failed to load tileset:', error);
+            return false;
+        }
+    }
+
+    // Parse FreeCiv tilespec format
+    parseTilespec(content) {
+        const data = {};
+        let currentSection = null;
+        let currentTile = null;
+
+        const lines = content.split('\n');
+
+        for (const line of lines) {
+            const trimmed = line.trim();
+
+            // Skip comments and empty lines
+            if (trimmed.startsWith('#') || trimmed === '') continue;
+
+            // Section headers
+            const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
+            if (sectionMatch) {
+                currentSection = sectionMatch[1];
+                if (currentSection === 'files') {
+                    data[currentSection] = [];
+                } else {
+                    data[currentSection] = {};
+                }
+                currentTile = null;
+                continue;
+            }
+
+            // Tile definitions (name =)
+            if (currentSection === 'tiles' && trimmed.match(/^[a-zA-Z_]+ =$/)) {
+                currentTile = trimmed.replace(' =', '').trim();
+                data[currentSection][currentTile] = {};
+                continue;
+            }
+
+            // Key-value pairs (either tile properties or section properties)
+            if (currentSection && trimmed.includes('=')) {
+                const [key, ...valueParts] = trimmed.split('=');
+                const value = valueParts.join('=').trim();
+                const parsedValue = this.parseValue(value);
+
+                if (currentTile && currentSection === 'tiles') {
+                    // This is a property of the current tile
+                    data[currentSection][currentTile][key.trim()] = parsedValue;
+                } else if (currentSection === 'files') {
+                    // Files section: collect file info
+                    if (key.trim() === 'file') {
+                        data[currentSection].push({file: parsedValue});
+                    } else if (data[currentSection].length > 0) {
+                        // Add properties to the last file
+                        const lastFile = data[currentSection][data[currentSection].length - 1];
+                        lastFile[key.trim()] = parsedValue;
+                    }
+                } else {
+                    // This is a section property
+                    data[currentSection][key.trim()] = parsedValue;
+                }
+            }
+        }
+
+        return data;
+    }
+
+    // Parse tilespec values
+    parseValue(value) {
+        // Remove quotes
+        const unquoted = value.replace(/^["']|["']$/g, '');
+
+        // Numbers
+        if (/^\d+$/.test(unquoted)) return parseInt(unquoted);
+        if (/^\d+\.\d+$/.test(unquoted)) return parseFloat(unquoted);
+
+        // Booleans
+        if (unquoted.toLowerCase() === 'true') return true;
+        if (unquoted.toLowerCase() === 'false') return false;
+
+        return unquoted;
+    }
+
+    // Load tile images
+    async loadTileImages() {
+        if (!this.tilespecData?.files) return;
+
+        const loadPromises = this.tilespecData.files.map(async (fileInfo) => {
+            if (!fileInfo.file) return;
+
+            try {
+                const image = new Image();
+                const imagePath = `${this.tilesetPath}${fileInfo.file}`;
+
+                await new Promise((resolve, reject) => {
+                    image.onload = () => resolve();
+                    image.onerror = () => {
+                        // Create fallback colored tile if image fails to load
+                        console.warn(`Failed to load ${fileInfo.file}, creating fallback tile`);
+                        const fallbackCanvas = document.createElement('canvas');
+                        fallbackCanvas.width = fileInfo.width || 64;
+                        fallbackCanvas.height = fileInfo.height || 64;
+                        const ctx = fallbackCanvas.getContext('2d');
+                        
+                        // Generate a simple colored pattern based on filename
+                        const hash = fileInfo.file.split('').reduce((a, b) => {
+                            a = ((a << 5) - a) + b.charCodeAt(0);
+                            return a & a;
+                        }, 0);
+                        const hue = Math.abs(hash) % 360;
+                        ctx.fillStyle = `hsl(${hue}, 50%, 50%)`;
+                        ctx.fillRect(0, 0, fallbackCanvas.width, fallbackCanvas.height);
+                        
+                        // Convert canvas to image
+                        const fallbackImage = new Image();
+                        fallbackImage.src = fallbackCanvas.toDataURL();
+                        resolve();
+                        return;
+                    };
+                    image.src = imagePath;
+                });
+
+                this.tileImages.set(fileInfo.file, {
+                    image: image,
+                    width: fileInfo.width || this.tilespecData.tile_width || 64,
+                    height: fileInfo.height || this.tilespecData.tile_height || 64
+                });
+
+            } catch (error) {
+                console.warn(`Failed to load tile image ${fileInfo.file}:`, error);
+                // Create a basic fallback tile
+                this.createFallbackTile(fileInfo.file, fileInfo.width || 64, fileInfo.height || 64);
+            }
+        });
+
+        await Promise.all(loadPromises);
+    }
+
+    // Create a simple fallback tile when image loading fails
+    createFallbackTile(fileName, width, height) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        // Generate color based on filename
+        const hash = fileName.split('').reduce((a, b) => {
+            a = ((a << 5) - a) + b.charCodeAt(0);
+            return a & a;
+        }, 0);
+        const hue = Math.abs(hash) % 360;
+        ctx.fillStyle = `hsl(${hue}, 60%, 45%)`;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Add some texture
+        ctx.fillStyle = `hsl(${hue}, 40%, 30%)`;
+        for (let i = 0; i < 10; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            const size = Math.random() * 4 + 1;
+            ctx.fillRect(x, y, size, size);
+        }
+        
+        const image = new Image();
+        image.src = canvas.toDataURL();
+        
+        this.tileImages.set(fileName, {
+            image: image,
+            width: width,
+            height: height
+        });
+    }
+
+    // Get tile data for terrain type
+    getTerrainTile(terrainType, variation = 0) {
+        if (!this.loaded) return null;
+
+        // Map Galaxy Game terrain to FreeCiv terrain
+        const freecivTerrain = this.mapGalaxyToFreecivTerrain(terrainType);
+        if (!freecivTerrain) return null;
+
+        // Get tile definition
+        const tilesSection = this.tilespecData?.tiles;
+        if (!tilesSection) return null;
+
+        const tileDef = tilesSection[freecivTerrain];
+        if (!tileDef) return null;
+
+        // Get image
+        const imageData = this.tileImages.get(tileDef.file);
+        if (!imageData) return null;
+
+        return {
+            image: imageData.image,
+            x: tileDef.x || 0,
+            y: tileDef.y || 0,
+            width: imageData.width,
+            height: imageData.height,
+            terrainType: terrainType
+        };
+    }
+
+    // Map Galaxy Game terrain types to FreeCiv terrain names
+    mapGalaxyToFreecivTerrain(galaxyTerrain) {
+        const mapping = {
+            'arctic': 'arctic',
+            'deep_sea': 'deep_ocean',
+            'desert': 'desert',
+            'forest': 'forest',
+            'plains': 'plains',
+            'grasslands': 'grassland',
+            'boreal': 'tundra',  // boreal forest -> tundra
+            'jungle': 'jungle',
+            'ocean': 'ocean',
+            'swamp': 'swamp',
+            'tundra': 'tundra',
+            'rock': 'mountains'  // rock -> mountains
+        };
+
+        return mapping[galaxyTerrain.toLowerCase()] || 'grassland';
+    }
+
+    // Check if tileset is loaded
+    isLoaded() {
+        return this.loaded;
+    }
+}
+
+// Assign to window to ensure global availability
+window.TilesetLoader = TilesetLoader;
+console.log('TilesetLoader assigned to window:', typeof window.TilesetLoader);
+} // End TilesetLoader guard clause
+
+// AlioTilesetLoader for sci-fi planetary rendering with burrow tubes
+console.log('Defining AlioTilesetLoader...');
+if (typeof window.AlioTilesetLoader === 'undefined') {
+    console.log('Defining AlioTilesetLoader class...');
+    class AlioTilesetLoader {
+    constructor(alioTileConfig = null) {
+        this.alioTileConfig = alioTileConfig;
+        this.tilesetPath = '/tilesets/alio/';
+        this.tileImages = new Map();
+        this.loaded = false;
+        this.tileWidth = 126;
+        this.tileHeight = 64;
+    }
+
+    // Load Alio tileset
+    async loadTileset() {
+        if (this.loaded) return true;
+
+        try {
+            // Parse the terrain spec file to understand tile layout
+            await this.parseTerrainSpec();
+            
+            // Load tile images based on config
+            if (this.alioTileConfig) {
+                await this.loadTileImagesFromConfig();
+            } else {
+                // Fallback: load standard Alio tiles
+                await this.loadStandardAlioTiles();
+            }
+
+            this.loaded = true;
+            return true;
+        } catch (error) {
+            console.error('Failed to load Alio tileset:', error);
+            return false;
+        }
+    }
+
+    // Parse the terrain.spec file to understand tile layout
+    async parseTerrainSpec() {
+        try {
+            const specResponse = await fetch(`${this.tilesetPath}terrain.spec`);
+            if (!specResponse.ok) {
+                throw new Error(`Failed to load terrain.spec: ${specResponse.status}`);
+            }
+
+            const specText = await specResponse.text();
+            this.parseSpecContent(specText);
+        } catch (error) {
+            console.warn('Failed to parse terrain spec, using fallback tiles:', error);
+        }
+    }
+
+    // Parse spec file content
+    parseSpecContent(content) {
+        const lines = content.split('\n');
+        let inTilesSection = false;
+        const tileMappings = {};
+
+        for (const line of lines) {
+            const trimmed = line.trim();
+            
+            if (trimmed === 'tiles = { "row", "column","tag"') {
+                inTilesSection = true;
+                continue;
+            }
+            
+            if (inTilesSection) {
+                if (trimmed === '}') {
+                    inTilesSection = false;
+                    continue;
+                }
+                
+                // Parse tile definition: row, column, "tag"
+                const match = trimmed.match(/(\d+),\s*(\d+),\s*"([^"]+)"/);
+                if (match) {
+                    const row = parseInt(match[1]);
+                    const col = parseInt(match[2]);
+                    const tag = match[3];
+                    
+                    // Extract terrain type from tag (e.g., "t.l0.alien_forest1" -> "alien_forest")
+                    const terrainMatch = tag.match(/t\..*\.(\w+)\d*/);
+                    if (terrainMatch) {
+                        const terrainType = terrainMatch[1];
+                        if (!tileMappings[terrainType]) {
+                            tileMappings[terrainType] = [];
+                        }
+                        tileMappings[terrainType].push({
+                            row: row,
+                            col: col,
+                            tag: tag,
+                            x: col * (this.tileWidth + 1) + 1, // Add border offset
+                            y: row * (this.tileHeight + 1) + 1
+                        });
+                    }
+                }
+            }
+        }
+
+        this.tileMappings = tileMappings;
+    }
+
+    // Load tiles from Rails-provided config
+    async loadTileImagesFromConfig() {
+        // Load the main terrain.png image
+        try {
+            const image = new Image();
+            const imagePath = `${this.tilesetPath}terrain.png`;
+
+            await new Promise((resolve, reject) => {
+                image.onload = () => resolve();
+                image.onerror = () => reject(new Error('Failed to load terrain.png'));
+                image.src = imagePath;
+            });
+
+            // Create tile entries for each terrain type in config
+            for (const [configKey, terrainType] of Object.entries(this.alioTileConfig)) {
+                if (typeof terrainType === 'string' && this.tileMappings && this.tileMappings[terrainType]) {
+                    // Use the last tile variant for this terrain type
+                    const tileInfo = this.tileMappings[terrainType][this.tileMappings[terrainType].length - 1];
+                    if (tileInfo) {
+                        this.tileImages.set(terrainType, {
+                            image: image,
+                            width: this.tileWidth,
+                            height: this.tileHeight,
+                            x: tileInfo.x,
+                            y: tileInfo.y,
+                            terrainType: terrainType
+                        });
+                    }
+                }
+            }
+
+            // Also load any feature tiles
+            if (this.alioTileConfig.features) {
+                for (const feature of this.alioTileConfig.features) {
+                    if (this.tileMappings && this.tileMappings[feature]) {
+                        const tileInfo = this.tileMappings[feature][0];
+                        if (tileInfo) {
+                            this.tileImages.set(feature, {
+                                image: image,
+                                width: this.tileWidth,
+                                height: this.tileHeight,
+                                x: tileInfo.x,
+                                y: tileInfo.y,
+                                terrainType: feature
+                            });
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to load terrain.png, using fallbacks:', error);
+            // Fall back to creating colored tiles
+            this.createFallbackTiles();
+        }
+    }
+
+    // Load standard Alio tiles as fallback
+    async loadStandardAlioTiles() {
+        // Standard Alio tiles - these would be defined in the tileset
+        const standardTiles = [
+            'arctic', 'desert', 'forest', 'grassland', 'hills', 'jungle',
+            'mountains', 'ocean', 'plains', 'swamp', 'tundra', 'burrow_tube'
+        ];
+
+        const loadPromises = standardTiles.map(tileName => {
+            return this.loadTileImage(`${tileName}.png`, { name: tileName });
+        });
+
+        await Promise.all(loadPromises);
+    }
+
+    // Load individual tile image
+    async loadTileImage(fileName, tileData) {
+        try {
+            const image = new Image();
+            const imagePath = `${this.tilesetPath}${fileName}`;
+
+            await new Promise((resolve, reject) => {
+                image.onload = () => resolve();
+                image.onerror = () => {
+                    console.warn(`Failed to load Alio tile ${fileName}, creating fallback`);
+                    this.createFallbackAlioTile(fileName, tileData);
+                    resolve();
+                };
+                image.src = imagePath;
+            });
+
+            this.tileImages.set(tileData.name || fileName.replace('.png', ''), {
+                image: image,
+                width: this.tileWidth,
+                height: this.tileHeight,
+                ...tileData
+            });
+
+        } catch (error) {
+            console.warn(`Failed to load Alio tile ${fileName}:`, error);
+            this.createFallbackAlioTile(fileName, tileData);
+        }
+    }
+
+    // Create fallback tiles when spec parsing fails
+    createFallbackTiles() {
+        const fallbackTerrains = ['alien_forest', 'radiating_rocks', 'glowing_rocks', 'thermal_vent', 'huge_plant'];
+        
+        for (const terrain of fallbackTerrains) {
+            this.createFallbackAlioTile(`${terrain}.png`, { name: terrain });
+        }
+    }
+
+    // Get tile for terrain type with auto-tiling for burrow tubes
+    getTerrainTile(terrainType, adjacentTiles = {}) {
+        if (!this.loaded) return null;
+
+        const tileName = this.mapTerrainToAlioTile(terrainType);
+        let tileData = this.tileImages.get(tileName);
+        
+        if (!tileData) {
+            // Try fallback mapping
+            const fallbackTile = this.mapTerrainToAlioTile(terrainType, true);
+            tileData = this.tileImages.get(fallbackTile);
+        }
+
+        if (!tileData) return null;
+
+        // Handle burrow tube auto-tiling
+        if (terrainType === 'burrow_tube' || tileName.includes('burrow')) {
+            return this.getBurrowTubeTile(adjacentTiles, tileData);
+        }
+
+        return {
+            image: tileData.image,
+            x: 0,
+            y: 0,
+            width: tileData.width,
+            height: tileData.height,
+            terrainType: terrainType
+        };
+    }
+
+    // Map Galaxy Game terrain to Alio tile names
+    mapTerrainToAlioTile(galaxyTerrain, fallback = false) {
+        const mapping = {
+            'arctic': 'radiating_rocks',
+            'deep_sea': 'ocean',
+            'desert': 'glowing_rocks',
+            'forest': 'alien_forest',
+            'plains': 'alien_forest', // Use alien_forest for plains
+            'grasslands': 'alien_forest',
+            'boreal': 'radiating_rocks',
+            'jungle': 'alien_forest',
+            'ocean': 'ocean',
+            'swamp': 'alien_forest',
+            'tundra': 'radiating_rocks', // Map tundra to radiating_rocks
+            'polar_desert': 'radiating_rocks', // Map polar_desert to radiating_rocks
+            'rock': 'glowing_rocks',
+            'mountains': 'glowing_rocks',
+            'hills': 'glowing_rocks',
+            'burrow_tube': 'burrow_tube'
+        };
+
+        const mapped = mapping[galaxyTerrain.toLowerCase()];
+        if (mapped && !fallback) return mapped;
+        
+        // Fallback mappings
+        if (fallback) {
+            if (galaxyTerrain.includes('water') || galaxyTerrain.includes('sea')) return 'ocean';
+            if (galaxyTerrain.includes('forest') || galaxyTerrain.includes('jungle')) return 'alien_forest';
+            if (galaxyTerrain.includes('mountain') || galaxyTerrain.includes('rock')) return 'glowing_rocks';
+            if (galaxyTerrain.includes('desert') || galaxyTerrain.includes('dry')) return 'glowing_rocks';
+            if (galaxyTerrain.includes('cold') || galaxyTerrain.includes('polar') || galaxyTerrain.includes('tundra')) return 'radiating_rocks';
+        }
+
+        return mapped || 'alien_forest'; // Default to alien_forest
+    }
+
+    // Get burrow tube tile with auto-tiling based on adjacent connections
+    getBurrowTubeTile(adjacentTiles, baseTileData) {
+        // Calculate bit mask for adjacent burrow tubes
+        // Bit positions: 0=NW, 1=NE, 2=E, 3=SE, 4=SW, 5=W
+        let bitMask = 0;
+        
+        if (adjacentTiles.northwest === 'burrow_tube') bitMask |= (1 << 0);
+        if (adjacentTiles.northeast === 'burrow_tube') bitMask |= (1 << 1);
+        if (adjacentTiles.east === 'burrow_tube') bitMask |= (1 << 2);
+        if (adjacentTiles.southeast === 'burrow_tube') bitMask |= (1 << 3);
+        if (adjacentTiles.southwest === 'burrow_tube') bitMask |= (1 << 4);
+        if (adjacentTiles.west === 'burrow_tube') bitMask |= (1 << 5);
+
+        // Calculate tile position based on bit mask
+        const tileIndex = this.calculateTilePosition(bitMask);
+        
+        return {
+            image: baseTileData.image,
+            x: tileIndex * this.tileWidth,
+            y: 0, // Assuming single row for now
+            width: this.tileWidth,
+            height: this.tileHeight,
+            terrainType: 'burrow_tube',
+            bitMask: bitMask
+        };
+    }
+
+    // Calculate tile position for burrow tube auto-tiling
+    // Fixed bit logic for proper connections
+    calculateTilePosition(bitMask) {
+        // Handle special cases first
+        if (bitMask === 0) return 0; // Isolated tube
+        
+        // Check for straight connections
+        if ((bitMask & 0b001001) === 0b001001) return 1; // NW-SE diagonal
+        if ((bitMask & 0b000110) === 0b000110) return 2; // NE-SW diagonal
+        if ((bitMask & 0b010100) === 0b010100) return 3; // E-W horizontal
+        if ((bitMask & 0b100001) === 0b100001) return 4; // N-S vertical
+        
+        // Check for corner connections
+        if ((bitMask & 0b011000) === 0b011000) return 5; // NE-E
+        if ((bitMask & 0b110000) === 0b110000) return 6; // E-SE
+        if ((bitMask & 0b000011) === 0b000011) return 7; // SW-W
+        if ((bitMask & 0b000101) === 0b000101) return 8; // W-NW
+        
+        // Check for three-way connections
+        if ((bitMask & 0b011100) === 0b011100) return 9;  // NE-E-SE
+        if ((bitMask & 0b110001) === 0b110001) return 10; // E-SE-SW
+        if ((bitMask & 0b100011) === 0b100011) return 11; // SE-SW-W
+        if ((bitMask & 0b001101) === 0b001101) return 12; // SW-W-NW
+        
+        // Check for cross connections
+        if ((bitMask & 0b101010) === 0b101010) return 13; // Alternating pattern
+        if ((bitMask & 0b010101) === 0b010101) return 14; // Other alternating
+        
+        // Default to first tile if no pattern matches
+        return 0;
+    }
+
+    // Check if tileset is loaded
+    isLoaded() {
+        return this.loaded;
+    }
+}
+
+// Assign to window to ensure global availability
+window.AlioTilesetLoader = AlioTilesetLoader;
+console.log('AlioTilesetLoader assigned to window:', typeof window.AlioTilesetLoader);
+} // End AlioTilesetLoader guard clause
+    </script>
 </head>
 <body>
     <div id="mainContainer">
@@ -191,9 +806,15 @@
         }
 
         // Planet data from Rails
-        const planetId = <%= @celestial_body.id %>;
-        const planetName = <%= raw @celestial_body.name.to_json %>;
-        const alioTileConfig = <%= raw @alio_tile_config ? @alio_tile_config.to_json : 'null' %>;
+        if (typeof planetId === 'undefined') {
+            var planetId = <%= @celestial_body.id %>;
+        }
+        if (typeof planetName === 'undefined') {
+            var planetName = <%= raw @celestial_body.name.to_json %>;
+        }
+        if (typeof alioTileConfig === 'undefined') {
+            var alioTileConfig = <%= raw @alio_tile_config ? @alio_tile_config.to_json : 'null' %>;
+        }
 
         // Initialize surface view
         async function initSurfaceView() {
@@ -211,7 +832,16 @@
             }
 
             // Load tileset
-            const tilesetLoaded = await tilesetLoader.loadTileset();
+            let tilesetLoaded = await tilesetLoader.loadTileset();
+            
+            // Fallback to standard tileset if Alio fails
+            if (!tilesetLoaded && currentTileset === 'alio') {
+                console.log('Alio tileset failed to load, falling back to standard tileset');
+                currentTileset = 'bigtrident';
+                tilesetLoader = new TilesetLoader(currentTileset);
+                tilesetLoaded = await tilesetLoader.loadTileset();
+            }
+            
             updateTilesetStatus(tilesetLoaded);
 
             if (tilesetLoaded) {
@@ -252,6 +882,27 @@
                 let civ4Data = <%= raw (civ4_map_data || civ4_properties_data) ? (civ4_map_data || civ4_properties_data).to_json : 'null' %>;
                 let hasPropertiesGrid = <%= raw has_properties_grid ? 'true' : 'false' %>;
                 let hydrosphereData = <%= raw @celestial_body&.hydrosphere ? @celestial_body.hydrosphere.attributes.to_json : 'null' %>;
+
+                // Handle procedural planet data format (biomes array instead of grid)
+                if (terrainData && terrainData.biomes && !terrainData.grid) {
+                    // Convert biomes array to a simple grid for rendering
+                    // Assume 9x10 grid (90 biomes) for basic visualization
+                    const biomes = terrainData.biomes;
+                    const width = 10;
+                    const height = 9;
+                    terrainData.grid = [];
+                    for (let y = 0; y < height; y++) {
+                        terrainData.grid[y] = [];
+                        for (let x = 0; x < width; x++) {
+                            const index = y * width + x;
+                            // Ensure we have a valid string terrain type
+                            const biomeValue = biomes[index];
+                            terrainData.grid[y][x] = (typeof biomeValue === 'string' && biomeValue.length > 0) ? biomeValue : 'grassland';
+                        }
+                    }
+                    terrainData.grid_width = width;
+                    terrainData.grid_height = height;
+                }
 
                 // Extract layers (same logic as monitor view)
                 layers = extractLayers(terrainData, freecivData, civ4Data, hasPropertiesGrid, hydrosphereData);
@@ -377,6 +1028,11 @@
 
         // Normalize terrain type
         function normalizeTerrainType(terrainCode) {
+            // Handle non-string inputs
+            if (typeof terrainCode !== 'string') {
+                return 'plains';
+            }
+            
             const mapping = {
                 ' ': 'ocean',
                 'a': 'arctic',
@@ -452,6 +1108,12 @@
                         const destY = y * tileSize * zoom;
                         const destSize = tileSize * zoom;
 
+                        // For Alio tileset (overlay graphics), draw body-specific background first
+                        if (tilesetLoader instanceof AlioTilesetLoader) {
+                            surfaceCtx.fillStyle = getBodyBackgroundColor();
+                            surfaceCtx.fillRect(destX, destY, destSize, destSize);
+                        }
+
                         surfaceCtx.drawImage(
                             tileData.image,
                             tileData.x, tileData.y, tileData.width, tileData.height,
@@ -493,6 +1155,27 @@
                 swamp: '#556B2F'
             };
             return colors[terrainType] || '#808080';
+        }
+
+        // Get body-specific background color for Alio overlay tileset
+        function getBodyBackgroundColor() {
+            const bodyColors = {
+                'Luna': '#4a4a4a',      // Grey regolith
+                'Mars': '#8b4513',      // Rust/sienna
+                'Mercury': '#3d3d3d',   // Dark grey basalt
+                'Venus': '#cc9966',     // Tan/beige
+                'Titan': '#cc6600',     // Orange tholin
+                'Earth': '#2d5a27',     // Dark green
+                'Europa': '#e8e8f0',    // Icy white-blue
+                'Io': '#ffcc00',        // Sulfur yellow
+                'Ganymede': '#8b8b7a',  // Grey-brown
+                'Callisto': '#5a5a5a',  // Dark grey
+                'Ceres': '#6b6b6b',     // Medium grey
+                'Vesta': '#7a7a7a',     // Light grey basalt
+                'Pluto': '#d4c4b0',     // Tan ice
+                'Triton': '#b8d4e8'     // Light blue ice
+            };
+            return bodyColors[planetName] || '#5a5a5a';  // Default grey
         }
 
         // Update render statistics
