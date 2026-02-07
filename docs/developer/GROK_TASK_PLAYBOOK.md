@@ -342,22 +342,21 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails db:test:
   - Documentation updated in `docs/crafts/asteroid_relocation_tug_guide.md`
   - Mission profiles created: `l1_tug_construction_profile_v1.json` and manifest
 
-- **🎯 NEXT PRIORITY: Alio Tileset Surface View Integration**
-  - Wire FreeCiv Alio tileset (GPL-2.0+) into Surface View rendering
-  - Complete AlioTilesetService already implemented and tested
-  - Add tileset selector, JavaScript loader, and body-specific configurations
-  - Enable sci-fi planetary rendering with burrow tubes, thermal vents, etc.
+- **✅ COMPLETED: Alio Tileset Surface View Integration**
+  - FreeCiv Alio tileset (GPL-2.0+) integrated into Surface View rendering
+  - Sci-fi planetary maps with burrow tubes, thermal vents, body-specific tile configurations
+  - 25 RSpec examples, 0 failures, visual testing at /admin/celestial_bodies/3/surface?tileset=alio
 
 - **Strategy:** Sequential task completion with full testing and documentation
-- **Next:** Complete Alio tileset integration, then evaluate AI Manager learning patterns
+- **Next:** Evaluate AI Manager learning patterns and terrain generation architecture
 
 ### Task Completion Log
 Track progress here after each major task:
 
 | Date | Task | Status | Notes |
 |------|------|--------|-------|
+| 2026-02-07 | Alio Tileset Surface View Integration | ✅ COMPLETED | 25 examples, 0 failures, sci-fi planetary rendering with burrow tubes |
 | 2026-02-05 | Tug Construction Integration Test | ✅ COMPLETED | 4 examples, 0 failures, stable across runs |
-| 2026-02-05 | Alio Tileset Surface View Integration | 🎯 IN PROGRESS | Service complete, need controller/view/JS integration |
 | 2026-01-17 | Backup Restoration Session | ✅ COMPLETED | BaseSettlement, CelestialBody, BaseStructure factory fixes |
 | 2026-01-17 | GameController/ShellPrintingJob Fixes | ✅ COMPLETED | 393 → 366 failures (-27) |
 
