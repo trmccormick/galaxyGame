@@ -937,22 +937,31 @@
                             default: color = '#8B4513'; // Default brown
                         }
                     }
-                    // Elevation-based height map (SimEarth style)
+                    // Elevation-based topographic map (grayscale/brown scale)
                     else if (elevation !== undefined && elevation !== null) {
-                        // Height map coloring based on elevation
+                        // Topographic coloring based on elevation (land only - water handled separately)
                         const normalizedElevation = (elevation - minElevation) / (maxElevation - minElevation);
-                        if (normalizedElevation < 0.3) {
-                            // Low elevation - blue/green (water/coastal)
-                            const blue = Math.floor(normalizedElevation * 255);
-                            color = `rgb(0, ${blue}, ${Math.floor(blue * 0.5)})`;
+
+                        if (normalizedElevation < 0.2) {
+                            // Very low elevation - dark brown (valleys, coastal plains)
+                            const intensity = Math.floor(40 + (normalizedElevation / 0.2) * 60);
+                            color = `rgb(${intensity}, ${Math.floor(intensity * 0.7)}, ${Math.floor(intensity * 0.4)})`;
+                        } else if (normalizedElevation < 0.4) {
+                            // Low elevation - brown (plains, lowlands)
+                            const intensity = Math.floor(100 + ((normalizedElevation - 0.2) / 0.2) * 55);
+                            color = `rgb(${intensity}, ${Math.floor(intensity * 0.8)}, ${Math.floor(intensity * 0.6)})`;
                         } else if (normalizedElevation < 0.6) {
-                            // Mid elevation - green (land)
-                            const green = Math.floor(128 + (normalizedElevation - 0.3) * 255);
-                            color = `rgb(0, ${green}, 0)`;
+                            // Mid elevation - tan/brown (hills, plateaus)
+                            const intensity = Math.floor(155 + ((normalizedElevation - 0.4) / 0.2) * 40);
+                            color = `rgb(${intensity}, ${Math.floor(intensity * 0.9)}, ${Math.floor(intensity * 0.7)})`;
+                        } else if (normalizedElevation < 0.8) {
+                            // High elevation - light brown/gray (mountains)
+                            const gray = Math.floor(195 + ((normalizedElevation - 0.6) / 0.2) * 60);
+                            color = `rgb(${gray}, ${gray}, ${Math.floor(gray * 0.9)})`;
                         } else {
-                            // High elevation - brown/gray (mountains)
-                            const gray = Math.floor(139 + (normalizedElevation - 0.6) * 116);
-                            color = `rgb(${gray}, ${gray - 20}, ${gray - 40})`;
+                            // Very high elevation - gray/white (peaks, snow-capped mountains)
+                            const white = Math.floor(220 + ((normalizedElevation - 0.8) / 0.2) * 35);
+                            color = `rgb(${white}, ${white}, ${white})`;
                         }
                     }
                     
