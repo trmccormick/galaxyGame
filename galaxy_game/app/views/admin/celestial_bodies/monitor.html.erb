@@ -603,6 +603,68 @@
             }
             console.log('=== END NASA DATA DEBUG ===');
 
+            // Function to calculate water layer from hydrosphere data using bathtub model
+            function calculateWaterLayerFromHydrosphere(hydrosphereData, elevationLayer) {
+                if (!hydrosphereData || !elevationLayer || !elevationLayer.grid) {
+                    return null;
+                }
+
+                const width = elevationLayer.width;
+                const height = elevationLayer.height;
+                const elevationGrid = elevationLayer.grid;
+
+                // Get water coverage from hydrosphere
+                let waterCoverage = hydrosphereData.water_coverage || 0;
+                if (waterCoverage > 1) {
+                    waterCoverage = waterCoverage / 100; // Convert percentage to decimal
+                }
+
+                // Calculate sea level using bathtub model
+                let seaLevel = 0;
+                if (waterCoverage > 0) {
+                    // Collect all elevation values and sort them
+                    const allElevations = [];
+                    for (let y = 0; y < height; y++) {
+                        for (let x = 0; x < width; x++) {
+                            const elev = elevationGrid[y][x];
+                            if (elev !== null && elev !== undefined) {
+                                allElevations.push(elev);
+                            }
+                        }
+                    }
+                    allElevations.sort((a, b) => a - b);
+
+                    // Find the elevation at the water coverage percentile
+                    const seaLevelIndex = Math.floor(allElevations.length * waterCoverage);
+                    seaLevel = allElevations[Math.min(seaLevelIndex, allElevations.length - 1)];
+                }
+
+                // Create water grid - each cell contains water depth (positive) or 0 (land)
+                const waterGrid = [];
+                for (let y = 0; y < height; y++) {
+                    waterGrid[y] = [];
+                    for (let x = 0; x < width; x++) {
+                        const elevation = elevationGrid[y][x];
+                        if (elevation !== null && elevation !== undefined && elevation < seaLevel) {
+                            // Underwater - calculate depth (sea level minus elevation)
+                            waterGrid[y][x] = seaLevel - elevation;
+                        } else {
+                            // Above water
+                            waterGrid[y][x] = 0;
+                        }
+                    }
+                }
+
+                return {
+                    grid: waterGrid,
+                    width: width,
+                    height: height,
+                    layer_type: 'water',
+                    sea_level: seaLevel,
+                    water_coverage: waterCoverage
+                };
+            }
+
             // Layer extraction system - NASA-first: use terrainData directly
             let layers = {
                 terrain: null,    // Not used in NASA-first system
