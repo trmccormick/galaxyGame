@@ -384,6 +384,87 @@ window.AdminMonitor = (function() {
   }
 
   // ============================================
+  // Hydrosphere Color Function
+  // ============================================
+
+  /**
+   * Get hydrosphere color based on liquid composition and depth
+   * Shallow water = light cyan/turquoise, Deep water = dark blue
+   * Mars = ice caps, Titan = orange methane, Earth = blue water
+   */
+  function getHydrosphereColor(waterDepth, pData) {
+    const name = (pData.name || '').toLowerCase();
+    const liquid = (pData.liquid_name || 'H2O').toUpperCase();
+    const temp = pData.surface_temperature || pData.temperature || 288;
+
+    // Normalize depth: 0-200m = shallow, 200-2000m = mid, 2000m+ = deep
+    // waterDepth is in meters (difference between sea level and ocean floor)
+    const shallowThreshold = 200;
+    const deepThreshold = 4000;
+
+    // Mars - ice caps (frozen H2O/CO2)
+    if (name === 'mars' || name.includes('mars')) {
+      const intensity = Math.min(1, waterDepth / 1000);
+      const iceValue = Math.round(200 + intensity * 55);
+      return `rgba(${iceValue}, ${iceValue}, 255, 0.85)`;
+    }
+
+    // Titan - methane/ethane lakes (orange)
+    if (name === 'titan' || liquid === 'CH4' || liquid === 'C2H6' ||
+        liquid.includes('METHANE') || liquid.includes('ETHANE')) {
+      const intensity = Math.min(1, waterDepth / 500);
+      const r = Math.round(180 + intensity * 75);
+      const g = Math.round(80 + intensity * 40);
+      return `rgba(${r}, ${g}, 0, 0.8)`;
+    }
+
+    // Europa/Enceladus - subsurface ocean (pale blue-white ice)
+    if (name === 'europa' || name === 'enceladus') {
+      const intensity = Math.min(1, waterDepth / 1000);
+      const iceBlue = Math.round(220 + intensity * 35);
+      return `rgba(${iceBlue}, ${iceBlue}, 255, 0.7)`;
+    }
+
+    // Nitrogen ice (Pluto/Triton)
+    if (liquid === 'N2' || name === 'pluto' || name === 'triton') {
+      const intensity = Math.min(1, waterDepth / 500);
+      const r = Math.round(230 + intensity * 25);
+      const g = Math.round(200 + intensity * 30);
+      const b = Math.round(200 + intensity * 30);
+      return `rgba(${r}, ${g}, ${b}, 0.75)`;
+    }
+
+    // Default: H2O water (Earth-like)
+    // Shallow = light cyan/turquoise, Deep = dark navy blue
+    if (waterDepth < shallowThreshold) {
+      // Shallow water: light cyan to medium blue
+      // 0m = rgb(100, 200, 255) light cyan
+      // 200m = rgb(50, 150, 220) medium blue
+      const t = waterDepth / shallowThreshold;
+      const r = Math.round(100 - t * 50);
+      const g = Math.round(200 - t * 50);
+      const b = Math.round(255 - t * 35);
+      return `rgba(${r}, ${g}, ${b}, 0.85)`;
+    } else if (waterDepth < deepThreshold) {
+      // Mid-depth: medium blue to dark blue
+      // 200m = rgb(50, 150, 220)
+      // 4000m = rgb(0, 50, 150) dark blue
+      const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+      const r = Math.round(50 - t * 50);
+      const g = Math.round(150 - t * 100);
+      const b = Math.round(220 - t * 70);
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    } else {
+      // Deep ocean: dark navy blue
+      // 4000m+ = rgb(0, 20, 100) to rgb(0, 10, 80)
+      const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+      const g = Math.round(20 - t * 10);
+      const b = Math.round(100 - t * 20);
+      return `rgba(0, ${g}, ${b}, 0.95)`;
+    }
+  }
+
+  // ============================================
   // Atmospheric Analysis
   // ============================================
 
@@ -755,7 +836,8 @@ window.AdminMonitor = (function() {
         
         // LAYER 1: Water overlay (only if water data exists)
         if (visibleLayers.has('water') && layers.water && layers.water.grid && layers.water.grid[y] && layers.water.grid[y][x] > 0) {
-          color = '#1e3a8a';  // Simple ocean blue
+          const waterDepth = layers.water.grid[y][x];
+          color = getHydrosphereColor(waterDepth, planetData);
         }
 
         // LAYER 2: Biome overlay (only for planets with biospheres)
