@@ -1,8 +1,25 @@
-# Galaxy Game: Grok Task Playbook
+# Galaxy Game: Contributor Task Playbook
 
 Purpose: Provide small, assignable task templates with exact commands, guardrails, and acceptance criteria for reliable maintenance and recovery.
 
 ## [2026-01-17] Environment Safety Patch
+
+### ⚠️ CRITICAL: Mandatory Session Start Protocol
+**BEFORE doing ANYTHING in this session:**
+
+1. ✅ Read ENVIRONMENT_BOUNDARIES.md
+2. ✅ Read the relevant sections of this playbook (GROK_TASK_PLAYBOOK.md)
+3. ✅ Acknowledge you've read and will follow all git rules
+
+#### Non-Negotiable Git Rules:
+- ONLY commit files you directly created/modified in this session
+- NEVER use `git add .` or `git add -A` 
+- ALWAYS run `git status` before committing
+- BACKUP files are NEVER committed (*.old*, *.new*, *.bak, etc.)
+- LOG files are NEVER committed
+- ZIP/DATA files are NEVER committed
+
+**Any violation results in session termination.**
 
 ### ⚠️ CRITICAL: Mandatory Test Logging Protocol
 **ALL RSpec test runs MUST be logged to preserve results for analysis and prevent redundant execution.**
