@@ -421,7 +421,7 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - Interactive terrain map with NASA-accurate rendering (180x90 grid, 8px tiles)
 - Data-driven atmospheric rendering based on planetary conditions (temperature, pressure, composition)
 - Planet-specific visual effects (Mars red tint, Venus volcanic haze)
-- Layer toggles for terrain, water, biomes, temperature, rainfall, and resources
+- Layer toggles for terrain, water, biomes, temperature, rainfall, resources, and civilization features
 - AI mission log for planet-specific missions
 - AI testing console with predefined test scenarios
 - Geological features tracking
@@ -448,11 +448,21 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - **Resources**: Geological deposits identified from terrain patterns
 - **Legacy FreeCiv/Civ4**: No longer used for terrain rendering - reserved for AI Manager training data only
 
+**Civilization Data Sources:**
+- **Major Cities**: Real-world city data with population > 1M, converted to lat/lon coordinates
+- **Strategic Locations**: Military bases, ports, and defensive positions from historical/geographical data
+- **Resource Hubs**: Mining centers, industrial complexes, and trade ports
+- **Ancient Wonders**: UNESCO World Heritage sites and historical landmarks
+- **Geological Features**: Notable canyons, mountains, and natural formations (Grand Canyon, Himalayas, etc.)
+- **Data Format**: JSON files in `data/json-data/star_systems/sol/celestial_bodies/earth/geological_features/`
+- **Coordinate System**: Lat/lon converted to equirectangular grid positions for rendering
+
 **Layer System:**
 - **Elevation Layer**: Always ON - NASA elevation data rendered as height map (SimEarth style)
 - **Biome Layer**: Toggleable - NASA biome classification overlay
 - **Water Layer**: Toggleable - Hydrosphere-based water coverage
 - **Resource Layer**: Toggleable - Geological resource highlighting
+- **Civilization Layer**: Toggleable - Strategic Earth features (cities, wonders, locations) for gameplay planning
 
 **Terrain Color Mapping (NASA-First):**
 - **Elevation-Based Height Map**: Brown gradient from low (dark brown) to high (light tan/white peaks)
@@ -467,6 +477,12 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
   - Volcanic: `#8B0000` (dark red)
 - **Water Layer**: Blue shades based on depth (coast, ocean, deep_sea)
 - **Resource Layer**: Yellow highlights for mineral deposits
+- **Civilization Layer**: Strategic features with distinct colors
+  - Major Cities: `#FFD700` (gold) - Large population centers
+  - Strategic Locations: `#FF4500` (orange red) - Military/defensive positions
+  - Resource Hubs: `#32CD32` (lime green) - Economic/trade centers
+  - Ancient Wonders: `#9370DB` (medium purple) - Historical/cultural sites
+  - Geological Features: `#00CED1` (dark turquoise) - Canyons, mountains, etc.
 
 **Data Endpoints:**
 - `GET /admin/celestial_bodies/:id/sphere_data.json` - Live sphere metrics
