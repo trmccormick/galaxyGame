@@ -135,11 +135,13 @@
                     </thead>
                     <tbody>
                         <% @celestial_body.atmosphere.composition.each do |gas, percentage| %>
-                        <tr style="border-bottom: 1px solid #333;">
-                            <td style="padding: 8px; color: #0ff;"><%= gas %></td>
-                            <td style="padding: 8px; color: #0f0; text-align: right;"><%= number_with_precision(percentage, precision: 2) %>%</td>
-                            <td style="padding: 8px; color: #0f0; text-align: right;"><%= number_with_precision((percentage * @celestial_body.atmosphere.pressure / 100), precision: 4) %> bar</td>
-                        </tr>
+                                                <tr style="border-bottom: 1px solid #333;">
+                                                        <td style="padding: 8px; color: #0ff;">
+                                                            <%= "#{gas}: #{number_with_precision((percentage / 100.0) * @celestial_body.atmosphere.total_atmospheric_mass, precision: 1)}" %>
+                                                        </td>
+                                                        <td style="padding: 8px; color: #0f0; text-align: right;"><%= number_with_precision(percentage, precision: 2) %>%</td>
+                                                        <td style="padding: 8px; color: #0f0; text-align: right;"><%= number_with_precision((percentage * @celestial_body.atmosphere.pressure / 100), precision: 4) %> bar</td>
+                                                </tr>
                         <% end %>
                     </tbody>
                 </table>

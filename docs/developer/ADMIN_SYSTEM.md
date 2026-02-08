@@ -155,10 +155,6 @@ Mission pattern testing and management interface.
 
 **Features:**
 - Pattern library with activation/deactivation controls
-- Testing interface for pattern validation
-- Pattern metadata: target bodies, complexity, success rates
-- Configuration testing with tech level and budget parameters
-- Pattern status indicators (active/inactive)
 
 **Controller:** `Admin::AiManagerController#patterns`
 
@@ -184,12 +180,6 @@ AI system performance monitoring and optimization controls.
 # Performance metrics (currently stub implementation)
 @metrics = {
   success_rate: 0,
-  average_timeline: 0,
-  resource_efficiency: 0
-}
-```
-
-### 1.5. AI Map Generation Studio (`/admin/map_studio`)
 
 AI-powered planetary map generation studio for creating procedural terrain maps from NASA GeoTIFF data sources.
 
