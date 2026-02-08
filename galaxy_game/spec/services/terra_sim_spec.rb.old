@@ -1,0 +1,96 @@
+# spec/services/terra_sim_spec.rb
+
+require 'rails_helper'
+
+RSpec.describe TerraSim, type: :service do
+  let(:celestial_body) { instance_double('CelestialBody', albedo: 0.3, insolation: 1361) }
+  let(:star) { create(:star) }
+  let(:service) { TerraSim.new }
+
+  before do
+    # Mock the methods or attributes used by TerraSim
+    allow(Game).to receive(:current_celestial_body).and_return(celestial_body)
+    allow(Game).to receive(:current_star).and_return(star)
+
+    allow(celestial_body).to receive(:albedo).and_return(0.3)
+    allow(celestial_body).to receive(:insolation).and_return(1361)
+    allow(celestial_body).to receive(:solar_constant).and_return(1361)
+    allow(celestial_body).to receive(:gas).with('CO2').and_return(double(mb: 400, pole: 100, regolith: 50, pr: 50, td: 210))
+    allow(celestial_body).to receive(:gas).with('N').and_return(double(mb: 780000))
+    allow(celestial_body).to receive(:gas).with('O2').and_return(double(mb: 210000))
+    allow(celestial_body).to receive(:gas).with('Ar').and_return(double(mb: 10000))
+    allow(celestial_body).to receive(:gas).with('Kr').and_return(double(mb: 1))
+    allow(celestial_body).to receive(:gas).with('CH4').and_return(double(mb: 2))
+    allow(celestial_body).to receive(:gas).with('NH3').and_return(double(mb: 3))
+    allow(celestial_body).to receive(:gas).with('CFC').and_return(double(mb: 0.1))
+    allow(celestial_body).to receive(:gas).with('H2O').and_return(double(mb: 4))
+
+    allow(celestial_body).to receive(:set_gas).and_return(true)
+    allow(celestial_body).to receive(:set_effective_temp).and_return(true)
+    allow(celestial_body).to receive(:set_greenhouse_temp).and_return(true)
+    allow(celestial_body).to receive(:set_polar_temp).and_return(true)
+    allow(celestial_body).to receive(:set_tropic_temp).and_return(true)
+    allow(celestial_body).to receive(:set_delta_t).and_return(true)
+    allow(celestial_body).to receive(:set_ice_lat).and_return(true)
+    allow(celestial_body).to receive(:set_hab_ratio).and_return(true)
+  end
+
+  describe '#calc_current' do
+    it 'calculates the planetary values correctly' do
+      service.calc_current
+
+      expect(service.instance_variable_get(:@p_co2)).to eq(400 / 1000.0)
+      expect(service.instance_variable_get(:@p_n2)).to eq(780000 / 1000.0)
+      expect(service.instance_variable_get(:@p_o2)).to eq(210000 / 1000.0)
+      expect(service.instance_variable_get(:@p_ar)).to eq(10000 / 1000.0)
+      expect(service.instance_variable_get(:@p_kr)).to eq(1 / 1000.0)
+      expect(service.instance_variable_get(:@p_ch4)).to eq(2 / 1_000_000.0)
+      expect(service.instance_variable_get(:@p_nh3)).to eq(3 / 1_000_000.0)
+      expect(service.instance_variable_get(:@p_cfc)).to eq(0.1 / 10.0)
+      expect(service.instance_variable_get(:@p_h2o)).to eq(4 / 1000.0)
+    end
+  end
+
+  describe '#greenhouse' do
+    it 'calculates the greenhouse effect and temperatures' do
+      service.calc_current
+      service.greenhouse
+
+      expect(service.instance_variable_get(:@tb)).to be_a(Float)
+      expect(service.instance_variable_get(:@ts)).to be_a(Float)
+      expect(service.instance_variable_get(:@tp)).to be_a(Float)
+      expect(service.instance_variable_get(:@tt)).to be_a(Float)
+      expect(service.instance_variable_get(:@d_t)).to be_a(Float)
+    end
+  end
+
+  describe '#biosphere' do
+    it 'calculates the habitable ratio and ice latitude' do
+      service.calc_current
+      service.greenhouse
+      service.biosphere
+
+      expect(service.instance_variable_get(:@hab_ratio)).to be_between(0, 1)
+      expect(service.instance_variable_get(:@ice_lat)).to be_a(Float)
+    end
+  end
+
+  describe '#output' do
+    it 'updates the planet with the calculated values' do
+      service.calc_current
+      service.output
+
+      expect(celestial_body).to have_received(:set_gas).with('CO2', anything, anything, anything, anything, anything)
+      expect(celestial_body).to have_received(:set_gas).with('H2O', anything, 0, 0, 0, 0)
+      expect(celestial_body).to have_received(:set_effective_temp).with(anything)
+      expect(celestial_body).to have_received(:set_greenhouse_temp).with(anything)
+      expect(celestial_body).to have_received(:set_polar_temp).with(anything)
+      expect(celestial_body).to have_received(:set_tropic_temp).with(anything)
+      expect(celestial_body).to have_received(:set_delta_t).with(anything)
+      expect(celestial_body).to have_received(:set_ice_lat).with(anything)
+      expect(celestial_body).to have_received(:set_hab_ratio).with(anything)
+    end
+  end
+end
+
+  

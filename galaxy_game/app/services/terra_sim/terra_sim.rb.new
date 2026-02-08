@@ -1,0 +1,99 @@
+# app/services/terra_sim.rb
+module TerraSim
+  class Simulator
+    attr_reader :celestial_body, :star
+
+    IDEAL_GAS_CONSTANT = 0.0821 # L·atm/(mol·K)
+    STEFAN_BOLTZMANN_CONSTANT = 5.67e-8 # W/(m²·K⁴)
+    GREENHOUSE_GASES = %w[CO2 CH4 N2O H2O].freeze
+
+    def initialize(celestial_body)
+      @celestial_body = celestial_body
+      @star = celestial_body.solar_system&.star
+    end
+
+    def calc_current
+      return unless star.present?
+
+      update_temperature
+      update_pressure
+      update_gravity
+      update_greenhouse_effect
+      update_biosphere
+
+      celestial_body.save!
+    end
+
+    private
+
+    def update_temperature
+      return unless celestial_body.distance_from_star.present? && star.luminosity.present?
+
+      solar_constant = star.luminosity / (4 * Math::PI * celestial_body.distance_from_star**2)
+      new_temperature = Math.cbrt(solar_constant / (IDEAL_GAS_CONSTANT * celestial_body.albedo))
+      celestial_body.surface_temperature = new_temperature
+    end
+
+    def update_pressure
+      return unless celestial_body.atmosphere.present? && celestial_body.surface_temperature.present?
+
+      atmosphere = celestial_body.atmosphere
+      new_pressure = atmosphere.calculate_pressure(celestial_body.surface_temperature)
+      atmosphere.update(pressure: new_pressure)
+    end
+
+    def update_gravity
+      celestial_body.update_gravity
+    end
+
+    def update_greenhouse_effect
+      return unless celestial_body.atmosphere.present? && celestial_body.surface_temperature.present?
+
+      greenhouse_factor = calculate_greenhouse_effect
+      celestial_body.surface_temperature *= greenhouse_factor
+    end
+
+    def calculate_greenhouse_effect
+      return 1.0 unless celestial_body.atmosphere.present?
+
+      atmosphere = celestial_body.atmosphere
+      greenhouse_concentration = atmosphere_gas_effect
+      greenhouse_factor = 1.0 + (0.01 * greenhouse_concentration)
+      greenhouse_factor
+    end
+
+    def atmosphere_gas_effect
+      return 0.0 unless celestial_body.atmosphere.present?
+
+      atmosphere = celestial_body.atmosphere
+      greenhouse_gas_effect = 0.0
+
+      GREENHOUSE_GASES.each do |gas|
+        concentration = atmosphere.gas_composition[gas] || 0.0
+        greenhouse_gas_effect += concentration
+      end
+
+      greenhouse_gas_effect
+    end
+
+    def update_biosphere
+      return unless celestial_body.biosphere.present?
+
+      tropical_temp = celestial_body.biosphere.temperature_tropical
+      polar_temp = celestial_body.biosphere.temperature_polar
+
+      if tropical_temp > 273 && polar_temp < 273
+        habitable_ratio = ((tropical_temp - 273) / (tropical_temp - polar_temp))**0.666667
+        ice_latitude = Math.asin(habitable_ratio)
+      elsif tropical_temp < 273
+        habitable_ratio = 0
+        ice_latitude = 0
+      elsif polar_temp > 273
+        habitable_ratio = 1
+        ice_latitude = Math.asin(1)
+      end
+
+      celestial_body.biosphere.update(habitable_ratio: habitable_ratio, ice_latitude: ice_latitude)
+    end
+  end
+end

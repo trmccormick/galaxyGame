@@ -1,0 +1,119 @@
+# app/services/terra_sim.rb
+
+class TerraSim
+  IDEAL_GAS_CONSTANT = 8.314
+  DEFAULT_VOLUME = 1.0 # Adjust based on the planet size
+
+  def initialize
+    @celestial_body = nil
+    @sun = nil
+    @atmosphere = nil
+    @temperature_base = 0
+    @temperature_surface = 0
+    @temperature_polar = 0
+    @temperature_tropical = 0
+    @delta_temperature = 0
+    @habitable_ratio = 0
+    @ice_latitude = 0
+  end
+
+  def set_info
+    @celestial_body = Game.current_celestial_body
+    @sun = Game.current_star
+    @atmosphere = @celestial_body.atmosphere
+  end
+
+  def calc_current
+    set_info
+    puts "calcCurrent #{@celestial_body.name}"
+
+    # Update solar constant and albedo
+    solar_constant = @celestial_body.solar_constant(@sun)
+    albedo = @celestial_body.albedo
+
+    # Perform greenhouse gas recalculations
+    greenhouse
+
+    # Output updated values
+    output
+
+    @celestial_body
+  end
+
+  def greenhouse
+    sigma = 5.67e-8  # Stefan-Boltzmann constant in W/m^2K^4
+    total_greenhouse_effect = calculate_greenhouse_effect
+
+    # Calculate base temperature (effective temperature without atmosphere)
+    @temperature_base = ((1 - @celestial_body.albedo) * @celestial_body.insolation / (4 * sigma)) ** 0.25
+
+    # Surface temperature after greenhouse effect
+    @temperature_surface = @temperature_base + total_greenhouse_effect
+
+    # Polar and tropical temperatures (based on surface temp and some assumptions)
+    @temperature_polar = @temperature_surface - 75
+    @temperature_tropical = @temperature_surface * 1.1
+
+    # Difference between surface and base temperature
+    @delta_temperature = @temperature_surface - @temperature_base
+
+    # Update biosphere conditions
+    update_biosphere
+  end
+
+  def calculate_greenhouse_effect
+    # Example gases: CO2, CH4, H2O, NH3, CFCs
+    co2_effect = atmosphere_gas_effect('CO2', 0.45, 0.11)
+    ch4_effect = atmosphere_gas_effect('CH4', 0.278, nil)
+    h2o_effect = atmosphere_gas_effect('H2O', 0.3, nil)
+    nh3_effect = atmosphere_gas_effect('NH3', 0.32, nil)
+    cfc_effect = atmosphere_gas_effect('CFC', 1.1, 0.015)
+
+    # Greenhouse effects from gases
+    gas_effects = {
+      'CO2' => (0.9 * co2_effect),
+      'CH4' => (0.5 * ch4_effect),
+      'H2O' => h2o_effect,
+      'NH3' => (9.6 * nh3_effect),
+      'CFC' => cfc_effect
+    }
+
+    # Sum of all greenhouse effects from gases
+    gas_effects.values.compact.sum
+  end
+
+  def atmosphere_gas_effect(gas_name, power, modifier = nil)
+    gas = @atmosphere.gases.find { |g| g.name == gas_name }
+    return 0 unless gas
+
+    base_effect = gas.moles ** power
+    base_effect *= modifier if modifier
+    base_effect
+  end
+
+  def output
+    @celestial_body.set_effective_temp(@temperature_base.to_s)
+    @celestial_body.set_greenhouse_temp(@temperature_surface.to_s)
+    @celestial_body.set_polar_temp(@temperature_polar.to_s)
+    @celestial_body.set_tropic_temp(@temperature_tropical.to_s)
+    @celestial_body.set_delta_t(@delta_temperature.to_s)
+    val = @ice_latitude * 180 / Math::PI
+    @celestial_body.set_ice_lat(val.to_s)
+    @celestial_body.set_hab_ratio(@habitable_ratio.to_s)
+
+    @celestial_body
+  end
+
+  def update_biosphere
+    if @temperature_tropical > 273 && @temperature_polar < 273
+      @habitable_ratio = ((@temperature_tropical - 273) / (@temperature_tropical - @temperature_polar))**0.666667
+      @ice_latitude = Math.asin(@habitable_ratio)
+    elsif @temperature_tropical < 273
+      @habitable_ratio = 0
+      @ice_latitude = 0
+    elsif @temperature_polar > 273
+      @habitable_ratio = 1
+      @ice_latitude = Math.asin(1)
+    end
+  end
+end
