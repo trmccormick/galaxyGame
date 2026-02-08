@@ -494,6 +494,16 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - `base_construction` - Test base building procedures
 - `isru_pipeline` - Test in-situ resource utilization
 
+**Biome Validation System:**
+- **Scope**: Applied only to Earth-like planets and terraformed worlds, not to all celestial bodies
+- **Purpose**: Ensures biome placement follows scientific environmental constraints (temperature, rainfall, elevation, latitude)
+- **Integration Points**: 
+  - EarthMapGenerator: Validates and corrects biomes during Earth map generation from FreeCiv/Civ4 sources
+  - AutomaticTerrainGenerator: Excluded - biome validation not applied to general planetary terrain generation
+- **Validation Logic**: TerraSim::BiomeValidator analyzes environmental conditions and suggests biome corrections
+- **Automatic Correction**: Invalid biomes are automatically replaced with scientifically appropriate alternatives
+- **Performance**: Validation runs post-generation with configurable correction thresholds (default: <80% accuracy triggers correction)
+
 #### Edit (`/admin/celestial_bodies/:id/edit`)
 
 Admin-only interface for editing celestial body names and aliases, plus NASA terrain data management.
