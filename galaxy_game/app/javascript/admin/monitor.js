@@ -389,8 +389,8 @@ window.AdminMonitor = (function() {
 
   /**
    * Get hydrosphere color based on liquid composition and depth
-   * Shallow water = light cyan/turquoise, Deep water = dark blue
-   * Mars = ice caps, Titan = orange methane, Earth = blue water, Ammonia = purple
+   * All liquids have depth-based gradients: shallow = lighter, deep = darker
+   * Mars = blue-white ice, Titan = orange methane, Earth = blue water, Ammonia = purple
    */
   function getHydrosphereColor(waterDepth, pData) {
     const name = (pData.name || '').toLowerCase();
@@ -402,45 +402,123 @@ window.AdminMonitor = (function() {
     const shallowThreshold = 200;
     const deepThreshold = 4000;
 
-    // Mars - ice caps (frozen H2O/CO2)
+    // Mars - ice caps (frozen H2O/CO2 gradients)
     if (name === 'mars' || name.includes('mars')) {
-      const intensity = Math.min(1, waterDepth / 1000);
-      const iceValue = Math.round(200 + intensity * 55);
-      return `rgba(${iceValue}, ${iceValue}, 255, 0.85)`;
+      if (waterDepth < shallowThreshold) {
+        // Shallow ice: very pale blue-white
+        const t = waterDepth / shallowThreshold;
+        const iceValue = Math.round(240 - t * 20);  // 240 → 220
+        return `rgba(${iceValue}, ${iceValue}, 255, 0.8)`;
+      } else if (waterDepth < deepThreshold) {
+        // Mid-depth ice: pale to medium blue-white
+        const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+        const iceValue = Math.round(220 - t * 40);  // 220 → 180
+        return `rgba(${iceValue}, ${iceValue}, 255, 0.85)`;
+      } else {
+        // Deep ice: darker blue-white
+        const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+        const iceValue = Math.round(180 - t * 40);  // 180 → 140
+        return `rgba(${iceValue}, ${iceValue}, 255, 0.9)`;
+      }
     }
 
-    // Titan - methane/ethane lakes (orange)
+    // Titan - methane/ethane lakes (orange gradients)
     if (name === 'titan' || liquid === 'CH4' || liquid === 'C2H6' ||
         liquid.includes('METHANE') || liquid.includes('ETHANE')) {
-      const intensity = Math.min(1, waterDepth / 500);
-      const r = Math.round(180 + intensity * 75);
-      const g = Math.round(80 + intensity * 40);
-      return `rgba(${r}, ${g}, 0, 0.8)`;
+      if (waterDepth < shallowThreshold) {
+        // Shallow methane: light orange
+        const t = waterDepth / shallowThreshold;
+        const r = Math.round(255 - t * 30);  // 255 → 225
+        const g = Math.round(180 - t * 40);  // 180 → 140
+        const b = Math.round(50 - t * 20);   // 50 → 30
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      } else if (waterDepth < deepThreshold) {
+        // Mid-depth: medium to dark orange
+        const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+        const r = Math.round(225 - t * 75);  // 225 → 150
+        const g = Math.round(140 - t * 60);  // 140 → 80
+        const b = Math.round(30 - t * 30);   // 30 → 0
+        return `rgba(${r}, ${g}, ${b}, 0.85)`;
+      } else {
+        // Deep methane: very dark orange-brown
+        const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+        const r = Math.round(150 - t * 50);  // 150 → 100
+        const g = Math.round(80 - t * 40);   // 80 → 40
+        const b = Math.round(0);             // Stay at 0
+        return `rgba(${r}, ${g}, ${b}, 0.9)`;
+      }
     }
 
-    // Europa/Enceladus - subsurface ocean (pale blue-white ice)
+    // Europa/Enceladus - subsurface ocean (pale blue-white ice gradients)
     if (name === 'europa' || name === 'enceladus') {
-      const intensity = Math.min(1, waterDepth / 1000);
-      const iceBlue = Math.round(220 + intensity * 35);
-      return `rgba(${iceBlue}, ${iceBlue}, 255, 0.7)`;
+      if (waterDepth < shallowThreshold) {
+        // Shallow subsurface: very pale blue-white
+        const t = waterDepth / shallowThreshold;
+        const iceBlue = Math.round(240 - t * 20);  // 240 → 220
+        return `rgba(${iceBlue}, ${iceBlue}, 255, 0.6)`;
+      } else if (waterDepth < deepThreshold) {
+        // Mid-depth: pale to medium blue-white
+        const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+        const iceBlue = Math.round(220 - t * 40);  // 220 → 180
+        return `rgba(${iceBlue}, ${iceBlue}, 255, 0.7)`;
+      } else {
+        // Deep subsurface: darker blue-white ice
+        const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+        const iceBlue = Math.round(180 - t * 40);  // 180 → 140
+        return `rgba(${iceBlue}, ${iceBlue}, 255, 0.8)`;
+      }
     }
 
-    // Nitrogen ice (Pluto/Triton)
+    // Nitrogen ice (Pluto/Triton) - light blue-gray gradients
     if (liquid === 'N2' || name === 'pluto' || name === 'triton') {
-      const intensity = Math.min(1, waterDepth / 500);
-      const r = Math.round(230 + intensity * 25);
-      const g = Math.round(200 + intensity * 30);
-      const b = Math.round(200 + intensity * 30);
-      return `rgba(${r}, ${g}, ${b}, 0.75)`;
+      if (waterDepth < shallowThreshold) {
+        // Shallow nitrogen: light blue-gray
+        const t = waterDepth / shallowThreshold;
+        const r = Math.round(240 - t * 10);  // 240 → 230
+        const g = Math.round(240 - t * 20);  // 240 → 220
+        const b = Math.round(250 - t * 20);  // 250 → 230
+        return `rgba(${r}, ${g}, ${b}, 0.7)`;
+      } else if (waterDepth < deepThreshold) {
+        // Mid-depth: medium blue-gray
+        const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+        const r = Math.round(230 - t * 30);  // 230 → 200
+        const g = Math.round(220 - t * 40);  // 220 → 180
+        const b = Math.round(230 - t * 50);  // 230 → 180
+        return `rgba(${r}, ${g}, ${b}, 0.75)`;
+      } else {
+        // Deep nitrogen: dark blue-gray
+        const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+        const r = Math.round(200 - t * 30);  // 200 → 170
+        const g = Math.round(180 - t * 40);  // 180 → 140
+        const b = Math.round(180 - t * 40);  // 180 → 140
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      }
     }
 
-    // Ammonia oceans (purple)
+    // Ammonia oceans (purple gradients)
     if (liquid === 'NH3' || liquid.includes('AMMONIA')) {
-      const intensity = Math.min(1, waterDepth / 500);
-      const r = Math.round(150 + intensity * 50);
-      const g = Math.round(50 + intensity * 30);
-      const b = Math.round(200 + intensity * 55);
-      return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      if (waterDepth < shallowThreshold) {
+        // Shallow ammonia: light purple
+        const t = waterDepth / shallowThreshold;
+        const r = Math.round(200 - t * 30);  // 200 → 170
+        const g = Math.round(150 - t * 50);  // 150 → 100
+        const b = Math.round(255 - t * 30);  // 255 → 225
+        return `rgba(${r}, ${g}, ${b}, 0.75)`;
+      } else if (waterDepth < deepThreshold) {
+        // Mid-depth: medium to dark purple
+        const t = (waterDepth - shallowThreshold) / (deepThreshold - shallowThreshold);
+        const r = Math.round(170 - t * 50);  // 170 → 120
+        const g = Math.round(100 - t * 50);  // 100 → 50
+        const b = Math.round(225 - t * 75);  // 225 → 150
+        return `rgba(${r}, ${g}, ${b}, 0.8)`;
+      } else {
+        // Deep ammonia: very dark purple
+        const t = Math.min(1, (waterDepth - deepThreshold) / 4000);
+        const r = Math.round(120 - t * 30);  // 120 → 90
+        const g = Math.round(50 - t * 20);   // 50 → 30
+        const b = Math.round(150 - t * 50);  // 150 → 100
+        return `rgba(${r}, ${g}, ${b}, 0.85)`;
+      }
     }
 
     // Default: H2O water (Earth-like)
