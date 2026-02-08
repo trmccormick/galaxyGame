@@ -12,4 +12,5 @@
 # ✅ FIX: Include fixture data with correct path
 !/galaxy_game/spec/fixtures/
 
-personal_notes.txtdata.zip
+personal_notes.txt
+data.zip
