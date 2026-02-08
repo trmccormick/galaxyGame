@@ -390,7 +390,7 @@ window.AdminMonitor = (function() {
   /**
    * Get hydrosphere color based on liquid composition and depth
    * Shallow water = light cyan/turquoise, Deep water = dark blue
-   * Mars = ice caps, Titan = orange methane, Earth = blue water
+   * Mars = ice caps, Titan = orange methane, Earth = blue water, Ammonia = purple
    */
   function getHydrosphereColor(waterDepth, pData) {
     const name = (pData.name || '').toLowerCase();
@@ -432,6 +432,15 @@ window.AdminMonitor = (function() {
       const g = Math.round(200 + intensity * 30);
       const b = Math.round(200 + intensity * 30);
       return `rgba(${r}, ${g}, ${b}, 0.75)`;
+    }
+
+    // Ammonia oceans (purple)
+    if (liquid === 'NH3' || liquid.includes('AMMONIA')) {
+      const intensity = Math.min(1, waterDepth / 500);
+      const r = Math.round(150 + intensity * 50);
+      const g = Math.round(50 + intensity * 30);
+      const b = Math.round(200 + intensity * 55);
+      return `rgba(${r}, ${g}, ${b}, 0.8)`;
     }
 
     // Default: H2O water (Earth-like)
