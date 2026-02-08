@@ -219,8 +219,20 @@ body {
 #canvasWrapper {
     background: #1a1a1a;
     position: relative;
+    overflow: hidden;
+    /* Constrain to grid cell */
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Scrollable area inside the wrapper */
+#canvasScroller {
+    position: absolute;
+    top: 50px; /* Leave room for overlay */
+    left: 0;
+    right: 0;
+    bottom: 0;
     overflow: scroll;
-    /* Let the wrapper fill its grid cell but allow scrolling */
 }
 
 /* Inner container for the canvas - sized to fit the canvas */

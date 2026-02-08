@@ -1038,19 +1038,465 @@ module StarSim
       grid_dims = calculate_diameter_based_grid_size(celestial_body)
       elevation = downsample_elevation(raw_data[:elevation], grid_dims[:width], grid_dims[:height])
 
+      # Hybrid biome generation:
+      # 1. Try to load FreeCiv biomes (hand-crafted, accurate climate zones)
+      # 2. Use FreeCiv biome where NASA also shows land
+      # 3. Fall back to algorithmic for areas not in FreeCiv or mismatched
+      biomes = generate_hybrid_biomes(body_name, elevation, celestial_body, grid_dims)
+
       {
         elevation: elevation,
-        biomes: generate_biomes_from_elevation(elevation, celestial_body),
+        biomes: biomes,
         resource_grid: generate_resource_grid_from_nasa_data(celestial_body),
         strategic_markers: generate_strategic_markers_from_nasa_data(celestial_body),
         resource_counts: generate_resource_counts_from_nasa_data(celestial_body),
         generation_metadata: {
           source: 'nasa_geotiff',
+          biome_source: 'hybrid_freeciv_algorithmic',
           file_path: geotiff_path,
           grid_dimensions: { width: grid_dims[:width], height: grid_dims[:height] },
           elevation_range: [elevation.flatten.min, elevation.flatten.max]
         }
       }
+    end
+    
+    # Generate biomes using FreeCiv data where available, algorithmic elsewhere
+    def generate_hybrid_biomes(body_name, elevation, celestial_body, grid_dims)
+      width = grid_dims[:width]
+      height = grid_dims[:height]
+      
+      # Try to load game map biome data (Civ4 preferred, then FreeCiv)
+      game_biomes = load_game_biome_grid(body_name, width, height)
+      
+      if game_biomes.nil?
+        Rails.logger.info "[AutomaticTerrainGenerator] No game map data for #{body_name}, using pure algorithmic"
+        return generate_biomes_from_elevation(elevation, celestial_body)
+      end
+      
+      game_height = game_biomes.size
+      game_width = game_biomes.first&.size || 0
+      Rails.logger.info "[AutomaticTerrainGenerator] Game map grid: #{game_width}x#{game_height}, Target: #{width}x#{height}"
+      
+      # Generate hybrid biomes
+      biomes = Array.new(height) do |y|
+        Array.new(width) do |x|
+          elev = elevation[y][x]
+          
+          # Underwater areas don't have biomes (handled by hydrosphere)
+          next nil if elev < 0
+          
+          # Map our coordinates to game map coordinates
+          game_x = (x.to_f / width * game_width).floor
+          game_y = (y.to_f / height * game_height).floor
+          game_x = [game_x, game_width - 1].min
+          game_y = [game_y, game_height - 1].min
+          
+          game_biome = game_biomes[game_y][game_x]
+          
+          # Normalize the game biome (convert terrain features to actual biomes)
+          normalized_biome = normalize_biome_type(game_biome, elev, y, height, celestial_body)
+          
+          if normalized_biome
+            normalized_biome
+          else
+            # Use algorithmic biome based on elevation/latitude
+            latitude = 90.0 - (y.to_f / height) * 180.0
+            classify_earth_biome_realistic(elev, latitude, celestial_body)
+          end
+        end
+      end
+      
+      biomes
+    end
+    
+    # Load FreeCiv map and convert to biome grid
+    def load_freeciv_biome_grid(body_name)
+      name = body_name.downcase
+      
+      freeciv_paths = [
+        Rails.root.join('data', 'maps', 'freeciv', name),
+        Rails.root.join('app', 'data', 'maps', 'freeciv', name)
+      ]
+      
+      freeciv_dir = freeciv_paths.find { |p| Dir.exist?(p) }
+      return nil unless freeciv_dir
+      
+      # Find .sav file
+      sav_files = Dir.glob(File.join(freeciv_dir, '*.sav'))
+      return nil if sav_files.empty?
+      
+      sav_path = sav_files.first
+      Rails.logger.info "[AutomaticTerrainGenerator] Loading FreeCiv biomes from: #{sav_path}"
+      
+      parse_freeciv_terrain_grid(sav_path)
+    end
+    
+    # Load game map biomes (Civ4 preferred, then FreeCiv, with multiple sources)
+    def load_game_biome_grid(body_name, target_width, target_height)
+      name = body_name.downcase
+      
+      puts "[DEBUG] Loading game biomes for #{body_name}"
+      
+      # Priority 1: Try Civ4 map (usually higher quality)
+      puts "[DEBUG] Trying Civ4 map for #{name}"
+      civ4_biomes = load_civ4_biomes(name, target_width, target_height)
+      if civ4_biomes
+        puts "[DEBUG] Using Civ4 biomes for #{name}"
+        return civ4_biomes
+      else
+        puts "[DEBUG] Civ4 biomes failed for #{name}"
+      end
+      
+      # Priority 2: Try FreeCiv full planet map
+      puts "[DEBUG] Trying FreeCiv map for #{name}"
+      freeciv_biomes = load_freeciv_biomes(name, target_width, target_height)
+      if freeciv_biomes
+        puts "[DEBUG] Using FreeCiv biomes for #{name}"
+        return freeciv_biomes
+      else
+        puts "[DEBUG] FreeCiv biomes failed for #{name}"
+      end
+      
+      # Priority 3: Try combined FreeCiv maps (e.g., Earth + Africa)
+      puts "[DEBUG] Trying combined FreeCiv maps for #{name}"
+      combined_biomes = load_combined_freeciv_biomes(name, target_width, target_height)
+      if combined_biomes
+        puts "[DEBUG] Using combined FreeCiv biomes for #{name}"
+        return combined_biomes
+      else
+        puts "[DEBUG] Combined FreeCiv biomes failed for #{name}"
+      end
+      
+      nil
+    end
+    
+    # Load and combine multiple FreeCiv maps for better coverage
+    def load_combined_freeciv_biomes(body_name, target_width, target_height)
+      name = body_name.downcase
+      
+      # Load main planet map
+      main_biomes = load_freeciv_biome_grid(body_name)
+      
+      # Load partial maps (e.g., Africa for Earth)
+      partial_maps = []
+      if name == 'earth'
+        africa_path = Rails.root.join('data', 'maps', 'freeciv', 'partial_planetary', 'Africa.sav')
+        if File.exist?(africa_path)
+          Rails.logger.info "[AutomaticTerrainGenerator] Loading Africa FreeCiv map for Earth"
+          africa_biomes = parse_freeciv_terrain_grid(africa_path)
+          partial_maps << { biomes: africa_biomes, region: :africa } if africa_biomes
+        end
+      end
+      
+      if main_biomes.nil? && partial_maps.empty?
+        return nil
+      end
+      
+      # If only main map, return it
+      if partial_maps.empty?
+        return resample_biome_grid(main_biomes, target_width, target_height)
+      end
+      
+      # Combine maps
+      combined_grid = combine_biome_grids(main_biomes, partial_maps, target_width, target_height)
+      resample_biome_grid(combined_grid, target_width, target_height)
+    end
+    
+    # Combine multiple biome grids with regional preferences
+    def combine_biome_grids(main_grid, partial_maps, target_width, target_height)
+      return main_grid unless main_grid
+      
+      main_height = main_grid.size
+      main_width = main_grid.first&.size || 0
+      
+      # Create combined grid at main resolution
+      combined = Array.new(main_height) do |y|
+        Array.new(main_width) do |x|
+          main_biome = main_grid[y][x]
+          
+          # Check if any partial map covers this location better
+          partial_maps.each do |partial|
+            if biome_better_for_region?(partial[:biomes], x, y, main_width, main_height, partial[:region])
+              partial_biome = get_partial_biome(partial[:biomes], x, y, main_width, main_height)
+              if partial_biome && partial_biome != 'ocean' && partial_biome != 'coast'
+                main_biome = partial_biome
+                break  # Use first matching partial map
+              end
+            end
+          end
+          
+          main_biome
+        end
+      end
+      
+      combined
+    end
+    
+    # Normalize biome types: convert terrain features to actual biomes
+    def normalize_biome_type(game_biome, elevation, y, height, celestial_body)
+      return nil unless game_biome
+      
+      # Water bodies are not biomes
+      return nil if ['ocean', 'coast', 'deep_sea'].include?(game_biome)
+      
+      latitude = 90.0 - (y.to_f / height) * 180.0
+      
+      # Polar regions must be ice/tundra regardless of game data
+      if latitude.abs > 66
+        return 'ice'
+      end
+      
+      # Terrain features - these are not biomes, get the climate biome for this location
+      terrain_features = ['hills', 'mountains', 'peaks', 'polar_mountains', 'tropical_mountains']
+      if terrain_features.include?(game_biome)
+        # Get the climate biome for this latitude (ignoring local elevation)
+        classify_earth_biome_realistic(0, latitude, celestial_body)  # Use sea level elevation
+      else
+        # Check if it's a valid biome (not a terrain feature)
+        valid_biomes = ['arctic', 'tundra', 'ice', 'boreal_forest', 'temperate_forest', 
+                       'tropical_rainforest', 'tropical_seasonal_forest', 'desert', 
+                       'grassland', 'plains', 'savanna', 'jungle', 'wetlands', 'swamp']
+        if valid_biomes.include?(game_biome)
+          game_biome
+        else
+          # Unknown or invalid biome, use algorithmic
+          classify_earth_biome_realistic(elevation, latitude, celestial_body)
+        end
+      end
+    end
+    
+    # Check if partial map provides better data for this region
+    def biome_better_for_region?(partial_grid, x, y, width, height, region)
+      return false unless partial_grid
+      
+      # For Africa: roughly longitude 15°W to 50°E, latitude 35°N to 35°S
+      case region
+      when :africa
+        longitude = (x.to_f / width) * 360.0 - 180.0  # -180 to 180
+        latitude = 90.0 - (y.to_f / height) * 180.0   # 90 to -90
+        
+        longitude.between?(-15, 50) && latitude.between?(-35, 35)
+      else
+        false
+      end
+    end
+    
+    # Get biome from partial grid at main grid coordinates
+    def get_partial_biome(partial_grid, x, y, main_width, main_height)
+      return nil unless partial_grid
+      
+      partial_height = partial_grid.size
+      partial_width = partial_grid.first&.size || 0
+      
+      # Map main coordinates to partial coordinates
+      px = (x.to_f / main_width * partial_width).floor
+      py = (y.to_f / main_height * partial_height).floor
+      px = [px, partial_width - 1].min
+      py = [py, partial_height - 1].min
+      
+      partial_grid[py][px]
+    end
+    
+    # Parse FreeCiv .sav file terrain grid
+    def parse_freeciv_terrain_grid(sav_path)
+      content = File.read(sav_path)
+      
+      # FreeCiv terrain codes to biome names
+      terrain_map = {
+        ' ' => 'ocean',      # Ocean (space)
+        'a' => 'arctic',     # Arctic/tundra
+        't' => 'tundra',     # Tundra
+        'f' => 'temperate_forest',  # Forest
+        'g' => 'grassland',  # Grassland
+        'p' => 'plains',     # Plains
+        'd' => 'desert',     # Desert
+        'j' => 'tropical_rainforest', # Jungle
+        's' => 'swamp',      # Swamp
+        'h' => 'hills',      # Hills
+        'm' => 'mountains',  # Mountains
+        ':' => 'coast',      # Coast (shallow water)
+        '.' => 'ocean'       # Deep ocean
+      }
+      
+      # Extract terrain rows (t000, t001, etc.)
+      terrain_rows = []
+      content.scan(/t(\d+)="([^"]*)"/) do |row_num, row_data|
+        terrain_rows[row_num.to_i] = row_data
+      end
+      
+      return nil if terrain_rows.empty?
+      
+      # Convert to biome grid
+      biome_grid = terrain_rows.compact.map do |row|
+        row.chars.map { |c| terrain_map[c] || 'plains' }
+      end
+      
+      Rails.logger.info "[AutomaticTerrainGenerator] Parsed FreeCiv grid: #{biome_grid.first&.size}x#{biome_grid.size}"
+      biome_grid
+    end
+    
+    # Load biomes from Civ4 or FreeCiv game maps - these have hand-crafted realistic biomes
+    def load_biomes_from_game_maps(body_name, target_width, target_height)
+      name = body_name.downcase
+      
+      # Priority 1: Try Civ4 map (usually higher quality biome data)
+      civ4_biomes = load_civ4_biomes(name, target_width, target_height)
+      return civ4_biomes if civ4_biomes
+      
+      # Priority 2: Try FreeCiv map
+      freeciv_biomes = load_freeciv_biomes(name, target_width, target_height)
+      return freeciv_biomes if freeciv_biomes
+      
+      nil
+    end
+    
+    def load_civ4_biomes(body_name, target_width, target_height)
+      civ4_paths = [
+        Rails.root.join('data', 'maps', 'civ4', body_name, "#{body_name.capitalize}.Civ4WorldBuilderSave"),
+        Rails.root.join('data', 'maps', 'civ4', body_name, "#{body_name}.Civ4WorldBuilderSave"),
+        Rails.root.join('app', 'data', 'maps', 'civ4', body_name, "#{body_name.capitalize}.Civ4WorldBuilderSave")
+      ]
+      
+      civ4_path = civ4_paths.find { |p| File.exist?(p) }
+      puts "[DEBUG] Civ4 path found: #{civ4_path}" if civ4_path
+      return nil unless civ4_path
+      
+      puts "[DEBUG] Loading biomes from Civ4: #{civ4_path}"
+      
+      begin
+        processor = Import::Civ4MapProcessor.new
+        civ4_data = processor.process(civ4_path, mode: :terrain)
+        
+        puts "[DEBUG] Civ4 data keys: #{civ4_data.keys.inspect}" if civ4_data
+        puts "[DEBUG] Civ4 biomes type: #{civ4_data[:biomes].class}" if civ4_data[:biomes]
+        biome_grid = extract_biomes_from_civ4(civ4_data)
+        puts "[DEBUG] Civ4 biome_grid: #{biome_grid ? 'success' : 'nil'}"
+        return nil unless biome_grid
+        
+        # Resample to target dimensions
+        resample_biome_grid(biome_grid, target_width, target_height)
+      rescue => e
+        puts "[DEBUG] Failed to load Civ4 biomes: #{e.message}"
+        puts "[DEBUG] Backtrace: #{e.backtrace.first(5).join("\n")}"
+        nil
+      end
+    end
+    
+    def load_freeciv_biomes(body_name, target_width, target_height)
+      freeciv_paths = [
+        Rails.root.join('data', 'maps', 'freeciv', body_name, "#{body_name}*.sav"),
+        Rails.root.join('app', 'data', 'maps', 'freeciv', body_name, "#{body_name}*.sav")
+      ]
+      
+      freeciv_path = freeciv_paths.flat_map { |p| Dir.glob(p.to_s) }.first
+      return nil unless freeciv_path && File.exist?(freeciv_path)
+      
+      puts "[DEBUG] Loading biomes from FreeCiv: #{freeciv_path}"
+      
+      begin
+        # For Earth, try simple parse first (older format)
+        if body_name.downcase == 'earth'
+          simple_grid = parse_freeciv_terrain_grid(freeciv_path)
+          if simple_grid
+            puts "[DEBUG] Using simple parse for Earth"
+            return resample_biome_grid(simple_grid, target_width, target_height)
+          end
+        end
+        
+        # Try the full processor
+        processor = Import::FreecivMapProcessor.new
+        freeciv_data = processor.process(freeciv_path)
+        
+        biome_grid = freeciv_data[:grid] || freeciv_data[:biomes]
+        return nil unless biome_grid
+        
+        # Resample to target dimensions
+        resample_biome_grid(biome_grid, target_width, target_height)
+      rescue => e
+        puts "[DEBUG] Failed to load FreeCiv biomes: #{e.message}"
+        nil
+      end
+    end
+    
+    def extract_biomes_from_civ4(civ4_data)
+      return nil unless civ4_data
+      
+      puts "[DEBUG] Extracting biomes from Civ4 data"
+      
+      # Civ4 terrain types to biome mapping
+      civ4_to_biome = {
+        'TERRAIN_GRASS' => 'grassland',
+        'TERRAIN_PLAINS' => 'plains',
+        'TERRAIN_DESERT' => 'desert',
+        'TERRAIN_TUNDRA' => 'tundra',
+        'TERRAIN_SNOW' => 'ice',
+        'TERRAIN_COAST' => 'coast',
+        'TERRAIN_OCEAN' => 'ocean',
+        'TERRAIN_PEAK' => 'peaks',
+        'TERRAIN_HILL' => 'hills',
+        # Feature-based biomes
+        'FEATURE_FOREST' => 'temperate_forest',
+        'FEATURE_JUNGLE' => 'tropical_rainforest',
+        'FEATURE_OASIS' => 'savanna',
+        'FEATURE_FLOOD_PLAINS' => 'plains',
+        'FEATURE_ICE' => 'ice'
+      }
+      
+      if civ4_data[:biomes]
+        puts "[DEBUG] Using :biomes directly"
+        # Convert symbols to strings
+        civ4_data[:biomes].map do |row|
+          row.map { |biome| biome.to_s }
+        end
+      elsif civ4_data[:terrain_grid]
+        puts "[DEBUG] Building from :terrain_grid"
+        height = civ4_data[:terrain_grid].size
+        width = civ4_data[:terrain_grid].first&.size || 0
+        
+        biome_grid = Array.new(height) do |y|
+          Array.new(width) do |x|
+            terrain = civ4_data[:terrain_grid][y][x]
+            feature = civ4_data[:feature_grid]&.dig(y, x)
+            
+            # Feature overrides terrain for biome classification
+            if feature && civ4_to_biome[feature]
+              civ4_to_biome[feature]
+            elsif terrain && civ4_to_biome[terrain]
+              civ4_to_biome[terrain]
+            else
+              'plains' # Default
+            end
+          end
+        end
+        
+        biome_grid
+      elsif civ4_data[:grid]
+        puts "[DEBUG] Using :grid"
+        civ4_data[:grid]
+      else
+        puts "[DEBUG] No suitable grid found in Civ4 data"
+        nil
+      end
+    end
+    
+    def resample_biome_grid(source_grid, target_width, target_height)
+      return source_grid if source_grid.nil? || source_grid.empty?
+      
+      source_height = source_grid.size
+      source_width = source_grid.first&.size || 0
+      
+      return source_grid if source_width == target_width && source_height == target_height
+      
+      # Nearest-neighbor resampling for biomes (preserves categorical data)
+      Array.new(target_height) do |y|
+        Array.new(target_width) do |x|
+          src_y = (y.to_f / target_height * source_height).floor
+          src_x = (x.to_f / target_width * source_width).floor
+          src_y = [src_y, source_height - 1].min
+          src_x = [src_x, source_width - 1].min
+          source_grid[src_y][src_x]
+        end
+      end
     end
 
     def find_geotiff_path(body_name)
@@ -1313,62 +1759,71 @@ module StarSim
     end
 
     def classify_earth_biome_realistic(elevation, latitude, body)
-      # Normalize elevation to 0-1 range for classification
-      min_elev = -10000  # Deep ocean
-      max_elev = 8000    # High mountains
-      normalized_elev = (elevation - min_elev) / (max_elev - min_elev).to_f
-      normalized_elev = [[normalized_elev, 0.0].max, 1.0].min
-
       abs_latitude = latitude.abs
+      elev_meters = elevation
 
-      # Water bodies
-      if normalized_elev < 0.1
-        return 'ocean'
-      elsif normalized_elev < 0.15
-        return 'coast'
+      # Water bodies (elevation below sea level) - not biomes
+      return nil if elevation < 0
+
+      # Determine base biome by latitude (climate zones)
+      base_biome = case
+      when abs_latitude > 66
+        'ice'  # Polar regions
+      when abs_latitude > 55
+        'tundra'  # Subpolar
+      when abs_latitude > 35
+        'temperate_forest'  # Temperate
+      when abs_latitude > 23.5
+        'desert'  # Subtropical (often arid)
+      when abs_latitude < 10
+        'tropical_rainforest'  # Equatorial
+      else
+        'tropical_seasonal_forest'  # Tropical but not equatorial
       end
 
-      # Polar regions
-      if abs_latitude > 66
-        if normalized_elev > 0.8
-          return 'polar_mountains'
-        elsif normalized_elev > 0.6
-          return 'tundra'
+      # Modify biome based on elevation
+      if elev_meters > 4000
+        # Very high elevation - alpine conditions
+        case base_biome
+        when 'temperate_forest', 'tropical_rainforest', 'tropical_seasonal_forest'
+          'tundra'  # Alpine tundra
+        when 'desert'
+          'desert'  # High desert remains desert
         else
-          return 'polar_desert'
+          base_biome  # Ice/tundra stays the same
         end
-      end
-
-      # Temperate zones (23.5° to 66°)
-      if abs_latitude > 23.5
-        if normalized_elev > 0.8
-          return 'mountains'
-        elsif normalized_elev > 0.6
-          return 'hills'
-        elsif abs_latitude > 45  # Higher latitudes in temperate zone
-          if body.surface_temperature && body.surface_temperature < 280
-            return 'boreal_forest'
-          else
-            return 'temperate_forest'
-          end
+      elsif elev_meters > 2500
+        # High elevation - subalpine
+        case base_biome
+        when 'temperate_forest'
+          'temperate_forest'  # Can still support forest
+        when 'tropical_rainforest', 'tropical_seasonal_forest'
+          'temperate_forest'  # Cooler forest types
+        when 'desert'
+          'desert'  # High desert
         else
-          return 'temperate_grassland'
+          base_biome
         end
-      end
-
-      # Tropical/Subtropical zones (0° to 23.5°)
-      if normalized_elev > 0.8
-        return 'tropical_mountains'
-      elsif normalized_elev > 0.6
-        return 'hills'
-      elsif abs_latitude < 10  # Equatorial
-        if body.surface_temperature && body.surface_temperature > 298
-          return 'tropical_rainforest'
+      elsif elev_meters > 1500
+        # Mid-high elevation
+        case base_biome
+        when 'tropical_rainforest'
+          'tropical_seasonal_forest'  # Less rainfall at higher elevation
+        when 'desert'
+          'grassland'  # Some deserts become grassland at mid elevations
         else
-          return 'tropical_seasonal_forest'
+          base_biome
+        end
+      elsif elev_meters < 500 && abs_latitude > 23.5
+        # Low elevation in subtropical zones - can be more arid or different
+        case base_biome
+        when 'desert'
+          'desert'  # Stays desert
+        else
+          base_biome
         end
       else
-        return 'tropical_grassland'
+        base_biome
       end
     end
 

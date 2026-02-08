@@ -19,6 +19,7 @@ window.AdminMonitor = (function() {
   let climate = null;
   let planetData = null;
   let terrainData = null;
+  let monitorData = null;
   let layers = {};
   let visibleLayers = new Set(['terrain']);
 
@@ -321,8 +322,9 @@ window.AdminMonitor = (function() {
       // Cold biomes
       'tundra': '#B8C4C8',
       'arctic': '#E8E8E8',
-      'ice': '#FFFFFF',
+      'ice': '#E0FFFF',
       'polar_ice': '#F0FFFF',
+      'snow': '#FFFAFA',
       
       // Wetlands
       'swamp': '#556B2F',
@@ -332,18 +334,23 @@ window.AdminMonitor = (function() {
       // Plains/steppe
       'plains': '#C4B454',
       'steppe': '#BDB76B',
+      'lowlands': '#8FBC8F',
+      'highlands': '#BC8F8F',
       
       // Mountains/hills (terrain features rendered as biomes)
-      'mountains': '#696969',
-      'mountain': '#696969',
+      'mountains': '#808080',
+      'mountain': '#808080',
       'polar_mountains': '#A9A9A9',
-      'tropical_mountains': '#505050',
-      'hills': '#8B7355',
-      'peaks': '#D3D3D3',
+      'tropical_mountains': '#696969',
+      'hills': '#8B7765',
+      'peaks': '#DCDCDC',
       
       // Volcanic
       'volcanic': '#8B0000',
       'lava': '#FF4500',
+      
+      // Lunar/Mars specific
+      'maria': '#3C3C3C',
       
       // Water (shouldn't typically be rendered as biome)
       'ocean': '#0066cc',
@@ -357,14 +364,22 @@ window.AdminMonitor = (function() {
     
     // Fallback: try to match partial biome names
     if (biome) {
-      if (biome.includes('desert')) return '#DAA520';
-      if (biome.includes('forest')) return '#228B22';
-      if (biome.includes('grass')) return '#7CCD7C';
-      if (biome.includes('tundra')) return '#B8C4C8';
-      if (biome.includes('mountain')) return '#696969';
-      if (biome.includes('jungle') || biome.includes('rain')) return '#004400';
+      const lowerBiome = biome.toLowerCase();
+      if (lowerBiome.includes('desert')) return '#DAA520';
+      if (lowerBiome.includes('forest')) return '#228B22';
+      if (lowerBiome.includes('grass')) return '#7CCD7C';
+      if (lowerBiome.includes('tundra')) return '#B8C4C8';
+      if (lowerBiome.includes('mountain')) return '#808080';
+      if (lowerBiome.includes('peak')) return '#DCDCDC';
+      if (lowerBiome.includes('hill')) return '#8B7765';
+      if (lowerBiome.includes('ice') || lowerBiome.includes('snow')) return '#E0FFFF';
+      if (lowerBiome.includes('jungle') || lowerBiome.includes('rain')) return '#004400';
+      if (lowerBiome.includes('savanna')) return '#9ACD32';
+      if (lowerBiome.includes('plain')) return '#C4B454';
     }
     
+    // Log unknown biomes for debugging
+    console.warn('Unknown biome type:', biome);
     return '#8B4513'; // Default brown for unknown biomes
   }
 
@@ -692,7 +707,15 @@ window.AdminMonitor = (function() {
         height: terrainData.biomes.length,
         layer_type: 'biomes'
       };
+      // Debug: Log unique biome types
+      const uniqueBiomes = new Set();
+      for (let y = 0; y < terrainData.biomes.length; y++) {
+        for (let x = 0; x < terrainData.biomes[y].length; x++) {
+          if (terrainData.biomes[y][x]) uniqueBiomes.add(terrainData.biomes[y][x]);
+        }
+      }
       console.log('Using NASA biome grid data');
+      console.log('Unique biome types found:', Array.from(uniqueBiomes));
     } else {
       console.log('Biomes grid missing - will show pure elevation heightmap');
     }
@@ -947,7 +970,6 @@ window.AdminMonitor = (function() {
     const zoomInput = document.getElementById('zoom');
     const zoomValue = document.getElementById('zoomValue');
     const canvas = document.getElementById('planetCanvas');
-    const canvasWrapper = document.getElementById('canvasWrapper');
     const canvasContainer = document.getElementById('canvasContainer');
     
     if (!zoomInput) return;
@@ -975,10 +997,10 @@ window.AdminMonitor = (function() {
   }
 
   function setupPanControl() {
-    const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvasScroller = document.getElementById('canvasScroller');
     const canvas = document.getElementById('planetCanvas');
     
-    if (!canvasWrapper || !canvas) return;
+    if (!canvasScroller || !canvas) return;
     
     let isPanning = false;
     let startX, startY, scrollLeft, scrollTop;
@@ -987,10 +1009,10 @@ window.AdminMonitor = (function() {
     canvas.addEventListener('mousedown', (e) => {
       isPanning = true;
       canvas.style.cursor = 'grabbing';
-      startX = e.pageX - canvasWrapper.offsetLeft;
-      startY = e.pageY - canvasWrapper.offsetTop;
-      scrollLeft = canvasWrapper.scrollLeft;
-      scrollTop = canvasWrapper.scrollTop;
+      startX = e.pageX - canvasScroller.offsetLeft;
+      startY = e.pageY - canvasScroller.offsetTop;
+      scrollLeft = canvasScroller.scrollLeft;
+      scrollTop = canvasScroller.scrollTop;
     });
     
     canvas.addEventListener('mouseleave', () => {
@@ -1006,12 +1028,12 @@ window.AdminMonitor = (function() {
     canvas.addEventListener('mousemove', (e) => {
       if (!isPanning) return;
       e.preventDefault();
-      const x = e.pageX - canvasWrapper.offsetLeft;
-      const y = e.pageY - canvasWrapper.offsetTop;
+      const x = e.pageX - canvasScroller.offsetLeft;
+      const y = e.pageY - canvasScroller.offsetTop;
       const walkX = (x - startX) * 1.5; // Scroll speed multiplier
       const walkY = (y - startY) * 1.5;
-      canvasWrapper.scrollLeft = scrollLeft - walkX;
-      canvasWrapper.scrollTop = scrollTop - walkY;
+      canvasScroller.scrollLeft = scrollLeft - walkX;
+      canvasScroller.scrollTop = scrollTop - walkY;
     });
     
     // Reset view button
@@ -1028,18 +1050,45 @@ window.AdminMonitor = (function() {
     }, 100);
   }
   
-  function centerMapView() {
+  function setupScrollableMap() {
     const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvasScroller = document.getElementById('canvasScroller');
+    
+    if (!canvasWrapper || !canvasScroller) return;
+    
+    // Get the wrapper's actual rendered dimensions from the grid
+    const wrapperRect = canvasWrapper.getBoundingClientRect();
+    const overlayHeight = 50; // Height reserved for map controls overlay
+    
+    // Set explicit dimensions on the scroller
+    canvasScroller.style.width = wrapperRect.width + 'px';
+    canvasScroller.style.height = (wrapperRect.height - overlayHeight) + 'px';
+    canvasScroller.style.position = 'absolute';
+    canvasScroller.style.top = overlayHeight + 'px';
+    canvasScroller.style.left = '0';
+    
+    console.log('Scroller dimensions set:', wrapperRect.width, 'x', (wrapperRect.height - overlayHeight));
+    
+    // Re-setup on window resize
+    window.addEventListener('resize', () => {
+      const newRect = canvasWrapper.getBoundingClientRect();
+      canvasScroller.style.width = newRect.width + 'px';
+      canvasScroller.style.height = (newRect.height - overlayHeight) + 'px';
+    });
+  }
+  
+  function centerMapView() {
+    const canvasScroller = document.getElementById('canvasScroller');
     const canvas = document.getElementById('planetCanvas');
     
-    if (!canvasWrapper || !canvas) return;
+    if (!canvasScroller || !canvas) return;
     
     // Center the scroll position
-    const scrollX = (canvas.width - canvasWrapper.clientWidth) / 2;
-    const scrollY = (canvas.height - canvasWrapper.clientHeight) / 2;
+    const scrollX = (canvas.width - canvasScroller.clientWidth) / 2;
+    const scrollY = (canvas.height - canvasScroller.clientHeight) / 2;
     
-    canvasWrapper.scrollLeft = Math.max(0, scrollX);
-    canvasWrapper.scrollTop = Math.max(0, scrollY);
+    canvasScroller.scrollLeft = Math.max(0, scrollX);
+    canvasScroller.scrollTop = Math.max(0, scrollY);
   }
   
   function resetMapView() {
@@ -1291,6 +1340,7 @@ window.AdminMonitor = (function() {
 
     try {
       const data = JSON.parse(dataElement.textContent);
+      monitorData = data;
       
       planetId = data.planet_id;
       planetName = data.planet_name;
@@ -1323,6 +1373,7 @@ window.AdminMonitor = (function() {
     updateLayerButtons();
     setupZoomControl();
     setupPanControl();
+    setupScrollableMap();
     startDataPolling();
     renderTerrainMap();
     logConsole('System initialized', 'info');

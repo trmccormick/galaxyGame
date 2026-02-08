@@ -14,7 +14,7 @@
       terrain_map_data = @celestial_body&.geosphere&.terrain_map
       
       # Determine which layers should be available based on planetary conditions
-      has_hydrosphere = @celestial_body.hydrosphere.present? && (@celestial_body.hydrosphere.water_coverage.to_f > 0 || @celestial_body.hydrosphere.ocean_mass.to_f > 0 || @celestial_body.hydrosphere.ice_mass.to_f > 0)
+      has_hydrosphere = @celestial_body.hydrosphere.present? && (@celestial_body.hydrosphere.water_coverage.to_f > 0 || @celestial_body.hydrosphere.total_liquid_mass.to_f > 0 || @celestial_body.hydrosphere.ice.to_f > 0)
       has_biosphere = @celestial_body.biosphere.present?
       has_atmosphere = @celestial_body.atmosphere.present? && @celestial_body.atmosphere.pressure.to_f > 0
       
@@ -55,7 +55,7 @@
           biomes: has_biosphere,
           features: has_biosphere,
           temperature: true,
-          rainfall: has_biosphere && has_atmosphere,
+          rainfall: has_hydrosphere && has_atmosphere,  # Precipitation requires atmosphere + liquid cycle
           resources: true
         }
       }
@@ -176,8 +176,10 @@
                     </div>
                 </div>
             </div>
-            <div id="canvasContainer">
-                <canvas id="planetCanvas" width="800" height="400"></canvas>
+            <div id="canvasScroller">
+                <div id="canvasContainer">
+                    <canvas id="planetCanvas" width="800" height="400"></canvas>
+                </div>
             </div>
             <div id="featureTooltip" class="hidden">
                 <div id="tooltipContent"></div>

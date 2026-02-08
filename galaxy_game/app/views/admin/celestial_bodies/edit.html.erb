@@ -222,7 +222,58 @@
                     </div>
                 </div>
             </div>
+            <div class="content-section">
+                <h3>🌍 Biome Source Selection</h3>
+                <div class="biome-source-section">
+                    <div class="biome-info">
+                        <p><strong>Control Biome Generation:</strong> Choose which data sources to use for biome placement during terrain regeneration. This allows testing different approaches for Earth-like worlds.</p>
 
+                        <div class="source-options">
+                            <div class="source-option">
+                                <h4>🎯 Civ4 Only</h4>
+                                <p>Use only Civilization 4 World Builder Save files for biome data. Provides detailed, hand-crafted biome distributions.</p>
+                            </div>
+
+                            <div class="source-option">
+                                <h4>🆓 FreeCiv Only</h4>
+                                <p>Use only FreeCiv save files for biome data. Offers procedural biome generation with continental features.</p>
+                            </div>
+
+                            <div class="source-option">
+                                <h4>🔄 Combined Civ4 + FreeCiv</h4>
+                                <p>Combine both Civ4 and FreeCiv sources for maximum coverage and variety (current default behavior).</p>
+                            </div>
+
+                            <div class="source-option">
+                                <h4>🤖 Algorithmic Only</h4>
+                                <p>Use only elevation-based algorithmic generation without game map data. Pure procedural biomes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%= form_with url: update_biome_source_admin_celestial_body_path(@celestial_body), method: :patch, id: 'biomeSourceForm' do |form| %>
+                        <div class="form-group">
+                            <%= form.label :biome_source, 'Biome Source Preference', class: 'form-label' %>
+                            <%= form.select :biome_source, 
+                                [['Civ4 Only', 'civ4_only'], 
+                                 ['FreeCiv Only', 'freeciv_only'], 
+                                 ['Combined Civ4 + FreeCiv', 'combined'], 
+                                 ['Algorithmic Only', 'algorithmic_only']], 
+                                selected: @celestial_body.properties['biome_source'] || 'combined',
+                                class: 'form-input' %>
+                            <div class="form-help">
+                                Current: <%= (@celestial_body.properties['biome_source'] || 'combined').humanize %>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <%= form.submit 'Update Biome Source', class: 'action-btn primary' %>
+                            <%= form.submit 'Regenerate Terrain Now', name: 'regenerate', class: 'action-btn warning', 
+                                data: { confirm: 'This will regenerate terrain using the selected biome source. Continue?' } %>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
             <div class="content-section">                <h3>�🔒 Protected Properties</h3>
                 <div class="protected-properties">
                     <p>The following properties cannot be edited through this interface:</p>
