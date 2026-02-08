@@ -58,6 +58,7 @@ module Admin
     # Main monitoring interface with three-panel layout
     def monitor
       @geological_features = load_geological_features
+      @civilization_features = load_civilization_features
       @ai_missions = load_ai_missions
       @sphere_summary = build_sphere_summary
     end
@@ -427,16 +428,14 @@ module Admin
     def celestial_body_admin_params
       # Handle different param keys based on the celestial body type
       permitted_params = params.permit(
-        celestial_body: [:name, :aliases],
-        celestial_bodies_planets_rocky_terrestrial_planet: [:name, :aliases],
+        celestial_body: [:name],
+        celestial_bodies_planets_rocky_terrestrial_planet: [:name],
         # Add other types as needed
       )
-      
       # Extract the actual params from whichever key is present
       celestial_body_params = permitted_params[:celestial_body] || 
                              permitted_params[:celestial_bodies_planets_rocky_terrestrial_planet] ||
                              {}
-      
       celestial_body_params
     end
 
@@ -537,6 +536,45 @@ module Admin
       end
     rescue StandardError => e
       Rails.logger.error "Error loading geological features: #{e.message}"
+      []
+    end
+
+    def load_civilization_features
+      return [] unless @celestial_body.name.downcase == 'earth'
+
+      features = []
+      
+      # Load major cities
+      cities_path = GalaxyGame::Paths::CIVILIZATION_FEATURES_PATH.join('cities.json')
+      if File.exist?(cities_path)
+        cities_data = JSON.parse(File.read(cities_path))
+        features.concat(cities_data['features'] || [])
+      end
+
+      # Load strategic locations
+      strategic_path = GalaxyGame::Paths::CIVILIZATION_FEATURES_PATH.join('strategic_locations.json')
+      if File.exist?(strategic_path)
+        strategic_data = JSON.parse(File.read(strategic_path))
+        features.concat(strategic_data['features'] || [])
+      end
+
+      # Load resource hubs
+      resources_path = GalaxyGame::Paths::CIVILIZATION_FEATURES_PATH.join('resource_hubs.json')
+      if File.exist?(resources_path)
+        resources_data = JSON.parse(File.read(resources_path))
+        features.concat(resources_data['features'] || [])
+      end
+
+      # Load ancient wonders
+      wonders_path = GalaxyGame::Paths::CIVILIZATION_FEATURES_PATH.join('ancient_wonders.json')
+      if File.exist?(wonders_path)
+        wonders_data = JSON.parse(File.read(wonders_path))
+        features.concat(wonders_data['features'] || [])
+      end
+
+      features
+    rescue StandardError => e
+      Rails.logger.error "Error loading civilization features: #{e.message}"
       []
     end
 
@@ -1271,6 +1309,32 @@ module Admin
       geosphere.save!
 
       Rails.logger.info "[Earth Map Generation] Saved generated Earth map to #{celestial_body.name}"
+    end
+
+    # GET /admin/celestial_bodies/:id/validate_biomes
+    # JSON endpoint for biome validation
+    def validate_biomes
+      @celestial_body = ::CelestialBodies::CelestialBody.find(params[:id])
+
+      # Get biome grid from terrain map
+      biome_grid = @celestial_body.geosphere&.terrain_map&.dig('biomes')
+
+      if biome_grid.blank?
+        render json: {
+          score: 0,
+          total_tiles: 0,
+          valid_tiles: 0,
+          errors: ['No biome data available'],
+          summary: 'No biome data - terrain must be generated first'
+        }
+        return
+      end
+
+      # Run validation
+      validator = TerraSim::BiomeValidator.new(@celestial_body)
+      validation_result = validator.validate_biome_grid(biome_grid)
+
+      render json: validation_result
     end
 
     private

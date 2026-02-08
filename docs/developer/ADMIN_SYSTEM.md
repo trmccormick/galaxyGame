@@ -363,7 +363,13 @@ end
 
 ### 2. Celestial Bodies (`/admin/celestial_bodies`)
 
-**Data Source**: Celestial bodies are created from authoritative data sources (JSON data files, StarSim generation) and cannot be manually created through the admin interface. The admin interface provides monitoring and limited metadata editing capabilities only.
+**Data Source & Editing Policy**: Celestial bodies are created from authoritative data sources (JSON data files, StarSim generation) and cannot be manually created through the admin interface. The admin interface provides monitoring and strictly limited metadata editing capabilities only.
+
+**Editing Policy:**
+- Editing celestial bodies (planets, worlds, etc.) is restricted to the admin section.
+- Only the name and alias fields may be edited; all other physical and astronomical properties (mass, radius, temperature, atmosphere, etc.) are read-only and sourced from authoritative data.
+- No gameplay or user-facing interface allows editing of worlds; editing is strictly for administrative metadata correction.
+- Attempts to edit other properties are blocked and clearly warned in the UI and documentation.
 
 #### Index (`/admin/celestial_bodies`)
 
@@ -502,7 +508,7 @@ Admin-only interface for editing celestial body names and aliases, plus NASA ter
 - Name editing with validation
 - Alias management (add/remove alternative names)
 - NASA GeoTIFF terrain data upload and processing
-- Clear warnings about protected properties
+- Clear warnings about protected properties (all properties except name/alias are read-only)
 - Restricted to admin users only
 
 **Controller:** `Admin::CelestialBodiesController#edit`, `Admin::CelestialBodiesController#update`
