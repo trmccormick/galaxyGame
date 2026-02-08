@@ -56,8 +56,11 @@
           features: has_biosphere,
           temperature: true,
           rainfall: has_hydrosphere && has_atmosphere,  # Precipitation requires atmosphere + liquid cycle
-          resources: true
-        }
+          resources: true,
+          civilization: true  # Strategic cities, wonders, resource hubs
+        },
+        # Civilization layer data
+        civilization_features: @civilization_features
       }
     %>
     <%= raw monitor_data.to_json %>
@@ -143,9 +146,24 @@
                     <button class="layer-btn" data-layer="temperature">Temp</button>
                     <button class="layer-btn" data-layer="rainfall">Rainfall</button>
                     <button class="layer-btn" data-layer="resources">Resources</button>
+                    <button class="layer-btn" data-layer="civilization">Civilization</button>
                 </div>
             </div>
-            
+
+            <!-- Biome Validation Section -->
+            <div class="tool-section">
+                <h3>BIOME VALIDATION</h3>
+                <div class="biome-validation-panel">
+                    <div id="validation-score">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <button onclick="runBiomeValidation()">Validate Biomes</button>
+                    <div id="validation-details" style="display: none;">
+                        <!-- Validation errors/warnings -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Geological Features -->
             <% if @geological_features.any? %>
                 <div class="tool-section">
