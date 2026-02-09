@@ -229,7 +229,11 @@
                                 Mass: <%= number_with_precision(body.mass, precision: 2) %> × 10^24 kg<br>
                                 Radius: <%= number_with_precision(body.radius, precision: 1) %> km<br>
                                 Temperature: <%= number_with_precision(body.surface_temperature, precision: 1) %> K<br>
-                                Gravity: <%= number_with_precision(body.surface_gravity, precision: 2) %> m/s²
+                                <% if body.respond_to?(:surface_gravity) && body.surface_gravity.present? %>
+                                    Gravity: <%= number_with_precision(body.surface_gravity, precision: 2) %> m/s²
+                                <% else %>
+                                    Gravity: N/A (irregular body)
+                                <% end %>
                             </div>
                             <div class="body-actions">
                                 <button class="action-btn" onclick="window.location.href='/celestial_bodies/<%= body.id %>'">
