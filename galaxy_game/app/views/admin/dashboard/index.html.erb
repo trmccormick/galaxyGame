@@ -6,130 +6,7 @@
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
     <title>Galaxy Game - Admin Control Center</title>
     <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
-    <style>
-        /* Dashboard-specific styles */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: #1a1a1a;
-            border: 1px solid #0f0;
-            padding: 15px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 32px;
-            color: #0ff;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #888;
-            text-transform: uppercase;
-        }
-        
-        .body-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .body-item {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            padding: 10px;
-            margin: 5px 0;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .body-item:hover {
-            border-color: #0f0;
-            background: #222;
-        }
-        
-        .body-name {
-            color: #0ff;
-            font-weight: bold;
-        }
-        
-        .body-type {
-            color: #888;
-            font-size: 11px;
-        }
-        
-        .body-actions {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .action-btn {
-            padding: 5px 10px;
-            background: #222;
-            border: 1px solid #0f0;
-            color: #0f0;
-            cursor: pointer;
-            font-size: 10px;
-            transition: all 0.2s;
-        }
-        
-        .action-btn:hover {
-            background: #0f0;
-            color: #000;
-        }
-        
-        .activity-log {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #0a0a0a;
-            padding: 10px;
-            border: 1px solid #333;
-        }
-        
-        .activity-item {
-            padding: 5px 0;
-            border-bottom: 1px solid #1a1a1a;
-            font-size: 11px;
-        }
-        
-        .activity-time {
-            color: #666;
-            margin-right: 10px;
-        }
-        
-        .activity-message {
-            color: #0f0;
-        }
-        
-        .activity-item.success .activity-message {
-            color: #0ff;
-        }
-        
-        .activity-item.error .activity-message {
-            color: #f00;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-        }
-        
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <%= stylesheet_link_tag 'admin/dashboard', media: 'all' %>
 </head>
 <body>
     <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
@@ -137,12 +14,14 @@
         <div id="header" style="grid-column: 1 / -1;">
             <h1>GALAXY GAME - ADMIN CONTROL CENTER</h1>
             <div id="planetInfo">
-                System Status: <span style="color: #0f0;">OPERATIONAL</span> | 
+                System Status: <span style="color: #0f0;">OPERATIONAL</span> |
                 Uptime: <%= @system_stats[:uptime] %> |
-                Version: 1.0.0-alpha
+                Version: 1.0.0-alpha |
+                Galaxy: <%= @selected_galaxy&.name || 'Unknown' %> |
+                Systems: <%= @star_systems.count %>
             </div>
         </div>
-        
+
         <!-- Left Panel: Admin Navigation -->
         <div id="toolPanel">
             <div class="tool-section">
@@ -175,7 +54,7 @@
                     ⚙️ Simulation Control
                 </button>
             </div>
-            
+
             <div class="tool-section">
                 <h3>🎮 QUICK ACTIONS</h3>
                 <button class="tool-button" onclick="window.location.href='/'">
@@ -188,81 +67,30 @@
                     🔄 Refresh Dashboard
                 </button>
             </div>
-            
+
+            <!-- Galaxy Stats -->
             <div class="tool-section">
-                <h3>🧪 AI TESTING</h3>
-                <button class="tool-button" onclick="window.location.href='/admin/map_studio/generate'">
-                    🗺️ Generate Planet Map
-                </button>
-                <button class="tool-button" onclick="runGlobalTest('resource_extraction')">
-                    ⛏️ Test Resource Extraction
-                </button>
-                <button class="tool-button" onclick="runGlobalTest('base_construction')">
-                    🏗️ Test Base Construction
-                </button>
-                <button class="tool-button" onclick="runGlobalTest('isru_pipeline')">
-                    🏭 Test ISRU Pipeline
-                </button>
-                <button class="tool-button" onclick="runGlobalTest('multi_mission')">
-                    🚀 Test Multi-Mission
-                </button>
-            </div>
-            
-            <div class="tool-section">
-                <h3>📁 DATA MANAGEMENT</h3>
-                <button class="tool-button" onclick="alert('Export feature coming soon')">
-                    💾 Export Data
-                </button>
-                <button class="tool-button" onclick="alert('Import feature coming soon')">
-                    📥 Import Data
-                </button>
-                <button class="tool-button" onclick="alert('Backup feature coming soon')">
-                    💿 Backup Database
-                </button>
-            </div>
-        </div>
-        
-        <!-- Main Content Area -->
-        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
-            <!-- System Stats -->
-            <div class="tool-section">
-                <h3>📊 SYSTEM STATISTICS</h3>
+                <h3>🌌 GALAXY STATS</h3>
                 <div class="stat-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Solar Systems</div>
-                        <div class="stat-value"><%= @system_stats[:total_systems] %></div>
+                        <div class="stat-label">Total Systems</div>
+                        <div class="stat-value"><%= @galaxy_stats[:total_systems] %></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Celestial Bodies</div>
-                        <div class="stat-value"><%= @system_stats[:total_bodies] %></div>
+                        <div class="stat-label">Total Bodies</div>
+                        <div class="stat-value"><%= @galaxy_stats[:total_bodies] %></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Habitable Worlds</div>
-                        <div class="stat-value"><%= @system_stats[:habitable_bodies] %></div>
+                        <div class="stat-label">Habitable Bodies</div>
+                        <div class="stat-value"><%= @galaxy_stats[:habitable_bodies] %></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Active Simulations</div>
-                        <div class="stat-value"><%= @system_stats[:active_simulations] %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">AI Missions</div>
-                        <div class="stat-value"><%= @system_stats[:ai_missions_running] %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">GCC Generation</div>
-                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:gcc_generation] %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">AI Status</div>
-                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:ai_status] %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Economic Autonomy</div>
-                        <div class="stat-value" style="font-size: 18px;"><%= @system_stats[:economic_autonomy] %></div>
+                        <div class="stat-value"><%= @galaxy_stats[:active_simulations] %></div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- AI Manager Status -->
             <div class="tool-section">
                 <h3>🤖 AI MANAGER STATUS</h3>
@@ -291,7 +119,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Economic Indicators -->
             <div class="tool-section">
                 <h3>💰 ECONOMIC INDICATORS</h3>
@@ -314,95 +142,156 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="dashboard-grid">
-                <!-- Celestial Bodies List -->
-                <div class="tool-section">
-                    <h3>🌍 CELESTIAL BODIES</h3>
-                    <div class="body-list">
-                        <% @celestial_bodies.each do |body| %>
-                            <div class="body-item">
-                                <div>
-                                    <div class="body-name"><%= body.name %></div>
-                                    <div class="body-type">
-                                        <%= body.solar_system&.name || 'Unknown System' %> | 
-                                        <%= body.type || 'Unknown Type' %> |
-                                        <%= number_with_precision(body.surface_temperature, precision: 1) %>K
-                                    </div>
-                                </div>
-                                <div class="body-actions">
-                                    <button class="action-btn" onclick="window.location.href='/celestial_bodies/<%= body.id %>'">
-                                        View
-                                    </button>
-                                    <button class="action-btn" onclick="window.location.href='/admin/celestial_bodies/<%= body.id %>/monitor'">
-                                        Monitor
-                                    </button>
-                                </div>
-                            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="mainContent">
+            <!-- Galaxy Selector -->
+            <div class="galaxy-selector">
+                <form method="get" style="display: inline;">
+                    <label for="galaxy_id" style="color: #0ff; margin-right: 10px;">SELECT GALAXY:</label>
+                    <select name="galaxy_id" id="galaxy_id" onchange="this.form.submit()">
+                        <% @galaxies.each do |galaxy| %>
+                            <option value="<%= galaxy.id %>" <%= 'selected' if galaxy.id == @selected_galaxy&.id %>>
+                                <%= galaxy.name %> (<%= galaxy.solar_systems.count %> systems)
+                            </option>
                         <% end %>
-                        
-                        <% if @celestial_bodies.empty? %>
-                            <div style="text-align: center; padding: 40px; color: #666;">
-                                No celestial bodies found.<br>
-                                <button class="tool-button" style="margin-top: 20px;" onclick="window.location.href='/simulation'">
-                                    Initialize Simulation
-                                </button>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Quick Access Panel -->
+            <div class="quick-access-panel">
+                <% if @sol_system %>
+                    <a href="/solar_systems/<%= @sol_system.id %>" class="quick-access-link sol-highlight">
+                        ⚡ QUICK ACCESS: SOL SYSTEM
+                    </a>
+                <% end %>
+                <a href="/admin/simulation" class="quick-access-link">
+                    🚀 START SIMULATION
+                </a>
+                <a href="/admin/ai_manager" class="quick-access-link">
+                    🤖 AI MANAGER
+                </a>
+                <a href="/admin/map_studio" class="quick-access-link">
+                    🗺️ MAP STUDIO
+                </a>
+            </div>
+
+            <!-- Systems Grid -->
+            <div class="systems-grid">
+                <% @star_systems.each do |system| %>
+                    <div class="system-card <%= 'sol-highlight' if system.name == 'Sol' %>">
+                        <div class="system-header">
+                            <div class="system-name"><%= system.name %></div>
+                            <div class="system-identifier">ID: <%= system.id %></div>
+                        </div>
+
+                        <div class="system-stats">
+                            <div class="system-stat">
+                                <span class="system-stat-value"><%= system.celestial_bodies.count %></span>
+                                <span class="system-stat-label">Bodies</span>
                             </div>
-                        <% end %>
-                    </div>
-                </div>
-                
-                <!-- Recent Activity -->
-                <div class="tool-section">
-                    <h3>📜 RECENT ACTIVITY</h3>
-                    <div class="activity-log">
-                        <% @recent_activity.each do |activity| %>
-                            <div class="activity-item <%= activity[:level] %>">
-                                <span class="activity-time">
-                                    <%= time_ago_in_words(activity[:timestamp]) %> ago
-                                </span>
-                                <span class="activity-message">
-                                    [<%= activity[:type].upcase %>] <%= activity[:message] %>
-                                </span>
+                            <div class="system-stat">
+                                <span class="system-stat-value"><%= system.celestial_bodies.select { |b| b.body_type == 'star' }.count %></span>
+                                <span class="system-stat-label">Stars</span>
                             </div>
-                        <% end %>
-                    </div>
-                </div>
-                
-                <!-- AI Activity Feed -->
-                <div class="tool-section">
-                    <h3>🧠 AI ACTIVITY FEED</h3>
-                    <div class="activity-log">
-                        <% @ai_activity_feed.each do |activity| %>
-                            <div class="activity-item <%= activity[:level] %>">
-                                <span class="activity-time">
-                                    <%= time_ago_in_words(activity[:timestamp]) %> ago
-                                </span>
-                                <span class="activity-message">
-                                    [<%= activity[:type].upcase %>] <%= activity[:message] %>
-                                </span>
-                                <% if activity[:details] %>
-                                    <div style="margin-top: 5px; font-size: 10px; color: #666;">
-                                        <%= activity[:details] %>
-                                    </div>
+                            <div class="system-stat">
+                                <span class="system-stat-value"><%= system.celestial_bodies.select { |b| b.body_type == 'terrestrial_planet' }.count %></span>
+                                <span class="system-stat-label">Planets</span>
+                            </div>
+                            <div class="system-stat">
+                                <span class="system-stat-value"><%= system.celestial_bodies.select { |b| b.body_type == 'moon' }.count %></span>
+                                <span class="system-stat-label">Moons</span>
+                            </div>
+                        </div>
+
+                        <div class="system-preview">
+                            <div class="system-preview-label">CELESTIAL BODIES:</div>
+                            <div class="system-bodies-list">
+                                <% system.celestial_bodies.limit(8).each do |body| %>
+                                    <span class="body-pill <%= body.body_type %>">
+                                        <%= body.name %>
+                                    </span>
+                                <% end %>
+                                <% if system.celestial_bodies.count > 8 %>
+                                    <span class="body-pill">+<%= system.celestial_bodies.count - 8 %> more</span>
                                 <% end %>
                             </div>
-                        <% end %>
+                        </div>
+
+                        <div class="system-actions">
+                            <a href="/solar_systems/<%= system.id %>" class="system-action-btn primary">
+                                VIEW SYSTEM
+                            </a>
+                            <a href="/admin/solar_systems/<%= system.id %>/monitor" class="system-action-btn">
+                                MONITOR
+                            </a>
+                        </div>
                     </div>
-                    
-                    <!-- AI Testing Controls -->
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
-                        <h4 style="margin: 0 0 10px 0; color: #0ff;">AI BOOTSTRAP TESTING</h4>
-                        <button class="tool-button" onclick="runGccBootstrapTest()" style="width: 100%; margin-bottom: 5px;">
-                            🚀 Test GCC Bootstrap
-                        </button>
-                        <button class="tool-button" onclick="runAiAnalysis()" style="width: 100%; margin-bottom: 5px;">
-                            🔍 Run AI System Analysis
-                        </button>
-                        <button class="tool-button" onclick="clearAiActivity()" style="width: 100%;">
-                            🗑️ Clear Activity Feed
-                        </button>
-                    </div>
+                <% end %>
+            </div>
+
+            <% if @star_systems.empty? %>
+                <div style="text-align: center; padding: 60px; color: #666; background: #1a1a1a; border: 1px solid #333; border-radius: 8px;">
+                    <h3>No star systems found in <%= @selected_galaxy&.name || 'selected galaxy' %></h3>
+                    <p>This galaxy appears to be empty or not yet initialized.</p>
+                    <button class="tool-button" style="margin-top: 20px;" onclick="window.location.href='/admin/simulation'">
+                        Initialize Simulation
+                    </button>
+                </div>
+            <% end %>
+
+            <!-- Recent Activity -->
+            <div class="tool-section" style="margin-top: 30px;">
+                <h3>📜 RECENT ACTIVITY</h3>
+                <div class="activity-feed-condensed">
+                    <% @recent_activity.each do |activity| %>
+                        <div class="activity-feed-item">
+                            <span class="activity-feed-time">
+                                <%= time_ago_in_words(activity[:timestamp]) %> ago
+                            </span>
+                            <div class="activity-feed-message">
+                                [<%= activity[:type].upcase %>] <%= activity[:message] %>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+
+            <!-- AI Activity Feed -->
+            <div class="tool-section">
+                <h3>🧠 AI ACTIVITY FEED</h3>
+                <div class="activity-feed-condensed">
+                    <% @ai_activity_feed.each do |activity| %>
+                        <div class="activity-feed-item">
+                            <span class="activity-feed-time">
+                                <%= time_ago_in_words(activity[:timestamp]) %> ago
+                            </span>
+                            <div class="activity-feed-message">
+                                [<%= activity[:type].upcase %>] <%= activity[:message] %>
+                            </div>
+                            <% if activity[:details] %>
+                                <div style="margin-top: 5px; font-size: 10px; color: #666;">
+                                    <%= activity[:details] %>
+                                </div>
+                            <% end %>
+                        </div>
+                    <% end %>
+                </div>
+
+                <!-- AI Testing Controls -->
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333;">
+                    <h4 style="margin: 0 0 10px 0; color: #0ff;">AI BOOTSTRAP TESTING</h4>
+                    <button class="tool-button" onclick="runGccBootstrapTest()" style="width: 100%; margin-bottom: 5px;">
+                        🚀 Test GCC Bootstrap
+                    </button>
+                    <button class="tool-button" onclick="runAiAnalysis()" style="width: 100%; margin-bottom: 5px;">
+                        🔍 Run AI System Analysis
+                    </button>
+                    <button class="tool-button" onclick="clearAiActivity()" style="width: 100%;">
+                        🗑️ Clear Activity Feed
+                    </button>
                 </div>
             </div>
         </div>
@@ -412,12 +301,12 @@
         function refreshDashboard() {
             window.location.reload();
         }
-        
+
         function runGlobalTest(testType) {
             // For now, just show an alert. Later, this could run tests across multiple bodies
             alert(`Global ${testType} test not yet implemented.\n\nPlease use individual body monitors for AI testing.`);
         }
-        
+
         function runGccBootstrapTest() {
             if (confirm('Run GCC Bootstrap Test?\n\nThis will test the AI Manager\'s ability to autonomously deploy a mining satellite to bootstrap cryptocurrency generation.')) {
                 // For now, redirect to a celestial body monitor. Later, this could run globally
@@ -429,11 +318,11 @@
                 }
             }
         }
-        
+
         function runAiAnalysis() {
             alert('AI System Analysis\n\nThis feature will analyze the current state of the AI Manager and provide recommendations for bootstrap actions.\n\nFeature coming soon!');
         }
-        
+
         function clearAiActivity() {
             if (confirm('Clear AI Activity Feed?\n\nThis will remove all AI activity entries from the dashboard.')) {
                 // TODO: Implement actual clearing functionality
@@ -441,7 +330,12 @@
                 location.reload();
             }
         }
-        
+
+        // Galaxy selector enhancement
+        document.getElementById('galaxy_id').addEventListener('change', function() {
+            this.form.submit();
+        });
+
         // Auto-refresh stats every 30 seconds
         setInterval(() => {
             fetch('/admin/dashboard')
