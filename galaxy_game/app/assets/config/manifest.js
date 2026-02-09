@@ -5,3 +5,4 @@
 //= link game.js
 //= link admin/monitor.js
 //= link admin/monitor.css
+//= link admin/dashboard.css
