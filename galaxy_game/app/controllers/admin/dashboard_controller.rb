@@ -7,24 +7,45 @@ module Admin
   # Main control center for game administration and AI testing
   class DashboardController < ApplicationController
     def index
-      @celestial_bodies = ::CelestialBodies::CelestialBody.includes(:solar_system)
-                                       .order('solar_systems.name, celestial_bodies.name')
-                                       .limit(50)
+      # Load galaxies for selection
+      @galaxies = Galaxy.includes(:solar_systems).order(:name)
       
+      # Default to Milky Way, fallback to first galaxy
+      @selected_galaxy = params[:galaxy_id] ? 
+        Galaxy.find(params[:galaxy_id]) : 
+        Galaxy.find_by(name: 'Milky Way') || @galaxies.first
+      
+      # Load systems for selected galaxy, prioritize Sol
+      if @selected_galaxy
+        @star_systems = @selected_galaxy.solar_systems
+          .includes(:celestial_bodies)
+          .order(Arel.sql("CASE WHEN name = 'Sol' THEN 0 ELSE 1 END, name"))
+          .limit(50) # Limit for performance
+        
+        # Find Sol system for quick access
+        @sol_system = @selected_galaxy.solar_systems.find_by(name: 'Sol') if @selected_galaxy.name == 'Milky Way'
+      else
+        @star_systems = []
+        @sol_system = nil
+      end
+      
+      # Keep existing AI and activity data
       @ai_status = load_ai_status
       @ai_activity_feed = load_ai_activity_feed
       @economic_indicators = load_economic_indicators
       
-      @system_stats = calculate_system_stats
+      @galaxy_stats = calculate_galaxy_stats(@selected_galaxy)
+      @system_stats = calculate_global_system_stats
       @recent_activity = load_recent_activity
     end
 
     private
 
-    def calculate_system_stats
+    def calculate_global_system_stats
       {
         total_bodies: ::CelestialBodies::CelestialBody.count,
         total_systems: SolarSystem.count,
+        total_galaxies: Galaxy.count,
         habitable_bodies: count_habitable_bodies,
         active_simulations: 0, # TODO: Implement simulation tracking
         ai_missions_running: @ai_status[:active_missions],
@@ -35,11 +56,39 @@ module Admin
       }
     end
 
+    def calculate_galaxy_stats(galaxy)
+      return {} unless galaxy
+      
+      total_bodies = galaxy.solar_systems.joins(:celestial_bodies).count
+      total_systems = galaxy.solar_systems.count
+      
+      {
+        total_galaxy_bodies: total_bodies,
+        total_galaxy_systems: total_systems,
+        habitable_bodies: count_habitable_bodies_in_galaxy(galaxy),
+        active_simulations: 0, # TODO: Implement simulation tracking
+        ai_missions_running: @ai_status[:active_missions],
+        uptime: calculate_uptime,
+        ai_status: @ai_status[:manager_status],
+        gcc_generation: @ai_status[:gcc_generation] ? 'Active' : 'None',
+        economic_autonomy: @ai_status[:economic_autonomy] ? 'Yes' : 'No'
+      }
+    end
+
     def count_habitable_bodies
-      # Count bodies with atmosphere and acceptable temperature
+      # Count bodies with atmosphere and acceptable temperature globally
       ::CelestialBodies::CelestialBody.joins(:atmosphere)
                    .where('surface_temperature > ? AND surface_temperature < ?', 250, 350)
                    .count
+    rescue StandardError
+      0
+    end
+
+    def count_habitable_bodies_in_galaxy(galaxy)
+      # Count bodies with atmosphere and acceptable temperature in this galaxy
+      galaxy.solar_systems.joins(celestial_bodies: :atmosphere)
+             .where('surface_temperature > ? AND surface_temperature < ?', 250, 350)
+             .count
     rescue StandardError
       0
     end
