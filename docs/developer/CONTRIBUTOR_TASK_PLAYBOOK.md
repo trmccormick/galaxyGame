@@ -795,7 +795,60 @@ data/json-data/star_systems/sol/celestial_bodies/luna/features/
 - FreeCiv Mars: `data/maps/mars-terraformed-133x64-v2.0.sav`
 
 ---
+## Star System Generator Improvements **[2026-02-09] Critical Fixes Required
 
+**Goal:** Fix procedural star system generator to produce complete, loadable JSON files that match database schema requirements.
+
+**Background:** Gaia system (aol-732356.json) failed to load due to missing required attributes and invalid data. Generator produces incomplete JSON that requires manual post-processing to be usable by SystemBuilderService.
+
+**Required Generator Fixes:**
+
+### 1) Add Missing Size Attributes
+**Issue:** Gas giants, ice giants, dwarf planets, and asteroids missing required 'size' attribute.
+**Solution:** Calculate size as radius ratio relative to Earth (Earth = 1.0).
+**Formula:** `size = radius / 6371000` (Earth's radius in meters)
+
+### 2) Add Missing Orbital Period Attributes  
+**Issue:** Gas giants, ice giants, dwarf planets, and asteroids missing required 'orbital_period' attribute.
+**Solution:** Use orbital_period_days from orbits array, rounded to nearest integer.
+
+### 3) Fix Density Unit Conversion
+**Issue:** Density values generated in kg/m³ instead of required g/cm³.
+**Solution:** Convert by dividing by 1000: `density_gcm3 = density_kgm3 / 1000`
+
+### 4) Remove Invalid Attributes
+**Issue:** Generator adds unsupported attributes that cause ActiveModel::UnknownAttributeError.
+**Remove from moons/asteroids:** `diameter_km`
+**Remove from asteroids:** `gravitational_anchor`, `anchor_designation`
+
+### 5) Validation Integration
+**Issue:** No validation that generated JSON matches CelestialBody model requirements.
+**Solution:** Add post-generation validation against database schema before saving files.
+
+**Files to Modify:**
+- `scripts/generate_star_system.rb` or equivalent generator script
+- Add size/orbital_period calculation logic
+- Add density unit conversion
+- Add attribute filtering/removal
+- Add schema validation
+
+**Testing:**
+- Generate test system and verify loads with SystemBuilderService
+- Compare generated JSON structure against sol-complete.json reference
+- Ensure all celestial bodies have required attributes in correct units
+
+**Acceptance:**
+- Generated star systems load without manual fixes
+- All celestial bodies have size, orbital_period, density in g/cm³
+- No invalid attributes present
+- Schema validation passes before file output
+
+**References:**
+- [Sol Complete Reference](../../data/json-data/star_systems/sol-complete.json) - Canonical structure
+- [CelestialBody Model](../../galaxy_game/app/models/celestial_body.rb) - Required attributes
+- [SystemBuilderService](../../galaxy_game/app/services/star_sim/system_builder_service.rb) - Loading logic
+
+---
 ## Optional: Alpha Centauri JSON Generator Template
 - Goal: Provide generator for Alpha Centauri system files.
 - Suggested placement: `scripts/alpha_centauri_generator.rb` or JSON build script under `galaxy_game/json-build-scripts/`.
