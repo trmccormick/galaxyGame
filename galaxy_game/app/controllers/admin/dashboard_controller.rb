@@ -24,9 +24,18 @@ module Admin
         
         # Find Sol system for quick access
         @sol_system = @selected_galaxy.solar_systems.find_by(name: 'Sol') if @selected_galaxy.name == 'Milky Way'
+        
+        # Load celestial bodies for backward compatibility (used by GCC Bootstrap Test)
+        @celestial_bodies = @selected_galaxy.solar_systems
+          .includes(:celestial_bodies)
+          .flat_map(&:celestial_bodies)
+          .uniq
+          .sort_by(&:name)
+          .first(50) # Limit for performance
       else
         @star_systems = []
         @sol_system = nil
+        @celestial_bodies = []
       end
       
       # Keep existing AI and activity data
