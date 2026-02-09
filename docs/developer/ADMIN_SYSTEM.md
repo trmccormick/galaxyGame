@@ -587,6 +587,10 @@ Detailed solar system monitoring and celestial body overview.
                                 .order(:name)
 ```
 
+**Notes:**
+- Surface gravity display is conditional - shows "N/A (irregular body)" for asteroids and other bodies without surface gravity calculation
+- Prevents NoMethodError when viewing systems containing asteroids or minor bodies
+
 ## Public Solar Systems Interface
 
 The public solar systems interface provides read-only access to solar system information for players.
