@@ -27,6 +27,7 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 
 #### Completed Work (NEW)
 - [Construction Refactor](development/completed/CONSTRUCTION_REFACTOR.md) - Manufacturing pipeline history
+- [Admin Dashboard Redesign](developer/ADMIN_DASHBOARD_REDESIGN.md) - Multi-galaxy support with hierarchical navigation
 
 #### Technical Reference
 - [Data-Driven Systems](developer/DATA_DRIVEN_SYSTEMS.md) - JSON configuration patterns
@@ -90,13 +91,15 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 
 ### Current: Phase 3 - Integration & Restoration
 **Goal**: Reduce test failures from 401 → <50  
-**Status**: ~398 failures remaining  
+**Status**: ~393 failures remaining  
 **Approach**: Surgical fixes preserving post-Jan-8 improvements
 
 **Recent Progress**:
 - ✅ shell_spec.rb - 66/66 passing
 - ✅ consortium_membership_spec.rb - 5/5 passing
 - ✅ covering_service_spec.rb - 23/24 passing
+- ✅ protoplanet_spec.rb - 10/10 passing (new protoplanet model)
+- ✅ terrain generation - Titan GeoTIFF support, protoplanet terrain
 - 🔄 financial/account_spec.rb - in progress
 
 ### Next: Phase 4 - UI Enhancement
@@ -204,7 +207,7 @@ Every code change must update corresponding .md files to maintain accuracy.
 
 ---
 
-**Last Updated**: January 16, 2026  
+**Last Updated**: February 9, 2026  
 **Documentation Version**: 2.0 (Reorganized structure)
 
 - [Project README](../README.md) - Project setup and overview
