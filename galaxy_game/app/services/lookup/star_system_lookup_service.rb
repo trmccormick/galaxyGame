@@ -32,7 +32,9 @@ module Lookup
         system_data = curated_systems.find do |sys|
           sys[:id] == system_name.to_s || 
           sys[:solar_system]&.[](:name)&.downcase == system_name.to_s.downcase ||
-          sys[:name]&.downcase == system_name.to_s.downcase
+          sys[:solar_system]&.[](:identifier) == system_name.to_s ||
+          sys[:name]&.downcase == system_name.to_s.downcase ||
+          sys[:_source_file]&.sub('.json', '') == system_name.to_s
         end
       end
       
@@ -41,7 +43,9 @@ module Lookup
         system_data = generated_systems.find do |sys|
           sys[:id] == system_name.to_s || 
           sys[:solar_system]&.[](:name)&.downcase == system_name.to_s.downcase ||
-          sys[:name]&.downcase == system_name.to_s.downcase
+          sys[:solar_system]&.[](:identifier) == system_name.to_s ||
+          sys[:name]&.downcase == system_name.to_s.downcase ||
+          sys[:_source_file]&.sub('.json', '')&.downcase == system_name.to_s.downcase
         end
       end
       
@@ -94,7 +98,11 @@ module Lookup
     def system_exists?(identifier)
       # Check if a system with this identifier exists in the loaded data
       @systems.any? do |system|
-        system[:id] == identifier.to_s || system[:name]&.downcase == identifier.to_s.downcase
+        system[:id] == identifier.to_s || 
+        system[:name]&.downcase == identifier.to_s.downcase ||
+        system[:solar_system]&.[](:identifier) == identifier.to_s ||
+        system[:solar_system]&.[](:name)&.downcase == identifier.to_s.downcase ||
+        system[:_source_file]&.sub('.json', '')&.downcase == identifier.to_s.downcase
       end
     end
 
