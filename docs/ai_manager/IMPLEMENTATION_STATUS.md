@@ -47,6 +47,28 @@ The AI Manager system has **30+ service files** implementing various aspects of 
 
 **Documentation Fix Needed**: Update wh-expansion.md Phase 1 to reference actual service name
 
+#### 2. PlanetaryMapGenerator (Terrain Generation)
+**File**: `galaxy_game/app/services/ai_manager/planetary_map_generator.rb` (581 lines)
+
+**Purpose**: Generates realistic planetary terrain using NASA GeoTIFF statistical patterns and Earth landmass shapes
+
+**Key Features**:
+- Pattern-based generation replacing problematic sine wave procedural generation
+- NASA GeoTIFF statistical data integration (mars, earth, luna, mercury, venus patterns)
+- Earth landmass reference from Civ4/FreeCiv maps for realistic continent shapes
+- Gaussian elevation distribution with proper smoothing
+- Strategic marker generation based on terrain features
+
+**Status**: ✅ **FUNCTIONAL** - Successfully generates realistic barren terrain without grid artifacts
+
+**Implementation Details**:
+- Replaced `Math.sin(x * 0.1) * Math.cos(y * 0.1)` grid patterns with statistical pattern generation
+- Uses elevation statistics from NASA data for realistic height variation
+- Integrates Earth landmass shapes for geographically plausible terrain
+- Maintains 2:1 aspect ratio and proper grid sizing for FreeCiv tileset compatibility
+
+**Testing**: Manual testing confirmed, AI Manager controller tests pass (17 examples, 0 failures)
+
 ---
 
 #### 2. ResourceAcquisitionService (Phase 2)
