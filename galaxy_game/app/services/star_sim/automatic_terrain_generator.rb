@@ -246,6 +246,9 @@ module StarSim
         height: params[:grid_height]
       }
 
+      # Always try to use Civ4/FreeCiv maps as sources for realistic landmass shapes
+      sources = load_civ4_freeciv_sources(body)
+
       # Use NASA data if available for this planet
       if nasa_data_available?(body.name)
         generator_params[:nasa_data_source] = find_nasa_data(body.name)
@@ -254,18 +257,26 @@ module StarSim
       # Get raw terrain data from PlanetaryMapGenerator
       raw_terrain = planetary_map_generator.generate_planetary_map(
         planet: body,
-        sources: generator_params[:sources] || [],
+        sources: sources,
         options: generator_params
       )
 
       # Transform into expected format
+      # Check if PlanetaryMapGenerator provided elevation_data (new format)
+      elevation_data = if raw_terrain[:elevation_data].present?
+        raw_terrain[:elevation_data]  # Use elevation data directly from PlanetaryMapGenerator
+      else
+        generate_elevation_data_from_grid(raw_terrain[:terrain_grid])  # Legacy conversion
+      end
+
       {
         grid: raw_terrain[:terrain_grid],  # The terrain grid with biome letters
-        elevation: generate_elevation_data_from_grid(raw_terrain[:terrain_grid]),  # Elevation values (2D)
+        elevation: elevation_data,  # Elevation values (2D)
         biomes: raw_terrain[:biome_counts],  # Biome counts
         resource_grid: generate_resource_grid(body, raw_terrain),
         strategic_markers: generate_strategic_markers(body, raw_terrain),
-        resource_counts: generate_resource_counts(raw_terrain)
+        resource_counts: generate_resource_counts(raw_terrain),
+        generation_metadata: raw_terrain[:metadata]  # Include metadata from PlanetaryMapGenerator
       }
     end
 
@@ -454,7 +465,7 @@ module StarSim
       # Otherwise fall back to default values
       generation_metadata = terrain_data[:generation_metadata] || {}
       source = generation_metadata[:source] || 'planetary_properties_analysis'
-      generation_method = generation_metadata[:source] || 'automatic_ai_driven'
+      generation_method = generation_metadata[:generation_method] || 'automatic_ai_driven'
       
       Rails.logger.info "[AutomaticTerrainGenerator] Storing terrain for #{body.name} - source: #{source}"
 
@@ -1012,6 +1023,81 @@ module StarSim
 
     def find_mars_freeciv_map
       find_freeciv_map_for_body(OpenStruct.new(name: 'mars'))
+    end
+
+    # Load Civ4/FreeCiv maps as sources for PlanetaryMapGenerator
+    def load_civ4_freeciv_sources(body)
+      sources = []
+
+      # Try Civ4 map first
+      civ4_path = find_civ4_map_for_body(body)
+      if civ4_path
+        Rails.logger.info "[AutomaticTerrainGenerator] Using Civ4 map as source: #{civ4_path}"
+        processor = Import::Civ4MapProcessor.new
+        civ4_data = processor.process(civ4_path, mode: :terrain)
+
+        if civ4_data
+          sources << {
+            type: 'civ4',
+            filename: File.basename(civ4_path),
+            data: civ4_data
+          }
+        end
+      end
+
+      # Try FreeCiv map as additional source
+      freeciv_path = find_freeciv_map_for_body(body)
+      if freeciv_path
+        Rails.logger.info "[AutomaticTerrainGenerator] Using FreeCiv map as source: #{freeciv_path}"
+        processor = Import::FreecivMapProcessor.new
+        freeciv_data = processor.load_map(body.name.downcase)
+
+        if freeciv_data
+          sources << {
+            type: 'freeciv',
+            filename: File.basename(freeciv_path),
+            data: freeciv_data
+          }
+        end
+      end
+
+      # If no specific maps found, try Earth maps as reference for landmass shapes
+      if sources.empty? && body.name.downcase != 'earth'
+        Rails.logger.info "[AutomaticTerrainGenerator] No specific maps found, using Earth as reference for landmass shapes"
+
+        # Try Earth Civ4 map
+        earth_civ4_path = find_civ4_map_for_body(OpenStruct.new(name: 'earth'))
+        if earth_civ4_path
+          processor = Import::Civ4MapProcessor.new
+          earth_data = processor.process(earth_civ4_path, mode: :terrain)
+
+          if earth_data
+            sources << {
+              type: 'civ4_earth_reference',
+              filename: File.basename(earth_civ4_path),
+              data: earth_data
+            }
+          end
+        end
+
+        # Try Earth FreeCiv map
+        earth_freeciv_path = find_freeciv_map_for_body(OpenStruct.new(name: 'earth'))
+        if earth_freeciv_path
+          processor = Import::FreecivMapProcessor.new
+          earth_data = processor.load_map('earth')
+
+          if earth_data
+            sources << {
+              type: 'freeciv_earth_reference',
+              filename: File.basename(earth_freeciv_path),
+              data: earth_data
+            }
+          end
+        end
+      end
+
+      Rails.logger.info "[AutomaticTerrainGenerator] Loaded #{sources.size} source maps for #{body.name}"
+      sources
     end
 
     # Check if planet is Earth-like based on properties
