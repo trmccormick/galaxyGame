@@ -1,101 +1,110 @@
-# Mission Plan Refinement: AI Manager Role Alignment
+# Mission Plan Refinement: AI Manager Bootstrap Phase Integration
 
 ## Task Overview
-Review and refine mission plans to properly separate Development Corporation establishment (missions) from ongoing AI Manager operations (mega projects, resource management, terraforming). Missions should focus on footholds and handoffs, while AI Manager handles sustained operations.
+Refine mission plans to properly integrate AI Manager's critical bootstrap harvesting role during early foothold establishment, while maintaining clear separation from ongoing operational resource management.
 
 ## Background
-Current mission plans include resource harvesting and operational management that should be handled by the AI Manager. This creates role confusion and potential conflicts. Missions should establish the initial foothold and Development Corporation, then hand off to AI Manager for ongoing operations.
+Upon review, the AI Manager DOES handle resource harvesting during the critical bootstrap phase - when missions establish footholds but bases aren't yet operational. This is essential for building initial infrastructure before players arrive. The key is distinguishing between:
 
-## Current Role Separation Analysis
+- **Bootstrap Harvesting** (AI Manager): Initial resource gathering to make base operational
+- **Operational Harvesting** (Players + AI Fallback): Ongoing resource management after base is established
+
+## Current Understanding (Corrected)
 
 ### ✅ Missions Should Handle:
 - **Development Corporation Creation**: Establishing new DCs with initial funding and charters
 - **Initial Footholds**: Basic infrastructure for presence (landing sites, basic habitats)
-- **Pattern Demonstration**: Showing AI Manager the "establishment technique"
-- **Handoff Triggers**: Clear conditions for AI Manager takeover
+- **Bootstrap Resource Setup**: Initial AI-managed harvesting to build operational base
+- **Transition Triggers**: Clear handoff to player-driven operations
 
-### ✅ AI Manager Should Handle:
-- **Mega Projects**: Stations, worldhouses, terraforming after establishment
-- **Resource Management**: Harvesting only when players don't fill buy orders
+### ✅ AI Manager Bootstrap Role:
+- **Early Harvesting**: Resource gathering during foothold establishment (before players arrive)
+- **Infrastructure Building**: Using harvested resources to make base operational
+- **Pattern Learning**: Learning bootstrap techniques from mission demonstrations
+- **Transition Handoff**: Shifting to operational mode when base becomes player-accessible
+
+### ✅ AI Manager Operational Role:
+- **Fallback Harvesting**: Only when players don't fill buy orders
 - **Sell Order Creation**: For excess materials
-- **Ongoing Operations**: Sustained corporate management
+- **Mega Projects**: Stations, worldhouses, terraforming after establishment
 
-## Mission Plan Issues Identified
+## Mission Plan Analysis (Revised)
 
-### 1. Resource Harvesting in Missions
-**Problem**: Missions include detailed resource harvesting phases that duplicate AI Manager responsibilities
-**Example**: Mars settlement phases include "Resource Extraction Infrastructure" and "Fuel Processing"
-**Impact**: Conflicts with AI Manager's resource procurement logic
+### ✅ Correctly Included Bootstrap Phases:
+- **Mars Settlement**: Resource phases are bootstrap harvesting to build operational base
+- **Titan Resource Hub**: Early harvesting establishes fuel depot before player operations
+- **Ceres Settlement**: Initial mining creates operational water/metal supply chain
 
-### 2. Operational Management in Missions
-**Problem**: Missions extend into operational phases that should be AI-managed
-**Example**: Titan mission includes "Interplanetary Logistics Network" phase
-**Impact**: Missions become too long and overlap with AI Manager scope
+### ⚠️ Issues Still Present:
 
-### 3. Missing Handoff Points
-**Problem**: No clear transition from mission completion to AI Manager takeover
-**Example**: Missions end with "establishment complete" but don't specify AI Manager activation
-**Impact**: Gap between mission completion and sustained operations
+#### 1. Bootstrap vs Operational Clarity
+**Problem**: Mission phases don't clearly distinguish bootstrap harvesting from operational phases
+**Impact**: Unclear when AI Manager transitions from bootstrap to operational mode
 
-## Required Refinements
+#### 2. Transition Triggers Missing
+**Problem**: No clear "base operational" triggers for AI Manager mode switch
+**Impact**: AI Manager might continue bootstrap harvesting when it should switch to fallback mode
 
-### Phase 1: Mission Scope Reduction
-- **Remove Resource Operations**: Strip out detailed harvesting phases from missions
-- **Focus on Establishment**: Limit missions to initial foothold creation
-- **Add Handoff Metadata**: Include AI Manager activation triggers
+#### 3. Pattern Documentation
+**Problem**: Bootstrap harvesting patterns not clearly documented for AI learning
+**Impact**: AI Manager may not learn correct bootstrap techniques
 
-### Phase 2: AI Manager Integration Points
-- **Handoff Conditions**: Define when AI Manager takes over (e.g., "DC established with 6-month resource buffer")
-- **Pattern Learning Hooks**: Ensure missions demonstrate techniques for AI learning
-- **Resource Baseline**: Missions should leave sufficient initial resources for AI Manager bootstrap
+## Required Refinements (Revised)
 
-### Phase 3: Mission Template Updates
-- **Establishment Template**: Standardize initial foothold creation
-- **DC Charter Template**: Consistent Development Corporation setup
-- **AI Handoff Template**: Standardized transition protocols
+### Phase 1: Bootstrap Phase Clarification
+- **Label Bootstrap Phases**: Clearly mark which resource phases are AI bootstrap harvesting
+- **Transition Conditions**: Define when base becomes "operational" (player-accessible)
+- **AI Mode Documentation**: Document bootstrap vs operational AI Manager behaviors
 
-## Mission Refinement Examples
+### Phase 2: Transition Integration
+- **Handoff Triggers**: Define conditions for AI Manager to switch from bootstrap to operational mode
+- **Player Integration Points**: When players can start filling buy orders
+- **Resource Buffer Requirements**: Minimum resources needed for operational transition
 
-### Current Mars Mission (Too Operational):
-```
-Phase 1: Orbital Establishment
-Phase 2: Surface Outposts
-Phase 3: Resource Mining Operations ← Should be AI Manager
-Phase 4: Industrial Processing ← Should be AI Manager
-```
+### Phase 3: Pattern Learning Enhancement
+- **Bootstrap Pattern Documentation**: Clear documentation of bootstrap harvesting techniques
+- **Success Metrics**: What constitutes successful bootstrap completion
+- **Failure Scenarios**: When bootstrap harvesting should trigger player intervention
 
-### Refined Mars Mission (Establishment-Focused):
-```
-Phase 1: Orbital Establishment (DC Creation)
-Phase 2: Initial Surface Foothold (Basic habitat + ISRU seed)
-Phase 3: AI Manager Handoff (Resource buffer + operational patterns demonstrated)
-```
+## Bootstrap vs Operational Distinction
 
-### AI Manager Takeover Triggers:
+### Bootstrap Harvesting (AI Manager - Early Phase):
 ```json
-"handoff_conditions": {
-  "development_corporation_established": true,
-  "initial_resource_buffer_months": 6,
-  "basic_infrastructure_online": true,
-  "ai_pattern_demonstrated": "mars_phobos_model"
+"bootstrap_harvesting": {
+  "purpose": "Build operational base infrastructure",
+  "ai_role": "Primary resource manager",
+  "player_role": "Not yet available",
+  "completion_trigger": "base_operational_with_3_month_resource_buffer",
+  "transition_to": "operational_fallback_mode"
+}
+```
+
+### Operational Harvesting (AI Manager - Fallback):
+```json
+"operational_harvesting": {
+  "purpose": "Fill unfilled player buy orders",
+  "ai_role": "Fallback resource manager",
+  "player_role": "Primary resource manager",
+  "trigger": "player_buy_orders_unfilled_for_48_hours",
+  "sell_orders": "create_for_excess_materials"
 }
 ```
 
 ## Success Criteria
-- [ ] Missions focus only on establishment, not ongoing operations
-- [ ] Clear handoff points to AI Manager defined
-- [ ] No resource harvesting phases in mission plans
-- [ ] AI Manager integration points documented
-- [ ] Pattern learning hooks preserved for AI training
+- [ ] Bootstrap harvesting phases clearly labeled in missions
+- [ ] Transition triggers defined for AI Manager mode switching
+- [ ] Pattern learning documentation enhanced for bootstrap techniques
+- [ ] Clear distinction between bootstrap and operational AI harvesting roles
+- [ ] Player integration points properly defined
 
 ## Files to Create/Modify
-- `data/json-data/missions/templates/establishment_template.json` - New template
-- `data/json-data/missions/templates/ai_handoff_template.json` - New template
-- Update all existing mission profiles to remove operational phases
-- `docs/architecture/ai_manager/MISSION_AI_INTEGRATION.md` - New integration guide
+- `docs/architecture/ai_manager/BOOTSTRAP_HARVESTING.md` - New documentation
+- Update mission profiles with bootstrap phase labels
+- `data/json-data/missions/_metadata/bootstrap_patterns.json` - Pattern documentation
+- `docs/architecture/ai_manager/AI_MODE_TRANSITIONS.md` - Transition logic
 
 ## Estimated Time
-4-6 hours
+3-4 hours
 
 ## Priority
-HIGH (Role Clarity)
+HIGH (Critical Role Clarification)
