@@ -276,6 +276,8 @@ module StarSim
         resource_grid: generate_resource_grid(body, raw_terrain),
         strategic_markers: generate_strategic_markers(body, raw_terrain),
         resource_counts: generate_resource_counts(raw_terrain),
+        width: raw_terrain[:metadata][:width] || elevation_data.first&.size || 0,
+        height: raw_terrain[:metadata][:height] || elevation_data.size,
         generation_metadata: raw_terrain[:metadata]  # Include metadata from PlanetaryMapGenerator
       }
     end
@@ -437,14 +439,44 @@ module StarSim
 
     # Check if NASA data is available for this planet
     def nasa_data_available?(planet_name)
-      # For now, return false - NASA data integration would be implemented separately
-      false
+      # Check for NASA GeoTIFF/ASC files for Sol system bodies
+      nasa_files = {
+        'earth' => ['earth_1800x900.asc.gz', 'earth_1800x900.tif'],
+        'mars' => ['Mars_elevation_1800x900.asc.gz', 'mars_1800x900.asc.gz'],
+        'luna' => ['Luna_elevation_1800x900.asc.gz', 'luna_1800x900.asc.gz'],
+        'venus' => ['venus_1800x900.asc.gz'],
+        'mercury' => ['mercury_1800x900.asc.gz']
+      }
+
+      planet_key = planet_name.downcase
+      return false unless nasa_files.key?(planet_key)
+
+      # Check if any of the expected files exist
+      geotiff_dir = GalaxyGame::Paths::GEOTIFF_PROCESSED
+      nasa_files[planet_key].any? do |filename|
+        File.exist?(File.join(geotiff_dir, filename))
+      end
     end
 
     # Find NASA data source for planet
     def find_nasa_data(planet_name)
-      # Placeholder for NASA data lookup
-      nil
+      return nil unless nasa_data_available?(planet_name)
+
+      # Return the path to the NASA data file
+      geotiff_dir = GalaxyGame::Paths::GEOTIFF_PROCESSED
+      planet_key = planet_name.downcase
+
+      nasa_files = {
+        'earth' => ['earth_1800x900.asc.gz', 'earth_1800x900.tif'],
+        'mars' => ['Mars_elevation_1800x900.asc.gz', 'mars_1800x900.asc.gz'],
+        'luna' => ['Luna_elevation_1800x900.asc.gz', 'luna_1800x900.asc.gz'],
+        'venus' => ['venus_1800x900.asc.gz'],
+        'mercury' => ['mercury_1800x900.asc.gz']
+      }
+
+      nasa_files[planet_key].find do |filename|
+        File.exist?(File.join(geotiff_dir, filename))
+      end
     end
 
     private
@@ -477,6 +509,8 @@ module StarSim
           resource_grid: terrain_data[:resource_grid],
           strategic_markers: terrain_data[:strategic_markers],
           resource_counts: terrain_data[:resource_counts],
+          width: terrain_data[:width],
+          height: terrain_data[:height],
           generation_method: generation_method,
           generation_date: Time.current,
           source: source,
@@ -1136,6 +1170,8 @@ module StarSim
         resource_grid: generate_resource_grid_from_nasa_data(celestial_body),
         strategic_markers: generate_strategic_markers_from_nasa_data(celestial_body),
         resource_counts: generate_resource_counts_from_nasa_data(celestial_body),
+        width: grid_dims[:width],
+        height: grid_dims[:height],
         generation_metadata: {
           source: 'nasa_geotiff',
           biome_source: 'hybrid_freeciv_algorithmic',

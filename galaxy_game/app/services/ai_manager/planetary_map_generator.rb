@@ -142,19 +142,28 @@ module AIManager
       width = options[:width] || 80
       height = options[:height] || 50
 
-      # Step 1: Get landmass reference (where continents should be)
-      landmass_mask = load_earth_landmass_reference(target_width: width, target_height: height)
+      # FIX: Load planet-specific elevation data instead of generic Earth reference
+      elevation_grid = load_planet_specific_elevation(planet, width, height)
+      
+      # Track whether we used GeoTIFF data
+      used_geotiff = !elevation_grid.nil?
+      
+      # If no planet-specific data, fall back to pattern-based generation
+      if elevation_grid.nil?
+        # Step 1: Generate planet-specific landmass pattern (not Earth reference)
+        landmass_mask = generate_planet_specific_landmass(planet, width, height)
 
-      # Step 2: Get NASA patterns for this planet type
-      nasa_patterns = select_nasa_patterns_for_planet(planet)
+        # Step 2: Get NASA patterns for this planet type
+        nasa_patterns = select_nasa_patterns_for_planet(planet)
 
-      # Step 3: Generate elevation grid using patterns + landmass
-      elevation_grid = generate_elevation_from_patterns(
-        landmass_mask: landmass_mask,
-        patterns: nasa_patterns,
-        width: width,
-        height: height
-      )
+        # Step 3: Generate elevation grid using patterns + landmass
+        elevation_grid = generate_elevation_from_patterns(
+          landmass_mask: landmass_mask,
+          patterns: nasa_patterns,
+          width: width,
+          height: height
+        )
+      end
 
       # Step 4: Generate biomes (barren by default, can be terraformed later)
       biome_grid = generate_barren_biomes(
@@ -166,7 +175,6 @@ module AIManager
       resources = generate_resource_locations(elevation_grid, planet)
       strategic_markers = generate_strategic_markers_from_elevation(elevation_grid)
 
-      # Step 6: Count biomes
       biome_counts = Hash.new(0)
       biome_grid.flatten.each { |biome| biome_counts[biome] += 1 }
 
@@ -183,9 +191,9 @@ module AIManager
           generation_options: options,
           width: width,
           height: height,
-          quality: 'pattern_based_realistic',
-          patterns_used: nasa_patterns.keys,
-          landmass_source: 'earth_reference'
+          quality: used_geotiff ? 'geotiff_based_realistic' : 'pattern_based_realistic',
+          patterns_used: nasa_patterns&.keys || [],
+          landmass_source: used_geotiff ? "#{planet.name.downcase}_geotiff" : "planet_specific_#{planet.name.downcase}"
         }
       }
     end
@@ -369,24 +377,54 @@ module AIManager
       resampled
     end
 
-    def generate_simple_landmass(width, height)
-      # Fallback: create simple continent pattern using Perlin-like noise
-      landmass = []
-
+    def generate_planet_specific_landmass(planet, width, height)
+      # Generate unique landmass patterns for each planet based on its properties
+      # This ensures planets without GeoTIFF data still have unique terrain
+      
+      # Use planet name as seed for reproducible but unique patterns
+      seed = planet.name.downcase.sum
+      
+      # Get planet properties for variation
+      temp_factor = (planet.surface_temperature || 288) / 288.0  # normalized to Earth temp
+      size_factor = Math.log(planet.radius || 6371) / Math.log(6371)  # normalized to Earth radius
+      
+      landmass = Array.new(height) { Array.new(width, false) }
+      
       (0...height).each do |y|
-        row = []
         (0...width).each do |x|
-          # Simple noise-based landmass generation
-          noise = perlin_noise(x * 0.02, y * 0.02) +
-                  perlin_noise(x * 0.1, y * 0.1) * 0.5
-
-          # 40% land, 60% water
-          is_land = noise > 0.2
-          row << is_land
+          # Create multiple noise layers with different frequencies
+          noise1 = perlin_noise(x * 0.03 + seed, y * 0.03 + seed)
+          noise2 = perlin_noise(x * 0.08 + seed * 2, y * 0.08 + seed * 2) * 0.5
+          noise3 = perlin_noise(x * 0.15 + seed * 3, y * 0.15 + seed * 3) * 0.25
+          
+          # Combine noises
+          combined_noise = noise1 + noise2 + noise3
+          
+          # Adjust land/water ratio based on planet type
+          base_threshold = 0.3  # 30% land by default
+          
+          # Hot planets (Venus-like) have less land
+          if temp_factor > 1.5
+            base_threshold -= 0.1
+          # Cold planets (Mars-like) have moderate land
+          elsif temp_factor < 0.8
+            base_threshold -= 0.05
+          end
+          
+          # Large planets have more landmass variation
+          if size_factor > 1.2
+            base_threshold += 0.05
+          elsif size_factor < 0.8
+            base_threshold -= 0.05
+          end
+          
+          # Determine if this is land
+          is_land = combined_noise > base_threshold
+          
+          landmass[y][x] = is_land
         end
-        landmass << row
       end
-
+      
       landmass
     end
 
@@ -576,6 +614,145 @@ module AIManager
           quality: 'procedural_generated'
         }
       }
+    end
+
+    # ADD new method to load planet-specific elevation data
+    def load_planet_specific_elevation(planet, target_width, target_height)
+      planet_name = planet.name.downcase
+      
+      # Map planet names to GeoTIFF filenames
+      geotiff_files = {
+        'earth' => 'earth_1800x900.asc.gz',
+        'mars' => 'mars_1800x900.asc.gz', 
+        'luna' => 'luna_1800x900.asc.gz',
+        'venus' => 'venus_1800x900.asc.gz',
+        'mercury' => 'mercury_1800x900.asc.gz',
+        'titan' => 'titan_1800x900_final.asc.gz'
+      }
+      
+      filename = geotiff_files[planet_name]
+      return nil unless filename
+      
+      filepath = Rails.root.join('app', 'data', 'geotiff', 'processed', filename)
+      return nil unless File.exist?(filepath)
+      
+      Rails.logger.info "[PlanetaryMapGenerator] Loading GeoTIFF elevation data for #{planet.name}"
+      
+      begin
+        # Load and resample elevation data
+        elevation_data = load_ascii_grid(filepath.to_s)
+        
+        # Resample to target dimensions
+        resample_elevation_grid(
+          elevation_data[:elevation], 
+          elevation_data[:width], 
+          elevation_data[:height],
+          target_width,
+          target_height
+        )
+      rescue => e
+        Rails.logger.error "[PlanetaryMapGenerator] Failed to load elevation data for #{planet.name}: #{e.message}"
+        nil
+      end
+    end
+
+    def resample_elevation_grid(elevation_data, source_width, source_height, target_width, target_height)
+      return nil if elevation_data.nil? || elevation_data.empty?
+      
+      resampled = Array.new(target_height) { Array.new(target_width, 0.0) }
+      
+      scale_x = source_width.to_f / target_width
+      scale_y = source_height.to_f / target_height
+      
+      target_height.times do |y|
+        target_width.times do |x|
+          # Use bilinear interpolation for smooth resampling
+          source_x = x * scale_x
+          source_y = y * scale_y
+          
+          resampled[y][x] = bilinear_interpolate(elevation_data, source_x, source_y, source_width, source_height)
+        end
+      end
+      
+      resampled
+    end
+
+    def bilinear_interpolate(data, x, y, width, height)
+      x1 = x.floor
+      y1 = y.floor
+      x2 = [x1 + 1, width - 1].min
+      y2 = [y1 + 1, height - 1].min
+      
+      # Get the four surrounding points
+      q11 = data[y1][x1] rescue 0.0
+      q12 = data[y2][x1] rescue 0.0
+      q21 = data[y1][x2] rescue 0.0
+      q22 = data[y2][x2] rescue 0.0
+      
+      # Bilinear interpolation formula
+      x_frac = x - x1
+      y_frac = y - y1
+      
+      # Interpolate in x direction first
+      r1 = q11 * (1 - x_frac) + q21 * x_frac
+      r2 = q12 * (1 - x_frac) + q22 * x_frac
+      
+      # Then interpolate in y direction
+      r1 * (1 - y_frac) + r2 * y_frac
+    end
+
+    def load_ascii_grid(filepath)
+      return nil unless File.exist?(filepath)
+      
+      # Read the compressed ASCII grid file
+      Zlib::GzipReader.open(filepath) do |gz|
+        lines = gz.readlines.map(&:strip)
+        
+        # Parse ESRI ASCII Grid header
+        ncols = lines[0].split[1].to_i
+        nrows = lines[1].split[1].to_i
+        xllcorner = lines[2].split[1].to_f
+        yllcorner = lines[3].split[1].to_f
+        cellsize = lines[4].split[1].to_f
+        nodata = lines[5].split[1]
+        
+        # Parse elevation data
+        elevation_lines = lines[6..-1]
+        elevation = elevation_lines.map do |line|
+          line.split.map do |val|
+            val == nodata ? nil : val.to_f
+          end
+        end
+        
+        # Normalize to 0-1 range
+        flat = elevation.flatten.compact
+        return nil if flat.empty?
+        
+        min_elev = flat.min
+        max_elev = flat.max
+        range = max_elev - min_elev
+        
+        normalized = elevation.map do |row|
+          row.map do |v|
+            if v.nil?
+              0.0  # Use 0 for nodata values
+            else
+              range > 0 ? (v - min_elev) / range : 0.5
+            end
+          end
+        end
+        
+        {
+          width: ncols,
+          height: nrows,
+          elevation: normalized,
+          bounds: { xll: xllcorner, yll: yllcorner, cellsize: cellsize },
+          original_range: { min: min_elev, max: max_elev }
+        }
+      end
+    rescue => e
+      Rails.logger.error "[PlanetaryMapGenerator] Error loading ASCII grid #{filepath}: #{e.message}"
+      nil
     end
   end
 end
