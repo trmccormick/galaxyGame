@@ -10,6 +10,8 @@
 
 ## 🌉 2. The Anchor Law (Stability & Infrastructure)
 - **Mass Requirement:** A wormhole link cannot be declared "stable" or "open for heavy traffic" unless the "Sweet Spot" contains a gravitational anchor of at least **10^16 kg** (minimum threshold for stable gravitational field generation).
+- **Counterbalance Physics:** Wormhole stability requires gravitational anchors at 180° opposite the exit point. Jupiter provides Sol's natural counterbalance; artificial systems need AWS stations or asteroid placement.
+- **Atmospheric Maintenance Mandate:** Terraformed worlds require ongoing technological support. AI Manager must maintain >95% system integrity or face reversion cascades. No "set and forget" terraforming.
 - **The Phobos/Luna Pattern:** 
   - **No Moons:** Relocate a Phobos-sized asteroid (mass ≈ 1.0×10^16 kg) to act as a station/depot anchor.
   - **Large Moon:** Establish the "Luna Pattern" first—settle the moon, build materials, then establish the L1/Depot gateway.
