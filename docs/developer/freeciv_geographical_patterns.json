@@ -1,0 +1,155 @@
+{
+  "metadata": {
+    "description": "Geographical patterns extracted from FreeCiv/Civ4 maps for AI training",
+    "extraction_date": "2026-02-09",
+    "source_maps_analyzed": 25,
+    "purpose": "AI training data for procedural world generation - patterns only, not direct copies"
+  },
+  "patterns": {
+    "archipelago_world": {
+      "ocean_coverage": 0.479,
+      "landmass_distribution": "scattered_islands",
+      "coastal_complexity": "high",
+      "terrain_mix": {
+        "plains": 0.148,
+        "grassland": 0.111,
+        "desert": 0.068,
+        "snow": 0.026,
+        "tundra": 0.024
+      },
+      "learned_from": ["Dark Tower Beta"],
+      "applications": ["island_hopping_civilizations", "water_trade_routes", "exploration_focused_worlds"],
+      "procedural_rules": {
+        "min_island_size": 5,
+        "max_island_size": 50,
+        "island_density": "medium",
+        "waterway_connectivity": "high"
+      }
+    },
+    "corrupted_fantasy": {
+      "custom_terrains": ["chaos_waste", "boneplains", "lava", "marsh", "scorched_earth"],
+      "corruption_percentage": 0.053,
+      "terrain_variety": "high",
+      "standard_terrains": {
+        "ocean": 0.248,
+        "grassland": 0.214,
+        "coast": 0.211,
+        "plains": 0.097
+      },
+      "learned_from": ["Warhammer Map"],
+      "applications": ["magical_corruption_mechanics", "post_apocalyptic_worlds", "fantasy_terrain_generation"],
+      "procedural_rules": {
+        "corruption_spread": "radial_from_centers",
+        "safe_zone_percentage": 0.3,
+        "faction_territory_division": "corruption_based"
+      }
+    },
+    "water_rich_moon": {
+      "ocean_coverage": 0.272,
+      "habitable_zones": "mixed",
+      "cryogenic_features": true,
+      "terrain_mix": {
+        "grassland": 0.24,
+        "plains": 0.202,
+        "desert": 0.154,
+        "coast": 0.132
+      },
+      "learned_from": ["Dione (Saturn)"],
+      "applications": ["subsurface_ocean_planets", "icy_moon_colonization", "cryogenic_worlds"],
+      "procedural_rules": {
+        "ocean_depth_distribution": "variable",
+        "ice_cap_percentage": 0.15,
+        "subsurface_potential": "high"
+      }
+    },
+    "hydrocentric_world": {
+      "ocean_coverage": 0.555,
+      "shallow_sea_percentage": 0.70,
+      "continental_shelves": "extensive",
+      "terrain_mix": {
+        "coast": 0.25,
+        "grassland": 0.15,
+        "plains": 0.10,
+        "desert": 0.05
+      },
+      "learned_from": ["Jurassic Map"],
+      "applications": ["ancient_sea_worlds", "marine_ecosystems", "shallow_sea_planets"],
+      "procedural_rules": {
+        "sea_level": "high",
+        "continental_emergence": "minimal",
+        "marine_biodiversity_zones": "multiple"
+      }
+    },
+    "mountainous_fortress": {
+      "mountain_percentage": 0.15,
+      "elevated_terrain": "clustered",
+      "defensive_positions": "strategic",
+      "terrain_mix": {
+        "mountains": 0.15,
+        "hills": 0.25,
+        "plains": 0.20,
+        "forest": 0.15
+      },
+      "learned_from": ["Arda (LOTR)", "Warhammer Map"],
+      "applications": ["mountain_kingdoms", "strategic_strongholds", "elevated_settlements"],
+      "procedural_rules": {
+        "mountain_range_orientation": "radial",
+        "valley_systems": "connecting",
+        "defensive_elevation_bonus": "high"
+      }
+    },
+    "crater_dominated": {
+      "impact_features": "dense",
+      "surface_age": "ancient",
+      "terrain_disruption": "high",
+      "learned_from": ["Mimas (Saturn)", "Mars maps"],
+      "applications": ["bombarded_worlds", "ancient_surfaces", "impact_terrain"],
+      "procedural_rules": {
+        "crater_density": "high",
+        "crater_size_distribution": "power_law",
+        "ejecta_blanket_patterns": "radial"
+      }
+    },
+    "faction_territories": {
+      "territory_division": "cultural",
+      "border_complexity": "high",
+      "cultural_markers": "distinct",
+      "learned_from": ["Azeroth (WoW)", "Warhammer Map"],
+      "applications": ["cultural_worlds", "faction_based_generation", "thematic_territories"],
+      "procedural_rules": {
+        "territory_balance": "equal_power",
+        "cultural_boundaries": "natural_features",
+        "expansion_zones": "contested"
+      }
+    },
+    "square_projection": {
+      "world_geometry": "non_spherical",
+      "terrain_redistribution": "grid_based",
+      "edge_effects": "significant",
+      "learned_from": ["Earth - Adams World in a Square"],
+      "applications": ["alternative_geometries", "mathematical_worlds", "projection_based_generation"],
+      "procedural_rules": {
+        "grid_transformation": "square_mapping",
+        "continuity_preservation": "edge_wrapping",
+        "area_distortion_compensation": "required"
+      }
+    }
+  },
+  "pattern_blending_rules": {
+    "fantasy_scientific_hybrid": {
+      "combine": ["corrupted_fantasy", "water_rich_moon"],
+      "result": "magical_cryogenic_world",
+      "compatibility_score": 0.75
+    },
+    "cultural_realism": {
+      "combine": ["mountainous_fortress", "hydrocentric_world"],
+      "result": "mountain_island_realm",
+      "compatibility_score": 0.85
+    },
+    "exotic_earth": {
+      "combine": ["square_projection", "archipelago_world"],
+      "result": "alternative_earth_geometry",
+      "compatibility_score": 0.60
+    }
+  }
+}
