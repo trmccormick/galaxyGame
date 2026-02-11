@@ -14,4 +14,16 @@
 - MONITOR_LOADING_ISSUE_ANALYSIS.md
 - STATUS_AND_NEXT_STEPS.md
 
+**Task Extraction Summary**:
+- **fix_monitor_loading.md**: Updated with detailed race condition analysis and timing fixes
+- **investigate_terrain_quality.md**: Enhanced with specific exoplanet terrain investigation steps
+- **define_ggmap_format.md**: Expanded with hierarchical layer system and scientific/strategic data support
+- **fix_terrain_quality.md**: Updated with pattern loading fixes and parameter tuning details
+- **assess_map_studio_state.md**: Refocused on surface map tileset integration assessment
+- **fix_surface_map_tileset_integration.md**: New task for implementing Civilization-style strategic view
+- **implement_scientific_layer.md**: Existing task for research data visualization
+- **implement_strategic_layer.md**: Existing task for economic/military overlays
+
+All tasks now include detailed implementation requirements extracted from Claude's analysis files.
+
 This folder is preserved for future Claude suggestions.
