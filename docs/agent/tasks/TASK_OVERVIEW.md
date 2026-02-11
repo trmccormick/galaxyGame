@@ -5,34 +5,60 @@
 
 ## Active Tasks (In Progress)
 
-### 🔥 CRITICAL: Fix System Seeding - STI Type Mapping
-**Agent**: Grok (Implementation)
-**Started**: 2026-02-11 02:00
-**Status**: IN PROGRESS
-
-**Issue**: Planets created with wrong STI type, causing dashboard to show 0 terrestrial planets despite 10 total bodies being created.
-
-**Root Cause**: JSON uses `"type": "terrestrial_planet"` but SystemBuilder only matches `"terrestrial"`, causing fallback to generic CelestialBody class.
-
-**Current Work**:
-- Investigating system_builder_service.rb type mapping (line ~318)
-- Adding support for both "terrestrial" and "terrestrial_planet" formats
-- Will re-seed database and verify counts
-
-**Expected Completion**: 2026-02-11 04:00 (2 hours)
-
-**Blocking**: Terrain generation testing, biome validation, monitor view improvements
-
-**Reference Documents**:
-- DIAGNOSTIC_SOL_SEEDING.md (root cause analysis)
-- ANALYSIS_SEEDING_FAILURES.md (detailed investigation)
-- ARCHITECTURE_ANSWERS_FOR_GROK.md (system architecture context)
-
-**Follow-up Tasks**: After completion, verify terrain generation works for all planets
+*No active tasks currently assigned*
 
 ---
 
 ## Recently Completed Tasks
+
+### ✅ Fix Hydrosphere Layer Display Issues
+**Agent**: Other Agent (Implementation)
+**Completed**: 2026-02-11
+**Duration**: 4-6 hours
+
+**What Was Done**:
+- Aligned hydrosphere layer button availability with water_coverage > 0 rendering logic
+- Added terrain data polling to updateSphereData() function for automatic map loading
+- Updated sphere_data endpoint to include terrain_data in JSON response
+- Fixed layer button dimming and map refresh requirements
+
+**Files Modified**:
+- `galaxy_game/app/views/admin/celestial_bodies/monitor.html.erb`
+- `galaxy_game/app/controllers/admin/celestial_bodies_controller.rb`
+- `galaxy_game/app/javascript/admin/monitor.js`
+
+**Validation**: Hydrosphere layer now enables/disables correctly, maps load without refresh
+
+---
+
+### ✅ Complete Seeding Terrain Task - STI Type Mapping & NASA Integration
+**Agent**: Other Agent (Implementation)
+**Completed**: 2026-02-11
+**Duration**: ~4 hours
+
+**What Was Done**:
+- Fixed STI type mapping for terrestrial planets (JSON "terrestrial_planet" → Ruby "terrestrial")
+- Integrated NASA GeoTIFF data for terrain generation
+- Updated celestial bodies interface and configuration for terrain system
+- Verified planet counts: 10 total bodies, 4 terrestrial planets
+- Confirmed terrain integration: Earth (180×90) and Mars (96×48) using NASA data
+
+**Files Changed**:
+- [StarSim] Fix STI type mapping: 1 file changed
+- [StarSim] Integrate NASA GeoTIFF: 2 files changed
+- [Admin] Update interface: 9 files changed
+
+**Testing**:
+- ✅ Planet counts verified: 10 total bodies, 4 terrestrial planets
+- ✅ Terrain integration confirmed for Earth and Mars
+- ✅ Git status clean: No uncommitted changes
+- ✅ Protocol compliance: Atomic commits, host-based git, proper testing
+
+**Outcome**: Critical STI type mapping bug and NASA terrain integration fully resolved.
+
+**Archive**: COMPLETE_SEEDING_TERRAIN_TASK.md
+
+---
 
 ### ✅ Fix Procedural Terrain Generation Using NASA Patterns
 **Agent**: Grok (Implementation)
@@ -122,7 +148,61 @@
 
 ## Backlog (Planned Work)
 
-### 📋 MEDIUM: Celestial Bodies Index Page Improvements
+### � HIGH PRIORITY: Test Suite Restoration Continuation
+**Priority**: HIGH (Blocks Phase 4)
+**Estimated Effort**: 2-3 days
+**Dependencies**: None (can run in parallel with other tasks)
+
+**Description**: Continue reducing RSpec test failures from ~393 to <50 using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
+
+**Current Status**: 393 failures (down from 401)
+**Target**: <50 failures
+**Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
+
+**Reference**: test_suite_restoration_continuation.md
+
+**Why Priority**: Blocks Phase 4 UI Enhancement and further development progress.
+
+---
+### 📋 MEDIUM: Phase 6 Documentation Cleanup - Material Naming Standards
+**Priority**: MEDIUM
+**Estimated Effort**: 3-4 hours
+**Dependencies**: None
+
+**Description**: Fix documentation violations that perpetuate location hardcoding anti-patterns. Create material naming standards and enhance code review checklists.
+
+**Reference**: phase_6_documentation_cleanup.md
+
+**Why Backlogged**: Can be done in parallel with other work, improves development hygiene.
+
+---
+
+### 📋 MEDIUM: Initiate Nightly Grinder Protocol
+**Priority**: MEDIUM
+**Estimated Effort**: 1-2 hours
+**Dependencies**: None
+
+**Description**: Set up test database and launch autonomous overnight test restoration using the nightly grinder protocol.
+
+**Reference**: initiate_nightly_grinder_protocol.md
+
+**Why Backlogged**: Required to unblock Phase 4, can be done immediately.
+
+---
+
+### 📋 MEDIUM: Phase 4 Digital Twin Database Schema
+**Priority**: MEDIUM
+**Estimated Effort**: 4-6 hours
+**Dependencies**: None
+
+**Description**: Implement database schema for Digital Twin simulation capabilities (DigitalTwin, SimulationRun, SimulationResult models).
+
+**Reference**: phase_4_digital_twin_schema.md
+
+**Why Backlogged**: Can be done in parallel with test restoration, no test dependencies.
+
+---
+### �📋 MEDIUM: Celestial Bodies Index Page Improvements
 **Priority**: Medium
 **Estimated Effort**: 2-3 hours
 **Dependencies**: None

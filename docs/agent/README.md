@@ -1,37 +1,138 @@
-# Agent Documentation
-This folder contains documentation and instructions specifically for AI agents working on the project.
+# Agent & Development Workflow Documentation
 
-## Contents
-- **GROK_RULES.md**: Core agent behavior rules and workflow
-- **GROK_CURRENT_WORK.md**: Active task instructions
-- **TASK_PROTOCOL.md**: Standardized protocol for creating and managing agent tasks
+This directory contains unified documentation for AI agent management and development workflow, organized by status and purpose.
 
-## Subfolders
+## 📁 Directory Structure
 
-### rules/
-Agent-specific rules and guidelines:
-- **GUARDRAILS.md**: AI Manager boundaries and economic rules (symlink to main docs)
-- **CONTRIBUTOR_TASK_PLAYBOOK.md**: Git/testing protocols
-- **ENVIRONMENT_BOUNDARIES.md**: Docker/Git safety rules
+### Root Files
+- **[CURRENT_STATUS.md](CURRENT_STATUS.md)** - Real-time project status, recent fixes, next steps
+- **[GROK_CURRENT_WORK.md](GROK_CURRENT_WORK.md)** - Current agent work tracking
+- **[GROK_RULES.md](GROK_RULES.md)** - Agent operating protocols
+- **[TASK_PROTOCOL.md](TASK_PROTOCOL.md)** - Task execution standards
 
-### tasks/
-Task management system:
-- **active/**: Current active tasks
-- **backlog/**: Future tasks  
-- **completed/**: Finished tasks
-- **TASK_OVERVIEW.md**: Comprehensive task status and history log
+### `/rules/` - Agent Operating Rules
+Core protocols and guidelines for AI agent operation.
 
-## Usage
-- Start with GROK_CURRENT_WORK.md for immediate tasks
-- Refer to GROK_RULES.md for workflow and rule compliance
-- Use TASK_PROTOCOL.md when creating new agent tasks
-- Check tasks/ for task management and overview
+**Files:**
+- **[GROK_RULES.md](rules/GROK_RULES.md)** - Complete agent operating protocols
+- **[TASK_PROTOCOL.md](rules/TASK_PROTOCOL.md)** - Task execution and completion standards
 
-## Notes
-- GUARDRAILS.md is also available in main `/docs/` for general developer reference
-- Task files are operational data, not just documentation
+**Purpose**: Defines how agents operate and complete work
 
-## Maintenance
-- Update GROK_CURRENT_WORK.md as tasks change
-- Keep GROK_RULES.md current with any rule changes
-- Use TASK_PROTOCOL.md for consistent task creation
+### `/tasks/` - Agent Task Management
+Executable tasks for AI agents with status tracking.
+
+**Subfolders:**
+- **`/active/`** - Currently executing tasks
+- **`/backlog/`** - Queued tasks awaiting assignment
+- **`/completed/`** - Finished tasks for reference
+
+**Files:**
+- **[TASK_OVERVIEW.md](tasks/TASK_OVERVIEW.md)** - Centralized task tracking log
+
+**Purpose**: Task assignment, progress tracking, and completion validation
+
+### `/planning/` - Future Roadmaps
+Strategic planning documents for upcoming development phases.
+
+**Files:**
+- **[RESTORATION_AND_ENHANCEMENT_PLAN.md](planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)** - 6-phase roadmap
+  - Phase 1-3: Test restoration (surgical fixes)
+  - Phase 4: UI Enhancement (SimEarth admin + Eve mission builder)
+  - Phase 5: AI Pattern Learning (autonomous wormhole expansion)
+  - Phase 6: Documentation cleanup
+
+**Purpose**: Long-term vision and phase-by-phase execution plans
+
+### `/completed/` - Historical Records
+Documentation of completed work for reference and learning.
+
+**Files:**
+- **[CONSTRUCTION_REFACTOR.md](completed/CONSTRUCTION_REFACTOR.md)** - Manufacturing pipeline implementation
+
+**Purpose**: Preserve institutional knowledge, reference for similar future work
+
+### `/reference/` - Technical Guides
+Essential technical documentation for daily development.
+
+**Files:**
+- **[grok_notes.md](reference/grok_notes.md)** - Agent-specific technical notes
+
+**Purpose**: Essential development and agent references
+
+## Workflow Integration
+
+**Agent-Driven Development**: Most work flows through the `/tasks/` system where planning documents are converted into executable agent tasks.
+
+**Status Tracking**: Use `CURRENT_STATUS.md` for real-time updates, `/tasks/TASK_OVERVIEW.md` for detailed task logs.
+
+**Planning → Execution**: Documents in `/planning/` are broken down into tasks in `/tasks/backlog/` for agent assignment.
+  - RSpec ALWAYS in container
+  - Command validation patterns
+  
+- **[grok_notes.md](reference/grok_notes.md)** - Workflow templates
+  - Task 1: Nightly Grinder (autonomous 4-hour cycles)
+  - Task 2: Quick-Fix (interactive, surgical approach)
+  - Task 3: Continued Development (vision alignment)
+
+**Purpose**: Quick reference for correct development practices
+
+---
+
+## 🎯 Usage Patterns
+
+### Starting Your Day
+1. Read [CURRENT_STATUS.md](CURRENT_STATUS.md) to see latest progress
+2. Check [ENVIRONMENT_BOUNDARIES.md](reference/ENVIRONMENT_BOUNDARIES.md) if running commands
+3. Reference [RESTORATION_AND_ENHANCEMENT_PLAN.md](planning/RESTORATION_AND_ENHANCEMENT_PLAN.md) for phase context
+
+### Planning New Features
+1. Review [RESTORATION_AND_ENHANCEMENT_PLAN.md](planning/RESTORATION_AND_ENHANCEMENT_PLAN.md) phases
+2. Check [CONSTRUCTION_REFACTOR.md](completed/CONSTRUCTION_REFACTOR.md) for implementation patterns
+3. Update [CURRENT_STATUS.md](CURRENT_STATUS.md) when starting work
+
+### Running Tests or Git Operations
+1. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](reference/ENVIRONMENT_BOUNDARIES.md) first
+2. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
+3. Never run bare commands without docker-compose prefix (container) or on host (git)
+
+---
+
+## 📝 Maintenance Guidelines
+
+### When to Update CURRENT_STATUS.md
+- After fixing any spec file
+- When changing active focus area
+- At end of each work session
+- When failures drop below thresholds (401 → 350 → 200 → 100 → 50)
+
+### When to Add to /completed/
+- After completing major refactors
+- When finishing multi-week development phases
+- For documenting E2E integration work
+- Preserving "how we built this" context
+
+### When to Update Planning Docs
+- Adding new phases or sub-phases
+- Changing success metrics or targets
+- Discovering better workflow patterns
+- Adjusting timeline estimates
+
+---
+
+## 🔗 Related Documentation
+
+### Parent Documentation
+- [Main Docs README](../README.md) - Full project documentation hub
+- [Developer Setup](../developer/setup.md) - Environment configuration
+
+### Sibling Directories
+- [Architecture](../architecture/) - System design
+- [Storyline](../storyline/) - Game narrative
+- [AI Manager](../ai_manager/) - AI systems
+
+---
+
+**Last Updated**: January 16, 2026  
+**Maintainer**: Development team  
+**Status**: Active organization (v2.0)
