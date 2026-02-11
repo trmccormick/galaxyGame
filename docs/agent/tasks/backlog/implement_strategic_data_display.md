@@ -1,7 +1,7 @@
-# Implement Strategic Layer
+# Implement Strategic Data Display
 
 ## Task Overview
-Implement the strategic layer for monitor interface, showing economic, military, and development data overlays for strategic planning.
+Implement the strategic data display layer for monitor interface, showing economic zones, development priorities, and military considerations.
 
 ## Background
 Strategic planning requires visualization of economic zones, development priorities, resource flows, and military considerations beyond basic terrain data.

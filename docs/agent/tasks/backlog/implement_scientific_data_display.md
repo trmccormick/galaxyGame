@@ -1,10 +1,10 @@
-# Implement Scientific Layer
+# Implement Scientific Data Display
 
 ## Task Overview
-Implement the scientific data layer for monitor interface, displaying research data, atmospheric measurements, and planetary science information.
+Implement the scientific data display layer for monitor interface, showing atmospheric measurements, geological data, and research metrics in the UI.
 
 ## Background
-The monitor interface needs a dedicated scientific layer to show detailed planetary data beyond basic terrain visualization, supporting research and administrative analysis.
+The monitor interface needs a dedicated scientific data layer to display existing planetary data (atmospheric composition, geological features, research progress) as overlays on the terrain view.
 
 ## Requirements
 
