@@ -4,6 +4,59 @@
 
 The `StarSim::AutomaticTerrainGenerator` is a service responsible for generating procedural terrain data for celestial bodies in the Galaxy Game. It integrates AI-learned terrain patterns with planetary properties to create realistic, playable terrain maps.
 
+## Terrain Data Sources
+
+### Sol System (Our Solar System) - NASA Data Priority
+
+For Sol worlds (Earth, Mars, Venus, Mercury, Luna/Moon), the system prioritizes real NASA data:
+
+**Primary Sources (Ground Truth):**
+- **NASA GeoTIFF Elevation Data**: Real topographic data from NASA missions
+- Direct loading of GeoTIFF files for accurate planetary topography
+- No procedural generation - uses astronomical data
+
+**Secondary Sources (Training/Reference):**
+- **FreeCiv/Civ4 Maps**: Used as training data for AI pattern learning
+- **Not Direct Terrain Sources**: Maps are not loaded as planet terrain
+- **Scenario Templates**: Provide terraforming target blueprints for Digital Twin testing
+
+**Sol World Processing Hierarchy:**
+1. **NASA GeoTIFF** (Ground Truth - current planetary state)
+2. **Civ4 Maps** (Elevation + land shape, adjusted for hydrosphere)
+3. **FreeCiv Maps** (Biome patterns, generate elevation with physics)
+4. **AI Generation** (Fallback when no data available)
+
+### Local Bubble Expansion (Other Star Systems) - Generated Data
+
+For star systems outside our solar system, the system generates playable terrain data:
+
+**Procedural Generation:**
+- **AI-Learned Patterns**: Uses FreeCiv/Civ4 training data for realistic landmass shapes
+- **Physics-Based Scaling**: Planet size and composition determine terrain complexity
+- **Playable Systems**: Generates complete, balanced terrain for gameplay
+
+**Data Sources:**
+- **Pattern Learning**: FreeCiv/Civ4 maps provide training for biome placement
+- **Procedural Algorithms**: Multi-body terrain generation with physics constraints
+- **Fallback Generation**: AI creates terrain when specific data unavailable
+
+### FreeCiv/Civ4 Integration
+
+FreeCiv (.sav) and Civ4 (.Civ4WorldBuilderSave) maps are **training/reference data only**:
+
+- **Not Direct Terrain Sources**: Maps are not loaded as direct terrain for planets
+- **AI Training Assets**: Used to train AI pattern recognition for biome placement and strategic features
+- **Scenario Inspiration**: Provide terraforming target templates for Digital Twin testing
+- **Pattern Extraction**: AI learns terrain patterns, settlement locations, and strategic features
+
+### Digital Twin Integration
+
+Terrain generation supports SimEarth-style testing through Digital Twin Sandbox:
+
+- Isolated "what-if" scenarios without affecting live game
+- FreeCiv/Civ4 patterns applied as terraforming targets
+- TerraSim validates physical viability of AI-suggested terrain
+
 ## Architecture
 
 ### Service Dependencies

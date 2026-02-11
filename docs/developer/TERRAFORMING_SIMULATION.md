@@ -386,7 +386,326 @@ terraforming_state: {
 3. **UI Changes**: Update control interfaces and visualization
 4. **Testing Results**: Include performance benchmarks and validation
 
-## Critical Constraints
+---
+
+# TerraSim Validation Requirements for Planetary Types **[2026-02-09]**
+
+TerraSim provides environmental physics validation for generated worlds, ensuring scientifically-grounded terraforming scenarios. Different planetary types require specific validation criteria based on their unique environmental challenges and transformation pathways.
+
+## Mars-like Cold Worlds (Cryovolcanism, Permafrost)
+
+### Environmental Characteristics
+- **Surface Temperature**: 200-250K (-73°C to -23°C)
+- **Atmospheric Pressure**: 0.005-0.01 atm (6-10 mbar)
+- **Primary Challenge**: Extreme cold with subsurface water/ice
+- **Geological Activity**: Cryovolcanism, permafrost dynamics
+
+### TerraSim Validation Requirements
+
+#### 1. Cryovolcanic Activity Validation
+```ruby
+# app/services/terra_sim/cryovolcanism_validator.rb
+def validate_cryovolcanic_potential(geosphere, hydrosphere)
+  # Check subsurface water availability
+  subsurface_water = hydrosphere.subsurface_water_content || 0
+  
+  # Validate geothermal gradient for cryovolcanism
+  geothermal_gradient = geosphere.thermal_gradient || 0
+  
+  # Cryovolcanism requires both water and heat
+  cryovolcanic_index = (subsurface_water * geothermal_gradient) / 1000
+  
+  return {
+    potential: cryovolcanic_index > 0.1,
+    eruption_probability: calculate_eruption_probability(cryovolcanic_index),
+    water_availability: subsurface_water > 0.01
+  }
+end
+```
+
+#### 2. Permafrost Dynamics Validation
+**Critical Parameters**:
+- **Active Layer Thickness**: 0.5-2.0 meters seasonal thaw
+- **Talik Formation**: Unfrozen zones beneath lakes/rivers
+- **Thermal Conductivity**: Ice vs rock interfaces
+- **Carbon Release**: Thawing permafrost methane emissions
+
+#### 3. Atmospheric Retention Validation
+**Validation Metrics**:
+- **Magnetic Field Strength**: < 0.01 Earth strength (weak protection)
+- **Atmospheric Escape Rate**: High due to low gravity (0.38g)
+- **Cold Trapping**: CO₂ freezes at poles, reducing pressure
+
+### Terraforming Pathway Validation
+1. **Phase 1**: Magnetic field generation (artificial magnetosphere)
+2. **Phase 2**: Atmospheric thickening (CO₂ release from permafrost)
+3. **Phase 3**: Greenhouse gas optimization (CH₄, CFCs)
+4. **Phase 4**: Water mobilization (cryovolcanic melting)
+
+---
+
+## Venus-like Hot Worlds (Atmospheric Dynamics, Crustal Heating)
+
+### Environmental Characteristics
+- **Surface Temperature**: 700-750K (427-477°C)
+- **Atmospheric Pressure**: 90-95 atm
+- **Primary Challenge**: Extreme heat and pressure
+- **Geological Activity**: Volcanism, crustal recycling
+
+### TerraSim Validation Requirements
+
+#### 1. Atmospheric Dynamics Validation
+```ruby
+# app/services/terra_sim/atmospheric_dynamics_validator.rb
+def validate_venusian_atmosphere(atmosphere, temperature)
+  # Super-rotational wind patterns
+  wind_shear = atmosphere.wind_velocity_gradient || 0
+  
+  # Temperature inversion validation
+  temp_inversion = temperature.stratospheric_inversion || 0
+  
+  # Acid cloud formation
+  sulfuric_acid_content = atmosphere.sulfuric_acid_concentration || 0
+  
+  return {
+    super_rotation: wind_shear > 100, # m/s per km
+    temp_inversion_strength: temp_inversion,
+    acid_weather: sulfuric_acid_content > 1.0 # ppm
+  }
+end
+```
+
+#### 2. Crustal Heating Validation
+**Critical Parameters**:
+- **Heat Flow**: 50-100 mW/m² (vs Earth's 50-100)
+- **Volcanic Activity**: Extensive resurfacing events
+- **Tectonic Style**: Stagnant lid with hot spots
+- **Crustal Thickness**: 10-50 km variable
+
+#### 3. Greenhouse Effect Validation
+**Validation Metrics**:
+- **CO₂ Dominance**: >96% atmospheric composition
+- **Runaway Greenhouse**: Self-sustaining heating
+- **Cloud Layer Dynamics**: Sulfuric acid condensation
+
+### Terraforming Pathway Validation
+1. **Phase 1**: Atmospheric thinning (CO₂ sequestration)
+2. **Phase 2**: Temperature reduction (aerosol cooling)
+3. **Phase 3**: Acid rain neutralization (calcium injection)
+4. **Phase 4**: Surface cooling (orbital reflectors)
+
+---
+
+## Titan-like Exotic Worlds (Hydrocarbon Chemistry, Low Gravity)
+
+### Environmental Characteristics
+- **Surface Temperature**: 90-95K (-183°C to -178°C)
+- **Atmospheric Pressure**: 1.45 atm (surface level)
+- **Primary Challenge**: Hydrocarbon chemistry, low gravity (0.14g)
+- **Geological Activity**: Cryovolcanism, aeolian processes
+
+### TerraSim Validation Requirements
+
+#### 1. Hydrocarbon Chemistry Validation
+```ruby
+# app/services/terra_sim/hydrocarbon_chemistry_validator.rb
+def validate_titan_chemistry(atmosphere, hydrosphere)
+  # Methane cycle validation
+  methane_abundance = atmosphere.methane_concentration || 0
+  ethane_lakes = hydrosphere.ethane_lake_coverage || 0
+  
+  # Photochemical haze
+  organic_haze_density = atmosphere.organic_haze_optical_depth || 0
+  
+  # Nitrogen-methane atmosphere
+  nitrogen_dominance = atmosphere.nitrogen_percentage || 0
+  
+  return {
+    methane_cycle_active: methane_abundance > 1.0, # %
+    hydrocarbon_oceans: ethane_lakes > 0.1, # coverage fraction
+    photochemical_haze: organic_haze_density > 1.0,
+    nitrogen_buffer: nitrogen_dominance > 95.0 # %
+  }
+end
+```
+
+#### 2. Low Gravity Effects Validation
+**Critical Parameters**:
+- **Atmospheric Scale Height**: 40-50 km (vs Earth's 8.5 km)
+- **Wind Patterns**: Methane-driven weather systems
+- **Cryovolcanism**: Water-ammonia lavas
+- **Aerosol Dynamics**: Organic particle formation
+
+#### 3. Surface-Atmosphere Exchange Validation
+**Validation Metrics**:
+- **Lake Evaporation**: Methane/ethane cycling
+- **Haze Formation**: UV photochemistry products
+- **Surface Deposition**: Organic solids accumulation
+- **Seasonal Changes**: 29.5-year orbital cycle effects
+
+### Terraforming Pathway Validation
+1. **Phase 1**: Methane cycle stabilization (prevent runaway loss)
+2. **Phase 2**: Temperature moderation (greenhouse optimization)
+3. **Phase 3**: Water introduction (cometary bombardment)
+4. **Phase 4**: Biosphere seeding (extremophile adaptation)
+
+---
+
+## Earth-like Habitable Worlds (Biosphere Development, Climate Systems)
+
+### Environmental Characteristics
+- **Surface Temperature**: 280-300K (7-27°C)
+- **Atmospheric Pressure**: 0.8-1.2 atm
+- **Primary Challenge**: Maintaining stable climate systems
+- **Geological Activity**: Plate tectonics, volcanic activity
+
+### TerraSim Validation Requirements
+
+#### 1. Biosphere Development Validation
+```ruby
+# app/services/terra_sim/biosphere_validator.rb
+def validate_earth_biosphere(biosphere, hydrosphere, atmosphere)
+  # Biodiversity metrics
+  species_richness = biosphere.species_count || 0
+  biomass_density = biosphere.total_biomass || 0
+  
+  # Ecosystem stability
+  trophic_levels = biosphere.trophic_complexity || 1
+  nutrient_cycling = biosphere.nutrient_cycle_efficiency || 0
+  
+  # Climate regulation
+  carbon_sequestration = biosphere.carbon_fixation_rate || 0
+  oxygen_production = biosphere.oxygen_generation_rate || 0
+  
+  return {
+    biodiversity_index: species_richness / 1000, # normalized
+    ecosystem_stability: trophic_levels > 3,
+    climate_regulation: carbon_sequestration > oxygen_production * 0.8,
+    biomass_sustainability: biomass_density > 1.0 # kg/m²
+  }
+end
+```
+
+#### 2. Climate System Validation
+**Critical Parameters**:
+- **Ocean-Atmosphere Coupling**: Thermohaline circulation
+- **Carbon Cycle Balance**: Photosynthesis vs respiration
+- **Albedo Feedback**: Ice cover vs temperature
+- **Weather Patterns**: Hadley/Ferrel/Polar cells
+
+#### 3. Geological-Biosphere Interaction Validation
+**Validation Metrics**:
+- **Nutrient Availability**: Rock weathering rates
+- **Soil Formation**: Pedogenesis processes
+- **Erosion Control**: Vegetation stabilization
+- **Volcanic Gas Emissions**: Atmospheric composition effects
+
+### Terraforming Pathway Validation
+1. **Phase 1**: Atmospheric composition optimization (N₂/O₂ balance)
+2. **Phase 2**: Hydrosphere stabilization (water cycle establishment)
+3. **Phase 3**: Biosphere seeding (microbial colonization)
+4. **Phase 4**: Ecosystem development (food web complexity)
+
+---
+
+## Cross-Planetary Validation Framework
+
+### Universal Validation Metrics
+```ruby
+# app/services/terra_sim/universal_validator.rb
+def validate_planetary_habitability(celestial_body)
+  {
+    temperature_stability: validate_temperature_range(celestial_body),
+    pressure_compatibility: validate_atmospheric_pressure(celestial_body),
+    water_phase_availability: validate_hydrosphere_state(celestial_body),
+    radiation_protection: validate_magnetic_shielding(celestial_body),
+    geological_stability: validate_tectonic_activity(celestial_body)
+  }
+end
+```
+
+### Planetary Type Classification
+```ruby
+PLANETARY_TYPES = {
+  mars_like: { temp_range: 200..250, pressure_range: 0.005..0.01, challenges: [:cold, :thin_atmosphere] },
+  venus_like: { temp_range: 700..750, pressure_range: 90..95, challenges: [:heat, :thick_atmosphere] },
+  titan_like: { temp_range: 90..95, pressure_range: 1.4..1.5, challenges: [:cold, :hydrocarbon_chemistry] },
+  earth_like: { temp_range: 280..300, pressure_range: 0.8..1.2, challenges: [:climate_stability] }
+}
+```
+
+### Validation Integration Points
+- **AI Manager**: Pattern validation before mission deployment
+- **Digital Twin**: Accelerated testing of terraforming scenarios
+- **Mission Planner**: Risk assessment and optimization
+- **Admin Interface**: Real-time validation feedback
+
+## Critical: Sol System Terrain Isolation **[2026-02-10]**
+
+**Issue:** Terrain generation changes affected Sol system loading
+**Root Cause:** Routing confusion between NASA GeoTIFF and pattern-based generation  
+**Fix:** Ensure Sol system bodies use NASA data exclusively, exoplanets use patterns
+**Prevention:** Add explicit NASA-only path for Sol bodies
+
+### Problem Description
+- **Expected:** Earth/Mars use NASA GeoTIFF data exclusively
+- **Actual:** Earth/Mars showing no terrain in development views
+- **Cause:** Terrain generation routing changed, affecting Sol system loading
+- **Impact:** Sol system planets cannot be monitored/visualized
+
+### Immediate Test: Database Reseed
+**Before implementing code fixes, test if reseeding restores terrain data:**
+
+```bash
+# Test 1: Check current terrain status
+docker exec -it web rails runner "earth = CelestialBodies::CelestialBody.find_by(name: 'Earth'); puts \"Earth terrain: #{earth.geosphere&.terrain_map&.present?}\"; mars = CelestialBodies::CelestialBody.find_by(name: 'Mars'); puts \"Mars terrain: #{mars.geosphere&.terrain_map&.present?}\""
+
+# Test 2: Reseed Sol system (if terrain data missing)
+docker exec -it web rails runner "SolarSystem.find_by(name: 'Sol')&.destroy; load Rails.root.join('db', 'seeds.rb')"
+
+# Test 3: Verify terrain restored
+docker exec -it web rails runner "earth = CelestialBodies::CelestialBody.find_by(name: 'Earth'); puts \"Earth terrain: #{earth.geosphere&.terrain_map&.present?}\"; mars = CelestialBodies::CelestialBody.find_by(name: 'Mars'); puts \"Mars terrain: #{mars.geosphere&.terrain_map&.present?}\""
+```
+
+### If Reseeding Doesn't Work: Code Fix Required
+
+**Command for other agent:**
+```bash
+# Fix: Isolate Sol system terrain loading from exoplanet pattern generation
+# File: app/services/star_sim/automatic_terrain_generator.rb
+
+# In generate_sol_world_terrain method, ensure NASA priority:
+def generate_sol_world_terrain(body)
+  case body.name.downcase
+  when 'earth', 'mars', 'venus', 'mercury', 'luna', 'moon'
+    # FORCE NASA GeoTIFF loading - bypass PlanetaryMapGenerator entirely
+    if nasa_geotiff_available?(body.name.downcase)
+      Rails.logger.info "[AutomaticTerrainGenerator] LOADING NASA GeoTIFF for #{body.name}"
+      terrain_data = load_nasa_terrain(body.name.downcase, body)
+      return store_generated_terrain(body, terrain_data) if terrain_data
+    end
+    
+    # Only if NASA fails, use Civ4/FreeCiv fallbacks
+    Rails.logger.warn "[AutomaticTerrainGenerator] NASA GeoTIFF failed for #{body.name}, trying fallbacks"
+    # ... existing Civ4/FreeCiv logic ...
+  end
+end
+
+# CRITICAL: Ensure generate_base_terrain is NEVER called for Sol bodies
+# The generate_terrain_for_body method should route Sol bodies directly to generate_sol_world_terrain
+```
+
+### Prevention Measures
+1. **Add explicit Sol system bypass** in `generate_terrain_for_body`
+2. **Never route Sol bodies through `PlanetaryMapGenerator`**
+3. **Add tests** to ensure Sol bodies always use NASA data when available
+4. **Monitor terrain status** in development views
+
+### Testing Checklist
+- [ ] Earth monitor shows detailed NASA terrain
+- [ ] Mars monitor shows detailed NASA terrain  
+- [ ] AOL-732356 planets show pattern-based terrain (not sine waves)
+- [ ] No cross-contamination between Sol and exoplanet generation
 
 - **Scientific Accuracy**: All calculations based on real planetary science
 - **Performance Limits**: Simulation must run efficiently for long-term play

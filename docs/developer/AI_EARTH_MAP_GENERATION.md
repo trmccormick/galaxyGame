@@ -4,6 +4,22 @@
 
 Galaxy Game now includes an advanced AI-powered system for generating Earth maps by analyzing and learning from FreeCiv and Civ4 terrain data. This system combines multiple map sources to create comprehensive, strategically rich planetary terrain with continuous learning capabilities.
 
+## FreeCiv/Civ4 Integration Role
+
+**Training and Reference Data Only:**
+FreeCiv (.sav) and Civ4 (.Civ4WorldBuilderSave) maps serve as AI training assets and scenario inspiration:
+
+- **Not Direct Terrain Sources**: Maps are not loaded as direct terrain for planets
+- **AI Learning Data**: Used to train pattern recognition for biome placement and strategic features
+- **Scenario Templates**: Provide terraforming target blueprints for Digital Twin testing
+- **Pattern Extraction**: AI learns terrain distributions, resource patterns, and settlement strategies
+
+**Digital Twin Integration:**
+- Map analysis creates reusable scenario templates for SimEarth-style testing
+- TerraSim validates physical viability of AI-extracted patterns
+- Isolated testing environment prevents live game impact
+- Continuous learning improves future terraforming scenario generation
+
 ## Key Components
 
 ### 1. EarthMapGenerator (`AIManager::EarthMapGenerator`)
@@ -88,6 +104,30 @@ The AI learning system tracks:
   }
 }
 ```
+
+## Digital Twin Integration
+
+### SimEarth-Style Testing Environment
+
+The Earth map generation system integrates with the Digital Twin Sandbox for SimEarth-inspired terraforming testing:
+
+**Workflow:**
+1. FreeCiv/Civ4 maps selected via admin interface (`select_maps_for_analysis`)
+2. AI extracts patterns and creates scenario templates
+3. Digital Twin creates isolated planetary copy
+4. TerraSim applies terraforming interventions toward target state
+5. Physics validation ensures realistic outcomes
+
+**Intervention Types:**
+- Atmospheric: `atmo_thickening`, `greenhouse_gases`, `ice_melting`
+- Settlement: `establish_outpost`, `build_infrastructure`
+- Life: `introduce_microbes`, `seed_ecosystem`
+
+**Benefits:**
+- Isolated testing without live game impact
+- Physics-validated terraforming scenarios
+- Continuous improvement through AI learning
+- Reusable templates for multiple test scenarios
 
 ## Generated Earth Map Format
 

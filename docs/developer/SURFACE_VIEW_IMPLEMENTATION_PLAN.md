@@ -3,22 +3,25 @@
 ## Overview
 This document tracks the implementation of planetary map visualization in Galaxy Game, including the monitor view (admin terrain debugging) and surface view (gameplay map display).
 
-## View Distinction [2026-02-05]
+## View Distinction [2026-02-11 UPDATED]
 
-### Monitor View (Admin/Debug)
-- **Purpose:** Verify terrain data is loading correctly
-- **Rendering:** SimEarth-style layered system with toggleable overlays
+### Monitor View (Admin/Debug - SimEarth Global Style)
+- **Purpose:** Verify terrain data is loading correctly, global planetary overview
+- **Rendering:** Canvas-based layered system with toggleable overlays
 - **Terrain Layer:** Always ON - elevation-based body-specific colors (cannot be disabled)
-- **Other Layers:** Hydrosphere, Biosphere, Infrastructure - toggleable
-- **Tileset:** Not used - direct pixel/canvas rendering
+- **Other Layers:** Hydrosphere, Biosphere, Infrastructure - toggleable transparency overlays
+- **Tileset:** NOT used - direct pixel/canvas rendering with planetary color schemes
 - **Location:** `app/views/admin/celestial_bodies/monitor.html.erb`
+- **Example:** SimEarth's global view showing continents, oceans, atmosphere
 
-### Surface View (Gameplay)
-- **Purpose:** Player interaction with planetary surface
-- **Rendering:** FreeCiv tileset sprites for proper game UI
-- **Tileset:** Required - uses 64×64 Trident tiles (or other FreeCiv tilesets)
-- **Grid Size:** Diameter-based with 2:1 aspect ratio for cylindrical wrap
+### Surface View (Gameplay - Civilization Strategic Style)
+- **Purpose:** Player interaction with planetary surface for strategy gameplay
+- **Rendering:** FreeCiv tileset sprites for proper strategic game UI
+- **Tileset:** REQUIRED - uses 64×64 Trident tiles (or other FreeCiv tilesets)
+- **Grid Size:** Diameter-based with 2:1 aspect ratio for cylindrical planetary wrap
+- **Layers:** Stacked sprite layers (terrain base + water + biomes + civilization/units)
 - **Location:** `app/views/admin/celestial_bodies/surface.html.erb`
+- **Example:** Civilization's tile-based world map with stacked unit/city overlays
 
 **FreeCiv Tileset Constraints (Surface View Only):**
 | Body | Grid Size | @64px tiles |
@@ -38,11 +41,18 @@ This document tracks the implementation of planetary map visualization in Galaxy
 - ✅ Water overlay working (not shown by default)
 - ✅ Diameter-based grid sizing works correctly
 
-### Surface View Status
+### Surface View Status [2026-02-11 UPDATED]
 - **Location:** `app/views/admin/celestial_bodies/surface.html.erb`
-- ✅ Created with tileset loading
-- ✅ Layer system implemented
-- ✅ Controller tests passing
+- ✅ **View exists** with comprehensive tileset loading system
+- ✅ **TilesetLoader class** implemented for FreeCiv tilesets (Trident, BigTrident, etc.)
+- ✅ **AlioTilesetLoader class** implemented for sci-fi tilesets with burrow tubes
+- ✅ **Layer controls** implemented (terrain/water/biomes/features/resources/elevation)
+- ✅ **Tileset selector** with multiple options (Alio, BigTrident, Trident, etc.)
+- ✅ **Zoom and tile size controls** functional
+- ✅ **Terrain mapping logic** from Galaxy Game types to FreeCiv tiles
+- ❓ **Data loading** - needs verification if terrain data is properly loaded
+- ❓ **Rendering pipeline** - needs testing if tiles actually display correctly
+- ❓ **Layer toggling** - needs verification if overlays work properly
 
 ## Architecture Correction Required
 
@@ -77,14 +87,18 @@ FreeCiv/Civ4 Maps → TRAINING DATA ONLY
 | **1.5** | Body-specific base colors | ❌ Pending |
 | **1.6** | Fix `primary_liquid` method | ❌ Pending |
 
-### Phase 2: Surface View Enhancement 🟡 MEDIUM PRIORITY
+### Phase 2: Surface View Enhancement [UPDATED 2026-02-11]
 
 | Task | Description | Status |
 |------|-------------|--------|
-| **2.1** | Integrate geological features overlay | ✅ Completed |
-| **2.2** | Add feature markers with tooltips | 🔄 In Progress |
-| **2.3** | Settlement planning integration | ❌ Pending |
-| **2.4** | FreeCiv tileset compatibility (2:1 grid ratio) | ❌ Pending |
+| **2.1** | Verify terrain data loading from geosphere.terrain_map | 🔄 Needs Testing |
+| **2.2** | Test tileset sprite rendering (Trident 64x64 tiles) | 🔄 Needs Testing |
+| **2.3** | Verify terrain type → FreeCiv tile mapping | 🔄 Needs Testing |
+| **2.4** | Test layer toggle functionality (water/biomes overlays) | 🔄 Needs Testing |
+| **2.5** | Fix any broken tileset loading or rendering issues | ❌ Pending |
+| **2.6** | Add geological feature markers (lava tubes, craters) | ❌ Pending |
+| **2.7** | Integrate settlement planning overlays | ❌ Pending |
+| **2.8** | Add unit/civilization layer on top | ❌ Pending |
 
 ### Phase 3: Geological Data Completion 🟢 LOW PRIORITY
 

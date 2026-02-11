@@ -500,6 +500,56 @@ Real-time planetary monitoring with sphere-based data visualization and terrain 
 - **Automatic Correction**: Invalid biomes are automatically replaced with scientifically appropriate alternatives
 - **Performance**: Validation runs post-generation with configurable correction thresholds (default: <80% accuracy triggers correction)
 
+#### Select Maps for Analysis (`/admin/celestial_bodies/select_maps_for_analysis`)
+
+FreeCiv/Civ4 map selection interface for AI learning and Digital Twin scenario generation.
+
+**Features:**
+- Browse available FreeCiv (.sav) and Civ4 (.Civ4WorldBuilderSave) maps
+- Map metadata display (file size, modification date, folder organization)
+- Bulk selection controls (select all, by type, none)
+- AI learning statistics dashboard
+- Form submission for AI analysis and pattern extraction
+
+**Controller:** `Admin::CelestialBodiesController#select_maps_for_analysis`
+
+**Map Discovery:**
+- **FreeCiv Maps**: Scans `data/maps/freeciv/` for .sav files
+- **Civ4 Maps**: Scans `data/maps/civ4/` for .Civ4WorldBuilderSave files
+- **Organization**: Groups maps by subfolder for better navigation
+- **Metadata**: Displays file size, modification date, and descriptive names
+
+**AI Learning Stats:**
+- Total learning entries from previous analyses
+- Available maps count by type
+- Success rates and pattern extraction metrics
+
+#### Generate Earth Map (`/admin/celestial_bodies/:id/generate_earth_map`)
+
+AI-powered Earth map generation using FreeCiv/Civ4 analysis for Digital Twin scenarios.
+
+**Features:**
+- Selected map analysis for strategic pattern extraction
+- AI learning data updates from map features
+- Scenario template generation for terraforming simulations
+- Digital Twin integration for isolated testing
+- TerraSim validation of generated terrain patterns
+
+**Controller:** `Admin::CelestialBodiesController#generate_earth_map`
+
+**Analysis Process:**
+1. **Map Processing**: Extract terrain patterns, settlement locations, resource distributions
+2. **AI Learning**: Update pattern database with successful strategies
+3. **Template Generation**: Create reusable terraforming scenario templates
+4. **Digital Twin Application**: Apply templates to isolated planetary simulations
+5. **TerraSim Validation**: Physics-based verification of intervention outcomes
+
+**Digital Twin Integration:**
+- **Isolated Testing**: Changes don't affect live game state
+- **Intervention Framework**: 20+ terraforming actions (atmospheric, settlement, life)
+- **Scenario Templates**: FreeCiv/Civ4 patterns become terraforming targets
+- **Physics Validation**: TerraSim ensures realistic outcomes
+
 #### Edit (`/admin/celestial_bodies/:id/edit`)
 
 Admin-only interface for editing celestial body names and aliases, plus NASA terrain data management.
