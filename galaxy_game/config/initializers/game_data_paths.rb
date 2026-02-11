@@ -53,6 +53,14 @@ module GalaxyGame
     # === Template Data Paths ===
     TEMPLATE_PATH = JSON_DATA.join('templates').freeze
 
+    # === Documentation Paths ===
+    # Path to project documentation (at project root level)
+    DOCS_PATH = if defined?(Rails) && Rails.root
+      Rails.root.join('..', 'docs').expand_path.freeze
+    else
+      RAILS_ROOT.join('..', 'docs').expand_path.freeze
+    end
+
     # === Operational Data Paths (Units, Structures, Crafts, Modules, Rigs) ===
     UNITS_PATH = JSON_DATA.join('operational_data', 'units').freeze 
     COMPUTER_UNITS_PATH = UNITS_PATH.join('computers').freeze 

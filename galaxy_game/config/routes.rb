@@ -77,9 +77,9 @@ Rails.application.routes.draw do
         post :import_freeciv_for_body  # Import FreeCiv terrain data
         post :import_civ4_for_body     # Import Civ4 terrain data
         post :generate_earth_map       # Generate Earth map with AI learning
+        get :select_maps_for_analysis  # Select FreeCiv/Civ4 maps for AI analysis
       end
       collection do
-        get :select_maps_for_analysis  # Select FreeCiv/Civ4 maps for AI analysis
       end
     end
     

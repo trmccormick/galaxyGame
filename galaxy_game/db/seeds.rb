@@ -1,8 +1,12 @@
 require_relative 'seeds/calculators'
 
-# Build the Sol star system using StarSim from JSON data
-puts "Building Sol star system..."
-StarSim::SystemBuilderService.new(name: 'Sol', debug_mode: true).build!
+# Build the Sol star system using StarSim from JSON data (complete version)
+puts "Building Sol star system (complete version)..."
+StarSim::SystemBuilderService.new(name: 'sol-complete', debug_mode: true).build!
+
+# Build the Gaia star system (AOL-732356)
+puts "Building Gaia star system (AOL-732356)..."
+StarSim::SystemBuilderService.new(name: 'AOL-732356', debug_mode: true).build!
 
 # Create system currencies
 puts "Creating system currencies..."

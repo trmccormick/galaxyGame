@@ -10,6 +10,12 @@ module AIManager
     def generate_planetary_map(planet:, sources:, options: {})
       Rails.logger.info "[PlanetaryMapGenerator] Generating map for #{planet.name} using #{sources.size} source maps"
 
+      # Check if NASA data source is specified - use it preferentially
+      if options[:nasa_data_source]
+        Rails.logger.info "[PlanetaryMapGenerator] NASA data source specified: #{options[:nasa_data_source]}"
+        return generate_nasa_based_map(planet, options)
+      end
+
       if sources.empty?
         # Generate a basic procedural map if no sources
         return generate_procedural_map(planet, options)
@@ -241,6 +247,57 @@ module AIManager
       end
 
       markers
+    end
+
+    def generate_nasa_based_map(planet, options)
+      Rails.logger.info "[PlanetaryMapGenerator] Generating NASA-based map for #{planet.name}"
+
+      nasa_file = options[:nasa_data_source]
+      base_width = options[:width] || 80
+      base_height = options[:height] || 50
+
+      # Scale dimensions based on planetary radius
+      width, height = scale_dimensions_for_planet(base_width, base_height, planet)
+
+      # Try to use NASA-derived multi-body terrain generator
+      body_type = planet_body_type(planet)
+      if body_type && defined?(Terrain::MultiBodyTerrainGenerator)
+        begin
+          Rails.logger.info "[PlanetaryMapGenerator] Using NASA terrain generator for #{body_type}"
+          terrain_generator = Terrain::MultiBodyTerrainGenerator.new
+          terrain_data = terrain_generator.generate_terrain(body_type, width: width, height: height)
+
+          # Convert to expected format
+          terrain_grid = terrain_data[:grid]
+          elevation_grid = terrain_data[:elevation]
+          biome_counts = count_biomes(terrain_grid)
+
+          return {
+            terrain_grid: terrain_grid,
+            biome_counts: biome_counts,
+            elevation_data: elevation_grid,
+            strategic_markers: [],
+            planet_name: planet.name,
+            planet_type: planet.type,
+            metadata: {
+              generated_at: Time.current.iso8601,
+              source_maps: [{ type: 'nasa_geotiff', filename: nasa_file }],
+              generation_options: options,
+              width: width,
+              height: height,
+              generator: 'MultiBodyTerrainGenerator',
+              body_type: body_type,
+              nasa_derived: true,
+              source: 'nasa_geotiff'
+            }
+          }
+        rescue => e
+          Rails.logger.warn "[PlanetaryMapGenerator] NASA terrain generation failed: #{e.message}, falling back to procedural"
+        end
+      end
+
+      # Fallback to procedural if NASA generation fails
+      generate_procedural_map(planet, options)
     end
 
     def generate_procedural_map(planet, options)

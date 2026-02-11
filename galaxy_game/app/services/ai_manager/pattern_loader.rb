@@ -46,6 +46,53 @@ module AIManager
       end
     end
 
+    def self.load_freeciv_geographical_patterns
+      # Load geographical patterns extracted from FreeCiv/Civ4 maps for AI training
+      pattern_file = GalaxyGame::Paths::DOCS_PATH.join('developer', 'freeciv_geographical_patterns.json')
+
+      if File.exist?(pattern_file)
+        JSON.parse(File.read(pattern_file))
+      else
+        Rails.logger.info "[PatternLoader] FreeCiv geographical patterns not found - using default patterns"
+        default_freeciv_patterns
+      end
+    end
+
+    def self.default_freeciv_patterns
+      # Default geographical patterns based on analyzed FreeCiv/Civ4 maps
+      {
+        "archipelago_world" => {
+          "ocean_coverage" => 0.479,
+          "landmass_distribution" => "scattered_islands",
+          "coastal_complexity" => "high",
+          "exploration_focus" => "water_based",
+          "learned_from" => ["Dark Tower Beta"],
+          "applications" => ["island_hopping_civilizations", "water_trade_routes"]
+        },
+        "corrupted_fantasy" => {
+          "custom_terrains" => ["chaos_waste", "boneplains", "lava", "marsh", "scorched_earth"],
+          "corruption_percentage" => 0.053,
+          "terrain_variety" => "high",
+          "learned_from" => ["Warhammer Map"],
+          "applications" => ["magical_corruption_mechanics", "post_apocalyptic_worlds"]
+        },
+        "water_rich_moon" => {
+          "ocean_coverage" => 0.272,
+          "habitable_zones" => "mixed",
+          "cryogenic_features" => true,
+          "learned_from" => ["Dione (Saturn)"],
+          "applications" => ["subsurface_ocean_planets", "icy_moon_colonization"]
+        },
+        "hydrocentric_world" => {
+          "ocean_coverage" => 0.555,
+          "shallow_sea_percentage" => 0.70,
+          "continental_shelves" => "extensive",
+          "learned_from" => ["Jurassic Map"],
+          "applications" => ["ancient_sea_worlds", "marine_ecosystems"]
+        }
+      }
+    end
+
     # Get specific terraforming pattern
     def self.terraforming_pattern(pattern_name)
       patterns = load_terraforming_patterns

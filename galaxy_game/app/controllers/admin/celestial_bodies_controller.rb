@@ -6,7 +6,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface]
+    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis]
 
     def select_maps_for_analysis
       @available_maps = find_available_maps || []
@@ -1093,8 +1093,12 @@ module Admin
       { mining_rate: initial_mining, units: mining_units.size }
     end
 
-    # GET /admin/celestial_bodies/:id/select_maps_for_analysis
+    # GET /admin/celestial_bodies/select_maps_for_analysis
     # Show interface for selecting FreeCiv/Civ4 maps for AI analysis
+    def select_maps_for_analysis
+      @available_maps = find_available_maps
+      @learning_stats = get_ai_learning_stats
+    end
 
     # POST /admin/celestial_bodies/:id/generate_earth_map
     # Generate Earth map using AI analysis of selected FreeCiv/Civ4 maps
@@ -1144,6 +1148,19 @@ module Admin
     end
 
     private
+
+    def get_ai_learning_stats
+      pattern_file = Rails.root.join('data', 'json-data', 'ai-manager', 'learned_patterns.json')
+      if File.exist?(pattern_file)
+        patterns = JSON.parse(File.read(pattern_file))
+        patterns.size
+      else
+        0
+      end
+    rescue => e
+      Rails.logger.warn "Error loading AI learning stats: #{e.message}"
+      0
+    end
 
     def find_available_maps
       maps = []

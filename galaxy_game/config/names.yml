@@ -177,3 +177,47 @@ planet_names:
     - Arcadia
     - Olympus
     - Atlantis
+  terrestrial:
+    - Gaia Prime
+    - Terra Nova Prime
+    - Eden Prime
+    - Avalon Prime
+    - Olympus Prime
+    - Arcadia Prime
+    - Elysium Prime
+    - Haven Prime
+    - Sanctuary Prime
+    - Providence Prime
+  gas_giant:
+    - Jupiter Major
+    - Saturn Major
+    - Neptune Major
+    - Uranus Major
+    - Kronos
+    - Zeus
+    - Poseidon
+    - Hades
+    - Odin
+    - Thor
+  ice_giant:
+    - Triton
+    - Oberon
+    - Titania
+    - Ariel
+    - Umbriel
+    - Miranda
+    - Proteus
+    - Nereid
+    - Larissa
+    - Despina
+  dwarf_planet:
+    - Ceres
+    - Pluto
+    - Eris
+    - Makemake
+    - Haumea
+    - Sedna
+    - Orcus
+    - Quaoar
+    - Varuna
+    - Ixion

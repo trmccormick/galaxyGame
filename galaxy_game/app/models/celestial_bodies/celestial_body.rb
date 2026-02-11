@@ -57,7 +57,7 @@ module CelestialBodies
     before_save :ensure_properties
 
     # JSONB field accessors
-    store_accessor :properties, :has_magnetosphere, :preservation_mode
+    store_accessor :properties, :has_magnetosphere, :preservation_mode, :aliases
     
     def name
       self[:name] || identifier
@@ -481,6 +481,44 @@ module CelestialBodies
         generate_material_description
       else
         "A celestial body of type #{type}. #{body_type.present? ? "Body type: #{body_type}." : ''}"
+      end
+    end
+
+    # Alias handling methods
+    def all_names
+      names = [name].compact
+      names += Array(aliases) if aliases.present?
+      names.uniq
+    end
+
+    def has_alias?(alias_name)
+      return false unless aliases.present?
+      Array(aliases).include?(alias_name.to_s)
+    end
+
+    def add_alias(new_alias)
+      self.aliases ||= []
+      self.aliases = Array(aliases) + [new_alias.to_s] unless has_alias?(new_alias)
+    end
+
+    def remove_alias(alias_to_remove)
+      return unless aliases.present?
+      self.aliases = Array(aliases) - [alias_to_remove.to_s]
+    end
+
+    # Class method to find by name or alias
+    def self.find_by_name_or_alias(name)
+      # First try exact name match
+      body = find_by(name: name)
+      return body if body.present?
+
+      # Then try identifier match
+      body = find_by(identifier: name)
+      return body if body.present?
+
+      # Finally try aliases (this requires a more complex query)
+      where("properties->>'aliases' LIKE ?", "%#{name}%").find do |b|
+        b.has_alias?(name)
       end
     end
 

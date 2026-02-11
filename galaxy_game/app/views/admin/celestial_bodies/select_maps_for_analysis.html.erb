@@ -372,7 +372,7 @@
     </div>
   </div>
 
-  <%= form_with url: "#", method: :post, local: true do |form| %>
+  <%= form_with url: generate_earth_map_admin_celestial_body_path(@celestial_body), method: :post, local: true do |form| %>
     <div class="map-selection-section">
       <h3>Select Maps for AI Analysis</h3>
       <p>The Digital Twin simulation system will analyze these maps to extract strategic patterns, terrain features, and development insights. This learning data will be used for planetary development planning and "what-if" scenario simulations.</p>
