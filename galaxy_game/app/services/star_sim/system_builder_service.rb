@@ -101,6 +101,8 @@ module StarSim
             'ice_giants'
           when 'dwarf_planet'
             'dwarf_planets'
+          when 'protoplanet'
+            'protoplanets'
           when 'moon'
             # Check if it's a major moon or regular moon
             if ['Luna', 'Titan', 'Ganymede', 'Callisto', 'Io', 'Europa', 'Rhea', 'Iapetus', 'Dione', 'Tethys', 'Enceladus', 'Mimas', 'Titania', 'Oberon', 'Umbriel', 'Ariel', 'Miranda'].include?(body[:name])
@@ -129,7 +131,8 @@ module StarSim
       galaxy_name = galaxy_data[:name] || "Unknown Galaxy"
       galaxy_identifier = galaxy_data[:identifier] || @name_generator.generate_identifier
       
-      @galaxy = Galaxy.find_or_create_by!(identifier: galaxy_identifier) do |g|
+      # Find by name first (to share galaxies between systems), then by identifier
+      @galaxy = Galaxy.find_by(name: galaxy_name) || Galaxy.find_or_create_by!(identifier: galaxy_identifier) do |g|
         g.name = galaxy_name
         puts "Creating galaxy: #{galaxy_name}" if @debug_mode
       end
@@ -140,7 +143,7 @@ module StarSim
       solar_data = @system_data[:solar_system] || {}
       
       system_name = solar_data[:name] || name
-      system_identifier = solar_data[:identifier] || @name_generator.generate_identifier
+      system_identifier = solar_data[:identifier] || system_name.parameterize.upcase
       
       @solar_system = SolarSystem.find_or_create_by!(identifier: system_identifier) do |sys|
         sys.name = system_name
@@ -164,17 +167,31 @@ module StarSim
         return @created_stars_cache[identifier]
       end
       
-      existing_star = CelestialBodies::Star.find_by(identifier: identifier, solar_system: @solar_system)
+      existing_star = CelestialBodies::Star.find_by(identifier: identifier)
       if existing_star
-        puts "Star #{star_name} already exists in DB." if @debug_mode
+        puts "Star #{star_name} already exists. Updating solar_system." if @debug_mode
+        existing_star.update(solar_system: @solar_system)
         @created_stars_cache[identifier] = existing_star
         return existing_star
       end
 
       # Prepare attributes for Star creation
       # Exclude 'properties' as it's handled separately
-      attrs = star_data.except(:properties) 
+      attrs = star_data.except(:properties, :type) # Also exclude 'type' as it's handled separately
       attrs[:solar_system] = @solar_system # Assign solar system to star
+
+      # Handle spectral type mapping for generated stars (like Gaia)
+      if star_data[:type].present?
+        # Map 'type' to spectral_class in properties
+        attrs[:spectral_class] = star_data[:type]
+        # Extract type_of_star from spectral class (first character)
+        attrs[:type_of_star] = star_data[:type][0]
+      end
+
+      # Set default values for required attributes if missing
+      attrs[:age] ||= 5.0e9  # Default age in years
+      attrs[:life] ||= 10.0e9  # Default lifespan in years
+      attrs[:r_ecosphere] ||= Math.sqrt(attrs[:luminosity].to_f) * 1.496e8  # Habitable zone distance based on luminosity
 
       # Create the star
       star = CelestialBodies::Star.new(attrs)
@@ -226,8 +243,14 @@ module StarSim
       # and association data that will be created separately.
       # CRITICAL FIX: Add :parent_body to special_keys_to_exclude
       special_keys_to_exclude = [
-        :type, :parent_identifier, :parent_body, :properties, # Handled explicitly
-        :atmosphere, :hydrosphere, :geosphere_attributes, :star_distances # Handled as associations
+        :type, :parent_identifier, :parent_body, :properties, :aliases, # Handled explicitly
+        :atmosphere, :hydrosphere, :geosphere_attributes, :star_distances, :materials, # Handled as associations
+        :atmosphere_attributes, :hydrosphere_attributes, :biosphere_attributes, # Aliases for associations
+        :geological_features, :magnetosphere, :magnetic_field_strength, :rotation_period, :orbital_elements, # Additional attributes
+        :volcanic_activity, # Geosphere attribute
+        :magnetic_moment, :tei_score, :known_pressure, :geological_activity, :engineered_atmosphere,
+        :terraforming_difficulty, :volatile_reservoir, :material_yield_bias, :from_template,
+        :orbits, :biosphere, :moons, :diameter_km # Additional non-DB attributes (removed :size)
       ]
       attrs = body_data.except(*special_keys_to_exclude)
 
@@ -255,7 +278,7 @@ module StarSim
         puts "DEBUG: Looking for parent with identifier: '#{parent_identifier}' for body '#{body_name}'" if @debug_mode
         # Look up the parent CelestialBody object from cache or DB
         parent_body_object = @created_celestial_bodies_cache[parent_identifier] || 
-                             CelestialBodies::CelestialBody.find_by(identifier: parent_identifier)
+                             CelestialBodies::CelestialBody.find_by(name: parent_identifier)
         
         unless parent_body_object
           puts "ERROR: Parent '#{parent_identifier}' not found for #{body_name}. Skipping creation." if @debug_mode
@@ -290,6 +313,7 @@ module StarSim
         create_atmosphere(body, body_data[:atmosphere]) if body_data[:atmosphere].present?
         create_hydrosphere(body, body_data[:hydrosphere]) if body_data[:hydrosphere].present?
         create_geosphere(body, body_data[:geosphere_attributes]) if body_data[:geosphere_attributes].present?
+        create_materials(body, body_data[:materials]) if body_data[:materials].present?
         # Only create biosphere for Earth initially (where life is confirmed to exist)
         create_biosphere(body, body_data[:biosphere]) if body.name.downcase == 'earth'
 
@@ -316,7 +340,7 @@ module StarSim
 
       # Fallback to custom logic if 'type' is a simplified string (e.g., "terrestrial", "moon")
       case body_data[:type].to_s
-      when "terrestrial" then CelestialBodies::Planets::Rocky::TerrestrialPlanet
+      when "terrestrial", "terrestrial_planet" then CelestialBodies::Planets::Rocky::TerrestrialPlanet
       when "super_earth" then CelestialBodies::Planets::Rocky::SuperEarth
       when "carbon_planet" then CelestialBodies::Planets::Rocky::CarbonPlanet
       when "lava_world"
@@ -332,6 +356,7 @@ module StarSim
 
       when "dwarf_planet" then CelestialBodies::MinorBodies::DwarfPlanet
       when "asteroid" then CelestialBodies::MinorBodies::Asteroid
+      when "protoplanet" then CelestialBodies::MinorBodies::Protoplanet
       when "comet" then CelestialBodies::MinorBodies::Comet
 
       when "moon" then CelestialBodies::Satellites::Moon
@@ -534,12 +559,11 @@ module StarSim
         end
       end
       
+      # Remove attributes that aren't part of the Geosphere model
+      geosphere_attrs.delete(:volcanic_activity)
+      
       # Use `build_geosphere` then `save!`
       geosphere = body.build_geosphere(geosphere_attrs)
-      
-      geosphere.skip_simulation = true if geosphere.respond_to?(:skip_simulation=)
-      
-      geosphere.stored_volatiles = stored_volatiles # Always set, even if empty
       
       geosphere.save!
       puts "Created geosphere for #{body.name}." if @debug_mode
@@ -575,6 +599,46 @@ module StarSim
         puts "WARNING: Failed to generate automatic terrain for #{body.name}: #{e.class}: #{e.message}"
         puts e.backtrace.first(10).join("\n")
         Rails.logger.warn "[SystemBuilderService] Terrain generation failed for #{body.name}: #{e.class}: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+      end
+    end
+
+    # Creates Material records for a celestial body.
+    # @param body [CelestialBodies::CelestialBody] The body to create materials for.
+    # @param materials_data [Array<Hash>] Materials data from JSON.
+    def create_materials(body, materials_data)
+      return unless materials_data.present? && materials_data.is_a?(Array)
+
+      materials_data.each do |material_data|
+        material_attrs = {
+          name: material_data[:name],
+          amount: material_data[:mass] || material_data[:amount] || 0,
+          state: :solid, # Default to solid, could be enhanced to detect from name
+          location: :surface, # Default location
+          celestial_body: body
+        }
+
+        # Try to determine state from material name
+        material_name = material_data[:name].to_s.downcase
+        if material_name.include?('gas') || ['helium', 'hydrogen', 'methane', 'ammonia', 'carbon dioxide', 'nitrogen', 'oxygen'].any? { |gas| material_name.include?(gas) }
+          material_attrs[:state] = :gas
+          material_attrs[:location] = :atmosphere
+        elsif material_name.include?('liquid') || ['water', 'ammonia', 'methane'].any? { |liquid| material_name.include?(liquid) && material_name.include?('liquid') }
+          material_attrs[:state] = :liquid
+          material_attrs[:location] = :hydrosphere
+        end
+
+        # Add uses to properties if present
+        if material_data[:uses].present?
+          # Material model doesn't have properties, so skip for now
+          # material_attrs[:properties] = { uses: material_data[:uses] }
+        end
+
+        material = CelestialBodies::Material.new(material_attrs)
+        if material.save
+          puts "Created material #{material.name} for #{body.name}" if @debug_mode
+        else
+          puts "ERROR: Failed to create material #{material_data[:name]} for #{body.name}: #{material.errors.full_messages.join(', ')}" if @debug_mode
+        end
       end
     end
 
