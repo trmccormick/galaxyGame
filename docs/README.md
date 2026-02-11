@@ -18,25 +18,29 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 #### Getting Started
 - [Setup Guide](developer/setup.md) - Development environment
 - [Architecture Overview](architecture/overview.md) - System design
-- **[Current Status](development/active/CURRENT_STATUS.md)** ⭐ - Active work tracker
+- **[Current Status](agent/CURRENT_STATUS.md)** ⭐ - Active work tracker
 
 #### Agent Documentation
 - **[Grok Rules](agent/GROK_RULES.md)** - Agent behavior guidelines
 - **[Current Work](agent/GROK_CURRENT_WORK.md)** - Active agent tasks
 
 #### Active Development (NEW)
-- **[Restoration Plan](development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)** - 6-phase roadmap
+- **[Restoration Plan](agent/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)** - 6-phase roadmap
 - [Environment Boundaries](agent/rules/ENVIRONMENT_BOUNDARIES.md) - Docker/Git rules
-- [Grok Task Templates](development/reference/grok_notes.md) - Workflow patterns
+- [Grok Task Templates](agent/reference/grok_notes.md) - Workflow patterns
 
 #### Completed Work (NEW)
-- [Construction Refactor](development/completed/CONSTRUCTION_REFACTOR.md) - Manufacturing pipeline history
+- [Construction Refactor](agent/completed/CONSTRUCTION_REFACTOR.md) - Manufacturing pipeline history
 - [Admin Dashboard Redesign](developer/ADMIN_DASHBOARD_REDESIGN.md) - Multi-galaxy support with hierarchical navigation
 
 #### Technical Reference
 - [Data-Driven Systems](developer/DATA_DRIVEN_SYSTEMS.md) - JSON configuration patterns
 - [Blueprint Cost Schema](developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) - Crafting system
 - [Testing Framework](developer/ai_testing_framework.md) - AI simulation testing
+- **[Practical Testing Guide](testing/PRACTICAL_TESTING_GUIDE.md)** ⭐ - RSpec best practices
+- **[CI/CD Pipeline](testing/CI_CD_PIPELINE.md)** ⭐ - Deployment automation
+- **[API Documentation](api/README.md)** ⭐ - Admin endpoints reference
+- **[Deployment Guide](operations/DEPLOYMENT.md)** ⭐ - Production setup
 
 #### Documentation Organization
 - [Reference Docs](reference/) - Stable guides and design intent
@@ -62,6 +66,7 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 - [Solar System](architecture/solar_system.md) - Sol system generation
 - [Geosphere](architecture/geosphere_system.md) - Planetary geology
 - [Hydrosphere](architecture/hydrosphere_system.md) - Water systems
+- **[Atmospheric Maintenance](architecture/atmospheric_maintenance_system.md)** ⭐ - Stabilization & terraforming physics
 - [Biosphere](architecture/biosphere_system.md) - Life and ecosystems
 - [Hycean Planets](architecture/hycean_planet_system.md) - Ocean worlds
 
@@ -216,8 +221,8 @@ Every code change must update corresponding .md files to maintain accuracy.
 
 ---
 
-**Last Updated**: February 9, 2026  
-**Documentation Version**: 2.0 (Reorganized structure)
+**Last Updated**: February 11, 2026  
+**Documentation Version**: 2.2 (Atmospheric maintenance & real science integration)
 
 - [Project README](../README.md) - Project setup and overview
 - [Planning Documents](architecture/planning/) - Future development plans
