@@ -20,9 +20,13 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 - [Architecture Overview](architecture/overview.md) - System design
 - **[Current Status](development/active/CURRENT_STATUS.md)** ⭐ - Active work tracker
 
+#### Agent Documentation
+- **[Grok Rules](agent/GROK_RULES.md)** - Agent behavior guidelines
+- **[Current Work](agent/GROK_CURRENT_WORK.md)** - Active agent tasks
+
 #### Active Development (NEW)
 - **[Restoration Plan](development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)** - 6-phase roadmap
-- [Environment Boundaries](development/reference/ENVIRONMENT_BOUNDARIES.md) - Docker/Git rules
+- [Environment Boundaries](agent/rules/ENVIRONMENT_BOUNDARIES.md) - Docker/Git rules
 - [Grok Task Templates](development/reference/grok_notes.md) - Workflow patterns
 
 #### Completed Work (NEW)
@@ -33,6 +37,11 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 - [Data-Driven Systems](developer/DATA_DRIVEN_SYSTEMS.md) - JSON configuration patterns
 - [Blueprint Cost Schema](developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) - Crafting system
 - [Testing Framework](developer/ai_testing_framework.md) - AI simulation testing
+
+#### Documentation Organization
+- [Reference Docs](reference/) - Stable guides and design intent
+- [Archive Docs](archive/) - Historic materials and legacy code
+- [Agent Docs](agent/) - AI agent instructions and rules
 
 ---
 
