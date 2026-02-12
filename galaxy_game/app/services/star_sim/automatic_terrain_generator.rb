@@ -370,6 +370,12 @@ module StarSim
 
     # Generate resource grid based on terrain
     def generate_resource_grid(body, raw_terrain)
+      # Guard against nil elevation_data
+      if raw_terrain[:elevation_data].nil? || raw_terrain[:elevation_data].empty?
+        Rails.logger.warn "[AutomaticTerrainGenerator] No elevation data available for resource generation, using fallback"
+        return generate_fallback_resource_grid(body)
+      end
+
       # Create a 2D grid for resources
       grid_size = raw_terrain[:elevation_data].size
       # Assume a roughly square grid
@@ -395,6 +401,21 @@ module StarSim
         grid[row][col] = rand < chance ? 'mineral' : nil
       end
 
+      grid
+    end
+
+    # Fallback resource grid when elevation data is unavailable
+    def generate_fallback_resource_grid(body)
+      # Create a simple 10x10 grid with some random minerals
+      grid = Array.new(10) { Array.new(10) }
+      
+      10.times do |y|
+        10.times do |x|
+          # 5% chance of minerals in fallback
+          grid[y][x] = rand < 0.05 ? 'mineral' : nil
+        end
+      end
+      
       grid
     end
 
