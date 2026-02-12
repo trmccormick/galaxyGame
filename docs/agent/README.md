@@ -25,6 +25,7 @@ Executable tasks for AI agents with status tracking.
 **Subfolders:**
 - **`/active/`** - Currently executing tasks
 - **`/backlog/`** - Queued tasks awaiting assignment
+- **`/critial/`** - Critical priority tasks requiring immediate attention
 - **`/completed/`** - Finished tasks for reference
 
 **Files:**
@@ -67,6 +68,13 @@ Essential technical documentation for daily development.
 **Status Tracking**: Use `CURRENT_STATUS.md` for real-time updates, `/tasks/TASK_OVERVIEW.md` for detailed task logs.
 
 **Planning → Execution**: Documents in `/planning/` are broken down into tasks in `/tasks/backlog/` for agent assignment.
+
+**Task Completion Workflow**: 
+1. Complete all task requirements and testing
+2. Move task file from source directory (`/active/`, `/critial/`, `/backlog/`) to `/completed/`
+3. Remove empty source directories to maintain clean structure
+4. Update `CURRENT_STATUS.md` with completion details
+5. Commit changes following mandatory pre-commit testing protocol
   - RSpec ALWAYS in container
   - Command validation patterns
   
