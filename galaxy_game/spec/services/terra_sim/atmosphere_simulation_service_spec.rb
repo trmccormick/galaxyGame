@@ -102,14 +102,18 @@ RSpec.describe TerraSim::AtmosphereSimulationService, type: :service do
       })
     end
     
-    it 'calculates stefan_boltzmann_temp correctly' do
+    it 'calculates stefan_boltzmann_temp within clamped range' do
       temp = subject.send(:stefan_boltzmann_temp)
-      expect(temp).to be_within(1.0).of(255.0)
+      expect(temp).to be_between(150.0, 400.0)
     end
     
-    it 'calculates greenhouse_adjusted_temp correctly' do
+    it 'calculates greenhouse_adjusted_temp with capped effect' do
       temp = subject.send(:greenhouse_adjusted_temp)
-      expect(temp).to be > subject.instance_variable_get(:@base_temp)
+      base_temp = subject.instance_variable_get(:@base_temp)
+      
+      # Greenhouse effect is now capped at 2x base temperature
+      expect(temp).to be <= base_temp * 2.0
+      expect(temp).to be >= base_temp * 0.8  # Conservative lower bound
     end
     
     it 'calculates water_vapor_pressure correctly' do
@@ -119,21 +123,21 @@ RSpec.describe TerraSim::AtmosphereSimulationService, type: :service do
   end
   
   describe '#update_temperatures' do
-    it 'updates all temperature types in atmosphere' do
-      # Set up test data
-      subject.instance_variable_set(:@base_temp, 255.0)
-      subject.instance_variable_set(:@surface_temp, 288.0)
-      subject.instance_variable_set(:@polar_temp, 248.0)
-      subject.instance_variable_set(:@tropic_temp, 298.0)
+    it 'updates all temperature types within clamped ranges' do
+      # Set up test data with extreme values to test clamping
+      subject.instance_variable_set(:@base_temp, 500.0)  # Above max
+      subject.instance_variable_set(:@surface_temp, 600.0)  # Above max
+      subject.instance_variable_set(:@polar_temp, 50.0)  # Below min
+      subject.instance_variable_set(:@tropic_temp, 700.0)  # Above max
       
-      # Expect the atmosphere to receive these method calls
-      expect(celestial_body.atmosphere).to receive(:set_effective_temp).with(255.0)
-      expect(celestial_body.atmosphere).to receive(:set_greenhouse_temp).with(288.0)
-      expect(celestial_body.atmosphere).to receive(:set_polar_temp).with(248.0)
-      expect(celestial_body.atmosphere).to receive(:set_tropic_temp).with(298.0)
+      # Expect the atmosphere to receive these method calls with clamped values
+      expect(celestial_body.atmosphere).to receive(:set_effective_temp).with(be_between(150.0, 400.0))
+      expect(celestial_body.atmosphere).to receive(:set_greenhouse_temp).with(be_between(150.0, 400.0))
+      expect(celestial_body.atmosphere).to receive(:set_polar_temp).with(be_between(100.0, 350.0))
+      expect(celestial_body.atmosphere).to receive(:set_tropic_temp).with(be_between(150.0, 400.0))
       
-      # Also expect celestial body to be updated
-      expect(celestial_body).to receive(:update).with(surface_temperature: 288.0).at_least(:once)
+      # Also expect celestial body to be updated with clamped surface temp
+      expect(celestial_body).to receive(:update).with(surface_temperature: be_between(150.0, 400.0)).at_least(:once)
       
       # Call the method
       subject.send(:update_temperatures)

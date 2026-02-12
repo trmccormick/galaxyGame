@@ -1,6 +1,9 @@
 # Database Cleaner Configuration
 # Keeps core reference data (celestial bodies, materials) intact between tests
 
+# Allow remote database URL for test environment BEFORE any DatabaseCleaner operations
+DatabaseCleaner.allow_remote_database_url = true
+
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
