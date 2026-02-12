@@ -1,6 +1,8 @@
 # Database Cleaner Configuration
 # Keeps core reference data (celestial bodies, materials) intact between tests
 
+require 'database_cleaner'
+
 # Allow remote database URL for test environment BEFORE any DatabaseCleaner operations
 DatabaseCleaner.allow_remote_database_url = true
 

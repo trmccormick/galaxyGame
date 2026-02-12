@@ -1,6 +1,26 @@
 # Current Development Status
 
-**Last Updated**: February 10, 2026 (Admin Dashboard Phase 3 Complete)
+**Last Updated**: February 11, 2026 (Testing Protocol Updated)
+
+## ⚠️ CRITICAL: Updated Testing Requirements
+
+### **MANDATORY Testing Protocol (Effective Immediately)**
+**ALL code changes MUST pass RSpec tests before commit:**
+
+- ✅ **Pre-commit requirement**: Run `docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec`
+- ✅ **Green-before-done**: All tests must pass
+- ✅ **No regressions**: Existing functionality preserved
+- ✅ **Service integration**: Related services load and interact correctly
+
+**Testing Workflow**:
+1. Make code changes
+2. Write/update RSpec tests  
+3. Run tests until green
+4. Only then commit and push
+
+**Documentation**: See [README.md](README.md) "Testing Requirements & Validation Rules" section
+
+---
 
 ## Active Work
 

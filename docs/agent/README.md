@@ -98,6 +98,46 @@ Essential technical documentation for daily development.
 
 ---
 
+## 🧪 Testing Requirements & Validation Rules
+
+### **MANDATORY: Pre-Commit Testing Protocol**
+**ALL code changes MUST pass RSpec tests before commit:**
+
+1. **Run RSpec tests for changed code:**
+   ```bash
+   docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/
+   # OR for specific files:
+   docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/escalation_service_spec.rb
+   ```
+
+2. **Validation Rules (MANDATORY):**
+   - ✅ **Green-before-done**: All RSpec tests must pass
+   - ✅ **No regressions**: Existing tests still pass
+   - ✅ **Service integration**: Related services load and interact correctly
+   - ✅ **Rails runner verification**: Manual testing with `rails runner` for complex logic
+
+3. **Testing Scope Requirements:**
+   - **New/Modified Services**: Full RSpec spec file required
+   - **Bug Fixes**: Tests demonstrating the fix works
+   - **Integration Changes**: Tests verifying service interactions
+   - **Configuration Changes**: Tests validating new behavior
+
+### **NEVER Commit Without Testing**
+- **Rails runner commands are NOT sufficient** for validation
+- **Manual testing is NOT sufficient** for validation  
+- **Only RSpec tests provide proper regression protection**
+- **All substantive changes require automated test coverage**
+
+### **Testing Workflow**
+1. Make code changes
+2. Write/update RSpec tests
+3. Run tests: `docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec`
+4. Fix any failures
+5. Re-run tests until green
+6. Only then commit and push
+
+---
+
 ## 📝 Maintenance Guidelines
 
 ### When to Update CURRENT_STATUS.md
