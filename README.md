@@ -39,6 +39,8 @@ Grounded in real physics, chemistry, and orbital mechanics while maintaining eng
 - ✅ TradeService pricing logic - fixed factory issues and method implementations
 - ✅ UnitAssemblyJob currency seeding - added GCC/USD currencies to test environment
 - ✅ Orbital resupply cycle - updated craft type and mocking strategy
+- ✅ Protoplanet classification - implemented for large asteroids (Vesta, Psyche)
+- ✅ Terrain generation fixes - Titan GeoTIFF usage, protoplanet support
 - 🔄 GameController singleton methods - moved method definitions before usage
 
 📊 **[View Current Status](docs/development/active/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
@@ -113,6 +115,7 @@ open http://localhost:3000
 - **Geosphere**: Geology, regolith composition, resource deposits
 - **Hydrosphere**: Water systems, ice caps, subsurface oceans
 - **Biosphere**: Terraforming, ecosystems, life support
+- **Minor Bodies**: Asteroids, protoplanets, dwarf planets classification
 - **[Planetary Systems Documentation](docs/architecture/)**
 
 ### AI & Automation
@@ -183,7 +186,7 @@ result = Logistics::PlayerContractService.create_logistics_contract(contract_dat
 We welcome contributions! Current focus areas:
 
 ### Active Development (Phase 3)
-- **Test Restoration**: Surgical fixes for ~398 failing specs
+- **Test Restoration**: Surgical fixes for ~393 failing specs
 - **Code Quality**: Improving test coverage and documentation
 - **Bug Fixes**: Addressing issues in manufacturing, financial, and settlement systems
 
@@ -222,13 +225,13 @@ Humanity has discovered a network of wormholes enabling FTL travel. Your role: g
 
 ### Test Suite Health
 - **Total Examples**: ~2,600
-- **Current Failures**: ~398 (Phase 3 restoration in progress)
+- **Current Failures**: ~393 (Phase 3 restoration in progress)
 - **Target**: <50 failures before Phase 4
 - **Coverage**: SimpleCov tracking (manufacturing pipeline fully tested)
 
 ### Development Activity
 - **Active Branch**: `main`
-- **Recent Commits**: Test restoration, manufacturing fixes, documentation reorganization
+- **Recent Commits**: Test restoration, manufacturing fixes, protoplanet implementation, terrain generation fixes, documentation reorganization
 - **CI/CD**: CircleCI + Code Climate integration
 - **Code Quality**: Monitored via Code Climate
 
@@ -249,5 +252,5 @@ Humanity has discovered a network of wormholes enabling FTL travel. Your role: g
 
 ---
 
-**Last Updated**: January 16, 2026  
+**Last Updated**: February 9, 2026  
 **Version**: Development (Phase 3 - Test Restoration) 
