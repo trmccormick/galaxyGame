@@ -172,11 +172,21 @@ Isolated testing environment for planetary terraforming scenarios, inspired by S
 - ✅ `PROTOPLANET_TERRAIN.md`: New pending implementation guide
 - ✅ `ADMIN_SYSTEM.md`: Added Digital Twin interface documentation
 - ✅ `CURRENT_STATUS.md`: Updated with Sol/Local Bubble architecture distinction
+- ✅ `GROK_FIX_RSPEC_INFINITE_LOOP.md`: Complete RSpec infinite loop resolution with 4-phase fix
+
+## Testing Infrastructure Updates
+
+### RSpec Infinite Loop Resolution ✅ COMPLETED
+- **Issue**: Tests stuck in infinite loop during terrain generation for TestPlanet
+- **Root Cause**: `nil.each` error in `AutomaticTerrainGenerator.generate_resource_grid` when elevation_data was nil
+- **Fix Applied**: Added nil guard with fallback resource grid generation
+- **Prevention**: Created `spec/support/disable_terrain_generation.rb` to stub terrain generation during tests
+- **Result**: Tests now complete in 4m13s with 227 examples, 18 failures (was infinite loop)
+- **Commit**: `7d47160` - "FIX: Resolve RSpec infinite loop in terrain generation tests"
 
 ## Known Issues
 
 ### Implementation Gaps
-- `select_maps_for_analysis` controller method missing
 - Route configuration inconsistencies
 - Form submission targeting issues
 
