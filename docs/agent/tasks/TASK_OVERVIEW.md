@@ -42,6 +42,96 @@
 **Success Criteria**: Test results obtained, failure patterns documented
 
 ---
+### 🌍 Add Surface Button to Admin Solar System View
+**Agent**: Available for assignment
+**Priority**: Medium (Missing navigation to existing feature)
+**Task File**: `add_surface_button_to_admin_solar_system_view.md`
+
+**Objective**: Add missing "Surface" button to celestial body cards in admin solar system view
+
+**Issues**:
+1. Route exists: `GET /admin/celestial_bodies/:id/surface`
+2. Controller action exists: `Admin::CelestialBodiesController#surface`
+3. View exists: Surface view with tileset functionality
+4. UI only shows "View Details" and "Monitor" buttons
+
+**Required Changes**:
+- Add "Surface" button to `body-actions` div in `/admin/solar_systems/show.html.erb`
+- Link to `/admin/celestial_bodies/<%= body.id %>/surface`
+- Match existing `.action-btn` styling
+
+**Expected Duration**: 15-30 minutes
+**Success Criteria**: Surface button appears and navigates to surface view correctly
+
+---
+### 🤖 Fix AI Mission Control Section in Admin Monitor
+**Agent**: Available for assignment
+**Priority**: Medium (UI organization and missing functionality)
+**Task File**: `fix_ai_mission_control_section_monitor.md`
+
+**Objective**: Clean up misplaced and non-functional elements in AI MISSION CONTROL section
+
+**Issues**:
+1. Non-AI buttons ("View Public Page", "Edit Celestial Body") mixed with AI testing tools
+2. Duplicate buttons between AI MISSION CONTROL and ADMIN TOOLS sections
+3. AI test buttons have `data-test` attributes but no JavaScript handlers
+
+**Required Changes**:
+- Remove general navigation buttons from AI MISSION CONTROL section
+- Either implement AI test functionality or relocate test buttons to appropriate location
+- Eliminate button duplication between sections
+
+**Expected Duration**: 45-60 minutes
+**Success Criteria**: Clean separation of AI testing tools from general admin navigation
+
+---
+### 🌿 Implement Biome Validation for Digital Twin Sandbox
+**Agent**: Available for assignment
+**Priority**: Medium-High (Valuable admin tool for terraforming and environmental planning)
+**Task File**: `fix_biome_validation_button_monitor.md`
+
+**Objective**: Implement biome validation functionality for digital twin sandbox and terraforming planning
+
+**Issues**:
+1. "Validate Biomes" button lacks proper styling and JavaScript handler
+2. `runBiomeValidation()` function doesn't exist
+3. Feature intended for TerraSim integration but not implemented
+4. Should be valuable admin tool for testing biome survival in terraforming scenarios
+
+**Required Changes**:
+- Add `tool-button` class for proper styling
+- Implement `runBiomeValidation()` function in `monitor.js`
+- Connect to TerraSim for biome stability testing
+- Display validation results in UI
+
+**Expected Duration**: 60-90 minutes
+**Success Criteria**: Biome validation tool functional for admin terraforming planning
+
+---
+### 🤖 Add AI Manager Priority Controls to Admin Simulation Page
+**Agent**: Available for assignment
+**Priority**: Medium (Valuable testing tool for AI behavior tuning)
+**Task File**: `add_ai_manager_priority_controls.md`
+
+**Objective**: Add admin controls for adjusting AI manager priorities during testing phases
+
+**Issues**:
+1. AI priorities are currently hardcoded in the system
+2. Constants should be moved to `game_constants.rb` for easier tuning
+3. No admin interface to tune simulation parameters during testing
+4. Admins cannot adjust how AI prioritizes different aspects of colony management
+5. TIME CONTROLS exist but lack AI priority tuning capabilities
+
+**Required Changes**:
+- Add "AI MANAGER CONTROLS" section to admin simulation page
+- Create adjustable controls for critical and operational priorities
+- Connect to existing AI priority system for real-time adjustments
+- Integrate with TIME CONTROLS for testing different priority configurations
+
+**Expected Duration**: 90-120 minutes
+**Success Criteria**: Admins can adjust AI priorities and test different simulation behaviors
+
+---
 ## Recently Completed Tasks
 
 ### ✅ TerraSim Test Suite Verification

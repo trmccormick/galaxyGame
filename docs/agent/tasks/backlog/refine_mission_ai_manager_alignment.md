@@ -28,6 +28,26 @@ Upon review, the AI Manager DOES handle resource harvesting during the critical 
 - **Sell Order Creation**: For excess materials
 - **Mega Projects**: Stations, worldhouses, terraforming after establishment
 
+## CRITICAL DISCOVERY: Operational Phase Implementation Gap
+
+### ❌ **Major Finding**: Operational Escalation Logic Not Implemented
+**Status**: The AI Manager's operational phase escalation system is **fully documented but completely unimplemented**
+
+**What's Documented** (PLAYER_CONTRACT_SYSTEM.md):
+- `handle_expired_buy_orders()` function
+- 3-tier escalation: Special Missions → Automated Harvesters → Scheduled Imports
+- Cost optimization (harvesters cheapest, imports most expensive)
+- 48-hour player opportunity windows
+
+**What's Missing**:
+- No `EscalationService` or `handle_expired_buy_orders` implementation
+- No automated harvester deployment logic
+- No special mission creation for expired orders
+- No scheduled import coordination
+- Existing `ContractCreationService` is stub-level only
+
+**Impact**: AI Manager cannot currently perform operational fallback harvesting - the entire escalation system is missing!
+
 ## Mission Plan Analysis (Revised)
 
 ### ✅ Correctly Included Bootstrap Phases:
@@ -48,6 +68,11 @@ Upon review, the AI Manager DOES handle resource harvesting during the critical 
 #### 3. Pattern Documentation
 **Problem**: Bootstrap harvesting patterns not clearly documented for AI learning
 **Impact**: AI Manager may not learn correct bootstrap techniques
+
+#### 4. 🚨 **CRITICAL**: Operational Escalation Implementation Missing
+**Problem**: The documented operational fallback system doesn't exist in code
+**Impact**: AI Manager cannot handle expired buy orders or perform automated harvesting
+**Priority**: **BLOCKER** - Must implement before operational phases can work
 
 ## Required Refinements (Revised)
 
