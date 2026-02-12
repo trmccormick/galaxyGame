@@ -5,24 +5,6 @@
 
 ## Active Tasks (In Progress)
 
-### � Fix Escalation Service Dependencies
-**Agent**: Available for assignment
-**Priority**: High (Blocks escalation testing)
-**Task File**: `fix_escalation_dependencies.md`
-
-**Objective**: Resolve missing services and methods in escalation system
-
-**Issues**:
-1. EmergencyMissionService doesn't exist (called by EscalationService)
-2. Atmosphere model missing temperature clamping methods
-3. Potential greenhouse effect capping issues
-
-**Dependencies**: Escalation system implementation
-
-**Expected Duration**: 60-90 minutes
-**Success Criteria**: No method missing errors, temperature clamping works
-
----
 ### 🧪 Manual TerraSim Test Execution
 **Agent**: Available for assignment
 **Priority**: Critical (Validates TerraSim fixes)
@@ -42,7 +24,21 @@
 **Success Criteria**: Test results obtained, failure patterns documented
 
 ---
-### 🌍 Add Surface Button to Admin Solar System View
+### � HIGH PRIORITY: Test Suite Restoration Continuation
+**Agent**: Available for assignment
+**Priority**: HIGH (Blocks Phase 4)
+**Estimated Effort**: 2-3 days
+**Dependencies**: None (can run in parallel with other tasks)
+
+**Description**: Continue reducing RSpec test failures from ~393 to <50 using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
+
+**Current Status**: 393 failures (down from 401)
+**Target**: <50 failures
+**Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
+
+**Reference**: test_suite_restoration_continuation.md
+
+**Why Priority**: Blocks Phase 4 UI Enhancement and further development progress.
 **Agent**: Available for assignment
 **Priority**: Medium (Missing navigation to existing feature)
 **Task File**: `add_surface_button_to_admin_solar_system_view.md`
@@ -130,6 +126,121 @@
 
 **Expected Duration**: 90-120 minutes
 **Success Criteria**: Admins can adjust AI priorities and test different simulation behaviors
+
+---
+### 🗄️ Archive Critical Terrain Data Assets
+**Agent**: Available for assignment
+**Priority**: High (Prevents permanent data loss)
+**Task File**: `archive_critical_terrain_data_assets.md`
+
+**Objective**: Safely archive irreplaceable GeoTIFF terrain data before optimization experiments
+
+**Issues**:
+1. NASA sources can disappear (Titan PNG incident)
+2. Current processed files (~140MB) at risk during optimization
+3. No proven recreation process for lost data
+4. Need safe archival before pattern extraction experiments
+
+**Required Changes**:
+- Create `data/geotiff/archive/` with complete backups
+- Document recreation processes and source URLs
+- Create restoration scripts for each planet
+- Verify archive integrity with checksums
+
+**Expected Duration**: 60-90 minutes
+**Success Criteria**: All terrain data safely archived with restoration capability
+
+---
+### ✅ Validate Sol System Terrain Recreation
+**Agent**: Available for assignment
+**Priority**: High (Must prove recreation works before optimization)
+**Task File**: `validate_sol_system_terrain_recreation.md`
+
+**Objective**: Prove Sol system terrain can be reliably recreated from archived sources
+
+**Issues**:
+1. Unproven recreation process could lead to permanent loss
+2. Need validation before pattern extraction experiments
+3. Titan PNG-to-GeoTIFF conversion needs testing
+4. Processing pipeline integrity verification required
+
+**Required Changes**:
+- Test recreation of all Sol bodies (Earth, Mars, Venus, Mercury, Luna, Titan)
+- Validate PlanetaryMapGenerator pipeline
+- Compare recreated terrain with archived originals
+- Document performance and quality benchmarks
+
+**Expected Duration**: 120-180 minutes
+**Success Criteria**: All Sol planets recreate successfully with matching quality
+
+---
+### 🎨 Extract Reusable Terrain Patterns
+**Agent**: Available for assignment
+**Priority**: Medium (Enables storage optimization)
+**Task File**: `extract_reusable_terrain_patterns.md`
+
+**Objective**: Extract reusable patterns from GeoTIFF data for compact JSON storage
+
+**Issues**:
+1. Runtime loading of 140MB GeoTIFF files
+2. Performance overhead of large file I/O
+3. Direct dependency on binary terrain files
+4. Need pattern-based generation for exoplanets
+
+**Required Changes**:
+- Create GeoTIFFPatternExtractor class
+- Extract elevation, coastline, mountain patterns for all Sol bodies
+- Store as compressed JSON (<5MB total)
+- Modify PlanetaryMapGenerator to use patterns
+
+**Expected Duration**: 180-240 minutes
+**Success Criteria**: Pattern extraction complete, terrain quality maintained, storage reduced
+
+---
+### 🔍 Fix Terrain Pixelation and Resolution
+**Agent**: Available for assignment
+**Priority**: Medium (Critical for SimEarth-quality user experience)
+**Task File**: `fix_terrain_pixelation_resolution.md`
+
+**Objective**: Address visible pixelation that makes current maps hard to use
+
+**Issues**:
+1. 1800×900 resolution creates visible artifacts
+2. Maps don't match SimEarth visual quality standards
+3. Terrain features unclear at current resolution
+4. Need higher fidelity for detailed gameplay
+
+**Required Changes**:
+- Analyze optimal resolution requirements
+- Implement 3600×1800 generation with smoothing
+- Enhance rendering with anti-aliasing
+- Validate performance impact
+
+**Expected Duration**: 120-180 minutes
+**Success Criteria**: Pixelation eliminated, SimEarth-quality visual fidelity achieved
+
+---
+### 🌍 Enhance Exoplanet Terrain Realism
+**Agent**: Available for assignment
+**Priority**: Medium (Addresses "looks odd" exoplanet terrain)
+**Task File**: `enhance_exoplanet_terrain_realism.md`
+
+**Objective**: Make generated exoplanet terrain look as realistic as Sol system maps
+
+**Issues**:
+1. Exoplanet terrain appears artificial and uniform
+2. Lacks natural features found in NASA-sourced terrain
+3. Visual quality gap between Sol and generated planets
+4. Reduces immersion and gameplay quality
+
+**Required Changes**:
+- Analyze successful patterns from Sol terrain
+- Improve planet-type-specific generation
+- Add diverse elevation distributions and features
+- Enhance visual coherence and natural variation
+
+**Expected Duration**: 180-240 minutes
+**Success Criteria**: Exoplanet terrain visually coherent and natural-looking
 
 ---
 ## Recently Completed Tasks
@@ -523,6 +634,7 @@ Seeding Fix (active)
 - ❌ Seeding creates wrong STI types (in progress)
 - ⚠️ Terrain not persisting (needs investigation)
 - ⚠️ Monitor requires refresh (needs investigation)
+- ✅ AI Manager escalation dependencies resolved
 
 ---
 
