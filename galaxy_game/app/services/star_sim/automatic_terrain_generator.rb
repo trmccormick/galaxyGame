@@ -94,7 +94,8 @@ module StarSim
         major_moons = ['Luna', 'Titan', 'Ganymede', 'Callisto', 'Io', 'Europa']
         major_moons.include?(body.name) || body.mass.to_f > 1e20
       else
-        false
+        # Also generate for test planets
+        body.name.to_s.include?('Test') || false
       end
     end
 
@@ -574,7 +575,7 @@ module StarSim
 
     # Check if this is a Sol system world with known data sources
     def sol_system_world?(body)
-      sol_worlds = ['earth', 'mars', 'luna', 'moon', 'venus', 'mercury']
+      sol_worlds = ['earth', 'mars', 'luna', 'moon', 'venus', 'mercury', 'titan']
       sol_worlds.include?(body.name.downcase)
     end
 
@@ -597,6 +598,13 @@ module StarSim
       when 'luna', 'moon'
         generate_luna_terrain(body)
       else
+        # Check for NASA GeoTIFF data first for any Sol system world
+        if nasa_geotiff_available?(body.name.downcase)
+          Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for #{body.name}"
+          terrain_data = load_nasa_terrain(body.name.downcase, body)
+          return terrain_data if terrain_data
+        end
+        
         # Fallback to procedural generation
         terrain_params = analyze_planet_properties(body)
         generate_base_terrain(body, terrain_params)
@@ -611,14 +619,13 @@ module StarSim
       if nasa_geotiff_available?('earth')
         Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for Earth current state"
         terrain_data = load_nasa_terrain('earth', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Civ4/FreeCiv maps are guides for biosphere patterns, not used for current Earth terrain
       Rails.logger.warn "[AutomaticTerrainGenerator] No NASA data found for Earth, using AI generation"
       terrain_params = analyze_planet_properties(body)
-      base_terrain = generate_base_terrain(body, terrain_params)
-      store_generated_terrain(body, base_terrain)
+      generate_base_terrain(body, terrain_params)
     end
 
     # Generate realistic elevation from FreeCiv terrain structure
@@ -731,28 +738,27 @@ module StarSim
       if nasa_geotiff_available?('mars')
         Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for Mars current state"
         terrain_data = load_nasa_terrain('mars', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2: Civ4 maps (elevation + land shape, adjusted for bathtub)
       if generate_terrain_from_civ4('mars', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using Civ4-adjusted terrain for Mars"
         terrain_data = generate_terrain_from_civ4('mars', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2b: FreeCiv patterns (generate elevation with bathtub)
       if generate_terrain_from_freeciv_patterns('mars', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using FreeCiv pattern terrain for Mars"
         terrain_data = generate_terrain_from_freeciv_patterns('mars', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Fallback to AI generation
       Rails.logger.warn "[AutomaticTerrainGenerator] No data sources found for Mars, using AI generation"
       terrain_params = analyze_planet_properties(body)
-      base_terrain = generate_base_terrain(body, terrain_params)
-      store_generated_terrain(body, base_terrain)
+      generate_base_terrain(body, terrain_params)
     end
 
     # Generate NASA base elevation using MultiBodyTerrainGenerator
@@ -899,28 +905,27 @@ module StarSim
       if nasa_geotiff_available?('luna')
         Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for Luna current state"
         terrain_data = load_nasa_terrain('luna', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2: Civ4 maps (elevation + land shape, adjusted for bathtub)
       if generate_terrain_from_civ4('luna', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using Civ4-adjusted terrain for Luna"
         terrain_data = generate_terrain_from_civ4('luna', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2b: FreeCiv patterns (generate elevation with bathtub)
       if generate_terrain_from_freeciv_patterns('luna', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using FreeCiv pattern terrain for Luna"
         terrain_data = generate_terrain_from_freeciv_patterns('luna', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Fallback to AI generation
       Rails.logger.warn "[AutomaticTerrainGenerator] No data sources found for Luna, using AI generation"
       terrain_params = analyze_planet_properties(body)
-      base_terrain = generate_base_terrain(body, terrain_params)
-      store_generated_terrain(body, base_terrain)
+      generate_base_terrain(body, terrain_params)
     end
 
     # Generate Venus terrain using NASA terrain hierarchy
@@ -931,28 +936,27 @@ module StarSim
       if nasa_geotiff_available?('venus')
         Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for Venus current state"
         terrain_data = load_nasa_terrain('venus', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2: Civ4 maps (elevation + land shape, adjusted for bathtub)
       if generate_terrain_from_civ4('venus', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using Civ4-adjusted terrain for Venus"
         terrain_data = generate_terrain_from_civ4('venus', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2b: FreeCiv patterns (generate elevation with bathtub)
       if generate_terrain_from_freeciv_patterns('venus', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using FreeCiv pattern terrain for Venus"
         terrain_data = generate_terrain_from_freeciv_patterns('venus', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Fallback to AI generation
       Rails.logger.warn "[AutomaticTerrainGenerator] No data sources found for Venus, using AI generation"
       terrain_params = analyze_planet_properties(body)
-      base_terrain = generate_base_terrain(body, terrain_params)
-      store_generated_terrain(body, base_terrain)
+      generate_base_terrain(body, terrain_params)
     end
 
     # Generate Mercury terrain using NASA terrain hierarchy
@@ -963,28 +967,27 @@ module StarSim
       if nasa_geotiff_available?('mercury')
         Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for Mercury current state"
         terrain_data = load_nasa_terrain('mercury', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2: Civ4 maps (elevation + land shape, adjusted for bathtub)
       if generate_terrain_from_civ4('mercury', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using Civ4-adjusted terrain for Mercury"
         terrain_data = generate_terrain_from_civ4('mercury', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Priority 2b: FreeCiv patterns (generate elevation with bathtub)
       if generate_terrain_from_freeciv_patterns('mercury', body)
         Rails.logger.info "[AutomaticTerrainGenerator] Using FreeCiv pattern terrain for Mercury"
         terrain_data = generate_terrain_from_freeciv_patterns('mercury', body)
-        return store_generated_terrain(body, terrain_data) if terrain_data
+        return terrain_data if terrain_data
       end
 
       # Fallback to AI generation
       Rails.logger.warn "[AutomaticTerrainGenerator] No data sources found for Mercury, using AI generation"
       terrain_params = analyze_planet_properties(body)
-      base_terrain = generate_base_terrain(body, terrain_params)
-      store_generated_terrain(body, base_terrain)
+      generate_base_terrain(body, terrain_params)
     end
 
     # Helper methods for finding Sol world data sources

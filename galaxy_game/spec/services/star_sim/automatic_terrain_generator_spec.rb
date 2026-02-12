@@ -98,6 +98,7 @@ RSpec.describe StarSim::AutomaticTerrainGenerator do
     context 'for gas giants' do
       let(:gas_giant) do
         double('CelestialBody',
+          name: 'Jupiter',
           geosphere: nil,
           class: double('class', name: 'CelestialBodies::Planets::Gaseous::GasGiant')
         )
