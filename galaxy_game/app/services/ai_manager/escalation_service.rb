@@ -154,17 +154,10 @@ module AIManager
       material = order.resource
       quantity = order.quantity
 
-      # Calculate premium reward (2x normal rate)
-      base_reward = calculate_base_reward(material, quantity)
-      premium_reward = base_reward * 2
-
       # Create emergency mission
       EmergencyMissionService.create_emergency_mission(
         settlement,
-        material.to_sym,
-        reward: premium_reward,
-        time_limit: 48.hours,
-        priority: :high
+        material.to_sym
       )
     end
 
@@ -279,5 +272,4 @@ module AIManager
       { latitude: 15, longitude: 45, depth: 2 } # Placeholder
     end
   end
-end</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/services/ai_manager/escalation_service.rb
+end

@@ -9,6 +9,7 @@ module AIManager
   require_relative 'ai_manager/decision_tree'
   require_relative 'ai_manager/depot_adapter'
   require_relative 'ai_manager/emergency_mission_service'
+  require_relative 'ai_manager/escalation_service'
   require_relative 'ai_manager/expansion_service'
   require_relative 'ai_manager/financial_service'
   require_relative 'ai_manager/llm_planner_service'
