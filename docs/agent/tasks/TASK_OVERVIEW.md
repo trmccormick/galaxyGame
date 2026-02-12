@@ -23,6 +23,32 @@
 **Why Priority**: Blocks Phase 4 UI Enhancement and further development progress.
 
 **Execution Mode**: Autonomous overnight processing - grinder running without interactive agent supervision.
+
+---
+### 🪐 Fix Sol System GeoTIFF Usage in Terrain Generation
+**Agent**: Available for assignment
+**Priority**: Critical (Affects core terrain quality for seeded Sol system bodies)
+**Task File**: `fix_sol_system_geotiff_usage.md`
+
+**Objective**: Ensure Sol system bodies like Titan use available GeoTIFF data instead of procedural terrain during seeding
+
+**Issues**:
+1. Titan generates poor quality procedural terrain despite having `titan_1800x900.tif`
+2. `generate_sol_world_terrain` only checks GeoTIFF for explicitly listed planets
+3. Fallback case doesn't check for available GeoTIFF data
+4. Affects terrain quality in admin monitor and gameplay experience
+
+**Required Changes**:
+- Modify `else` clause in `generate_sol_world_terrain` to check `nasa_geotiff_available?()` first
+- Add GeoTIFF loading logic before procedural generation
+- Regenerate terrain for affected bodies
+- Test and validate terrain quality improvements
+
+**Expected Duration**: 60-90 minutes
+**Success Criteria**: Titan and other Sol bodies use GeoTIFF data, terrain quality matches available data sources
+
+---
+### 🎯 Add Surface Button to Admin Solar System View
 **Agent**: Available for assignment
 **Priority**: Medium (Missing navigation to existing feature)
 **Task File**: `add_surface_button_to_admin_solar_system_view.md`
@@ -619,6 +645,75 @@ Seeding Fix (active)
 - ⚠️ Terrain not persisting (needs investigation)
 - ⚠️ Monitor requires refresh (needs investigation)
 - ✅ AI Manager escalation dependencies resolved
+
+---
+### 📚 Update Biosphere Documentation with Phosphorus Mechanics
+**Agent**: Available for assignment
+**Priority**: Medium (Scientific accuracy and gameplay depth enhancement)
+**Task File**: `update_biosphere_docs_phosphorus.md`
+
+**Objective**: Integrate recent phosphorus research into biosphere system documentation
+
+**Issues**:
+1. Biosphere docs lack P as critical life element
+2. No distinction between atmospheric and biological terraforming
+3. Missing P requirements for population support
+4. Worldhouse concepts need P-focused implementation
+
+**Required Changes**:
+- Add scientific foundation from 2026 Nature Astronomy study
+- Document P requirements and resource hierarchy
+- Integrate with AI Manager scouting logic
+- Update worldhouse seeding mechanics
+
+**Expected Duration**: 45-60 minutes
+**Success Criteria**: Biosphere docs include comprehensive P mechanics with cross-references
+
+---
+### 🧪 Implement Phosphorus Resource Mechanics
+**Agent**: Available for assignment
+**Priority**: Medium-High (Strategic gameplay depth for terraforming)
+**Task File**: `implement_phosphorus_mechanics.md`
+
+**Objective**: Add phosphorus as strategic resource affecting terraforming and AI decisions
+
+**Issues**:
+1. No P availability metrics in data models
+2. Terraforming lacks P-dependent biological phases
+3. AI Manager doesn't evaluate P-rich vs. P-poor systems
+4. Missing P processing and supply chain mechanics
+
+**Required Changes**:
+- Add P fields to celestial body/material models
+- Implement P requirements for biological terraforming
+- Update AI Manager scouting with P-triage
+- Add P refining mechanics for stations
+
+**Expected Duration**: 90-120 minutes
+**Success Criteria**: P availability affects gameplay decisions, AI optimizes for P-rich worlds
+
+---
+### 📝 Update Workflow Documentation to Agent-Neutral
+**Agent**: Available for assignment
+**Priority**: Medium (Documentation improvement for agent interoperability)
+**Task File**: `update_workflow_docs_agent_neutral.md`
+
+**Objective**: Remove Grok-specific references from WORKFLOW_README.md to make it universally applicable
+
+**Issues**:
+1. Document contains heavy "Grok" references throughout
+2. Title and examples are agent-specific
+3. Limits reusability for other agents
+4. Should serve as generic workflow guide
+
+**Required Changes**:
+- Change title and headers to agent-neutral
+- Replace Grok references with generic terms
+- Update examples and commands to be universal
+- Remove specific model/implementation references
+
+**Expected Duration**: 30-45 minutes
+**Success Criteria**: Document is completely agent-neutral and reusable by any AI assistant
 
 ---
 
