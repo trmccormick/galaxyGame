@@ -139,8 +139,11 @@ module AIManager
     def generate_planetary_map_with_patterns(planet:, sources:, options: {})
       Rails.logger.info "[PlanetaryMapGenerator] Generating pattern-based map for #{planet.name}"
 
-      width = options[:width] || 80
-      height = options[:height] || 50
+      # ADAPTIVE GRID: Use provided dimensions or calculate based on planet size
+      width = options[:width] || calculate_adaptive_grid_size(planet, options[:target_resolution] || 800)
+      height = options[:height] || (width * 0.625).to_i # Maintain aspect ratio
+
+      Rails.logger.info "[PlanetaryMapGenerator] Using adaptive grid: #{width}x#{height} for #{planet.name} (diameter: #{planet.respond_to?(:diameter) ? planet.diameter : (planet.radius * 2) rescue 'unknown'}km)"
 
       # FIX: Load planet-specific elevation data instead of generic Earth reference
       elevation_grid = load_planet_specific_elevation(planet, width, height)
@@ -753,6 +756,70 @@ module AIManager
     rescue => e
       Rails.logger.error "[PlanetaryMapGenerator] Error loading ASCII grid #{filepath}: #{e.message}"
       nil
+    end
+
+    private
+
+    # Calculate adaptive grid size based on planet characteristics
+    # Returns width dimension, height is calculated as width * 0.625
+    def calculate_adaptive_grid_size(planet, target_resolution = 800)
+      diameter_km = planet.respond_to?(:diameter) ? planet.diameter : (planet.radius * 2) || 12742 # Earth default
+      body_type = planet.type || planet.body_category || 'planet'
+      name = planet.name&.downcase || ''
+
+      # Earth reference for scaling
+      earth_diameter = 12742.0
+      diameter_ratio = [0.01, diameter_km / earth_diameter].max # Prevent division by zero
+
+      # Scale grid size: smaller bodies get relatively larger grids for detail
+      base_grid_size = if diameter_km < 100
+        # Small asteroids: high detail relative to size
+        [40, [120, (80 * Math.sqrt(1.0 / diameter_ratio))].min].max
+      elsif diameter_km < 1000
+        # Moons like Luna, Europa: medium-high detail
+        [50, [100, (80 * Math.sqrt(1.0 / diameter_ratio))].min].max
+      elsif diameter_km < 5000
+        # Small planets like Mars: standard detail
+        [60, [120, (80 * Math.sqrt(diameter_ratio))].min].max
+      else
+        # Large planets/gas giants: reduced detail for performance
+        [70, [150, (80 * diameter_ratio)].min].max
+      end
+
+      # Special cases for known bodies
+      if name == 'luna' || name == 'moon' || body_type.include?('moon')
+        base_grid_size = 60 # Higher detail for lunar craters
+      elsif name == 'mars' || body_type.include?('terrestrial')
+        base_grid_size = 90 # Good detail for Mars features
+      elsif body_type.include?('gas_giant') || body_type.include?('ice_giant')
+        base_grid_size = [120, base_grid_size].min # Limit for performance
+      end
+
+      # Calculate tile size for minimum visible resolution
+      tile_size = [4, [24, target_resolution / base_grid_size].min].max
+
+      # Adjust tile size based on body type for optimal detail
+      if diameter_km < 500
+        # Small bodies: larger tiles for visibility
+        tile_size = [12, tile_size].max
+      elsif diameter_km > 10000
+        # Large bodies: smaller tiles for detail
+        tile_size = [8, tile_size].min
+      end
+
+      # Ensure we don't exceed reasonable canvas sizes (browser limit ~4096px)
+      max_canvas_size = 4096
+      total_width = base_grid_size * tile_size
+      total_height = (base_grid_size * 0.625) * tile_size
+
+      if total_width > max_canvas_size || total_height > max_canvas_size
+        scale = [max_canvas_size / total_width, max_canvas_size / total_height].min
+        tile_size = [4, (tile_size * scale).floor].max
+      end
+
+      Rails.logger.info "[PlanetaryMapGenerator] Adaptive grid for #{planet.name}: #{base_grid_size.floor}×#{(base_grid_size * 0.625).floor} grid, #{tile_size}px tiles (diameter: #{diameter_km}km)"
+
+      base_grid_size.floor
     end
   end
 end
