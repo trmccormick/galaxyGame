@@ -716,6 +716,29 @@ Seeding Fix (active)
 **Success Criteria**: Document is completely agent-neutral and reusable by any AI assistant
 
 ---
+### 🚨 Investigate Terrain Generation Regression
+**Agent**: Available for assignment
+**Priority**: Critical (Terrain display broken for all Sol system bodies)
+**Task File**: `investigate_terrain_regression.md`
+
+**Objective**: Fix critical regression where Sol worlds show "NO TERRAIN DATA AVAILABLE" after flexibility changes
+
+**Issues**:
+1. All Sol system bodies (Earth, Titan, Mars, etc.) display "NO TERRAIN DATA AVAILABLE"
+2. Regression occurred after terrain flexibility improvements
+3. Generated worlds still have poor quality procedural terrain
+4. Admin monitor terrain display completely broken
+
+**Required Changes**:
+- Analyze recent changes to generate_sol_world_terrain and find_geotiff_path
+- Debug terrain storage/loading for Sol system bodies
+- Implement fix while preserving flexibility improvements
+- Validate terrain display across all affected systems
+
+**Expected Duration**: 60-90 minutes
+**Success Criteria**: All Sol worlds display proper terrain, admin monitor functional, no regressions
+
+---
 
 ## Recent Architectural Decisions
 
