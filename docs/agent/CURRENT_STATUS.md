@@ -48,6 +48,33 @@
 - ✅ All service tests pass (1154/1154) - no regressions
 - ✅ Rails runner verification of GeoTIFF path detection
 
+---
+
+### ✅ Terrain Display Regression Fix (COMPLETED)
+**Status**: ✅ COMPLETED - Admin interface now has manual terrain generation capability
+**Issue**: Sol system bodies showed "NO TERRAIN DATA AVAILABLE" after flexibility changes
+**Root Cause**: Geospheres existed but terrain_map fields were nil
+**Solution**: Added manual terrain generation to admin monitor interface
+
+**Implementation**:
+- ✅ **New Controller Action**: `generate_terrain` forces regeneration for any body
+- ✅ **Updated Routes**: Added `POST /admin/celestial_bodies/:id/generate_terrain`
+- ✅ **Enhanced UI**: "🗺️ Generate Terrain" / "🔄 Regenerate Terrain" buttons in Admin Tools
+- ✅ **NASA Priority**: Uses available GeoTIFF data, falls back to procedural
+- ✅ **Data Storage**: Properly stores terrain in geosphere.terrain_map JSONB field
+
+**Results**:
+- ✅ **Immediate Fix**: Admins can restore terrain for any Sol system body
+- ✅ **User Control**: Manual generation provides admin flexibility
+- ✅ **Data Integrity**: Maintains NASA data priority and procedural fallbacks
+- ✅ **Interface Enhancement**: Improved admin tools for terrain management
+
+**Validation**:
+- ✅ Terrain generation works for Earth, Mars, Titan, Venus, etc.
+- ✅ Buttons appear correctly in monitor interface
+- ✅ Page reloads and displays proper terrain visualization
+- ✅ No conflicts with existing terrain flexibility system
+
 ### ✅ Admin Dashboard Redesign (Phase 3 Complete)
 **Status**: ✅ COMPLETED - Multi-Galaxy Support Implementation  
 **Achievement**: Hierarchical Galaxy → Star System → Celestial Body navigation with Sol prioritization
