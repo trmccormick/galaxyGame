@@ -730,6 +730,52 @@ Seeding Fix (active)
 - **Status**: Terrain display functional, flexibility improvements preserved
 
 ---
+### 🎨 Redesign Admin Celestial Bodies Edit Page
+**Agent**: Available for assignment
+**Priority**: Medium-High (Improves admin usability and workflow clarity)
+**Task File**: `redesign_admin_celestial_bodies_edit_page.md`
+
+**Objective**: Simplify edit page to focus on basic properties with automatic terrain loading
+
+**Issues**:
+1. Edit page cluttered with complex AI terrain generation features
+2. Manual terrain generation required instead of automatic loading
+3. Poor separation between property editing and terrain operations
+4. Confusing navigation and redundant functionality
+
+**Required Changes**:
+- Remove AI map selection and complex terrain UI
+- Keep only name/alias editing with optional regeneration
+- Add clear navigation to Map Studio and Monitor
+- Implement automatic terrain loading for all worlds
+
+**Expected Duration**: 60-90 minutes
+**Success Criteria**: Clean edit interface, automatic terrain loading, clear navigation
+
+---
+### 🔄 Implement Automatic Terrain Loading for Celestial Bodies
+**Agent**: Available for assignment
+**Priority**: Medium (Improves system reliability and reduces admin overhead)
+**Task File**: `implement_automatic_terrain_loading.md`
+
+**Objective**: Enable automatic terrain loading for all celestial bodies during creation
+
+**Issues**:
+1. Terrain generation requires manual admin intervention
+2. Sol worlds don't automatically use available GeoTIFF data
+3. Generated worlds lack automatic terrain assignment
+4. Inconsistent terrain availability across systems
+
+**Required Changes**:
+- Implement automatic GeoTIFF loading for Sol worlds
+- Add automatic procedural generation for created worlds
+- Update admin interface to reflect automatic processes
+- Add error handling and monitoring for terrain loading
+
+**Expected Duration**: 90-120 minutes
+**Success Criteria**: All worlds get terrain automatically, admin override available
+
+---
 
 ## Recent Architectural Decisions
 
