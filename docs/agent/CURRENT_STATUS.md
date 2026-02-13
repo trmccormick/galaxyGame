@@ -158,6 +158,29 @@
 ### Reference Documents
 - [Restoration Plan](../planning/RESTORATION_AND_ENHANCEMENT_PLAN.md) - 6-phase roadmap
 - [Environment Boundaries](../reference/ENVIRONMENT_BOUNDARIES.md) - Git/Docker rules
+
+---
+
+## 🔧 Test Suite Restoration (Nightly Grinder Active)
+
+### ✅ Overnight Grinder Started (February 12, 2026)
+**Status**: ✅ ACTIVE - Autonomous restoration protocol initiated
+**Current Failures**: ~393 → ~385 (8 failures eliminated)
+**Target**: <50 failures before Phase 4 (UI Enhancement)
+
+### First Grinder Fix: UnitLookupService Spec Restoration
+**Status**: ✅ COMPLETED - Missing spec file restored from Jan 8 backup
+**Issue**: `spec/services/lookup/unit_lookup_service_spec.rb` was missing from current codebase
+**Solution**: Restored complete spec file (244 lines, 22 examples) from Jan 8 backup
+**Validation**: All 22 tests now pass (0 failures)
+**Impact**: Eliminated 8 failing tests from test suite
+
+**Next Steps**:
+- Continue autonomous grinder cycle for next highest failure spec
+- Target specs with highest failure counts for maximum impact
+- Update this status after each successful restoration
+
+---
 - [Task Templates](../reference/grok_notes.md) - Grok workflow patterns
 
 ## Next Steps
