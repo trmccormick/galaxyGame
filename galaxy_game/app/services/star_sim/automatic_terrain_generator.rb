@@ -583,32 +583,40 @@ module StarSim
     def generate_sol_world_terrain(body)
       Rails.logger.info "[AutomaticTerrainGenerator] Generating terrain for Sol world: #{body.name}"
 
-      case body.name.downcase
-      when 'earth'
-        generate_earth_terrain(body)
-      when 'mars'
-        Rails.logger.info "[AutomaticTerrainGenerator] Calling generate_mars_terrain for #{body.name}"
-        result = generate_mars_terrain(body)
-        Rails.logger.info "[AutomaticTerrainGenerator] generate_mars_terrain returned: #{result ? 'Hash' : 'nil'}"
-        result
-      when 'venus'
-        generate_venus_terrain(body)
-      when 'mercury'
-        generate_mercury_terrain(body)
-      when 'luna', 'moon'
-        generate_luna_terrain(body)
-      else
-        # Check for NASA GeoTIFF data first for any Sol system world
-        if nasa_geotiff_available?(body.name.downcase)
-          Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for #{body.name}"
-          terrain_data = load_nasa_terrain(body.name.downcase, body)
-          return terrain_data if terrain_data
-        end
-        
-        # Fallback to procedural generation
-        terrain_params = analyze_planet_properties(body)
-        generate_base_terrain(body, terrain_params)
+      body_name = body.name.downcase
+
+      # Priority 1: NASA GeoTIFF data (any available high-quality source)
+      if nasa_geotiff_available?(body_name)
+        Rails.logger.info "[AutomaticTerrainGenerator] Using NASA GeoTIFF for #{body.name}"
+        terrain_data = load_nasa_terrain(body_name, body)
+        return terrain_data if terrain_data
       end
+
+      # Priority 2: Specialized generation for known bodies with unique requirements
+      case body_name
+      when 'earth'
+        return generate_earth_terrain(body)
+      when 'mars'
+        Rails.logger.info "[AutomaticTerrainGenerator] Using specialized Mars terrain generation"
+        result = generate_mars_terrain(body)
+        return result if result
+      when 'venus'
+        return generate_venus_terrain(body)
+      when 'mercury'
+        return generate_mercury_terrain(body)
+      when 'luna', 'moon'
+        return generate_luna_terrain(body)
+      end
+
+      # Priority 3: Generic Civ4/FreeCiv map-based generation for any body
+      Rails.logger.info "[AutomaticTerrainGenerator] Using generic map-based generation for #{body.name}"
+      terrain_data = generate_terrain_from_civ4_or_freeciv(body_name, body)
+      return terrain_data if terrain_data
+
+      # Priority 4: AI-assisted procedural generation as final fallback
+      Rails.logger.warn "[AutomaticTerrainGenerator] No specialized data found for #{body.name}, using AI procedural generation"
+      terrain_params = analyze_planet_properties(body)
+      generate_base_terrain(body, terrain_params)
     end
 
     # Generate Earth terrain using NASA terrain hierarchy
@@ -1649,20 +1657,59 @@ module StarSim
       name = body_name.downcase
       name = 'luna' if name == 'moon'
 
-      # Docker mounts data at app/data/, local dev uses data/
-      paths = [
-        # Docker mounted path (primary)
-        Rails.root.join('app', 'data', 'geotiff', 'processed', "#{name}_1800x900.tif"),
-        # Local development path
-        Rails.root.join('data', 'geotiff', 'processed', "#{name}_1800x900.tif"),
-        # Temp/alternative paths
-        Rails.root.join('app', 'data', 'geotiff', 'temp', "#{name}_900x450.tif"),
-        Rails.root.join('data', 'geotiff', 'temp', "#{name}_900x450.tif")
+      # Define search patterns in priority order (best quality first)
+      search_patterns = [
+        # High-quality processed variants (1800x900 resolution)
+        "#{name}_1800x900_final.tif",      # Best: final processed version
+        "#{name}_1800x900_centered.tif",   # Good: centered version
+        "#{name}_1800x900_new.tif",        # Good: newer version
+        "#{name}_1800x900.tif",            # Standard processed version
+        "#{name}_1800x900.asc.gz",         # Compressed ASCII grid (processed)
+        "#{name}_elevation_1800x900.asc.gz", # Alternative naming
+
+        # Lower resolution temp files (900x450)
+        "#{name}_900x450.tif",
+        "#{name}_900x450.asc.gz",
+
+        # Raw data fallbacks (highest resolution available)
+        "#{name}_etopo_2022.tif",          # Earth high-res
+        "#{name}_lola_118m.tif",           # Luna high-res
+        "#{name}_mola_463m.tif",           # Mars high-res
+        "#{name}_messenger_665m.tif",      # Mercury high-res
+        "#{name}_magellan_4641m.tif",      # Venus high-res
+        "#{name}_cassini_radar.tif",       # Titan radar
+        "#{name}_cassini_topography.tif",  # Titan topography
       ]
 
-      found = paths.find { |p| File.exist?(p) }
-      Rails.logger.info "[AutomaticTerrainGenerator] GeoTIFF search for #{name}: #{found || 'NOT FOUND'}"
-      found
+      # Search directories in priority order
+      search_dirs = [
+        Rails.root.join('data', 'geotiff', 'processed'),     # Primary processed
+        Rails.root.join('app', 'data', 'geotiff', 'processed'), # Docker mount
+        Rails.root.join('data', 'geotiff', 'temp'),          # Temp processing
+        Rails.root.join('app', 'data', 'geotiff', 'temp'),   # Docker temp
+        Rails.root.join('data', 'geotiff', 'raw'),           # Raw source data
+        Rails.root.join('app', 'data', 'geotiff', 'raw'),    # Docker raw
+      ]
+
+      # Find the best available file
+      found_path = nil
+      search_patterns.each do |pattern|
+        search_dirs.each do |dir|
+          next unless Dir.exist?(dir)
+          Dir.glob("#{dir}/#{pattern}").each do |path|
+            if File.exist?(path)
+              found_path = path
+              Rails.logger.info "[AutomaticTerrainGenerator] Found GeoTIFF: #{pattern} in #{dir}"
+              break
+            end
+          end
+          break if found_path
+        end
+        break if found_path
+      end
+
+      Rails.logger.info "[AutomaticTerrainGenerator] GeoTIFF search for #{name}: #{found_path || 'NOT FOUND'}"
+      found_path
     end
 
     def nasa_geotiff_available?(body_name)
@@ -1725,6 +1772,22 @@ module StarSim
       end
 
       mask
+    end
+
+    # Generic terrain generation from Civ4 or FreeCiv maps for any celestial body
+    def generate_terrain_from_civ4_or_freeciv(body_name, celestial_body)
+      Rails.logger.info "[AutomaticTerrainGenerator] Attempting Civ4/FreeCiv map-based generation for #{body_name}"
+
+      # Try Civ4 maps first (more detailed terrain data)
+      civ4_result = generate_terrain_from_civ4(body_name, celestial_body)
+      return civ4_result if civ4_result
+
+      # Fallback to FreeCiv patterns
+      freeciv_result = generate_terrain_from_freeciv_patterns(body_name, celestial_body)
+      return freeciv_result if freeciv_result
+
+      Rails.logger.info "[AutomaticTerrainGenerator] No Civ4 or FreeCiv maps found for #{body_name}"
+      nil
     end
 
     # Priority 2b: FreeCiv maps (patterns only, generate elevation with bathtub)

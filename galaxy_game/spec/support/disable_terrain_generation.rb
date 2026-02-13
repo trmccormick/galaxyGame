@@ -10,7 +10,12 @@ RSpec.configure do |config|
     allow_any_instance_of(StarSim::AutomaticTerrainGenerator)
       .to receive(:generate_base_terrain)
       .and_return({
+        grid: Array.new(90) { Array.new(180, 'p') },
         elevation: Array.new(90) { Array.new(180, 0.5) },
+        biomes: Array.new(90) { Array.new(180, 'plains') },
+        resource_grid: Array.new(90) { Array.new(180, nil) },
+        strategic_markers: [],  # Empty array instead of 2D array
+        resource_counts: {},
         width: 180,
         height: 90,
         metadata: {

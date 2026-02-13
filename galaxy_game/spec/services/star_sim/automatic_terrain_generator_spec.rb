@@ -25,6 +25,11 @@ RSpec.describe StarSim::AutomaticTerrainGenerator do
   end
 
   describe '#generate_terrain_for_body' do
+    before(:each) do
+      # Allow the real method to be called for this test
+      allow(generator).to receive(:generate_terrain_for_body).and_call_original
+    end
+
     context 'when planet has no existing terrain' do
       it 'generates terrain data' do
         result = generator.generate_terrain_for_body(mock_planet)
