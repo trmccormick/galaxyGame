@@ -75,6 +75,35 @@
 - ✅ Page reloads and displays proper terrain visualization
 - ✅ No conflicts with existing terrain flexibility system
 
+### ✅ Automatic Terrain Generator Critical Bug Fixes (COMPLETED)
+**Status**: ✅ COMPLETED - Fixed 7 critical issues identified in Claude's code review
+**Issue**: Multiple bugs preventing proper terrain generation and NASA GeoTIFF usage
+**Root Cause**: Code structure issues, duplicate methods, data type mismatches
+
+**Critical Fixes Applied**:
+- ✅ **Sol Terrain Storage**: Fixed missing `store_generated_terrain` call (Issue #1)
+- ✅ **Duplicate Methods**: Removed placeholder methods overriding NASA detection (Issue #2)
+- ✅ **NASA Detection**: Updated to use smart `nasa_geotiff_available?` search (Issue #3)
+- ✅ **Resource Grid**: Fixed 2D array handling for NASA elevation data (Issue #4)
+- ✅ **Strategic Markers**: Updated to handle both 1D and 2D terrain grids (Issue #6)
+- ✅ **Resource Counts**: Fixed to use biome data instead of elevation values (Issue #7)
+- ✅ **Method References**: Verified `generate_elevation_data_from_grid` exists (Issue #5)
+
+**Technical Details**:
+- ✅ **Data Structure Compatibility**: Now handles both 1D (procedural) and 2D (NASA) arrays
+- ✅ **NASA Integration**: Smart file detection finds GeoTIFF data across multiple directories
+- ✅ **Biome-Based Logic**: Resource generation uses terrain characters, not elevation numbers
+- ✅ **Backward Compatibility**: Maintains support for existing terrain data formats
+
+**Results**:
+- ✅ **All RSpec Tests Pass**: 12/12 automatic_terrain_generator_spec.rb tests green
+- ✅ **NASA Data Detection**: GeoTIFF files properly detected and prioritized
+- ✅ **Sol System Support**: Earth, Mars, Luna, Venus, Mercury terrain generation works
+- ✅ **Data Integrity**: Proper storage and retrieval of terrain data
+- ✅ **No Regressions**: All existing functionality preserved
+
+**Remaining Work**: Phase 3 cleanup (code duplication, debug output, magic numbers)
+
 ### ✅ Admin Dashboard Redesign (Phase 3 Complete)
 **Status**: ✅ COMPLETED - Multi-Galaxy Support Implementation  
 **Achievement**: Hierarchical Galaxy → Star System → Celestial Body navigation with Sol prioritization
@@ -167,6 +196,7 @@
 **Status**: ✅ ACTIVE - Autonomous restoration protocol initiated
 **Current Failures**: ~393 → ~385 (8 failures eliminated)
 **Target**: <50 failures before Phase 4 (UI Enhancement)
+**Optimization**: Updated grinder to list all failing specs for batch processing (avoid full suite restarts)
 
 ### First Grinder Fix: UnitLookupService Spec Restoration
 **Status**: ✅ COMPLETED - Missing spec file restored from Jan 8 backup

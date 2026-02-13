@@ -62,7 +62,10 @@ module StarSim
 
       # Special handling for Sol system worlds with known data
       if sol_system_world?(celestial_body)
-        return generate_sol_world_terrain(celestial_body)
+        base_terrain = generate_sol_world_terrain(celestial_body)
+        store_generated_terrain(celestial_body, base_terrain)  # Add this line!
+        Rails.logger.info "[AutomaticTerrainGenerator] Terrain generation complete for #{celestial_body.name}"
+        return base_terrain
       end
 
       # Analyze planet properties to determine terrain parameters
@@ -251,8 +254,8 @@ module StarSim
       sources = load_civ4_freeciv_sources(body)
 
       # Use NASA data if available for this planet
-      if nasa_data_available?(body.name)
-        generator_params[:nasa_data_source] = find_nasa_data(body.name)
+      if nasa_geotiff_available?(body.name)
+        generator_params[:nasa_data_source] = find_geotiff_path(body.name)
       end
 
       # Get raw terrain data from PlanetaryMapGenerator
@@ -371,35 +374,53 @@ module StarSim
 
     # Generate resource grid based on terrain
     def generate_resource_grid(body, raw_terrain)
-      # Guard against nil elevation_data
-      if raw_terrain[:elevation_data].nil? || raw_terrain[:elevation_data].empty?
-        Rails.logger.warn "[AutomaticTerrainGenerator] No elevation data available for resource generation, using fallback"
+      # Guard against nil data
+      terrain_grid = raw_terrain[:terrain_grid]
+      if terrain_grid.nil? || terrain_grid.empty?
+        Rails.logger.warn "[AutomaticTerrainGenerator] No terrain grid available for resource generation, using fallback"
         return generate_fallback_resource_grid(body)
       end
 
-      # Create a 2D grid for resources
-      grid_size = raw_terrain[:elevation_data].size
-      # Assume a roughly square grid
-      side_length = Math.sqrt(grid_size).ceil
-      total_cells = side_length * side_length
+      # Handle both 1D and 2D terrain grids
+      if terrain_grid.first.is_a?(Array)
+        # 2D grid (NASA/Civ4/FreeCiv data)
+        height = terrain_grid.size
+        width = terrain_grid.first.size
+        grid = Array.new(height) { Array.new(width) }
 
-      # Create 2D array
-      grid = Array.new(side_length) { Array.new(side_length) }
+        terrain_grid.each_with_index do |row, y|
+          row.each_with_index do |biome, x|
+            # 10% chance of minerals, higher in certain biomes
+            chance = case biome
+                     when 'd', 'g' then 0.15  # Desert and grassland have more minerals
+                     when 'f' then 0.05      # Forest has fewer
+                     else 0.08               # Default
+                     end
 
-      # Fill with resources randomly
-      raw_terrain[:elevation_data].each_with_index do |biome, index|
-        row = index / side_length
-        col = index % side_length
-        next if row >= side_length || col >= side_length
+            grid[y][x] = rand < chance ? 'mineral' : nil
+          end
+        end
+      else
+        # 1D grid (legacy procedural data)
+        grid_size = terrain_grid.size
+        side_length = Math.sqrt(grid_size).ceil
+        height = width = side_length
+        grid = Array.new(side_length) { Array.new(side_length) }
 
-        # 10% chance of minerals, higher in certain biomes
-        chance = case biome
-                 when 'd', 'g' then 0.15  # Desert and grassland have more minerals
-                 when 'f' then 0.05      # Forest has fewer
-                 else 0.08               # Default
-                 end
+        terrain_grid.each_with_index do |biome, index|
+          row = index / side_length
+          col = index % side_length
+          next if row >= side_length || col >= side_length
 
-        grid[row][col] = rand < chance ? 'mineral' : nil
+          # 10% chance of minerals, higher in certain biomes
+          chance = case biome
+                   when 'd', 'g' then 0.15  # Desert and grassland have more minerals
+                   when 'f' then 0.05      # Forest has fewer
+                   else 0.08               # Default
+                   end
+
+          grid[row][col] = rand < chance ? 'mineral' : nil
+        end
       end
 
       grid
@@ -424,13 +445,28 @@ module StarSim
     def generate_strategic_markers(body, raw_terrain)
       # Generate some strategic locations
       markers = []
-      grid_size = raw_terrain[:elevation_data].size
-      side_length = Math.sqrt(grid_size).ceil
+      terrain_grid = raw_terrain[:terrain_grid]
+
+      if terrain_grid.nil? || terrain_grid.empty?
+        return []
+      end
+
+      # Handle both 1D and 2D terrain grids
+      if terrain_grid.first.is_a?(Array)
+        # 2D grid
+        height = terrain_grid.size
+        width = terrain_grid.first.size
+      else
+        # 1D grid
+        grid_size = terrain_grid.size
+        side_length = Math.sqrt(grid_size).ceil
+        height = width = side_length
+      end
 
       # Add a few random strategic markers
       3.times do
-        x = rand(side_length)
-        y = rand(side_length)
+        x = rand(width)
+        y = rand(height)
         markers << {
           x: x,
           y: y,
@@ -444,11 +480,30 @@ module StarSim
 
     # Generate resource counts
     def generate_resource_counts(raw_terrain)
-      # Simple resource counts based on terrain
+      # Use biome counts if available, otherwise estimate from terrain grid
+      if raw_terrain[:biome_counts].is_a?(Hash)
+        # Use biome counts summary
+        minerals = (raw_terrain[:biome_counts]['desert'].to_i + raw_terrain[:biome_counts]['grassland'].to_i) / 10
+        water = raw_terrain[:biome_counts]['ocean'].to_i / 5
+        organics = (raw_terrain[:biome_counts]['forest'].to_i + raw_terrain[:biome_counts]['plains'].to_i) / 8
+      else
+        # Fallback: estimate from terrain grid
+        terrain_grid = raw_terrain[:terrain_grid]
+        if terrain_grid.nil? || terrain_grid.empty?
+          return { minerals: 0, water: 0, organics: 0 }
+        end
+
+        # Flatten 2D grid if needed
+        flat_grid = terrain_grid.flatten
+        minerals = flat_grid.count { |b| ['d', 'g'].include?(b) } / 10
+        water = flat_grid.count { |b| b == 'o' } / 5
+        organics = flat_grid.count { |b| ['f', 'p'].include?(b) } / 8
+      end
+
       {
-        minerals: raw_terrain[:elevation_data].count { |b| ['d', 'g'].include?(b) } / 10,
-        water: raw_terrain[:elevation_data].count { |b| b == 'o' } / 5,
-        organics: raw_terrain[:elevation_data].count { |b| ['f', 'p'].include?(b) } / 8
+        minerals: minerals,
+        water: water,
+        organics: organics
       }
     end
 
@@ -559,18 +614,6 @@ module StarSim
       # Terrain variety (would need analysis of elevation/biome variance)
 
       score.clamp(0.0, 1.0)
-    end
-
-    # Check if NASA data is available for this planet
-    def nasa_data_available?(planet_name)
-      # For now, return false - NASA data integration would be implemented separately
-      false
-    end
-
-    # Find NASA data source for planet
-    def find_nasa_data(planet_name)
-      # Placeholder for NASA data lookup
-      nil
     end
 
     # Check if this is a Sol system world with known data sources
