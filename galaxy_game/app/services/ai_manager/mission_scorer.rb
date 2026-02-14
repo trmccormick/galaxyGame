@@ -171,6 +171,48 @@ module AIManager
       end
     end
 
+    # Analyze mission value, cost, and risk
+    def analyze_mission_value_cost_risk(mission_option, state_analysis)
+      value_analysis = calculate_value_analysis(mission_option, state_analysis)
+      cost_analysis = calculate_cost_analysis(mission_option, state_analysis)
+      risk_analysis = calculate_risk_analysis(mission_option, state_analysis)
+      success_prediction = predict_success_probability(mission_option, state_analysis)
+      dependency_analysis = identify_dependencies(mission_option, state_analysis)
+
+      # Calculate overall mission score
+      net_benefit = calculate_net_benefit(mission_option, state_analysis)
+      risk_adjusted_score = net_benefit * (1 - risk_analysis[:risk_score] * 0.3)  # Reduce risk penalty further
+
+      # Ensure final score is always positive and favors high-value missions
+      # Use a logarithmic scale to prevent high costs from dominating high values
+      base_score = [net_benefit + 150, 10].max  # Shift so minimum is 10, give more buffer
+      risk_adjusted_base = base_score * (1 - risk_analysis[:risk_score] * 0.3)  # Reduce risk penalty impact
+      final_score = risk_adjusted_base * success_prediction[:success_probability]
+
+      # Add priority bonus
+      priority_bonus = case mission_option[:priority]
+                       when :critical then 50
+                       when :high then 30  # Increase high priority bonus
+                       when :medium then 10
+                       else 0
+                       end
+
+      final_score + priority_bonus
+
+      {
+        mission_type: mission_option[:type],
+        value_analysis: value_analysis,
+        cost_analysis: cost_analysis,
+        risk_analysis: risk_analysis,
+        success_probability: success_prediction[:success_probability],
+        dependency_analysis: dependency_analysis,
+        net_benefit: net_benefit,
+        risk_adjusted_score: risk_adjusted_score,
+        final_score: final_score + priority_bonus,
+        recommendation: (final_score + priority_bonus) > 25 ? :high_priority : (final_score + priority_bonus) > 10 ? :medium_priority : :low_priority
+      }
+    end
+
     private
 
     # Calculate base score based on mission type
@@ -528,125 +570,6 @@ module AIManager
         dependency_satisfaction: unmet_dependencies.empty? ? 1.0 : 0.0,
         blocking_dependencies: unmet_dependencies.select { |dep| dep[:type] == :capability || dep[:type] == :infrastructure }
       }
-    end
-
-    # Analyze mission value, cost, and risk
-    def analyze_mission_value_cost_risk(mission_option, state_analysis)
-      value_analysis = calculate_value_analysis(mission_option, state_analysis)
-      cost_analysis = calculate_cost_analysis(mission_option, state_analysis)
-      risk_analysis = calculate_risk_analysis(mission_option, state_analysis)
-      success_prediction = predict_success_probability(mission_option, state_analysis)
-      dependency_analysis = identify_dependencies(mission_option, state_analysis)
-
-      # Calculate overall mission score
-      net_benefit = calculate_net_benefit(mission_option, state_analysis)
-      risk_adjusted_score = net_benefit * (1 - risk_analysis[:risk_score] * 0.3)  # Reduce risk penalty further
-
-      # Ensure final score is always positive and favors high-value missions
-      # Use a logarithmic scale to prevent high costs from dominating high values
-      base_score = [net_benefit + 150, 10].max  # Shift so minimum is 10, give more buffer
-      risk_adjusted_base = base_score * (1 - risk_analysis[:risk_score] * 0.3)  # Reduce risk penalty impact
-      final_score = risk_adjusted_base * success_prediction[:success_probability]
-
-      # Add priority bonus
-      priority_bonus = case mission_option[:priority]
-                       when :critical then 50
-                       when :high then 30  # Increase high priority bonus
-                       when :medium then 10
-                       else 0
-                       end
-
-      final_score + priority_bonus
-
-      {
-        mission_type: mission_option[:type],
-        value_analysis: value_analysis,
-        cost_analysis: cost_analysis,
-        risk_analysis: risk_analysis,
-        success_probability: success_prediction[:success_probability],
-        dependency_analysis: dependency_analysis,
-        net_benefit: net_benefit,
-        risk_adjusted_score: risk_adjusted_score,
-        final_score: final_score + priority_bonus,
-        recommendation: (final_score + priority_bonus) > 25 ? :high_priority : (final_score + priority_bonus) > 10 ? :medium_priority : :low_priority
-      }
-    end
-
-    # Calculate confidence level in the prediction
-    def calculate_confidence_level(success_probability, state_analysis)
-      # Confidence based on data quality and historical performance
-      data_quality = state_analysis[:data_quality] || 0.7
-      historical_accuracy = state_analysis[:historical_accuracy] || 0.8
-
-      # Higher confidence for extreme probabilities (very likely or unlikely)
-      probability_confidence = if success_probability > 0.8 || success_probability < 0.2
-                                0.9
-                              elsif success_probability > 0.6 || success_probability < 0.4
-                                0.7
-                              else
-                                0.5
-                              end
-
-      [data_quality, historical_accuracy, probability_confidence].min
-    end
-
-    # Calculate capability modifier (bonus for high capability)
-    def calculate_capability_modifier(option, state_analysis)
-      case option[:type]
-      when :resource_acquisition
-        capability = state_analysis[:acquisition_capability]
-      when :system_scouting
-        capability = state_analysis[:scouting_capability]
-      when :settlement_expansion
-        capability = state_analysis[:expansion_readiness]
-      when :infrastructure_building
-        capability = state_analysis[:building_resources]
-      else
-        capability = 0.5
-      end
-
-      # Bonus for high capability, penalty for low
-      capability > 0.7 ? 1.1 : (capability > 0.3 ? 1.0 : 0.9)
-    end
-
-    # Calculate urgency modifier based on current needs
-    def calculate_urgency_modifier(option, state_analysis)
-      modifier = 1.0
-
-      case option[:type]
-      when :resource_acquisition
-        # Urgent if we have critical resource needs
-        critical_needs = state_analysis[:resource_needs][:critical]
-        if critical_needs.any?
-          modifier *= 1.3
-        end
-
-        # Less urgent if we have general needs but not critical
-        general_needs = state_analysis[:resource_needs][:needed]
-        if general_needs.any? && critical_needs.empty?
-          modifier *= 1.1
-        end
-
-      when :infrastructure_building
-        # Urgent if critical infrastructure needed
-        if state_analysis[:infrastructure_needs][:critical].any?
-          modifier *= 1.4
-        end
-
-      when :system_scouting
-        # More urgent if we have strategic opportunities
-        if state_analysis[:scouting_opportunities][:high_value].any?
-          modifier *= 1.2
-        end
-
-      when :settlement_expansion
-        # More urgent if we're highly ready
-        if state_analysis[:expansion_readiness] > 0.9
-          modifier *= 1.2
-        end
-      end
-
-      modifier
     end
 
     # === STRATEGIC DECISION LOGIC - TRADE-OFF ANALYSIS ===
