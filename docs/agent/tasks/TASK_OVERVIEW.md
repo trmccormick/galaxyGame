@@ -6,15 +6,19 @@
 ## Active Tasks (In Progress)
 
 ### � HIGH PRIORITY: Test Suite Restoration Continuation
-**Agent**: Autonomous Nightly Grinder (Process 74341)
+**Agent**: Autonomous Nightly Grinder (Process 65383 - ACTIVE)
 **Priority**: HIGH (Blocks Phase 4)
-**Status**: 🔄 RUNNING - Pre-flight checks complete, generating fresh baseline RSpec log
+**Status**: 🔄 RUNNING - Actively fixing specs, grinder process confirmed running
 **Estimated Effort**: 2-3 days (overnight autonomous execution)
 **Dependencies**: None (can run in parallel with other tasks)
 
-**Description**: Continue reducing RSpec test failures from ~393 to <50 using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
+**Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: 393 failures (down from 401)
+**Current Status**: 243 failures (down from 253, 10 failures fixed) - Grinder using old log files, actual progress better
+**Recent Progress**: 
+- ✅ celestial_body_spec.rb: 8→0 failures (26 examples passing) - Fixed private method declarations
+- ✅ unit_lookup_service_spec.rb: Now passing (22 examples, 0 failures)
+- 🎯 Next Target: environment_spec.rb (8 failures) - Grinder actively working on this
 **Target**: <50 failures
 **Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
 
@@ -25,7 +29,7 @@
 **Execution Mode**: Autonomous overnight processing - grinder running without interactive agent supervision.
 
 ---
-### 🪐 Fix Sol System GeoTIFF Usage in Terrain Generation
+### 🪐 Fix Sol System GeoTIFF Usage in Terrain Generation **[MVP]**
 **Agent**: Available for assignment
 **Priority**: Critical (Affects core terrain quality for seeded Sol system bodies)
 **Task File**: `fix_sol_system_geotiff_usage.md`
@@ -114,7 +118,7 @@
 **Success Criteria**: Biome validation tool functional for admin terraforming planning
 
 ---
-### 🤖 Add AI Manager Priority Controls to Admin Simulation Page
+### 🤖 Add AI Manager Priority Controls to Admin Simulation Page **[MVP]**
 **Agent**: Available for assignment
 **Priority**: Medium (Valuable testing tool for AI behavior tuning)
 **Task File**: `add_ai_manager_priority_controls.md`
@@ -253,6 +257,32 @@
 **Success Criteria**: Exoplanet terrain visually coherent and natural-looking
 
 ---
+### 🤖 AI Manager Expansion MVP - Phase 4A (Post-Grinder Tasks)
+**Priority**: HIGH (Enables autonomous multi-body expansion)
+**Status**: � ACTIVE - Assessment complete, integration ready to start
+**Estimated Effort**: 16-20 hours total
+**Dependencies**: Test suite <50 failures (currently 243)
+**Timeline**: 1-2 weeks to autonomous Mars + Luna coordination
+
+**Description**: Enable AI Manager to autonomously coordinate Mars + Luna settlements through service integration and strategic decision making.
+
+**Task Sequence**:
+1. **ASSESS_AI_MANAGER_CURRENT_STATE.md** ✅ COMPLETED (2 hours) - Discovery phase complete, full service inventory documented
+2. **INTEGRATE_AI_MANAGER_SERVICES.md** 🔄 READY TO START (4-6 hours) - Connect services through Manager.rb
+3. **IMPLEMENT_STRATEGY_SELECTOR.md** (4-6 hours) - Add autonomous decision making (requires grinder complete)
+4. **IMPLEMENT_SYSTEM_ORCHESTRATOR.md** (6-8 hours) - Enable multi-body coordination (requires grinder complete)
+
+**Dependency Details**:
+- **Task 1**: ✅ COMPLETED - Can run during grinding (uses Rails console, no RSpec conflicts)
+- **Tasks 2-4**: Cannot run during grinding (require RSpec, test database conflicts)
+- **All tasks**: Tasks 2-4 blocked until grinder reaches <50 failures
+
+**Why Priority**: Core blocker for autonomous AI expansion. User wants to test AI setup mode before joining as player.
+
+**Expected Outcome**: AI autonomously manages Mars + Luna bases with resource sharing and coordinated expansion.
+
+---
+
 ## Recently Completed Tasks
 
 ### ✅ TerraSim Test Suite Verification
@@ -409,7 +439,13 @@
 
 ## Backlog (Planned Work)
 
-### � HIGH PRIORITY: Test Suite Restoration Continuation
+**MVP vs Enhancement Classification:**
+- **[MVP]**: Core functionality for AI autonomous expansion, mission system, and foothold establishment
+- **[ENHANCEMENT]**: Advanced features for terrain expansion, UI polish, and operational excellence
+
+**Current MVP Focus**: AI Manager autonomous expansion into new systems, mission configuration, foothold establishment, and infrastructure setup for wormhole network expansion.
+
+---
 **Priority**: HIGH (Blocks Phase 4)
 **Estimated Effort**: 2-3 days
 **Dependencies**: None (can run in parallel with other tasks)
@@ -489,14 +525,14 @@
 
 ---
 
-### 🔧 LOW: AI Manager Mission Patterns Audit
-**Priority**: Low
+### 🔧 MEDIUM: AI Manager Mission Patterns Audit **[MVP]**
+**Priority**: Medium
 **Estimated Effort**: 1-2 hours
 **Dependencies**: None
 
-**Description**: Review and document all mission pattern types used by AI Manager to ensure consistency and completeness.
+**Description**: Review and document all mission pattern types used by AI Manager to ensure consistency and completeness for autonomous expansion.
 
-**Why Backlogged**: Not blocking any current work, can be done during downtime.
+**Why Backlogged**: Critical for understanding current mission capabilities before enhancement.
 
 ---
 
@@ -510,6 +546,278 @@
 **Reference**: ARCHITECTURE_ANSWERS_FOR_GROK.md (section 5: Documentation Gaps)
 
 **Why Backlogged**: Functional fixes take priority over documentation updates.
+
+---
+
+### 🤖 HIGH: AI Manager Autonomous System Expansion **[MVP]**
+**Priority**: HIGH
+**Estimated Effort**: 8-12 hours
+**Dependencies**: Working AI Manager mission system
+
+**Description**: Implement AI capability to autonomously discover, evaluate, and expand into new star systems through the wormhole network without player intervention.
+
+**Key Changes**:
+- Create system discovery and evaluation algorithms
+- Implement autonomous foothold establishment
+- Build expansion mission generation
+- Integrate with wormhole network strategy
+
+**Reference**: ai_manager_autonomous_expansion.md
+
+**Why Priority**: Core MVP requirement for AI autonomous expansion gameplay.
+
+---
+
+### 📋 HIGH: Review and Enhance AI Mission JSON Configuration **[MVP]**
+**Priority**: HIGH
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Existing AI Manager mission system
+
+**Description**: Audit and enhance AI mission JSON configurations to support autonomous expansion, foothold establishment, and strategic decision making.
+
+**Key Changes**:
+- Audit existing mission configurations
+- Implement missing mission types for expansion
+- Enhance mission intelligence and adaptation
+- Create mission validation framework
+
+**Reference**: review_ai_mission_json_configuration.md
+
+**Why Priority**: Critical for AI mission system completeness in autonomous expansion.
+
+---
+
+### 🏰 HIGH: Implement Foothold Establishment System **[MVP]**
+**Priority**: HIGH
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Celestial body database, colony system
+
+**Description**: Create systematic foothold establishment mechanics for initial colonization and resource claiming in new star systems.
+
+**Key Changes**:
+- Design foothold establishment framework
+- Implement resource claim and control systems
+- Develop foothold expansion logic
+- Create AI foothold integration
+
+**Reference**: implement_foothold_establishment_system.md
+
+**Why Priority**: Essential for establishing presence in new systems during expansion.
+
+---
+
+### 🏢 MEDIUM: Implement Data Center Establishment **[MVP]**
+**Priority**: MEDIUM
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Wormhole network system
+
+**Description**: Build infrastructure establishment system for Data Centers (communication/logistics hubs) in expanding wormhole network.
+
+**Key Changes**:
+- Design DC infrastructure framework
+- Implement DC establishment mechanics
+- Integrate DC with wormhole network
+- Develop DC AI management
+
+**Reference**: implement_data_center_establishment.md
+
+**Why Priority**: Required infrastructure for wormhole network expansion and system control.
+
+---
+
+### 🛰️ MEDIUM: Implement GeoTIFF Auto-Detection System **[ENHANCEMENT]**
+**Priority**: MEDIUM
+**Estimated Effort**: 4-6 hours
+**Dependencies**: Working GeoTIFF processing pipeline
+
+**Description**: Implement automatic detection of new GeoTIFF files and terrain regeneration triggers. Currently requires manual intervention when new NASA data is added.
+
+**Key Changes**:
+- Add file modification time checking in `nasa_geotiff_available?()`
+- Modify `generate_terrain_for_body()` to check for data updates
+- Add data validation and error handling for corrupted files
+- Enhance logging and monitoring for data source detection
+
+**Reference**: implement_geotiff_auto_detection_system.md
+
+**Why Backlogged**: Builds on current terrain foundation, enables continuous data expansion.
+
+---
+
+### 🛰️ MEDIUM: Develop NASA Data Acquisition Pipeline **[ENHANCEMENT]**
+**Priority**: MEDIUM
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Stable GeoTIFF processing pipeline
+
+**Description**: Create automated system to discover and download new NASA terrain datasets as they become available, reducing manual data management burden.
+
+**Key Changes**:
+- Implement NASA dataset discovery service (PDS, USGS APIs)
+- Build secure download client with rate limiting and retries
+- Add automatic GeoTIFF processing and integration
+- Create admin interface for monitoring download status
+
+**Reference**: develop_nasa_data_acquisition_pipeline.md
+
+**Why Backlogged**: Enables scaling terrain quality beyond manual data management.
+
+---
+
+### 🤖 MEDIUM: Enhance AI Pattern Learning Documentation **[ENHANCEMENT]**
+**Priority**: MEDIUM
+**Estimated Effort**: 4-6 hours
+**Dependencies**: Working Civ4/FreeCiv map processing
+
+**Description**: Document the hybrid NASA + AI learning approach with specific implementation details, metrics, and version control for pattern databases.
+
+**Key Changes**:
+- Detail pattern extraction algorithms and storage
+- Implement learning metrics and validation system
+- Create pattern version control with metadata
+- Document hybrid integration priority system
+
+**Reference**: enhance_pattern_learning_documentation.md
+
+**Why Backlogged**: Improves AI learning pipeline maintainability and debugging.
+
+---
+
+### 🌍 MEDIUM: Expand Celestial Body Terrain Coverage **[ENHANCEMENT]**
+**Priority**: MEDIUM
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Working terrain generation for Sol worlds
+
+**Description**: Extend realistic terrain generation beyond the main Sol worlds to unknown and generated worlds using the hybrid NASA + AI approach.
+
+**Key Changes**:
+- Create generic terrain generation framework with body profiles
+- Expand NASA data integration for additional bodies
+- Enhance AI pattern adaptation for different body types
+- Implement terrain quality assessment system
+
+**Reference**: expand_celestial_body_coverage.md
+
+**Why Backlogged**: Enables better terrain for unknown worlds and generated systems.
+
+---
+
+### 🔧 MEDIUM: Create Terrain Data Management Operations **[ENHANCEMENT]**
+**Priority**: MEDIUM
+**Estimated Effort**: 4-6 hours
+**Dependencies**: Working terrain generation and storage
+
+**Description**: Implement operational processes for managing growing terrain data volume, including cleanup, optimization, and integrity validation.
+
+**Key Changes**:
+- Create automated data cleanup and deduplication
+- Add performance monitoring and optimization
+- Implement data integrity validation system
+- Develop maintenance dashboard and scheduling
+
+**Reference**: create_terrain_data_operations.md
+
+**Why Backlogged**: Ensures terrain system remains performant as data volume grows.
+
+---
+
+### 🪨 MEDIUM: Implement Small Body Terrain Generation **[ENHANCEMENT]**
+**Priority**: MEDIUM
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Working terrain generation for planetary bodies
+
+**Description**: Extend terrain generation to asteroids, Kuiper Belt Objects, and other small bodies using AI pattern recognition from real mission data (Dawn, New Horizons).
+
+**Key Changes**:
+- Create terrain profiles for different small body types (asteroids, KBOs, comets)
+- Integrate GeoTIFF data from asteroid/KBO missions
+- Develop AI pattern recognition for surface features (craters, boulders, regolith)
+- Implement realistic terrain generation with appropriate physics
+
+**Reference**: implement_small_body_terrain_generation.md
+
+**Why Backlogged**: Expands terrain system to complete celestial body coverage, enables realistic asteroid/KBO gameplay.
+
+---
+
+### 🔧 HIGH: Analyze Industrial Pipeline Gaps for AI Supply Chain Management **[MVP]**
+**Priority**: HIGH
+**Estimated Effort**: 8-10 hours
+**Dependencies**: Access to blueprint/material/mission databases
+
+**Description**: Analyze industrial pipelines for realistic Luna base buildup where AI encounters expected production gaps and learns to manage Earth-Luna supply chains. Focus on import request triggers, supply chain economics, and AI manifest generation.
+
+**Key Changes**:
+- Audit Luna base initial production capabilities vs requirements
+- Design import request system for material shortages
+- Analyze supply chain economics and profitability optimization
+- Create AI algorithms for Astrolift manifest generation
+- Implement return cargo value optimization
+- Define infrastructure expansion triggers
+
+**Reference**: analyze_industrial_pipeline_gaps.md
+
+**Why Priority**: Critical for AI learning through realistic supply chain management - Luna buildup is first test case.
+
+---
+
+### 🚀 HIGH: Implement Luna Base Buildup Test Case for AI Supply Chain Learning **[MVP]**
+**Priority**: HIGH
+**Estimated Effort**: 10-12 hours
+**Dependencies**: Luna base mission system, AI Manager framework
+
+**Description**: Create the first real test case for AI Manager supply chain learning through realistic Luna base buildup. AI encounters production gaps, requests Earth imports, and manages profitable Earth-Luna trade.
+
+**Key Changes**:
+- Implement Luna base initial capability assessment
+- Create import request system for material shortages
+- Build AI manifest generation for Astrolift missions
+- Implement return cargo profit optimization
+- Develop supply chain economics engine
+- Add infrastructure expansion triggers
+
+**Reference**: implement_luna_base_buildup_test_case.md
+
+**Why Priority**: First concrete test of AI supply chain management - Luna buildup creates expected gaps that AI must learn to handle.
+
+---
+
+### 🔧 HIGH: Analyze Technology Tree Gaps for Luna-to-Mars Progression **[MVP]**
+**Priority**: HIGH
+**Estimated Effort**: 8-10 hours
+**Dependencies**: Luna base and L1 construction mission definitions
+
+**Description**: Comprehensive analysis of technology progression gaps from Luna base buildup → L1 infrastructure → Tug/Cycler construction → Mars mission. Ensures complete blueprint and operational coverage for AI autonomous expansion.
+
+**Key Changes**:
+- Audit L1 infrastructure blueprint completeness
+- Detail tug/cycler manufacturing processes
+- Define Mars mission operational procedures
+- Validate technology tree integration and dependencies
+- Check operational data completeness for all units
+
+**Reference**: analyze_technology_tree_gaps.md
+
+**Why Priority**: Critical for seamless Luna-to-Mars technology progression - identifies blocking gaps in the industrial pipeline.
+
+---
+
+### 🏗️ MEDIUM: Implement AI Station Construction Strategy Selection **[MVP]**
+**Priority**: MEDIUM
+**Estimated Effort**: 6-8 hours
+**Dependencies**: Station blueprint definitions, resource assessment capabilities
+
+**Description**: Create AI decision framework for selecting optimal station construction approaches (full stations vs asteroid conversions) based on local resources, strategic needs, and cost-benefit analysis.
+
+**Key Changes**:
+- Develop station type evaluation algorithm considering strategic purpose and resources
+- Implement cost-benefit analysis engine for construction options
+- Create resource availability assessment for asteroid/lunar alternatives
+- Build strategic positioning logic for optimal placement
+- Add dynamic strategy adaptation based on performance learning
+
+**Reference**: implement_ai_station_construction_strategy.md
+
+**Why Priority**: Enables intelligent infrastructure decisions - AI must choose between expensive full stations vs cost-effective asteroid conversions based on local conditions.
 
 ---
 
