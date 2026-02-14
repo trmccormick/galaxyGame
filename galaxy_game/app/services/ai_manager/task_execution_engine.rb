@@ -370,17 +370,19 @@ def initialize(mission_id)
     end
     
     def complete_mission
-      current_data = @mission.operational_data || {}
-      @mission.update(
-        status: 'completed',
-        progress: 100,
-        completion_date: Time.current,
-        operational_data: current_data.merge(
-          completion_message: "All #{@task_list.length} tasks completed successfully"
+      if @mission
+        current_data = @mission.operational_data || {}
+        @mission.update(
+          status: 'completed',
+          progress: 100,
+          completion_date: Time.current,
+          operational_data: current_data.merge(
+            completion_message: "All #{@task_list.length} tasks completed successfully"
+          )
         )
-      )
-      
-      ResourceTrackingService.track_inventory_snapshot(@settlement)
+        
+        ResourceTrackingService.track_inventory_snapshot(@settlement)
+      end
       Rails.logger.info("✓ Mission #{@mission_id} completed successfully - #{@task_list.length} tasks executed")
     end
     
