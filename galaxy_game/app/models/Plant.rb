@@ -1,5 +1,5 @@
 class Plant < ApplicationRecord
-    belongs_to :environment
+    belongs_to :environment, optional: true
   
     # Constants for plant health thresholds
     HEALTH_THRESHOLD = 0.0
