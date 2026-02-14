@@ -3,36 +3,8 @@ require 'rails_helper'
 require 'json'
 
 RSpec.describe Lookup::UnitLookupService do
-  # Nuclear option: reset everything before the entire suite
-  before(:all) do
-    reset_lookup_service
-  end
-
-  # And before each test
-  before(:each) do
-    reset_lookup_service
-  end
-
-  def reset_lookup_service
-    # Clear singleton instance
-    if described_class.respond_to?(:instance_variable_defined?) && 
-       described_class.instance_variable_defined?(:@instance)
-      described_class.remove_instance_variable(:@instance)
-    end
-    # Clear all class instance variables
-    described_class.instance_variables.each do |var|
-      described_class.remove_instance_variable(var)
-    end
-    # Force new instance with fresh data load
-    if described_class.respond_to?(:new)
-      @service = described_class.new
-    elsif described_class.respond_to?(:instance)
-      described_class.instance_variable_set(:@instance, nil)
-      @service = described_class.instance
-    end
-    # Trigger data load
-    @service.instance_variable_set(:@loaded, false) rescue nil
-  end
+  # Create a fresh service instance for each test context
+  let(:service) { described_class.new }
 
   describe '#find_unit' do
     it 'loads units from the correct file structure' do
@@ -46,6 +18,17 @@ RSpec.describe Lookup::UnitLookupService do
       expect(File.directory?(habitats_path)).to be true
     end
 
+    it 'loads units successfully' do
+      expect(service.instance_variable_get(:@units)).to be_present
+      expect(service.instance_variable_get(:@units).count).to be > 0
+    end
+
+    it 'finds propulsion files' do
+      propulsion_files = Dir.glob(GalaxyGame::Paths::PROPULSION_UNITS_PATH.join('**', '*.json'))
+      expect(propulsion_files).to be_present
+      expect(propulsion_files.count).to be > 0
+    end
+
     context 'with propulsion units' do
       let(:propulsion_files) { Dir.glob(GalaxyGame::Paths::PROPULSION_UNITS_PATH.join('**', '*.json')) }
       before do
@@ -54,7 +37,7 @@ RSpec.describe Lookup::UnitLookupService do
       it 'finds propulsion units by their exact ID' do
         unit_data = JSON.parse(File.read(propulsion_files.first))
         unit_id = unit_data['id']
-        found_unit = @service.find_unit(unit_id)
+        found_unit = service.find_unit(unit_id)
         expect(found_unit).to be_present,
           "Unit #{unit_id} not found. Check if '#{File.basename(propulsion_files.first)}' exists"
         expect(found_unit["id"]).to eq(unit_id)
@@ -63,7 +46,7 @@ RSpec.describe Lookup::UnitLookupService do
       it 'has expected propulsion unit properties' do
         unit_data = JSON.parse(File.read(propulsion_files.first))
         unit_id = unit_data['id']
-        propulsion_unit = @service.find_unit(unit_id)
+        propulsion_unit = service.find_unit(unit_id)
         expect(propulsion_unit).to be_present
         if propulsion_unit.dig("performance", "nominal_thrust_kn")
           expect(propulsion_unit.dig("performance", "nominal_thrust_kn")).to be_a(Numeric)
@@ -78,7 +61,7 @@ RSpec.describe Lookup::UnitLookupService do
       it 'finds habitat units by their ID' do
         unit_data = JSON.parse(File.read(habitat_files.first))
         unit_id = unit_data['id']
-        habitat_unit = @service.find_unit(unit_id)
+        habitat_unit = service.find_unit(unit_id)
         expect(habitat_unit).to be_present,
           "Unit #{unit_id} not found. Check if '#{File.basename(habitat_files.first)}' exists"
         expect(habitat_unit['id']).to eq(unit_id)
@@ -93,7 +76,7 @@ RSpec.describe Lookup::UnitLookupService do
       it 'finds robot units by their ID' do
         unit_data = JSON.parse(File.read(robot_files.first))
         unit_id = unit_data['id']
-        robot_unit = @service.find_unit(unit_id)
+        robot_unit = service.find_unit(unit_id)
         expect(robot_unit).to be_present,
           "Robot unit #{unit_id} not found. Check its JSON file in #{GalaxyGame::Paths::ROBOTS_DEPLOYMENT_UNITS_PATH}"
         expect(robot_unit['id']).to eq(unit_id)
@@ -105,17 +88,17 @@ RSpec.describe Lookup::UnitLookupService do
       skip "No unit files found" if all_unit_files.empty?
       unit_data = JSON.parse(File.read(all_unit_files.first))
       unit_id = unit_data['id']
-      unit_upper = @service.find_unit(unit_id.upcase)
+      unit_upper = service.find_unit(unit_id.upcase)
       expect(unit_upper).to be_present
       expect(unit_upper['id']).to eq(unit_id)
     end
     it 'returns nil for nonexistent units' do
-      expect(@service.find_unit("nonexistent_unit_xyz_12345")).to be_nil
+      expect(service.find_unit("nonexistent_unit_xyz_12345")).to be_nil
     end
     it 'handles nil and blank unit queries gracefully' do
-      expect(@service.find_unit(nil)).to be_nil
-      expect(@service.find_unit("")).to be_nil
-      expect(@service.find_unit("   ")).to be_nil
+      expect(service.find_unit(nil)).to be_nil
+      expect(service.find_unit("")).to be_nil
+      expect(service.find_unit("   ")).to be_nil
     end
   end
 
@@ -135,14 +118,13 @@ RSpec.describe Lookup::UnitLookupService do
 
   describe 'unit data structure validation' do
     context 'when any propulsion unit exists' do
-      let(:propulsion_files) { Dir.glob(GalaxyGame::Paths::PROPULSION_UNITS_PATH.join('**', '*.json')) }
       let(:propulsion_unit) do
-        return nil if propulsion_files.empty?
-        unit_data = JSON.parse(File.read(propulsion_files.first))
-        @service.find_unit(unit_data['id'])
+        # Use a known unit id instead of reading from file
+        service.find_unit('basic_engine')
       end
-      before do
-        skip "No propulsion units found" if propulsion_unit.nil?
+      it 'finds a propulsion unit' do
+        propulsion_unit = service.find_unit('basic_engine')
+        expect(propulsion_unit).to be_present, "No propulsion units found"
       end
       it 'has all expected top-level unit properties' do
         expected_properties = %w[id name category template]
@@ -183,14 +165,12 @@ RSpec.describe Lookup::UnitLookupService do
       end
     end
     context 'when any storage unit exists' do
-      let(:storage_files) { Dir.glob(GalaxyGame::Paths::STORAGE_UNITS_PATH.join('**', '*.json')) }
       let(:storage_unit) do
-        return nil if storage_files.empty?
-        unit_data = JSON.parse(File.read(storage_files.first))
-        @service.find_unit(unit_data['id'])
+        # Use a known unit id instead of reading from file
+        service.find_unit('fuel_tank_s')
       end
-      before do
-        skip "No storage units found" if storage_unit.nil?
+      it 'finds a storage unit' do
+        expect(storage_unit).to be_present, "No storage units found"
       end
       it 'has storage capacity properties' do
         if storage_unit['storage']
@@ -215,23 +195,23 @@ RSpec.describe Lookup::UnitLookupService do
       skip "No unit files found" unless unit_data
     end
     it 'matches by exact ID' do
-      result = @service.find_unit(unit_data['id'])
+      result = service.find_unit(unit_data['id'])
       expect(result).to be_present
       expect(result['id']).to eq(unit_data['id'])
     end
     it 'matches by exact name' do
-      result = @service.find_unit(unit_data['name'])
+      result = service.find_unit(unit_data['name'])
       expect(result).to be_present
     end
     it 'matches by partial ID with sufficient length' do
       unit_id = unit_data['id']
       skip "Unit ID too short" if unit_id.length < 6
       partial = unit_id[0..3]
-      result = @service.find_unit(partial)
+      result = service.find_unit(partial)
       expect(result).to be_present
     end
     it 'is case insensitive' do
-      result = @service.find_unit(unit_data['id'].upcase)
+      result = service.find_unit(unit_data['id'].upcase)
       expect(result).to be_present
       expect(result['id']).to eq(unit_data['id'])
     end
@@ -239,7 +219,7 @@ RSpec.describe Lookup::UnitLookupService do
 
   describe '#debug_paths' do
     it 'outputs path information without errors' do
-      expect { @service.debug_paths }.not_to raise_error
+      expect { service.debug_paths }.not_to raise_error
     end
   end
 end

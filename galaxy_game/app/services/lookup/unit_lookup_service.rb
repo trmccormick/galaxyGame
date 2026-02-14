@@ -137,6 +137,12 @@ module Lookup
     end
     
     def initialize(force_reload: false)
+      # In test environment, always create fresh instances
+      if Rails.env.test?
+        @units = load_units
+        return
+      end
+      
       return if @instance && !force_reload # Prevent multiple instances
       
       begin
@@ -156,12 +162,10 @@ module Lookup
     end
 
     def find_unit(unit_type)
-      Rails.logger.debug("Finding unit: #{unit_type}")
       return nil unless unit_type.present?
       
       query = unit_type.to_s.downcase
       found = @units.find { |unit| match_unit?(unit, query) }
-      Rails.logger.debug "Unit lookup for '#{query}': #{found ? 'found' : 'not found'}"
       found
     rescue => e
       Rails.logger.error "Error finding unit: #{e.message}"
