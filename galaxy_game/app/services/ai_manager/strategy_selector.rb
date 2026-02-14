@@ -119,25 +119,55 @@ module AIManager
 
     # Score mission options based on strategic value
     def score_mission_options(options, state_analysis)
-      options.map do |option|
-        score = @mission_scorer.calculate_score(option, state_analysis)
-        option.merge(score: score)
-      end.sort_by { |opt| -opt[:score] } # Sort by score descending
+      # Use the new prioritization system with detailed analysis
+      prioritized_missions = @mission_scorer.prioritize_missions(options, state_analysis)
+
+      # Convert to the expected format for backward compatibility
+      prioritized_missions.map do |mission_data|
+        original_mission = mission_data[:mission]
+        original_mission.merge(
+          score: mission_data[:score],
+          analysis: mission_data[:analysis],
+          priority_level: mission_data[:priority_level],
+          sequencing_info: mission_data[:sequencing_info]
+        )
+      end
     end
 
     # Select the optimal action considering current constraints
     def select_optimal_action(scored_options, state_analysis)
       return { type: :wait, score: 0, rationale: "No viable actions available" } if scored_options.empty?
 
-      # Apply strategic constraints
+      # First, try to find actions that can be executed immediately
+      executable_now = scored_options.select do |option|
+        option[:sequencing_info][:can_execute_now] && viable_action?(option, state_analysis)
+      end
+
+      unless executable_now.empty?
+        best_executable = executable_now.first
+        return best_executable.merge(
+          rationale: "#{best_executable[:rationale]} - Can execute immediately"
+        )
+      end
+
+      # If no actions can execute immediately, check for viable actions that might need preparation
       viable_options = scored_options.select do |option|
         viable_action?(option, state_analysis)
       end
 
-      return scored_options.first.merge(rationale: "Best available option") if viable_options.empty?
+      unless viable_options.empty?
+        best_viable = viable_options.first
+        blocking_deps = best_viable[:sequencing_info][:blocking_dependencies]
+        return best_viable.merge(
+          rationale: "#{best_viable[:rationale]} - Requires preparation (#{blocking_deps.map { |d| d[:name] }.join(', ')})"
+        )
+      end
 
-      # Return highest scoring viable option
-      viable_options.first
+      # Fallback to highest priority option even if not viable
+      fallback_option = scored_options.first
+      return fallback_option.merge(
+        rationale: "#{fallback_option[:rationale]} - Best available despite constraints"
+      )
     end
 
     # Check if an action is viable given current constraints
