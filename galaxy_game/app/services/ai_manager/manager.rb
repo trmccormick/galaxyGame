@@ -1,6 +1,7 @@
 # app/services/ai_manager/manager.rb
 require_relative 'shared_context'
 require_relative 'service_coordinator'
+require_relative 'strategy_selector'
 require 'structures'
 
 module AIManager
@@ -25,14 +26,18 @@ module AIManager
       @service_coordinator.process_pending_missions
       @service_coordinator.process_resource_requests
 
-      # Logic to determine if initial construction is needed
-      # This assumes @target_entity is a Lavatube or a nascent Settlement
-      if @target_entity.respond_to?(:settlement_type) && @target_entity.settlement_type.nil? && !settlement_established?(@target_entity)
-        run_initial_construction(@target_entity)
-      elsif @target_entity.is_a?(Settlement::BaseSettlement) && needs_expansion?(@target_entity)
-        run_expansion_plan(@target_entity)
+      # Use strategy selector for autonomous decision making
+      if @target_entity.is_a?(Settlement::BaseSettlement)
+        next_action = @strategy_selector.evaluate_next_action(@target_entity)
+        if next_action[:type] != :wait
+          @strategy_selector.execute_action(next_action, @target_entity)
+        end
+      else
+        # Fallback logic for non-settlement entities (e.g., Lavatube)
+        if @target_entity.respond_to?(:settlement_type) && @target_entity.settlement_type.nil? && !settlement_established?(@target_entity)
+          run_initial_construction(@target_entity)
+        end
       end
-      # ... other AI logic
     end
 
     # Public interface for service coordination
@@ -64,6 +69,15 @@ module AIManager
       @service_coordinator.get_scouting_results(system_id)
     end
 
+    # Strategy selector interface
+    def evaluate_next_action
+      @strategy_selector.evaluate_next_action(@target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
+    end
+
+    def execute_strategy_action(action)
+      @strategy_selector.execute_action(action, @target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
+    end
+
     def queue_mission(mission_data)
       @shared_context.queue_mission(mission_data)
     end
@@ -80,6 +94,9 @@ module AIManager
 
       # Initialize service coordinator
       @service_coordinator = ServiceCoordinator.new(@shared_context)
+
+      # Initialize strategy selector for autonomous decision making
+      @strategy_selector = StrategySelector.new(@shared_context, @service_coordinator)
 
       Rails.logger.info "[AI] Initialized service coordination for #{@target_entity.name}"
     end
