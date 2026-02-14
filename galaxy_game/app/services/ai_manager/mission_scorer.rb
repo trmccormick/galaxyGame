@@ -648,5 +648,233 @@ module AIManager
 
       modifier
     end
+
+    # === STRATEGIC DECISION LOGIC - TRADE-OFF ANALYSIS ===
+
+    # Analyze trade-offs between resource acquisition and scouting
+    def analyze_resource_vs_scouting_tradeoffs(state_analysis)
+      resource_score = calculate_resource_acquisition_score(state_analysis)
+      scouting_score = calculate_scouting_score(state_analysis)
+
+      opportunity_cost = calculate_opportunity_cost(resource_score, scouting_score)
+      risk_adjustment = assess_risk_tolerance(state_analysis)
+      long_term_value = calculate_long_term_planning_score(state_analysis)
+
+      {
+        resource_score: resource_score,
+        scouting_score: scouting_score,
+        opportunity_cost: opportunity_cost,
+        risk_adjustment: risk_adjustment,
+        long_term_value: long_term_value,
+        recommended_focus: determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value)
+      }
+    end
+
+    # Analyze trade-offs between resource acquisition and building
+    def analyze_resource_vs_building_tradeoffs(state_analysis)
+      resource_score = calculate_resource_acquisition_score(state_analysis)
+      building_score = calculate_building_score(state_analysis)
+
+      opportunity_cost = calculate_opportunity_cost(resource_score, building_score)
+      risk_adjustment = assess_risk_tolerance(state_analysis)
+      long_term_value = calculate_long_term_planning_score(state_analysis)
+
+      {
+        resource_score: resource_score,
+        building_score: building_score,
+        opportunity_cost: opportunity_cost,
+        risk_adjustment: risk_adjustment,
+        long_term_value: long_term_value,
+        recommended_focus: determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+      }
+    end
+
+    # Analyze trade-offs between scouting and building
+    def analyze_scouting_vs_building_tradeoffs(state_analysis)
+      scouting_score = calculate_scouting_score(state_analysis)
+      building_score = calculate_building_score(state_analysis)
+
+      opportunity_cost = calculate_opportunity_cost(scouting_score, building_score)
+      risk_adjustment = assess_risk_tolerance(state_analysis)
+      long_term_value = calculate_long_term_planning_score(state_analysis)
+
+      {
+        scouting_score: scouting_score,
+        building_score: building_score,
+        opportunity_cost: opportunity_cost,
+        risk_adjustment: risk_adjustment,
+        long_term_value: long_term_value,
+        recommended_focus: determine_optimal_focus(scouting_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+      }
+    end
+
+    # Calculate resource acquisition strategic score
+    def calculate_resource_acquisition_score(state_analysis)
+      base_score = 0
+
+      # Resource scarcity drives score up
+      critical_needs = state_analysis[:resource_needs][:critical] || []
+      needed_resources = state_analysis[:resource_needs][:needed] || []
+      base_score += critical_needs.length * 30
+      base_score += needed_resources.length * 15
+
+      # Economic health modifier
+      economic_health = state_analysis[:economic_health] || 0.5
+      base_score *= (2.0 - economic_health)  # Higher score when economic health is poor
+
+      # Current resource levels (lower levels increase score)
+      current_resources = state_analysis[:current_resources] || {}
+      resource_deficit = calculate_resource_deficit(current_resources)
+      base_score += resource_deficit * 10
+
+      [base_score, 100].min  # Cap at 100
+    end
+
+    # Calculate scouting strategic score
+    def calculate_scouting_score(state_analysis)
+      base_score = 0
+
+      # High-value opportunities
+      high_value_systems = state_analysis[:scouting_opportunities][:high_value] || []
+      strategic_systems = state_analysis[:scouting_opportunities][:strategic] || []
+      base_score += high_value_systems.length * 25
+      base_score += strategic_systems.length * 20
+
+      # Exploration readiness
+      exploration_readiness = state_analysis[:exploration_readiness] || 0.5
+      base_score *= exploration_readiness
+
+      # Current knowledge gaps
+      knowledge_gaps = state_analysis[:knowledge_gaps] || []
+      base_score += knowledge_gaps.length * 15
+
+      # Strategic position (lower position increases scouting value)
+      strategic_position = state_analysis[:strategic_position] || 0.5
+      base_score *= (1.5 - strategic_position)  # Higher score when strategic position is weak
+
+      [base_score, 100].min
+    end
+
+    # Calculate building/infrastructure strategic score
+    def calculate_building_score(state_analysis)
+      base_score = 0
+
+      # Infrastructure needs
+      critical_infrastructure = state_analysis[:infrastructure_needs][:critical] || []
+      needed_infrastructure = state_analysis[:infrastructure_needs][:needed] || []
+      base_score += critical_infrastructure.length * 35
+      base_score += needed_infrastructure.length * 20
+
+      # Expansion readiness
+      expansion_readiness = state_analysis[:expansion_readiness] || 0.5
+      base_score *= expansion_readiness
+
+      # Settlement health (lower health increases building priority)
+      settlement_health = state_analysis[:settlement_health] || 0.8
+      base_score *= (1.5 - settlement_health)  # Higher score when health is poor
+
+      # Current infrastructure level (lower levels increase score)
+      infrastructure_level = state_analysis[:infrastructure_level] || 0.5
+      base_score *= (1.5 - infrastructure_level)
+
+      [base_score, 100].min
+    end
+
+    # Calculate opportunity cost of choosing one option over another
+    def calculate_opportunity_cost(option_a_score, option_b_score)
+      # Opportunity cost is the value of the foregone alternative
+      # Higher when the difference between options is large
+      difference = (option_a_score - option_b_score).abs
+      difference * 0.3  # Scale down to prevent over-weighting
+    end
+
+    # Assess risk tolerance based on current state
+    def assess_risk_tolerance(state_analysis)
+      base_tolerance = 0.5  # Moderate risk tolerance by default
+
+      # Higher tolerance when resources are abundant
+      resource_abundance = calculate_resource_abundance(state_analysis)
+      base_tolerance += resource_abundance * 0.2
+
+      # Higher tolerance when strategic position is strong
+      strategic_position = state_analysis[:strategic_position] || 0.5
+      base_tolerance += strategic_position * 0.2
+
+      # Lower tolerance when settlement health is poor
+      settlement_health = state_analysis[:settlement_health] || 0.8
+      base_tolerance -= (1 - settlement_health) * 0.3
+
+      base_tolerance.clamp(0.1, 0.9)
+    end
+
+    # Calculate long-term planning score
+    def calculate_long_term_planning_score(state_analysis)
+      base_score = 0
+
+      # Future resource projections
+      future_resource_needs = state_analysis[:future_projections][:resource_needs] || []
+      base_score += future_resource_needs.length * 10
+
+      # Strategic opportunities timeline
+      strategic_timeline = state_analysis[:strategic_timeline] || []
+      base_score += strategic_timeline.length * 15
+
+      # Expansion potential
+      expansion_potential = state_analysis[:expansion_potential] || 0.5
+      base_score *= expansion_potential
+
+      # Economic projections
+      economic_projections = state_analysis[:economic_projections] || {}
+      long_term_economic_health = economic_projections[:long_term] || 0.5
+      base_score *= long_term_economic_health
+
+      [base_score, 100].min
+    end
+
+    # Determine optimal focus based on trade-off analysis
+    def determine_optimal_focus(score_a, score_b, opportunity_cost, risk_adjustment, long_term_value)
+      # Calculate adjusted scores
+      adjusted_a = score_a * (1 + risk_adjustment) + (long_term_value * 0.2)
+      adjusted_b = score_b * (1 + risk_adjustment) + (long_term_value * 0.2)
+
+      # Apply opportunity cost penalty
+      adjusted_a -= opportunity_cost
+      adjusted_b -= opportunity_cost
+
+      # Determine winner with threshold to avoid constant switching
+      threshold = 10  # Minimum difference to change focus
+
+      if adjusted_a > adjusted_b + threshold
+        :focus_a
+      elsif adjusted_b > adjusted_a + threshold
+        :focus_b
+      else
+        :balanced_approach
+      end
+    end
+
+    # Helper methods for trade-off calculations
+
+    def calculate_resource_deficit(current_resources)
+      # Calculate how much below optimal levels we are
+      deficit = 0
+      optimal_levels = { minerals: 100, energy: 100, food: 100, water: 100 }
+
+      optimal_levels.each do |resource, optimal|
+        current = current_resources[resource] || 0
+        deficit += [optimal - current, 0].max
+      end
+
+      deficit / 10.0  # Scale down
+    end
+
+    def calculate_resource_abundance(state_analysis)
+      current_resources = state_analysis[:current_resources] || {}
+      total_current = current_resources.values.sum
+      optimal_total = 400  # Sum of optimal levels
+
+      abundance = total_current / optimal_total.to_f
+      abundance.clamp(0, 1)
+    end
   end
 end
