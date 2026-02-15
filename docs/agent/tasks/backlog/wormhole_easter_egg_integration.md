@@ -1,9 +1,9 @@
 # Wormhole Easter Egg Integration
 
-**Priority:** HIGH (Enables legendary discoveries and special events)
+**Priority:** LOW (Post-MVP nice-to-have enhancement)
 **Estimated Time:** 4-6 hours
 **Risk Level:** MEDIUM (New systems integration)
-**Dependencies:** Easter egg system cleanup complete
+**Dependencies:** Easter egg system cleanup complete, MVP features stable
 
 ## 🎯 Objective
 Update wormhole generation jobs to support easter egg integration, special event triggering, and anomaly reporting for discoveries not revealed by initial AI Manager scouting.

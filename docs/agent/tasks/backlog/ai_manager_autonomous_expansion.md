@@ -35,11 +35,19 @@ The AI Manager currently lacks the capability to autonomously expand into new st
 - Add network vulnerability assessment and defense
 - Create expansion corridor optimization
 
+### Task 1.5: Implement Multi-Task Management Tuning
+- Tune AI logic for concurrent operations: DC base construction, resource management, logistics coordination, and universe economy balancing
+- Implement priority weighting for competing objectives during expansion
+- Add resource allocation algorithms across multiple systems
+- Create economic impact assessment for expansion decisions
+- Integrate logistics optimization with wormhole retargeting costs
+
 ## Success Criteria
 - AI can autonomously discover and evaluate new star systems
 - Automated foothold establishment in promising systems
 - Strategic expansion through wormhole network
 - Balanced resource allocation across expanding empire
+- AI effectively manages concurrent tasks during expansion (DC bases, resources, logistics, economy)
 
 ## Files to Create/Modify
 - `galaxy_game/app/services/ai_manager/system_expansion_service.rb` (new)
@@ -56,5 +64,6 @@ The AI Manager currently lacks the capability to autonomously expand into new st
 ## Dependencies
 - Requires working AI Manager mission system
 - Assumes wormhole network infrastructure exists
-- Needs celestial body database with system data</content>
+- Needs celestial body database with system data
+- Depends on wormhole documentation update and logic adjustments</content>
 <parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/docs/agent/tasks/backlog/ai_manager_autonomous_expansion.md
