@@ -1714,6 +1714,12 @@ module StarSim
         "#{name}_900x450.tif",
         "#{name}_900x450.asc.gz",
 
+        # PNG fallbacks (lower quality but functional)
+        "#{name}_topography.png",          # Standard topography naming
+        "#{name}_topography_pia16848.png", # NASA PIA naming convention
+        "#{name}_elevation.png",           # Elevation naming
+        "#{name}.png",                     # Generic PNG
+
         # Raw data fallbacks (highest resolution available)
         "#{name}_etopo_2022.tif",          # Earth high-res
         "#{name}_lola_118m.tif",           # Luna high-res

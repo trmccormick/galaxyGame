@@ -998,5 +998,99 @@ module AIManager
       # Default: no Easter Egg
       { flavor_text: nil, easter_egg_id: nil, naming_description: nil }
     end
+
+    # Apply easter egg overlays to geological features
+    def apply_easter_egg_overlays(geological_features)
+      return geological_features unless @celestial_body
+
+      # Load available Easter Eggs
+      easter_eggs = load_easter_eggs
+
+      # Find easter eggs with target_feature that could apply to this body
+      applicable_eggs = easter_eggs.select do |egg|
+        triggers = egg['trigger_conditions'] || {}
+        target_feature = triggers['target_feature']
+        target_feature && should_apply_easter_egg_overlay?(egg, @celestial_body)
+      end
+
+      # Apply overlays to matching features
+      enhanced_features = geological_features.deep_dup
+
+      applicable_eggs.each do |egg|
+        target_id = egg['trigger_conditions']['target_feature']
+        feature = find_feature_by_id(enhanced_features, target_id)
+
+        if feature
+          enhanced_features = apply_feature_overlay(enhanced_features, feature, egg)
+        end
+      end
+
+      enhanced_features
+    end
+
+    private
+
+    # Check if easter egg overlay should be applied based on conditions
+    def should_apply_easter_egg_overlay?(egg, celestial_body)
+      triggers = egg['trigger_conditions'] || {}
+      rarity = triggers['rarity'].to_f
+
+      # Rarity check
+      return false if rarity > 0 && rand > rarity
+
+      # Body type check
+      body_name = celestial_body['name']&.downcase
+      if triggers['body_name'] && body_name != triggers['body_name'].downcase
+        return false
+      end
+
+      # System check
+      system_id = celestial_body['identifier']&.split('-')&.first
+      if triggers['system_template'] && !system_id&.include?(triggers['system_template'].split('-').first.downcase)
+        return false
+      end
+
+      true
+    end
+
+    # Find feature by ID in nested feature structure
+    def find_feature_by_id(features, target_id)
+      # Handle nested structure: features[type][features]
+      features.each do |type_key, type_data|
+        next unless type_data.is_a?(Hash) && type_data['features'].is_a?(Array)
+
+        type_data['features'].each do |feature|
+          return feature if feature['id'] == target_id
+        end
+      end
+      nil
+    end
+
+    # Apply easter egg overlay to a specific feature
+    def apply_feature_overlay(features, feature, egg)
+      overlay_data = egg['overlay'] || {}
+
+      # Add easter egg metadata without modifying core scientific data
+      feature['easter_egg_overlay'] = {
+        easter_egg_id: egg['easter_egg_id'],
+        category: egg['category'],
+        flavor_text: egg['flavor_text'],
+        applied_at: Time.current.iso8601
+      }
+
+      # Add overlay attributes if specified
+      if overlay_data['additional_attributes']
+        feature['additional_attributes'] ||= {}
+        feature['additional_attributes'].merge!(overlay_data['additional_attributes'])
+      end
+
+      # Add gameplay enhancements if specified
+      if overlay_data['gameplay_enhancements']
+        feature['gameplay_enhancements'] ||= {}
+        feature['gameplay_enhancements'].merge!(overlay_data['gameplay_enhancements'])
+      end
+
+      features
+    end
   end
 end

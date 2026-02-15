@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe Game do
   before(:all) do
     # Create required Currencies
-    @gcc = Currency.find_or_create_by!(symbol: 'GCC') do |c|
+    @gcc = Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
       c.name = 'Galactic Crypto Currency'
       c.is_system_currency = true
       c.precision = 8
     end
-    @usd = Currency.find_or_create_by!(symbol: 'USD') do |c|
+    @usd = Financial::Currency.find_or_create_by!(symbol: 'USD') do |c|
       c.name = 'United States Dollar'
       c.is_system_currency = true
       c.precision = 2
