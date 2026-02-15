@@ -6,86 +6,90 @@
 **Dependencies:** TerraSim integration stable, biosphere simulation service operational
 
 ## 🎯 Objective
-Refine TerraSim to support atmospheric engineering simulation for AI-managed planetary modification. Focus on engineering solutions for human habitability (artificial magnetospheres, gas processing, atmosphere tuning) rather than natural terraforming. Include basic Earth-based biome placement for understanding ecological potential, but emphasize that atmospheric engineering ≠ terraforming.
+Refine TerraSim to support multiple planetary modification strategies for AI manager decision-making. Enable evaluation of different approaches: brute force atmospheric engineering for immediate human habitation, hybrid engineering/ecological methods, sectional planetary modification, or full terraforming when technologically feasible. Include Earth-based biome placement for ecological potential assessment, but emphasize strategic AI planning across modification approaches.
 
 ## 📋 Requirements
-- Implement atmospheric engineering simulation (artificial magnetospheres, gas processing, atmosphere imports)
-- Create AI-managed planetary engineering processes with variable difficulty
-- Add Earth-based biome placement for ecological potential assessment
-- Create artificial biome system (domes/worldhouses) as engineering testbeds
-- Add biome thriving logic when engineering enables natural processes
-- Enable AI planning for atmospheric engineering feats
-- Integrate with digital twin service for planetary modification "what if" analysis
+- Implement multiple planetary modification strategies (engineering, hybrid, sectional, terraforming)
+- Create AI evaluation framework for choosing optimal modification paths
+- Add atmospheric engineering simulation (magnetospheres, gas processing, imports)
+- Include Earth-based biome placement for ecological strategy assessment
+- Create artificial biome system (domes/worldhouses) as testing/modification hubs
+- Add biome thriving logic when conditions enable natural processes
+- Enable AI strategic planning for planetary modification across different world types
+- Integrate with digital twin service for comparative "what if" analysis
 
 ## 🔍 Analysis Phase
 **Time: 30 minutes**
 
 ### Tasks:
-1. Review current atmospheric simulation and distinguish engineering vs. terraforming
-2. Research atmospheric engineering techniques (magnetospheres, gas processing, imports)
-3. Analyze AI-managed planetary modification processes and variable world difficulty
-4. Identify artificial biome requirements as engineering testbeds
-5. Define biome thriving conditions enabled by engineering solutions
+1. Review planetary modification strategies (engineering vs. ecological approaches)
+2. Research atmospheric engineering techniques and life adaptation challenges
+3. Analyze AI decision framework for choosing optimal modification paths
+4. Identify artificial biome requirements as strategic testing/modification hubs
+5. Define evaluation criteria for different world types and technology levels
 
 ### Success Criteria:
-- Engineering vs. terraforming distinction clarified
-- Atmospheric engineering requirements scoped
-- AI management approach defined
-- Variable world difficulty parameters mapped
+- Multiple modification strategies identified and scoped
+- AI evaluation framework requirements defined
+- Technology-dependent approach selection mapped
+- World-specific strategy optimization parameters established
 
 ## 🛠️ Implementation Phase
 **Time: 4-5 hours**
 
 ### Tasks:
-1. Implement atmospheric engineering simulation (magnetospheres, gas processing, imports)
-2. Add AI-managed planetary engineering processes with variable world difficulty
-3. Replace FreeCiv/Civ4 patterns with real Earth biome placement data
-4. Implement artificial biome system (domes/worldhouses) as engineering testbeds
-5. Add biome thriving logic when engineering enables natural processes
-6. Integrate with TerraSim Simulator for AI planetary engineering planning
+1. Implement multiple planetary modification strategies (engineering, hybrid, sectional, terraforming)
+2. Create AI evaluation framework for optimal path selection
+3. Add atmospheric engineering simulation (magnetospheres, gas processing, imports)
+4. Replace FreeCiv/Civ4 patterns with real Earth biome placement data
+5. Implement artificial biome system (domes/worldhouses) as strategic hubs
+6. Add biome thriving logic when conditions enable natural processes
+7. Integrate with TerraSim Simulator for AI strategic planning
 
-### Atmospheric Engineering Logic:
-- **Artificial Magnetospheres**: Radiation protection engineering for Mars-like worlds
-- **Gas Processing**: Venus atmosphere processing and import solutions
-- **Atmosphere Tuning**: Creating breathable mixtures through engineering
-- **Variable World Difficulty**: Different engineering challenges by planet type
-- **Engineering ≠ Terraforming**: Clear distinction between artificial and natural processes
+### Planetary Modification Strategies:
+- **Brute Force Engineering**: Immediate human habitation (breathable air ≠ Earth life survival)
+- **Hybrid Approaches**: Engineering + ecological adaptation for different world types
+- **Sectional Modification**: Only habitable zones needed for human survival
+- **Full Terraforming**: Natural ecological development when technologically feasible
+- **AI Path Selection**: Technology, world type, and goals determine optimal strategy
 
 ### Files to Create/Modify:
 - `galaxy_game/app/services/terra_sim/biosphere_simulation_service.rb` (extend)
 - `galaxy_game/app/models/biome.rb` (add Earth placement data)
 - `galaxy_game/app/services/terra_sim/atmospheric_engineering_service.rb` (new)
+- `galaxy_game/app/services/ai_manager/planetary_modification_planner.rb` (new)
 - `galaxy_game/app/models/artificial_biome.rb` (new)
 - `galaxy_game/spec/services/terra_sim/atmospheric_engineering_service_spec.rb` (new)
 
 ### Success Criteria:
-- Atmospheric engineering simulation functional (magnetospheres, gas processing)
-- AI-managed planetary engineering processes implemented
-- Variable world difficulty affecting engineering complexity
-- Artificial biome testbeds working as controlled environments
+- Multiple modification strategies implemented and selectable
+- AI evaluation framework functional for path optimization
+- Atmospheric engineering simulation working
+- Strategy selection adapts to world type and technology availability
 
 ## 🧪 Validation Phase
 **Time: 1 hour**
 
 ### Tasks:
-1. Test atmospheric engineering techniques (magnetospheres, gas processing, imports)
-2. Validate AI-managed planetary engineering across different world types
-3. Verify biome placement against real Earth patterns
-4. Test artificial biome testbed functionality
+1. Test multiple modification strategies across different world types
+2. Validate AI path selection for various technology and goal combinations
+3. Verify atmospheric engineering techniques work for human habitation
+4. Test artificial biome functionality as strategic modification hubs
 
 ### Success Criteria:
-- Engineering techniques work for human habitability
-- AI management required for complex engineering processes
-- Variable difficulty affects engineering timelines realistically
-- Artificial testbeds provide controlled research environments
+- AI selects appropriate strategies based on world type and technology
+- Different approaches work for different planetary conditions
+- Engineering enables human habitation even if Earth life cannot survive
+- Strategy evaluation considers goals (habitation vs. full ecological development)
 
 ## 🎯 Success Metrics
+- ✅ Multiple planetary modification strategies (engineering, hybrid, sectional, terraforming)
+- ✅ AI evaluation framework for optimal path selection based on world/goals/tech
 - ✅ Atmospheric engineering simulation (magnetospheres, gas processing, imports)
-- ✅ AI-managed planetary engineering processes with variable world difficulty
-- ✅ Earth-based biome placement for ecological potential assessment
-- ✅ Artificial biome system (domes/worldhouses) as engineering testbeds
-- ✅ Biome thriving when engineering enables natural processes
-- ✅ Clear distinction: atmospheric engineering ≠ terraforming
+- ✅ Earth-based biome placement for ecological strategy assessment
+- ✅ Artificial biome system (domes/worldhouses) as strategic modification hubs
+- ✅ Biome thriving when conditions enable natural processes
+- ✅ No single solution - strategies adapt to different worlds and requirements
 
 ## 📈 Future Enhancements
 - Advanced atmospheric engineering techniques
