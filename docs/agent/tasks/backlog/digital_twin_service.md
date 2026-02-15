@@ -1,9 +1,9 @@
 # Digital Twin Service for AI Strategy Development and Training
 
-**Priority:** HIGH (AI strategy refinement and training tool)
-**Estimated Time:** 8-12 hours
+**Priority:** LOW (Future enhancement - terraforming simulation outside MVP scope)
+**Estimated Time:** 20-30 hours (Post-MVP development)
 **Risk Level:** HIGH (Complex AI integration and simulation)
-**Dependencies:** TerraSim integration stable, AI Manager autonomous expansion operational
+**Dependencies:** TerraSim integration stable, AI Manager autonomous expansion operational, MVP features complete
 
 ## 🎯 Objective
 Implement Digital Twin Service as a collaborative AI-human strategy development platform. Enable AI Manager to develop world-specific settlement/terraforming plans, admins to test/review/validate these plans through accelerated simulations, and create feedback loops for AI learning. Go beyond simple SimEarth simulations to build a comprehensive strategy optimization system where AI proposes plans, humans validate them, and AI improves through iterative testing.
