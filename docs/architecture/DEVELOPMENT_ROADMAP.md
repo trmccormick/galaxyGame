@@ -124,12 +124,19 @@
 
 ---
 
-### Phase 4: "The Snap" Crisis Event (Testing Wormhole Network Mechanics)
+### Phase 4: "The Snap" Crisis Event (Maturity-Triggered)
 
-**Goal**: Test controlled wormhole destabilization, orphaning, and reconnection protocols
+**Trigger Condition**: Eden system reaches operational maturity through accumulated infrastructure and resource flows, causing natural wormhole mass limits to be exceeded.
+
+**Maturity Metrics** (Before Snap Can Occur):
+- ✅ **Settlement Network**: Multiple interconnected settlements operational
+- ✅ **Orbital Infrastructure**: Comprehensive depot and station network
+- ✅ **Economic Activity**: Active trade routes and resource extraction
+- ✅ **Mass Accumulation**: Infrastructure mass approaches wormhole stability limits
+- ✅ **Resource Flows**: Regular heavy cargo transport established
 
 **Crisis Scenario**:
-1. **Mass Limit Exceeded**: Cycler + cargo exceeds 500k ton mass limit on SOL-AOL-732356 link
+1. **Mass Limit Exceeded**: Accumulated infrastructure and cargo flows exceed 300k ton mass limit on SOL-AOL-732356 link (reduced from 500k tons due to Eden's weaker counterbalance effect)
 2. **Wormhole Snaps**: Exit point shifts from AOL-732356 to new random system (System B)
 3. **AOL-732356 Orphaned**: No longer connected to Sol via natural wormhole
 4. **AWS Activation**: Pre-built Artificial Wormhole Station activates to reconnect AOL-732356 → Sol

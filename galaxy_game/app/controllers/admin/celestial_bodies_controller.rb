@@ -6,7 +6,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis]
+    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis, :generate_terrain]
 
     def select_maps_for_analysis
       @available_maps = find_available_maps || []
@@ -87,7 +87,8 @@ module Admin
         hydrosphere: hydrosphere_data,
         geosphere: geosphere_data,
         biosphere: biosphere_data,
-        planet_info: planet_info_data
+        planet_info: planet_info_data,
+        terrain_data: @celestial_body.geosphere&.terrain_map
       }
     end
 
@@ -1352,6 +1353,31 @@ module Admin
       validation_result = validator.validate_biome_grid(biome_grid)
 
       render json: validation_result
+    end
+
+    # POST /admin/celestial_bodies/:id/generate_terrain
+    # Generate automatic terrain for a celestial body
+    def generate_terrain
+      begin
+        terrain_generator = StarSim::AutomaticTerrainGenerator.new
+        # Force regeneration by temporarily clearing terrain_map
+        if @celestial_body.geosphere&.terrain_map.present?
+          @celestial_body.geosphere.update!(terrain_map: nil)
+        end
+        terrain_data = terrain_generator.generate_terrain_for_body(@celestial_body)
+        
+        if terrain_data
+          redirect_to monitor_admin_celestial_body_path(@celestial_body), 
+                      notice: "Successfully generated terrain for #{@celestial_body.name}"
+        else
+          redirect_to monitor_admin_celestial_body_path(@celestial_body), 
+                      alert: "Failed to generate terrain for #{@celestial_body.name}"
+        end
+      rescue => e
+        Rails.logger.error "Terrain generation error: #{e.message}\n#{e.backtrace.join("\n")}"
+        redirect_to monitor_admin_celestial_body_path(@celestial_body), 
+                    alert: "Terrain generation failed: #{e.message}"
+      end
     end
 
     private

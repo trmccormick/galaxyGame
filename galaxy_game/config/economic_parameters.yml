@@ -198,6 +198,54 @@ economy:
     volatility_factor: 0.1       # Random price variation
     stabilization_rate: 0.05     # How quickly prices return to equilibrium
 
+  # Infrastructure joint ventures and ownership models
+  # NOTE: These are examples of the universal shared infrastructure model that applies
+  # to all DC orbital stations and surface bases across the solar system. Multiple
+  # logistics companies can form joint ventures with DCs at any foothold location.
+  infrastructure_ownership:
+    l1_station:
+      ownership: "joint_venture"
+      partners: ["logistics_corp", "ldc"]  # Flexible logistics partner(s) - can include multiple competing companies
+      revenue_sharing: 0.6  # 60% Logistics, 40% LDC
+      partnership_model:
+        logistics_corp: "logistics_expertise_shipyard_operations"
+        ldc: "lunar_resources_construction_materials"
+      capabilities:
+        - "craft_construction"
+        - "shipyard_operations"
+        - "resource_depot"
+        - "shared_infrastructure"
+        - "commercial_spacecraft_sales"
+        - "player_trading_hub"
+        - "fueling_repair_services"
+    leo_depot:
+      ownership: "joint_venture"
+      partners: ["logistics_corp", "ldc"]  # Flexible logistics partner(s) - competitive collaboration
+      fuel_transfer_efficiency: 0.85  # 85% efficient Luna-LEO transfer
+      economic_benefits:
+        - "reduced_earth_launch_costs"
+        - "interplanetary_fuel_availability"
+        - "mars_expansion_enabling"
+    ceres_extraction_facility:
+      ownership: "joint_venture"
+      partners: ["logistics_corp", "mdc"]  # Flexible logistics partner(s) - multiple companies can collaborate
+      revenue_sharing: 0.6  # 60% Logistics, 40% MDC
+      partnership_model:
+        logistics_corp: "logistics_transport_asteroid_belt_operations"
+        mdc: "asteroid_resources_mining_expertise"
+      capabilities:
+        - "asteroid_mining"
+        - "resource_processing"
+        - "belt_logistics_hub"
+        - "shared_infrastructure"
+        - "commercial_mining_craft_sales"
+        - "player_resource_trading"
+        - "deep_space_fueling_repair"
+      economic_benefits:
+        - "rare_metal_exports"
+        - "asteroid_belt_resource_access"
+        - "deep_space_operations_support"
+
 # Cryptocurrency mining economics
 cryptocurrency:
   gcc_mining:

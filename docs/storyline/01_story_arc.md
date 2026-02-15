@@ -12,11 +12,19 @@ AI Manager learns deployment patterns from initial systems (e.g., Luna, Venus, M
 
 **The Learning Loop**: Each successful deployment refines the AI's understanding, creating a growing library of system-agnostic techniques that enable continuous, self-sustaining expansion across the galaxy.
 
-## Act 2: Wormhole Discovery (Application Phase)
+## Act 2: Wormhole Discovery & Eden System Development (Application Phase)
 
-AI Manager applies learned patterns to any system discovered through wormhole connections, using ScoutLogic to analyze system data and select the best pattern.
+AI Manager applies learned patterns to wormhole-discovered systems, using ScoutLogic to analyze system data and select the best pattern.
 
-**Wormhole Expansion**: When new systems are discovered through wormhole connections, the AI Manager applies these learned techniques autonomously, adapting the proven patterns to each unique system's characteristics (moons, atmosphere, asteroids, resources).
+**Eden System Maturation**: The AI Manager focuses on developing the initial colonized system ("Eden system") to operational maturity before expansion risks. This includes:
+- Establishing interconnected settlements
+- Building comprehensive orbital infrastructure
+- Creating stable economic and resource flows
+- Accumulating sufficient mass to eventually trigger wormhole instability
+
+**Maturity Conditions**: See `system_maturity_conditions.md` for detailed requirements that must be met before the Snap event can occur.
+
+**Wormhole Expansion**: When the Eden system reaches maturity (through accumulated infrastructure and resource flows), natural wormhole connections become unstable, leading to the "Snap" event that opens new expansion opportunities.
 
 ## Act 3: The Snap, Consortium Formation & Dual-Link Solution (Crisis Phase)
 

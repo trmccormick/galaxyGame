@@ -66,7 +66,10 @@ module TerraSim
       co2_effect   = @gases['CO2'][:mass]**0.3
       ch4_effect   = @gases['CH4'][:mass]**0.3
 
-      (@base_temp * (1 + co2_effect + water_effect + ch4_effect)**0.25)
+      greenhouse_temp = (@base_temp * (1 + co2_effect + water_effect + ch4_effect)**0.25)
+      
+      # Cap greenhouse effect at 2x base temperature
+      [greenhouse_temp, 2.0 * @base_temp].min
     end
 
     def water_vapor_pressure

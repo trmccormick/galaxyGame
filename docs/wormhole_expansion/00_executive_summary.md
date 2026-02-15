@@ -28,6 +28,7 @@ The Wormhole Expansion system is built on a **data-driven, system-agnostic archi
 
 ### The Crisis: The "Snap" & Exit-Shift
 - **Trigger**: Natural wormhole snaps when mass-limit exceeded, shifting exit to new location, orphaning colonies.
+- **Maturity Requirement**: Snap can only occur after the Eden system reaches operational maturity through accumulated infrastructure and resource flows.
 - **Reconnection Drive**: Crisis forces Consortium formation for stable artificial links.
 - **Analogy**: Like a rubber band snapping and flicking away.
 - **Controlled Snap Expansion**: AI uses high-mass capacity for seeding, then triggers snaps for new systems, deploying stabilization satellites and Artificial Wormhole Stations.

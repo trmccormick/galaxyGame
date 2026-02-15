@@ -507,7 +507,8 @@ end
 ```
 
 **NPC Fulfillment**:
-- Use Virtual Ledger (no GCC cost)
+- DCs activate automated harvesting workforce or arrange imports
+- Use Virtual Ledger for internal accounting (no GCC cost to preserve player transaction capacity)
 - Higher operational cost than player contract (incentivizes player participation)
 - Slower execution (player priority allows faster completion)
 - Game progresses autonomously (never stalls waiting for players)

@@ -86,8 +86,21 @@ fi
 echo ""
 echo "Step 5: Analyzing test results..."
 
+# Extract total examples and failures from log
+TOTAL_EXAMPLES=$(grep "examples," "$LOG_FILE" | tail -1 | sed 's/.* \([0-9]*\) examples.*/\1/')
+TOTAL_FAILURES=$(grep "failures" "$LOG_FILE" | tail -1 | sed 's/.* \([0-9]*\) failures.*/\1/')
+
+# Default to unknown if not found
+TOTAL_EXAMPLES=${TOTAL_EXAMPLES:-unknown}
+TOTAL_FAILURES=${TOTAL_FAILURES:-unknown}
+
+echo "📊 Test Results Summary:"
+echo "   Total Examples: $TOTAL_EXAMPLES"
+echo "   Total Failures: $TOTAL_FAILURES"
+echo ""
+
 # If no failures, check if tests actually ran
-if [[ "$TOTAL_FAILURES" == "0" ]]; then
+if [[ "$TOTAL_FAILURES" == "0" ]] || [[ "$TOTAL_FAILURES" == "unknown" ]]; then
     if [[ "$TOTAL_EXAMPLES" == "unknown" ]] || [[ "$TOTAL_EXAMPLES" == "0" ]]; then
         echo "❌ No tests appear to have run! Log may be incomplete."
         echo "   Check log file: $LOG_FILE"
@@ -104,7 +117,7 @@ if [[ "$TOTAL_FAILURES" == "0" ]]; then
     fi
 fi
 
-TOP_SPEC=$(grep "rspec ./spec" "$LOG_FILE" | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -1)
+TOP_SPEC=$(grep "rspec " "$LOG_FILE" | grep "spec" | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | head -1)
 TOP_FILE=$(echo "$TOP_SPEC" | awk '{print $2}')
 TOP_COUNT=$(echo "$TOP_SPEC" | awk '{print $1}')
 
@@ -127,6 +140,15 @@ else
 fi
 echo ""
 
+# NEW: Extract all failing specs for batch processing
+echo "📋 ALL FAILING SPECS (sorted by failure count):"
+echo "================================================"
+grep "rspec " "$LOG_FILE" | grep "spec" | awk '{print $2}' | cut -d: -f1 | sort | uniq -c | sort -nr | while read -r count spec; do
+    echo "• $spec ($count failures)"
+done
+echo ""
+echo "================================================"
+
 echo "=================================================="
 echo "✅ PRE-FLIGHT COMPLETE - READY FOR GRINDER"
 echo "=================================================="
@@ -143,7 +165,12 @@ echo "2. Identify regression vs schema evolution"
 echo "3. Fix code + update /docs"
 echo "4. Run: docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [spec_file]'"
 echo "5. Atomic commit: git add [fixed_files] docs/[updated_doc].md"
-echo "6. Repeat for next highest failure"
+echo "6. Repeat for next highest failure in the list above"
+echo ""
+echo "Batch Processing Mode:"
+echo "- Fix multiple specs in sequence without re-running full suite"
+echo "- After fixing 3-5 specs, re-run grinder to update failure counts"
+echo "- This avoids restarting the entire test suite each time"
 echo ""
 echo "Grinder ready for overnight autonomous execution"
 

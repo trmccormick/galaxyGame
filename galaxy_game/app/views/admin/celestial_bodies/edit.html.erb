@@ -32,6 +32,9 @@
                 <button class="tool-button" onclick="window.location.href='/admin'">
                     🏠 Admin Dashboard
                 </button>
+                <button class="tool-button" onclick="window.location.href='<%= admin_map_studio_path %>'">
+                    🗺️ Map Studio
+                </button>
             </div>
 
             <div class="tool-section">
@@ -215,7 +218,7 @@
 
                     <div class="ai-actions">
                         <%= link_to '🚀 Generate Earth Map with AI',
-                            select_maps_for_analysis_admin_celestial_bodies_path,
+                            select_maps_for_analysis_admin_celestial_body_path(@celestial_body),
                             class: 'action-btn ai-primary',
                             title: 'Analyze multiple maps with AI to generate comprehensive Earth terrain' %>
                         <p class="ai-note">Select from available FreeCiv and Civ4 maps for AI analysis and pattern extraction</p>

@@ -36,6 +36,8 @@ ldc = Organizations::BaseOrganization.find_or_create_by!(
 end
 
 # Create logistics and service corporations
+# Note: These companies compete for contracts but can collaborate on joint ventures
+# for major infrastructure projects, similar to real-world business alliances
 puts "Creating logistics corporations..."
 astrolift = Organizations::BaseOrganization.find_or_create_by!(
   name: 'AstroLift',

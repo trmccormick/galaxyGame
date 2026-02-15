@@ -47,6 +47,8 @@ RSpec.configure do |config|
 end
 
 # Database Cleaner Configuration
+DatabaseCleaner.allow_remote_database_url = true if Rails.env.test?
+
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
 

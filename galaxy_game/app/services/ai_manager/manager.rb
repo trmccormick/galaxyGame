@@ -2,22 +2,37 @@
 require_relative 'shared_context'
 require_relative 'service_coordinator'
 require_relative 'strategy_selector'
+require_relative 'system_orchestrator'
 require 'structures'
 
 module AIManager
   class Manager
-    def initialize(target_entity:) # Changed to target_entity
+    def initialize(target_entity:, system_orchestrator: nil) # Changed to target_entity
       @target_entity = target_entity # This could be a Lavatube or an existing Settlement
+      @system_orchestrator = system_orchestrator # Optional system-wide orchestrator
+
       # Ensure you have access to GameDataGenerator instance,
       # maybe passed in or initialized here.
       @game_data_generator = Generators::GameDataGenerator.new # Or inject it via initializer
 
       # Initialize service coordination system
       initialize_service_coordination
+
+      # Register with system orchestrator if available
+      if @system_orchestrator && @target_entity.is_a?(Settlement::BaseSettlement)
+        @system_orchestrator.register_settlement(@target_entity)
+        Rails.logger.info "[AI] Registered settlement #{@target_entity.name} with system orchestrator"
+      end
     end
 
     def advance_time
       Rails.logger.info "[AI] Tick for #{@target_entity.name}"
+
+      # Perform system-wide orchestration if orchestrator is available
+      if @system_orchestrator
+        Rails.logger.info "[AI] Performing system-wide orchestration"
+        @system_orchestrator.orchestrate_system
+      end
 
       # Update economic metrics in shared context
       @service_coordinator.update_economic_metrics(@target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
@@ -67,6 +82,15 @@ module AIManager
 
     def get_scouting_results(system_id = nil)
       @service_coordinator.get_scouting_results(system_id)
+    end
+
+    # System orchestrator interface
+    def system_orchestrator
+      @system_orchestrator
+    end
+
+    def system_orchestrator?
+      !@system_orchestrator.nil?
     end
 
     # Strategy selector interface

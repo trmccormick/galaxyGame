@@ -121,15 +121,15 @@ RSpec.describe Units::BaseUnit, type: :model do
       end
 
       it 'stores items in both inventory and operational data' do
-        expect(storage_unit.store_item('steel_bar', 10)).to be true
+        expect(storage_unit.store_item('steel', 10)).to be true
         storage_unit.reload
-        expect(storage_unit.inventory.items.first).to have_attributes(name: 'steel_bar', amount: 10)
-        expect(storage_unit.operational_data['resources']['stored']).to include('steel_bar' => 10)
+        expect(storage_unit.inventory.items.first).to have_attributes(name: 'steel', amount: 10)
+        expect(storage_unit.operational_data['resources']['stored']).to include('steel' => 10)
         expect(storage_unit.operational_data['storage']['current_level']).to eq(10)
       end
 
       it 'respects storage capacity limits' do
-        expect(storage_unit.store_item('steel_bar', 1500)).to be false
+        expect(storage_unit.store_item('steel', 1500)).to be false
         storage_unit.reload
         expect(storage_unit.inventory.items).to be_empty
         expect(storage_unit.operational_data['resources']['stored']).to be_empty
@@ -137,11 +137,11 @@ RSpec.describe Units::BaseUnit, type: :model do
       end
 
       it 'updates existing items' do
-        storage_unit.store_item('steel_bar', 10)
-        expect(storage_unit.store_item('steel_bar', 15)).to be true
+        storage_unit.store_item('steel', 10)
+        expect(storage_unit.store_item('steel', 15)).to be true
         storage_unit.reload
         expect(storage_unit.inventory.items.first).to have_attributes(amount: 25)
-        expect(storage_unit.operational_data['resources']['stored']['steel_bar']).to eq(25)
+        expect(storage_unit.operational_data['resources']['stored']['steel']).to eq(25)
         expect(storage_unit.operational_data['storage']['current_level']).to eq(25)
       end
     end

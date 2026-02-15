@@ -218,12 +218,14 @@ This example demonstrates basic trade mechanics: gas pricing, transport costs, c
 ### Portal Characteristics
 - **Paired Units**: Portals work in fixed pairs, not dynamic networks
 - **Size Constraints**: Limited to personnel and small cargo, not bulk materials
-- **Surface-Based**: Deployed on planetary surfaces with environmental protections
+- **Universal Deployment**: Can be installed anywhere with sufficient EM power (surface, orbital, or ship-based)
 - **Energy Efficient**: Uses exotic matter stabilization rather than massive gravity manipulation
-- **Solar System Limited**: Portals only function within the current solar system; cannot connect to other star systems (e.g., no Sol to Alpha Centauri portals)
+- **Hub Network**: Functions like airports with connections to different hubs for transfers
+- **Inter-System Access**: Can connect to AWS stations for travel to other star systems
+- **Emergency Transport**: Enables rapid evacuation and crew rotation from ships to home bases
 
 ### Potential Terraforming Applications
-While portals cannot handle large-scale resource transport or interstellar travel, they could accelerate terraforming within the Solar System through:
+While portals cannot handle large-scale resource transport in single transfers, they could enable significant material movement through engineering solutions and hub network transfers:
 
 ### Potential Terraforming Applications
 While portals cannot handle large-scale resource transport in single transfers, they could enable significant material movement through engineering solutions:
@@ -256,6 +258,13 @@ While portals cannot handle large-scale resource transport in single transfers, 
 - **Quality Control**: Instant inspection and oversight of terraforming operations
 - **Training Support**: Experienced personnel providing guidance from Earth bases
 
+#### Ship-Based Applications
+- **Emergency Transport**: Rapid evacuation from ships to home bases during crises
+- **Crew Rotation**: Personnel transfers between vessels and shore leave facilities
+- **Supply Delivery**: Critical supplies and medical equipment to remote ships
+- **Cycler Integration**: Long-haul cyclers equipped with portal pairs for crew welfare and emergencies
+- **Fleet Coordination**: Command staff movement between ships and command centers
+
 ### Portal Hub Integration
 - **Lunar Hub**: Central coordination point for Solar System operations
 - **Mars Surface Hub**: Direct connection to Earth research facilities
@@ -263,6 +272,7 @@ While portals cannot handle large-scale resource transport in single transfers, 
 
 ### Limitations for Terraforming
 - **Single Transfer Limits**: Individual portal activations restricted to personnel and small cargo
+- **Bulk Material Transport**: Large assets, terraforming resources, and industrial equipment still require cycler craft
 - **Infrastructure Requirements**: Requires permanent installations and supporting facilities
 - **Energy Requirements**: Significant power draw for activation and maintenance
 - **Security Concerns**: Potential for unauthorized access or sabotage
@@ -353,6 +363,119 @@ Portal technology cannot bridge to other star systems, maintaining the strategic
 - **Engineering Innovation**: Portal loops as advanced alternative to traditional bulk transport
 
 Portal technology provides sophisticated transportation capabilities but operates within different constraints than wormhole-based systems, focusing on precision and quality over volume and scale.
+
+## Advanced Portal Technology: Dynamic Networks
+
+**Future Research Breakthrough**: Advanced portal technology could remove the pairing requirement, enabling dynamic point-to-point connections rather than fixed pairs. This represents a fundamental shift in transportation mechanics with profound game implications.
+
+### Dynamic Portal Characteristics
+- **Point-to-Point Freedom**: Connect to any portal in the network without pre-established pairs
+- **Network Mesh**: Full mesh connectivity between all portal installations
+- **Instant Routing**: Dynamic path selection for optimal connections
+- **EM Budget Constraints**: Massive energy requirements limit network scale and usage
+- **Scalable Infrastructure**: Network grows organically but EM costs create strategic limits
+
+### Game Impact Analysis
+
+#### EM Budget as Primary Constraint
+**Energy Scarcity Drives Strategy**: EM requirements become the dominant economic and strategic factor
+- **Portal Deployment Costs**: High EM investment required for each portal installation
+- **Operational Expenses**: Continuous EM consumption for network maintenance and usage
+- **Capacity Limits**: Total network throughput constrained by available EM resources
+- **Strategic Allocation**: Corporations must choose between portal expansion and other EM-dependent technologies
+
+**Opportunity Cost Economics**: Limited EM creates critical trade-off decisions
+- **ROI Justification**: Portal deployment requires proving EM investment value over alternative uses
+- **Strategic Prioritization**: High-value targets get EM allocation over marginal locations
+- **AWS Competition**: EM allocated to wormhole stations vs portal network expansion
+- **Active Wormhole Management**: AI can maintain temporary access or force shifts for scouting without full stabilization commitment
+- **Natural Wormhole Advantage**: Systems with active natural wormholes provide local EM harvesting for easier stabilization
+- **Inter-System Wormhole Value**: Natural wormholes in other systems become high-value EM sources requiring special strategic consideration
+- **Local Bubble Cost Penalty**: Artificial connections within local bubble are EM-expensive without natural EM sources
+- **Wormhole Harvesting Alternative**: EM invested in temporary natural wormhole harvesting vs permanent stabilization
+- **Resource Optimization**: Corporations must maximize EM efficiency across all systems
+
+#### Economic Transformation
+**EM-Driven Economics**: Portal accessibility determined by energy economics rather than distance
+- **EM-Rich Systems**: Locations with abundant EM generation become portal network hubs
+- **Energy Trade**: EM becomes primary commodity for portal network expansion
+- **Cost-Benefit Analysis**: Portal deployment requires ROI analysis on EM investment vs transportation savings
+- **Network Monopoly**: Corporations controlling EM resources gain portal network dominance
+
+**Distance Becomes Irrelevant**: Solar System locations lose their delta-V cost advantages
+- **Inner System**: NEAs, Mars Belt, Venus lose competitive advantages
+- **Outer System**: Pluto, Jupiter Trojans become equally accessible to inner planets
+- **ROI Rebalancing**: All locations achieve similar accessibility, shifting value to resource quality and strategic positioning
+
+#### Strategic Reassessment
+**Location Value Shift**: Strategic importance moves from proximity to:
+- **EM Availability**: Locations with EM generation capacity become strategically critical
+- **Value Justification**: Only high-ROI locations receive EM investment for portal connectivity
+- **Selective Deployment**: EM scarcity prevents universal portal access - strategic choices required
+- **Resource Quality**: Unique materials become primary differentiators where EM investment is justified
+- **Energy Security**: Portal network becomes critical infrastructure requiring protection
+- **EM Competition**: Control of energy resources determines portal network influence
+
+**Strategic Decision Framework**: EM allocation creates opportunity cost economics
+- **High-Value Targets**: Inner system hubs and major trade routes get priority EM investment
+- **Active Wormhole Control**: AI can maintain temporary access, force shifts for scouting, or allow natural decay
+- **Natural Wormhole Priority**: Systems with active EM-expelling wormholes get preferential stabilization investment
+- **Inter-System Wormhole Assets**: Natural wormholes in other systems become strategic EM sources requiring acquisition
+- **Local Bubble Penalty**: Artificial connections require higher EM justification without natural EM sources
+- **Marginal Locations**: Distant, low-ROI sites may remain without portal connectivity
+- **AWS vs Portal Trade-offs**: Corporations choose between wormhole station power and portal networks
+- **Wormhole Harvesting Strategy**: Temporary resource extraction vs permanent stabilization investment
+- **Network Optimization**: EM efficiency becomes key to maintaining competitive connectivity
+
+#### Operational Changes
+**Transportation Revolution**:
+- **Fleet Reduction**: Massive decrease in cycler craft and transport vessel requirements
+- **Real-Time Response**: Instant crisis response across the Solar System
+- **Supply Chain**: Just-in-time delivery eliminates inventory needs
+- **Crew Welfare**: Seamless rotation between any locations
+
+#### Gameplay Balance Concerns
+**EM Constraints Maintain Challenge**:
+- **Energy Scarcity**: EM budget limits prevent universal portal deployment
+- **Strategic Allocation**: Corporations must prioritize portal investments vs other EM needs
+- **Network Competition**: Control of EM resources creates new competitive dynamics
+- **Infrastructure Costs**: High EM requirements maintain economic barriers to entry
+
+**Remaining Issues**:
+- **Exploration Devaluation**: Easy access could reduce expansion challenge if EM constraints are insufficient
+- **Economic Stagnation**: Loss of transportation bottlenecks might remove strategic constraints
+- **Resource Competition**: All locations become equally viable, potentially reducing specialization incentives
+
+#### Mitigation Strategies
+**EM Budget as Primary Balancing Mechanism**:
+- **Energy Scarcity**: EM constraints prevent unlimited portal deployment
+- **Strategic Allocation**: Corporations must balance portal expansion against other EM needs
+- **Infrastructure Costs**: Massive EM investment required for portal networks
+- **Network Capacity Limits**: Total throughput constrained by available EM resources
+- **Competitive Dynamics**: EM resource control creates new strategic gameplay
+
+**Additional Balancing Factors**:
+- **Quality Over Quantity**: Specialized cargo still requires careful handling
+- **Research Dependencies**: Advanced portal tech requires significant R&D investment
+- **Regulatory Frameworks**: Portal usage could require licensing and access controls
+- **Security Requirements**: Portal networks become critical infrastructure to protect
+
+#### Economic Rebalancing
+**EM-Driven Value Propositions**:
+- **Energy Hubs**: Locations with EM generation capacity become strategically critical
+- **Network Monopoly**: Corporations controlling EM resources dominate portal networks
+- **EM Trade Economy**: Energy becomes primary commodity for portal expansion
+- **Cost-Benefit Analysis**: Portal deployment requires ROI analysis on EM investment
+- **Security Premium**: Protected portal routes command premium pricing
+
+#### Implementation Timeline
+**Phased Introduction**:
+- **Phase 1**: Dynamic intra-system connections (Solar System only)
+- **Phase 2**: Inter-system portal bridges via AWS stations
+- **Phase 3**: Network optimization and security enhancements
+- **Phase 4**: Portal ecosystem with supporting infrastructure
+
+This advancement would fundamentally transform Galaxy Game from a "space exploration and colonization" game to a "network management and resource optimization" game, requiring careful balance to maintain engaging gameplay.
 
 ## Core Economic Purpose
 

@@ -285,17 +285,16 @@ class Item < ApplicationRecord
   def validate_item_exists
     # Skip for test environment
     return if Rails.env.test?
-    
+
     # Skip validation if properties or material properties are already loaded
     return if properties.present? || material_properties.present?
-    
+
     # Skip validation for special case names
     return if special_case_name?
-    
+
     # Check if valid using any lookup service
     return if valid_in_any_lookup_service?
-    
-    # If we get here, the item name couldn't be found in any service
+
     errors.add(:name, "must be a valid item, material, unit, craft, rig, or blueprint")
   end
 

@@ -75,10 +75,16 @@ module Admin
         end
 
         # Generate planetary map
+        # ADAPTIVE GRID: Calculate appropriate grid size for planet
+        adaptive_options = generation_options.merge(
+          target_resolution: 800,  # Minimum pixel resolution for visibility
+          adaptive_grid: true
+        )
+
         generated_map = generator.generate_planetary_map(
           planet: planet,
           sources: sources,
-          options: generation_options
+          options: adaptive_options
         )
 
         # Save generated map

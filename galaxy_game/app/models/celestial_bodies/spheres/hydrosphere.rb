@@ -283,6 +283,12 @@ module CelestialBodies
         rivers_coverage = rivers.is_a?(Hash) ? rivers['coverage'].to_f : rivers.to_f
         
         total_coverage = oceans_coverage + lakes_coverage + rivers_coverage
+        
+        # If no water_bodies data, use state_distribution liquid percentage
+        if total_coverage.zero? && state_distribution.present?
+          total_coverage = state_distribution['liquid'].to_f
+        end
+        
         total_coverage
       end      
 

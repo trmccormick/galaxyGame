@@ -402,7 +402,7 @@
                                     <div class="body-details">
                                         <div class="body-detail">
                                             <span class="body-detail-label">Mass:</span>
-                                            <span class="body-detail-value"><%= body.mass ? "#{body.mass} kg" : "Unknown" %></span>
+                                            <span class="body-detail-value"><%= body.mass ? "#{number_to_human(body.mass, units: { unit: 'kg', thousand: 'k', million: 'M', billion: 'B', trillion: 'T' })}" : "Unknown" %></span>
                                         </div>
                                         <div class="body-detail">
                                             <span class="body-detail-label">Radius:</span>
@@ -410,7 +410,7 @@
                                         </div>
                                         <div class="body-detail">
                                             <span class="body-detail-label">Temperature:</span>
-                                            <span class="body-detail-value"><%= body.temperature ? "#{body.temperature}°C" : "Unknown" %></span>
+                                            <span class="body-detail-value"><%= body.temperature ? "#{body.temperature.round(1)}°C" : "Unknown" %></span>
                                         </div>
                                         <div class="body-detail">
                                             <span class="body-detail-label">Atmosphere:</span>

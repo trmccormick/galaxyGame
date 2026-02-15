@@ -613,6 +613,9 @@ module CelestialBodies
     def generate_material_description
       "A celestial material resource. #{body_type.present? ? "Type: #{body_type}." : ''}"
     end
+
+    public
+
     def rogue?
       solar_system_id.nil? && planet_class?
     end

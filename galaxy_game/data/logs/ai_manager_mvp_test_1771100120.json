@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-02-14 20:15:19 UTC",
+  "phases": {
+    "phase_1": {
+      "success": false,
+      "error": "unknown attribute 'atmospheric_pressure' for CelestialBodies::TerrestrialPlanet."
+    },
+    "phase_2": {
+      "success": false,
+      "error": "undefined method 'id' for nil"
+    },
+    "phase_3": {
+      "success": false,
+      "error": "undefined method 'id' for nil"
+    },
+    "phase_4": {
+      "success": true,
+      "active_transfers": 0,
+      "metrics": {
+        "total_active_transfers": 0,
+        "completion_rate": 0,
+        "delay_rate": 0,
+        "average_transport_cost": 0,
+        "capacity_utilization": 0.0
+      }
+    },
+    "phase_5": {
+      "success": true,
+      "cycles_completed": 5,
+      "final_conflicts": 0
+    },
+    "phase_6": {
+      "success": true,
+      "analysis_complete": true
+    }
+  },
+  "overall_success": false,
+  "findings": {
+    "successes": [],
+    "issues": [
+      "Only  settlements registered (expected 2)"
+    ],
+    "tuning_needs": [],
+    "next_steps": [
+      "Review detailed results in JSON output",
+      "Address any issues found in testing",
+      "Consider tuning priority arbitration if conflicts detected",
+      "Ready for Phase 4B UI enhancements or further AI development"
+    ]
+  }
+}

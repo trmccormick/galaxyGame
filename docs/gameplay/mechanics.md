@@ -81,8 +81,8 @@ Current Venus assessment shows habitation unlikely due to 400°C+ temperatures, 
 - **Atmospheric modifications** through industrial processors
 - **Basic lifeform introduction** with hardy microorganisms
 - **Resource importation** from other solar system bodies
-- **Future portal technology** for specialized transport (personnel and small cargo) within the Solar System only
-- **Engineering potential** for large-scale material transfer through continuous portal loop systems
+- **Future portal technology** for specialized transport (personnel and small cargo) within and between star systems via hub networks, including ship-based emergency transport
+- **Engineering potential** for specialized material transfer through continuous portal loop systems (complements cycler craft for bulk transport)
 - **Cryogenic storage networks** (e.g., Venus-Titan gas banking for Mars terraforming)
 - **Distributed processing networks** (e.g., Venus CO2 → O2/CO separation with portal transport to Mars/orbital depots)
 - **Hydrogen fuel cycles** (e.g., outer solar system H2 import to Mars for water production via O2 combustion)

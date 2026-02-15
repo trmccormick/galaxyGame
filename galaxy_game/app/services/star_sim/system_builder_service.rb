@@ -244,7 +244,7 @@ module StarSim
       # CRITICAL FIX: Add :parent_body to special_keys_to_exclude
       special_keys_to_exclude = [
         :type, :parent_identifier, :parent_body, :properties, :aliases, # Handled explicitly
-        :atmosphere, :hydrosphere, :geosphere_attributes, :star_distances, :materials, # Handled as associations
+        :atmosphere, :hydrosphere, :hydrosphere_attributes, :geosphere_attributes, :star_distances, :materials, # Handled as associations
         :atmosphere_attributes, :hydrosphere_attributes, :biosphere_attributes, # Aliases for associations
         :geological_features, :magnetosphere, :magnetic_field_strength, :rotation_period, :orbital_elements, # Additional attributes
         :volcanic_activity, # Geosphere attribute
@@ -264,6 +264,12 @@ module StarSim
         rescue ArgumentError, TypeError
           attrs[:mass] = nil
         end
+      end
+
+      # Calculate size from radius if not provided (size is in Earth radii)
+      if attrs[:radius].present? && attrs[:size].blank?
+        earth_radius = 6371000.0 # meters
+        attrs[:size] = attrs[:radius].to_f / earth_radius
       end
 
       # Handle parent relationships for satellites/moons (CRITICAL FIX: Use belongs_to association)
@@ -311,7 +317,7 @@ module StarSim
         # Create associated sphere and distance data AFTER the body is saved
         create_star_distances(body, body_data[:star_distances])
         create_atmosphere(body, body_data[:atmosphere]) if body_data[:atmosphere].present?
-        create_hydrosphere(body, body_data[:hydrosphere]) if body_data[:hydrosphere].present?
+        create_hydrosphere(body, body_data[:hydrosphere_attributes] || body_data[:hydrosphere]) if body_data[:hydrosphere_attributes].present? || body_data[:hydrosphere].present?
         create_geosphere(body, body_data[:geosphere_attributes]) if body_data[:geosphere_attributes].present?
         create_materials(body, body_data[:materials]) if body_data[:materials].present?
         # Only create biosphere for Earth initially (where life is confirmed to exist)
@@ -553,9 +559,16 @@ module StarSim
       
       if geosphere_attrs[:stored_volatiles].present?
         volatiles_data = geosphere_attrs.delete(:stored_volatiles)
-        volatiles_data.each do |compound, locations|
-          stored_volatiles[compound] ||= {}
-          stored_volatiles[compound].merge!(locations)
+        volatiles_data.each do |compound, amount|
+          if amount.is_a?(Hash)
+            # Format: {compound: {location: amount}}
+            stored_volatiles[compound] ||= {}
+            stored_volatiles[compound].merge!(amount)
+          else
+            # Format: {compound: amount} - assume it's in crust or general storage
+            stored_volatiles[compound] ||= {}
+            stored_volatiles[compound]['crust'] = amount
+          end
         end
       end
       

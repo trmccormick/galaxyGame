@@ -1,6 +1,15 @@
 class Environment < ApplicationRecord
-    has_many :plants
-    has_many :animals
+  belongs_to :biome
+  belongs_to :celestial_body, foreign_key: :celestial_bodies_id, class_name: 'CelestialBodies::CelestialBody'
+
+  has_many :plants
+  has_many :animals
+
+  validates :biome, presence: true
+  validates :celestial_body, presence: true
+  validates :temperature, presence: true
+  validates :pressure, presence: true
+  validates :humidity, presence: true
   
     BIOMES = {
       'Desert' => { temperature: (15.0..45.0), moisture: (0.0..10.0), sunlight: (70.0..100.0), soil_quality: 'Poor' },

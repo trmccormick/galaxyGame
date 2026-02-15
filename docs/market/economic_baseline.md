@@ -26,7 +26,7 @@
 - **Link Type:** Natural_Scraped (Hot_Start environment)
 - **Anchor Strategy:** Asteroid XXXV ballast (Phobos Pattern)
 - **STE Ratio:** 15,000 (Stability-to-Efficiency)
-- **Mass Limit:** 500,000 tons
+- **Mass Limit:** 300,000 tons (Eden system - reduced due to weaker counterbalance vs Sol's 500,000 tons)
 - **Economic Contribution:** Enables helium-3 trade routes with 1.12 GCC exchange rate
 - **Market Integration:** Hot Start industrial profile with abundant helium-3 supply
 

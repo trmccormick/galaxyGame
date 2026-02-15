@@ -213,6 +213,65 @@ module AIManager
       }
     end
 
+    # === STRATEGIC DECISION LOGIC - TRADE-OFF ANALYSIS ===
+
+    # Analyze trade-offs between resource acquisition and scouting
+    def analyze_resource_vs_scouting_tradeoffs(state_analysis)
+      resource_score = calculate_resource_acquisition_score(state_analysis)
+      scouting_score = calculate_scouting_score(state_analysis)
+
+      opportunity_cost = calculate_opportunity_cost(resource_score, scouting_score)
+      risk_adjustment = assess_risk_tolerance(state_analysis)
+      long_term_value = calculate_long_term_planning_score(state_analysis)
+
+      {
+        resource_score: resource_score,
+        scouting_score: scouting_score,
+        opportunity_cost: opportunity_cost,
+        risk_adjustment: risk_adjustment,
+        long_term_value: long_term_value,
+        recommended_focus: determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value)
+      }
+    end
+
+    # Analyze trade-offs between resource acquisition and building
+    def analyze_resource_vs_building_tradeoffs(state_analysis)
+      resource_score = calculate_resource_acquisition_score(state_analysis)
+      building_score = calculate_building_score(state_analysis)
+
+      opportunity_cost = calculate_opportunity_cost(resource_score, building_score)
+      risk_adjustment = assess_risk_tolerance(state_analysis)
+      long_term_value = calculate_long_term_planning_score(state_analysis)
+
+      {
+        resource_score: resource_score,
+        building_score: building_score,
+        opportunity_cost: opportunity_cost,
+        risk_adjustment: risk_adjustment,
+        long_term_value: long_term_value,
+        recommended_focus: determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+      }
+    end
+
+    # Analyze trade-offs between scouting and building
+    def analyze_scouting_vs_building_tradeoffs(state_analysis)
+      scouting_score = calculate_scouting_score(state_analysis)
+      building_score = calculate_building_score(state_analysis)
+
+      opportunity_cost = calculate_opportunity_cost(scouting_score, building_score)
+      risk_adjustment = assess_risk_tolerance(state_analysis)
+      long_term_value = calculate_long_term_planning_score(state_analysis)
+
+      {
+        scouting_score: scouting_score,
+        building_score: building_score,
+        opportunity_cost: opportunity_cost,
+        risk_adjustment: risk_adjustment,
+        long_term_value: long_term_value,
+        recommended_focus: determine_optimal_focus(scouting_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+      }
+    end
+
     private
 
     # Calculate base score based on mission type
@@ -574,63 +633,6 @@ module AIManager
 
     # === STRATEGIC DECISION LOGIC - TRADE-OFF ANALYSIS ===
 
-    # Analyze trade-offs between resource acquisition and scouting
-    def analyze_resource_vs_scouting_tradeoffs(state_analysis)
-      resource_score = calculate_resource_acquisition_score(state_analysis)
-      scouting_score = calculate_scouting_score(state_analysis)
-
-      opportunity_cost = calculate_opportunity_cost(resource_score, scouting_score)
-      risk_adjustment = assess_risk_tolerance(state_analysis)
-      long_term_value = calculate_long_term_planning_score(state_analysis)
-
-      {
-        resource_score: resource_score,
-        scouting_score: scouting_score,
-        opportunity_cost: opportunity_cost,
-        risk_adjustment: risk_adjustment,
-        long_term_value: long_term_value,
-        recommended_focus: determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value)
-      }
-    end
-
-    # Analyze trade-offs between resource acquisition and building
-    def analyze_resource_vs_building_tradeoffs(state_analysis)
-      resource_score = calculate_resource_acquisition_score(state_analysis)
-      building_score = calculate_building_score(state_analysis)
-
-      opportunity_cost = calculate_opportunity_cost(resource_score, building_score)
-      risk_adjustment = assess_risk_tolerance(state_analysis)
-      long_term_value = calculate_long_term_planning_score(state_analysis)
-
-      {
-        resource_score: resource_score,
-        building_score: building_score,
-        opportunity_cost: opportunity_cost,
-        risk_adjustment: risk_adjustment,
-        long_term_value: long_term_value,
-        recommended_focus: determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
-      }
-    end
-
-    # Analyze trade-offs between scouting and building
-    def analyze_scouting_vs_building_tradeoffs(state_analysis)
-      scouting_score = calculate_scouting_score(state_analysis)
-      building_score = calculate_building_score(state_analysis)
-
-      opportunity_cost = calculate_opportunity_cost(scouting_score, building_score)
-      risk_adjustment = assess_risk_tolerance(state_analysis)
-      long_term_value = calculate_long_term_planning_score(state_analysis)
-
-      {
-        scouting_score: scouting_score,
-        building_score: building_score,
-        opportunity_cost: opportunity_cost,
-        risk_adjustment: risk_adjustment,
-        long_term_value: long_term_value,
-        recommended_focus: determine_optimal_focus(scouting_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
-      }
-    end
-
     # Calculate resource acquisition strategic score
     def calculate_resource_acquisition_score(state_analysis)
       base_score = 0
@@ -735,7 +737,8 @@ module AIManager
       base_score = 0
 
       # Future resource projections
-      future_resource_needs = state_analysis[:future_projections][:resource_needs] || []
+      future_projections = state_analysis[:future_projections] || {}
+      future_resource_needs = future_projections[:resource_needs] || []
       base_score += future_resource_needs.length * 10
 
       # Strategic opportunities timeline

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_23_174416) do
+ActiveRecord::Schema[7.0].define(version: 2026_02_12_011654) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -1220,6 +1220,18 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_23_174416) do
     t.index ["cycler_id"], name: "index_scheduled_departures_on_cycler_id"
   end
 
+  create_table "scheduled_imports", force: :cascade do |t|
+    t.string "material"
+    t.decimal "quantity"
+    t.string "source"
+    t.integer "destination_id", null: false
+    t.decimal "transport_cost"
+    t.datetime "delivery_eta"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "seal_printing_jobs", force: :cascade do |t|
     t.bigint "settlement_id", null: false
     t.bigint "printer_unit_id", null: false
@@ -1587,6 +1599,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_23_174416) do
   add_foreign_key "route_proposals", "organizations", column: "proposer_id"
   add_foreign_key "scheduled_arrivals", "cyclers"
   add_foreign_key "scheduled_departures", "cyclers"
+  add_foreign_key "scheduled_imports", "base_settlements", column: "destination_id"
   add_foreign_key "seal_printing_jobs", "base_settlements", column: "settlement_id"
   add_foreign_key "seal_printing_jobs", "base_units", column: "printer_unit_id"
   add_foreign_key "segment_components", "items"

@@ -26,6 +26,7 @@
 ### Contract Ceiling Limits
 - **Contract Assignment:** All harvesting, logistics, and construction contracts MUST be offered to players first with 24-48 hour timeout window before moving to NPC queue.
 - **NPC Fallback Mandate:** Game progression MUST NOT stall waiting for player acceptance. If player declines or timeout expires, task moves to NPC autonomous execution.
+- **Expired Order Handling:** When player contracts expire unfilled, DCs activate automated harvesting workforce or arrange imports to maintain supply lines.
 - **GCC Economy:** Players earn Galactic Crypto Currency (GCC) for completed missions. NPCs use Virtual Ledger for internal accounting (no GCC).
 - **Autonomous Progression:** AI Manager ensures all mission objectives complete whether players participate or not.
 - **Player Influence:** GCC spending allows players to outbid NPCs, access premium contracts, and influence development priorities.

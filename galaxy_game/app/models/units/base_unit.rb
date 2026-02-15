@@ -356,8 +356,6 @@ module Units
     end
 
     def store_item(item_id, amount)
-      Rails.logger.debug("store_item called with: item_id=#{item_id}, amount=#{amount}")
-    
       # Initialize storage structure if needed
       self.operational_data ||= {}
       self.operational_data['storage'] ||= {
@@ -366,8 +364,6 @@ module Units
         'current_level' => 0
       }
       self.operational_data['resources'] ||= { 'stored' => {} }
-    
-      Rails.logger.debug("Operational data before save: #{operational_data.inspect}")
     
       # Check capacity
       current_level = operational_data['storage']['current_level'] || 0
@@ -383,29 +379,20 @@ module Units
       item.amount = existing_amount + amount
       item.owner = owner
     
-      Rails.logger.debug("Inventory item before save: #{item.inspect}")
-    
       if item.save
-        Rails.logger.debug("Inventory item saved successfully.")
-    
-        # Update storage data
-        self.operational_data = operational_data.deep_dup # Create a new hash
-        self.operational_data['resources']['stored'][item_id] = (self.operational_data['resources']['stored'][item_id] || 0) + amount
-        self.operational_data['storage']['current_level'] = (self.operational_data['storage']['current_level'] || 0) + amount
-        self.operational_data_will_change! # Mark operational_data as changed
-    
-        Rails.logger.debug("Operational data before final save: #{operational_data.inspect}")
+        # Update storage data by reassigning the hash to ensure Rails detects changes
+        updated_operational_data = self.operational_data.deep_dup
+        updated_operational_data['resources']['stored'][item_id] = (updated_operational_data['resources']['stored'][item_id] || 0) + amount
+        updated_operational_data['storage']['current_level'] = (updated_operational_data['storage']['current_level'] || 0) + amount
+        self.operational_data = updated_operational_data
     
         begin
           save!
-          Rails.logger.debug("Unit saved successfully.")
           true
         rescue StandardError => e
-          Rails.logger.error("Error saving unit: #{e.message}")
           false
         end
       else
-        Rails.logger.debug("Inventory item save failed.")
         false
       end
     end
@@ -475,12 +462,23 @@ module Units
     
       return unless @unit_info.present?
     
-      # Check if operational_data is already set
-      if operational_data.blank?
-        # Only overwrite if operational_data is empty
-        self.operational_data = @unit_info.deep_dup
-        save! if persisted?
+      # Initialize operational_data if blank
+      self.operational_data ||= {}
+    
+      # Merge storage configuration from unit_info (only set defaults, don't override existing)
+      if @unit_info['storage']
+        self.operational_data['storage'] ||= {}
+        @unit_info['storage'].each do |key, value|
+          self.operational_data['storage'][key] ||= value
+        end
       end
+    
+      # Set other unit info properties
+      self.operational_data['input_resources'] = @unit_info['input_resources'] if @unit_info['input_resources']
+      self.operational_data['output_resources'] = @unit_info['output_resources'] if @unit_info['output_resources']
+      self.operational_data['processing_capabilities'] = @unit_info['processing_capabilities'] if @unit_info['processing_capabilities']
+    
+      save! if persisted? && changed?
     end  
 
     def initialize_unit

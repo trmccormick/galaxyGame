@@ -14,7 +14,7 @@
       terrain_map_data = @celestial_body&.geosphere&.terrain_map
       
       # Determine which layers should be available based on planetary conditions
-      has_hydrosphere = @celestial_body.hydrosphere.present? && (@celestial_body.hydrosphere.water_coverage.to_f > 0 || @celestial_body.hydrosphere.total_liquid_mass.to_f > 0 || @celestial_body.hydrosphere.ice.to_f > 0)
+      has_hydrosphere = @celestial_body.hydrosphere.present? && @celestial_body.hydrosphere.water_coverage.to_f > 0
       has_biosphere = @celestial_body.biosphere.present?
       has_atmosphere = @celestial_body.atmosphere.present? && @celestial_body.atmosphere.pressure.to_f > 0
       
@@ -112,6 +112,15 @@
                 <button class="tool-button" onclick="window.location.href='/celestial_bodies/<%= @celestial_body.id %>'">
                     👁️ View Public Page
                 </button>
+                <% if @celestial_body.geosphere&.terrain_map.nil? %>
+                    <%= button_to '🗺️ Generate Terrain', generate_terrain_admin_celestial_body_path(@celestial_body), 
+                                  method: :post, class: 'tool-button', 
+                                  data: { confirm: 'This will generate terrain data for this celestial body. Continue?' } %>
+                <% else %>
+                    <%= button_to '🔄 Regenerate Terrain', generate_terrain_admin_celestial_body_path(@celestial_body), 
+                                  method: :post, class: 'tool-button', 
+                                  data: { confirm: 'This will regenerate terrain data for this celestial body, replacing existing data. Continue?' } %>
+                <% end %>
             </div>
             
             <!-- Active Missions Section -->

@@ -1,4 +1,6 @@
 class GameController < ApplicationController
+  layout false
+  
   def index
     @game_state = get_or_create_game_state
     @game_state.update_time! if @game_state.running

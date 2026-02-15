@@ -378,4 +378,54 @@ module AtmosphereConcern
     material = lookup_service.find_material(formula)
     material ? material['id'] : formula
   end
+
+  # Temperature setter methods with clamping (150-400K range)
+  def set_effective_temp(temp)
+    clamped_temp = [[temp.to_f, 150.0].max, 400.0].min
+    self.temperature_data ||= {}
+    self.temperature_data['effective_temp'] = clamped_temp
+    save! if persisted?
+    clamped_temp
+  end
+
+  def set_greenhouse_temp(temp)
+    clamped_temp = [[temp.to_f, 150.0].max, 400.0].min
+    self.temperature_data ||= {}
+    self.temperature_data['greenhouse_temp'] = clamped_temp
+    save! if persisted?
+    clamped_temp
+  end
+
+  def set_polar_temp(temp)
+    clamped_temp = [[temp.to_f, 150.0].max, 400.0].min
+    self.temperature_data ||= {}
+    self.temperature_data['polar_temp'] = clamped_temp
+    save! if persisted?
+    clamped_temp
+  end
+
+  def set_tropic_temp(temp)
+    clamped_temp = [[temp.to_f, 150.0].max, 400.0].min
+    self.temperature_data ||= {}
+    self.temperature_data['tropic_temp'] = clamped_temp
+    save! if persisted?
+    clamped_temp
+  end
+
+  # Getter methods for temperature data
+  def effective_temp
+    temperature_data&.dig('effective_temp') || temperature
+  end
+
+  def greenhouse_temp
+    temperature_data&.dig('greenhouse_temp') || temperature
+  end
+
+  def polar_temp
+    temperature_data&.dig('polar_temp') || temperature
+  end
+
+  def tropic_temp
+    temperature_data&.dig('tropic_temp') || temperature
+  end
 end

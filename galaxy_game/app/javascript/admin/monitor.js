@@ -726,6 +726,100 @@ window.AdminMonitor = (function() {
   }
 
   // ============================================
+  // Adaptive Grid Calculation for Pixelation Fix
+  // ============================================
+
+  /**
+   * Calculate adaptive grid parameters based on planet size
+   * Fixes pixelation by scaling resolution with planet diameter
+   */
+  function calculateAdaptiveGrid(planetData, terrainData) {
+    if (!planetData || !terrainData) {
+      // Fallback to current fixed resolution
+      return {
+        width: 80,
+        height: 50,
+        tileSize: 8,
+        totalWidth: 640,
+        totalHeight: 400,
+        adaptive: false
+      };
+    }
+
+    // Get planet diameter in kilometers
+    const diameterKm = planetData.diameter || planetData.radius * 2 || 12742; // Earth default
+    const bodyType = planetData.type || planetData.body_category || 'planet';
+    const name = (planetData.name || '').toLowerCase();
+
+    // Base grid size scales with planet size for consistent detail density
+    const earthDiameter = 12742; // km
+    const diameterRatio = Math.max(0.01, diameterKm / earthDiameter); // Prevent division by zero
+
+    // Scale grid size: smaller bodies get relatively larger grids for detail
+    let baseGridSize;
+    if (diameterKm < 100) {
+      // Small asteroids: high detail relative to size
+      baseGridSize = Math.max(40, Math.min(120, 80 * Math.sqrt(1 / diameterRatio)));
+    } else if (diameterKm < 1000) {
+      // Moons like Luna, Europa: medium-high detail
+      baseGridSize = Math.max(50, Math.min(100, 80 * Math.sqrt(1 / diameterRatio)));
+    } else if (diameterKm < 5000) {
+      // Small planets like Mars: standard detail
+      baseGridSize = Math.max(60, Math.min(120, 80 * Math.sqrt(diameterRatio)));
+    } else {
+      // Large planets/gas giants: reduced detail for performance
+      baseGridSize = Math.max(70, Math.min(150, 80 * diameterRatio));
+    }
+
+    // Special cases for known bodies
+    if (name === 'luna' || name === 'moon' || bodyType.includes('moon')) {
+      baseGridSize = 60; // Higher detail for lunar craters
+    } else if (name === 'mars' || bodyType.includes('terrestrial')) {
+      baseGridSize = 90; // Good detail for Mars features
+    } else if (bodyType.includes('gas_giant') || bodyType.includes('ice_giant')) {
+      baseGridSize = Math.min(120, baseGridSize); // Limit for performance
+    }
+
+    // Calculate tile size for minimum visible resolution
+    const targetMinResolution = 800; // Minimum pixels for decent visibility
+    let tileSize = Math.max(4, Math.min(24, targetMinResolution / baseGridSize));
+
+    // Adjust tile size based on body type for optimal detail
+    if (diameterKm < 500) {
+      // Small bodies: larger tiles for visibility
+      tileSize = Math.max(12, tileSize);
+    } else if (diameterKm > 10000) {
+      // Large bodies: smaller tiles for detail
+      tileSize = Math.min(8, tileSize);
+    }
+
+    // Ensure we don't exceed reasonable canvas sizes
+    const maxCanvasSize = 4096; // Browser limit
+    const totalWidth = baseGridSize * tileSize;
+    const totalHeight = (baseGridSize * 0.625) * tileSize; // Maintain aspect ratio
+
+    if (totalWidth > maxCanvasSize || totalHeight > maxCanvasSize) {
+      const scale = Math.min(maxCanvasSize / totalWidth, maxCanvasSize / totalHeight);
+      tileSize = Math.max(4, Math.floor(tileSize * scale));
+    }
+
+    const finalWidth = Math.floor(baseGridSize);
+    const finalHeight = Math.floor(baseGridSize * 0.625);
+
+    return {
+      width: finalWidth,
+      height: finalHeight,
+      tileSize: tileSize,
+      totalWidth: finalWidth * tileSize,
+      totalHeight: finalHeight * tileSize,
+      adaptive: true,
+      diameterKm: diameterKm,
+      bodyType: bodyType,
+      scaling: diameterRatio
+    };
+  }
+
+  // ============================================
   // Main Terrain Rendering
   // ============================================
 
@@ -854,18 +948,23 @@ window.AdminMonitor = (function() {
       return;
     }
 
-    const tileSize = 8;
-    canvas.width = width * tileSize;
-    canvas.height = height * tileSize;
+    // ADAPTIVE GRID: Calculate tile size based on planet characteristics
+    const adaptive = calculateAdaptiveGrid(planetData, terrainData);
+    const tileSize = adaptive.tileSize;
+
+    console.log('Adaptive grid calculated:', adaptive);
+
+    canvas.width = adaptive.totalWidth;
+    canvas.height = adaptive.totalHeight;
     
     // Set container size to match canvas for proper scrolling
     const canvasContainer = document.getElementById('canvasContainer');
     if (canvasContainer) {
-      canvasContainer.style.width = canvas.width + 'px';
-      canvasContainer.style.height = canvas.height + 'px';
+      canvasContainer.style.width = adaptive.totalWidth + 'px';
+      canvasContainer.style.height = adaptive.totalHeight + 'px';
     }
     
-    console.log('Canvas size:', canvas.width, 'x', canvas.height);
+    console.log('Canvas size:', adaptive.totalWidth, 'x', adaptive.totalHeight, `(tile: ${tileSize}px, adaptive: ${adaptive.adaptive})`);
 
     // Calculate min/max elevation
     let minElevation = Infinity;
@@ -1290,6 +1389,13 @@ window.AdminMonitor = (function() {
           updateElement('geo-activity', `${data.geosphere.geological_activity}/100`);
           updateElement('geo-tectonic', data.geosphere.tectonic_active ? 'Yes' : 'No');
           updateElement('geo-volcano', data.geosphere.volcanic_activity);
+        }
+
+        // Check for terrain data updates
+        if (data.terrain_data && (!terrainData || JSON.stringify(data.terrain_data) !== JSON.stringify(terrainData))) {
+          terrainData = data.terrain_data;
+          console.log('Terrain data updated, re-rendering map');
+          renderTerrainMap();
         }
       })
       .catch(error => {

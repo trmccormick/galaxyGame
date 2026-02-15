@@ -26,17 +26,18 @@ The game implements a **three-currency economic model** with Earth as the stabil
 - **Creation**: LDC operates crypto mining satellites that generate new GCC (simulated mining, not real crypto)
 
 ### 2. Virtual Ledger
-- **Purpose**: Internal NPC-to-NPC accounting when GCC is scarce
+- **Purpose**: Internal NPC-to-NPC IOU system when GCC reserves are insufficient, preserving GCC for player transactions
 - **Implementation**: Negative account balances (`Financial::Account.can_overdraft?`)
 - **Key Behavior**:
-  - Tracks obligations without transferring real currency
+  - **NPC-Only System**: Tracks obligations between NPCs without transferring real currency
   - Uses current market prices for transactions
   - NPCs/Colonies can go negative (overdraft enabled)
-  - Players **cannot** use Virtual Ledger (no overdraft)
+  - **Players cannot use Virtual Ledger** (no overdraft - always require real GCC)
+  - **GCC Preservation**: Keeps GCC available for player contracts, mission rewards, and buy orders
 - **Usage**: 
   - NPC-to-NPC resource trades when GCC reserves low
   - Service exchanges between Development Corporations
-  - Deferred payment tracking
+  - Deferred payment tracking for DC expansion support
 
 ### 3. USD (United States Dollar)
 - **Purpose**: Earth anchor currency enabling debt and import-driven economic expansion
@@ -58,24 +59,39 @@ The game implements a **three-currency economic model** with Earth as the stabil
 - **Mission**: **Non-profit entities** building footholds on other worlds
 - **Examples**: LDC (Lunar Development Corporation), MDC (Mars Development Corporation), TDC (Titan Development Corporation)
 - **Economic Behavior**:
+  - **Local Resource Priority**: Prefer local resource harvesting over importing when possible, but import when infrastructure is incomplete or resources unavailable (e.g., Luna lacks N2)
   - Trade resources via **Virtual Ledger** when GCC reserves are low
   - Use real GCC when available without depleting reserves
   - Focus on infrastructure development, not profit maximization
   - Revenue from operations funds expansion (not shareholder profits)
+- **Expansion Focus**: DCs prioritize establishing new footholds and supporting other DCs' expansion efforts
+- **Player Order Priority**: Allow players first opportunity to fill resource orders; expired orders trigger DC automated harvesting or imports
+- **Universal Infrastructure Model**: All DCs establish orbital stations and surface depots that serve as shared logistics hubs
+- **Player Economic Hubs**: DCs provide essential services for players to sell harvested resources and acquire equipment
+- **Multi-World Operations**: As DCs expand to new worlds, they create fueling/repair stations and trading posts
+- **Inter-DC Cooperation**: DCs use Virtual Ledger to maintain supply lines and support each other's expansion, even during GCC scarcity
 - **Unique Capabilities**: 
   - Can earn USD through Earth support contracts and exports
   - Can issue USD bonds for major capital projects (Earth-backed credit)
   - LDC specifically operates GCC mining satellites (the mint)
 
-### Logistics Corps (e.g., AstroLift)
-- **Mission**: Bridge Earth ↔ Space operations with bidirectional supply chains
+### Logistics Corps (e.g., AstroLift, Zenith Orbital, Vector Hauling)
+- **Mission**: Bridge Earth ↔ Space operations with bidirectional supply chains across the solar system
 - **Currency Acceptance**:
   - **USD**: Earth-side operations (terrestrial logistics, Earth contracts)
   - **GCC**: Space-side operations (orbital logistics, interplanetary transport)
 - **Special Role**: 
   - Enable Earth imports when space-based production insufficient (equipment, specialized goods)
-  - Enable lunar exports when production creates surplus (Helium-3, meteorites, samples)
-  - Bidirectional supply ships maximize efficiency (outbound cargo TO space, return cargo FROM space)
+  - Enable exports from all DC locations when production creates surplus
+  - Bidirectional supply ships maximize efficiency across all worlds
+- **Universal Presence**: Logistics corps operate at all DC-established orbital stations and surface depots
+- **Player Services**: Provide fueling, repair, and equipment acquisition services at every DC foothold
+- **Business Dynamics**:
+  - **Competition & Collaboration**: Companies compete for contracts but form joint ventures for major infrastructure projects
+  - **Specialized Roles**: AstroLift (LEO depots), Zenith Orbital (station construction), Vector Hauling (cargo transport)
+  - **Strategic Partnerships**: Multiple logistics corps can co-invest in infrastructure while maintaining competitive operations
+  - **Shared Infrastructure**: Like airlines using the same airports, companies operate from shared facilities at all DC locations
+  - **Commercial Operations**: Companies build and sell spacecraft at shipyards using local resources to players and other corporations
 
 ### LDC (Lunar Development Corporation)
 - **Entity Type**: **Non-profit Development Corporation** (like all DCs - focused on infrastructure development, not profit maximization)
@@ -97,12 +113,62 @@ The game implements a **three-currency economic model** with Earth as the stabil
   - **Infrastructure hosting**: Fees for Earth-operated equipment on Luna
 - **USD Usage**:
   - Purchase Earth items via AstroLift logistics (bidirectional supply ships)
+  - **Import specialized resources unavailable locally** (e.g., N2 not available on Luna despite extensive ISRU infrastructure)
   - Import specialized equipment unavailable in space
   - Pay wormhole transit fees
   - Fund satellite launches for GCC mining expansion
   - Reinvest in lunar infrastructure (non-profit development mission)
 - **GCC Generation**: Operates crypto mining satellites that produce new GCC, providing controlled currency supply growth
+- **Joint Venture Partnerships**:
+  - **Universal Model**: This shared infrastructure model applies to all DC orbital stations and surface depots across the solar system
+  - **Multi-Company Collaborations**: LDC can form joint ventures with multiple logistics companies simultaneously
+  - **AstroLift-LDC Infrastructure**: Co-own L1 stations, LEO depots, and shipyards (initial partnership)
+  - **Partnership Model**: Logistics corps provide expertise and operations; LDC provides lunar resources
+  - **Competitive Collaboration**: Even competing logistics companies can co-invest in infrastructure projects
+  - **Shared Infrastructure Model**: Like airlines using the same airports, multiple companies operate from L1/LEO facilities
+  - **Commercial Spacecraft Operations**: Companies build and sell craft at L1 shipyards using lunar resources to players and corporations
+  - **Player Services**: Stations provide fueling, repair, resource trading, and equipment acquisition for all players
+  - **Multiple Partners**: LDC works with various logistics companies (AstroLift, Zenith Orbital, Vector Hauling)
+  - **Mutual Benefits**: All profit from joint ventures; LDC sells resources at depots and to logistics partners for construction
+  - **Shipyard Access**: Logistics companies gain construction capabilities at L1 station/shipyard
+  - **Non-Profit Focus**: LDC prioritizes footholds and expansion over profit maximization
 - **Trade Balance**: Imports from Earth (equipment, specialized goods) balanced by exports to Earth AND Earth orbit (Helium-3, meteorites, samples, LEO depot propellant)
+
+### MDC (Mars Development Corporation)
+- **Entity Type**: **Non-profit Development Corporation** (like all DCs - focused on infrastructure development, not profit maximization)
+- **Critical Role**: **Asteroid Belt Development** - MDC establishes footholds and resource extraction in the asteroid belt
+- **Bootstrap Sequence**:
+  1. Receive initial Earth grants for Mars colonization
+  2. Establish Mars base infrastructure and ISRU capabilities
+  3. Expand to asteroid belt operations (Ceres as primary hub)
+  4. Develop asteroid mining and processing facilities
+  5. Export rare metals and volatiles to Earth and inner planets
+  6. Establish asteroid belt logistics network
+- **USD Revenue Sources**:
+  - **Earth grants**: Mars colonization funding, asteroid belt development contracts
+  - **Asteroid exports**: Rare earth metals, platinum group metals, water ice, hydrocarbons
+  - **Resource sales**: Volatiles and metals to inner planet colonies
+  - **Infrastructure contracts**: Asteroid belt transportation and processing services
+- **USD Usage**:
+  - Purchase Earth items via AstroLift logistics
+  - Import specialized mining and processing equipment
+  - Fund asteroid belt expansion
+  - Pay wormhole transit fees
+  - Reinvest in Mars and asteroid infrastructure (non-profit development mission)
+- **Joint Venture Partnerships**:
+  - **Universal Model**: This shared infrastructure model applies to all DC orbital stations and surface depots across the solar system
+  - **Multi-Company Collaborations**: MDC can form joint ventures with multiple logistics companies simultaneously
+  - **AstroLift-MDC Infrastructure**: Co-own Ceres asteroid belt extraction facilities (initial partnership)
+  - **Partnership Model**: Logistics corps provide transport and operations; MDC provides asteroid resources and mining expertise
+  - **Competitive Collaboration**: Even competing logistics companies can co-invest in asteroid belt operations
+  - **Shared Infrastructure Model**: Like airlines using the same airports, multiple companies operate from shared belt facilities
+  - **Commercial Operations**: Companies build and sell asteroid mining craft using belt resources to players and corporations
+  - **Player Services**: Depots provide fueling, repair, resource trading, and equipment acquisition for all players
+  - **Multiple Partners**: MDC works with various logistics companies (AstroLift, Zenith Orbital, Vector Hauling)
+  - **Mutual Benefits**: Both profit from joint ventures; MDC sells asteroid resources at depots and to logistics partners for operations
+  - **Asteroid Access**: Logistics companies gain asteroid belt resource extraction and processing capabilities
+  - **Non-Profit Focus**: MDC prioritizes footholds and expansion over profit maximization
+- **Trade Balance**: Imports from Earth (equipment, specialized goods) balanced by exports to Earth AND inner planets (rare metals, volatiles, asteroid resources)
 
 ## Economic Flow Examples
 
@@ -121,6 +187,29 @@ The game implements a **three-currency economic model** with Earth as the stabil
 5. **GCC Settlement (when available)**:
    - If GCC becomes available at Luna, transactions settle with real GCC
    - Virtual Ledger obligations cleared, balances normalized
+
+### Example 1b: Competitive Collaboration on Infrastructure
+**Scenario**: Competing logistics companies co-invest in DC infrastructure across all locations
+
+1. **Joint Venture Formation**: 
+   - Multiple logistics companies (AstroLift, Zenith Orbital, MDC, etc.) form joint ventures with LDC at every DC foothold
+   - Even though they compete for transport contracts, they collaborate on shared infrastructure at all orbital stations and surface bases
+2. **Capital Investment**: 
+   - Companies invest GCC/USD capital in DC infrastructure construction across the solar system
+   - LDC provides local resources and construction oversight at each location
+3. **Revenue Sharing**: 
+   - Revenue split varies by location but typically favors LDC (40-50%) with logistics companies sharing remaining revenue
+   - All benefit from docking fees, shipyard services, logistics contracts, and spacecraft sales at every DC facility
+4. **Commercial Spacecraft Operations**: 
+   - All logistics companies build and sell spacecraft at DC shipyards using local resources
+   - Players and other corporations purchase craft from any company operating out of the same shared facilities
+   - Like airlines at the same airport, companies compete for customers while sharing infrastructure at every DC location
+5. **Market Competition Maintained**: 
+   - Outside the joint venture, companies compete for individual transport contracts and spacecraft sales
+   - Collaboration on infrastructure enables competition in operations and manufacturing across all worlds
+6. **Economic Multiplier**: 
+   - DC infrastructure at every foothold enables all companies to offer comprehensive services
+   - Shared infrastructure reduces costs while maintaining competitive market dynamics throughout the solar system
 
 ### Example 2: LDC Bootstrap & Earth-Anchored Growth
 **Scenario**: LDC establishes GCC mint and creates bidirectional Earth trade
@@ -157,13 +246,18 @@ The game implements a **three-currency economic model** with Earth as the stabil
 ## Decision Logic: Virtual Ledger vs. GCC
 
 ### When to Use Virtual Ledger
-- NPC-to-NPC transactions
+- NPC-to-NPC transactions (IOU system for internal DC/colony accounting)
 - GCC reserves below operational threshold
 - Both parties are NPCs/Colonies (have `can_overdraft?` permission)
-- Real currency transfer would deplete critical reserves
+- Real currency transfer would deplete critical reserves needed for player transactions
+- DC expansion support and inter-DC resource sharing
+- Maintaining supply lines during GCC scarcity periods
 
 ### When to Use Real GCC
-- Player-involved transactions (always require real GCC)
+- **Player-involved transactions (always require real GCC)**
+  - Player contracts and mission rewards
+  - Player buy/sell orders at DC trading hubs
+  - Player equipment and spacecraft purchases
 - NPC has sufficient GCC reserves without depletion risk
 - Virtual Ledger debt accumulation reaches reconciliation trigger
 - Priority transactions (emergency supplies, critical infrastructure)

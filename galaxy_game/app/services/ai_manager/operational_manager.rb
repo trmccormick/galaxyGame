@@ -43,6 +43,9 @@ require_relative 'scout_logic'
         return decision
       end
 
+      # Check for expired buy orders and trigger escalation
+      check_market_escalation
+
       # Check operational priorities
       operational_needs = assess_operational_state
       if operational_needs.any?
@@ -944,6 +947,13 @@ require_relative 'scout_logic'
 
       # Store in performance tracker for learning
       @performance_tracker.record_scouting_outcome(scouting_result) if @performance_tracker.respond_to?(:record_scouting_outcome)
+    end
+
+    def check_market_escalation
+      # Check for expired buy orders and trigger automated escalation
+      ResourceAcquisitionService.check_expired_orders
+    rescue => e
+      Rails.logger.error "[OperationalManager] Error during market escalation check: #{e.message}"
     end
   end
 end

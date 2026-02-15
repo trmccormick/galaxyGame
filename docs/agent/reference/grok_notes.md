@@ -850,18 +850,49 @@ Given player-driven gameplay where terraforming is background economic driver ra
 - Terraforming remains long-term endeavor without rapid import acceleration
 
 **Advanced Portal Technology Alternative:**
-- Portal tech could enable some material transport scenarios as more advanced tech
+- Portal tech enables hub-based transport within and between star systems
 - Paired units with size/mass constraints (personnel + small cargo only)
-- Surface-based deployment with environmental protections
-- Solar System limited: cannot connect to other star systems (no Sol to Alpha Centauri)
-- Engineering workarounds: continuous loop systems for massive cumulative throughput
+- Universal deployment anywhere with EM power
+- Hub network system: functions like airports with transfer connections
+- Inter-system access: can connect to AWS stations for travel to other star systems
+- Engineering workarounds: continuous loop systems for specialized cumulative throughput (complements cycler craft for bulk transport)
 - Key examples: Venus-Titan cryogenic storage, Venus CO2 processing chains, Mars H2 fuel cycles
-- Applications: rapid personnel deployment, high-value material transfer, engineered bulk transport, distributed processing networks, fuel cycle management
-- Limitations: single transfer limits, but continuous operation enables large-scale movement
-- Strategic value: accelerated research, quality control, emergency response, resource banking, ship-less interplanetary logistics, sustainable fuel cycles
+- Applications: rapid personnel deployment, high-value material transfer, engineered specialized transport, distributed processing networks, fuel cycle management, ship-based emergency transport, crew rotation systems
+- Limitations: single transfer limits, continuous operation enables specialized movement (cycler craft still needed for large assets)
+- Strategic value: accelerated research, quality control, emergency response, resource banking, specialized interplanetary logistics, sustainable fuel cycles, fleet safety and crew welfare
 - **Player Integration**: Background economic drivers providing opportunities/constraints for player decision-making, not direct controls
 - **Core Economic Purpose**: Resource sink for GCC investment while enabling mission/task opportunities that generate more GCC
 - **Active Player Role**: Players buy harvest operations and deliver atmospheric gases to Mars through missions/contracts
+
+### Advanced Portal Technology: Dynamic Networks
+**Research Breakthrough Impact**: Future removal of pairing requirement creates dynamic point-to-point connectivity, fundamentally changing game economics and strategy.
+
+#### Economic Transformation
+- **EM-Driven Economics**: Portal accessibility determined by energy economics rather than distance
+- **Energy Scarcity**: EM budget limits prevent universal portal deployment
+- **Active Wormhole Management**: AI controls temporary access, exit shifts, and stabilization decisions
+- **Inter-System Wormhole Assets**: Natural wormholes in other systems become strategic EM sources
+- **Natural Wormhole Advantage**: Systems with active EM sources get preferential investment for stabilization
+- **Local Bubble Cost Penalty**: Artificial connections are EM-expensive without natural EM harvesting
+- **Opportunity Cost Decisions**: EM allocated to high-value targets over marginal locations
+- **Wormhole Harvesting Alternative**: Temporary resource extraction vs permanent portal/stabilization investment
+- **Selective Connectivity**: Only locations justifying EM investment get portal access
+- **Strategic Allocation**: Corporations must prioritize portal investments against other EM needs
+- **Network Monopoly**: Control of EM resources determines portal network dominance
+- **Distance Irrelevance**: Solar System locations lose delta-V cost advantages
+
+#### Strategic Implications
+- **Game Rebalancing**: From exploration challenge to energy management and network strategy
+- **New Challenges**: EM budget constraints, network security, competitive energy markets
+- **Economic Reassessment**: EM control becomes key strategic advantage over location proximity
+- **Narrative Evolution**: "Energy mastery" replaces "conquering distance" as core challenge
+
+#### Mitigation Strategies
+- **EM Budget Constraints**: Primary balancing mechanism preventing unlimited expansion
+- **Energy Competition**: Control of EM resources creates new strategic gameplay
+- **Infrastructure Costs**: Massive EM investment required for portal networks
+- **Security Gameplay**: Portal networks become critical infrastructure to protect
+- **Regulatory Frameworks**: Access controls and licensing create strategic decisions
 
 ### AI Manager Procurement Implementation
 **Hybrid Economic System**: AI prioritizes player participation while maintaining self-sufficiency.
@@ -906,7 +937,7 @@ Given player-driven gameplay where terraforming is background economic driver ra
 - Atmospheric modifications through industrial processors
 - Basic lifeform seeding with hardy microorganisms
 - Resource importation from solar system bodies via orbital transfers
-- Portal technology for specialized transport (future advanced tech)
+- Portal technology for specialized transport (future advanced tech with hub connectivity)
 
 **Progressive Terraforming Simulation:**
 - Milestones provide economic bonuses (resource yields, trade opportunities)

@@ -6,7 +6,7 @@
 
 ### Current Metrics
 - **Maintenance Tax:** 752.5 EM/hour (Cold_Start environment)
-- **Mass Limit:** 500,000 tons
+- **Mass Limit:** 500,000 tons (Alpha Centauri system - full counterbalance effect)
 - **Environment:** Cold_Start (high EM consumption)
 - **Sabatier Offset:** Active (currently not implemented in ResourcePlanner)
 

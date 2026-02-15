@@ -240,10 +240,12 @@ AI Manager uses a data-driven decision flow to source materials, always prioriti
 ### Phase 2: ResourceAcquisitionService (Economics) - ✅ IMPLEMENTED
 **Service**: `app/services/ai_manager/resource_acquisition_service.rb`
 
-- AI Manager makes smart, data-driven sourcing decisions
+- AI Manager makes smart, data-driven sourcing decisions prioritizing local resources over shipping
+- **Local Resource Priority**: DCs prefer local harvesting when infrastructure exists, but import when resources unavailable (e.g., Luna lacks N2)
+- **Player-First Economics**: Enforces GUARDRAILS.md Section 4 - players get first opportunity on orders, expired orders trigger DC automated harvesting or imports
 - Prioritizes player market (GCC), then NPC (Virtual Ledger), then Earth (USD)
 - Implements buy order pricing, timeout/fallback logic, and tracks metrics
-- **Player-First Economics**: Enforces GUARDRAILS.md Section 4
+- **DC Expansion Focus**: Supports inter-DC cooperation and Virtual Ledger usage to maintain supply lines during GCC scarcity
 
 ### Phase 3: ScoutLogic - System Analysis (Intelligence) - ✅ IMPLEMENTED
 **Service**: `app/services/ai_manager/scout_logic.rb`

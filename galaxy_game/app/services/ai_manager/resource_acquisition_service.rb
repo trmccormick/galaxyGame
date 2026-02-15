@@ -14,6 +14,15 @@ module AIManager
       end
     end
     
+    # Check for expired buy orders and trigger escalation
+    def self.check_expired_orders
+      expired_orders = Market::Order.where(order_type: :buy)
+                                    .where('created_at < ?', 24.hours.ago)
+                                    .where(status: :active)
+
+      EscalationService.handle_expired_buy_orders(expired_orders) if expired_orders.any?
+    end
+    
     # Utility method for the ResourcePlanner to decide the acquisition type.
     # Returns :local_trade or :external_import
     def self.acquisition_method_for(material)
