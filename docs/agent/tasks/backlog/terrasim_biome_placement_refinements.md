@@ -6,90 +6,91 @@
 **Dependencies:** TerraSim integration stable, biosphere simulation service operational
 
 ## 🎯 Objective
-Refine TerraSim to support multiple planetary modification strategies for AI manager decision-making. Enable evaluation of different approaches: brute force atmospheric engineering for immediate human habitation, hybrid engineering/ecological methods, sectional planetary modification, or full terraforming when technologically feasible. Include Earth-based biome placement for ecological potential assessment, but emphasize strategic AI planning across modification approaches.
+Refine TerraSim to support cost-based evaluation of planetary modification strategies for AI manager decision-making. As Dune teaches: "You can make any place habitable" - but costs determine which approach is chosen. Enable AI evaluation of different approaches (brute force engineering, hybrid methods, sectional modification, full terraforming) based on resource costs, time requirements, technological investment, and strategic value. Include Earth-based biome placement for ecological potential assessment.
 
 ## 📋 Requirements
-- Implement multiple planetary modification strategies (engineering, hybrid, sectional, terraforming)
-- Create AI evaluation framework for choosing optimal modification paths
+- Implement cost-based evaluation framework for planetary modification strategies
+- Create AI decision-making that weighs resources, time, technology vs. strategic value
 - Add atmospheric engineering simulation (magnetospheres, gas processing, imports)
 - Include Earth-based biome placement for ecological strategy assessment
-- Create artificial biome system (domes/worldhouses) as testing/modification hubs
+- Create artificial biome system (domes/worldhouses) as cost-effective testing/modification hubs
 - Add biome thriving logic when conditions enable natural processes
-- Enable AI strategic planning for planetary modification across different world types
-- Integrate with digital twin service for comparative "what if" analysis
+- Enable AI strategic planning balancing costs vs. benefits across different world types
+- Integrate with digital twin service for comparative cost-benefit "what if" analysis
 
 ## 🔍 Analysis Phase
 **Time: 30 minutes**
 
 ### Tasks:
-1. Review planetary modification strategies (engineering vs. ecological approaches)
-2. Research atmospheric engineering techniques and life adaptation challenges
-3. Analyze AI decision framework for choosing optimal modification paths
-4. Identify artificial biome requirements as strategic testing/modification hubs
-5. Define evaluation criteria for different world types and technology levels
+1. Review planetary modification strategies with cost-benefit analysis
+2. Research atmospheric engineering techniques and associated resource costs
+3. Analyze AI decision framework incorporating resource, time, and technology costs
+4. Identify cost factors for artificial biome implementation
+5. Define evaluation criteria balancing costs vs. strategic value for different worlds
 
 ### Success Criteria:
-- Multiple modification strategies identified and scoped
-- AI evaluation framework requirements defined
-- Technology-dependent approach selection mapped
-- World-specific strategy optimization parameters established
+- Cost factors identified for each modification strategy
+- AI evaluation framework includes resource/time/technology trade-offs
+- Strategic value assessment integrated with cost analysis
+- World-specific cost optimization parameters established
 
 ## 🛠️ Implementation Phase
 **Time: 4-5 hours**
 
 ### Tasks:
-1. Implement multiple planetary modification strategies (engineering, hybrid, sectional, terraforming)
-2. Create AI evaluation framework for optimal path selection
+1. Implement cost-based evaluation framework for planetary modification strategies
+2. Create AI decision-making that weighs resources, time, technology vs. strategic value
 3. Add atmospheric engineering simulation (magnetospheres, gas processing, imports)
 4. Replace FreeCiv/Civ4 patterns with real Earth biome placement data
-5. Implement artificial biome system (domes/worldhouses) as strategic hubs
+5. Implement artificial biome system (domes/worldhouses) as cost-effective hubs
 6. Add biome thriving logic when conditions enable natural processes
-7. Integrate with TerraSim Simulator for AI strategic planning
+7. Integrate with TerraSim Simulator for AI cost-benefit strategic planning
 
-### Planetary Modification Strategies:
-- **Brute Force Engineering**: Immediate human habitation (breathable air ≠ Earth life survival)
-- **Hybrid Approaches**: Engineering + ecological adaptation for different world types
-- **Sectional Modification**: Only habitable zones needed for human survival
-- **Full Terraforming**: Natural ecological development when technologically feasible
-- **AI Path Selection**: Technology, world type, and goals determine optimal strategy
+### Cost-Based Strategy Evaluation:
+- **Resource Costs**: Materials, energy, transportation for each modification approach
+- **Time Factors**: Implementation timelines vs. strategic urgency
+- **Technology Investment**: Development costs vs. existing capabilities
+- **Strategic Value**: Military, economic, scientific benefits vs. costs incurred
+- **Dune Wisdom**: Any planet can be habitable - costs determine the chosen path
 
 ### Files to Create/Modify:
 - `galaxy_game/app/services/terra_sim/biosphere_simulation_service.rb` (extend)
 - `galaxy_game/app/models/biome.rb` (add Earth placement data)
 - `galaxy_game/app/services/terra_sim/atmospheric_engineering_service.rb` (new)
 - `galaxy_game/app/services/ai_manager/planetary_modification_planner.rb` (new)
+- `galaxy_game/app/models/planetary_modification_cost.rb` (new)
 - `galaxy_game/app/models/artificial_biome.rb` (new)
 - `galaxy_game/spec/services/terra_sim/atmospheric_engineering_service_spec.rb` (new)
 
 ### Success Criteria:
-- Multiple modification strategies implemented and selectable
-- AI evaluation framework functional for path optimization
-- Atmospheric engineering simulation working
-- Strategy selection adapts to world type and technology availability
+- Cost evaluation framework functional for strategy comparison
+- AI selects cost-effective approaches based on available resources
+- Multiple modification strategies implemented with cost trade-off analysis
+- Strategy selection adapts to resource constraints and strategic priorities
 
 ## 🧪 Validation Phase
 **Time: 1 hour**
 
 ### Tasks:
-1. Test multiple modification strategies across different world types
-2. Validate AI path selection for various technology and goal combinations
-3. Verify atmospheric engineering techniques work for human habitation
-4. Test artificial biome functionality as strategic modification hubs
+1. Test cost-based strategy evaluation across different resource scenarios
+2. Validate AI decision-making under various cost constraints
+3. Verify atmospheric engineering techniques work within cost parameters
+4. Test artificial biome cost-effectiveness as modification hubs
 
 ### Success Criteria:
-- AI selects appropriate strategies based on world type and technology
-- Different approaches work for different planetary conditions
-- Engineering enables human habitation even if Earth life cannot survive
-- Strategy evaluation considers goals (habitation vs. full ecological development)
+- AI selects cost-effective strategies based on resource availability
+- Cost-benefit analysis drives strategy selection appropriately
+- Engineering approaches work within realistic cost constraints
+- Strategic value assessment balances against implementation costs
 
 ## 🎯 Success Metrics
-- ✅ Multiple planetary modification strategies (engineering, hybrid, sectional, terraforming)
-- ✅ AI evaluation framework for optimal path selection based on world/goals/tech
+- ✅ Cost-based evaluation framework for planetary modification strategies
+- ✅ AI decision-making balancing resources, time, technology vs. strategic value
 - ✅ Atmospheric engineering simulation (magnetospheres, gas processing, imports)
 - ✅ Earth-based biome placement for ecological strategy assessment
-- ✅ Artificial biome system (domes/worldhouses) as strategic modification hubs
+- ✅ Artificial biome system (domes/worldhouses) as cost-effective modification hubs
 - ✅ Biome thriving when conditions enable natural processes
-- ✅ No single solution - strategies adapt to different worlds and requirements
+- ✅ Dune wisdom applied: costs determine which habitability path is chosen
 
 ## 📈 Future Enhancements
 - Advanced atmospheric engineering techniques
