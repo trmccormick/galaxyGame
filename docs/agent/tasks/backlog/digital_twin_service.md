@@ -6,16 +6,16 @@
 **Dependencies:** TerraSim integration stable, AI Manager autonomous expansion operational
 
 ## 🎯 Objective
-Implement Digital Twin Service as an AI-assisted planning and training tool. Enable admins to take existing planets, have AI develop settlement/terraforming plans, run accelerated simulations projecting specific time periods, and analyze results for strategy refinement. Include cost analysis and AI training capabilities for future simulated runs.
+Implement Digital Twin Service as a collaborative AI-human strategy development platform. Enable AI Manager to develop world-specific settlement/terraforming plans, admins to test/review/validate these plans through accelerated simulations, and create feedback loops for AI learning. Go beyond simple SimEarth simulations to build a comprehensive strategy optimization system where AI proposes plans, humans validate them, and AI improves through iterative testing.
 
 ## 📋 Requirements
-- Create AI settlement/terraforming plan generation for selected planets
-- Implement accelerated simulation engine (configurable time projection)
-- Add comprehensive result analysis (settlement progress, terraforming projections, costs)
-- Enable admin strategy refinement and plan tuning interface
-- Include AI training mechanisms from simulation outcomes
-- Integrate cost-benefit analysis throughout the planning process
-- Provide comparative scenario analysis for strategy optimization
+- Create AI plan generation system that develops world-specific strategies
+- Implement collaborative admin testing and review interface
+- Add AI learning from simulation outcomes and human feedback
+- Enable strategy validation cycles (AI propose → human test → AI improve)
+- Include comprehensive cost-benefit analysis for strategy comparison
+- Support multiple strategy alternatives for the same world
+- Provide admin tools for plan modification and custom scenario testing
 
 ## 🔍 Analysis Phase
 **Time: 30 minutes**
@@ -32,74 +32,76 @@ Implement Digital Twin Service as an AI-assisted planning and training tool. Ena
 - Service scope defined
 
 ## 🛠️ Implementation Phase
-**Time: 6-8 hours**
+**Time: 8-10 hours**
 
 ### Tasks:
-1. Implement AI plan generation for settlement and terraforming strategies
-2. Create accelerated simulation engine with configurable time projections
-3. Add comprehensive result analysis and visualization
-4. Build admin interface for strategy refinement and plan tuning
-5. Implement AI training mechanisms from simulation outcomes
-6. Integrate cost-benefit analysis throughout planning process
-7. Add comparative scenario analysis capabilities
+1. Implement AI plan generation system with world-specific strategy development
+2. Create collaborative admin testing and review interface
+3. Add AI learning mechanisms from simulation outcomes and human feedback
+4. Build strategy validation cycles (AI propose → human test → AI improve)
+5. Integrate comprehensive cost-benefit analysis for strategy comparison
+6. Develop multiple strategy alternatives generation
+7. Create admin tools for plan modification and custom scenario testing
 
-### AI Planning Logic:
-- **Strategy Generation**: AI develops comprehensive settlement/terraforming plans
-- **Cost Integration**: All plans include detailed resource, time, and technology costs
-- **Risk Assessment**: Success probability calculations for different approaches
-- **Optimization**: AI suggests optimal strategies based on planet characteristics
+### AI-Human Collaboration Logic:
+- **AI Plan Generation**: World analysis → strategy development → plan optimization
+- **Human Review**: Plan evaluation → modification suggestions → approval/rejection
+- **Feedback Integration**: Human input → AI learning → strategy improvement
+- **Iterative Refinement**: Multiple cycles of AI proposal and human validation
 
-### Simulation Engine:
-- **Time Projection**: Configurable acceleration (1:1 to 100:1 time ratios)
-- **Result Tracking**: Settlement progress, terraforming milestones, cost accumulation
-- **Failure Analysis**: Identify plan weaknesses and optimization opportunities
-- **Pattern Learning**: AI extracts successful strategies for future use
+### Strategy Development Framework:
+- **World Analysis**: Planet characteristics, resources, challenges, opportunities
+- **Strategy Alternatives**: Multiple approaches for the same world (cost vs. speed trade-offs)
+- **Risk Assessment**: Success probabilities, failure modes, contingency plans
+- **Cost Optimization**: Resource allocation, timeline management, technology requirements
 
 ### Files to Create/Modify:
 - `galaxy_game/app/services/digital_twin_service.rb` (complete implementation)
-- `galaxy_game/app/services/ai_manager/strategy_planner.rb` (new)
-- `galaxy_game/app/models/digital_twin.rb` (new)
-- `galaxy_game/app/models/simulation_result.rb` (new)
-- `galaxy_game/app/controllers/admin/digital_twins_controller.rb` (enhance)
-- `galaxy_game/app/views/admin/digital_twins/` (enhanced UI)
-- `galaxy_game/spec/services/digital_twin_service_spec.rb` (new)
+- `galaxy_game/app/services/ai_manager/strategy_planner.rb` (enhanced)
+- `galaxy_game/app/services/ai_manager/strategy_validator.rb` (new)
+- `galaxy_game/app/models/digital_twin.rb` (enhanced)
+- `galaxy_game/app/models/strategy_plan.rb` (new)
+- `galaxy_game/app/models/simulation_feedback.rb` (new)
+- `galaxy_game/app/controllers/admin/digital_twins_controller.rb` (enhanced)
+- `galaxy_game/app/views/admin/digital_twins/` (collaborative UI)
+- `galaxy_game/spec/services/digital_twin_service_spec.rb` (comprehensive)
 
 ### Success Criteria:
-- AI can generate comprehensive settlement/terraforming plans
-- Accelerated simulations run successfully with accurate projections
-- Admin interface enables strategy refinement and plan tuning
-- AI training mechanisms capture successful patterns
-- Cost-benefit analysis drives decision-making
+- AI generates world-specific, comprehensive settlement/terraforming plans
+- Admin interface enables thorough plan review and modification
+- AI learning system captures human feedback and improves strategies
+- Strategy validation cycles work effectively for iterative improvement
+- Multiple strategy alternatives provided for comparative analysis
 
 ## 🧪 Validation Phase
-**Time: 2 hours**
+**Time: 2-3 hours**
 
 ### Tasks:
-1. Test AI plan generation accuracy and completeness
-2. Validate simulation projections against known scenarios
-3. Verify admin strategy refinement capabilities
-4. Test AI training and pattern learning from simulations
-5. Confirm cost-benefit analysis drives optimal strategy selection
+1. Test AI plan generation for diverse world types and strategy alternatives
+2. Validate collaborative admin review and modification capabilities
+3. Verify AI learning from human feedback and simulation outcomes
+4. Test iterative strategy improvement cycles
+5. Confirm cost-benefit analysis enables optimal strategy selection
 
 ### Success Criteria:
-- AI generates realistic and comprehensive settlement/terraforming plans
-- Simulation projections accurately model planetary development
-- Admin interface effectively enables strategy refinement
-- AI demonstrates improved performance from training simulations
-- Cost-benefit analysis leads to optimal strategic decisions
+- AI generates diverse, world-appropriate strategy alternatives
+- Admin interface supports comprehensive plan review and modification
+- AI demonstrates measurable improvement from human feedback
+- Strategy validation cycles lead to better outcomes over iterations
+- Cost-benefit analysis enables data-driven strategic decisions
 
 ## 🎯 Success Metrics
-- ✅ AI generates comprehensive settlement/terraforming plans with cost analysis
-- ✅ Accelerated simulations provide accurate time-projected results
-- ✅ Admin interface enables effective strategy refinement and plan tuning
-- ✅ AI training mechanisms improve performance on future simulations
-- ✅ Cost-benefit analysis optimizes planetary development strategies
-- ✅ Comparative scenario analysis supports strategic decision-making
+- ✅ AI generates world-specific strategy plans with multiple alternatives
+- ✅ Collaborative admin interface enables thorough plan review and modification
+- ✅ AI learning system improves strategies through human feedback loops
+- ✅ Iterative validation cycles produce optimized settlement/terraforming plans
+- ✅ Cost-benefit analysis supports strategic decision-making
+- ✅ System catches AI strategy gaps similar to human game development process
 
 ## 📈 Future Enhancements
-- Advanced AI learning algorithms for strategy optimization
-- Multi-planet comparative analysis and cross-training
-- Historical simulation replay for pattern analysis
-- Real-time simulation adjustment during runs
-- Integration with live game deployment for validated strategies
-- Advanced cost modeling with risk and uncertainty factors
+- Advanced collaborative AI-human learning algorithms
+- Strategy pattern library from validated simulations
+- Cross-world strategy transfer and adaptation
+- Real-time collaborative plan modification during simulations
+- Integration with live deployment for validated strategy implementation
+- Advanced feedback analysis for AI improvement prioritization
