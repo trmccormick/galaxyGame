@@ -52,6 +52,13 @@ module EnergyManagement
     power_generation - power_usage
   end
 
+  # --- Unit-level Power Methods ---
+
+  # Returns the power generation for this unit
+  def power_generation
+    operational_data.dig('operational_properties', 'power_generation_kw') || 0.0
+  end
+
   # Returns an array of attached units that are power generators.
   # Assumes a `base_units` or `units` association on the including model.
   def power_generating_units
@@ -83,6 +90,19 @@ module EnergyManagement
     }
   end
 
+  # --- Solar Output Methods ---
+
+  # Returns the current solar output factor for scaling solar power generation
+  def current_solar_output_factor
+    return 1.0 unless respond_to?(:location) && location.present?
+    location.solar_output_factor
+  end
+
+  # Determines if it's currently daylight based on solar output factor
+  def solar_daylight?
+    current_solar_output_factor > 0.1
+  end
+
   # --- Private Helper Methods ---
 
   private
@@ -110,10 +130,27 @@ module EnergyManagement
 
     if respond_to?(:base_units) # Check if the model has associated units
       base_units.each do |unit|
-        total_generation += unit.power_generation if unit.respond_to?(:power_generation)
+        unit_generation = unit.power_generation if unit.respond_to?(:power_generation)
+        # Apply solar scaling for solar units
+        if unit_solar?(unit)
+          unit_generation = (unit_generation || 0.0) * current_solar_output_factor
+        end
+        total_generation += unit_generation || 0.0
       end
     end
     total_generation
+  end
+
+  # --- Private Helper Methods ---
+
+  private
+
+  # Helper method to determine if a unit is solar-powered
+  def unit_solar?(unit)
+    return false unless unit.respond_to?(:operational_data)
+    
+    subcategory = unit.operational_data&.dig('subcategory')
+    subcategory&.include?('solar') || subcategory == 'solar_panel'
   end
 
   # Calculates the current status of the power grid (e.g., 'online', 'offline', 'low_power').

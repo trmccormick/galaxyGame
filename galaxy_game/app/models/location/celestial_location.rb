@@ -53,6 +53,35 @@ module Location
       end
     end
     
+    # ============================================================================
+    # SOLAR OUTPUT FACTOR
+    # ============================================================================
+    
+    # Returns the solar output factor for this location
+    # This affects solar power generation efficiency
+    def solar_output_factor
+      # For now, return a default value based on celestial body type
+      # In a real implementation, this would be calculated based on:
+      # - Distance from star
+      # - Atmospheric conditions
+      # - Time of day
+      # - Seasonal variations
+      # - Celestial body albedo and other properties
+      
+      case celestial_body&.type
+      when 'star'
+        1.0  # Full solar output at the star
+      when 'terrestrial_planet'
+        0.8  # Earth-like conditions
+      when 'gas_giant'
+        0.1  # Very low solar input due to thick atmosphere
+      when 'moon'
+        0.9  # Good solar exposure, minimal atmosphere
+      else
+        0.5  # Default moderate solar factor
+      end
+    end
+    
     def altitude_km
       altitude ? altitude / 1000.0 : nil
     end

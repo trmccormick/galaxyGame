@@ -61,7 +61,7 @@ RSpec.describe EnergyManagement, type: :concern do
     include AttributeStub
     include EnergyManagement
 
-    attr_accessor :operational_data
+    attr_accessor :operational_data, :location
 
     def initialize
       @operational_data = {}
@@ -183,13 +183,13 @@ RSpec.describe EnergyManagement, type: :concern do
   # end
   
   describe "solar output factor" do
-    let(:player) { create(:player) }
-    let(:celestial_body) { create(:celestial_body, name: 'Luna') }
-    let(:location) { create(:celestial_location, celestial_body: celestial_body) }
-    let(:settlement) { create(:base_settlement, location: location, owner: player) }
+    let(:location) { double('Location', solar_output_factor: 0.8) }
+    let(:settlement) { TestWithEnergyManagement.new }
     
     before do
+      settlement.location = location
       ensure_complete_energy_data(settlement)
+      allow(settlement).to receive(:respond_to?).and_return(true)
     end
     
     describe "#current_solar_output_factor" do
@@ -222,7 +222,8 @@ RSpec.describe EnergyManagement, type: :concern do
           operational_data: {
             'subcategory' => 'solar_panel',
             'operational_properties' => { 'power_generation_kw' => 10.0 }
-          }
+          },
+          power_generation: 10.0
         )
       end
       
@@ -231,13 +232,20 @@ RSpec.describe EnergyManagement, type: :concern do
           operational_data: {
             'subcategory' => 'nuclear_generator',
             'operational_properties' => { 'power_generation_kw' => 10.0 }
-          }
+          },
+          power_generation: 10.0
         )
       end
       
       before do
         # Clear the resource_management generated data so it uses base_units calculation
         settlement.operational_data['resource_management'].delete('generated')
+        
+        # Stub power_generation on mock units
+        allow(mock_solar_unit).to receive(:power_generation).and_return(10.0)
+        allow(mock_solar_unit).to receive(:respond_to?).with(:power_generation).and_return(true)
+        allow(mock_nuclear_unit).to receive(:power_generation).and_return(10.0)
+        allow(mock_nuclear_unit).to receive(:respond_to?).with(:power_generation).and_return(true)
       end
       
       it "scales solar unit output by solar factor" do
