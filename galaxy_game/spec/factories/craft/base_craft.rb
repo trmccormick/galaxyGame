@@ -31,4 +31,19 @@ FactoryBot.define do
       association :owner, factory: :player
     end
   end
+
+  factory :craft_harvester, class: 'Craft::Harvester' do
+    sequence(:name) { |n| "Harvester#{n}" }
+    craft_name { "Harvester" }
+    craft_type { "harvesters" }
+    operational_data { {
+      'systems' => {},
+      'resources' => {
+        'stored' => {}
+      },
+      'extraction_rate' => 10
+    } }
+
+    association :owner, factory: :player
+  end
 end

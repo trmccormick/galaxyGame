@@ -902,6 +902,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_12_011654) do
   end
 
   create_table "market_transaction_fees", force: :cascade do |t|
+    t.string "fee_type", null: false
+    t.decimal "percentage", precision: 5, scale: 2
+    t.decimal "fixed_amount", precision: 15, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

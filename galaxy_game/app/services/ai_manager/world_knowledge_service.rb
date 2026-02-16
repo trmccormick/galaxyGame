@@ -862,14 +862,17 @@ module AIManager
       easter_eggs = load_easter_eggs
 
       # Find matching Easter Egg based on system characteristics
-      matching_egg = find_matching_easter_egg(easter_eggs, nil, 0, 0, false, false, has_wormhole)
+      location = has_wormhole ? "wormhole_terminus" : nil
+      matching_egg = find_matching_easter_egg(easter_eggs, nil, 0, 0, false, false, has_wormhole, location)
 
       if matching_egg
-        {
+        result = {
           flavor_text: matching_egg['flavor_text'],
           easter_egg_id: matching_egg['easter_egg_id'],
           manifest_entry: matching_egg['manifest_entry']
         }
+        result[:wormhole_connection] = matching_egg['trigger_conditions']['wormhole_connection'] if matching_egg['trigger_conditions']&.key?('wormhole_connection')
+        result
       else
         nil
       end

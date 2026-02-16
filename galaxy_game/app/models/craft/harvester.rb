@@ -11,10 +11,20 @@ module Craft
     def extract_resources(target_body, amount)
       raise "Invalid target" unless valid_extraction_target?(target_body)
       ensure_inventory
-      raise "Storage full" unless can_store?('raw_material', amount)
+      raise "Storage full" unless can_store?('Regolith', amount)
 
-      # Use the HasExtraction method for the base extraction process
-      super(target_body, amount)
+      # Extract regolith instead of generic raw_material
+      actual_extracted = (amount * extraction_efficiency).to_i
+      update_inventory({ 'Regolith' => actual_extracted })
+    end
+
+    # Check if the harvester can store a given material and amount
+    def can_store?(material_name, amount)
+      return false unless inventory
+
+      # For now, assume unlimited storage capacity
+      # TODO: Implement actual capacity checking based on craft size and storage modules
+      true
     end
 
     # Process extracted materials into refined resources
@@ -25,9 +35,10 @@ module Craft
         processed_amount = calculate_processing(item.amount)
         item.update!(amount: item.amount - processed_amount)
 
-        refined_item = inventory.items.find_or_initialize_by(name: 'refined_material') do |item|
+        refined_item = inventory.items.find_or_initialize_by(name: 'Processed Regolith') do |item|
           item.owner = player || self
           item.storage_method = 'bulk_storage'
+          item.material_type = :processed_material
         end
         refined_item.amount += processed_amount
         refined_item.save!
@@ -53,7 +64,7 @@ module Craft
     private
 
     def processable_material?(material_name)
-      material_name == 'raw_material'
+      material_name == 'Regolith'
     end
 
     def calculate_processing(amount)

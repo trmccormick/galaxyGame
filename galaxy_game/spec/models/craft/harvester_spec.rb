@@ -30,9 +30,9 @@ RSpec.describe Craft::Harvester, type: :model do
     context 'when extracting from a valid target' do
       it 'increases inventory with extracted resources' do
         harvester.extract_resources(target_body, 100)
-        raw_material = harvester.inventory.items.find_by(name: 'raw_material')
+        regolith = harvester.inventory.items.find_by(name: 'Regolith')
 
-        expect(raw_material.amount).to eq(90) # 100 * 0.9 efficiency
+        expect(regolith.amount).to eq(90) # 100 * 0.9 efficiency
       end
     end
 
@@ -57,14 +57,14 @@ RSpec.describe Craft::Harvester, type: :model do
 
   describe '#process_resources' do
     before do
-      harvester.inventory.items.create!(name: 'raw_material', amount: 100, owner: harvester.player)
+      harvester.inventory.items.create!(name: 'Regolith', amount: 100, owner: harvester.player, storage_method: 'bulk_storage', material_type: :raw_material)
     end
 
     it 'converts raw material into refined material' do
       harvester.process_resources
 
-      raw_material = harvester.inventory.items.find_by(name: 'raw_material')
-      refined_material = harvester.inventory.items.find_by(name: 'refined_material')
+      raw_material = harvester.inventory.items.find_by(name: 'Regolith')
+      refined_material = harvester.inventory.items.find_by(name: 'Processed Regolith')
 
       expect(raw_material.amount).to eq(20) # 100 - 80 processed
       expect(refined_material.amount).to eq(80) # 100 * 0.8 conversion

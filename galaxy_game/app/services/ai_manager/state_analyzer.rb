@@ -66,27 +66,107 @@ module AIManager
 
     # Analyze potential scouting opportunities
     def analyze_scouting_opportunities(settlement)
+      discovery_service = AIManager::SystemDiscoveryService.new(@shared_context)
+      available_systems = discovery_service.discover_systems_in_range(settlement)
+
+      # Filter out the current system
+      current_system_id = settlement.solar_system&.id
+      candidate_systems = available_systems.reject { |sys| sys[:system_id] == current_system_id }
+
+      # Categorize by strategic value
       high_value_systems = []
       strategic_systems = []
 
-      # Check for unexplored systems in range
-      # This would typically check a system database or known systems
-      # For now, return mock opportunities based on settlement state
-
-      # If settlement is resource-rich, look for expansion opportunities
-      if assess_economic_health(settlement) > 0.7
-        strategic_systems << { id: 'nearby_system_1', estimated_value: :high }
-      end
-
-      # If settlement needs resources, look for resource-rich systems
-      if analyze_resource_needs(settlement)[:critical].any?
-        high_value_systems << { id: 'resource_system_1', resource_potential: :high }
+      candidate_systems.each do |system_data|
+        if is_high_value_system?(system_data)
+          high_value_systems << format_system_opportunity(system_data, :high_value)
+        elsif is_strategic_system?(system_data, settlement)
+          strategic_systems << format_system_opportunity(system_data, :strategic)
+        end
       end
 
       {
         high_value: high_value_systems,
         strategic: strategic_systems
       }
+    end
+
+    private
+
+    def is_high_value_system?(system_data)
+      # High value criteria
+      tei_score = system_data[:tei_score] || 0
+      strategic_value = system_data[:strategic_value] || 0
+      resource_profile = system_data[:resource_profile] || {}
+
+      # Prize World (TEI > 80%)
+      return true if tei_score > 80
+
+      # Resource World (high resource scores)
+      resource_score = (resource_profile[:metal_richness] || 0) +
+                      (resource_profile[:volatile_availability] || 0) +
+                      (resource_profile[:rare_earth_potential] || 0)
+      return true if resource_score > 1.5
+
+      # High strategic value
+      return true if strategic_value > 0.7
+
+      false
+    end
+
+    def is_strategic_system?(system_data, settlement)
+      # Strategic criteria based on settlement needs
+      resource_needs = analyze_resource_needs(settlement)
+      economic_health = assess_economic_health(settlement)
+
+      # If settlement is doing well economically, look for expansion opportunities
+      if economic_health > 0.6
+        strategic_value = system_data[:strategic_value] || 0
+        return true if strategic_value > 0.4
+      end
+
+      # If settlement has critical resource needs, look for resource-rich systems
+      if resource_needs[:critical].any?
+        resource_profile = system_data[:resource_profile] || {}
+        resource_score = (resource_profile[:metal_richness] || 0) +
+                        (resource_profile[:volatile_availability] || 0)
+        return true if resource_score > 0.8
+      end
+
+      # Systems with wormhole connections are always strategic
+      wormhole_data = system_data[:wormhole_data]
+      return true if wormhole_data&.dig(:has_wormholes)
+
+      false
+    end
+
+    def format_system_opportunity(system_data, category)
+      {
+        id: system_data[:identifier],
+        name: system_data[:name],
+        tei_score: system_data[:tei_score],
+        strategic_value: system_data[:strategic_value],
+        resource_profile: system_data[:resource_profile],
+        wormhole_distance: system_data[:wormhole_distance],
+        connection_stability: system_data[:connection_stability],
+        category: category,
+        estimated_value: calculate_estimated_value(system_data)
+      }
+    end
+
+    def calculate_estimated_value(system_data)
+      tei = system_data[:tei_score] || 0
+      strategic = system_data[:strategic_value] || 0
+
+      if tei > 80
+        :prize_world
+      elsif strategic > 0.7
+        :high
+      elsif strategic > 0.4
+        :medium
+      else
+        :low
+      end
     end
 
     # Calculate readiness for settlement expansion

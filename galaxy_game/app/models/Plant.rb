@@ -1,10 +1,24 @@
 class Plant < ApplicationRecord
     belongs_to :environment, optional: true
+
+    # Validations
+    validates :name, presence: true, uniqueness: true
+    validates :growth_temperature_range, presence: true
+    validates :growth_humidity_range, presence: true
   
     # Constants for plant health thresholds
     HEALTH_THRESHOLD = 0.0
     MAX_HEALTH = 100.0
-  
+
+    # Method to check if plant can grow in given environment
+    def can_grow_in?(environment)
+      temp_range = parse_range(growth_temperature_range)
+      humidity_range = parse_range(growth_humidity_range)
+      
+      temp_range.include?(environment.temperature) && 
+      humidity_range.include?(environment.humidity)
+    end
+
     # Method to simulate growth and death
     def simulate_growth_and_death
       adjust_growth_rate
@@ -58,6 +72,21 @@ class Plant < ApplicationRecord
         1.5 # Higher growth due to ideal conditions
       else
         1.0 # Normal growth rate
+      end
+    end
+
+    private
+
+    # Parse string range like "20..30" into a Range object
+    def parse_range(range_string)
+      return Range.new(0, 0) if range_string.blank?
+      
+      if range_string.is_a?(Range)
+        range_string
+      else
+        # Parse string like "20..30" or "20...30"
+        min, max = range_string.to_s.scan(/-?\d+\.?\d*/).map(&:to_f)
+        min..max
       end
     end
   end

@@ -1,22 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Housing, type: :concern do
-  # Create a test class that includes the concern
-  let(:test_class) do
-    Class.new do
-      include Housing
-      
-      # Add attributes needed for testing
-      attr_accessor :current_population, :base_units
-      
-      def initialize
-        @current_population = 0
-        @base_units = []
-      end
-    end
-  end
+  # Use BaseSettlement which includes the Housing concern
+  let(:test_object) { build(:base_settlement) }
   
-  let(:test_object) { test_class.new }
+  let(:mock_base_units) { double('base_units') }
   
   let(:mock_base_units) { double('base_units') }
   
@@ -47,7 +35,7 @@ RSpec.describe Housing, type: :concern do
     }
     
     before do
-      allow(mock_base_units).to receive(:where).with("unit_type LIKE ?", "%habitat%")
+    allow(test_object).to receive(:base_units).and_return(mock_base_units)
         .and_return([habitat_unit, starship_habitat])
       allow(mock_base_units).to receive(:sum) do |&block|
         [habitat_unit, starship_habitat, non_habitat].sum(&block)
@@ -79,6 +67,7 @@ RSpec.describe Housing, type: :concern do
     end
     
     it 'calculates total population from base units' do
+      allow(test_object).to receive(:base_units).and_return(mock_base_units)
       allow(mock_base_units).to receive(:sum).and_return(50) # 30 + 20
       expect(test_object.total_population).to eq(50)
     end

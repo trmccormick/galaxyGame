@@ -127,12 +127,43 @@ module Settlement
 
     def capacity
       base_units.sum do |unit|
-        unit.operational_data&.dig('capacity')&.to_i || 0
+        capacity_data = unit.operational_data&.dig('capacity')
+        if capacity_data.is_a?(Hash)
+          capacity_data['passenger_capacity'] || capacity_data['capacity'] || 0
+        else
+          capacity_data&.to_i || 0
+        end
       end
     end
 
-    def allocate_space(num_people)
-      super(num_people)
+    # Population capacity is calculated from habitat units
+    def population_capacity
+      capacity
+    end
+
+    # Alias for backward compatibility
+    alias_method :total_capacity, :population_capacity
+
+    # Available capacity = total capacity - current population
+    def available_capacity
+      population_capacity - current_population
+    end
+
+    # Check if settlement has capacity for additional population
+    def has_capacity_for?(additional_population)
+      available_capacity >= additional_population
+    end
+
+    # Calculate total population from base units
+    def total_population
+      base_units.sum do |unit|
+        population_data = unit.operational_data&.dig('population')
+        if population_data.is_a?(Hash)
+          population_data['current_population'] || population_data['population'] || 0
+        else
+          population_data || 0
+        end
+      end
     end
 
     def initialize_inventory

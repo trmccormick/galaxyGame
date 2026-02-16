@@ -83,7 +83,11 @@ module HasUnitStorage
     return unless inventory && collected_materials.present?
     
     collected_materials.each do |material, amount|
-      item = inventory.items.find_or_initialize_by(name: material)
+      item = inventory.items.find_or_initialize_by(name: material) do |new_item|
+        new_item.owner = owner
+        new_item.storage_method = 'bulk_storage'
+        new_item.material_type = :raw_material
+      end
       item.amount = (item.amount || 0) + amount
       item.save!
     end
