@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_02_12_011654) do
+ActiveRecord::Schema[7.0].define(version: 2026_02_16_020036) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -1227,12 +1227,14 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_12_011654) do
     t.string "material"
     t.decimal "quantity"
     t.string "source"
-    t.integer "destination_id", null: false
+    t.integer "destination_settlement_id", null: false
     t.decimal "transport_cost"
     t.datetime "delivery_eta"
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "source_settlement_id"
+    t.index ["source_settlement_id"], name: "index_scheduled_imports_on_source_settlement_id"
   end
 
   create_table "seal_printing_jobs", force: :cascade do |t|
@@ -1602,7 +1604,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_12_011654) do
   add_foreign_key "route_proposals", "organizations", column: "proposer_id"
   add_foreign_key "scheduled_arrivals", "cyclers"
   add_foreign_key "scheduled_departures", "cyclers"
-  add_foreign_key "scheduled_imports", "base_settlements", column: "destination_id"
+  add_foreign_key "scheduled_imports", "base_settlements", column: "destination_settlement_id"
+  add_foreign_key "scheduled_imports", "base_settlements", column: "source_settlement_id"
   add_foreign_key "seal_printing_jobs", "base_settlements", column: "settlement_id"
   add_foreign_key "seal_printing_jobs", "base_units", column: "printer_unit_id"
   add_foreign_key "segment_components", "items"
