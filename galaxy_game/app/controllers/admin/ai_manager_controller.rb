@@ -1,6 +1,35 @@
 module Admin
   class AiManagerController < ApplicationController
     
+    def index
+      # System status overview
+      @system_status = {
+        active_missions: Mission.where(status: [:in_progress]).count,
+        completed_missions: Mission.where(status: [:completed]).count,
+        failed_missions: Mission.where(status: [:failed, :stalled]).count,
+        total_missions: Mission.count,
+        ai_services_status: check_ai_services_status,
+        last_activity: Mission.order(updated_at: :desc).first&.updated_at
+      }
+      
+      # Active missions summary
+      @active_missions = Mission.where(status: [:in_progress]).includes(:settlement).limit(5)
+      
+      # Performance metrics
+      @performance_metrics = calculate_performance_metrics
+      
+      # System alerts
+      @system_alerts = collect_system_alerts
+      
+      # Quick action data
+      @quick_actions = {
+        planner: { path: admin_ai_manager_planner_path, title: 'Mission Planner', description: 'Plan and simulate new missions' },
+        decisions: { path: admin_ai_manager_decisions_path, title: 'Decision Log', description: 'Review AI decision history' },
+        patterns: { path: admin_ai_manager_patterns_path, title: 'Pattern Analysis', description: 'Analyze and test AI patterns' },
+        performance: { path: admin_ai_manager_performance_path, title: 'Performance Metrics', description: 'Monitor AI system performance' }
+      }
+    end
+    
     def missions
       # Load all missions from database
       @missions = Mission.includes(:settlement).order(created_at: :desc)
@@ -97,6 +126,96 @@ module Admin
     end
     
     private
+    
+    def check_ai_services_status
+      # Check if key AI services are operational
+      services = {}
+      
+      # Check if AI Manager services can be instantiated
+      begin
+        AIManager::MissionPlannerService.new('test', {})
+        services[:mission_planner] = :operational
+      rescue => e
+        services[:mission_planner] = :error
+      end
+      
+      begin
+        AIManager::EconomicForecasterService.new({})
+        services[:economic_forecaster] = :operational
+      rescue => e
+        services[:economic_forecaster] = :error
+      end
+      
+      begin
+        AIManager::StationConstructionStrategy.new({})
+        services[:station_construction] = :operational
+      rescue => e
+        services[:station_construction] = :error
+      end
+      
+      services
+    end
+    
+    def calculate_performance_metrics
+      total_missions = Mission.count
+      return { success_rate: 0, average_timeline: 0, resource_efficiency: 0 } if total_missions.zero?
+      
+      completed_missions = Mission.where(status: :completed).count
+      success_rate = (completed_missions.to_f / total_missions * 100).round(1)
+      
+      # Calculate average timeline (simplified)
+      avg_timeline = Mission.where(status: :completed).average('EXTRACT(EPOCH FROM (updated_at - created_at))/86400')&.round(1) || 0
+      
+      # Resource efficiency (simplified metric)
+      resource_efficiency = [success_rate * 0.8, 100].min.round(1)
+      
+      {
+        success_rate: success_rate,
+        average_timeline: avg_timeline,
+        resource_efficiency: resource_efficiency
+      }
+    end
+    
+    def collect_system_alerts
+      alerts = []
+      
+      # Check for failed missions
+      failed_count = Mission.where(status: [:failed, :stalled]).count
+      if failed_count > 0
+        alerts << {
+          type: :warning,
+          message: "#{failed_count} mission(s) have failed or stalled",
+          action: admin_ai_manager_missions_path,
+          action_text: 'Review Missions'
+        }
+      end
+      
+      # Check AI service status
+      ai_status = check_ai_services_status
+      ai_status.each do |service, status|
+        if status == :error
+          alerts << {
+            type: :error,
+            message: "#{service.to_s.humanize} service is experiencing errors",
+            action: admin_ai_manager_performance_path,
+            action_text: 'Check Performance'
+          }
+        end
+      end
+      
+      # Check for old missions without updates
+      stale_missions = Mission.where(status: :in_progress).where('updated_at < ?', 7.days.ago).count
+      if stale_missions > 0
+        alerts << {
+          type: :info,
+          message: "#{stale_missions} mission(s) haven't been updated in over a week",
+          action: admin_ai_manager_missions_path,
+          action_text: 'Review Stale Missions'
+        }
+      end
+      
+      alerts
+    end
     
     # Maps simplified UI pattern names to actual JSON pattern identifiers
     def available_mission_patterns

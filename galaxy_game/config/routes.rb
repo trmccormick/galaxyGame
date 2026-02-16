@@ -54,6 +54,7 @@ Rails.application.routes.draw do
     get 'dashboard', to: 'dashboard#index'
     
     # AI Manager routes
+    get 'ai_manager', to: 'ai_manager#index', as: 'ai_manager'
     get 'ai_manager/missions', to: 'ai_manager#missions', as: 'ai_manager_missions'
     get 'ai_manager/missions/:id', to: 'ai_manager#show_mission', as: 'ai_manager_mission'
     post 'ai_manager/missions/:id/advance_phase', to: 'ai_manager#advance_phase', as: 'ai_manager_advance_phase'

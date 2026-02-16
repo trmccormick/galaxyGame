@@ -202,6 +202,12 @@ We welcome contributions! Current focus areas:
 4. Update documentation with every code change
 5. Submit PRs with passing tests
 
+### Development Workflow
+- **Git Practices**: Be selective with staging - avoid `git add .` as it can interfere with other developers' work
+- **File Staging**: Use `git add <specific-file>` to stage only the files you're responsible for
+- **Collaboration**: Check `git status` first to see what files have changed, then selectively add only your changes
+- **Testing**: Run full test suite before committing to ensure no regressions
+
 **Contribution Guidelines**: [docs/developer/README.md](docs/developer/README.md)
 
 ---

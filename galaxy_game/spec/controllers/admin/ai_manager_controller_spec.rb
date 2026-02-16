@@ -100,6 +100,91 @@ RSpec.describe Admin::AiManagerController, type: :controller do
     allow(Logistics::TransportCostService).to receive(:calculate_cost_per_kg).and_return(50.0)
   end
   
+  describe "GET #index" do
+    let!(:active_mission) { create(:mission, identifier: 'active_mission', status: :in_progress, progress: 50) }
+    let!(:completed_mission) { create(:mission, identifier: 'completed_mission', status: :completed, progress: 100) }
+    let!(:failed_mission) { create(:mission, identifier: 'failed_mission', status: :failed, progress: 0) }
+    
+    it "returns http success" do
+      get :index
+      expect(response).to have_http_status(:success)
+    end
+    
+    it "assigns system status data" do
+      get :index
+      expect(assigns(:system_status)).to be_a(Hash)
+      expect(assigns(:system_status)).to have_key(:active_missions)
+      expect(assigns(:system_status)).to have_key(:completed_missions)
+      expect(assigns(:system_status)).to have_key(:failed_missions)
+      expect(assigns(:system_status)).to have_key(:total_missions)
+      expect(assigns(:system_status)).to have_key(:ai_services_status)
+      expect(assigns(:system_status)).to have_key(:last_activity)
+    end
+    
+    it "assigns active missions (limited to 5)" do
+      # Create more than 5 active missions
+      6.times do |i|
+        create(:mission, identifier: "active_mission_#{i}", status: :in_progress, progress: 10)
+      end
+      
+      get :index
+      expect(assigns(:active_missions).length).to eq(5)
+    end
+    
+    it "assigns performance metrics" do
+      get :index
+      expect(assigns(:performance_metrics)).to be_a(Hash)
+      expect(assigns(:performance_metrics)).to have_key(:success_rate)
+      expect(assigns(:performance_metrics)).to have_key(:average_timeline)
+      expect(assigns(:performance_metrics)).to have_key(:resource_efficiency)
+    end
+    
+    it "assigns system alerts" do
+      get :index
+      expect(assigns(:system_alerts)).to be_an(Array)
+    end
+    
+    it "assigns quick actions data" do
+      get :index
+      expect(assigns(:quick_actions)).to be_a(Hash)
+      expect(assigns(:quick_actions)).to have_key(:planner)
+      expect(assigns(:quick_actions)).to have_key(:decisions)
+      expect(assigns(:quick_actions)).to have_key(:patterns)
+      expect(assigns(:quick_actions)).to have_key(:performance)
+      
+      # Check that each quick action has required keys
+      assigns(:quick_actions).each do |key, action|
+        expect(action).to have_key(:path)
+        expect(action).to have_key(:title)
+        expect(action).to have_key(:description)
+      end
+    end
+    
+    it "calculates correct mission counts" do
+      get :index
+      
+      expect(assigns(:system_status)[:active_missions]).to eq(1)
+      expect(assigns(:system_status)[:completed_missions]).to eq(1)
+      expect(assigns(:system_status)[:failed_missions]).to eq(1)
+      expect(assigns(:system_status)[:total_missions]).to eq(3)
+    end
+    
+    it "includes AI services status" do
+      get :index
+      
+      ai_status = assigns(:system_status)[:ai_services_status]
+      expect(ai_status).to be_a(Hash)
+      expect(ai_status).to have_key(:mission_planner)
+      expect(ai_status).to have_key(:economic_forecaster)
+      expect(ai_status).to have_key(:station_construction)
+      
+      # Each service should be either :operational or :error
+      ai_status.each_value do |status|
+        expect([:operational, :error]).to include(status)
+      end
+    end
+  end
+  
   describe "GET #missions" do
     it "loads all missions" do
       get :missions

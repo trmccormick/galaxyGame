@@ -1,0 +1,618 @@
+<div class="ai-manager-dashboard">
+  <div class="dashboard-header">
+    <h1>🤖 AI Manager Dashboard</h1>
+    <p class="dashboard-subtitle">Comprehensive AI system monitoring, mission control, and performance analytics</p>
+  </div>
+
+  <!-- System Status Overview -->
+  <div class="status-overview">
+    <h2>System Status</h2>
+    <div class="status-cards">
+      <div class="status-card">
+        <div class="status-icon">🚀</div>
+        <div class="status-content">
+          <h3><%= @system_status[:active_missions] %></h3>
+          <p>Active Missions</p>
+        </div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">✅</div>
+        <div class="status-content">
+          <h3><%= @system_status[:completed_missions] %></h3>
+          <p>Completed Missions</p>
+        </div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">❌</div>
+        <div class="status-content">
+          <h3><%= @system_status[:failed_missions] %></h3>
+          <p>Failed Missions</p>
+        </div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">⚡</div>
+        <div class="status-content">
+          <h3><%= @performance_metrics[:success_rate] %>%</h3>
+          <p>Success Rate</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-cards">
+      <% @quick_actions.each do |key, action| %>
+        <div class="action-card">
+          <h3><%= action[:title] %></h3>
+          <p><%= action[:description] %></p>
+          <%= link_to 'Access', action[:path], class: 'action-button' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- System Alerts -->
+  <% if @system_alerts.any? %>
+    <div class="system-alerts">
+      <h2>System Alerts</h2>
+      <div class="alerts-list">
+        <% @system_alerts.each do |alert| %>
+          <div class="alert alert-<%= alert[:type] %>">
+            <div class="alert-content">
+              <span class="alert-message"><%= alert[:message] %></span>
+              <%= link_to alert[:action_text], alert[:action], class: 'alert-action' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Active Missions -->
+  <div class="active-missions">
+    <h2>Active Missions</h2>
+    <% if @active_missions.any? %>
+      <div class="missions-list">
+        <% @active_missions.each do |mission| %>
+          <div class="mission-card">
+            <div class="mission-header">
+              <h3><%= mission.identifier %></h3>
+              <span class="mission-status status-<%= mission.status %>"><%= mission.status.humanize %></span>
+            </div>
+            <div class="mission-details">
+              <p><strong>Settlement:</strong> <%= mission.settlement&.name || 'Unknown' %></p>
+              <p><strong>Progress:</strong> <%= mission.progress %>%</p>
+              <p><strong>Started:</strong> <%= mission.created_at.strftime('%Y-%m-%d %H:%M') %></p>
+            </div>
+            <div class="mission-actions">
+              <%= link_to 'View Details', admin_ai_manager_mission_path(mission), class: 'mission-button' %>
+              <%= link_to 'Advance Phase', admin_ai_manager_advance_phase_path(mission), method: :post, class: 'mission-button secondary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <%= link_to 'View All Missions', admin_ai_manager_missions_path, class: 'view-all-link' %>
+    <% else %>
+      <div class="no-missions">
+        <p>No active missions at this time.</p>
+        <%= link_to 'Plan New Mission', admin_ai_manager_planner_path, class: 'plan-mission-button' %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Performance Metrics -->
+  <div class="performance-metrics">
+    <h2>Performance Metrics</h2>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3><%= @performance_metrics[:success_rate] %>%</h3>
+        <p>Mission Success Rate</p>
+        <div class="metric-bar">
+          <div class="metric-fill" style="width: <%= @performance_metrics[:success_rate] %>%"></div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <h3><%= @performance_metrics[:average_timeline] %> days</h3>
+        <p>Average Mission Timeline</p>
+      </div>
+      <div class="metric-card">
+        <h3><%= @performance_metrics[:resource_efficiency] %>%</h3>
+        <p>Resource Efficiency</p>
+        <div class="metric-bar">
+          <div class="metric-fill" style="width: <%= @performance_metrics[:resource_efficiency] %>%"></div>
+        </div>
+      </div>
+    </div>
+    <%= link_to 'View Detailed Performance', admin_ai_manager_performance_path, class: 'detailed-metrics-link' %>
+  </div>
+
+  <!-- AI Services Status -->
+  <div class="ai-services-status">
+    <h2>AI Services Status</h2>
+    <div class="services-grid">
+      <% @system_status[:ai_services_status].each do |service, status| %>
+        <div class="service-card status-<%= status %>">
+          <div class="service-icon">
+            <%= status == :operational ? '✅' : '❌' %>
+          </div>
+          <div class="service-info">
+            <h4><%= service.to_s.humanize %></h4>
+            <span class="service-status"><%= status.to_s.humanize %></span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+.ai-manager-dashboard {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.dashboard-subtitle {
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+/* Status Overview */
+.status-overview {
+  margin-bottom: 30px;
+}
+
+.status-overview h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.status-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.status-icon {
+  font-size: 2em;
+}
+
+.status-content h3 {
+  margin: 0;
+  font-size: 2em;
+  color: #2c3e50;
+}
+
+.status-content p {
+  margin: 5px 0 0 0;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+/* Quick Actions */
+.quick-actions {
+  margin-bottom: 30px;
+}
+
+.quick-actions h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e74c3c;
+  padding-bottom: 10px;
+}
+
+.action-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.action-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.action-card h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.action-card p {
+  color: #7f8c8d;
+  margin-bottom: 15px;
+}
+
+.action-button {
+  display: inline-block;
+  background: #3498db;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.action-button:hover {
+  background: #2980b9;
+}
+
+/* System Alerts */
+.system-alerts {
+  margin-bottom: 30px;
+}
+
+.system-alerts h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f39c12;
+  padding-bottom: 10px;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-error {
+  background: #fee;
+  border-left: 4px solid #e74c3c;
+}
+
+.alert-warning {
+  background: #fff8e1;
+  border-left: 4px solid #f39c12;
+}
+
+.alert-info {
+  background: #e8f4fd;
+  border-left: 4px solid #3498db;
+}
+
+.alert-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.alert-message {
+  color: #2c3e50;
+}
+
+.alert-action {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 15px;
+}
+
+.alert-action:hover {
+  text-decoration: underline;
+}
+
+/* Active Missions */
+.active-missions {
+  margin-bottom: 30px;
+}
+
+.active-missions h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #27ae60;
+  padding-bottom: 10px;
+}
+
+.missions-list {
+  display: grid;
+  gap: 15px;
+}
+
+.mission-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.mission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.mission-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.mission-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-in_progress {
+  background: #3498db;
+  color: white;
+}
+
+.status-completed {
+  background: #27ae60;
+  color: white;
+}
+
+.status-failed {
+  background: #e74c3c;
+  color: white;
+}
+
+.status-stalled {
+  background: #f39c12;
+  color: white;
+}
+
+.mission-details {
+  margin-bottom: 15px;
+}
+
+.mission-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.mission-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.mission-button {
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.mission-button {
+  background: #3498db;
+  color: white;
+}
+
+.mission-button:hover {
+  background: #2980b9;
+}
+
+.mission-button.secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.mission-button.secondary:hover {
+  background: #7f8c8d;
+}
+
+.view-all-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.view-all-link:hover {
+  text-decoration: underline;
+}
+
+.no-missions {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.plan-mission-button {
+  display: inline-block;
+  margin-top: 15px;
+  background: #27ae60;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.plan-mission-button:hover {
+  background: #229954;
+}
+
+/* Performance Metrics */
+.performance-metrics {
+  margin-bottom: 30px;
+}
+
+.performance-metrics h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #9b59b6;
+  padding-bottom: 10px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.metric-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 2em;
+  color: #2c3e50;
+}
+
+.metric-card p {
+  margin: 0 0 15px 0;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.metric-bar {
+  background: #ecf0f1;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.metric-fill {
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.detailed-metrics-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: #9b59b6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.detailed-metrics-link:hover {
+  text-decoration: underline;
+}
+
+/* AI Services Status */
+.ai-services-status {
+  margin-bottom: 30px;
+}
+
+.ai-services-status h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #1abc9c;
+  padding-bottom: 10px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.service-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.service-card.status-operational {
+  border-left: 4px solid #27ae60;
+}
+
+.service-card.status-error {
+  border-left: 4px solid #e74c3c;
+}
+
+.service-icon {
+  font-size: 1.5em;
+}
+
+.service-info h4 {
+  margin: 0 0 5px 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.service-status {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.service-card.status-operational .service-status {
+  color: #27ae60;
+}
+
+.service-card.status-error .service-status {
+  color: #e74c3c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ai-manager-dashboard {
+    padding: 10px;
+  }
+
+  .status-cards,
+  .action-cards,
+  .metrics-grid,
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-actions {
+    flex-direction: column;
+  }
+
+  .alert-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .alert-action {
+    margin-left: 0;
+  }
+}
+</style>
