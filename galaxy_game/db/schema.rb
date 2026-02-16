@@ -678,7 +678,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_16_021253) do
     t.float "pressure", default: 0.0
     t.json "water_bodies", default: {}
     t.json "composition", default: {}
-    t.json "state_distribution", default: {"liquid"=>0.0, "solid"=>0.0, "vapor"=>0.0}
+    t.json "state_distribution", default: {"liquid" => 0.0, "solid" => 0.0, "vapor" => 0.0}
     t.float "total_water_mass", default: 0.0
     t.integer "pollution", default: 0
     t.string "environment_type", default: "planetary"

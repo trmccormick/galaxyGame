@@ -91,8 +91,9 @@ Essential technical documentation for daily development.
 
 ### Starting Your Day
 1. Read [CURRENT_STATUS.md](CURRENT_STATUS.md) to see latest progress
-2. Check [ENVIRONMENT_BOUNDARIES.md](reference/ENVIRONMENT_BOUNDARIES.md) if running commands
-3. Reference [RESTORATION_AND_ENHANCEMENT_PLAN.md](planning/RESTORATION_AND_ENHANCEMENT_PLAN.md) for phase context
+2. **CRITICAL**: Review [Environment Boundaries & Docker Isolation](#-critical-environment-boundaries--docker-isolation) section below
+3. Check [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety rules
+4. Reference [RESTORATION_AND_ENHANCEMENT_PLAN.md](planning/RESTORATION_AND_ENHANCEMENT_PLAN.md) for phase context
 
 ### Planning New Features
 1. Review [RESTORATION_AND_ENHANCEMENT_PLAN.md](planning/RESTORATION_AND_ENHANCEMENT_PLAN.md) phases
@@ -100,9 +101,10 @@ Essential technical documentation for daily development.
 3. Update [CURRENT_STATUS.md](CURRENT_STATUS.md) when starting work
 
 ### Running Tests or Git Operations
-1. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](reference/ENVIRONMENT_BOUNDARIES.md) first
-2. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
-3. Never run bare commands without docker-compose prefix (container) or on host (git)
+1. **MANDATORY**: Read [Environment Boundaries & Docker Isolation](#-critical-environment-boundaries--docker-isolation) section
+2. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety
+3. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
+4. **NEVER** run Rails/Ruby commands on host - always use `docker-compose exec web`
 
 ---
 
@@ -129,6 +131,35 @@ Essential technical documentation for daily development.
    - **Bug Fixes**: Tests demonstrating the fix works
    - **Integration Changes**: Tests verifying service interactions
    - **Configuration Changes**: Tests validating new behavior
+
+### **🚫 CRITICAL: Environment Boundaries & Docker Isolation**
+
+**ALL development work MUST occur within Docker containers. Host system isolation is mandatory:**
+
+#### **NEVER Run Commands on Host System**
+- ❌ **Do NOT run** `bundle install`, `rails server`, `rake db:migrate`, etc. on host
+- ❌ **Do NOT change** Ruby versions, system packages, or host environment
+- ❌ **Do NOT run** Rails commands, RSpec tests, or database operations on host
+- ❌ **Do NOT modify** host Ruby, Node.js, or system-level dependencies
+
+#### **ALWAYS Use Docker for Everything**
+- ✅ **Rails Commands**: `docker-compose exec web bundle exec rails ...`
+- ✅ **RSpec Tests**: `docker-compose exec web bundle exec rspec ...`
+- ✅ **Database Operations**: `docker-compose exec web bundle exec rake db:...`
+- ✅ **Bundle Install**: `docker-compose exec web bundle install`
+- ✅ **Rails Console**: `docker-compose exec web bundle exec rails console`
+
+#### **Ruby Version Management**
+- **DO NOT change Ruby versions** in Gemfile, Dockerfile, or host system
+- **Ruby version is fixed** at 3.4.3 in Docker containers - this is intentional
+- **Host Ruby version is irrelevant** - all work happens in isolated containers
+- **Version mismatches indicate configuration errors**, not version changes needed
+
+#### **Service Isolation Benefits**
+- **Predictable environment**: Same Ruby, gems, and dependencies every time
+- **No host pollution**: Development doesn't affect or require host system changes
+- **Team consistency**: All developers work in identical Docker environments
+- **Clean separation**: Host system remains stable and unchanged
 
 ### **NEVER Commit Without Testing**
 - **Rails runner commands are NOT sufficient** for validation
@@ -181,6 +212,6 @@ Essential technical documentation for daily development.
 
 ---
 
-**Last Updated**: January 16, 2026  
+**Last Updated**: February 15, 2026  
 **Maintainer**: Development team  
 **Status**: Active organization (v2.0)
