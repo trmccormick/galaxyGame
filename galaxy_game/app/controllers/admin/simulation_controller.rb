@@ -5,15 +5,18 @@ module Admin
       @solar_system = SolarSystem.includes(:stars, :celestial_bodies).first
       
       if @solar_system.nil?
-        @celestial_bodies = CelestialBodies::CelestialBody.all
+        @celestial_bodies = ::CelestialBodies::CelestialBody.all
       else
         @celestial_bodies = @solar_system.celestial_bodies
         @star = @solar_system.primary_star
       end
+
+      # Load AI priority system for controls
+      @ai_priority_system = AIManager::AiPrioritySystem.instance
     end
 
     def run
-      @celestial_body = CelestialBodies::CelestialBody.find(params[:id])
+      @celestial_body = ::CelestialBodies::CelestialBody.find(params[:id])
       
       # Run the simulator for this body
       simulator = TerraSim::Simulator.new(@celestial_body)
@@ -41,7 +44,7 @@ module Admin
     
     def spheres
       # Sphere simulation controls
-      @celestial_bodies = CelestialBodies::CelestialBody.includes(:atmosphere, :hydrosphere, :geosphere, :biosphere).all
+      @celestial_bodies = ::CelestialBodies::CelestialBody.includes(:atmosphere, :hydrosphere, :geosphere, :biosphere).all
     end
     
     def time_control
@@ -99,6 +102,77 @@ module Admin
       # TODO: Pass to TaskExecutionEngine
       # TODO: Monitor deployment
       raise NotImplementedError, "Phase 4 implementation pending Phase 3 completion"
+    end
+
+    # AI Priority Controls
+    def update_ai_priorities
+      # Validate required parameters
+      unless params[:critical_multiplier].present? && params[:operational_multiplier].present?
+        respond_to do |format|
+          format.json { render json: { success: false, error: "Missing required parameters" }, status: :unprocessable_entity }
+          format.html { redirect_to admin_simulation_path, alert: "Missing required parameters" }
+        end
+        return
+      end
+
+      critical_multiplier = params[:critical_multiplier].to_f
+      operational_multiplier = params[:operational_multiplier].to_f
+
+      # Validate that parameters are numeric and within reasonable bounds
+      unless valid_multiplier?(params[:critical_multiplier]) && valid_multiplier?(params[:operational_multiplier])
+        respond_to do |format|
+          format.json { render json: { success: false, error: "Invalid parameters - multipliers must be numeric values between 0.1 and 10.0" }, status: :unprocessable_entity }
+          format.html { redirect_to admin_simulation_path, alert: "Invalid parameters - multipliers must be numeric values between 0.1 and 10.0" }
+        end
+        return
+      end
+
+      # Update AI priority system multipliers
+      ai_priority_system = AIManager::AiPrioritySystem.instance
+      ai_priority_system.set_critical_multiplier(critical_multiplier)
+      ai_priority_system.set_operational_multiplier(operational_multiplier)
+
+      respond_to do |format|
+        format.json { render json: { success: true, message: "AI priorities updated successfully" } }
+        format.html { redirect_to admin_simulation_path, notice: "AI priorities updated successfully" }
+      end
+    rescue => e
+      respond_to do |format|
+        format.json { render json: { success: false, error: "Failed to update AI priorities" }, status: :unprocessable_entity }
+        format.html { redirect_to admin_simulation_path, alert: "Failed to update AI priorities: #{e.message}" }
+      end
+    end
+
+    def reset_ai_priorities
+      # Reset AI priority system to default multipliers
+      ai_priority_system = AIManager::AiPrioritySystem.instance
+      ai_priority_system.set_critical_multiplier(1.0)
+      ai_priority_system.set_operational_multiplier(1.0)
+
+      respond_to do |format|
+        format.json { render json: { success: true, message: "AI priorities reset to defaults" } }
+        format.html { redirect_to admin_simulation_path, notice: "AI priorities reset to defaults" }
+      end
+    rescue => e
+      respond_to do |format|
+        format.json { render json: { success: false, error: "Failed to reset AI priorities" }, status: :unprocessable_entity }
+        format.html { redirect_to admin_simulation_path, alert: "Failed to reset AI priorities: #{e.message}" }
+      end
+    end
+
+    private
+
+    def valid_multiplier?(value)
+      return false unless value.present?
+      
+      # Check if it's a valid numeric string
+      Float(value)
+      multiplier = value.to_f
+      
+      # Check bounds (reasonable range for multipliers)
+      multiplier >= 0.1 && multiplier <= 10.0
+    rescue ArgumentError
+      false
     end
   end
 end

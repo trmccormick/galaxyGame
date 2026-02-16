@@ -144,4 +144,25 @@ module GameConstants
     max_biomes: 10,                         # Maximum number of biomes for biodiversity calculation
     temperature_suitability_falloff: 20.0   # Temperature distance where suitability reaches zero
   }.freeze
+
+  # AI Priority System Configuration
+  # Adjustable priorities for AI behavior tuning during testing phases
+  AI_PRIORITIES = {
+    critical: {
+      life_support: 1000,
+      atmospheric_maintenance: 900,
+      debt_repayment: 800
+    },
+    operational: {
+      resource_procurement: 500,
+      construction: 300,
+      expansion: 100
+    }
+  }
+
+  # Default priority multipliers for testing adjustments
+  AI_PRIORITY_MULTIPLIERS = {
+    critical: 1.0,
+    operational: 1.0
+  }
 end

@@ -122,5 +122,7 @@ Rails.application.routes.draw do
     get 'simulation/spheres', to: 'simulation#spheres', as: 'simulation_spheres'
     get 'simulation/time_control', to: 'simulation#time_control', as: 'simulation_time_control'
     get 'simulation/testing', to: 'simulation#testing', as: 'simulation_testing'
+    post 'simulation/update_ai_priorities', to: 'simulation#update_ai_priorities', as: 'simulation_update_ai_priorities'
+    post 'simulation/reset_ai_priorities', to: 'simulation#reset_ai_priorities', as: 'simulation_reset_ai_priorities'
   end
 end

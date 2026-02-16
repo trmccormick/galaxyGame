@@ -54,7 +54,70 @@
                     💾 Export Data
                 </button>
             </div>
-            
+
+            <div class="tool-section">
+                <h3>🤖 AI MANAGER PRIORITY CONTROLS</h3>
+                <div style="margin: 10px 0; font-size: 11px; color: #ccc;">
+                    Adjust AI behavior priorities for testing scenarios
+                </div>
+
+                <!-- Critical Priorities -->
+                <div style="margin: 10px 0;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #ff6b6b;">
+                        🔥 Critical Priority Multiplier: <span id="critical-value"><%= number_with_precision(@ai_priority_system.critical_multiplier, precision: 1) %></span>x
+                    </label>
+                    <input type="range" id="critical-slider" min="0.1" max="5.0" step="0.1"
+                           value="<%= @ai_priority_system.critical_multiplier %>"
+                           style="width: 100%; margin: 5px 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: #888;">
+                        <span>0.1x</span>
+                        <span>1.0x (Default)</span>
+                        <span>5.0x</span>
+                    </div>
+                </div>
+
+                <!-- Operational Priorities -->
+                <div style="margin: 10px 0;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #4ecdc4;">
+                        ⚙️ Operational Priority Multiplier: <span id="operational-value"><%= number_with_precision(@ai_priority_system.operational_multiplier, precision: 1) %></span>x
+                    </label>
+                    <input type="range" id="operational-slider" min="0.1" max="5.0" step="0.1"
+                           value="<%= @ai_priority_system.operational_multiplier %>"
+                           style="width: 100%; margin: 5px 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: #888;">
+                        <span>0.1x</span>
+                        <span>1.0x (Default)</span>
+                        <span>5.0x</span>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div style="margin: 15px 0; display: flex; gap: 5px;">
+                    <button class="tool-button" id="update-priorities-btn" style="background: #4CAF50; flex: 1;">
+                        ✅ Apply Changes
+                    </button>
+                    <button class="tool-button" id="reset-priorities-btn" style="background: #ff9800; flex: 1;">
+                        🔄 Reset to Default
+                    </button>
+                </div>
+
+                <!-- Priority Preview -->
+                <div id="priority-preview" style="margin: 10px 0; padding: 8px; background: #1a1a1a; border-radius: 4px; font-size: 10px; display: none;">
+                    <div style="color: #ff6b6b; margin-bottom: 5px;">
+                        <strong>Critical Priorities:</strong><br>
+                        Life Support: <span id="preview-critical-life-support">-</span><br>
+                        Atmospheric: <span id="preview-critical-atmospheric">-</span><br>
+                        Debt: <span id="preview-critical-debt">-</span>
+                    </div>
+                    <div style="color: #4ecdc4;">
+                        <strong>Operational Priorities:</strong><br>
+                        Resources: <span id="preview-operational-resources">-</span><br>
+                        Construction: <span id="preview-operational-construction">-</span><br>
+                        Expansion: <span id="preview-operational-expansion">-</span>
+                    </div>
+                </div>
+            </div>
+
             <% if @solar_system %>
             <div class="tool-section">
                 <h3>📊 SYSTEM STATS</h3>
@@ -201,6 +264,129 @@
             a.download = 'simulation-data-export.json';
             a.click();
         }
+
+        // AI Priority Controls
+        document.addEventListener('DOMContentLoaded', function() {
+            const criticalSlider = document.getElementById('critical-slider');
+            const operationalSlider = document.getElementById('operational-slider');
+            const criticalValue = document.getElementById('critical-value');
+            const operationalValue = document.getElementById('operational-value');
+            const updateBtn = document.getElementById('update-priorities-btn');
+            const resetBtn = document.getElementById('reset-priorities-btn');
+            const previewDiv = document.getElementById('priority-preview');
+
+            // Update value displays when sliders change
+            criticalSlider.addEventListener('input', function() {
+                criticalValue.textContent = parseFloat(this.value).toFixed(1) + 'x';
+                updatePreview();
+            });
+
+            operationalSlider.addEventListener('input', function() {
+                operationalValue.textContent = parseFloat(this.value).toFixed(1) + 'x';
+                updatePreview();
+            });
+
+            // Update priorities via AJAX
+            updateBtn.addEventListener('click', function() {
+                const criticalMultiplier = parseFloat(criticalSlider.value);
+                const operationalMultiplier = parseFloat(operationalSlider.value);
+
+                fetch('/admin/simulation/update_ai_priorities', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        critical_multiplier: criticalMultiplier,
+                        operational_multiplier: operationalMultiplier
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('✅ AI priorities updated successfully!', 'success');
+                        updatePreview();
+                    } else {
+                        showNotification('❌ Failed to update AI priorities', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating priorities:', error);
+                    showNotification('❌ Error updating AI priorities', 'error');
+                });
+            });
+
+            // Reset priorities to default
+            resetBtn.addEventListener('click', function() {
+                if (confirm('Reset AI priorities to default values (1.0x)?')) {
+                    fetch('/admin/simulation/reset_ai_priorities', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            criticalSlider.value = 1.0;
+                            operationalSlider.value = 1.0;
+                            criticalValue.textContent = '1.0x';
+                            operationalValue.textContent = '1.0x';
+                            showNotification('🔄 AI priorities reset to default!', 'success');
+                            updatePreview();
+                        } else {
+                            showNotification('❌ Failed to reset AI priorities', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error resetting priorities:', error);
+                        showNotification('❌ Error resetting AI priorities', 'error');
+                    });
+                }
+            });
+
+            // Update priority preview
+            function updatePreview() {
+                const criticalMult = parseFloat(criticalSlider.value);
+                const operationalMult = parseFloat(operationalSlider.value);
+
+                // Calculate effective priorities (simplified preview)
+                document.getElementById('preview-critical-life-support').textContent = Math.round(1000 * criticalMult);
+                document.getElementById('preview-critical-atmospheric').textContent = Math.round(900 * criticalMult);
+                document.getElementById('preview-critical-debt').textContent = Math.round(800 * criticalMult);
+                document.getElementById('preview-operational-resources').textContent = Math.round(500 * operationalMult);
+                document.getElementById('preview-operational-construction').textContent = Math.round(300 * operationalMult);
+                document.getElementById('preview-operational-expansion').textContent = Math.round(100 * operationalMult);
+
+                previewDiv.style.display = 'block';
+            }
+
+            // Show notification in simulation log
+            function showNotification(message, type) {
+                const logDiv = document.getElementById('simulationLog');
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    margin: 5px 0;
+                    padding: 5px;
+                    border-left: 2px solid ${type === 'success' ? '#0f0' : '#f00'};
+                    background: ${type === 'success' ? '#003300' : '#330000'};
+                    color: ${type === 'success' ? '#0f0' : '#f00'};
+                `;
+                notification.textContent = message;
+                logDiv.insertBefore(notification, logDiv.firstChild);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+
+            // Initialize preview on page load
+            updatePreview();
+        });
     </script>
 </body>
 </html>

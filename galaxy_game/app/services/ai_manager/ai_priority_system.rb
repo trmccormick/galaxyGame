@@ -1,19 +1,46 @@
 module AIManager
   class AiPrioritySystem
-  CRITICAL_PRIORITIES = {
-    life_support: 1000,
-    atmospheric_maintenance: 900,
-    debt_repayment: 800
-  }
+  CRITICAL_PRIORITIES = GameConstants::AI_PRIORITIES[:critical]
+  OPERATIONAL_PRIORITIES = GameConstants::AI_PRIORITIES[:operational]
 
-  OPERATIONAL_PRIORITIES = {
-    resource_procurement: 500,
-    construction: 300,
-    expansion: 100
-  }
+  # Singleton pattern for global priority management
+  @@instance = nil
+
+  def self.instance
+    @@instance ||= new
+  end
 
   def initialize
     @last_check = Time.current
+    @critical_multiplier = GameConstants::AI_PRIORITY_MULTIPLIERS[:critical]
+    @operational_multiplier = GameConstants::AI_PRIORITY_MULTIPLIERS[:operational]
+  end
+
+  # Get current effective priorities with multipliers applied
+  def effective_critical_priorities
+    CRITICAL_PRIORITIES.transform_values { |v| (v * @critical_multiplier).to_i }
+  end
+
+  def effective_operational_priorities
+    OPERATIONAL_PRIORITIES.transform_values { |v| (v * @operational_multiplier).to_i }
+  end
+
+  # Adjust priority multipliers (0.1 to 5.0 range for testing)
+  def set_critical_multiplier(multiplier)
+    @critical_multiplier = [[0.1, multiplier].max, 5.0].min
+  end
+
+  def set_operational_multiplier(multiplier)
+    @operational_multiplier = [[0.1, multiplier].max, 5.0].min
+  end
+
+  # Get current multipliers
+  def critical_multiplier
+    @critical_multiplier
+  end
+
+  def operational_multiplier
+    @operational_multiplier
   end
 
   def check_critical(settlement)
@@ -23,7 +50,7 @@ module AIManager
     if life_support_critical?(settlement)
       issues << {
         type: :life_support,
-        priority: CRITICAL_PRIORITIES[:life_support],
+        priority: effective_critical_priorities[:life_support],
         resources: critical_resources(settlement)
       }
     end
@@ -32,7 +59,7 @@ module AIManager
     if atmospheric_critical?(settlement)
       issues << {
         type: :atmospheric_maintenance,
-        priority: CRITICAL_PRIORITIES[:atmospheric_maintenance]
+        priority: effective_critical_priorities[:atmospheric_maintenance]
       }
     end
 
@@ -40,7 +67,7 @@ module AIManager
     if debt_critical?(settlement)
       issues << {
         type: :debt_repayment,
-        priority: CRITICAL_PRIORITIES[:debt_repayment],
+        priority: effective_critical_priorities[:debt_repayment],
         amount: outstanding_debt(settlement)
       }
     end
@@ -56,7 +83,7 @@ module AIManager
     if shortage
       needs << {
         type: :resource_procurement,
-        priority: OPERATIONAL_PRIORITIES[:resource_procurement],
+        priority: effective_operational_priorities[:resource_procurement],
         resource: shortage[:resource],
         amount: shortage[:amount]
       }
@@ -67,7 +94,7 @@ module AIManager
     if construction
       needs << {
         type: :construction,
-        priority: OPERATIONAL_PRIORITIES[:construction],
+        priority: effective_operational_priorities[:construction],
         facility: construction[:facility]
       }
     end
