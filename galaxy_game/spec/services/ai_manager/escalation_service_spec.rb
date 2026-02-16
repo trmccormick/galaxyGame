@@ -105,4 +105,56 @@ RSpec.describe AIManager::EscalationService, type: :service do
       end
     end
   end
+
+  describe '.schedule_cycler_import' do
+    let(:order) { create(:market_order, :buy, base_settlement: settlement, resource: 'iron', quantity: 500) }
+
+    it 'creates a scheduled import record' do
+      import_source = { type: :earth, location: 'Earth', cost_multiplier: 3.0 }
+      transport_cost = 1500.0
+      delivery_eta = 30.days.from_now
+
+      expect(described_class).to receive(:find_best_import_source).and_return(import_source)
+      expect(described_class).to receive(:calculate_transport_cost).and_return(transport_cost)
+      expect(described_class).to receive(:calculate_delivery_time).and_return(delivery_eta)
+      expect(described_class).to receive(:schedule_import_delivery).with(
+        material: 'iron',
+        quantity: 500,
+        source: import_source,
+        destination: settlement,
+        transport_cost: transport_cost,
+        delivery_eta: delivery_eta
+      )
+
+      described_class.schedule_cycler_import(order)
+    end
+  end
+
+  describe '.schedule_import_delivery' do
+    let(:source) { { type: :earth, location: 'Earth' } }
+    let(:destination) { settlement }
+    let(:delivery_eta) { 30.days.from_now }
+
+    it 'creates a ScheduledImport record' do
+      expect {
+        described_class.schedule_import_delivery(
+          material: 'iron',
+          quantity: 500,
+          source: source,
+          destination: destination,
+          transport_cost: 1500.0,
+          delivery_eta: delivery_eta
+        )
+      }.to change(ScheduledImport, :count).by(1)
+
+      import = ScheduledImport.last
+      expect(import.material).to eq('iron')
+      expect(import.quantity).to eq(500)
+      expect(import.source).to eq('Earth')
+      expect(import.destination_settlement_id).to eq(settlement.id)
+      expect(import.transport_cost).to eq(1500.0)
+      expect(import.delivery_eta).to be_within(1.second).of(delivery_eta)
+      expect(import.status).to eq('scheduled')
+    end
+  end
 end

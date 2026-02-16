@@ -267,6 +267,19 @@ module AIManager
       { latitude: -45, longitude: 30, depth: 100 } # Placeholder
     end
 
+    def self.schedule_import_delivery(material:, quantity:, source:, destination:, transport_cost:, delivery_eta:)
+      ScheduledImport.create!(
+        material: material,
+        quantity: quantity,
+        source: source[:location],
+        source_settlement: source[:type] == :settlement ? source[:location] : nil,
+        destination_settlement: destination,
+        transport_cost: transport_cost,
+        delivery_eta: delivery_eta,
+        status: :scheduled
+      )
+    end
+
     def self.find_regolith_site(celestial_body, material)
       # Find optimal regolith mining location
       { latitude: 15, longitude: 45, depth: 2 } # Placeholder

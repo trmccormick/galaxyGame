@@ -21,5 +21,4 @@ class ScheduledImport < ApplicationRecord
   def days_until_delivery
     ((delivery_eta - Time.current) / 1.day).ceil
   end
-end</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/models/scheduled_import.rb
+end

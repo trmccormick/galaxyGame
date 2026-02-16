@@ -4,13 +4,13 @@ class CreateScheduledImports < ActiveRecord::Migration[7.0]
       t.string :material
       t.decimal :quantity
       t.string :source
-      t.integer :destination_id, null: false
+      t.references :source_settlement, foreign_key: { to_table: :base_settlements }, optional: true
+      t.references :destination_settlement, foreign_key: { to_table: :base_settlements }, null: false
       t.decimal :transport_cost
       t.datetime :delivery_eta
       t.integer :status
 
       t.timestamps
     end
-    add_foreign_key :scheduled_imports, :base_settlements, column: :destination_id
   end
 end
