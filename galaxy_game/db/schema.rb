@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_02_16_020036) do
+ActiveRecord::Schema[7.0].define(version: 2026_02_16_021253) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -1043,6 +1043,31 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_16_020036) do
     t.index ["settlement_id"], name: "index_missions_on_settlement_id"
   end
 
+  create_table "multi_wormhole_events", force: :cascade do |t|
+    t.bigint "trigger_system_id"
+    t.bigint "system_a_id"
+    t.bigint "system_b_id"
+    t.integer "event_status", default: 0
+    t.integer "stability_window_hours"
+    t.json "system_assessments"
+    t.json "strategic_decisions"
+    t.json "stabilization_results"
+    t.json "learning_patterns"
+    t.json "event_characteristics"
+    t.datetime "triggered_at"
+    t.datetime "assessed_at"
+    t.datetime "decided_at"
+    t.datetime "executed_at"
+    t.datetime "completed_at"
+    t.datetime "failed_at"
+    t.string "failure_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["system_a_id"], name: "index_multi_wormhole_events_on_system_a_id"
+    t.index ["system_b_id"], name: "index_multi_wormhole_events_on_system_b_id"
+    t.index ["trigger_system_id"], name: "index_multi_wormhole_events_on_trigger_system_id"
+  end
+
   create_table "npc_colonies", force: :cascade do |t|
     t.string "name", null: false
     t.integer "population_capacity"
@@ -1593,6 +1618,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_16_020036) do
   add_foreign_key "migration_logs", "base_units", column: "robot_id"
   add_foreign_key "migration_logs", "base_units", column: "unit_id"
   add_foreign_key "missions", "base_settlements", column: "settlement_id"
+  add_foreign_key "multi_wormhole_events", "solar_systems", column: "system_a_id"
+  add_foreign_key "multi_wormhole_events", "solar_systems", column: "system_b_id"
+  add_foreign_key "multi_wormhole_events", "solar_systems", column: "trigger_system_id"
   add_foreign_key "orbital_construction_projects", "base_settlements", column: "station_id"
   add_foreign_key "planet_biomes", "biomes"
   add_foreign_key "planet_biomes", "biospheres"

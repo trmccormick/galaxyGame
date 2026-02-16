@@ -559,5 +559,139 @@ module AIManager
       # Implementation for identifying resource dependencies
       [] # Placeholder
     end
+
+    # Handle multi-wormhole events with adaptive decision-making
+    def handle_multi_wormhole_event(event_data)
+      Rails.logger.info "[WormholeCoordinator] Processing multi-wormhole event"
+
+      # Initialize multi-wormhole event handler
+      event_handler = AIManager::MultiWormholeEventHandler.new(@shared_context)
+
+      # Execute event handling
+      result = event_handler.handle_double_wormhole_event(event_data)
+
+      # Update coordinator state with learned patterns
+      update_coordinator_with_learned_patterns(result[:learning])
+
+      # Log event completion
+      log_multi_wormhole_event_completion(result)
+
+      result
+    end
+
+    # Check if multi-wormhole event should be triggered
+    def should_trigger_multi_wormhole_event?(context)
+      # Check AI Manager phase
+      return false unless context[:ai_phase] && context[:ai_phase] >= 4
+
+      # Check story progression
+      return false unless context[:story_milestones]&.include?(:sol_snap_resolved)
+
+      # Check wormhole experience
+      return false unless context[:wormhole_stabilizations] && context[:wormhole_stabilizations] >= 3
+
+      # Random chance (15%)
+      rand < 0.15
+    end
+
+    # Create multi-wormhole event data structure
+    def create_multi_wormhole_event_data(trigger_system, system_a, system_b)
+      {
+        trigger_system: trigger_system,
+        system_a: system_a,
+        system_b: system_b,
+        counterbalance_quality: calculate_counterbalance_quality(system_a, system_b),
+        stabilization_efforts: current_stabilization_efforts,
+        existing_aws: find_existing_aws_stations,
+        event_characteristics: {
+          wormhole_count: 2,
+          stability_window: :variable,
+          em_bonus: 2.5,
+          ai_learning_focus: :adaptive_multi_wormhole_management
+        }
+      }
+    end
+
+    private
+
+    def update_coordinator_with_learned_patterns(learning_patterns)
+      # Update internal coordination algorithms with learned patterns
+      learning_patterns.each do |pattern_name, pattern_data|
+        case pattern_name
+        when :adaptive_scouting
+          update_scouting_algorithms(pattern_data)
+        when :dual_system_valuation
+          update_valuation_algorithms(pattern_data)
+        when :counterbalance_assessment
+          update_stability_prediction_algorithms(pattern_data)
+        when :aws_cost_benefit_analysis
+          update_cost_benefit_algorithms(pattern_data)
+        when :simultaneous_operations
+          update_coordination_algorithms(pattern_data)
+        end
+      end
+
+      Rails.logger.info "[WormholeCoordinator] Updated coordination algorithms with #{learning_patterns.length} learned patterns"
+    end
+
+    def log_multi_wormhole_event_completion(result)
+      Rails.logger.info "[WormholeCoordinator] Multi-wormhole event completed: " \
+                       "EM harvested: #{result[:results][:em_harvested] || 0}, " \
+                       "Systems stabilized: #{result[:results][:systems_stabilized] || 0}, " \
+                       "Learning patterns: #{result[:learning]&.length || 0}"
+    end
+
+    def calculate_counterbalance_quality(system_a, system_b)
+      # Calculate gravitational anchor quality affecting stability duration
+      # Simplified implementation - would use actual celestial body data
+      base_quality = 1.0
+
+      # Factors affecting counterbalance
+      system_a_mass = system_a[:total_mass] || 1.0
+      system_b_mass = system_b[:total_mass] || 1.0
+      relative_positioning = rand(0.8..1.2) # Orbital mechanics factor
+
+      (system_a_mass + system_b_mass) * relative_positioning * base_quality * 0.1
+    end
+
+    def current_stabilization_efforts
+      # Return current stabilization infrastructure level
+      # This would track active stabilization satellites, AWS construction, etc.
+      2 # Placeholder - would be calculated from actual infrastructure
+    end
+
+    def find_existing_aws_stations
+      # Find existing AWS stations in the network
+      # Simplified implementation
+      [
+        { id: 1, location: 'system_a', status: 'active' },
+        { id: 2, location: 'system_b', status: 'stabilizing' }
+      ]
+    end
+
+    def update_scouting_algorithms(pattern_data)
+      # Update scouting algorithms with adaptive patterns
+      @scouting_effectiveness = pattern_data[:effectiveness] || 0.85
+    end
+
+    def update_valuation_algorithms(pattern_data)
+      # Update system valuation algorithms
+      @valuation_accuracy = pattern_data[:decision_quality] || 0.9
+    end
+
+    def update_stability_prediction_algorithms(pattern_data)
+      # Update stability prediction models
+      @stability_prediction_accuracy = pattern_data[:prediction_accuracy] || 0.75
+    end
+
+    def update_cost_benefit_algorithms(pattern_data)
+      # Update AWS cost-benefit analysis
+      @cost_benefit_optimization = pattern_data[:cost_savings_achieved] || 0.3
+    end
+
+    def update_coordination_algorithms(pattern_data)
+      # Update multi-system coordination algorithms
+      @coordination_effectiveness = pattern_data[:coordination_effectiveness] || 0.75
+    end
   end
 end
