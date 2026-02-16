@@ -7,7 +7,7 @@ default: &default
 development:
   <<: *default
   database: galaxy_game_development
-  host: db
+  host: localhost
   username: postgres
   password: password
 
@@ -16,7 +16,7 @@ development:
 test:
   <<: *default
   database: galaxy_game_test
-  host: db
+  host: localhost
   username: postgres
   password: password
 

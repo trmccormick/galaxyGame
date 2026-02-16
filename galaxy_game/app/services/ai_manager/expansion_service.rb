@@ -86,6 +86,37 @@ module AIManager
       }
     end
 
+    # Station construction strategy integration
+    def self.plan_station_construction(target_system, strategic_purpose, available_resources = {}, shared_context = nil)
+      Rails.logger.info "[ExpansionService] Planning station construction for #{target_system[:identifier]} with purpose: #{strategic_purpose}"
+
+      # Initialize shared context if not provided
+      shared_context ||= AIManager::SharedContext.new(system_data: target_system)
+
+      # Use station construction strategy service
+      strategy_service = StationConstructionStrategy.new(shared_context)
+      construction_plan = strategy_service.determine_optimal_station_strategy(
+        target_system,
+        strategic_purpose,
+        available_resources
+      )
+
+      # Validate and optimize the plan
+      validated_plan = validate_construction_plan(construction_plan, available_resources)
+
+      # Generate resource procurement plan
+      procurement_plan = generate_procurement_plan(validated_plan, available_resources)
+
+      {
+        status: :success,
+        construction_plan: validated_plan,
+        procurement_plan: procurement_plan,
+        strategic_purpose: strategic_purpose,
+        estimated_completion: validated_plan[:implementation_plan][:timeline][:total_duration],
+        risk_assessment: validated_plan[:risk_assessment]
+      }
+    end
+
     private
 
     def self.deploy_probes_and_analyze(target_system)
@@ -614,6 +645,180 @@ module AIManager
       end
 
       priorities.uniq
+    end
+
+    # Station construction validation and optimization
+    def self.validate_construction_plan(construction_plan, available_resources)
+      plan = construction_plan.deep_dup
+
+      # Validate resource availability
+      required_resources = plan[:optimal_strategy][:resource_requirements] || {}
+      required_materials = required_resources[:materials] || {}
+
+      resource_shortages = []
+      required_materials.each do |material, required_qty|
+        available_qty = available_resources[material] || 0
+        if available_qty < required_qty
+          shortage = required_qty - available_qty
+          resource_shortages << {
+            material: material,
+            required: required_qty,
+            available: available_qty,
+            shortage: shortage
+          }
+        end
+      end
+
+      # Add validation results to plan
+      plan[:validation] = {
+        resource_shortages: resource_shortages,
+        is_feasible: resource_shortages.empty?,
+        recommendations: generate_validation_recommendations(resource_shortages, plan)
+      }
+
+      plan
+    end
+
+    def self.generate_procurement_plan(validated_plan, available_resources)
+      procurement_items = []
+
+      # Identify materials that need to be procured
+      resource_shortages = validated_plan[:validation][:resource_shortages] || []
+
+      resource_shortages.each do |shortage|
+        procurement_items << {
+          material: shortage[:material],
+          quantity_needed: shortage[:shortage],
+          priority: calculate_procurement_priority(shortage, validated_plan),
+          estimated_cost: estimate_procurement_cost(shortage[:material], shortage[:shortage]),
+          procurement_time: estimate_procurement_time(shortage[:material], shortage[:shortage])
+        }
+      end
+
+      # Add personnel requirements
+      personnel_requirements = validated_plan[:optimal_strategy][:resource_requirements][:personnel] || {}
+      personnel_requirements.each do |role, count|
+        procurement_items << {
+          type: :personnel,
+          role: role,
+          quantity_needed: count,
+          priority: :high,
+          estimated_cost: estimate_personnel_cost(role, count),
+          procurement_time: estimate_personnel_procurement_time(role, count)
+        }
+      end
+
+      {
+        items: procurement_items,
+        total_cost: procurement_items.sum { |item| item[:estimated_cost] },
+        total_time: procurement_items.map { |item| item[:procurement_time] }.max || 0.months,
+        critical_path: identify_procurement_critical_path(procurement_items)
+      }
+    end
+
+    def self.generate_validation_recommendations(resource_shortages, plan)
+      recommendations = []
+
+      if resource_shortages.any?
+        recommendations << "Procure #{resource_shortages.length} missing materials"
+        recommendations << "Consider alternative construction methods with lower resource requirements"
+      end
+
+      # Check timeline feasibility
+      timeline = plan[:implementation_plan][:timeline]
+      if timeline[:total_duration] > 18.months
+        recommendations << "Long construction timeline detected - consider accelerated construction methods"
+      end
+
+      # Check risk levels
+      risk_level = plan[:risk_assessment][:overall_risk_level]
+      if risk_level == :high
+        recommendations << "High risk project - implement additional risk mitigation measures"
+      end
+
+      recommendations
+    end
+
+    def self.calculate_procurement_priority(shortage, plan)
+      material = shortage[:material]
+      shortage_ratio = shortage[:shortage].to_f / shortage[:required]
+
+      # Critical materials get higher priority
+      critical_materials = [:steel, :aluminum, :life_support, :electronics]
+      return :critical if critical_materials.include?(material) && shortage_ratio > 0.5
+
+      # Time-sensitive materials
+      construction_time = plan[:implementation_plan][:timeline][:total_duration]
+      return :high if construction_time < 12.months && shortage_ratio > 0.3
+
+      :medium
+    end
+
+    def self.estimate_procurement_cost(material, quantity)
+      # Simplified cost estimation - in real implementation would use market data
+      base_costs = {
+        steel: 1000,
+        aluminum: 2000,
+        electronics: 5000,
+        life_support: 10000,
+        explosives: 500,
+        composites: 3000
+      }
+
+      base_cost = base_costs[material] || 1000
+      base_cost * quantity
+    end
+
+    def self.estimate_procurement_time(material, quantity)
+      # Simplified time estimation
+      base_times = {
+        steel: 2.months,
+        aluminum: 3.months,
+        electronics: 4.months,
+        life_support: 6.months,
+        explosives: 1.month,
+        composites: 5.months
+      }
+
+      base_time = base_times[material] || 3.months
+
+      # Scale time based on quantity
+      scale_factor = [quantity / 1000.0, 1].min
+      base_time * (1 + scale_factor)
+    end
+
+    def self.estimate_personnel_cost(role, count)
+      # Simplified personnel cost estimation
+      role_costs = {
+        engineers: 150000,
+        technicians: 100000,
+        construction_crew: 80000,
+        mining_crew: 90000,
+        assembly_crew: 85000
+      }
+
+      base_cost = role_costs[role] || 100000
+      base_cost * count
+    end
+
+    def self.estimate_personnel_procurement_time(role, count)
+      # Personnel procurement typically takes 1-3 months
+      base_time = 2.months
+
+      # Specialized roles take longer
+      specialized_roles = [:engineers, :technicians]
+      base_time = 3.months if specialized_roles.include?(role)
+
+      # Scale for large teams
+      scale_factor = [count / 50.0, 1].min
+      base_time * (1 + scale_factor)
+    end
+
+    def self.identify_procurement_critical_path(procurement_items)
+      # Find the item with the longest procurement time
+      critical_item = procurement_items.max_by { |item| item[:procurement_time] }
+
+      critical_item ? critical_item[:procurement_time] : 0.months
     end
   end
 end
