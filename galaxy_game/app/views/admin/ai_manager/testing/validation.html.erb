@@ -1,0 +1,292 @@
+# app/views/admin/ai_manager/testing/validation.html.erb
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">AI Validation Results</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-primary btn-sm" id="run-validation-btn">
+              <i class="fas fa-play"></i> Run Full Validation
+            </button>
+            <button type="button" class="btn btn-info btn-sm" id="export-results-btn">
+              <i class="fas fa-download"></i> Export Results
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Validation Statistics -->
+          <div class="row">
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-chart-line"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Runs</span>
+                  <span class="info-box-number" id="total-runs">0</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-check"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Pass Rate</span>
+                  <span class="info-box-number" id="pass-rate">0%</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fas fa-exclamation-triangle"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Last Status</span>
+                  <span class="info-box-number" id="last-status">Unknown</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-secondary"><i class="fas fa-trend"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Trend</span>
+                  <span class="info-box-number" id="trend">Stable</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Validation Results -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card" id="current-results-card" style="display: none;">
+                <div class="card-header">
+                  <h4 class="card-title">Latest Validation Results</h4>
+                  <div class="card-tools">
+                    <span class="badge badge-pill" id="overall-status-badge">Unknown</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h5>Behavioral Validations</h5>
+                      <div id="behavioral-validations"></div>
+                    </div>
+                    <div class="col-md-6">
+                      <h5>Safety Checks</h5>
+                      <div id="safety-checks"></div>
+                    </div>
+                  </div>
+
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <h5>Performance Metrics</h5>
+                      <div id="performance-metrics"></div>
+                    </div>
+                  </div>
+
+                  <div class="row mt-3" id="recommendations-section" style="display: none;">
+                    <div class="col-12">
+                      <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb"></i> Recommendations</h6>
+                        <ul id="recommendations-list"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Validation History -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Validation History</h4>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-striped" id="validation-history-table">
+                      <thead>
+                        <tr>
+                          <th>Timestamp</th>
+                          <th>Status</th>
+                          <th>Validations</th>
+                          <th>Safety</th>
+                          <th>Duration</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="validation-history-body">
+                        <tr>
+                          <td colspan="6" class="text-center">No validation history</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Load initial statistics
+  loadValidationStatistics();
+
+  // Run validation
+  $('#run-validation-btn').click(function() {
+    $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Running...');
+
+    $.post('/admin/ai_manager/testing/validate', function(data) {
+      displayValidationResults(data);
+      loadValidationStatistics();
+    }).fail(function() {
+      alert('Validation failed');
+    }).always(function() {
+      $('#run-validation-btn').prop('disabled', false).html('<i class="fas fa-play"></i> Run Full Validation');
+    });
+  });
+
+  // Export results
+  $('#export-results-btn').click(function() {
+    window.location.href = '/admin/ai_manager/testing/validation/export';
+  });
+
+  function loadValidationStatistics() {
+    $.get('/admin/ai_manager/testing/validation/statistics', function(data) {
+      $('#total-runs').text(data.total_validation_runs);
+      $('#pass-rate').text(data.pass_rate + '%');
+      $('#last-status').text(data.last_run_status || 'Never');
+      $('#trend').text(data.recent_trend);
+
+      // Update trend badge color
+      var trendBadge = $('#trend');
+      trendBadge.removeClass('badge-success badge-warning badge-danger');
+      if (data.recent_trend === 'improving') {
+        trendBadge.addClass('badge-success');
+      } else if (data.recent_trend === 'declining') {
+        trendBadge.addClass('badge-danger');
+      } else {
+        trendBadge.addClass('badge-secondary');
+      }
+    });
+  }
+
+  function displayValidationResults(data) {
+    $('#current-results-card').show();
+
+    // Update overall status badge
+    var statusBadge = $('#overall-status-badge');
+    statusBadge.removeClass('badge-success badge-warning badge-danger badge-secondary');
+    statusBadge.addClass(getStatusBadgeClass(data.overall_status));
+    statusBadge.text(data.overall_status.toUpperCase());
+
+    // Display behavioral validations
+    displayValidations('#behavioral-validations', data.validations);
+
+    // Display safety checks
+    displaySafetyChecks('#safety-checks', data.safety_checks);
+
+    // Display performance metrics
+    displayPerformanceMetrics('#performance-metrics', data.performance_summary);
+
+    // Display recommendations
+    if (data.recommendations && data.recommendations.length > 0) {
+      $('#recommendations-section').show();
+      var recHtml = '';
+      data.recommendations.forEach(function(rec) {
+        recHtml += '<li>' + rec + '</li>';
+      });
+      $('#recommendations-list').html(recHtml);
+    } else {
+      $('#recommendations-section').hide();
+    }
+
+    // Update history table
+    loadValidationHistory();
+  }
+
+  function displayValidations(container, validations) {
+    var html = '';
+    Object.keys(validations).forEach(function(key) {
+      var validation = validations[key];
+      var badgeClass = validation.status === 'passed' ? 'badge-success' :
+                      validation.status === 'warning' ? 'badge-warning' : 'badge-danger';
+      html += '<div class="mb-2">';
+      html += '<span class="badge ' + badgeClass + '">' + key.replace(/_/g, ' ') + '</span> ';
+      html += validation.message;
+      html += '</div>';
+    });
+    $(container).html(html);
+  }
+
+  function displaySafetyChecks(container, safetyChecks) {
+    var html = '';
+    Object.keys(safetyChecks).forEach(function(key) {
+      var check = safetyChecks[key];
+      var badgeClass = check.status === 'passed' ? 'badge-success' :
+                      check.status === 'warning' ? 'badge-warning' : 'badge-danger';
+      var severityIcon = check.severity === 'critical' ? 'fas fa-exclamation-triangle' :
+                        check.severity === 'high' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle';
+      html += '<div class="mb-2">';
+      html += '<span class="badge ' + badgeClass + '"><i class="' + severityIcon + '"></i> ' + key.replace(/_/g, ' ') + '</span> ';
+      html += check.message;
+      html += '</div>';
+    });
+    $(container).html(html);
+  }
+
+  function displayPerformanceMetrics(container, metrics) {
+    var html = '<div class="row">';
+    html += '<div class="col-md-3"><strong>Ops/sec:</strong> ' + metrics.operations_per_second.toFixed(1) + '</div>';
+    html += '<div class="col-md-3"><strong>Avg Decision:</strong> ' + (metrics.average_decision_time * 1000).toFixed(0) + 'ms</div>';
+    html += '<div class="col-md-3"><strong>Error Rate:</strong> ' + metrics.error_rate.toFixed(1) + '%</div>';
+    html += '<div class="col-md-3"><strong>Coordination Rate:</strong> ' + metrics.service_coordination_rate.toFixed(1) + '/s</div>';
+    html += '</div>';
+    $(container).html(html);
+  }
+
+  function loadValidationHistory() {
+    $.get('/admin/ai_manager/testing/validation/history', function(data) {
+      var html = '';
+      if (data.length === 0) {
+        html = '<tr><td colspan="6" class="text-center">No validation history</td></tr>';
+      } else {
+        data.forEach(function(run) {
+          var statusClass = getStatusBadgeClass(run.overall_status);
+          html += '<tr>';
+          html += '<td>' + new Date(run.timestamp).toLocaleString() + '</td>';
+          html += '<td><span class="badge ' + statusClass + '">' + run.overall_status + '</span></td>';
+          html += '<td>' + run.summary.validations.pass_rate + '%</td>';
+          html += '<td>' + run.summary.safety_checks.pass_rate + '%</td>';
+          html += '<td>' + Math.round(run.session_duration) + 's</td>';
+          html += '<td><button class="btn btn-sm btn-info" onclick="viewRunDetails(\'' + run.timestamp + '\')">Details</button></td>';
+          html += '</tr>';
+        });
+      }
+      $('#validation-history-body').html(html);
+    });
+  }
+
+  function getStatusBadgeClass(status) {
+    return status === 'passed' ? 'badge-success' :
+           status === 'warning' ? 'badge-warning' :
+           status === 'failed' ? 'badge-danger' : 'badge-secondary';
+  }
+
+  // Load initial history
+  loadValidationHistory();
+});
+
+// Global function for viewing run details
+function viewRunDetails(timestamp) {
+  // This would open a modal with detailed run information
+  alert('Run details for ' + timestamp + ' (feature not implemented in demo)');
+}
+</script>

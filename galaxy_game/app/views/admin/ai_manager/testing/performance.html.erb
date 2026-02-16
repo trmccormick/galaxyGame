@@ -1,0 +1,264 @@
+# app/views/admin/ai_manager/testing/performance.html.erb
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">AI Performance Monitoring</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-info btn-sm" id="refresh-metrics-btn">
+              <i class="fas fa-sync"></i> Refresh
+            </button>
+            <button type="button" class="btn btn-success btn-sm" id="export-metrics-btn">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-primary"><i class="fas fa-clock"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Session Duration</span>
+                  <span class="info-box-number" id="session-duration">0s</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-tachometer-alt"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Operations/sec</span>
+                  <span class="info-box-number" id="ops-per-second">0</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fas fa-brain"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Avg Decision Time</span>
+                  <span class="info-box-number" id="avg-decision-time">0ms</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-danger"><i class="fas fa-exclamation-triangle"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Anomalies</span>
+                  <span class="info-box-number" id="anomaly-count">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Performance Metrics</h4>
+                </div>
+                <div class="card-body">
+                  <canvas id="performance-chart" width="400" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Active Operations</h4>
+                </div>
+                <div class="card-body">
+                  <div id="active-operations" class="list-group">
+                    <div class="list-group-item">No active operations</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Performance Anomalies</h4>
+                </div>
+                <div class="card-body">
+                  <div id="anomalies-list">
+                    <div class="alert alert-info">No anomalies detected</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Recent Metrics</h4>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-striped" id="metrics-table">
+                      <thead>
+                        <tr>
+                          <th>Timestamp</th>
+                          <th>Metric</th>
+                          <th>Value</th>
+                          <th>Elapsed Time</th>
+                        </tr>
+                      </thead>
+                      <tbody id="metrics-table-body">
+                        <tr>
+                          <td colspan="4" class="text-center">No metrics recorded</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+$(document).ready(function() {
+  var performanceChart = null;
+
+  // Initialize chart
+  function initChart() {
+    var ctx = document.getElementById('performance-chart').getContext('2d');
+    performanceChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Response Time (ms)',
+          data: [],
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  initChart();
+
+  // Refresh metrics
+  $('#refresh-metrics-btn').click(function() {
+    $.get('/admin/ai_manager/testing/performance/metrics', function(data) {
+      updateMetricsDisplay(data);
+    }).fail(function() {
+      alert('Failed to refresh metrics');
+    });
+  });
+
+  // Export metrics
+  $('#export-metrics-btn').click(function() {
+    window.location.href = '/admin/ai_manager/testing/performance/export';
+  });
+
+  function updateMetricsDisplay(data) {
+    // Update info boxes
+    $('#session-duration').text(Math.round(data.session_duration) + 's');
+    $('#ops-per-second').text(data.operations_per_second.toFixed(1));
+    $('#avg-decision-time').text((data.aggregate_metrics.average_decision_time * 1000).toFixed(0) + 'ms');
+    $('#anomaly-count').text(data.anomalies_detected);
+
+    // Update active operations
+    updateActiveOperations(data.active_operations);
+
+    // Update anomalies
+    updateAnomalies(data.anomalies);
+
+    // Update metrics table
+    updateMetricsTable(data.recent_metrics);
+
+    // Update chart
+    updateChart(data.recent_metrics);
+  }
+
+  function updateActiveOperations(operations) {
+    var html = '';
+    if (operations.length === 0) {
+      html = '<div class="list-group-item">No active operations</div>';
+    } else {
+      operations.forEach(function(op) {
+        html += '<div class="list-group-item">' + op.name + ' (' + Math.round(op.elapsed_time) + 's)</div>';
+      });
+    }
+    $('#active-operations').html(html);
+  }
+
+  function updateAnomalies(anomalies) {
+    var html = '';
+    if (anomalies.length === 0) {
+      html = '<div class="alert alert-success">No anomalies detected</div>';
+    } else {
+      anomalies.forEach(function(anomaly) {
+        var alertClass = anomaly.severity === 'critical' ? 'alert-danger' :
+                        anomaly.severity === 'high' ? 'alert-warning' : 'alert-info';
+        html += '<div class="alert ' + alertClass + '">';
+        html += '<strong>' + anomaly.type.replace(/_/g, ' ').toUpperCase() + '</strong>: ';
+        html += anomaly.message;
+        html += '</div>';
+      });
+    }
+    $('#anomalies-list').html(html);
+  }
+
+  function updateMetricsTable(metrics) {
+    var html = '';
+    if (metrics.length === 0) {
+      html = '<tr><td colspan="4" class="text-center">No metrics recorded</td></tr>';
+    } else {
+      metrics.forEach(function(metric) {
+        html += '<tr>';
+        html += '<td>' + new Date(metric.timestamp).toLocaleTimeString() + '</td>';
+        html += '<td>' + metric.name + '</td>';
+        html += '<td>' + metric.value + '</td>';
+        html += '<td>' + Math.round(metric.elapsed_time) + 's</td>';
+        html += '</tr>';
+      });
+    }
+    $('#metrics-table-body').html(html);
+  }
+
+  function updateChart(metrics) {
+    var labels = [];
+    var data = [];
+
+    metrics.forEach(function(metric) {
+      if (metric.name.includes('duration')) {
+        labels.push(new Date(metric.timestamp).toLocaleTimeString());
+        data.push(metric.value * 1000); // Convert to milliseconds
+      }
+    });
+
+    performanceChart.data.labels = labels;
+    performanceChart.data.datasets[0].data = data;
+    performanceChart.update();
+  }
+
+  // Auto-refresh every 5 seconds
+  setInterval(function() {
+    $('#refresh-metrics-btn').click();
+  }, 5000);
+});
+</script>

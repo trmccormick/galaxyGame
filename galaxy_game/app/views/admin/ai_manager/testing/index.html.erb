@@ -1,0 +1,157 @@
+# app/views/admin/ai_manager/testing/index.html.erb
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">AI Manager Testing Framework</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-success btn-sm" id="run-validation-btn">
+              <i class="fas fa-play"></i> Run Validation Suite
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-flask"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Test Environment</span>
+                  <span class="info-box-number" id="test-status">Inactive</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-check-circle"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Last Validation</span>
+                  <span class="info-box-number" id="last-validation">Never</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Testing Controls</h4>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <button type="button" class="btn btn-primary btn-block" id="bootstrap-btn">
+                        <i class="fas fa-cog"></i> Bootstrap Test Environment
+                      </button>
+                    </div>
+                    <div class="col-md-4">
+                      <button type="button" class="btn btn-warning btn-block" id="performance-btn">
+                        <i class="fas fa-chart-line"></i> Start Performance Monitor
+                      </button>
+                    </div>
+                    <div class="col-md-4">
+                      <button type="button" class="btn btn-danger btn-block" id="reset-btn">
+                        <i class="fas fa-undo"></i> Reset Environment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card" id="results-card" style="display: none;">
+                <div class="card-header">
+                  <h4 class="card-title">Test Results</h4>
+                </div>
+                <div class="card-body">
+                  <div id="test-results"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Bootstrap test environment
+  $('#bootstrap-btn').click(function() {
+    $.post('/admin/ai_manager/testing/bootstrap', function(data) {
+      $('#test-status').text('Active');
+      showResults('Test environment bootstrapped successfully', 'success');
+    }).fail(function() {
+      showResults('Failed to bootstrap test environment', 'error');
+    });
+  });
+
+  // Start performance monitoring
+  $('#performance-btn').click(function() {
+    $.post('/admin/ai_manager/testing/performance/start', function(data) {
+      showResults('Performance monitoring started', 'info');
+    }).fail(function() {
+      showResults('Failed to start performance monitoring', 'error');
+    });
+  });
+
+  // Run validation suite
+  $('#run-validation-btn').click(function() {
+    $.post('/admin/ai_manager/testing/validate', function(data) {
+      $('#last-validation').text(new Date().toLocaleString());
+      displayValidationResults(data);
+    }).fail(function() {
+      showResults('Validation failed', 'error');
+    });
+  });
+
+  // Reset environment
+  $('#reset-btn').click(function() {
+    $.post('/admin/ai_manager/testing/reset', function(data) {
+      $('#test-status').text('Inactive');
+      showResults('Test environment reset', 'warning');
+    }).fail(function() {
+      showResults('Failed to reset environment', 'error');
+    });
+  });
+
+  function showResults(message, type) {
+    $('#results-card').show();
+    $('#test-results').html('<div class="alert alert-' + type + '">' + message + '</div>');
+  }
+
+  function displayValidationResults(data) {
+    $('#results-card').show();
+    var html = '<div class="row">';
+
+    // Overall status
+    html += '<div class="col-md-12"><h5>Overall Status: <span class="badge badge-' +
+            (data.overall_status === 'passed' ? 'success' : 'danger') + '">' +
+            data.overall_status + '</span></h5></div>';
+
+    // Validation summary
+    if (data.summary) {
+      html += '<div class="col-md-6">';
+      html += '<h6>Validations</h6>';
+      html += '<p>Passed: ' + data.summary.validations.passed + '/' + data.summary.validations.total + '</p>';
+      html += '<p>Pass Rate: ' + data.summary.validations.pass_rate + '%</p>';
+      html += '</div>';
+
+      html += '<div class="col-md-6">';
+      html += '<h6>Safety Checks</h6>';
+      html += '<p>Passed: ' + data.summary.safety_checks.passed + '/' + data.summary.safety_checks.total + '</p>';
+      html += '<p>Pass Rate: ' + data.summary.safety_checks.pass_rate + '%</p>';
+      html += '</div>';
+    }
+
+    html += '</div>';
+    $('#test-results').html(html);
+  }
+});
+</script>
