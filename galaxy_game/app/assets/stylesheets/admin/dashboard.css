@@ -5,14 +5,14 @@
     margin-bottom: 20px;
     padding: 15px;
     background: #1a1a1a;
-    border: 1px solid #0f0;
+    border: 1px solid #0066cc;
     border-radius: 5px;
 }
 
 .galaxy-selector select {
     background: #000;
-    color: #0ff;
-    border: 1px solid #0f0;
+    color: #00ccff;
+    border: 1px solid #0066cc;
     padding: 8px;
     font-family: 'Courier New', monospace;
     font-size: 14px;
@@ -29,8 +29,8 @@
 .quick-access-link {
     padding: 10px 15px;
     background: #1a1a1a;
-    border: 1px solid #0f0;
-    color: #0f0;
+    border: 1px solid #0066cc;
+    color: #0066cc;
     text-decoration: none;
     border-radius: 5px;
     font-family: 'Courier New', monospace;
@@ -39,7 +39,7 @@
 }
 
 .quick-access-link:hover {
-    background: #0f0;
+    background: #0066cc;
     color: #000;
 }
 
@@ -58,7 +58,7 @@
 
 .system-card {
     background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-    border: 2px solid #0f0;
+    border: 2px solid #0066cc;
     border-radius: 8px;
     padding: 20px;
     transition: all 0.3s;
@@ -74,15 +74,15 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #0f0, #0ff);
+    background: linear-gradient(90deg, #0066cc, #00ccff);
     opacity: 0;
     transition: opacity 0.3s;
 }
 
 .system-card:hover {
-    border-color: #0ff;
+    border-color: #00ccff;
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 204, 255, 0.3);
 }
 
 .system-card:hover::before {
@@ -98,7 +98,7 @@
 
 .system-name {
     font-size: 24px;
-    color: #0ff;
+    color: #00ccff;
     font-weight: bold;
     text-transform: uppercase;
 }
@@ -128,7 +128,7 @@
 
 .system-stat-value {
     font-size: 20px;
-    color: #0f0;
+    color: #0066cc;
     font-weight: bold;
     display: block;
 }
@@ -143,8 +143,8 @@
 .system-preview {
     margin: 15px 0;
     padding: 10px;
-    background: rgba(0, 255, 0, 0.05);
-    border-left: 3px solid #0f0;
+    background: rgba(0, 102, 204, 0.05);
+    border-left: 3px solid #0066cc;
     border-radius: 3px;
 }
 
@@ -167,11 +167,11 @@
     background: #1a1a1a;
     border: 1px solid #333;
     border-radius: 12px;
-    color: #0ff;
+    color: #00ccff;
 }
 
 .body-pill.star { border-color: #ffd700; color: #ffd700; }
-.body-pill.planet { border-color: #0f0; color: #0f0; }
+.body-pill.planet { border-color: #0066cc; color: #0066cc; }
 .body-pill.moon { border-color: #ff0; color: #ff0; }
 
 .system-actions {
@@ -184,8 +184,8 @@
     flex: 1;
     padding: 10px;
     background: #222;
-    border: 1px solid #0f0;
-    color: #0f0;
+    border: 1px solid #0066cc;
+    color: #0066cc;
     text-align: center;
     text-decoration: none;
     border-radius: 5px;
@@ -196,17 +196,17 @@
 }
 
 .system-action-btn:hover {
-    background: #0f0;
+    background: #0066cc;
     color: #000;
 }
 
 .system-action-btn.primary {
-    background: #0f0;
+    background: #0066cc;
     color: #000;
 }
 
 .system-action-btn.primary:hover {
-    background: #0ff;
+    background: #00ccff;
 }
 
 /* Dashboard Stats */
@@ -227,13 +227,13 @@
 }
 
 .dashboard-stat-card:hover {
-    border-color: #0f0;
+    border-color: #0066cc;
     background: #222;
 }
 
 .dashboard-stat-value {
     font-size: 36px;
-    color: #0ff;
+    color: #00ccff;
     font-weight: bold;
     margin: 10px 0;
 }
@@ -308,7 +308,7 @@
 }
 
 .activity-feed-message {
-    color: #0ff;
+    color: #00ccff;
     margin-top: 3px;
 }
 
