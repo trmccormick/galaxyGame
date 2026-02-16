@@ -2,6 +2,7 @@
 require_relative 'shared_context'
 require_relative 'service_coordinator'
 require_relative 'strategy_selector'
+require_relative 'service_orchestrator'
 require_relative 'system_orchestrator'
 require 'structures'
 
@@ -34,6 +35,9 @@ module AIManager
         @system_orchestrator.orchestrate_system
       end
 
+      # Perform service orchestration for optimal service coordination
+      @service_orchestrator.orchestrate_services
+
       # Update economic metrics in shared context
       @service_coordinator.update_economic_metrics(@target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
 
@@ -41,11 +45,11 @@ module AIManager
       @service_coordinator.process_pending_missions
       @service_coordinator.process_resource_requests
 
-      # Use strategy selector for autonomous decision making
+      # Use strategy selector for autonomous decision making with service orchestration support
       if @target_entity.is_a?(Settlement::BaseSettlement)
         next_action = @strategy_selector.evaluate_next_action(@target_entity)
         if next_action[:type] != :wait
-          @strategy_selector.execute_action(next_action, @target_entity)
+          execute_action_with_service_orchestration(next_action, @target_entity)
         end
       else
         # Fallback logic for non-settlement entities (e.g., Lavatube)
@@ -99,7 +103,20 @@ module AIManager
     end
 
     def execute_strategy_action(action)
-      @strategy_selector.execute_action(action, @target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
+      execute_action_with_service_orchestration(action, @target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
+    end
+
+    # Service orchestrator interface
+    def service_orchestrator
+      @service_orchestrator
+    end
+
+    def execute_coordinated_operation(operation_type, params = {})
+      @service_orchestrator.execute_coordinated_operation(operation_type, params.merge(settlement: @target_entity))
+    end
+
+    def get_service_status
+      @service_orchestrator.orchestration_status
     end
 
     def queue_mission(mission_data)
@@ -112,6 +129,32 @@ module AIManager
 
     private
 
+    # Execute action with service orchestration support for better coordination
+    def execute_action_with_service_orchestration(action, settlement)
+      case action[:type]
+      when :resource_acquisition
+        # Use coordinated resource acquisition with potential scouting
+        if action[:priority] == :critical
+          execute_coordinated_operation(:resource_acquisition_with_scouting, {
+            material: action[:resources].first,
+            quantity: 100,
+            scout_system: @shared_context.system_data
+          })
+        else
+          @strategy_selector.execute_action(action, settlement)
+        end
+      when :system_scouting
+        # Use coordinated scouting with expansion planning
+        execute_coordinated_operation(:scouting_with_expansion_planning, {
+          system_data: action[:systems].first,
+          settlement: settlement
+        })
+      else
+        # Use standard strategy selector execution for other actions
+        @strategy_selector.execute_action(action, settlement)
+      end
+    end
+
     def initialize_service_coordination
       # Initialize shared context
       @shared_context = SharedContext.new(settlement: @target_entity.is_a?(Settlement::BaseSettlement) ? @target_entity : nil)
@@ -122,7 +165,10 @@ module AIManager
       # Initialize strategy selector for autonomous decision making
       @strategy_selector = StrategySelector.new(@shared_context, @service_coordinator)
 
-      Rails.logger.info "[AI] Initialized service coordination for #{@target_entity.name}"
+      # Initialize service orchestrator for high-level service coordination
+      @service_orchestrator = ServiceOrchestrator.new(@shared_context, @service_coordinator)
+
+      Rails.logger.info "[AI] Initialized service coordination with orchestrator for #{@target_entity.name}"
     end
 
     private

@@ -16,12 +16,20 @@ RSpec.describe AIManager::Manager, type: :service do
         expect(manager.instance_variable_get(:@shared_context).settlement).to eq(settlement)
       end
 
+      it 'initializes service orchestrator' do
+        manager = described_class.new(target_entity: settlement)
+
+        expect(manager.instance_variable_get(:@service_orchestrator)).to be_a(AIManager::ServiceOrchestrator)
+      end
+
       it 'registers service coordinator as shared context listener' do
         manager = described_class.new(target_entity: settlement)
         shared_context = manager.instance_variable_get(:@shared_context)
         coordinator = manager.instance_variable_get(:@service_coordinator)
+        orchestrator = manager.instance_variable_get(:@service_orchestrator)
 
         expect(shared_context.instance_variable_get(:@listeners)).to include(coordinator)
+        expect(shared_context.instance_variable_get(:@listeners)).to include(orchestrator)
       end
     end
 
@@ -153,19 +161,30 @@ RSpec.describe AIManager::Manager, type: :service do
       end
     end
 
-    context 'Event notification system' do
-      it 'service coordinator receives shared context events' do
+    context 'ServiceOrchestrator integration' do
+      it 'provides access to service orchestrator' do
         manager = described_class.new(target_entity: settlement)
-        coordinator = manager.instance_variable_get(:@service_coordinator)
 
-        # Spy on the coordinator's handle_event method
-        allow(coordinator).to receive(:handle_event)
+        expect(manager.service_orchestrator).to be_a(AIManager::ServiceOrchestrator)
+      end
 
-        # Trigger an event
-        manager.queue_mission({ 'identifier' => 'test' })
+      it 'can execute coordinated operations' do
+        manager = described_class.new(target_entity: settlement)
 
-        # Verify event was handled
-        expect(coordinator).to have_received(:handle_event).with(:mission_queued, { 'identifier' => 'test' })
+        allow_any_instance_of(AIManager::ServiceOrchestrator).to receive(:execute_coordinated_operation).and_return(true)
+
+        result = manager.execute_coordinated_operation(:resource_acquisition_with_scouting, { material: 'Iron' })
+        expect(result).to be true
+      end
+
+      it 'provides service orchestration status' do
+        manager = described_class.new(target_entity: settlement)
+
+        status = manager.get_service_status
+        expect(status).to have_key(:service_states)
+        expect(status).to have_key(:service_priorities)
+        expect(status).to have_key(:active_operations)
+        expect(status).to have_key(:service_health)
       end
     end
   end
@@ -216,5 +235,16 @@ RSpec.describe AIManager::Manager, type: :service do
       # Verify resource requests were processed
       expect(manager.instance_variable_get(:@service_coordinator)).to have_received(:process_resource_requests)
     end
-  end
+
+    it 'performs service orchestration during advance_time' do
+      manager = described_class.new(target_entity: settlement)
+
+      # Mock the orchestrate_services method
+      allow(manager.instance_variable_get(:@service_orchestrator)).to receive(:orchestrate_services)
+
+      manager.advance_time
+
+      # Verify service orchestration was performed
+      expect(manager.instance_variable_get(:@service_orchestrator)).to have_received(:orchestrate_services)
+    end
 end

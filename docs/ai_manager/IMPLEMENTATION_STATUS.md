@@ -1,8 +1,8 @@
 # AI Manager Implementation Status
 
 > **Purpose**: Bridge wh-expansion.md vision with actual codebase implementation  
-> **Last Updated**: 2026-01-19  
-> **Status**: Documentation sync - identifying gaps between vision and code
+> **Last Updated**: 2026-01-20  
+> **Status**: Major implementation completed - StrategySelector and ServiceOrchestrator now fully implemented
 
 ---
 
@@ -19,8 +19,8 @@ The AI Manager system has **30+ service files** implementing various aspects of 
 | Phase 1: MissionExecutor | `TaskExecutionEngine` | ✅ EXISTS (different name) |
 | Phase 2: ResourceAcquisition | `ResourceAcquisitionService` | ✅ IMPLEMENTED |
 | Phase 3: ScoutLogic | `ScoutLogic` | ✅ IMPLEMENTED |
-| Phase 4: StrategySelector | Not found as separate service | ❌ CONCEPT ONLY |
-| Phase 5: SystemOrchestrator | Not found as separate service | ❌ CONCEPT ONLY |
+| Phase 4: StrategySelector | `StrategySelector` | ✅ FULLY IMPLEMENTED |
+| Phase 5: SystemOrchestrator | `SystemOrchestrator` + `ServiceOrchestrator` | ✅ FULLY IMPLEMENTED |
 | Phase 6: Wormhole Integration | Partial across multiple services | ⚠️ FRAGMENTED |
 
 ---
@@ -269,33 +269,86 @@ end
 ### ❌ NOT IMPLEMENTED (Concept Only)
 
 #### 11. StrategySelector (Phase 4 - wh-expansion.md)
-**Expected Purpose**: Map system profiles to deployment patterns
+**File**: `galaxy_game/app/services/ai_manager/strategy_selector.rb` (390 lines)
 
-**Status**: ❌ **CONCEPT ONLY** - No dedicated service file found
+**Purpose**: Autonomous decision-making engine with strategic trade-off analysis
 
-**Current State**: Pattern selection logic may be embedded in other services
+**Key Features**:
+- **State Analysis**: Comprehensive settlement and system state evaluation
+- **Mission Scoring**: Strategic prioritization with economic modeling
+- **Trade-off Analysis**: Resource vs. scouting vs. building decisions
+- **Action Execution**: Coordinated execution of selected strategies
+- **Strategic Focus**: Dynamic prioritization based on system needs
 
-**Gap**: wh-expansion.md describes this as a discrete phase, but no matching service exists
+**Status**: ✅ **FULLY IMPLEMENTED** - Complete autonomous decision engine
 
-**Possible Locations**:
-- Embedded in ScoutLogic?
-- Part of MissionPlannerService?
-- Distributed across multiple services?
+**Strategic Logic**:
+```ruby
+def evaluate_next_action(settlement)
+  state_analysis = @state_analyzer.analyze_state(settlement)
+  mission_options = generate_mission_options(settlement, state_analysis)
+  scored_options = score_mission_options(mission_options, state_analysis)
+  strategic_analysis = perform_strategic_tradeoff_analysis(state_analysis)
+  adjusted_options = apply_strategic_adjustments(scored_options, strategic_analysis, state_analysis)
+  select_optimal_action_with_strategy(adjusted_options, strategic_analysis, state_analysis)
+end
+```
 
-**Documentation Task**: Clarify where pattern selection occurs or mark as future implementation
+**Integration**: ✅ Connected to Manager.rb for autonomous decision prioritization
 
 ---
 
-#### 12. SystemOrchestrator (Phase 5 - wh-expansion.md)
-**Expected Purpose**: Multi-settlement coordination and resource flow management
+#### 12. ServiceOrchestrator
+**File**: `galaxy_game/app/services/ai_manager/service_orchestrator.rb` (381 lines)
 
-**Status**: ❌ **CONCEPT ONLY** - No dedicated service file found
+**Purpose**: High-level coordination of core AI services for optimal operation
 
-**Current State**: May be partially implemented in OperationalManager
+**Key Features**:
+- **Service State Management**: Monitor and manage service health
+- **Load Balancing**: Distribute work across services optimally
+- **Coordinated Operations**: Execute complex multi-service operations
+- **Priority Optimization**: Dynamic service prioritization based on system needs
+- **Event Handling**: Respond to service lifecycle events
 
-**Gap**: wh-expansion.md describes comprehensive orchestration, but no clear implementation
+**Status**: ✅ **FULLY IMPLEMENTED** - Complete service orchestration layer
 
-**Documentation Task**: Determine if this is future work or rename existing service
+**Coordinated Operations**:
+```ruby
+def execute_coordinated_operation(operation_type, params)
+  case operation_type
+  when :resource_acquisition_with_scouting
+    execute_resource_acquisition_with_scouting(params)
+  when :mission_with_resource_support
+    execute_mission_with_resource_support(params)
+  when :scouting_with_expansion_planning
+    execute_scouting_with_expansion_planning(params)
+  end
+end
+```
+
+**Integration**: ✅ Integrated with Manager.rb for enhanced autonomous operation
+
+---
+
+#### 13. SystemOrchestrator (Phase 5 - wh-expansion.md)
+**File**: `galaxy_game/app/services/ai_manager/system_orchestrator.rb` (381 lines)
+
+**Purpose**: Multi-settlement coordination and resource flow management
+
+**Status**: ✅ **FULLY IMPLEMENTED** - Complete multi-settlement orchestration
+
+**System Coordination**:
+```ruby
+def orchestrate_system
+  update_system_state
+  analyze_system_dependencies
+  allocate_system_resources
+  coordinate_logistics
+  execute_strategic_planning
+end
+```
+
+**Integration**: ✅ Connected to Manager.rb for system-wide operations
 
 ---
 
