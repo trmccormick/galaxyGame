@@ -39,6 +39,17 @@
 ✅ Automated harvester deployment with extraction rate and completion tracking
 ✅ Scheduled import coordination with Earth/other settlement sources
 
+### ✅ Task 6 Complete: AI Expansion Decision Engine & Silent Anomaly Pattern
+**Date**: February 17, 2026
+**Status**: Complete
+**Summary:**
+- Implemented ExpansionDecisionService for Prize/Siphon scoring and strategy selection.
+- HammerProtocol schedules high-mass transit to force Sol-side exit shift for Siphon systems.
+- Legendary (permanent_pair) anomalies (DJEW-716790/FR-488530) protected: em_bloom_rate: 0, stability_decay: 0, never hammered, prioritized for settlement.
+- Unique Lore Log for Legendary pair: "The sensors are flat. No flux, no decay. It shouldn't be possible, but the link is perfect."
+- RSpec: decision_logic_spec.rb validates correct protocol selection and protection.
+- Documentation: Moved wormhole_easter_egg_integration.md to completed, updated learned_patterns.json with Hammer Reset criteria.
+
 ### 🎨 MEDIUM PRIORITY TASK COMPLETE: Blue Color Scheme Implementation ✅
 **Time**: 2-3 hours
 **Priority**: MEDIUM - Visual harmony and branding consistency
