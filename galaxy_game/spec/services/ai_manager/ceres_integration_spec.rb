@@ -17,5 +17,10 @@ RSpec.describe AIManager::ColonyManager, type: :service do
       roi = manager.handle_player_trade
       expect(roi).to eq(0.87)
     end
+
+    it 'applies material loss for high transit risk' do
+      roi = manager.handle_player_trade(high_transit_risk: true)
+      expect(roi).to eq(0.80)
+    end
   end
 end

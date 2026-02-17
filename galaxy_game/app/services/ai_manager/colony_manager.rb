@@ -42,11 +42,15 @@ module AIManager
     end
 
     public
-    def handle_player_trade
+    def handle_player_trade(high_transit_risk: false)
       # Use GCC Trading Platform logic for water exports (Ceres-specific)
       return unless @ceres_profile && player_colony
       if player_colony.respond_to?(:resources) && player_colony.resources.include?('water')
         roi = calculate_ceres_water_export_roi(player_colony)
+        if high_transit_risk
+          loss_factor = 0.08 # 8% loss for 2.8 AU transit
+          roi = (roi * (1 - loss_factor)).round(2)
+        end
         Rails.logger.info("Ceres Phase 1 Water Export ROI: #{roi}")
         roi
       else
