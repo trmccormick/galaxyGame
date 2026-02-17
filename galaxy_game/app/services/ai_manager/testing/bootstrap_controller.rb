@@ -139,27 +139,41 @@ module AIManager
           name: "#{config[:name]} [TEST]",
           settlement_type: :outpost,
           location: generate_test_location,
-          description: "Isolated test settlement for AI Manager testing",
-          current_population: config[:population],
-          power_output_mw: config[:power_output],
-          resource_storage_cubic_meters: config[:resource_storage]
+          current_population: config[:population]
         )
-
-        # Mock the save to avoid database writes in tests
-        allow(settlement).to receive(:save).and_return(true)
-        allow(settlement).to receive(:persisted?).and_return(true)
-        allow(settlement).to receive(:id).and_return(rand(10000..99999))
-
-        # Initialize mock inventory
-        allow(settlement).to receive(:inventory).and_return(double('inventory'))
 
         settlement
       end
 
       # Generate test location coordinates
       def generate_test_location
-        # Use coordinates far from live game areas
-        { x: rand(10000..20000), y: rand(10000..20000), z: rand(10000..20000) }
+        # Create or find a test celestial body
+        test_body = CelestialBodies::CelestialBody.find_by(name: 'Test Planet 1') || CelestialBodies::CelestialBody.first
+        # Fallback: create a minimal test body if none exists, using correct STI type
+        unless test_body
+          test_body = CelestialBodies::CelestialBody.create!(
+            name: 'Test Planet 1',
+            type: 'CelestialBodies::Planets::Rocky::TerrestrialPlanet',
+            identifier: 'test_planet_1',
+            radius: 3_389_500,
+            mass: 6.39e23,
+            size: 1 # Minimal valid value for size
+          )
+        end
+
+        # Generate valid coordinates string (e.g., '10.00°N 20.00°E')
+        lat = format('%.2f', rand(0.0..89.99))
+        lon = format('%.2f', rand(0.0..179.99))
+        ns = %w[N S].sample
+        ew = %w[E W].sample
+        coords = "#{lat}°#{ns} #{lon}°#{ew}"
+
+        Location::CelestialLocation.new(
+          name: "Test Location #{rand(1000..9999)}",
+          celestial_body: test_body,
+          coordinates: coords,
+          altitude: 0
+        )
       end
 
       # Generate system data for testing
