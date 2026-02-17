@@ -8,7 +8,7 @@ Rails.autoloaders.main.ignore(
 
 # Optional: Configure custom inflection rules if needed
 Rails.autoloaders.main.inflector.inflect(
-  "ai_manager" => "AiColonyManager",
+  "ai_manager" => "AIManager",
   "api" => "API",
   "json" => "JSON"
 )

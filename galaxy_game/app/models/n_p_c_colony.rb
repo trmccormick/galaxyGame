@@ -3,12 +3,12 @@ class NPCColony < Settlement
   
     def initialize(name, population_capacity, initial_resources)
       super(name, population_capacity, initial_resources)
-      @ai_manager = AiColonyManager.new  # Each NPC colony can have its own AI manager
+      @ai_manager = AIManager::ColonyManager.new  # Each NPC colony can have its own AI manager
       @trade_routes = []  # Potential routes for trading with other colonies
     end
   
     def perform_autonomous_tasks
-      @ai_manager.manage_colonies  # Use the AI manager for resource management
+      @ai_manager.manage_colonies  # Use the colony manager for resource management
       explore_and_expand  # Optional function for NPC colonies
     end
   

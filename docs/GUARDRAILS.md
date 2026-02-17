@@ -35,9 +35,29 @@
 - **Autonomous Overrides:** The AI Manager may ignore Alpha Centauri in favor of local Milky Way wormholes if the `SimEvaluator` predicts a higher ROI or faster stability rating.
 - **Verification:** All autonomous construction phases must be logged via the `PerformanceTracker` to ensure they meet the 85% success rate requirement.
 
-## 🧱 6. Architectural Integrity
 - **Namespace Preservation:** Models must reside in directories matching their Ruby namespace (e.g., `Location::SpatialLocation` belongs in `app/models/location/`).
 - **Nesting Mandate:** Do not flatten directory structures during recovery. If a class is namespaced in `ApplicationRecord`, the spec must reflect that namespace (e.g., use `Location::SpatialLocation.new`, not `SpatialLocation.new`).
+
+- **Service Namespace Integrity:**
+  - All service classes (AIManager, Ceres, Mars, etc.) must use nested module definitions:
+    ```ruby
+    module AIManager
+      module Testing
+        class PerformanceMonitor
+          # ...
+        end
+      end
+    end
+    ```
+  - Do **not** use `module AIManager::Testing` for service classes. Zeitwerk may not resolve the parent module if not already loaded, causing `NameError`.
+  - Ensure there is no file named `app/services/ai_manager/testing.rb` that conflicts with the `app/services/ai_manager/testing/` directory. If a namespace file is needed, it should only define the module and not contain logic or requires.
+  - All specs for namespaced services must require `rails_helper` and never use `require_relative` for app/services code.
+-  - After any namespace or structure change, run `bin/rails zeitwerk:check` and the relevant RSpec suite.
+
+- **Manager/Service Placement Rule [2026-01-15]:**
+  - All 'Manager' and 'Service' classes must reside in `app/services/` and never in `app/models/` unless they are backed by a database table (i.e., inherit from `ApplicationRecord`).
+  - This ensures Zeitwerk autoloading and logical separation of concerns.
+  - [cite: 2026-01-15]
 - **Autoloader Compliance:** Any "uninitialized constant" error must first be triaged as a potential path/namespace mismatch before attempting to recreate the class.
 - **Incident Precedent [2026-01-15]:** Resolved 10 RSpec failures caused by the flattening of the `Location` namespace in `wormhole_spec.rb`. This incident validated the importance of namespace preservation for maintaining system stability—just as the [Anchor Law](GUARDRAILS.md#-2-the-anchor-law-stability--infrastructure) requires physical mass thresholds for wormhole stability, architectural integrity requires namespace structures for code stability.
 - **Gold Standard Reference:** `wormhole_spec.rb` serves as the canonical example of proper namespace testing. All future model specs must use fully qualified class names (e.g., `Location::SpatialLocation`) in both instantiation and association expectations.
