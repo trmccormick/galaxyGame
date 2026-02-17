@@ -498,3 +498,12 @@ git commit -m "fix: descriptive message"
 ```bash
 docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --format documentation --dry-run 2>&1 | grep -E "pending|failed"
 ```
+
+## Feb 17, 2026: Ceres Integration & Material Loss Logic
+
+- Integrated Ceres profile loading and GCC Trading Platform logic into AIManager::ColonyManager.
+- Implemented material loss logic for Ceres-Mars transit (default 8% loss for high-risk routes).
+- Updated spec to validate both normal and high transit risk ROI calculations (0.87 and 0.80).
+- All changes committed atomically per workflow.
+- GUARDRAILS.md updated to document material loss logic and planetary integration requirements.
+- All tests green; workflow and documentation fully compliant.
