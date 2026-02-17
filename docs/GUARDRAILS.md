@@ -1,3 +1,23 @@
+## 🚦 Moving Station Safety Protocols [2026-02-17]
+**Cycler-as-Station:** Cyclers must be treated as mobile stations with:
+- Defined docking_capacity and processing_power
+- Panel/I-beam standardization for all docked craft
+- In-route processing of skimmer cargo using cycler energy reserves
+- All docking/undocking events logged to PerformanceTracker
+- Emergency undock if energy or pressure thresholds are exceeded
+**Hitchhiker Protocol:** SkimmerCyclerHandshakeService must validate compatibility and ensure safe, pressure-equalized docking during high-speed transit.
+
+---
+
+**Task 10: Gas Harvesting & Cycler Hitchhiker Integration — In Progress**
+## 🛡️ High-Pressure Atmospheric Skimming Protocols [2026-02-17]
+**Atmospheric Harvester Safety:** All skimmer and cycler operations in high-pressure atmospheres (Venus, Titan) must:
+- Use reinforced hulls and pressure-rated docking ports
+- Require dual-panel (I-beam) redundancy for all docking maneuvers
+- Log all skimming and transfer events to the PerformanceTracker
+- Abort and return to depot if pressure or temperature exceeds safe thresholds
+- Validate all gas transfers with ResourceAllocator before export
+**Cycler Docking:** Skimmer-Cycler handshakes require matching panel configuration and successful pressure equalization before transfer.
 ## 🛰️ Super-Mars Settlement & Asteroid Redirection Pattern [2026-02-17]
 **MoonlessPlanetPattern:** For Super-Mars planets without natural moons, AI must redirect nearby Phobos/Deimos-sized asteroids into stable orbits using Tug craft to serve as stations/depots.
 **LargeMoonPattern:** If a Luna-sized moon exists, AI must prioritize settling the moon first to build materials before establishing an L1 Depot.
