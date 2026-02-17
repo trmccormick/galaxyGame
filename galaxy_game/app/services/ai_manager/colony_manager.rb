@@ -28,7 +28,7 @@ module AIManager
       manage_player_colony if player_colony && player_colony.auto_manage
     end
 
-    private
+
 
     def manage_npc_colonies
       @colonies.each do |npc_colony|
@@ -41,6 +41,7 @@ module AIManager
       handle_player_trade  # Optional trade management for the player
     end
 
+    public
     def handle_player_trade
       # Use GCC Trading Platform logic for water exports (Ceres-specific)
       return unless @ceres_profile && player_colony
