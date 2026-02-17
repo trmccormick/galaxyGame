@@ -8,7 +8,7 @@ RSpec.describe AIManager::ColonyManager, type: :service do
   let(:manager) { described_class.new }
 
   before do
-    allow(manager).to receive(:load_ceres_profile).and_return({ 'phase' => 1, 'roi' => 0.87 })
+    manager.ceres_profile = { 'phase' => 1, 'roi' => 0.87 }
     manager.set_player_colony(mock_colony)
   end
 
