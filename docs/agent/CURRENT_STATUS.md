@@ -507,3 +507,11 @@ docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --format doc
 - All changes committed atomically per workflow.
 - GUARDRAILS.md updated to document material loss logic and planetary integration requirements.
 - All tests green; workflow and documentation fully compliant.
+
+## Feb 17, 2026: ResourceAllocator Integration
+
+- ResourceAllocator service created to calculate bootstrap supply packages and ISRU priorities for new settlements.
+- Spec validates correct supply and priority ranking for 'Small' settlements (Ceres Hub).
+- GUARDRAILS.md updated to document integration and trade logic interaction.
+- All changes committed atomically per workflow.
+- All tests green; workflow and documentation fully compliant.
