@@ -1,3 +1,34 @@
+module AIManager
+  class ResourceAllocator
+    # Default supply requirements for a 'Small' settlement (30 days)
+    SUPPLY_REQUIREMENTS = {
+      energy: 3000,      # kWh
+      water: 900,       # liters
+      food: 600,        # kg
+      construction: 2000 # tons
+    }
+
+    # ISRU priorities (days to bootstrap)
+    ISRU_PRIORITIES = [
+      { resource: 'oxygen', priority: :critical, timeline: 60 },
+      { resource: 'water', priority: :high, timeline: 90 },
+      { resource: 'metals', priority: :medium, timeline: 180 }
+    ]
+
+    def initialize(settlement_size: 'small')
+      @settlement_size = settlement_size
+    end
+
+    def initial_resource_package
+      # For now, only 'small' supported
+      SUPPLY_REQUIREMENTS.dup
+    end
+
+    def isru_priority_list
+      ISRU_PRIORITIES.sort_by { |r| r[:timeline] }
+    end
+  end
+end
 # app/services/ai_manager/resource_allocator.rb
 module AIManager
   class ResourceAllocator
