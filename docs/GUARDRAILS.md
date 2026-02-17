@@ -1,3 +1,8 @@
+## 🚀 Material Loss Logic for Interplanetary Transit [2026-02-03]
+- All resource exports between planetary bodies (e.g., Ceres to Mars) must account for material loss due to transit risk and distance.
+- Default loss rate is 5-10% for high-risk, long-distance routes (e.g., 2.8 AU Ceres-Mars).
+- Loss variable must be applied to ROI calculations in service logic and validated by spec.
+- Cite: ai_resource_allocation_engine.md, venus_tug_transition_strategy.md, and current game constraints.
 # 🛡️ AI Manager: "First and Done" Guardrails
 **Context:** Internal Game Logic (AIManager Module)
 **Mandate:** These rules govern the autonomous behavior of the AI Manager during expansion and settlement.
