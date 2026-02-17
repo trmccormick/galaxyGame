@@ -1,3 +1,9 @@
+## 🛰️ Super-Mars Settlement & Asteroid Redirection Pattern [2026-02-17]
+**MoonlessPlanetPattern:** For Super-Mars planets without natural moons, AI must redirect nearby Phobos/Deimos-sized asteroids into stable orbits using Tug craft to serve as stations/depots.
+**LargeMoonPattern:** If a Luna-sized moon exists, AI must prioritize settling the moon first to build materials before establishing an L1 Depot.
+**Surface Accessibility Gate:** If the surface is accessible, harvest resources locally to build the L1/Depot. If not accessible, import station components from the nearest Siphon/Sol link, but only as a last resort.
+**I-Beam Configuration:** Integrate configurable panel system (transparent/rugged/solar) into depot construction logic.
+**Avoid Importing Mandate:** New colonies must avoid importing station components unless surface is inaccessible. All logic must be validated by spec and documented in learned_patterns.json.
 ## 🚀 Material Loss Logic for Interplanetary Transit [2026-02-03]
 - All resource exports between planetary bodies (e.g., Ceres to Mars) must account for material loss due to transit risk and distance.
 - Default loss rate is 5-10% for high-risk, long-distance routes (e.g., 2.8 AU Ceres-Mars).
@@ -13,15 +19,23 @@
 - **The Mandate:** No logic change to `manager.rb` or `autonomous_construction_manager.rb` is complete until the corresponding Markdown documentation is updated.
 - **Pattern Integrity:** If a new mission pattern is added (e.g., via `ai:manager:teach:pattern`), the `learned_patterns.json` and `docs/` must reflect the new success criteria and ROI estimates.
 
+
 ## 🌉 2. The Anchor Law (Stability & Infrastructure)
-- **Mass Requirement:** A wormhole link cannot be declared "stable" or "open for heavy traffic" unless the "Sweet Spot" contains a gravitational anchor of at least **10^16 kg** (minimum threshold for stable gravitational field generation).
-- **Counterbalance Physics:** Wormhole stability requires gravitational anchors at 180° opposite the exit point. Jupiter provides Sol's natural counterbalance; artificial systems need AWS stations or asteroid placement.
-- **Atmospheric Maintenance Mandate:** Terraformed worlds require ongoing technological support. AI Manager must maintain >95% system integrity or face reversion cascades. No "set and forget" terraforming.
-- **The Phobos/Luna Pattern:** 
-  - **No Moons:** Relocate a Phobos-sized asteroid (mass ≈ 1.0×10^16 kg) to act as a station/depot anchor.
-  - **Large Moon:** Establish the "Luna Pattern" first—settle the moon, build materials, then establish the L1/Depot gateway.
-  - **Reference Implementation:** See [AOL-732356 System Documentation](systems/aol-732356.md) for successful Phobos Pattern deployment using Asteroid XXXV ($2.44 \times 10^{19}$ kg) anchored to Gas Giant 18 ($5.72 \times 10^{27}$ kg).
-- **Harvest First:** The AI Manager must prioritize local resource harvesting (ISRU) to build station components rather than importing them, unless the surface is strictly inaccessible.
+
+**The 180° Rule (AWS Placement):**
+Artificial Wormhole Stations (AWS) must be positioned exactly 180° opposite a high-mass body (e.g., Gas Giant or Moon) relative to the wormhole throat. This utilizes the "Gravitational Shadow" to prevent aperture drift.
+
+**Mass Displacement Threshold ($M_{max}$):**
+Natural wormholes are subject to stochastic "Snaps" once cumulative transit mass exceeds the system's threshold (approx. 300k tons for non-Sol systems).
+
+**The Hammer Protocol:**
+AI Manager is authorized to use high-mass overload (The Hammer) to force-close low-ROI natural links to reset Sol-side coordinates.
+
+**EM Bloom / Hot Start:**
+Reconnection missions (Act 3) must prioritize sites with residual EM Blooms. These provide the "Hot Start" energy required to power AWS High-EM Inductors.
+
+**Anomaly Exclusion:**
+Legendary/Permanent pairs (e.g., DJEW-716790) are immune to $M_{max}$ decay and the Hammer Protocol. They produce zero EM Bloom and remain "Silent" but stable.
 
 ## 💰 3. Market & GCC Integrity
 **Core Design Philosophy:** Player-first with NPC fallback ensures the solar system colonization continues regardless of player activity levels, while giving players meaningful opportunities to lead, profit, and shape development.
