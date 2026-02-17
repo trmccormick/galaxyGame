@@ -1,10 +1,18 @@
 module AIManager
   class ColonyManager
-    attr_accessor :colonies, :player_colony
+    attr_accessor :colonies, :player_colony, :ceres_profile
 
     def initialize
-      @colonies = []  # Store all NPC colonies
-      @player_colony = nil  # Reference to the player's colony
+      @colonies = []
+      @player_colony = nil
+      @ceres_profile = load_ceres_profile
+    end
+    def load_ceres_profile
+      path = File.join(Rails.root, 'data', 'json-data', 'ceres_mars_belt_operations_hub_profile_v1.json')
+      JSON.parse(File.read(path)) if File.exist?(path)
+    rescue => e
+      Rails.logger.warn("Could not load Ceres profile: #{e.message}")
+      nil
     end
 
     def add_colony(colony)
@@ -34,8 +42,21 @@ module AIManager
     end
 
     def handle_player_trade
-      # Logic for managing trades based on the player's colony status and needs
-      puts "#{player_colony.name} is negotiating trade."
+      # Use GCC Trading Platform logic for water exports (Ceres-specific)
+      return unless @ceres_profile && player_colony
+      if player_colony.respond_to?(:resources) && player_colony.resources.include?('water')
+        roi = calculate_ceres_water_export_roi(player_colony)
+        Rails.logger.info("Ceres Phase 1 Water Export ROI: #{roi}")
+        roi
+      else
+        puts "#{player_colony.name} is negotiating trade."
+      end
+    end
+
+    def calculate_ceres_water_export_roi(colony)
+      # Example: Use profile data to calculate ROI for water exports
+      # This is a stub; real logic would use @ceres_profile and colony state
+      0.87
     end
   end
 end
