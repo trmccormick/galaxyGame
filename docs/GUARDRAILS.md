@@ -203,24 +203,6 @@ height = (width / 2).round.clamp(20, 360)  # Enforce 2:1 aspect ratio
 - **Cycler Gas Storage & Utilization**: Cyclers maintain their own gas storage capacity and have operational uses for various gases (propulsion, life support), enabling them to store and utilize processed gases from docked craft production
 - **Ownership-Based Value Capture**: Processing value during transit belongs to the owning company - if AstroLift owns both cycler and docked craft, they capture all processing value; mixed ownership requires inter-company agreements for revenue sharing and material ownership
 - **Station-Style Processing Services**: Docked craft extend cycler/base infrastructure with their processing systems, following station economics - owners can charge fees for others to use processing capabilities, allowing monetization of idle craft systems for GCC earnings
-### Market Dynamics and Resource Flow
-- **Buy/Sell Order System**: All bases and stations maintain active buy and sell orders for essential materials, creating natural resource flow incentives
-- **Player Logistics Role**: Players and logistics NPCs bridge resource gaps by transporting materials from production sites to consumption sites as the game expands
-- **Multi-Modal Transport**: Cycler routes provide slow but reliable bulk transport, while players enable faster, more flexible logistics
-- **Construction Buy Orders**: Orbital stations and depots create buy orders for construction materials (e.g., L1 station buying 1000 3D printed ibeams), allowing players to participate in infrastructure development
-- **Player Supply Chain**: Players can build or purchase materials from locations like Luna and sell them at demand centers like L1 Station for profit
-- **NPC Fallback System**: If players don't fill orders within timeout windows, NPCs like AstroLift automatically fill them to maintain game progression
-- **Baseline Price Setting**: NPC order fulfillment establishes market prices and ensures economic activity continues even without player participation
-- **Early Game Critical**: NPC fallbacks are especially important early in the game when player logistics infrastructure is limited
-- **Economic Continuity**: System ensures construction and expansion never stall due to lack of material supply, whether through player participation or NPC automation
-- **Adaptive Cycler Logistics**: AI Manager loads cyclers with materials for specific destinations, but if no buy orders exist at arrival, cyclers can unload and place sell orders locally, then continue to next destination to prevent wasted trips and create market opportunities
-- **Pre-Destination Market Analysis**: AI Manager evaluates demand at upcoming cycler stops before arrival, deciding whether to deliver cargo, sell locally, or continue with current load
-- **Ownership-Based Decision Making**: Cargo handling depends on ownership - AstroLift-owned materials can be sold opportunistically, while TDC cargo is delivered as contracted regardless of local market conditions
-- **Mobile Production Platforms**: Cyclers function as moving space stations that can be configured for onboard production during transit, turning raw materials into processed goods to maximize value from long transit times
-- **Docked Craft Processing**: Craft docked with cyclers can continue onboard processing if they have sufficient power, raw materials, and storage capacity, allowing Venus skimmers to crack CO2 into O2 and CO during transit
-- **Cycler Gas Storage & Utilization**: Cyclers maintain their own gas storage capacity and have operational uses for various gases (propulsion, life support), enabling them to store and utilize processed gases from docked craft production
-- **Ownership-Based Value Capture**: Processing value during transit belongs to the owning company - if AstroLift owns both cycler and docked craft, they capture all processing value; mixed ownership requires inter-company agreements for revenue sharing and material ownership
-- **Station-Style Processing Services**: Docked craft extend cycler/base infrastructure with their processing systems, following station economics - owners can charge fees for others to use processing capabilities, allowing monetization of idle craft systems for GCC earnings
 - **Player Infrastructure Contributions**: Players can add structures/units to NPC bases (if connections available) to expand storage or processing capabilities, earning GCC usage fees while paying rent to base owners for space utilization
 - **DC Infrastructure Foundation**: Development Corporations provide basic infrastructure and expand as needed if players do not contribute, following the player-first model with NPCs as backup to ensure continuous expansion
 
@@ -476,3 +458,10 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - **Phase 1:** ✅ Implemented - Biosphere creation limited to Earth
 - **Phase 2:** 📋 Planned - Enhanced habitability detection system
 - **Phase 3:** 📋 Planned - Subsurface sphere confirmation requirements
+
+## 🛠️ Resource Allocation Engine Integration [2026-01-15]
+- All bootstrap settlement logic must use AIManager::ResourceAllocator to calculate initial supply packages (energy, water, food, construction).
+- ISRU priorities (oxygen, water, metals) must be ranked and documented per engine requirements.
+- ResourceAllocator interacts with ColonyManager's trade logic for supply and extraction planning.
+- All integration must be validated by spec and documented in the workflow.
+- Cite: ai_resource_allocation_engine.md, Documentation Mandate.
