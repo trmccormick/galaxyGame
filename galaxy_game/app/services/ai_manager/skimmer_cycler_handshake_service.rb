@@ -15,6 +15,7 @@ module AIManager
       cycler.energy_reserve -= required_energy
       skimmer[:processed_cargo] = skimmer[:raw_cargo].transform_values { |v| v * 0.9 }
       skimmer[:raw_cargo] = {}
+      skimmer[:available] = true # Mark skimmer as available for next dive
       true
     end
 

@@ -1,9 +1,9 @@
+
 require 'rails_helper'
-require 'cycler'
 
 RSpec.describe AIManager::SkimmerCyclerHandshakeService, type: :service do
   let(:service) { described_class.new }
-  let(:cycler) { Cycler.new(docking_capacity: 2, processing_power: 100, energy_reserve: 500, panel_config: :rugged) }
+  let(:cycler) { AIManager::Cycler.new(docking_capacity: 2, processing_power: 100, energy_reserve: 500, panel_config: :rugged) }
   let(:skimmer) { { panel_config: :rugged, raw_cargo: { methane: 50, nitrogen: 30 } } }
 
   describe '#dock_skimmer' do
@@ -23,11 +23,12 @@ RSpec.describe AIManager::SkimmerCyclerHandshakeService, type: :service do
 
   describe '#process_cargo' do
     before { service.dock_skimmer(skimmer, cycler) }
-    it 'processes skimmer cargo using cycler energy' do
+    it 'processes skimmer cargo using cycler energy and marks skimmer available for next dive' do
       expect(service.process_cargo(skimmer, cycler)).to eq(true)
       expect(skimmer[:processed_cargo][:methane]).to eq(45.0)
       expect(skimmer[:processed_cargo][:nitrogen]).to eq(27.0)
       expect(skimmer[:raw_cargo]).to be_empty
+      expect(skimmer[:available]).to eq(true)
       expect(cycler.energy_reserve).to be < 500
     end
     it 'does not process if not docked' do
