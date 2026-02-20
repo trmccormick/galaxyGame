@@ -1,5 +1,14 @@
 module Admin
   class AiManagerController < ApplicationController
+        def testing_validation
+          # Stub action for validation suite
+          render plain: 'Validation suite stub - implementation pending.'
+        end
+    def testing
+      @test_bodies = ::CelestialBodies::CelestialBody.where.not(type: 'star').order(:name).limit(20)
+      @test_stats = { total_runs: 0, passed: 0, failed: 0 }
+      render 'admin/ai_manager/testing/index'
+    end
     
     def index
       # System status overview
@@ -26,7 +35,8 @@ module Admin
         planner: { path: admin_ai_manager_planner_path, title: 'Mission Planner', description: 'Plan and simulate new missions' },
         decisions: { path: admin_ai_manager_decisions_path, title: 'Decision Log', description: 'Review AI decision history' },
         patterns: { path: admin_ai_manager_patterns_path, title: 'Pattern Analysis', description: 'Analyze and test AI patterns' },
-        performance: { path: admin_ai_manager_performance_path, title: 'Performance Metrics', description: 'Monitor AI system performance' }
+        performance: { path: admin_ai_manager_performance_path, title: 'Performance Metrics', description: 'Monitor AI system performance' },
+        testing: { path: '/admin/ai_manager/testing', title: 'Testing & Validation', description: 'Run AI system tests, validations, and bootstrap operations' }
       }
     end
     

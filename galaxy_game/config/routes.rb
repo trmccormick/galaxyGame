@@ -1,8 +1,12 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  # Temporary placeholder routes until Devise is installed
+  get 'users/sign_in', to: 'landing#index', as: :new_user_session
+  get 'users/sign_up', to: 'landing#index', as: :new_user_registration
+  get 'about', to: 'landing#about'
   # Root route
-  root 'game#index'
+  root 'landing#index'
 
   # Simulation routes
   get 'simulation', to: 'simulation#index'
@@ -50,6 +54,7 @@ Rails.application.routes.draw do
 
   # Admin namespace for comprehensive monitoring and control
   namespace :admin do
+      get 'ai_manager/testing/validation', to: 'ai_manager#testing_validation', as: 'ai_manager_testing_validation'
     root 'dashboard#index'        # Admin dashboard home
     get 'dashboard', to: 'dashboard#index'
     
@@ -64,6 +69,7 @@ Rails.application.routes.draw do
     get 'ai_manager/decisions', to: 'ai_manager#decisions', as: 'ai_manager_decisions'
     get 'ai_manager/patterns', to: 'ai_manager#patterns', as: 'ai_manager_patterns'
     get 'ai_manager/performance', to: 'ai_manager#performance', as: 'ai_manager_performance'
+    get 'ai_manager/testing', to: 'ai_manager#testing', as: 'ai_manager_testing'
     
     # Celestial Bodies routes
     resources :celestial_bodies, only: [:index] do
