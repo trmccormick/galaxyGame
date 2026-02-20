@@ -21,6 +21,14 @@ FactoryBot.define do
       operational_data { {'systems' => {'stabilizer_unit' => {'status' => 'online'}}} }
     end
 
+
+    after(:create) do |craft, _evaluator|
+      unless craft.inventory
+        FactoryBot.create(:inventory, inventoryable: craft)
+        craft.reload
+      end
+    end
+
     # You might need a specific trait for wormhole stabilizers
     trait :wormhole_stabilizer do
       craft_name { "Wormhole Stabilization Satellite" }
@@ -36,14 +44,34 @@ FactoryBot.define do
     sequence(:name) { |n| "Harvester#{n}" }
     craft_name { "Harvester" }
     craft_type { "harvesters" }
-    operational_data { {
-      'systems' => {},
-      'resources' => {
-        'stored' => {}
-      },
-      'extraction_rate' => 10
-    } }
+    extraction_rate { 1.2 }
+    operational_data {
+      {
+        'systems' => {},
+        'resources' => {
+          'stored' => {}
+        },
+        'extraction_rate' => extraction_rate
+      }
+    }
 
     association :owner, factory: :player
+
+    # Allow association with a settlement or another craft in tests
+    transient do
+      docked_at { nil }
+      docked_at_type { nil }
+    end
+
+    after(:create) do |harvester, evaluator|
+      unless harvester.inventory
+        FactoryBot.create(:inventory, inventoryable: harvester)
+        harvester.reload
+      end
+      if evaluator.docked_at && evaluator.docked_at_type
+        harvester.docked_at = evaluator.docked_at
+        harvester.docked_at_type = evaluator.docked_at_type
+      end
+    end
   end
 end
