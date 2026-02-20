@@ -827,37 +827,36 @@ window.AdminMonitor = (function() {
     const canvas = document.getElementById('planetCanvas');
     if (!canvas) {
       console.error('Canvas element not found');
+      logConsole('Canvas element not found', 'error');
       return;
     }
-
-    const ctx = canvas.getContext('2d');
-
-    console.log('=== NASA TERRAIN DATA DEBUG ===');
-    console.log('terrainData:', terrainData ? 'LOADED' : 'null');
-    if (terrainData && terrainData.grid) {
-      console.log('Geosphere grid sample:', terrainData.grid[0]?.slice(0, 10));
+    // PATCH: Check if canvas is ready before rendering
+    if (canvas.width === 0 || canvas.height === 0) {
+      console.log('Canvas not ready yet, waiting...');
+      setTimeout(() => renderTerrainMap(), 100);
+      return;
     }
-    console.log('=== END NASA DATA DEBUG ===');
-
-    // Reset layers
-    layers = {
-      terrain: null,
-      water: null,
-      biomes: null,
-      resources: null,
-      elevation: null
-    };
-
-    // NASA-first: Extract elevation
-    if (terrainData && terrainData.elevation) {
-      layers.elevation = {
-        grid: terrainData.elevation,
-        width: terrainData.elevation[0]?.length || 0,
-        height: terrainData.elevation.length,
-        layer_type: 'elevation',
-        quality: terrainData.quality_score || 'nasa',
-        method: terrainData.generation_method || 'nasa_geotiff'
-      };
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.error('Failed to get canvas context');
+      logConsole('Failed to get canvas context', 'error');
+      return;
+    }
+    // Check for terrain data
+    if (!terrainData || !terrainData.grid) {
+      console.log('No terrain data available for rendering');
+      logConsole('No terrain data available', 'warning');
+      // Display message on canvas
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00d4ff';
+      ctx.font = '16px "Courier New", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('No terrain data available', canvas.width / 2, canvas.height / 2);
+      ctx.fillText('Generate terrain to view map', canvas.width / 2, canvas.height / 2 + 25);
+      return;
+    }
+    // ...existing code continues...
       console.log('Using NASA elevation data:', layers.elevation.quality, layers.elevation.method);
     }
 
@@ -1552,7 +1551,13 @@ window.AdminMonitor = (function() {
     setupPanControl();
     setupScrollableMap();
     startDataPolling();
-    renderTerrainMap();
+    // PATCH: Defer terrain rendering to ensure canvas is ready
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        console.log('Attempting first render...');
+        renderTerrainMap();
+      });
+    });
     logConsole('System initialized', 'info');
 
     // Cleanup on unload

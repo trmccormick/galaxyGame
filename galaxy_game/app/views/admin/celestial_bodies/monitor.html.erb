@@ -55,9 +55,9 @@
           biomes: has_biosphere,
           features: has_biosphere,
           temperature: true,
-          rainfall: has_hydrosphere && has_atmosphere,  # Precipitation requires atmosphere + liquid cycle
+          rainfall: has_hydrosphere && has_atmosphere,
           resources: true,
-          civilization: true  # Strategic cities, wonders, resource hubs
+          civilization: true
         },
         # Civilization layer data
         civilization_features: @civilization_features
@@ -66,87 +66,45 @@
     <%= raw monitor_data.to_json %>
     </script>
 
-    <div id="mainContainer">
-        <!-- Header -->
-        <div id="header">
-            <h1 id="planetName"><%= @celestial_body.name %> - ADMIN MONITOR</h1>
-            <div id="planetInfo">
-                <%= @celestial_body.type %> | 
-                Radius: <%= number_to_human(@celestial_body.radius, precision: 2) %> m | 
+    <div class="admin-main-container" style="display: grid; grid-template-columns: 250px 1fr 320px; grid-template-rows: auto 1fr auto; min-height: 100vh;">
+        <header class="admin-header" style="grid-column: 1 / span 3;">
+            <h1 class="admin-title"><%= @celestial_body.name %> - ADMIN MONITOR</h1>
+            <div class="admin-header-info">
+                <%= @celestial_body.type %> |
+                Radius: <%= number_to_human(@celestial_body.radius, precision: 2) %> m |
                 Gravity: <%= number_with_precision(@celestial_body.gravity, precision: 3) %>g |
-                Temp: <%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %>K
+                Temp: <%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %>K |
+                <%= link_to '← Admin Dashboard', admin_root_path, style: 'color: #00d4ff; margin-left: 20px;' %>
             </div>
-        </div>
-        
-        <!-- Left Panel: AI Mission Controls -->
-        <div id="toolPanel">
-            <!-- Mission Control Section -->
-            <div class="tool-section">
-                <h3>AI MISSION CONTROL</h3>
-                <button class="tool-button" data-test="resource_extraction">
-                    ⛏️ Test Resource Extraction
-                </button>
-                <button class="tool-button" data-test="base_construction">
-                    🏗️ Test Base Construction
-                </button>
-                <button class="tool-button" data-test="isru_pipeline">
-                    🏭 Test ISRU Pipeline
-                </button>
-                <button class="tool-button" data-test="gcc_bootstrap">
-                    🚀 Test GCC Bootstrap
-                </button>
-                <button class="tool-button" onclick="window.location.href='/celestial_bodies/<%= @celestial_body.id %>'">
-                    👁️ View Public Page
-                </button>
-                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/edit'">
-                    ⚙️ Edit Celestial Body
-                </button>
+        </header>
+        <aside class="admin-sidebar">         
+            <!-- Navigation -->
+            <div class="admin-tool-section">
+                <h3>🎯 NAVIGATION</h3>
+                <%= link_to '👁️ View Public Page', celestial_body_path(@celestial_body), class: 'admin-tool-button' %>
+                <%= link_to '⚙️ Edit Properties', edit_admin_celestial_body_path(@celestial_body), class: 'admin-tool-button' %>
+                <%= link_to '🌍 Celestial Bodies', admin_celestial_bodies_path, class: 'admin-tool-button' %>
             </div>
             
-            <!-- Management Tools Section -->
-            <div class="tool-section">
-                <h3>ADMIN TOOLS</h3>
-                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/edit'">
-                    ⚙️ Edit Celestial Body Properties
-                </button>
-                <button class="tool-button" onclick="window.location.href='/celestial_bodies/<%= @celestial_body.id %>'">
-                    👁️ View Public Page
-                </button>
+            <!-- Terrain Management -->
+            <div class="admin-tool-section">
+                <h3>🗺️ TERRAIN</h3>
                 <% if @celestial_body.geosphere&.terrain_map.nil? %>
                     <%= button_to '🗺️ Generate Terrain', generate_terrain_admin_celestial_body_path(@celestial_body), 
-                                  method: :post, class: 'tool-button', 
+                                  method: :post, class: 'admin-tool-button', 
                                   data: { confirm: 'This will generate terrain data for this celestial body. Continue?' } %>
                 <% else %>
                     <%= button_to '🔄 Regenerate Terrain', generate_terrain_admin_celestial_body_path(@celestial_body), 
-                                  method: :post, class: 'tool-button', 
-                                  data: { confirm: 'This will regenerate terrain data for this celestial body, replacing existing data. Continue?' } %>
+                                  method: :post, class: 'admin-tool-button', 
+                                  data: { confirm: 'This will regenerate terrain data, replacing existing data. Continue?' } %>
                 <% end %>
             </div>
             
-            <!-- Active Missions Section -->
-            <div class="tool-section">
-                <h3>ACTIVE MISSIONS</h3>
-                <div id="missionList">
-                    <% @ai_missions.each do |mission| %>
-                        <div class="mission-item <%= mission[:status] %>">
-                            <div class="mission-header">
-                                <span class="mission-type"><%= mission[:type] %></span>
-                                <span class="mission-status"><%= mission[:status].upcase %></span>
-                            </div>
-                            <div class="mission-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: <%= mission[:progress] %>%"></div>
-                                </div>
-                                <span class="progress-text"><%= mission[:progress] %>%</span>
-                            </div>
-                        </div>
-                    <% end %>
-                </div>
-            </div>
+
             
-            <!-- View Layers Section -->
-            <div class="tool-section">
-                <h3>MAP LAYERS</h3>
+            <!-- Map Layers -->
+            <div class="admin-tool-section">
+                <h3>🗺️ MAP LAYERS</h3>
                 <div class="layer-selector">
                     <button class="layer-btn active" data-layer="terrain">Terrain</button>
                     <button class="layer-btn" data-layer="water">Hydrosphere</button>
@@ -159,24 +117,10 @@
                 </div>
             </div>
 
-            <!-- Biome Validation Section -->
-            <div class="tool-section">
-                <h3>BIOME VALIDATION</h3>
-                <div class="biome-validation-panel">
-                    <div id="validation-score">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                    <button onclick="runBiomeValidation()">Validate Biomes</button>
-                    <div id="validation-details" style="display: none;">
-                        <!-- Validation errors/warnings -->
-                    </div>
-                </div>
-            </div>
-
             <!-- Geological Features -->
             <% if @geological_features.any? %>
-                <div class="tool-section">
-                    <h3>GEOLOGICAL FEATURES</h3>
+                <div class="admin-tool-section">
+                    <h3>🏔️ GEOLOGICAL FEATURES</h3>
                     <div class="feature-list">
                         <% @geological_features.take(5).each do |feature| %>
                             <div class="feature-item">
@@ -187,21 +131,12 @@
                     </div>
                 </div>
             <% end %>
-        </div>
-        
+        </aside>
+        <main class="admin-content" style="padding: 0 2rem;">
         <!-- Center Panel: Planetary Map -->
         <div id="canvasWrapper">
             <div id="mapOverlay">
                 <div id="mapTitle"><%= @celestial_body.name %> - PLANETARY MAP</div>
-                <div id="mapControls">
-                    <div class="control-group">
-                        <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
-                        <input type="range" id="zoom" min="0.5" max="4" step="0.1" value="1">
-                    </div>
-                    <div class="control-group">
-                        <button id="resetViewBtn" class="tool-button" title="Reset view to center">⌂ Reset</button>
-                    </div>
-                </div>
             </div>
             <div id="canvasScroller">
                 <div id="canvasContainer">
@@ -211,10 +146,19 @@
             <div id="featureTooltip" class="hidden">
                 <div id="tooltipContent"></div>
             </div>
+            <div id="mapControls" style="width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 2rem; margin-top: 0.5rem; pointer-events: auto;">
+                <div class="control-group">
+                    <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
+                    <input type="range" id="zoom" min="0.5" max="4" step="0.1" value="1">
+                </div>
+                <div class="control-group">
+                    <button id="resetViewBtn" class="admin-tool-button" title="Reset view to center" style="pointer-events: auto;">⌂ Reset</button>
+                </div>
+            </div>
         </div>
-        
-        <!-- Right Panel: Sphere Data -->
-        <div id="dataPanel">
+        </main>
+        <!-- Right Panel: Data Panel -->
+        <aside id="dataPanel" style="background: #101c2c; color: #fff; padding: 1.5rem 1rem; border-left: 1px solid #223;">
             <!-- Atmosphere Section -->
             <div class="data-section">
                 <h3>ATMOSPHERE</h3>
@@ -222,7 +166,7 @@
                     <div class="data-row">
                         <span class="data-label">Pressure:</span>
                         <span class="data-value" id="atmo-pressure">
-                            <%= number_with_precision(@celestial_body.atmosphere.pressure, precision: 4) %> bar
+                            <%= number_with_precision(@celestial_body.atmosphere.pressure, precision: 2) %> atm
                         </span>
                     </div>
                     <div class="data-row">
@@ -256,10 +200,10 @@
                 <% end %>
             </div>
             
-            <!-- Biosphere Section -->
-            <div class="data-section">
-                <h3>BIOSPHERE</h3>
-                <% if @celestial_body.biosphere %>
+            <!-- Biosphere Section (only if present) -->
+            <% if @celestial_body.biosphere %>
+                <div class="data-section">
+                    <h3>BIOSPHERE</h3>
                     <div class="data-row">
                         <span class="data-label">Biodiversity:</span>
                         <span class="data-value" id="bio-diversity">
@@ -283,16 +227,13 @@
                     <div class="data-row">
                         <span class="data-label">Life Forms:</span>
                         <span class="data-value" id="bio-lifeforms">
-                            <%= @celestial_body.biosphere.life_forms.count %>
+                            <%= @celestial_body.biosphere&.try(:dominant_life_forms) || 'None' %>
                         </span>
                     </div>
-                <% else %>
-                    <div class="data-row">
-                        <span class="data-value warning">Not Present</span>
-                    </div>
-                <% end %>
-            </div>
+                </div>
+            <% end %>
             
+
             <!-- Geosphere Section -->
             <% if @celestial_body.geosphere %>
                 <div class="data-section">
@@ -300,7 +241,7 @@
                     <div class="data-row">
                         <span class="data-label">Geological Activity:</span>
                         <span class="data-value" id="geo-activity">
-                            <%= number_with_precision((@celestial_body.geosphere.geological_activity || 0) * 100, precision: 1) %>%
+                            <%= @celestial_body.geological_activity ? "#{number_with_precision(@celestial_body.geological_activity * 100, precision: 0)}%" : "Unknown" %>
                         </span>
                     </div>
                     <div class="data-row">
@@ -317,16 +258,63 @@
                     </div>
                 </div>
             <% end %>
-        </div>
-        
+
+            <!-- Hydrosphere Section (only if present) -->
+            <% if @celestial_body.hydrosphere %>
+                <div class="data-section">
+                    <h3>HYDROSPHERE</h3>
+                    <div class="data-row">
+                        <span class="data-label">Water Coverage:</span>
+                        <span class="data-value">
+                            <%= number_with_precision(@celestial_body.hydrosphere.water_coverage * 100, precision: 1) %>%
+                        </span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Primary Liquid:</span>
+                        <span class="data-value">
+                            <%= @celestial_body.respond_to?(:primary_liquid) ? @celestial_body.primary_liquid : 'H2O' %>
+                        </span>
+                    </div>
+                    <% if @celestial_body.hydrosphere.respond_to?(:total_water_mass) && @celestial_body.hydrosphere.total_water_mass %>
+                    <div class="data-row">
+                        <span class="data-label">Total Water Mass:</span>
+                        <span class="data-value">
+                            <%= number_to_human(@celestial_body.hydrosphere.total_water_mass, precision: 2) %> kg
+                        </span>
+                    </div>
+                    <% end %>
+                </div>
+            <% end %>
+
+            <!-- Active Missions (moved from sidebar) -->
+            <% if @ai_missions.any? %>
+                <div class="data-section">
+                    <h3>📋 ACTIVE MISSIONS</h3>
+                    <div class="mission-list">
+                        <% @ai_missions.take(3).each do |mission| %>
+                            <div class="mission-item <%= mission[:status] %>">
+                                <div class="mission-header">
+                                    <span class="mission-type"><%= mission[:type] %></span>
+                                    <span class="mission-status"><%= mission[:status].upcase %></span>
+                                </div>
+                                <div class="mission-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: <%= mission[:progress] %>%"></div>
+                                    </div>
+                                    <span class="progress-text"><%= mission[:progress] %>%</span>
+                                </div>
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+            <% end %>
+        </aside>
         <!-- Bottom Panel: Console -->
-        <div id="console">
+        <footer>
             <div class="console-line info">&gt; Admin monitoring system initialized for <%= @celestial_body.name %></div>
-            <div class="console-line info">&gt; Sphere data loaded: 
-                <%= @sphere_summary.select { |k, v| v }.keys.join(', ') %>
-            </div>
+            <div class="console-line info">&gt; Sphere data loaded: <%= @sphere_summary.select { |k, v| v }.keys.join(', ') %></div>
             <div class="console-line info">&gt; Ready for AI Manager testing operations</div>
-        </div>
+        </footer>
     </div>
 
     <%= javascript_include_tag 'admin/monitor' %>

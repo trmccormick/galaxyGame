@@ -1,212 +1,152 @@
-# frozen_string_literal: true
+class Admin::DashboardController < ApplicationController
+  def index
+    @system_stats  = build_system_stats
+    @galaxy_stats  = build_galaxy_stats
+    @ai_status     = build_ai_status
+    @economic_indicators = build_economic_indicators
+    @network_stats = build_network_stats
+    @recent_activity    = build_recent_activity
+    @ai_activity_feed   = build_ai_activity_feed
+    @celestial_bodies   = ::CelestialBodies::CelestialBody.all
+  end
 
-require 'celestial_bodies/celestial_body'
+  private
 
-module Admin
-  # Admin dashboard controller
-  # Main control center for game administration and AI testing
-  class DashboardController < ApplicationController
-    def index
-      # Load galaxies for selection
-      @galaxies = Galaxy.includes(:solar_systems).order(:name)
-      
-      # Default to Milky Way, fallback to first galaxy
-      @selected_galaxy = params[:galaxy_id] ? 
-        Galaxy.find(params[:galaxy_id]) : 
-        Galaxy.find_by(name: 'Milky Way') || @galaxies.first
-      
-      # Load systems for selected galaxy, prioritize Sol
-      if @selected_galaxy
-        @star_systems = @selected_galaxy.solar_systems
-          .includes(:celestial_bodies)
-          .order(Arel.sql("CASE WHEN name = 'Sol' THEN 0 ELSE 1 END, name"))
-          .limit(50) # Limit for performance
-        
-        # Find Sol system for quick access
-        @sol_system = @selected_galaxy.solar_systems.find_by(name: 'Sol') if @selected_galaxy.name == 'Milky Way'
-        
-        # Load celestial bodies for backward compatibility (used by GCC Bootstrap Test)
-        @celestial_bodies = @selected_galaxy.solar_systems
-          .includes(:celestial_bodies)
-          .flat_map(&:celestial_bodies)
-          .uniq
-          .sort_by(&:name)
-          .first(50) # Limit for performance
-      else
-        @star_systems = []
-        @sol_system = nil
-        @celestial_bodies = []
-      end
-      
-      # Keep existing AI and activity data
-      @ai_status = load_ai_status
-      @ai_activity_feed = load_ai_activity_feed
-      @economic_indicators = load_economic_indicators
-      
-      @galaxy_stats = calculate_galaxy_stats(@selected_galaxy)
-      @system_stats = calculate_global_system_stats
-      @recent_activity = load_recent_activity
-    end
+  # ---------------------------------------------------------------------------
+  # System
+  # ---------------------------------------------------------------------------
 
-    private
+  def build_system_stats
+    {
+      uptime: calculate_uptime
+    }
+  end
 
-    def calculate_global_system_stats
-      {
-        total_bodies: ::CelestialBodies::CelestialBody.count,
-        total_systems: SolarSystem.count,
-        total_galaxies: Galaxy.count,
-        habitable_bodies: count_habitable_bodies,
-        active_simulations: 0, # TODO: Implement simulation tracking
-        ai_missions_running: @ai_status[:active_missions],
-        uptime: calculate_uptime,
-        ai_status: @ai_status[:manager_status],
-        gcc_generation: @ai_status[:gcc_generation] ? 'Active' : 'None',
-        economic_autonomy: @ai_status[:economic_autonomy] ? 'Yes' : 'No'
-      }
-    end
+  # ---------------------------------------------------------------------------
+  # Galaxy
+  # ---------------------------------------------------------------------------
 
-    def calculate_galaxy_stats(galaxy)
-      return {} unless galaxy
-      
-      total_bodies = galaxy.solar_systems.joins(:celestial_bodies).count
-      total_systems = galaxy.solar_systems.count
-      
-      {
-        total_galaxy_bodies: total_bodies,
-        total_galaxy_systems: total_systems,
-        habitable_bodies: count_habitable_bodies_in_galaxy(galaxy),
-        active_simulations: 0, # TODO: Implement simulation tracking
-        ai_missions_running: @ai_status[:active_missions],
-        uptime: calculate_uptime,
-        ai_status: @ai_status[:manager_status],
-        gcc_generation: @ai_status[:gcc_generation] ? 'Active' : 'None',
-        economic_autonomy: @ai_status[:economic_autonomy] ? 'Yes' : 'No'
-      }
-    end
+  def build_galaxy_stats
+    {
+      total_systems:    SolarSystem.count,
+      total_bodies:     ::CelestialBodies::CelestialBody.count,
+      habitable_bodies: ::CelestialBodies::CelestialBody
+                          .where('tei_score >= ?', 0.4)
+                          .count,
+      settlements:      Settlement.count
+    }
+  rescue StandardError => e
+    Rails.logger.error("DashboardController#build_galaxy_stats failed: #{e.message}")
+    { total_systems: 0, total_bodies: 0, habitable_bodies: 0, settlements: 0 }
+  end
 
-    def count_habitable_bodies
-      # Count bodies with atmosphere and acceptable temperature globally
-      ::CelestialBodies::CelestialBody.joins(:atmosphere)
-                   .where('surface_temperature > ? AND surface_temperature < ?', 250, 350)
-                   .count
-    rescue StandardError
-      0
-    end
+  # ---------------------------------------------------------------------------
+  # AI Manager
+  # ---------------------------------------------------------------------------
 
-    def count_habitable_bodies_in_galaxy(galaxy)
-      # Count bodies with atmosphere and acceptable temperature in this galaxy
-      galaxy.solar_systems.joins(celestial_bodies: :atmosphere)
-             .where('surface_temperature > ? AND surface_temperature < ?', 250, 350)
-             .count
-    rescue StandardError
-      0
-    end
+  def build_ai_status
+    {
+      manager_status:     'online',
+      bootstrap_capable:  true,
+      learned_patterns:   ::AiDecision.count,
+      last_decision:      ::AiDecision.recent.first&.timestamp || 1.hour.ago,
+      active_simulations: sidekiq_simulation_count
+    }
+  rescue StandardError => e
+    Rails.logger.error("DashboardController#build_ai_status failed: #{e.message}")
+    {
+      manager_status:     'offline',
+      bootstrap_capable:  false,
+      learned_patterns:   0,
+      last_decision:      1.hour.ago,
+      active_simulations: 0
+    }
+  end
 
-    def calculate_uptime
-      # Get Rails application uptime
-      if defined?(Rails::Info)
-        started_at = File.mtime(Rails.root.join('tmp', 'pids', 'server.pid'))
-        seconds = Time.now - started_at
-        
-        days = (seconds / 86400).floor
-        hours = ((seconds % 86400) / 3600).floor
-        minutes = ((seconds % 3600) / 60).floor
-        
-        "#{days}d #{hours}h #{minutes}m"
-      else
-        "Unknown"
-      end
-    rescue StandardError
-      "Unknown"
-    end
+  # ---------------------------------------------------------------------------
+  # Economy
+  # Note: USD Balance removed - it is an NPC corp metric, not a game-wide stat
+  # ---------------------------------------------------------------------------
 
-    def load_recent_activity
-      # Placeholder for activity log
-      # TODO: Implement proper activity tracking
-      [
-        { 
-          timestamp: 5.minutes.ago, 
-          type: 'system', 
-          message: 'Database connection healthy',
-          level: 'info'
-        },
-        { 
-          timestamp: 10.minutes.ago, 
-          type: 'simulation', 
-          message: 'Background simulation tick completed',
-          level: 'success'
-        },
-        { 
-          timestamp: 15.minutes.ago, 
-          type: 'ai', 
-          message: 'AI Manager ready for testing',
-          level: 'info'
-        }
-      ]
-    end
+  def build_economic_indicators
+    {
+      total_gcc:    calculate_total_gcc,
+      minting_rate: 1200,  # GCC/day - TODO: derive from active mining satellites
+      active_trades: 0,    # TODO: Market::Order.active.count
+      daily_volume:  0     # TODO: Market::Order.where('created_at >= ?', 24.hours.ago).sum(:amount)
+    }
+  rescue StandardError => e
+    Rails.logger.error("DashboardController#build_economic_indicators failed: #{e.message}")
+    { total_gcc: 0, minting_rate: 0, active_trades: 0, daily_volume: 0 }
+  end
 
-    def load_ai_status
-      # AI Manager status and capabilities
-      {
-        manager_status: 'online',
-        bootstrap_capable: true,
-        active_missions: 0,
-        learned_patterns: 42, # TODO: Get actual count from AI Manager
-        last_decision: 2.minutes.ago,
-        gcc_generation: check_gcc_generation,
-        economic_autonomy: check_economic_autonomy
-      }
-    end
+  # ---------------------------------------------------------------------------
+  # Network
+  # ---------------------------------------------------------------------------
 
-    def load_ai_activity_feed
-      # Recent AI decisions and actions
-      [
-        {
-          timestamp: 1.minute.ago,
-          type: 'analysis',
-          message: 'Analyzing system for GCC generation opportunities',
-          level: 'info',
-          details: 'AI Manager scanning for missing cryptocurrency infrastructure'
-        },
-        {
-          timestamp: 5.minutes.ago,
-          type: 'decision',
-          message: 'Decision: Deploy mining satellite for GCC bootstrap',
-          level: 'success',
-          details: 'AI determined mining satellite deployment as highest priority action'
-        },
-        {
-          timestamp: 10.minutes.ago,
-          type: 'planning',
-          message: 'Planning: Resource acquisition for satellite construction',
-          level: 'info',
-          details: 'Calculating material requirements and launch costs'
-        }
-      ]
-    end
+  def build_network_stats
+    {
+      wormholes:          Wormhole.count,
+      connected_systems:  calculate_connected_systems,
+      isolated_systems:   calculate_isolated_systems
+    }
+  rescue StandardError => e
+    Rails.logger.error("DashboardController#build_network_stats failed: #{e.message}")
+    { wormholes: 0, connected_systems: 0, isolated_systems: 0 }
+  end
 
-    def load_economic_indicators
-      # Economic status and AI-driven activities
-      {
-        total_gcc: 0, # TODO: Get from actual economy
-        usd_balance: 1000000, # TODO: Get from actual accounts
-        active_trades: 0,
-        resource_flows: 0,
-        ai_initiated_transactions: 0,
-        bootstrap_progress: 0 # 0-100%
-      }
-    end
+  # ---------------------------------------------------------------------------
+  # Activity feeds
+  # These will be replaced with real model queries once ActivityLog exists
+  # ---------------------------------------------------------------------------
 
-    def check_gcc_generation
-      # Check if GCC is being generated anywhere in the system
-      # TODO: Implement actual GCC generation check
-      false
-    end
+  def build_recent_activity
+    # TODO: Replace with ActivityLog.order(created_at: :desc).limit(10).map { ... }
+    [
+      { type: 'info', message: 'System initialized',  timestamp: 1.hour.ago },
+      { type: 'ai',   message: 'AI decision made',    timestamp: 30.minutes.ago }
+    ]
+  end
 
-    def check_economic_autonomy
-      # Check if AI can operate independently
-      # TODO: Implement actual autonomy check
-      false
-    end
+  def build_ai_activity_feed
+    # TODO: Replace with AiActivityLog.order(created_at: :desc).limit(10).map { ... }
+    [
+      { type: 'analysis', message: 'AI started',    details: 'AI system booted',              timestamp: 1.hour.ago },
+      { type: 'decision', message: 'Decision made', details: 'Allocated resources to Mars',   timestamp: 30.minutes.ago },
+      { type: 'idle',     message: 'AI idle',       details: 'No recent activity',            timestamp: 10.minutes.ago }
+    ]
+  end
+
+  # ---------------------------------------------------------------------------
+  # Helpers
+  # ---------------------------------------------------------------------------
+
+  def calculate_uptime
+    # TODO: Track real game start time in GameState or similar
+    'N/A'
+  end
+
+  def calculate_total_gcc
+    # TODO: Sum all GCC balances across players, NPCs, AI Manager
+    # e.g. Account.sum(:gcc_balance)
+    0
+  end
+
+  def calculate_connected_systems
+    # TODO: Traverse wormhole graph to count reachable systems
+    SolarSystem.count
+  rescue StandardError
+    0
+  end
+
+  def calculate_isolated_systems
+    # TODO: Systems with no wormhole connections
+    0
+  end
+
+  def sidekiq_simulation_count
+    Sidekiq::Queue.new('simulations').size
+  rescue StandardError
+    0
   end
 end
