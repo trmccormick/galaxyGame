@@ -1,6 +1,6 @@
 # app/services/ai_manager/isru_optimizer.rb
 module AIManager
-  class ISRUOptimizer
+  class IsruOptimizer
     def initialize(shared_context)
       @shared_context = shared_context
     end

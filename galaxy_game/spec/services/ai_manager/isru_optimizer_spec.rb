@@ -2,7 +2,7 @@
 require "./app/services/ai_manager/isru_optimizer"
 require 'rails_helper'
 
-RSpec.describe AIManager::ISRUOptimizer do
+RSpec.describe AIManager::IsruOptimizer do
   let(:shared_context) { double('SharedContext') }
   let(:optimizer) { described_class.new(shared_context) }
 
