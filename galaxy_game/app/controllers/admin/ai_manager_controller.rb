@@ -1,9 +1,10 @@
 module Admin
   class AiManagerController < ApplicationController
-        def testing_validation
-          # Stub action for validation suite
-          render plain: 'Validation suite stub - implementation pending.'
-        end
+    def testing_validation
+      # Render the themed validation view
+      render 'admin/ai_manager/testing/validation'
+    end
+    
     def testing
       @test_bodies = ::CelestialBodies::CelestialBody.where.not(type: 'star').order(:name).limit(20)
       @test_stats = { total_runs: 0, passed: 0, failed: 0 }
