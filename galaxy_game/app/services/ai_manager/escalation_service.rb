@@ -33,7 +33,10 @@ module AIManager
       when 'oxygen'
         Units::Robot.create!(
           name: "Automated Oxygen Harvester",
-          settlement: settlement,
+          identifier: "ROBOT-#{SecureRandom.hex(4)}",
+          unit_type: "robot",
+          owner: settlement.owner,
+          attachable: settlement,
           operational_data: {
             'task_type' => 'atmospheric_harvesting',
             'target_material' => 'oxygen',
@@ -45,7 +48,10 @@ module AIManager
       when 'water'
         Craft::Harvester.create!(
           name: "Automated Water Extractor",
-          settlement: settlement,
+          craft_name: "water_extractor",
+          craft_type: "harvester",
+          owner: settlement.owner,
+          docked_at: settlement,
           operational_data: {
             'extraction_rate' => 50, # kg/hour
             'target_body' => settlement.celestial_body
@@ -55,7 +61,10 @@ module AIManager
         # Regolith mining robot
         Units::Robot.create!(
           name: "Automated #{material.titleize} Miner",
-          settlement: settlement,
+          identifier: "ROBOT-#{SecureRandom.hex(4)}",
+          unit_type: "robot",
+          owner: settlement.owner,
+          attachable: settlement,
           operational_data: {
             'task_type' => 'regolith_mining',
             'target_material' => material,
@@ -69,35 +78,66 @@ module AIManager
 
     def self.deploy_harvester_to_site(harvester, celestial_body, material)
       # Deploy based on material type and celestial body characteristics
-      case material.downcase
-      when 'oxygen'
-        # Deploy near atmosphere-rich areas
-        harvester.update!(
-          location: celestial_body,
-          operational_data: harvester.operational_data.merge({
-            'deployment_site' => 'atmospheric_processor',
-            'coordinates' => find_atmospheric_site(celestial_body)
-          })
-        )
-      when 'water'
-        # Deploy near hydrosphere-rich areas
-        harvester.update!(
-          location: celestial_body,
-          operational_data: harvester.operational_data.merge({
-            'deployment_site' => 'ice_deposit',
-            'coordinates' => find_hydrosphere_site(celestial_body)
-          })
-        )
-      else
-        # Deploy to regolith mining sites
-        harvester.update!(
-          location: celestial_body,
-          operational_data: harvester.operational_data.merge({
-            'deployment_site' => 'regolith_field',
-            'coordinates' => find_regolith_site(celestial_body, material)
-          })
-        )
+
+      def self.format_coordinates(lat, lon)
+        lat_dir = lat >= 0 ? 'N' : 'S'
+        lon_dir = lon >= 0 ? 'E' : 'W'
+        format('%.2f°%s %.2f°%s', lat.abs, lat_dir, lon.abs, lon_dir)
       end
+
+      def self.random_coordinates
+        lat = rand(-90.0..90.0)
+        lon = rand(-180.0..180.0)
+        format_coordinates(lat, lon)
+      end
+
+      deployment_data = case material.downcase
+      when 'oxygen'
+        {
+          'deployment_site' => 'atmospheric_processor',
+          'coordinates' => random_coordinates
+        }
+      when 'water'
+        {
+          'deployment_site' => 'ice_deposit',
+          'coordinates' => random_coordinates
+        }
+      else
+        {
+          'deployment_site' => 'regolith_field',
+          'coordinates' => random_coordinates
+        }
+      end
+
+      # If harvester responds to set_location, use it; else, set attachable if possible
+      if harvester.respond_to?(:set_location)
+        # For Craft::Harvester, set a CelestialLocation
+        loc = Location::CelestialLocation.create!(
+          name: "#{material.titleize} Site (#{deployment_data['coordinates']})",
+          celestial_body: celestial_body,
+          coordinates: deployment_data['coordinates'],
+          locationable: harvester
+        )
+        harvester.set_location(loc)
+      elsif harvester.is_a?(Units::Robot)
+        # For Units::Robot, also create a CelestialLocation and assign
+        loc = Location::CelestialLocation.create!(
+          name: "#{material.titleize} Site (#{deployment_data['coordinates']})",
+          celestial_body: celestial_body,
+          coordinates: deployment_data['coordinates'],
+          locationable: harvester
+        )
+        harvester.location = loc
+        harvester.save!
+      elsif harvester.respond_to?(:attachable=)
+        # For Units::Robot, attach to the settlement or celestial_body if needed
+        harvester.attachable = celestial_body if harvester.respond_to?(:attachable=)
+        harvester.save!
+      end
+
+      # Update operational_data
+      harvester.operational_data = harvester.operational_data.merge(deployment_data)
+      harvester.save!
     end
 
     def self.schedule_harvester_completion(harvester, order)
@@ -145,7 +185,7 @@ module AIManager
         celestial_body.atmosphere&.gases&.any? { |g| g.name == 'N2' }
       else
         # Check regolith composition for other materials
-        celestial_body.composition&.dig('regolith', material.downcase)&.positive?
+        celestial_body.materials.where(location: 'geosphere', name: material).exists?
       end
     end
 
@@ -222,12 +262,15 @@ module AIManager
 
     def self.find_nearby_settlements(settlement)
       # Find other settlements in the same solar system
-      settlement.solar_system.settlements.where.not(id: settlement.id)
+      Settlement::BaseSettlement.joins(location: { celestial_body: :solar_system })
+                                .where(solar_systems: { id: settlement.celestial_body.solar_system.id })
+                                .where.not(id: settlement.id)
     end
 
     def self.find_orbital_depots(settlement)
       # Find orbital depots/stations in the same system
-      settlement.solar_system.orbital_stations
+      # For now, return empty array as orbital stations aren't implemented yet
+      []
     end
 
     def self.can_supply?(source, material)

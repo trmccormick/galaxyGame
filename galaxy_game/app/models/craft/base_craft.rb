@@ -1,17 +1,14 @@
 # app/models/craft/base_craft.rb
 module Craft
   class BaseCraft < ApplicationRecord
-      belongs_to :orbiting_celestial_body,
-             class_name: 'CelestialBodies::CelestialBody',
-             foreign_key: 'orbiting_celestial_body_id',
-             inverse_of: :orbiting_craft,
-             optional: true
-    attribute :status, :string, default: 'operational'
+    # ============================================
+    # INCLUDES (FIRST!)
+    # ============================================
     include HasModules
     include HasRigs
     include HasUnits
     include Housing
-    include GameConstants # Ensure this is included to access GameConstants
+    include GameConstants
     include HasUnitStorage
     include HasExternalConnections
     include EnergyManagement
@@ -19,13 +16,27 @@ module Craft
     include BatteryManagement
     include HasBlueprintPorts
 
-    # Removed: DEFAULT_VOLUME_PER_CREW_M3 = 50.0 # Now in GameConstants
+    # ============================================
+    # ASSOCIATIONS
+    # ============================================
+    belongs_to :orbiting_celestial_body,
+               class_name: 'CelestialBodies::CelestialBody',
+               foreign_key: 'orbiting_celestial_body_id',
+               inverse_of: :orbiting_craft,
+               optional: true
 
-    belongs_to :player, optional: true # if the player is controlling the craft directly
+    belongs_to :player, optional: true
     belongs_to :owner, polymorphic: true
 
-    delegate :account, to: :owner, allow_nil: true
-    delegate :under_sanction?, to: :owner, allow_nil: true # Assuming Player has this method
+    belongs_to :docked_at,
+               polymorphic: true,
+               optional: true
+
+    belongs_to :stabilizing_wormhole,
+               class_name: 'Wormhole',
+               foreign_key: 'stabilizing_wormhole_id',
+               inverse_of: :stabilizers,
+               optional: true
 
     has_one :inventory, as: :inventoryable, dependent: :destroy
     has_many :items, through: :inventory
@@ -33,43 +44,84 @@ module Craft
     has_one :spatial_location, as: :locationable, class_name: 'Location::SpatialLocation'
     has_one :celestial_location, as: :locationable, class_name: 'Location::CelestialLocation'
 
-    belongs_to :docked_at,
-               class_name: 'Settlement::BaseSettlement',
-               foreign_key: 'docked_at_id',
-               inverse_of: :docked_crafts,
-               optional: true
-
-    # Add wormhole stabilization relationship
-    belongs_to :stabilizing_wormhole,
-               class_name: 'Wormhole',
-               foreign_key: 'stabilizing_wormhole_id',
-               inverse_of: :stabilizers,
-               optional: true
-
     has_many :modules, class_name: 'Modules::BaseModule', as: :attachable, dependent: :destroy
-
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable, dependent: :destroy
-    has_many :units, through: :base_units, source: :base_unit # Corrected source
-
+    has_many :units, through: :base_units, source: :base_unit
     has_many :rigs, as: :attachable, class_name: 'Rigs::BaseRig', dependent: :destroy
 
     has_one :atmosphere, foreign_key: :craft_id, dependent: :destroy
 
-    # Delegate atmospheric methods
+    # Moved from Docking concern (refactored)
+    has_many :docked_crafts,
+             class_name: 'Craft::BaseCraft',
+             foreign_key: 'docked_at_id',
+             dependent: :nullify
+
+    # ============================================
+    # ATTRIBUTES
+    # ============================================
+    attribute :status, :string, default: 'operational'
+
+    # ============================================
+    # DELEGATES
+    # ============================================
+    delegate :account, to: :owner, allow_nil: true
+    delegate :under_sanction?, to: :owner, allow_nil: true
+
     delegate :pressure, :temperature, :gases, :add_gas, :remove_gas, :habitable?,
              :sealed?, :seal!, :o2_percentage, :co2_percentage,
              to: :atmosphere, allow_nil: true
 
+    # ============================================
+    # VALIDATIONS
+    # ============================================
     validates :name, presence: true, uniqueness: true
     validates :craft_name, :craft_type, presence: true
     validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :operational_data, presence: true
     validates :owner, presence: true
 
+    # ============================================
+    # CALLBACKS
+    # ============================================
     before_validation :load_craft_info
     after_save :reload_associations, if: :saved_change_to_docked_at_id?
     after_create :create_inventory
     after_create :initialize_atmosphere_if_needed
+
+    # ============================================
+    # INSTANCE METHODS
+    # ============================================
+    def add_equipment!(equipment_id)
+      self.operational_data['equipment'] ||= []
+      self.operational_data['equipment'] << equipment_id unless self.operational_data['equipment'].include?(equipment_id)
+      self.save!
+      true
+    end    
+
+    # Returns array of blueprint ports
+    def blueprint_ports
+      # Always assume at least one docking port by default
+      ports = operational_data['blueprint_ports']
+      if ports.nil? || (ports.respond_to?(:empty?) && ports.empty?)
+        ["default_port"]
+      else
+        ports
+      end
+    end
+
+    # Returns array of interface adapters
+    def interface_adapters
+      operational_data['interface_adapters'] || []
+    end    
+
+    # Returns true if there is at least one available docking port based on blueprint_data
+    def has_available_docking_port?
+      # Always assume at least one docking port
+      max_ports = blueprint_ports.size
+      docked_children = self.class.where(docked_at_id: self.id).count
+      max_ports > docked_children
+    end
 
     # Determines if the craft needs an atmosphere based on its operational data or installed units.
     def needs_atmosphere?
@@ -545,5 +597,21 @@ module Craft
       'craft'
     end
 
-end
+    # Returns the physical properties (length, width, height) from the blueprint
+    def physical_properties
+      blueprint = Lookup::BlueprintLookupService.new.find_blueprint("#{craft_name} Blueprint")
+      props = blueprint&.dig('physical_properties')
+      return { length_m: nil, width_m: nil, height_m: nil } unless props
+      {
+        length_m: props['length_m'],
+        width_m: props['width_m'],
+        height_m: props['height_m']
+      }
+    end
+
+    # Temporary: Provide mass for compatibility until service/spec use physical_properties
+    def mass
+      total_mass
+    end
+  end
 end

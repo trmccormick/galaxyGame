@@ -1,29 +1,24 @@
 module Docking
-  extend ActiveSupport::Concern
+  # Docking concern provides pure logic for docking ports
+  # Associations must be defined in the including model
 
-  included do
-    has_many :docked_crafts
-    has_many :scheduled_arrivals
-    has_many :scheduled_departures
-  end
-
-  def dock_craft(craft)
-    return false if docked_crafts.count >= maximum_docking_capacity
-    docked_crafts << craft
-  end
-
-  def undock_craft(craft)
-    docked_crafts.delete(craft)
-  end
-
+  # Returns the number of available docking ports
   def available_docking_ports
-    maximum_docking_capacity - docked_crafts.count
+    port_count = 1
+    if respond_to?(:blueprint_ports)
+      ports = blueprint_ports
+      port_count = ports.is_a?(Array) ? ports.size : ports.to_i
+      port_count = 1 if port_count < 1
+    end
+    docked = respond_to?(:docked_crafts) ? docked_crafts.size : 0
+    [port_count - docked, 0].max
   end
 
-  def schedule_arrival(craft, arrival_time)
-    scheduled_arrivals.create(
-      craft: craft,
-      scheduled_time: arrival_time
-    )
+  # Returns true if there is at least one available docking port
+  def has_available_docking_port?
+    available_docking_ports > 0
   end
+
+  # Docking and undocking logic should be handled by the including model
+  # This concern only provides port availability logic
 end

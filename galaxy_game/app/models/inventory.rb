@@ -15,23 +15,23 @@ class Inventory < ApplicationRecord
     items.where(name: resource_name).sum(:amount)
   end
 
-  def add_item(name, amount, owner = nil, metadata = {}) # <--- ADDED metadata = {}
-    Rails.logger.debug "Inventory#add_item: name=#{name}, amount=#{amount}, owner=#{owner}, metadata=#{metadata}" # <--- ADDED metadata
 
-    return false unless can_store?(name, amount)
+  def add_item(name, amount, owner = nil, metadata = {})
+
+    result = can_store?(name, amount)
+    return false unless result
     owner ||= determine_default_owner
 
     if specialized_storage_required?(name)
-      store_in_inventory(name, amount, owner, metadata) # <--- ADDED metadata
+      store_in_inventory(name, amount, owner, metadata)
     elsif capacity_exceeded?(amount + total_stored)
-      handle_surface_storage(name, amount, owner, metadata) # <--- ADDED metadata
+      handle_surface_storage(name, amount, owner, metadata)
     else
-      store_in_inventory(name, amount, owner, metadata) # <--- ADDED metadata
+      store_in_inventory(name, amount, owner, metadata)
     end
   end
 
   def remove_item(name, amount, owner = nil, metadata = {}) # <--- ADDED owner=nil (optional) and metadata = {}
-    Rails.logger.debug "Inventory#remove_item: name=#{name}, amount=#{amount}, owner=#{owner}, metadata=#{metadata}" # <--- ADDED metadata
 
     # <--- MODIFIED lookup to include metadata. IMPORTANT: This requires 'metadata' column to be jsonb.
     conditions = metadata.map { |k, v| "metadata ->> '#{k}' = '#{v}'" }.join(' AND ')
@@ -220,7 +220,8 @@ class Inventory < ApplicationRecord
         unit.respond_to?(:operational_data) &&
         unit.operational_data&.dig('storage', 'capacity').present?
       end
-      return storage_units.sum { |unit| unit.operational_data['storage']['capacity'].to_i }
+      total_capacity = storage_units.sum { |unit| unit.operational_data['storage']['capacity'].to_i }
+      return total_capacity
     end
     0
   end

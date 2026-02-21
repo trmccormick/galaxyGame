@@ -1,3 +1,22 @@
+        # Legendary Pair exclusion logic
+        LEGENDARY_PAIRS = ["DJEW-716790", "FR-488530"].freeze
+
+        def legendary_anomaly?(system)
+          LEGENDARY_PAIRS.include?(system[:anomaly_id])
+        end
+    # Route Optimization: Maintenance Cost vs. Transit Revenue
+    def optimize_routes(systems)
+      systems.each do |system|
+        next if legendary_anomaly?(system)
+        maintenance_cost = system[:maintenance_cost] || 0
+        transit_revenue = system[:transit_revenue] || 0
+        if maintenance_cost > transit_revenue
+          system[:recall_decommission] = true
+        else
+          system[:recall_decommission] = false
+        end
+      end
+    end
 # ExpansionDecisionService
 # Scores scouted systems and determines expansion or Hammer Protocol
 
