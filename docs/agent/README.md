@@ -215,3 +215,23 @@ Essential technical documentation for daily development.
 **Last Updated**: February 15, 2026  
 **Maintainer**: Development team  
 **Status**: Active organization (v2.0)
+
+
+## Completed Task: Admin Monitor JS Map Initialization Fix
+
+- Fixed admin monitor view map not loading on first Turbo navigation; map now loads immediately for all planets.
+- Removed stale initialization guard, ensured monitorData and terrainData reload on every view.
+- Manual testing confirmed fix; no RSpec or Ruby changes, so pre-commit testing protocol is not required for this JS-only change.
+- Commit protocol: Only JS changes committed, no service or backend modifications.
+- Documentation updated to record fix and testing scope.
+
+## Completed Task: Implement Live System Health Checks for AI Manager Validation Suite
+
+- All stubbed values in the System Health section replaced with live backend integration.
+- Health check endpoint implemented with AJAX JSON response.
+- Backend checks: AI service status, database connection, pattern availability, performance metrics.
+- Frontend auto-refresh and manual refresh added; loading/error states handled.
+- RSpec and integration tests cover backend and frontend.
+- Documentation updated for new endpoint and troubleshooting.
+- Acceptance criteria met: live status, no stub values, auto-refresh, <2s response, error handling, full test coverage.
+- Task file moved to completed: docs/agent/tasks/completed/implement_live_system_health_checks_enhanced.md

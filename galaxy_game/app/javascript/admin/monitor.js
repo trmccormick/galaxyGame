@@ -27,21 +27,21 @@ window.AdminMonitor = (function() {
   const layerOverlays = {
     water: {
       terrainColors: {
-        'coast': '#87CEEB',
-        'ocean': '#1e3a8a',
-        'deep_sea': '#000080'
+        coast: '#87CEEB',
+        ocean: '#1e3a8a',
+        deep_sea: '#000080'
       }
     },
     biomes: {
       terrainColors: {
-        'forest': '#228B22',
-        'jungle': '#006400',
-        'grasslands': '#32CD32',
-        'plains': '#FFFF00',
-        'swamp': '#808000',
-        'boreal': '#228B22',
-        'arctic': '#ffffff',
-        'desert': function(lat, climate) {
+        forest: '#228B22',
+        jungle: '#006400',
+        grasslands: '#32CD32',
+        plains: '#FFFF00',
+        swamp: '#808000',
+        boreal: '#228B22',
+        arctic: '#ffffff',
+        desert: function(lat, climate) {
           const absLat = Math.abs(lat);
           if (absLat > climate.iceLatitude + 20) {
             return '#ffeedd';
@@ -52,31 +52,33 @@ window.AdminMonitor = (function() {
       }
     },
     features: {
-      // Geological features - mountains, hills, volcanic
       terrainColors: {
-        'mountains': '#505050',
-        'mountain': '#505050',
-        'polar_mountains': '#a0a0a0',
-        'tropical_mountains': '#606060',
-        'hills': '#707050',
-        'peaks': '#c0c0c0',
-        'rock': '#696969',
-        'volcanic': '#8b0000',
-        'lava': '#ff4400'
+        mountains: '#505050',
+        mountain: '#505050',
+        polar_mountains: '#a0a0a0',
+        tropical_mountains: '#606060',
+        hills: '#707050',
+        peaks: '#c0c0c0',
+        rock: '#696969',
+        volcanic: '#8b0000',
+        lava: '#ff4400'
       },
-      // Helper function to check if biome is a geological feature
       isFeature: function(biome) {
         if (!biome) return false;
-        return biome.includes('mountain') || biome.includes('hill') || 
-               biome.includes('peak') || biome.includes('volcanic') ||
-               biome === 'rock' || biome === 'lava';
+        return (
+          biome.includes('mountain') ||
+          biome.includes('hill') ||
+          biome.includes('peak') ||
+          biome.includes('volcanic') ||
+          biome === 'rock' ||
+          biome === 'lava'
+        );
       }
     },
     temperature: {
       getOverlayColor: function(latitude, elevation, globalTemp, pressure) {
         const absLat = Math.abs(latitude);
         let baseTemp;
-        // Latitude-based temperature (equator hot, poles cold)
         if (absLat < 30) {
           baseTemp = globalTemp - 273.15 + 20 - (absLat / 30) * 10;
         } else if (absLat < 60) {
@@ -84,58 +86,48 @@ window.AdminMonitor = (function() {
         } else {
           baseTemp = globalTemp - 273.15 - 20 - ((absLat - 60) / 30) * 30;
         }
-        // Elevation cooling: ~6.5°C per 1000m (lapse rate)
-        // elevation is normalized 0-1, assume max elevation ~8000m
         const elevationMeters = elevation * 8000;
         const elevationCooling = (elevationMeters / 1000) * 6.5;
         const elevationTemp = baseTemp - elevationCooling;
-        // Pressure effect (thin atmosphere = cooler)
         const pressureTemp = elevationTemp * (0.5 + Math.min(pressure, 1.0) * 0.5);
-        
-        // Smoother color gradient
-        if (pressureTemp > 35) return '#ff0000';      // Hot red
-        else if (pressureTemp > 25) return '#ff4400'; // Warm orange-red
-        else if (pressureTemp > 15) return '#ff8800'; // Orange
-        else if (pressureTemp > 5) return '#ffcc00';  // Warm yellow
-        else if (pressureTemp > -5) return '#88cc44'; // Temperate green
-        else if (pressureTemp > -15) return '#44aaff';// Cool blue
-        else if (pressureTemp > -30) return '#2288ff';// Cold blue
-        else return '#0066cc';                        // Frigid deep blue
+        if (pressureTemp > 35) return '#ff0000';
+        else if (pressureTemp > 25) return '#ff4400';
+        else if (pressureTemp > 15) return '#ff8800';
+        else if (pressureTemp > 5) return '#ffcc00';
+        else if (pressureTemp > -5) return '#88cc44';
+        else if (pressureTemp > -15) return '#44aaff';
+        else if (pressureTemp > -30) return '#2288ff';
+        else return '#0066cc';
       },
       terrainColors: {}
     },
     rainfall: {
       terrainColors: {
-        // High rainfall (blues)
-        'tropical_rainforest': '#0033ff',
-        'jungle': '#0044ff',
-        'swamp': '#0055ff',
-        'tropical_seasonal_forest': '#0066ff',
-        // Medium-high rainfall
-        'temperate_forest': '#2288ff',
-        'temperate_rainforest': '#1166ff',
-        'boreal_forest': '#4499ff',
-        'forest': '#3388ff',
-        'boreal': '#55aaff',
-        // Medium rainfall
-        'temperate_grassland': '#66bbff',
-        'grassland': '#77ccff',
-        'grasslands': '#77ccff',
-        'tropical_grassland': '#88ddff',
-        'plains': '#99eeff',
-        // Low rainfall
-        'tundra': '#aaddcc',
-        'polar_desert': '#ffee88',
-        'desert': '#ffcc00',
-        // Ocean (high water but not rainfall)
-        'ocean': '#004488',
-        'coast': '#006699'
+        tropical_rainforest: '#0033ff',
+        jungle: '#0044ff',
+        swamp: '#0055ff',
+        tropical_seasonal_forest: '#0066ff',
+        temperate_forest: '#2288ff',
+        temperate_rainforest: '#1166ff',
+        boreal_forest: '#4499ff',
+        forest: '#3388ff',
+        boreal: '#55aaff',
+        temperate_grassland: '#66bbff',
+        grassland: '#77ccff',
+        grasslands: '#77ccff',
+        tropical_grassland: '#88ddff',
+        plains: '#99eeff',
+        tundra: '#aaddcc',
+        polar_desert: '#ffee88',
+        desert: '#ffcc00',
+        ocean: '#004488',
+        coast: '#006699'
       }
     },
     resources: {
       terrainColors: {
-        'rock': '#ffd700',
-        'desert': '#daa520'
+        rock: '#ffd700',
+        desert: '#daa520'
       }
     }
   };
@@ -301,14 +293,14 @@ window.AdminMonitor = (function() {
       'desert': '#DAA520',
       'polar_desert': '#E8DCC8',
       'hot_desert': '#F4A460',
-      
+
       // Grasslands
       'grassland': '#7CCD7C',
       'grasslands': '#7CCD7C',
       'temperate_grassland': '#90EE90',
       'tropical_grassland': '#98FB98',
       'savanna': '#9ACD32',
-      
+
       // Forests
       'forest': '#228B22',
       'temperate_forest': '#228B22',
@@ -318,25 +310,26 @@ window.AdminMonitor = (function() {
       'boreal': '#2E8B57',
       'jungle': '#004400',
       'temperate_rainforest': '#006633',
-      
+
       // Cold biomes
       'tundra': '#B8C4C8',
       'arctic': '#E8E8E8',
       'ice': '#E0FFFF',
       'polar_ice': '#F0FFFF',
       'snow': '#FFFAFA',
-      
+
       // Wetlands
       'swamp': '#556B2F',
       'marsh': '#6B8E23',
       'wetland': '#698B69',
-      
+      'wetlands': '#698B69',
+
       // Plains/steppe
       'plains': '#C4B454',
       'steppe': '#BDB76B',
       'lowlands': '#8FBC8F',
       'highlands': '#BC8F8F',
-      
+
       // Mountains/hills (terrain features rendered as biomes)
       'mountains': '#808080',
       'mountain': '#808080',
@@ -344,14 +337,14 @@ window.AdminMonitor = (function() {
       'tropical_mountains': '#696969',
       'hills': '#8B7765',
       'peaks': '#DCDCDC',
-      
+
       // Volcanic
       'volcanic': '#8B0000',
       'lava': '#FF4500',
-      
+
       // Lunar/Mars specific
       'maria': '#3C3C3C',
-      
+
       // Water (shouldn't typically be rendered as biome)
       'ocean': '#0066cc',
       'coast': '#4682B4',
@@ -827,36 +820,37 @@ window.AdminMonitor = (function() {
     const canvas = document.getElementById('planetCanvas');
     if (!canvas) {
       console.error('Canvas element not found');
-      logConsole('Canvas element not found', 'error');
       return;
     }
-    // PATCH: Check if canvas is ready before rendering
-    if (canvas.width === 0 || canvas.height === 0) {
-      console.log('Canvas not ready yet, waiting...');
-      setTimeout(() => renderTerrainMap(), 100);
-      return;
-    }
+
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      console.error('Failed to get canvas context');
-      logConsole('Failed to get canvas context', 'error');
-      return;
+
+    console.log('=== NASA TERRAIN DATA DEBUG ===');
+    console.log('terrainData:', terrainData ? 'LOADED' : 'null');
+    if (terrainData && terrainData.grid) {
+      console.log('Geosphere grid sample:', terrainData.grid[0]?.slice(0, 10));
     }
-    // Check for terrain data
-    if (!terrainData || !terrainData.grid) {
-      console.log('No terrain data available for rendering');
-      logConsole('No terrain data available', 'warning');
-      // Display message on canvas
-      ctx.fillStyle = '#1a1a1a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#00d4ff';
-      ctx.font = '16px "Courier New", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('No terrain data available', canvas.width / 2, canvas.height / 2);
-      ctx.fillText('Generate terrain to view map', canvas.width / 2, canvas.height / 2 + 25);
-      return;
-    }
-    // ...existing code continues...
+    console.log('=== END NASA DATA DEBUG ===');
+
+    // Reset layers
+    layers = {
+      terrain: null,
+      water: null,
+      biomes: null,
+      resources: null,
+      elevation: null
+    };
+
+    // NASA-first: Extract elevation
+    if (terrainData && terrainData.elevation) {
+      layers.elevation = {
+        grid: terrainData.elevation,
+        width: terrainData.elevation[0]?.length || 0,
+        height: terrainData.elevation.length,
+        layer_type: 'elevation',
+        quality: terrainData.quality_score || 'nasa',
+        method: terrainData.generation_method || 'nasa_geotiff'
+      };
       console.log('Using NASA elevation data:', layers.elevation.quality, layers.elevation.method);
     }
 
@@ -1497,33 +1491,34 @@ window.AdminMonitor = (function() {
   // ============================================
 
   function init() {
-    // Prevent multiple initializations
-    if (window.monitorScriptLoaded) {
-      console.log('Monitor script already loaded, skipping...');
-      if (window.monitorUpdateInterval) {
-        clearInterval(window.monitorUpdateInterval);
-      }
+    // Only run on pages that actually have the monitor DOM
+    const dataElement   = document.getElementById('monitor-data');
+    const canvas        = document.getElementById('planetCanvas');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+
+    // If this page doesn't have the monitor, bail out and DO NOT set the loaded flag
+    if (!dataElement || !canvas || !canvasWrapper) {
+      console.log('Monitor page DOM not found; skipping init');
       return;
     }
-    window.monitorScriptLoaded = true;
+
+    // Always re-initialize on turbo:load (navigation)
+    if (window.monitorUpdateInterval) {
+      clearInterval(window.monitorUpdateInterval);
+      window.monitorUpdateInterval = null;
+    }
 
     // Load data from JSON element
-    const dataElement = document.getElementById('monitor-data');
-    if (!dataElement) {
-      console.error('Monitor data element not found');
-      return;
-    }
 
     try {
       const data = JSON.parse(dataElement.textContent);
       monitorData = data;
-      
       planetId = data.planet_id;
       planetName = data.planet_name;
       planetType = data.planet_type;
       terrainData = data.terrain_data;
       planetData = data.planet_data;
-      
+
       // Set default visible layers based on planet
       visibleLayers = new Set(['terrain']);
       if (planetName.toLowerCase() === 'earth') {
@@ -1531,12 +1526,12 @@ window.AdminMonitor = (function() {
         visibleLayers.add('water');
         visibleLayers.add('biomes');
       }
-      
+
       // Calculate climate zones
       const planetTemp = data.atmosphere_temperature || data.surface_temperature || 288;
       const planetPressure = data.atmosphere_pressure || 1.0;
       climate = calculateClimateZones(planetTemp, planetPressure);
-      
+
       console.log('Monitor initialized for:', planetName);
     } catch (e) {
       console.error('Error parsing monitor data:', e);
@@ -1551,14 +1546,11 @@ window.AdminMonitor = (function() {
     setupPanControl();
     setupScrollableMap();
     startDataPolling();
-    // PATCH: Defer terrain rendering to ensure canvas is ready
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        console.log('Attempting first render...');
-        renderTerrainMap();
-      });
+    // Defer first render to after layout
+    requestAnimationFrame(function() {
+      renderTerrainMap();
+      logConsole('System initialized', 'info');
     });
-    logConsole('System initialized', 'info');
 
     // Cleanup on unload
     window.addEventListener('beforeunload', function() {
@@ -1581,13 +1573,13 @@ window.AdminMonitor = (function() {
   };
 
 })();
-
-// Auto-initialize on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function() {
+// Prefer turbo:load only for Turbo-enabled Rails
+document.addEventListener('turbo:load', function () {
   AdminMonitor.init();
 });
-
-// Also initialize on Turbo load (for Rails 7+)
-document.addEventListener('turbo:load', function() {
-  AdminMonitor.init();
-});
+// Fallback for non-Turbo environments
+if (!window.Turbo) {
+  document.addEventListener('DOMContentLoaded', function () {
+    AdminMonitor.init();
+  });
+}
