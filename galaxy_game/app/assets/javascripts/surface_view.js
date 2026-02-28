@@ -103,14 +103,14 @@ window.SurfaceView = {
   getPlanetTilesetName: function(planetName) {
     // Map planets to appropriate tilesets
     const tilesetMap = {
-      'Earth': 'galaxy_game_base_terrain',   // Use new JSON tileset for Earth
+      'Earth': 'gemini_space_colonization_tileset',   // Use Gemini tileset for Earth test
       'Mars': 'alio',
       'Luna': 'alio',
       'Titan': 'alio',
       'Europa': 'alio',
       'Venus': 'alio'
     };
-    return tilesetMap[planetName] || 'galaxy_game_base_terrain'; // Default to new JSON tileset
+    return tilesetMap[planetName] || 'gemini_space_colonization_tileset'; // Default to Gemini tileset
   },
   
   renderGrid: function() {
