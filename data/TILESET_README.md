@@ -57,6 +57,12 @@
 - [ ] Commit changes atomically (asset + config + docs)
 - [ ] Push to remote and update status documentation
 
+## Project Status & Task Management
+- After completing any tileset update, always:
+  - Update `docs/CURRENT_STATUS.md` with a summary of changes and next steps
+  - Move completed task files to `/docs/agent/tasks/completed/` if applicable
+  - Follow atomic commit and push protocol for all changes
+
 ## Testing & Validation
 - Always reload the map view after asset/config changes to confirm correct tile rendering
 - If adding backend logic, run RSpec tests in Docker as per project protocol
