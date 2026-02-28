@@ -1,0 +1,21 @@
+{
+  "name": "galaxy_game_base_terrain",
+  "description": "Default base terrain tileset for GalaxyGame surface and monitor views.",
+  "tile_size": 32,
+  "sheets": {
+    "base": {
+      "file": "base_terrain.png",
+      "tiles": {
+        "ocean": { "x": 0, "y": 0 },
+        "plains": { "x": 32, "y": 0 },
+        "desert": { "x": 64, "y": 0 },
+        "forest": { "x": 96, "y": 0 },
+        "mountains": { "x": 128, "y": 0 },
+        "tundra": { "x": 160, "y": 0 },
+        "grasslands": { "x": 192, "y": 0 },
+        "swamp": { "x": 224, "y": 0 },
+        "jungle": { "x": 256, "y": 0 }
+      }
+    }
+  }
+}

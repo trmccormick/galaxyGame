@@ -4,6 +4,41 @@
 
 **2026 Update:** GalaxyGame has pivoted away from FreeCiv tilespec parsing and legacy asset pipelines. All map rendering now uses a unified JSON-based tileset system for surface and monitor views.
 
+### JSON Tileset Format Example
+
+All new tilesets are defined in JSON. Example:
+
+```json
+{
+  "name": "galaxy_game_base_terrain",
+  "description": "Default base terrain tileset for GalaxyGame surface and monitor views.",
+  "tile_size": 32,
+  "sheets": {
+    "base": {
+      "file": "base_terrain.png",
+      "tiles": {
+        "ocean": { "x": 0, "y": 0 },
+        "plains": { "x": 32, "y": 0 },
+        "desert": { "x": 64, "y": 0 },
+        "forest": { "x": 96, "y": 0 },
+        "mountains": { "x": 128, "y": 0 },
+        "tundra": { "x": 160, "y": 0 },
+        "grasslands": { "x": 192, "y": 0 },
+        "swamp": { "x": 224, "y": 0 },
+        "jungle": { "x": 256, "y": 0 }
+      }
+    }
+  }
+}
+```
+
+See `data/galaxy_game_tileset.json` for the current template. Sprite sheets must match the tile size and layout defined in the JSON.
+
+**Migration Status:**
+- Loader logic (`simple_tileset_loader.js`) and rendering code are ready for JSON tilesets.
+- Default backup colors are used until new sprite sheets are created and applied.
+- Next: Create and integrate new sprite sheets for each terrain type.
+
 ### New Map Layer Data Requirements
 
 - **Terrain:** Height map (2D elevation grid, width, height). No biomes or features unless biosphere is present.
