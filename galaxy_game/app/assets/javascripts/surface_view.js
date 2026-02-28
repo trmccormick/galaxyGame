@@ -27,13 +27,18 @@ window.SurfaceView = {
     this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
     
-    // Get tileset name (default to RoundSquare for Earth, Alio for others)
+      // Get tileset name and variant (default to RoundSquare for Earth, Alio for others)
     const tilesetName = this.getPlanetTilesetName(this.data.planet_name);
+      // Example: select variant based on world or user setting
+      // You can set this dynamically, e.g., from user input or world properties
+      const tilesetVariant = this.data.tileset_variant || 'base';
     console.log(`🧩 Loading tileset: ${tilesetName} for ${this.data.planet_name}`);
+      console.log(`🧩 Loading tileset: ${tilesetName} [variant: ${tilesetVariant}] for ${this.data.planet_name}`);
     
     // Initialize tileset loader
       if (window.SimpleTilesetLoader) {
         this.tilesetLoader = new window.SimpleTilesetLoader(tilesetName);
+          this.tilesetVariant = tilesetVariant; // Store variant for rendering
       
       // Update UI
       const nameEl = document.getElementById('tileset-name');
