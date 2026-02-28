@@ -47,6 +47,21 @@
 - Update loader logic to select the appropriate sheet based on user or world settings.
 - Document any new terrain types or variants in this README for team reference.
 
+## Tileset Update Checklist
+- [ ] Create new terrain tile(s) in your sprite sheet (PNG)
+- [ ] Add new terrain type(s) to the JSON config under the appropriate sheet
+- [ ] For variants, create and name new sheets/files, then reference in JSON
+- [ ] Reload the surface/monitor view and verify correct rendering
+- [ ] Update this README with new terrain types/variants
+- [ ] Run all relevant tests (JS rendering, RSpec if backend changes)
+- [ ] Commit changes atomically (asset + config + docs)
+- [ ] Push to remote and update status documentation
+
+## Testing & Validation
+- Always reload the map view after asset/config changes to confirm correct tile rendering
+- If adding backend logic, run RSpec tests in Docker as per project protocol
+- Document any issues or fixes in CURRENT_STATUS.md
+
 ---
 
 **Last updated:** 2026-02-28
