@@ -307,3 +307,9 @@ Essential technical documentation for daily development.
 - Documentation updated for new endpoint and troubleshooting.
 - Acceptance criteria met: live status, no stub values, auto-refresh, <2s response, error handling, full test coverage.
 - Task file moved to completed: docs/agent/tasks/completed/implement_live_system_health_checks_enhanced.md
+
+---
+
+## Tileset & Map Asset Workflow
+- For all tileset, sprite sheet, and map asset work, see [TILESET_README.md](../../data/TILESET_README.md) for full instructions, requirements, and update protocol.
+- This includes asset creation, config updates, variant/expansion workflow, testing, and atomic commit rules.
