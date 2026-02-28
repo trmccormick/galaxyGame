@@ -103,14 +103,14 @@ window.SurfaceView = {
   getPlanetTilesetName: function(planetName) {
     // Map planets to appropriate tilesets
     const tilesetMap = {
-      'Earth': 'roundsquare',   // Use RoundSquare for clean Earth
+      'Earth': 'galaxy_game_base_terrain',   // Use new JSON tileset for Earth
       'Mars': 'alio',
       'Luna': 'alio',
       'Titan': 'alio',
       'Europa': 'alio',
       'Venus': 'alio'
     };
-    return tilesetMap[planetName] || 'roundsquare'; // Default to RoundSquare
+    return tilesetMap[planetName] || 'galaxy_game_base_terrain'; // Default to new JSON tileset
   },
   
   renderGrid: function() {
