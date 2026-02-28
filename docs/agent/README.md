@@ -1,6 +1,38 @@
+## Monitor View Layer Data Requirements
+
+# Tileset System Pivot: FreeCiv → JSON-Based Tiles
+
+**2026 Update:** GalaxyGame has pivoted away from FreeCiv tilespec parsing and legacy asset pipelines. All map rendering now uses a unified JSON-based tileset system for surface and monitor views.
+
+### New Map Layer Data Requirements
+
+- **Terrain:** Height map (2D elevation grid, width, height). No biomes or features unless biosphere is present.
+- **Hydrosphere:** Bathtub fill logic, guided by hydrosphere mass and coverage percentage. Only for worlds with liquid coverage.
+- **Biomes:** Only present for Earth or worlds with biosphere. Omitted for bare/airless worlds.
+- **Features:** Major geological features only (craters, mountains, etc.), conditionally included for clarity.
+- **Temp:** Surface temperature grid or average value.
+- **Resources:** Resource placement from real data, AI generation, or artistic maps. Only if relevant.
+- **Civilization:** Settlements, technology, or artificial structures. Only if present.
+
+**Best Practice:**
+- Backend must filter and send only the data needed for each layer, based on planet properties.
+- Frontend (monitor.js, surface_view_optimized.js) checks for layer presence and only renders if data is available and relevant.
+- Biomes and features are conditionally included, never defaulted.
+
+**Tileset System:**
+- All tilesets are defined in JSON (see `galaxy_game_tileset.json`).
+- Sprite sheets are referenced directly; no .spec or tilespec parsing.
+- Loader logic is handled by `simple_tileset_loader.js`.
+- Rendering is optimized via viewport culling in `surface_view_optimized.js`.
+
+**Migration Notes:**
+- Legacy FreeCiv tilespec and .spec files are deprecated.
+- All new worlds and surface views use the JSON tileset system for performance, maintainability, and extensibility.
+
+This ensures the monitor view is efficient, accurate, and scientifically robust, avoiding unnecessary or misleading data for each world.
 # Agent & Development Workflow Documentation
 
-This directory contains unified documentation for AI agent management and development workflow, organized by status and purpose.
+This directory contains unified documentation for AI agent management and development workflow, organized by status and purpose. All new map and surface rendering tasks must use the JSON-based tileset system.
 
 ## 📁 Directory Structure
 
@@ -89,6 +121,12 @@ Essential technical documentation for daily development.
 
 ## 🎯 Usage Patterns
 
+### Simulation & Map Data Intent
+- **FreeCiv/Civ4 tilespec and biome data are no longer used for map rendering.**
+- All surface and monitor views use the new JSON-based tileset system for both scientific and artistic worlds.
+- Biome data is only included for worlds with biosphere or active terraforming.
+- Terrain/elevation data is always present; biomes/features/resources/civilization layers are conditionally included based on world properties.
+
 ### Starting Your Day
 1. Read [CURRENT_STATUS.md](CURRENT_STATUS.md) to see latest progress
 2. **CRITICAL**: Review [Environment Boundaries & Docker Isolation](#-critical-environment-boundaries--docker-isolation) section below
@@ -105,8 +143,7 @@ Essential technical documentation for daily development.
 2. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety
 3. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
 4. **NEVER** run Rails/Ruby commands on host - always use `docker-compose exec web`
-
----
+5. **Tileset/Map Rendering:** All new map and surface rendering code must use the JSON-based tileset system. Legacy FreeCiv/Civ4 asset pipelines are deprecated.
 
 ## 🧪 Testing Requirements & Validation Rules
 

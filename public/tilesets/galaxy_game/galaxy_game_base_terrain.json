@@ -1,0 +1,97 @@
+{
+  "name": "galaxy_game_base_terrain",
+  "version": "1.0",
+  "tile_size": 32,
+  "description": "Base terrain tiles for Galaxy Game - reusable across all procedural planets via tinting",
+  "sheets": {
+    "terrain_base": {
+      "file": "terrain_base.png",
+      "width": 256,
+      "height": 160,
+      "tile_width": 32,
+      "tile_height": 32,
+      "tiles": {
+        "lunar.regolith_smooth": { "x": 0, "y": 0 },
+        "lunar.regolith_rough": { "x": 32, "y": 0 },
+        "lunar.basalt_smooth": { "x": 64, "y": 0 },
+        "lunar.crater_small": { "x": 96, "y": 0 },
+        "lunar.crater_large": { "x": 128, "y": 0 },
+        "lunar.rocky_outcrop": { "x": 160, "y": 0 },
+        "lunar.boulder_field": { "x": 192, "y": 0 },
+        "lunar.dust_plains": { "x": 224, "y": 0 },
+        "mars.dust_flat": { "x": 0, "y": 32 },
+        "mars.dust_rocky": { "x": 32, "y": 32 },
+        "mars.dunes": { "x": 64, "y": 32 },
+        "mars.basalt_fractured": { "x": 96, "y": 32 },
+        "mars.iron_oxide": { "x": 128, "y": 32 },
+        "mars.crater_rim": { "x": 160, "y": 32 },
+        "mars.ancient_riverbed": { "x": 192, "y": 32 },
+        "mars.windswept_dust": { "x": 224, "y": 32 },
+        "ice.sheet_smooth": { "x": 0, "y": 64 },
+        "ice.cracked": { "x": 32, "y": 64 },
+        "ice.glacier": { "x": 64, "y": 64 },
+        "ice.pack_ice": { "x": 96, "y": 64 },
+        "ice.rock_exposure": { "x": 128, "y": 64 },
+        "ice.methane_frozen": { "x": 160, "y": 64 },
+        "ice.nitrogen_frozen": { "x": 192, "y": 64 },
+        "ice.frost_covered_rock": { "x": 224, "y": 64 },
+        "volcanic.basalt_cooled": { "x": 0, "y": 96 },
+        "volcanic.lava_cracks": { "x": 32, "y": 96 },
+        "volcanic.lava_flow_cooled": { "x": 64, "y": 96 },
+        "volcanic.ash": { "x": 96, "y": 96 },
+        "volcanic.cinder_field": { "x": 128, "y": 96 },
+        "volcanic.lava_active": { "x": 160, "y": 96 },
+        "volcanic.geothermal_vents": { "x": 192, "y": 96 },
+        "volcanic.scorched_rock": { "x": 224, "y": 96 },
+        "biome.grassland": { "x": 0, "y": 128 },
+        "biome.forest": { "x": 32, "y": 128 },
+        "biome.desert_sand": { "x": 64, "y": 128 },
+        "biome.tundra": { "x": 96, "y": 128 },
+        "biome.savanna": { "x": 128, "y": 128 },
+        "biome.jungle": { "x": 160, "y": 128 },
+        "biome.agricultural": { "x": 192, "y": 128 },
+        "biome.rocky_plains": { "x": 224, "y": 128 }
+      }
+    }
+  },
+  "tile_mappings": {
+    "comment": "Map elevation and biome data to tile names",
+    "rules": [
+      {
+        "condition": "planet_name == 'Luna' or composition.dominant == 'gray_regolith'",
+        "elevation_low": "lunar.dust_plains",
+        "elevation_medium": "lunar.regolith_smooth",
+        "elevation_high": "lunar.rocky_outcrop",
+        "elevation_crater": "lunar.crater_small"
+      },
+      {
+        "condition": "planet_name == 'Mars' or composition.dominant == 'iron_oxide'",
+        "elevation_low": "mars.dust_flat",
+        "elevation_medium": "mars.dust_rocky",
+        "elevation_high": "mars.crater_rim",
+        "elevation_dunes": "mars.dunes"
+      },
+      {
+        "condition": "temperature < 273 and composition.has_ice",
+        "elevation_low": "ice.sheet_smooth",
+        "elevation_medium": "ice.cracked",
+        "elevation_high": "ice.rock_exposure"
+      },
+      {
+        "condition": "geological_activity == 'active' or temperature > 600",
+        "elevation_low": "volcanic.lava_active",
+        "elevation_medium": "volcanic.lava_cracks",
+        "elevation_high": "volcanic.scorched_rock"
+      },
+      {
+        "condition": "biosphere.present == true",
+        "biome_forest": "biome.forest",
+        "biome_jungle": "biome.jungle",
+        "biome_grassland": "biome.grassland",
+        "biome_desert": "biome.desert_sand",
+        "biome_tundra": "biome.tundra",
+        "biome_savanna": "biome.savanna"
+      }
+    ]
+  }
+}
