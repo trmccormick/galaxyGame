@@ -109,8 +109,17 @@ RSpec.describe AIManager::UniversalDockingService, type: :service do
 
   describe 'Universal Payload Handover' do
     it 'lets a Skimmer offload gas to an Orbital Depot with volatiles processing' do
+      puts "Skimmer inventoryable_capacity before install: #{skimmer.inventoryable_capacity}"; STDOUT.flush
+      # Install a storage unit as a base unit to provide capacity
+      storage_unit = FactoryBot.create(:storage_unit, owner: skimmer.owner)
+      skimmer.install_unit(storage_unit)
+      skimmer.reload
+      skimmer.inventory.reload
+      puts "Skimmer base_units after install: #{skimmer.base_units.map { |u| {id: u.id, operational_data: u.operational_data} }}"; STDOUT.flush
+      puts "Skimmer inventoryable_capacity after install: #{skimmer.inventoryable_capacity}"; STDOUT.flush
+      puts "Installed storage_unit operational_data: #{storage_unit.operational_data}"; STDOUT.flush
       skimmer.inventory.add_item('Methane', 10, skimmer.owner)
-      puts "After add_item: Skimmer inventory: #{skimmer.inventory.items.map { |i| [i.name, i.amount] }}"
+      puts "After add_item: Skimmer inventory: #{skimmer.inventory.items.map { |i| [i.name, i.amount] }}"; STDOUT.flush
       puts "Before transfer:"
       puts "  Skimmer inventory: #{skimmer.inventory.items.map { |i| [i.name, i.amount] }}"
       puts "  Depot inventory: #{orbital_depot.inventory.items.map { |i| [i.name, i.amount] }}"
@@ -148,8 +157,17 @@ RSpec.describe AIManager::UniversalDockingService, type: :service do
       orbital_depot.current_population = 10
       orbital_depot.save!
       orbital_depot.reload
+      puts "Harvester inventoryable_capacity before install: #{harvester.inventoryable_capacity}"; STDOUT.flush
+      # Install a storage unit as a base unit to provide capacity
+      storage_unit = FactoryBot.create(:storage_unit, owner: harvester.owner)
+      harvester.install_unit(storage_unit)
+      harvester.reload
+      harvester.inventory.reload
+      puts "Harvester base_units after install: #{harvester.base_units.map { |u| {id: u.id, operational_data: u.operational_data} }}"; STDOUT.flush
+      puts "Harvester inventoryable_capacity after install: #{harvester.inventoryable_capacity}"; STDOUT.flush
+      puts "Installed storage_unit operational_data: #{storage_unit.operational_data}"; STDOUT.flush
       harvester.inventory.add_item('Methane', 10, harvester.owner)
-      puts "After add_item: Harvester inventory: #{harvester.inventory.items.map { |i| [i.name, i.amount] }}"
+      puts "After add_item: Harvester inventory: #{harvester.inventory.items.map { |i| [i.name, i.amount] }}"; STDOUT.flush
       puts "Before transfer:"
       puts "  Harvester inventory: #{harvester.inventory.items.map { |i| [i.name, i.amount] }}"
       puts "  Depot inventory: #{orbital_depot.inventory.items.map { |i| [i.name, i.amount] }}"

@@ -1,4 +1,9 @@
 # PostgreSQL configuration
+# IMPORTANT: For Docker-based development, the database host must be set to 'db', not 'localhost'.
+# This is required for container-to-container networking. See docs/agent/rules/ENVIRONMENT_BOUNDARIES.md
+# and docs/agent/README.md for details on environment boundaries and agent rules.
+#
+# If you change this, you may break local development in Docker. Do not set host: localhost!
 default: &default
   adapter: postgresql
   encoding: unicode

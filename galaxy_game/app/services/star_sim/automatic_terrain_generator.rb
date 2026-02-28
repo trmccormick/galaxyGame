@@ -133,6 +133,21 @@ module StarSim
 
     private
 
+    def parse_asc_dem(asc_path)
+      lines = File.readlines(asc_path, chomp: true)
+      
+      # Skip ASC header (first 6 lines: ncols, nrows, xllcorner, yllcorner, cellsize, NODATA_value)
+      data_lines = lines.drop(6)
+      
+      elevation = data_lines.map { |line| line.split.map(&:to_f) }
+      
+      {
+        elevation: elevation,
+        width: elevation.first&.size || 0,
+        height: elevation.size
+      }
+    end
+
     # Calculate terrain complexity based on planet characteristics
     def calculate_terrain_complexity(body)
       complexity = 0.5  # Base complexity
@@ -1222,21 +1237,63 @@ module StarSim
 
     # NASA Terrain Hierarchy Implementation
     # Priority 1: NASA GeoTIFF (Ground Truth)
+    # def load_nasa_terrain(body_name, celestial_body)
+    #   geotiff_path = find_geotiff_path(body_name)
+    #   return nil unless geotiff_path && File.exist?(geotiff_path)
+
+    #   # Use existing GeoTIFFReader
+    #   raw_data = GeoTIFFReader.read_elevation(geotiff_path)
+
+    #   # Downsample to game grid size
+    #   grid_dims = calculate_diameter_based_grid_size(celestial_body)
+    #   elevation = downsample_elevation(raw_data[:elevation], grid_dims[:width], grid_dims[:height])
+
+    #   # Hybrid biome generation:
+    #   # 1. Try to load FreeCiv biomes (hand-crafted, accurate climate zones)
+    #   # 2. Use FreeCiv biome where NASA also shows land
+    #   # 3. Fall back to algorithmic for areas not in FreeCiv or mismatched
+    #   biomes = generate_hybrid_biomes(body_name, elevation, celestial_body, grid_dims)
+
+    #   {
+    #     elevation: elevation,
+    #     biomes: biomes,
+    #     resource_grid: generate_resource_grid_from_nasa_data(celestial_body),
+    #     strategic_markers: generate_strategic_markers_from_nasa_data(celestial_body),
+    #     resource_counts: generate_resource_counts_from_nasa_data(celestial_body),
+    #     width: grid_dims[:width],
+    #     height: grid_dims[:height],
+    #     generation_metadata: {
+    #       source: 'nasa_geotiff',
+    #       biome_source: 'hybrid_freeciv_algorithmic',
+    #       file_path: geotiff_path,
+    #       grid_dimensions: { width: grid_dims[:width], height: grid_dims[:height] },
+    #       elevation_range: [elevation.flatten.min, elevation.flatten.max]
+    #     }
+    #   }
+    # end
+
     def load_nasa_terrain(body_name, celestial_body)
       geotiff_path = find_geotiff_path(body_name)
       return nil unless geotiff_path && File.exist?(geotiff_path)
 
-      # Use existing GeoTIFFReader
-      raw_data = GeoTIFFReader.read_elevation(geotiff_path)
+      Rails.logger.info "[AutomaticTerrainGenerator] Loading: #{geotiff_path}"
 
-      # Downsample to game grid size
+      # NEW: Handle ASC.GZ files (your processed data)
+      if geotiff_path.end_with?('.asc.gz')
+        require 'zlib'
+        temp_asc = Tempfile.new(['nasa_dem', '.asc'])
+        Zlib::GzipReader.open(geotiff_path) { |gz| temp_asc.write(gz.read) }
+        temp_asc.rewind
+        raw_data = parse_asc_dem(temp_asc.path)
+        temp_asc.close; temp_asc.unlink
+      else
+        # Existing TIF handling
+        raw_data = GeoTIFFReader.read_elevation(geotiff_path)
+      end
+
+      # Rest unchanged...
       grid_dims = calculate_diameter_based_grid_size(celestial_body)
       elevation = downsample_elevation(raw_data[:elevation], grid_dims[:width], grid_dims[:height])
-
-      # Hybrid biome generation:
-      # 1. Try to load FreeCiv biomes (hand-crafted, accurate climate zones)
-      # 2. Use FreeCiv biome where NASA also shows land
-      # 3. Fall back to algorithmic for areas not in FreeCiv or mismatched
       biomes = generate_hybrid_biomes(body_name, elevation, celestial_body, grid_dims)
 
       {
@@ -1702,13 +1759,15 @@ module StarSim
 
       # Define search patterns in priority order (best quality first)
       search_patterns = [
+        # YOUR PROCESSED FILES FIRST (Priority 1)
+        "#{name}_1800x900.asc.gz",           # ← NEW #1: Your 1.43% Titan!
+        "#{name}_elevation_1800x900.asc.gz", # ← NEW #2
+
         # High-quality processed variants (1800x900 resolution)
         "#{name}_1800x900_final.tif",      # Best: final processed version
         "#{name}_1800x900_centered.tif",   # Good: centered version
         "#{name}_1800x900_new.tif",        # Good: newer version
         "#{name}_1800x900.tif",            # Standard processed version
-        "#{name}_1800x900.asc.gz",         # Compressed ASCII grid (processed)
-        "#{name}_elevation_1800x900.asc.gz", # Alternative naming
 
         # Lower resolution temp files (900x450)
         "#{name}_900x450.tif",

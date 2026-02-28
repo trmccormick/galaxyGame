@@ -18,9 +18,10 @@ A natural wormhole snaps when its mass-limit is exceeded, but this occurs only a
 - ✅ **Economic Activity**: Active trade routes and resource extraction operations
 - ✅ **Counterbalance Effects**: System-specific stability multipliers (Eden: 0.6 vs Sol: 1.0)
 
+
 **Mass Limits**: Base 500k tons × stability multiplier = system-specific limits
 - **Sol System**: 500,000 tons (perfect Jupiter counterbalance)
-- **Eden System**: 300,000 tons (offset gas giant positioning)
+- **Eden System (AOL-732356)**: 300,000 tons (offset gas giant positioning; first expansion system outside Sol)
 
 **The Result**: The exit shifts from System A to System B, keeping Sol stable but orphaning the original colony.
 

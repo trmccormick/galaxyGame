@@ -8,6 +8,10 @@ This folder contains stable reference materials that provide context and guidanc
 - **MASTER_IMPLEMENTATION_GUIDE.md**: Implementation strategies and guides.
 - **DIAGNOSTIC_SOL_SEEDING.md**: Seeding system diagnostics.
 
+## Inventory and Storage
+
+See [INVENTORY_AND_STORAGE.md](INVENTORY_AND_STORAGE.md) for canonical rules on inventory, storage units, and surface storage.
+
 ## Usage
 - Read for understanding "why" and historical context.
 - Not for active task instructions—see current work docs for that.

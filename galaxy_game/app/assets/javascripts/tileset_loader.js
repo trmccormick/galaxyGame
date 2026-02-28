@@ -18,14 +18,32 @@ if (typeof window.TilesetLoader === 'undefined') {
         if (this.loaded) return true;
 
         try {
-            // Load tilespec
-            const tilespecResponse = await fetch(`${this.tilesetPath}${this.tilesetName}.tilespec`);
-            if (!tilespecResponse.ok) {
-                throw new Error(`Failed to load tilespec: ${tilespecResponse.status}`);
+            // Try multiple tilespec locations (FreeCiv standard)
+            const possibleTilespecs = [
+                `${this.tilesetPath}${this.tilesetName}.tilespec`,
+                `/tilesets/${this.tilesetName}.tilespec`,     // Parent folder (YOUR CASE)
+                `${this.tilesetPath}${this.tilesetName.charAt(0).toUpperCase() + this.tilesetName.slice(1)}.tilespec`
+            ];
+
+            let tilespecLoaded = false;
+            for (let tilespecPath of possibleTilespecs) {
+                try {
+                    const tilespecResponse = await fetch(tilespecPath);
+                    if (tilespecResponse.ok) {
+                        const tilespecText = await tilespecResponse.text();
+                        this.tilespecData = this.parseTilespec(tilespecText);
+                        tilespecLoaded = true;
+                        console.log(`✅ Tilespec loaded from: ${tilespecPath}`);
+                        break;
+                    }
+                } catch(e) {
+                    continue;
+                }
             }
 
-            const tilespecText = await tilespecResponse.text();
-            this.tilespecData = this.parseTilespec(tilespecText);
+            if (!tilespecLoaded) {
+                throw new Error('No tilespec found in any location');
+            }
 
             // Load tile images
             await this.loadTileImages();
@@ -38,17 +56,17 @@ if (typeof window.TilesetLoader === 'undefined') {
         }
     }
 
-    // Parse FreeCiv tilespec format
+    // Parse FreeCiv tilespec format (handles multi-line files = section)
     parseTilespec(content) {
         const data = {};
         let currentSection = null;
         let currentTile = null;
+        data.files = [];
 
         const lines = content.split('\n');
 
-        for (const line of lines) {
-            const trimmed = line.trim();
-
+        for (let i = 0; i < lines.length; i++) {
+            let trimmed = lines[i].trim();
             // Skip comments and empty lines
             if (trimmed.startsWith('#') || trimmed === '') continue;
 
@@ -56,47 +74,46 @@ if (typeof window.TilesetLoader === 'undefined') {
             const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
             if (sectionMatch) {
                 currentSection = sectionMatch[1];
-                if (currentSection === 'files') {
-                    data[currentSection] = [];
-                } else {
+                if (currentSection !== 'files') {
                     data[currentSection] = {};
                 }
                 currentTile = null;
                 continue;
             }
 
-            // Tile definitions (name =)
-            if (currentSection === 'tiles' && trimmed.match(/^[a-zA-Z_]+ =$/)) {
-                currentTile = trimmed.replace(' =', '').trim();
-                data[currentSection][currentTile] = {};
+            // FREE CIV FILES= - Handle multi-line + indentation
+            if (trimmed.match(/files\s*=\s*/i) || (currentSection === 'files')) {
+                // Extract .spec files from ANY line in files section
+                const fileMatches = trimmed.match(/"([^\"]*\.spec[^\"]*)"|\b([a-zA-Z0-9_/.-]+\.spec)/gi);
+                if (fileMatches) {
+                    fileMatches.forEach(match => {
+                        let filename = (match.match(/"([^\"]+)"/)?.[1] || match).replace(/"/g, '');
+                        filename = filename.split('/').pop(); // Strip path
+                        if (filename.endsWith('.spec')) {
+                            data.files.push({file: filename});
+                        }
+                    });
+                }
+                currentSection = 'files'; // Stay in files section
                 continue;
             }
 
-            // Key-value pairs (either tile properties or section properties)
+            // Key-value pairs (your existing logic)
             if (currentSection && trimmed.includes('=')) {
                 const [key, ...valueParts] = trimmed.split('=');
                 const value = valueParts.join('=').trim();
                 const parsedValue = this.parseValue(value);
 
                 if (currentTile && currentSection === 'tiles') {
-                    // This is a property of the current tile
                     data[currentSection][currentTile][key.trim()] = parsedValue;
-                } else if (currentSection === 'files') {
-                    // Files section: collect file info
-                    if (key.trim() === 'file') {
-                        data[currentSection].push({file: parsedValue});
-                    } else if (data[currentSection].length > 0) {
-                        // Add properties to the last file
-                        const lastFile = data[currentSection][data[currentSection].length - 1];
-                        lastFile[key.trim()] = parsedValue;
-                    }
                 } else {
-                    // This is a section property
-                    data[currentSection][key.trim()] = parsedValue;
+                    data[key.trim()] = parsedValue;
                 }
             }
         }
 
+        console.log('🔍 Extracted files:', data.files.slice(0, 5));
+        console.log('🔍 Parsed tilespec.files:', data.files.length, data.files);
         return data;
     }
 
@@ -118,57 +135,225 @@ if (typeof window.TilesetLoader === 'undefined') {
 
     // Load tile images
     async loadTileImages() {
-        if (!this.tilespecData?.files) return;
+        if (!this.tilespecData?.files) {
+            console.warn('tilespecData.files missing or empty');
+            return;
+        }
 
-        const loadPromises = this.tilespecData.files.map(async (fileInfo) => {
-            if (!fileInfo.file) return;
+        // 1. Load main terrain image
+        await this.loadTerrainImage();
+
+        // 2. Parse all .spec files
+        await this.parseAllSpecFiles();
+
+        // 3. Extract sprites
+        await this.extractSpritesFromSpecFiles();
+
+        console.log(`✅ Extracted ${this.tileImages.size} tiles from .spec files`);
+    }
+
+    // NEW: Load terrain sprite sheet
+    async loadTerrainImage() {
+        const possibleFiles = [
+            'tiles.png',           // RoundSquare/Trident standard
+            'terrain.png',         // Generic
+            `${this.tilesetName}/tiles.png`,  // Subfolder
+            'terrain1.png',        // Legacy
+            'terrain2.png'
+        ];
+
+        for (let filename of possibleFiles) {
+            try {
+                const img = new Image();
+                img.src = `${this.tilesetPath}${filename}`;
+                await new Promise((resolve, reject) => {
+                    img.onload = () => {
+                        this.terrainImage = img;
+                        this.tileWidth = this.tilespecData.normal_tile_width || 30;
+                        this.tileHeight = this.tilespecData.normal_tile_height || 30;
+                        resolve();
+                    };
+                    img.onerror = reject;
+                });
+                console.log(`✅ Terrain loaded: ${filename}`);
+                return;
+            } catch(e) {
+                continue;
+            }
+        }
+        throw new Error('No terrain image found');
+    }
+
+    // Parse ALL .spec files from tilespec "files" section
+    async parseAllSpecFiles() {
+        if (!this.tilespecData.files) {
+            console.warn('No files section in tilespec');
+            return;
+        }
+
+        for (const fileInfo of this.tilespecData.files) {
+            if (!fileInfo.file || !fileInfo.file.endsWith('.spec')) continue;
 
             try {
-                const image = new Image();
-                const imagePath = `${this.tilesetPath}${fileInfo.file}`;
-
-                await new Promise((resolve, reject) => {
-                    image.onload = () => resolve();
-                    image.onerror = () => {
-                        // Create fallback colored tile if image fails to load
-                        console.warn(`Failed to load ${fileInfo.file}, creating fallback tile`);
-                        const fallbackCanvas = document.createElement('canvas');
-                        fallbackCanvas.width = fileInfo.width || 64;
-                        fallbackCanvas.height = fileInfo.height || 64;
-                        const ctx = fallbackCanvas.getContext('2d');
-                        
-                        // Generate a simple colored pattern based on filename
-                        const hash = fileInfo.file.split('').reduce((a, b) => {
-                            a = ((a << 5) - a) + b.charCodeAt(0);
-                            return a & a;
-                        }, 0);
-                        const hue = Math.abs(hash) % 360;
-                        ctx.fillStyle = `hsl(${hue}, 50%, 50%)`;
-                        ctx.fillRect(0, 0, fallbackCanvas.width, fallbackCanvas.height);
-                        
-                        // Convert canvas to image
-                        const fallbackImage = new Image();
-                        fallbackImage.src = fallbackCanvas.toDataURL();
-                        resolve();
-                        return;
-                    };
-                    image.src = imagePath;
-                });
-
-                this.tileImages.set(fileInfo.file, {
-                    image: image,
-                    width: fileInfo.width || this.tilespecData.tile_width || 64,
-                    height: fileInfo.height || this.tilespecData.tile_height || 64
-                });
-
-            } catch (error) {
-                console.warn(`Failed to load tile image ${fileInfo.file}:`, error);
-                // Create a basic fallback tile
-                this.createFallbackTile(fileInfo.file, fileInfo.width || 64, fileInfo.height || 64);
+                const url = `${this.tilesetPath}${fileInfo.file}`;
+                const specResponse = await fetch(url);
+                if (specResponse.ok) {
+                    const specText = await specResponse.text();
+                    console.log(`📄 Parsing spec: ${url}`);
+                    this.parseSpecFile(specText, fileInfo.file);
+                } else {
+                    console.warn(`Spec ${url} responded ${specResponse.status}`);
+                }
+            } catch (e) {
+                console.warn(`Failed to parse ${fileInfo.file}:`, e);
             }
+        }
+
+        console.log('📦 tileImages size after parseAllSpecFiles:', this.tileImages.size);
+    }
+
+    // Parse FreeCiv .spec format → sprite coordinates
+    parseSpecFile(specText, specFilename) {
+        const lines = specText.split('\n');
+        let currentGrid = null;
+
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+
+            // Grid definition: [grid_tag]
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+                currentGrid = trimmed.slice(1, -1);
+                continue;
+            }
+
+            // Tile position: row,col,"tag"
+            const tileMatch = trimmed.match(/^(\d+),\s*(\d+),\s*"(.+)"$/);
+            if (tileMatch && currentGrid) {
+                const [, row, col, tag] = tileMatch;
+                const r = parseInt(row, 10);
+                const c = parseInt(col, 10);
+
+                this.tileImages.set(tag, {
+                    tag,
+                    row: r,
+                    col: c,
+                    grid: currentGrid,
+                    specFile: specFilename
+                });
+            }
+        }
+    }
+
+    async extractSpritesFromSpecFiles() {
+        if (!this.tileImages || this.tileImages.size === 0) {
+            console.warn('No tile definitions to extract sprites for');
+            return;
+        }
+
+        // collect PNGs
+        const spriteSheetFiles = new Set();
+        for (const [, tileData] of this.tileImages) {
+            if (tileData.specFile) {
+                spriteSheetFiles.add(tileData.specFile.replace('.spec', '.png'));
+            }
+        }
+
+        if (!this.spriteSheets) this.spriteSheets = new Map();
+
+        const loadPromises = Array.from(spriteSheetFiles).map(pngFile => {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.onload = () => {
+                    this.spriteSheets.set(pngFile, img);
+                    resolve();
+                };
+                img.onerror = () => {
+                    console.warn(`Failed to load sprite sheet ${pngFile}, using terrainImage`);
+                    this.spriteSheets.set(pngFile, this.terrainImage);
+                    resolve();
+                };
+                img.src = `${this.tilesetPath}${pngFile}`;
+            });
         });
 
         await Promise.all(loadPromises);
+
+        let extracted = 0;
+        for (const [tag, tileData] of this.tileImages) {
+            if (tileData.row == null || tileData.col == null) continue;
+
+            const pngFile = tileData.specFile.replace('.spec', '.png');
+            const sheet = this.spriteSheets.get(pngFile) || this.terrainImage;
+            if (!sheet) continue;
+
+            const sprite = this.extractSpriteFromSheet(sheet, tileData);
+            tileData.image = sprite;
+            tileData.width = this.tileWidth;
+            tileData.height = this.tileHeight;
+            extracted++;
+        }
+
+        console.log(`✅ extractSpritesFromSpecFiles: extracted ${extracted} sprites`);
+    }
+
+    async loadAllSpriteSheets() {
+        const spriteSheets = new Map();
+        const promises = [];
+
+        // Collect unique PNG files from .spec files
+        for (const [, tileData] of this.tileImages) {
+            if (tileData.specFile) {
+                const pngFile = tileData.specFile.replace('.spec', '.png');
+                if (!spriteSheets.has(pngFile)) {
+                    promises.push(this.loadSpriteSheet(pngFile, spriteSheets));
+                }
+            }
+        }
+
+        await Promise.all(promises);
+        return spriteSheets;
+    }
+
+    async loadSpriteSheet(pngFile, spriteSheets) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                this.spriteSheets.set(pngFile, img);
+                spriteSheets.set(pngFile, img);
+                resolve(img);
+            };
+            img.onerror = () => {
+                this.spriteSheets.set(pngFile, this.terrainImage);
+                spriteSheets.set(pngFile, this.terrainImage);
+                resolve(this.terrainImage);
+            };
+            img.src = `${this.tilesetPath}${pngFile}`;
+        });
+    }
+
+    getSpriteSheetForSpec(specFile) {
+        // Map .spec → PNG filename (tiles.spec → tiles.png)
+        const pngFile = specFile.replace('.spec', '.png');
+        // CRITICAL: Check if already cached
+        if (this.spriteSheets?.has(pngFile)) {
+            return this.spriteSheets.get(pngFile);
+        }
+        // IMMEDIATE FAIL: Return terrainImage if PNG not ready
+        return this.terrainImage || null;
+    }
+
+    extractSpriteFromSheet(sheet, tileData) {
+        const canvas = document.createElement('canvas');
+        canvas.width = this.tileWidth;
+        canvas.height = this.tileHeight;
+        const ctx = canvas.getContext('2d');
+        const sx = tileData.col * this.tileWidth;
+        const sy = tileData.row * this.tileHeight;
+        ctx.drawImage(sheet, sx, sy, this.tileWidth, this.tileHeight, 0, 0, this.tileWidth, this.tileHeight);
+        const img = new Image();
+        img.src = canvas.toDataURL();
+        return img;
     }
 
     // Create a simple fallback tile when image loading fails
@@ -210,25 +395,18 @@ if (typeof window.TilesetLoader === 'undefined') {
     getTerrainTile(terrainType, variation = 0) {
         if (!this.loaded) return null;
 
-        // Map Galaxy Game terrain to FreeCiv terrain
+        // Map Galaxy Game terrain to FreeCiv terrain tag
         const freecivTerrain = this.mapGalaxyToFreecivTerrain(terrainType);
         if (!freecivTerrain) return null;
 
-        // Get tile definition
-        const tilesSection = this.tilespecData?.tiles;
-        if (!tilesSection) return null;
-
-        const tileDef = tilesSection[freecivTerrain];
-        if (!tileDef) return null;
-
-        // Get image
-        const imageData = this.tileImages.get(tileDef.file);
+        // Directly use the tag for lookup
+        const imageData = this.tileImages.get(freecivTerrain);
         if (!imageData) return null;
 
         return {
             image: imageData.image,
-            x: tileDef.x || 0,
-            y: tileDef.y || 0,
+            x: 0,
+            y: 0,
             width: imageData.width,
             height: imageData.height,
             terrainType: terrainType
@@ -237,22 +415,24 @@ if (typeof window.TilesetLoader === 'undefined') {
 
     // Map Galaxy Game terrain types to FreeCiv terrain names
     mapGalaxyToFreecivTerrain(galaxyTerrain) {
+        // Map Galaxy Game terrain types to actual FreeCiv tags from tiles.spec
+        // Trident tileset terrain tag mapping
         const mapping = {
-            'arctic': 'arctic',
-            'deep_sea': 'deep_ocean',
-            'desert': 'desert',
-            'forest': 'forest',
-            'plains': 'plains',
-            'grasslands': 'grassland',
-            'boreal': 'tundra',  // boreal forest -> tundra
-            'jungle': 'jungle',
             'ocean': 'ocean',
-            'swamp': 'swamp',
-            'tundra': 'tundra',
-            'rock': 'mountains'  // rock -> mountains
+            'deep_sea': 'deep_water',
+            'desert': 't.l1.desert1',
+            'forest': 't.l1.forest1',
+            'plains': 't.l1.plains1',
+            'grasslands': 't.l0.grassland1',
+            'tundra': 't.l1.tundra1',
+            'arctic': 't.l1.arctic1',
+            'boreal': 't.l1.tundra1',
+            'jungle': 't.l1.jungle1',
+            'swamp': 't.l1.swamp1',
+            'rock': 't.l1.mountains1',
+            'mountains': 't.l1.mountains1'
         };
-
-        return mapping[galaxyTerrain.toLowerCase()] || 'grassland';
+        return mapping[galaxyTerrain.toLowerCase()] || 't.l0.grassland1';
     }
 
     // Check if tileset is loaded
@@ -438,17 +618,17 @@ if (typeof window.AlioTilesetLoader === 'undefined') {
     mapTerrainToAlioTile(galaxyTerrain, fallback = false) {
         const mapping = {
             'arctic': 'arctic',
-            'deep_sea': 'ocean',
-            'desert': 'desert',
-            'forest': 'forest',
-            'plains': 'plains',
-            'grasslands': 'grassland',
-            'boreal': 'tundra',
-            'jungle': 'jungle',
-            'ocean': 'ocean',
-            'swamp': 'swamp',
-            'tundra': 'tundra',
-            'rock': 'mountains',
+            'deep_sea': 't.l1.coast_n1e1s1w1',
+            'desert': 't.l0.desert_n1e1s1w1',
+            'forest': 't.l0.forest_n0e0s0w0',
+            'plains': 't.l0.plains_n1e1s1w1',
+            'grasslands': 't.l0.grassland1',
+            'boreal': 't.l0.tundra_n1e1s1w1',
+            'jungle': 't.l0.jungle_n1e1s1w1',
+            'ocean': 't.l1.coast_n1e1s1w1',
+            'swamp': 't.l0.swamp_n1e1s1w1',
+            'tundra': 't.l0.tundra_n1e1s1w1',
+            'rock': 't.l0.mountains_n0e0s0w0',  // rock -> mountains
             'mountains': 'mountains',
             'hills': 'hills',
             'burrow_tube': 'burrow_tube'

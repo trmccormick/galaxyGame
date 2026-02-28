@@ -260,6 +260,8 @@ GEM
       rspec-support (~> 3.13)
     rspec-support (3.13.2)
     rubyzip (2.4.1)
+    sassc (2.4.0)
+      ffi (~> 1.9)
     selenium-webdriver (4.28.0)
       base64 (~> 0.2)
       logger (~> 1.4)
@@ -351,6 +353,7 @@ DEPENDENCIES
   rails (~> 7.0.8, >= 7.0.8.4)
   rails-controller-testing
   rspec-rails
+  sassc (~> 2.4)
   selenium-webdriver
   shoulda-matchers (~> 5.0)
   sidekiq

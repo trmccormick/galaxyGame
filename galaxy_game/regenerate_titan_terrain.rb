@@ -8,7 +8,7 @@ puts "Regenerating Titan Terrain"
 puts "=" * 30
 
 # Find Titan
-titan = CelestialBodies::Moon.find_by(name: 'Titan')
+titan = CelestialBodies::Satellites::Moon.find_by(name: 'Titan')
 unless titan
   puts "❌ Titan not found in database"
   exit 1

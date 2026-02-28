@@ -100,6 +100,19 @@ FactoryBot.define do
       end
     end
 
+    trait :with_critical_resources do
+      after(:create) do |settlement|
+        %w[oxygen water nitrogen].each do |resource|
+          settlement.inventory.items.create!(
+            name: resource,
+            amount: 1000,
+            material_type: "critical_resource",
+            storage_method: "bulk_storage"
+          )
+        end
+      end
+    end
+
     # Add the for_energy_testing trait here:
     trait :for_energy_testing do
       operational_data {
@@ -125,10 +138,21 @@ FactoryBot.define do
   end
   
   # Standard Settlement - inherits from base_settlement
-  factory :settlement, class: 'Settlement::Settlement', parent: :base_settlement do
+  factory :settlement, class: 'Settlement::Settlement' do
     sequence(:name) { |n| "Settlement #{n}" }
-    current_population { 10 }
-  end
+    association :location, factory: :celestial_location
+    association :owner, factory: :player
+
+    transient do
+      celestial_body { nil }
+    end
+
+    after(:build) do |settlement, evaluator|
+      if evaluator.celestial_body
+        settlement.location ||= build(:celestial_location, celestial_body: evaluator.celestial_body)
+      end
+    end
+  end  
 
   # City - inherits from settlement
   factory :city, class: 'Settlement::City', parent: :settlement do

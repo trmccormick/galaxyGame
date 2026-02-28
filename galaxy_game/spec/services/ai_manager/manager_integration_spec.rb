@@ -247,4 +247,5 @@ RSpec.describe AIManager::Manager, type: :service do
       # Verify service orchestration was performed
       expect(manager.instance_variable_get(:@service_orchestrator)).to have_received(:orchestrate_services)
     end
+  end
 end

@@ -96,5 +96,4 @@ class HarvesterCompletionJob < ApplicationJob
       currency: Currency.find_by(symbol: 'GCC')
     )
   end
-end</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/jobs/harvester_completion_job.rb
+end

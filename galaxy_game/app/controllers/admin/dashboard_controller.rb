@@ -28,16 +28,22 @@ class Admin::DashboardController < ApplicationController
 
   def build_galaxy_stats
     {
-      total_systems:    SolarSystem.count,
-      total_bodies:     ::CelestialBodies::CelestialBody.count,
-      habitable_bodies: ::CelestialBodies::CelestialBody
-                          .where('tei_score >= ?', 0.4)
-                          .count,
-      settlements:      Settlement.count
+      total_systems:    safe_count(SolarSystem),
+      total_bodies:     safe_count(::CelestialBodies::CelestialBody),
+      habitable_bodies: CelestialBodies::CelestialBody.all.select { |body|
+        body.atmosphere&.habitable?
+      }.count,
+      settlements:      safe_count(Settlement)
     }
   rescue StandardError => e
     Rails.logger.error("DashboardController#build_galaxy_stats failed: #{e.message}")
     { total_systems: 0, total_bodies: 0, habitable_bodies: 0, settlements: 0 }
+  end
+
+  def safe_count(query)
+    query.count
+  rescue StandardError
+    0
   end
 
   # ---------------------------------------------------------------------------

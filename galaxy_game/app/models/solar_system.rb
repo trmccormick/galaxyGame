@@ -316,11 +316,12 @@ class SolarSystem < ApplicationRecord
   end
 
   def ensure_initial_star
-    if stars.empty?
+    # Only create Sol if no star named 'Sol' exists globally or in this system
+    if stars.where(name: 'Sol').empty? && CelestialBodies::Star.where(name: 'Sol').empty?
       stars.create!(
-        name: 'Sol', 
-        type_of_star: 'G', 
-        mass: 1.989e30, 
+        name: 'Sol',
+        type_of_star: 'G',
+        mass: 1.989e30,
         radius: 6.96e8,
         age: 4.6e9,
         life: 10.0e9,

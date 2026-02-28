@@ -4,143 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Manager - Missions</title>
-    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <%= stylesheet_link_tag 'admin/dashboard', media: 'all' %>
+    <%= stylesheet_link_tag 'application', media: 'all' %>
 </head>
 <body>
-    <div id="mainContainer" style="grid-template-columns: 250px 1fr 300px; grid-template-rows: 80px 1fr;">
-        <div id="header" style="grid-column: 1 / -1;">
+    <div class="admin-main-container">
+        <header class="admin-header">
             <h1>AI MANAGER - MISSION TRACKER</h1>
-            <div id="planetInfo">
-                Active: <%= @active_missions_count %> | 
-                Completed: <%= @completed_missions_count %> | 
+            <div class="admin-header-info">
+                Active: <%= @active_missions_count %> |
+                Completed: <%= @completed_missions_count %> |
                 Failed: <%= @failed_missions_count %> |
-                <%= link_to '← Admin Dashboard', admin_root_path, style: 'color: #0ff; text-decoration: none;' %>
+                <%= link_to '← Admin Dashboard', admin_root_path, class: 'admin-dashboard-link' %>
             </div>
-        </div>
-        
-        <!-- Left Panel: Navigation -->
-        <div id="toolPanel">
-            <div class="tool-section">
+        </header>
+        <aside class="admin-sidebar">
+            <section class="admin-tool-section">
                 <h3>🤖 AI MANAGER</h3>
-                <%= link_to '📋 Missions', admin_ai_manager_missions_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0; background: #003300;' %>
-                <%= link_to '🎯 Planner', admin_ai_manager_planner_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
-                <%= link_to '🗺️ Map Studio', admin_map_studio_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
-                <%= link_to '🧠 Decisions', admin_ai_manager_decisions_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
-                <%= link_to '🔬 Patterns', admin_ai_manager_patterns_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
-                <%= link_to '📊 Performance', admin_ai_manager_performance_path, class: 'tool-button', style: 'display: block; text-align: center; text-decoration: none; color: #0f0;' %>
-            </div>
-            
-            <div class="tool-section">
+                <%= link_to '📋 Missions', admin_ai_manager_missions_path, class: 'admin-tool-button' %>
+                <%= link_to '🎯 Planner', admin_ai_manager_planner_path, class: 'admin-tool-button' %>
+                <%= link_to '🗺️ Map Studio', admin_map_studio_path, class: 'admin-tool-button' %>
+                <%= link_to '🧠 Decisions', admin_ai_manager_decisions_path, class: 'admin-tool-button' %>
+                <%= link_to '🔬 Patterns', admin_ai_manager_patterns_path, class: 'admin-tool-button' %>
+                <%= link_to '📊 Performance', admin_ai_manager_performance_path, class: 'admin-tool-button' %>
+            </section>
+            <section class="admin-tool-section">
                 <h3>📊 STATISTICS</h3>
-                <div style="font-size: 11px; color: #888;">
-                    <div style="margin: 5px 0;">
-                        <span>Total Missions:</span>
-                        <span style="color: #0f0; float: right;"><%= @missions.count %></span>
-                    </div>
-                    <div style="margin: 5px 0;">
-                        <span>In Progress:</span>
-                        <span style="color: #0ff; float: right;"><%= @active_missions_count %></span>
-                    </div>
-                    <div style="margin: 5px 0;">
-                        <span>Completed:</span>
-                        <span style="color: #0f0; float: right;"><%= @completed_missions_count %></span>
-                    </div>
-                    <div style="margin: 5px 0;">
-                        <span>Failed:</span>
-                        <span style="color: #f00; float: right;"><%= @failed_missions_count %></span>
-                    </div>
+                <div class="admin-stats">
+                    <div><span>Total Missions:</span><span class="admin-stat-value"><%= @missions.count %></span></div>
+                    <div><span>In Progress:</span><span class="admin-stat-value in-progress"><%= @active_missions_count %></span></div>
+                    <div><span>Completed:</span><span class="admin-stat-value completed"><%= @completed_missions_count %></span></div>
+                    <div><span>Failed:</span><span class="admin-stat-value failed"><%= @failed_missions_count %></span></div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Main Content: Mission List -->
-        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+            </section>
+        </aside>
+        <main class="admin-content">
             <% if @missions.any? %>
-                <!-- Active Missions -->
                 <% if @active_missions.any? %>
-                    <div class="tool-section" style="margin-bottom: 20px;">
+                    <section class="admin-section">
                         <h3>⚡ ACTIVE MISSIONS</h3>
                         <% @active_missions.each do |mission| %>
-                            <div class="tool-section" style="margin: 10px 0; cursor: pointer; transition: all 0.2s;" onclick="window.location.href='<%= admin_ai_manager_mission_path(mission) %>'">
-                                <h4 style="color: #0ff; font-size: 14px; margin-bottom: 10px;">
-                                    <%= mission.identifier.upcase %>
-                                </h4>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                                    <div class="data-row">
-                                        <span class="data-label">Settlement:</span>
-                                        <span class="data-value"><%= mission.settlement&.name || 'N/A' %></span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Progress:</span>
-                                        <span class="data-value"><%= mission.progress %>%</span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Status:</span>
-                                        <span class="data-value" style="color: #0ff;"><%= mission.status.titleize %></span>
-                                    </div>
-                                    <div class="data-row">
-                                        <span class="data-label">Type:</span>
-                                        <span class="data-value"><%= mission.mission_type || 'Unknown' %></span>
-                                    </div>
+                            <div class="admin-mission-card active" onclick="window.location.href='<%= admin_ai_manager_mission_path(mission) %>'">
+                                <h4><%= mission.identifier.upcase %></h4>
+                                <div class="admin-mission-details">
+                                    <div class="data-row"><span class="data-label">Settlement:</span><span class="data-value"><%= mission.settlement&.name || 'N/A' %></span></div>
+                                    <div class="data-row"><span class="data-label">Progress:</span><span class="data-value"><%= mission.progress %>%</span></div>
+                                    <div class="data-row"><span class="data-label">Status:</span><span class="data-value"><%= mission.status.titleize %></span></div>
+                                    <div class="data-row"><span class="data-label">Type:</span><span class="data-value"><%= mission.mission_type || 'Unknown' %></span></div>
                                 </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: <%= mission.progress %>%; background: #0ff;"></div>
-                                </div>
+                                <div class="admin-progress-bar"><div class="admin-progress-fill" style="width: <%= mission.progress %>%"></div></div>
                             </div>
                         <% end %>
-                    </div>
+                    </section>
                 <% end %>
-                
-                <!-- Completed Missions -->
                 <% if @completed_missions.any? %>
-                    <div class="tool-section" style="margin-bottom: 20px;">
+                    <section class="admin-section">
                         <h3>✅ COMPLETED MISSIONS</h3>
                         <% @completed_missions.limit(5).each do |mission| %>
-                            <div style="padding: 10px; margin: 5px 0; background: #1a1a1a; border: 1px solid #333; cursor: pointer;" onclick="window.location.href='<%= admin_ai_manager_mission_path(mission) %>'">
-                                <span style="color: #0f0; font-weight: bold;"><%= mission.identifier %></span>
-                                <span style="color: #888; float: right;"><%= mission.completion_date&.strftime('%Y-%m-%d') || 'N/A' %></span>
+                            <div class="admin-mission-card completed" onclick="window.location.href='<%= admin_ai_manager_mission_path(mission) %>'">
+                                <span class="mission-id"><%= mission.identifier %></span>
+                                <span class="mission-date"><%= mission.completion_date&.strftime('%Y-%m-%d') || 'N/A' %></span>
                             </div>
                         <% end %>
-                    </div>
+                    </section>
                 <% end %>
-                
-                <!-- Failed/Stalled Missions -->
                 <% if @failed_missions.any? %>
-                    <div class="tool-section">
-                        <h3 style="color: #f00;">⚠️ FAILED/STALLED MISSIONS</h3>
+                    <section class="admin-section">
+                        <h3 class="failed">⚠️ FAILED/STALLED MISSIONS</h3>
                         <% @failed_missions.limit(5).each do |mission| %>
-                            <div style="padding: 10px; margin: 5px 0; background: #1a1a1a; border: 1px solid #f00; cursor: pointer;" onclick="window.location.href='<%= admin_ai_manager_mission_path(mission) %>'">
-                                <span style="color: #f00; font-weight: bold;"><%= mission.identifier %></span>
-                                <span style="color: #888; float: right;"><%= mission.status.titleize %></span>
+                            <div class="admin-mission-card failed" onclick="window.location.href='<%= admin_ai_manager_mission_path(mission) %>'">
+                                <span class="mission-id"><%= mission.identifier %></span>
+                                <span class="mission-status"><%= mission.status.titleize %></span>
                             </div>
                         <% end %>
-                    </div>
+                    </section>
                 <% end %>
             <% else %>
-                <div class="tool-section">
+                <section class="admin-section">
                     <h3>📭 NO MISSIONS FOUND</h3>
-                    <p style="color: #888; margin-top: 10px;">
-                        No missions exist in the database yet. Missions will appear here once they are created by the AI Manager.
-                    </p>
-                </div>
+                    <p class="admin-empty">No missions exist in the database yet. Missions will appear here once they are created by the AI Manager.</p>
+                </section>
             <% end %>
-        </div>
-        
-        <!-- Right Panel: Activity Log -->
-        <div id="toolPanel" style="border-left: 2px solid #0f0; border-right: none;">
-            <div class="tool-section">
+        </main>
+        <aside class="admin-activity-log">
+            <section class="admin-tool-section">
                 <h3>📜 AI ACTIVITY LOG</h3>
-                <div id="activityLog" style="max-height: 400px; overflow-y: auto; font-size: 11px; color: #0f0; font-family: 'Courier New', monospace;">
+                <div class="admin-activity-list">
                     <% @missions.limit(10).each do |mission| %>
-                        <div style="margin: 5px 0; padding: 5px; background: #003300; border-left: 2px solid #0f0;">
-                            <div style="color: #888;"><%= mission.created_at.strftime('%H:%M:%S') %></div>
-                            <div style="color: #0ff;"><%= mission.identifier %></div>
-                            <div style="color: #0f0; font-size: 10px;"><%= mission.status.titleize %> - <%= mission.progress %>%</div>
+                        <div class="admin-activity-item">
+                            <div class="activity-time"><%= mission.created_at.strftime('%H:%M:%S') %></div>
+                            <div class="activity-id"><%= mission.identifier %></div>
+                            <div class="activity-status"><%= mission.status.titleize %> - <%= mission.progress %>%</div>
                         </div>
                     <% end %>
                 </div>
-            </div>
-        </div>
+            </section>
+        </aside>
     </div>
 </body>
 </html>

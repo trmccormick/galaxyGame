@@ -5,7 +5,25 @@
 The hydrosphere system models planetary liquid bodies and their dynamic behavior. Unlike traditional hardcoded water-only systems, Galaxy Game's hydrosphere is **fully generic and data-driven**, supporting any liquid material based on planetary conditions and composition.
 
 ## Core Components
+**Important:**
+The `state_distribution` field must represent **surface coverage percent** for each phase (liquid, solid, gas), not mass fraction. For Earth, `liquid` should be ~71.0 (percent of surface covered by liquid water). This ensures correct rendering and simulation.
 
+**Backward Compatibility:**
+The system currently supports both array and object forms for `state_distribution`:
+
+```json
+// Preferred (object, surface coverage)
+"state_distribution": { "liquid": 71.0, "solid": 2.0, "gas": 0.5 }
+
+// Legacy (array, will be converted automatically)
+"state_distribution": [
+  {"state": "liquid", "percentage": 71.0},
+  {"state": "solid", "percentage": 2.0},
+  {"state": "gas", "percentage": 0.5}
+]
+```
+
+**All new data and generators must use the object form with surface coverage percent.**
 ### Hydrosphere Model (`CelestialBodies::Spheres::Hydrosphere`)
 
 The hydrosphere represents a planet's liquid envelope with the following key attributes:

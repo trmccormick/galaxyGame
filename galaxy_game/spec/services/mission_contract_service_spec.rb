@@ -2,8 +2,8 @@
 require 'rails_helper'
 
 RSpec.describe MissionContractService do
-  let(:supplier) { double('AiColonyManager', id: 1, name: 'Supplier AI') }
-  let(:buyer) { double('AiColonyManager', id: 2, name: 'Buyer AI') }
+  let(:supplier) { double('ColonyManager', id: 1, name: 'Supplier AI') }
+  let(:buyer) { double('ColonyManager', id: 2, name: 'Buyer AI') }
   let(:contractor) { double('Organization', id: 3, name: 'Construction Corp') }
   let(:client) { double('Organization', id: 4, name: 'Client Corp') }
   let(:player) { double('Player', id: 5) }

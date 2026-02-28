@@ -2,7 +2,10 @@
 require 'rails_helper'
 
 RSpec.describe AIManager::EscalationService, type: :service do
-  let(:settlement) { create(:settlement) }
+  let(:solar_system) { create(:solar_system) }
+  let(:celestial_body) { create(:celestial_body, solar_system: solar_system) }
+  # let(:settlement) { create(:settlement, location: create(:celestial_location, celestial_body: celestial_body)) }
+  let(:settlement) { create(:base_settlement, :with_critical_resources, location: create(:celestial_location, celestial_body: celestial_body)) }
   let(:expired_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen', quantity: 1000) }
 
   describe '.handle_expired_buy_orders' do
@@ -76,7 +79,10 @@ RSpec.describe AIManager::EscalationService, type: :service do
       it 'creates robot unit for oxygen' do
         expect(Units::Robot).to receive(:create!).with(
           name: "Automated Oxygen Harvester",
-          settlement: settlement,
+          identifier: match(/^ROBOT-/),
+          unit_type: "robot",
+          owner: settlement.owner,
+          attachable: settlement,
           operational_data: {
             'task_type' => 'atmospheric_harvesting',
             'target_material' => 'oxygen',
@@ -94,7 +100,10 @@ RSpec.describe AIManager::EscalationService, type: :service do
       it 'creates harvester craft for water' do
         expect(Craft::Harvester).to receive(:create!).with(
           name: "Automated Water Extractor",
-          settlement: settlement,
+          craft_name: "water_extractor",
+          craft_type: "harvester",
+          owner: settlement.owner,
+          docked_at: settlement,
           operational_data: {
             'extraction_rate' => 50,
             'target_body' => settlement.celestial_body
@@ -187,7 +196,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
       let(:iron_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'iron') }
 
       it 'returns :automated_harvesting for locally available materials' do
-        celestial_body.update!(composition: { 'regolith' => { 'iron' => 3.5 } })
+        create(:material, celestial_body: celestial_body, name: 'iron', location: 'geosphere', amount: 3.5)
         expect(described_class.send(:determine_escalation_strategy, iron_order)).to eq(:automated_harvesting)
       end
     end
@@ -231,70 +240,120 @@ RSpec.describe AIManager::EscalationService, type: :service do
   end
 
   describe '.can_harvest_locally?' do
-    let(:celestial_body) { settlement.celestial_body }
-
     context 'oxygen harvesting' do
       it 'returns true when atmosphere contains O2' do
-        atmosphere = create(:atmosphere, celestial_body: celestial_body)
-        create(:gas, atmosphere: atmosphere, name: 'O2', percentage: 21.0)
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        atmosphere = cb.atmosphere
+        atmosphere.gases.destroy_all
+        create(:gas, :o2, atmosphere: atmosphere, percentage: 21.0)
+        cb.reload
+        settlement.reload
+        settlement.location.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'oxygen')).to be true
       end
 
       it 'returns false when atmosphere lacks O2' do
-        atmosphere = create(:atmosphere, celestial_body: celestial_body)
-        create(:gas, atmosphere: atmosphere, name: 'CO2', percentage: 95.0)
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        atmosphere = cb.atmosphere
+        atmosphere.gases.destroy_all
+        create(:gas, :co2, atmosphere: atmosphere, percentage: 95.0)
+        cb.reload
+        settlement.reload
+        settlement.location.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'oxygen')).to be false
       end
     end
 
     context 'water harvesting' do
       it 'returns true when hydrosphere has liquid water' do
-        create(:hydrosphere, celestial_body: celestial_body, total_liquid_mass: 1000000.0)
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        hydrosphere = cb.hydrosphere
+        hydrosphere.update!(total_liquid_mass: 1.386e21)
+        cb.reload
+        settlement.reload
+        settlement.location.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'water')).to be true
       end
 
       it 'returns false when hydrosphere lacks liquid water' do
-        create(:hydrosphere, celestial_body: celestial_body, total_liquid_mass: 0.0)
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        hydrosphere = cb.hydrosphere
+        hydrosphere.update!(total_liquid_mass: 0.0)
+        cb.reload
+        settlement.reload
+        settlement.location.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'water')).to be false
       end
     end
 
     context 'nitrogen harvesting' do
       it 'returns true when atmosphere contains N2' do
-        atmosphere = create(:atmosphere, celestial_body: celestial_body)
-        create(:gas, atmosphere: atmosphere, name: 'N2', percentage: 78.0)
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        atmosphere = cb.atmosphere
+        atmosphere.gases.destroy_all
+        create(:gas, :n2, atmosphere: atmosphere, percentage: 78.0)
+        cb.reload
+        settlement.reload
+        settlement.location.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'nitrogen')).to be true
       end
 
       it 'returns false when atmosphere lacks N2' do
-        atmosphere = create(:atmosphere, celestial_body: celestial_body)
-        create(:gas, atmosphere: atmosphere, name: 'O2', percentage: 100.0)
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        atmosphere = cb.atmosphere
+        atmosphere.gases.destroy_all
+        create(:gas, :o2, atmosphere: atmosphere, percentage: 100.0)
+        cb.reload
+        settlement.reload
+        settlement.location.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'nitrogen')).to be false
       end
     end
 
     context 'regolith materials' do
       it 'returns true when regolith contains the material' do
-        celestial_body.update!(composition: { 'regolith' => { 'iron' => 5.2 } })
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        create(:material, :iron, celestial_body: cb, location: 'geosphere', amount: 5.2)
+        cb.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'iron')).to be true
       end
 
       it 'returns false when regolith lacks the material' do
-        celestial_body.update!(composition: { 'regolith' => { 'titanium' => 1.5 } })
-
+        cb = create(:celestial_body)
+        settlement = create(:base_settlement)
+        settlement.location.celestial_body = cb
+        settlement.location.save!
+        create(:material, name: 'titanium', state: 'solid', location: 'geosphere', amount: 1.5, celestial_body: cb)
+        cb.reload
         expect(described_class.send(:can_harvest_locally?, settlement, 'iron')).to be false
       end
     end
   end
 
   describe '.find_best_import_source' do
+    let(:other_settlement) { create(:settlement, location: create(:celestial_location, celestial_body: celestial_body)) }
+
     it 'prioritizes Earth as primary source' do
       source = described_class.send(:find_best_import_source, settlement, 'iron')
       expect(source[:type]).to eq(:earth)
@@ -303,9 +362,6 @@ RSpec.describe AIManager::EscalationService, type: :service do
     end
 
     it 'falls back to settlement sources when Earth cannot supply' do
-      allow(described_class).to receive(:can_supply?).with(anything, 'helium').and_return(false)
-      allow(described_class).to receive(:find_nearby_settlements).and_return([double('settlement')])
-
       source = described_class.send(:find_best_import_source, settlement, 'helium')
       expect(source[:type]).to eq(:settlement)
     end
@@ -385,7 +441,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
       described_class.send(:deploy_harvester_to_site, harvester, celestial_body, 'oxygen')
 
       harvester.reload
-      expect(harvester.location).to eq(celestial_body)
+      expect(harvester.location.celestial_body).to eq(celestial_body)
       expect(harvester.operational_data['deployment_site']).to eq('atmospheric_processor')
       expect(harvester.operational_data['coordinates']).to be_present
     end
@@ -395,7 +451,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
       described_class.send(:deploy_harvester_to_site, harvester, celestial_body, 'water')
 
       harvester.reload
-      expect(harvester.location).to eq(celestial_body)
+      expect(harvester.location.celestial_body).to eq(celestial_body)
       expect(harvester.operational_data['deployment_site']).to eq('ice_deposit')
       expect(harvester.operational_data['coordinates']).to be_present
     end
@@ -405,7 +461,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
       described_class.send(:deploy_harvester_to_site, harvester, celestial_body, 'iron')
 
       harvester.reload
-      expect(harvester.location).to eq(celestial_body)
+      expect(harvester.location.celestial_body).to eq(celestial_body)
       expect(harvester.operational_data['deployment_site']).to eq('regolith_field')
       expect(harvester.operational_data['coordinates']).to be_present
     end

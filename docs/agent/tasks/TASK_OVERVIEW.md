@@ -1804,10 +1804,20 @@ end
 3. **Update blockers** - Remove blockers that were unblocked by this work
 4. **Note follow-ups** - Add any new tasks discovered during implementation
 
-### When Discovering Issues
-1. **Add to "Known Issues & Blockers"** - Clear description, severity, investigation steps
-2. **Mark dependencies** - Note which tasks are blocked by this issue
-3. **Propose fix** - Add to backlog if not urgent, or escalate if critical
+
+---
+
+## Backlog Tasks (Awaiting Assignment)
+
+### 🖥️ Monitor View Progress Tracking
+**Agent**: Available for assignment
+**Priority**: Medium (Ensures UI and data changes are tracked)
+**Status**: 📋 PLANNED - Reminder to update progress and issues for monitor view in backlog
+**Description**: Regularly update backlog tasks and progress logs for monitor view changes, including hydrosphere, terrain, and data-driven rendering improvements.
+**Success Criteria**:
+- [ ] Monitor view progress and issues are documented in backlog
+- [ ] UI/data changes are tracked for review
+- [ ] Task status is updated after each major change
 
 ---
 

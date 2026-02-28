@@ -5,65 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
     <title>Edit <%= @celestial_body.name %> - Admin Celestial Body</title>
-    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+    <%= stylesheet_link_tag 'application', media: 'all' %>
+    <%= stylesheet_link_tag 'admin/admin_cards', media: 'all' %>
 </head>
-<body style="overflow-y: auto;">
-    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
+<body>
+    <div class="admin-main-container" style="display: grid; grid-template-columns: 250px 1fr; grid-template-rows: auto 1fr; min-height: 100vh;">
         <!-- Header -->
-        <div id="header" style="grid-column: 1 / -1;">
-            <h1>ADMIN EDIT: <%= @celestial_body.name.upcase %></h1>
-            <div id="planetInfo">
+        <header class="admin-header">
+            <h1 class="admin-title">ADMIN EDIT: <%= @celestial_body.name.upcase %></h1>
+            <div class="admin-header-info">
                 Celestial Body Name/Alias Editor |
-                <%= link_to '← Back to Monitor', monitor_admin_celestial_body_path(@celestial_body), style: 'color: #0ff; text-decoration: none;' %> |
-                <%= link_to '← Back to List', admin_celestial_bodies_path, style: 'color: #0ff; text-decoration: none;' %>
+                <%= link_to '← Back to Monitor', monitor_admin_celestial_body_path(@celestial_body), class: 'admin-dashboard-link' %>
+                <%= link_to '← Back to List', admin_celestial_bodies_path, class: 'admin-dashboard-link' %>
             </div>
-        </div>
+        </header>
 
-        <!-- Left Panel: Navigation -->
-        <div id="toolPanel">
-            <div class="tool-section">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-tool-section">
                 <h3>📍 NAVIGATION</h3>
-                <button class="tool-button" onclick="window.location.href='<%= monitor_admin_celestial_body_path(@celestial_body) %>'">
-                    🖥️ Monitor Body
-                </button>
-                <button class="tool-button" onclick="window.location.href='<%= admin_celestial_bodies_path %>'">
-                    📋 All Bodies
-                </button>
-                <button class="tool-button" onclick="window.location.href='/admin'">
-                    🏠 Admin Dashboard
-                </button>
-                <button class="tool-button" onclick="window.location.href='<%= admin_map_studio_path %>'">
-                    🗺️ Map Studio
-                </button>
+                <a href="/admin/celestial_bodies" class="admin-tool-button">📋 All Bodies</a>
+                <a href="/admin/celestial_bodies/<%= @celestial_body.id %>/monitor" class="admin-tool-button">🖥️ Admin Monitor</a>
+                <a href="/admin" class="admin-tool-button">🏠 Admin Dashboard</a>
+                <a href="/" class="admin-tool-button">🎮 Main Game</a>
             </div>
+            <div class="admin-tool-section">
+                <h3>⚙️ ACTIONS</h3>
+                <a href="#" class="admin-tool-button">💾 Export Data</a>
+            </div>
+            <div class="admin-tool-section">
+                <h3>📊 QUICK STATS</h3>
+                <div class="admin-stats">
+                    <div>Type: <span class="admin-stat-value"><%= @celestial_body.body_category&.humanize || 'Unknown' %></span></div>
+                    <div>Identifier: <span class="admin-stat-value"><%= @celestial_body.identifier %></span></div>
+                    <div>System: <span class="admin-stat-value"><%= @celestial_body.solar_system&.name || 'Unknown' %></span></div>
+                </div>
+            </div>
+        </aside>
 
-            <div class="tool-section">
+        <!-- Main Content: Edit Form -->
+        <main class="admin-content">
+            <div class="admin-section" style="margin-bottom: 2rem;">
                 <h3>ℹ️ BODY INFO</h3>
-                <div class="info-item">
-                    <strong>Type:</strong><br>
-                    <%= @celestial_body.body_category&.humanize || 'Unknown' %>
-                </div>
-                <div class="info-item">
-                    <strong>Identifier:</strong><br>
-                    <%= @celestial_body.identifier %>
-                </div>
-                <div class="info-item">
-                    <strong>System:</strong><br>
-                    <%= @celestial_body.solar_system&.name || 'Unknown' %>
-                </div>
+                <div class="info-item"><strong>Type:</strong> <%= @celestial_body.body_category&.humanize || 'Unknown' %></div>
+                <div class="info-item"><strong>Identifier:</strong> <%= @celestial_body.identifier %></div>
+                <div class="info-item"><strong>System:</strong> <%= @celestial_body.solar_system&.name || 'Unknown' %></div>
             </div>
-
-            <div class="tool-section">
+            <div class="admin-section" style="margin-bottom: 2rem;">
                 <h3>⚠️ RESTRICTIONS</h3>
                 <div class="warning-text">
                     Only name and aliases can be edited.<br>
                     Properties come from JSON data, known information, or StarSim generation.
                 </div>
             </div>
-        </div>
-
-        <!-- Main Content: Edit Form -->
-        <div id="contentPanel">
             <div class="content-section">
                 <h2>✏️ Edit Celestial Body Name & Aliases</h2>
 

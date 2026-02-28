@@ -313,10 +313,11 @@ module StarSim
       if body.save
         puts "Successfully created #{body.class.name} #{body.name} (ID: #{body.id})" if @debug_mode
         @created_celestial_bodies_cache[identifier] = body # Add to cache
-        
+
         # Create associated sphere and distance data AFTER the body is saved
         create_star_distances(body, body_data[:star_distances])
-        create_atmosphere(body, body_data[:atmosphere]) if body_data[:atmosphere].present?
+        # FIX: Support both :atmosphere and :atmosphere_attributes
+        create_atmosphere(body, body_data[:atmosphere_attributes] || body_data[:atmosphere]) if body_data[:atmosphere_attributes].present? || body_data[:atmosphere].present?
         create_hydrosphere(body, body_data[:hydrosphere_attributes] || body_data[:hydrosphere]) if body_data[:hydrosphere_attributes].present? || body_data[:hydrosphere].present?
         create_geosphere(body, body_data[:geosphere_attributes]) if body_data[:geosphere_attributes].present?
         create_materials(body, body_data[:materials]) if body_data[:materials].present?
@@ -475,26 +476,30 @@ module StarSim
           transformed_composition[key.to_s] = value
         end
       end
-      
+
+      # Fix: Set temperature from atmosphere_data if present
+      temperature = atmosphere_data[:temperature] || atmosphere_data["temperature"] || body.surface_temperature || 0.0
+
       initial_values = {
         composition: transformed_composition,
         pressure: atmosphere_data[:pressure],
         total_atmospheric_mass: atmosphere_data[:total_atmospheric_mass],
-        dust: atmosphere_data[:dust]
+        dust: atmosphere_data[:dust],
+        temperature: temperature
       }
-      
+
       # Use `build_atmosphere` then `save!` to ensure it's part of the transaction
       atmo = body.build_atmosphere(
         initial_values.merge(
           base_values: initial_values.deep_dup
         )
       )
-      
+
       # Set skip_simulation if the Atmosphere model supports it, to prevent its own callbacks
       atmo.skip_simulation = true if atmo.respond_to?(:skip_simulation=)
-      
+
       atmo.save!
-      
+
       # Manually initialize gases after atmosphere is saved
       atmo.initialize_gases if atmo.respond_to?(:initialize_gases)
       puts "Created atmosphere for #{body.name}." if @debug_mode

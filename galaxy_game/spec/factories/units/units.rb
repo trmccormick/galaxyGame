@@ -162,7 +162,11 @@ FactoryBot.define do
       operational_data do
         {
           'human_rated' => false,
-          'capacity' => 0,
+          'storage' => {
+            'capacity' => 250,
+            'type' => 'general',
+            'current_level' => 0
+          },
           'storage_capacity_m3' => 250.0,
           'max_load_kg' => 50000.0,
           'power_draw_kw' => 2.0

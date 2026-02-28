@@ -36,6 +36,30 @@ module CelestialBodies
 
       after_initialize :set_defaults
       after_update :run_simulation, unless: :simulation_running
+
+      # Returns the primary liquid type for this hydrosphere
+      # def liquid_type
+      #   # Prefer the most abundant liquid_material
+      #   if liquid_materials.any?
+      #     primary = liquid_materials.max_by { |lm| lm.amount || 0 }
+      #     return primary.name if primary&.name.present?
+      #   end
+      #   # Otherwise, use the most abundant entry in composition
+      #   if composition.present? && composition.any?
+      #     sorted = composition.sort_by { |_, v| -v.to_f }
+      #     return sorted.first[0] if sorted.any?
+      #   end
+      #   nil
+      # end
+
+      def liquid_type
+        return nil unless composition.is_a?(Hash) && composition.any?
+        
+        # Return the most abundant component in the composition
+        # For Titan: returns 'CH4' (50.0%)
+        # For Earth: returns 'H2O' (96.5%)
+        composition.max_by { |_k, v| v.to_f }&.first
+      end
       
       # Setup liquid materials from celestial body
       def setup_liquid_materials
@@ -275,21 +299,43 @@ module CelestialBodies
       end
 
       def water_coverage
-        return 0.0 unless celestial_body&.surface_area&.positive?
-        
-        # Extract coverage percentages from water_bodies hashes
-        oceans_coverage = oceans.is_a?(Hash) ? oceans['coverage'].to_f : oceans.to_f
-        lakes_coverage = lakes.is_a?(Hash) ? lakes['coverage'].to_f : lakes.to_f
-        rivers_coverage = rivers.is_a?(Hash) ? rivers['coverage'].to_f : rivers.to_f
-        
-        total_coverage = oceans_coverage + lakes_coverage + rivers_coverage
-        
-        # If no water_bodies data, use state_distribution liquid percentage
-        if total_coverage.zero? && state_distribution.present?
-          total_coverage = state_distribution['liquid'].to_f
+        unless celestial_body&.surface_area&.positive?
+          Rails.logger.warn("Hydrosphere: surface_area missing for #{celestial_body&.name || 'unknown body'}")
+          return 0.0
         end
-        
-        total_coverage
+
+        # Sum all liquid types (oceans, lakes, rivers, ice_caps, groundwater, etc.)
+        total_liquid = 0.0
+        units = nil
+        %w[oceans lakes rivers ice_caps groundwater].each do |body|
+          value = liquid_bodies&.dig(body)
+          if value.is_a?(Hash)
+            total_liquid += value['volume'].to_f
+            units ||= value['units'] if value['units']
+          else
+            total_liquid += value.to_f if value
+          end
+        end
+
+        # Default to m^2 if units are not specified
+        units ||= 'm^2'
+        surface_area = celestial_body.surface_area.to_f
+
+        # Convert units if needed (assume km^2 to m^2)
+        if units == 'km^2'
+          total_liquid *= 1_000_000
+        elsif units != 'm^2'
+          Rails.logger.warn("Hydrosphere: unknown units '#{units}' for liquid_bodies on #{celestial_body&.name || 'unknown body'}")
+        end
+
+        coverage = (total_liquid / surface_area) * 100.0
+
+        # Fallback: use state_distribution if liquid_bodies are missing
+        if total_liquid.zero? && state_distribution.present?
+          coverage = state_distribution['liquid'].to_f
+        end
+
+        coverage
       end      
 
       private

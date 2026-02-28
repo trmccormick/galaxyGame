@@ -2,6 +2,46 @@
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
+                  # Sum buffer gases (N2, Ar, He, etc.)
+                  def buffer_gas_percentage
+                    buffer_names = ['N2', 'Ar', 'He']
+                    gases.select { |g| buffer_names.include?(g.name) }.sum { |g| g.percentage.to_f }
+                  end
+            # Extract O2 percentage from gases association
+
+            def o2_percentage
+              gas = gases.find { |g| g.name == 'O2' }
+              return gas.percentage.to_f if gas
+              # Fallback to composition hash
+              composition && composition['O2'] ? composition['O2'].to_f : 0.0
+            end
+
+            def co2_percentage
+              gas = gases.find { |g| g.name == 'CO2' }
+              return gas.percentage.to_f if gas
+              composition && composition['CO2'] ? composition['CO2'].to_f : 0.0
+            end
+
+            # Extract N2 percentage from gases association
+            def n2_percentage
+              gas = gases.find { |g| g.name == 'N2' }
+              gas&.percentage.to_f
+            end
+
+            # Human survival limits for habitability
+            def habitable?
+              # Pressure: Armstrong limit ~6.3 kPa, comfortable 50–110 kPa
+              return false if pressure.nil? || pressure < 6.3 || pressure > 110.0
+              # Temperature: Comfortable 273–323K (0–50°C), survival 273–333K (0–60°C)
+              return false if temperature.nil? || temperature < 273.15 || temperature > 333.15
+              # Oxygen: Partial pressure 8–50 kPa, percentage 16–40% (if total pressure is normal)
+              return false if o2_percentage < 16.0 || o2_percentage > 40.0
+              # CO2: Must remain below 1% for long-term health
+              return false if co2_percentage > 1.0
+              # Buffer gas: sum of N2, Ar, He, etc. should be at least 30%
+              return false if buffer_gas_percentage < 30.0
+              true
+            end
       self.table_name = 'atmospheres'
       include AtmosphereConcern
       include MaterialTransferable

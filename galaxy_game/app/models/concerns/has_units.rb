@@ -64,7 +64,10 @@ module HasUnits
     end
 
     begin
-      if unit.update(attachable: self)
+      puts "[DEBUG] install_unit: unit operational_data=#{unit.operational_data}"; STDOUT.flush
+      result = unit.update(attachable: self)
+      puts "[DEBUG] install_unit: craft base_units after install=#{self.base_units.map { |u| {id: u.id, operational_data: u.operational_data} }}"; STDOUT.flush
+      if result
         apply_unit_effects(unit)
         return true
       else

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_02_16_021253) do
+ActiveRecord::Schema[7.0].define(version: 2026_02_18_235549) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -103,8 +103,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_16_021253) do
     t.datetime "updated_at", null: false
     t.bigint "orbiting_celestial_body_id"
     t.decimal "size"
+    t.string "docked_at_type"
     t.index ["craft_type"], name: "index_base_crafts_on_craft_type"
     t.index ["docked_at_id"], name: "index_base_crafts_on_docked_at_id"
+    t.index ["docked_at_type", "docked_at_id"], name: "index_base_crafts_on_docked_at_type_and_docked_at_id"
     t.index ["name"], name: "index_base_crafts_on_name"
     t.index ["operational_data"], name: "index_base_crafts_on_operational_data", using: :gin
     t.index ["orbiting_celestial_body_id"], name: "index_base_crafts_on_orbiting_celestial_body_id"
@@ -1252,13 +1254,14 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_16_021253) do
     t.string "material"
     t.decimal "quantity"
     t.string "source"
-    t.integer "destination_settlement_id", null: false
+    t.bigint "source_settlement_id"
+    t.bigint "destination_settlement_id", null: false
     t.decimal "transport_cost"
     t.datetime "delivery_eta"
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "source_settlement_id"
+    t.index ["destination_settlement_id"], name: "index_scheduled_imports_on_destination_settlement_id"
     t.index ["source_settlement_id"], name: "index_scheduled_imports_on_source_settlement_id"
   end
 
@@ -1552,7 +1555,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_16_021253) do
   add_foreign_key "adapted_features", "celestial_bodies"
   add_foreign_key "atmospheres", "base_crafts", column: "craft_id"
   add_foreign_key "atmospheres", "celestial_bodies"
-  add_foreign_key "base_crafts", "base_settlements", column: "docked_at_id"
   add_foreign_key "base_crafts", "celestial_bodies", column: "orbiting_celestial_body_id"
   add_foreign_key "base_crafts", "players"
   add_foreign_key "base_crafts", "wormholes", column: "stabilizing_wormhole_id"

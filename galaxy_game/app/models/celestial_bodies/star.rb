@@ -9,7 +9,7 @@ module CelestialBodies
     ], coder: JSON
     
     # Validations
-    validates :name, presence: true
+    validates :name, presence: true, uniqueness: true
     validates :identifier, presence: true
     validates :type_of_star, presence: true
     validates :age, presence: true
@@ -24,7 +24,10 @@ module CelestialBodies
     validates :luminosity, presence: true, numericality: { greater_than: 0 }
     
     # Associations - CRITICAL: Use the correct namespaced class
-    belongs_to :solar_system, optional: true
+    belongs_to :solar_system, optional: false
+
+    # Ensure a star is only associated with one solar system and name is unique
+    validates :solar_system_id, uniqueness: { scope: :name, message: "A star with this name already exists in another solar system" }
     
     # Use the correct namespace for StarDistance
     has_many :star_distances, class_name: 'CelestialBodies::StarDistance', foreign_key: 'star_id', dependent: :destroy

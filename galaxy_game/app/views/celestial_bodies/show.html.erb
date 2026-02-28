@@ -8,65 +8,39 @@
     <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
 </head>
 <body>
-    <div id="mainContainer" style="grid-template-columns: 250px 1fr; grid-template-rows: 80px 1fr;">
-        <!-- Header -->
-        <div id="header" style="grid-column: 1 / -1;">
-            <h1><%= @celestial_body.name.upcase %></h1>
-            <div id="planetInfo">
+    <div class="admin-main-container" style="display: grid; grid-template-columns: 250px 1fr; grid-template-rows: auto 1fr; min-height: 100vh;">
+        <header class="admin-header">
+            <h1 class="admin-title"><%= @celestial_body.name.upcase %></h1>
+            <div class="admin-header-info">
                 <%= @celestial_body.type || 'Unknown Type' %> | 
                 <%= @celestial_body.solar_system&.name || 'Unknown System' %> |
-                <%= link_to '← Back to List', celestial_bodies_path, style: 'color: #0ff; text-decoration: none;' %>
+                <%= link_to '← Back to List', celestial_bodies_path, class: 'admin-dashboard-link' %>
             </div>
-        </div>
-        
-        <!-- Left Panel: Navigation -->
-        <div id="toolPanel">
-            <div class="tool-section">
+        </header>
+        <aside class="admin-sidebar">
+            <div class="admin-tool-section">
                 <h3>📍 NAVIGATION</h3>
-                <button class="tool-button" onclick="window.location.href='<%= celestial_bodies_path %>'">
-                    📋 All Bodies
-                </button>
-                <button class="tool-button" onclick="window.location.href='/admin/celestial_bodies/<%= @celestial_body.id %>/monitor'">
-                    🖥️ Admin Monitor
-                </button>
-                <button class="tool-button" onclick="window.location.href='/admin'">
-                    🏠 Admin Dashboard
-                </button>
-                <button class="tool-button" onclick="window.location.href='/'">
-                    🎮 Main Game
-                </button>
+                <a href="<%= celestial_bodies_path %>" class="admin-tool-button">📋 All Bodies</a>
+                <a href="/admin/celestial_bodies/<%= @celestial_body.id %>/monitor" class="admin-tool-button">🖥️ Admin Monitor</a>
+                <a href="/admin" class="admin-tool-button">🏠 Admin Dashboard</a>
+                <a href="/" class="admin-tool-button">🎮 Main Game</a>
             </div>
-            
-            <div class="tool-section">
+            <div class="admin-tool-section">
                 <h3>⚙️ ACTIONS</h3>
-                <button class="tool-button" onclick="exportData()">
-                    💾 Export Data
-                </button>
+                <a href="#" onclick="exportData()" class="admin-tool-button">💾 Export Data</a>
             </div>
-            
-            <div class="tool-section">
+            <div class="admin-tool-section">
                 <h3>📊 QUICK STATS</h3>
-                <div style="font-size: 11px; color: #888;">
-                    <div style="margin: 5px 0;">
-                        <span>Size:</span>
-                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.size, precision: 2) %></span>
-                    </div>
-                    <div style="margin: 5px 0;">
-                        <span>Gravity:</span>
-                        <span style="color: #0f0; float: right;"><%= number_with_precision(@celestial_body.gravity, precision: 2) %>g</span>
-                    </div>
+                <div class="admin-stats">
+                    <div>Size: <span class="admin-stat-value"><%= number_with_precision(@celestial_body.size, precision: 2) %></span></div>
+                    <div>Gravity: <span class="admin-stat-value"><%= number_with_precision(@celestial_body.gravity, precision: 2) %>g</span></div>
                     <% if @celestial_body.density %>
-                    <div style="margin: 5px 0;">
-                        <span>Density:</span>
-                        <span style="color: #0f0; float: right;"><%= number_to_human(@celestial_body.density, precision: 2) %></span>
-                    </div>
+                    <div>Density: <span class="admin-stat-value"><%= number_to_human(@celestial_body.density, precision: 2) %></span></div>
                     <% end %>
                 </div>
             </div>
-        </div>
-        
-        <!-- Main Content Area -->
-        <div style="padding: 20px; overflow-y: auto; background: #0a0a0a;">
+        </aside>
+        <main class="admin-content">
             <!-- Basic Properties -->
             <div class="tool-section">
                 <h3>🌍 PHYSICAL PROPERTIES</h3>

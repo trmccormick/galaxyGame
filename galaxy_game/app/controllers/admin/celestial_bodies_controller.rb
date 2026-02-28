@@ -61,6 +61,12 @@ module Admin
       @civilization_features = load_civilization_features
       @ai_missions = load_ai_missions
       @sphere_summary = build_sphere_summary
+
+      # Assign normalized sphere data for view panels
+      @atmosphere_data = atmosphere_data
+      @hydrosphere_data = hydrosphere_data
+      @geosphere_data = geosphere_data
+      @biosphere_data = biosphere_data
     end
 
     # GET /admin/celestial_bodies/:id/surface
@@ -446,12 +452,8 @@ module Admin
       atmo = @celestial_body.atmosphere
       composition = @celestial_body.atmospheric_composition || {}
 
-      # Get temperature from temperature column, temperature_data, or celestial body surface temperature
-      temperature = atmo.temperature
-      if temperature.nil? && atmo.temperature_data.present?
-        temperature = atmo.temperature_data['tropical_temperature'] || atmo.temperature_data['surface_temperature']
-      end
-      temperature ||= @celestial_body.surface_temperature
+      # Use CelestialBody#temperature for consistency with overview cards
+      temperature = @celestial_body.temperature
 
       {
         pressure: atmo.pressure&.round(4) || 0,
@@ -468,13 +470,25 @@ module Admin
 
       hydro = @celestial_body.hydrosphere
 
+      # Use Hydrosphere model's methods for robust data
+      coverage = if hydro.respond_to?(:water_coverage)
+        hydro.water_coverage
+      elsif hydro.water_bodies&.dig('ocean', 'percentage')
+        hydro.water_bodies.dig('ocean', 'percentage')
+      else
+        0
+      end
+
+      primary_liquid = hydro.respond_to?(:liquid_type) ? hydro.liquid_type : 'Unknown'
+
       {
-        water_coverage: (hydro.water_bodies&.dig('ocean', 'percentage') || 0),
+        water_coverage: coverage || 0,
         ocean_mass: (hydro.water_bodies&.dig('ocean', 'mass') || 0),
         ice_mass: (hydro.water_bodies&.dig('ice_caps', 'volume') || 0),
         total_water: hydro.total_water_mass&.round(2) || 0,
         average_depth: (hydro.water_bodies&.dig('ocean', 'average_depth') || 0),
-        ice_coverage: (hydro.water_bodies&.dig('ice_caps', 'coverage') || 0)
+        ice_coverage: (hydro.water_bodies&.dig('ice_caps', 'coverage') || 0),
+        primary_liquid: primary_liquid
       }
     end
 
@@ -490,7 +504,9 @@ module Admin
         volcanic_activity: (activity_level > 50 ? 'moderate' : 'low'),
         core_composition: geo.core_composition || {},
         crust_composition: geo.crust_composition || {},
-        magnetic_field: 0 # Not in schema, placeholder
+        magnetic_field: 0, # Not in schema, placeholder
+        base_total_core_mass: geo.base_values && geo.base_values["base_total_core_mass"],
+        total_core_mass: geo.total_core_mass
       }
     end
 
@@ -500,11 +516,9 @@ module Admin
       bio = @celestial_body.biosphere
 
       {
-        biodiversity_index: (bio.biodiversity_index * 100)&.round(2) || 0,
-        habitable_ratio: (bio.habitable_ratio * 100)&.round(2) || 0,
-        life_forms_count: 0, # Not in schema
-        biomass: 0, # Not in schema  
-        primary_producers: 0 # Not in schema
+        biodiversity: (bio.biodiversity_index * 100)&.round(2) || 0,
+        habitability: (bio.habitable_ratio * 100)&.round(2) || 0,
+        life_forms: (bio.respond_to?(:life_forms) ? bio.life_forms : nil)
       }
     end
 
