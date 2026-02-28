@@ -18,6 +18,35 @@
 - To add new terrain types, update both the sprite sheet and the JSON config.
 - For variants (e.g., seasonal, artistic), create additional sheets and reference them in the JSON.
 
+## Variant Naming & Multi-Sheet Integration
+- For seasonal or artistic variants, use descriptive filenames (e.g., `base_terrain_winter.png`, `base_terrain_artistic.png`).
+- Reference each sheet in the JSON config under the `sheets` section.
+- Example JSON config for variants:
+
+```json
+{
+  "name": "galaxy_game_base_terrain",
+  "tile_size": 32,
+  "sheets": {
+    "base": {
+      "file": "base_terrain.png",
+      "tiles": { "ocean": { "x": 0, "y": 0 }, ... }
+    },
+    "winter": {
+      "file": "base_terrain_winter.png",
+      "tiles": { "ocean": { "x": 0, "y": 0 }, ... }
+    },
+    "artistic": {
+      "file": "base_terrain_artistic.png",
+      "tiles": { "ocean": { "x": 0, "y": 0 }, ... }
+    }
+  }
+}
+```
+
+- Update loader logic to select the appropriate sheet based on user or world settings.
+- Document any new terrain types or variants in this README for team reference.
+
 ---
 
 **Last updated:** 2026-02-28
