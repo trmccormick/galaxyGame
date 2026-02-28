@@ -4,7 +4,7 @@
   "tile_size": 32,
   "sheets": {
     "base": {
-      "file": "base_terrain.png",
+      "file": "base_terrain.png", // TODO: Add real sprite sheet image here
       "tiles": {
         "ocean": { "x": 0, "y": 0 },
         "plains": { "x": 32, "y": 0 },
