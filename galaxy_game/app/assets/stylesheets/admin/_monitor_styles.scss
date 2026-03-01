@@ -1,0 +1,287 @@
+// Planet Monitor View - SimEarth Aesthetic
+// Used ONLY by: /admin/celestial_bodies/:id/monitor
+
+
+// Use dashboard/index layout for monitor
+.admin-main-container {
+  display: grid;
+  grid-template-columns: 250px 1fr 320px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  gap: 2px;
+  background: #111;
+}
+
+.admin-header {
+  grid-column: 1 / -1;
+  background: #1a1a1a;
+  padding: 15px 20px;
+  border-bottom: 2px solid #00d4ff;
+  h1 {
+    font-size: 20px;
+    color: #00d4ff;
+    margin: 0;
+  }
+}
+
+.admin-header-info {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+}
+
+.admin-sidebar {
+  background: #1a1a1a;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 2px solid #00d4ff;
+}
+
+.admin-content {
+  background: #0a0a0a;
+  padding: 20px 0 20px 20px;
+  overflow-y: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+aside#dataPanel {
+  background: #101c2c;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  border-left: 1px solid #223;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+footer {
+  grid-column: 1 / span 3 !important;
+  background: #0a1420 !important;
+  color: #00d4ff !important;
+  padding: 2.5rem 2rem 2.5rem 2rem !important;
+  font-size: 0.92rem !important;
+  border-top: 2.5px solid #00d4ff !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 10 !important;
+  min-height: 120px !important;
+  box-shadow: 0 -2px 12px #00d4ff33;
+}
+
+footer .console-line {
+  font-size: 0.85rem !important;
+}
+
+
+/* ============================================
+   MODERN NAV STYLING FOR MONITOR
+   Replace the old .tool-section and .tool-button 
+   with these updated styles in _monitor_styles.scss
+   ============================================ */
+
+
+
+/* Mission list container */
+.mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* KEEP existing mission-item, layer-btn, feature-list styles as-is */
+
+
+#canvasWrapper {
+  background: #1a1a1a;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+#canvasScroller {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+#canvasContainer {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+#planetCanvas {
+  display: block;
+  border: 3px solid #00ffff;
+  background: #000;
+  cursor: grab;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  min-width: 200px;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
+  &:active { cursor: grabbing; }
+}
+
+
+#mapOverlay {
+  position: absolute;
+  top: 10px; left: 10px; right: 10px;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  pointer-events: none;
+  width: calc(100% - 20px);
+}
+
+#mapControls {
+  position: relative;
+  z-index: 11;
+  background: #181f2a;
+  border-radius: 6px;
+  padding: 0.5rem 1.5rem;
+  margin: 0.5rem 0 0 0;
+  box-shadow: 0 2px 8px #00d4ff22;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2rem;
+  pointer-events: auto;
+}
+
+#mapTitle {
+  color: #00ccff;
+  font-size: 16px;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+#featureTooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.9);
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  padding: 10px;
+  max-width: 300px;
+  z-index: 20;
+  pointer-events: none;
+  font-size: 11px;
+  &.hidden { display: none; }
+}
+
+
+
+.data-section {
+  margin-bottom: 15px;
+  border: 1px solid #333;
+  padding: 10px;
+  h3 {
+    color: #00ccff;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+}
+
+.layer-selector {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.layer-btn {
+  padding: 5px 10px;
+  background: #222;
+  border: 1px solid #333;
+  color: #888;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: inherit;
+  transition: all 0.2s;
+  &.active { background: #0066cc; color: #000; border-color: #0066cc; }
+  &:hover:not(:disabled) { border-color: #0066cc; }
+  &:disabled, &.unavailable {
+    background: #1a1a1a; border-color: #2a2a2a;
+    color: #444; cursor: not-allowed; opacity: 0.5;
+  }
+}
+
+.mission-item {
+  background: #181f2a;
+  border: 1.5px solid #00ccff;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 6px;
+  &.active {
+    box-shadow: 0 0 12px rgba(0, 204, 255, 0.6);
+    .mission-status { animation: pulse 2s infinite; }
+  }
+}
+
+.mission-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.mission-type   { color: #00ccff; font-size: 11px; font-weight: bold; }
+.mission-status { color: #0066cc; font-size: 10px; }
+
+.mission-progress {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  .progress-text { color: #888; font-size: 10px; min-width: 35px; }
+}
+
+
+.console-line {
+  margin: 2px 0;
+  color: #00d4ff;
+  font-family: 'Courier New', monospace;
+  &.info    { color: #00d4ff; }
+  &.success { color: #00cc44; }
+  &.warning { color: #ff0; }
+  &.error   { color: #f00; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+
+@media (max-width: 900px) {
+  .admin-main-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px auto auto auto 200px;
+  }
+  .admin-sidebar, aside#dataPanel {
+    border: none;
+    border-bottom: 2px solid #00d4ff;
+  }
+  footer {
+    grid-column: 1 / -1;
+    position: static;
+  }
+}

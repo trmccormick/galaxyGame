@@ -1,0 +1,18 @@
+// Common reusable mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card {
+  background: $background-panel;
+  border-radius: 12px;
+  box-shadow: $glow-primary;
+  padding: $spacing-md $spacing-lg;
+}
+
+@mixin neon-text {
+  color: $primary-blue;
+  text-shadow: $glow-primary;
+}

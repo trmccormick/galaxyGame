@@ -1,0 +1,9 @@
+.card, .status-card, .system-card {
+  @include card;
+  margin-bottom: $spacing-lg;
+  color: $text-primary;
+  .card-icon { font-size: 2.5rem; margin-bottom: $spacing-sm; }
+  .stat-large { font-size: 2rem; font-weight: 700; color: $primary-blue; }
+  .stat-label { color: $text-secondary; font-size: 1rem; }
+  .stat-detail { color: $text-dim; font-size: 0.95rem; }
+}

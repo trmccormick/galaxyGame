@@ -1,0 +1,16 @@
+body, html {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: $text-primary;
+  background: $background-dark;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: $text-highlight;
+  letter-spacing: 0.02em;
+}
+
+p {
+  color: $text-secondary;
+  line-height: 1.6;
+}

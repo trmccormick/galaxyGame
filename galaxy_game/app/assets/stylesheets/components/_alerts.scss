@@ -1,0 +1,8 @@
+.alert {
+  padding: $spacing-sm $spacing-md;
+  border-radius: 5px;
+  font-weight: 600;
+  &.alert-warning { background: $accent-warning; color: $background-dark; }
+  &.alert-danger { background: $accent-danger; color: $background-dark; }
+  &.alert-success { background: $accent-success; color: $background-dark; }
+}

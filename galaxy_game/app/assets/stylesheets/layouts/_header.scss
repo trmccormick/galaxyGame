@@ -1,0 +1,7 @@
+.site-header {
+  background: $background-surface;
+  padding: $spacing-md 0;
+  @include flex-center;
+  .logo-large { height: 60px; margin-right: $spacing-lg; }
+  .nav-link { margin-left: $spacing-md; }
+}

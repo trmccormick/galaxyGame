@@ -1,0 +1,185 @@
+/* Celestial Bodies Tile Layout - Neon Blue Theme */
+
+.body-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.body-card {
+  background: #1a1a1a;
+  border: 1.5px solid #00ccff !important;
+  padding: 20px;
+  border-radius: 5px;
+  transition: all 0.2s;
+}
+
+.body-card:hover {
+  border-color: #00ccff !important;
+  background: #222;
+}
+
+.body-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.body-name {
+  color: #00ccff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.body-type {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.body-type.star {
+  background: #ffd700;
+  color: #000;
+}
+.body-type.brown_dwarf {
+  background: #daa520;
+  color: #000;
+}
+.body-type.terrestrial_planet,
+.body-type.carbon_planet,
+.body-type.lava_world,
+.body-type.super_earth,
+.body-type.hycean_planet,
+.body-type.ocean_planet,
+.body-type.water_world {
+  background: #00ccff !important;
+  color: #000 !important;
+}
+.body-type.gas_giant,
+.body-type.hot_jupiter {
+  background: #f0f;
+  color: #fff;
+}
+.body-type.ice_giant {
+  background: #0ff;
+  color: #000;
+}
+.body-type.moon,
+.body-type.large_moon,
+.body-type.small_moon,
+.body-type.ice_moon {
+  background: #0ff;
+  color: #000;
+}
+.body-type.asteroid,
+.body-type.comet,
+.body-type.dwarf_planet,
+.body-type.kuiper_belt_object {
+  background: #f00;
+  color: #fff;
+}
+.body-type.alien_life_form {
+  background: #f0f;
+  color: #fff;
+}
+.body-type.material {
+  background: #00ccff !important;
+  color: #000 !important;
+}
+.body-type.unknown {
+  background: #666;
+  color: #fff;
+}
+
+.body-description {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.body-details {
+  background: #0a0a0a;
+  padding: 10px;
+  border-radius: 3px;
+  margin-bottom: 15px;
+}
+
+.body-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.body-detail-label {
+  color: #888;
+}
+
+.body-detail-value {
+  color: #00ccff !important;
+  font-weight: bold;
+}
+
+.body-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  background: #222 !important;
+  border: 1px solid #00ccff !important;
+  color: #00ccff !important;
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 12px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: #00ccff !important;
+  color: #000 !important;
+}
+
+.action-btn.primary {
+  background: #00ccff;
+  color: #000;
+}
+
+.admin-content .body-card {
+  border: 1.5px solid #00ccff !important;
+}
+.admin-content .body-card:hover {
+  border-color: #00ccff !important;
+}
+.admin-content .body-type.terrestrial_planet,
+.admin-content .body-type.carbon_planet,
+.admin-content .body-type.lava_world,
+.admin-content .body-type.super_earth,
+.admin-content .body-type.hycean_planet,
+.admin-content .body-type.ocean_planet,
+.admin-content .body-type.water_world,
+.admin-content .body-type.material {
+  background: #00ccff !important;
+  color: #000 !important;
+}
+.admin-content .body-detail-value {
+  color: #00ccff !important;
+}
+.admin-content .action-btn,
+.admin-content .action-btn.primary {
+  border: 1px solid #00ccff !important;
+  color: #00ccff !important;
+  background: #222 !important;
+}
+.admin-content .action-btn.primary,
+.admin-content .action-btn:hover {
+  background: #00ccff !important;
+  color: #000 !important;
+}

@@ -1,0 +1,854 @@
+.admin-title {
+	font-size: $font-size-h2;
+	color: $primary-blue;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+}
+.sidebar-section-title {
+	color: $primary-blue;
+	font-size: $font-size-large;
+	margin-bottom: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+}
+.type-breakdown {
+	background: #101a2a;
+	border: 1px solid $primary-blue;
+	padding: 12px;
+	border-radius: 8px;
+	margin-bottom: 0;
+}
+.type-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 8px;
+}
+.type-item {
+	text-align: center;
+	padding: 8px;
+	background: #0a0a1a;
+	border: 1px solid #222;
+	border-radius: 6px;
+}
+.type-name {
+	color: $primary-blue;
+	font-size: $font-size-base;
+	font-weight: bold;
+}
+.type-count {
+	color: #fff;
+	font-size: $font-size-small;
+}
+// Performance page specific override: use 2-column grid if no activity log
+.admin-main-container.performance-page {
+	grid-template-columns: 250px 1fr;
+}
+// --- AI Manager Performance Page ---
+.metrics-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 24px;
+	margin-bottom: 32px;
+}
+.metric-card {
+	background: $background-panel;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 8px;
+	padding: 24px 18px 18px 18px;
+	text-align: center;
+	box-shadow: 0 2px 12px rgba($primary-blue, 0.08);
+}
+.metric-value {
+	font-size: 2.2rem;
+	color: $accent-cyan;
+	font-weight: 700;
+	margin: 12px 0 8px 0;
+}
+.metric-label {
+	font-size: 1rem;
+	color: $text-secondary;
+	text-transform: uppercase;
+	margin-bottom: 8px;
+}
+.metric-trend {
+	font-size: 0.98rem;
+	padding: 4px 10px;
+	border-radius: 4px;
+	display: inline-block;
+	margin-top: 6px;
+	font-weight: 600;
+}
+.metric-trend.positive {
+	background: $accent-success;
+	color: $background-dark;
+}
+.metric-trend.negative {
+	background: $accent-danger;
+	color: $background-dark;
+}
+.metric-trend.neutral {
+	background: $background-surface;
+	color: $text-secondary;
+}
+.performance-chart {
+	background: $background-surface;
+	border: 1px solid $primary-blue-dark;
+	padding: 28px 0;
+	margin-bottom: 24px;
+	height: 300px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $text-tertiary;
+	font-size: 1.2rem;
+	border-radius: 8px;
+}
+.performance-table {
+	background: $background-surface;
+	border: 1px solid $primary-blue-dark;
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 24px;
+	border-radius: 8px;
+	overflow: hidden;
+}
+.performance-table th,
+.performance-table td {
+	padding: 14px 12px;
+	text-align: left;
+	border-bottom: 1px solid $primary-blue-dark;
+}
+.performance-table th {
+	background: $background-panel;
+	color: $accent-cyan;
+	font-weight: 700;
+	text-transform: uppercase;
+	font-size: 0.98rem;
+}
+.performance-table td {
+	color: $text-primary;
+}
+.performance-table tr:hover td {
+	background: $background-dark;
+}
+.status-indicator {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin-right: 8px;
+}
+.status-indicator.good {
+	background: $accent-success;
+}
+.status-indicator.warning {
+	background: $accent-warning;
+}
+.status-indicator.critical {
+	background: $accent-danger;
+}
+.controls-section {
+	background: $background-surface;
+	border: 1px solid $primary-blue-dark;
+	padding: 20px 18px 16px 18px;
+	margin-bottom: 28px;
+	border-radius: 8px;
+}
+.control-group {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 12px;
+	flex-wrap: wrap;
+}
+.control-label {
+	color: $primary-blue;
+	font-size: 1rem;
+	min-width: 120px;
+	font-weight: 600;
+}
+.control-hint {
+	color: $text-tertiary;
+	font-size: 0.98rem;
+}
+.control-input {
+	padding: 7px 12px;
+	background: $background-dark;
+	border: 1px solid $primary-blue-dark;
+	color: $accent-cyan;
+	font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+	font-size: 1rem;
+	border-radius: 4px;
+}
+.control-btn {
+	padding: 7px 16px;
+	background: $background-panel;
+	border: 1px solid $primary-blue-dark;
+	color: $primary-blue;
+	cursor: pointer;
+	border-radius: 4px;
+	font-size: 1rem;
+	font-weight: 600;
+	transition: all 0.2s;
+}
+.control-btn:hover {
+	background: $primary-blue;
+	color: $background-dark;
+}
+.control-btn--small {
+	font-size: 0.92rem;
+	padding: 4px 10px;
+}
+.system-health {
+	background: $background-surface;
+	padding: 18px 18px 10px 18px;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 8px;
+	margin-top: 12px;
+}
+.text-success {
+	color: $accent-success !important;
+}
+.text-warning {
+	color: $accent-warning !important;
+}
+.text-accent {
+	color: $accent-cyan !important;
+}
+html, body {
+	height: 100%;
+}
+body {
+	overflow-y: auto;
+}
+// --- Map Studio Generate Page ---
+.generation-form {
+	background: $background-panel;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 10px;
+	padding: 36px 32px 32px 32px;
+	margin-bottom: 36px;
+	box-shadow: 0 2px 12px rgba($primary-blue, 0.08);
+}
+.form-title {
+	color: $primary-blue;
+	font-size: 1.5rem;
+	margin-bottom: 24px;
+	text-align: center;
+	font-weight: 700;
+}
+.form-section {
+	margin-bottom: 28px;
+	padding: 22px 18px 18px 18px;
+	background: $background-surface;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 7px;
+}
+.section-title {
+	color: $primary-blue;
+	font-size: 1.15rem;
+	margin-bottom: 16px;
+	border-bottom: 1px solid $primary-blue-dark;
+	padding-bottom: 6px;
+}
+.form-group {
+	margin-bottom: 16px;
+}
+.form-label {
+	display: block;
+	color: $text-secondary;
+	font-weight: 600;
+	margin-bottom: 6px;
+	font-size: 1rem;
+}
+.form-input, .form-select, .form-textarea {
+	width: 100%;
+	padding: 10px;
+	background: $background-dark;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 4px;
+	color: $text-primary;
+	font-size: 1rem;
+	margin-bottom: 2px;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+	border-color: $primary-blue;
+	outline: none;
+}
+.form-textarea {
+	min-height: 100px;
+	resize: vertical;
+}
+.form-hint {
+	color: $text-tertiary;
+	font-size: 0.98rem;
+	margin-bottom: 10px;
+	display: block;
+}
+.map-selection {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 16px;
+	margin-top: 16px;
+}
+.map-option {
+	background: $background-surface;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 6px;
+	padding: 16px 12px;
+	cursor: pointer;
+	transition: all 0.2s;
+	text-align: center;
+	box-shadow: 0 2px 8px rgba($primary-blue, 0.06);
+}
+.map-option:hover {
+	border-color: $primary-blue;
+}
+.map-option.selected {
+	border-color: $accent-cyan;
+	background: $background-dark;
+}
+.map-name {
+	color: $accent-cyan;
+	font-weight: 600;
+	margin-bottom: 6px;
+}
+.map-details {
+	color: $text-secondary;
+	font-size: 0.98rem;
+}
+.generation-progress {
+	display: none;
+	background: $background-panel;
+	border: 1.5px solid $accent-warning;
+	border-radius: 10px;
+	padding: 24px 32px;
+	margin-top: 24px;
+	box-shadow: 0 2px 12px rgba($primary-blue, 0.08);
+}
+.progress-title {
+	color: $accent-warning;
+	text-align: center;
+	font-size: 1.15rem;
+	margin-bottom: 16px;
+}
+.progress-bar {
+	width: 100%;
+	height: 20px;
+	background: $background-surface;
+	border-radius: 10px;
+	overflow: hidden;
+	margin: 12px 0;
+}
+.progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, $primary-blue, $accent-cyan);
+	width: 0%;
+	transition: width 0.3s ease;
+}
+.progress-text {
+	color: $accent-cyan;
+	text-align: center;
+	font-weight: 600;
+	font-size: 1.05rem;
+}
+.generate-button {
+	background: $primary-blue;
+	color: $background-dark;
+	border: none;
+	padding: 15px 30px;
+	font-size: 1.1rem;
+	font-weight: 700;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s;
+	width: 100%;
+	margin-top: 20px;
+	box-shadow: $glow-primary;
+}
+.generate-button:hover {
+	background: $accent-cyan;
+	color: $background-dark;
+	transform: scale(1.02);
+}
+.generate-button:disabled {
+	background: $background-surface;
+	color: $text-tertiary;
+	cursor: not-allowed;
+	transform: none;
+}
+// --- Map Studio Browse Page ---
+.maps-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 28px;
+	margin-bottom: 36px;
+}
+.map-card {
+	background: $background-panel;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 10px;
+	overflow: hidden;
+	transition: all 0.25s;
+	cursor: pointer;
+	box-shadow: 0 2px 12px rgba($primary-blue, 0.08);
+	display: flex;
+	flex-direction: column;
+}
+.map-card:hover {
+	border-color: $primary-blue;
+	box-shadow: $glow-primary;
+	transform: translateY(-4px) scale(1.03);
+}
+.map-header {
+	background: $background-surface;
+	padding: 18px 20px 12px 20px;
+	border-bottom: 1px solid $primary-blue-dark;
+}
+.map-name {
+	color: $primary-blue;
+	font-size: 1.15rem;
+	font-weight: 700;
+	margin: 0;
+}
+.map-meta {
+	color: $text-secondary;
+	font-size: 0.98rem;
+	margin: 6px 0 0 0;
+}
+.map-preview {
+	height: 150px;
+	background: $background-dark;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $text-tertiary;
+	font-size: 1.1rem;
+}
+.map-details {
+	padding: 18px 20px 10px 20px;
+	flex: 1;
+}
+.map-description {
+	color: $text-primary;
+	font-size: 1rem;
+	margin-bottom: 10px;
+	line-height: 1.4;
+}
+.map-stats {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.98rem;
+	color: $text-secondary;
+}
+.map-actions {
+	padding: 14px 20px 16px 20px;
+	background: $background-surface;
+	border-top: 1px solid $primary-blue-dark;
+	display: flex;
+	gap: 10px;
+}
+
+.filters-section {
+	background: $background-panel;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 10px;
+	padding: 24px 24px 18px 24px;
+	margin-bottom: 36px;
+}
+.filters-title {
+	color: $primary-blue;
+	font-size: 1.2rem;
+	margin-bottom: 18px;
+}
+.filters-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 18px;
+}
+.filter-group {
+	display: flex;
+	flex-direction: column;
+}
+.filter-label {
+	color: $text-secondary;
+	font-weight: 600;
+	margin-bottom: 5px;
+	font-size: 1rem;
+}
+.filter-select {
+	padding: 8px;
+	background: $background-surface;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 3px;
+	color: $text-primary;
+}
+
+.empty-state {
+	text-align: center;
+	padding: 50px 0;
+	color: $text-tertiary;
+}
+.empty-title {
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	color: $primary-blue;
+}
+.empty-description {
+	font-size: 1.1rem;
+	color: $text-secondary;
+	margin-bottom: 20px;
+}
+.pagination {
+	text-align: center;
+	margin-top: 30px;
+}
+// --- Studio Content Centering ---
+.studio-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 32px 24px;
+	width: 100%;
+}
+// --- Map Studio Single Column Layout ---
+.studio-main-container {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	background: $background-dark;
+	color: $text-primary;
+}
+// --- Map Studio Page Specific ---
+.studio-title {
+	color: $primary-blue;
+	font-size: 2rem;
+	font-weight: 700;
+	text-shadow: 0 0 10px $accent-cyan;
+	margin-bottom: 0.2em;
+}
+
+.studio-subtitle {
+	color: $text-secondary;
+	font-size: 1.1rem;
+	margin-bottom: 1.5em;
+}
+
+.stats-section {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 18px;
+	margin-bottom: 2.2em;
+}
+
+.stat-card {
+	background: $background-panel;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 8px;
+	padding: 1.2em 1.5em;
+	text-align: center;
+	box-shadow: 0 2px 12px rgba($primary-blue, 0.08);
+}
+.stat-value {
+	font-size: 2.1rem;
+	color: $accent-cyan;
+	font-weight: 700;
+	margin-bottom: 0.2em;
+}
+.stat-label {
+	font-size: 0.95rem;
+	color: $text-secondary;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.action-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 22px;
+	margin-bottom: 2.2em;
+}
+.action-card {
+	background: $background-surface;
+	border: 1.5px solid $primary-blue-dark;
+	border-radius: 10px;
+	padding: 1.5em 1.2em;
+	text-align: center;
+	transition: all 0.25s;
+	cursor: pointer;
+	box-shadow: 0 2px 12px rgba($primary-blue, 0.08);
+	&:hover {
+		border-color: $primary-blue;
+		box-shadow: $glow-primary;
+		transform: translateY(-4px) scale(1.03);
+	}
+}
+.action-icon {
+	font-size: 2.5rem;
+	margin-bottom: 0.7em;
+	display: block;
+	color: $accent-cyan;
+	text-shadow: 0 0 8px $primary-blue;
+}
+.action-title {
+	color: $primary-blue;
+	font-size: 1.15rem;
+	font-weight: 600;
+	margin-bottom: 0.5em;
+}
+.action-description {
+	color: $text-secondary;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.recent-activity {
+	background: $background-panel;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 7px;
+	padding: 1.2em 1.5em;
+	max-height: 320px;
+	overflow-y: auto;
+	margin-bottom: 2em;
+}
+.activity-title {
+	color: $primary-blue;
+	font-size: 1.15rem;
+	margin-bottom: 1em;
+	border-bottom: 1px solid $primary-blue-dark;
+	padding-bottom: 0.5em;
+}
+.activity-item {
+	padding: 0.7em 0;
+	border-bottom: 1px solid $background-surface;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.activity-info {
+	flex: 1;
+}
+.activity-name {
+	color: $accent-cyan;
+	font-weight: 600;
+}
+.activity-details {
+	color: $text-secondary;
+	font-size: 0.98rem;
+}
+.activity-time {
+	color: $text-tertiary;
+	font-size: 0.93rem;
+}
+
+@import '../_variables';
+
+.admin-main-container {
+	display: grid;
+	grid-template-columns: 250px 1fr 300px;
+	grid-template-rows: 80px 1fr;
+	height: 100vh;
+	background: $background-dark;
+	color: $text-primary;
+}
+
+.admin-header {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	background: $background-surface;
+	padding: 18px 24px 18px 24px;
+	border-bottom: 2px solid $primary-blue;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	h1 {
+		color: $primary-blue;
+		font-size: 1.7rem;
+		font-weight: 700;
+		margin: 0 0 6px 0;
+		letter-spacing: 0.04em;
+	}
+	.admin-header-info {
+		color: $text-secondary;
+		font-size: 1rem;
+		.admin-dashboard-link {
+			color: $accent-cyan;
+			text-decoration: none;
+			margin-left: 1.5rem;
+			&:hover { color: $primary-blue; text-shadow: $glow-accent; }
+		}
+	}
+}
+
+.admin-sidebar {
+	background: $background-panel;
+	border-right: 2px solid $primary-blue-dark;
+	padding: 18px 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	grid-column: 1;
+	grid-row: 2;
+}
+
+.admin-tool-section {
+	margin-bottom: 1.5rem;
+	h3 {
+		color: $primary-blue;
+		font-size: 1.1rem;
+		margin-bottom: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.03em;
+	}
+}
+
+.admin-tool-button {
+	display: block;
+	width: 100%;
+	text-align: center;
+	text-decoration: none;
+	color: $primary-blue;
+	background: $background-surface;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 6px;
+	margin-bottom: 0.5rem;
+	padding: 0.7rem 1.4rem;
+	font-weight: 600;
+	font-size: 1rem;
+	transition: all 0.2s;
+	&:hover {
+		background: $primary-blue;
+		color: $background-dark;
+		box-shadow: $glow-primary;
+	}
+}
+
+.admin-stats {
+	font-size: 0.95rem;
+	color: $text-secondary;
+	.admin-stat-value {
+		float: right;
+		font-weight: 600;
+		&.in-progress { color: $accent-cyan; }
+		&.completed { color: $accent-success; }
+		&.failed { color: $accent-danger; }
+	}
+	div { margin: 5px 0; }
+}
+
+.admin-content {
+	background: $background-dark;
+	padding: 24px 32px;
+	grid-column: 2;
+	grid-row: 2;
+	height: 100%;
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.admin-section {
+	margin-bottom: 2.5rem;
+	h3 {
+		color: $primary-blue;
+		font-size: 1.2rem;
+		margin-bottom: 1rem;
+		&.failed { color: $accent-danger; }
+	}
+}
+
+.admin-mission-card {
+	background: $background-panel;
+	border: 1px solid $primary-blue-dark;
+	border-radius: 8px;
+	margin: 10px 0;
+	padding: 1rem 1.2rem;
+	cursor: pointer;
+	transition: box-shadow 0.2s, border 0.2s;
+	&:hover {
+		border: 1.5px solid $primary-blue;
+		box-shadow: $glow-primary;
+	}
+	&.active h4 { color: $accent-cyan; }
+	&.completed .mission-id { color: $accent-success; font-weight: bold; }
+	&.failed .mission-id { color: $accent-danger; font-weight: bold; }
+	&.failed .mission-status { color: $accent-danger; }
+	h4 {
+		font-size: 1.1rem;
+		margin-bottom: 0.7rem;
+		color: $primary-blue;
+		font-weight: 600;
+	}
+	.admin-mission-details {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+		margin-bottom: 10px;
+		.data-label { color: $text-secondary; font-size: 0.95em; }
+		.data-value { color: $text-primary; font-size: 0.95em; }
+	}
+	.admin-progress-bar {
+		background: $background-surface;
+		border-radius: 4px;
+		height: 8px;
+		width: 100%;
+		margin-top: 8px;
+		.admin-progress-fill {
+			background: $accent-cyan;
+			height: 100%;
+			border-radius: 4px;
+			transition: width 0.3s;
+		}
+	}
+	.mission-id { font-size: 1.05em; }
+	.mission-date { float: right; color: $text-secondary; font-size: 0.95em; }
+	.mission-status { float: right; color: $accent-danger; font-size: 0.95em; }
+}
+
+.admin-empty {
+	color: $text-secondary;
+	margin-top: 10px;
+}
+
+.admin-activity-log {
+	background: $background-panel;
+	border-left: 2px solid $primary-blue-dark;
+	padding: 18px 12px;
+	overflow-y: auto;
+}
+
+.admin-activity-list {
+	max-height: 400px;
+	overflow-y: auto;
+	font-size: 0.95rem;
+	color: $text-primary;
+	font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+.admin-activity-item {
+	margin: 5px 0;
+	padding: 8px 10px;
+	background: $background-surface;
+	border-left: 2px solid $primary-blue;
+	border-radius: 4px;
+	.activity-time { color: $text-secondary; font-size: 0.95em; }
+	.activity-id { color: $accent-cyan; font-size: 1em; }
+	.activity-status { color: $accent-success; font-size: 0.95em; }
+}
+
+@media (max-width: 1200px) {
+	.admin-main-container {
+		grid-template-columns: 180px 1fr 220px;
+	}
+}
+@media (max-width: 900px) {
+	.admin-main-container {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto auto 1fr auto;
+	}
+	.admin-sidebar, .admin-activity-log {
+		border: none;
+		padding: 10px 6px;
+	}
+	.admin-content {
+		padding: 12px 6px;
+	}
+}

@@ -1,0 +1,38 @@
+[alio]
+name = "Alio Tileset"
+version = "1.0"
+
+; Include all relevant .spec files for the Alio tileset
+include "terrain.spec"
+include "burrowtubes.spec"
+include "fortresses.spec"
+include "hills.spec"
+include "roads.spec"
+include "tunnels.spec"
+
+; Add additional includes or configuration as needed
+
+[files]
+file = "terrain.png"
+file = "tunnels.png"
+file = "burrowtubes.png"
+file = "fortresses.png"
+file = "hills.png"
+file = "roads.png"
+file = "water.png"
+file = "forest.png"
+file = "mountains.png"
+file = "plains.png"
+file = "desert.png"
+file = "swamp.png"
+file = "arctic.png"
+file = "ocean.png"
+file = "grassland.png"
+file = "jungle.png"
+file = "tundra.png"
+file = "glowing_rocks.png"
+file = "thermal_vent.png"
+file = "alien_mine.png"
+file = "huge_plant.png"
+file = "alien_forest1.png"
+file = "radiating_rocks1.png"

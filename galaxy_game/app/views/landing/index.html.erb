@@ -1,0 +1,130 @@
+<div class="landing-page">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <%= image_tag 'GalaxyGame.png', alt: 'Galaxy Game', class: 'logo-large' %>
+      <h1 class="hero-title">Galaxy Game</h1>
+      <p class="hero-subtitle">
+        Help guide our AI Manager and influence the expansion of humanity across the universe.
+      </p>
+      <p class="hero-description">
+        Strategic decisions. Emergent gameplay. Cooperative expansion.
+      </p>
+      <div class="hero-actions">
+        <div class="auth-buttons">
+          <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary btn-large' %>
+          <%= link_to 'Create Account', new_user_registration_path, class: 'btn btn-secondary btn-large' %>
+        </div>
+        <%= link_to 'Learn More', about_path, class: 'btn btn-text' %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Status Section -->
+  <div class="status-section">
+    <div class="container">
+      <h2 class="section-title">Galaxy Status</h2>
+      <div class="status-grid">
+        <div class="status-card">
+          <div class="card-icon">🤖</div>
+          <h3>AI Manager</h3>
+          <div class="stat-large"><%= @ai_decisions_today %></div>
+          <div class="stat-label">Decisions Today</div>
+          <div class="stat-detail">
+            <%= @settlements_count %> Active Settlements
+          </div>
+        </div>
+        <div class="status-card">
+          <div class="card-icon">🌌</div>
+          <h3>Star Systems</h3>
+          <div class="stat-large"><%= @systems_count %></div>
+          <div class="stat-label">Systems Discovered</div>
+          <div class="stat-detail">
+            <%= @wormholes_count %> Wormhole Connections
+          </div>
+        </div>
+        <div class="status-card">
+          <div class="card-icon">💰</div>
+          <h3>Economy</h3>
+          <div class="stat-large"><%= number_to_currency(@gcc_volume, unit: 'GCC') %></div>
+          <div class="stat-label">Daily Trade Volume</div>
+          <div class="stat-detail">
+            <%= @active_missions_count %> Active Missions
+          </div>
+        </div>
+        <div class="status-card">
+          <div class="card-icon">🚀</div>
+          <h3>Expansion</h3>
+          <div class="stat-large"><%= @expansion_rate %>%</div>
+          <div class="stat-label">Growth Rate</div>
+          <div class="stat-detail">
+            <%= @prize_worlds_count %> Prize Worlds Found
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Systems Section -->
+  <div class="systems-section">
+    <div class="container">
+      <h2 class="section-title">Active Star Systems</h2>
+      <div class="systems-grid">
+        <% @active_systems.each do |system| %>
+          <div class="system-card">
+            <h3 class="system-name"><%= system.name %></h3>
+            <div class="system-identifier"><%= system.identifier %></div>
+            <div class="system-stats">
+              <div class="stat-item">
+                <span class="stat-label">Settlements:</span>
+                <span class="stat-value"><%= system.settlements.count %></span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Bodies:</span>
+                <span class="stat-value"><%= system.celestial_bodies.count %></span>
+              </div>
+              <% if system.wormholes.any? %>
+                <div class="stat-item stat-highlight">
+                  <span class="stat-label">🌀 Wormhole Hub</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Section -->
+  <div class="activity-section">
+    <div class="container">
+      <h2 class="section-title">Recent AI Activity</h2>
+      <div class="activity-feed">
+        <% @recent_activities.each do |activity| %>
+          <div class="activity-item">
+            <div class="activity-icon <%= activity.type %>">
+              <%= activity.type == 'emergency' ? '🚨' : activity.type == 'colony' ? '🏆' : '🛰️' %>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title"><%= activity.title %></div>
+              <div class="activity-description"><%= activity.description %></div>
+              <div class="activity-time"><%= time_ago_in_words(activity.created_at) %> ago</div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action -->
+  <div class="cta-section">
+    <div class="container">
+      <h2>Ready to Shape the Galaxy?</h2>
+      <p>Join the autonomous expansion. Influence strategic decisions. Build the future.</p>
+      <div class="cta-actions">
+        <%= link_to 'Create Account', '#', class: 'btn btn-primary btn-xl' %>
+        <%= link_to 'Watch Demo', '#', class: 'btn btn-secondary btn-xl' %>
+      </div>
+    </div>
+  </div>
+</div>

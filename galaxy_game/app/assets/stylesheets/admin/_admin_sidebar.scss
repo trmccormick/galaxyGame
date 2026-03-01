@@ -1,0 +1,99 @@
+// Admin Sidebar Styles (shared for all admin left navs)
+
+// --- Style A: Neon Cyan Modern (from monitor)
+.admin-sidebar-cyan {
+  background: #1a1a1a;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 2px solid #00d4ff;
+}
+
+.admin-sidebar-cyan .admin-tool-section {
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 10px;
+  border-radius: 6px;
+  background: #111;
+}
+
+.admin-sidebar-cyan .admin-tool-section h3 {
+  color: #00d4ff;
+  margin-bottom: 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+}
+
+.admin-sidebar-cyan .admin-tool-button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  margin: 4px 0;
+  background: #1a1a2e;
+  color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.admin-sidebar-cyan .admin-tool-button:hover,
+.admin-sidebar-cyan .admin-tool-button.active {
+  background: #00d4ff;
+  color: #1a1a2e;
+  border-color: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+// --- Style B: Classic Blue (from index/dashboard)
+.admin-sidebar-blue {
+  background: #1a1a1a;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 2px solid #00ccff;
+}
+
+.admin-sidebar-blue .admin-tool-section {
+  margin-bottom: 20px;
+  border: 1px solid #00ccff;
+  padding: 10px;
+  border-radius: 6px;
+  background: #181f2a;
+}
+
+.admin-sidebar-blue .admin-tool-section h3 {
+  color: #00ccff;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+}
+
+.admin-sidebar-blue .admin-tool-button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  margin: 4px 0;
+  background: #181f2a;
+  color: #00ccff;
+  border: 1px solid #00ccff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.admin-sidebar-blue .admin-tool-button:hover,
+.admin-sidebar-blue .admin-tool-button.active {
+  background: #00ccff;
+  color: #181f2a;
+  border-color: #00ccff;
+  box-shadow: 0 0 8px rgba(0, 204, 255, 0.4);
+}

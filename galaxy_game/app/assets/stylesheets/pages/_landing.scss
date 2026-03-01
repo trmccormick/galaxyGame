@@ -1,0 +1,358 @@
+  // About page list styling
+  .about-list {
+    margin: 1.25rem 0 1.75rem 0;
+    padding-left: 1.5rem;
+    list-style: disc inside;
+    color: $text-secondary;
+    font-size: $font-size-base;
+    line-height: 1.7;
+  }
+
+  .about-list li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+  }
+  .hero-actions {
+    margin-top: $spacing-md;
+  }
+// Auth button styles for hero section
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: $primary-blue;
+  color: $background-dark;
+  box-shadow: 0 0 10px $primary-blue-glow;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 2rem;
+  font-size: $font-size-large;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  
+  &:hover {
+    background: lighten($primary-blue, 10%);
+    color: $background-dark;
+    box-shadow: 0 0 20px $primary-blue-glow;
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  color: $primary-blue;
+  border: 2px solid $primary-blue;
+  border-radius: 6px;
+  padding: 0.75rem 2rem;
+  font-size: $font-size-large;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  
+  &:hover {
+    background: $primary-blue;
+    color: $background-dark;
+    box-shadow: 0 0 20px $primary-blue-glow;
+  }
+}
+
+.btn-text {
+  background: transparent;
+  color: $text-secondary;
+  padding: 0.5rem 1rem;
+  font-size: $font-size-base;
+  border: none;
+  box-shadow: none;
+  text-decoration: none;
+  display: inline-block;
+  
+  &:hover {
+    color: $primary-blue;
+    text-decoration: underline;
+  }
+}
+
+.landing-page {
+  background: $background-dark;
+  color: $text-primary;
+  min-height: 100vh;
+  
+  .hero-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: $spacing-xl 2rem $spacing-lg 2rem;
+    background: 
+      linear-gradient(180deg, rgba(10, 10, 10, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%),
+      image-url('hero-banner.png') center center / cover no-repeat;
+    max-width: 900px;
+    margin: 0 auto;
+    .logo-large {
+      display: none;
+    }
+  }
+
+  .hero-content {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .status-section, .systems-section, .activity-section, .cta-section {
+    padding: $spacing-xl 1rem;
+    
+    .section-title {
+      color: $primary-blue;
+      text-shadow: $glow-primary;
+      font-size: $font-size-h2;  // 28px now
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .hero-subtitle {
+       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+       color: white;  // Or keep cyan
+    }
+  }
+  
+  .status-grid, .systems-grid {
+    display: flex;
+    gap: $spacing-lg;
+    flex-wrap: wrap;
+    margin-top: $spacing-md;
+    justify-content: center;
+  }
+  
+  .status-card {
+    background: $background-panel;
+    border: 1px solid $primary-blue;
+    border-radius: 8px;
+    box-shadow: $glow-primary;
+    min-width: 220px;
+    flex: 1 1 220px;
+    max-width: 280px;  // ADD MAX WIDTH
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: $glow-strong;
+    }
+    
+    h3 {
+      color: $text-primary;
+      font-size: $font-size-h3;
+      margin-bottom: 0.75rem;
+    }
+  }
+  
+  .system-card {
+    background: $background-panel;
+    border: 1px solid rgba($primary-blue, 0.5);
+    border-radius: 8px;
+    min-width: 220px;
+    flex: 1 1 220px;
+    max-width: 300px;  // ADD MAX WIDTH
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: $primary-blue;
+      box-shadow: $glow-primary;
+    }
+  }
+  
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: $primary-blue;
+  }
+  
+  .stat-large {
+    font-size: 1.25rem;  // REDUCED from 1.75rem (28px → 20px)
+    font-weight: 700;
+    color: $primary-blue;
+    margin-bottom: $spacing-xs;
+    text-shadow: $glow-primary;
+    
+    // Overflow handling:
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.2;
+  }
+  
+  .stat-label {
+    font-size: $font-size-small;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: $spacing-xs;
+  }
+  
+  .stat-detail {
+    font-size: $font-size-small;
+    color: $text-dim;
+  }
+  
+  .system-name {
+    font-size: $font-size-large;
+    color: $primary-blue;
+    margin-bottom: 0.5rem;
+  }
+  
+  .system-identifier {
+    font-size: $font-size-small;
+    color: $text-dim;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 0.75rem;
+  }
+  
+  .system-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: $font-size-small;
+    
+    .stat-label {
+      color: $text-secondary;
+    }
+    
+    .stat-value {
+      color: $primary-blue;
+      font-weight: 600;
+    }
+  }
+  
+  .activity-feed {
+    margin-top: $spacing-md;
+    max-width: 1000px;  // INCREASED from 800px
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1rem;    // ADD: side padding
+    
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: $spacing-md;
+        padding: 1rem;
+        background: $background-panel;
+        border: 1px solid rgba($primary-blue, 0.3);
+        border-radius: 6px;
+        
+        &:hover {
+        border-color: $primary-blue;
+        }
+        
+        .activity-icon { 
+        font-size: 1.5rem;
+        margin-right: $spacing-md;
+        flex-shrink: 0;
+        color: $primary-blue;
+        order: 0;  // ADD: ensures icon stays on left
+        }
+        
+        .activity-content {
+        flex: 1;   // ADD: content takes remaining space
+        order: 1;  // ADD: content appears after icon
+        }
+        
+        .activity-title { 
+        font-weight: 700; 
+        color: $primary-blue; 
+        margin-bottom: 0.25rem;
+        }
+        
+        .activity-description { 
+        color: $text-secondary; 
+        font-size: $font-size-base;
+        margin-bottom: 0.25rem;
+        }
+        
+        .activity-time { 
+        color: $text-dim; 
+        font-size: $font-size-small;
+        }
+    }
+  }
+  
+  .cta-section {
+    text-align: center;
+    
+    h2 {
+      color: $primary-blue;
+      font-size: $font-size-h2;
+      margin-bottom: $spacing-md;
+    }
+    
+    p {
+      color: $text-secondary;
+      font-size: $font-size-base;
+      margin-bottom: $spacing-lg;
+    }
+    
+    .cta-actions { 
+      margin-top: $spacing-md; 
+      display: flex;
+      gap: $spacing-md;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: $breakpoint-mobile) {
+  .landing-page {
+    .hero-title {
+      font-size: 3rem;  // Bigger on banner
+      color: $primary-blue;
+      text-shadow: 
+        0 0 20px rgba(0, 212, 255, 0.8),
+        0 4px 20px rgba(0, 0, 0, 0.9);  // Strong shadow for readability
+    }
+    
+    .logo-large {
+      height: 60px;
+    }
+    
+    .status-grid,
+    .systems-grid {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .status-card,
+    .system-card {
+      max-width: 100%;
+    }
+    
+    .stat-large {
+      font-size: 1.5rem;  // 24px on mobile
+    }
+    
+    .auth-buttons {
+      flex-direction: column;
+      width: 100%;
+      
+      .btn {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  }
+}

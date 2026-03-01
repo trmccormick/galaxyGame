@@ -1,0 +1,7 @@
+.nav-link {
+  color: $primary-blue;
+  font-weight: 600;
+  margin-right: $spacing-md;
+  text-decoration: none;
+  &:hover { color: $accent-cyan; text-shadow: $glow-accent; }
+}

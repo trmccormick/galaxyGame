@@ -1,0 +1,162 @@
+/* Generic Admin Card/Grid Styles (Neon Blue Theme) */
+
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.admin-card {
+  background: #1a1a1a;
+  border: 1px solid #00ccff;
+  padding: 20px;
+  border-radius: 5px;
+  transition: all 0.2s;
+}
+
+.admin-card:hover {
+  border-color: #00ccff;
+  background: #222;
+}
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.admin-card-title {
+  color: #00ccff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.admin-card-type {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.admin-card-type.star {
+  background: #ffd700;
+  color: #000;
+}
+
+.admin-card-type.brown_dwarf {
+  background: #daa520;
+  color: #000;
+}
+
+.admin-card-type.terrestrial_planet,
+.admin-card-type.carbon_planet,
+.admin-card-type.lava_world,
+.admin-card-type.super_earth,
+.admin-card-type.hycean_planet,
+.admin-card-type.ocean_planet,
+.admin-card-type.water_world {
+  background: #00ccff;
+  color: #000;
+}
+
+.admin-card-type.gas_giant,
+.admin-card-type.hot_jupiter {
+  background: #f0f;
+  color: #fff;
+}
+
+.admin-card-type.ice_giant {
+  background: #00ccff;
+  color: #000;
+}
+
+.admin-card-type.moon,
+.admin-card-type.large_moon,
+.admin-card-type.small_moon,
+.admin-card-type.ice_moon {
+  background: #ff0;
+  color: #000;
+}
+
+.admin-card-type.asteroid,
+.admin-card-type.comet,
+.admin-card-type.dwarf_planet,
+.admin-card-type.kuiper_belt_object {
+  background: #f00;
+  color: #fff;
+}
+
+.admin-card-type.alien_life_form {
+  background: #f0f;
+  color: #fff;
+}
+
+.admin-card-type.material {
+  background: #00ccff;
+  color: #000;
+}
+
+.admin-card-type.unknown {
+  background: #666;
+  color: #fff;
+}
+
+.admin-card-description {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.admin-card-details {
+  background: #0a0a0a;
+  padding: 10px;
+  border-radius: 3px;
+  margin-bottom: 15px;
+}
+
+.admin-card-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.admin-card-detail-label {
+  color: #888;
+}
+
+.admin-card-detail-value {
+  color: #00ccff;
+  font-weight: bold;
+}
+
+.admin-card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-action-btn {
+  padding: 8px 16px;
+  background: #222;
+  border: 1px solid #00ccff;
+  color: #00ccff;
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 12px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.admin-action-btn:hover {
+  background: #00ccff;
+  color: #000;
+}
+
+.admin-action-btn.primary {
+  background: #00ccff;
+  color: #000;
+}

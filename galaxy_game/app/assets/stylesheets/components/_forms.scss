@@ -1,0 +1,15 @@
+input, select, textarea {
+  background: $background-surface;
+  color: $text-primary;
+  border: 1px solid $primary-blue-dark;
+  border-radius: 4px;
+  padding: $spacing-sm;
+  margin-bottom: $spacing-sm;
+  font-size: 1rem;
+}
+label {
+  color: $text-secondary;
+  font-size: 1rem;
+  margin-bottom: $spacing-xs;
+  display: block;
+}

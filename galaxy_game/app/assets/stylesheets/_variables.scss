@@ -1,0 +1,49 @@
+// Font sizes - REDUCED TO FIT
+$font-size-hero: 2.5rem;          // 40px - Hero title (REDUCED from 3rem)
+$font-size-stat-large: 1.75rem;   // 28px - Stat numbers (REDUCED from 2.5rem)
+$font-size-h2: 1.75rem;           // 28px - Section titles (REDUCED from 2rem)
+$font-size-h3: 1.25rem;           // 20px - Card titles
+$font-size-large: 1.125rem;       // 18px - Larger text (REDUCED from 1.25rem)
+$font-size-base: 1rem;            // 16px - Body text
+$font-size-small: 0.875rem;       // 14px - Small text
+
+// Neon Blue Theme (from GalaxyGame.png logo)
+$primary-blue: #00d4ff;
+$primary-blue-dark: #0099cc;
+$primary-blue-glow: rgba(0, 212, 255, 0.5);
+
+// Background colors (dark space theme)
+$background-dark: #0a0a0a;
+$background-surface: #1a1a2e;
+$background-panel: #16213e;
+
+// Text colors
+$text-primary: #e0e0e0;
+$text-secondary: #8892b0;
+$text-tertiary: #49587a;
+$text-dim: #64748b;
+$text-highlight: $primary-blue;
+
+// Accent colors
+$accent-cyan: #00fff9;
+$accent-purple: #9d4edd;
+$accent-warning: #ffd60a;
+$accent-danger: #ff006e;
+$accent-success: #06ffa5;
+
+// Effects
+$glow-primary: 0 0 10px $primary-blue-glow;
+$glow-strong: 0 0 20px $primary-blue;
+$glow-accent: 0 0 15px rgba(0, 255, 249, 0.4);
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+
+// Breakpoints
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1440px;

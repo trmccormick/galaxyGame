@@ -1,0 +1,11 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: $spacing-md;
+  @include neon-text;
+}

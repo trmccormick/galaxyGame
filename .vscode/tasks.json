@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run SuperMarsSettlementService RSpec",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/super_mars_settlement_spec.rb",
+			"group": "test"
+		},
+		{
+			"label": "Run GasHarvestingSpec for Task 10",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/gas_harvesting_spec.rb",
+			"group": "test"
+		},
+		{
+			"label": "Run CyclerHitchhikerSpec for Task 10",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/cycler_hitchhiker_spec.rb",
+			"group": "test"
+		}
+	]
+}

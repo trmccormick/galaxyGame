@@ -1,0 +1,52 @@
+{
+  "name": "gemini_space_colonization_tileset",
+  "description": "Sprite sheet for space colonization game, 5x8 grid, 32x32 tiles.",
+  "tile_size": 32,
+  "sheets": {
+    "base": {
+      "file": "Gemini_Generated_Image_l9892hl9892hl989.png",
+      "tiles": {
+        "smooth_gray_regolith": { "x": 0, "y": 0 },
+        "rough_gray_regolith": { "x": 32, "y": 0 },
+        "dark_basalt_flat": { "x": 64, "y": 0 },
+        "impact_crater_small": { "x": 96, "y": 0 },
+        "impact_crater_large": { "x": 128, "y": 0 },
+        "rocky_outcrop": { "x": 160, "y": 0 },
+        "boulder_field": { "x": 192, "y": 0 },
+        "dust_plains": { "x": 224, "y": 0 },
+        "red_dust_flat": { "x": 0, "y": 32 },
+        "red_dust_rocky": { "x": 32, "y": 32 },
+        "red_dunes": { "x": 64, "y": 32 },
+        "dark_basalt_fractured": { "x": 96, "y": 32 },
+        "iron_oxide_deposits": { "x": 128, "y": 32 },
+        "crater_rim": { "x": 160, "y": 32 },
+        "ancient_riverbed": { "x": 192, "y": 32 },
+        "wind_swept_dust_plains": { "x": 224, "y": 32 },
+        "smooth_ice_sheet": { "x": 0, "y": 64 },
+        "cracked_ice": { "x": 32, "y": 64 },
+        "glacier_texture": { "x": 64, "y": 64 },
+        "pack_ice": { "x": 96, "y": 64 },
+        "ice_with_rock_exposure": { "x": 128, "y": 64 },
+        "frozen_methane": { "x": 160, "y": 64 },
+        "nitrogen_ice": { "x": 192, "y": 64 },
+        "frost_covered_rock": { "x": 224, "y": 64 },
+        "dark_basalt_cooled_flow": { "x": 0, "y": 96 },
+        "lava_cracks": { "x": 32, "y": 96 },
+        "cooled_lava_flow": { "x": 64, "y": 96 },
+        "volcanic_ash": { "x": 96, "y": 96 },
+        "cinder_field": { "x": 128, "y": 96 },
+        "active_lava": { "x": 160, "y": 96 },
+        "geothermal_vents": { "x": 192, "y": 96 },
+        "scorched_rock": { "x": 224, "y": 96 },
+        "grassland": { "x": 0, "y": 128 },
+        "forest": { "x": 32, "y": 128 },
+        "desert_sand": { "x": 64, "y": 128 },
+        "tundra": { "x": 96, "y": 128 },
+        "savanna": { "x": 128, "y": 128 },
+        "tropical_jungle": { "x": 160, "y": 128 },
+        "agricultural_fields": { "x": 192, "y": 128 },
+        "rocky_plains": { "x": 224, "y": 128 }
+      }
+    }
+  }
+}

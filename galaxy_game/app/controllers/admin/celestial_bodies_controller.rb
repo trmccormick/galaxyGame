@@ -6,7 +6,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:monitor, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis, :generate_terrain]
+    before_action :set_celestial_body, only: [:planetary, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis, :generate_terrain]
 
     def select_maps_for_analysis
       @available_maps = find_available_maps || []
@@ -54,9 +54,9 @@ module Admin
       minor_categories.sum { |cat| @bodies_by_type[cat]&.count || 0 }
     end
 
-    # GET /admin/celestial_bodies/:id/monitor
+    # GET /admin/celestial_bodies/:id/planetary
     # Main monitoring interface with three-panel layout
-    def monitor
+    def planetary
       @geological_features = load_geological_features
       @civilization_features = load_civilization_features
       @ai_missions = load_ai_missions

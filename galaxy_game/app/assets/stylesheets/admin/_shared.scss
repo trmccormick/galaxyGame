@@ -1,0 +1,60 @@
+// Shared Admin Styles (used by both monitor and dashboard)
+
+// Fonts & Base
+.admin-font {
+  font-family: 'Courier New', monospace;
+}
+
+// Colors
+$monitor-blue: #0066cc;
+$monitor-cyan: #00ccff;
+$monitor-bg: #1a1a1a;
+$monitor-dark: #0a0a0a;
+
+// Data rows (used in monitor data panel AND dashboard sections)
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin: 3px 0;
+  padding: 2px 0;
+}
+
+.data-label { color: #888; }
+
+.data-value {
+  color: #0066cc;
+  &.warning  { color: #ffaa00; }
+  &.critical { color: #f00; }
+  &.good     { color: #0066cc; }
+  &.neutral  { color: #888; }
+}
+
+// Status colors (used everywhere)
+.text-success { color: #00cc44; }
+.text-danger  { color: #ff0044; }
+.text-warning { color: #ffaa00; }
+.text-accent  { color: #00ccff; }
+
+// Progress bars (used in monitor AND missions)
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #222;
+  border: 1px solid #333;
+  margin: 5px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0066cc, #00ccff);
+  transition: width 0.3s;
+}
+
+// Scrollbars
+::-webkit-scrollbar       { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #1a1a1a; }
+::-webkit-scrollbar-thumb { background: #0066cc; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #00ccff; }

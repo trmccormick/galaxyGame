@@ -1,0 +1,4 @@
+/* Simple CSS Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: $background-dark; color: $text-primary; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; }
+a { color: $primary-blue; text-decoration: none; }

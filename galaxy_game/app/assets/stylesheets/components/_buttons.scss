@@ -1,0 +1,21 @@
+.btn {
+  padding: $spacing-sm $spacing-lg;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  
+  &.btn-large { 
+    font-size: $font-size-large;
+    padding: $spacing-md $spacing-xl; 
+  }
+  
+  &.btn-xl { 
+    font-size: $font-size-large;
+    padding: $spacing-lg $spacing-xl; 
+  }
+}
