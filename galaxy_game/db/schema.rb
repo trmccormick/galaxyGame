@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_02_18_235549) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_02_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -59,6 +59,20 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_18_235549) do
     t.index ["operational_data"], name: "index_adapted_features_on_operational_data", using: :gin
     t.index ["parent_feature_id"], name: "index_adapted_features_on_parent_feature_id"
     t.index ["type"], name: "index_adapted_features_on_type"
+  end
+
+  create_table "ai_decision_logs", force: :cascade do |t|
+    t.bigint "celestial_body_id", null: false
+    t.string "location_context", null: false
+    t.string "decision_type", null: false
+    t.text "reasoning", null: false
+    t.text "constraints"
+    t.text "outcome"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["celestial_body_id", "location_context"], name: "idx_aidlog_body_loc"
+    t.index ["celestial_body_id"], name: "index_ai_decision_logs_on_celestial_body_id"
   end
 
   create_table "atmospheres", force: :cascade do |t|
@@ -1553,6 +1567,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_02_18_235549) do
   add_foreign_key "accounts", "currencies"
   add_foreign_key "adapted_features", "adapted_features", column: "parent_feature_id"
   add_foreign_key "adapted_features", "celestial_bodies"
+  add_foreign_key "ai_decision_logs", "celestial_bodies"
   add_foreign_key "atmospheres", "base_crafts", column: "craft_id"
   add_foreign_key "atmospheres", "celestial_bodies"
   add_foreign_key "base_crafts", "celestial_bodies", column: "orbiting_celestial_body_id"
