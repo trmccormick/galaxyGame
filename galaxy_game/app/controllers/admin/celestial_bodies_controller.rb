@@ -6,7 +6,7 @@ module Admin
   # Admin controller for celestial body monitoring and testing
   # Provides AI Manager testing interface with SimEarth aesthetic
   class CelestialBodiesController < ApplicationController
-    before_action :set_celestial_body, only: [:planetary, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis, :generate_terrain]
+    before_action :set_celestial_body, only: [:monitor, :planetary, :sphere_data, :mission_log, :run_ai_test, :edit, :update, :import_freeciv_for_body, :import_civ4_for_body, :generate_earth_map, :surface, :select_maps_for_analysis, :generate_terrain]
 
     def select_maps_for_analysis
       @available_maps = find_available_maps || []
@@ -54,35 +54,15 @@ module Admin
       minor_categories.sum { |cat| @bodies_by_type[cat]&.count || 0 }
     end
 
-    # GET /admin/celestial_bodies/:id/planetary
-    # Main monitoring interface with three-panel layout
-    def planetary
-      @geological_features = load_geological_features
-      @civilization_features = load_civilization_features
-      @ai_missions = load_ai_missions
-      @sphere_summary = build_sphere_summary
-
-      # Assign normalized sphere data for view panels
-      @atmosphere_data = atmosphere_data
-      @hydrosphere_data = hydrosphere_data
-      @geosphere_data = geosphere_data
-      @biosphere_data = biosphere_data
+    # GET /admin/celestial_bodies/:id/monitor
+    # Planetary monitor dashboard — entry point for monitor_admin_celestial_body_path
+    def monitor
     end
 
     # GET /admin/celestial_bodies/:id/surface
-    # Surface view with tileset-based planetary mapping
+    # Surface view with biome tileset rendering
     def surface
-      @geological_features = load_geological_features
-      @ai_missions = load_ai_missions
-      @sphere_summary = build_sphere_summary
-      @tileset_name = params[:tileset] || 'alio'  # Changed default to Alio
-      
-      # NEW: Load Alio service for body-specific tile config
-      if @tileset_name == 'alio'
-        @alio_service = Tileset::AlioTilesetService.new
-        @alio_service.load
-        @alio_tile_config = @alio_service.tiles_for_body(@celestial_body.name)
-      end
+      @tileset_name = 'galaxy_game'
     end
 
     # GET /admin/celestial_bodies/:id/sphere_data

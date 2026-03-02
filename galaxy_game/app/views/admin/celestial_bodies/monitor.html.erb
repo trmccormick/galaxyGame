@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+    <title>Monitor — <%= @celestial_body.name %></title>
+    <%= stylesheet_link_tag 'admin/monitor', media: 'all' %>
+</head>
+<body style="background:#0a0e1a; color:#c0cfe8; font-family:'Courier New',monospace; margin:0;">
+
+    <div class="admin-main-container" style="display:grid; grid-template-rows:auto 1fr auto; min-height:100vh; padding:1.5rem 2rem; gap:1.5rem; max-width:1200px; margin:0 auto;">
+
+        <%# ── Header ──────────────────────────────────────────────── %>
+        <header style="border-bottom:1px solid #223; padding-bottom:1rem;">
+            <h1 style="color:#00d4ff; font-size:1.4rem; margin:0 0 0.4rem;">
+                🖥️ <%= @celestial_body.name %> — MONITOR
+            </h1>
+            <div style="color:#6a8aaa; font-size:0.85rem; display:flex; gap:2rem; flex-wrap:wrap;">
+                <span>Type: <%= @celestial_body.type&.demodulize || 'Unknown' %></span>
+                <% if @celestial_body.radius %>
+                    <span>Radius: <%= number_to_human(@celestial_body.radius, precision: 3) %> m</span>
+                <% end %>
+                <% if @celestial_body.gravity %>
+                    <span>Gravity: <%= number_with_precision(@celestial_body.gravity, precision: 3) %>g</span>
+                <% end %>
+                <% if @celestial_body.surface_temperature %>
+                    <span>Temperature: <%= number_with_precision(@celestial_body.surface_temperature, precision: 1) %> K</span>
+                <% end %>
+            </div>
+        </header>
+
+        <%# ── Main panel ──────────────────────────────────────────── %>
+        <main style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem;">
+
+            <%# Navigation card %>
+            <div style="background:#101c2c; border:1px solid #223; border-radius:6px; padding:1.25rem;">
+                <h3 style="color:#00d4ff; font-size:0.9rem; margin:0 0 1rem; text-transform:uppercase; letter-spacing:.08em;">
+                    🎯 Navigation
+                </h3>
+                <%= link_to '🌍 Planetary View', planetary_admin_celestial_body_path(@celestial_body),
+                            style: 'display:block; padding:.6rem .9rem; margin-bottom:.5rem; background:#0d1f33; border:1px solid #00d4ff; color:#00d4ff; text-decoration:none; border-radius:4px; font-size:.85rem;' %>
+                <%= link_to '🗺️ Surface View', surface_admin_celestial_body_path(@celestial_body),
+                            style: 'display:block; padding:.6rem .9rem; margin-bottom:.5rem; background:#0d1f33; border:1px solid #2a5; color:#2a5; text-decoration:none; border-radius:4px; font-size:.85rem;' %>
+                <%= link_to '⚙️ Edit Properties', edit_admin_celestial_body_path(@celestial_body),
+                            style: 'display:block; padding:.6rem .9rem; margin-bottom:.5rem; background:#0d1f33; border:1px solid #445; color:#8aabcc; text-decoration:none; border-radius:4px; font-size:.85rem;' %>
+                <%= link_to '← All Bodies', admin_celestial_bodies_path,
+                            style: 'display:block; padding:.6rem .9rem; background:#0d1f33; border:1px solid #334; color:#6a8aaa; text-decoration:none; border-radius:4px; font-size:.85rem;' %>
+            </div>
+
+            <%# Sphere status card %>
+            <div style="background:#101c2c; border:1px solid #223; border-radius:6px; padding:1.25rem;">
+                <h3 style="color:#00d4ff; font-size:0.9rem; margin:0 0 1rem; text-transform:uppercase; letter-spacing:.08em;">
+                    🌐 Sphere Status
+                </h3>
+                <% [
+                    ['Atmosphere', @celestial_body.atmosphere],
+                    ['Geosphere',  @celestial_body.geosphere],
+                    ['Hydrosphere', @celestial_body.hydrosphere],
+                    ['Biosphere',  @celestial_body.biosphere],
+                ].each do |label, sphere| %>
+                    <div style="display:flex; justify-content:space-between; padding:.35rem 0; border-bottom:1px solid #1a2a3a; font-size:.85rem;">
+                        <span style="color:#8aabcc;"><%= label %></span>
+                        <span style="color:<%= sphere.present? ? '#2a5' : '#a44' %>; font-weight:bold;">
+                            <%= sphere.present? ? '● Present' : '○ None' %>
+                        </span>
+                    </div>
+                <% end %>
+                <% if @celestial_body.geosphere&.terrain_map.present? %>
+                    <div style="margin-top:.75rem; padding:.5rem; background:#0d1f33; border-radius:4px; font-size:.8rem; color:#2a5;">
+                        🗺️ Terrain map available
+                    </div>
+                <% else %>
+                    <div style="margin-top:.75rem; padding:.5rem; background:#0d1f33; border-radius:4px; font-size:.8rem; color:#a66;">
+                        ⚠️ No terrain map
+                    </div>
+                <% end %>
+            </div>
+
+            <%# Quick actions card %>
+            <div style="background:#101c2c; border:1px solid #223; border-radius:6px; padding:1.25rem;">
+                <h3 style="color:#00d4ff; font-size:0.9rem; margin:0 0 1rem; text-transform:uppercase; letter-spacing:.08em;">
+                    ⚡ Quick Actions
+                </h3>
+                <% unless @celestial_body.geosphere&.terrain_map.present? %>
+                    <%= button_to '🗺️ Generate Terrain',
+                                  generate_terrain_admin_celestial_body_path(@celestial_body),
+                                  method: :post,
+                                  data: { confirm: 'Generate terrain for this body?' },
+                                  style: 'display:block; width:100%; padding:.6rem; margin-bottom:.5rem; background:#0d1f33; border:1px solid #446; color:#8aabcc; cursor:pointer; border-radius:4px; font-family:inherit; font-size:.85rem; text-align:left;' %>
+                <% end %>
+                <%= link_to '👁️ Public Page', celestial_body_path(@celestial_body),
+                            style: 'display:block; padding:.6rem .9rem; background:#0d1f33; border:1px solid #334; color:#6a8aaa; text-decoration:none; border-radius:4px; font-size:.85rem;' %>
+            </div>
+
+        </main>
+
+        <%# ── Console footer ──────────────────────────────────────── %>
+        <footer style="background:#060d18; border:1px solid #1a2a3a; border-radius:4px; padding:.75rem 1rem; font-size:.8rem; color:#4a8aaa;">
+            <div>&gt; monitor view initialised for <strong style="color:#00d4ff;"><%= @celestial_body.name %></strong></div>
+            <div>&gt; route: /admin/celestial_bodies/<%= @celestial_body.id %>/monitor</div>
+            <div>&gt; select planetary or surface view for canvas rendering</div>
+        </footer>
+
+    </div>
+
+</body>
+</html>

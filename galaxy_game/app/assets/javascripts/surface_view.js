@@ -67,7 +67,7 @@ window.SurfaceView = {
         resolve(true);
       };
       img.onerror = () => { console.error('PNG load failed'); resolve(false); };
-      img.src = 'http://localhost:3000/tilesets/galaxy_game/base_terrain.png';
+      img.src = '/assets/biomes/base_terrain.png';
     });
   },
   

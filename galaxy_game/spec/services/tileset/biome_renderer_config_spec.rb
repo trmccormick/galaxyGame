@@ -12,7 +12,7 @@ require 'rails_helper'
 
 RSpec.describe 'BiomeRenderer configuration', type: :service do
   BIOMES_JSON_PATH = Rails.root.join('public', 'tilesets', 'galaxy_game', 'biomes.json').freeze
-  BIOME_ASSETS_DIR = Rails.root.join('app', 'assets', 'images', 'biomes').freeze
+  BIOME_ASSETS_DIR = Rails.root.join('public', 'assets', 'biomes').freeze
 
   EXPECTED_BIOME_KEYS = %w[
     desert
@@ -117,16 +117,16 @@ RSpec.describe 'BiomeRenderer configuration', type: :service do
 
   # ── PNG asset presence on disk ────────────────────────────────────
   describe 'biome PNG assets' do
-    it 'biomes asset directory exists' do
+    it 'biomes asset directory exists at public/assets/biomes/' do
       expect(Dir.exist?(BIOME_ASSETS_DIR)).to be true
     end
 
     EXPECTED_BIOME_KEYS.each do |biome|
-      it "#{biome}.png exists in assets/images/biomes/" do
+      it "#{biome}.png exists in public/assets/biomes/" do
         path = BIOME_ASSETS_DIR.join("#{biome}.png")
         expect(File.exist?(path)).to be(true),
           "Missing PNG: #{path}\n" \
-          "Place the file at app/assets/images/biomes/#{biome}.png"
+          "Place the file at public/assets/biomes/#{biome}.png"
       end
     end
 
@@ -134,7 +134,7 @@ RSpec.describe 'BiomeRenderer configuration', type: :service do
       config['biomes'].each do |name, meta|
         path = BIOME_ASSETS_DIR.join(meta['file'])
         expect(File.exist?(path)).to be(true),
-          "biomes.json entry '#{name}' references missing file: #{meta['file']}"
+          "biomes.json entry '#{name}' references missing file: #{meta['file']} (checked in public/assets/biomes/)"
       end
     end
   end

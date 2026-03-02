@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     # Celestial Bodies routes
     resources :celestial_bodies, only: [:index] do
       member do
+        get :monitor                 # Monitor view → monitor_admin_celestial_body_path
         get :planetary               # Main monitoring interface
         get :surface                 # Surface view with tilesets
         get :sphere_data            # JSON: Real-time sphere data
