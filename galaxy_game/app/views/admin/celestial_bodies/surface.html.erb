@@ -29,7 +29,7 @@
         # Terrain data (core for surface view)
         terrain_data: terrain_map_data ? {
           elevation: terrain_map_data['elevation'] || terrain_map_data['grid'],
-          biomes: terrain_map_data['biomes'],
+          biomes: terrain_map_data['biomes'] || terrain_map_data['grid'],  # Fallback to grid if biomes missing
           resources: terrain_map_data['resource_grid'],
           width: terrain_map_data['width'],
           height: terrain_map_data['height'] || (terrain_map_data['elevation']&.length || 0),

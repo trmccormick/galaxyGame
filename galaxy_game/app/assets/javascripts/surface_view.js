@@ -166,6 +166,29 @@ window.SurfaceView = {
 
   getTileName: function(elev, biome) {
     const b = (biome || '').toLowerCase().trim();
+    
+    // ── Biome map from automatic_terrain_generator.rb grid characters ──
+    const biomeMap = {
+      ' ': 'ocean',      // Ocean (space)
+      'a': 'tundra',     // Arctic/tundra
+      't': 'tundra',     // Tundra
+      'f': 'forest',     // Forest
+      'g': 'grasslands', // Grassland
+      'p': 'plains',     // Plains
+      'd': 'desert',     // Desert
+      'j': 'jungle',     // Jungle
+      's': 'swamp',      // Swamp
+      'h': 'mountains',  // Hills
+      'm': 'mountains',  // Mountains
+      ':': 'ocean',      // Coast (shallow water)
+      '.': 'ocean'       // Deep ocean
+    };
+    
+    // If biome is a single character from grid, map it
+    if (b.length === 1 && biomeMap[b]) {
+      return biomeMap[b];
+    }
+    
     if (this.planetType === "Luna") {
       if (b === "crater" || b.includes("crater")) return "crater";
       if (b === "low"    || b.includes("regolith")) return "regolith";
