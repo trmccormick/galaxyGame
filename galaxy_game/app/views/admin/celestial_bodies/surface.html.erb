@@ -130,11 +130,16 @@
                     <div id="tooltipContent"></div>
                 </div>
                 <div id="mapControls" style="width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 2rem; margin-top: 0.5rem;">
-                    <div class="control-group">
-                        <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
-                        <input type="range" id="zoom" min="0.5" max="6" step="0.1" value="1">
-                    </div>
-                    <button id="resetViewBtn" class="admin-tool-button" title="Reset view">⌂ Reset</button>
+                                        <script>
+                                            window.PLANET_TYPE = "<%= @celestial_body.type %>";
+                                            window.PLANET_NAME = "<%= @celestial_body.name %>";
+                                        </script>
+                                        <div class="control-group">
+                                                <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
+                                                <input type="range" id="zoom" min="0.5" max="6" step="0.1" value="1">
+                                        </div>
+                                        <button id="resetViewBtn" class="admin-tool-button" title="Reset view">⌂ Reset</button>
+                                        <button id="toggleTerrainBtn" class="admin-tool-button" title="Toggle terrain/biome">Show Elevation</button>
                 </div>
             </div>
         </main>
@@ -188,6 +193,10 @@
         </footer>
     </div>
 
+    <script>
+      window.PLANET_NAME = '<%= j @celestial_body.name %>';
+      window.PLANET_TYPE = '<%= j @celestial_body.type %>';
+    </script>
     <%= javascript_include_tag 'biome_renderer', 'data-turbo-track': 'reload' %>
     <%= javascript_include_tag 'surface_view',  'data-turbo-track': 'reload' %>
 </body>
