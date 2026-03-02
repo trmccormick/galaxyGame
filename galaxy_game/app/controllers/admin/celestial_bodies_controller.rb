@@ -59,6 +59,24 @@ module Admin
     def monitor
     end
 
+    # GET /admin/celestial_bodies/:id/planetary
+    # Full planetary monitoring view with sphere data, terrain, missions
+    def planetary
+      @geological_features    = load_geological_features
+      @atmosphere_data        = atmosphere_data
+      @hydrosphere_data       = hydrosphere_data
+      @geosphere_data         = geosphere_data
+      @biosphere_data         = biosphere_data
+      @ai_missions            = load_ai_missions
+      @civilization_features  = []
+      @sphere_summary = {
+        atmosphere:  @celestial_body.atmosphere.present?,
+        geosphere:   @celestial_body.geosphere.present?,
+        hydrosphere: @celestial_body.hydrosphere.present?,
+        biosphere:   @celestial_body.biosphere.present?
+      }
+    end
+
     # GET /admin/celestial_bodies/:id/surface
     # Surface view with biome tileset rendering
     def surface
