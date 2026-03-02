@@ -118,8 +118,8 @@ module Admin
     end
     
     def decisions
-      # TODO: Load AI decision log
-      @decisions = []
+      # Load AI decision log for admin review
+      @decisions = AiDecisionLog.includes(:celestial_body).order(created_at: :desc).limit(200)
     end
     
     def patterns
