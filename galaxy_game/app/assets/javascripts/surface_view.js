@@ -35,19 +35,19 @@ window.SurfaceView = {
     console.log(`🌍 Planet: "${rawName}" type: "${rawType}"`);
 
     // ── Terrain mode detection (data-format, not name heuristic) ─────────
-    // BIOME mode : terrain.biomes[row][col] is a non-empty string
-    // ELEVATION  : terrain.biomes is absent / null — numbers only
+    // BIOME mode : terrain.grid[row][col] is a non-empty string (e.g. "p" for plains)
+    // ELEVATION  : terrain.grid[row][col] is a number (e.g. -1738 for elevation)
     if (this.terrain && this.terrain.elevation) {
-      const firstBiome = this.terrain.biomes &&
-                         this.terrain.biomes[0] &&
-                         this.terrain.biomes[0][0];
-      this.terrainMode = (typeof firstBiome === 'string' && firstBiome.length > 0)
+      const firstTile = this.terrain.grid &&
+                        this.terrain.grid[0] &&
+                        this.terrain.grid[0][0];
+      this.terrainMode = (typeof firstTile === 'string' && firstTile.length > 0)
         ? 'biome'
         : 'elevation';
     } else {
       this.terrainMode = 'elevation';
     }
-    console.log(`🗺️  Terrain mode: ${this.terrainMode} (biomes present: ${!!(this.terrain && this.terrain.biomes)})`);
+    console.log(`🗺️  Terrain mode: ${this.terrainMode} (grid[0][0]: ${this.terrain?.grid?.[0]?.[0]})`);
 
     const nameEl   = document.getElementById('tileset-name');
     const statusEl = document.getElementById('tileset-status');
