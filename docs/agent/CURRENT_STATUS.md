@@ -1,6 +1,6 @@
 # Current Development Status
 
-**Last Updated**: February 16, 2026 (AI Manager Operational Escalation - Complete)
+**Last Updated**: March 1, 2026 (BiomeRenderer ES6 class + biomes.json tileset config)
 
 ## ⚠️ CRITICAL: Updated Testing Requirements
 
@@ -22,7 +22,26 @@
 
 ---
 
-## Recent Progress (Today - Feb 16, 2026)
+## Recent Progress (Today - Mar 1, 2026)
+
+### ✅ BiomeRenderer ES6 Class + biomes.json Tileset Config
+**Status**: Complete — 120 RSpec examples, 0 failures
+
+**Files Added**:
+- `galaxy_game/public/tilesets/galaxy_game/biomes.json` — 10-biome tileset config (tile_size: 142, asset_path, fallback colours, elevation ranges, climate labels)
+- `galaxy_game/app/assets/javascripts/biome_renderer.js` — ES6 class: async `init()` loads all 10 PNGs in parallel (crisp 142×142, no smoothing), `draw(ctx, biomeName, x, y, rotation)` with planetary rotation, `drawAt()` for grid/pan/zoom integration, `Map()` tile storage, graceful PNG-miss fallbacks
+- `galaxy_game/spec/services/tileset/biome_renderer_config_spec.rb` — JSON structure, 10-key completeness, per-biome field validation, hex colour format, PNG asset presence
+
+**Key Capabilities**:
+- ✅ All 10 biomes: desert, forest, grasslands, jungle, mountains, mountains_snow_covered, ocean, plains, swamp, tundra
+- ✅ Per-tile planetary rotation (radians) for surface_view.js 20fps loop
+- ✅ `drawAt(ctx, name, col, row, scale, offsetX, offsetY, rotation)` — drop-in for surface_view pan/zoom
+- ✅ Error-resilient: PNG load failures degrade silently to solid fallback colours
+- ✅ CommonJS + browser Sprockets export guard
+
+---
+
+## Recent Progress (Feb 16, 2026)
 
 ### 🎯 HIGH PRIORITY TASK COMPLETE: AI Manager Operational Escalation ✅
 **Time**: 4-6 hours

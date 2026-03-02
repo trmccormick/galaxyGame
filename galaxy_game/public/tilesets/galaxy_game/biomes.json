@@ -1,0 +1,88 @@
+{
+  "version": "1.0.0",
+  "description": "Biome tile configuration for BiomeRenderer — 10 individual 142×142 PNGs",
+  "tile_size": 142,
+  "asset_path": "/assets/biomes/",
+  "biomes": {
+    "desert": {
+      "file": "desert.png",
+      "label": "Desert",
+      "color_fallback": "#c2a04a",
+      "elevation_range": [0, 1000],
+      "climate": "arid",
+      "description": "Hot, dry sandy terrain with minimal vegetation"
+    },
+    "forest": {
+      "file": "forest.png",
+      "label": "Forest",
+      "color_fallback": "#2d6a2d",
+      "elevation_range": [100, 1500],
+      "climate": "temperate",
+      "description": "Dense temperate woodland with mixed canopy"
+    },
+    "grasslands": {
+      "file": "grasslands.png",
+      "label": "Grasslands",
+      "color_fallback": "#7ab54e",
+      "elevation_range": [0, 800],
+      "climate": "temperate",
+      "description": "Open grassy plains with low seasonal rainfall"
+    },
+    "jungle": {
+      "file": "jungle.png",
+      "label": "Jungle",
+      "color_fallback": "#1a6b1a",
+      "elevation_range": [0, 600],
+      "climate": "tropical",
+      "description": "Dense tropical rainforest with high humidity"
+    },
+    "mountains": {
+      "file": "mountains.png",
+      "label": "Mountains",
+      "color_fallback": "#7a6a5a",
+      "elevation_range": [1500, 5000],
+      "climate": "alpine",
+      "description": "Rocky high-altitude terrain with exposed ridgelines"
+    },
+    "mountains_snow_covered": {
+      "file": "mountains_snow_covered.png",
+      "label": "Snow-Capped Mountains",
+      "color_fallback": "#d0d8e8",
+      "elevation_range": [3000, 9000],
+      "climate": "arctic_alpine",
+      "description": "High-altitude peaks with permanent ice and snowpack"
+    },
+    "ocean": {
+      "file": "ocean.png",
+      "label": "Ocean",
+      "color_fallback": "#1e3a8a",
+      "elevation_range": [-11000, 0],
+      "climate": "marine",
+      "description": "Deep open water, saltwater or alien equivalent"
+    },
+    "plains": {
+      "file": "plains.png",
+      "label": "Plains",
+      "color_fallback": "#c8b86a",
+      "elevation_range": [0, 500],
+      "climate": "temperate",
+      "description": "Flat low-elevation terrain with sparse ground cover"
+    },
+    "swamp": {
+      "file": "swamp.png",
+      "label": "Swamp",
+      "color_fallback": "#4a6b3a",
+      "elevation_range": [-50, 200],
+      "climate": "wetland",
+      "description": "Saturated lowland terrain with stagnant water and dense reeds"
+    },
+    "tundra": {
+      "file": "tundra.png",
+      "label": "Tundra",
+      "color_fallback": "#a0b8c0",
+      "elevation_range": [0, 1000],
+      "climate": "polar",
+      "description": "Cold treeless biome with permafrost and low ground cover"
+    }
+  }
+}
