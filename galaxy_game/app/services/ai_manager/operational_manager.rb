@@ -886,6 +886,24 @@ require_relative 'scout_logic'
       decision_record = @performance_tracker.record_decision(decision, context)
       @last_decision = decision_record
       log_decision(decision, category)
+
+      # --- AI Decision Audit Trail ---
+      # Log to AIDecisionLog for admin/audit/learning
+      location_context = context[:location_context] || settlement.celestial_body&.name || 'unknown'
+      AiDecisionLog.create!(
+        celestial_body: settlement.celestial_body,
+        location_context: location_context,
+        decision_type: decision[:action].to_s,
+        reasoning: decision[:reason] || 'N/A',
+        constraints: decision[:constraints] || {},
+        outcome: decision_record[:outcome],
+        metadata: {
+          context: context,
+          category: category,
+          timestamp: decision_record[:timestamp],
+          lessons_learned: decision_record[:lessons_learned]
+        }
+      )
       decision_record
     end
 
