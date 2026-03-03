@@ -1,6 +1,6 @@
 # Current Development Status
 
-**Last Updated**: March 1, 2026 (BiomeRenderer ES6 class + biomes.json tileset config)
+**Last Updated**: March 2, 2026 (Surface View Terrain Rendering Fixes)
 
 ## ⚠️ CRITICAL: Updated Testing Requirements
 
@@ -22,7 +22,32 @@
 
 ---
 
-## Recent Progress (Today - Mar 1, 2026)
+## Recent Progress (Today - Mar 2, 2026)
+
+### ✅ Surface View Terrain Rendering Fixes
+**Status**: Complete — Earth colorful biomes, Luna grayscale elevation, 120 RSpec examples, 0 failures
+
+**Issues Resolved**:
+- ❌ **Earth Grey Bug**: Terrain mode detection checked `terrain.biomes[0][0]` (nil) instead of `terrain.grid[0][0]` (string like "p")
+- ❌ **Biome Character Mapping**: `getTileName()` didn't map automatic_terrain_generator.rb grid chars ('p' → 'plains')
+- ❌ **View Data Fallback**: `surface.html.erb` didn't fallback `biomes` to `grid` when biomes missing
+
+**Files Modified**:
+- `galaxy_game/app/assets/javascripts/surface_view.js` — Added `biomeMap` for grid chars, fixed mode detection to check `terrain.grid[0][0]`
+- `galaxy_game/app/views/admin/celestial_bodies/surface.html.erb` — Added `biomes: terrain_map_data['biomes'] || terrain_map_data['grid']` fallback
+
+**Key Capabilities**:
+- ✅ **Planet-Aware Rendering**: Elevation mode (grayscale) for Luna, Biome mode (PNG tiles) for Earth
+- ✅ **Biome Character Support**: Maps 'p'→'plains', 'f'→'forest', 'g'→'grasslands', etc. from terrain generator
+- ✅ **Robust Mode Detection**: Checks actual data format, not planet name heuristics
+- ✅ **Cursor HUD Updates**: Dynamic labels ("Biome: plains" vs "Terrain: -1738 m")
+- ✅ **Error-Resilient**: Graceful fallbacks when terrain data incomplete
+
+**Testing Validation**:
+- ✅ All 120 biome_renderer_config_spec.rb tests pass
+- ✅ Earth renders colorful biome tiles
+- ✅ Luna renders grayscale elevation colormap
+- ✅ No regressions in existing functionality
 
 ### ✅ BiomeRenderer ES6 Class + biomes.json Tileset Config
 **Status**: Complete — 120 RSpec examples, 0 failures

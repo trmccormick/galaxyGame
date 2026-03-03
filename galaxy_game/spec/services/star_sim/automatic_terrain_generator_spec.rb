@@ -167,4 +167,17 @@ RSpec.describe StarSim::AutomaticTerrainGenerator do
       expect(generator.send(:earth_like_planet?, inhospitable_planet)).to be false
     end
   end
+
+  describe '#generate_hybrid_biomes' do
+    let(:airless_body) do
+      double('CelestialBody', biosphere: nil)
+    end
+    let(:grid_dims) { { width: 2, height: 2 } }
+    let(:elevation) { [[1, 1], [1, 1]] }
+
+    it 'returns nil for airless bodies' do
+      result = generator.send(:generate_hybrid_biomes, 'Luna', elevation, airless_body, grid_dims)
+      expect(result).to be_nil
+    end
+  end
 end

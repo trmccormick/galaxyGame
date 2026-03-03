@@ -1316,6 +1316,7 @@ module StarSim
     
     # Generate biomes using FreeCiv data where available, algorithmic elsewhere
     def generate_hybrid_biomes(body_name, elevation, celestial_body, grid_dims)
+      return nil unless celestial_body.biosphere.present?
       width = grid_dims[:width]
       height = grid_dims[:height]
       
