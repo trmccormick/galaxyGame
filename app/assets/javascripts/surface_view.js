@@ -27,10 +27,16 @@ window.SurfaceView = {
     this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
     // FIX 2: Ensure canvas pixel size matches CSS size for sharp tiles
+    // PHASE 1: Regional view 16K scaling
+    const MAX_CANVAS_WIDTH  = 16384;
+    const MAX_CANVAS_HEIGHT = 8192;
     const resizeCanvas = () => {
       const rect = this.canvas.parentElement.getBoundingClientRect();
-      const w = Math.floor(rect.width)  || 1200;
-      const h = Math.floor(rect.height) || 700;
+      let w = Math.floor(rect.width)  || 1200;
+      let h = Math.floor(rect.height) || 700;
+      // Clamp to max regional view size
+      w = Math.min(w, MAX_CANVAS_WIDTH);
+      h = Math.min(h, MAX_CANVAS_HEIGHT);
       if (this.canvas.width !== w || this.canvas.height !== h) {
         this.canvas.width  = w;
         this.canvas.height = h;
@@ -43,20 +49,20 @@ window.SurfaceView = {
     this.ctx.imageSmoothingEnabled = true;
     this.ctx.imageSmoothingQuality = 'high';
     console.log(`🧩 Terrain grid: ${this.terrain.width}×${this.terrain.height}`);
+    // PHASE 2: Sprite atlas integration
     if (window.SimpleTilesetLoader) {
-      this.tilesetLoader = new window.SimpleTilesetLoader('galaxy_game_base_terrain');
+      // Use external atlas and config for regional view
+      this.tilesetLoader = new window.SimpleTilesetLoader('galaxy_surface', '/assets/galaxy_surface.png', '/assets/galaxy_surface_tileset.json');
       const nameEl = document.getElementById('tileset-name');
       const statusEl = document.getElementById('tileset-status');
-      if (nameEl) nameEl.textContent = 'galaxy_game_base_terrain';
+      if (nameEl) nameEl.textContent = 'galaxy_surface';
       if (statusEl) statusEl.textContent = 'Loading...';
       const success = await this.tilesetLoader.loadTileset();
       if (success) {
         this.tilesetLoaded = true;
-        console.log(`✅ Tileset loaded: ${this.tilesetLoader.tileImages.size} tiles`);
-        // ...existing code...
+        console.log(`✅ Sprite atlas loaded: ${this.tilesetLoader.tileImages.size} tiles`);
       } else {
-        console.error('❌ Failed to load tileset');
-        // ...existing code...
+        console.error('❌ Failed to load sprite atlas');
       }
     } else {
       console.warn('⚠️ SimpleTilesetLoader not available - using color fallback');
@@ -64,6 +70,24 @@ window.SurfaceView = {
     this.renderGrid();
     this.setupZoom();
     this.setupPan();
+    // PHASE 2: Add layer toggles for units/cities
+    this.visibleLayers = new Set(['terrain', 'liquid', 'biomes', 'units', 'cities']);
+    const unitToggle = document.getElementById('toggleUnitsBtn');
+    if (unitToggle) {
+      unitToggle.addEventListener('click', () => {
+        if (this.visibleLayers.has('units')) this.visibleLayers.delete('units');
+        else this.visibleLayers.add('units');
+        this.dirty = true;
+      });
+    }
+    const cityToggle = document.getElementById('toggleCitiesBtn');
+    if (cityToggle) {
+      cityToggle.addEventListener('click', () => {
+        if (this.visibleLayers.has('cities')) this.visibleLayers.delete('cities');
+        else this.visibleLayers.add('cities');
+        this.dirty = true;
+      });
+    }
     // FIX 6: Add click handler for AI planning panel
     canvas.addEventListener('click', e => {
       if (!this.layers.elevation) return;
@@ -102,34 +126,55 @@ window.SurfaceView = {
     let tilesRendered = 0;
     let tilesFallback = 0;
     
-    // Only render visible tiles
-    for (let row = viewport.startRow; row <= viewport.endRow; row++) {
-      const eRow = terrain.elevation[row];
-      if (!eRow) continue;
-      const bRow = hasBiosphere && this.layers.biomes.grid[row]
-                   ? this.layers.biomes.grid[row]
-                   : null;
-      const lRow = liquidGrid  ? liquidGrid[row]   : null;
-      const rRow = resourceGrid ? resourceGrid[row] : null;
+      // PHASE 3: Optimized render loop for 16K regional view
+      // Only render visible tiles (viewport culling)
+      for (let row = viewport.startRow; row <= viewport.endRow; row++) {
+        const eRow = terrain.elevation[row];
+        if (!eRow) continue;
+        const bRow = hasBiosphere && this.layers.biomes.grid[row]
+                     ? this.layers.biomes.grid[row]
+                     : null;
+        const lRow = liquidGrid  ? liquidGrid[row]   : null;
+        const rRow = resourceGrid ? resourceGrid[row] : null;
 
-      for (let col = viewport.startCol; col <= viewport.endCol; col++) {
-        // FIX 5: wrap horizontal col
-        const wrappedCol = ((col % terrain.width) + terrain.width) % terrain.width;
-        // Change all data lookups to use wrappedCol
-        const rawElev = eRow[wrappedCol];
-        if (rawElev == null) continue;
-        const normElev = (rawElev - minElev) / elevRange;
-        const x = col * TILE_SIZE * scale + this.offsetX;
-        const y = row * TILE_SIZE * scale + this.offsetY;
-        const tileScreenSize = TILE_SIZE * scale;
-        
-        // Get tile name
-        const tileName = this.getTerrainTileName(elev, biome);
-        
-        // Try to draw tileset sprite
-        if (this.tilesetLoaded && this.tilesetLoader.hasTile(tileName)) {/* Lines 113-116 omitted */} else {/* Lines 117-122 omitted */}
-        
-        // Optional: grid lines at high zoom
+        for (let col = viewport.startCol; col <= viewport.endCol; col++) {
+          const wrappedCol = ((col % terrain.width) + terrain.width) % terrain.width;
+          const rawElev = eRow[wrappedCol];
+          if (rawElev == null) continue;
+          const normElev = (rawElev - minElev) / elevRange;
+          const x = col * TILE_SIZE * scale + this.offsetX;
+          const y = row * TILE_SIZE * scale + this.offsetY;
+          const tileScreenSize = TILE_SIZE * scale;
+
+          // Level-of-detail: batch draw distant tiles as single color blocks
+          if (scale < 0.7) {
+            // Low zoom: batch by 4x4 tiles for speed
+            if (col % 4 === 0 && row % 4 === 0) {
+              ctx.fillStyle = this.getTerrainColor(rawElev, bRow ? bRow[wrappedCol] : null);
+              ctx.fillRect(x, y, tileScreenSize * 4, tileScreenSize * 4);
+              tilesFallback++;
+            }
+            continue;
+          }
+
+          // Get tile name for sprite rendering
+          const tileName = this.getTerrainTileName(rawElev, bRow ? bRow[wrappedCol] : null);
+          if (this.tilesetLoaded && this.tilesetLoader.hasTile(tileName)) {
+            const sprite = this.tilesetLoader.getTile(tileName);
+            if (sprite) {
+              ctx.drawImage(sprite, x, y, tileScreenSize, tileScreenSize);
+              tilesRendered++;
+              continue;
+            }
+          }
+          // Fallback: draw color
+          ctx.fillStyle = this.getTerrainColor(rawElev, bRow ? bRow[wrappedCol] : null);
+          ctx.fillRect(x, y, tileScreenSize, tileScreenSize);
+          tilesFallback++;
+          // Optional: grid lines at high zoom
+          if (scale >= 2.0) {/* Lines 126-129 omitted */}
+        }
+      }
         if (scale >= 2.0) {/* Lines 126-129 omitted */}
       }
     }
