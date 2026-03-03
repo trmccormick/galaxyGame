@@ -114,6 +114,11 @@
                             </div>
                             <div class="admin-card-actions">
                                 <a href="/celestial_bodies/<%= body.id %>" class="admin-action-btn">View Details</a>
+                                <% if body.geosphere&.terrain_map.present? %>
+                                    <button class="action-btn" onclick="window.location.href='/admin/celestial_bodies/<%= body.id %>/surface'">
+                                        🗺️ Surface
+                                    </button>
+                                <% end %>
                                 <a href="/admin/celestial_bodies/<%= body.id %>/monitor" class="admin-action-btn primary">Monitor</a>
                             </div>
                         </div>
