@@ -1,0 +1,290 @@
+{
+  "filename": "mars_genesis_phase4_gateway_shielding.json",
+  "phase_name": "Phase 4: Mars System Gateway & Planetary Shielding",
+  "goal": "Convert Phobos and Deimos into specialized orbital stations - Phobos as a hybrid depot/main station combining lunar resource processing with L1-scale manufacturing, and Deimos as a dedicated fuel depot and crew staging hub, while deploying a planetary-scale artificial magnetosphere to protect Mars' atmosphere.",
+  "description": "This phase transforms Mars' moons into unique orbital infrastructure unlike anything in the solar system. Phobos becomes a hybrid station combining lunar-style resource extraction and processing with L1-scale manufacturing capabilities for large spacecraft construction. Deimos serves as a specialized fuel depot and crew staging hub, optimized for high-volume propellant storage and transfer operations. Concurrently, a massive artificial magnetosphere is deployed at Mars' L1 point to protect the planet's developing atmosphere from solar wind erosion.",
+  "mission_log": [
+    {
+      "mission_id": "MG_P4_M001_MoonsSettlement",
+      "name": "Establish a Settlement on Mars' Moons (Phobos & Deimos)",
+      "description": "Establish specialized infrastructure on both Mars moons: Phobos as a hybrid manufacturing and resource processing station (lunar-style extraction + L1-scale construction), and Deimos as a dedicated fuel depot and crew logistics hub with extensive propellant storage and transfer capabilities.",
+      "prerequisites": ["OBJ_LD_P3_M005_1_ScoutPhobosDeimos_Completed"],
+      "status": "locked",
+      "rewards": {
+        "credits": 350000,
+        "player_xp": 100000,
+        "unlocked_blueprints": ["PhobosDeimosHabitat_Core", "MarsMoonsLaunchPad_Mk1", "RadiationShielding_Regolith_Tier1"],
+        "unlocked_technologies": ["LowGravityConstruction", "MoonsLogisticsOptimization", "RegolithShieldingApplication"],
+        "system_status_update": {"mars_moons_human_presence": "Established"}
+      },
+      "objectives": [
+        {
+          "objective_id": "OBJ_MG_P4_M001_1_SiteSelection",
+          "name": "Finalize Phobos/Deimos Landing & Settlement Site",
+          "description": "Based on detailed orbital surveys, assign specialized roles: Phobos for hybrid manufacturing/processing operations, Deimos for fuel depot and crew staging. This creates a unique dual-station system unlike Luna or L1.",
+          "type": "decision_point",
+          "target": "Phobos_Deimos_Settlement_Site",
+          "resources_cost": {
+            "scientific_data_analysis": 5000,
+            "crew_hours_planning": 2000
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": [],
+          "controlled_by": "player_mission",
+          "priority": "High",
+          "duration_months": 2,
+          "ai_manager_notes": "Present player with analyzed data from LD_P3. Recommend optimal site based on parameters. Once selected, allocate initial construction resources to the chosen moon."
+        },
+        {
+          "objective_id": "OBJ_MG_P4_M001_2_ConstructSettlement",
+          "name": "Construct Core Lunar-Style Settlement",
+          "description": "Construct specialized infrastructure: Phobos receives lunar-style resource processing units combined with L1-scale manufacturing facilities for large spacecraft assembly. Deimos gets extensive cryogenic fuel storage and high-flow transfer systems for propellant depot operations.",
+          "type": "construct_structure_complex",
+          "target": {
+            "blueprint_name": "PhobosDeimosHabitat_Core",
+            "quantity": 1,
+            "modules": ["Habitat_Unit_Mk1", "LifeSupport_ClosedLoop", "LunarStyleMiningRig", "SolarArray_MarsOptimized", "NuclearGenerator_Compact", "ManufacturingBay_L1Scale"]
+          },
+          "resources_cost": {
+            "prefabricated_habitat_modules": 3000,
+            "advanced_life_support_units": 1000,
+            "mining_equipment_compact": 800,
+            "nuclear_fuel_bundles": 500,
+            "crew_hours": 10000
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": [],
+          "controlled_by": "player_mission",
+          "priority": "High",
+          "duration_months": 18,
+          "ai_manager_notes": "Initiate automated deployment sequences upon arrival. Oversee assembly teams. Establish power grid and ensure life support systems are operational and stable for initial crew."
+        },
+        {
+          "objective_id": "OBJ_MG_P4_M001_3_DevelopStagingGround",
+          "name": "Develop Mars Landing Staging Ground",
+          "description": "Develop specialized staging capabilities: Phobos focuses on spacecraft assembly and testing facilities, while Deimos emphasizes fuel transfer infrastructure and crew rotation systems optimized for Mars surface operations.",
+          "type": "construct_and_test",
+          "target": {
+            "blueprint_name": "MarsMoonsLaunchPad_Mk1",
+            "quantity": 2,
+            "storage_capacity_tons": 500,
+            "test_flights_required": 5
+          },
+          "resources_cost": {
+            "structural_alloys_space": 1500,
+            "cryogenic_fuel_tanks": 1000,
+            "fuel_transfer_systems": 750,
+            "test_propellant": 2000
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": [],
+          "controlled_by": "player_mission",
+          "priority": "High",
+          "duration_months": 12,
+          "ai_manager_notes": "Ensure sufficient fuel transfer capacity from L1 fuel depots to the moons. Schedule and monitor automated test flights to Mars orbit and back. Simulate crew transfer logistics."
+        },
+        {
+          "objective_id": "OBJ_MG_P4_M001_4_ResearchRadiationProtection",
+          "name": "Research Local Radiation Protection Techniques",
+          "description": "Study the properties of Phobos' and Deimos' regolith for use as radiation shielding. Test protective materials and magnetic field designs suitable for both the moon bases and eventual deployment on Mars' surface.",
+          "type": "research_project",
+          "target": "RegolithShielding_Optimization",
+          "resources_cost": {
+            "research_points": 30000,
+            "sample_analysis_kits": 500,
+            "test_material_fabrication": 200
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": ["RadiationShielding_Regolith_Tier1"],
+          "controlled_by": "player_mission",
+          "priority": "Medium",
+          "duration_months": 12,
+          "ai_manager_notes": "Establish a dedicated research lab within the moons settlement. Conduct material science experiments on local regolith. Simulate radiation exposure with various shielding designs. Collaborate with Earth-based research teams."
+        }
+      ]
+    },
+    {
+      "mission_id": "MG_P4_M002_MagnetosphereDeployment",
+      "name": "Deploy the Artificial Magnetosphere to Mars",
+      "description": "Launch, position, and activate a large-scale electromagnetic shield at Mars' L1 Lagrange Point to protect the planet from solar wind, thereby reducing atmospheric loss and improving conditions for eventual terraforming efforts.",
+      "prerequisites": ["OBJ_MG_P4_M001_3_DevelopStagingGround_Completed", "OBJ_LD_P3_M004_1_KeyResearchAreas_EfficientPropulsion_Completed"],
+      "status": "locked",
+      "rewards": {
+        "credits": 500000,
+        "player_xp": 150000,
+        "unlocked_blueprints": ["MagnetosphereGenerator_MarsL1", "PlanetaryShielding_ControlCenter"],
+        "unlocked_technologies": ["PlanetaryMagneticFieldGeneration", "AtmosphericRetentionModeling_Advanced"],
+        "environmental_impact": {
+          "mars_atmospheric_loss_rate_reduction": "-50%",
+          "mars_radiation_surface_reduction": "-30%"
+        },
+        "system_status_update": {"mars_magnetosphere_status": "Active"}
+      },
+      "objectives": [
+        {
+          "objective_id": "OBJ_MG_P4_M002_1_LaunchPositionGenerator",
+          "name": "Launch & Position the Magnetosphere Generator",
+          "description": "Construct the massive Magnetosphere Generator at the L1 Industrial Station (or on Earth, if specialized), and deploy it to Mars' L1 Lagrange Point using advanced deep-space tugs. Precisely position it to ensure optimal field alignment with Mars.",
+          "type": "construct_and_deploy_massive_unit",
+          "target": {
+            "blueprint_name": "MagnetosphereGenerator_MarsL1",
+            "quantity": 1,
+            "deployment_location": "Mars_L1_Lagrange_Point"
+          },
+          "resources_cost": {
+            "mega_structural_components": 5000,
+            "superconducting_materials": 3000,
+            "high_power_reactors": 2000,
+            "deep_space_propellant_heavy": 3000,
+            "rare_earth_magnets": 1000
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": [],
+          "controlled_by": "player_mission",
+          "priority": "Critical",
+          "duration_months": 24,
+          "ai_manager_notes": "Allocate maximum manufacturing capacity at L1 or Earth for the generator. Plan and execute complex deep-space trajectory. Ensure stable station-keeping at Mars L1. Initiate initial power-up sequence."
+        },
+        {
+          "objective_id": "OBJ_MG_P4_M002_2_MonitorAdjustField",
+          "name": "Monitor & Adjust the Magnetic Field",
+          "description": "Establish a Planetary Shielding Control Center (either on Phobos/Deimos or L1) and continuously monitor the effectiveness of the magnetic field. Adjust its strength and orientation to ensure optimal planetary coverage and solar wind deflection.",
+          "type": "operate_and_optimize",
+          "target": {
+            "control_center_blueprint": "PlanetaryShielding_ControlCenter",
+            "operational_status": "Optimized"
+          },
+          "resources_cost": {
+            "monitoring_satellites": 5,
+            "sensor_array_upgrades": 700,
+            "computing_cores_high_performance": 500,
+            "maintenance_crew_hours": 3000
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": [],
+          "controlled_by": "player_mission",
+          "priority": "High",
+          "duration_months": 12,
+          "ai_manager_notes": "Continuously feed data from Martian orbiters and surface probes to the control center. Run simulations to predict solar flare impacts. Automate field adjustments where possible, requiring manual override for critical events."
+        },
+        {
+          "objective_id": "OBJ_MG_P4_M002_3_MeasureAtmosphericEffects",
+          "name": "Measure Effects on Mars’ Atmosphere & Radiation Levels",
+          "description": "Establish a network of atmospheric and radiation monitoring stations on Mars' surface and in orbit. Track changes in atmospheric retention over time and quantify the decrease in cosmic radiation levels, using this data to refine long-term atmospheric engineering strategies.",
+          "type": "deploy_and_collect_data",
+          "target": {
+            "units": [
+              {"blueprint_name": "MarsAtmosphericMonitor_Mk1", "quantity": 10},
+              {"blueprint_name": "MarsRadiationSensor_Mk1", "quantity": 10}
+            ],
+            "data_collection_duration_months": 12
+          },
+          "resources_cost": {
+            "scientific_sensors": 1500,
+            "deployment_rovers_drones": 500,
+            "data_processing_power": 1000
+          },
+          "progress_tracker": { "current": 0, "total": 1 },
+          "status": "pending",
+          "unlocks_on_complete": ["AtmosphericRetentionModeling_Advanced"],
+          "controlled_by": "player_mission",
+          "priority": "Medium",
+          "duration_months": 12,
+          "ai_manager_notes": "Deploy surface probes via semi-autonomous landers. Establish orbital relays for continuous data transmission. Analyze long-term trends in atmospheric density and composition. Provide reports to terraforming research teams."
+        }
+      ]
+    }
+  ],
+  "milestones_phase4_completion": {
+    "Mars_Moons_Gateway_Established": {
+      "description": "Both Phobos (hybrid manufacturing station) and Deimos (fuel depot) are operational with specialized infrastructure, creating a unique dual-station system that combines lunar resource processing with L1-scale construction capabilities.",
+      "requirements": [
+        "OBJ_MG_P4_M001_1_SiteSelection",
+        "OBJ_MG_P4_M001_2_ConstructSettlement",
+        "OBJ_MG_P4_M001_3_DevelopStagingGround",
+        "OBJ_MG_P4_M001_4_ResearchRadiationProtection"
+      ]
+    },
+    "Planetary_Magnetosphere_Active": {
+      "description": "The artificial magnetosphere is successfully deployed, fully operational, and actively reducing atmospheric loss and radiation levels on Mars, providing crucial protection for future terraforming efforts.",
+      "requirements": [
+        "OBJ_MG_P4_M002_1_LaunchPositionGenerator",
+        "OBJ_MG_P4_M002_2_MonitorAdjustField",
+        "OBJ_MG_P4_M002_3_MeasureAtmosphericEffects"
+      ]
+    }
+  },
+  "shield_upgrade_events": {
+    "em_core_retrofit_upgrade": {
+      "trigger_tech": "EM-Core Power Systems",
+      "description": "Upgrade the initial fusion-powered magnetosphere to EM-core technology for 95%+ atmospheric retention",
+      "transition_window_hours": 72,
+      "vulnerabilities": [
+        "Atmospheric loss spike during retrofit",
+        "Market price volatility for imported gases",
+        "Traitor sabotage opportunities (EM-core theft)"
+      ],
+      "benefits": [
+        "Near-zero maintenance requirements",
+        "Reduced loss rates by 500%",
+        "Enables accelerated terraforming"
+      ],
+      "resources_required": {
+        "refined_em": 10.0,
+        "superconductors": 5000.0,
+        "advanced_electronics": 10000.0,
+        "titanium_alloy": 50000.0
+      },
+      "economic_impact": {
+        "gcc_cost": 10000000,
+        "market_effects": "GCC price spikes for Venusian N2 and Titan CH4 during transition"
+      }
+    },
+    "wormhole_stabilized_upgrade": {
+      "trigger_tech": "Wormhole Stabilization",
+      "description": "Replace EM-core system with direct wormhole channeling for 100% atmospheric retention",
+      "transition_window_hours": 96,
+      "vulnerabilities": [
+        "Complete shield collapse if wormhole destabilizes",
+        "Extended atmospheric loss during upgrade",
+        "High traitor sabotage risk (wormhole alignment disruption)"
+      ],
+      "benefits": [
+        "Self-sustaining magnetic field",
+        "Perfect atmospheric protection",
+        "Enables full terraforming acceleration"
+      ],
+      "resources_required": {
+        "refined_em": 50.0,
+        "superconductors": 10000.0,
+        "advanced_electronics": 20000.0,
+        "titanium_alloy": 100000.0
+      },
+      "economic_impact": {
+        "gcc_cost": 20000000,
+        "market_effects": "Massive GCC price spikes for all atmospheric gases; potential for traitor profit opportunities"
+      }
+    }
+  },
+  "next_steps_for_expansion": {
+    "transition_to_phase5_focus": "Mars Surface Landing & Initial Human Settlement",
+    "details": [
+      "Manned Mars Landing: Dispatch the first human crews from the Mars moons gateway to the Martian surface, initiating direct exploration and settlement.",
+      "Initial Surface Base Construction: Establish the primary long-term human colony on Mars, focusing on advanced life-support, ISRU for water, fuel, and materials.",
+      "Early Terraforming Operations (Protected): Begin the systematic warming and atmospheric thickening of Mars, now under the protection of the newly deployed magnetosphere."
+    ]
+  },
+  "key_changes_integration_notes": [
+    "This phase establishes a unique dual-station system on Mars' moons unlike any other location in the solar system.",
+    "Phobos combines lunar-style resource extraction with L1-scale manufacturing for large spacecraft construction.",
+    "Deimos serves as a specialized fuel depot with extensive propellant storage and crew staging capabilities.",
+    "The artificial magnetosphere deployment is placed as a foundational step, logically preceding and enabling significant atmospheric terraforming efforts, ensuring long-term success.",
+    "It directly sets the stage for Phase 5 (Landing on Mars), providing the necessary protective environment and logistical staging."
+  ]
+}
