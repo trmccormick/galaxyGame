@@ -29,7 +29,7 @@
         # Terrain data (core for surface view)
         terrain_data: terrain_map_data ? {
           elevation: terrain_map_data['elevation'] || terrain_map_data['grid'],
-          biomes: terrain_map_data['biomes'] || terrain_map_data['grid'],  # Fallback to grid if biomes missing
+          biomes: terrain_map_data['biomes'],  # Removed grid fallback. If biomes is nil, no biomes.
           resources: terrain_map_data['resource_grid'],
           width: terrain_map_data['width'],
           height: terrain_map_data['height'] || (terrain_map_data['elevation']&.length || 0),
@@ -48,6 +48,7 @@
           gravity: @celestial_body.gravity,
           liquid_name: @celestial_body.hydrosphere&.liquid_type || 'H2O',
           water_coverage: @celestial_body.hydrosphere&.state_distribution&.dig('liquid') || 0,
+          crust_iron_oxide_percentage: @celestial_body.geosphere&.crust_composition&.dig('Fe2O3') || 0,
           has_hydrosphere: has_hydrosphere
         },
         
@@ -121,22 +122,18 @@
                 <div id="mapOverlay">
                     <div id="mapTitle"><%= @celestial_body.name %> - SURFACE MAP</div>
                 </div>
-                <div id="canvasScroller" style="overflow: auto; width: 100%; height: 100%;">
-                    <div id="canvasContainer" style="min-width: 1200px; min-height: 600px;">
-                        <canvas id="surfaceCanvas" width="2400" height="1200"></canvas>
+                <div id="canvasScroller" style="overflow: hidden; width: 100%; height: 100%;">
+                    <div id="canvasContainer" style="width: 100%; height: 100%;">
+                        <canvas id="surfaceCanvas"></canvas>
                     </div>
                 </div>
                 <div id="featureTooltip" class="hidden">
                     <div id="tooltipContent"></div>
                 </div>
                 <div id="mapControls" style="width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 2rem; margin-top: 0.5rem;">
-                                        <script>
-                                            window.PLANET_TYPE = "<%= @celestial_body.type %>";
-                                            window.PLANET_NAME = "<%= @celestial_body.name %>";
-                                        </script>
                                         <div class="control-group">
-                                                <label>Zoom: <span id="zoomValue" class="value-display">1.0x</span></label>
-                                                <input type="range" id="zoom" min="0.5" max="6" step="0.1" value="1">
+                                                <label>Zoom: <span id="zoomValue" class="value-display">2.5x</span></label>
+                                                <input type="range" id="zoom" min="0.5" max="6" step="0.1" value="2.5">
                                         </div>
                                         <button id="resetViewBtn" class="admin-tool-button" title="Reset view">⌂ Reset</button>
                                         <button id="toggleTerrainBtn" class="admin-tool-button" title="Toggle terrain/biome">Show Elevation</button>
