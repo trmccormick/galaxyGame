@@ -470,6 +470,34 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 - **Phase 2:** 📋 Planned - Enhanced habitability detection system
 - **Phase 3:** 📋 Planned - Subsurface sphere confirmation requirements
 
+## ⚡ EM Power Transition & Shield Technology Evolution
+
+### Energy System Progression
+- **Fusion Era:** Reliable, understood power for early colonization (surface cities, factories, skimmers). High maintenance, heat dissipation issues.
+- **EM Era:** Near-infinite power from wormhole-harvested Exotic Matter. Shifts gameplay from "grid management" to "logistics and stability."
+- **Complementary Roles:** Fusion for local power; EM for "big science" (shields, portals, tugs).
+
+### Shield Technology Tiers
+- **Tier 1 (Fusion-Powered):** 60-80% atmospheric retention, high maintenance, heat-limited.
+- **Tier 2 (EM-Core Retrofit):** 95%+ retention, near-zero maintenance, requires EM-core synthesis tech.
+- **Tier 3 (Wormhole-Stabilized):** 100% retention, self-sustaining, requires advanced wormhole tech.
+
+### Upgrade Events & Vulnerabilities
+- **Trigger:** Shield upgrades prompted when relevant energy tech unlocks.
+- **Transition Window:** 48-72 game hours of vulnerability during retrofit.
+- **Risks:** Atmospheric loss spikes, market price volatility for imported gases.
+- **Sabotage:** Traitors can disrupt upgrades for economic gain (EM theft, alignment sabotage).
+
+### Security & Market Dynamics
+- **EM Logistics:** Gameplay shifts to EM harvesting, transport, and storage security.
+- **Traitor Opportunities:** EM-core theft causes instant shield collapse; wormhole sabotage delays upgrades.
+- **GCC Impact:** Upgrade disruptions spike prices for atmospheric gases, creating profit opportunities.
+
+### Documentation Requirements
+- Shield upgrade paths must be documented in tech tree and mission profiles.
+- EM power transition effects on gameplay must be reflected in industrial loops and AI Manager logic.
+- All changes must maintain Market vs. Build balance and player-first economics.
+
 ## 🛠️ Resource Allocation Engine Integration [2026-01-15]
 - All bootstrap settlement logic must use AIManager::ResourceAllocator to calculate initial supply packages (energy, water, food, construction).
 - ISRU priorities (oxygen, water, metals) must be ranked and documented per engine requirements.
