@@ -75,3 +75,84 @@ This document contains the ChatGPT/DALL-E prompts used to generate visual assets
 - **Scale Consistency**: Reference the HLL (large) and CAR-300 (small) for relative sizing.
 - **Isometric Angle**: All assets use 2:1 isometric perspective with top-right lighting.
 - **Game Integration**: Assets are designed for Civ4/FreeCiv-style tile engines with 8-directional unit sprites.
+
+## Additional Planned Assets
+
+### Missing Units & Craft
+
+#### Skimmer Craft (Logistics)
+"A 2:1 isometric atmospheric skimmer craft with aerodynamic lifting body design, visible intake scoops for gases, and docking rings on the top. Sleek silver fuselage with blue thruster glows. Isolated on a solid flat white background."
+
+#### Cycler Station (Orbital Hub)
+"A massive 2:1 isometric orbital station resembling a rotating cylinder with solar panels, docking ports, and cargo bays. Industrial space station aesthetic. Isolated on a solid flat white background."
+
+#### Power/Comms Spike (Infrastructure)
+"A tall 2:1 isometric vertical antenna tower with unfolding solar fins and a high-gain dish at the top. Base connected to power cables. Isolated on a solid flat white background."
+
+### Inflatable & Habitat Assets
+
+#### Inflatable Habitat Dome
+"A 2:1 isometric white inflatable habitat dome with reinforced seams and airlock doors. Smooth, rounded shape with pressure indicators. Isolated on a solid flat white background."
+
+#### Greenhouse Module
+"A 2:1 isometric transparent inflatable greenhouse with hydroponic trays visible inside. Semi-transparent walls showing plant growth. Isolated on a solid flat white background."
+
+### Terrain & Tile Expansions
+
+#### Empty Trench Terrain (Mars)
+"A 2:1 isometric barren Martian trench tile with red dust, rocky walls, and no structures. Deep shadows and eroded features. Isolated on a solid flat neon green background."
+
+#### Pressurized Habitat Tile
+"A 2:1 isometric developed Middle Surface tile with sealed habitats, greenhouses, and access roads on the Safeguard panels. Populated with small figures. Isolated on a solid flat neon green background."
+
+#### Damaged Safeguard Tile
+"A 2:1 isometric Safeguard tile with cracked glass panels, leaking atmosphere effects, and emergency repair robots. Isolated on a solid flat neon green background."
+
+### Robot States & Variations
+
+#### CAR-300 (Active State)
+"A 2:1 isometric CAR-300 robot with manipulator arms extended, blue work lights on, and tool attachments. Industrial white and orange. Isolated on a solid flat white background."
+
+#### SMR-500 (Scanning State)
+"A 2:1 isometric SMR-500 with LIDAR turret spinning, sensor lenses glowing brightly, and data transmission antennas extended. Isolated on a solid flat white background."
+
+#### Damaged Robot (Generic)
+"A 2:1 isometric damaged robot with sparking wires, bent chassis, and warning lights flashing. Rusty and battle-worn appearance. Isolated on a solid flat white background."
+
+### Processing & Fabrication Expansions
+
+#### Sabatier Reactor Unit
+"A 2:1 isometric chemical processing unit with input pipes for CO2 and H2, output for CH4 and H2O, and cooling fins. Industrial with green status lights. Isolated on a solid flat white background."
+
+#### EM-Core Synthesis Unit
+"A 2:1 isometric advanced fabrication unit with exotic matter containment fields, wormhole stabilizers, and high-tech interfaces. Glowing blue energy effects. Isolated on a solid flat white background."
+
+### Logistics & Storage Expansions
+
+#### Fuel Depot Tank Farm
+"A 2:1 isometric cluster of spherical fuel tanks connected by pipelines, with loading arms and safety valves. Methane and oxygen storage. Isolated on a solid flat white background."
+
+#### Cargo Transfer Station
+"A 2:1 isometric modular cargo handling facility with conveyor belts, loading docks, and automated cranes. Industrial shipping container aesthetic. Isolated on a solid flat white background."
+
+### Easter Egg & Flavor Assets
+
+#### Sci-Fi Monument
+"A 2:1 isometric alien monolith or mysterious artifact partially buried in regolith, with glowing runes and unknown technology. Isolated on a solid flat white background."
+
+#### Abandoned Settlement Ruins
+"A 2:1 isometric ruined habitat with collapsed structures, overgrown vegetation, and ancient technology remnants. Atmospheric and mysterious. Isolated on a solid flat white background."
+
+## Animation & Multi-Frame Considerations
+
+For units requiring movement or states:
+- Generate 8-directional sprites (N, NE, E, SE, S, SW, W, NW).
+- Include idle, active, and damaged variants.
+- For tiles, consider overlay effects (e.g., dust storms, energy fields).
+
+## Generation Priority
+
+1. Core units (Skimmer, Cycler) for logistics.
+2. Habitat assets for population display.
+3. Terrain variations for dynamic gameplay.
+4. Flavor assets for immersion.
