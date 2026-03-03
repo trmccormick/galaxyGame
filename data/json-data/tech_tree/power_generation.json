@@ -1,0 +1,496 @@
+{
+  "template": "technology_category",
+  "category_id": "power_generation",
+  "category_name": "Power Generation",
+  "description": "Technologies for generating and managing power in space environments.",
+  "icon": "icons/tech/power_generation.png",
+  "tier_structure": {
+    "tier_1": {
+      "name": "Solar Technology Level 1",
+      "description": "Improved solar panel technology with higher efficiency in space.",
+      "research_cost": {
+        "currency": "GCC",
+        "amount": 75000
+      },
+      "research_points_required": {
+        "engineering_points": 300,
+        "scientific_points": 200,
+        "social_points": 0
+      },
+      "time_to_research": 2000,
+      "requirements": [],
+      "unlocks": [
+        {
+          "unit": "High-Efficiency Solar Panel",
+          "details": {
+            "base_material_efficiency": 3,
+            "base_time_efficiency": 2,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 250000
+            },
+            "materials": [
+              {
+                "id": "silicon",
+                "amount": 500.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "aluminum",
+                "amount": 200.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "electronics",
+                "amount": 100.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "High-Efficiency Solar Panel",
+            "time_to_build": 1000,
+            "maintenance": {
+              "time_to_repair": 100,
+              "repair_cost_gcc": 25000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "silicon",
+                  "amount": 50.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "power_generation": 25.0,
+              "unit": "kilowatt_hour"
+            },
+            "deployment": {
+              "deployment_locations": ["orbit", "surface"],
+              "deployment_time": 50
+            }
+          }
+        }
+      ]
+    },
+    "tier_1b": {
+      "name": "RTG Manufacturing",
+      "description": "Radioisotope Thermoelectric Generator technology for reliable long-term power.",
+      "research_cost": {
+        "currency": "GCC",
+        "amount": 150000
+      },
+      "research_points_required": {
+        "engineering_points": 400,
+        "scientific_points": 300,
+        "materials_points": 100
+      },
+      "time_to_research": 4000,
+      "requirements": [
+        "Solar Technology Level 1"
+      ],
+      "unlocks": [
+        {
+          "unit": "RTG Power Unit",
+          "details": {
+            "base_material_efficiency": 4,
+            "base_time_efficiency": 3,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 400000
+            },
+            "materials": [
+              {
+                "id": "plutonium_238",
+                "amount": 10.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "thermoelectric_materials",
+                "amount": 50.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "RTG Power Unit",
+            "time_to_build": 1500,
+            "maintenance": {
+              "time_to_repair": 200,
+              "repair_cost_gcc": 40000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "thermoelectric_materials",
+                  "amount": 10.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "required_power": 0.0,
+              "unit": "kilowatt_hour",
+              "power_output": 0.125
+            }
+          }
+        },
+        {
+          "material": "plutonium_238"
+        }
+      ]
+    },
+    "tier_2": {
+      "name": "Compact Nuclear Reactor",
+      "description": "Small-scale nuclear reactor suitable for spacecraft and bases.",
+      "research_cost": {
+        "currency": "GCC",
+        "amount": 300000
+      },
+      "research_points_required": {
+        "engineering_points": 800,
+        "scientific_points": 600,
+        "social_points": 200
+      },
+      "time_to_research": 8000,
+      "requirements": [
+        "Advanced Solar Arrays"
+      ],
+      "unlocks": [
+        {
+          "unit": "Compact Fission Reactor",
+          "details": {
+            "base_material_efficiency": 8,
+            "base_time_efficiency": 4,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 1200000
+            },
+            "materials": [
+              {
+                "id": "uranium",
+                "amount": 200.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "lead",
+                "amount": 5000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "titanium_alloy",
+                "amount": 2000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "electronics",
+                "amount": 500.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "Compact Fission Reactor",
+            "time_to_build": 5000,
+            "maintenance": {
+              "time_to_repair": 500,
+              "repair_cost_gcc": 100000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "titanium_alloy",
+                  "amount": 200.0,
+                  "unit": "kilogram"
+                },
+                {
+                  "id": "electronics",
+                  "amount": 50.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "power_generation": 250.0,
+              "unit": "kilowatt_hour"
+            },
+            "deployment": {
+              "deployment_locations": ["surface"],
+              "deployment_time": 200
+            }
+          }
+        }
+      ]
+    },
+    "tier_2b": {
+      "name": "Industrial Nuclear Reactor Design",
+      "description": "Large-scale nuclear reactors for industrial power generation with enhanced safety features.",
+      "research_cost": {
+        "currency": "GCC",
+        "amount": 800000
+      },
+      "research_points_required": {
+        "engineering_points": 1000,
+        "scientific_points": 800,
+        "materials_points": 400
+      },
+      "time_to_research": 10000,
+      "requirements": [
+        "Compact Nuclear Reactor",
+        "Advanced Materials"
+      ],
+      "unlocks": [
+        {
+          "unit": "Industrial Nuclear Reactor",
+          "details": {
+            "base_material_efficiency": 10,
+            "base_time_efficiency": 6,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 2000000
+            },
+            "materials": [
+              {
+                "id": "advanced_alloys",
+                "amount": 2000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "nuclear_fuel",
+                "amount": 500.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "Industrial Nuclear Reactor",
+            "time_to_build": 5000,
+            "maintenance": {
+              "time_to_repair": 600,
+              "repair_cost_gcc": 200000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "advanced_alloys",
+                  "amount": 400.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "required_power": 0.0,
+              "unit": "kilowatt_hour",
+              "power_output": 1000.0
+            }
+          }
+        }
+      ]
+    },
+    "tier_3": {
+      "name": "Fusion Power",
+      "description": "Harnessing the power of nuclear fusion for safe, efficient power generation.",
+      "research_cost": {
+        "currency": "GCC",
+        "amount": 1500000
+      },
+      "research_points_required": {
+        "engineering_points": 2000,
+        "scientific_points": 2500,
+        "social_points": 500
+      },
+      "time_to_research": 15000,
+      "requirements": [
+        "Compact Nuclear Reactor"
+      ],
+      "unlocks": [
+        {
+          "unit": "Fusion Reactor",
+          "details": {
+            "base_material_efficiency": 15,
+            "base_time_efficiency": 8,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 5000000
+            },
+            "materials": [
+              {
+                "id": "deuterium",
+                "amount": 100.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "tritium",
+                "amount": 50.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "superconductors",
+                "amount": 1000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "titanium_alloy",
+                "amount": 10000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "advanced_electronics",
+                "amount": 2000.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "Fusion Reactor",
+            "time_to_build": 10000,
+            "maintenance": {
+              "time_to_repair": 1000,
+              "repair_cost_gcc": 500000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "superconductors",
+                  "amount": 100.0,
+                  "unit": "kilogram"
+                },
+                {
+                  "id": "advanced_electronics",
+                  "amount": 200.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "power_generation": 2000.0,
+              "unit": "kilowatt_hour"
+            },
+            "deployment": {
+              "deployment_locations": ["surface", "large_spacecraft"],
+              "deployment_time": 500
+            }
+          }
+        }
+      ]
+    },
+    "tier_4": {
+      "name": "EM-Core Power Systems",
+      "description": "Exotic Matter core technology for near-infinite power generation with minimal maintenance.",
+      "research_cost": {
+        "currency": "GCC",
+        "amount": 5000000
+      },
+      "research_points_required": {
+        "engineering_points": 3000,
+        "scientific_points": 4000,
+        "social_points": 1000
+      },
+      "time_to_research": 25000,
+      "requirements": [
+        "Fusion Power",
+        "Wormhole Stabilization"
+      ],
+      "unlocks": [
+        {
+          "unit": "EM-Core Shield Retrofit",
+          "details": {
+            "description": "Upgrade existing planetary magnetic shields to use EM-core power for 95%+ atmospheric retention",
+            "base_material_efficiency": 20,
+            "base_time_efficiency": 10,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 10000000
+            },
+            "materials": [
+              {
+                "id": "refined_em",
+                "amount": 10.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "superconductors",
+                "amount": 5000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "advanced_electronics",
+                "amount": 10000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "titanium_alloy",
+                "amount": 50000.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "EM-Core Shield Retrofit Kit",
+            "time_to_build": 20000,
+            "maintenance": {
+              "time_to_repair": 2000,
+              "repair_cost_gcc": 1000000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "refined_em",
+                  "amount": 1.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "power_generation": 0.0,
+              "unit": "kilowatt_hour",
+              "em_core_output": "infinite"
+            },
+            "deployment": {
+              "deployment_locations": ["orbital"],
+              "deployment_time": 1000
+            }
+          }
+        },
+        {
+          "unit": "Wormhole-Stabilized Shield Generator",
+          "details": {
+            "description": "New planetary shield using direct wormhole EM channeling for 100% atmospheric retention",
+            "base_material_efficiency": 25,
+            "base_time_efficiency": 12,
+            "purchase_cost": {
+              "currency": "GCC",
+              "amount": 20000000
+            },
+            "materials": [
+              {
+                "id": "refined_em",
+                "amount": 50.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "superconductors",
+                "amount": 10000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "advanced_electronics",
+                "amount": 20000.0,
+                "unit": "kilogram"
+              },
+              {
+                "id": "titanium_alloy",
+                "amount": 100000.0,
+                "unit": "kilogram"
+              }
+            ],
+            "outcome": "Wormhole-Stabilized Shield Generator",
+            "time_to_build": 50000,
+            "maintenance": {
+              "time_to_repair": 5000,
+              "repair_cost_gcc": 2000000,
+              "materials_needed_for_repair": [
+                {
+                  "id": "refined_em",
+                  "amount": 5.0,
+                  "unit": "kilogram"
+                }
+              ]
+            },
+            "power_requirements": {
+              "power_generation": 0.0,
+              "unit": "kilowatt_hour",
+              "wormhole_channeling": "direct"
+            },
+            "deployment": {
+              "deployment_locations": ["orbital"],
+              "deployment_time": 2000
+            }
+          }
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "category": "technology"
+  }
+}
