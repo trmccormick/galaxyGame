@@ -231,6 +231,17 @@ height = (width / 2).round.clamp(20, 360)  # Enforce 2:1 aspect ratio
 - **For-Profit NPC Corporations:** AstroLift and other NPC corporations are for-profit entities essential for logistics and specialized services
 - **Infrastructure Focus:** DCs prioritize base infrastructure establishment while for-profit NPCs handle commercial logistics and transportation
 
+### Earth-Luna Anchor & Import Parity
+- **Earth-Luna Anchor**: All GCC pricing references the Earth-Luna Anchor as the absolute floor. No material can be sold below the cost of importing from Luna (including fuel, taxes, and 3.37% Sales Tax).
+- **Import Parity Ceiling**: AI Manager sets Buy Orders at Earth Anchor + shipping costs + taxes. Players must beat this to compete with NPC imports.
+- **GCC-to-USD Flow**: Robot replacements and high-tech imports create persistent GCC outflow to Earth, maintaining economic balance.
+
+### AI Manager Treasury & Robot Fleet
+- **GCC Treasury Management**: AI Manager maintains a treasury for player payouts. If depleted, shifts to robot-only operations and byproduct sales.
+- **Robot Fleet as Capital Assets**: Robots are sunk costs; AI uses them for maintenance and production when GCC is low, selling byproducts at 5% below Import Parity.
+- **Maintenance Tax**: 30-60% of robot uptime dedicated to base upkeep, reducing construction capacity on large projects.
+- **Path of Least Resistance**: AI prioritizes outsourcing to players over robot labor to maximize efficiency.
+
 ## 🤖 9. Sol as AI Training Data
 
 **Core Design Philosophy:** The Sol system serves as the primary training dataset for AI Manager autonomous decision-making in new system development. All patterns, economic dynamics, and infrastructure decisions learned from Sol must be applied to maintain consistent expansion quality and player-first economics.

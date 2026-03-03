@@ -156,3 +156,38 @@ Phase 0 has been converted to the new task-runnable format with:
 - Supplies rare earth minerals and advanced manufacturing
 - Enables cycler-based interplanetary trade networks
 - Dual-moon stations create unique gameplay opportunities
+
+## Middle Surface & Civ-Sim-EVE Integration
+
+### Civ4/FreeCiv Hybrid Engine
+- **Middle Surface**: The "Safeguard" layer capping Valles Marineris, functioning as a pressurized terrain tile for population and biology.
+- **Tile States**: Empty (trench) → Girders (i-beams) → Sealed (panels) → Developed (habitats).
+- **Unit Roles**: Robots (extraction/fabrication), Skimmers (logistics), AI Manager (coordination).
+- **EVE Elements**: Player "Traitors" can sabotage shield upgrades; EM logistics create new gameplay loops.
+
+### Robot Fleet & Automation
+- **CAR-300**: Surface assembly and operations.
+- **SMR-500**: Mapping for skylights and tunnels.
+- **HRV-400**: Resource harvesting from regolith.
+- **MRR-100**: Maintenance and repair.
+- **LTR-100**: Logistics and transfer.
+- **LSPU**: Surface preparation for landings.
+
+### Fabrication & Infrastructure
+- **Planetary I-Beam Printing Unit**: Produces structural skeletons.
+- **3D Regolith Shell Printer**: Hardens inflatable habitats.
+- **Thermal Extraction Unit**: Processes volatiles.
+- **PVE Mk1**: Extracts oxygen and gases.
+- **Gas Separator Unit**: Refines methane and nitrogen.
+
+### Safeguard Construction Sequence
+- **Phase 0**: Power/Comms deployment via HLL.
+- **Phase 1**: Extraction and initial fabrication.
+- **Phase 2**: I-beam skeleton and panel sealing.
+- **Phase 3**: Biology introduction and population growth.
+- **Parallel Execution**: CNT foundry and advanced mining run concurrently.
+
+### Visual Assets
+- Generated via ChatGPT prompts for 2:1 isometric sprites.
+- Transparency-ready for terrain overlay.
+- See docs/agent/ASSET_PROMPTS.md for details.
