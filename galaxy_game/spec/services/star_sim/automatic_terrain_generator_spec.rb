@@ -133,11 +133,12 @@ RSpec.describe StarSim::AutomaticTerrainGenerator do
         hydrosphere: double('hydrosphere', water_coverage: 71.0),
         atmosphere: double('atmosphere', pressure: 1.0),
         properties: {},
-        density: 5.5  # g/cm³
+        density: 5.5,  # g/cm³
+        magnetic_field: 50.0
       )
 
       params = generator.send(:analyze_planet_properties, earth_planet)
-      expect(params[:biome_density]).to eq(1.0)
+      expect(params[:biome_density]).to be_within(0.01).of(0.8)
     end
   end
 
@@ -178,6 +179,33 @@ RSpec.describe StarSim::AutomaticTerrainGenerator do
     it 'returns nil for airless bodies' do
       result = generator.send(:generate_hybrid_biomes, 'Luna', elevation, airless_body, grid_dims)
       expect(result).to be_nil
+    end
+  end
+
+  describe '#calculate_biome_density' do
+    let(:generator) { described_class.new }
+    it 'returns high density for Earth via environmental factors' do
+      earth = double('CelestialBody',
+        name: 'Earth',
+        surface_temperature: 288,
+        hydrosphere: double('hydrosphere', water_coverage: 71.0),
+        atmosphere: double('atmosphere', pressure: 1.0),
+        magnetic_field: 50.0
+      )
+      density = generator.send(:calculate_biome_density, earth)
+      expect(density).to be_within(0.01).of(0.8)
+    end
+
+    it 'returns lower density for dry, cold planet' do
+      dry_cold = double('CelestialBody',
+        name: 'DryCold',
+        surface_temperature: 150,
+        hydrosphere: double('hydrosphere', water_coverage: 0.0),
+        atmosphere: double('atmosphere', pressure: 0.01),
+        magnetic_field: 0.0
+      )
+      density = generator.send(:calculate_biome_density, dry_cold)
+      expect(density).to be < 0.2
     end
   end
 end

@@ -178,8 +178,6 @@ module StarSim
 
     # Calculate biome density based on habitability
     def calculate_biome_density(body)
-      # Earth gets full biome density
-      return 1.0 if body.name.downcase == 'earth'
 
       density = 0.0
 
