@@ -47,9 +47,9 @@ RSpec.describe GameController, type: :controller do
         Atmosphere.delete_all
         CelestialBodies::CelestialBody.delete_all
         SolarSystem.delete_all
+        allow(StarSim::SystemBuilderService).to receive(:new).and_return(double(build!: true))
       end
-      let!(:sol_system) { SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01') }
-      let!(:sol_star) { FactoryBot.create(:star, name: 'Sol', identifier: 'SOL', solar_system: sol_system, type_of_star: 'G') }
+      let!(:sol_system) { FactoryBot.create(:solar_system, name: 'Sol', identifier: 'SOL-01') }
       let!(:earth) { FactoryBot.create(:terrestrial_planet, name: 'Earth', identifier: 'EARTH-01', solar_system: sol_system, orbital_period: 365, surface_temperature: 288) }
       let!(:luna) { FactoryBot.create(:moon, name: 'Luna', identifier: 'LUNA-01', solar_system: sol_system, orbital_period: 27, parent_celestial_body: earth, surface_temperature: 250) }
       let!(:jupiter) { FactoryBot.create(:gas_giant, name: 'Jupiter', identifier: 'JUPITER-01', solar_system: sol_system, orbital_period: 4331, surface_temperature: 165) }
@@ -75,14 +75,12 @@ RSpec.describe GameController, type: :controller do
 
       it "calls SystemBuilderService to build the system if no solar system exists" do
         SolarSystem.delete_all
-        
+
         allow(SolarSystem).to receive(:find_by).with(name: 'Sol').and_call_original
-        
-        # Stub to actually create the solar system
-        expect_any_instance_of(StarSim::SystemBuilderService).to receive(:build!).once do
-          SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01')
-        end
-        
+
+        # Stub to return the test sol_system object
+        allow_any_instance_of(StarSim::SystemBuilderService).to receive(:build!).and_return(sol_system)
+
         get :index
         expect(assigns(:solar_system)).to be_present
       end
