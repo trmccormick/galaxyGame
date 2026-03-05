@@ -5,22 +5,40 @@
 
 ## Active Tasks (In Progress)
 
+### 🔥 CRITICAL: Phase 2 Regional View Implementation
+**Agent**: Implementation Agent (READY)
+**Priority**: HIGH (Enables regional gameplay)
+**Status**: 📋 READY - Phase 1 complete, planning documents created
+**Estimated Effort**: 2-3 days
+**Dependencies**: ✅ Phase 1 planetary view completion
+
+**Description**: Implement Civ4-style regional view with 16K canvas, sprite-based terrain rendering, unit movement layers, and city placement zones.
+
+**Key Deliverables**:
+- 16384x8192 canvas (100m/pixel resolution)
+- galaxy_surface.png sprite atlas (288x32, 9 terrain types)
+- NASA biome → sprite mapping logic
+- Unit movement preview layer
+- City placement zone visualization
+- Viewport culling optimization
+
+**Reference**: PHASE_2_REGIONAL_VIEW_IMPLEMENTATION.md
+
+**Why Priority**: Required for regional gameplay mechanics and unit/city systems.
+
+**Execution Mode**: Implementation agent execution with testing validation.
+
 ### � HIGH PRIORITY: Test Suite Restoration Continuation
 **Agent**: Autonomous Nightly Grinder (Process 65383 - ACTIVE)
 **Priority**: HIGH (Blocks Phase 4)
-**Status**: ⏸️ READY TO RESUME - Easter egg cleanup complete, grinder can restart overnight
+**Status**: 🔄 ACTIVE - Started today at ~358 failures, actively grinding
 **Estimated Effort**: 2-3 days (overnight autonomous execution)
 **Dependencies**: ✅ Easter egg system cleanup (COMPLETED)
 
 **Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: 147 failures (down from 243, 96 failures eliminated ✅)
+**Current Status**: ~358 failures (baseline established today)
 **Recent Progress**:
-- ✅ terrestrial_planets_spec.rb: Fixed 3/4 failures (1 TerraSim-related failure remains)
-- ✅ base_unit_spec.rb: All 26 tests now passing (complete fix)
-- ✅ Milestone achieved: <200 failures reached! 🎉
-- 🔧 Key fixes: Item validation, operational data persistence, unit initialization
-- ✅ BLOCKER RESOLVED: Easter egg cleanup complete - no more data mixing interference
 **Target**: <50 failures
 **Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
 
@@ -30,24 +48,7 @@
 
 **Execution Mode**: Autonomous overnight processing - ready to resume immediately.
 
-**Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
-
-**Current Status**: 147 failures (down from 243, 96 failures eliminated ✅)
-**Recent Progress**:
-- ✅ terrestrial_planets_spec.rb: Fixed 3/4 failures (1 TerraSim-related failure remains)
-- ✅ base_unit_spec.rb: All 26 tests now passing (complete fix)
-- ✅ Milestone achieved: <200 failures reached! 🎉
-- 🔧 Key fixes: Item validation, operational data persistence, unit initialization
-- ✅ BLOCKER RESOLVED: Easter egg cleanup complete - no more data mixing interference
-**Target**: <50 failures
-**Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
-
-**Reference**: test_suite_restoration_continuation.md
-
-**Why Priority**: Blocks Phase 4 UI Enhancement and further development progress.
-
 **Execution Mode**: Autonomous overnight processing - currently paused for easter egg cleanup completion.
-
 ---
 
 ### 🤖 Phase 4A: AI Manager Enhancement (FULLY COMPLETE - MVP Validated)
@@ -1433,6 +1434,25 @@
 
 ---
 
+### 🔧 LOW: Heavy Lift Transport — Solar Expansion Rig Documentation & Sprite Backlog
+**Priority**: LOW
+**Estimated Effort**: 15 min
+**Dependencies**: None
+
+**Description**: Document and backlog updates for the Solar Expansion Rig as a deployable module on the Heavy Lift Transport. Blueprint JSON and sprite set need updating to reflect that the rig is not a standalone ground structure, but a ship-deployable module. Sprite generation is queued until image quota resets.
+
+**Key Changes**:
+- Solar Expansion Rig deploys from ship exterior, used for deep space and temporary colony power, removed by robots once grid is online
+- Heavy Lift Transport needs two additional sprite states: Landed + Rig Deployed, In Transit + Rig Deployed
+- Blueprint JSON compatible_modules should include Solar Expansion Rig as a deployable module with deploy/retract states
+- Reference existing sprite sheets in docs/agent/image-generation/
+
+**Task File**: `tasks/backlog/heavy_lift_solar_rig_updates.md`
+
+**Why Backlogged**: Documentation only, image generation quota resets in ~24 hours. No blockers.
+
+---
+
 ### 🤖 HIGH: AI Manager Autonomous System Expansion **[MVP]**
 **Priority**: HIGH
 **Estimated Effort**: 8-12 hours
@@ -2025,7 +2045,7 @@ Seeding Fix (active)
 ---
 
 **Log Maintained By**: Claude (Planning Agent)
-**Last Updated**: 2026-02-11 03:15
+**Last Updated**: 2026-03-05
 **Next Review**: After Grok completes seeding fix
 
 ### Implement Live System Health Checks for AI Manager Validation Suite
@@ -2037,3 +2057,32 @@ Seeding Fix (active)
 **Description**: The System Health section in the AI Manager validation suite currently displays only stub values. Implement backend endpoints and frontend integration to provide live health status for AI services, database, patterns, and performance. Remove all stubbed values. Ensure robust error handling and RSpec coverage. See `implement_live_system_health_checks.md` in backlog for details.
 
 ---
+
+### Surface View Mars Color Mismatch (2026-03-04)
+**Status**: Backlog
+**Summary**: Mars surface view renders grey instead of rust red shown in monitor.
+Investigation: Review biome color data pipeline between monitor view and surface view renderer.
+**Reference**: backlog/surface_view_mars_color_mismatch.md
+
+### Surface Map Initial Load Requires Refresh (2026-03-04)
+**Status**: Backlog
+**Summary**: Surface map requires manual browser refresh before tiles render on first load.
+**Investigation**: Likely a JavaScript load order or DOM ready issue.
+**Reference**: backlog/surface_map_initial_load.md
+
+### EscalationService Redesign — ISRU-First Architecture (2026-03-05)
+**Status**: Backlog
+**Priority**: High
+**Owner**: Unassigned — Claude Sonnet recommended (complex reasoning required)
+**Created**: 2026-03-05
+
+**Summary**: Current EscalationService does not reflect ISRU-first design principles. `critical_resource?` method is incorrect — oxygen/water are always harvested locally. `find_nearby_settlements` requires Cycler route network architecture before implementation.
+
+**Correct escalation order:**
+1. ISRU chain expansion — can local production meet demand
+2. Deploy robot fleet for additional local harvesting
+3. Query same-world settlements with available craft for in-system trade
+4. Schedule import on next Cycler visit via established route
+
+**Reference**: backlog/escalation_service_redesign.md
+**Spec**: spec/integration/ai_manager/escalation_integration_spec.rb (stubbed as pending)
