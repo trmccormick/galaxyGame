@@ -48,8 +48,7 @@
           gravity: @celestial_body.gravity,
           liquid_name: @celestial_body.hydrosphere&.liquid_type || 'H2O',
           water_coverage: @celestial_body.hydrosphere&.state_distribution&.dig('liquid') || 0,
-          crust_iron_oxide_percentage: @celestial_body.geosphere&.properties&.dig('iron_oxide_percentage') ||
-                                        @celestial_body.geosphere&.crust_composition&.dig('iron_oxide') || 0,
+          crust_iron_oxide_percentage: @celestial_body.geosphere&.crust_composition&.dig('iron_oxide') || 0,
           has_hydrosphere: has_hydrosphere
         },
         
@@ -125,7 +124,7 @@
                 </div>
                 <div id="canvasScroller" style="overflow: hidden; width: 100%; height: 100%;">
                     <div id="canvasContainer" style="width: 100%; height: 100%;">
-                        <canvas id="surfaceCanvas" style="display:block; width:100%; height:100%;"></canvas>
+                        <canvas id="surfaceCanvas" style="display:block; width:100%; height:auto;"></canvas>
                     </div>
                 </div>
                 <div id="featureTooltip" class="hidden">
