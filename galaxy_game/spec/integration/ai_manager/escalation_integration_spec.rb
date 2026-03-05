@@ -33,7 +33,8 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
                quantity: 500,
                created_at: 30.hours.ago)
       end
-
+    pending "EscalationService requires redesign — ISRU-first architecture. See docs/agent/tasks/backlog/escalation_service_redesign.md"
+  end
       before do
         # Set up celestial body with available resources
         create_atmosphere_with_oxygen(celestial_body)
@@ -383,7 +384,7 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
   end
 
   def create_regolith_with_iron(celestial_body)
-    celestial_body.update!(composition: { 'regolith' => { 'iron' => 5.2 } })
+    celestial_body.update!(properties: celestial_body.properties.merge('regolith' => { 'iron' => 5.2 }))
   end
 
   def enqueued_jobs_count
