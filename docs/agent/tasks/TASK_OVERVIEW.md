@@ -1841,6 +1841,32 @@ end
 
 ---
 
+### 🏗️ TerrainForge Layer Architecture Correction
+**Agent**: Documentation Update Complete (Grok Planner)
+**Priority**: Medium (Documentation correctness, not blocking current RSpec work)
+**Status**: ✅ COMPLETED - Architecture documentation updated to reflect correct Surface View integration
+**Task File**: `implement_terrainforge_layer.md` (backlog)
+
+**Description**: Corrected TerrainForge documentation to reflect proper architecture as Civilization Layer interaction mode within Surface View, not separate view.
+
+**Key Corrections**:
+- TerrainForge IS the Civilization Layer (Layer 4) on the Surface View — not a separate view
+- Two interaction modes: Admin and Player Corporation
+- Admin mode: DC base direction, AI Manager training, full visibility
+- Player Corporation mode: base placement, unit deployment, road building, resource claiming
+- Corporation membership required for TerrainForge access
+- DC bases as temporary player home bases
+- Megaprojects (Worldhouse, terraforming) restricted to DC/AI Manager only
+- Orbital infrastructure marked as future scope
+
+**Success Criteria**:
+- ✅ Architecture documentation updated
+- ✅ Scope boundaries clearly defined
+- ✅ Implementation roadmap corrected
+- ✅ Task file created in backlog with corrected specifications
+
+---
+
 ## Project Status Summary
 
 ### Current Phase: **System Stabilization**
