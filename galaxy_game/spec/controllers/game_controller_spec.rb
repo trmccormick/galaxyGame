@@ -78,8 +78,11 @@ RSpec.describe GameController, type: :controller do
 
         allow(SolarSystem).to receive(:find_by).with(name: 'Sol').and_call_original
 
-        # Stub to return the test sol_system object
+        # Stub to return the test sol_system object when build! is called
         allow_any_instance_of(StarSim::SystemBuilderService).to receive(:build!).and_return(sol_system)
+
+        # Stub SolarSystem.find_by to return sol_system on the second call (after build!)
+        allow(SolarSystem).to receive(:find_by).with(name: 'Sol').and_return(nil, sol_system)
 
         get :index
         expect(assigns(:solar_system)).to be_present
