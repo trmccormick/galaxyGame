@@ -9,6 +9,7 @@ FactoryBot.define do
     after(:build) do |solar_system|
       solar_system.define_singleton_method(:validate_star_presence) { true } if solar_system.respond_to?(:validate_star_presence)
       solar_system.define_singleton_method(:validate_celestial_bodies) { true } if solar_system.respond_to?(:validate_celestial_bodies)
+      solar_system.define_singleton_method(:ensure_initial_star) { true } if solar_system.respond_to?(:ensure_initial_star)
     end
     
     trait :with_stars do

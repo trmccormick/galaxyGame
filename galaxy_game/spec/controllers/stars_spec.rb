@@ -21,21 +21,27 @@ RSpec.describe StarsController, type: :controller do
   end
 
   describe "POST #create" do
-    context "with valid parameters" do
-      it "creates a new Star" do
-        expect {
-          post :create, params: { star: valid_attributes }
-        }.to change(CelestialBodies::Star, :count).by(1)
-      end
+    before do
+      allow_any_instance_of(SolarSystem).to receive(:ensure_initial_star)
+    end
+  let(:solar_system) { create(:solar_system) }
+  let(:valid_attributes) { attributes_for(:star).merge(solar_system_id: solar_system.id) }
 
-      it "renders a JSON response with the new star" do
+  context "with valid parameters" do
+    it "creates a new Star" do
+      expect {
         post :create, params: { star: valid_attributes }
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to include('application/json')
-        json_response = JSON.parse(response.body)
-        expect(json_response['name']).to be_present
-        expect(json_response['type_of_star']).to be_present
-      end
+      }.to change(CelestialBodies::Star, :count).by(1)
+    end
+
+    it "renders a JSON response with the new star" do
+      post :create, params: { star: valid_attributes }
+      expect(response).to have_http_status(:created)
+      expect(response.content_type).to include('application/json')
+      json_response = JSON.parse(response.body)
+      expect(json_response['name']).to be_present
+      expect(json_response['type_of_star']).to be_present
+    end
     end
 
     context "with invalid parameters" do
