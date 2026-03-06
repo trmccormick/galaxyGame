@@ -1,6 +1,10 @@
 module Lookup
   class ItemLookupService < BaseLookupService
-    BASE_PATH = Rails.root.join('app', 'data', 'items').freeze
+    # Provide class method for spec compatibility
+    def self.base_items_path
+      GalaxyGame::Paths::ITEMS_PATH
+    end
+    # BASE_PATH removed; use GalaxyGame::Paths constants instead
 
     CATEGORIES = {
       'consumable' => 'consumables',
@@ -11,22 +15,20 @@ module Lookup
 
     # Use the same directory structure as UnitLookupService
     ITEM_PATHS = {
-      'consumable' => Rails.root.join('app', 'data', 'items', 'consumable'),
-      'container' => Rails.root.join('app', 'data', 'items', 'container'),
-      'equipment' => Rails.root.join('app', 'data', 'items', 'equipment'),
-      'material' => Rails.root.join('app', 'data', 'items', 'material')
+      'consumable' => GalaxyGame::Paths::CONSUMABLE_ITEMS_PATH,
+      'container' => GalaxyGame::Paths::CONTAINER_ITEMS_PATH,
+      'equipment' => GalaxyGame::Paths::EQUIPMENT_ITEMS_PATH,
+      'material' => GalaxyGame::Paths::MATERIALS_PATH
     }.freeze
 
     def initialize
       super
-      @items = load_items unless Rails.env.test?
+      @items = load_items
       @cache = {}
     end
 
     def base_path
-      @base_path ||= Rails.env.test? ? 
-        Rails.root.join('spec/support/test_data/items') :
-        GalaxyGame::Paths::ITEMS_PATH
+      @base_path ||= GalaxyGame::Paths::ITEMS_PATH
     end
 
     def find_item(item_id, category = nil)
@@ -66,6 +68,36 @@ module Lookup
         end
       end
       
+      # Dynamic item creation for scrap, processed, and used items
+      normalized_id = item_id.to_s.strip.downcase.gsub(' ', '_')
+      normalized_name = item_id.to_s.strip
+
+      if normalized_name.match?(/scrap/i)
+        base = normalized_name.sub(/ scrap/i, '')
+        return {
+          'id' => normalized_id,
+          'name' => normalized_name,
+          'type' => 'scrap_material',
+          'category' => 'recyclable'
+        }
+      elsif normalized_name.match?(/processed/i)
+        base = normalized_name.sub(/processed /i, '')
+        return {
+          'id' => normalized_id,
+          'name' => normalized_name,
+          'type' => 'processed_material',
+          'category' => 'processed'
+        }
+      elsif normalized_name.match?(/used/i)
+        base = normalized_name.sub(/used /i, '')
+        return {
+          'id' => normalized_id,
+          'name' => normalized_name,
+          'type' => 'used_component',
+          'category' => 'used'
+        }
+      end
+
       nil
     end
 
