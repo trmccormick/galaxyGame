@@ -47,7 +47,7 @@ RSpec.describe Lookup::ModuleLookupService do
 
   describe 'service configuration' do
     it 'has the correct base path' do
-      expected_path = File.join(Rails.root, "data", "json-data", "operational_data", "modules")
+      expected_path = GalaxyGame::Paths::MODULES_PATH.to_s
       actual_path = described_class.base_modules_path.to_s
       expect(actual_path).to eq(expected_path)
     end
