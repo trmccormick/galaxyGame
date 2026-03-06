@@ -3,7 +3,7 @@ require_relative '../../../app/services/ai_manager'
 
 
 RSpec.describe AIManager::OperationalManager do
-  let(:settlement) { double('Settlement', id: 1, celestial_body: double('CelestialBody', data: {})) }
+  let(:settlement) { create(:settlement, celestial_body: create(:celestial_body, :minimal, name: 'Mars')) }
   let(:operational_manager) { described_class.new(settlement) }
 
   describe '#initialize' do

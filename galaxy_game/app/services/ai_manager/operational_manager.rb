@@ -17,7 +17,7 @@ require_relative 'scout_logic'
       @settlement = settlement
       @patterns = load_trained_patterns
       @priorities = AiPrioritySystem.new
-      @world_knowledge = WorldKnowledgeService.new(settlement.celestial_body&.data || settlement.celestial_body)
+      @world_knowledge = WorldKnowledgeService.new(settlement.celestial_body)
       @last_decision = nil
       @decision_log = []
       @performance_tracker = PerformanceTracker.new(settlement.id)
@@ -683,7 +683,7 @@ require_relative 'scout_logic'
       equipment_score = [equipment[:total_unit_count].to_i, 50].min
 
       # Add world compatibility score
-      validator = AIManager::PatternValidator.new(@settlement.celestial_body&.data || @settlement.celestial_body)
+      validator = AIManager::PatternValidator.new(@settlement.celestial_body)
       world_compatibility = validator.assess_world_compatibility(pattern)
       world_score = world_compatibility[:score] * 30
 
@@ -890,20 +890,24 @@ require_relative 'scout_logic'
       # --- AI Decision Audit Trail ---
       # Log to AIDecisionLog for admin/audit/learning
       location_context = context[:location_context] || settlement.celestial_body&.name || 'unknown'
-      AiDecisionLog.create!(
-        celestial_body: settlement.celestial_body,
-        location_context: location_context,
-        decision_type: decision[:action].to_s,
-        reasoning: decision[:reason] || 'N/A',
-        constraints: decision[:constraints] || {},
-        outcome: decision_record[:outcome],
-        metadata: {
-          context: context,
-          category: category,
-          timestamp: decision_record[:timestamp],
-          lessons_learned: decision_record[:lessons_learned]
-        }
-      )
+      begin
+        AiDecisionLog.create!(
+          celestial_body: settlement.celestial_body,
+          location_context: location_context,
+          decision_type: decision[:action].to_s,
+          reasoning: decision[:reason] || 'N/A',
+          constraints: decision[:constraints] || {},
+          outcome: decision_record[:outcome] || decision[:action].to_s,
+          metadata: {
+            context: context,
+            category: category,
+            timestamp: decision_record[:timestamp],
+            lessons_learned: decision_record[:lessons_learned]
+          }
+        )
+      rescue ActiveRecord::StatementInvalid, PG::InFailedSqlTransaction => e
+        Rails.logger.error "Failed to record AI decision log: #{e.message}"
+      end
       decision_record
     end
 
