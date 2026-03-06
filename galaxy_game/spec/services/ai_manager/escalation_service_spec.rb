@@ -2,7 +2,10 @@
 require 'rails_helper'
 
 RSpec.describe AIManager::EscalationService, type: :service do
-  pending "EscalationService requires ISRU-first redesign — see docs/agent/tasks/backlog/escalation_service_redesign.md"
+  # pending "EscalationService requires ISRU-first redesign — see docs/agent/tasks/backlog/escalation_service_redesign.md"
+
+  let(:settlement) { create(:base_settlement) }
+  let(:celestial_body) { settlement.celestial_body }
 
   describe '.deploy_automated_harvesters' do
     let(:order) { create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen', quantity: 100) }
@@ -147,7 +150,12 @@ RSpec.describe AIManager::EscalationService, type: :service do
     end
 
     context 'with non-critical non-locally available resources' do
-      let(:titanium_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'titanium') }
+      let(:titanium_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen') }
+
+      before do
+        settlement.celestial_body.atmosphere.gases.destroy_all
+        allow(described_class).to receive(:hlt_mission_manifest).and_return(['oxygen'])
+      end
 
       it 'returns :scheduled_import for unavailable materials' do
         expect(described_class.send(:determine_escalation_strategy, titanium_order)).to eq(:scheduled_import)
@@ -155,32 +163,13 @@ RSpec.describe AIManager::EscalationService, type: :service do
     end
   end
 
-  describe '.critical_resource?' do
-    it 'returns true for oxygen' do
-      expect(described_class.send(:critical_resource?, 'oxygen')).to be true
+  describe '.critical_import_required?' do
+    it 'returns true for advanced_electronics' do
+      expect(described_class.send(:critical_import_required?, 'advanced_electronics')).to be true
     end
 
-    it 'returns true for water' do
-      expect(described_class.send(:critical_resource?, 'water')).to be true
-    end
-
-    it 'returns true for nitrogen' do
-      expect(described_class.send(:critical_resource?, 'nitrogen')).to be true
-    end
-
-    it 'returns true for hydrogen' do
-      expect(described_class.send(:critical_resource?, 'hydrogen')).to be true
-    end
-
-    it 'returns false for non-critical resources' do
-      expect(described_class.send(:critical_resource?, 'iron')).to be false
-      expect(described_class.send(:critical_resource?, 'titanium')).to be false
-      expect(described_class.send(:critical_resource?, 'copper')).to be false
-    end
-
-    it 'is case insensitive' do
-      expect(described_class.send(:critical_resource?, 'OXYGEN')).to be true
-      expect(described_class.send(:critical_resource?, 'Water')).to be true
+    it 'returns false for oxygen' do
+      expect(described_class.send(:critical_import_required?, 'oxygen')).to be false
     end
   end
 

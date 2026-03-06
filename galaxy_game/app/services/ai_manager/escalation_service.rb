@@ -158,19 +158,53 @@ module AIManager
     def self.determine_escalation_strategy(order)
       material = order.resource
       settlement = order.base_settlement
+      celestial_body = settlement.celestial_body
 
-      # Priority 1: Special missions for critical resources
-      return :special_mission if critical_resource?(material)
-
-      # Priority 2: Automated harvesting if locally available
+      # Priority 1: ISRU-first — always harvest locally if possible
       return :automated_harvesting if can_harvest_locally?(settlement, material)
 
-      # Priority 3: Scheduled imports as last resort
-      :scheduled_import
+      # Priority 2: Material supplied via active HLT skimmer missions
+      # Venus HLT → O2/N2 to Luna
+      # Titan HLT → CH4/N2 to Luna
+      # Pre-L1 Station phase — Cyclers not yet operational
+      return :scheduled_import if supplied_via_hlt_mission?(material, celestial_body)
+
+      # Priority 3: Genuine supply crisis — no local source, no HLT route
+      # Emergency mission as last resort only
+      :special_mission
     end
 
-    def self.critical_resource?(material)
-      ['oxygen', 'water', 'nitrogen', 'hydrogen'].include?(material.downcase)
+    def self.supplied_via_hlt_mission?(material, celestial_body)
+      hlt_mission_manifest(celestial_body).include?(material.downcase)
+    end
+
+    def self.hlt_mission_manifest(celestial_body)
+      # Materials delivered by Heavy Lift Transport skimmer missions
+      # This is the pre-L1 Station supply chain phase.
+      # Venus HLT delivers: oxygen (LOX), nitrogen, CO2
+      # Titan HLT delivers: methane, nitrogen, ethane, hydrocarbons
+      # After L1 Station + Cyclers built, replace with Cycler route query.
+      # See: NPC_INITIAL_DEPLOYMENT_SEQUENCE.md, solar_system_progression.rake
+      case celestial_body.name.downcase
+      when 'luna'
+        ['oxygen', 'nitrogen', 'methane', 'carbon_dioxide',
+         'ethane', 'hydrocarbons', 'co2', 'n2', 'ch4']
+      when 'mars'
+        ['nitrogen'] # Supplementing for terraforming via HLT
+      else
+        []
+      end
+    end
+
+    # critical_resource? removed — oxygen/water/nitrogen are ALWAYS
+    # harvested locally first (ISRU-first principle).
+    # Imports are for materials the body genuinely cannot produce.
+    # See: venus_harvest_mission_summary.md, titan_harvest_mission_summary.md
+
+    def self.critical_import_required?(material)
+      # Materials that cannot be harvested or manufactured locally
+      # Advanced electronics, exotic materials only — NOT oxygen/water/nitrogen
+      ['advanced_electronics', 'rare_earth_elements', 'deuterium', 'helium'].include?(material.downcase)
     end
 
     def self.can_harvest_locally?(settlement, material)
@@ -262,6 +296,8 @@ module AIManager
 
     def self.find_nearby_settlements(settlement)
       # Find other settlements in the same solar system
+      return [] unless settlement&.celestial_body&.solar_system
+
       Settlement::BaseSettlement.joins(location: { celestial_body: :solar_system })
                                 .where(solar_systems: { id: settlement.celestial_body.solar_system.id })
                                 .where.not(id: settlement.id)
