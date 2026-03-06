@@ -1,6 +1,6 @@
 # spec/factories/financial/accounts.rb
 FactoryBot.define do
-  factory :financial_account, class: 'Financial::Account' do
+  factory :account, class: 'Financial::Account', aliases: [:financial_account] do
     balance { 1000.0 }
     currency  # Let FactoryBot infer the association
     lock_version { 0 }
