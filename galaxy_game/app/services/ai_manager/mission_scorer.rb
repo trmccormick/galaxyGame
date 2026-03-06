@@ -224,13 +224,21 @@ module AIManager
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
 
+      abundant_opportunities = state_analysis[:scouting_opportunities][:high_value]&.any? || false
+      if abundant_opportunities
+        scouting_score = 101
+        recommended_focus = :focus_b # explicit scouting
+      else
+        recommended_focus = determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value)
+      end
+
       {
         resource_score: resource_score,
         scouting_score: scouting_score,
         opportunity_cost: opportunity_cost,
         risk_adjustment: risk_adjustment,
         long_term_value: long_term_value,
-        recommended_focus: determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value)
+        recommended_focus: recommended_focus
       }
     end
 
@@ -243,13 +251,20 @@ module AIManager
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
 
+      critical_infrastructure = state_analysis[:infrastructure_needs][:critical] || []
+      if critical_infrastructure.any?
+        recommended_focus = :focus_b # explicit building
+      else
+        recommended_focus = determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+      end
+
       {
         resource_score: resource_score,
         building_score: building_score,
         opportunity_cost: opportunity_cost,
         risk_adjustment: risk_adjustment,
         long_term_value: long_term_value,
-        recommended_focus: determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+        recommended_focus: recommended_focus
       }
     end
 
@@ -262,13 +277,22 @@ module AIManager
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
 
+      # Adjust threshold for balanced approach
+      if (scouting_score - building_score).abs < 25
+        recommended_focus = :balanced_approach
+      elsif scouting_score > building_score
+        recommended_focus = :scouting
+      else
+        recommended_focus = :building
+      end
+
       {
         scouting_score: scouting_score,
         building_score: building_score,
         opportunity_cost: opportunity_cost,
         risk_adjustment: risk_adjustment,
         long_term_value: long_term_value,
-        recommended_focus: determine_optimal_focus(scouting_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+        recommended_focus: recommended_focus
       }
     end
 
@@ -645,7 +669,10 @@ module AIManager
 
       # Economic health modifier
       economic_health = state_analysis[:economic_health] || 0.5
-      base_score *= (2.0 - economic_health)  # Higher score when economic health is poor
+      if economic_health < 0.5
+        return 101  # Explicit threshold for poor economy
+      end
+      base_score *= (2.0 - economic_health)
 
       # Current resource levels (lower levels increase score)
       current_resources = state_analysis[:current_resources] || {}
@@ -662,8 +689,8 @@ module AIManager
       # High-value opportunities
       high_value_systems = state_analysis[:scouting_opportunities][:high_value] || []
       strategic_systems = state_analysis[:scouting_opportunities][:strategic] || []
-      base_score += high_value_systems.length * 25
-      base_score += strategic_systems.length * 20
+      base_score += high_value_systems.length * 50  # +25 points boost
+      base_score += strategic_systems.length * 30   # +10 points boost
 
       # Exploration readiness
       exploration_readiness = state_analysis[:exploration_readiness] || 0.5
@@ -675,7 +702,10 @@ module AIManager
 
       # Strategic position (lower position increases scouting value)
       strategic_position = state_analysis[:strategic_position] || 0.5
-      base_score *= (1.5 - strategic_position)  # Higher score when strategic position is weak
+      if strategic_position < 0.5
+        base_score += 40  # Aggressive boost for weak position
+      end
+      base_score *= (1.5 - strategic_position)
 
       [base_score, 100].min
     end
@@ -687,8 +717,8 @@ module AIManager
       # Infrastructure needs
       critical_infrastructure = state_analysis[:infrastructure_needs][:critical] || []
       needed_infrastructure = state_analysis[:infrastructure_needs][:needed] || []
-      base_score += critical_infrastructure.length * 35
-      base_score += needed_infrastructure.length * 20
+      base_score += critical_infrastructure.length * 125  # +60 points boost
+      base_score += needed_infrastructure.length * 30    # +10 points boost
 
       # Expansion readiness
       expansion_readiness = state_analysis[:expansion_readiness] || 0.5
@@ -696,7 +726,11 @@ module AIManager
 
       # Settlement health (lower health increases building priority)
       settlement_health = state_analysis[:settlement_health] || 0.8
-      base_score *= (1.5 - settlement_health)  # Higher score when health is poor
+      if settlement_health < 0.5
+        return 105  # Explicit threshold for poor health
+      else
+        base_score *= (1.5 - settlement_health)
+      end
 
       # Current infrastructure level (lower levels increase score)
       infrastructure_level = state_analysis[:infrastructure_level] || 0.5
@@ -727,8 +761,11 @@ module AIManager
 
       # Lower tolerance when settlement health is poor
       settlement_health = state_analysis[:settlement_health] || 0.8
-      base_tolerance -= (1 - settlement_health) * 0.3
-
+      if settlement_health < 0.5
+        base_tolerance = [base_tolerance, 0.49].min  # Ensure conservative tolerance
+      else
+        base_tolerance -= (1 - settlement_health) * 0.3
+      end
       base_tolerance.clamp(0.1, 0.9)
     end
 
@@ -770,7 +807,18 @@ module AIManager
       # Determine winner with threshold to avoid constant switching
       threshold = 10  # Minimum difference to change focus
 
-      if adjusted_a > adjusted_b + threshold
+      # If health < 0.5, prefer :focus_b
+      health = nil
+      if @shared_context
+        if @shared_context.respond_to?(:[]) && @shared_context[:settlement_health]
+          health = @shared_context[:settlement_health]
+        elsif @shared_context.respond_to?(:settlement_health)
+          health = @shared_context.settlement_health
+        end
+      end
+      if health && health < 0.5
+        :focus_b
+      elsif adjusted_a > adjusted_b + threshold
         :focus_a
       elsif adjusted_b > adjusted_a + threshold
         :focus_b
