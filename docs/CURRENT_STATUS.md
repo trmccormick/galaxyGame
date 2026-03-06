@@ -1,5 +1,62 @@
 # CURRENT_STATUS.md
 
+## 2026-03-03
+
+### Summary
+Mar 3, 2026 - Surface View Terrain Fixes COMPLETE, Phase 2 Regional View ACTIVE
+
+COMPLETED THIS SESSION — Terrain Generation Fixes Applied
+
+  DONE: Biosphere guard in generate_hybrid_biomes
+        automatic_terrain_generator.rb
+        Returns nil unless celestial_body.biosphere.present?
+        Fixes: Luna, Mercury, bare Mars no longer get Earth biome grids
+
+  DONE: Name-based biome density removed
+        automatic_terrain_generator.rb
+        Removed hardcoded return 1.0 for earth name check
+        Earth density now from environmental factors + biosphere presence bonus
+
+  DONE: Mars colour from iron oxide not name
+        monitor.js getTerrainColorScheme
+        Rust tint from crust_iron_oxide_percentage > 10%
+        Any procedural iron-rich world now gets correct rust tint
+        NOTE: surface.html.erb still needs crust_iron_oxide_percentage in planet_data
+
+  DONE: Exact biome string matching in surface view
+        surface_view.js _getBiomeColor and _biomeTileKey
+        Exact matching for all 15 canonical biomes
+        Canonical list: arctic, tundra, ice, boreal_forest, temperate_forest,
+          tropical_rainforest, tropical_seasonal_forest, desert, grassland,
+          plains, savanna, jungle, wetlands, swamp
+
+  DONE: BiomeRenderer double-load Turbo guard
+        biome_renderer.js
+        Wrapped in window.BiomeRenderer existence check
+        Fixes Turbo redeclaration error
+
+  DONE: Surface button added to solar system view
+        admin/solar_systems/show.html.erb
+        Conditional on body.geosphere.terrain_map.present?
+
+  DONE: Surface ERB fixes applied
+        surface.html.erb
+        Applied all 7 targeted changes: removed duplicate globals, fixed biomes fallback, optimized canvas sizing, corrected zoom range, added iron oxide data, included passability/resource DOM elements
+        Unblocks surface view functionality
+
+  DONE: Surface viewport fixes applied
+        surface_view.js
+        Applied all 6 interconnected fixes: Turbo navigation, canvas sharpness, auto-fit zoom, pan clamping/wrap, horizontal tile wrapping, tile click handler
+        Enables proper surface view navigation and AI planning interface
+
+**PHASE 2 REGIONAL VIEW PROGRESS:**
+  ✅ Phase 1: Canvas Scaling - 16K (16384x8192) regional view foundation established
+  ✅ Phase 2: Sprite Atlas Integration - galaxy_surface.png and JSON config loaded, advanced layer toggling for units/cities implemented
+  ✅ Phase 3: Performance Optimization - viewport culling, sprite rendering optimization, level-of-detail batching implemented
+  🔄 Phase 4: Validation & Documentation - RSpec testing, atomic commit, final documentation updates (ready to proceed)
+
+---
+
 ## 2026-03-01
 
 ### Summary

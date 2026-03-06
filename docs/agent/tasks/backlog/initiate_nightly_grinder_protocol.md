@@ -1,5 +1,11 @@
 # Initiate Nightly Grinder Protocol - Test Suite Restoration
 
+# OBSOLETE: Initiate Nightly Grinder Protocol
+
+**Note:** This protocol is obsolete. Replaced by start_grinder.sh, which handles DB setup, cache clearing, and baseline generation automatically.
+
+# Initiate Nightly Grinder Protocol - Test Suite Restoration
+
 ## Problem Description
 The RSpec test suite has ~393 failing tests with database connection issues preventing proper testing. The nightly grinder protocol provides autonomous overnight restoration but needs to be initiated.
 

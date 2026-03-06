@@ -1,0 +1,162 @@
+[
+  {
+    "index": 0,
+    "name": "dome",
+    "x": 0,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 1,
+    "name": "factory",
+    "x": 32,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 2,
+    "name": "robot",
+    "x": 64,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 3,
+    "name": "panel",
+    "x": 96,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 4,
+    "name": "lab",
+    "x": 128,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 5,
+    "name": "farm",
+    "x": 160,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 6,
+    "name": "crane",
+    "x": 192,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 7,
+    "name": "extractor",
+    "x": 224,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 8,
+    "name": "pad",
+    "x": 256,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 9,
+    "name": "storage",
+    "x": 288,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 10,
+    "name": "habitat",
+    "x": 0,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 11,
+    "name": "solar_array",
+    "x": 32,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 12,
+    "name": "refinery",
+    "x": 64,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 13,
+    "name": "control_tower",
+    "x": 96,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 14,
+    "name": "greenhouse",
+    "x": 128,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 15,
+    "name": "vehicle",
+    "x": 160,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 16,
+    "name": "tank",
+    "x": 192,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 17,
+    "name": "antenna",
+    "x": 224,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 18,
+    "name": "reactor",
+    "x": 256,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  },
+  {
+    "index": 19,
+    "name": "workshop",
+    "x": 288,
+    "y": 32,
+    "width": 32,
+    "height": 32
+  }
+]

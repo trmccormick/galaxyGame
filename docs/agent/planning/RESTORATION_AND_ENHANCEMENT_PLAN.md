@@ -1,4 +1,15 @@
 # Galaxy Game: Restoration and Enhancement Plan
+
+---
+## March 4, 2026 Update
+
+**Protocol Change:**
+- Jan 8 backup comparison is now secondary, not primary
+- Most remaining failures require human judgment, not mechanical restore
+- Fail-fast interactive protocol is now preferred over overnight grinder
+- Overnight grinder reserved for clear mechanical batch fixes only
+
+---
 **Date:** January 16, 2026  
 **Status:** Active Development  
 **Context:** Post-code-loss recovery with architectural improvements

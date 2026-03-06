@@ -2,7 +2,8 @@
 FROM ruby:3.4.3
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs gdal-bin
+
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs gdal-bin python3 python3-pip python3-pillow
 
 # Set the working directory
 WORKDIR /home/galaxy_game

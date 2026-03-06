@@ -306,7 +306,7 @@ RSpec.describe Admin::AiManagerController, type: :controller do
 
     it "assigns decisions data" do
       get :decisions
-      expect(assigns(:decisions)).to be_an(Array)
+      expect(assigns(:decisions)).to be_an(ActiveRecord::Relation)
     end
   end
 

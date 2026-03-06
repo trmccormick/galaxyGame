@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :enclosed_atmosphere, class: 'Atmosphere' do
+  factory :enclosed_atmosphere_factory, class: 'Atmosphere' do
     # ✅ FIX: Use celestial_body instead of container
     association :celestial_body, factory: :terrestrial_planet
     

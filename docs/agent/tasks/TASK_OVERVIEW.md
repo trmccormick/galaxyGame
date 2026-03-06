@@ -31,14 +31,34 @@
 ### � HIGH PRIORITY: Test Suite Restoration Continuation
 **Agent**: Autonomous Nightly Grinder (Process 65383 - ACTIVE)
 **Priority**: HIGH (Blocks Phase 4)
-**Status**: 🔄 ACTIVE - Started today at ~358 failures, actively grinding
+**Status**: 🔄 ACTIVE - Session complete: 330 → 257 failures (73 eliminated)
 **Estimated Effort**: 2-3 days (overnight autonomous execution)
 **Dependencies**: ✅ Easter egg system cleanup (COMPLETED)
 
 **Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: ~358 failures (baseline established today)
-**Recent Progress**:
+**Current Status**: 257 failures (confirmed baseline)
+**Recent Progress**: ✅ TerrainForge L4 UNLOCKED (<300 threshold met)
+**Session Results** (March 5, 2026):
+- Previous baseline: 330 failures (corrected from stale 147)
+- Current confirmed: 257 failures  
+- Session reduction: 73 failures eliminated
+- TerrainForge L4 threshold (<300): ✅ UNLOCKED
+
+**Commits Made This Session**:
+- Add :independent trait to SettlementFactory; green DomeService specs (20/24)
+- Add :financial_account alias to account factory; green DomeService specs (24/24)
+- Fix ModuleLookupService spec — use GalaxyGame::Paths::MODULES_PATH constant
+- Fix ItemLookupService — use GalaxyGame::Paths constants, remove test env guard
+
+**Baseline Log**: Saved to ./data/logs/rspec_full_[timestamp].log
+
+**Next Priority Clusters** (257 failures remaining):
+- unit_lookup_service_spec: 16 failures (Was passing earlier — recheck)
+- escalation_service_spec: 18 failures (Architecture redesign needed)  
+- ai_manager/*: ~60 failures (Various)
+- models/*: ~45 failures (Various)
+
 **Target**: <50 failures
 **Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
 
@@ -48,7 +68,30 @@
 
 **Execution Mode**: Autonomous overnight processing - ready to resume immediately.
 
-**Execution Mode**: Autonomous overnight processing - currently paused for easter egg cleanup completion.
+---
+
+### 🧹 HIGH PRIORITY: NPCColony Obsolete Cleanup
+**Agent**: GPT-4.1 (execution)
+**Priority**: HIGH
+**Status**: 📋 PENDING - Task created, ready for execution
+**Estimated Effort**: 5 minutes
+**Dependencies**: None
+
+**Description**: Remove obsolete Settlement::NPCColony model + all related files and references superseded by BaseSettlement + AI Manager architecture.
+
+**Steps**:
+1. SEARCH: grep -r "NPCColony" app/ spec/ lib/ db/ --exclude-dir=log
+2. DELETE app/models/settlement/n_p_c_colony.rb
+3. DELETE spec/models/settlement/n_p_c_colony_spec.rb
+4. DELETE any factories: spec/factories/**/npc_colon*.rb
+5. CHECK migrations: grep -r "npc_colon" db/migrate/ (remove if NPCColony-specific)
+6. VERIFY: grep -r "NPCColony" app/ spec/ lib/ (should be clean)
+7. COMMIT: "Remove obsolete NPCColony (BaseSettlement + AI Manager)"
+
+**RSPEC Impact**: 254 failures → 254 failures (pending specs removed)
+**Why Priority**: Code cleanup, remove obsolete architecture before TerrainForge L4 work
+**Execution Mode**: Thorough search + file deletion + verification
+
 ---
 
 ### 🤖 Phase 4A: AI Manager Enhancement (FULLY COMPLETE - MVP Validated)
@@ -514,9 +557,84 @@
 
 **Expected Outcome**: AI autonomously manages Mars + Luna bases with resource sharing and coordinated expansion.
 
+### 🔴 HIGH PRIORITY: Fix EscalationService Spec Failures
+**Agent**: Claude Sonnet
+**Priority**: HIGH (top failing spec, blocks grinding progress)
+**Status**: ⏳ WAITING - Pending Claude review of priorities and potential other issues
+**Estimated Effort**: 2-4 hours
+**Dependencies**: DomeService fix completed
+**Description**: Fix 25 failures in escalation_service_spec.rb, now top failing spec.
+**Reference**: fix_escalation_service_spec_failures.md
+**Why Priority**: Critical blocker for test suite restoration (<300 target)
+**Execution Mode**: Autonomous grinding with iterative fix-test cycles.
+
+### 🔧 MEDIUM PRIORITY: Diagnose UnitLookupService
+**Agent**: GPT-4.1
+**Priority**: MEDIUM (part of LookupService cluster fixes)
+**Status**: 📋 READY - Task file created, ready for assignment
+**Estimated Effort**: 5 minutes
+**Dependencies**: None
+**Description**: Diagnose 16 failures in unit_lookup_service_spec.rb and report to Claude.
+**Reference**: diagnose_unit_lookup_service.md
+**Why Priority**: Resolves path abstraction issues in LookupService cluster
+**Execution Mode**: Diagnosis and reporting.
+
 ---
 
-## Recently Completed Tasks
+### ✅ Fix DomeService Financial Account Factory Alias
+**Agent**: GPT-4.1
+**Completed**: 2026-03-05
+**Priority**: MEDIUM
+**Task File**: `fix_dome_service_financial_account_alias.md` (moved to completed/)
+
+**What was accomplished**:
+- ✅ Added `aliases: [:financial_account]` to `:account` factory in `galaxy_game/spec/factories/financial/accounts.rb`
+- ✅ Fixed 4 remaining DomeService spec failures (Factory not registered: 'financial_account')
+- ✅ Specs validated: 24 examples, 0 failures (all green)
+- ✅ Committed with message: "Add :financial_account alias to account factory; green DomeService specs (24/24)"
+
+**Results**: DomeService specs fully unblocked, contributing to <300 failure target
+
+### ✅ Fix ModuleLookupService Spec Path
+**Agent**: GPT-4.1
+**Completed**: 2026-03-05
+**Priority**: MEDIUM
+**Task File**: `fix_module_lookup_service_spec_path.md` (moved to completed/)
+
+**What was accomplished**:
+- ✅ Replaced hardcoded path with GalaxyGame::Paths::MODULES_PATH.to_s in spec
+- ✅ Fixed 1 failure in module_lookup_service_spec.rb
+- ✅ Specs validated: 1/1 green
+
+**Results**: ModuleLookupService path abstraction corrected
+
+### ✅ Fix ItemLookupService
+**Agent**: GPT-4.1
+**Completed**: 2026-03-05
+**Priority**: MEDIUM
+**Task File**: `fix_item_lookup_service.md` (moved to completed/)
+
+**What was accomplished**:
+- ✅ Removed test env guard from @items = load_items
+- ✅ Replaced ITEM_PATHS with GalaxyGame::Paths constants (CONSUMABLE_ITEMS_PATH, etc.)
+- ✅ Removed base_path test env branch
+- ✅ Added dynamic creation logic for scrap/processed/used items in find_item method
+- ✅ Specs validated: 15 examples, 0 failures, 3 pending
+
+**Results**: ItemLookupService path abstraction corrected, dynamic item creation implemented
+
+### ✅ Diagnose UnitLookupService
+**Agent**: GPT-4.1
+**Completed**: 2026-03-05
+**Priority**: MEDIUM
+**Task File**: `diagnose_unit_lookup_service.md` (moved to completed/)
+
+**What was accomplished**:
+- ✅ Ran diagnosis command for unit_lookup_service_spec.rb
+- ✅ Captured output: 26 examples, 0 failures (all passing)
+- ✅ No fixes needed — specs already green after LookupService cluster fixes
+
+**Results**: UnitLookupService diagnosis complete, no additional fixes required
 
 ### ✅ TerraSim Test Suite Verification
 **Agent**: Grok

@@ -1,0 +1,47 @@
+{
+  "name": "settlement_space_colonization_tileset",
+  "tile_size": 32,
+  "sheets": {
+    "settlement": {
+      "file": "settlement_terrain.png",
+      "tiles": {
+        "dome": {
+          "x": 0,
+          "y": 0
+        },
+        "factory": {
+          "x": 32,
+          "y": 0
+        },
+        "mining_rig": {
+          "x": 64,
+          "y": 0
+        },
+        "solar": {
+          "x": 96,
+          "y": 0
+        },
+        "hydroponics": {
+          "x": 128,
+          "y": 0
+        },
+        "storage": {
+          "x": 160,
+          "y": 0
+        },
+        "worldhouse": {
+          "x": 192,
+          "y": 0
+        },
+        "habitat": {
+          "x": 224,
+          "y": 0
+        },
+        "reactor": {
+          "x": 256,
+          "y": 0
+        }
+      }
+    }
+  }
+}

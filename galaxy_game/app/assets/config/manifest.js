@@ -11,3 +11,7 @@
 //= link tileset_loader.js
 //= link surface_view.js
 //= link simple_tileset_loader.js
+
+//= link biome_renderer.js
+
+//= link game_interface_enhanced.js

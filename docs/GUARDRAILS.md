@@ -1,3 +1,46 @@
+---
+# 🔴 AGENT ROLE BOUNDARIES — READ FIRST [2026-03-03]
+
+All agents operating on this project fall into one of two roles. **Your role determines what you are allowed to do.** If you are unsure which role you are in, you are in the Planner role.
+
+## 🧠 Planner Agent (Documentation / Task Creation / Code Review / Planning)
+
+**YOU MAY:**
+- Read, review, and edit source files and documentation
+- Create and update task lists, plans, and GUARDRAILS.md
+- Write code changes to files
+- Suggest fixes and flag issues
+- Run `git` commands on the host
+
+**YOU MAY NOT:**
+- Execute any shell commands other than `git` and basic file operations
+- Run RSpec, rake tasks, Rails runners, or any Ruby command — on the host OR in the container
+- Issue any `docker` or `docker-compose` commands for any reason
+- Install, configure, or modify anything on the host environment
+- Run commands to "verify" your changes — write the change and hand off to the Executor
+
+## ⚙️ Executor Agent (Grinder / Active Development)
+
+**YOU MAY:**
+- Run commands inside the container via `docker exec -it web bash -c '...'`
+- Run RSpec **when explicitly requested** (see Section 13)
+- Run Rails/rake tasks inside the container
+- Execute `start-grinder.sh` when instructed
+
+**YOU MAY NOT:**
+- Run any Ruby/Rails/rake/rspec command directly on the host
+- Use `docker-compose exec` for anything (use `docker exec -it web` instead)
+- Start, stop, restart, or rebuild containers (see Section 12)
+- Modify GUARDRAILS.md or task documentation unilaterally
+
+## ⚠️ Both Agents — The Golden Rule
+
+> **The host is not a development environment. Docker is.**  
+> Mismatches between host and container Ruby/gem environments are normal and intentional.  
+> Never attempt to fix host/container environment mismatches. Run everything in the container.
+
+---
+
 ## Universal Docking & Chassis Integration (2026-02-17)
 
 - Docking is now a Universal Chassis capability for all craft, stations, and bases.
@@ -174,6 +217,73 @@ height = (width / 2).round.clamp(20, 360)  # Enforce 2:1 aspect ratio
 - **Fix Required:** Load NASA GeoTIFF data directly, use FreeCiv/Civ4 only for AI Manager training
 - **Hydrosphere Fix:** `primary_liquid` method must check `liquid_name` attribute first
 
+### No Fog of War — CRITICAL RULE [2026-03-03]
+
+This is a space game. Orbital surveys give us the full terrain before landing.
+FOG OF WAR MUST NEVER BE IMPLEMENTED. If any agent suggests it, reject it.
+
+Scouting is NOT map revelation. Scouting is physical presence:
+- Scout unit on tile reveals: exact deposit yield, mineral composition,
+  subsurface features (lava tubes, ice pockets), precise habitability score
+- Before scouting: tile shows orbital data — terrain, biome, estimated resources
+- After scouting: tile shows full confirmed detail including yield quality
+
+### Worldhouse — Regional Biosphere [2026-03-03]
+
+BIOMES ARE NOT A PLANET-LEVEL BOOLEAN. They are regional.
+
+Global biosphere: Full terraforming. Biomes cover entire surface. (Earth, fully terraformed Mars)
+
+Regional biosphere — Worldhouse:
+  Biomes exist ONLY within an enclosed habitat region.
+  Rest of planet is bare geological terrain.
+  Example: Enclose Valles Marineris under transparent panels.
+  Inside the enclosure: jungle, grassland, city tiles visible.
+  Outside: bare rust Mars regolith.
+
+In terrain_data.biomes grid:
+  biomes[y][x] = 'jungle'   <- inside worldhouse
+  biomes[y][x] = nil        <- outside worldhouse, bare Mars
+  biomes[y][x] = 'regolith' <- explicitly bare geological surface
+
+Surface view renders sparse biome grids correctly.
+Worldhouse boundary/panel outline = Civilisation layer, not Biome layer.
+
+Through the worldhouse panels (Civ4 view) you see:
+  - Strategic unit/tile layer on top
+  - Biome tiles visible inside enclosure boundary
+  - SimCity (TerrainForge) layer below for construction detail
+
+### Desert = Dry Not Hot [2026-03-03]
+
+Desert means LOW PRECIPITATION. Not high temperature.
+Cold deserts are scientifically valid and exist in our solar system.
+
+  desert / hot_desert   ->  golden sandy tan      ->  desert.png
+  cold_desert           ->  pale grey-brown        ->  colour fallback (no tile yet)
+  polar_desert          ->  pale grey-white        ->  tundra.png approximation
+
+Future asset needed: cold_desert.png
+
+### Geological Features Are Not Biomes [2026-03-03]
+
+These are geological surface features, NOT biomes.
+Never put them in biome colour maps or tile mappings.
+They fall through to elevation base colour.
+
+  crater, regolith, maria, mare, volcanic, lava,
+  mountains, hills, peaks, ocean, coast, deep_sea
+
+### Physical Properties Drive Rendering — Name Checks Forbidden [2026-03-03]
+
+Never check planet name to determine rendering.
+
+  Rust/red tint         ->  crust_iron_oxide_percentage > 10%
+  Biomes allowed        ->  celestial_body.biosphere.present?
+  Airless grey          ->  atmosphere.pressure < 0.001 or no atmosphere
+  Volcanic scheme       ->  surface_temperature > 700 AND geological_activity > 80
+  Methane liquid        ->  hydrosphere.liquid_type includes CH4 or C2H6
+
 ## 💵 8. Economic System Guardrails
 
 ### Contract Ceiling Limits
@@ -335,29 +445,69 @@ This strategy ensures the game honors sci-fi's legacy while maintaining focus on
 **Context:** Development Environment Integrity  
 **Mandate:** Protect running applications and collaborative work sessions from unintended disruptions.
 
-### 🚫 Container Restart Prohibition
-- **No Autonomous Restarts:** Do NOT restart, rebuild, or stop Docker containers without explicit user permission, unless operating in autonomous "Grinder" mode for overnight batch processing.
-- **Interactive Mode Default:** In interactive sessions (Quick-Fix Protocol, manual code review), assume containers are running correctly and other agents may be active.
-- **Verification First:** Before suggesting any container operations, ask "Are the containers currently running?" or check status with `docker-compose ps`.
-- **Exception - Grinder Mode:** Autonomous Nightly Grinder may perform container operations as part of its scripted workflow, but must log all actions and provide rollback instructions.
+### 🔴 HOST vs CONTAINER BOUNDARY — CRITICAL RULE [2026-03-03]
+
+The development environment runs **entirely inside Docker**. The host machine is NOT a development environment and must NOT be treated as one.
+
+**The host is only used for:**
+- `git` commands (commit, push, pull, branch, status, log)
+- Editing source files directly (the editor / agent file tools)
+- Running `start-grinder.sh` or other project shell scripts at the project root
+
+**Everything else runs INSIDE the container:**
+```bash
+# ✅ CORRECT — all Rails, Ruby, rake, rspec commands via docker exec
+docker exec -it web bash -c 'bundle exec rails ...'
+docker exec -it web bash -c 'bundle exec rspec ...'
+docker exec -it web bash -c 'bundle exec rake ...'
+```
+
+**NEVER run on the host:**
+- `bundle install`, `bundle exec`, `gem install`
+- `rails`, `rake`, `rspec`
+- `ruby` (to execute app code)
+- Any command that would install, configure, or modify Ruby/gem/rbenv/rvm state
+
+**Why:** The host Ruby environment does NOT match the container and is not expected to. Differences in Ruby version, gems, and paths between host and container are NORMAL and INTENTIONAL. Do NOT attempt to reconcile them. Do NOT install gems on the host to make a command work. Run it in the container instead.
+
+**If a command fails on the host:** The fix is always to move it to `docker exec -it web bash -c '...'`, never to modify the host environment.
+
+---
+
+### 🔴 CONTAINERS ARE ALWAYS RUNNING — DO NOT START, STOP, OR RESTART
+
+The full stack (web, db, and all services) is **assumed to be running at all times** during a development session. 
+
+- **NEVER** run `docker-compose up`, `docker-compose restart`, `docker-compose stop`, `docker-compose down`, or `docker-compose build` without explicit user instruction
+- **NEVER** check container state as a precursor to starting them — they are already running
+- **NEVER** use `docker-compose exec` — use `docker exec -it web` to access the already-running web container
+- If a command fails due to a container issue, **report it to the user** — do not attempt to restart anything
+
+**The correct way to run anything in the app:**
+```bash
+# ✅ Always use docker exec against the running container
+docker exec -it web bash -c 'YOUR COMMAND HERE'
+```
 
 ### 🔍 Environment State Preservation
-- **Running Application Assumption:** Assume the Rails application is running unless explicitly told otherwise. Do not assume container state from tool outputs alone.
-- **Collaborative Awareness:** Multiple agents may be working simultaneously. Container operations affect all agents - coordinate or ask first.
-- **Minimal Intervention:** Prefer code-only fixes that don't require service restarts. Rails development mode reloads most changes automatically.
+- **Collaborative Awareness:** Multiple agents may be working simultaneously. Container operations affect all agents — never touch the container lifecycle.
+- **Minimal Intervention:** Prefer code-only fixes. Rails development mode reloads most changes automatically.
 
-### ✅ Permitted Container Operations
-- **Status Checks:** `docker-compose ps`, `docker ps` - safe informational commands
-- **Log Inspection:** `docker-compose logs` - safe for debugging
-- **Database Queries:** Container-based Rails commands for data inspection
-- **Test Execution:** Running RSpec inside containers (with proper environment isolation)
-- **Grinder Mode:** Full container lifecycle management during autonomous batch processing
+### ✅ Permitted Host Operations
+- `git` commands only: `git status`, `git add`, `git commit`, `git push`, `git pull`, `git branch`, etc.
+- Editing/creating source files via file tools
+- Running `start-grinder.sh` when explicitly requested
 
-### � Configuration Change Prohibition
-- **No Autonomous Config Changes:** Do NOT suggest or make changes to Docker Compose files, .gitignore, environment files, or other infrastructure configurations without explicit user permission.
-- **Interactive Mode Restriction:** In interactive sessions, assume all configurations are correct and do not propose modifications unless directly requested.
+### ✅ Permitted Container Operations (via `docker exec -it web`)
+- `docker exec -it web bash -c 'bundle exec rails ...'` — Rails commands
+- `docker exec -it web bash -c 'bundle exec rake ...'` — Rake tasks
+- `docker-compose ps`, `docker-compose logs` — read-only status/log inspection only
+- RSpec — **only when explicitly requested by the user** (see Section 13)
+
+### 🚫 Configuration Change Prohibition
+- **No Autonomous Config Changes:** Do NOT suggest or make changes to Docker Compose files, `.gitignore`, environment files, or other infrastructure configurations without explicit user permission.
 - **Documentation First:** Any proposed config changes must be documented and approved before implementation.
-- **Exception - Grinder Mode:** Autonomous mode may propose config changes as part of scripted workflows, but must provide clear rollback instructions and require approval.
+- **Exception - Grinder Mode:** Autonomous Grinder mode may perform container operations as part of its scripted workflow, but must log all actions and provide rollback instructions.
 
 ### 🚨 Incident Response [2026-01-23]
 - **Root Cause:** Unintended configuration changes during file review session
@@ -370,6 +520,29 @@ This strategy ensures the game honors sci-fi's legacy while maintaining focus on
 **Context:** Database Integrity and Test Isolation  
 **Mandate:** Prevent accidental corruption of development database through improper test execution.
 
+#### 🔴 NEVER RUN TESTS UNPROMPTED
+
+Running RSpec or any test command is **PROHIBITED** unless the user has explicitly asked for tests to be run in this session.
+
+- Code review does NOT imply permission to run tests
+- Finding a bug does NOT imply permission to run tests  
+- Planning or documentation tasks do NOT imply permission to run tests
+- Fixing code does NOT imply permission to run tests
+
+**When in doubt: do not run tests. Ask the user first.**
+
+#### 🔴 NEVER USE docker-compose TO RUN TESTS
+
+`docker-compose exec` must never be used for test execution. It does not reliably isolate the database environment.
+
+```bash
+# ❌ FORBIDDEN — risks dev database corruption
+docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
+
+# ✅ ONLY correct form — always docker exec, never docker-compose exec
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+```
+
 #### 🚫 Test Environment Violation Prohibition
 - **RAILS_ENV=test Mandate:** ALL RSpec test executions MUST use `RAILS_ENV=test` to prevent development database corruption.
 - **DATABASE_URL Unset Requirement:** ALL test commands MUST prefix with `unset DATABASE_URL` to avoid environment bleed.
@@ -377,7 +550,7 @@ This strategy ensures the game honors sci-fi's legacy while maintaining focus on
   ```bash
   docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"'
   # Expected: galaxy_game_test
-  # ❌ STOP if shows galaxy_game_development
+  # ❌ STOP immediately if output shows galaxy_game_development
   ```
 
 #### 🚨 Development Database Corruption Response
@@ -396,19 +569,10 @@ This strategy ensures the game honors sci-fi's legacy while maintaining focus on
   ```
 - **Prevention Logging:** Document incident in commit message and update guardrails.
 
-#### ✅ Correct Test Execution Pattern
-```bash
-# ❌ WRONG - Corrupts development database
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
-
-# ✅ CORRECT - Safe test execution
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
-```
-
 #### 📊 Incident Precedent [2026-01-24]
-- **Root Cause:** RSpec executed without RAILS_ENV=test, potentially corrupting development database
-- **Impact:** Development database may contain test artifacts or corrupted data
-- **Prevention:** Added explicit database environment protection guardrails
+- **Root Cause:** RSpec executed via docker-compose without RAILS_ENV=test, corrupting development database
+- **Impact:** Development database contained test artifacts and corrupted data
+- **Prevention:** Added explicit database environment protection guardrails and unprompted test prohibition
 - **Recovery:** Development database reseeding required to restore clean state
 
 ## 🖥️ 14. Monitor Interface & Layer System Guardrails

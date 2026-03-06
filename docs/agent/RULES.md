@@ -3,6 +3,24 @@
 
 ---
 
+## 👤 Which Agent Are You?
+
+**Read this first.** Your role determines what you can do.
+
+| | Planner Agent | Executor / Grinder Agent |
+|---|---|---|
+| Edit files | ✅ | ✅ |
+| Run git commands (host) | ✅ | ✅ |
+| Run RSpec | ❌ Never | ✅ When assigned |
+| Run docker exec commands | ❌ Never | ✅ |
+| Restart containers | ❌ Never | ❌ Never |
+| Use docker-compose exec | ❌ Never | ❌ Never |
+
+**If you are a Planner:** your job ends at writing correct task files. You do not verify, test, or execute anything.  
+**If you are an Executor:** your loop is fix → test → fix → test → green → commit → update docs.
+
+---
+
 ## 🚨 CRITICAL RULES (Never Break These)
 
 ### Git & Commits
@@ -20,13 +38,15 @@
 ### Testing
 ```bash
 ❌ NEVER: Run tests without logging
-✅ ALWAYS: rspec > ./log/rspec_full_$(date +%s).log 2>&1
-
 ❌ NEVER: Test against development database
-✅ ALWAYS: unset DATABASE_URL && RAILS_ENV=test
+❌ NEVER: Use docker-compose exec for tests (corrupts dev db)
+❌ NEVER: Split unset/export/rspec across separate lines in automation
 
-✅ ALWAYS: Test inside Docker: docker exec -it web bash
-✅ ALWAYS: Verify tests pass before committing
+✅ ALWAYS: Single chained command via docker exec
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec path/to/spec.rb > ./log/rspec_full_$(date +%s).log 2>&1'
+
+✅ ALWAYS: Verify before committing
+docker exec -it web bash -c 'echo $?'  # 0 = pass
 ```
 
 ### Code Quality
@@ -54,25 +74,30 @@
 
 ## 📋 WORKFLOW RULES
 
-### Starting Work
+### Starting Work — Planner Agent
 1. ✅ Read GROK_CURRENT_WORK.md for current task
 2. ✅ Read relevant reference docs for context
-3. ✅ Enter Docker container: `docker exec -it web bash`
+3. ✅ Update GROK_CURRENT_WORK.md status
+4. ❌ Do NOT enter Docker — write task files and hand off to Executor
+
+### Starting Work — Executor / Grinder Agent
+1. ✅ Read assigned task file completely
+2. ✅ Confirm you understand the fix required and the test commands
+3. ✅ All commands run via `docker exec -it web bash -c '...'` — containers are already running
 4. ✅ Update GROK_CURRENT_WORK.md status
 
-### During Work
-1. ✅ Make small, testable changes
-2. ✅ Test each change in Docker
-3. ✅ Log all test output
-4. ✅ Ask if confused (don't guess)
+### During Work — Executor Loop
+1. ✅ Make targeted code change
+2. ✅ Run RSpec via `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'`
+3. ✅ Log output checked — fix failures, repeat until green
+4. ✅ Ask if confused — don't guess at architecture
 
-### Finishing Work
-1. ✅ Run full test suite (with logging)
-2. ✅ Exit Docker container
-3. ✅ Commit from host (specific files only)
-4. ✅ Update GROK_CURRENT_WORK.md (mark complete)
-5. ✅ Move task to COMPLETED_TASKS_ARCHIVE.md
-6. ✅ Ask user what's next
+### Finishing Work — Executor
+1. ✅ Full relevant spec suite passes (logged)
+2. ✅ Commit from **host** (specific files only, never `git add .`)
+3. ✅ Update GROK_CURRENT_WORK.md (mark complete)
+4. ✅ Update any docs specified in task CRITICAL CONSTRAINTS
+5. ✅ Ask user what's next
 
 ---
 
@@ -213,46 +238,62 @@ Is the task clear?
 
 ## 📝 QUICK COMMAND REFERENCE
 
-### Enter Docker
+### Verify Database Before Starting (ALWAYS do this first)
 ```bash
-docker exec -it web bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "puts ActiveRecord::Base.connection.current_database"'
+# ✅ Expected: galaxy_game_test
+# ❌ STOP if output is: galaxy_game_development
 ```
 
-### Run Tests (Inside Docker)
+### Run Tests (Executor Only — inside container via docker exec)
 ```bash
-# Set environment
-unset DATABASE_URL
-export RAILS_ENV=test
+# Full chained form — copy this exactly, adjust spec path
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec path/to/spec.rb > ./log/rspec_full_$(date +%s).log 2>&1'
 
-# Run with logging
-bundle exec rspec path/to/spec.rb > ./log/rspec_full_$(date +%s).log 2>&1
+# Fail-fast — stops at first failure, good for interactive sessions
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --fail-fast --format documentation 2>&1 | tee ./log/rspec_full_$(date +%s).log'
 
-# Check results
-echo $?  # 0 = pass, non-zero = fail
+# Full suite — sequential to avoid connection pool exhaustion
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --order defined > ./log/rspec_full_$(date +%s).log 2>&1'
+
+# Full suite — limited parallel workers (if connection errors occur)
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test PARALLEL_WORKERS=2 bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+
+# Easiest full suite — uses wrapper script
+docker exec web bin/test > ./data/logs/rspec_full_$(date +%s).log 2>&1
+
+# Check exit code (0 = all pass)
+echo $?
 ```
 
-### Database Operations (Inside Docker)
+> ⚠️ **Log path note**: `./log/` inside the container maps to `./data/logs/` on the host (see docker-compose.dev.yml volume mount). Both paths work — just be consistent when reading logs.
+
+### If You See "Connection is Closed" Errors
+Run sequentially to avoid connection pool exhaustion:
 ```bash
-# Reset and seed
-rails db:reset
-rails db:seed
-
-# Console
-rails console
-
-# Check what was created
-rails c -e "CelestialBodies::CelestialBody.count"
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --order defined --fail-fast=false > ./log/rspec_full_$(date +%s).log 2>&1'
 ```
 
-### Exit Docker & Commit (On Host)
+### Rails Runner (inside container)
 ```bash
-# Exit Docker
-exit
+docker exec -it web bash -c 'bundle exec rails runner "puts SomeClass.count"'
+```
 
-# On host machine
+### Database Operations (inside container)
+```bash
+docker exec -it web bash -c 'bundle exec rake db:reset db:seed'
+```
+
+### Rails Console (inside container)
+```bash
+docker exec -it web bash -c 'bundle exec rails console'
+```
+
+### Commit (on HOST — never inside docker exec)
+```bash
 git status
 git add path/to/specific/file.rb
-git commit -m "[Component] Clear description"
+git commit -m "[Component] Clear description of fix"
 git push origin main
 ```
 

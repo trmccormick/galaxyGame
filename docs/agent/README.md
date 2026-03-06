@@ -59,7 +59,40 @@ Essential technical documentation for daily development.
 
 **Purpose**: Essential development and agent references
 
-## Workflow Integration
+## 🔴 Current Grinder State
+**Last Updated**: March 3, 2026 — update this section after every grinder run
+
+| Metric | Value |
+|---|---|
+| Total Examples | 4,056 |
+| Total Failures | 369 |
+| Pending | 17 |
+| Target | <50 failures |
+| Log Location | `./data/logs/rspec_full_[timestamp].log` |
+
+### Top Failing Specs (start here)
+1. `spec/services/ai_manager/escalation_service_spec.rb` — **25 failures**
+2. `spec/services/manufacturing/construction/dome_service_spec.rb` — **24 failures**
+3. `spec/services/manufacturing/construction/hangar_service_spec.rb` — **23 failures**
+4. `spec/integration/ai_manager/escalation_integration_spec.rb` — **20 failures**
+5. `spec/services/lookup/unit_lookup_service_spec.rb` — **18 failures**
+
+### Grinder Startup
+Always run `./start_grinder.sh` first — it seeds the test database, clears cache, generates a fresh baseline log, and outputs the current top failing specs. Do not start grinding without running this first.
+
+```bash
+# On host — starts grinder pre-flight and generates fresh baseline
+./start_grinder.sh
+```
+
+### Mandatory RSpec Command Form
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb > ./data/logs/rspec_full_$(date +%s).log 2>&1'
+```
+
+> ⚠️ Logs go to `./data/logs/` — not `./log/`. Always use this path.
+
+---
 
 **Agent-Driven Development**: Most work flows through the `/tasks/` system where planning documents are converted into executable agent tasks.
 
@@ -99,23 +132,69 @@ Essential technical documentation for daily development.
 2. Check [CONSTRUCTION_REFACTOR.md](completed/CONSTRUCTION_REFACTOR.md) for implementation patterns
 3. Update [CURRENT_STATUS.md](CURRENT_STATUS.md) when starting work
 
-### Running Tests or Git Operations
-1. **MANDATORY**: Read [Environment Boundaries & Docker Isolation](#-critical-environment-boundaries--docker-isolation) section
-2. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety
-3. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
-4. **NEVER** run Rails/Ruby commands on host - always use `docker-compose exec web`
-5. **Tileset/Map Rendering:** All new map and surface rendering code must use the JSON-based tileset system. Legacy FreeCiv/Civ4 asset pipelines are deprecated.
+### Interactive Quick-Fix Protocol (Executor — when user is present)
+Use this for monitored collaboration during the day. Stops at first failure and waits for analysis before applying fixes.
+
+```bash
+# Step 1: Run fail-fast to find first failure
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --fail-fast --format documentation 2>&1 | tee ./log/rspec_full_$(date +%s).log'
+```
+
+After running, produce a Synthesis Report:
+
+**The Failure** — spec file, line, error message, expected vs actual
+
+**The Discrepancy** — compare current code vs Jan 8 backup at:
+`/Users/tam0013/Documents/git/galaxyGame/data/old-code/galaxyGame-01-08-2026/`
+
+**Proposed Fix** — code change with rationale
+
+**Documentation Plan** — what docs need updating after the fix
+
+**Then STOP** — wait for user approval before applying any changes.
+
+> Use Grinder (overnight) for autonomous batch processing. Use Quick-Fix (daytime) for monitored single-failure collaboration.
+
+### Autonomous Grinder Protocol (Executor — overnight unattended)
+Run `./start_grinder.sh` first to establish baseline, then grind top failing specs autonomously:
+- Fix → test → fix → green → commit → next spec
+- No user prompts between specs
+- Only stop for architectural decisions requiring human input
+- Update `CURRENT_STATUS.md` after each batch
+> ⚠️ **Tests are ONLY run when explicitly requested by the user. Do not run tests as part of review, planning, or routine coding tasks.** See GUARDRAILS.md Section 13.
+
+1. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety
+2. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
+3. **NEVER** run Rails/Ruby commands on host — always use `docker exec -it web bash -c '...'`
+4. **Tileset/Map Rendering:** All new map and surface rendering code must use the JSON-based tileset system. Legacy FreeCiv/Civ4 asset pipelines are deprecated.
+
+### Git Operations (Host Only)
+- `git` commands are run on the **host**, not inside the container
+- All other commands (Rails, rake, rspec, bundle) run **inside the container only** via `docker exec -it web`
 
 ## 🧪 Testing Requirements & Validation Rules
 
-### **MANDATORY: Pre-Commit Testing Protocol**
-**ALL code changes MUST pass RSpec tests before commit:**
+### 🔴 NEVER Run Tests Unprompted
+**RSpec must only be run when the user has explicitly requested it.** The following do NOT grant permission to run tests:
+- Completing a code change
+- Finding or fixing a bug
+- Code review or planning work
+- Pre-commit validation (flag it, don't run it autonomously)
 
-1. **Run RSpec tests for changed code:**
+When in doubt: **do not run tests. Ask the user.**
+
+### **MANDATORY: Pre-Commit Testing Protocol**
+**When tests ARE requested, ALL code changes MUST pass RSpec before commit:**
+
+1. **Run RSpec tests for changed code — always via `docker exec`, never `docker-compose exec`:**
    ```bash
-   docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/
+   # ✅ CORRECT
+   docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/'
    # OR for specific files:
-   docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/services/ai_manager/escalation_service_spec.rb
+   docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/escalation_service_spec.rb'
+
+   # ❌ FORBIDDEN — risks dev database corruption
+   docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec
    ```
 
 2. **Validation Rules (MANDATORY):**
@@ -140,12 +219,15 @@ Essential technical documentation for daily development.
 - ❌ **Do NOT run** Rails commands, RSpec tests, or database operations on host
 - ❌ **Do NOT modify** host Ruby, Node.js, or system-level dependencies
 
-#### **ALWAYS Use Docker for Everything**
-- ✅ **Rails Commands**: `docker-compose exec web bundle exec rails ...`
-- ✅ **RSpec Tests**: `docker-compose exec web bundle exec rspec ...`
-- ✅ **Database Operations**: `docker-compose exec web bundle exec rake db:...`
-- ✅ **Bundle Install**: `docker-compose exec web bundle install`
-- ✅ **Rails Console**: `docker-compose exec web bundle exec rails console`
+#### **ALWAYS Use `docker exec` for Everything in the Container**
+- ✅ **Rails Commands**: `docker exec -it web bash -c 'bundle exec rails ...'`
+- ✅ **RSpec Tests**: `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'`
+- ✅ **Database Operations**: `docker exec -it web bash -c 'bundle exec rake db:...'`
+- ✅ **Bundle Install**: `docker exec -it web bash -c 'bundle install'`
+- ✅ **Rails Console**: `docker exec -it web bash -c 'bundle exec rails console'`
+- ✅ **Git commands**: Run on the **host** directly — this is the only exception
+
+> ⚠️ **`docker-compose exec` is FORBIDDEN for running app commands.** It does not reliably isolate the database environment and has caused dev database corruption. Always use `docker exec -it web`.
 
 #### **Ruby Version Management**
 - **DO NOT change Ruby versions** in Gemfile, Dockerfile, or host system
@@ -159,16 +241,20 @@ Essential technical documentation for daily development.
 - **Team consistency**: All developers work in identical Docker environments
 - **Clean separation**: Host system remains stable and unchanged
 
-### **NEVER Commit Without Testing**
+### **NEVER Commit Without Testing — But Do Not Run Tests Autonomously**
 - **Rails runner commands are NOT sufficient** for validation
-- **Manual testing is NOT sufficient** for validation  
+- **Manual testing is NOT sufficient** for validation
 - **Only RSpec tests provide proper regression protection**
 - **All substantive changes require automated test coverage**
+- **If you are a Planner agent:** flag that tests are needed, do not run them yourself
 
-### **Testing Workflow**
+### **Testing Workflow (Executor / Grinder Agent Only)**
 1. Make code changes
 2. Write/update RSpec tests
-3. Run tests: `docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec`
+3. Run tests (only when instructed):
+   ```bash
+   docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec'
+   ```
 4. Fix any failures
 5. Re-run tests until green
 6. Only then commit and push
@@ -177,11 +263,11 @@ Essential technical documentation for daily development.
 
 ## 📝 Maintenance Guidelines
 
-### When to Update CURRENT_STATUS.md
-- After fixing any spec file
-- When changing active focus area
-- At end of each work session
-- When failures drop below thresholds (401 → 350 → 200 → 100 → 50)
+### When to Update Current Grinder State (top of this file)
+- After every `./start_grinder.sh` run — update failure count and top targets
+- After each batch of fixes — update the failure count
+- When a spec file reaches 0 failures — remove it from the top targets list
+- When failure count crosses thresholds (369 → 300 → 200 → 100 → 50)
 
 ### When to Add to /completed/
 - After completing major refactors
@@ -210,6 +296,20 @@ Essential technical documentation for daily development.
 
 ---
 
-**Last Updated**: March 1, 2026  
+**Last Updated**: March 3, 2026  
 **Maintainer**: Development team  
 **Status**: Active organization (v2.0)
+
+### **⚙️ GRINDER / EXECUTOR AGENT AUTONOMY**
+**This section applies ONLY to the Executor (Grinder) agent. Planner agents are not exempt from any restrictions.**
+
+When running as the Grinder/Executor agent on an explicitly assigned grinding task:
+- **No user prompts required** for `docker exec -it web` command execution
+- **Automatic fix application** without confirmation for failing specs
+- **Self-contained validation** and commit cycles
+- **Continuous progression** to next specs without input
+- **`docker-compose exec` remains forbidden** — always use `docker exec -it web`
+- **Container lifecycle (start/stop/restart) remains forbidden** — containers are always assumed running
+- **RAILS_ENV=test and unset DATABASE_URL remain mandatory** on every test run — no exceptions
+
+This exception enables efficient test suite restoration while maintaining all safety protocols in GUARDRAILS.md Sections 12 and 13.

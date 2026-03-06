@@ -221,6 +221,16 @@ window.AdminMonitor = (function() {
       pData.geological_activity || pData.geosphere_attributes?.geological_activity || 50;
     const gravity = pData.gravity || 1.0;
     const name    = (pData.name || '').toLowerCase();
+    
+    // Check for physical properties first
+    const geosphere = pData.geosphere_attributes || pData.geosphere || {};
+    const crust = geosphere.crust_composition || {};
+    const surface_color_hint = geosphere.surface_color_hint || 
+                               pData.properties?.surface_color_hint;
+                               
+    // High iron/rusty world (iron oxide > 10%)
+    const ironOxide = crust.iron_oxide || crust.Fe2O3 || 0;
+    const isRusty = ironOxide > 10 || surface_color_hint === '#cd5c3c';
 
     if (surfaceTemp > 700 && geologicalActivity > 80) {
       return { low: '#1a0000', high: '#ff4500' };
@@ -230,7 +240,8 @@ window.AdminMonitor = (function() {
       return { low: '#8b4513', high: '#ffa500' };
     }
 
-    if (name === 'mars' ||
+    // Mars or rusty procedural world
+    if (name === 'mars' || isRusty ||
         (atmosphere && atmosphere.pressure > 0.001 && atmosphere.pressure < 0.1 &&
          surfaceTemp < 280 && surfaceTemp > 150 && gravity > 2 && gravity < 5)) {
       return { low: '#4a2810', high: '#cd5c3c' };
@@ -246,7 +257,7 @@ window.AdminMonitor = (function() {
       return { low: '#4a4a4a', high: '#d0d0d0' };
     }
 
-    if (type?.includes('carbon') || pData.crust_composition?.elements?.C > 25) {
+    if (type?.includes('carbon') || crust.elements?.C > 25 || (crust.C && crust.C > 25)) {
       return { low: '#2f2f2f', high: '#696969' };
     }
 

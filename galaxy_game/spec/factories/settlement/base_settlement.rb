@@ -152,6 +152,10 @@ FactoryBot.define do
         settlement.location ||= build(:celestial_location, celestial_body: evaluator.celestial_body)
       end
     end
+
+    trait :independent do
+      owner { nil }
+    end
   end  
 
   # City - inherits from settlement

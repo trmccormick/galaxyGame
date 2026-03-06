@@ -123,9 +123,18 @@ module StarSim
       when /LavaWorld/
         params[:volcanic_activity] = 'high'
         params[:biome_density] *= 0.3  # Reduced biomes on lava worlds
+        params[:surface_color_hint] = '#8b0000' # Dark red/black for lava
       when /OceanPlanet/
         params[:water_coverage] = [params[:water_coverage], 80].max
         params[:biome_density] *= 0.7  # Some biomes underwater
+        params[:surface_color_hint] = '#00008b' # Deep blue for ocean worlds
+      when /TerrestrialPlanet/
+        # Check for iron oxide (rust) composition for Mars-like worlds
+        iron_oxide = body.geosphere&.crust_composition&.dig('iron_oxide') || 
+                     body.geosphere&.crust_composition&.dig('iron')
+        if iron_oxide.to_f > 10.0 || body.name.downcase == 'mars'
+          params[:surface_color_hint] = '#cd5c3c' # Rusty red
+        end
       end
 
       params

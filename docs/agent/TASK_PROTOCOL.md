@@ -7,9 +7,41 @@ This document provides the standardized protocol for creating new LLM agent task
 ## Core Principles
 
 ### 1. Agent Role Separation
-- **Documentation & Planning Agents**: Analysis, code review, documentation updates, task preparation
-- **Implementation Agents**: Code changes, testing, commits (following prepared commands)
-- **Never overlap roles** - documentation agents prepare commands, implementation agents execute them
+- **Planner Agent** (this document's author): Analysis, code review, documentation updates, task creation. **Never executes shell commands, never runs tests, never touches Docker.**
+- **Executor Agent** (Implementation/Grinder): Reads assigned tasks, makes code changes, runs RSpec inside the container in a fix-test loop until green, commits from host, updates docs.
+- **Never overlap roles** — Planner prepares tasks with exact commands, Executor runs them as written.
+
+### ⚠️ Critical: Planner Agents Must Write Correct Commands
+Commands written in TESTING SEQUENCE sections are run verbatim by the Executor. Incorrect command forms cause dev database corruption or silent failures.
+
+#### ✅ Canonical Command Forms — always use these exactly in task files
+```bash
+# RSpec — always chained on one line, always via docker exec -it web bash -c
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec path/to/spec.rb > ./log/rspec_full_$(date +%s).log 2>&1'
+
+# Rails runner — inside container
+docker exec -it web bash -c 'bundle exec rails runner "puts SomeClass.count"'
+
+# Database reset — inside container
+docker exec -it web bash -c 'bundle exec rake db:reset db:seed'
+
+# Git — on HOST only, never inside docker exec
+git add path/to/specific/file.rb
+git commit -m "[Component] Description"
+```
+
+#### ❌ Forbidden Forms — never write these in task files
+```bash
+# Bare commands (agent runs them on host)
+rails db:reset
+bundle exec rspec
+
+# docker-compose exec (bypasses database isolation, causes dev db corruption)
+docker-compose exec web bundle exec rspec
+
+# Persistent shell session (breaks in autonomous/non-interactive use)
+docker exec -it web bash   # followed by separate command lines
+```
 
 ### 2. Mandatory References
 All agent tasks MUST include explicit references to:
@@ -56,12 +88,12 @@ All agent tasks MUST include explicit references to:
 - [Performance improvements]
 
 **CRITICAL CONSTRAINTS:**
-- All operations must stay inside the web docker container for all rspec testing
-- All tests must pass before proceeding
+- All RSpec runs via `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'` — never bare, never docker-compose exec
+- Fix-test loop: make fix → run rspec → fix failures → repeat until green
+- Git commits from host only (never inside a docker exec call)
 - Create/Update Docs: [specific docs to update]
-- Commit only changed files on host, not inside docker container
-- Follow CONTRIBUTOR_TASK_PLAYBOOK.md git rules
-- Reference GUARDRAILS.md for architectural decisions
+- Follow GUARDRAILS.md for architectural decisions
+- No container restarts — containers are always running, use `docker exec -it web`
 
 **MANDATORY REFERENCES:**
 - GUARDRAILS.md: [relevant sections]
@@ -302,7 +334,7 @@ Task A          Task D
 ```markdown
 ### 2026-02-11 - 🔥 CRITICAL: Fix STI Type Mapping in SystemBuilder
 
-**AGENT ROLE:** Implementation
+**AGENT ROLE:** Executor (Implementation)
 
 **CONTEXT:** SystemBuilderService creates celestial bodies from JSON
 
@@ -316,13 +348,17 @@ Line: ~318
 Change: when "terrestrial" → when "terrestrial", "terrestrial_planet"
 
 **TESTING SEQUENCE:**
-1. `rails db:reset && rails db:seed`
-2. `rails c` → `CelestialBodies::Planets::Rocky::TerrestrialPlanet.count`
-3. Verify dashboard shows 4 terrestrial planets
+1. `docker exec -it web bash -c 'bundle exec rake db:reset db:seed'`
+2. `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/star_sim/system_builder_service_spec.rb > ./log/rspec_full_$(date +%s).log 2>&1'`
+3. `docker exec -it web bash -c 'bundle exec rails runner "puts CelestialBodies::Planets::Rocky::TerrestrialPlanet.count"'`
+   Expected: 4
+
+**EXECUTOR LOOP:** Make fix → run step 2 → fix failures → repeat until green → commit from host
 
 **CRITICAL CONSTRAINTS:**
-- Test in Docker container
-- Commit from host after verification
+- RSpec always via `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test ...'`
+- Never use docker-compose exec
+- Git commit from host after tests pass
 ```
 
 ### Example 2: Feature Development Task

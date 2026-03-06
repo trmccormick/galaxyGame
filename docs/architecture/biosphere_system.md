@@ -4,6 +4,43 @@
 
 The biosphere system models planetary biological ecosystems and their dynamic interactions with other planetary spheres. Galaxy Game's biosphere is **fully generic and data-driven**, supporting diverse planetary biomes from terrestrial Earth-like worlds to exotic alien ecosystems.
 
+## Worldhouse — Regional Biosphere [2026-03-03]
+
+BIOMES ARE NOT A PLANET-LEVEL BOOLEAN. They are regional.
+
+Global biosphere: Full terraforming. Biomes cover entire surface. (Earth, fully terraformed Mars)
+
+Regional biosphere — Worldhouse:
+  Biomes exist ONLY within an enclosed habitat region.
+  Rest of planet is bare geological terrain.
+  Example: Enclose Valles Marineris under transparent panels.
+  Inside the enclosure: jungle, grassland, city tiles visible.
+  Outside: bare rust Mars regolith.
+
+In terrain_data.biomes grid:
+  biomes[y][x] = 'jungle'   <- inside worldhouse
+  biomes[y][x] = nil        <- outside worldhouse, bare Mars
+  biomes[y][x] = 'regolith' <- explicitly bare geological surface
+
+Surface view renders sparse biome grids correctly.
+Worldhouse boundary/panel outline = Civilisation layer, not Biome layer.
+
+Through the worldhouse panels (Civ4 view) you see:
+  - Strategic unit/tile layer on top
+  - Biome tiles visible inside enclosure boundary
+  - SimCity (TerrainForge) layer below for construction detail
+
+## Desert = Dry Not Hot [2026-03-03]
+
+Desert means LOW PRECIPITATION. Not high temperature.
+Cold deserts are scientifically valid and exist in our solar system.
+
+  desert / hot_desert   ->  golden sandy tan      ->  desert.png
+  cold_desert           ->  pale grey-brown        ->  colour fallback (no tile yet)
+  polar_desert          ->  pale grey-white        ->  tundra.png approximation
+
+Future asset needed: cold_desert.png
+
 ## Core Components
 
 ### Biosphere Model (`CelestialBodies::Spheres::Biosphere`)

@@ -26,7 +26,7 @@ RSpec.describe Atmosphere, type: :model do
   end
 
   describe "validations" do
-    subject { build(:enclosed_atmosphere, celestial_body: earth) }  # ✅ FIX
+    subject { build(:enclosed_atmosphere_factory, celestial_body: earth) }  # ✅ FIX
     
     it { should validate_presence_of(:environment_type) }
     it { should validate_numericality_of(:temperature) }
@@ -52,7 +52,7 @@ RSpec.describe Atmosphere, type: :model do
       end
 
       it "returns the celestial_body's volume" do
-        atmosphere = build(:enclosed_atmosphere, celestial_body: earth)  # ✅ FIX
+        atmosphere = build(:enclosed_atmosphere_factory, celestial_body: earth)  # ✅ FIX
         expect(atmosphere.volume).to eq(1000.0)
       end
     end
@@ -66,14 +66,14 @@ RSpec.describe Atmosphere, type: :model do
       end
       
       it "returns 0" do
-        atmosphere = build(:enclosed_atmosphere, celestial_body: simple_celestial_body)
+        atmosphere = build(:enclosed_atmosphere_factory, celestial_body: simple_celestial_body)
         expect(atmosphere.volume).to eq(0)
       end
     end
   end
 
   describe "sealing methods" do
-    let(:atmosphere) { create(:enclosed_atmosphere, :sealed, celestial_body: earth) }  # ✅ FIX
+    let(:atmosphere) { create(:enclosed_atmosphere_factory, :sealed, celestial_body: earth) }  # ✅ FIX
 
     describe "#sealed?" do
       it "returns the sealing status" do
@@ -82,7 +82,7 @@ RSpec.describe Atmosphere, type: :model do
     end
 
     describe "#seal!" do
-      let(:unsealed_atmosphere) { create(:enclosed_atmosphere, celestial_body: earth) }
+      let(:unsealed_atmosphere) { create(:enclosed_atmosphere_factory, celestial_body: earth) }
       
       it "sets sealing status to true" do
         expect { unsealed_atmosphere.seal! }.to change { unsealed_atmosphere.sealing_status }.from(false).to(true)
@@ -97,7 +97,7 @@ RSpec.describe Atmosphere, type: :model do
   end
 
   describe "#habitable?" do
-    let(:atmosphere) { build(:enclosed_atmosphere, :earth_like, celestial_body: earth) }  # ✅ FIX
+    let(:atmosphere) { build(:enclosed_atmosphere_factory, :earth_like, celestial_body: earth) }  # ✅ FIX
 
     context "with good conditions" do
       it "returns true" do
@@ -140,7 +140,7 @@ RSpec.describe Atmosphere, type: :model do
   end
 
   describe "AtmosphereConcern inclusion" do
-    let(:atmosphere) { build(:enclosed_atmosphere, celestial_body: earth) }  # ✅ FIX
+    let(:atmosphere) { build(:enclosed_atmosphere_factory, celestial_body: earth) }  # ✅ FIX
 
     it "includes AtmosphereConcern methods" do
       expect(atmosphere).to respond_to(:initialize_gases)
@@ -150,7 +150,7 @@ RSpec.describe Atmosphere, type: :model do
   end
 
   describe "JSON fields" do
-    let(:atmosphere) { create(:enclosed_atmosphere, celestial_body: earth, temperature: 293.15, pressure: 101.325) }  # ✅ FIX
+    let(:atmosphere) { create(:enclosed_atmosphere_factory, celestial_body: earth, temperature: 293.15, pressure: 101.325) }  # ✅ FIX
 
     it "initializes JSON fields with empty objects" do
       expect(atmosphere.composition).to eq({})
@@ -177,7 +177,7 @@ RSpec.describe Atmosphere, type: :model do
 
   describe "parent validation" do
     it "requires exactly one parent" do
-      atmosphere = build(:enclosed_atmosphere, celestial_body: nil)
+      atmosphere = build(:enclosed_atmosphere_factory, celestial_body: nil)
       atmosphere.craft_id = nil
       atmosphere.structure_id = nil
       
@@ -191,7 +191,7 @@ RSpec.describe Atmosphere, type: :model do
       craft = create(:base_craft, owner: player)
       structure = create(:base_structure, settlement: settlement, owner: player)
       
-      atmosphere = build(:enclosed_atmosphere, celestial_body: earth)
+      atmosphere = build(:enclosed_atmosphere_factory, celestial_body: earth)
       atmosphere.craft_id = craft.id
       atmosphere.structure_id = structure.id
       

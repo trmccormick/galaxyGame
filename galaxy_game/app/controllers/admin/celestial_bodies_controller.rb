@@ -80,7 +80,27 @@ module Admin
     # GET /admin/celestial_bodies/:id/surface
     # Surface view with biome tileset rendering
     def surface
-      @tileset_name = 'galaxy_game'
+      @tileset_name = params[:tileset] || 'galaxy_game'
+      @terrain = @celestial_body.geosphere&.terrain_map
+      @geological_features = begin
+        if @celestial_body.geosphere
+          service = Lookup::PlanetaryGeologicalFeatureLookupService.new(@celestial_body)
+          service.all_features.map do |feature|
+            {
+              name: feature['name'],
+              type: feature['feature_type'],
+              description: feature['description'],
+              formation: feature['formation_process']
+            }
+          end
+        else
+          []
+        end
+      rescue StandardError => e
+        Rails.logger.error "Error loading geological features: #{e.message}"
+        []
+      end
+      # TODO: @ai_missions = load_ai_missions (future civilization layer)
     end
 
     # GET /admin/celestial_bodies/:id/sphere_data
@@ -495,6 +515,24 @@ module Admin
 
       geo = @celestial_body.geosphere
       activity_level = geo.geological_activity.to_i rescue 0
+      
+      # Handle different storage formats for terrain_map
+      terrain_map = geo.terrain_map
+      surface_color_hint = nil
+      
+      if terrain_map.is_a?(String)
+        begin
+          terrain_map = JSON.parse(terrain_map)
+        rescue JSON::ParserError
+          terrain_map = {}
+        end
+      end
+      
+      # Extract surface_color_hint from generation_metadata if it exists (and ensure terrain_map is a hash)
+      if terrain_map.is_a?(Hash)
+        surface_color_hint = terrain_map.dig('generation_metadata', 'surface_color_hint') || 
+                             terrain_map.dig('generation_metadata', 'generation_options', 'surface_color_hint')
+      end
 
       {
         geological_activity: activity_level,
@@ -502,6 +540,7 @@ module Admin
         volcanic_activity: (activity_level > 50 ? 'moderate' : 'low'),
         core_composition: geo.core_composition || {},
         crust_composition: geo.crust_composition || {},
+        surface_color_hint: surface_color_hint,
         magnetic_field: 0, # Not in schema, placeholder
         base_total_core_mass: geo.base_values && geo.base_values["base_total_core_mass"],
         total_core_mass: geo.total_core_mass
@@ -514,9 +553,10 @@ module Admin
       bio = @celestial_body.biosphere
 
       {
-        biodiversity: (bio.biodiversity_index * 100)&.round(2) || 0,
-        habitability: (bio.habitable_ratio * 100)&.round(2) || 0,
-        life_forms: (bio.respond_to?(:life_forms) ? bio.life_forms : nil)
+        biodiversity_index: (bio.biodiversity_index || 0.0) * 100.0,
+        habitable_ratio: (bio.habitable_ratio * 100)&.round(2) || 0,
+        life_forms: (bio.respond_to?(:life_forms) ? bio.life_forms : nil),
+        life_forms_count: (bio.respond_to?(:life_forms) && bio.life_forms ? bio.life_forms.size : 0)
       }
     end
 

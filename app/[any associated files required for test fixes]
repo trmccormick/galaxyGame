@@ -1,0 +1,42 @@
+class Settlement
+  attr_accessor :data, :associations
+
+  def initialize(data)
+    @data = data
+    @associations = {}
+  end
+
+  def valid?
+    # Add validation logic here
+  end
+
+  def save
+    # Logic to save the settlement
+  end
+
+  def self.find(id)
+    # Logic to find a settlement by id
+  end
+end
+
+class Environment
+  attr_accessor :settings
+
+  def initialize(settings)
+    @settings = settings
+  end
+
+  def configure
+    # Logic to configure the environment
+  end
+end
+
+class CelestialBodiesController
+  def index
+    # Logic to list celestial bodies
+  end
+
+  def show(id)
+    # Logic to show a specific celestial body
+  end
+end

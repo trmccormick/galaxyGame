@@ -3,25 +3,31 @@
 ## Overview
 This document tracks the implementation of planetary map visualization in Galaxy Game, including the monitor view (admin terrain debugging) and surface view (gameplay map display).
 
-## View Distinction [2026-02-11 UPDATED]
+## View Distinction [2026-03-03 UPDATED]
 
-### Monitor View (Admin/Debug - SimEarth Global Style)
-- **Purpose:** Verify terrain data is loading correctly, global planetary overview
-- **Rendering:** Canvas-based layered system with toggleable overlays
-- **Terrain Layer:** Always ON - elevation-based body-specific colors (cannot be disabled)
-- **Other Layers:** Hydrosphere, Biosphere, Infrastructure - toggleable transparency overlays
-- **Tileset:** NOT used - direct pixel/canvas rendering with planetary color schemes
-- **Location:** `app/views/admin/celestial_bodies/monitor.html.erb`
-- **Example:** SimEarth's global view showing continents, oceans, atmosphere
+### Monitor View (SimEarth global — existing)
+- Whole planet visible at once, auto-scaled to canvas
+- Purpose: Admin/AI orbital overview, planetary health, terraforming progress
+- Layers: Elevation, Liquid, Biomes, data overlays
+- No units, no civilisation layer
+- Users: Admin and AI Manager only
 
-### Surface View (Gameplay - Civilization Strategic Style)
-- **Purpose:** Player interaction with planetary surface for strategy gameplay
-- **Rendering:** FreeCiv tileset sprites for proper strategic game UI
-- **Tileset:** REQUIRED - uses 64×64 Trident tiles (or other FreeCiv tilesets)
-- **Grid Size:** Diameter-based with 2:1 aspect ratio for cylindrical planetary wrap
-- **Layers:** Stacked sprite layers (terrain base + water + biomes + civilization/units)
-- **Location:** `app/views/admin/celestial_bodies/surface.html.erb`
-- **Example:** Civilization's tile-based world map with stacked unit/city overlays
+### Surface View (Civ4/FreeCiv strategic — in progress)
+- Viewport window into the planet. Player pans and zooms.
+- Purpose: Scouting, harvesting, unit movement, base placement planning
+- Same view for Admin (AI planning) and Player (unit orders), different overlays
+- Layer stack bottom to top:
+    0. Elevation     - always on, colour from physical properties not planet name
+    1. Liquid        - bathtub fill, composition-aware colour
+    2. Biomes        - only where biosphere exists (global OR regional)
+    3. Resources     - deposit markers from orbital survey
+    4. Civilisation  - spaceports, bases, roads, worldhouse panels
+    5. Units         - probes, scouts, harvesters, transports (always on top)
+
+### TerrainForge View (SimCity construction — future)
+- Zoomed into specific region, construction grid
+- Purpose: Detailed base and worldhouse building placement
+- Status: Not yet built
 
 **FreeCiv Tileset Constraints (Surface View Only):**
 | Body | Grid Size | @64px tiles |

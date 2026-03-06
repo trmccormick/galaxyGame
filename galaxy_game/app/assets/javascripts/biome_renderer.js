@@ -10,7 +10,15 @@
  *   const renderer = new BiomeRenderer();
  *   await renderer.init();
  *   renderer.draw(ctx, 'desert', x, y, rotation);
+ *
+ * Guard: safe to load multiple times (Turbo navigation / duplicate script tags).
  */
+
+// Only define once — Turbo can cause the script to execute twice in the same
+// page session, which throws "redeclaration of let BiomeRenderer" in strict
+// mode because ES6 class declarations are block-scoped like `let`.
+if (typeof window === 'undefined' || !window.BiomeRenderer) {
+
 'use strict';
 
 class BiomeRenderer {
@@ -219,3 +227,5 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
   window.BiomeRenderer = BiomeRenderer;
 }
+
+} // end double-load guard
