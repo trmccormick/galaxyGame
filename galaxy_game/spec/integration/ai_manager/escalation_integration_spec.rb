@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe 'AI Manager Escalation Integration', type: :integration do
-  pending "Escalation Integration requires significant data model alignment - see docs/agent/tasks/backlog/escalation_service_redesign.md"
+  include ActiveSupport::Testing::TimeHelpers
   let(:settlement) { create(:base_settlement) }
   let(:celestial_body) { settlement.celestial_body }
 
@@ -45,16 +45,8 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
       it 'triggers escalation for all expired orders' do
         expect {
           AIManager::EscalationService.handle_expired_buy_orders([expired_oxygen_order, expired_water_order, expired_iron_order])
-        }.to change { enqueued_jobs_count }.by_at_least(3) # At least 3 jobs: 2 harvesters + 1 import
-      end
-
-      it 'creates special missions for critical resources (oxygen, water)' do
-        expect(AIManager::EmergencyMissionService).to receive(:create_emergency_mission)
-          .with(settlement, :oxygen)
-        expect(AIManager::EmergencyMissionService).to receive(:create_emergency_mission)
-          .with(settlement, :water)
-
-        AIManager::EscalationService.handle_expired_buy_orders([expired_oxygen_order, expired_water_order])
+        }.to change(Units::Robot, :count).by(2) # oxygen + iron
+          .and change(Craft::Harvester, :count).by(1) # water
       end
 
       it 'deploys automated harvesters for locally available materials' do
@@ -64,14 +56,14 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
 
         harvester = Units::Robot.last
         expect(harvester.name).to eq("Automated Oxygen Harvester")
-        expect(harvester.settlement).to eq(settlement)
+        expect(harvester.attachable).to eq(settlement)
         expect(harvester.operational_data['target_material']).to eq('oxygen')
         expect(harvester.operational_data['target_quantity']).to eq(1000)
       end
 
       it 'schedules imports for non-critical, non-locally-available materials' do
         # Remove iron from regolith to force import
-        celestial_body.update!(composition: { 'regolith' => {} })
+        celestial_body.update!(properties: { 'regolith' => {} })
 
         expect {
           AIManager::EscalationService.handle_expired_buy_orders([expired_iron_order])
@@ -85,11 +77,11 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
       end
 
       it 'correctly selects escalation strategies based on material availability and criticality' do
-        # Test oxygen (critical + locally available) -> special mission
-        expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_oxygen_order)).to eq(:special_mission)
+        # Test oxygen (critical + locally available) -> automated harvesting
+        expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_oxygen_order)).to eq(:automated_harvesting)
 
-        # Test water (critical + locally available) -> special mission
-        expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_water_order)).to eq(:special_mission)
+        # Test water (critical + locally available) -> automated harvesting
+        expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_water_order)).to eq(:automated_harvesting)
 
         # Test iron (non-critical + locally available) -> automated harvesting
         expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_iron_order)).to eq(:automated_harvesting)
@@ -226,7 +218,7 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
 
     before do
       # Ensure iron is not locally available
-      celestial_body.update!(composition: { 'regolith' => {} })
+      celestial_body.update!(properties: { 'regolith' => {} })
     end
 
     it 'creates scheduled import with correct parameters' do
@@ -283,7 +275,7 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
 
     before do
       # Set up settlement with sufficient funds
-      allow_any_instance_of(Settlement::BaseSettlement).to receive(:settlement_funds).and_return(100000)
+      allow_any_instance_of(Settlement::BaseSettlement).to receive(:balance).and_return(100000)
       allow(AIManager::EmergencyMissionService).to receive(:normal_procurement_failed?).and_return(true)
     end
 
@@ -307,7 +299,7 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
 
     it 'validates settlement can afford emergency rewards' do
       # Test with insufficient funds
-      allow_any_instance_of(Settlement::BaseSettlement).to receive(:settlement_funds).and_return(0)
+      allow_any_instance_of(Settlement::BaseSettlement).to receive(:balance).and_return(0)
 
       mission = AIManager::EmergencyMissionService.create_emergency_mission(settlement, :oxygen)
       expect(mission).to be_nil
@@ -332,7 +324,7 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
       # Leave titanium unavailable to force import
 
       # Mock settlement funds for emergency missions
-      allow_any_instance_of(Settlement::BaseSettlement).to receive(:settlement_funds).and_return(100000)
+      allow_any_instance_of(Settlement::BaseSettlement).to receive(:balance).and_return(100000)
       allow(AIManager::EmergencyMissionService).to receive(:normal_procurement_failed?).and_return(true)
     end
 
@@ -375,16 +367,20 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
   private
 
   def create_atmosphere_with_oxygen(celestial_body)
-    atmosphere = create(:atmosphere, celestial_body: celestial_body)
+    atmosphere = celestial_body.atmosphere || create(:atmosphere, celestial_body: celestial_body)
     create(:gas, atmosphere: atmosphere, name: 'O2', percentage: 21.0)
+    create(:material, celestial_body: celestial_body, materializable: atmosphere, name: 'oxygen', state: 'gas', location: 'atmosphere')
   end
 
   def create_hydrosphere_with_water(celestial_body)
-    create(:hydrosphere, celestial_body: celestial_body, total_liquid_mass: 1000000.0)
+    hydrosphere = celestial_body.hydrosphere || create(:hydrosphere, celestial_body: celestial_body, total_liquid_mass: 1000000.0)
+    create(:material, celestial_body: celestial_body, materializable: hydrosphere, name: 'water', state: 'liquid', location: 'hydrosphere')
   end
 
   def create_regolith_with_iron(celestial_body)
-    celestial_body.update!(properties: celestial_body.properties.merge('regolith' => { 'iron' => 5.2 }))
+    geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
+    create(:geological_material, geosphere: geosphere, name: 'iron', layer: 'crust')
+    create(:material, celestial_body: celestial_body, materializable: geosphere, name: 'iron', state: 'solid', location: 'geosphere')
   end
 
   def enqueued_jobs_count

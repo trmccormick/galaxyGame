@@ -38,7 +38,7 @@ module AIManager
 
     def self.settlement_can_afford_reward?(settlement, reward_amount)
       # Settlement must have sufficient GCC for the reward
-      settlement_funds(settlement) >= reward_amount * 1.2 # 20% buffer
+      settlement.balance >= reward_amount * 1.2 # 20% buffer
     end
 
     def self.create_mission_record(settlement, resource_type, reward)
@@ -112,12 +112,6 @@ module AIManager
       # This would query procurement history
       # Placeholder - assume procurement can fail
       true
-    end
-
-    def self.settlement_funds(settlement)
-      # Get settlement's available GCC
-      # Placeholder
-      100000
     end
   end
 end
