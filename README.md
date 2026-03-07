@@ -202,6 +202,12 @@ We welcome contributions! Current focus areas:
 4. Update documentation with every code change
 5. Submit PRs with passing tests
 
+
+### Data-Driven Unit Architecture & JSON Migration
+- **BiogasUnit Migration**: The `biogas_generator` and `biogas_unit` have been migrated to a JSON-driven BaseUnit architecture. All legacy Ruby models have been removed in favor of template-compliant JSON blueprints and operational data.
+- **JSON Data Protocol**: JSON blueprint and operational data files (e.g., `biogas_generator_bp.json`, `biogas_generator_data.json`) are **NOT** committed to GitHub. Contributors must follow the documented workflow for local creation and validation.
+- **Standards & Workflow**: See [docs/developer/JSON_DATA_GUIDE.md](docs/developer/JSON_DATA_GUIDE.md) for naming conventions, required fields, and validation steps for all unit JSON data.
+
 ### Development Workflow
 - **Git Practices**: Be selective with staging - avoid `git add .` as it can interfere with other developers' work
 - **File Staging**: Use `git add <specific-file>` to stage only the files you're responsible for

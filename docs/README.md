@@ -33,11 +33,15 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 - [Construction Refactor](agent/completed/CONSTRUCTION_REFACTOR.md) - Manufacturing pipeline history
 - [Admin Dashboard Redesign](developer/ADMIN_DASHBOARD_REDESIGN.md) - Multi-galaxy support with hierarchical navigation
 
-#### Technical Reference
 - [Data-Driven Systems](developer/DATA_DRIVEN_SYSTEMS.md) - JSON configuration patterns
 - [Blueprint Cost Schema](developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) - Crafting system
 - [Testing Framework](developer/ai_testing_framework.md) - AI simulation testing
 - **[Practical Testing Guide](testing/PRACTICAL_TESTING_GUIDE.md)** ⭐ - RSpec best practices
+
+### Data-Driven Unit Architecture & JSON Migration
+- **BiogasUnit Migration**: The `biogas_generator` and `biogas_unit` have been migrated to a JSON-driven BaseUnit architecture. All legacy Ruby models have been removed in favor of template-compliant JSON blueprints and operational data.
+- **JSON Data Protocol**: JSON blueprint and operational data files (e.g., `biogas_generator_bp.json`, `biogas_generator_data.json`) are **NOT** committed to GitHub. Contributors must follow the documented workflow for local creation and validation.
+- **Standards & Workflow**: See [developer/JSON_DATA_GUIDE.md](developer/JSON_DATA_GUIDE.md) for naming conventions, required fields, and validation steps for all unit JSON data.
 - **[CI/CD Pipeline](testing/CI_CD_PIPELINE.md)** ⭐ - Deployment automation
 - **[API Documentation](api/README.md)** ⭐ - Admin endpoints reference
 - **[Deployment Guide](operations/DEPLOYMENT.md)** ⭐ - Production setup
