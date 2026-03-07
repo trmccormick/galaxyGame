@@ -1,53 +1,35 @@
 # CURRENT_STATUS.md
 
-## 2026-03-03
+## 2026-03-07
 
 ### Summary
-Mar 3, 2026 - Surface View Terrain Fixes COMPLETE, Phase 2 Regional View ACTIVE
+Mar 7, 2026 - RSpec Failure Reduction ACTIVE: Storage PORO Cleanup COMPLETE (215 → ~206-209 failures), Dome Cleanup NEXT
 
-COMPLETED THIS SESSION — Terrain Generation Fixes Applied
+### COMPLETED THIS SESSION — RSpec Failure Reduction
 
-  DONE: Biosphere guard in generate_hybrid_biomes
-        automatic_terrain_generator.rb
-        Returns nil unless celestial_body.biosphere.present?
-        Fixes: Luna, Mercury, bare Mars no longer get Earth biome grids
+  DONE: Storage PORO Cleanup (Task C)
+        - Deleted obsolete PORO classes: BaseStorage, GasStorage, LiquidStorage, SolidStorage, EnergyStorage
+        - Deleted their specs (3 failing specs removed)
+        - Verified inventory_spec.rb passes fully (live AR system intact)
+        - Commit: "refactor: remove obsolete PORO storage classes (Inventory system only)"
+        - Failures reduced: 215 → ~206-209
 
-  DONE: Name-based biome density removed
-        automatic_terrain_generator.rb
-        Removed hardcoded return 1.0 for earth name check
-        Earth density now from environmental factors + biosphere presence bonus
+  ACTIVE: Dome Model Cleanup (Task A)
+        - Next priority: Remove obsolete settlement STI subclasses and dome model
+        - Expected impact: ~3 more failures eliminated
+        - Agent: GPT-4.1 (simple file deletions)
 
-  DONE: Mars colour from iron oxide not name
-        monitor.js getTerrainColorScheme
-        Rust tint from crust_iron_oxide_percentage > 10%
-        Any procedural iron-rich world now gets correct rust tint
-        NOTE: surface.html.erb still needs crust_iron_oxide_percentage in planet_data
+### Current RSpec Status
+- Total examples: 4039
+- Failures: ~206-209 (after storage cleanup)
+- Pending: 26
+- Biogas JSON migration: ✅ complete
+- Live systems verified: Inventory, SurfaceStorage, MaterialPile, StorageManager
 
-  DONE: Exact biome string matching in surface view
-        surface_view.js _getBiomeColor and _biomeTileKey
-        Exact matching for all 15 canonical biomes
-        Canonical list: arctic, tundra, ice, boreal_forest, temperate_forest,
-          tropical_rainforest, tropical_seasonal_forest, desert, grassland,
-          plains, savanna, jungle, wetlands, swamp
-
-  DONE: BiomeRenderer double-load Turbo guard
-        biome_renderer.js
-        Wrapped in window.BiomeRenderer existence check
-        Fixes Turbo redeclaration error
-
-  DONE: Surface button added to solar system view
-        admin/solar_systems/show.html.erb
-        Conditional on body.geosphere.terrain_map.present?
-
-  DONE: Surface ERB fixes applied
-        surface.html.erb
-        Applied all 7 targeted changes: removed duplicate globals, fixed biomes fallback, optimized canvas sizing, corrected zoom range, added iron oxide data, included passability/resource DOM elements
-        Unblocks surface view functionality
-
-  DONE: Surface viewport fixes applied
-        surface_view.js
-        Applied all 6 interconnected fixes: Turbo navigation, canvas sharpness, auto-fit zoom, pan clamping/wrap, horizontal tile wrapping, tile click handler
-        Enables proper surface view navigation and AI planning interface
+### Next Steps
+1. Execute Dome cleanup (settlement models)
+2. Continue failure reduction sequence
+3. Update after each completion
 
 **PHASE 2 REGIONAL VIEW PROGRESS:**
   ✅ Phase 1: Canvas Scaling - 16K (16384x8192) regional view foundation established
