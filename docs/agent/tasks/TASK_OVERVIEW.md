@@ -68,12 +68,12 @@
 
 **Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: 238 failures (confirmed baseline - full suite run)
-**Recent Progress**: ✅ DatabaseCleaner connection fixed (245 → 227 failures, 18 specs eliminated)
-**Session Results** (March 5, 2026):
-- Previous baseline: 330 failures (corrected from stale 147)
-- Current confirmed: 257 failures  
-- Session reduction: 73 failures eliminated
+**Current Status**: 215 failures (confirmed baseline - full suite run)
+**Recent Progress**: ✅ EscalationService ISRU-first fix (34/34 green), OperationalManager fix (20/20 green), NPCColony cleanup, MissionScorer fix
+**Session Results** (March 6, 2026):
+- Previous baseline: 238 failures
+- Current confirmed: 215 failures  
+- Session reduction: 23 failures eliminated
 - TerrainForge L4 threshold (<300): ✅ UNLOCKED
 
 **Commits Made This Session** (March 5, 2026):
@@ -101,6 +101,73 @@
 **Execution Mode**: Autonomous overnight processing - ready to resume immediately.
 
 ---
+
+### 🧹 MEDIUM PRIORITY: Settlement Model Cleanup
+**Agent**: GPT-4.1
+**Priority**: MEDIUM
+**Status**: 📋 PENDING - Task created, ready for execution
+**Estimated Effort**: 30 minutes
+**Impact**: 215 → 212 failures (3 eliminated)
+
+**Description**: Remove obsolete settlement STI subclasses and dome model that duplicate enum values and have no table.
+
+**Files to Delete**:
+- app/models/settlement/dome.rb (obsolete, no table)
+- app/models/settlement/colony.rb (duplicate of root Colony)
+- app/models/settlement/outpost.rb (empty, outpost is enum)
+- app/models/settlement/habitat.rb (empty, no enum)
+- app/models/settlement/settlement.rb (empty, name collision)
+- app/models/settlement/city.rb (empty, city is enum)
+- app/controllers/domes_controller.rb (references dead Dome)
+- spec/models/dome_spec.rb (testing dead model)
+
+**Keep**: base_settlement.rb, space_station.rb, orbital_depot.rb, colony.rb (root)
+
+**Commit**: "Remove obsolete settlement STI subclasses and dome model"
+
+---
+
+### 🧹 MEDIUM PRIORITY: OrbitalDepot Architecture Correction
+**Agent**: GPT-4.1
+**Priority**: MEDIUM
+**Status**: 📋 PENDING - Task created, ready for execution
+**Estimated Effort**: 20 minutes
+**Impact**: No current failures, backlog cleanup
+
+**Description**: Fix OrbitalDepot inheritance - should be sibling of SpaceStation, not subclass.
+
+**Change**: app/models/settlement/orbital_depot.rb
+FROM: class OrbitalDepot < SpaceStation
+TO: class OrbitalDepot < BaseSettlement; include Structures::Shell; include Docking
+
+**Documentation**: Add operational_data notes for LEO depot (fuel/cargo) vs L1 depot (shipyard optional)
+
+**Commit**: "Fix OrbitalDepot inheritance - sibling of SpaceStation not subclass"
+
+---
+
+### 🧹 MEDIUM PRIORITY: Remove Obsolete PORO Storage Classes
+**Agent**: GPT-4.1
+**Priority**: MEDIUM
+**Status**: 📋 PENDING - Task created, ready for execution
+**Estimated Effort**: 25 minutes
+**Impact**: 215 → ~206-212 failures (~6-9 eliminated)
+
+**Description**: Delete legacy PORO storage classes superseded by Inventory + Units::BaseUnit.
+
+**Files to Delete**:
+- app/models/storage/base_storage.rb
+- app/models/storage/gas_storage.rb
+- app/models/storage/liquid_storage.rb
+- app/models/storage/solid_storage.rb
+- app/models/storage/energy_storage.rb
+- spec/models/storage/base_storage_spec.rb
+- spec/models/storage/solid_storage_spec.rb
+- spec/models/storage/gas_storage_spec.rb
+
+**Keep**: Inventory, SurfaceStorage, MaterialPile, StorageManager
+
+**Commit**: "Remove obsolete PORO storage classes — superseded by Inventory system"
 
 ### 🧹 HIGH PRIORITY: NPCColony Obsolete Cleanup
 **Agent**: GPT-4.1 ✅ COMPLETED

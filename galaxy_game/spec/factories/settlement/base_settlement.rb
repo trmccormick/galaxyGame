@@ -158,19 +158,7 @@ FactoryBot.define do
     end
   end  
 
-  # City - inherits from settlement
-  factory :city, class: 'Settlement::City', parent: :settlement do
-    sequence(:name) { |n| "City #{n}" }
-    settlement_type { :city }
-    current_population { 500 }
-  end
-  
-  # Outpost - inherits from settlement
-  factory :outpost, class: 'Settlement::Outpost', parent: :settlement do
-    sequence(:name) { |n| "Outpost #{n}" }
-    settlement_type { :outpost }
-    current_population { 25 }
-  end
+  # Removed obsolete city and outpost STI factories
   
   # Space Station - inherits from base_settlement
   factory :space_station, class: 'Settlement::SpaceStation', parent: :base_settlement do

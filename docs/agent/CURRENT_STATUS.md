@@ -1,6 +1,40 @@
 # Current Development Status
 
-**Last Updated**: March 6, 2026 (BiogasUnit JSON Migration Task Created)
+**Last Updated**: March 6, 2026 (Model Cleanup Tasks Created)
+
+## 🔄 ACTIVE: Test Suite Restoration (215 failures remaining)
+**Status**: 🔄 ACTIVE - Baseline confirmed at 215 failures, surgical fixes in progress
+**Priority**: HIGH - Blocks Phase 4 UI Enhancement
+**Recent Progress** (March 5-6, 2026):
+- ✅ EscalationService ISRU-first fix (34/34 green) - 238 → 221 failures
+- ✅ OperationalManager AiDecisionLog fix (20/20 green) - 221 → 201 failures  
+- ✅ NPCColony obsolete cleanup (0 impact) - codebase hygiene
+- ✅ MissionScorer balance logic fix (16/16 green) - 257 → 245 failures
+- ✅ BiogasUnit JSON migration (4 specs eliminated) - 221 → 217 failures
+**Current Baseline**: 215 failures (confirmed full suite run)
+**Target**: <50 failures for Phase 4 unlock
+**Next Priority Clusters**: unit_lookup_service_spec (16 failures), ai_manager/* (~42 failures), models/* (~45 failures)
+
+## 📋 PENDING: Model Architecture Cleanups (Ready for Execution)
+**Status**: 📋 PENDING - Three cleanup tasks created and ready for GPT-4.1 execution
+**Priority**: MEDIUM - Codebase hygiene and obsolete removal
+
+### Settlement Model Cleanup
+- Remove obsolete STI subclasses: dome.rb, colony.rb, outpost.rb, habitat.rb, settlement.rb, city.rb
+- Delete domes_controller.rb and dome_spec.rb
+- Impact: 215 → 212 failures (3 eliminated)
+
+### OrbitalDepot Architecture Correction  
+- Fix inheritance: OrbitalDepot < BaseSettlement (not SpaceStation)
+- Add Structures::Shell and Docking includes
+- Impact: No current failures, architecture consistency
+
+### Remove Obsolete PORO Storage Classes
+- Delete base_storage.rb, gas_storage.rb, liquid_storage.rb, solid_storage.rb, energy_storage.rb
+- Delete related specs
+- Impact: 215 → ~206-212 failures (~6-9 eliminated)
+
+**Next**: Execute cleanups with GPT-4.1, then resume RSpec restoration
 
 
 ## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)

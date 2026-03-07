@@ -1,8 +1,8 @@
 # Task: Settlement Model Cleanup
 
-**Priority:** LOW  
+**Priority:** HIGH  
 **Agent:** GPT-4.1  
-**Impact:** 215 → 212 failures (dome spec)
+**Impact:** ~206-209 → ~203-206 failures (dome spec)
 
 ## Problem
 Several settlement models are obsolete or empty STI subclasses that duplicate enum values already on BaseSettlement. These cause test failures and architectural confusion.
