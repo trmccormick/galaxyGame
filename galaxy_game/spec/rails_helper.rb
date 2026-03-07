@@ -53,10 +53,15 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
+    # Ensure database connection is established before cleaning
+    ActiveRecord::Base.connection_pool.with_connection do |conn|
+      conn.verify!
+    end
+
     # Clean test DB completely before test suite
     # Using :deletion instead of :truncation to avoid PostgreSQL deadlocks (2026-01-18)
     DatabaseCleaner.clean_with(:deletion)
-    
+
     # Create system currencies needed for tests
     Financial::Currency.find_or_create_by!(
       name: 'Galactic Crypto Currency',
@@ -64,7 +69,7 @@ RSpec.configure do |config|
       is_system_currency: true,
       precision: 8
     )
-    
+
     Financial::Currency.find_or_create_by!(
       name: 'US Dollar',
       symbol: 'USD',

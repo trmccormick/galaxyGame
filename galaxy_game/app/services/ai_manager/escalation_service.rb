@@ -45,18 +45,21 @@ module AIManager
             'mobility_type' => 'stationary'
           }
         )
-      when 'water'
-        Craft::Harvester.create!(
-          name: "Automated Water Extractor",
-          craft_name: "water_extractor",
-          craft_type: "harvester",
-          owner: settlement.owner,
-          docked_at: settlement,
-          operational_data: {
-            'extraction_rate' => 50, # kg/hour
-            'target_body' => settlement.celestial_body
-          }
-        )
+        when 'water'
+          Units::Robot.create!(
+            name: "Automated Water Extractor",
+            identifier: "ROBOT-#{SecureRandom.hex(4)}",
+            unit_type: "robot",
+            owner: settlement.owner,
+            attachable: settlement,
+            operational_data: {
+              'task_type' => 'ice_extraction',
+              'target_material' => 'water',
+              'target_quantity' => quantity,
+              'extraction_rate' => 50,
+              'mobility_type' => 'wheeled'
+            }
+          )
       else
         # Regolith mining robot
         Units::Robot.create!(

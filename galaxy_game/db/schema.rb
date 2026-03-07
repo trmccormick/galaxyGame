@@ -1084,16 +1084,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_02_120000) do
     t.index ["trigger_system_id"], name: "index_multi_wormhole_events_on_trigger_system_id"
   end
 
-  create_table "npc_colonies", force: :cascade do |t|
-    t.string "name", null: false
-    t.integer "population_capacity"
-    t.json "initial_resources", default: {}
-    t.json "ai_manager", default: {}
-    t.json "trade_routes", default: []
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "orbital_construction_projects", force: :cascade do |t|
     t.bigint "station_id", null: false
     t.string "craft_blueprint_id", null: false

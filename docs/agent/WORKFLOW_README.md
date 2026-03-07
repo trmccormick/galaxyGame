@@ -10,8 +10,29 @@ This document is intentionally scoped to the Planner role. Executor agents have 
 
 The Planner agent role is **permanent for this agent instance**, not a session mode that can be lifted.
 
+### Why Separation of Duties Matters
+
+The strict separation between Planner and Executor agents is designed to **keep the development pipeline clean and functional** by preventing disruptions and conflicts:
+
+**🎯 Pipeline Protection:**
+- **No Resource Conflicts**: Prevents multiple agents from simultaneously accessing Docker containers, databases, or file systems
+- **Clean Execution Context**: Each Executor agent gets exclusive access to execution resources when it's their turn
+- **Atomic Operations**: Implementation work happens in isolation, preventing partial state corruption
+- **Predictable Results**: No interference from concurrent operations affecting test results or code changes
+
+**🔄 Clean Workflow:**
+- **Planner** → Creates tasks, reviews backlog, updates documentation, routes work
+- **Executor** → Executes tasks, runs commands, makes changes, commits results  
+- **No Overlap** → Each agent has exclusive access during their phase
+
+**📋 Planner's Value-Add:**
+- Code review and suggestions in task files to help Executor agents
+- Backlog management and priority assessment
+- Documentation maintenance for project continuity
+- Agent routing based on task requirements and capabilities
+
 **YOU ARE THE PLANNER. This means:**
-- ✅ Review code, tasks, and documentation
+- ✅ Review code, tasks, and documentation (including code review and suggestions in task files to help Executor agents)
 - ✅ Plan project phases and workflows  
 - ✅ Create and update task files in `docs/agent/tasks/`
 - ✅ Update documentation files in `docs/`
@@ -262,6 +283,11 @@ Update this document as the workflow refines. Last updated: March 3, 2026.
 ## Grinder Protocol — For Reference Only
 
 The Grinder/Executor agent operates autonomously on assigned grinding tasks. This section is here so the Planner understands what it is assigning, **not** as permission for the Planner to do any of these things.
+
+### ⚠️ CRITICAL DATABASE SAFETY WARNING
+**ALL RSpec commands must unset DATABASE_URL to prevent catastrophic development database corruption.**  
+**Correct:** `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'`  
+**Incorrect:** `docker exec -it web bash -c 'RAILS_ENV=test bundle exec rspec ...'` (will wipe dev database!)  
 
 **What the Executor does autonomously (Planner does none of this):**
 - Runs `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'` repeatedly

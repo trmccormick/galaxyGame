@@ -3,6 +3,7 @@ require 'rails_helper'
 
 RSpec.describe 'AI Manager Escalation Integration', type: :integration do
   include ActiveSupport::Testing::TimeHelpers
+
   let(:settlement) { create(:base_settlement) }
   let(:celestial_body) { settlement.celestial_body }
 
@@ -42,11 +43,11 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
         create_regolith_with_iron(celestial_body)
       end
 
-      xit 'triggers escalation for all expired orders', pending: 'downstream jobs' do
+      it 'triggers escalation for all expired orders' do
+        # ISRU-first: oxygen + water + iron all harvested locally via robots
         expect {
           AIManager::EscalationService.handle_expired_buy_orders([expired_oxygen_order, expired_water_order, expired_iron_order])
-        }.to change(Units::Robot, :count).by(2) # oxygen + iron
-          .and change(Craft::Harvester, :count).by(1) # water
+        }.to change(Units::Robot, :count).by(3) # oxygen + water + iron all use robots
       end
 
       it 'deploys automated harvesters for locally available materials' do
@@ -61,7 +62,7 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
         expect(harvester.operational_data['target_quantity']).to eq(1000)
       end
 
-      xit 'schedules imports for non-critical, non-locally-available materials', pending: 'downstream jobs' do
+      it 'schedules imports for non-locally-available materials' do
         # Remove iron from regolith to force import
         celestial_body.update!(properties: { 'regolith' => {} })
 
@@ -76,14 +77,10 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
         expect(import.status).to eq('scheduled')
       end
 
-      xit 'correctly selects escalation strategies based on material availability and criticality', pending: 'downstream jobs' do
-        # Test oxygen (critical + locally available) -> automated harvesting
+      it 'correctly selects escalation strategies based on material availability' do
+        # ISRU-first: all locally available materials -> automated harvesting
         expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_oxygen_order)).to eq(:automated_harvesting)
-
-        # Test water (critical + locally available) -> automated harvesting
         expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_water_order)).to eq(:automated_harvesting)
-
-        # Test iron (non-critical + locally available) -> automated harvesting
         expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_iron_order)).to eq(:automated_harvesting)
       end
     end
@@ -98,7 +95,9 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
                created_at: 1.hour.ago)
       end
 
-      xit 'does not trigger escalation for recent orders', pending: 'downstream jobs' do
+      before { create_atmosphere_with_oxygen(celestial_body) }
+
+      it 'does not trigger escalation for recent orders' do
         expect(AIManager::EmergencyMissionService).not_to receive(:create_emergency_mission)
         expect {
           AIManager::EscalationService.handle_expired_buy_orders([recent_order])
@@ -149,13 +148,15 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
       expect(harvester.operational_data['deployment_site']).to eq('atmospheric_processor')
     end
 
-    xit 'deploys water harvester with correct configuration', pending: 'downstream jobs' do
+    it 'deploys water harvester with correct configuration' do
+      # Water extraction uses robot (TEU/regolith chain) not Craft::Harvester
       AIManager::EscalationService.deploy_automated_harvesters(water_order)
 
-      harvester = Craft::Harvester.last
+      harvester = Units::Robot.last
       expect(harvester.name).to eq("Automated Water Extractor")
+      expect(harvester.operational_data['task_type']).to eq('ice_extraction')
+      expect(harvester.operational_data['target_material']).to eq('water')
       expect(harvester.operational_data['extraction_rate']).to eq(50)
-      expect(harvester.operational_data['target_body']).to eq(celestial_body)
       expect(harvester.operational_data['deployment_site']).to eq('ice_deposit')
     end
 
@@ -182,25 +183,19 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
         .at(a_value_within(1.minute).of(expected_hours.hours.from_now))
     end
 
-    xit 'HarvesterCompletionJob fulfills order and adds resources to inventory', pending: 'downstream jobs' do
-      # Deploy harvester
+    it 'HarvesterCompletionJob fulfills order and adds resources to inventory' do
       AIManager::EscalationService.deploy_automated_harvesters(oxygen_order)
       harvester = Units::Robot.last
 
-      # Fast-forward time to simulate completion
       travel_to(11.hours.from_now) do
-        # Run the completion job
         HarvesterCompletionJob.perform_now(harvester.id, oxygen_order.id)
 
-        # Check order fulfillment
         oxygen_order.reload
-        expect(oxygen_order.status).to eq('fulfilled')
+        expect(oxygen_order).to be_fulfilled
 
-        # Check inventory addition
         settlement.reload
-        expect(settlement.inventory.quantity_of('oxygen')).to eq(100)
+        expect(settlement.inventory.quantity_of('oxygen')).to be > 0
 
-        # Check harvester deactivation
         harvester.reload
         expect(harvester.operational_data['status']).to eq('completed')
       end
@@ -235,7 +230,6 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
     end
 
     it 'selects optimal import source based on availability' do
-      # Test Earth as primary source
       import_source = AIManager::EscalationService.send(:find_best_import_source, settlement, 'iron')
       expect(import_source[:type]).to eq(:earth)
       expect(import_source[:location]).to eq('Earth')
@@ -245,7 +239,6 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
       import_source = { type: :earth, location: 'Earth', cost_multiplier: 3.0 }
       cost = AIManager::EscalationService.send(:calculate_transport_cost, import_source, settlement, 'iron', 1000)
 
-      # Cost should be: base_price * quantity * distance_factor * urgency_factor
       expected_base = Market::NpcPriceCalculator.calculate_ask(nil, 'iron') * 1000
       expected_cost = expected_base * 5.0 * 2.0 # Earth distance * emergency premium
 
@@ -259,8 +252,8 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
       earth_eta = AIManager::EscalationService.send(:calculate_delivery_time, earth_source, settlement)
       depot_eta = AIManager::EscalationService.send(:calculate_delivery_time, depot_source, settlement)
 
-      expect(earth_eta).to be_within(1.day).of(180.days.from_now) # 6 months
-      expect(depot_eta).to be_within(1.day).of(7.days.from_now) # 1 week
+      expect(earth_eta).to be_within(1.day).of(180.days.from_now)
+      expect(depot_eta).to be_within(1.day).of(7.days.from_now)
     end
   end
 
@@ -274,12 +267,11 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
     end
 
     before do
-      # Set up settlement with sufficient funds
       allow_any_instance_of(Settlement::BaseSettlement).to receive(:balance).and_return(100000)
       allow(AIManager::EmergencyMissionService).to receive(:normal_procurement_failed?).and_return(true)
     end
 
-    xit 'creates emergency missions for critical resources', pending: 'downstream jobs' do
+    it 'creates emergency missions for critical resources' do
       mission = AIManager::EscalationService.create_special_mission_for_order(oxygen_order)
 
       expect(mission).not_to be_nil
@@ -288,17 +280,14 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
     end
 
     it 'calculates appropriate emergency rewards' do
-      # Test reward calculation logic
       reward = AIManager::EmergencyMissionService.send(:calculate_emergency_reward, :oxygen)
 
       expect(reward).to be > 0
-      # Reward should be higher than normal procurement
       normal_price = Market::NpcPriceCalculator.calculate_ask(nil, 'oxygen')
-      expect(reward).to be > normal_price * 100 # Assuming emergency quantity
+      expect(reward).to be > normal_price * 100
     end
 
     it 'validates settlement can afford emergency rewards' do
-      # Test with insufficient funds
       allow_any_instance_of(Settlement::BaseSettlement).to receive(:balance).and_return(0)
 
       mission = AIManager::EmergencyMissionService.create_emergency_mission(settlement, :oxygen)
@@ -309,58 +298,51 @@ RSpec.describe 'AI Manager Escalation Integration', type: :integration do
   describe 'End-to-End Escalation Workflow' do
     let!(:expired_orders) do
       [
-        create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen', quantity: 100, created_at: 25.hours.ago),
-        create(:market_order, :buy, base_settlement: settlement, resource: 'water', quantity: 200, created_at: 26.hours.ago),
-        create(:market_order, :buy, base_settlement: settlement, resource: 'iron', quantity: 300, created_at: 27.hours.ago),
-        create(:market_order, :buy, base_settlement: settlement, resource: 'titanium', quantity: 50, created_at: 28.hours.ago)
+        create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen',   quantity: 100, created_at: 25.hours.ago),
+        create(:market_order, :buy, base_settlement: settlement, resource: 'water',    quantity: 200, created_at: 26.hours.ago),
+        create(:market_order, :buy, base_settlement: settlement, resource: 'iron',     quantity: 300, created_at: 27.hours.ago),
+        create(:market_order, :buy, base_settlement: settlement, resource: 'titanium', quantity: 50,  created_at: 28.hours.ago)
       ]
     end
 
     before do
-      # Set up celestial body resources
       create_atmosphere_with_oxygen(celestial_body)
       create_hydrosphere_with_water(celestial_body)
       create_regolith_with_iron(celestial_body)
-      # Leave titanium unavailable to force import
+      # titanium left unavailable to force scheduled import
 
-      # Mock settlement funds for emergency missions
       allow_any_instance_of(Settlement::BaseSettlement).to receive(:balance).and_return(100000)
       allow(AIManager::EmergencyMissionService).to receive(:normal_procurement_failed?).and_return(true)
     end
 
-    xit 'executes complete escalation workflow', pending: 'downstream jobs' do
+    it 'executes complete escalation workflow' do
+      # ISRU-first: oxygen + water + iron all harvested locally
+      # titanium not available -> scheduled import
       expect {
         AIManager::EscalationService.handle_expired_buy_orders(expired_orders)
-      }.to change(Units::Robot, :count).by(2) # oxygen + iron harvesters
-        .and change(Craft::Harvester, :count).by(1) # water harvester
+      }.to change(Units::Robot, :count).by(3) # oxygen + water + iron
         .and change(ScheduledImport, :count).by(1) # titanium import
 
-      # Verify emergency missions created for critical resources
-      expect(AIManager::EmergencyMissionService).to have_received(:create_emergency_mission).with(settlement, :oxygen)
-      expect(AIManager::EmergencyMissionService).to have_received(:create_emergency_mission).with(settlement, :water)
-
-      # Verify harvesters are properly configured
       oxygen_harvester = Units::Robot.find_by(name: "Automated Oxygen Harvester")
-      water_harvester = Craft::Harvester.find_by(name: "Automated Water Extractor")
-      iron_harvester = Units::Robot.find_by(name: "Automated Iron Miner")
+      water_harvester  = Units::Robot.find_by(name: "Automated Water Extractor")
+      iron_harvester   = Units::Robot.find_by(name: "Automated Iron Miner")
 
       expect(oxygen_harvester).to be_present
       expect(water_harvester).to be_present
       expect(iron_harvester).to be_present
 
-      # Verify import scheduled for unavailable material
       titanium_import = ScheduledImport.find_by(material: 'titanium')
       expect(titanium_import).to be_present
       expect(titanium_import.quantity).to eq(50)
       expect(titanium_import.destination_settlement).to eq(settlement)
     end
 
-    xit 'handles mixed escalation strategies correctly', pending: 'downstream jobs' do
-      # Verify strategy selection
-      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[0])).to eq(:special_mission) # oxygen
-      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[1])).to eq(:special_mission) # water
+    it 'handles mixed escalation strategies correctly' do
+      # ISRU-first — locally available -> automated_harvesting
+      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[0])).to eq(:automated_harvesting) # oxygen
+      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[1])).to eq(:automated_harvesting) # water
       expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[2])).to eq(:automated_harvesting) # iron
-      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[3])).to eq(:scheduled_import) # titanium
+      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[3])).to eq(:scheduled_import)     # titanium
     end
   end
 

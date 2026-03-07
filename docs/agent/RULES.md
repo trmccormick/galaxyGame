@@ -251,7 +251,7 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test rails runner "
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec path/to/spec.rb > ./log/rspec_full_$(date +%s).log 2>&1'
 
 # Fail-fast — stops at first failure, good for interactive sessions
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --fail-fast --format documentation 2>&1 | tee ./log/rspec_full_$(date +%s).log'
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --fail-fast --format documentation > ./log/rspec_full_$(date +%s).log 2>&1'
 
 # Full suite — sequential to avoid connection pool exhaustion
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --order defined > ./log/rspec_full_$(date +%s).log 2>&1'

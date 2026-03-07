@@ -41,8 +41,13 @@
    - Optimize sprite rendering for large areas
    - Add level-of-detail rendering if needed
 
+## ⚠️ CRITICAL DATABASE SAFETY WARNING
+**ALL RSpec commands must unset DATABASE_URL to prevent catastrophic development database corruption.**  
+**Correct:** `docker-compose -f docker-compose.dev.yml exec -T web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'`  
+**Incorrect:** `docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec ...` (will wipe dev database!)  
+
 **TESTING SEQUENCE:**
-1. `docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec spec/features/regional_view_spec.rb` (create new spec)
+1. `docker-compose -f docker-compose.dev.yml exec -T web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/features/regional_view_spec.rb'` (create new spec)
 2. Manual testing: Load regional view, verify 16K canvas renders
 3. Performance testing: 60fps at regional scale
 4. Integration testing: Unit movement and city zones visible

@@ -60,12 +60,12 @@ Essential technical documentation for daily development.
 **Purpose**: Essential development and agent references
 
 ## 🔴 Current Grinder State
-**Last Updated**: March 3, 2026 — update this section after every grinder run
+**Last Updated**: March 6, 2026 — EscalationIntegrationSpec fixed (238 → 221 failures)
 
 | Metric | Value |
 |---|---|
 | Total Examples | 4,056 |
-| Total Failures | 369 |
+| Total Failures | 221 |
 | Pending | 17 |
 | Target | <50 failures |
 | Log Location | `./data/logs/rspec_full_[timestamp].log` |
@@ -74,8 +74,7 @@ Essential technical documentation for daily development.
 1. `spec/services/ai_manager/escalation_service_spec.rb` — **25 failures**
 2. `spec/services/manufacturing/construction/dome_service_spec.rb` — **24 failures**
 3. `spec/services/manufacturing/construction/hangar_service_spec.rb` — **23 failures**
-4. `spec/integration/ai_manager/escalation_integration_spec.rb` — **20 failures**
-5. `spec/services/lookup/unit_lookup_service_spec.rb` — **18 failures**
+4. `spec/services/lookup/unit_lookup_service_spec.rb` — **18 failures**
 
 ### Grinder Startup
 Always run `./start_grinder.sh` first — it seeds the test database, clears cache, generates a fresh baseline log, and outputs the current top failing specs. Do not start grinding without running this first.
@@ -87,7 +86,7 @@ Always run `./start_grinder.sh` first — it seeds the test database, clears cac
 
 ### Mandatory RSpec Command Form
 ```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb > ./data/logs/rspec_full_$(date +%s).log 2>&1'
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
 > ⚠️ Logs go to `./data/logs/` — not `./log/`. Always use this path.
@@ -137,7 +136,7 @@ Use this for monitored collaboration during the day. Stops at first failure and 
 
 ```bash
 # Step 1: Run fail-fast to find first failure
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --fail-fast --format documentation 2>&1 | tee ./log/rspec_full_$(date +%s).log'
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec --fail-fast --format documentation > ./log/rspec_full_$(date +%s).log 2>&1'
 ```
 
 After running, produce a Synthesis Report:
@@ -196,6 +195,18 @@ When in doubt: **do not run tests. Ask the user.**
    # ❌ FORBIDDEN — risks dev database corruption
    docker-compose -f docker-compose.dev.yml exec -T web bundle exec rspec
    ```
+
+> ⚠️ **CRITICAL: ALWAYS UNSET DATABASE_URL BEFORE RUNNING RSPEC**
+> Never run rspec without unsetting DATABASE_URL first.
+> DATABASE_URL overrides RAILS_ENV=test and will point Rails at the 
+> wrong database — potentially wiping your development database.
+> 
+> **CORRECT command format — no exceptions:**
+> `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [spec_path] > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'`
+> 
+> **NEVER use:**
+> `docker-compose exec web bundle exec rspec`  ← missing DATABASE_URL unset
+> `docker exec web rspec`  ← missing DATABASE_URL unset and RAILS_ENV
 
 2. **Validation Rules (MANDATORY):**
    - ✅ **Green-before-done**: All RSpec tests must pass

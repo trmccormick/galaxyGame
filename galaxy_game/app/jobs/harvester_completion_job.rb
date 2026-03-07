@@ -59,7 +59,7 @@ class HarvesterCompletionJob < ApplicationJob
 
   def fulfill_order(order, amount)
     # Mark order as fulfilled
-    order.update(status: :fulfilled)
+    order.fulfill!
 
     # Create transaction record
     Transaction.create!(
