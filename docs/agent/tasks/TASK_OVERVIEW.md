@@ -68,28 +68,23 @@
 
 **Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: 215 failures (confirmed baseline - full suite run)
-**Recent Progress**: ✅ EscalationService ISRU-first fix (34/34 green), OperationalManager fix (20/20 green), NPCColony cleanup, MissionScorer fix
-**Session Results** (March 6, 2026):
-- Previous baseline: 238 failures
-- Current confirmed: 215 failures  
-- Session reduction: 23 failures eliminated
-- TerrainForge L4 threshold (<300): ✅ UNLOCKED
+**Current Status**: 212 failures (confirmed baseline after settlement cleanup)
+**Recent Progress**: ✅ EscalationService ISRU-first fix (34/34 green), OperationalManager fix (20/20 green), NPCColony cleanup, MissionScorer fix, Settlement Model Cleanup (3 specs eliminated)
+**Session Results** (March 7, 2026):
+- Previous baseline: 215 failures
+- Current confirmed: 212 failures  
+- Session reduction: 3 failures eliminated
+- Settlement cleanup: ✅ COMPLETED
 
-**Commits Made This Session** (March 5, 2026):
-- Add :independent trait to SettlementFactory; green DomeService specs (20/24)
-- Add :financial_account alias to account factory; green DomeService specs (24/24)
-- Fix ModuleLookupService spec — use GalaxyGame::Paths::MODULES_PATH constant
-- Fix ItemLookupService — use GalaxyGame::Paths constants, remove test env guard
-- Remove obsolete NPCColony (BaseSettlement + AI Manager)
-- Fix mission_scorer_spec.rb balance logic (16/16 GREEN)
+**Commits Made This Session** (March 7, 2026):
+- Remove obsolete settlement STI subclasses and dome model
 
 **Baseline Log**: Saved to ./data/logs/rspec_full_[timestamp].log
 
-**Next Priority Clusters** (227 failures remaining):
+**Next Priority Clusters** (209 failures remaining):
 - unit_lookup_service_spec: 16 failures (Was passing earlier — recheck)
 - ai_manager/*: ~42 failures (Various - escalation_service_spec now GREEN)
-- models/*: ~45 failures (Various)
+- models/*: ~42 failures (Various - settlement STI specs eliminated)
 
 **Target**: <50 failures
 **Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
@@ -102,16 +97,16 @@
 
 ---
 
-### 🧹 MEDIUM PRIORITY: Settlement Model Cleanup
-**Agent**: GPT-4.1
+### ✅ COMPLETED: Settlement Model Cleanup
+**Agent**: GPT-4.1 ✅ COMPLETED
 **Priority**: MEDIUM
-**Status**: 📋 PENDING - Task created, ready for execution
+**Status**: ✅ COMPLETED - All obsolete settlement STI subclasses and dome model removed
 **Estimated Effort**: 30 minutes
 **Impact**: 215 → 212 failures (3 eliminated)
 
 **Description**: Remove obsolete settlement STI subclasses and dome model that duplicate enum values and have no table.
 
-**Files to Delete**:
+**Files Deleted**:
 - app/models/settlement/dome.rb (obsolete, no table)
 - app/models/settlement/colony.rb (duplicate of root Colony)
 - app/models/settlement/outpost.rb (empty, outpost is enum)
@@ -120,10 +115,16 @@
 - app/models/settlement/city.rb (empty, city is enum)
 - app/controllers/domes_controller.rb (references dead Dome)
 - spec/models/dome_spec.rb (testing dead model)
+- spec/models/outpost_spec.rb
+- spec/models/city_spec.rb
+- spec/models/settlement_spec.rb
 
-**Keep**: base_settlement.rb, space_station.rb, orbital_depot.rb, colony.rb (root)
+**Files Kept**: base_settlement.rb, space_station.rb, orbital_depot.rb, colony.rb (root)
 
 **Commit**: "Remove obsolete settlement STI subclasses and dome model"
+
+**RSPEC Impact**: 215 → 212 failures (3 specs eliminated)
+**Validation**: Models spec output shows no errors or failures from removed files
 
 ---
 
@@ -131,18 +132,24 @@
 **Agent**: GPT-4.1
 **Priority**: MEDIUM
 **Status**: 📋 PENDING - Task created, ready for execution
-**Estimated Effort**: 20 minutes
-**Impact**: No current failures, backlog cleanup
+**Estimated Effort**: 15 minutes
+**Impact**: No current failures, architecture consistency
 
 **Description**: Fix OrbitalDepot inheritance - should be sibling of SpaceStation, not subclass.
 
-**Change**: app/models/settlement/orbital_depot.rb
+**Change**: galaxy_game/app/models/settlement/orbital_depot.rb
 FROM: class OrbitalDepot < SpaceStation
-TO: class OrbitalDepot < BaseSettlement; include Structures::Shell; include Docking
+TO:   class OrbitalDepot < BaseSettlement
+      include Structures::Shell
+      include Docking
+
+**Keep ALL gas storage methods intact** - Inventory integration perfect.
 
 **Documentation**: Add operational_data notes for LEO depot (fuel/cargo) vs L1 depot (shipyard optional)
 
 **Commit**: "Fix OrbitalDepot inheritance - sibling of SpaceStation not subclass"
+
+**Verification**: spec/models/settlement --format progress
 
 ---
 

@@ -4,7 +4,7 @@
 **Priority**: MEDIUM
 **Status**: 📋 PENDING - Task created, ready for execution
 **Estimated Effort**: 25 minutes
-**Impact**: 215 → ~206-212 failures (~6-9 eliminated)
+**Impact**: 212 → ~203-209 failures (~6-9 eliminated)
 
 ## Description
 Delete legacy PORO storage classes superseded by Inventory + Units::BaseUnit architecture. These were early prototypes that have been replaced by the JSON-driven unit system.
@@ -26,7 +26,7 @@ Delete legacy PORO storage classes superseded by Inventory + Units::BaseUnit arc
 - StorageManager (coordination service)
 
 ## Validation Steps
-1. Run full RSpec suite to confirm baseline (215 failures)
+1. Run full RSpec suite to confirm baseline (212 failures)
 2. Delete all listed files
 3. Run RSpec again to confirm impact (~206-212 failures expected)
 4. Verify no references remain in codebase (grep search)

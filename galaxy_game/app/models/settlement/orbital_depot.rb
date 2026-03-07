@@ -10,7 +10,9 @@
 # 4. Remove temporary PORO model
 
 module Settlement
-  class OrbitalDepot < SpaceStation
+  class OrbitalDepot < BaseSettlement
+    include Structures::Shell
+    include Docking
     # Orbital depot is a specialized space station for gas/liquid storage
     # Located at strategic points (planetary orbits, Lagrange points, etc.)
     

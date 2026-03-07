@@ -1,33 +1,37 @@
 # Current Development Status
 
-**Last Updated**: March 6, 2026 (Model Cleanup Tasks Created)
+**Last Updated**: March 7, 2026 (Settlement Model Cleanup Completed)
 
-## 🔄 ACTIVE: Test Suite Restoration (215 failures remaining)
-**Status**: 🔄 ACTIVE - Baseline confirmed at 215 failures, surgical fixes in progress
+## 🔄 ACTIVE: Test Suite Restoration (212 failures remaining)
+**Status**: 🔄 ACTIVE - Baseline updated to 212 failures after settlement cleanup
 **Priority**: HIGH - Blocks Phase 4 UI Enhancement
-**Recent Progress** (March 5-6, 2026):
+**Recent Progress** (March 5-7, 2026):
 - ✅ EscalationService ISRU-first fix (34/34 green) - 238 → 221 failures
 - ✅ OperationalManager AiDecisionLog fix (20/20 green) - 221 → 201 failures  
 - ✅ NPCColony obsolete cleanup (0 impact) - codebase hygiene
 - ✅ MissionScorer balance logic fix (16/16 green) - 257 → 245 failures
 - ✅ BiogasUnit JSON migration (4 specs eliminated) - 221 → 217 failures
-**Current Baseline**: 215 failures (confirmed full suite run)
+- ✅ Settlement Model Cleanup (3 specs eliminated) - 215 → 212 failures
+**Current Baseline**: 212 failures (confirmed after settlement cleanup)
 **Target**: <50 failures for Phase 4 unlock
-**Next Priority Clusters**: unit_lookup_service_spec (16 failures), ai_manager/* (~42 failures), models/* (~45 failures)
+**Next Priority Clusters**: unit_lookup_service_spec (16 failures), ai_manager/* (~42 failures), models/* (~42 failures)
 
-## 📋 PENDING: Model Architecture Cleanups (Ready for Execution)
-**Status**: 📋 PENDING - Three cleanup tasks created and ready for GPT-4.1 execution
+## 📋 PENDING: Model Architecture Cleanups (1 remaining)
+**Status**: 📋 PENDING - One cleanup task remaining for GPT-4.1 execution
 **Priority**: MEDIUM - Codebase hygiene and obsolete removal
 
-### Settlement Model Cleanup
-- Remove obsolete STI subclasses: dome.rb, colony.rb, outpost.rb, habitat.rb, settlement.rb, city.rb
-- Delete domes_controller.rb and dome_spec.rb
-- Impact: 215 → 212 failures (3 eliminated)
+### ✅ COMPLETED: Settlement Model Cleanup (March 7, 2026)
+- ✅ Removed obsolete STI subclasses: dome.rb, colony.rb, outpost.rb, habitat.rb, settlement.rb, city.rb
+- ✅ Deleted domes_controller.rb and related specs
+- ✅ Impact: 215 → 212 failures (3 eliminated)
+- ✅ Commit: "Remove obsolete settlement STI subclasses and dome model"
 
-### OrbitalDepot Architecture Correction  
+### 🧹 OrbitalDepot Architecture Correction (READY FOR EXECUTION)
 - Fix inheritance: OrbitalDepot < BaseSettlement (not SpaceStation)
 - Add Structures::Shell and Docking includes
+- Keep ALL gas storage methods intact (Inventory integration perfect)
 - Impact: No current failures, architecture consistency
+- **Status**: 📋 PENDING - Task file created, ready for GPT-4.1 execution
 
 ### Remove Obsolete PORO Storage Classes
 - Delete base_storage.rb, gas_storage.rb, liquid_storage.rb, solid_storage.rb, energy_storage.rb

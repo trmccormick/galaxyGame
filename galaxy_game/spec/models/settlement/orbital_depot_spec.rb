@@ -42,8 +42,8 @@ RSpec.describe Settlement::OrbitalDepot, type: :model do
   end
   
   describe 'inheritance' do
-    it 'inherits from SpaceStation' do
-      expect(depot).to be_a(Settlement::SpaceStation)
+    it 'is not a subclass of SpaceStation' do
+      expect(depot).not_to be_a(Settlement::SpaceStation)
     end
     
     it 'inherits from BaseSettlement' do
