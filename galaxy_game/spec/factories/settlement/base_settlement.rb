@@ -138,7 +138,7 @@ FactoryBot.define do
   end
   
   # Standard Settlement - inherits from base_settlement
-  factory :settlement, class: 'Settlement::Settlement' do
+  factory :settlement, class: 'Settlement::BaseSettlement' do
     sequence(:name) { |n| "Settlement #{n}" }
     association :location, factory: :celestial_location
     association :owner, factory: :player
@@ -167,8 +167,8 @@ FactoryBot.define do
     current_population { 50 }
   end
 
-  # Orbital Depot - inherits from space_station
-  factory :orbital_depot, class: 'Settlement::OrbitalDepot', parent: :space_station do
+  # Orbital Depot - inherits from base_settlement (architecture fix)
+  factory :orbital_depot, class: 'Settlement::OrbitalDepot', parent: :base_settlement do
     sequence(:name) { |n| "Orbital Depot #{n}" }
     settlement_type { :outpost }
     current_population { 10 }

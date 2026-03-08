@@ -128,10 +128,10 @@
 
 ---
 
-### 🧹 MEDIUM PRIORITY: OrbitalDepot Architecture Correction
-**Agent**: GPT-4.1
+### ✅ COMPLETED: OrbitalDepot Architecture Correction
+**Agent**: GPT-4.1 ✅ COMPLETED
 **Priority**: MEDIUM
-**Status**: 📋 PENDING - Task created, ready for execution
+**Status**: ✅ COMPLETED - OrbitalDepot inheritance fixed, now inherits from BaseSettlement with required modules
 **Estimated Effort**: 15 minutes
 **Impact**: No current failures, architecture consistency
 
@@ -149,20 +149,20 @@ TO:   class OrbitalDepot < BaseSettlement
 
 **Commit**: "Fix OrbitalDepot inheritance - sibling of SpaceStation not subclass"
 
-**Verification**: spec/models/settlement --format progress
+**Verification**: spec/models/settlement --format progress (architecture validated)
 
 ---
 
-### 🧹 MEDIUM PRIORITY: Remove Obsolete PORO Storage Classes
-**Agent**: GPT-4.1
+### ✅ COMPLETED: Remove Obsolete PORO Storage Classes
+**Agent**: GPT-4.1 ✅ COMPLETED
 **Priority**: MEDIUM
-**Status**: 📋 PENDING - Task created, ready for execution
+**Status**: ✅ COMPLETED - All obsolete PORO storage classes and specs removed
 **Estimated Effort**: 25 minutes
-**Impact**: 215 → ~206-212 failures (~6-9 eliminated)
+**Impact**: 212 → ~203-209 failures (~6-9 eliminated)
 
 **Description**: Delete legacy PORO storage classes superseded by Inventory + Units::BaseUnit.
 
-**Files to Delete**:
+**Files Deleted**:
 - app/models/storage/base_storage.rb
 - app/models/storage/gas_storage.rb
 - app/models/storage/liquid_storage.rb
@@ -172,9 +172,12 @@ TO:   class OrbitalDepot < BaseSettlement
 - spec/models/storage/solid_storage_spec.rb
 - spec/models/storage/gas_storage_spec.rb
 
-**Keep**: Inventory, SurfaceStorage, MaterialPile, StorageManager
+**Files Kept**: Inventory, SurfaceStorage, MaterialPile, StorageManager
 
 **Commit**: "Remove obsolete PORO storage classes — superseded by Inventory system"
+
+**RSPEC Impact**: ~6-9 specs eliminated (estimated)
+**Validation**: No references remain in codebase
 
 ### 🧹 HIGH PRIORITY: NPCColony Obsolete Cleanup
 **Agent**: GPT-4.1 ✅ COMPLETED
