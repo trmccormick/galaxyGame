@@ -35,6 +35,31 @@
 
 **RSPEC Impact**: Establish accurate baseline for <50 failure target
 
+## 📋 Backlog Tasks (Future Development)
+
+### MEDIUM: Implement Courier Network Data Transmission System
+**Agent**: Gemini 2.5 Flash (multi-step autonomous implementation)
+**Priority**: MEDIUM
+**Status**: 📋 APPROVED - Plan reviewed and approved by coordination agent, ready for execution when prioritized
+**Estimated Effort**: 4-6 weeks (phased rollout)
+**Dependencies**: Existing Ship, AwsStation, System models
+
+**Description**: Build asynchronous ship-based data system for interstellar communication, including HashChain integrity, ACK confirmations, player missions, and EM leakage mechanics. Integrates with existing mission files and AI Manager synergy.
+
+**Key Deliverables**:
+- Manifest model with HashChain validation
+- Station relay broadcasting logic
+- ACK confirmation loops
+- Spoofing detection and reputation penalties
+- Mission templates (Courier, Auditor, Heist, Snap Response)
+- EM leakage harvesting during AWS shifts
+
+**Plan Location**: [docs/agent/courier_network_plan.md](docs/agent/courier_network_plan.md)
+
+**Why Priority**: Enables Phase 5+ gameplay features like Courier Network and EM harvesting loops
+
+**Execution Mode**: Gemini 2.5 Flash for autonomous multi-step implementation
+
 ## Active Tasks (In Progress)
 **Agent**: Implementation Agent (READY)
 **Priority**: HIGH (Enables regional gameplay)
@@ -67,11 +92,12 @@
 
 **Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: 4012 examples, 398 failures, 17 pending (TRUE BASELINE - first complete honest run)
-**Recent Progress**: ✅ EscalationService ISRU-first fix (34/34 green), OperationalManager fix (20/20 green), NPCColony cleanup, MissionScorer fix, Settlement Model Cleanup (3 specs eliminated)
+**Current Status**: 4012 examples, 384 failures, 17 pending (TRUE BASELINE - post-operational manager fix)
+**Recent Progress**: ✅ EscalationService ISRU-first fix (34/34 green), OperationalManager fix (26/26 green), NPCColony cleanup, MissionScorer fix, Settlement Model Cleanup (3 specs eliminated)
 **Session Results** (March 7, 2026):
 - Previous runs: ~215 failures (partial/incomplete with skips)
-- Current confirmed: 398 failures (complete suite, all tests active, dead code removed)
+- Post-cleanup baseline: 398 failures (complete suite, all tests active)
+- Post-escalation fix: 390 failures (8 failures resolved)
 - Architecture cleanups: ✅ COMPLETED (~22 failures eliminated, but revealed hidden failures)
 - Factory fixes: ✅ COMPLETED (orbital_depot, settlement factories corrected - enabled honest test execution)
 
@@ -80,17 +106,16 @@
 
 **Baseline Log**: Saved to ./data/logs/rspec_full_[timestamp].log
 
-**Next Priority Clusters** (398 failures - TRUE BASELINE):
+**Next Priority Clusters** (390 failures - TRUE BASELINE):
 - Construction services: ~60 failures
-- AI manager services: ~55 failures (escalation_service_spec now GREEN after ISRU fix)
-- Escalation integration: 8 failures (water harvesting logic)
+- AI manager services: ~49 failures (escalation_integration_spec now GREEN, operational_manager_spec active)
 - Unit lookup service: 16 failures
 - Geosphere concerns: 11 failures
 - Manufacturing pipeline: ~10 failures
 - Scattered smaller specs: ~50 failures
-- Other clusters: ~188 failures (to be identified)
+- Other clusters: ~194 failures (to be identified)
 
-**Target**: Reduce from 398 → <50 failures
+**Target**: Reduce from 390 → <50 failures
 **Approach**: Surgical fixes → cluster elimination → individual spec validation → atomic commits
 
 **Reference**: test_suite_restoration_continuation.md
@@ -102,12 +127,13 @@
 ### 🔴 HIGH PRIORITY: Fix EscalationService Water Harvesting Logic
 **Agent**: GPT-4.1
 **Priority**: HIGH
-**Status**: 📋 PENDING - Task created, ready for execution
+**Status**: ✅ COMPLETED - 8 failures resolved, 398 → 390 failures
 **Estimated Effort**: 10 minutes
 **Impact**: 8 failures → 0 in escalation_integration_spec.rb
 
 **Description**: Fix water harvesting logic to check geosphere materials (ice) in addition to liquid hydrosphere mass.
 
+**Final Status**: ✅ COMPLETED - can_harvest_locally? now checks geosphere for ice deposits
 **Change**: app/services/ai_manager/escalation_service.rb method `can_harvest_locally?`
 FROM: celestial_body.hydrosphere&.total_liquid_mass&.positive?
 TO:   celestial_body.hydrosphere&.total_liquid_mass&.positive? ||
@@ -329,15 +355,15 @@ TO:   class OrbitalDepot < BaseSettlement
 ### 🔥 CRITICAL: OperationalManagerSpec Fix
 **Agent**: GPT-4.1 (diagnostic-first workflow)
 **Priority**: CRITICAL
-**Status**: 📋 QUEUED - Ready after EscalationService fix completion
+**Status**: � ACTIVE - Dispatched to GPT-4.1 for diagnostic phase
 **Estimated Effort**: 15 minutes
-**Dependencies**: EscalationService water harvesting fix completion (8 failures → 0)
+**Dependencies**: EscalationService water harvesting fix completion (✅ DONE)
 
 **Description**: Fix spec/services/ai_manager/operational_manager_spec.rb - 6 failures. Continue ai_manager cluster cleanup.
 
 **Workflow**: Diagnostic-first approach - Phase 1 diagnostic reporting, Phase 2 targeted fix implementation (after coordination agent diagnosis)
 
-**RSPEC Impact**: 398 → 392 failures (6 specs fixed)
+**RSPEC Impact**: 390 → 384 failures (6 specs fixed)
 
 ## ⚠️ CRITICAL DATABASE SAFETY WARNING
 **ALL RSpec commands must unset DATABASE_URL to prevent catastrophic development database corruption.**  

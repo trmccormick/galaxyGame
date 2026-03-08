@@ -47,6 +47,14 @@
 **Architecture Now Clean**: Settlement hierarchy properly structured with JSON units and grid connectivity
 
 
+## 📋 BACKLOG: Courier Network Data Transmission System (March 8, 2026)
+**Status**: 📋 BACKLOG - Comprehensive implementation plan approved, moved to backlog for future prioritization
+**Priority**: MEDIUM - Future gameplay enhancement for Phase 5+ features
+**Summary**: Designed asynchronous ship-based data propagation between systems with HashChain integrity, ACK confirmations, and player missions. Includes EM leakage harvesting during AWS shifts, spoofing mechanics, and market data latency. Integrates with existing mission files and AI Manager.
+**Plan Location**: [docs/agent/courier_network_plan.md](docs/agent/courier_network_plan.md)
+**Components**: Manifest model, station relays, ACK loops, HashChain validation, mission templates, EM harvesting.
+**Next**: Await prioritization; assign to Executor agent when ready.
+
 ## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)
 **Status**: ✅ COMPLETED - Biogas generator/unit fully migrated to JSON-driven BaseUnit architecture
 **Priority**: CRITICAL - Establishes JSON-driven unit architecture pattern
@@ -299,7 +307,7 @@
 ✅ Economic quantification of wormhole network benefits
 ✅ Network utilization analysis and bottleneck detection
 ✅ Implementation roadmap generation with risk assessment
-✅ Integration with existing BootstrapResourceAllocator and ISRUOptimizer
+✅ Integration with existing BootstrapResourceAllocator and IsruOptimizer
 
 **Testing Results**: All 92 AI Manager tests passing (0 failures)
 **Integration Status**: Fully integrated with ExpansionService and Manager.rb
