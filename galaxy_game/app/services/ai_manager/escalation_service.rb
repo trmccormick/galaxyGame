@@ -217,7 +217,9 @@ module AIManager
       when 'oxygen'
         celestial_body.atmosphere&.gases&.any? { |g| g.name == 'O2' }
       when 'water'
-        celestial_body.hydrosphere&.total_liquid_mass&.positive?
+        hydrosphere_has_water = celestial_body.hydrosphere&.total_liquid_mass&.positive?
+        geosphere_has_ice = celestial_body.materials.where(location: 'geosphere').where("name ILIKE ?", "%ice%").exists?
+        hydrosphere_has_water || geosphere_has_ice
       when 'nitrogen'
         celestial_body.atmosphere&.gases&.any? { |g| g.name == 'N2' }
       else

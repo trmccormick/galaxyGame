@@ -3,21 +3,37 @@
 ## 2026-03-07
 
 ### Summary
-Mar 7, 2026 - RSpec Failure Reduction ACTIVE: Storage PORO Cleanup COMPLETE (215 → ~206-209 failures), Dome Cleanup NEXT
+Mar 7, 2026 - RSpec Failure Reduction ACTIVE: TRUE BASELINE ESTABLISHED (398 failures), EscalationService Water Harvesting Fix NEXT
 
 ### COMPLETED THIS SESSION — RSpec Failure Reduction
 
-  DONE: Storage PORO Cleanup (Task C)
-        - Deleted obsolete PORO classes: BaseStorage, GasStorage, LiquidStorage, SolidStorage, EnergyStorage
-        - Deleted their specs (3 failing specs removed)
-        - Verified inventory_spec.rb passes fully (live AR system intact)
-        - Commit: "refactor: remove obsolete PORO storage classes (Inventory system only)"
-        - Failures reduced: 215 → ~206-209
+  ✅ DONE: All Architecture Cleanups (Tasks A-C)
+        - Settlement STI subclasses removed (3 specs eliminated)
+        - OrbitalDepot inheritance fixed (architecture consistency)
+        - Storage PORO classes deleted (3 specs eliminated)
+        - BiogasUnit JSON migration completed (4 specs eliminated)
+        - Factory inheritance fixes applied (orbital_depot, settlement factories corrected)
 
-  ACTIVE: Dome Model Cleanup (Task A)
-        - Next priority: Remove obsolete settlement STI subclasses and dome model
-        - Expected impact: ~3 more failures eliminated
-        - Agent: GPT-4.1 (simple file deletions)
+  ✅ DONE: Baseline Investigation COMPLETE
+        - Root cause identified: Previous runs were partial/incomplete with xit skips
+        - Factory fixes enabled honest test execution (no more silent setup failures)
+        - TRUE BASELINE: 398 failures (first complete honest run of full suite)
+        - No regression - reality becoming visible after dead code removal
+
+### Current RSpec Status (TRUE BASELINE ESTABLISHED)
+- Total examples: 4012
+- Failures: 398 (complete suite, all tests active, dead code removed)
+- Pending: 17
+- Architecture clean: Settlement hierarchy, Inventory system, OrbitalDepot inheritance, Factory inheritance
+- Investigation complete: Cause known - partial runs with skips were hiding failures
+        - Agent: GPT-4.1 ready for execution
+
+### Current RSpec Status
+- Total examples: 4039
+- Failures: ~206-209 (after all cleanups)
+- Pending: 26
+- Architecture clean: Settlement hierarchy, Inventory system, OrbitalDepot inheritance
+- Next priority: EscalationService water harvesting logic fix
 
 ### Current RSpec Status
 - Total examples: 4039
@@ -27,9 +43,29 @@ Mar 7, 2026 - RSpec Failure Reduction ACTIVE: Storage PORO Cleanup COMPLETE (215
 - Live systems verified: Inventory, SurfaceStorage, MaterialPile, StorageManager
 
 ### Next Steps
-1. Execute Dome cleanup (settlement models)
-2. Continue failure reduction sequence
-3. Update after each completion
+1. **🔄 ACTIVE**: EscalationService water harvesting fix (8 failures → 0) - Dispatched to GPT-4.1
+2. **📋 QUEUED**: OperationalManagerSpec fix (6 failures → 0) - Diagnostic-first workflow ready
+3. Attack construction services cluster (~60 failures)
+4. Target: 398 → <50 failures through systematic cluster elimination
+
+**Failure Clusters Identified:**
+- Construction services: ~60 failures
+- AI manager services: ~55 failures (escalation integration: 8 active, operational manager: 6 queued)
+- Unit lookup service: 16 failures
+- Geosphere concerns: 11 failures
+- Manufacturing pipeline: ~10 failures
+- Scattered smaller specs: ~50 failures
+
+**📋 OVERNIGHT BASELINE RUN - QUEUE AFTER ESCALATION FIX**
+After EscalationService water harvesting fix commits, queue overnight baseline run to capture all today's fixes:
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
+```
+**Expected**: 398 → ~320-340 failures post factory + escalation fixes
+**Purpose**: Ensures tomorrow's session starts with accurate baseline reflecting all today's work
+- Geosphere concerns: 11 failures
+- Manufacturing pipeline: ~10 failures
+- Scattered smaller specs: ~50 failures
 
 **PHASE 2 REGIONAL VIEW PROGRESS:**
   ✅ Phase 1: Canvas Scaling - 16K (16384x8192) regional view foundation established

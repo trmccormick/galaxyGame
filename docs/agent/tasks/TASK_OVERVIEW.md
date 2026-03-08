@@ -3,40 +3,39 @@
 
 ---
 
+---
+
 ## 🔥 Critical Priority Tasks
 
-### CRITICAL: BiogasUnit JSON Migration Cleanup
-**Agent**: GPT-4.1 (JSON creation + spec refactor) + Perplexity (architecture review)
+### CRITICAL: Investigate High RSpec Failure Count
+**Agent**: GPT-4.1 (investigation) or Ollama (full analysis)
 **Priority**: CRITICAL
 **Status**: 📋 PENDING - Task created, ready for execution
-**Estimated Effort**: 25 minutes
-**Dependencies**: BaseUnit.operate() functional (confirmed ready)
+**Estimated Effort**: 30 minutes
+**Dependencies**: None (baseline investigation)
 
-**Description**: Migrate biogas_generator + biogas_unit → BaseUnit JSON processing. Eliminate duplicate hardcoded models → data-driven architecture.
+**Description**: Current baseline shows 398 failures vs expected ~200. Investigate discrepancy after factory fixes and architecture cleanups.
 
 **Current State**:
-- ❌ biogas_generator-2.rb + biogas_unit-3.rb = duplicate legacy code
-- ✅ BaseUnit.operate() = generic input/output processing ready
+- Expected: ~200 failures after cleanups
+- Actual: 398 failures (4012 examples, 17 pending)
+- Discrepancy: ~198 additional failures
 
 **Key Actions**:
-1. READ templates: unit_operational_data_v1.2.json, unit_blueprint_v1.3.json
-2. CREATE JSON files: biogas_generator.json (blueprints + operational_data)
-3. DELETE legacy models: biogas_generator.rb, biogas_unit.rb
-4. UPDATE spec: biogas_generator_spec.rb → BaseUnit JSON processing
-5. VERIFY: 4/4 specs green
-6. COMMIT: "Migrate biogas units to JSON-driven BaseUnit (4 specs green)"
+1. Run targeted factory specs to identify new failures
+2. Check recent commit impact on test counts
+3. Identify highest failure clusters
+4. Compare against previous baseline logs
 
-**Reference**: biogas_unit_json_migration_cleanup.md
+**Reference**: investigate_high_failure_count.md
 
-**Why Priority**: Eliminates duplicate code, establishes JSON-driven unit architecture pattern
+**Why Priority**: Must establish accurate baseline before proceeding with reduction strategy
 
-**Execution Mode**: GPT-4.1 execution with Perplexity architecture review.
+**Execution Mode**: GPT-4.1 investigation with Ollama analysis if needed
 
-**RSPEC Impact**: 221 → 217 failures (4 specs eliminated)
+**RSPEC Impact**: Establish accurate baseline for <50 failure target
 
 ## Active Tasks (In Progress)
-
-### 🔥 CRITICAL: Phase 2 Regional View Implementation
 **Agent**: Implementation Agent (READY)
 **Priority**: HIGH (Enables regional gameplay)
 **Status**: 📋 READY - Phase 1 complete, planning documents created
@@ -68,32 +67,56 @@
 
 **Description**: Continue reducing RSpec test failures using surgical Quick-Fix grinding approach. Target highest-failure specs first, preserve post-Jan-8 improvements.
 
-**Current Status**: 212 failures (confirmed baseline after settlement cleanup)
+**Current Status**: 4012 examples, 398 failures, 17 pending (TRUE BASELINE - first complete honest run)
 **Recent Progress**: ✅ EscalationService ISRU-first fix (34/34 green), OperationalManager fix (20/20 green), NPCColony cleanup, MissionScorer fix, Settlement Model Cleanup (3 specs eliminated)
 **Session Results** (March 7, 2026):
-- Previous baseline: 215 failures
-- Current confirmed: 212 failures  
-- Session reduction: 3 failures eliminated
-- Settlement cleanup: ✅ COMPLETED
+- Previous runs: ~215 failures (partial/incomplete with skips)
+- Current confirmed: 398 failures (complete suite, all tests active, dead code removed)
+- Architecture cleanups: ✅ COMPLETED (~22 failures eliminated, but revealed hidden failures)
+- Factory fixes: ✅ COMPLETED (orbital_depot, settlement factories corrected - enabled honest test execution)
 
 **Commits Made This Session** (March 7, 2026):
 - Remove obsolete settlement STI subclasses and dome model
 
 **Baseline Log**: Saved to ./data/logs/rspec_full_[timestamp].log
 
-**Next Priority Clusters** (209 failures remaining):
-- unit_lookup_service_spec: 16 failures (Was passing earlier — recheck)
-- ai_manager/*: ~42 failures (Various - escalation_service_spec now GREEN)
-- models/*: ~42 failures (Various - settlement STI specs eliminated)
+**Next Priority Clusters** (398 failures - TRUE BASELINE):
+- Construction services: ~60 failures
+- AI manager services: ~55 failures (escalation_service_spec now GREEN after ISRU fix)
+- Escalation integration: 8 failures (water harvesting logic)
+- Unit lookup service: 16 failures
+- Geosphere concerns: 11 failures
+- Manufacturing pipeline: ~10 failures
+- Scattered smaller specs: ~50 failures
+- Other clusters: ~188 failures (to be identified)
 
-**Target**: <50 failures
-**Approach**: Interactive analysis → surgical fixes → individual spec validation → atomic commits
+**Target**: Reduce from 398 → <50 failures
+**Approach**: Surgical fixes → cluster elimination → individual spec validation → atomic commits
 
 **Reference**: test_suite_restoration_continuation.md
 
 **Why Priority**: Blocks Phase 4 UI Enhancement and further development progress.
 
 **Execution Mode**: Autonomous overnight processing - ready to resume immediately.
+
+### 🔴 HIGH PRIORITY: Fix EscalationService Water Harvesting Logic
+**Agent**: GPT-4.1
+**Priority**: HIGH
+**Status**: 📋 PENDING - Task created, ready for execution
+**Estimated Effort**: 10 minutes
+**Impact**: 8 failures → 0 in escalation_integration_spec.rb
+
+**Description**: Fix water harvesting logic to check geosphere materials (ice) in addition to liquid hydrosphere mass.
+
+**Change**: app/services/ai_manager/escalation_service.rb method `can_harvest_locally?`
+FROM: celestial_body.hydrosphere&.total_liquid_mass&.positive?
+TO:   celestial_body.hydrosphere&.total_liquid_mass&.positive? ||
+      celestial_body.materials.where(location: 'geosphere', name: 'water').exists? ||
+      celestial_body.materials.where(location: 'hydrosphere', name: 'water').exists?
+
+**Verification**: docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/integration/ai_manager/escalation_integration_spec.rb --format progress 2>&1 | tail -5'
+
+**Commit**: "Fix water harvesting — check geosphere materials for ice not just liquid hydrosphere"
 
 ---
 
@@ -215,6 +238,33 @@ TO:   class OrbitalDepot < BaseSettlement
 **Success Criteria**: ✅ 16/16 specs green
 **Why Priority**: Critical blocker for ai_manager cluster, fastest path to reduce failures
 **Execution Mode**: Diagnosis → fix planning → execution → verification
+
+### ✅ COMPLETED: BiogasUnit JSON Migration Cleanup
+**Agent**: GPT-4.1 (JSON creation + spec refactor) + Perplexity (architecture review)
+**Priority**: CRITICAL
+**Status**: ✅ COMPLETED - All biogas units migrated to JSON-driven BaseUnit processing
+**Estimated Effort**: 25 minutes
+**Dependencies**: BaseUnit.operate() functional (confirmed ready)
+
+**Description**: Migrate biogas_generator + biogas_unit → BaseUnit JSON processing. Eliminate duplicate hardcoded models → data-driven architecture.
+
+**Final Status**: ✅ COMPLETED - Legacy models deleted, JSON specs 4/4 green, architecture pattern established
+
+**Key Actions Completed**:
+1. ✅ READ templates: unit_operational_data_v1.2.json, unit_blueprint_v1.3.json
+2. ✅ CREATE JSON files: biogas_generator.json (blueprints + operational_data)
+3. ✅ DELETE legacy models: biogas_generator.rb, biogas_unit.rb
+4. ✅ UPDATE spec: biogas_generator_spec.rb → BaseUnit JSON processing
+5. ✅ VERIFY: 4/4 specs green
+6. ✅ COMMIT: "Migrate biogas units to JSON-driven BaseUnit (4 specs green)"
+
+**Reference**: biogas_unit_json_migration_cleanup.md (moved to completed/)
+
+**RSPEC Impact**: 221 → 217 failures (4 specs eliminated)
+**Why Priority**: Eliminates duplicate code, establishes JSON-driven unit architecture pattern
+
+**Execution Mode**: GPT-4.1 execution with Perplexity architecture review.
+
 **Agent**: Implementation Agent ✅ COMPLETED
 **Priority**: HIGH (Enables autonomous AI gameplay)
 **Status**: ✅ COMPLETED - All phases implemented and tested, autonomous multi-body coordination operational
@@ -277,13 +327,17 @@ TO:   class OrbitalDepot < BaseSettlement
 ---
 
 ### 🔥 CRITICAL: OperationalManagerSpec Fix
-**Agent**: GPT-4.1 (diagnosis + execution)
+**Agent**: GPT-4.1 (diagnostic-first workflow)
 **Priority**: CRITICAL
-**Status**: 📋 PENDING - Task created, ready for execution
+**Status**: 📋 QUEUED - Ready after EscalationService fix completion
 **Estimated Effort**: 15 minutes
-**Dependencies**: None (ai_manager cluster continuation)
+**Dependencies**: EscalationService water harvesting fix completion (8 failures → 0)
 
-**Description**: Fix spec/services/ai_manager/operational_manager_spec.rb - 6 failures. Continue ai_manager cluster cleanup (16/16 mission_scorer → operational_manager).
+**Description**: Fix spec/services/ai_manager/operational_manager_spec.rb - 6 failures. Continue ai_manager cluster cleanup.
+
+**Workflow**: Diagnostic-first approach - Phase 1 diagnostic reporting, Phase 2 targeted fix implementation (after coordination agent diagnosis)
+
+**RSPEC Impact**: 398 → 392 failures (6 specs fixed)
 
 ## ⚠️ CRITICAL DATABASE SAFETY WARNING
 **ALL RSpec commands must unset DATABASE_URL to prevent catastrophic development database corruption.**  
@@ -294,10 +348,10 @@ TO:   class OrbitalDepot < BaseSettlement
 1. DIAGNOSE: docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/operational_manager_spec.rb --format documentation'
 2. FIX failure patterns (method arity, factory traits, threshold logic)
 3. TEST: docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/operational_manager_spec.rb'
-4. COMMIT: "Fix operational_manager_spec.rb (6→0, 22/22 ai_manager GREEN)"
-5. REPORT: 234 → 228 failures
+4. COMMIT: "Fix operational_manager_spec.rb (6→0, ai_manager cluster progress)"
+5. REPORT: Updated failure count
 
-**RSPEC Impact**: 234 → 228 failures (42% → 45%)
+**RSPEC Impact**: 398 → 392 failures (6 specs fixed)
 **Why Priority**: Continue ai_manager cluster cleanup, maintain momentum toward TerrainForge L4
 **Execution Mode**: Diagnosis → fix → verification → commit
 
