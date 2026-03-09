@@ -62,6 +62,13 @@
 **File**: app/services/ai_manager/terraforming_manager.rb lines 315-322
 **Next**: Do NOT implement until manufacturing pipeline is stable.
 
+## 📋 PENDING: Fix EscalationService Water Escalation (March 8, 2026)
+**Status**: 📋 PENDING - Task created, pending precursor mission architecture review
+**Priority**: HIGH - Corrects foundational ISRU logic for Luna water production
+**Summary**: Fix EscalationService to deploy TEU + PVE units for regolith processing instead of creating generic robots for ice extraction. Water is byproduct of ISRU chain, not direct harvesting.
+**Files**: app/services/ai_manager/escalation_service.rb, spec/services/ai_manager/escalation_service_spec.rb
+**Next**: Skip spec (xdescribe) and await precursor mission review before implementation.
+
 ## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)
 **Status**: ✅ COMPLETED - Biogas generator/unit fully migrated to JSON-driven BaseUnit architecture
 **Priority**: CRITICAL - Establishes JSON-driven unit architecture pattern

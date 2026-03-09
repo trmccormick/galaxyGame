@@ -83,6 +83,32 @@
 
 **Impact**: Improves AI scalability and maintainability
 
+### HIGH: Fix EscalationService Water Escalation - ISRU Chain
+**Agent**: Claude Sonnet (architecture reasoning) or Gemini 2.5 Flash (implementation)
+**Priority**: HIGH - Corrects foundational ISRU logic for Luna water production
+**Status**: 📋 PENDING - Task created, pending precursor mission architecture review
+**Estimated Effort**: 4-6 hours
+**Dependencies**: Precursor mission architecture review
+
+**Description**: Fix EscalationService water escalation logic. Currently creates generic Units::Robot with ice_extraction task, which is architecturally wrong. Luna water comes from regolith processing via TEU (thermal_extraction_unit_mk1) + PVE (planetary_volatiles_extractor_mk1), not direct ice harvesting.
+
+**Key Actions**:
+- Skip spec for now: mark escalation_service_spec.rb:48 as xdescribe with comment "Pending ISRU chain redesign"
+- Update EscalationService to check for TEU/PVE deployment instead of creating robots
+- If missing: trigger precursor ISRU deployment (TEU + PVE)
+- If present but insufficient: deploy additional PVE units
+- Water is byproduct of regolith processing, not primary target
+
+**Files**: 
+- app/services/ai_manager/escalation_service.rb
+- spec/services/ai_manager/escalation_service_spec.rb
+
+**Why Priority**: Fixes foundational ISRU chain; water is day one in precursor mission plan
+
+**Execution Mode**: Do NOT implement until precursor mission architecture is reviewed
+
+**Impact**: Corrects water escalation to use actual unit architecture
+
 ## Active Tasks (In Progress)
 **Agent**: Implementation Agent (READY)
 **Priority**: HIGH (Enables regional gameplay)
