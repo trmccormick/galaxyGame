@@ -109,6 +109,29 @@
 
 **Impact**: Corrects water escalation to use actual unit architecture
 
+### MEDIUM: Refactor Internal Resource Keys to Chemical Formulas
+**Agent**: GPT-4.1 (mechanical search/replace) or Gemini 2.5 Flash (implementation)
+**Priority**: MEDIUM - Standardizes internal resource representation
+**Status**: 📋 BACKLOG - Ready for implementation post manufacturing_pipeline_e2e_spec.rb + courier_phase1
+**Estimated Effort**: 4-6 hours
+**Dependencies**: Manufacturing pipeline stability, Courier Phase 1 completion
+
+**Description**: Refactor internal resource keys from display names ("iron", "oxygen") to chemical formulas (Fe, O2). Violates project convention where internal logic must use chemical formulas.
+
+**Key Actions**:
+- Create CHEMICAL_REGISTRY constant (single source of truth) mapping display names to formulas
+- Update factories, resource creation, order attributes, escalation logic
+- Replace hardcoded arrays/case statements with formula-based keys
+- Mechanical search/replace across affected files
+
+**Affected Areas**: Tests/services, factories, resource creation, order attributes, escalation logic, hardcoded arrays/case statements
+
+**Why Priority**: Ensures consistency with project convention for internal resource representation
+
+**Execution Mode**: Mechanical search/replace, no complex logic changes
+
+**Impact**: Standardizes resource keys to chemical formulas throughout codebase
+
 ## Active Tasks (In Progress)
 **Agent**: Implementation Agent (READY)
 **Priority**: HIGH (Enables regional gameplay)
