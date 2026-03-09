@@ -67,15 +67,7 @@
 **Estimated Effort**: 2-4 hours
 **Dependencies**: Manufacturing pipeline stability
 
-**Description**: Refactor TerraformingManager#identify_available_resources to be data-driven instead of hardcoded planet names. Currently hardcodes @worlds[:venus], @worlds[:titan], @worlds[:saturn] by name, breaking if world names change or new systems added.
-
-**Key Actions**:
-- Query celestial body atmospheric composition dynamically
-- Use gas percentages and body type (gas_giant, terrestrial, ice_giant) to determine available resources
-- Remove hardcoded venus/titan/saturn references
-- Make AI decisions based on data, not planet names
-
-**File**: app/services/ai_manager/terraforming_manager.rb lines 315-322
+**Task File**: [docs/agent/tasks/backlog/refactor_terraforming_manager_identify_available_resources.md](docs/agent/tasks/backlog/refactor_terraforming_manager_identify_available_resources.md)
 
 **Why Priority**: Consistent with SOL-as-training-ground, data-driven AI vision; prevents breakage on system expansion
 
@@ -90,14 +82,7 @@
 **Estimated Effort**: 4-6 hours
 **Dependencies**: Precursor mission architecture review
 
-**Description**: Fix EscalationService water escalation logic. Currently creates generic Units::Robot with ice_extraction task, which is architecturally wrong. Luna water comes from regolith processing via TEU (thermal_extraction_unit_mk1) + PVE (planetary_volatiles_extractor_mk1), not direct ice harvesting.
-
-**Key Actions**:
-- Skip spec for now: mark escalation_service_spec.rb:48 as xdescribe with comment "Pending ISRU chain redesign"
-- Update EscalationService to check for TEU/PVE deployment instead of creating robots
-- If missing: trigger precursor ISRU deployment (TEU + PVE)
-- If present but insufficient: deploy additional PVE units
-- Water is byproduct of regolith processing, not primary target
+**Task File**: [docs/agent/tasks/backlog/fix_escalation_service_water_escalation_isru_chain.md](docs/agent/tasks/backlog/fix_escalation_service_water_escalation_isru_chain.md)
 
 **Files**: 
 - app/services/ai_manager/escalation_service.rb
@@ -116,16 +101,7 @@
 **Estimated Effort**: 90 minutes
 **Dependencies**: Manufacturing pipeline stability, Courier Phase 1 completion
 
-**Description**: Refactor internal resource keys from display names ("iron", "oxygen") to chemical formulas (Fe, O2) using existing MaterialLookupService. Internal logic must use chemical formulas via LookupService.
-
-**Key Actions**:
-- Global search for display names in internal logic: grep -r "iron|oxygen|water|nitrogen|carbon_dioxide|methane" app/ spec/ --exclude-dir=app/views --exclude-dir=app/helpers
-- Replace pattern: display_name → LookupService.find_material(chemical_formula)
-- Update factories: use material_id and formula instead of name
-- Add RSpec verification (8 examples) in spec/services/resource_naming_spec.rb
-- Mechanical search/replace in affected files: factories, models, services, hardcoded arrays/case statements
-
-**Target Files**: spec/factories/*.rb, app/models/resource*.rb, app/services/escalation*.rb, order*.rb, hardcoded arrays/case statements
+**Task File**: [docs/agent/tasks/backlog/refactor_internal_resource_keys_to_chemical_formulas.md](docs/agent/tasks/backlog/refactor_internal_resource_keys_to_chemical_formulas.md)
 
 **Why Priority**: Ensures consistency with project convention; leverages existing MaterialLookupService infrastructure
 
