@@ -83,6 +83,30 @@
 
 **Impact**: Improves AI scalability and maintainability
 
+### LOW: Remove Duplicate planetary_volatiles_extractor_mk1_data.json
+**Agent**: GPT-4.1 (file cleanup)
+**Priority**: LOW - Data hygiene, not blocking
+**Status**: 📋 BACKLOG - Duplicate identified, ready for removal
+**Estimated Effort**: 15 minutes
+**Dependencies**: None
+
+**Description**: Remove duplicate planetary_volatiles_extractor_mk1_data.json file. The correct, more comprehensive version is in /production/extractors/, while the simpler duplicate is in /resource/.
+
+**Key Actions**:
+- Delete /data/json-data/operational_data/units/resource/planetary_volatiles_extractor_mk1_data.json
+- Verify the correct file in /production/extractors/ remains intact
+- Ensure no references point to the deleted file
+
+**Files Involved**:
+- Remove: data/json-data/operational_data/units/resource/planetary_volatiles_extractor_mk1_data.json
+- Keep: data/json-data/operational_data/units/production/extractors/planetary_volatiles_extractor_mk1_data.json
+
+**Why Priority**: Data consistency; prevents confusion in JSON data loading
+
+**Execution Mode**: Simple file deletion, no code changes
+
+**Impact**: Cleans up duplicate data records
+
 ## Active Tasks (In Progress)
 **Agent**: Implementation Agent (READY)
 **Priority**: HIGH (Enables regional gameplay)
