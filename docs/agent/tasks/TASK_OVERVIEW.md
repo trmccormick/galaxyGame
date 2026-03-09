@@ -60,6 +60,29 @@
 
 **Execution Mode**: Gemini 2.5 Flash for autonomous multi-step implementation
 
+### LOW: Refactor TerraformingManager#identify_available_resources
+**Agent**: Claude Sonnet (architecture reasoning) or GPT-4.1 (implementation)
+**Priority**: LOW - Technical debt, not blocking
+**Status**: 📋 BACKLOG - Identified technical debt, ready for future cleanup
+**Estimated Effort**: 2-4 hours
+**Dependencies**: Manufacturing pipeline stability
+
+**Description**: Refactor TerraformingManager#identify_available_resources to be data-driven instead of hardcoded planet names. Currently hardcodes @worlds[:venus], @worlds[:titan], @worlds[:saturn] by name, breaking if world names change or new systems added.
+
+**Key Actions**:
+- Query celestial body atmospheric composition dynamically
+- Use gas percentages and body type (gas_giant, terrestrial, ice_giant) to determine available resources
+- Remove hardcoded venus/titan/saturn references
+- Make AI decisions based on data, not planet names
+
+**File**: app/services/ai_manager/terraforming_manager.rb lines 315-322
+
+**Why Priority**: Consistent with SOL-as-training-ground, data-driven AI vision; prevents breakage on system expansion
+
+**Execution Mode**: Do NOT implement until manufacturing pipeline is stable
+
+**Impact**: Improves AI scalability and maintainability
+
 ## Active Tasks (In Progress)
 **Agent**: Implementation Agent (READY)
 **Priority**: HIGH (Enables regional gameplay)

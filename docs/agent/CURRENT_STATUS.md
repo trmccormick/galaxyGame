@@ -55,6 +55,13 @@
 **Components**: Manifest model, station relays, ACK loops, HashChain validation, mission templates, EM harvesting.
 **Next**: Await prioritization; assign to Executor agent when ready.
 
+## 📋 BACKLOG: TerraformingManager Refactor (March 8, 2026)
+**Status**: 📋 BACKLOG - Technical debt identified, low priority cleanup
+**Priority**: LOW - Not blocking current development
+**Summary**: Refactor TerraformingManager#identify_available_resources to be data-driven, removing hardcoded planet names (@worlds[:venus], etc.) and using dynamic atmospheric composition queries instead.
+**File**: app/services/ai_manager/terraforming_manager.rb lines 315-322
+**Next**: Do NOT implement until manufacturing pipeline is stable.
+
 ## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)
 **Status**: ✅ COMPLETED - Biogas generator/unit fully migrated to JSON-driven BaseUnit architecture
 **Priority**: CRITICAL - Establishes JSON-driven unit architecture pattern
