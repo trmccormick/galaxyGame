@@ -113,24 +113,25 @@
 **Agent**: GPT-4.1 (mechanical search/replace) or Gemini 2.5 Flash (implementation)
 **Priority**: MEDIUM - Standardizes internal resource representation
 **Status**: 📋 BACKLOG - Ready for implementation post manufacturing_pipeline_e2e_spec.rb + courier_phase1
-**Estimated Effort**: 4-6 hours
+**Estimated Effort**: 90 minutes
 **Dependencies**: Manufacturing pipeline stability, Courier Phase 1 completion
 
-**Description**: Refactor internal resource keys from display names ("iron", "oxygen") to chemical formulas (Fe, O2). Violates project convention where internal logic must use chemical formulas.
+**Description**: Refactor internal resource keys from display names ("iron", "oxygen") to chemical formulas (Fe, O2) using existing MaterialLookupService. Internal logic must use chemical formulas via LookupService.
 
 **Key Actions**:
-- Create CHEMICAL_REGISTRY constant (single source of truth) mapping display names to formulas
-- Update factories, resource creation, order attributes, escalation logic
-- Replace hardcoded arrays/case statements with formula-based keys
-- Mechanical search/replace across affected files
+- Global search for display names in internal logic: grep -r "iron|oxygen|water|nitrogen|carbon_dioxide|methane" app/ spec/ --exclude-dir=app/views --exclude-dir=app/helpers
+- Replace pattern: display_name → LookupService.find_material(chemical_formula)
+- Update factories: use material_id and formula instead of name
+- Add RSpec verification (8 examples) in spec/services/resource_naming_spec.rb
+- Mechanical search/replace in affected files: factories, models, services, hardcoded arrays/case statements
 
-**Affected Areas**: Tests/services, factories, resource creation, order attributes, escalation logic, hardcoded arrays/case statements
+**Target Files**: spec/factories/*.rb, app/models/resource*.rb, app/services/escalation*.rb, order*.rb, hardcoded arrays/case statements
 
-**Why Priority**: Ensures consistency with project convention for internal resource representation
+**Why Priority**: Ensures consistency with project convention; leverages existing MaterialLookupService infrastructure
 
 **Execution Mode**: Mechanical search/replace, no complex logic changes
 
-**Impact**: Standardizes resource keys to chemical formulas throughout codebase
+**Impact**: 15-25 test failures from string matching → service calls; perfect separation of internal formulas vs UI display names
 
 ## Active Tasks (In Progress)
 **Agent**: Implementation Agent (READY)

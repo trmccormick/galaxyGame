@@ -72,9 +72,13 @@
 ## 📋 BACKLOG: Refactor Internal Resource Keys to Chemical Formulas (March 8, 2026)
 **Status**: 📋 BACKLOG - Ready for implementation post manufacturing_pipeline_e2e_spec.rb + courier_phase1
 **Priority**: MEDIUM - Standardizes internal resource representation
-**Summary**: Refactor internal resource keys from display names ("iron", "oxygen") to chemical formulas (Fe, O2). Create CHEMICAL_REGISTRY constant and update affected code.
-**Affected**: Tests/services, factories, resource creation, order attributes, escalation logic, hardcoded arrays/case statements
+**Summary**: Refactor internal resource keys from display names ("iron", "oxygen") to chemical formulas (Fe, O2) using existing MaterialLookupService. Mechanical search/replace across factories, models, services.
+**Scope**: Global search for display names, replace with LookupService.find_material(chemical_formula), update factories, add RSpec verification.
+**Time**: 90 minutes
+**Impact**: 15-25 test failures; perfect separation of internal formulas vs UI display names.
 **Next**: Post manufacturing pipeline stability and Courier Phase 1.
+
+## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)
 
 ## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)
 **Status**: ✅ COMPLETED - Biogas generator/unit fully migrated to JSON-driven BaseUnit architecture
