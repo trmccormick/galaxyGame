@@ -126,25 +126,8 @@ module Lookup
         recursive_scan: true
       }
     }
-
-    # Add class method to clear cached instances
-    def self.reset!
-      @instance = nil if instance_variable_defined?(:@instance)
-    end
-
-    def self.instance
-      @instance ||= new
-    end
     
-    def initialize(force_reload: false)
-      # In test environment, always create fresh instances
-      if Rails.env.test?
-        @units = load_units
-        return
-      end
-      
-      return if @instance && !force_reload # Prevent multiple instances
-      
+    def initialize
       begin
         @units = load_units
       rescue StandardError => e
@@ -152,9 +135,23 @@ module Lookup
         Rails.logger.error e.backtrace.join("\n")
         @units = []
       end
-      
-      @instance = self
     end
+
+    def find_units_by_trait(trait_key, trait_value)
+      @units.select do |unit|
+        unit_trait = unit[trait_key]
+        if unit_trait.is_a?(Array)
+          unit_trait.include?(trait_value)
+        elsif unit_trait.is_a?(Hash)
+          unit_trait.key?(trait_value) || unit_trait.value?(trait_value)
+        else
+          unit_trait == trait_value
+        end
+      end
+    rescue => e
+      Rails.logger.error "Error finding units by trait #{trait_key}=#{trait_value}: #{e.message}"
+      []
+    end    
     
     # Add method to reload units if needed
     def reload_units!

@@ -79,6 +79,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    Lookup::BaseLookupService.reset_cache!
     # Use transaction strategy for most tests
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start

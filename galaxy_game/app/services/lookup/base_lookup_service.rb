@@ -17,6 +17,15 @@ module Lookup
       end
     end
 
+    # Class-level cache shared across instances
+    def self.data_cache
+      @data_cache ||= {}
+    end
+
+    def self.reset_cache!
+      @data_cache = {}
+    end    
+
     protected
 
     def search_in_path(path, search_term)
@@ -36,18 +45,17 @@ module Lookup
     end
 
     def load_json_file(file_path)
-      return @cache[file_path] if @cache.key?(file_path)
-      
-      Rails.logger.debug("Loading file: #{file_path}")
-      data = JSON.parse(File.read(file_path))
-      @cache[file_path] = data
-      data
-    rescue JSON::ParserError => e
-      Rails.logger.error("Invalid JSON in file: #{file_path} - #{e.message}")
-      nil
-    rescue StandardError => e
-      Rails.logger.error("Error reading file: #{file_path} - #{e.message}")
-      nil
+      # Use class-level cache instead of instance cache
+      self.class.data_cache[file_path] ||= begin
+        data = JSON.parse(File.read(file_path))
+        data
+      rescue JSON::ParserError => e
+        Rails.logger.error "Invalid JSON in file: #{file_path} - #{e.message}"
+        nil
+      rescue StandardError => e
+        Rails.logger.error "Error reading file: #{file_path} - #{e.message}"
+        nil
+      end
     end
 
     def match_data?(data, search_term)

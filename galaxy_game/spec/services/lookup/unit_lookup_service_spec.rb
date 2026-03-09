@@ -3,6 +3,10 @@ require 'rails_helper'
 require 'json'
 
 RSpec.describe Lookup::UnitLookupService do
+  before do
+    described_class.instance_variable_set(:@instance, nil)
+  end
+
   # Create a fresh service instance for each test context
   let(:service) { described_class.new }
 
@@ -216,6 +220,37 @@ RSpec.describe Lookup::UnitLookupService do
       expect(result['id']).to eq(unit_data['id'])
     end
   end
+
+  describe '#find_units_by_trait' do
+    it 'returns an array' do
+      result = service.find_units_by_trait('category', 'propulsion')
+      expect(result).to be_an(Array)
+    end
+
+    it 'finds units matching a trait value' do
+      result = service.find_units_by_trait('category', 'propulsion')
+      expect(result).to be_present
+      result.each do |unit|
+        expect(unit['category']).to match(/propulsion/i)
+      end
+    end
+
+    it 'returns empty array for non-existent trait' do
+      result = service.find_units_by_trait('category', 'nonexistent_xyz')
+      expect(result).to eq([])
+    end
+
+    it 'handles nil trait value gracefully' do
+      result = service.find_units_by_trait('category', nil)
+      expect(result).to be_an(Array)
+    end
+
+    it 'finds units by array trait inclusion' do
+      # system_architect uses traits array
+      result = service.find_units_by_trait('traits', 'production')
+      expect(result).to be_an(Array)
+    end
+  end  
 
   describe '#debug_paths' do
     it 'outputs path information without errors' do
