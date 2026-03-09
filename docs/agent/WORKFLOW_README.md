@@ -278,7 +278,7 @@ When reporting that a file was updated, **show the changed section or share the 
 If file-write tools are unavailable, say so explicitly: "I cannot write to disk in this session — here is the content to add manually."
 
 ## Contact/Updates
-Update this document as the workflow refines. Last updated: March 3, 2026.
+Update this document as the workflow refines. Last updated: March 8, 2026.
 
 ## Grinder Protocol — For Reference Only
 
@@ -288,6 +288,29 @@ The Grinder/Executor agent operates autonomously on assigned grinding tasks. Thi
 **ALL RSpec commands must unset DATABASE_URL to prevent catastrophic development database corruption.**  
 **Correct:** `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'`  
 **Incorrect:** `docker exec -it web bash -c 'RAILS_ENV=test bundle exec rspec ...'` (will wipe dev database!)  
+
+### RSpec Command Variants
+**For overnight runs** (start and go to bed - synchronous execution):
+```bash
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
+```
+- Runs in foreground so you can see it start
+- Logs to container `./log/` directory (maps to host `./data/logs/`)
+- No `-it` flag (non-interactive)
+- No `&` (synchronous execution)
+
+**For background execution** (unattended overnight):
+```bash
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1 &'
+```
+- Runs in background with `&`
+- Uses full container path `/home/galaxy_game/log/`
+- Includes `-it` for interactive setup
+
+**For individual spec testing** (during development):
+```bash
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'
+```
 
 **What the Executor does autonomously (Planner does none of this):**
 - Runs `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'` repeatedly
