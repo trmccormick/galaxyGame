@@ -62,13 +62,6 @@
 **File**: app/services/ai_manager/terraforming_manager.rb lines 315-322
 **Next**: Do NOT implement until manufacturing pipeline is stable.
 
-## 📋 BACKLOG: Remove Duplicate planetary_volatiles_extractor_mk1_data.json (March 8, 2026)
-**Status**: 📋 BACKLOG - Duplicate data file identified, low priority cleanup
-**Priority**: LOW - Data hygiene, not blocking
-**Summary**: Remove duplicate planetary_volatiles_extractor_mk1_data.json. Correct version is in /production/extractors/ (comprehensive), duplicate in /resource/ (simpler).
-**Files**: Remove data/json-data/operational_data/units/resource/planetary_volatiles_extractor_mk1_data.json
-**Next**: Simple file deletion when convenient.
-
 ## ✅ COMPLETED: BiogasUnit JSON Migration Cleanup (March 6, 2026)
 **Status**: ✅ COMPLETED - Biogas generator/unit fully migrated to JSON-driven BaseUnit architecture
 **Priority**: CRITICAL - Establishes JSON-driven unit architecture pattern
