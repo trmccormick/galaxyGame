@@ -144,7 +144,7 @@ module AIManager
 
       # Check for performance anomalies
       def detect_anomalies
-        return [] unless @performance_data.size > 10
+        return [] unless @performance_data.size > 5
 
         anomalies = []
 

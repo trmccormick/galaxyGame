@@ -53,9 +53,7 @@ module AIManager
         validations << validate_decision_rationality(decision_data)
 
         # Check against expected patterns
-        if expected_patterns.any?
-          validations << validate_expected_patterns(decision_data, expected_patterns)
-        end
+        validations << validate_expected_patterns(decision_data, expected_patterns)
 
         # Check for decision loops or oscillations
         validations << validate_decision_stability(decision_data)

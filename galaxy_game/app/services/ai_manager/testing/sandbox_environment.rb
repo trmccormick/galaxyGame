@@ -18,6 +18,8 @@ module AIManager
 
         Rails.logger.info "[SandboxEnvironment] Activating sandbox environment"
 
+        @active = true
+
         # Isolate AI services
         isolate_ai_services
 
@@ -26,8 +28,6 @@ module AIManager
 
         # Configure service overrides
         configure_service_overrides
-
-        @active = true
 
         Rails.logger.info "[SandboxEnvironment] Sandbox environment activated - live game protected"
       end
@@ -80,7 +80,7 @@ module AIManager
       def isolate_service(service_class, mock_implementation = nil)
         return unless @active
 
-        service_name = service_class.name.demodulize.underscore
+        service_name = service_class.name ? service_class.name.demodulize.underscore : 'class'
 
         # Store original service state
         @original_service_states[service_name] = {
@@ -121,7 +121,7 @@ module AIManager
       def override_service_method(service_class, method_name, override_proc)
         return unless @active
 
-        service_name = service_class.name.demodulize.underscore
+        service_name = service_class.name ? service_class.name.demodulize.underscore : 'class'
 
         # Store original method
         original_method = service_class.instance_method(method_name) if service_class.instance_methods.include?(method_name)
