@@ -65,9 +65,10 @@ module Logistics
     private
 
     def self.valid_settlement_pair?(from_settlement, to_settlement)
-      # Both must be NPC settlements
-      from_settlement.owner.nil? && to_settlement.owner.nil? &&
-      from_settlement != to_settlement
+      # Both must be NPC-owned settlements (not player-owned)
+      from_settlement != to_settlement &&
+      (from_settlement.owner.nil? || from_settlement.owner.is_npc?) &&
+      (to_settlement.owner.nil? || to_settlement.owner.is_npc?)
     end
 
     def self.calculate_delivery_time(from_settlement, to_settlement, transport_method)

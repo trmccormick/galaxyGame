@@ -1,3 +1,6 @@
+    def orbital?
+      is_a?(Settlement::SpaceStation) || settlement_type.to_s == 'station'
+    end
 module Settlement
   class BaseSettlement < ApplicationRecord
     include Housing
@@ -61,6 +64,10 @@ module Settlement
     def operational_data=(value)
       self[:operational_data] = value
     end
+
+    def orbital?
+      is_a?(Settlement::SpaceStation) || settlement_type.to_s == 'station'
+    end    
     
     def construction_cost_percentage
       # FIXED: Simplified - operational_data will return {} for nil thanks to Rails jsonb defaults
