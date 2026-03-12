@@ -178,6 +178,8 @@ RSpec.describe AIManager::MissionPlannerService do
   
   describe 'MaterialLookupService integration' do
     let(:planner) { described_class.new('mars-terraforming') }
+    let(:solar_system) { create(:solar_system) }
+    let(:mars) { create(:terrestrial_planet, :mars, solar_system: solar_system) }
     
     before do
       allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)

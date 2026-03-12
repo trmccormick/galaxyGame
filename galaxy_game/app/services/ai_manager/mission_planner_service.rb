@@ -221,7 +221,8 @@ module AIManager
       final_state = run_terrasim_simulation(target_location, simulation_years)
 
       # Calculate changes
-      calculate_state_changes(initial_state, final_state, simulation_years)
+      changes = calculate_state_changes(initial_state, final_state, simulation_years)
+      changes.empty? ? default_planetary_changes : changes
     end
 
     def capture_initial_state(celestial_body)

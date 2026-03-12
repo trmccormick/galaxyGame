@@ -11,12 +11,15 @@
   <aside class="admin-sidebar">
     <section class="admin-tool-section">
       <h3>🤖 AI MANAGER</h3>
-      <%= link_to '📋 Missions', admin_ai_manager_missions_path, class: 'admin-tool-button' %>
-      <%= link_to '🎯 Planner', admin_ai_manager_planner_path, class: 'admin-tool-button' %>
-      <%= link_to '🗺️ Map Studio', admin_map_studio_path, class: 'admin-tool-button' %>
-      <%= link_to '🧠 Decisions', admin_ai_manager_decisions_path, class: 'admin-tool-button' %>
-      <%= link_to '🔬 Patterns', admin_ai_manager_patterns_path, class: 'admin-tool-button' %>
-      <%= link_to '📊 Performance', admin_ai_manager_performance_path, class: 'admin-tool-button' %>
+      <%= link_to '📊 Dashboard',   admin_ai_manager_path,             class: "ai-manager-nav-link #{controller.action_name == 'index' ? 'active' : ''}" %>
+      <%= link_to '📋 Missions',    admin_ai_manager_missions_path,    class: "ai-manager-nav-link #{controller.action_name == 'missions' ? 'active' : ''}" %>
+      <%= link_to '🧠 Decisions',   admin_ai_manager_decisions_path,   class: "ai-manager-nav-link #{controller.action_name == 'decisions' ? 'active' : ''}" %>
+      <%= link_to '🎯 Planner',     admin_ai_manager_planner_path,     class: "ai-manager-nav-link #{controller.action_name == 'planner' ? 'active' : ''}" %>
+      <%= link_to '🔬 Patterns',    admin_ai_manager_patterns_path,    class: "ai-manager-nav-link #{controller.action_name == 'patterns' ? 'active' : ''}" %>
+      <%= link_to '📊 Performance', admin_ai_manager_performance_path, class: "ai-manager-nav-link #{controller.action_name == 'performance' ? 'active' : ''}" %>
+      <%= link_to '🧪 Testing',     "/admin/ai_manager/testing",       class: "ai-manager-nav-link #{controller.action_name == 'testing' ? 'active' : ''}" %>
+      <h3>Admin</h3>
+      <%= link_to "← Dashboard", admin_dashboard_path, class: "ai-manager-nav-link" %>
     </section>
   </aside>
   <main class="admin-content">
@@ -38,6 +41,12 @@
         <div class="form-group">
           <label>TIMELINE (Years):</label>
           <%= number_field_tag :timeline_years, params[:timeline_years] || 10, min: 5, max: 50 %>
+        </div>
+        <%# ...existing content... %>
+      <% end %>
+    </section>
+  </main>
+</div>
         </div>
         <div class="form-group">
           <label>BUDGET (GCC):</label>

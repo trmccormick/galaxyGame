@@ -1,14 +1,30 @@
 
-<%= stylesheet_link_tag 'admin/dashboard', media: 'all' %>
-<%= stylesheet_link_tag 'application', media: 'all' %>
+<div class="ai-manager-layout">
+  <%# ── Sidebar ── %>
+  <aside class="ai-manager-sidebar">
+    <h3>🤖 AI Manager</h3>
+    <%= link_to "📊 Dashboard",   admin_ai_manager_path,             class: "ai-manager-nav-link #{controller.action_name == 'index' ? 'active' : ''}" %>
+    <%= link_to "🚀 Missions",    admin_ai_manager_missions_path,    class: "ai-manager-nav-link #{controller.action_name == 'missions' ? 'active' : ''}" %>
+    <%= link_to "🧠 Decisions",   admin_ai_manager_decisions_path,   class: "ai-manager-nav-link #{controller.action_name == 'decisions' ? 'active' : ''}" %>
+    <%= link_to "📋 Planner",     admin_ai_manager_planner_path,     class: "ai-manager-nav-link #{controller.action_name == 'planner' ? 'active' : ''}" %>
+    <%= link_to "🎯 Patterns",    admin_ai_manager_patterns_path,    class: "ai-manager-nav-link #{controller.action_name == 'patterns' ? 'active' : ''}" %>
+    <%= link_to "📈 Performance", admin_ai_manager_performance_path, class: "ai-manager-nav-link #{controller.action_name == 'performance' ? 'active' : ''}" %>
+    <%= link_to "🧪 Testing",     "/admin/ai_manager/testing",       class: "ai-manager-nav-link #{controller.action_name == 'testing' ? 'active' : ''}" %>
+    <h3>Admin</h3>
+    <%= link_to "← Dashboard", admin_dashboard_path, class: "ai-manager-nav-link" %>
+  </aside>
 
-<div class="studio-main-container">
-  <header class="admin-header">
-    <h1 class="studio-title">🤖 AI Manager</h1>
-    <div class="studio-subtitle">Comprehensive AI system monitoring, mission control, and analytics</div>
+  <%# ── Header ── %>
+  <header class="ai-manager-header">
+    <h1>GALAXY GAME — AI MANAGER</h1>
+    <div class="header-meta">
+      System: <span class="status-ok">OPERATIONAL</span>
+    </div>
   </header>
-  <main class="admin-content">
-    <div class="stats-section">
+
+  <%# ── Main Content ── %>
+  <main class="ai-manager-main">
+    <section class="stats-section">
       <div class="stat-card">
         <div class="stat-value"><%= @system_status[:active_missions] %></div>
         <div class="stat-label">Active Missions</div>
@@ -21,29 +37,33 @@
         <div class="stat-value"><%= @system_status[:failed_missions] %></div>
         <div class="stat-label">Failed Missions</div>
       </div>
+    </section>
+    <%# ...existing content... %>
+  </main>
+      </div>
       <div class="stat-card">
         <div class="stat-value"><%= @performance_metrics[:success_rate] %>%</div>
         <div class="stat-label">Success Rate</div>
       </div>
-    </div>
-    <div class="action-grid">
-      <% @quick_actions.each do |key, action| %>
-        <div class="action-card" onclick="window.location.href='<%= action[:path] %>'">
-          <span class="action-icon">
-            <%= case key.to_s
-              when 'planner' then '📋'
-              when 'decisions' then '🧠'
-              when 'patterns' then '🎯'
-              when 'performance' then '📊'
-              else '⚙️'
-            end %>
-          </span>
-          <div class="action-title"><%= action[:title] %></div>
-          <div class="action-description"><%= action[:description] %></div>
-        </div>
-      <% end %>
-    </div>
-    <div class="recent-activity">
+    </section>
+    <section class="content-section">
+      <h2>🧠 AI Manager Quick Actions</h2>
+      <div class="admin-card-grid">
+        <% @quick_actions.each do |key, action| %>
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title"><%= action[:title] %></div>
+              <div class="admin-card-type"><%= key.to_s.humanize %></div>
+            </div>
+            <div class="admin-card-description"><%= action[:description] %></div>
+            <div class="admin-card-actions">
+              <a href="<%= action[:path] %>" class="admin-action-btn primary">Go</a>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+    <section class="recent-activity">
       <div class="activity-title">📋 Recent Activity</div>
       <% if @active_missions.any? %>
         <% @active_missions.each do |mission| %>
@@ -64,7 +84,7 @@
           <div class="activity-time">Never</div>
         </div>
       <% end %>
-    </div>
+    </section>
     <div style="text-align: center; margin-top: 30px;">
       <a href="<%= admin_dashboard_path %>" class="admin-tool-button">← Back to Admin Dashboard</a>
     </div>

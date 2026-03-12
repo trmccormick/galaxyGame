@@ -164,7 +164,7 @@ Run `./start_grinder.sh` first to establish baseline, then grind top failing spe
 
 1. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety
 2. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
-3. **NEVER** run Rails/Ruby commands on host — always use `docker exec -it web bash -c '...'`
+3. **NEVER** run Rails/Ruby commands on host — always use `docker exec -it web bash -c '...'
 4. **Tileset/Map Rendering:** All new map and surface rendering code must use the JSON-based tileset system. Legacy FreeCiv/Civ4 asset pipelines are deprecated.
 
 ### Git Operations (Host Only)
@@ -324,3 +324,18 @@ When running as the Grinder/Executor agent on an explicitly assigned grinding ta
 - **RAILS_ENV=test and unset DATABASE_URL remain mandatory** on every test run — no exceptions
 
 This exception enables efficient test suite restoration while maintaining all safety protocols in GUARDRAILS.md Sections 12 and 13.
+
+## 🧪 RSpec Test Output Naming Protocol
+
+- **Full suite runs:**
+  - Output log file: `/data/logs/rspec_full_$(date +%s).log`
+  - Command example:
+    docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /data/logs/rspec_full_$(date +%s).log 2>&1'
+- **Subset/spec runs:**
+  - Output log file: `/data/logs/rspec_[scope]_$(date +%s).log` (e.g., `rspec_ai_manager_$(date +%s).log`)
+  - Command example:
+    docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/ > /data/logs/rspec_ai_manager_$(date +%s).log 2>&1'
+- **Never monitor live output:** Always redirect to log file and review after completion.
+- **Always use descriptive log names for partial runs** to avoid confusion and maintain clear test records.
+
+---

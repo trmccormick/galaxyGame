@@ -1,49 +1,52 @@
-<div class="admin-main-container performance-page">
-            <aside class="admin-sidebar">
-                <div class="admin-tool-section">
-                    <h3>🤖 AI MANAGER</h3>
-                    <a href="/admin/ai_manager/missions" class="admin-tool-button">🚀 Missions</a>
-                    <a href="/admin/ai_manager/decisions" class="admin-tool-button">🧠 Decisions</a>
-                    <a href="/admin/ai_manager/planner" class="admin-tool-button">📋 Planner</a>
-                    <a href="/admin/ai_manager/patterns" class="admin-tool-button">🎯 Patterns</a>
-                    <a href="/admin/ai_manager/performance" class="admin-tool-button admin-tool-button--active">📊 Performance</a>
+<div class="ai-manager-layout">
+    <%# ── Sidebar ── %>
+    <aside class="ai-manager-sidebar">
+        <h3>🤖 AI Manager</h3>
+        <%= link_to "📊 Dashboard",   admin_ai_manager_path,             class: "ai-manager-nav-link #{controller.action_name == 'index' ? 'active' : ''}" %>
+        <%= link_to "🚀 Missions",    admin_ai_manager_missions_path,    class: "ai-manager-nav-link #{controller.action_name == 'missions' ? 'active' : ''}" %>
+        <%= link_to "🧠 Decisions",   admin_ai_manager_decisions_path,   class: "ai-manager-nav-link #{controller.action_name == 'decisions' ? 'active' : ''}" %>
+        <%= link_to "📋 Planner",     admin_ai_manager_planner_path,     class: "ai-manager-nav-link #{controller.action_name == 'planner' ? 'active' : ''}" %>
+        <%= link_to "🎯 Patterns",    admin_ai_manager_patterns_path,    class: "ai-manager-nav-link #{controller.action_name == 'patterns' ? 'active' : ''}" %>
+        <%= link_to "📈 Performance", admin_ai_manager_performance_path, class: "ai-manager-nav-link #{controller.action_name == 'performance' ? 'active' : ''}" %>
+        <%= link_to "🧪 Testing",     "/admin/ai_manager/testing",       class: "ai-manager-nav-link #{controller.action_name == 'testing' ? 'active' : ''}" %>
+        <h3>Admin</h3>
+        <%= link_to "← Dashboard", admin_dashboard_path, class: "ai-manager-nav-link" %>
+    </aside>
+
+    <%# ── Header ── %>
+    <header class="ai-manager-header">
+        <h1>AI MANAGER — PERFORMANCE</h1>
+        <div class="header-meta">
+            System: <span class="status-ok">OPERATIONAL</span>
+            AI Performance: <span class="status-monitoring">MONITORING</span>
+            Version: 1.0.0-alpha
+        </div>
+    </header>
+
+    <%# ── Main Content ── %>
+    <main class="ai-manager-main">
+        <section class="performance-section">
+            <h2>📊 AI PERFORMANCE METRICS</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Success Rate</div>
+                    <div class="metric-value"><%= @metrics[:success_rate] %>%</div>
+                    <div class="metric-trend positive">+2.1%</div>
                 </div>
-                <div class="admin-tool-section">
-                    <h3>🎯 ADMIN SECTIONS</h3>
-                    <a href="/admin/dashboard" class="admin-tool-button">← Dashboard</a>
+                <div class="metric-card">
+                    <div class="metric-label">Avg Timeline</div>
+                    <div class="metric-value"><%= @metrics[:average_timeline] %></div>
+                    <div class="metric-trend neutral">±0.0%</div>
                 </div>
-            </aside>
-            <header class="admin-header">
-                <h1>GALAXY GAME - AI MANAGER PERFORMANCE</h1>
-                <div class="admin-header-info">
-                    System Status: <span class="text-success">OPERATIONAL</span> |
-                    AI Performance: <span class="text-accent">MONITORING</span> |
-                    Version: 1.0.0-alpha
+                <div class="metric-card">
+                    <div class="metric-label">Resource Efficiency</div>
+                    <div class="metric-value"><%= @metrics[:resource_efficiency] %>%</div>
                 </div>
-            </header>
-            <main class="admin-content">
-                <section class="content-section">
-                    <h2>📊 AI PERFORMANCE METRICS</h2>
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">Success Rate</div>
-                            <div class="metric-value"><%= @metrics[:success_rate] %>%</div>
-                            <div class="metric-trend positive">+2.1%</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Avg Timeline</div>
-                            <div class="metric-value"><%= @metrics[:average_timeline] %></div>
-                            <div class="metric-trend neutral">±0.0%</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Resource Efficiency</div>
-                            <div class="metric-value"><%= @metrics[:resource_efficiency] %>%</div>
-                            <div class="metric-trend positive">+5.3%</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Active Missions</div>
-                            <div class="metric-value">--</div>
-                            <div class="metric-trend neutral">±0.0%</div>
+                <%# ...existing content... %>
+            </div>
+        </section>
+    </main>
+</div>
                         </div>
                     </div>
                     <div class="controls-section">
