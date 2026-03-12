@@ -144,11 +144,16 @@ RSpec.describe AIManager::MissionPlannerService do
   
   describe 'data-driven local production' do
     let(:solar_system) { create(:solar_system) }
-    let!(:mars) { create(:terrestrial_planet, :mars, solar_system: solar_system) }
+    let!(:mars) { create(:celestial_body, name: 'Mars', solar_system: solar_system) }
     let(:planner) { described_class.new('mars-terraforming') }
     
     before do
       allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)
+      mars.atmosphere.update!(composition: { "CO2" => 95.97, "Ar" => 1.93, "N2" => 1.89 })
+      co2_gas = mars.atmosphere.gases.find_or_create_by(name: 'CO2')
+      co2_gas.update!(percentage: 95.97)
+      ar_gas = mars.atmosphere.gases.find_or_create_by(name: 'Ar')
+      ar_gas.update!(percentage: 1.93)
     end
     
     it 'uses actual celestial body data for capability detection' do
@@ -177,9 +182,9 @@ RSpec.describe AIManager::MissionPlannerService do
   end
   
   describe 'MaterialLookupService integration' do
-    let(:planner) { described_class.new('mars-terraforming') }
     let(:solar_system) { create(:solar_system) }
-    let(:mars) { create(:terrestrial_planet, :mars, solar_system: solar_system) }
+    let(:mars) { create(:celestial_body, name: 'Mars', solar_system: solar_system) }
+    let(:planner) { described_class.new('mars-terraforming') }
     
     before do
       allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)
