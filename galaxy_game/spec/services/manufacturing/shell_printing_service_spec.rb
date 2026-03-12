@@ -105,6 +105,11 @@ RSpec.describe Manufacturing::ShellPrintingService do
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         })
         settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
+        # Make printer operational
+        printer_unit.update_columns(status: 'operational')
+        allow(printer_unit).to receive(:has_minimum_required_units?).and_return(true)
+        allow(printer_unit).to receive(:system_status).with('power_distribution').and_return('online')
+        allow(printer_unit).to receive(:current_mode).and_return('active')
       end
 
       it 'creates a shell printing job' do
@@ -190,6 +195,11 @@ RSpec.describe Manufacturing::ShellPrintingService do
       before do
         settlement.inventory.add_item('inert_waste', 2000, player)
         settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
+        # Make wrong_printer operational
+        wrong_printer.update_columns(status: 'operational')
+        allow(wrong_printer).to receive(:has_minimum_required_units?).and_return(true)
+        allow(wrong_printer).to receive(:system_status).with('power_distribution').and_return('online')
+        allow(wrong_printer).to receive(:current_mode).and_return('active')
       end
 
       it 'raises an error' do

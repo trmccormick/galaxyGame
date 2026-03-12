@@ -731,3 +731,11 @@ docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --format doc
 - GUARDRAILS.md updated to document integration and trade logic interaction.
 - All changes committed atomically per workflow.
 - All tests green; workflow and documentation fully compliant.
+
+### ✅ COMPLETED: Manufacturing Spec Fixes (March 12, 2026)
+- ✅ Fixed operator precedence bug in cost_calculator.rb
+- ✅ Made printer_unit operational in shell_printing_service_spec.rb
+- ✅ Updated assembly_service_spec.rb balance assertion for tenant fee
+- ✅ All manufacturing specs green: 164 examples, 0 failures, 1 pending
+- ✅ Task file moved to /completed
+- ✅ Commit: "Fix manufacturing spec failures and archive task"

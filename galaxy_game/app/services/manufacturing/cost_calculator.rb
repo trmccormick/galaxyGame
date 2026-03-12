@@ -68,7 +68,7 @@ class Manufacturing::CostCalculator
 
     # Get waste factor from production_data.base_material_efficiency or waste_factor
     # Efficiency is 0.95 (95%), so waste is 0.05 (5%)
-    base_efficiency = @blueprint.dig('production_data', 'base_material_efficiency') || @blueprint['waste_factor'] ? (1.0 - @blueprint['waste_factor']) : 1.0
+    base_efficiency = @blueprint.dig('production_data', 'base_material_efficiency') || (@blueprint['waste_factor'] ? (1.0 - @blueprint['waste_factor']) : 1.0)
     waste_factor = 1.0 - base_efficiency.to_f
     production_efficiency = 1.0 - waste_factor
 

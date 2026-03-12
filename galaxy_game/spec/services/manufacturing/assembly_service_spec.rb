@@ -67,7 +67,7 @@ RSpec.describe Manufacturing::AssemblyService, type: :service do
           buy_missing: false
         )
 
-        expect(player.account.reload.balance).to eq(initial_player_balance)
+        expect(player.account.reload.balance).to eq(initial_player_balance - result.tenant_fee)
         expect(settlement.account.reload.balance).to eq(initial_settlement_balance)
       end
     end
