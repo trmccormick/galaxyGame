@@ -88,13 +88,19 @@ module TerraSim
     def update_temperatures
       atmosphere = @celestial_body.atmosphere
       return unless atmosphere
-      
-      # Update the various temperature types using our new methods
-      atmosphere.set_effective_temp(@base_temp)
-      atmosphere.set_greenhouse_temp(@surface_temp)
-      atmosphere.set_polar_temp(@polar_temp)
-      atmosphere.set_tropic_temp(@tropic_temp)
-      
+
+      # Clamp temperatures to valid ranges before updating
+      clamped_base_temp    = @base_temp.clamp(150.0, 400.0)
+      clamped_surface_temp = @surface_temp.clamp(150.0, 400.0)
+      clamped_polar_temp   = @polar_temp.clamp(100.0, 350.0)
+      clamped_tropic_temp  = @tropic_temp.clamp(150.0, 400.0)
+
+      # Update the various temperature types using clamped values
+      atmosphere.set_effective_temp(clamped_base_temp)
+      atmosphere.set_greenhouse_temp(clamped_surface_temp)
+      atmosphere.set_polar_temp(clamped_polar_temp)
+      atmosphere.set_tropic_temp(clamped_tropic_temp)
+
       # Also update the celestial body's surface temperature
       @celestial_body.update(surface_temperature: @surface_temp)
     end

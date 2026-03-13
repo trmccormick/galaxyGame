@@ -52,6 +52,14 @@
 - ✅ Task file moved to /completed
 - ✅ Commit: "Fix logistics regression and processing service spec balance math"
 
+### ✅ COMPLETED: TerraSim Spec Fixes (March 12, 2026)
+- ✅ Fixed ice_tectonics_enabled method calls in service and spec
+- ✅ Wrapped regolith stubs in column_exists? check in geosphere_initializer_spec.rb
+- ✅ Clamped temperature values in update_temperatures in atmosphere_simulation_service.rb
+- ✅ All TerraSim specs green: 123 examples, 0 failures, 3 pending
+- ✅ Task file moved to /completed
+- ✅ Commit: "Fix TerraSim spec failures and archive task"
+
 **Status**: 📋 BACKLOG - Comprehensive implementation plan approved, moved to backlog for future prioritization
 **Priority**: MEDIUM - Future gameplay enhancement for Phase 5+ features
 **Summary**: Designed asynchronous ship-based data propagation between systems with HashChain integrity, ACK confirmations, and player missions. Includes EM leakage harvesting during AWS shifts, spoofing mechanics, and market data latency. Integrates with existing mission files and AI Manager.

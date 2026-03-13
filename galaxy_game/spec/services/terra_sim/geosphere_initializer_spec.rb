@@ -87,7 +87,7 @@ RSpec.describe TerraSim::GeosphereInitializer, type: :service do
 
     it "sets up ice_tectonics_enabled for ice giants" do
       initializer.initialize_geosphere
-      expect(ice_giant.geosphere.ice_tectonic_enabled).to be true
+      expect(ice_giant.geosphere.ice_tectonics_enabled?).to be true
     end
     
     it "creates appropriate ice materials" do
@@ -148,10 +148,11 @@ RSpec.describe TerraSim::GeosphereInitializer, type: :service do
     before do
       # Create atmosphere for the Earth-like body
       earth_atmosphere
-      
-      # Set body types directly
-      allow_any_instance_of(TerraSim::GeosphereInitializer).to receive(:determine_regolith_depth).and_return(3.0)
-      allow_any_instance_of(TerraSim::GeosphereInitializer).to receive(:determine_particle_size).and_return(0.5)
+      # Only stub regolith methods if the columns exist
+      if ActiveRecord::Base.connection.column_exists?(:geospheres, :regolith_depth)
+        allow_any_instance_of(TerraSim::GeosphereInitializer).to receive(:determine_regolith_depth).and_return(3.0)
+        allow_any_instance_of(TerraSim::GeosphereInitializer).to receive(:determine_particle_size).and_return(0.5)
+      end
     end
     
     it 'initializes regolith properties for planets with atmospheres' do

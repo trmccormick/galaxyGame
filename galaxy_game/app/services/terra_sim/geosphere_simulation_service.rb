@@ -53,7 +53,7 @@ module TerraSim
       end
       
       # If ice tectonics are enabled, simulate ice-specific processes
-      if @geosphere.ice_tectonic_enabled
+      if @geosphere.ice_tectonics_enabled?
         simulate_ice_tectonics
       end
     end
@@ -204,7 +204,7 @@ module TerraSim
         
         # Determine which gases to emit based on planet type
         volcanic_composition = determine_volcanic_composition
-        
+      
         # Emit each gas
         volcanic_composition.each do |gas_id, weight|
           # Calculate amount based on geological activity and random factor
