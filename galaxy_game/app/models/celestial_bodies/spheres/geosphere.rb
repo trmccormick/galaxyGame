@@ -291,9 +291,19 @@ module CelestialBodies
         self[:regolith_depth] = value
       end
 
+
       def calculate_total_mass
         self.total_geosphere_mass = total_crust_mass + total_mantle_mass + total_core_mass
         save!
+      end
+
+      # Ice tectonics accessor methods for ExoticWorldSimulationService
+      def ice_tectonics_enabled?
+        self.plates&.dig('ice_tectonics_enabled') || false
+      end
+
+      def ice_tectonic_enabled
+        self.plates&.dig('ice_tectonics_enabled') || false
       end
 
       private
@@ -374,14 +384,7 @@ module CelestialBodies
         celestial_body.present? && celestial_body.radius.to_f > 6000000 ? 7 : 3 # More plates for larger bodies
       end
 
-      # Ice tectonics accessor methods for ExoticWorldSimulationService
-      def ice_tectonics_enabled?
-        self.plates&.dig('ice_tectonics_enabled') || false
-      end
 
-      def ice_tectonic_enabled
-        self.plates&.dig('ice_tectonics_enabled') || false
-      end
 
       def run_simulation_after_save
         activity = geological_activity || 0
