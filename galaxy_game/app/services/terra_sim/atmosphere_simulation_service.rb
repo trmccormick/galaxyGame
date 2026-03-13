@@ -102,7 +102,7 @@ module TerraSim
       atmosphere.set_tropic_temp(clamped_tropic_temp)
 
       # Also update the celestial body's surface temperature
-      @celestial_body.update(surface_temperature: @surface_temp)
+      @celestial_body.update(surface_temperature: clamped_surface_temp)
     end
 
     def simulate_atmospheric_loss
