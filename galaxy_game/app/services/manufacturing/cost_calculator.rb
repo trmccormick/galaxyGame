@@ -80,7 +80,6 @@ class Manufacturing::CostCalculator
   # Prints a formatted breakdown of the COGS calculation.
   def print_breakdown
     raw_material_cost_sum = 0.0
-    base_efficiency = @blueprint.dig('production_data', 'base_material_efficiency') || @blueprint['waste_factor'] ? (1.0 - @blueprint['waste_factor']) : 1.0
     waste_factor = 1.0 - base_efficiency.to_f
     production_efficiency = 1.0 - waste_factor
 

@@ -1,6 +1,3 @@
-    def orbital?
-      is_a?(Settlement::SpaceStation) || settlement_type.to_s == 'station'
-    end
 module Settlement
   class BaseSettlement < ApplicationRecord
     include Housing
