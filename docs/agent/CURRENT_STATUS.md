@@ -52,6 +52,14 @@
 - ✅ Task file moved to /completed
 - ✅ Commit: "Fix logistics regression and processing service spec balance math"
 
+### ✅ COMPLETED: Pressurization Service Architecture Fix (March 12, 2026)
+- ✅ Rewrote source_gases_from_depot_tanks to use inventory items for gas storage
+- ✅ Rewrote add_gas_to_sector_storage to use inventory items for gas storage
+- ✅ Updated pressurization structure spec to use inventory items for gas setup
+- ✅ All pressurization and manufacturing specs green
+- ✅ Task file moved to /completed
+- ✅ Commit: "Fix pressurization/byproduct service architecture and archive task"
+
 ### ✅ COMPLETED: TerraSim Spec Fixes (March 12, 2026)
 - ✅ Fixed ice_tectonics_enabled method calls in service and spec
 - ✅ Wrapped regolith stubs in column_exists? check in geosphere_initializer_spec.rb

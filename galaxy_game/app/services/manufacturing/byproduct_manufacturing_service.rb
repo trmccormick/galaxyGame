@@ -20,25 +20,25 @@ module Manufacturing
     private
 
     def self.add_gas_to_sector_storage(settlement, gas, mass)
-      # Find depot tanks in the settlement to store the gas
-      depot_tanks = settlement.structures.where(structure_name: 'depot_tank')
+      # Gas is stored as Items with material_type: :gas in the settlement inventory
+      inventory = settlement.inventory
+      return unless inventory
 
-      return if depot_tanks.empty?
+      # Normalize gas name (service uses 'O2', 'N2' etc.)
+      gas_name = gas.to_s
 
-      # Distribute the gas across available depot tanks
-      # For simplicity, add to the first available tank
-      depot_tank = depot_tanks.first
+      existing_item = inventory.items.find_by(name: gas_name, material_type: :gas)
 
-      current_storage = depot_tank.operational_data.fetch('gas_storage', {})
-      updated_storage = current_storage.merge(
-        gas => current_storage.fetch(gas, 0) + mass
-      )
-
-      depot_tank.update_columns(
-        operational_data: depot_tank.operational_data.merge('gas_storage' => updated_storage)
-      )
-
-      Rails.logger.info "[ByproductManufacturing] Added #{mass} kg of #{gas} to #{depot_tank.name} from mining byproduct"
+      if existing_item
+        existing_item.update!(amount: existing_item.amount + mass)
+      else
+        inventory.items.create!(
+          name: gas_name,
+          material_type: :gas,
+          amount: mass,
+          owner: settlement.owner
+        )
+      end
     end
   end
 end

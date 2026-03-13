@@ -20,30 +20,26 @@ module Pressurization
     
     def self.source_gases_from_depot_tanks(settlement)
       gases = {}
-      
-      # Look for depot tanks in the settlement
-      depot_tanks = settlement.structures.where("operational_data->>'structure_type' = ?", 'depot_tank')
-      
-      depot_tanks.each do |tank|
-        tank_data = tank.operational_data || {}
-        
-        # Check for stored gases
-        if tank_data['gas_storage']
-          tank_data['gas_storage'].each do |gas_name, amount|
-            # Convert to common names used by pressurization service
-            common_name = case gas_name
-                          when 'O2' then 'oxygen'
-                          when 'N2' then 'nitrogen'
-                          when 'CO2' then 'carbon_dioxide'
-                          else gas_name.downcase
-                          end
-            
-            gases[common_name.to_sym] ||= 0
-            gases[common_name.to_sym] += amount
-          end
-        end
+
+      # Gas quantities are tracked in the settlement inventory as Items with material_type: :gas
+      gas_items = settlement.inventory.items.where(material_type: :gas)
+
+      gas_items.each do |item|
+        # Normalize gas names to symbols used by pressurization service
+        common_name = case item.name.upcase
+                      when 'O2', 'OXYGEN'       then :oxygen
+                      when 'N2', 'NITROGEN'     then :nitrogen
+                      when 'CO2'                then :carbon_dioxide
+                      when 'CH4', 'METHANE'     then :methane
+                      when 'H2', 'HYDROGEN'     then :hydrogen
+                      when 'AR', 'ARGON'        then :argon
+                      else item.name.downcase.to_sym
+                      end
+
+        gases[common_name] ||= 0
+        gases[common_name] += item.amount.to_f
       end
-      
+
       gases
     end
     
