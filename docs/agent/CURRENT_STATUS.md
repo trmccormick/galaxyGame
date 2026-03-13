@@ -44,10 +44,14 @@
 - ✅ Commit: "Remove obsolete PORO storage classes — superseded by Inventory system"
 - ✅ Validation: No references remain in codebase
 
-**Architecture Now Clean**: Settlement hierarchy properly structured with JSON units and grid connectivity
+### ✅ COMPLETED: Logistics Regression and Processing Fix (March 12, 2026)
+- ✅ Fixed valid_settlement_pair? regression by adding respond_to?(:is_npc?) check
+- ✅ Updated processing_service_spec.rb balance math (withdraw 96,000 instead of 95,000)
+- ✅ All logistics specs green: 15 examples, 0 failures
+- ✅ Processing service spec green: 3 examples, 0 failures
+- ✅ Task file moved to /completed
+- ✅ Commit: "Fix logistics regression and processing service spec balance math"
 
-
-## 📋 BACKLOG: Courier Network Data Transmission System (March 8, 2026)
 **Status**: 📋 BACKLOG - Comprehensive implementation plan approved, moved to backlog for future prioritization
 **Priority**: MEDIUM - Future gameplay enhancement for Phase 5+ features
 **Summary**: Designed asynchronous ship-based data propagation between systems with HashChain integrity, ACK confirmations, and player missions. Includes EM leakage harvesting during AWS shifts, spoofing mechanics, and market data latency. Integrates with existing mission files and AI Manager.

@@ -120,7 +120,7 @@ RSpec.describe ProcessingService, type: :service do
 
     context 'when owner does not have enough GCC' do
       before do
-        owner.account.withdraw(95_000.0, "Testing insufficient funds")
+        owner.account.withdraw(96_000.0, "Testing insufficient funds")
       end
 
       it 'raises an error when GCC is insufficient' do
