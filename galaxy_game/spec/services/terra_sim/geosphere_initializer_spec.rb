@@ -85,9 +85,9 @@ RSpec.describe TerraSim::GeosphereInitializer, type: :service do
       allow(ice_giant).to receive(:surface_temperature).and_return(100)
     end
 
-    it "sets up ice_tectonics_enabled for ice giants" do
+    it "does not enable ice_tectonics for ice giants" do
       initializer.initialize_geosphere
-      expect(ice_giant.geosphere.ice_tectonics_enabled?).to be true
+      expect(ice_giant.geosphere.ice_tectonics_enabled?).to be false
     end
     
     it "creates appropriate ice materials" do
