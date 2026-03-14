@@ -26,7 +26,7 @@ FactoryBot.define do
       }
     }
 
-    association :owner, factory: :player
+    association :owner, factory: :development_corporation
     association :location, factory: :celestial_location
     
     # Independent settlement (no colony)
@@ -154,7 +154,7 @@ FactoryBot.define do
     end
 
     trait :independent do
-      owner { nil }
+      colony { nil }
     end
   end  
 

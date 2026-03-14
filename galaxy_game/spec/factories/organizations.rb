@@ -1,5 +1,13 @@
 FactoryBot.define do
   factory :organization, class: 'Organizations::BaseOrganization' do
+        trait :development_corporation do
+          organization_type { 'development_corporation' }
+          operational_data { { 'is_npc' => true, 'status' => 'Active' } }
+        end
+      factory :development_corporation, parent: :organization do
+        organization_type { 'development_corporation' }
+        operational_data { { 'is_npc' => true, 'status' => 'Active' } }
+      end
     sequence(:name) { |n| "Test Organization #{n}" }
     sequence(:identifier) { |n| "ORG#{n}" }
     organization_type { 'corporation' }

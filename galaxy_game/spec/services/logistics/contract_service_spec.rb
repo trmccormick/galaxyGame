@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Logistics::ContractService do
-  let(:from_settlement) { create(:base_settlement, :independent, name: 'Supplier Base') }
-  let(:to_settlement) { create(:base_settlement, :independent, name: 'Consumer Base') }
+  let(:from_settlement) { create(:base_settlement, name: 'Supplier Base') }
+  let(:to_settlement) { create(:base_settlement, name: 'Consumer Base') }
   let(:material) { 'oxygen' }
   let(:quantity) { 1000 }
 
