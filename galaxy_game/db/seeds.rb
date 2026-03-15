@@ -66,6 +66,48 @@ vector = Organizations::BaseOrganization.find_or_create_by!(
   org.operational_data = { 'is_npc' => true, 'specialization' => 'cargo_transport' }
 end
 
+# Seed Logistics Providers for each logistics corporation
+puts "Seeding Logistics Providers..."
+
+Logistics::Provider.find_or_create_by!(
+  name: 'AstroLift Logistics',
+  identifier: 'ASTROLIFT',
+  organization: astrolift
+) do |provider|
+  provider.reliability_rating = 4.8
+  provider.base_fee_per_kg = 12.0
+  provider.speed_multiplier = 1.0
+  provider.capabilities = ['orbital_transfer', 'surface_conveyance']
+  provider.cost_modifiers = { 'bulk_discount_thresholds' => [], 'orbital_transfer_discount' => 0.9 }
+  provider.time_modifiers = { 'orbital_transfer_speedup' => 0.8 }
+end
+
+Logistics::Provider.find_or_create_by!(
+  name: 'Zenith Orbital Logistics',
+  identifier: 'ZENITH',
+  organization: zenith
+) do |provider|
+  provider.reliability_rating = 4.6
+  provider.base_fee_per_kg = 11.0
+  provider.speed_multiplier = 0.95
+  provider.capabilities = ['orbital_transfer', 'drone_delivery']
+  provider.cost_modifiers = { 'bulk_discount_thresholds' => [], 'orbital_transfer_discount' => 0.92 }
+  provider.time_modifiers = { 'orbital_transfer_speedup' => 0.85 }
+end
+
+Logistics::Provider.find_or_create_by!(
+  name: 'Vector Hauling Logistics',
+  identifier: 'VECTOR',
+  organization: vector
+) do |provider|
+  provider.reliability_rating = 4.4
+  provider.base_fee_per_kg = 10.5
+  provider.speed_multiplier = 0.9
+  provider.capabilities = ['surface_conveyance', 'orbital_transfer']
+  provider.cost_modifiers = { 'bulk_discount_thresholds' => [], 'orbital_transfer_discount' => 0.95 }
+  provider.time_modifiers = { 'orbital_transfer_speedup' => 0.9 }
+end
+
 # Note: Wormhole Transit Consortium is NOT created during initial seed
 # It will be formed later during the "Snap Event" storyline when access to 
 # the first extrasolar system is lost, forcing LDC and AstroLift to collaborate
