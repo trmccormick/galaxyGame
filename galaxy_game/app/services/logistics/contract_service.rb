@@ -20,6 +20,9 @@ module Logistics
       end
 
       # FALLBACK: Create direct NPC contract if no players available
+      provider = find_provider(from_settlement, to_settlement, transport_method)
+      raise "No suitable logistics provider found" unless provider
+
       contract = Logistics::Contract.create!(
         from_settlement: from_settlement,
         to_settlement: to_settlement,
@@ -28,14 +31,25 @@ module Logistics
         transport_method: transport_method,
         status: :pending,
         scheduled_at: calculate_delivery_time(from_settlement, to_settlement, transport_method),
+        provider: provider,
         operational_data: {
           purpose: 'internal_b2b_transfer',
           created_by: 'ai_manager'
         }
       )
 
-      Rails.logger.info "[Logistics::Contract] Created direct NPC transfer: #{quantity} #{material} from #{from_settlement.name} to #{to_settlement.name}"
+      Rails.logger.info "[Logistics::Contract] Created direct NPC transfer: #{quantity} #{material} from #{from_settlement.name} to #{to_settlement.name} (provider: #{provider.name})"
       contract
+        # Find a suitable logistics provider for the route and method
+        def self.find_provider(from_settlement, to_settlement, transport_method)
+          # Robustly handle capabilities as array, JSON string, or plain string
+          Logistics::Provider.all.select { |provider|
+            caps = provider.capabilities
+            caps = JSON.parse(caps) rescue caps if caps.is_a?(String)
+            Array(caps).map(&:to_s).include?(transport_method.to_s)
+          }.max_by(&:reliability_rating)
+        end
+        end
     end
 
     def self.execute_pending_contracts
