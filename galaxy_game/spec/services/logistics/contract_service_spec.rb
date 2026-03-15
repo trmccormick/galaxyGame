@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Logistics::ContractService do
+  let(:provider) { create(:logistics_provider) }
   let(:from_settlement) { create(:base_settlement, name: 'Supplier Base') }
   let(:to_settlement) { create(:base_settlement, name: 'Consumer Base') }
   let(:material) { 'oxygen' }
@@ -9,6 +10,7 @@ RSpec.describe Logistics::ContractService do
   describe '.create_internal_transfer' do
     context 'with valid settlements' do
       before do
+        allow(described_class).to receive(:find_provider).and_return(provider)
         allow(from_settlement).to receive_message_chain(:inventory, :current_storage_of)
           .with(material).and_return(2000)
         allow(to_settlement).to receive_message_chain(:inventory, :current_storage_of)
@@ -16,6 +18,8 @@ RSpec.describe Logistics::ContractService do
       end
 
       it 'creates a logistics contract for internal transfer' do
+        # Ensure provider exists before running the service
+        provider
         contract = described_class.create_internal_transfer(
           from_settlement, to_settlement, material, quantity
         )
@@ -28,6 +32,7 @@ RSpec.describe Logistics::ContractService do
         expect(contract.status).to eq('pending')
         expect(contract.transport_method).to eq('orbital_transfer')
         expect(contract.operational_data['purpose']).to eq('internal_b2b_transfer')
+        expect(contract.provider).to be_present
       end
     end
 
