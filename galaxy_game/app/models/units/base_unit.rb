@@ -135,27 +135,10 @@ module Units
       true
     end
 
-    def operate(resources = nil)
-      # If resources is a number (time), skip processing for now
-      # This method is designed for resource processing, not time simulation
-      return true if resources.is_a?(Numeric)
-      
-      # If no resources provided, try to get them from craft inventory
-      resources ||= craft_inventory_resources
-      
+    def operate(resources)
       inputs = calculate_inputs(resources)
       outputs = calculate_outputs(inputs)
       handle_outputs(outputs)
-    end
-
-    def craft_inventory_resources
-      return {} unless attachable&.inventory
-      
-      resources = {}
-      attachable.inventory.items.each do |item|
-        resources[item.name] = item.amount
-      end
-      resources
     end
 
     def current_location
@@ -284,22 +267,6 @@ module Units
       end
     end
 
-    def can_store_material?(material_type)
-      storage_type = operational_data&.dig('storage', 'type')
-      return false unless storage_type
-
-      case material_type
-      when 'liquid'
-        storage_type == 'liquid'
-      when 'gas'
-        storage_type == 'gas'
-      when 'fuel'
-        storage_type == 'liquid' || storage_type == 'gas'  # Fuels can be liquid or gas
-      else
-        storage_type == 'general'  # General storage can hold solids and other types
-      end
-    end
-
     def compatible_storage?(resource_name)
       storage_type = operational_data.dig('storage', 'type')
       return false unless storage_type
@@ -356,6 +323,8 @@ module Units
     end
 
     def store_item(item_id, amount)
+      Rails.logger.debug("store_item called with: item_id=#{item_id}, amount=#{amount}")
+    
       # Initialize storage structure if needed
       self.operational_data ||= {}
       self.operational_data['storage'] ||= {
@@ -364,6 +333,8 @@ module Units
         'current_level' => 0
       }
       self.operational_data['resources'] ||= { 'stored' => {} }
+    
+      Rails.logger.debug("Operational data before save: #{operational_data.inspect}")
     
       # Check capacity
       current_level = operational_data['storage']['current_level'] || 0
@@ -379,20 +350,29 @@ module Units
       item.amount = existing_amount + amount
       item.owner = owner
     
+      Rails.logger.debug("Inventory item before save: #{item.inspect}")
+    
       if item.save
-        # Update storage data by reassigning the hash to ensure Rails detects changes
-        updated_operational_data = self.operational_data.deep_dup
-        updated_operational_data['resources']['stored'][item_id] = (updated_operational_data['resources']['stored'][item_id] || 0) + amount
-        updated_operational_data['storage']['current_level'] = (updated_operational_data['storage']['current_level'] || 0) + amount
-        self.operational_data = updated_operational_data
+        Rails.logger.debug("Inventory item saved successfully.")
+    
+        # Update storage data
+        self.operational_data = operational_data.deep_dup # Create a new hash
+        self.operational_data['resources']['stored'][item_id] = (self.operational_data['resources']['stored'][item_id] || 0) + amount
+        self.operational_data['storage']['current_level'] = (self.operational_data['storage']['current_level'] || 0) + amount
+        self.operational_data_will_change! # Mark operational_data as changed
+    
+        Rails.logger.debug("Operational data before final save: #{operational_data.inspect}")
     
         begin
           save!
+          Rails.logger.debug("Unit saved successfully.")
           true
         rescue StandardError => e
+          Rails.logger.error("Error saving unit: #{e.message}")
           false
         end
       else
+        Rails.logger.debug("Inventory item save failed.")
         false
       end
     end
@@ -417,40 +397,26 @@ module Units
     end
 
     def operational?
-      # Check test override first
-      return operational_data['test_operational'] if operational_data.key?('test_operational')
-      
-      # Fall back to deployment status
-      operational_data.dig('operational_properties', 'deployment', 'current_stage') == 'operational'
+      # Simple operational check - unit exists and has valid operational_data
+      operational_data.present? && 
+      operational_data.is_a?(Hash) && 
+      !operational_data.empty?
     end
 
-    def production_data
-      return {} unless operational_data
-
-      data = {}
-
-      # Parse power requirements
-      if operational_data['power_requirements']
-        if operational_data['power_requirements'].is_a?(Numeric)
-          data['power_requirements'] = {'operational_power_kw' => operational_data['power_requirements']}
-        else
-          data['power_requirements'] = operational_data['power_requirements']
-        end
+    def can_store_material?(material_type)
+      storage_type = operational_data&.dig('storage', 'type')
+      return false unless storage_type
+      case material_type
+      when 'liquid'
+        storage_type == 'liquid'
+      when 'gas'
+        storage_type == 'gas'
+      when 'fuel'
+        storage_type == 'liquid' || storage_type == 'gas'
+      else
+        storage_type == 'general'
       end
-
-      # Parse outputs
-      if operational_data['output_resources']
-        outputs = {}
-        operational_data['output_resources'].each do |resource|
-          resource_name = resource['resource'] || resource['id']
-          rate = resource['rate'] || resource['amount']
-          outputs[resource_name] = rate.to_f if resource_name && rate
-        end
-        data['outputs'] = outputs
-      end
-
-      data
-    end
+    end    
 
     private
 
@@ -462,23 +428,12 @@ module Units
     
       return unless @unit_info.present?
     
-      # Initialize operational_data if blank
-      self.operational_data ||= {}
-    
-      # Merge storage configuration from unit_info (only set defaults, don't override existing)
-      if @unit_info['storage']
-        self.operational_data['storage'] ||= {}
-        @unit_info['storage'].each do |key, value|
-          self.operational_data['storage'][key] ||= value
-        end
+      # Check if operational_data is already set
+      if operational_data.blank?
+        # Only overwrite if operational_data is empty
+        self.operational_data = @unit_info.deep_dup
+        save! if persisted?
       end
-    
-      # Set other unit info properties
-      self.operational_data['input_resources'] = @unit_info['input_resources'] if @unit_info['input_resources']
-      self.operational_data['output_resources'] = @unit_info['output_resources'] if @unit_info['output_resources']
-      self.operational_data['processing_capabilities'] = @unit_info['processing_capabilities'] if @unit_info['processing_capabilities']
-    
-      save! if persisted? && changed?
     end  
 
     def initialize_unit
@@ -608,35 +563,6 @@ module Units
       )
     end
 
-    public
-    def operational?
-      return operational_data['test_operational'] if operational_data.key?('test_operational')
-      operational_data.dig('operational_properties', 'deployment', 'current_stage') == 'operational'
-    end
-
-    def production_data
-      @production_data ||= begin
-        outputs = {}
-        operational_data['output_resources']&.each do |res|
-          resource_id = res['id']
-          amount = res['amount'].to_f
-          if resource_id == 'extracted_water'
-            resource_id = 'water'
-            amount = 1.0 if amount == 0
-          end
-          outputs[resource_id] = amount
-        end
-        power_kw = operational_data.dig('operational_properties', 'power_consumption_kw').to_f
-        # Override for test units
-        power_kw = 10.0 if ['PLANETARY_VOLATILES_EXTRACTOR_MK1', 'THERMAL_EXTRACTION_UNIT_MK1'].include?(unit_type)
-        {
-          'outputs' => outputs,
-          'power_requirements' => {'operational_power_kw' => power_kw}
-        }
-      end
-    end
-
-    private
     def atmospheric_unit_types
       %w[co2_oxygen_production_unit oxygen_production_unit gas_separator]
     end
