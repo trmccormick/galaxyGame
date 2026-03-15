@@ -55,10 +55,19 @@ RSpec.describe Manufacturing::AssemblyService, type: :service do
 
       it 'charges the tenant fee' do
         gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
-        player.account.update!(balance: 1000)
-        settlement.account.update!(balance: 1000)
-        initial_player_balance = player.account.balance
-        initial_settlement_balance = settlement.account.balance
+
+        # Use the same account lookup the service uses — GCC-specific accounts
+        settlement_gcc_account = Financial::Account.find_or_create_for_entity_and_currency(
+          accountable_entity: settlement,
+          currency: gcc_currency
+        )
+        settlement_gcc_account.update!(balance: 1000)
+
+        player_gcc_account = Financial::Account.find_or_create_for_entity_and_currency(
+          accountable_entity: player,
+          currency: gcc_currency
+        )
+        player_gcc_account.update!(balance: 1000)
 
         result = described_class.start_assembly(
           blueprint: blueprint,
@@ -67,8 +76,11 @@ RSpec.describe Manufacturing::AssemblyService, type: :service do
           buy_missing: false
         )
 
-        expect(player.account.reload.balance).to eq(initial_player_balance - result.tenant_fee)
-        expect(settlement.account.reload.balance).to eq(initial_settlement_balance)
+        expect(result.success?).to be true
+        # Player pays the fee
+        expect(player_gcc_account.reload.balance).to eq(1000 - result.tenant_fee)
+        # Settlement receives the fee
+        expect(settlement_gcc_account.reload.balance).to eq(1000 + result.tenant_fee)
       end
     end
 
