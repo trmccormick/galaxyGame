@@ -41,8 +41,8 @@ class WormholeConsortiumFormationService
           preferential_rates: 0.10
         }
       )
+      member.operational_data ||= {}
       member.operational_data['consortium_memberships'] ||= []
-      member.operational_data['consortium_memberships'] << 'WH-CONSORTIUM'
       member.save!
     end
     consortium.update(
