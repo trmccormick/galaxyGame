@@ -17,35 +17,6 @@ RSpec.describe HasUnits, type: :concern do
 
   # Dummy Lookup Service mock - This should be outside the RSpec.describe block
   # to ensure it overrides the real service for all tests in this file.
-  module Lookup
-    class UnitLookupService
-      def find_unit(blueprint_id)
-        case blueprint_id.to_s
-        when 'computer'
-          # Note: unit_type here is the string stored in the DB, not the class name
-          { 'id' => 'computer', 'name' => 'Computer Unit', 'human_rated' => false, 'unit_type' => 'control_computer', 'category' => 'computer',
-            'operational_data' => { 'power_draw' => 10, 'capacity' => 0 } }
-        when 'robot'
-          { 'id' => 'robot', 'name' => 'Robot Unit', 'human_rated' => false, 'unit_type' => 'robot', 'category' => 'robot',
-            'operational_data' => { 'manufacturing_speed_bonus' => 0.1, 'mobility_type' => 'wheels', 'capacity' => 0 } }
-        when 'battery'
-          { 'id' => 'battery', 'name' => 'Battery Unit', 'human_rated' => false, 'unit_type' => 'battery', 'category' => 'power',
-            'operational_data' => { 'capacity' => 100, 'power_storage' => 1000 } }
-        when 'inflatable_habitat_unit'
-          { 'id' => 'inflatable_habitat_unit', 'name' => 'Inflatable Habitat Unit', 'human_rated' => true, 'unit_type' => 'habitat', 'category' => 'habitation',
-            'operational_data' => { 'capacity' => 5 } }
-        when 'storage_unit'
-          { 'id' => 'storage_unit', 'name' => 'Storage Unit', 'human_rated' => false, 'unit_type' => 'storage', 'category' => 'storage',
-            'operational_data' => { 'capacity' => 0, 'storage_capacity_m3' => 250.0, 'max_load_kg' => 50000.0, 'power_draw_kw' => 2.0 } }
-        when 'basic_unit'
-          { 'id' => 'basic_unit', 'name' => 'Basic Unit', 'human_rated' => false, 'unit_type' => 'basic_unit', 'category' => 'general',
-            'operational_data' => { 'capacity' => 0 } }
-        else
-          nil
-        end
-      end
-    end
-  end
 
   let(:owner_org) { create(:organization) }
   let(:player) { create(:player) }
@@ -186,6 +157,11 @@ RSpec.describe HasUnits, type: :concern do
   end
 
   describe 'unit management scenarios' do
+        before(:each) do
+          allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit).and_call_original
+          allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit).with('basic_unit').and_return({ 'id' => 'basic_unit', 'name' => 'Basic Unit', 'unit_type' => 'basic_unit', 'operational_data' => { 'capacity' => 0 } })
+          allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit).with('computer').and_return({ 'id' => 'computer', 'name' => 'Computer Unit', 'unit_type' => 'computer', 'operational_data' => { 'capacity' => 0 } })
+        end
     before do
       craft.base_units.destroy_all
       craft.reload
