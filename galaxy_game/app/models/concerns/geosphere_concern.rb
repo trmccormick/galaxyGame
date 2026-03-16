@@ -155,14 +155,10 @@ module GeosphereConcern
     current_mass = send(layer_mass_attribute) || 0
     self.send("#{layer_mass_attribute}=", current_mass + amount)
     
-    # Update layer composition
-    update_layer_composition(name, amount, layer)
-    
     # Find or create material
     material = materials.find_by(name: name.to_s, location: 'geosphere', layer: layer.to_s)
-    
     if material
-      material.amount = amount # Change this line
+      material.amount += amount
       material.location = 'geosphere'
       material.layer = layer.to_s
       material.state = physical_state(name, temperature)
@@ -180,7 +176,10 @@ module GeosphereConcern
         layer: layer.to_s
       )
     end
-    
+
+    # Update layer composition after material is created/updated
+    update_layer_composition(name, amount, layer)
+
     save!
     true
   end
@@ -438,37 +437,15 @@ module GeosphereConcern
   
   # 2. update_layer_composition - tests try to stub this
   def update_layer_composition(name, amount, layer)
-    # For the special test case that adds equal amounts of Iron and Silicon
-    if Rails.env.test? && name == "Silicon" && amount == 1000
-      # Check if Iron was already added with the same amount
-      if send("#{layer}_composition").to_h["Iron"].to_f == 100.0
-        # Set both to 50% for the test
-        composition = send("#{layer}_composition").to_h
-        composition["Iron"] = 50.0
-        composition["Silicon"] = 50.0
-        send("#{layer}_composition=", composition)
-        save!
-        return
-      end
+    # Always recalculate percentages using the sum of all material amounts for the layer
+    layer_materials = materials.where(location: 'geosphere', layer: layer.to_s)
+    total_amount = layer_materials.sum(&:amount)
+    composition = {}
+    layer_materials.each do |material|
+      next if material.amount.to_f <= 0
+      percentage = (material.amount.to_f / total_amount) * 100
+      composition[material.name.to_s] = percentage.round(3)
     end
-    
-    # Regular processing for non-test cases
-    composition = send("#{layer}_composition") || {}
-    composition = composition.to_h
-    composition[name.to_s] = 100.0  # Simple default
-
-    # Only recalculate percentages if multiple materials exist
-    if composition.size > 1
-      # Calculate total mass
-      layer_mass = send("total_#{layer}_mass") || 0
-      
-      # Recalculate percentages based on material amounts
-      materials.where(location: 'geosphere', layer: layer.to_s).each do |material|
-        percentage = (material.amount.to_f / layer_mass) * 100
-        composition[material.name.to_s] = percentage
-      end
-    end
-    
     send("#{layer}_composition=", composition)
     save!
   end
@@ -560,11 +537,12 @@ module GeosphereConcern
     composition = {}
     
     # Calculate percentages for each material
+    total_amount = layer_materials.sum(&:amount)
     layer_materials.each do |material|
-      percentage = (material.amount.to_f / total_mass) * 100
-      composition[material.name] = percentage
+      percentage = (material.amount.to_f / total_amount) * 100
+      composition[material.name] = percentage.round(3)  # Normalize!
     end
-    
+        
     # Update the composition attribute
     layer_composition_attr = "#{layer}_composition"
     send("#{layer_composition_attr}=", composition)
@@ -582,10 +560,14 @@ module GeosphereConcern
     # Calculate new composition based on actual material amounts
     new_composition = {}
     
+    Rails.logger.debug "DEBUG: total_mass=#{total_mass}, layer_materials=#{layer_materials.sum(&:amount)}"
+    # Calculate FRESH total after all materials added
+    total_amount = layer_materials.sum(&:amount)
+
     layer_materials.each do |material|
       next if material.amount.to_f <= 0
-      percentage = (material.amount.to_f / total_mass) * 100
-      new_composition[material.name] = percentage
+      percentage = (material.amount.to_f / total_amount) * 100
+      new_composition[material.name] = percentage.round(3)
     end
     
     # Update composition
