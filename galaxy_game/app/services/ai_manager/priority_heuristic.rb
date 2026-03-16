@@ -20,7 +20,10 @@ module AIManager
 
     # Check if settlement account is negative
     def account_negative?
-      @settlement.account&.balance&.negative?
+      gcc_currency = Financial::Currency.find_by(symbol: 'GCC')
+      return nil unless gcc_currency
+      account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: @settlement, currency: gcc_currency)
+      account.balance.negative?
     end
 
     # Check if corporation has high debt levels

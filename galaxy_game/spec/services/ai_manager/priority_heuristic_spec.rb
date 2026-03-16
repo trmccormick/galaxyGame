@@ -37,7 +37,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
   describe '#account_negative?' do
     context 'when account balance is positive' do
       before do
-        settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
       end
 
       it 'returns false' do
@@ -47,7 +49,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
 
     context 'when account balance is negative' do
       before do
-        settlement.account.update!(balance: -500.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: settlement, currency: gcc_currency)
+        account.update!(balance: -500.0)
       end
 
       it 'returns true' do
@@ -59,7 +63,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
   describe '#get_priorities' do
     context 'when neither condition is met' do
       before do
-        settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 200.0, 'nitrogen' => 100.0 }))
@@ -72,7 +78,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
 
     context 'when oxygen is critical' do
       before do
-        settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 100.0 }))
@@ -85,7 +93,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
 
     context 'when account is negative' do
       before do
-        settlement.account.update!(balance: -500.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: settlement, currency: gcc_currency)
+        account.update!(balance: -500.0)
         structure = create(:base_structure, settlement: settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 200.0 }))
@@ -98,7 +108,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
 
     context 'when both conditions are met' do
       before do
-        settlement.account.update!(balance: -500.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: settlement, currency: gcc_currency)
+        account.update!(balance: -500.0)
         structure = create(:base_structure, settlement: settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 100.0 }))
@@ -120,11 +132,12 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
       let(:mars_priority_heuristic) { described_class.new(mars_settlement) }
 
       before do
-        mars_settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: mars_settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: mars_settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 100.0 }))
-        
         # Set up Mars-like atmosphere with high CO2
         mars_body.atmosphere.update!(composition: { "CO2" => 95.97, "Ar" => 1.93, "N2" => 1.89 })
         co2_gas = mars_body.atmosphere.gases.find_or_create_by(name: 'CO2')
@@ -146,11 +159,12 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
       let(:mars_priority_heuristic) { described_class.new(mars_settlement) }
 
       before do
-        mars_settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: mars_settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: mars_settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'nitrogen' => 50.0 }))
-        
         # Set up Mars-like atmosphere with Ar
         mars_body.atmosphere.update!(composition: { "CO2" => 95.97, "Ar" => 1.93, "N2" => 1.89 })
         ar_gas = mars_body.atmosphere.gases.find_or_create_by(name: 'Ar')
@@ -181,11 +195,12 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
       let(:high_co2_priority_heuristic) { described_class.new(high_co2_settlement) }
 
       before do
-        high_co2_settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: high_co2_settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: high_co2_settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 100.0 }))
-        
         # Set up atmosphere with 95% CO2
         high_co2_body.atmosphere.update!(composition: { "CO2" => 95.0, "N2" => 5.0 })
         co2_gas = high_co2_body.atmosphere.gases.find_or_create_by(name: 'CO2')
@@ -205,11 +220,12 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
       let(:low_co2_priority_heuristic) { described_class.new(low_co2_settlement) }
 
       before do
-        low_co2_settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: low_co2_settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: low_co2_settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 100.0 }))
-        
         # Set up atmosphere with low CO2
         low_co2_body.atmosphere.update!(composition: { "N2" => 78.0, "O2" => 21.0, "CO2" => 0.5 })
         co2_gas = low_co2_body.atmosphere.gases.find_or_create_by(name: 'CO2')
@@ -229,11 +245,12 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
       let(:excess_gas_priority_heuristic) { described_class.new(excess_gas_settlement) }
 
       before do
-        excess_gas_settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: excess_gas_settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: excess_gas_settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge('gas_storage' => { 'oxygen' => 200.0, 'nitrogen' => 100.0 }))
-        
         # Add CO and H2 to inventory
         co_item = excess_gas_settlement.inventory.items.find_or_create_by(name: 'CO', material_type: :gas, owner: excess_gas_settlement)
         co_item.update!(amount: 200.0)
@@ -253,7 +270,9 @@ RSpec.describe AIManager::PriorityHeuristic, type: :service do
       let(:full_tanks_priority_heuristic) { described_class.new(full_tanks_settlement) }
 
       before do
-        full_tanks_settlement.account.update!(balance: 1000.0)
+        gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+        account = Financial::Account.find_or_create_for_entity_and_currency(accountable_entity: full_tanks_settlement, currency: gcc_currency)
+        account.update!(balance: 1000.0)
         structure = create(:base_structure, settlement: full_tanks_settlement)
         structure.save
         structure.update_columns(operational_data: structure.operational_data.merge(
