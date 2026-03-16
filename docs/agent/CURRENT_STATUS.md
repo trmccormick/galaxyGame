@@ -1,11 +1,12 @@
 # Current Development Status
 
-**Last Updated**: March 7, 2026 (All Model Architecture Cleanups Completed)
+**Last Updated**: March 16, 2026 (planetary_geological_feature_lookup_service_spec rewrite completed)
 
 ## 🔄 ACTIVE: Test Suite Restoration (Baseline Run Required)
 **Status**: 🔄 ACTIVE - All architecture cleanups complete, running baseline RSpec to confirm exact failure count
 **Priority**: HIGH - Blocks Phase 4 UI Enhancement
-**Recent Progress** (March 5-15, 2026):
+**Recent Progress** (March 5-16, 2026):
+   - ✅ planetary_geological_feature_lookup_service_spec.rb rewritten to use real Luna data (pollution-free, atomic commit, task moved to completed)
 - ✅ EscalationService ISRU-first fix (34/34 green) - 238 → 221 failures
 - ✅ OperationalManager AiDecisionLog fix (20/20 green) - 221 → 201 failures  
 - ✅ NPCColony obsolete cleanup (0 impact) - codebase hygiene
@@ -797,11 +798,7 @@ docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --format doc
 ## March 15, 2026 — Task Cleanup, Backlog Additions, and Baseline Update
 
 ### Tasks Completed Today
-- base_unit_operational_shell_printing_fix.md (moved to done)
-- resume_rspec_grinding.md (moved to done)
-- resume_test_suite_grinding.md (moved to done)
-- test_suite_restoration_continuation.md (moved to done)
-- geosphere_initializer_architecture_backlog.md (part 1 complete, moved to done)
+ dome_cleanup.md & settlement_model_cleanup.md: Dome model, specs, factories, routes, and docs fully removed; construction economics doc updated; critical tasks completed and committed atomically (March 15, 2026)
 
 ### New Backlog Tasks Added
 - priority_heuristic_spec_account_fix.md (high priority, GCC account fix)

@@ -1,41 +1,69 @@
 require 'rails_helper'
 
 RSpec.describe Lookup::PlanetaryGeologicalFeatureLookupService do
-  let(:star) { create(:star) }
-  let(:sol) { create(:solar_system, current_star: star, name: 'Sol') }
-  let(:earth) { create(:terrestrial_planet, :earth, solar_system: sol) }
-  let(:mars) { create(:terrestrial_planet, :mars, solar_system: sol) }
-  
-  let(:temp_test_dir) { Dir.mktmpdir('planetary_geological_test') }
-  
+  # Use real Luna data from data/json-data
+  let(:luna_data_path) { Rails.root.join('data', 'json-data', 'star_systems', 'sol', 'celestial_bodies', 'earth', 'luna', 'geological_features') }
+  let(:sol) { double('SolarSystem', name: 'Sol') }
+  let(:earth) { double('Planet', name: 'Earth', solar_system: sol, parent_celestial_body: nil) }
+  let(:luna) { double('Moon', name: 'Luna', solar_system: sol, parent_celestial_body: earth) }
+
   before do
-    stub_const('GalaxyGame::Paths::JSON_DATA', temp_test_dir)
+    stub_const('GalaxyGame::Paths::JSON_DATA', Rails.root.join('data', 'json-data'))
   end
 
-  after do
-    FileUtils.rm_rf(temp_test_dir) if File.exist?(temp_test_dir)
-  end
-
-  describe "#initialize" do
-    it "initializes with a celestial body" do
-      service = described_class.new(earth)
-      expect(service).to be_an_instance_of(described_class)
-    end
-
-    it "loads features during initialization" do
-      # Create test fixture with new structure
-      create_test_feature_file(earth, {
-        "celestial_body" => "earth",
-        "feature_type" => "mountain",
-        "features" => [
-          { "name" => "Mount Everest", "feature_type" => "mountain", "tier" => "strategic" }
-        ]
-      })
-      
-      service = described_class.new(earth)
-      expect(service.all_features).not_to be_empty
+  describe "#initialize and #all_features with real Luna data" do
+    it "loads all Luna features from real data" do
+      service = described_class.new(luna)
+      features = service.all_features
+      expect(features).not_to be_empty
+      names = features.map { |f| f["name"] }
+      expect(names).to include("Shackleton Crater")
+      expect(names).to include("Marius Hills Skylight")
     end
   end
+
+  describe "#find_by_name with real Luna data" do
+    it "finds Shackleton Crater by name" do
+      service = described_class.new(luna)
+      feature = service.find_by_name("Shackleton Crater")
+      expect(feature).not_to be_nil
+      expect(feature["feature_type"]).to eq("crater")
+    end
+
+    it "finds Marius Hills Skylight by name" do
+      service = described_class.new(luna)
+      feature = service.find_by_name("Marius Hills Skylight")
+      expect(feature).not_to be_nil
+      expect(feature["feature_type"]).to eq("lava_tube")
+    end
+  end
+
+  describe "#features_by_type with real Luna data" do
+    it "returns all craters" do
+      service = described_class.new(luna)
+      craters = service.features_by_type("crater")
+      expect(craters).not_to be_empty
+      expect(craters.any? { |f| f["name"] == "Shackleton Crater" }).to be true
+    end
+
+    it "returns all lava tubes" do
+      service = described_class.new(luna)
+      tubes = service.features_by_type("lava_tube")
+      expect(tubes).not_to be_empty
+      expect(tubes.any? { |f| f["name"] == "Marius Hills Skylight" }).to be true
+    end
+  end
+
+  describe "#feature_summary with real Luna data" do
+    it "groups features by type" do
+      service = described_class.new(luna)
+      summary = service.feature_summary
+      expect(summary.keys).to include("crater", "lava_tube")
+      expect(summary["crater"].any? { |f| f["name"] == "Shackleton Crater" }).to be true
+      expect(summary["lava_tube"].any? { |f| f["name"] == "Marius Hills Skylight" }).to be true
+    end
+  end
+end
 
   describe "#all_features" do
     it "returns an empty array when no features exist" do
