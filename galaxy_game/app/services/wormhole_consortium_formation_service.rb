@@ -43,6 +43,7 @@ class WormholeConsortiumFormationService
       )
       member.operational_data ||= {}
       member.operational_data['consortium_memberships'] ||= []
+      member.operational_data['consortium_memberships'] << consortium.identifier
       member.save!
     end
     consortium.update(
