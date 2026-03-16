@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :construction_job do
-    association :jobable, factory: [:crater_dome, :with_dimensions]
+    # Removed obsolete dome association
     association :settlement, factory: :base_settlement
     
     job_type { :crater_dome_construction }

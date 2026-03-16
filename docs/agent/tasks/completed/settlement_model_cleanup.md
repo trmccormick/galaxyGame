@@ -1,36 +1,35 @@
-# Settlement Model Cleanup Task
+# Task: Settlement Model Cleanup
 
-**Agent**: GPT-4.1
-**Priority**: MEDIUM
-**Status**: 📋 PENDING - Task created, ready for execution
-**Estimated Effort**: 30 minutes
-**Impact**: 215 → 212 failures (3 eliminated)
+**Priority:** HIGH  
+**Agent:** GPT-4.1  
+**Impact:** ~206-209 → ~203-206 failures (dome spec)
 
-## Description
-Remove obsolete settlement STI subclasses and dome model that duplicate enum values and have no table. These were superseded by the BaseSettlement + Structures::* architecture.
+## Problem
+Several settlement models are obsolete or empty STI subclasses that duplicate enum values already on BaseSettlement. These cause test failures and architectural confusion.
 
-## Files to Delete
-- app/models/settlement/dome.rb (obsolete, no table)
+## Delete these files entirely
+- app/models/settlement/dome.rb (no table, obsolete)
 - app/models/settlement/colony.rb (duplicate of root Colony)
-- app/models/settlement/outpost.rb (empty, outpost is enum)
-- app/models/settlement/habitat.rb (empty, no enum)
+- app/models/settlement/outpost.rb (empty, outpost is enum value)
+- app/models/settlement/habitat.rb (empty, no enum value)
 - app/models/settlement/settlement.rb (empty, name collision)
-- app/models/settlement/city.rb (empty, city is enum)
-- app/controllers/domes_controller.rb (references dead Dome)
+- app/models/settlement/city.rb (empty, city is enum value)
+- app/controllers/domes_controller.rb (references dead Dome model)
 - spec/models/dome_spec.rb (testing dead model)
 
-## Files to Keep
+## Do NOT delete
+- app/models/colony.rb (root level, government layer, 6/6 green)
 - app/models/settlement/base_settlement.rb
 - app/models/settlement/space_station.rb
 - app/models/settlement/orbital_depot.rb
-- app/models/settlement/colony.rb (root model)
 
-## Validation Steps
-1. Run full RSpec suite to confirm baseline (215 failures)
-2. Delete all listed files
-3. Run RSpec again to confirm impact (212 failures expected)
-4. Verify no references remain in codebase (grep search)
-5. Commit with message: "Remove obsolete settlement STI subclasses and dome model"
+## Verify after deletion
+grep -r "Settlement::Dome\|Settlement::Colony\|Settlement::Outpost\|Settlement::Habitat\|Settlement::City" app/ spec/ --include="*.rb"
 
-## Architecture Context
-Settlement types are now represented as enums in BaseSettlement rather than STI subclasses. The Structures::* modules provide the actual functionality.
+Remove any remaining references found.
+
+## Command to run after changes
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/models/ --format progress 2>&1 | tail -20'
+
+## Commit message
+"Remove obsolete settlement STI subclasses and dome model"
