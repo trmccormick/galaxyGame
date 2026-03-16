@@ -212,9 +212,9 @@ RSpec.describe MaterialRequest, type: :model do
       let(:material_request) { create(:material_request, requestable: construction_job) }
 
       before do
-        # Mock the MaterialLookupService
         @lookup_service = instance_double(Lookup::MaterialLookupService)
         allow(Lookup::MaterialLookupService).to receive(:new).and_return(@lookup_service)
+        allow(@lookup_service).to receive(:find_material).and_return(nil) # catch-all for factory setup
       end
 
       it "returns true when material is a gas" do
