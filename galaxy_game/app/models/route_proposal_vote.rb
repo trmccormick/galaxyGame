@@ -1,5 +1,5 @@
 class RouteProposalVote < ApplicationRecord
-  belongs_to :proposal, class_name: 'RouteProposal'
+  belongs_to :route_proposal
   belongs_to :voter,
     class_name: 'Organizations::BaseOrganization',
     foreign_key: :voter_id

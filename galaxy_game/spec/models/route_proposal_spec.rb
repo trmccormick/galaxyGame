@@ -10,12 +10,12 @@ RSpec.describe RouteProposal, type: :model do
   end
 
   it 'calculates vote outcome based on threshold' do
-    RouteProposalVote.create!(proposal: proposal, voter: proposer, vote: 'approve', voting_power: 10000)
+    RouteProposalVote.create!(route_proposal: proposal, voter: proposer, vote: 'approve', voting_power: 10000)
     expect(proposal.calculate_vote_outcome).to be true
   end
 
   it 'fails if votes do not meet threshold' do
-    RouteProposalVote.create!(proposal: proposal, voter: proposer, vote: 'reject', voting_power: 10000)
+    RouteProposalVote.create!(route_proposal: proposal, voter: proposer, vote: 'reject', voting_power: 10000)
     expect(proposal.calculate_vote_outcome).to be false
   end
 end
