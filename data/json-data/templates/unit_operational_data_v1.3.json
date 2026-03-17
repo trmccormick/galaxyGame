@@ -1,0 +1,181 @@
+{
+  "id": "",
+  "name": "",
+  "unit_type": "facility",
+  "category": "",
+  "subcategory": "",
+  "description": "",
+
+  "processing_capabilities": {
+    "atmospheric_processing": {
+      "enabled": false,
+      "types": [],
+      "efficiency": 1.0
+    },
+    "geosphere_processing": {
+      "enabled": false,
+      "types": [],
+      "efficiency": 1.0
+    },
+    "resource_extraction": {
+      "enabled": false,
+      "types": [],
+      "efficiency": 1.0
+    },
+    "thermal_processing": {
+      "enabled": false,
+      "types": [],
+      "max_temperature_c": 0
+    }
+  },
+
+  "consumables": {
+    "energy": 0,
+    "unit": "kilowatt_hour"
+  },
+
+  "input_resources": [],
+  "output_resources": [],
+
+  "storage": {
+    "capacity": 0,
+    "current_level": 0
+  },
+
+  "operational_status": {
+    "status": "offline",
+    "condition": 100,
+    "degradation_rate": 0.0
+  },
+
+  "operational_properties": {
+    "power_consumption_kw": 0,
+    "heat_generation_kw": 0,
+    "failure_rate": 0,
+    "maintenance_interval_hours": 0,
+
+    "deployment": {
+      "deployed": false,
+      "current_stage": "",
+      "stages": [],
+      "progress_percent": 0,
+      "resource_usage": {
+        "power_kw": 0,
+        "materials": {}
+      },
+      "time_remaining_hours": 0
+    }
+  },
+
+  "operational_modes": {
+    "current_mode": "standby",
+    "available_modes": []
+  },
+
+  "habitat_systems": {
+    "_comment": "Optional block — only present on human-accessible units",
+    "human_accessible": false,
+    "capacity": 0,
+    "current_occupants": 0,
+    "habitable_volume_m3": 0,
+    "life_support_active": false,
+    "pressure_kpa": 0,
+    "thermal_regulation": {
+      "target_temperature_c": 21,
+      "current_temperature_c": 21,
+      "humidity_percent": 40
+    },
+    "radiation_shielding": 0.0
+  },
+
+  "wellbeing_output": {
+    "_comment": "Optional block — only present on units that provide psychological benefit to crew",
+    "biophilia_rating": 0,
+    "morale_contribution_per_visit": 0.0,
+    "max_daily_visitors": 0,
+    "sensory_richness": "none",
+    "notes": ""
+  },
+
+  "diagnostics": {
+    "_comment": "Optional block — present on units with monitoring requirements",
+    "air_quality": {
+      "co2_ppm": 400,
+      "warning_threshold_co2": 1000,
+      "critical_threshold_co2": 2000,
+      "humidity_percent": 0,
+      "warning_threshold_humidity": 0,
+      "critical_threshold_humidity": 0
+    },
+    "temperature": {
+      "celsius": 21.0,
+      "warning_threshold": 0,
+      "critical_threshold": 0
+    },
+    "radiation_level": {
+      "current_msv": 0.0,
+      "warning_threshold": 1.0,
+      "critical_threshold": 5.0
+    }
+  },
+
+  "telemetry": {
+    "_comment": "Optional block — present on units with telemetry reporting",
+    "data_points": [],
+    "logging_frequency_hz": 0.1
+  },
+
+  "hazards": {},
+  "required_crew": {},
+  "safety_systems": [],
+
+  "resource_requirements": {
+    "construction": [],
+    "operation": []
+  },
+
+  "ports": {
+    "internal": 0,
+    "external": 0
+  },
+
+  "interfaces": [],
+  "required_technologies": [],
+
+  "metadata": {
+    "version": "1.3",
+    "type": "unit_operational_data",
+    "category": "",
+    "template_compliance": "unit_operational_data",
+    "changelog": {
+      "1.3": [
+        "Added operational_status block (status, condition, degradation_rate)",
+        "Added operational_modes block (current_mode, available_modes)",
+        "Added habitat_systems optional block (human_accessible, capacity, occupants, pressure, thermal)",
+        "Added wellbeing_output optional block (biophilia_rating, morale_contribution, sensory_richness)",
+        "Added diagnostics optional block (air_quality, temperature, radiation)",
+        "Added telemetry optional block (data_points, logging_frequency)",
+        "All new blocks are optional — v1.2 files remain valid"
+      ],
+      "1.2": [
+        "Added processing_capabilities block",
+        "Added deployment stages to operational_properties",
+        "Added base_cost_eap and usd_import_fee"
+      ],
+      "1.1": [
+        "Initial versioned template"
+      ]
+    }
+  },
+
+  "units": {
+    "biomass_recycler": {
+      "inputs": { "biomass": 50 },
+      "energy_cost": 20,
+      "outputs": { "fertilizer": 10, "biofuel": 5 }
+    }
+  },
+  "template": "unit_operational_data",
+  "base_cost_eap": 0.0,
+  "usd_import_fee": 0.0
+}

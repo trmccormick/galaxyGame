@@ -175,6 +175,20 @@ FactoryBot.define do
     end
   end
 
+  # Biomass Recycler factory (data-driven)
+  trait :biomass_recycler do
+    unit_type { 'biomass_recycler' }
+    name { 'Basic Biomass Recycler' }
+    operational_data do
+      {
+        'inputs' => { 'biomass' => 50 },
+        'energy_cost' => 20,
+        'outputs' => { 'fertilizer' => 10, 'biofuel' => 5 }
+      }
+    end
+  end
+  factory :biomass_recycler, parent: :base_unit, traits: [:biomass_recycler]
+
   # Alias for backward compatibility
   factory :unit, parent: :base_unit do
   end
