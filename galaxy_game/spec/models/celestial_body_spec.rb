@@ -4,7 +4,7 @@ RSpec.describe CelestialBodies::CelestialBody, type: :model do
   let(:star) { FactoryBot.create(:star) }
   let(:solar_system) { FactoryBot.create(:solar_system, current_star: star) }
   let(:mars) { FactoryBot.create(:celestial_body, :with_solar_system, solar_system: solar_system) }
-  let(:brown_dwarf) { FactoryBot.create(:brown_dwarf) }
+  let(:brown_dwarf) { FactoryBot.create(:brown_dwarf, :without_solar_system) }
 
   context 'when part of a solar system' do
     it 'validates distance_from_star presence' do
@@ -22,18 +22,18 @@ RSpec.describe CelestialBodies::CelestialBody, type: :model do
 
   describe '#add_material' do
     it 'creates a new material if it does not exist' do
-      expect { mars.add_material('Oxygen', 100) }.to change { mars.materials.count }.by(1)
-      expect(mars.materials.last.name).to eq('Oxygen')
+      expect { mars.add_material('O2', 100) }.to change { mars.materials.count }.by(1)
+      expect(mars.materials.last.name).to eq('oxygen')
       expect(mars.materials.last.amount).to eq(100)
     end
 
     it 'updates the amount of an existing material' do
-      mars.add_material('Nitrogen', 100)
+      mars.add_material('N2', 100)
 
       puts mars.materials.inspect
 
-      expect { mars.add_material('Nitrogen', 50) }.not_to change { mars.materials.count }
-      expect(mars.materials.find_by(name: 'Nitrogen').amount).to eq(150)
+      expect { mars.add_material('N2', 50) }.not_to change { mars.materials.count }
+      expect(mars.materials.find_by(name: 'nitrogen').amount).to eq(150)
     end
   end
 
@@ -63,12 +63,15 @@ RSpec.describe CelestialBodies::CelestialBody, type: :model do
   #   end
   # end
 
-  describe '#update_gravity' do
-    it 'calculates and updates the gravity based on mass and radius' do
-      mars.update_gravity
-      expected_gravity = (6.67430e-11 * mars.mass) / (mars.radius ** 2)
-      expect(mars.gravity).to be_within(0.01).of(expected_gravity)
-    end
+  it 'calculates and updates the gravity based on mass and radius' do
+    mars = create(:terrestrial_planet, :mars)
+    allow_any_instance_of(TerraSim::Simulator).to receive(:calc_current)  # Skip sim
+    mars.mass = 6.42e23
+    mars.radius = 3390e3
+    mars.save!
+    mars.update_gravity
+    expected_gravity = (6.67430e-11 * mars.mass) / (mars.radius ** 2)
+    expect(mars.reload.gravity).to be_within(0.01).of(expected_gravity)
   end
 
   # describe '#habitability_score' do
