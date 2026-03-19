@@ -74,6 +74,25 @@
 
 ---
 
+### Geosphere Composition Normalization - COMPLETE ✅
+
+**Task Overview**: Fixed geosphere composition normalization and accumulation logic for correct material percentage calculations.
+
+**Components Delivered**:
+- Refactored normalization to use sum of all material amounts
+- Fixed add_material to accumulate, not overwrite, amounts
+- Moved composition update after material creation/update
+- All geosphere specs pass except for expected pending
+- Atomic commit: "fix: geosphere composition normalization and accumulation logic (1→0 failures)"
+- Task file moved to /completed
+
+**Success Criteria Met**:
+- ✅ All geosphere spec tests green (except expected pending)
+- ✅ Atomic commit made
+- ✅ Task file archived
+
+---
+
 ## 📋 BACKLOG STATUS SUMMARY
 
 ### ✅ ARCHIVED (Fully Implemented)

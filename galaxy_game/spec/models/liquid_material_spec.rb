@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CelestialBodies::Materials::Liquid, type: :model do
-  let(:hydrosphere) { create(:celestial_bodies_spheres_hydrosphere) }
+  let(:hydrosphere) { create(:hydrosphere) }
 
   subject(:liquid_material) { described_class.new(name: 'Methane', amount: 500.0, hydrosphere: hydrosphere) }
 

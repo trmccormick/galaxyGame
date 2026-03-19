@@ -471,12 +471,12 @@ module AIManager
       Structures::BaseStructure.create!(
         name: "Primary Habitat Module - #{settlement.name} - #{Time.now.to_i}-#{rand(1000)}",
         structure_name: 'habitat',
+        structure_type: 'habitat',
         settlement: settlement,
         owner: settlement.owner,
         operational_data: { 
           pressurized: true, 
           radiation_shielded: true, 
-          structure_type: 'habitat',
           status: 'operational'
         }
       )
@@ -487,10 +487,10 @@ module AIManager
       Structures::BaseStructure.create!(
         name: "Primary Power System - #{settlement.name} - #{Time.now.to_i}-#{rand(1000)}",
         structure_name: 'power_plant',
+        structure_type: 'power_plant',
         settlement: settlement,
         owner: settlement.owner,
         operational_data: { 
-          structure_type: 'power_plant',
           power_output: 1000 
         } # kW
       )
@@ -501,9 +501,12 @@ module AIManager
       Structures::BaseStructure.create!(
         name: "Communication Array - #{settlement.name} - #{Time.now.to_i}-#{rand(1000)}",
         structure_name: 'comms',
+        structure_type: 'comms',
         settlement: settlement,
         owner: settlement.owner,
-        operational_data: { structure_type: 'comms' }
+        operational_data: {
+          status: 'operational'
+        }
       )
     end
 
@@ -512,10 +515,10 @@ module AIManager
       Structures::BaseStructure.create!(
         name: "Life Support System - #{settlement.name} - #{Time.now.to_i}-#{rand(1000)}",
         structure_name: 'life_support',
+        structure_type: 'life_support',
         settlement: settlement,
         owner: settlement.owner,
         operational_data: { 
-          structure_type: 'life_support',
           o2_generation: 100, 
           co2_scrubbing: 80 
         } # kg/day
@@ -551,10 +554,11 @@ module AIManager
       structure = Structures::BaseStructure.create!(
         name: "#{unit['name']} Structure - #{settlement.name} - #{Time.now.to_i}",
         structure_name: unit['name'].downcase.gsub(' ', '_'),
+        structure_type: 'production',
         settlement: settlement,
         location: settlement.location,
         owner: settlement.owner,
-        operational_data: { structure_type: 'production' }
+        operational_data: { status: 'operational' }
       )
 
       # Add the unit to the structure

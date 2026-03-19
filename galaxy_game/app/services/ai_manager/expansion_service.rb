@@ -23,15 +23,15 @@ module AIManager
       settlement_plan = generate_enhanced_settlement_plan(probe_data, target_system)
 
       # Phase 2: Calculate bootstrap resource requirements
-      bootstrap_allocator = BootstrapResourceAllocator.new(@shared_context)
+      bootstrap_allocator = AIManager::BootstrapResourceAllocator.new(@shared_context)
       resource_requirements = bootstrap_allocator.calculate_bootstrap_requirements(settlement_plan, target_system)
 
       # Phase 3: Optimize ISRU priorities
-      isru_optimizer = ISRUOptimizer.new(@shared_context)
+      isru_optimizer = AIManager::IsruOptimizer.new(@shared_context)
       isru_optimization = isru_optimizer.optimize_isru_priorities(target_system, settlement_plan)
 
       # Phase 4: Coordinate wormhole network expansion
-      wormhole_coordinator = WormholeCoordinator.new(@shared_context)
+      wormhole_coordinator = AIManager::WormholeCoordinator.new(@shared_context)
       network_coordination = wormhole_coordinator.calculate_optimal_routes(target_system, [target_system], resource_requirements)
 
       # Phase 5: Execute expansion if settlement exists, or prepare for new settlement
@@ -54,11 +54,11 @@ module AIManager
       Rails.logger.info "[ExpansionService] Starting network-aware expansion from #{current_system[:identifier]} to #{expansion_targets.length} targets"
 
       # Phase 1: Coordinate wormhole routes for all targets
-      wormhole_coordinator = WormholeCoordinator.new(@shared_context)
+      wormhole_coordinator = AIManager::WormholeCoordinator.new(@shared_context)
       route_coordination = wormhole_coordinator.calculate_optimal_routes(current_system, expansion_targets, available_resources)
 
       # Phase 2: Optimize network development priorities
-      network_optimizer = NetworkOptimizer.new(@shared_context)
+      network_optimizer = AIManager::NetworkOptimizer.new(@shared_context)
       network_optimization = network_optimizer.identify_network_priorities(
         { nodes: {}, edges: [] }, # Current network - would be populated from actual data
         expansion_targets,
@@ -94,7 +94,7 @@ module AIManager
       shared_context ||= AIManager::SharedContext.new(system_data: target_system)
 
       # Use station construction strategy service
-      strategy_service = StationConstructionStrategy.new(shared_context)
+      strategy_service = AIManager::StationConstructionStrategy.new(shared_context)
       construction_plan = strategy_service.determine_optimal_station_strategy(
         target_system,
         strategic_purpose,
@@ -120,7 +120,7 @@ module AIManager
     private
 
     def self.deploy_probes_and_analyze(target_system)
-      probe_service = ProbeDeploymentService.new(target_system)
+      probe_service = AIManager::ProbeDeploymentService.new(target_system)
       probe_data = probe_service.deploy_scout_probes
 
       Rails.logger.info "[ExpansionService] Probe deployment complete. Data collected: #{probe_data[:data_types].join(', ')}"
@@ -131,7 +131,7 @@ module AIManager
       # Use probe data to inform settlement planning
       analysis = analyze_probe_data(probe_data, target_system)
 
-      plan_generator = SettlementPlanGenerator.new(analysis, target_system)
+      plan_generator = AIManager::SettlementPlanGenerator.new(analysis, target_system)
       settlement_plan = plan_generator.generate_settlement_plan
 
       Rails.logger.info "[ExpansionService] Settlement plan generated: #{settlement_plan[:mission_type]} for #{settlement_plan[:target_body]}"
@@ -285,7 +285,7 @@ module AIManager
       Rails.logger.info "[ExpansionService] Executing expansion with resource allocation for settlement #{settlement.id}"
 
       # Allocate initial resources
-      bootstrap_allocator = BootstrapResourceAllocator.new(@shared_context)
+      bootstrap_allocator = AIManager::BootstrapResourceAllocator.new(@shared_context)
       initial_allocations = bootstrap_allocator.allocate_initial_resources(settlement, resource_requirements)
 
       # Execute phased expansion with resource awareness

@@ -40,16 +40,13 @@ module Logistics
 
       Rails.logger.info "[Logistics::Contract] Created direct NPC transfer: #{quantity} #{material} from #{from_settlement.name} to #{to_settlement.name} (provider: #{provider.name})"
       contract
-        # Find a suitable logistics provider for the route and method
-        def self.find_provider(from_settlement, to_settlement, transport_method)
-          # Robustly handle capabilities as array, JSON string, or plain string
-          Logistics::Provider.all.select { |provider|
-            caps = provider.capabilities
-            caps = JSON.parse(caps) rescue caps if caps.is_a?(String)
-            Array(caps).map(&:to_s).include?(transport_method.to_s)
-          }.max_by(&:reliability_rating)
-        end
-        end
+    end
+
+    # Find a suitable logistics provider for the route and method
+    def self.find_provider(from_settlement, to_settlement, transport_method)
+      Logistics::Provider.all.select { |provider|
+        provider.normalized_capabilities.include?(transport_method.to_s)
+      }.max_by(&:reliability_rating)
     end
 
     def self.execute_pending_contracts

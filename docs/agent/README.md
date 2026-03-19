@@ -59,6 +59,7 @@ Essential technical documentation for daily development.
 
 **Purpose**: Essential development and agent references
 
+
 ## 🔴 Current Grinder State
 **Last Updated**: March 6, 2026 — EscalationIntegrationSpec fixed (238 → 221 failures)
 
@@ -68,7 +69,15 @@ Essential technical documentation for daily development.
 | Total Failures | 221 |
 | Pending | 17 |
 | Target | <50 failures |
-| Log Location | `./data/logs/rspec_full_[timestamp].log` |
+| Log Location |
+| **Host:** `/data/logs/rspec_full_[timestamp].log` |
+| **Container:** `/home/galaxy_game/log/rspec_full_[timestamp].log` |
+
+> **Note:** Log directory mapping is defined in `docker-compose.dev.yml` and related compose files:
+> ```yaml
+>   - ./data/logs:/home/galaxy_game/log
+> ```
+> Always consult the compose files for correct host vs. container bind mount paths.
 
 ### Top Failing Specs (start here)
 1. `spec/services/ai_manager/escalation_service_spec.rb` — **25 failures**
@@ -84,12 +93,17 @@ Always run `./start_grinder.sh` first — it seeds the test database, clears cac
 ./start_grinder.sh
 ```
 
+
 ### Mandatory RSpec Command Form
 ```bash
+# Inside the container (always use this path for output):
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
-> ⚠️ Logs go to `./data/logs/` — not `./log/`. Always use this path.
+> ⚠️ **Log path mapping:**
+> - **Inside container:** `/home/galaxy_game/log/`
+> - **On host:** `./data/logs/`
+> - See `docker-compose.dev.yml` for bind mount details.
 
 ---
 
@@ -160,7 +174,16 @@ Run `./start_grinder.sh` first to establish baseline, then grind top failing spe
 - No user prompts between specs
 - Only stop for architectural decisions requiring human input
 - Update `CURRENT_STATUS.md` after each batch
-> ⚠️ **Tests are ONLY run when explicitly requested by the user. Do not run tests as part of review, planning, or routine coding tasks.** See GUARDRAILS.md Section 13.
+> ⚠️ **Full suite runs require user permission. Single spec runs on modified
+> files are permitted autonomously as part of the fix-verify-commit cycle.
+> See testing rules above.**
+```
+
+---
+
+This is a clean, minimal change — two sections updated, nothing else touched. GPT-4.1 can apply it as an atomic commit to `docs/agent/README.md` with the message:
+```
+Update test execution rules for single-executor workflow
 
 1. **ALWAYS** consult [ENVIRONMENT_BOUNDARIES.md](rules/ENVIRONMENT_BOUNDARIES.md) for command safety
 2. Use [grok_notes.md](reference/grok_notes.md) task templates for workflow guidance
@@ -173,14 +196,21 @@ Run `./start_grinder.sh` first to establish baseline, then grind top failing spe
 
 ## 🧪 Testing Requirements & Validation Rules
 
-### 🔴 NEVER Run Tests Unprompted
-**RSpec must only be run when the user has explicitly requested it.** The following do NOT grant permission to run tests:
-- Completing a code change
-- Finding or fixing a bug
-- Code review or planning work
-- Pre-commit validation (flag it, don't run it autonomously)
+### 🟡 Test Execution Rules — Single Executor Sessions
+When operating as the sole Executor agent (no other agents running concurrently),
+GPT-4.1 MAY run RSpec autonomously as part of the fix-verify-commit cycle:
 
-When in doubt: **do not run tests. Ask the user.**
+✅ **Permitted without asking:**
+- Running specs for files you just modified
+- Running the spec file in isolation to verify a fix
+- Running the containing directory as a pollution check
+
+❌ **Still requires user permission:**
+- Running the full suite (`bundle exec rspec` with no path)
+- Running specs on files you did not touch in this session
+- Running tests during planning, review, or diagnosis work
+
+When in doubt about scope: run the single spec file only and report results.
 
 ### **MANDATORY: Pre-Commit Testing Protocol**
 **When tests ARE requested, ALL code changes MUST pass RSpec before commit:**
@@ -325,17 +355,62 @@ When running as the Grinder/Executor agent on an explicitly assigned grinding ta
 
 This exception enables efficient test suite restoration while maintaining all safety protocols in GUARDRAILS.md Sections 12 and 13.
 
+## 🧩 Blueprint & Operational Data Creation Protocol
+
+### Template Usage and File Creation
+- **Templates are versioned and must NEVER be modified directly.**
+- To create a new unit, craft, or other entity:
+  1. **Copy** the appropriate template file (e.g., `unit_blueprint_v1.3.json`, `unit_operational_data_v1.3.json`) from the templates directory.
+  2. **Rename** the copy to match the entity, using the naming convention:
+     - Blueprints: `<entity>_bp.json` (e.g., `biomass_recycler_bp.json`)
+     - Operational data: `<entity>_data.json` (e.g., `biomass_recycler_data.json`)
+  3. **Edit only the new file** to fill in the required fields for the specific unit or craft. Do not alter the template structure unless the version is being incremented for all units.
+  4. **Preserve all other template fields** as defaults unless otherwise specified by the spec or requirements.
+- **Never update or commit changes to the template files themselves.**
+
+### Example Workflow
+1. Copy `data/json-data/templates/unit_blueprint_v1.3.json` → `data/json-data/blueprints/units/life_support/biomass_recycler_bp.json`
+2. Copy `data/json-data/templates/unit_operational_data_v1.3.json` → `data/json-data/operational_data/units/life_support/biomass_recycler_data.json`
+3. Edit only the new files to match the unit's requirements/spec.
+
+> **Note:** This protocol ensures versioned templates remain pristine and all entity data is isolated to its own file, preventing accidental global changes.
+
+---
+
+
 ## 🧪 RSpec Test Output Naming Protocol
 
 - **Full suite runs:**
-  - Output log file: `/data/logs/rspec_full_$(date +%s).log`
-  - Command example:
-    docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /data/logs/rspec_full_$(date +%s).log 2>&1'
+   - Output log file: `/home/galaxy_game/log/rspec_full_$(date +%s).log` (inside container)
+   - Output log file: `./data/logs/rspec_full_$(date +%s).log` (on host)
+   - Command example:
+      docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 - **Subset/spec runs:**
-  - Output log file: `/data/logs/rspec_[scope]_$(date +%s).log` (e.g., `rspec_ai_manager_$(date +%s).log`)
-  - Command example:
-    docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/ > /data/logs/rspec_ai_manager_$(date +%s).log 2>&1'
+   - Output log file: `/home/galaxy_game/log/rspec_[scope]_$(date +%s).log` (inside container)
+   - Output log file: `./data/logs/rspec_[scope]_$(date +%s).log` (on host)
+   - Command example:
+      docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/ > /home/galaxy_game/log/rspec_ai_manager_$(date +%s).log 2>&1'
 - **Never monitor live output:** Always redirect to log file and review after completion.
 - **Always use descriptive log names for partial runs** to avoid confusion and maintain clear test records.
+
+> **Log path mapping is controlled by the bind mount in `docker-compose.dev.yml` and related compose files.**
+> Always check the compose file for the current mapping.
+
+### 🔴 Mandatory Verify Step — Spec Changes
+
+When modifying or rewriting any spec file, the following steps are
+**mandatory before reporting completion or asking the user anything**:
+
+1. Run the spec file in isolation and confirm 0 failures:
+```bash
+   docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [spec_path] > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
+```
+2. If failures exist — fix them before reporting back. Do not ask the user
+   to run tests. Do not report "done" with known failures.
+3. If the same failure persists after two fix attempts — STOP and escalate
+   to Claude with the exact error output and the current spec content.
+   Do not make a third attempt.
+
+**Never report a spec task complete without a green isolation run.**
 
 ---

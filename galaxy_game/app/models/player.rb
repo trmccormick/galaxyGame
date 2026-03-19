@@ -1,6 +1,9 @@
 class Player < ApplicationRecord
     include FinancialManagement
     has_many :colonies
+
+    # Fix: Add blueprint association for ManufacturingService
+    has_many :blueprints, foreign_key: :player_id, dependent: :destroy
     
     # Validations
     validates :name, presence: true
@@ -8,6 +11,7 @@ class Player < ApplicationRecord
     
     # Associations
     has_one :inventory, as: :inventoryable, dependent: :destroy
+    has_many :blueprints, dependent: :destroy
     
     # Methods
     def inventory_at_active_location

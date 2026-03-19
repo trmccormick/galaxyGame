@@ -18,9 +18,10 @@ require 'rspec/rails'
 # require shoulda-matchers
 require 'shoulda/matchers'
 
-# require support files 
+# require support files
 Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 Dir[Rails.root.join('spec', 'shared', '*.rb')].each { |f| require f }
+
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
@@ -58,7 +59,13 @@ RSpec.configure do |config|
       conn.verify!
     end
 
-    # Clean test DB completely before test suite
+    # Set transaction strategy ONCE for the entire suite.
+    # Previously this was set inside before(:each) which caused test pollution —
+    # strategy reassignment per-test allowed bleed between specs with different
+    # cleaner needs. (Fixed 2026-03-14)
+    DatabaseCleaner.strategy = :transaction
+
+    # Clean test DB completely before suite starts
     # Using :deletion instead of :truncation to avoid PostgreSQL deadlocks (2026-01-18)
     DatabaseCleaner.clean_with(:deletion)
 
@@ -79,9 +86,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    Lookup::BaseLookupService.descendants.each(&:reset_cache!)
     Lookup::BaseLookupService.reset_cache!
-    # Use transaction strategy for most tests
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
   end
 

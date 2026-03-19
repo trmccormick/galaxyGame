@@ -2,11 +2,11 @@
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
-                  # Sum buffer gases (N2, Ar, He, etc.)
-                  def buffer_gas_percentage
-                    buffer_names = ['N2', 'Ar', 'He']
-                    gases.select { |g| buffer_names.include?(g.name) }.sum { |g| g.percentage.to_f }
-                  end
+            # Sum buffer gases (N2, Ar, He, etc.)
+            def buffer_gas_percentage
+              buffer_names = ['N2', 'Ar', 'He']
+              gases.select { |g| buffer_names.include?(g.name) }.sum { |g| g.percentage.to_f }
+            end
             # Extract O2 percentage from gases association
 
             def o2_percentage
@@ -27,6 +27,18 @@ module CelestialBodies
               gas = gases.find { |g| g.name == 'N2' }
               gas&.percentage.to_f
             end
+
+            def ch4_percentage
+              gas = gases.find { |g| g.name == 'CH4' }
+              return gas.percentage.to_f if gas
+              composition && composition['CH4'] ? composition['CH4'].to_f : 0.0
+            end
+
+            def h2_percentage
+              gas = gases.find { |g| g.name == 'H2' }
+              return gas.percentage.to_f if gas
+              composition && composition['H2'] ? composition['H2'].to_f : 0.0
+            end            
 
             # Human survival limits for habitability
             def habitable?

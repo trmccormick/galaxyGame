@@ -16,6 +16,20 @@ arrive to a market that reflects the actual state of development.
 
 ---
 
+### LDC as the Mint
+
+LDC is the sole issuer of GCC. GCC supply is backed by Luna's productive
+capacity — resource extraction output, infrastructure value, and settlement
+economic activity. Other DCs earn GCC through productivity; they do not
+create it.
+
+The virtual ledger is the monetary base — GCC seeded into DC accounts before
+real revenue flows exist. It bootstraps the early game economy and is wound
+down gradually as real revenue replaces virtual credits.
+
+See `docs/architecture/ai_manager/AI_MANAGER_CONSTRUCTION_ECONOMICS.md`
+for the full DC financial model.
+
 ## GCC/USD Peg — The Market Primer
 
 ### Initial State: Hard Peg (1 GCC = 1 USD)
@@ -210,6 +224,26 @@ ELSE:
 - Local production available: posted at production cost + margin
 - Players can sell to NPCs at any price up to EAP
 
+### Construction Cost Evaluation
+
+Before posting buy orders or importing for construction, the AI Manager
+evaluates profitability:
+```
+proceed_if: (acquisition_cost + transport + overhead) < construction_value
+            OR strategic_necessity == true
+```
+
+Build priority order:
+1. Local resources + robot labor (zero GCC cost)
+2. Player buy orders (GCC spent, players get first opportunity)
+3. NPC imports (last resort)
+
+Excess side-effect resources (volatiles from regolith, etc.) listed at
+5% below lowest import cost.
+
+See `docs/architecture/ai_manager/AI_MANAGER_CONSTRUCTION_ECONOMICS.md`
+for the complete construction economics model.
+
 ### Price Ceiling Enforcement
 If a player posts a sell order above EAP, AI Manager:
 1. Rejects the order (won't pay more than import cost)
@@ -271,6 +305,7 @@ Cycler operations → bulk cargo economics → price stability
 - `config/economic_parameters.yml` — Base rates and Earth spot prices
 - `docs/architecture/LOGISTICS_PROVIDER_INTENT.md` — Provider architecture
 - `docs/architecture/DUAL_ECONOMY_INTENT.md` — Full economic model
+- `docs/architecture/ai_manager/AI_MANAGER_CONSTRUCTION_ECONOMICS.md` — DC financial structure, construction economics, LDC mint model
 
 ---
 

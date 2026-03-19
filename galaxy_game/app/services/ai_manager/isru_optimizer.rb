@@ -7,7 +7,7 @@ module AIManager
 
     # Optimize ISRU (In-Situ Resource Utilization) priorities for settlement
     def optimize_isru_priorities(target_system, settlement_plan)
-      Rails.logger.info "[ISRUOptimizer] Optimizing ISRU priorities for #{target_system[:identifier]}"
+      Rails.logger.info "[IsruOptimizer] Optimizing ISRU priorities for #{target_system[:identifier]}"
 
       # Analyze available local resources
       resource_analysis = analyze_local_resources(target_system)
@@ -32,7 +32,7 @@ module AIManager
 
     # Prioritize ISRU opportunities based on value and feasibility
     def prioritize_isru_opportunities(target_system, settlement_requirements)
-      Rails.logger.info "[ISRUOptimizer] Prioritizing ISRU opportunities"
+      Rails.logger.info "[IsruOptimizer] Prioritizing ISRU opportunities"
 
       opportunities = identify_isru_opportunities(target_system)
 

@@ -97,7 +97,7 @@ RSpec.describe AIManager::SystemArchitect do
 
   describe '#deploy_subsurface_foothold' do
     it 'creates subsurface location' do
-      expect { architect.send(:deploy_subsurface_foothold) }.to change(CelestialLocation, :count).by(1)
+      expect { architect.send(:deploy_subsurface_foothold) }.to change(Location::CelestialLocation, :count).by(1)
     end
 
     it 'creates settlement' do

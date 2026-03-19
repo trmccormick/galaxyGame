@@ -1,37 +1,35 @@
+
 # spec/models/biomass_recycler_spec.rb
 require 'rails_helper'
 
-RSpec.describe Units::BiomassRecycler, type: :model do
-  let(:biomass_recycler) do
-    BiomassRecycler.new(
-      name: 'Basic Biomass Recycler',
-      material_list: { 'biomass' => 50, 'fertilizer_output' => 10, 'biofuel_output' => 5 },
-      energy_cost: 20  # Updated to use energy_cost
-    )
-  end
+RSpec.describe Units::BaseUnit, type: :model do
+  # let(:biomass_recycler) { create(:biomass_recycler) }
+  # let(:inventory) { double('Inventory') }
 
-  let(:available_resources) do
-    { 'biomass' => 100, 'energy' => 50, 'fertilizer' => 0, 'biofuel' => 0 }  # Updated to use energy
+  before do
+    allow(biomass_recycler).to receive(:inventory).and_return(inventory)
   end
 
   describe '#operate' do
     it 'consumes biomass and energy, producing fertilizer and biofuel' do
-      expect(biomass_recycler.operate(available_resources)).to be_truthy
-      expect(available_resources['biomass']).to eq(50)
-      expect(available_resources['energy']).to eq(30)  # Updated to check energy
-      expect(available_resources['fertilizer']).to eq(10)
-      expect(available_resources['biofuel']).to eq(5)
+      allow(inventory).to receive(:consume_materials).with({ 'biomass' => 50 }).and_return(true)
+      allow(biomass_recycler).to receive(:sufficient_energy?).and_return(true)
+      expect(inventory).to receive(:produce_materials).with({ 'fertilizer' => 10, 'biofuel' => 5 })
+      expect(biomass_recycler.operate(inventory)).to be_truthy
     end
 
     it 'returns false if insufficient biomass is available' do
-      available_resources['biomass'] = 20
-      expect(biomass_recycler.operate(available_resources)).to be_falsey
+      allow(inventory).to receive(:consume_materials).with({ 'biomass' => 50 }).and_return(false)
+      allow(biomass_recycler).to receive(:sufficient_energy?).and_return(true)
+      expect(biomass_recycler.operate(inventory)).to be_falsey
     end
 
     it 'returns false if insufficient energy is available' do
-      available_resources['energy'] = 10  # Updated to check energy
-      expect(biomass_recycler.operate(available_resources)).to be_falsey
+      allow(inventory).to receive(:consume_materials).with({ 'biomass' => 50 }).and_return(true)
+      allow(biomass_recycler).to receive(:sufficient_energy?).and_return(false)
+      expect(biomass_recycler.operate(inventory)).to be_falsey
     end
   end
 end
+
 

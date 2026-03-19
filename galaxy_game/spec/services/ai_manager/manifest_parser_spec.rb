@@ -30,7 +30,7 @@ RSpec.describe AIManager::ManifestParser do
             { "id" => "atmospheric_scoop", "count" => 4 }
           ],
           "units" => [
-            { "id" => "raptor_engine", "count" => 6 },
+            { "id" => "methane_engine", "count" => 6 },
             { "id" => "cryogenic_storage_unit", "count" => 4 }
           ]
         }
@@ -42,7 +42,7 @@ RSpec.describe AIManager::ManifestParser do
 
       expect(result[:modules]).to include("compact_nuclear_reactor (2)")
       expect(result[:modules]).to include("atmospheric_scoop (4)")
-      expect(result[:units]).to include("raptor_engine (6)")
+      expect(result[:units]).to include("methane_engine (6)")
       expect(result[:units]).to include("cryogenic_storage_unit (4)")
       expect(result[:total_modules]).to eq(6)
       expect(result[:total_units]).to eq(10)

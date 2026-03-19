@@ -3,7 +3,7 @@
 ## 2026-03-07
 
 ### Summary
-Mar 7, 2026 - RSpec Failure Reduction ACTIVE: TRUE BASELINE ESTABLISHED (398 failures), EscalationService Water Harvesting Fix NEXT
+Mar 7, 2026 - RSpec Failure Reduction ACTIVE: EscalationService Water Fix COMPLETED (398 → 390 failures), OperationalManagerSpec Diagnostic NEXT
 
 ### COMPLETED THIS SESSION — RSpec Failure Reduction
 
@@ -22,7 +22,7 @@ Mar 7, 2026 - RSpec Failure Reduction ACTIVE: TRUE BASELINE ESTABLISHED (398 fai
 
 ### Current RSpec Status (TRUE BASELINE ESTABLISHED)
 - Total examples: 4012
-- Failures: 398 (complete suite, all tests active, dead code removed)
+- Failures: 390 (complete suite, all tests active, dead code removed, post-escalation fix)
 - Pending: 17
 - Architecture clean: Settlement hierarchy, Inventory system, OrbitalDepot inheritance, Factory inheritance
 - Investigation complete: Cause known - partial runs with skips were hiding failures
@@ -43,14 +43,14 @@ Mar 7, 2026 - RSpec Failure Reduction ACTIVE: TRUE BASELINE ESTABLISHED (398 fai
 - Live systems verified: Inventory, SurfaceStorage, MaterialPile, StorageManager
 
 ### Next Steps
-1. **🔄 ACTIVE**: EscalationService water harvesting fix (8 failures → 0) - Dispatched to GPT-4.1
-2. **📋 QUEUED**: OperationalManagerSpec fix (6 failures → 0) - Diagnostic-first workflow ready
+1. **✅ COMPLETED**: EscalationService water harvesting fix (8 failures → 0) - 398 → 390 failures
+2. **🔄 ACTIVE**: OperationalManagerSpec fix (6 failures → 0) - Dispatched to GPT-4.1 for diagnostic phase
 3. Attack construction services cluster (~60 failures)
-4. Target: 398 → <50 failures through systematic cluster elimination
+4. Target: 390 → <50 failures through systematic cluster elimination
 
 **Failure Clusters Identified:**
 - Construction services: ~60 failures
-- AI manager services: ~55 failures (escalation integration: 8 active, operational manager: 6 queued)
+- AI manager services: ~49 failures (operational manager: 6 active, remaining: ~43)
 - Unit lookup service: 16 failures
 - Geosphere concerns: 11 failures
 - Manufacturing pipeline: ~10 failures
@@ -61,7 +61,7 @@ After EscalationService water harvesting fix commits, queue overnight baseline r
 ```bash
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
-**Expected**: 398 → ~320-340 failures post factory + escalation fixes
+**Expected**: 390 → ~310-330 failures post factory + escalation + operational manager fixes
 **Purpose**: Ensures tomorrow's session starts with accurate baseline reflecting all today's work
 - Geosphere concerns: 11 failures
 - Manufacturing pipeline: ~10 failures

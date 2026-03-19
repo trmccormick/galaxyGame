@@ -2,15 +2,73 @@ module AIManager
   class EscalationService
     def self.handle_expired_buy_orders(expired_orders)
       expired_orders.each do |order|
-        case determine_escalation_strategy(order)
-        when :special_mission
+        settlement = order.base_settlement
+        resource = order.resource
+
+        if emergency_required?(settlement, resource)
           create_special_mission_for_order(order)
-        when :automated_harvesting
-          deploy_automated_harvesters(order)
-        when :scheduled_import
-          schedule_cycler_import(order)
+        else
+          add_to_resupply_manifest(order)
         end
       end
+    end
+    # --- Escalation Sprint Additions ---
+    private
+
+    def self.humans_present?(settlement)
+      settlement.current_population.to_i > 0
+    end
+
+    def self.time_to_critical(settlement, resource)
+      # STUB: implement real consumption rate tracking when
+      # PerformanceTracker and inventory consumption data are available.
+      # Conservative default: 72 hours until critical for any shortage
+      # when humans are present.
+      # TODO: query settlement.inventory consumption rate for resource
+      72.hours
+    end
+
+    def self.time_to_next_resupply(settlement)
+      # STUB: implement when ResupplyMission/ScheduledImport scheduling
+      # is fully wired. Conservative default: 7 days.
+      # TODO: query next scheduled ScheduledImport for this settlement
+      7.days
+    end
+
+    def self.settlement_can_fund_emergency?(settlement, resource)
+      reward = EmergencyMissionService.calculate_emergency_reward(resource.to_sym)
+      required = reward * 1.2
+
+      gcc_currency = Financial::Currency.find_by(symbol: 'GCC')
+      return false unless gcc_currency
+
+      account = Financial::Account.find_or_create_for_entity_and_currency(
+        accountable_entity: settlement,
+        currency: gcc_currency
+      )
+      account.balance >= required
+    rescue => e
+      Rails.logger.error "[EscalationService] GCC check failed: #{e.message}"
+      false
+    end
+
+    def self.emergency_required?(settlement, resource)
+      return false unless humans_present?(settlement)
+
+      ttc = time_to_critical(settlement, resource)
+      ttr = time_to_next_resupply(settlement)
+
+      ttc < ttr
+    end
+
+    def self.add_to_resupply_manifest(order)
+      # STUB: implement full resupply manifest building when
+      # ResupplyManifest model is available.
+      # For now: log the shortage so it is visible and traceable.
+      Rails.logger.info "[EscalationService] Adding to resupply manifest: " \
+                        "#{order.resource} x#{order.quantity} for " \
+                        "settlement #{order.base_settlement_id}"
+      # TODO: ResupplyManifest.add_shortage(order)
     end
 
     def self.deploy_automated_harvesters(order)
@@ -172,9 +230,9 @@ module AIManager
       # Pre-L1 Station phase — Cyclers not yet operational
       return :scheduled_import if supplied_via_hlt_mission?(material, celestial_body)
 
-      # Priority 3: Genuine supply crisis — no local source, no HLT route
-      # Emergency mission as last resort only
-      :special_mission
+      # Priority 3: Default to import if not local and not HLT
+      # Emergency mission only for truly critical resources (e.g., oxygen/water/food) with no import route
+      :scheduled_import
     end
 
     def self.supplied_via_hlt_mission?(material, celestial_body)

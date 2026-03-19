@@ -20,7 +20,7 @@ module AIManager
 
     def self.qualifies_for_emergency?(settlement, resource_type)
       # Check if resource is survival-critical
-      survival_resources = [:oxygen, :water, :food]
+      survival_resources = [:oxygen, :water, :food, :medicine]
       return false unless survival_resources.include?(resource_type)
 
       # Check if normal procurement failed
@@ -92,7 +92,8 @@ module AIManager
       prices = {
         oxygen: 500,
         water: 300,
-        food: 800
+        food: 800,
+        medicine: 1200
       }
       prices[resource_type] || 100
     end
@@ -102,7 +103,8 @@ module AIManager
       quantities = {
         oxygen: 500,    # kg
         water: 1000,    # liters
-        food: 200       # meals
+        food: 200,      # meals
+        medicine: 50    # doses
       }
       quantities[resource_type] || 100
     end

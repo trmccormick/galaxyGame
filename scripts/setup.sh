@@ -10,3 +10,7 @@ else
 fi
 
 bin/rails db:seed
+
+echo "Preparing Test Database"
+RAILS_ENV=test bin/rails db:create
+RAILS_ENV=test bin/rails db:schema:load

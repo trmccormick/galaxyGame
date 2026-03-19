@@ -17,7 +17,7 @@ module AIManager
 
     # Discover systems within wormhole range of current settlements
     def discover_systems_in_range(settlement)
-      current_system = settlement.solar_system
+      current_system = settlement.celestial_body&.solar_system
       wormhole_connections = find_wormhole_connections(current_system)
 
       candidate_systems = wormhole_connections.map do |connection|

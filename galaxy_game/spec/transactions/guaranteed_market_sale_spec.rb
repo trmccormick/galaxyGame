@@ -42,7 +42,7 @@ RSpec.describe "Guaranteed Market Sale Transaction", type: :transaction_flow do
       id: -1,
       orderable: luna_settlement,
       resource: 'LOX',
-      order_type: 'Buy',
+      order_type: 'buy',
       quantity: 100,
       price: GUARANTEED_BID_PRICE,
       market_condition: marketplace.market_conditions.find_by(resource: 'LOX')

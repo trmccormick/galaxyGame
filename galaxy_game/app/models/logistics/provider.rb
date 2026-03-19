@@ -14,6 +14,13 @@ module Logistics
     serialize :cost_modifiers, JSON
     serialize :time_modifiers, JSON
 
+    # Robustly normalize capabilities to array of strings
+    def normalized_capabilities
+      caps = capabilities
+      caps = JSON.parse(caps) rescue caps if caps.is_a?(String)
+      Array(caps).map(&:to_s)
+    end
+
     # Calculate shipping cost for a given route and cargo
     def calculate_cost(from_settlement, to_settlement, material, quantity, transport_method)
       base_cost = base_fee_per_kg * quantity

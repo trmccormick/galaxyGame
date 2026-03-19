@@ -9,6 +9,27 @@ RSpec.describe AIManager::ResourceFlowSimulator do
   let(:simulator) { described_class.new(settlement) }
 
   describe '#simulate_plan' do
+    before do
+      inv = settlement.inventory
+      player = settlement.owner
+      [
+        ['titanium', 500],
+        ['electronics', 100],
+        ['solar_panels', 50],
+        ['aluminum', 500],
+        ['heat_exchangers', 50],
+        ['vacuum_pumps', 50],
+        ['methane', 500]
+      ].each do |name, amount|
+        inv.items.create!(
+          name: name,
+          amount: amount,
+          owner: player,
+          storage_method: 'bulk_storage'
+        )
+      end
+    end
+
     let(:plan_phases) do
       [
         {

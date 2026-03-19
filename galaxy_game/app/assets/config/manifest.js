@@ -5,8 +5,12 @@
 //= link game.js
 //= link admin/monitor.js
 //= link admin/monitor.css
-//= link admin/dashboard.css
+
 //= link admin/admin_cards.css
+
+//= link admin/celestial_bodies.css
+
+//= link admin/dashboard.css
 
 //= link tileset_loader.js
 //= link surface_view.js

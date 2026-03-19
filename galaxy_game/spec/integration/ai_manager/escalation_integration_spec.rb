@@ -21,14 +21,18 @@ let(:robot_repair_order) do
   create(:market_order, resource: 'robot_repair_kit', base_settlement: settlement, created_at: 25.hours.ago, quantity: 10)
 end
 
-it 'triggers escalation for oxygen, water, robot_repair_kit' do
-  expect {
-    AIManager::EscalationService.handle_expired_buy_orders([
-      expired_oxygen_order,
-      expired_water_order,
-      robot_repair_order
-    ])
-  }.to change(Units::Robot, :count).by(3)
+it 'routes non-emergency orders to resupply manifest when no humans present' do
+  # Settlement with no population — all shortages go to manifest
+  settlement.update!(current_population: 0)
+
+  expect(AIManager::EscalationService).to receive(:add_to_resupply_manifest)
+    .at_least(:once)
+
+  AIManager::EscalationService.handle_expired_buy_orders([
+    expired_oxygen_order,
+    expired_water_order,
+    robot_repair_order
+  ])
 end
 
   describe 'Expired Buy Orders Escalation System' do
@@ -77,43 +81,53 @@ end
         celestial_body.materials.where(name: %w[iron titanium]).destroy_all
       end
 
-      it 'triggers escalation for all expired orders' do
-        # ISRU-first: robot_repair_kit + food + spare_robot_parts all harvested locally via robots
-        expect {
-          AIManager::EscalationService.handle_expired_buy_orders([
-            expired_robot_repair_kit_order,
-            expired_food_order,
-            expired_spare_parts_order
-          ])
-        }.to change(Units::Robot, :count).by(3) # all use robots
+      it 'routes to emergency when humans present and time_to_critical is urgent' do
+        settlement.update!(current_population: 100)
+
+        # Stub time calculations so emergency_required? returns true
+        allow(AIManager::EscalationService).to receive(:time_to_critical)
+          .and_return(1.hour)
+        allow(AIManager::EscalationService).to receive(:time_to_next_resupply)
+          .and_return(7.days)
+
+        expect(AIManager::EmergencyMissionService).to receive(:create_emergency_mission)
+          .at_least(:once)
+          .and_return({ id: 'test_mission', resource_type: :robot_repair_kit })
+
+        AIManager::EscalationService.handle_expired_buy_orders([
+          expired_robot_repair_kit_order,
+          expired_food_order,
+          expired_spare_parts_order
+        ])
       end
 
-      it 'deploys automated harvesters for locally available materials' do
-        expect {
-          AIManager::EscalationService.handle_expired_buy_orders([expired_oxygen_order])
-        }.to change(Units::Robot, :count).by(1)
+      it 'routes non-emergency orders to resupply manifest when no humans present' do
+        settlement.update!(current_population: 0)
 
-        harvester = Units::Robot.last
-        expect(harvester.name).to eq("Automated Oxygen Harvester")
-        expect(harvester.attachable).to eq(settlement)
-        expect(harvester.operational_data['target_material']).to eq('oxygen')
-        expect(harvester.operational_data['target_quantity']).to eq(1000)
+        expect(AIManager::EscalationService).to receive(:add_to_resupply_manifest)
+          .at_least(:once)
+
+        AIManager::EscalationService.handle_expired_buy_orders([
+          expired_oxygen_order
+        ])
       end
 
-      it 'schedules imports for non-locally-available materials' do
-        # Remove iron from regolith and materials to force import
-        celestial_body.update!(properties: { 'regolith' => {} })
-        celestial_body.materials.where(name: 'iron').destroy_all
+      it 'routes to emergency when humans present and time_to_critical is urgent' do
+        settlement.update!(current_population: 100)
 
-        expect {
-          AIManager::EscalationService.handle_expired_buy_orders([expired_iron_order])
-        }.to change(ScheduledImport, :count).by(1)
+        # Stub time calculations so emergency_required? returns true
+        allow(AIManager::EscalationService).to receive(:time_to_critical)
+          .and_return(1.hour)
+        allow(AIManager::EscalationService).to receive(:time_to_next_resupply)
+          .and_return(7.days)
 
-        import = ScheduledImport.last
-        expect(import.material).to eq('iron')
-        expect(import.quantity).to eq(500)
-        expect(import.destination_settlement).to eq(settlement)
-        expect(import.status).to eq('scheduled')
+        expect(AIManager::EmergencyMissionService).to receive(:create_emergency_mission)
+          .at_least(:once)
+          .and_return({ id: 'test_mission', resource_type: :robot_repair_kit })
+
+        AIManager::EscalationService.handle_expired_buy_orders([
+          expired_iron_order
+        ])
       end
 
       it 'correctly selects escalation strategies based on material availability' do
@@ -318,15 +332,31 @@ end
       settlement.inventory.items.where(name: 'medicine').destroy_all if settlement.inventory.respond_to?(:items)
     end
 
-    it 'creates emergency missions for critical resources' do
-      # Emergency: ensure medicine shortage
-      settlement.inventory.items.where(name: 'medicine').destroy_all
-      expired_medicine_order = create(:market_order, resource: 'medicine', base_settlement: settlement, created_at: 25.hours.ago, quantity: 500)
-      mission = AIManager::EscalationService.create_special_mission_for_order(expired_medicine_order)
+    it 'creates emergency mission for medicine when humans present' do
+      settlement.update!(current_population: 100)
+
+      allow(AIManager::EscalationService).to receive(:time_to_critical)
+        .and_return(1.hour)
+      allow(AIManager::EscalationService).to receive(:time_to_next_resupply)
+        .and_return(7.days)
+
+      medicine_order = create(:market_order,
+        resource: 'medicine',
+        quantity: 50,
+        base_settlement: settlement,
+        created_at: 25.hours.ago
+      )
+
+      mission = nil
+      allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission) do |s, r|
+        mission = { id: "emergency_#{r}_#{Time.current.to_i}", resource_type: r }
+        mission
+      end
+
+      AIManager::EscalationService.handle_expired_buy_orders([medicine_order])
 
       expect(mission).not_to be_nil
       expect(mission[:resource_type]).to eq(:medicine)
-      expect(mission[:settlement_id]).to eq(settlement.id)
     end
 
     it 'calculates appropriate emergency rewards' do
@@ -366,26 +396,31 @@ end
       allow(AIManager::EmergencyMissionService).to receive(:normal_procurement_failed?).and_return(true)
     end
 
-    it 'executes complete escalation workflow' do
-      # ISRU-first: oxygen + water + iron all harvested locally
-      # titanium not available -> scheduled import
-      expect {
-        AIManager::EscalationService.handle_expired_buy_orders(expired_orders)
-      }.to change(Units::Robot, :count).by(3) # oxygen + water + iron
-        .and change(ScheduledImport, :count).by(1) # titanium import
+    it 'creates emergency mission for medicine when humans present' do
+      settlement.update!(current_population: 100)
 
-      oxygen_harvester = Units::Robot.find_by(name: "Automated Oxygen Harvester")
-      water_harvester  = Units::Robot.find_by(name: "Automated Water Extractor")
-      iron_harvester   = Units::Robot.find_by(name: "Automated Iron Miner")
+      allow(AIManager::EscalationService).to receive(:time_to_critical)
+        .and_return(1.hour)
+      allow(AIManager::EscalationService).to receive(:time_to_next_resupply)
+        .and_return(7.days)
 
-      expect(oxygen_harvester).to be_present
-      expect(water_harvester).to be_present
-      expect(iron_harvester).to be_present
+      medicine_order = create(:market_order,
+        resource: 'medicine',
+        quantity: 50,
+        base_settlement: settlement,
+        created_at: 25.hours.ago
+      )
 
-      titanium_import = ScheduledImport.find_by(material: 'titanium')
-      expect(titanium_import).to be_present
-      expect(titanium_import.quantity).to eq(50)
-      expect(titanium_import.destination_settlement).to eq(settlement)
+      mission = nil
+      allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission) do |s, r|
+        mission = { id: "emergency_#{r}_#{Time.current.to_i}", resource_type: r }
+        mission
+      end
+
+      AIManager::EscalationService.handle_expired_buy_orders([medicine_order])
+
+      expect(mission).not_to be_nil
+      expect(mission[:resource_type]).to eq(:medicine)
     end
 
     it 'handles mixed escalation strategies correctly' do

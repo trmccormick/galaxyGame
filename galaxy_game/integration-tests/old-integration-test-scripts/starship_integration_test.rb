@@ -109,7 +109,7 @@ begin
     'description' => "Test configuration using all new components",
     'modules' => [
       {
-        'id' => 'raptor_engine',
+        'id' => 'methane_engine',
         'count' => 3,
         'category' => 'propulsion'
       },

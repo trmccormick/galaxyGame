@@ -439,7 +439,7 @@ module Structures
       
       Rails.logger.debug("Loading structure info for: #{structure_name}, #{structure_type}")
       @lookup_service ||= Lookup::StructureLookupService.new
-      structure_data = @lookup_service.find_structure(structure_name, structure_type)
+      structure_data = @lookup_service.find_structure(structure_name)
       
       unless structure_data
         errors.add(:base, "Could not find structure data for #{structure_name} of type #{structure_type}")

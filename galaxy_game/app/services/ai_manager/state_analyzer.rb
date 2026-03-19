@@ -70,7 +70,7 @@ module AIManager
       available_systems = discovery_service.discover_systems_in_range(settlement)
 
       # Filter out the current system
-      current_system_id = settlement.solar_system&.id
+      current_system_id = settlement.celestial_body&.solar_system&.id
       candidate_systems = available_systems.reject { |sys| sys[:system_id] == current_system_id }
 
       # Categorize by strategic value

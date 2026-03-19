@@ -287,7 +287,7 @@ This timeframe allows for realistic operational planning while maintaining AI re
 
 ```ruby
 # Initialize service with target system data
-probe_service = ProbeDeploymentService.new(system_data)
+probe_service = AIManager::ProbeDeploymentService.new(system_data)
 
 # Deploy probes and collect data
 probe_data = probe_service.deploy_scout_probes
@@ -303,7 +303,7 @@ probe_data = probe_service.deploy_scout_probes
 class Manager
   def evaluate_new_system(system_data)
     # Phase 0: Deploy probes
-    probe_service = ProbeDeploymentService.new(system_data)
+    probe_service = AIManager::ProbeDeploymentService.new(system_data)
     probe_results = probe_service.deploy_scout_probes
 
     # Phase 1: Analyze probe data
@@ -312,7 +312,7 @@ class Manager
 
     # Phase 2: Generate settlement plans
     if opportunities.any?
-      plan_generator = SettlementPlanGenerator.new(opportunities.first)
+      plan_generator = AIManager::SettlementPlanGenerator.new(opportunities.first)
       settlement_plan = plan_generator.generate_settlement_plan
     end
   end

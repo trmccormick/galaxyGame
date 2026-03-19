@@ -81,7 +81,7 @@ namespace :structures do
       
       # 1. STUB Lookup::StructureLookupService.new to return a mock with find_structure
       MockLookupService = Struct.new(:id) do
-        def find_structure(structure_id, category=nil)
+        def find_structure(structure_id)
           if structure_id == PLANETARY_HUB_ID
             puts "--- MOCK INTERCEPT: Structure Lookup Service stub successful! ---"
             return MOCK_HUB_DATA

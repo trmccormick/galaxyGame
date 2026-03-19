@@ -3,9 +3,6 @@ class Inventory < ApplicationRecord
   has_many :items, dependent: :destroy
   has_one :surface_storage, class_name: 'Storage::SurfaceStorage', dependent: :destroy
 
-  # Remove capacity validation since it comes from units
-  # validates :capacity, numericality: { greater_than_or_equal_to: 0 }
-
   # New public method needed for the Player delegation
   def has_item?(resource_name, quantity)
     current_storage_of(resource_name) >= quantity

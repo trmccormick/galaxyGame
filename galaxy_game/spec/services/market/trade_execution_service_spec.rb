@@ -49,7 +49,7 @@ RSpec.describe Market::TradeExecutionService, type: :service do
       base_settlement_id: settlement.id,
       resource: 'LOX',
       quantity: 100,
-      order_type: 'Sell'
+      order_type: 'sell'
     )
   end
   

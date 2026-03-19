@@ -49,4 +49,56 @@ RSpec.describe Logistics::ContractService do
       end
     end
   end
+
+  def make_provider_with_caps(caps)
+    Logistics::Provider.create!(
+      name: "Test Provider #{caps}",
+      identifier: "TP-#{rand(10000)}",
+      organization: create(:organization),
+      reliability_rating: 4.5,
+      base_fee_per_kg: 10.0,
+      speed_multiplier: 1.0,
+      capabilities: caps,
+      cost_modifiers: {},
+      time_modifiers: {}
+    )
+  end
+
+  describe '.find_provider' do
+    it 'finds provider with Ruby array capabilities' do
+      provider = make_provider_with_caps(['orbital_transfer'])
+      found = described_class.find_provider(from_settlement, to_settlement, :orbital_transfer)
+      expect(found).to eq(provider)
+    end
+
+    it 'finds provider with JSON string capabilities' do
+      provider = make_provider_with_caps('["orbital_transfer"]')
+      found = described_class.find_provider(from_settlement, to_settlement, :orbital_transfer)
+      expect(found).to eq(provider)
+    end
+
+    it 'finds provider with plain string capabilities' do
+      provider = make_provider_with_caps('orbital_transfer')
+      found = described_class.find_provider(from_settlement, to_settlement, :orbital_transfer)
+      expect(found).to eq(provider)
+    end
+
+    it 'returns nil if no provider matches' do
+      make_provider_with_caps(['surface_conveyance'])
+      found = described_class.find_provider(from_settlement, to_settlement, :orbital_transfer)
+      expect(found).to be_nil
+    end
+
+    it 'handles nil capabilities' do
+      provider = make_provider_with_caps(nil)
+      found = described_class.find_provider(from_settlement, to_settlement, :orbital_transfer)
+      expect(found).to be_nil
+    end
+
+    it 'handles empty array capabilities' do
+      provider = make_provider_with_caps([])
+      found = described_class.find_provider(from_settlement, to_settlement, :orbital_transfer)
+      expect(found).to be_nil
+    end
+  end
 end

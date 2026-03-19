@@ -7,7 +7,7 @@ RSpec.describe UnitAssemblyJob, type: :model do
   let(:job) do
     UnitAssemblyJob.create!(
       base_settlement: settlement,  # Use correct association name
-      unit_type: 'raptor_engine',
+      unit_type: 'methane_engine',
       count: 2,
       status: 'materials_pending',
       specifications: {  # Use specifications not blueprint_data
@@ -135,7 +135,7 @@ RSpec.describe UnitAssemblyJob, type: :model do
       item = items.first
       expect(item.owner).to eq(player)
       expect(item.material_type).to eq('manufactured_goods')
-      expect(item.metadata['deployment_data']['unit_type']).to eq('raptor_engine')
+      expect(item.metadata['deployment_data']['unit_type']).to eq('methane_engine')
     end
 
     it "marks job as completed" do

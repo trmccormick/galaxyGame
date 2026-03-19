@@ -105,11 +105,23 @@ RSpec.describe Manufacturing::ShellPrintingService do
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         })
         settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
-        # Make printer operational
-        printer_unit.update_columns(status: 'operational')
-        allow(printer_unit).to receive(:has_minimum_required_units?).and_return(true)
-        allow(printer_unit).to receive(:system_status).with('power_distribution').and_return('online')
-        allow(printer_unit).to receive(:current_mode).and_return('active')
+        # Make printer operational and ensure required capabilities
+        printer_unit.update!(
+          operational_data: printer_unit.operational_data.merge(
+            'status' => 'operational',
+            'power' => { 'connected' => true, 'source' => 'grid' },
+            'processing_capabilities' => {
+              'geosphere_processing' => {
+                'enabled' => true,
+                'types' => ['regolith'],
+                'efficiency' => 0.85
+              }
+            },
+            'component_production' => {
+              'production_rate_multiplier' => 1.0
+            }
+          )
+        )
       end
 
       it 'creates a shell printing job' do
@@ -195,11 +207,23 @@ RSpec.describe Manufacturing::ShellPrintingService do
       before do
         settlement.inventory.add_item('inert_waste', 2000, player)
         settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
-        # Make wrong_printer operational
-        wrong_printer.update_columns(status: 'operational')
-        allow(wrong_printer).to receive(:has_minimum_required_units?).and_return(true)
-        allow(wrong_printer).to receive(:system_status).with('power_distribution').and_return('online')
-        allow(wrong_printer).to receive(:current_mode).and_return('active')
+        # Make wrong_printer operational (but with no regolith capability)
+        wrong_printer.update!(
+          operational_data: wrong_printer.operational_data.merge(
+            'status' => 'operational',
+            'power' => { 'connected' => true, 'source' => 'grid' },
+            'processing_capabilities' => {
+              'geosphere_processing' => {
+                'enabled' => false,
+                'types' => [],
+                'efficiency' => 0.0
+              }
+            },
+            'component_production' => {
+              'production_rate_multiplier' => 1.0
+            }
+          )
+        )
       end
 
       it 'raises an error' do

@@ -13,7 +13,11 @@ module Settlement
     
     belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
     belongs_to :owner, polymorphic: true, optional: true
-    has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account'
+    has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account' # Legacy/primary account
+      # Multi-currency support (LDC GCC/USD)
+      has_many :accounts, as: :accountable, class_name: 'Financial::Account'
+    # Multi-currency support (LDC GCC/USD)
+    has_many :accounts, as: :accountable, class_name: 'Financial::Account'
     has_one :marketplace, 
           class_name: 'Market::Marketplace', 
           foreign_key: 'settlement_id', 
@@ -469,6 +473,12 @@ module Settlement
       if robot_units.any?
         Rails.logger.debug "#{name}: Robot services operational with #{robot_units.count} units"
       end
+    end
+
+    # Returns the GCC account for this settlement, creating it if needed
+    public
+    def gcc_account
+      accounts.find_or_create_by(currency: Financial::Currency.find_by(symbol: 'GCC'))
     end
   end
 end

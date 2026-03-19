@@ -85,7 +85,7 @@ RSpec.describe Naming::PlanetNameService, type: :service do
   describe '#add_suffix_to_name' do
     it 'adds a suffix to the base name' do
       service.instance_variable_set(:@names_data, { 'suffixes' => ['I', 'II'] })
-      allow(Kernel).to receive(:rand).and_return(0) # First suffix
+      allow_any_instance_of(Array).to receive(:sample).and_return('I')
 
       result = service.send(:add_suffix_to_name, "Aurelion", 'TEST')
 

@@ -1633,7 +1633,7 @@ def create_tug_construction_scenario
   puts "    Creating L1 station for tug construction teaching..."
 
   # Find or create L1 location
-  l1_location = CelestialLocation.find_or_create_by!(
+  l1_location = Location::CelestialLocation.find_or_create_by!(
     name: 'Earth-Moon L1 Point',
     location_type: 'lagrange_point',
     parent_body: CelestialBody.find_by(name: 'Earth')

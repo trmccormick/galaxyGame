@@ -216,7 +216,7 @@ module AIManager
     def deploy_scouting_probes(system_data)
       # Use the existing probe deployment service
       target_system = { identifier: system_data['name'], data: system_data }
-      probe_service = ProbeDeploymentService.new(target_system)
+      probe_service = AIManager::ProbeDeploymentService.new(target_system)
       probe_service.deploy_and_analyze
     end
 

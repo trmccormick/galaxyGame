@@ -48,7 +48,7 @@ module MaterialManagementConcern
     
     material.amount ||= 0
     material.amount += amount
-    
+    material.layer ||= 'crust'  # Valid geological layer
     material.save!  # This should now work since name is set
     
     # Only update atmosphere for gases, and only in a controlled way

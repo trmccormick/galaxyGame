@@ -406,7 +406,7 @@ module Craft
     # Constants for unit categories - using only existing unit types
     # These are now also provided by EnergyManagement module, but keeping for broader clarity
     POWER_UNIT_TYPES = EnergyManagement::POWER_UNIT_TYPES
-    NAVIGATION_UNIT_TYPES = ['raptor_engine'].freeze
+    NAVIGATION_UNIT_TYPES = ['methane_engine'].freeze
     CONTROL_UNIT_TYPES = ['life_support'].freeze # Consider if 'life_support' is a unit or a module
 
     def has_cargo_bay?

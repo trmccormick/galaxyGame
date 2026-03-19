@@ -58,7 +58,7 @@ module Craft
     private
     
     def load_base_data
-      path = BASE_PATH.join(@craft_id.split('/')[0..-2].join('/'), "#{@craft_id.split('/').last}.json")
+      path = BASE_PATH.join(@craft_id.split('/')[0..-2].join('/'), "#{@craft_id.split('/').last}_data.json")
       JSON.parse(File.read(path))
     rescue => e
       Rails.logger.error("Error loading base craft data for #{@craft_id}: #{e.message}")

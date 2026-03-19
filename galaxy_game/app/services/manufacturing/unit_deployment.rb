@@ -98,7 +98,7 @@ class Manufacturing::UnitDeployment
       return inventory_item.deployment_data['unit_type']
     end
     
-    # Extract from name "Unassembled Raptor Engine" → "raptor_engine"
+    # Extract from name "Unassembled Raptor Engine" → "methane_engine"
     if inventory_item.name.start_with?("Unassembled ")
       base_name = inventory_item.name.sub("Unassembled ", "")
       return base_name.downcase.gsub(' ', '_')

@@ -239,4 +239,43 @@ RSpec.describe AIManager::OperationalManager do
       end
     end
   end
+
+  describe 'operational mission planning' do
+    let(:basic_scenario) { { type: :basic, resources: [:oxygen, :water] } }
+    let(:complex_scenario) { { type: :complex, resources: [:oxygen, :water, :food], constraints: [:limited_fuel] } }
+    let(:emergency_conditions) { { type: :life_support_failure, severity: :critical } }
+    let(:settlement_upgrades) { { facilities: [:atmospheric_processor], priority: :high } }
+
+    it 'returns valid mission plan for basic scenario' do
+      plan = operational_manager.plan_mission(basic_scenario)
+      expect(plan.valid?).to be true
+    end
+
+    it 'handles resource allocation for complex scenario' do
+      result = operational_manager.allocate_resources(complex_scenario)
+      expect(result.success?).to be true
+    end
+
+    it 'responds to emergency conditions' do
+      response = operational_manager.handle_emergency(emergency_conditions)
+      expect(response.status).to eq('handled')
+    end
+
+    it 'integrates with ai_manager for settlement upgrades' do
+      upgrade = operational_manager.upgrade_settlement(settlement_upgrades)
+      expect(upgrade.applied?).to be true
+    end
+
+    it 'logs mission outcomes correctly' do
+      operational_manager.log_mission_outcome({ mission: :test, result: :success })
+      operational_manager.log_mission_outcome({ mission: :test2, result: :partial })
+      operational_manager.log_mission_outcome({ mission: :test3, result: :failure })
+      expect(operational_manager.log.entries.count).to eq(3)
+    end
+
+    it 'handles edge case: no available resources' do
+      operational_manager.handle_no_resources
+      expect(operational_manager.status).to eq('idle')
+    end
+  end
 end

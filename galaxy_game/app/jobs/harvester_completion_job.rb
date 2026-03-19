@@ -63,11 +63,12 @@ class HarvesterCompletionJob < ApplicationJob
 
     # Create transaction record
     Transaction.create!(
-      from_account: settlement_fund_account(order.base_settlement),
-      to_account: npc_fund_account,
+      account: settlement_fund_account(order.base_settlement),
+      recipient: order.base_settlement,
+      currency: Financial::Currency.find_by(symbol: 'GCC'),
       amount: order.total_cost,
       description: "Automated harvesting fulfillment for #{order.resource}",
-      transaction_type: :resource_acquisition
+      transaction_type: :transfer
     )
   end
 
@@ -83,17 +84,17 @@ class HarvesterCompletionJob < ApplicationJob
 
   def settlement_fund_account(settlement)
     # Find or create settlement's fund account
-    Account.find_or_create_by(
-      accountable: settlement,
-      currency: Currency.find_by(symbol: 'GCC')
-    )
+    settlement.gcc_account
   end
 
   def npc_fund_account
-    # NPC fund account for automated operations
-    Account.find_or_create_by(
-      accountable_type: 'NpcManager',
-      currency: Currency.find_by(symbol: 'GCC')
+    # Use harvester's owner for polymorphic account lookup
+    owner = @harvester&.owner || (defined?(harvester) ? harvester.owner : nil)
+    return nil unless owner
+    Financial::Account.find_or_create_by(
+      accountable_type: owner.class.name,
+      accountable_id: owner.id,
+      currency: Financial::Currency.find_by(symbol: 'GCC')
     )
   end
 end

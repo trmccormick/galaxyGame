@@ -607,10 +607,11 @@ def initialize(mission_id)
       airlock_structure = Structures::BaseStructure.create!(
         name: "Lava Tube Airlock - #{@settlement.id}",
         structure_name: "lava_tube_airlock",
+        structure_type: "airlock", 
         owner: @settlement,
         settlement: @settlement,
         location: @settlement.location,
-        operational_data: { 'structure_type' => 'airlock', 'status' => 'under_construction' }
+        operational_data: {'status' => 'under_construction' }
       )
       
       job = ConstructionJobService.create_job(airlock_structure, 'structure_upgrade', settlement: @settlement)
@@ -632,10 +633,11 @@ def initialize(mission_id)
       skylight_structure = Structures::BaseStructure.create!(
         name: "Lava Tube Skylight - #{@settlement.id}",
         structure_name: "skylight_cover",
+        structure_type: "skylight",
         owner: @settlement,
         settlement: @settlement,
         location: @settlement.location,
-        operational_data: { 'structure_type' => 'skylight', 'status' => 'under_construction' }
+        operational_data: { 'status' => 'under_construction' }
       )
       
       job = ConstructionJobService.create_job(skylight_structure, 'structure_upgrade', settlement: @settlement)

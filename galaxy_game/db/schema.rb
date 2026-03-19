@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_02_120000) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_17_021641) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -988,6 +988,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_02_120000) do
     t.bigint "celestial_body_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "layer", default: "crust", null: false
+    t.index ["celestial_body_id", "layer"], name: "index_materials_on_celestial_body_id_and_layer"
     t.index ["celestial_body_id"], name: "index_materials_on_celestial_body_id"
     t.index ["location"], name: "index_materials_on_location"
     t.index ["materializable_type", "materializable_id"], name: "index_materials_on_materializable"
@@ -1217,13 +1219,13 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_02_120000) do
   end
 
   create_table "route_proposal_votes", force: :cascade do |t|
-    t.bigint "proposal_id", null: false
     t.bigint "voter_id", null: false
     t.string "vote", null: false
     t.integer "voting_power"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["proposal_id"], name: "index_route_proposal_votes_on_proposal_id"
+    t.bigint "route_proposal_id", null: false
+    t.index ["route_proposal_id"], name: "index_route_proposal_votes_on_route_proposal_id"
     t.index ["voter_id"], name: "index_route_proposal_votes_on_voter_id"
   end
 
@@ -1634,7 +1636,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_02_120000) do
   add_foreign_key "plant_environments", "environments"
   add_foreign_key "plant_environments", "plants"
   add_foreign_key "route_proposal_votes", "organizations", column: "voter_id"
-  add_foreign_key "route_proposal_votes", "route_proposals", column: "proposal_id"
+  add_foreign_key "route_proposal_votes", "route_proposals"
   add_foreign_key "route_proposals", "organizations", column: "consortium_id"
   add_foreign_key "route_proposals", "organizations", column: "proposer_id"
   add_foreign_key "scheduled_arrivals", "cyclers"

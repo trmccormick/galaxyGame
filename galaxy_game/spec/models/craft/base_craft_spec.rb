@@ -286,7 +286,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
           'variant_configuration' => 'heavy_lift_standard'
         },
         'recommended_units' => [
-          {'id' => 'raptor_engine', 'count' => 6}
+          {'id' => 'methane_engine', 'count' => 6}
         ]
       }
     end

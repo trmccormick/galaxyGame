@@ -13,20 +13,23 @@ FactoryBot.define do
       name { 'oxygen' }
       state { 'gas' }
       location { 'atmosphere' }
+      layer { 'unknown' }  # Use 'unknown' for non-standard layers
       amount { 50.0 }
     end
     
     trait :iron do
       name { 'iron' }
       state { 'solid' }
-      location { 'crust' }
+      location { 'geosphere' } # FIX: match escalation logic
+      layer { 'crust' }  # Valid enum value
       amount { 1000.0 }
     end
-    
+
     trait :water do
       name { 'water' }
       state { 'liquid' }
       location { 'hydrosphere' }
+      layer { 'unknown' }  # Use 'unknown' for non-standard layers
       amount { 500.0 }
     end
   end

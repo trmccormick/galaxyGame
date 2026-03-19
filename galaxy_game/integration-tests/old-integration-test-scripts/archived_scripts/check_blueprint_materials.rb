@@ -583,8 +583,8 @@ begin
     
     # Test specific files that should exist
     test_files = [
-      ['units', 'propulsion', 'raptor_engine_data.json'],
-      ['blueprints', 'units', 'propulsion', 'raptor_engine_blueprint.json'],
+      ['units', 'propulsion', 'methane_engine_data.json'],
+      ['blueprints', 'units', 'propulsion', 'methane_engine_blueprint.json'],
       ['starship-cargo-manifest', 'ssc-000.json']
     ]
     

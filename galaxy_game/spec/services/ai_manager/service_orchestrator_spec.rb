@@ -106,6 +106,7 @@ RSpec.describe AIManager::ServiceOrchestrator, type: :service do
       end
 
       it 'returns false if resource acquisition service is not available' do
+        allow(service_orchestrator).to receive(:service_available?).and_return(false)
         allow(service_orchestrator).to receive(:service_available?).with(:resource_acquisition_service).and_return(false)
 
         result = service_orchestrator.execute_coordinated_operation(:resource_acquisition_with_scouting, params)

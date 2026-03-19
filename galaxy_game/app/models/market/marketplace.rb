@@ -143,7 +143,7 @@ module Market
         id: -1,
         orderable: settlement,
         resource: new_order.resource,
-        order_type: 'Buy',
+        order_type: 'buy',
         quantity: trade_volume,
         price: npc_price,
         market_condition: new_order.market_condition
