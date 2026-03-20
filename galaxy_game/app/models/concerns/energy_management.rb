@@ -52,13 +52,6 @@ module EnergyManagement
     power_generation - power_usage
   end
 
-  # --- Unit-level Power Methods ---
-
-  # Returns the power generation for this unit
-  def power_generation
-    operational_data.dig('operational_properties', 'power_generation_kw') || 0.0
-  end
-
   # Returns an array of attached units that are power generators.
   # Assumes a `base_units` or `units` association on the including model.
   def power_generating_units
