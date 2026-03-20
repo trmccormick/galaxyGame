@@ -1,5 +1,8 @@
 module CelestialBodies
   class Material < ApplicationRecord
+    validates :melting_point, numericality: true, allow_nil: true
+    validates :boiling_point, numericality: true, allow_nil: true
+
     belongs_to :celestial_body
     belongs_to :materializable, polymorphic: true, optional: true
 
@@ -15,12 +18,11 @@ module CelestialBodies
       'core' => 6
     }
     
-    # Add enum for layer (optional but can be helpful)
     enum layer: {
-      'crust' => 0,
-      'mantle' => 1,
-      'core' => 2,
-      'unknown' => 3
+      'crust' => 'crust',
+      'mantle' => 'mantle',
+      'core' => 'core',
+      'unknown' => 'unknown'
     }, _prefix: true
     
     validates :name, presence: true
@@ -103,17 +105,19 @@ module CelestialBodies
     end
     
     def melting_point
-      properties&.dig('properties', 'melting_point')
+      properties&.dig('melting_point') || properties&.dig('properties', 'melting_point')
     end
-    
+
     def boiling_point
-      properties&.dig('properties', 'boiling_point')
+      properties&.dig('boiling_point') || properties&.dig('properties', 'boiling_point')
     end
     
     # Determine the physical state of the material at given conditions
     def state_at(temperature, pressure)
-      return 'solid' if melting_point && temperature < melting_point
-      return 'liquid' if boiling_point && temperature < boiling_point
+      mp = melting_point&.to_f
+      bp = boiling_point&.to_f
+      return 'solid' if mp && temperature < mp
+      return 'liquid' if bp && temperature < bp
       'gas'
     end
   end

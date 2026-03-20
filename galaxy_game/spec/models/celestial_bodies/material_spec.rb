@@ -24,6 +24,11 @@ RSpec.describe CelestialBodies::Material, type: :model do
       expect(material).to_not be_valid
     end
 
+    it 'is not valid without a state' do
+      material.state = nil
+      expect(material).to_not be_valid
+    end    
+
     it 'is valid with a valid state (solid, liquid, gas)' do
       %w[solid liquid gas].each do |valid_state|
         material.state = valid_state
@@ -31,22 +36,14 @@ RSpec.describe CelestialBodies::Material, type: :model do
       end
     end
 
-    # it 'is not valid with an invalid state' do
-    #   material.state = 'unknown'
-    #   expect(material).to_not be_valid
-    # end
+    it 'is not valid with an invalid state' do
+      expect { material.state = 'unknown' }.to raise_error(ArgumentError)
+    end
 
-    # it 'is valid with valid melting and boiling points' do
-    #   material.melting_point = 273  # Example melting point (in Kelvin)
-    #   material.boiling_point = 373   # Example boiling point (in Kelvin)
-    #   expect(material).to be_valid
-    # end
-
-    # it 'is not valid with non-numeric melting and boiling points' do
-    #   material.melting_point = 'invalid'
-    #   material.boiling_point = 'invalid'
-    #   expect(material).to_not be_valid
-    # end
+    it 'is valid with valid melting and boiling points' do
+      expect(material.melting_point).to be_present
+      expect(material.boiling_point).to be_present
+    end
   end
 
   describe 'associations' do
@@ -55,11 +52,17 @@ RSpec.describe CelestialBodies::Material, type: :model do
     end
   end
 
-  # describe '#state_at' do
-  #   it 'returns "gas" when temperature is above the adjusted boiling point' do
-  #     expect(material.state_at(600, 1.0)).to eq('gas')
-  #   end
-  # end
+  describe '#state_at' do
+    it 'returns "solid" when temperature is below melting point' do
+      expect(material.state_at(250, 1.0)).to eq('solid')
+    end
+    it 'returns "liquid" when temperature is between melting and boiling points' do
+      expect(material.state_at(2000, 1.0)).to eq('liquid')
+    end
+    it 'returns "gas" when temperature is above boiling point' do
+      expect(material.state_at(3000, 1.0)).to eq('gas')
+    end
+  end
 
   # describe '#add_to_atmosphere' do
   #   let(:atmosphere) { CelestialBodies::Spheres::Atmosphere.new(celestial_body: celestial_body) }
