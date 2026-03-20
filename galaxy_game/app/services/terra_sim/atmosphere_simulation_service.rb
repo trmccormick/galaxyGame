@@ -112,6 +112,7 @@ module TerraSim
       loss_factor = calculate_solar_wind_factor
 
       atmosphere.gases.each do |gas|
+        next if gas.mass.nil?
         new_mass = [gas.mass - gas.mass * loss_factor, 0].max
         gas.update(mass: new_mass)
       end

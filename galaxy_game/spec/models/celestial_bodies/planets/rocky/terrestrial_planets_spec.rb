@@ -13,13 +13,13 @@ RSpec.describe CelestialBodies::Planets::Rocky::TerrestrialPlanet, type: :model 
 
   describe '#habitable_zone?' do
     it 'returns a boolean indicating if the planet is in the habitable zone' do
-      expect([true, false]).to include(planet.habitable_zone?)
+      expect([true, false]).to include(planet.send(:habitable_zone?))
     end
   end
 
   describe '#habitability_score' do
     it 'returns a numeric score for habitability' do
-      expect(planet.habitability_score).to be_a(Numeric)
+      expect(planet.send(:habitability_score)).to be_a(Numeric)
     end
   end
 

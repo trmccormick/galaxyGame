@@ -12,7 +12,6 @@ module CelestialBodies
       attr_accessor :skip_simulation
       
       store :base_values, coder: JSON
-      serialize :stored_volatiles, Hash
       store_accessor :base_values, :base_stored_volatiles
       
       validates :geological_activity, numericality: { 
@@ -245,11 +244,12 @@ module CelestialBodies
         release_amounts = {}
         
         stored_volatiles.each do |compound, locations|
+          next unless locations.is_a?(Hash)
           compound_release = 0
-          
+
           locations.each do |location, amount|
             next if amount.nil? || amount <= 0
-            
+
             release_rate = case location
                           when 'polar_caps', 'surface_ice'
                             calculate_surface_release_rate(temperature, compound)
@@ -260,7 +260,7 @@ module CelestialBodies
                           else
                             0.01
                           end
-            
+
             released = amount * release_rate
             compound_release += released
             
