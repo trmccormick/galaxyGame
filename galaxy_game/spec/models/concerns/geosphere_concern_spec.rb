@@ -78,7 +78,7 @@ RSpec.describe GeosphereConcern do
       original_base_values = geosphere.base_values.deep_dup
       
       # Test with empty hash
-      geosphere.update!(base_values: {})
+      geosphere.update!(base_values: {'invalid_key' => 'value'})
       expect(geosphere.reset).to be_falsey
       
       # Test with unrelated keys
@@ -108,7 +108,7 @@ RSpec.describe GeosphereConcern do
       
       # Replace base_values with an empty hash
       original_base_values = geosphere.base_values.deep_dup
-      geosphere.update!(base_values: {})
+      geosphere.update!(base_values: {'invalid_key' => 'value'})
       
       # Call reset
       result = geosphere.reset
