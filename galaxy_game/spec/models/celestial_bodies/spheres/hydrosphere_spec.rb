@@ -75,7 +75,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       )
       
       # Temporarily disable the water cycle simulation
-      allow(hydrosphere).to receive(:water_cycle_tick)
+      allow(hydrosphere).to receive(:hydrosphere_cycle_tick)
       
       # Reset
       hydrosphere.reset
@@ -110,7 +110,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       end
     end
     
-    describe '#water_cycle_tick' do
+    describe '#hydrosphere_cycle_tick' do
       before do
         # Directly associate atmosphere with celestial_body
         atmosphere = create(:atmosphere, celestial_body: celestial_body)
@@ -124,7 +124,7 @@ RSpec.describe CelestialBodies::Spheres::Hydrosphere, type: :model do
       it 'calls evaporation and precipitation handlers' do
         expect(hydrosphere).to receive(:handle_evaporation)
         expect(hydrosphere).to receive(:handle_precipitation)
-        hydrosphere.water_cycle_tick
+        hydrosphere.hydrosphere_cycle_tick
       end
     end
   end

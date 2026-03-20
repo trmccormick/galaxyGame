@@ -35,7 +35,9 @@ RSpec.describe MaterialManagementConcern, type: :concern do
         'save!': true,
         'new_record?': true,
         'name=': nil,
-        name: 'oxygen'  # ✅ Add name getter for debug logging
+        name: 'oxygen',
+        layer: 'unknown',      # ADD THIS
+        'layer=': nil          # ADD THIS
       ) 
     }
     
@@ -115,7 +117,9 @@ RSpec.describe MaterialManagementConcern, type: :concern do
         'amount=': nil, 
         'save!': true, 
         destroy: true,
-        name: 'iron'
+        name: 'iron',
+        layer: 'crust',      # ADD THIS
+        'layer=': nil          # ADD THIS
       ) 
     }
     
@@ -187,7 +191,7 @@ RSpec.describe MaterialManagementConcern, type: :concern do
 
       # ✅ Fix 2: Use material_id for atmosphere
       it 'updates atmosphere composition' do
-        expect(test_object).to receive(:update_atmosphere_for_gas).with("iron", -100)
+        expect(test_object).to receive(:update_atmosphere_for_gas).with("Fe", -100)
         
         test_object.remove_material('iron', 100)
       end
