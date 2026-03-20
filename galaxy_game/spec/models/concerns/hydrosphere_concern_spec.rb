@@ -68,7 +68,7 @@ RSpec.describe HydrosphereConcern do
       expect(hydrosphere).to receive(:handle_evaporation)
       expect(hydrosphere).to receive(:handle_precipitation)
       
-      hydrosphere.water_cycle_tick
+      hydrosphere.hydrosphere_cycle_tick
     end
     
     it 'does nothing when celestial body has no atmosphere' do
@@ -77,7 +77,7 @@ RSpec.describe HydrosphereConcern do
       expect(hydrosphere).not_to receive(:handle_evaporation)
       expect(hydrosphere).not_to receive(:handle_precipitation)
       
-      hydrosphere.water_cycle_tick
+      hydrosphere.hydrosphere_cycle_tick
     end
   end
 

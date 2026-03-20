@@ -372,8 +372,8 @@ module CelestialBodies
         # Prevent recursive updates
         self.simulation_running = true
         
-        # Call water_cycle_tick from the concern
-        water_cycle_tick
+        # Call hydrosphere_cycle_tick from the concern
+        hydrosphere_cycle_tick
         
         self.simulation_running = false
       end

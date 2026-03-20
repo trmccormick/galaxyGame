@@ -17,7 +17,7 @@ module HydrosphereConcern
     }
   end
 
-  def water_cycle_tick
+  def hydrosphere_cycle_tick
     return unless celestial_body&.atmosphere
     handle_evaporation
     handle_precipitation
