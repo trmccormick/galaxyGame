@@ -2,59 +2,8 @@
 module CelestialBodies
   module Spheres
     class Atmosphere < ApplicationRecord
-            # Sum buffer gases (N2, Ar, He, etc.)
-            def buffer_gas_percentage
-              buffer_names = ['N2', 'Ar', 'He']
-              gases.select { |g| buffer_names.include?(g.name) }.sum { |g| g.percentage.to_f }
-            end
-            # Extract O2 percentage from gases association
-
-            def o2_percentage
-              gas = gases.find { |g| g.name == 'O2' }
-              return gas.percentage.to_f if gas
-              # Fallback to composition hash
-              composition && composition['O2'] ? composition['O2'].to_f : 0.0
-            end
-
-            def co2_percentage
-              gas = gases.find { |g| g.name == 'CO2' }
-              return gas.percentage.to_f if gas
-              composition && composition['CO2'] ? composition['CO2'].to_f : 0.0
-            end
-
-            # Extract N2 percentage from gases association
-            def n2_percentage
-              gas = gases.find { |g| g.name == 'N2' }
-              gas&.percentage.to_f
-            end
-
-            def ch4_percentage
-              gas = gases.find { |g| g.name == 'CH4' }
-              return gas.percentage.to_f if gas
-              composition && composition['CH4'] ? composition['CH4'].to_f : 0.0
-            end
-
-            def h2_percentage
-              gas = gases.find { |g| g.name == 'H2' }
-              return gas.percentage.to_f if gas
-              composition && composition['H2'] ? composition['H2'].to_f : 0.0
-            end            
-
-            # Human survival limits for habitability
-            def habitable?
-              # Pressure: Armstrong limit ~6.3 kPa, comfortable 50–110 kPa
-              return false if pressure.nil? || pressure < 6.3 || pressure > 110.0
-              # Temperature: Comfortable 273–323K (0–50°C), survival 273–333K (0–60°C)
-              return false if temperature.nil? || temperature < 273.15 || temperature > 333.15
-              # Oxygen: Partial pressure 8–50 kPa, percentage 16–40% (if total pressure is normal)
-              return false if o2_percentage < 16.0 || o2_percentage > 40.0
-              # CO2: Must remain below 1% for long-term health
-              return false if co2_percentage > 1.0
-              # Buffer gas: sum of N2, Ar, He, etc. should be at least 30%
-              return false if buffer_gas_percentage < 30.0
-              true
-            end
       self.table_name = 'atmospheres'
+      
       include AtmosphereConcern
       include MaterialTransferable
       
@@ -64,12 +13,11 @@ module CelestialBodies
       has_many :gases, class_name: 'CelestialBodies::Materials::Gas', dependent: :destroy
       
       # Stored attributes
-      store_accessor :temperature_data, :effective_temperature, 
-                                       :greenhouse_temperature, 
-                                       :polar_temperature, 
-                                       :tropical_temperature
-      
-      store :composition, accessors: [:gas_ratios]
+      store_accessor :temperature_data, :effective_temperature,
+                                        :greenhouse_temperature,
+                                        :polar_temperature,
+                                        :tropical_temperature
+
       store :dust, accessors: [:concentration, :particle_size]
 
       # Validations
@@ -80,52 +28,78 @@ module CelestialBodies
 
       # Callbacks
       after_create :initialize_gases
-
-      # The reset method is now provided by AtmosphereConcern for DRYness and consistency.
+      after_save :update_celestial_body_material_tracking, if: :total_atmospheric_mass_changed?
 
       #---------------------------------------------------------------------------
-      # Temperature Management Methods
+      # Planetary Atmosphere Overrides
       #---------------------------------------------------------------------------
+
+      # Planetary atmospheres are never artificially sealed
+      def sealed?
+        false
+      end
+
+      # Is this planet naturally habitable for humans without a spacesuit?
+      # Applies to both natural and terraformed atmospheres
+      def habitable?
+        return false if pressure < 60.0
+        return false if o2_percentage < 16.0
+        return false if co2_percentage > 0.5
+        return false if temperature < 273.15 || temperature > 313.15
+        true
+      end
+
+      # Buffer gases (N2, Ar, He) — used by habitable? check
+      def buffer_gas_percentage
+        buffer_names = ['N2', 'Ar', 'He']
+        gases.select { |g| buffer_names.include?(g.name) }.sum { |g| g.percentage.to_f }
+      end
+
+      #---------------------------------------------------------------------------
+      # Temperature Management
+      #---------------------------------------------------------------------------
+
       def set_effective_temp(temp)
         self.effective_temperature = temp
         save!
       end
-      
+
       def set_greenhouse_temp(temp)
         self.greenhouse_temperature = temp
         self.temperature = temp
         save!
       end
-      
+
       def set_polar_temp(temp)
         self.polar_temperature = temp
         save!
       end
-      
+
       def set_tropic_temp(temp)
         self.tropical_temperature = temp
         save!
       end
-      
+
       def effective_temp
         effective_temperature || temperature
       end
-      
+
       def greenhouse_temp
         greenhouse_temperature || temperature
       end
-      
+
       def polar_temp
         polar_temperature || (temperature - 40)
       end
-      
+
       def tropic_temp
         tropical_temperature || (temperature + 10)
       end
-      
+
       #---------------------------------------------------------------------------
-      # Mass Management Methods
+      # Mass Management
       #---------------------------------------------------------------------------
+
       def recalculate_mass!
         update_total_atmospheric_mass
       end
@@ -133,28 +107,23 @@ module CelestialBodies
       #---------------------------------------------------------------------------
       # Atmospheric Physical Properties
       #---------------------------------------------------------------------------
+
       def density
         return 0.0 if pressure.to_f <= 0 || temperature.to_f <= 0
-        
-        pressure_pa = pressure.to_f * 100000.0 # Convert bars to Pascals
+        pressure_pa = pressure.to_f * 100000.0
         r_specific = calculate_gas_constant
-        
         pressure_pa / (r_specific * temperature.to_f)
       end
-      
+
       def calculate_gas_constant
         if gases.any?
           total_mass = gases.sum(:mass)
           return GameConstants::EARTH_ATMOSPHERE[:average_gas_constant] if total_mass <= 0
-          
           material_service = Lookup::MaterialLookupService.new
           weighted_sum = gases.sum do |gas|
             next 0 if gas.mass.to_f <= 0
-            
             mass_fraction = gas.mass.to_f / total_mass
-            # Always use chemical formula for lookup
             material_data = material_service.find_material(gas.name)
-            
             if material_data && material_data['properties'] && material_data['properties']['specific_gas_constant']
               gas_constant = material_data['properties']['specific_gas_constant']
             elsif material_data && material_data['properties'] && material_data['properties']['molar_mass']
@@ -165,64 +134,48 @@ module CelestialBodies
             else
               gas_constant = GameConstants::EARTH_ATMOSPHERE[:average_gas_constant]
             end
-            
             mass_fraction * gas_constant
           end
-          
           return weighted_sum
         end
-        
         GameConstants::EARTH_ATMOSPHERE[:average_gas_constant]
       end
-      
+
       def calculate_average_molar_mass
         if gases.any?
           total_mass = gases.sum(:mass)
           return estimate_molar_mass(composition || {}) if total_mass <= 0
-          
           material_service = Lookup::MaterialLookupService.new
-          
           weighted_sum = gases.sum do |gas|
             next 0 if gas.mass.to_f <= 0
-            
             mass_fraction = gas.mass.to_f / total_mass
-            
             if gas.molar_mass.to_f > 0
-              molar_mass = gas.molar_mass.to_f / 1000.0 # Convert to kg/mol
+              molar_mass = gas.molar_mass.to_f / 1000.0
             else
-              # Always use chemical formula for lookup
               material_data = material_service.find_material(gas.name)
               if material_data && material_data['properties'] && material_data['properties']['molar_mass']
                 molar_mass = material_data['properties']['molar_mass'].to_f / 1000.0
               else
-                molar_mass = 0.029 # Default for Earth air
+                molar_mass = 0.029
               end
             end
-            
             mass_fraction * molar_mass
           end
-          
           return weighted_sum
         end
-        
-        # Always fall back to composition-based calculation
         estimate_molar_mass(composition || {})
       end
-      
+
       def scale_height
-        # Scale height H = R*T/(M*g)
-        gravity = celestial_body.respond_to?(:gravity) ? celestial_body.gravity : 9.8 # m/s²
+        gravity = celestial_body.respond_to?(:gravity) ? celestial_body.gravity : 9.8
         molar_mass = calculate_average_molar_mass
         r_universal = GameConstants::IDEAL_GAS_CONSTANT
-
-        return nil if temperature.nil? || molar_mass.nil? || gravity.nil? || molar_mass == 0.0 || gravity == 0.0
-
+        return nil if temperature.nil? || molar_mass.nil? || gravity.nil? || 
+                      molar_mass == 0.0 || gravity == 0.0
         (r_universal * temperature.to_f) / (molar_mass * gravity) / 1000.0
       end
 
-      # ✅ ADD: Override for planetary atmospheres (they don't have containers)
       def get_celestial_atmosphere_data
-        # For planetary atmospheres, they ARE the celestial atmosphere data
         {
           temperature: temperature || 273.15,
           pressure: pressure || 0.0,
@@ -230,18 +183,17 @@ module CelestialBodies
         }
       end
 
-      # ✅ ADD: Planetary atmospheres are never "sealed" (they're natural)
-      def sealed?
-        false # Planetary atmospheres are never artificially sealed
-      end      
-      
-      def habitable?
-        # Planetary atmospheres don't need to be "sealed" - they're natural
-        return false if pressure < 60.0   # Minimum pressure for human survival (kPa)  
-        return false if o2_percentage < 16.0
-        return false if co2_percentage > 0.5
-        return false if temperature < 273.15 || temperature > 313.15  # 0°C to 40°C
-        true
+      def transfer_material(material_name, amount, target_sphere)
+        gas = gases.find_by(name: material_name)
+        Rails.logger.warn "[Atmosphere] Transfer failed: #{material_name} has insufficient mass (#{gas&.mass || 0})" if gas.nil? || gas.mass < amount
+        return false unless gas && gas.mass >= amount
+        CelestialBodies::Material.transaction do
+          remove_gas(material_name, amount)
+          target_sphere.materials.create!(
+            name: material_name,
+            amount: amount
+          )
+        end
       end
 
       private
@@ -250,14 +202,8 @@ module CelestialBodies
         celestial_body.surface_temperature
       end
 
-      # Add a callback that runs after gas changes
-      after_save :update_celestial_body_material_tracking, if: :total_atmospheric_mass_changed?
-      
-      # Only update material tracking for celestial body atmospheres
       def update_celestial_body_material_tracking
         return unless celestial_body.present?
-        
-        # Trigger material validation at celestial body level
         if celestial_body.respond_to?(:validate_mass_conservation)
           celestial_body.validate_mass_conservation
         end
@@ -265,4 +211,3 @@ module CelestialBodies
     end
   end
 end
-
