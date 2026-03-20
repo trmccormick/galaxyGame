@@ -240,12 +240,12 @@ RSpec.describe EnergyManagement, type: :concern do
       before do
         # Clear the resource_management generated data so it uses base_units calculation
         settlement.operational_data['resource_management'].delete('generated')
-        
-        # Stub power_generation on mock units
+
+        # Blanket stub respond_to? and power_generation on mock units
+        allow(mock_solar_unit).to receive(:respond_to?).and_return(true)
         allow(mock_solar_unit).to receive(:power_generation).and_return(10.0)
-        allow(mock_solar_unit).to receive(:respond_to?).with(:power_generation).and_return(true)
+        allow(mock_nuclear_unit).to receive(:respond_to?).and_return(true)
         allow(mock_nuclear_unit).to receive(:power_generation).and_return(10.0)
-        allow(mock_nuclear_unit).to receive(:respond_to?).with(:power_generation).and_return(true)
       end
       
       it "scales solar unit output by solar factor" do
