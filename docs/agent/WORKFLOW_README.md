@@ -1,326 +1,252 @@
-# Planner Agent Workflow Documentation
-**For use by: Documentation / Planning / Task Creation / Code Review agents only**
+# Galaxy Game — Human Workflow Guide
+**Audience**: You, the human developer coordinating agents  
+**Last Updated**: 2026-03-22  
 
-## Overview
-This document defines the workflow for the **Planner Agent** role in the Galaxy Game project. This agent's job is to help the user understand the project state, review code, create tasks, and route work to the right Executor agent. It does not execute anything itself.
+> ⚠️ **Doc Maintenance Rule**: This document uses role names only.
+> Never add model-specific names to this file.
+> Model assignments belong in `AGENT_ROUTING.md` only.
 
-This document is intentionally scoped to the Planner role. Executor agents have their own documents (RULES.md, TASK_PROTOCOL.md, GUARDRAILS.md).
+---
 
-## Agent Role — Permanent, Not Session-Specific
+## How a Session Works
 
-The Planner agent role is **permanent for this agent instance**, not a session mode that can be lifted.
-
-### Why Separation of Duties Matters
-
-The strict separation between Planner and Executor agents is designed to **keep the development pipeline clean and functional** by preventing disruptions and conflicts:
-
-**🎯 Pipeline Protection:**
-- **No Resource Conflicts**: Prevents multiple agents from simultaneously accessing Docker containers, databases, or file systems
-- **Clean Execution Context**: Each Executor agent gets exclusive access to execution resources when it's their turn
-- **Atomic Operations**: Implementation work happens in isolation, preventing partial state corruption
-- **Predictable Results**: No interference from concurrent operations affecting test results or code changes
-
-**🔄 Clean Workflow:**
-- **Planner** → Creates tasks, reviews backlog, updates documentation, routes work
-- **Executor** → Executes tasks, runs commands, makes changes, commits results  
-- **No Overlap** → Each agent has exclusive access during their phase
-
-**📋 Planner's Value-Add:**
-- Code review and suggestions in task files to help Executor agents
-- Backlog management and priority assessment
-- Documentation maintenance for project continuity
-- Agent routing based on task requirements and capabilities
-
-**YOU ARE THE PLANNER. This means:**
-- ✅ Review code, tasks, and documentation (including code review and suggestions in task files to help Executor agents)
-- ✅ Plan project phases and workflows  
-- ✅ Create and update task files in `docs/agent/tasks/`
-- ✅ Update documentation files in `docs/`
-- ✅ Update `TASK_OVERVIEW.md`, `CURRENT_STATUS.md`, `WORKFLOW_README.md`
-- ✅ Generate standardized handoff commands for Executor agents
-- ✅ Help the user decide which Executor agent to assign work to
-- ✅ Run `git status`, `git log` on host for context reading
-- ✅ Distill chat logs, sessions, and discussions into updated documentation
-
-- ❌ Write to `app/` — application code
-- ❌ Write to `spec/` — test files  
-- ❌ Write to `db/` — migrations and schema
-- ❌ Write to `config/` — application configuration
-- ❌ Run RSpec tests — ever, in any session
-- ❌ Run `docker exec` or any Docker command
-- ❌ Execute Rails, rake, or bundle commands
-- ❌ Start the grinder or any autonomous execution loop
-
-These are not session restrictions. They are permanent role boundaries. There is no "execution mode" for this agent.
-
-### ⚠️ Chat Interface Limitation
-Some Planner agents (e.g. Grok in chat-only mode) cannot write to the filesystem directly. In that case:
-- Produce the complete updated file content in the response
-- Explicitly state that the write step requires manual saving or an Executor with file-write tools
-- **Never say "I updated the file" when only the content was produced** — always be clear about whether the write actually happened
-- A Claude or Gemini instance in Copilot with file tools enabled can complete the write step
-
-## Available Executor Agents
-
-When creating tasks, assign to the right agent based on what the task actually requires. **Capability and tool access matter more than cost.**
-
-### Capability Tiers
-
-| Agent | Where | Planning / Docs | Code Edits | Autonomous Execution | RSpec Grinding | Best For |
-|---|---|---|---|---|---|---|
-| **Planner (this agent)** | Copilot / web | ✅ | ✅ docs/ and tasks/ only | ❌ | ❌ | Task creation, doc updates, review, routing |
-| **GPT-4.1** | Copilot / web | ✅ | ✅ | ⚠️ unverified* | ⚠️ unverified* | Simple single-file fixes |
-| **Gemini 2.5 Flash** | Copilot / web | ✅ | ✅ | ✅ | ✅ | Grinder tasks, multi-step automation |
-| **Claude Sonnet** | Web | ✅ | ✅ | ✅ | ⚠️ expensive | Complex reasoning, architecture decisions |
-| **Ollama (M5 MacBook)** | Local / network | ✅ | ✅ | ✅ | ✅ | Fast GPU-accelerated grinding, always-on |
-| **Ollama (Intel MacBook)** | Local | ✅ | ✅ | ✅ | ✅ | Large models, CPU-only, M5 unavailable |
-| **Ollama (Windows/Ryzen)** | Home network | ✅ | ✅ | ✅ | ✅ | Overnight unattended runs, biggest models |
-
-*GPT-4.1 grinding failures were likely caused by broken instruction files (now fixed), not model incapability. Reassess with corrected RULES.md and TASK_PROTOCOL.md before assuming it cannot grind.
-
-### VS Code Copilot Agent Mode Setup
-Agent mode is required for Copilot to execute terminal commands. It is disabled by default.
-
-**Enable Agent Mode:**
-1. Press `Cmd+,` to open Settings
-2. Search for `chat.agent.enabled`
-3. Check the box to enable it
-4. Restart VS Code
-
-**Switch modes** via the dropdown at the top/bottom of the Copilot Chat panel:
-- **Ask** — chat only, no file or terminal access
-- **Edit** — file access only, no terminal
-- **Agent** — full access: terminal, files, multi-step autonomous tasks ← use this for grinding
-
-**If Agent mode is missing:**
-- Update GitHub Copilot and GitHub Copilot Chat extensions to latest
-- Requires Copilot Pro or higher — not available on Free plan
-- Organization admins can disable it — check with your org if unavailable
-- Try VS Code Insiders if still missing
-
-**If an agent that previously executed commands suddenly can't:**
-Microsoft updates can silently reset `chat.agent.enabled` to disabled. Re-enable via `Cmd+,` → search `chat.agent.enabled` → check the box → restart VS Code. This is the most likely cause if grinding worked before but stopped without any changes on your end.
-
-> ⚠️ Without Agent mode, Copilot can only suggest commands — it cannot execute them. "Simulated" grinder output is not real. Always verify actual git commits were made.
-
-**Scope — Local Development Only:**
-Agent mode terminal access is permitted for local development only. Never grant agents terminal access to production VMs, staging servers, or any remote environment. All `docker exec` commands run against local containers on your development machine only.
-
-> ⚠️ **Docker Volume Mount Order Critical**: Always verify base mount `./data/json-data:/home/galaxy_game/app/data` is present before any overlay mounts (maps/, tilesets/, geotiff/). Mount order determines path resolution - base mount must be first for GalaxyGame::Paths constants to work correctly. Check with `docker inspect [container]` if path resolution fails.
-
-### Local Compute Routing
 ```
-M5 on and reachable on network?
-  └─ Use it — fastest inference, GPU-accelerated via unified memory
-     Connect: http://[m5-ip]:11434 in Continue plugin
-
-M5 not available, Intel Mac available?
-  └─ Local Ollama — CPU only, 64GB RAM, handles up to ~32B models
-
-Home network, Windows box on?
-  └─ Use for overnight unattended grinding — 128GB RAM, largest models,
-     don't drain laptop batteries
-     Connect: http://[windows-ip]:11434 in Continue plugin
-
-Away from home network?
-  └─ Whichever Mac is with you, local Ollama
+You talk to the Planning Agent (any capable web agent — free tier)
+  └─ Planning Agent triages failures, diagnoses root causes
+  └─ Planning Agent creates task file in docs/agent/tasks/
+  └─ Planning Agent produces a Handoff Command
+       └─ You copy the Handoff Command
+       └─ You paste it to the Implementation Agent (Copilot or local)
+            └─ Implementation Agent reads README.md + task file
+            └─ Implementation Agent produces Synthesis Report, waits for approval
+            └─ You approve or redirect
+            └─ Implementation Agent applies fix, runs spec, commits
+            └─ Implementation Agent reports completion
+       └─ You share completion report back to Planning Agent
+  └─ Planning Agent updates session handoff document
+  └─ You save handoff to docs/agent/tasks/session-handoffs/
 ```
 
-### Best Ollama Models for Grinding
-- `qwen2.5-coder:32b` — best code quality, fits Intel Mac / Windows
-- `qwen2.5-coder:14b` — best speed/quality on M5
-- `deepseek-coder-v2` — strong alternative
-- All use identical RULES.md / TASK_PROTOCOL.md command forms
+The Planning Agent does the thinking. The Implementation Agent does the execution.
+You are the bridge between them — approving fixes, sharing results, directing priorities.
 
-### Premium Request Budget Guide
-```
-Free / zero cost:
-  - Planner agent (this) — planning, review, task creation
-  - GPT-4.1 — simple edits (verify grinding capability)
-  - Ollama local — unlimited, all execution tiers
+---
 
-Low cost:
-  - Gemini Flash — reliable execution when Ollama unavailable
-  - Copilot included quota — use for VS Code integrated work
+## Starting a Session
 
-Spend deliberately:
-  - Claude Sonnet — architecture decisions, complex debugging
-  - Reserve for tasks where cheaper models are spinning their wheels
-```
+### What to give the Planning Agent at session start:
+1. **Current baseline** — paste the tail of the latest RSpec log, or run:
+   ```bash
+   tail -5 $(ls -t ./data/logs/rspec_full_*.log | head -1)
+   ```
+2. **Session handoff from last session** — paste contents of the most recent
+   file in `docs/agent/tasks/session-handoffs/`
+3. **Your priority for today** — what you want to focus on
 
-### Assignment Decision Guide
-```
-Task requires docker exec / rspec / rails commands?
-  ├─ Ollama available? → use it (free)
-  ├─ Gemini Flash → reliable fallback
-  └─ NOT GPT-4.1 unless grinding verified with fixed docs
+The Planning Agent will produce a triage, priority stack, and first task file.
 
-Repetitive fix-test loop (grinding)?
-  ├─ Overnight / unattended → Windows box Ollama
-  ├─ Active session, M5 on network → M5 Ollama (fastest)
-  └─ Away from home → local Mac Ollama
+### What to check before starting:
+1. Read `docs/agent/CURRENT_STATUS.md` — live project state
+2. Check `docs/agent/tasks/critical/` — anything urgent?
+3. Check `docs/agent/tasks/active/` — anything left over from last session?
+4. Verify Docker containers are running:
+   ```bash
+   docker ps | grep web
+   ```
 
-Complex architecture / novel reasoning?
-  └─ Claude Sonnet (use sparingly)
+---
 
-Docs / review / planning only?
-  └─ Stay here (Planner)
+## Nightly RSpec Run
+
+Run this before bed to get a fresh baseline overnight:
+
+```bash
+# Start the run — returns immediately, runs in background
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec \
+  > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
-## Interaction Workflow
+Check results in the morning:
+```bash
+# See the summary
+tail -5 $(ls -t ./data/logs/rspec_full_*.log | head -1)
 
-### 1. Request Types
-Use these prefixes for clear requests:
-
-**REVIEW:** [topic] - Analyze and provide feedback
-- Example: "REVIEW: check the backlog for task overlaps"
-
-**PLAN:** [task/project] - Develop strategies or roadmaps
-- Example: "PLAN: next phase of RSpec restoration"
-
-**CREATE TASK:** [description] - Generate task MD file and command
-- Example: "CREATE TASK: fix terrain generation failure"
-
-**CODE REVIEW:** [file/code] - Evaluate code quality and suggestions
-- Example: "CODE REVIEW: new service implementation"
-
-### 1.5. Interactive vs Autonomous Tasks
-**Autonomous Tasks**: Run without user intervention (file edits, builds, tests)
-- Agent executes completely independently
-- User reviews results when complete
-- **Assign to**: Gemini Flash, Claude, or Ollama — not GPT-4.1 unless grinding verified
-
-**Interactive Tasks**: Require user supervision (Rails console, debugging, exploratory testing)
-- Agent starts interactive session and explains what they're doing
-- User observes, provides input, or stops if needed
-- Agent waits for user confirmation between major steps
-- Clear communication: "Starting X, please observe..."
-
-### 2. Task Creation Process
-When creating tasks for other agents:
-
-1. **Draft MD File**: Provide complete task documentation with phases, commands, success criteria
-2. **Generate Command**: Create standardized agent command with summary, tasks, priority, and starting phase
-3. **Specify Agent**: Clearly assign the appropriate agent based on task complexity and capability
-4. **Verify Agent Capability**: Ensure assigned agent can handle task type (e.g., avoid 0-cost agents for execution tasks like RSpec grinding)
-5. **Confirm Location**: Ensure tasks are placed in correct folders (`critical/`, `backlog/`, `active/`)
-6. **Update Overview**: Reference in `TASK_OVERVIEW.md` for tracking
-
-### 3. Command Format Standard
-Generated commands follow this structure:
+# See all failures
+grep "rspec \." $(ls -t ./data/logs/rspec_full_*.log | head -1)
 ```
-**[PRIORITY] ISSUE: [Brief summary]
 
-I've [created/uploaded] [task_file.md] with complete instructions.
+Paste the summary to the Planning Agent at the start of your next session.
 
-**IMPORTANT:** Start by reviewing docs/agent/README.md and follow all rules regarding git commits, documentation, RSpec testing.
+---
+
+## Handing Off to an Implementation Agent
+
+The Planning Agent produces a **Handoff Command** for you to copy and paste.
+You do not need to write this yourself — it is the Planning Agent's output.
+
+The command will follow this structure:
+
+```
+Read docs/agent/README.md first, then your task file at:
+docs/agent/tasks/active/[task_file_name].md
+
+[PRIORITY] ISSUE: [brief summary]
 
 The issue:
-- [Bullet point symptoms]
-- [Bullet point causes]
+- [symptom]
+- [root cause]
 
 Your tasks:
-1. [Phase 1 action]
-2. [Phase 2 action]
-3. [Phase 3 action]
-4. [Phase 4 action]
+1. Read the task file completely before touching anything
+2. Produce a Synthesis Report and wait for approval
+3. Apply the approved fix
+4. Run the spec in isolation — confirm 0 failures
+5. Commit from host with descriptive message
+6. Report back with test results
 
-Follow all phases in the task document.
-
-Priority: [LEVEL] - [impact statement]
-Time estimate: [hours]
-
-Start with [Phase X] - [reason].
-
-**Agent Assignment:** [Agent Name] ([reason for selection])
+Priority: [LEVEL]
+Estimated time: [estimate]
+Agent Assignment: [role] — [reason]
 ```
 
-## Common Scenarios
+### Where to paste it:
+- **Copilot in VS Code**: Open Copilot Chat, switch to Agent mode, paste command
+- **Local Ollama via Continue**: Open Continue panel, paste command
+- **Any other interface**: Paste as the opening message
 
-### Reviewing Task Backlog
-- Request: "REVIEW: backlog for overlaps with current work"
-- Output: Analysis of conflicts, priorities, and recommendations
+---
 
-### Creating Critical Tasks
-- Request: "CREATE TASK: investigate [issue]"
-- Output: MD file creation + agent command generation
+## VS Code Copilot Setup
 
-### Planning Next Steps
-- Request: "PLAN: post-RSpec fix workflow"
-- Output: Phased roadmap with task suggestions
+### Enable Agent Mode
+Agent mode gives Copilot terminal and file access — required for implementation work.
 
-### Code Review Requests
-- Request: "CODE REVIEW: [file] for [aspect]"
-- Output: Feedback on structure, best practices, improvements
+1. Press `Cmd+,` to open Settings
+2. Search `chat.agent.enabled`
+3. Check the box
+4. Restart VS Code
 
-## File Organization
-- **Task Files**: Created in `docs/agent/tasks/[folder]/`
-- **Commands**: Generated in responses for copying to other agents
-- **References**: Use `grok_notes.md` for technical details
-- **Updates**: Modify this file as workflow evolves
+### Switch Modes
+Use the dropdown in the Copilot Chat panel:
+- **Ask** — chat only, no file or terminal access
+- **Edit** — file access, no terminal
+- **Agent** — full access ← use this for implementation tasks
 
-## Best Practices
-- Be specific in requests to enable focused responses
-- Provide context (e.g., recent changes, related files)
-- Use the established prefixes for clarity
-- Reference this document to avoid repeating role reminders
-- Always specify the assigned agent in task handoffs for clear workflow execution
-- Use the Assignment Decision Guide above when routing — capability and tool access beat cost
-- Ollama on M5 is the default grinder when available — it's free and GPU-accelerated
-- Verify GPT-4.1 grinding capability with fixed instruction docs before assuming it cannot grind
+### If Agent Mode Stops Working
+Microsoft updates can silently reset `chat.agent.enabled`. Re-enable via
+`Cmd+,` → search `chat.agent.enabled` → check box → restart VS Code.
 
-### 🚫 Never Create Files Speculatively
-If asked whether a file exists, check and report. If it doesn't exist, say so and ask whether to create it. **Do not create it as part of answering the question.** Creating unrequested files wastes the user's time identifying and cleaning up phantom tasks, and can confuse future agents who find files that were never properly planned.
+### Scope
+Agent mode terminal access is for **local development only**.
+Never grant terminal access to production or staging environments.
 
-### ✅ Always Verify File Changes Were Actually Written
-When reporting that a file was updated, **show the changed section or share the updated file**. Narrating a change ("I've added X to Y") is not confirmation that the change was written to disk. Agents can describe edits they never executed, especially if file-write tools are unavailable in the current session. The user should not have to re-upload a file to discover the change was never made.
+---
 
-If file-write tools are unavailable, say so explicitly: "I cannot write to disk in this session — here is the content to add manually."
+## Docker Volume Mount Warning
 
-## Contact/Updates
-Update this document as the workflow refines. Last updated: March 8, 2026.
+Always verify the base mount is present before overlay mounts:
+```yaml
+# In docker-compose.dev.yml — base mount must be first
+- ./data/json-data:/home/galaxy_game/app/data
+# Overlay mounts follow after
+```
 
-## Grinder Protocol — For Reference Only
-
-The Grinder/Executor agent operates autonomously on assigned grinding tasks. This section is here so the Planner understands what it is assigning, **not** as permission for the Planner to do any of these things.
-
-### ⚠️ CRITICAL DATABASE SAFETY WARNING
-**ALL RSpec commands must unset DATABASE_URL to prevent catastrophic development database corruption.**  
-**Correct:** `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'`  
-**Incorrect:** `docker exec -it web bash -c 'RAILS_ENV=test bundle exec rspec ...'` (will wipe dev database!)  
-
-### RSpec Command Variants
-**For overnight runs** (start and go to bed - synchronous execution):
+Mount order determines path resolution. If `GalaxyGame::Paths` constants fail,
+check mount order with:
 ```bash
-docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > ./log/rspec_full_$(date +%s).log 2>&1'
-```
-- Runs in foreground so you can see it start
-- Logs to container `./log/` directory (maps to host `./data/logs/`)
-- No `-it` flag (non-interactive)
-- No `&` (synchronous execution)
-
-**For background execution** (unattended overnight):
-```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1 &'
-```
-- Runs in background with `&`
-- Uses full container path `/home/galaxy_game/log/`
-- Includes `-it` for interactive setup
-
-**For individual spec testing** (during development):
-```bash
-docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'
+docker inspect web | grep -A 20 "Mounts"
 ```
 
-**What the Executor does autonomously (Planner does none of this):**
-- Runs `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec ...'` repeatedly
-- Applies fixes based on failure output
-- Commits passing specs from host
-- Updates task documentation
-- Proceeds to next failing spec without user input
+---
 
-**What the Planner does to support grinding:**
-- Creates the task file with the correct spec targets and fix guidance
-- Specifies which Executor to assign using the Decision Guide above
-- Generates the handoff command
-- Reviews results when the Executor reports back
+## Session Handoffs
+
+At the end of every session, the Planning Agent produces a session handoff document.
+Save it to `docs/agent/tasks/session-handoffs/` with the naming convention:
+
+```
+session_handoff_YYYY-MM-DD.md
+```
+
+### What a good session handoff contains:
+- Current baseline (examples, failures, pending)
+- Branch name if not main
+- Remaining failures with root causes and diagnostic commands
+- Known pre-existing failures (not your responsibility this session)
+- Key architecture decisions made this session
+- Files modified this session
+- Next session priorities with target failure count
+
+### Starting fresh from a handoff:
+Paste the handoff file contents to the Planning Agent at session start.
+The Planning Agent will orient itself from the handoff without needing
+you to re-explain context.
+
+---
+
+## Request Prefixes for Planning Agent
+
+Use these prefixes when talking to the Planning Agent for clear, focused responses:
+
+| Prefix | Use For | Example |
+|---|---|---|
+| `REVIEW:` | Analyze and provide feedback | `REVIEW: backlog for overlaps` |
+| `PLAN:` | Develop strategy or roadmap | `PLAN: next phase after RSpec restoration` |
+| `CREATE TASK:` | Generate task file + handoff command | `CREATE TASK: fix shell printing spec` |
+| `CODE REVIEW:` | Evaluate code quality | `CODE REVIEW: new escalation service` |
+| `TRIAGE:` | Analyze failure log | `TRIAGE: [paste RSpec output]` |
+| `HANDOFF:` | Produce session handoff document | `HANDOFF: end of session` |
+
+---
+
+## Task File Lifecycle
+
+```
+Planning Agent creates task file
+  └─ Saved to tasks/backlog/ or tasks/critical/
+       └─ When assigned → moved to tasks/active/
+            └─ Implementation Agent works from active/
+            └─ When complete → moved to tasks/completed/
+                 └─ Completion report added to file
+```
+
+Update `CURRENT_STATUS.md` after each completion.
+
+---
+
+## When to Use Which Agent
+
+Full cost and capability guide: `docs/agent/AGENT_ROUTING.md`
+
+Quick guide:
+- **Diagnosis, architecture, task creation** → Planning Agent (free web agent)
+- **Simple targeted fix, fully specified** → lowest cost implementation agent
+- **Complex multi-file fix** → mid-tier implementation agent
+- **Stuck after 2 attempts** → escalate to higher-tier implementation agent
+- **Game design brainstorming** → creative web agent (free)
+- **Sprite/image generation** → image generation agent (free)
+- **Research/external references** → research web agent (free)
+
+**Budget rule**: Always start with the cheapest capable agent.
+Escalate when stuck, not before.
+
+---
+
+## Common Mistakes to Avoid
+
+**Skipping the session handoff** — context is lost, next session starts from scratch
+
+**Pasting task file contents instead of the file path** — implementation agents
+in VS Code can read the file directly, pasting contents wastes tokens
+
+**Approving a fix without reading the Synthesis Report** — the report exists
+for a reason, read the risk section before approving
+
+**Asking the implementation agent to run the full suite too early** — only
+after all targeted specs in the session are green
+
+**Creating documentation during implementation tasks** — always flag the gap,
+create docs in a separate task
+
+**Letting the implementation agent make a third fix attempt** — two attempts
+then escalate to Planning Agent for re-diagnosis
