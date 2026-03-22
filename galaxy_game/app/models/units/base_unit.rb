@@ -29,6 +29,8 @@ module Units
     after_create :initialize_unit
     after_create :create_inventory
 
+    include RigAttachable
+
     attr_accessor :internal_modules, :external_modules, :rigs
 
     delegate :storage_capacity, :storage_capacity_by_type, to: :storage_manager
@@ -135,9 +137,10 @@ module Units
       true
     end
 
-    def operate(resources)
-      inputs = calculate_inputs(resources)
-      outputs = calculate_outputs(inputs)
+    def operate(time_skipped)
+      return unless @unit_info.present?
+      inputs = calculate_inputs
+      outputs = calculate_outputs(inputs, time_skipped)
       handle_outputs(outputs)
     end
 
@@ -421,25 +424,22 @@ module Units
     private
 
     def load_unit_info
-      return if unit_type.blank?
-    
-      @lookup_service ||= ::Lookup::UnitLookupService.new
-      @unit_info = @lookup_service.find_unit(unit_type)
-    
-      return unless @unit_info.present?
-    
-      # Check if operational_data is already set
+      service = Lookup::UnitLookupService.new
+      @unit_info = service.find_unit(unit_type)
       if operational_data.blank?
-        # Only overwrite if operational_data is empty
         self.operational_data = @unit_info.deep_dup
-        save! if persisted?
       end
+      nil
     end  
 
     def initialize_unit
       return unless @unit_info.present?
+      # If operational_data is blank or missing expected storage keys, set from @unit_info
+      if operational_data.blank? || !operational_data['storage']
+        self.operational_data = @unit_info.deep_dup
+        save!
+      end
       ensure_inventory
-      save!
     end
 
     def capacity
@@ -458,7 +458,9 @@ module Units
       @unit_info.dig('ports', location.to_s) || 0
     end
 
-    def calculate_inputs(resources)
+    def calculate_inputs
+      return {} if input_resources.nil?
+      resources = fetch_available_resources
       inputs = {}
       input_resources.each do |input|
         resource_id = input['id']
@@ -468,16 +470,32 @@ module Units
       inputs
     end
 
-    def calculate_outputs(inputs)
+    # Helper to get available resources from this unit's inventory
+    def fetch_available_resources
+      result = {}
+      if inventory && inventory.items.any?
+        inventory.items.each do |item|
+          result[item.name] = item.amount
+        end
+      end
+      result
+    end
+
+    def calculate_outputs(inputs, time_skipped = 1)
+      return {} if output_resources.nil?
       total_input_mass = inputs.values.sum
-      output_specs = output_resources.map { |output| [output['id'], output_mass(output, total_input_mass)] }.to_h
+      # Optionally scale outputs by time_skipped if needed
+      output_specs = output_resources.map do |output|
+        [output['id'], output_mass(output, total_input_mass, time_skipped)]
+      end.to_h
       output_specs
     end
 
-    def output_mass(output, total_mass)
+    def output_mass(output, total_mass, time_skipped = 1)
       range = output['amount_range']
       base_amount = rand(range['min']..range['max'])
-      base_amount + (total_mass * 0.05).floor
+      # Optionally scale by time_skipped if output is time-dependent
+      (base_amount + (total_mass * 0.05).floor) * time_skipped
     end
 
     def handle_outputs(outputs)
