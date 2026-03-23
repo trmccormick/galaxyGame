@@ -36,3 +36,7 @@
 - Stabilization satellite logic is present for Alpha Centauri bridge.
 
 ## See also: StarSim/TerraSim for network evolution and dynamic population.
+
+## Live Query Pathfinding
+
+The WormholeNavigator service provides dynamic, live-query pathfinding across the current wormhole network. It adapts to all Counterbalance and Stabilization states, always reflecting the latest network topology, link status, and mass constraints. No path is cached; every route proposal is recalculated in real time, ensuring accurate navigation as the network evolves.
