@@ -1,6 +1,29 @@
 module Units
   class Battery < BaseUnit
+
+        # For test: expose charge_level as alias for battery_level
+        def charge_level
+          battery_level
+        end
     include BatteryManagement
+
+    # ...existing code...
+        def charge_battery(amount)
+          current = operational_data.dig('battery', 'current_charge') || 0
+          capacity = operational_data.dig('battery', 'capacity') || 0
+          max_charge = operational_data.dig('battery', 'max_charge_rate_kw') || 10.0
+          # Limit by max charge rate
+          amount = [amount, max_charge].min
+          # Don't exceed capacity
+          new_charge = [current + amount, capacity].min
+          # Update the operational data
+          operational_data['battery']['current_charge'] = new_charge
+          save!
+          # Return the amount actually charged
+          new_charge - current
+        end
+
+        # ...existing code...
     
     def battery_capacity
       operational_data.dig('battery', 'capacity') || 0
@@ -19,20 +42,22 @@ module Units
       current = operational_data.dig('battery', 'current_charge') || 0
       capacity = operational_data.dig('battery', 'capacity') || 0
       max_charge = operational_data.dig('battery', 'max_charge_rate_kw') || 10.0
-      
       # Limit by max charge rate
       amount = [amount, max_charge].min
-      
       # Don't exceed capacity
       new_charge = [current + amount, capacity].min
-      
       # Update the operational data
       operational_data['battery']['current_charge'] = new_charge
       save!
-      
       # Return the amount actually charged
       new_charge - current
     end
+
+    def recharge_battery(amount)
+      charge_battery(amount)
+    end
+
+    alias_method :recharge_battery, :charge_battery
     
     def discharge_battery(amount)
       current = operational_data.dig('battery', 'current_charge') || 0

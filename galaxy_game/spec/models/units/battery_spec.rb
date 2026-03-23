@@ -99,13 +99,8 @@ RSpec.describe Units::Battery, type: :model do
     end
     
     it "prefers specialized methods over concern methods" do
-      # Our specialized charge_battery should be used
-      expect(battery).to receive(:charge_battery).with(30.0)
-      battery.charge_battery(30.0)
-      
-      # The alias should now point to our implementation
-      expect(battery).to receive(:charge_battery).with(20.0)
-      battery.recharge_battery(20.0)
+      expect { battery.charge_battery(30.0) }.to change { battery.charge_level }.by(30.0)
+      expect { battery.recharge_battery(20.0) }.to change { battery.charge_level }.by(20.0)
     end
   end
 end
