@@ -28,4 +28,18 @@ The 30% of asteroid mass that can be converted into functional station space thr
 ### Geosphere Simulation
 Planetary geological simulation system that models tectonic activity, material distribution, and geological processes. Includes specialized ice tectonics simulation for cryogenic worlds where traditional rock plate tectonics are replaced by slower-moving ice plate dynamics.
 
+## Four-Layer Hybrid Vision
+
+### Macro Layer (Planetary)
+Features Short-Term Tactical Projections (100-year window) for immediate atmospheric/resource shifts, while the underlying Strategic Evolution (Deep-Time) simulation tracks progress over 500–1,000+ years. The 100-year window is not a completion window, but a tactical forecast for player planning; true terraforming is a millennial process.
+
+### Meso Layer (Surface View)
+Tactical expansion layer (Civ-style). Focuses on heavy-lift craft landing, settlement placement, and resource harvesting (e.g., Nitrogen/Lava Tube access).
+
+### Micro Layer (TerrainForge)
+Granular industrial layer (SimCity-style). Manages ConstructionEvents, I-beam/panel configurations, and internal "worldhouse" logistics.
+
+### Economic Layer (Logistics)
+Player-driven market (EVE-style). Governed by 'Market vs. Build' logic and fixed tax overheads: 0.5% SCC Surcharge, 0.3% Broker Fee, and 3.37% Sales Tax.
+
 ## Planetary Systems
