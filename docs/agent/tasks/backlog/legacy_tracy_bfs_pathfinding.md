@@ -6,11 +6,15 @@ Galaxy Game's wormhole network is **dynamic**: artificial and natural wormholes 
 
 Tracy McCormick’s 1995 Turbo Pascal `Paths.pas` implements Breadth-First Search (BFS) for shortest pathfinding in a graph. This task adapts that logic for a dynamic, system-level wormhole network in Rails, as outlined in Perplexity's mapping and the current game architecture.
 
----
 
 ## Objective
 
-Implement a BFS-based shortest path finder for star systems, using the **current, live set of wormhole connections** (not a static map). The new service will enable efficient, up-to-date route proposals between any two systems, mirroring the original Pascal logic but in Ruby/Rails.
+## Phase 2: Integration & Validation
+
+- **ActiveRecord Filter:** Implement neighbors lookup to respect both stability and mass_limit from the live DB/JSON. Only traverse edges (wormholes/portals) that are currently stable and within the ship's mass limit.
+- **RSpec Coverage:** Create `spec/services/navigation/wormhole_navigator_spec.rb` to test dynamic path recalculation, including stability and mass-limited edges.
+- **Result Wrapper:** Ensure the service returns a `RouteProposal` object containing EM costs and jump counts for the path.
+- **Logging:** Implement a Trace log that mirrors the 1995 Print_Output for developer debugging, showing the pathfinding steps and decisions.
 
 ---
 
