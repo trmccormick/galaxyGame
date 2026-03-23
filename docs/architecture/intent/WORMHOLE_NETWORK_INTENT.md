@@ -1,6 +1,15 @@
 # Wormhole Network Intent
 
 ## Overview
+## Sol-Side Wormhole Anchor: Jupiter-Sun L3
+
+The Sol-side natural wormhole is anchored at the Jupiter-Sun L3 point, a gravitational pocket located 180° opposite Jupiter's current position. This location is chosen for its remote counterbalance properties, leveraging Jupiter's mass to stabilize the wormhole throat.
+
+### Counterbalance Mechanism
+- **Jupiter Counterbalance:** The stability of the Sol-side wormhole is maintained by the gravitational influence of Jupiter. However, the 180-degree separation creates a "Long-Lever" instability—while the counterbalance is strong, it is also sensitive to resonance effects and orbital drift.
+
+### Snap Trigger
+- **Snap Event:** The "Snap" occurs when the total transit mass through the wormhole causes the throat resonance to decouple from the Jupiter-Sun gravitational lock. This results in the collapse of the L3 pocket and a sudden shift of the wormhole exit to a new location.
 
 The wormhole network represents Galaxy Game's primary mechanism for interstellar expansion, enabling the discovery and colonization of new star systems. Wormholes are stable, traversable tunnels through spacetime that connect distant locations, allowing near-instantaneous travel between star systems. The network grows organically through exploration, colonization, and economic incentives, creating a web of connected systems that form the backbone of human expansion.
 
