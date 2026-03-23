@@ -25,9 +25,15 @@
 ---
 
 ## Agent Assignment
+
 **Assigned To**: [GPT-4.1 0x | Grok 0.25x | Gemini Flash 0.33x | Claude Sonnet 1x | Local Ollama]  
 **Why This Agent**: [one line — e.g. "straightforward spec fix, fully self-contained" or "requires architectural reasoning"]  
 **Supervision Level**: [watched carefully | standard | autonomous OK]  
+
+**Supervision Legend**:
+- 🔴 Watched carefully = 0x/0.25x agents
+- 🟡 Standard = 0.33x agents  
+- 🟢 Autonomous OK = 1x agents
 
 > ⚠️ 0x and 0.25x agents: read every section carefully before starting.
 > Do not infer file paths or method names — they are provided explicitly below.
@@ -87,8 +93,12 @@ message verbatim. For features: describe the missing behavior precisely.]
 
 ## Implementation Steps
 
+> 1x agents: use as a guide, apply judgment.
+
 > 0x/0.25x agents: follow these steps exactly in order.
 > 1x agents: use as a guide, apply judgment.
+
+**Debug prints OK for complex callbacks** — add temporary `puts` statements to trace data flow, remove after verification. Flag in completion report.
 
 ### Step 1 — [action]
 [Exact description of what to do]
@@ -145,7 +155,18 @@ Do not apply the fix until the user explicitly approves.
 
 ## Testing Sequence
 
+
 > Run in this order. Do not skip steps.
+
+## Docker Escaping Rules
+ALWAYS escape `!` characters in zsh/bash:
+- `save!` → `save\\!` in grep patterns
+- Use single quotes around grep patterns: `'load_unit_info|save\\!'`
+
+Example:
+```bash
+grep -n 'load_unit_info|save\\!|operational_data' app/models/file.rb
+```
 
 1. **Isolation run** — spec file only:
 ```bash

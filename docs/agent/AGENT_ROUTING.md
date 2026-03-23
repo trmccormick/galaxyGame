@@ -33,13 +33,15 @@
 
 ### Local Agents — Free, Setup In Progress
 
-| Agent | Status | Notes |
+### Local Agents — **STANDARDIZED 2026-03-22**
+| Agent | Primary Role | Notes |
 |---|---|---|
-| **Ollama** (local) | Available, not standardized | Tested. Use for free grinding once workflow is validated |
-| **Qwen 32B** | Available on Windows/Intel | Best code quality for local |
-| **Qwen 14B** | Available on M5 | Best speed/quality balance |
+| **Ollama** (Llama3.1:70B) | **PRIMARY GRINDER** | Overnight autonomous runs, validated workflow |
+| **Qwen 32B** | Windows backup |  |
+| **Qwen 14B** | M5 speed |  |
 
-> Ollama onboarding is a pending backlog task. Until standardized, treat as experimental.
+> Ollama is now the default for free, large-scale grinding. Qwen models are available as platform-specific backups.
+| **Perplexity** | **Research + Protocol Review** | RSpec patterns, Ruby metaprogramming, agent workflow docs |
 
 ---
 
