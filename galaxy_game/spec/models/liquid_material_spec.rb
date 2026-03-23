@@ -23,7 +23,7 @@ RSpec.describe CelestialBodies::Materials::Liquid, type: :model do
     it 'is not valid without an amount' do
       liquid_material.amount = nil
       expect(liquid_material).not_to be_valid
-      expect(liquid_material.errors.messages[:amount]).to include("can't be blank")
+      expect(liquid_material.errors.messages[:amount]).to include("is not a number")
     end
 
     it 'is not valid with a negative amount' do

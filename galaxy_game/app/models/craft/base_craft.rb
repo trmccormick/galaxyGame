@@ -6,6 +6,7 @@ module Craft
     # ============================================
     include HasModules
     include HasRigs
+    include RigAttachable
     include HasUnits
     include Housing
     include GameConstants
@@ -19,6 +20,7 @@ module Craft
     # ============================================
     # ASSOCIATIONS
     # ============================================
+
     belongs_to :orbiting_celestial_body,
                class_name: 'CelestialBodies::CelestialBody',
                foreign_key: 'orbiting_celestial_body_id',

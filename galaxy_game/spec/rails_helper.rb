@@ -47,27 +47,12 @@ RSpec.configure do |config|
   end
 end
 
-# Database Cleaner Configuration
-DatabaseCleaner.allow_remote_database_url = true if Rails.env.test?
-
 RSpec.configure do |config|
-  config.use_transactional_fixtures = false
-
   config.before(:suite) do
     # Ensure database connection is established before cleaning
     ActiveRecord::Base.connection_pool.with_connection do |conn|
       conn.verify!
     end
-
-    # Set transaction strategy ONCE for the entire suite.
-    # Previously this was set inside before(:each) which caused test pollution —
-    # strategy reassignment per-test allowed bleed between specs with different
-    # cleaner needs. (Fixed 2026-03-14)
-    DatabaseCleaner.strategy = :transaction
-
-    # Clean test DB completely before suite starts
-    # Using :deletion instead of :truncation to avoid PostgreSQL deadlocks (2026-01-18)
-    DatabaseCleaner.clean_with(:deletion)
 
     # Create system currencies needed for tests
     Financial::Currency.find_or_create_by!(
@@ -88,10 +73,5 @@ RSpec.configure do |config|
   config.before(:each) do
     Lookup::BaseLookupService.descendants.each(&:reset_cache!)
     Lookup::BaseLookupService.reset_cache!
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
   end
 end

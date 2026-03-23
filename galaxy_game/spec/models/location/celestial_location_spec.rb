@@ -395,7 +395,7 @@ RSpec.describe Location::CelestialLocation, type: :model do
   
   # NEW: Description methods
   describe '#description' do
-    let(:body) { double('Body', name: 'Mars') }
+    let(:body) { create(:terrestrial_planet, name: 'Mars') }
     
     it 'describes surface locations' do
       location = Location::CelestialLocation.new(

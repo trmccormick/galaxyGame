@@ -23,7 +23,7 @@ RSpec.describe SolarSystem, type: :model do
   describe 'associations' do
     it 'has one spatial_location association' do
       expect(SolarSystem.reflect_on_association(:spatial_location).macro).to eq(:has_one)
-      expect(SolarSystem.reflect_on_association(:spatial_location).class_name).to eq('SpatialLocation')
+      expect(SolarSystem.reflect_on_association(:spatial_location).class_name).to eq('Location::SpatialLocation')
       expect(SolarSystem.reflect_on_association(:spatial_location).options[:as]).to eq(:spatial_context)
       expect(SolarSystem.reflect_on_association(:spatial_location).options[:dependent]).to eq(:destroy)
     end
@@ -54,10 +54,9 @@ RSpec.describe SolarSystem, type: :model do
       
       # Now verify it set a name properly - change the regex to match the actual pattern
       expect(solar_system.name).to be_present
-      # Either remove the specific pattern expectation:
-      # expect(solar_system.name).to be_present
-      # Or update it to match the actual pattern (like "SS-13"):
-      expect(solar_system.name).to match(/^[A-Z]{2}-\d{2}$/)
+
+      # Callback sets a 6-letter name
+      expect(solar_system.read_attribute(:name)).to match(/^[A-Z]{6}$/)
     end
 
     it 'sets an initial star after create if no stars exist' do
@@ -260,6 +259,7 @@ RSpec.describe SolarSystem, type: :model do
 
     it 'calculates total mass of all planets and dwarf planets' do
       # Clear existing planets first
+      CelestialBodies::CelestialBody.where(solar_system: solar_system).each { |cb| cb.atmosphere&.destroy }
       solar_system.terrestrial_planets.destroy_all
       solar_system.gas_giants.destroy_all
       solar_system.ice_giants.destroy_all

@@ -455,7 +455,7 @@ end
 
   def create_regolith_with_iron(celestial_body)
     geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
-    create(:material, :iron, celestial_body: celestial_body, materializable: geosphere)
+    create(:material, celestial_body: celestial_body, materializable: geosphere)
   end
 
   def enqueued_jobs_count

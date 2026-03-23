@@ -7,16 +7,17 @@ module Location
                class_name: 'CelestialBodies::CelestialBody'
     belongs_to :locationable, polymorphic: true, optional: true
 
+    validates :name, presence: true
     validates :celestial_body, presence: true
     validates :coordinates, presence: true
-  validates :coordinates, uniqueness: { scope: :celestial_body, case_sensitive: false }
-  validates :coordinates, format: {
-    with: /\A\d+\.\d+°[NS]\s+\d+\.\d+°[EW]\z/,
-    message: "must be in format '00.00°N/S 00.00°E/W'"
-  }
+    validates :coordinates, uniqueness: { scope: :celestial_body, case_sensitive: false }
+    validates :coordinates, format: {
+      with: /\A\d+\.\d+°[NS]\s+\d+\.\d+°[EW]\z/,
+      message: "must be in format '00.00°N/S 00.00°E/W'"
+    }
   
-  # NEW: Altitude validation
-  validates :altitude, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+    # NEW: Altitude validation
+    validates :altitude, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     
     # ============================================================================
     # SCOPES

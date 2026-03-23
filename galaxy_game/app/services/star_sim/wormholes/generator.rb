@@ -38,7 +38,7 @@ module StarSim::Wormholes
     def self.create_endpoint(wormhole:, endpoint_type:, solar_system:)
       coordinates = calculate_safe_coordinates(solar_system)
       
-      location = SpatialLocation.create!(
+      location = Location::SpatialLocation.create!(
         name: "Wormhole #{endpoint_type.capitalize} #{wormhole.id}",
         x_coordinate: coordinates[:x],
         y_coordinate: coordinates[:y],

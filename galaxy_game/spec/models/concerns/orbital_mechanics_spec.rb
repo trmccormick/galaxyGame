@@ -16,7 +16,7 @@ RSpec.describe OrbitalMechanics do
     other_object.mass = 1.0e24 # Earth-like mass
     
     test_object.spatial_location = double(
-      'SpatialLocation',
+      'Location::SpatialLocation',
       x_coordinate: 0.0,
       y_coordinate: 0.0,
       z_coordinate: 0.0
@@ -24,7 +24,7 @@ RSpec.describe OrbitalMechanics do
     allow(test_object.spatial_location).to receive(:distance_to).and_return(1.496e11) # 1 AU in meters
     
     other_object.spatial_location = double(
-      'SpatialLocation',
+      'Location::SpatialLocation',
       x_coordinate: 1.0,
       y_coordinate: 1.0,
       z_coordinate: 1.0

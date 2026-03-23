@@ -303,7 +303,7 @@ class SolarSystem < ApplicationRecord
 
   # This method needs to explicitly set the name attribute
   def generate_unique_name
-    return if name.present?
+    return if read_attribute(:name).present?
     
     # Generate a random alphanumeric string
     random_name = Array('A'..'Z').sample(6).join
@@ -317,7 +317,7 @@ class SolarSystem < ApplicationRecord
 
   def ensure_initial_star
     # Only create Sol if no star named 'Sol' exists globally or in this system
-    if stars.where(name: 'Sol').empty? && CelestialBodies::Star.where(name: 'Sol').empty?
+    if stars.where(name: 'Sol').empty?
       stars.create!(
         name: 'Sol',
         type_of_star: 'G',

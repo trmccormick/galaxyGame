@@ -8,6 +8,7 @@ module Structures
     # Include the HasModules concern for module effects
     include HasModules
     include HasRigs
+    include RigAttachable
     include HasUnits
     include Housing
     include GameConstants

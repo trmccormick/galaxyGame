@@ -90,7 +90,7 @@ end
 # Imports into Rails database (if Rails is defined)
 def import_into_spatial_location(data)
   data.each do |bd|
-    SpatialLocation.find_or_create_by(
+    Location::SpatialLocation.find_or_create_by(
       name: bd[:name],
       x_coordinate: bd[:x_coordinate],
       y_coordinate: bd[:y_coordinate],

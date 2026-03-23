@@ -59,7 +59,7 @@ class ProcessingService
       return celestial_location if celestial_location.present?
       
       # Then try spatial location
-      spatial_location = SpatialLocation.find_by(name: @owner.active_location)
+      spatial_location = Location::SpatialLocation.find_by(name: @owner.active_location)
       return spatial_location if spatial_location.present?
     end
     

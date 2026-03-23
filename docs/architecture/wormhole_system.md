@@ -39,6 +39,16 @@ This document establishes the official operational standards for the Galaxy Game
 
 The SystemArchitect must reference the Environment Classification to determine deployment priority. In Cold Start systems like Alpha Centauri, the AI must prioritize EM Storage Vaults and Sabatier Units (leveraging the 10% $CO_2$ on Proxima b) for local fuel production to sustain the link.
 
+## Gravity-Based Maintenance Offsets
+
+Wormhole maintenance costs are offset by the gravitational anchor mass of the body at each endpoint:
+
+- **Gas Giant (Jupiter/Saturn-Class):** 0.5x to 0.7x multiplier on maintenance_tax_em (lowest cost).
+- **AWS (Dual-Station):** 0.85x multiplier (artificial counterbalance).
+- **Unanchored/Inner-System:** 1.0x (no reduction; full maintenance cost applies).
+
+The AI Manager and contract logic must apply the appropriate multiplier based on the anchor body type and mass when calculating ongoing maintenance costs.
+
 ## Versioning
 
 - **Version:** 1.2

@@ -36,19 +36,37 @@ class UnitAssemblyJob < ApplicationRecord
   end
 
   def materials_gathered?
-    material_requests.empty? || material_requests.all? { |req| req.status.in?(['fulfilled_by_player', 'fulfilled_by_npc']) }
+    material_requests.all? { |req| req.status == 'fulfilled' }
   end
 
   def start_assembly
     return false unless status == 'materials_pending'
     return false unless materials_gathered?
 
-    # Consume materials from settlement inventory
-    consume_materials
+    # Deduct materials from inventory
+    material_requests.each do |request|
+      remaining_needed = request.quantity_requested
+      items_to_consume = base_settlement.inventory.items.where(
+        name: request.material_name,
+        owner: base_settlement.owner
+      ).order(:created_at)
+
+      items_to_consume.each do |item|
+        break if remaining_needed <= 0
+
+        if item.amount <= remaining_needed
+          remaining_needed -= item.amount
+          item.destroy!
+        else
+          item.update!(amount: item.amount - remaining_needed)
+          remaining_needed = 0
+        end
+      end
+    end
 
     # Calculate completion time - use specifications for blueprint data
     manufacturing_time = specifications.dig('production_data', 'manufacturing_time_hours') || 1
-    
+
     update!(
       status: 'in_progress',
       start_date: Time.current,
