@@ -6,7 +6,35 @@
 > Never add model-specific names to this file.
 > Model assignments belong in `AGENT_ROUTING.md` only.
 
----
+
+# Documentation Process Overview
+
+Documentation is a first-class part of the Galaxy Game workflow, governed by the Documentation Strategist role (see DOCUMENTATION_STRATEGIST.md). All documentation tasks—creation, review, categorization, and maintenance—follow a structured process to ensure clarity, hierarchy, and project alignment.
+
+**When to Create Documentation Tasks:**
+- When a feature, fix, or system change is not yet documented
+- When a documentation gap, duplication, or orphaned file is found
+- When project vision, terminology, or architecture changes
+
+**How Documentation Tasks Are Handled:**
+- Documentation tasks are created and tracked like code tasks (see Task File Lifecycle)
+- The Documentation Strategist reviews, categorizes, and routes documentation tasks by simulation layer (Macro, Meso, Micro, Economic)
+- Documentation changes are reviewed for hierarchy, clarity, and duplication before approval
+- All documentation changes must be committed and, if superseded, archived per the Agent Directory Standards
+
+**Where to Store Documentation:**
+- Place new or updated docs in the correct simulation layer directory (see DOCUMENTATION_STRATEGIST.md for mapping)
+- Use clear, descriptive filenames; archive old or superseded docs in docs/agent/archive/
+
+**Review and Approval:**
+- Documentation changes are reviewed by the Documentation Strategist or assigned agent
+- Major changes require a Synthesis Report and approval, following the same handoff/approval process as code
+
+**Key References:**
+- docs/agent/DOCUMENTATION_STRATEGIST.md — Role, protocols, and directory standards
+- docs/agent/AGENT_ROUTING.md — Agent assignment and routing logic
+
+Always treat documentation as a core deliverable. Gaps or issues should be flagged and tracked as tasks, not handled ad hoc during implementation.
 
 ## How a Session Works
 
