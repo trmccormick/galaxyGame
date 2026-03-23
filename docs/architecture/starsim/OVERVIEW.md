@@ -23,3 +23,8 @@ Logic for spawning transient objects (Asteroids, KBOs, Comets, Interstellar Visi
 ---
 
 *This document is the master reference for StarSim's architecture, weathering logic, fidelity tiers, and dynamic population mechanisms.*
+
+## Known Issues & Mitigation
+
+- **Civ4 Shoreline Flooding:** Current NASA/Civ4 fusion logic can result in unrealistic shoreline flooding and water encroachment on land tiles. This is a known artifact of the Civ4 tile mapping and procedural noise. 
+- **Mitigation:** Implementation of a Regression Filter (see TerraSim) is required to correct shorelines and ensure realistic land/water boundaries. All future terrain generation must route through this filter.

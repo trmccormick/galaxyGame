@@ -20,7 +20,7 @@ Review existing tasks related to biomes, TerraSim, and DigitalTwin to ensure pro
 - Remove incorrect migration: `20260308031950_add_celestial_body_to_planet_biomes.rb`
 - Document correct architecture: PlanetBiome → belongs_to :biosphere
 
-**Dependencies:** None - can be implemented immediately
+**Dependencies:** BLOCKER: Requires TerraSim Regression Engine (Phase 3)
 
 ### 2. Phase 4 Prerequisite: PlanetBiome Bridge
 **File:** `planetbiome_bridge_terrasim_prerequisites.md`
@@ -32,12 +32,13 @@ Review existing tasks related to biomes, TerraSim, and DigitalTwin to ensure pro
 - Bridge in AutomaticTerrainGenerator to create PlanetBiome records
 - Fix planet_biome_spec.rb with correct associations
 
-**Dependencies:** Phase 4 TerraSim implementation
+**Dependencies:** BLOCKER: Requires TerraSim Regression Engine (Phase 3)
 
 ### 3. DigitalTwin Schema Implementation
 **File:** `phase_4_digital_twin_schema.md`
 **Status:** Backlog
 **Priority:** Medium
+**Dependencies:** BLOCKER: Requires TerraSim Regression Engine (Phase 3)
 
 **Key Components:**
 - DigitalTwin, SimulationRun, SimulationResult models

@@ -22,3 +22,8 @@ TerraSim is responsible for simulating planetary surface and climate evolution. 
 ---
 
 *This document summarizes the current structure and intent of TerraSim, highlighting the need for a direct regression/weathering engine for world state transitions.*
+
+## Known Issues & Mitigation
+
+- **Civ4 Shoreline Flooding:** The current NASA/Civ4 fusion process can cause excessive shoreline flooding and unrealistic water/land boundaries. This is a known issue with Civ4 tile mapping and procedural noise.
+- **Mitigation:** A dedicated Regression Filter is required to post-process all generated terrain, correcting shorelines and enforcing realistic transitions. This filter is a critical dependency for all Biome and DigitalTwin work.

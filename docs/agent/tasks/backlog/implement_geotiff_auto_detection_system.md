@@ -38,6 +38,10 @@ Currently, adding new GeoTIFF files requires manual intervention to regenerate t
 - Clear logging of data source detection and usage
 
 ## Files to Modify
+
+## NASA/Civ4 Fusion
+
+All ingested NASA GeoTIFF data must directly feed the Multi-Octave Erosion engine. This ensures that real-world elevation data is fused with Civ4/FreeCiv tile logic, fixing procedural noise and enabling realistic terrain generation. The Multi-Octave Erosion engine is a required downstream consumer of all new or updated NASA data. No procedural terrain should be generated without first attempting NASA/Civ4 fusion.
 - `galaxy_game/app/services/star_sim/automatic_terrain_generator.rb`
 - `galaxy_game/app/controllers/admin/celestial_bodies_controller.rb` (for manual triggers)
 
