@@ -1,0 +1,26 @@
+{
+  "name": "galaxy_regional_atlas",
+  "tile_size": 32,
+  "format": "png",
+  "file": "galaxy_surface.png",
+  "metadata": {
+    "view_scale": "100m_per_pixel",
+    "lighting": "top_left_45_degree",
+    "total_dimensions": { "width": 288, "height": 32 }
+  },
+  "sheets": {
+    "regional_terrain": {
+      "tiles": {
+        "ocean":      { "x": 0,   "y": 0, "description": "Deep blue, subtle wave noise" },
+        "plains":     { "x": 32,  "y": 0, "description": "Golden yellow, dry grass texture" },
+        "desert":     { "x": 64,  "y": 0, "description": "Sandy beige, dune ripple pattern" },
+        "forest":     { "x": 96,  "y": 0, "description": "Dense dark green, tree-top clusters" },
+        "mountains":  { "x": 128, "y": 0, "description": "Rugged gray, snow-capped peaks" },
+        "tundra":     { "x": 160, "y": 0, "description": "Frozen white-blue, ice crack noise" },
+        "grasslands": { "x": 192, "y": 0, "description": "Lush medium green, mossy texture" },
+        "swamp":      { "x": 224, "y": 0, "description": "Murky green-brown, reed silhouettes" },
+        "jungle":     { "x": 256, "y": 0, "description": "Vibrant bright green, thick canopy" }
+      }
+    }
+  }
+}

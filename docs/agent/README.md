@@ -172,6 +172,12 @@ Flag the gap in your completion report. Create docs in a separate task.
 **6. Read `GUARDRAILS.md` before making architectural changes**  
 It defines what is and isn't permitted. Use the current version — ignore `.old` files.
 
+**7. RSpec Output Policy — Never Stream Full Output**
+- Single spec file: `rspec spec/path/to/file_spec.rb` OK to stream
+- Multiple files or full suite: ALWAYS redirect → `rspec spec/... > log/rspec_last_run.log 2>&1`
+- Report back ONLY: final summary line + targeted failure snippets from the log
+- NEVER paste full RSpec output to chat/IDE — crashes VSCode buffer (happens repeatedly)
+
 ---
 
 ## Key Architectural Decisions
