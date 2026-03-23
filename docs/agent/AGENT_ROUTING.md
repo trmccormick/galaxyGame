@@ -5,7 +5,7 @@
 ---
 
 ## Agent Roster & Routing
-
+| **Documentation Strategist** | Documentation Integrity | Doc hierarchy, deduplication, mapping, session handoff management |
 ### Web Agents — Free, No Request Limits
 
 | Agent | Primary Role | Use For |
@@ -42,6 +42,7 @@
 
 > Ollama is now the default for free, large-scale grinding. Qwen models are available as platform-specific backups.
 | **Perplexity** | **Research + Protocol Review** | RSpec patterns, Ruby metaprogramming, agent workflow docs |
+| **Documentation Strategist** | Documentation Integrity | Doc hierarchy, deduplication, mapping, session handoff management |
 
 ---
 
@@ -50,8 +51,12 @@
 ```
 What kind of work is this?
 
+
 PLANNING / ARCHITECTURE / TASK CREATION?
   └─ Claude web (free, no limit) — stays here, produces task file
+
+DOCUMENTATION / DOC REFACTOR / INDEXING?
+  └─ Documentation Strategist (docs/agent/DOCUMENTATION_STRATEGIST.md) — manages doc hierarchy, deduplication, mapping, and session handoff archiving
 
 RESEARCH / EXTERNAL REFERENCE?
   └─ Perplexity web (free)
