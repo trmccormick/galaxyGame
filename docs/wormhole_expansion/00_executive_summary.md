@@ -1,4 +1,6 @@
 # Wormhole Expansion Plan - Executive Summary
+#
+# Deprecated: Technical rules for procedural generation, anchor selection, and network topology have migrated to docs/architecture/STARSIM_GENERATION_RULES.md. This document remains as narrative and lore reference only.
 
 ## Core Philosophy
 
