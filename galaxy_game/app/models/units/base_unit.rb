@@ -427,7 +427,8 @@ module Units
       service = Lookup::UnitLookupService.new
       @unit_info = service.find_unit(unit_type)
       if operational_data.blank?
-        self.operational_data = @unit_info.deep_dup
+        self.operational_data = (@unit_info || {}).deep_merge(self.operational_data || {})
+        save! if changed?
       end
       nil
     end  
@@ -436,8 +437,8 @@ module Units
       return unless @unit_info.present?
       # If operational_data is blank or missing expected storage keys, set from @unit_info
       if operational_data.blank? || !operational_data['storage']
-        self.operational_data = @unit_info.deep_dup
-        save!
+        self.operational_data = (@unit_info || {}).deep_merge(self.operational_data || {})
+        save! if changed?
       end
       ensure_inventory
     end

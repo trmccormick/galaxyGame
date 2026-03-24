@@ -53,23 +53,28 @@ module AIManager
     def self.expand_with_network_awareness(current_system, expansion_targets, available_resources = {})
       Rails.logger.info "[ExpansionService] Starting network-aware expansion from #{current_system[:identifier]} to #{expansion_targets.length} targets"
 
-      # Phase 1: Coordinate wormhole routes for all targets
-      wormhole_coordinator = AIManager::WormholeCoordinator.new(@shared_context)
-      route_coordination = wormhole_coordinator.calculate_optimal_routes(current_system, expansion_targets, available_resources)
+      # Phase 1: Prioritize Sol-to-Belt and infrastructure-free targets
+      prioritized_targets = expansion_targets.sort_by do |target|
+        [sol_to_belt_priority(target), infrastructure_free_deployment_possible?(target) ? 0 : 1, -(target[:anchor_quality_score] || 0)]
+      end
 
-      # Phase 2: Optimize network development priorities
+      # Phase 2: Coordinate wormhole routes for prioritized targets
+      wormhole_coordinator = AIManager::WormholeCoordinator.new(@shared_context)
+      route_coordination = wormhole_coordinator.calculate_optimal_routes(current_system, prioritized_targets, available_resources)
+
+      # Phase 3: Optimize network development priorities
       network_optimizer = AIManager::NetworkOptimizer.new(@shared_context)
       network_optimization = network_optimizer.identify_network_priorities(
-        { nodes: {}, edges: [] }, # Current network - would be populated from actual data
-        expansion_targets,
+        { nodes: {}, edges: [] },
+        prioritized_targets,
         available_resources
       )
 
-      # Phase 3: Coordinate parallel settlement development
-      settlement_plans = expansion_targets.map { |target| generate_settlement_plan_for_target(target) }
+      # Phase 4: Coordinate parallel settlement development
+      settlement_plans = prioritized_targets.map { |target| generate_settlement_plan_for_target(target) }
       parallel_coordination = wormhole_coordinator.coordinate_parallel_development(settlement_plans, route_coordination)
 
-      # Phase 4: Generate integrated expansion plan
+      # Phase 5: Generate integrated expansion plan
       integrated_plan = generate_integrated_expansion_plan(
         route_coordination,
         network_optimization,
@@ -84,6 +89,19 @@ module AIManager
         parallel_coordination: parallel_coordination,
         integrated_plan: integrated_plan
       }
+    end
+
+    # Returns 0 for Sol-to-Belt, 1 for others
+    def self.sol_to_belt_priority(target)
+      sol_ids = ["SOL", "Sol", "001"]
+      belt_ids = ["BELT", "Belt", "ASTEROID_BELT"]
+      ids = [target[:system_id], target[:target_id], target[:name]].compact
+      (ids & sol_ids).any? && (ids & belt_ids).any? ? 0 : 1
+    end
+
+    # Returns true if target is eligible for infrastructure-free deployment
+    def self.infrastructure_free_deployment_possible?(target)
+      (target[:settlements] || []).all? { |s| s[:type] == :outpost || s[:type] == :none }
     end
 
     # Station construction strategy integration

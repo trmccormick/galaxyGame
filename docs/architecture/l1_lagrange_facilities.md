@@ -1,5 +1,10 @@
 # L1 Lagrange Point Facilities System
 
+> **This file has been superseded.**
+> For all L1 facility, orbital depot, and mega-station construction logic, see:
+> 
+> **architecture/stations/SYNTHETIC_MEGA_STATIONS.md**
+
 ## Overview
 
 The L1 Lagrange Point Facilities represent the primary Earth-Moon system infrastructure hub for Sol system operations. Located at the Earth-Moon L1 point (approximately 326,000 km from Earth), these facilities serve as the central staging area for interplanetary missions, resource processing, and spacecraft construction.
@@ -179,5 +184,4 @@ Luna Base → Lunar Elevator → Orbital Depot → Planetary Staging Hub → Out
 
 ### Operational Data Files
 - `orbital_depot_mk1_data.json`: Runtime configuration for depot operations
-- `planetary_staging_hub_mk1_data.json`: Runtime configuration for staging hub operations</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/docs/architecture/l1_lagrange_facilities.md
+- `planetary_staging_hub_mk1_data.json`: Runtime configuration for staging hub operations

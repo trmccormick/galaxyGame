@@ -89,50 +89,59 @@ module AIManager
     def self.create_automated_harvester(settlement, material, quantity)
       case material.downcase
       when 'oxygen'
+        operational_data = {
+          'task_type' => 'atmospheric_harvesting',
+          'target_material' => 'oxygen',
+          'target_quantity' => quantity,
+          'extraction_rate' => 10, # kg/hour
+          'mobility_type' => 'stationary',
+          'deployment_site' => 'atmospheric_processor'
+        }
+        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'stationary'
         Units::Robot.create!(
           name: "Automated Oxygen Harvester",
           identifier: "ROBOT-#{SecureRandom.hex(4)}",
           unit_type: "robot",
           owner: settlement.owner,
           attachable: settlement,
-          operational_data: {
-            'task_type' => 'atmospheric_harvesting',
-            'target_material' => 'oxygen',
-            'target_quantity' => quantity,
-            'extraction_rate' => 10, # kg/hour
-            'mobility_type' => 'stationary'
-          }
+          operational_data: operational_data
         )
-        when 'water'
-          Units::Robot.create!(
-            name: "Automated Water Extractor",
-            identifier: "ROBOT-#{SecureRandom.hex(4)}",
-            unit_type: "robot",
-            owner: settlement.owner,
-            attachable: settlement,
-            operational_data: {
-              'task_type' => 'ice_extraction',
-              'target_material' => 'water',
-              'target_quantity' => quantity,
-              'extraction_rate' => 50,
-              'mobility_type' => 'wheeled'
-            }
-          )
+      when 'water'
+        operational_data = {
+          'task_type' => 'ice_extraction',
+          'target_material' => 'water',
+          'target_quantity' => quantity,
+          'extraction_rate' => 50,
+          'mobility_type' => 'wheeled',
+          'deployment_site' => 'ice_deposit'
+        }
+        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'wheeled'
+        Units::Robot.create!(
+          name: "Automated Water Extractor",
+          identifier: "ROBOT-#{SecureRandom.hex(4)}",
+          unit_type: "robot",
+          owner: settlement.owner,
+          attachable: settlement,
+          operational_data: operational_data
+        )
       else
         # Regolith mining robot
+        operational_data = {
+          'task_type' => 'regolith_mining',
+          'target_material' => material,
+          'target_quantity' => quantity,
+          'extraction_rate' => 25, # kg/hour
+          'mobility_type' => 'wheeled',
+          'deployment_site' => 'regolith_field'
+        }
+        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'wheeled'
         Units::Robot.create!(
           name: "Automated #{material.titleize} Miner",
           identifier: "ROBOT-#{SecureRandom.hex(4)}",
           unit_type: "robot",
           owner: settlement.owner,
           attachable: settlement,
-          operational_data: {
-            'task_type' => 'regolith_mining',
-            'target_material' => material,
-            'target_quantity' => quantity,
-            'extraction_rate' => 25, # kg/hour
-            'mobility_type' => 'wheeled'
-          }
+          operational_data: operational_data
         )
       end
     end
@@ -203,15 +212,17 @@ module AIManager
 
     def self.schedule_harvester_completion(harvester, order)
       # Calculate completion time based on extraction rate and quantity
-      extraction_rate = harvester.operational_data['extraction_rate']
-      target_quantity = order.quantity
-      hours_to_complete = (target_quantity / extraction_rate.to_f).ceil
+      extraction_rate = harvester.operational_data['extraction_rate'].to_f
+      target_quantity = order.quantity.to_f
+      hours_to_complete = (target_quantity / extraction_rate).ceil
 
-      completion_time = Time.current + hours_to_complete.hours
+      # Use harvester's created_at as start time if available, else now
+      start_time = harvester.created_at || Time.current
+      completion_time = start_time + hours_to_complete.hours
 
       # Schedule completion job
       HarvesterCompletionJob.set(wait_until: completion_time)
-                              .perform_later(harvester.id, order.id)
+                .perform_later(harvester.id, order.id)
     end
 
     private

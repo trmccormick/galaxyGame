@@ -39,3 +39,7 @@ The lunar_space_elevator.json project requires 500,000 kg of carbon nanotubes an
 - GCC revenue streams from CNT production and sales
 - Market integration for interplanetary CNT trading
 - Cost tracking for in-situ resource utilization benefits
+
+> **Note:** For all industrial chain integration with mega-stations, see:
+> 
+> **architecture/stations/SYNTHETIC_MEGA_STATIONS.md**

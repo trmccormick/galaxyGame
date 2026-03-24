@@ -30,7 +30,11 @@ module AIManager
     end
 
     def evaluate_systems
-      @systems.each do |system|
+      # Prioritize Sol-to-Belt expansion and infrastructure-free deployment
+      prioritized = @systems.sort_by do |system|
+        [sol_to_belt_priority(system), infrastructure_free_deployment_possible?(system) ? 0 : 1, -(system[:anchor_quality_score] || 0)]
+      end
+      prioritized.each do |system|
         if legendary_anomaly?(system)
           system[:expansion_strategy] = :legendary
           system[:lore_log] = "The sensors are flat. No flux, no decay. It shouldn't be possible, but the link is perfect."
@@ -43,6 +47,19 @@ module AIManager
           system[:expansion_strategy] = :hammer_protocol
         end
       end
+    end
+
+    # Returns 0 for Sol-to-Belt, 1 for others
+    def sol_to_belt_priority(system)
+      sol_ids = ["SOL", "Sol", "001"]
+      belt_ids = ["BELT", "Belt", "ASTEROID_BELT"]
+      ids = [system[:system_id], system[:target_id], system[:name]].compact
+      (ids & sol_ids).any? && (ids & belt_ids).any? ? 0 : 1
+    end
+
+    # Returns true if system is eligible for infrastructure-free deployment
+    def infrastructure_free_deployment_possible?(system)
+      (system[:settlements] || []).all? { |s| s[:type] == :outpost || s[:type] == :none }
     end
 
     def score_system(system)

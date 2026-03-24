@@ -67,6 +67,12 @@ Cyclers are large mobile space stations that serve as AI Manager's primary deplo
 - Loaded with: extracted resources + retracted satellites
 - Total mass: 18M+ kg
 
+> **Note:** All hollowing, asteroid/moon conversion, and Expanse-style Phobos/Deimos logic are now consolidated in:
+> 
+> **architecture/stations/CONVERTED_ROCK_STATIONS.md**
+> 
+> The CONVERTED_ROCK_STATIONS.md protocol (Tug + Hollowing + Propellant) is a functional prerequisite for Mars and Venus orbital establishment phases.
+
 ---
 
 ## AI Manager Pattern Recognition
@@ -84,7 +90,6 @@ The AI Manager now recognizes specialized mission patterns for optimized deploym
 - Mission profiles analyzed for equipment combinations
 - Foundry patterns prioritized for lunar elevator dependency fulfillment
 - Dynamic weighting based on active project requirements
-```
 
 ---
 
@@ -125,3 +130,4 @@ Add sections:
 ├─ Unit Transferability Rules
 ├─ Mission Lifecycle (Fit → Deploy → Transfer → Return → Refit)
 └─ Examples for each pattern
+```

@@ -92,5 +92,10 @@
     "total_harvested_em": 125000.0,
     "current_burn_rate_em": 175.5,
     "expansion_budget_em": 25000.0
+  },
+  "logistics": {
+    "sabatier_offset_active": true,
+    "portal_max_mass": 5000, 
+    "gravity_counterbalance_offset": 0.5
   }
 }

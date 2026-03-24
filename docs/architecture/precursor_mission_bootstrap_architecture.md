@@ -342,3 +342,9 @@ The second mission brings additional crew, expansion units, and supplies. It con
 
 *This document represents the canonical precursor mission narrative. The JSON phase files and rake tasks are the source of truth for task sequencing — this document explains the reasoning behind that sequence and how Sol generalises to new worlds.*
 *Update this document when the phase sequence changes, new world patterns are added, or the handoff criteria are revised.*
+
+> **Note:** The L1 station module manufacturing and all asteroid/moon hollowing/conversion logic are now consolidated in:
+> 
+> **architecture/stations/CONVERTED_ROCK_STATIONS.md**
+> 
+> The CONVERTED_ROCK_STATIONS.md protocol (Tug + Hollowing + Propellant) is a functional prerequisite for Mars and Venus orbital establishment phases.

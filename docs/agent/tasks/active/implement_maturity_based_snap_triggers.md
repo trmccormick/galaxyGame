@@ -2,7 +2,7 @@
 # Implement Maturity-Based Snap Event Triggers
 
 ## Overview
-Implement a two-stage maturity system where expansion requires core system development pressure before wormhole discovery becomes possible, then Eden system maturity triggers snap events. Replace arbitrary timeline-based snap events with organic triggers based on population pressure, economic capacity, and infrastructure accumulation.
+Implement a two-stage maturity system where expansion is triggered by infrastructure readiness—specifically the presence of Tugs, Cyclers, and Station IOC—coupled with the "Natural Window" (Random Event) logic. Remove all hard population limits. Snap events are triggered organically by infrastructure mass, transport volume, and the occurrence of a natural expansion window, not by arbitrary timelines or population thresholds.
 
 ## Task Breakdown
 
@@ -17,23 +17,23 @@ Implement a two-stage maturity system where expansion requires core system devel
    - Monitor transportation readiness (ship counts)
 
 2. **Expansion Readiness Assessment**
-   - Population pressure metrics (>50M Earth/Luna)
-   - Economic capacity thresholds (>100B GCC)
-   - Transportation readiness (>10 inter-system vessels)
-   - Resource surplus calculations (>20k tons/month exports)
+   - Infrastructure readiness: Tugs, Cyclers, and Station IOC must be present
+   - Economic capacity and resource surplus (as supporting factors)
+   - Transportation readiness (minimum viable inter-system vessels)
+   - Natural Window: Random Event logic must trigger expansion opportunity
 
 3. **Expansion Gate Logic**
-   - Block wormhole discovery until readiness met
-   - Implement gradual approach indicators
+   - Block wormhole discovery until infrastructure readiness and Natural Window are met
+   - Implement gradual approach indicators (infrastructure milestones)
    - Create expansion preparation protocols
 
 4. **AI Manager Integration**
-   - Add expansion readiness to decision cycles
+   - Add infrastructure readiness and Natural Window logic to decision cycles
    - Implement core system development priorities
    - Create expansion planning logic
 
 ### Phase 2: Eden System Maturity Tracking (2-3 weeks)
-**Goal**: Implement Stage 2 maturity tracking for snap triggers
+**Goal**: Implement Stage 2 maturity tracking for snap triggers (infrastructure mass, transport volume, and network complexity)
 
 **Tasks**:
 1. **Create EdenSystemMaturityMonitor Class**
@@ -47,6 +47,7 @@ Implement a two-stage maturity system where expansion requires core system devel
    - Include settlements, stations, satellites, and transportation assets
    - Implement mass calculation algorithms with counterbalance effects
    - Account for system-specific stability multipliers (Eden: 0.6 vs Sol: 1.0)
+   - Snap trigger requires both infrastructure mass and a triggered Natural Window event
 
 3. **Economic Activity Monitoring**
    - Track monthly resource transport volumes
@@ -54,17 +55,16 @@ Implement a two-stage maturity system where expansion requires core system devel
    - Calculate ISRU efficiency metrics
 
 4. **Settlement Network Analysis**
-   - Count operational settlements (5+ for snap trigger)
-   - Track interconnection levels
-   - Assess network complexity
+   - Track operational settlements and network complexity
+   - Snap trigger is based on network maturity and infrastructure, not a fixed settlement count
 
 ### Phase 3: Unified Risk Assessment (1-2 weeks)
 **Goal**: Create comprehensive risk assessment across both stages
 
 **Tasks**:
 1. **Stage 1 Risk Logic**
-   - Implement expansion readiness assessment
-   - Define approach indicators (3/4 criteria met)
+   - Implement infrastructure readiness and Natural Window assessment
+   - Define approach indicators (infrastructure milestones met)
    - Create expansion preparation warnings
 
 2. **Stage 2 Risk Logic**
@@ -72,6 +72,7 @@ Implement a two-stage maturity system where expansion requires core system devel
    - Define risk thresholds accounting for system stability differences
    - Create risk progression logic that delays snap timing with slow buildup
    - Include buildup rate calculations for strategic timing
+   - Snap risk is only present when both infrastructure and Natural Window are active
 
 3. **AI Manager Integration**
    - Integrate dual-stage monitoring into decision cycles

@@ -67,6 +67,14 @@ The Shift: Unlike a real rubber band, the wormhole doesn't just disappear; the l
 
 The Result: The origin point (Sol) remains stable and anchored, but the exit point shifts to a different, random location in deep space, leaving the original colony "orphaned" and isolated.
 
+## The Harvest Choice: Scout/Harvest vs. Permanent AWS Expansion
+
+Before the AI Manager is permitted to build a permanent Artificial Wormhole Station (AWS), it must evaluate the System_ROI (Return on Investment) for the target system. If System_ROI is below a defined threshold, the AI Manager is prohibited from constructing an AWS. Instead, it must deploy a WS MK1-H (Wormhole Station, Mark 1-Harvester) for electromagnetic (EM) and resource extraction only.
+
+**Shift Trigger:** Once the Resource_Yield of the system drops below 10% of its initial value, the AI Manager will automatically trigger the Hammer Protocol. This protocol initiates a search for a new system by cycling the wormhole, rather than investing further in permanent infrastructure.
+
+**Asteroid Propulsion Modules:** The WS MK1-H is equipped with 4 Asteroid Propulsion Modules, allowing the station to reposition itself to follow the wormhole if it "wobbles" before the final snap event.
+
 The Controlled Snap Expansion Strategy:
 
 Seeding Phase: The AI Manager uses the high-mass capacity of natural wormholes to "seed" new systems with infrastructure. **Phased Stabilization**: First deploys orbiting stabilization satellites to gather expelled EM and refocus it at the wormhole throat for immediate stability, then constructs permanent Artificial Wormhole Stations (AWS) which replace the temporary satellites.

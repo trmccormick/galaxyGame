@@ -30,6 +30,10 @@ Stability Assessment: Stable
 Stability Risk: Low
 Construction Priority: High
 
+> **Note:** For all wormhole station placement and logic, see:
+> 
+> **architecture/stations/SPECIALIZED_WH_STATIONS.md**
+
 NEXT ACTIONS
 ------------
 1. Deploy stabilization satellites

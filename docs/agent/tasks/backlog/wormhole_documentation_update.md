@@ -170,5 +170,23 @@ grep -r "AWS" docs/architecture/ | grep -v "generated"
 - Add visual diagrams for wormhole network topologies
 - Include mathematical models for stability duration calculations
 - Expand AWS cost-benefit analysis examples
-- Add troubleshooting guides for common wormhole issues</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/docs/agent/tasks/backlog/wormhole_documentation_update.md
+- Add troubleshooting guides for common wormhole issues
+
+# Orbital Precedence Protocol
+
+**Definition:**
+The Orbital Precedence Protocol mandates that all surface-targeted missions to a planetary body are *Hard-Locked*—that is, strictly prohibited—until the world's Orbital Station achieves *Initial Operational Capability* (IOC).
+
+**Constraint:**
+- No surface base deployment, landing, or construction may proceed until the Orbital Station is fully established and operational (IOC status confirmed).
+
+**Mechanism:**
+- High-mass station modules required for IOC are delivered via Cycler (Transport Config), ensuring robust orbital infrastructure before any surface activity.
+
+**AI Manager Logic:**
+- The AI Manager must always treat the Orbital Station as the *Primary Asset* for any planetary system.
+- The Surface Base is considered a *Secondary Extension*—dependent on the orbital asset for logistics, resupply, and mission continuity.
+- If a surface mission fails or is aborted, the Orbital Station remains as a persistent staging point, enabling rapid reattempts or alternate mission profiles without loss of core infrastructure.
+
+**Rationale:**
+This protocol ensures that orbital infrastructure is prioritized, providing a resilient logistics and command platform that supports all subsequent surface operations. It minimizes risk by preventing premature surface deployment and guarantees that mission failures do not compromise the overall expansion strategy.
