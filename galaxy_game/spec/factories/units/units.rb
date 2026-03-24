@@ -191,5 +191,12 @@ FactoryBot.define do
 
   # Alias for backward compatibility
   factory :unit, parent: :base_unit do
+    after(:build) do |unit, evaluator|
+      unit.load_unit_info if unit.unit_type.present?
+    end
+
+    after(:create) do |unit, evaluator|
+      unit.initialize_unit if unit.operational_data.blank?
+    end
   end
 end

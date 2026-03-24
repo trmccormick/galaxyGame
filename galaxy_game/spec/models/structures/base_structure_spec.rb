@@ -137,20 +137,20 @@ RSpec.describe Structures::BaseStructure, type: :model do
   describe "unit management" do
     let(:unit_data) do
       {
-        "id" => "uranium_enrichment_centrifuge",
-        "name" => "Uranium Enrichment Centrifuge",
-        "type" => "production/refineries"
+        "id" => "multi_purpose_cryogenic_storage_mk1",
+        "name" => "Multi-Purpose Cryogenic Storage",
+        "type" => "storage"
       }
     end
     
     before do
       allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit)
-        .with("uranium_enrichment_centrifuge")
+        .with("multi_purpose_cryogenic_storage_mk1")
         .and_return(unit_data)
     end
     
     describe "#install_unit" do
-      let(:unit) { create(:base_unit, unit_type: "uranium_enrichment_centrifuge", name: "Test Centrifuge", owner: player) }
+      let(:unit) { create(:unit, unit_type: "multi_purpose_cryogenic_storage_mk1") }
       
       it "installs a unit if slot is available" do
         allow(structure).to receive(:available_unit_slots).and_return(1)
@@ -169,7 +169,7 @@ RSpec.describe Structures::BaseStructure, type: :model do
     
     describe "#uninstall_unit" do
       let(:unit) do
-        unit = build(:base_unit, unit_type: "uranium_enrichment_centrifuge", name: "Test Centrifuge", owner: player)
+        unit = build(:base_unit, unit_type: "multi_purpose_cryogenic_storage_mk1", name: "Test Cryo Storage", owner: player)
         unit.attachable = structure
         unit.save!
         unit
@@ -186,7 +186,7 @@ RSpec.describe Structures::BaseStructure, type: :model do
       end
       
       it "fails for units not attached to the structure" do
-        other_unit = create(:base_unit, unit_type: "uranium_enrichment_centrifuge", name: "Other Centrifuge", owner: player)
+        other_unit = create(:base_unit, unit_type: "multi_purpose_cryogenic_storage_mk1", name: "Other Cryo Storage", owner: player)
         expect(structure.uninstall_unit(other_unit)).to be false
       end
     end

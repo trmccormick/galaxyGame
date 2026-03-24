@@ -25,7 +25,7 @@ module Units
     validates :name, :unit_type, presence: true
     validates :current_population, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
-    after_initialize :load_unit_info
+    before_validation :load_unit_info
     after_create :initialize_unit
     after_create :create_inventory
 

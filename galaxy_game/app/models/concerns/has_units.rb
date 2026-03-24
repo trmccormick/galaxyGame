@@ -56,6 +56,8 @@ module HasUnits
   # This method attaches an *existing* unit to the craft
   # It should be the primary method for attaching units if BaseCraft's was removed.
   def install_unit(unit)
+    return false if unit.nil? || unit.unit_type.blank?
+    lookup_unit = Lookup::UnitLookupService.find_unit(unit.unit_type)
     return false unless unit.is_a?(Units::BaseUnit)
 
     if unit.attachable == self
@@ -64,9 +66,7 @@ module HasUnits
     end
 
     begin
-      puts "[DEBUG] install_unit: unit operational_data=#{unit.operational_data}"; STDOUT.flush
       result = unit.update(attachable: self)
-      puts "[DEBUG] install_unit: craft base_units after install=#{self.base_units.map { |u| {id: u.id, operational_data: u.operational_data} }}"; STDOUT.flush
       if result
         apply_unit_effects(unit)
         return true

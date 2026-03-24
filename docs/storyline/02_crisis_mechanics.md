@@ -82,23 +82,10 @@ Think of a natural wormhole like a rubber band connecting two points.
 - **The Shift**: Unlike a real rubber band, the wormhole doesn't just disappear; the loose end "flicks" away from its original destination.
 - **The Result**: The origin point (Sol) remains stable and anchored, but the exit point shifts to a different, random location in deep space, leaving the original colony "orphaned" and isolated.
 
-## Controlled Snap Expansion Strategy
+## The Nature of the Snap: Catastrophic Accident
 
-### Seeding Phase
-The AI Manager uses the high-mass capacity of natural wormholes to "seed" new systems with infrastructure.
+The first Snap was not a controlled expansion strategy, but a catastrophic accident. The Mars Development Corporation (MDC) and TerraGen, relying on conventional "Mars-Spec" physics, did not account for the effects of Exotic Matter (EM) on wormhole stability. The Snap was triggered by the unintentional movement of massive infrastructure through the natural link, exceeding the mass-tension limit without warning.
 
-### Phased Stabilization
-First deploys orbiting stabilization satellites to gather expelled EM and refocus it at the wormhole throat for immediate stability, then constructs permanent Artificial Wormhole Stations (AWS) which replace the temporary satellites.
+This ignorance of EM physics led to the orphaning of the Eden system and the formation of the Wormhole Transit Consortium (WTC) as a Sol-side rescue coalition. Only after the Snap did Sol-side scientists begin to unravel EM physics, leading to the development of new technologies for wormhole stabilization and reconnection.
 
-### The Mass Trigger
-Once local infrastructure is established, the AI retrieves stabilization satellites and cycles a high-mass Cycler Fleet through the link, intentionally triggering a "Snap" or "Shift" to a new system (e.g., from System B to System C).
-
-### Standby Activation
-Systems "orphaned" by the snap immediately activate pre-built Artificial Wormhole Stations (AWS) to reconnect to the existing network backbone (e.g., reconnecting B to A).
-
-### Shift Event Handling
-When a wormhole shifts location, AWS infrastructure must be rebuilt at the new natural wormhole position to maintain EM harvesting capability, preserving any existing counterbalance stations for gravitational stability.
-
----
-
-*This crisis mechanism drives technological and institutional evolution in the game.*
+The Snap event marks the transition from pre-EM ignorance to the era of advanced wormhole management, with all subsequent protocols (including the Hammer Protocol) emerging as lessons learned from this crisis.

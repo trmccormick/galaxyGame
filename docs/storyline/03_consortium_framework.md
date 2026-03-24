@@ -5,7 +5,8 @@ Formed by major logistics corporations (AstroLift, Zenith Orbital, Vector Haulin
 
 **Key Founding Members:**
 - **Logistics Corporations**: Provide transportation, ship operations, and network management expertise
-- **LDC (Lunar Development Corporation)**: The oldest and most developed DC, brings mature construction infrastructure essential for building Wormhole Stations and Artificial Wormhole Stations (AWS)
+- **MDC (Mars Development Corporation)**: Mars' leading DC, exporting "Mars-Spec" terraforming expertise and infrastructure to the high-opportunity Eden system. This export became a vital new income stream for Mars, as their technology and specialists were in high demand for Eden's rapid development.
+- **Eden Development Corporations**: Newly formed DCs in the Eden system, partnering with MDC to form TerraGen as a joint venture for large-scale terraforming and settlement projects.
 - **Other Development Corporations**: Contribute capital and participate in governance
 
 ## Founding Member Roles
@@ -35,18 +36,20 @@ The Consortium integrates with the broader economic system:
 - Dividends provide ROI for corporate investments
 - Player participation through Route Proposals
 
-## Post-Snap Evolution: TerraGen Terraforming Consortium
 
-Following the initial snap events that opened access to multiple new systems, the Development Corporations formed TerraGen to coordinate terraforming efforts across the expanding network.
+## Post-Snap Evolution: TerraGen & The WTC (Wormhole Transit Consortium)
 
-**Formation Trigger:** The snap event revealed numerous habitable worlds requiring coordinated terraforming expertise.
+**TerraGen Joint Venture:**
+TerraGen is a joint venture between the Mars Development Corporation (MDC) and the new Eden DCs. Its formation marked a major economic shift, as Mars exported its "Mars-Spec" terraforming expertise and technology to Eden, creating a vital new income stream for the Martian economy.
 
-**Founding Members:**
-- LDC and other established Development Corporations
-- New system settlers seeking terraforming technology
-- Corporations providing terraforming supplies and biological materials
+**WTC (Wormhole Transit Consortium):**
+The WTC was formed as a Sol-side Rescue Coalition immediately after the Snap, led by MDC and the Eden DC parent companies. Its primary mission was to recover stranded assets, scientists, and infrastructure in Eden, and to coordinate the technical and political response to the crisis.
 
-**Complementary Role:** While the Wormhole Transit Consortium manages interstellar logistics, TerraGen focuses on making new worlds habitable, creating a symbiotic relationship between transportation infrastructure and colonization capabilities.
+**Formation Trigger:**
+The Snap event was a catastrophic accident, not a controlled strategy. It occurred because the "Mars-Spec" conventional physics used by TerraGen did not account for Exotic Matter (EM). The trigger was the result of being "too successful"—moving massive infrastructure through the natural link until the mass-tension limit was unknowingly exceeded.
+
+**Complementary Role:**
+While the WTC manages interstellar rescue and logistics, TerraGen focuses on terraforming and settlement, creating a symbiotic relationship between transportation infrastructure and colonization capabilities.
 
 ---
 

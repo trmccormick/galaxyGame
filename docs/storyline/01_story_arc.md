@@ -26,13 +26,17 @@ AI Manager applies learned patterns to wormhole-discovered systems, using ScoutL
 
 **Wormhole Expansion**: When the Eden system reaches maturity (through accumulated infrastructure and resource flows), natural wormhole connections become unstable, leading to the "Snap" event that opens new expansion opportunities.
 
-## Act 3: The Snap, Consortium Formation & Dual-Link Solution (Crisis Phase)
 
-When a natural wormhole destabilizes (mass limit exceeded), the AI Manager uses EM harvesting and constructs an Artificial Wormhole Station. By pairing a natural and artificial wormhole, the system achieves stable, lower-EM dual-link operation using the counterbalance model. The crisis forces the formation of the Wormhole Transit Consortium to re-establish stable, artificial links. Brown Dwarfs serve as critical secondary anchors that bridge the gap between "Prize" systems and "Siphon" sources.
+## Act 3: The Orphaned Era (Tech Gap & Rescue)
 
-## Act 4: Network Mastery (Late Game)
+The Snap event creates an asymmetrical technology divide:
 
-AI Manager manages a network of wormholes, balancing EM budgets, optimizing logistics, and making ROI-based expansion decisions. All logic is data-driven and adapts to any system profile. The AI handles branching networks, where secondary hubs with multiple natural wormholes enable parallel expansion into new systems.
+- **Sol Side (WTC):** The Wormhole Transit Consortium (WTC) forms as a rescue coalition. Sol-side scientists, including the MDC, begin to unravel EM Physics (post-Snap tech) and construct the High-Energy Beacon. This Beacon is critical for delivering the EM Physics Data-Drop to Eden.
+- **Eden Side:** Stranded survivors, including the Martian Brain Trust, are limited to conventional/jury-rigged technology and remain in EM-ignorance. They cannot begin building a Counterbalance AWS until the Sol-side Beacon delivers the EM Physics Data-Drop and blueprints.
+
+## Act 4: Hammer Protocol & Network Mastery (Post-Data-Drop)
+
+Only after the tragedy of the first Snap and the successful knowledge transfer does the Hammer Protocol emerge as a deliberate strategy. The AI Manager now manages a network of wormholes, balancing EM budgets, optimizing logistics, and making ROI-based expansion decisions. All logic is data-driven and adapts to any system profile. The AI handles branching networks, where secondary hubs with multiple natural wormholes enable parallel expansion into new systems.
 
 ---
 

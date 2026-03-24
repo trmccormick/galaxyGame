@@ -1,3 +1,18 @@
+## Code Location and Path Reference
+
+All application code, specs, and documentation files live on the host filesystem (your local machine) under the project directory. These files are mounted into the Docker containers using the volume mappings defined in `docker-compose.dev.yml`.
+
+- When you edit files locally, changes are immediately visible inside the container.
+- When you run tests or inspect files via `docker exec`, you are operating on the same files as on the host.
+- If you encounter missing files or path errors inside the container, always check the volume mounts in `docker-compose.dev.yml` to ensure the correct directories are mapped.
+
+**Reference:**
+- Example mapping: `- ./galaxy_game:/home/galaxy_game` (host:project/galaxy_game → container:/home/galaxy_game)
+- Spec files: `spec/` on host is available as `/home/galaxy_game/spec/` in the container.
+
+This guarantees a single source of truth for all code and specs, and ensures that edits, tests, and diagnostics are always in sync between host and container.
+
+---
 # Implementation Agent — Operating Guide
 **Role**: Executor — applies fixes, runs tests, commits results  
 **Last Updated**: March 22, 2026  
@@ -22,6 +37,32 @@ You do not decide what to work on. You do not apply fixes speculatively. You do 
 ## The One Command Form — No Exceptions
 
 All Rails, RSpec, rake, and bundle commands run **inside the Docker container**:
+
+---
+
+## **Workflow: Local Edits, Container Testing**
+
+**Edit all code and documentation files locally on the host.**
+
+- Use your local editor for Ruby, model, concern, and service files.
+- Do not attempt to edit code from inside the container.
+
+**Run all tests, diagnostics, and spec file reading via `docker exec` inside the container.**
+
+- To view or reference spec/test files, use `docker exec` with `cat`, `sed`, or `less` (e.g., `docker exec -it web sed -n '150,210p' spec/models/structures/base_structure_spec.rb`).
+- To run RSpec or any Rails command, always use `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test ...'`.
+- Never run RSpec, Rails, or Ruby commands on the host.
+
+**Commit code from the host as usual.**
+
+- Use `git` on the host for all version control operations.
+
+**Summary:**
+- Edit code locally → Test and inspect via container → Commit from host
+
+This workflow ensures all changes are tracked, tests run in the correct environment, and file access is consistent between host and container.
+
+---
 
 ```bash
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'
