@@ -174,7 +174,7 @@ It defines what is and isn't permitted. Use the current version — ignore `.old
 
 **7. RSpec Output Policy — Never Stream Full Output**
 - Single spec file: `rspec spec/path/to/file_spec.rb` OK to stream
-- Multiple files or full suite: ALWAYS redirect → `rspec spec/... > log/rspec_last_run.log 2>&1`
+- Multiple files or full suite: ALWAYS redirect → `rspec spec/... > log/rspec_full_$(date +%s).log 2>&1`
 - Report back ONLY: final summary line + targeted failure snippets from the log
 - NEVER paste full RSpec output to chat/IDE — crashes VSCode buffer (happens repeatedly)
 
