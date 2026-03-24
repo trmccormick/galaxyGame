@@ -178,6 +178,9 @@ It defines what is and isn't permitted. Use the current version — ignore `.old
 - Report back ONLY: final summary line + targeted failure snippets from the log
 - NEVER paste full RSpec output to chat/IDE — crashes VSCode buffer (happens repeatedly)
 
+**8. Never recreate large or canonical documentation files**
+Always use direct file operations (mv/cp) to move or copy large or canonical documentation files (such as wh-expansion.md or architecture docs). Never attempt to read and then recreate these files, as this risks data loss, corruption, or loss of metadata. This rule applies to all agents and automation.
+
 ---
 
 ## Key Architectural Decisions
