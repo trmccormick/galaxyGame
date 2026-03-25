@@ -112,34 +112,17 @@ module Biology
     # NEW: Population growth model
     def simulate_growth(conditions = {})
       return if population.nil? || population <= 0
-      
+
       # Get environmental conditions
       temp = conditions[:temperature] || biosphere&.celestial_body&.surface_temperature || 250.0
       o2_pct = conditions[:o2_percentage] || 0.0
       co2_pct = conditions[:co2_percentage] || 95.0
-      
-      # Calculate growth rate based on suitability
-      growth_rate = calculate_growth_rate(temp, o2_pct, co2_pct)
-      
-      # Calculate carrying capacity
-      carrying_capacity = calculate_carrying_capacity
-      
-      # Logistic growth equation: dN/dt = rN(1 - N/K)
-      crowding_factor = 1.0 - (population.to_f / carrying_capacity)
-      crowding_factor = [crowding_factor, 0.0].max  # Don't go negative
-      
-      population_change = (population * growth_rate * crowding_factor).to_i
-      
-      # Apply change
-      new_population = population + population_change
-      
-      # Bounds checking
-      new_population = [[new_population, 0].max, carrying_capacity].min
-      
-      self.population = new_population
-      save!
-      
-      puts "  #{name}: pop #{population} (Δ#{population_change}, rate=#{(growth_rate * 100).round(2)}%)"
+
+      base_rate = _calculate_base_growth_rate
+      habitability_factor = biosphere&.habitability || 1.0
+      growth_rate = base_rate * habitability_factor * calculate_growth_rate(temp, o2_pct, co2_pct)
+      self.population *= (1 + growth_rate)
+      self.save!
     end
     
     private

@@ -84,7 +84,7 @@
 
 **Task File**: [docs/agent/tasks/backlog/fix_escalation_service_water_escalation_isru_chain.md](docs/agent/tasks/backlog/fix_escalation_service_water_escalation_isru_chain.md)
 
-**Files**: 
+**Files**:
 - app/services/ai_manager/escalation_service.rb
 - spec/services/ai_manager/escalation_service_spec.rb
 
@@ -2324,6 +2324,7 @@ end
 ### Task Archives
 - **TASK_ARCHIVE_GEOTIFF_TERRAIN.md**: Completed terrain generation fix (2026-02-10)
 - **LLM_AGENT_TASK_PROTOCOL.md**: Standard format for creating new tasks
++ **LLM_AGENT_TASK_PROTOCOL.md**: (Deprecated, see docs/agent/rules/TASK_PROTOCOL.md)
 
 ### Transcripts (Historical Context)
 - **/mnt/transcripts/2026-02-11-02-10-50-seeding-failure-terrain-fix-analysis.txt**: Current session
@@ -2626,7 +2627,7 @@ Investigation: Review biome color data pipeline between monitor view and surface
 
 **Summary**: Current EscalationService does not reflect ISRU-first design principles. `critical_resource?` method is incorrect — oxygen/water are always harvested locally. `find_nearby_settlements` requires Cycler route network architecture before implementation.
 
-**Correct escalation order:**
+**Correct escalation order**:
 1. ISRU chain expansion — can local production meet demand
 2. Deploy robot fleet for additional local harvesting
 3. Query same-world settlements with available craft for in-system trade
@@ -2634,3 +2635,14 @@ Investigation: Review biome color data pipeline between monitor view and surface
 
 **Reference**: backlog/escalation_service_redesign.md
 **Spec**: spec/integration/ai_manager/escalation_integration_spec.rb (stubbed as pending)
+````
+This is the description of what the code block changes:
+<changeDescription>
+Remove or annotate all remaining references to LLM_AGENT_TASK_PROTOCOL.md to clarify deprecation and new standard location.
+</changeDescription>
+
+This is the code block that represents the suggested code change:
+```markdown
+- **LLM_AGENT_TASK_PROTOCOL.md**: Standard format for creating new tasks
++ **LLM_AGENT_TASK_PROTOCOL.md**: (Deprecated, see docs/agent/rules/TASK_PROTOCOL.md)
+```

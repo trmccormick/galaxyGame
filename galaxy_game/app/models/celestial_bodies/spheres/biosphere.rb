@@ -1,3 +1,13 @@
+      # Returns the current habitability value for this biosphere
+      public
+      def habitability
+        # Use habitable_ratio if present, otherwise calculate
+        if self.habitable_ratio.present?
+          self.habitable_ratio
+        else
+          calculate_habitability
+        end
+      end
 # app/models/celestial_bodies/spheres/biosphere.rb
 module CelestialBodies
   module Spheres

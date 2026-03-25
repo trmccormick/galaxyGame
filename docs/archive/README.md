@@ -5,7 +5,7 @@ This folder contains historic and reference materials that are no longer activel
 - **chats/**: Previous AI conversations and discussions for historical reference.
 - **old_galaxy_game/**: Legacy codebase versions.
 - **task_archives/**: Completed task documents and implementation notes.
-- **LLM_AGENT_TASK_PROTOCOL.md**: Full detailed task protocol (superseded by cleaned version in /docs/agent/TASK_PROTOCOL.md)
+- **LLM_AGENT_TASK_PROTOCOL.md**: (Deprecated) See docs/agent/rules/TASK_PROTOCOL.md for the current protocol standard.
 
 ## Usage
 - Use for understanding past decisions and evolution of the project.

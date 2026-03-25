@@ -23,6 +23,17 @@ Integration between WormholeScoutingService and ProceduralGenerator for on-deman
    - AI Manager evaluates scouting data for "Prizes" (terraformable worlds, resources)
    - Decision: Build permanent wormhole station or close temporary link
 
+## 4. Recovery Scouting (Orphaned Systems)
+In the event of a system disconnection (The Snap), scouting priorities shift from "Discovery" to "Reconnection."
+
+### 4.1 Structural Validation
+Scouts must perform a `Seismic Scan` on target asteroids to verify density/cohesion. 
+* **Pass:** Density > 1.5 g/cm³ (Solid/Metallic). Proceed to Tug Phase.
+* **Fail:** Rubble Pile detected. AI Manager must search for a new anchor.
+
+### 4.2 The Handshake Courier
+Once the AWS Anchor is complete, the Scout ship's `execute_scouting_mission` method is updated to include a **Token Retrieval** action. The ship must physically dock with the Eden AWS to receive the `HandshakeToken` before jumping back to Sol.
+
 ## Current State Issues
 
 ### WormholeScoutingService (Line 62)
