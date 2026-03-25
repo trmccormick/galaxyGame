@@ -78,6 +78,10 @@ module Structures
       # Update geological feature status
       if construction_complete?
         geological_feature.enclose!
+        # Propagate to skylights
+        geological_feature.child_features.where(feature_type: 'skylight', status: ['natural', 'surveyed']).each do |skylight|
+          Manufacturing::Construction::SegmentCoveringService.new(skylight, self).cover!
+        end
       end
     end
     
