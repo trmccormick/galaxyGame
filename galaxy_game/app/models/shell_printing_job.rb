@@ -4,21 +4,23 @@ class ShellPrintingJob < ApplicationRecord
   belongs_to :printer_unit, class_name: 'Units::BaseUnit', foreign_key: 'printer_unit_id'
   belongs_to :inflatable_tank, class_name: 'Units::BaseUnit', foreign_key: 'inflatable_tank_id'
 
-  # Validations
-  validates :status, presence: true, inclusion: { 
-    in: %w[pending in_progress completed failed cancelled],
-    message: "%{value} is not a valid status" 
-  }
+  validates :status, presence: true
   validates :production_time_hours, presence: true, numericality: { greater_than: 0 }
-  validates :progress_hours, numericality: { greater_than_or_equal_to: 0 }
+  validates :progress_hours, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
-  # Scopes
-  scope :active, -> { where(status: ['pending', 'in_progress']) }
-  scope :completed, -> { where(status: 'completed') }
-  scope :in_progress, -> { where(status: 'in_progress') }
+  enum status: {
+    pending: 'pending',
+    in_progress: 'in_progress',
+    completed: 'completed',
+    failed: 'failed',
+    cancelled: 'cancelled'
+  }
+
+  scope :active, -> { where(status: [:pending, :in_progress]) }
+  scope :completed, -> { where(status: :completed) }
+  scope :in_progress, -> { where(status: :in_progress) }
   scope :for_settlement, ->(settlement_id) { where(settlement_id: settlement_id) }
 
-  # Status transitions
   def start!
     update!(status: 'in_progress', started_at: Time.current)
   end
@@ -29,9 +31,9 @@ class ShellPrintingJob < ApplicationRecord
 
   def fail!(reason = nil)
     update!(
-      status: 'failed', 
+      status: 'failed',
       completed_at: Time.current,
-      metadata: metadata.merge('failure_reason' => reason)
+      metadata: (metadata || {}).merge('failure_reason' => reason)
     )
   end
 
@@ -39,14 +41,13 @@ class ShellPrintingJob < ApplicationRecord
     update!(status: 'cancelled', completed_at: Time.current)
   end
 
-  # Progress tracking
   def progress_percentage
-    return 0 if production_time_hours.zero?
-    ((progress_hours / production_time_hours) * 100).round(2)
+    return 0 if production_time_hours.to_f.zero?
+    ((progress_hours.to_f / production_time_hours.to_f) * 100).round(2)
   end
 
   def time_remaining_hours
-    [production_time_hours - progress_hours, 0].max
+    [production_time_hours.to_f - progress_hours.to_f, 0].max
   end
 
   def estimated_completion
@@ -54,29 +55,23 @@ class ShellPrintingJob < ApplicationRecord
     started_at + production_time_hours.hours
   end
 
-  # State checks
   def active?
-    %w[pending in_progress].include?(status)
+    pending? || in_progress?
   end
 
   def finished?
-    %w[completed failed cancelled].include?(status)
+    completed? || failed? || cancelled?
   end
 
-  # Processing
   def process_tick(hours_elapsed)
-    return unless status == 'in_progress'
-    
+    return unless in_progress?
+    self.progress_hours ||= 0
     self.progress_hours += hours_elapsed
-    
     if progress_hours >= production_time_hours
-      # Mark as completed - service will finalize it
       self.status = 'completed'
       self.completed_at = Time.current
       self.progress_hours = production_time_hours
-      save!
-    else
-      save!
     end
+    save!
   end
 end
