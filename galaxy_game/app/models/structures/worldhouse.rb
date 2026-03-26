@@ -1,35 +1,32 @@
-# app/models/structures/worldhouse.rb
-# A Worldhouse is a STRUCTURE built on top of a geological feature
 module Structures
   class Worldhouse < BaseStructure
+    before_validation :set_structure_type
+
+    def set_structure_type
+      self.operational_data ||= {}
+      self.operational_data['structure_type'] = 'worldhouse'
+      self.structure_type = 'worldhouse'
+    end
+
     # Link to the underlying natural feature
     belongs_to :geological_feature, 
                class_name: 'CelestialBodies::Features::BaseFeature',
                foreign_key: :geological_feature_id,
                optional: false
-    
     has_many :worldhouse_segments, 
              class_name: 'Structures::WorldhouseSegment',
              foreign_key: :worldhouse_id,
              dependent: :destroy
-    
     validates :geological_feature, presence: true
     validate :feature_must_be_suitable
-    
     # Structure attributes
     attribute :total_segments, :integer
     attribute :enclosed_segments, :integer, default: 0
     attribute :coverage_percent, :float, default: 0.0
-    
     before_create :set_structure_name
-    
     # Delegate to geological feature
     def feature_name
       geological_feature&.name
-    end
-    
-    def feature_length_m
-      geological_feature&.length_m
     end
     
     def feature_width_m
