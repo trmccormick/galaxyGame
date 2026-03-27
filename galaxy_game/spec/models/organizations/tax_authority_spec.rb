@@ -7,6 +7,8 @@ RSpec.describe Organizations::TaxAuthority, type: :model do
   # Note: TaxAuthority.instance creates and returns the object
 
   describe '.instance' do
+    before { Organizations::TaxAuthority.reset_instance! }
+
     it 'creates the Tax Authority if it does not exist' do
       # Ensure no instance exists initially (relying on database cleaner)
       Organizations::TaxAuthority.destroy_all 

@@ -121,6 +121,14 @@ module Organizations
       end
     end
 
+    def calculate_revenue
+      0.0
+    end
+
+    def calculate_costs
+      0.0
+    end    
+
     private
 
     def set_game_defaults
