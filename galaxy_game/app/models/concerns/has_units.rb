@@ -57,7 +57,8 @@ module HasUnits
   # It should be the primary method for attaching units if BaseCraft's was removed.
   def install_unit(unit)
     return false if unit.nil? || unit.unit_type.blank?
-    lookup_unit = Lookup::UnitLookupService.find_unit(unit.unit_type)
+    service = Lookup::UnitLookupService.new
+    lookup_unit = service.find_unit(unit.unit_type)
     return false unless unit.is_a?(Units::BaseUnit)
 
     if unit.attachable == self
