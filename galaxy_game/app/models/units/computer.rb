@@ -25,8 +25,7 @@ module Units
     end
 
     def upgrade_efficiency(upgrade_amount)
-      self.efficiency_upgrade_value += upgrade_amount
-      save
+      self.efficiency_upgrade_value = (efficiency_upgrade_value || 0.0) + upgrade_amount
     end
 
     def overclock(boost_amount, duration)
