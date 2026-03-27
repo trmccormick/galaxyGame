@@ -5,20 +5,20 @@ FactoryBot.define do
     association :printer_unit, factory: :unit
     association :inflatable_tank, factory: :unit
     
-    status { 'pending' }
+    status { :pending }
     production_time_hours { 10.0 }
     progress_hours { 0.0 }
     materials_consumed { {} }
     metadata { {} }
 
     trait :in_progress do
-      status { 'in_progress' }
+      status { :in_progress }
       started_at { Time.current }
       progress_hours { 5.0 }
     end
 
     trait :completed do
-      status { 'completed' }
+      status { :completed }
       started_at { 1.day.ago }
       completed_at { Time.current }
       progress_hours { 10.0 }

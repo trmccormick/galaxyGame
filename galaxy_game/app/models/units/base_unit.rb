@@ -424,6 +424,9 @@ module Units
     private
 
     def load_unit_info
+      return if @load_unit_info_running
+      @load_unit_info_running = true
+      
       service = Lookup::UnitLookupService.new
       @unit_info = service.find_unit(unit_type)
       if operational_data.blank?
@@ -431,7 +434,9 @@ module Units
         save! if changed?
       end
       nil
-    end  
+    ensure
+      @load_unit_info_running = false
+    end
 
     def initialize_unit
       return unless @unit_info.present?

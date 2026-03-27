@@ -118,9 +118,9 @@ module AIManager
       # Volatile deposits
       if geo.stored_volatiles.present?
         reservoirs = geo.stored_volatiles
-        resources << 'water_ice' if reservoirs['H2O'].to_f > 0
-        resources << 'frozen_co2' if reservoirs['CO2'].to_f > 0
-        resources << 'methane_ice' if reservoirs['CH4'].to_f > 0
+        resources << 'water_ice' if reservoirs['H2O']&.values&.sum.to_f > 0
+        resources << 'frozen_co2' if reservoirs['CO2']&.values&.sum.to_f > 0
+        resources << 'methane_ice' if reservoirs['CH4']&.values&.sum.to_f > 0
       end
 
       resources

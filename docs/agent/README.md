@@ -34,6 +34,35 @@ If your role is not specified in the handoff, ask before proceeding.
 
 ---
 
+## 🚨 The 5-Stage Workflow Gate (MANDATORY)
+
+## 🚨 The 7-Stage Surgical Workflow (MANDATORY)
+Applies to: Session Strategists, Documentation Strategists, and Planners. This protocol is the only authorized way to move from a "Problem" to a "Fixed Spec." No agent may skip stages.
+
+### PHASE A: PREPARATION (The Map Room)
+**Research Intent:** Search docs/ for original architectural patterns. Identify the "Canonical Precedent" (e.g., how was the last structure validated?).
+
+**Audit Documentation:** Compare "Intent" vs. "Recorded State." Document any discrepancies in the chat.
+
+**Code Inquiry (Human-in-the-Loop):** Request specific grep, cat, or ls commands. Constraint: You must see the current code logic before proposing changes.
+
+### PHASE B: AUTHORIZATION (The Gate)
+**Draft Action Plan:** Present a bulleted sequence of the fix (e.g., "Step 1: Update callback, Step 2: Fix Factory").
+
+**Human Approval:** STOP. Do not generate a task file until the human explicitly approves the Action Plan.
+
+### PHASE C: EXECUTION & OVERSIGHT (The Engine Room)
+**Task & Handoff:** Generate the .md file in active/ and provide the copy-paste Handoff Command for the Implementation Agent (GPT-4.1/Local).
+
+**Guidance & Review:** Monitor the Implementation Agent’s output.
+
+Compare their results against the Action Plan.
+
+Provide course corrections if they hit unexpected errors.
+
+Finalize the session by updating CURRENT_STATUS.md and drafting the Session Handoff.
+
+
 ## Current Project State
 
 > **Always check [`CURRENT_STATUS.md`](CURRENT_STATUS.md) for the live state.**  

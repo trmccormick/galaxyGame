@@ -90,8 +90,7 @@ Run this before bed to get a fresh baseline overnight:
 
 ```bash
 # Start the run — returns immediately, runs in background
-docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec \
-  > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec  > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
 Check results in the morning:

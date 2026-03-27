@@ -139,7 +139,7 @@ FactoryBot.define do
         # Create geosphere with lunar properties
         celestial_body.geosphere.update_columns(
           crust_composition: { 'regolith' => 100.0, 'Silicon' => 45.0, 'Oxygen' => 35.0, 'Aluminum' => 10.0, 'Titanium' => 5.0 },
-          stored_volatiles: { 'H2O' => 1.0e12, 'He3' => 100.0 }
+          stored_volatiles: { 'H2O' => { 'subsurface' => 1.0e12 }, 'He3' => { 'regolith' => 100.0 } }
         )
         celestial_body.geosphere.reload
         
