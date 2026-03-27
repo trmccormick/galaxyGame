@@ -7,7 +7,11 @@ module Logistics
     belongs_to :to_settlement, class_name: 'Settlement::BaseSettlement'
 
     enum status: { pending: 0, in_transit: 1, delivered: 2, failed: 3, cancelled: 4 }
-    enum transport_method: { orbital_transfer: 0, surface_conveyance: 1, drone_delivery: 2 }
+    enum transport_method: {
+      orbital_transfer: 'orbital_transfer',
+      surface_conveyance: 'surface_conveyance',
+      drone_delivery: 'drone_delivery'
+    }
 
     validates :material, :quantity, :transport_method, presence: true
     validates :quantity, numericality: { greater_than: 0 }
