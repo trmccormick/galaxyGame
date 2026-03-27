@@ -426,12 +426,12 @@ module Units
     def load_unit_info
       return if @load_unit_info_running
       @load_unit_info_running = true
-      
+
       service = Lookup::UnitLookupService.new
       @unit_info = service.find_unit(unit_type)
       if operational_data.blank?
         self.operational_data = (@unit_info || {}).deep_merge(self.operational_data || {})
-        save! if changed?
+        save!(validate: false) if changed? && persisted?
       end
       nil
     ensure
