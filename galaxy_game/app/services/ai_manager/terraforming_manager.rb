@@ -312,12 +312,15 @@ module AIManager
       return [] unless world
 
       resources = []
-      resources << 'venus_atmosphere' if @worlds[:venus]&.atmosphere&.co2_percentage.to_f > 90
-      resources << 'titan_atmosphere' if @worlds[:titan]&.atmosphere&.ch4_percentage.to_f > 1
-      resources << 'saturn_atmosphere' if @worlds[:saturn]&.atmosphere&.h2_percentage.to_f > 80
-      resources << 'CO2' if world.atmosphere&.co2_percentage.to_f > 50
-      resources << 'CH4' if world.atmosphere&.ch4_percentage.to_f > 0.1
-      resources << 'H2' if world.atmosphere&.h2_percentage.to_f > 0.1
+      @worlds.each_value do |w|
+        next unless w&.atmosphere&.composition.present?
+        resources << "#{w.identifier}_atmosphere" if w.atmosphere.composition.dig('CO2', 'percentage').to_f > 90
+        resources << "#{w.identifier}_atmosphere" if w.atmosphere.composition.dig('CH4', 'percentage').to_f > 1
+        resources << "#{w.identifier}_atmosphere" if w.atmosphere.composition.dig('H2', 'percentage').to_f > 80
+      end
+      resources << 'CO2' if world.atmosphere&.composition&.dig('CO2', 'percentage').to_f > 50
+      resources << 'CH4' if world.atmosphere&.composition&.dig('CH4', 'percentage').to_f > 0.1
+      resources << 'H2' if world.atmosphere&.composition&.dig('H2', 'percentage').to_f > 0.1
 
       resources
     end
