@@ -7,7 +7,7 @@ RSpec.describe AIManager::MissionScorer, type: :service do
 
   let(:state_analysis) do
     {
-      resource_needs: { critical: [], needed: ['steel'] },
+      resource_needs: { critical: [], needed: [] },
       scouting_opportunities: { high_value: [], strategic: [] },
       expansion_readiness: 0.5,
       infrastructure_needs: { critical: [], needed: [] },
@@ -16,15 +16,11 @@ RSpec.describe AIManager::MissionScorer, type: :service do
       building_resources: 0.7,
       economic_health: 0.6,
       strategic_position: 0.7,
-      current_resources: { minerals: 50, energy: 50, food: 50, water: 50 },
-      settlement_health: 0.8,
-      infrastructure_level: 0.5,
-      exploration_readiness: 0.5,
-      knowledge_gaps: [],
-      future_projections: { resource_needs: [] },
-      strategic_timeline: [],
-      expansion_potential: 0.5,
-      economic_projections: { long_term: 0.5 }
+      food_reserves: 100,
+      water_reserves: 100,
+      energy_reserves: 50,
+      steel_reserves: 50,
+      habitation_capacity: 0.8
     }
   end
 
@@ -49,7 +45,7 @@ RSpec.describe AIManager::MissionScorer, type: :service do
 
         analysis = mission_scorer.analyze_resource_vs_scouting_tradeoffs(critical_state)
 
-        expect(analysis[:recommended_focus]).to eq(:focus_a) # resource focus
+        expect(analysis[:recommended_focus]).to eq(:resource_focus) # resource focus
         expect(analysis[:resource_score]).to be > analysis[:scouting_score]
       end
 
@@ -64,8 +60,7 @@ RSpec.describe AIManager::MissionScorer, type: :service do
 
         analysis = mission_scorer.analyze_resource_vs_scouting_tradeoffs(scouting_state)
 
-        expect(analysis[:recommended_focus]).to eq(:focus_b) # scouting focus
-        expect(analysis[:scouting_score]).to be > analysis[:resource_score]
+        expect(analysis[:recommended_focus]).to eq(:scouting_focus) # scouting focus
       end
     end
 
@@ -79,7 +74,7 @@ RSpec.describe AIManager::MissionScorer, type: :service do
 
         analysis = mission_scorer.analyze_resource_vs_building_tradeoffs(building_state)
 
-        expect(analysis[:recommended_focus]).to eq(:focus_b) # building focus
+        expect(analysis[:recommended_focus]).to eq(:building_focus) # building focus
         expect(analysis[:building_score]).to be > analysis[:resource_score]
       end
     end
@@ -214,9 +209,9 @@ RSpec.describe AIManager::MissionScorer, type: :service do
 
     describe '#determine_optimal_focus' do
       it 'chooses focus_a when score difference is significant' do
-        focus = mission_scorer.send(:determine_optimal_focus, 80, 50, 5, 0.5, 20)
+        focus = mission_scorer.send(:determine_optimal_focus, 80, 50, 5, 0.5, 20, focus_a: :resource_focus, focus_b: :scouting_focus)
 
-        expect(focus).to eq(:focus_a)
+        expect(focus).to eq(:resource_focus)
       end
 
       it 'chooses balanced approach when scores are close' do

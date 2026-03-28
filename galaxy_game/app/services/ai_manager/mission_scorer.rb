@@ -219,19 +219,16 @@ module AIManager
     def analyze_resource_vs_scouting_tradeoffs(state_analysis)
       resource_score = calculate_resource_acquisition_score(state_analysis)
       scouting_score = calculate_scouting_score(state_analysis)
-
       opportunity_cost = calculate_opportunity_cost(resource_score, scouting_score)
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
-
       abundant_opportunities = state_analysis[:scouting_opportunities][:high_value]&.any? || false
-      if abundant_opportunities
-        scouting_score = 101
-        recommended_focus = :focus_b # explicit scouting
+      critical_resources = state_analysis.dig(:resource_needs, :critical) || []
+      if abundant_opportunities && critical_resources.empty?
+        recommended_focus = :scouting_focus
       else
-        recommended_focus = determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value)
+        recommended_focus = determine_optimal_focus(resource_score, scouting_score, opportunity_cost, risk_adjustment, long_term_value, focus_a: :resource_focus, focus_b: :scouting_focus)
       end
-
       {
         resource_score: resource_score,
         scouting_score: scouting_score,
@@ -251,11 +248,11 @@ module AIManager
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
 
-      critical_infrastructure = state_analysis[:infrastructure_needs][:critical] || []
+      critical_infrastructure = state_analysis.dig(:infrastructure_needs, :critical) || []
       if critical_infrastructure.any?
-        recommended_focus = :focus_b # explicit building
+        recommended_focus = :building_focus
       else
-        recommended_focus = determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value)
+        recommended_focus = determine_optimal_focus(resource_score, building_score, opportunity_cost, risk_adjustment, long_term_value, focus_a: :resource_focus, focus_b: :building_focus)
       end
 
       {
@@ -272,20 +269,13 @@ module AIManager
     def analyze_scouting_vs_building_tradeoffs(state_analysis)
       scouting_score = calculate_scouting_score(state_analysis)
       building_score = calculate_building_score(state_analysis)
-
       opportunity_cost = calculate_opportunity_cost(scouting_score, building_score)
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
-
-      # Adjust threshold for balanced approach
-      if (scouting_score - building_score).abs < 25
-        recommended_focus = :balanced_approach
-      elsif scouting_score > building_score
-        recommended_focus = :scouting
-      else
-        recommended_focus = :building
-      end
-
+      recommended_focus = determine_optimal_focus(
+        scouting_score, building_score, opportunity_cost, risk_adjustment, long_term_value,
+        focus_a: :scouting_focus, focus_b: :building_focus
+      )
       {
         scouting_score: scouting_score,
         building_score: building_score,
@@ -650,7 +640,7 @@ module AIManager
       {
         dependencies: dependencies,
         unmet_dependencies: unmet_dependencies,
-        dependency_satisfaction: unmet_dependencies.empty? ? 1.0 : 0.0,
+        dependency_satisfaction: unmet_dependencies.empty? ? 1.0 : (dependencies.length - unmet_dependencies.length).to_f / dependencies.length,
         blocking_dependencies: unmet_dependencies.select { |dep| dep[:type] == :capability || dep[:type] == :infrastructure }
       }
     end
@@ -795,7 +785,7 @@ module AIManager
     end
 
     # Determine optimal focus based on trade-off analysis
-    def determine_optimal_focus(score_a, score_b, opportunity_cost, risk_adjustment, long_term_value)
+    def determine_optimal_focus(score_a, score_b, opportunity_cost, risk_adjustment, long_term_value, focus_a: :resource_focus, focus_b: :scouting_focus)
       # Calculate adjusted scores
       adjusted_a = score_a * (1 + risk_adjustment) + (long_term_value * 0.2)
       adjusted_b = score_b * (1 + risk_adjustment) + (long_term_value * 0.2)
@@ -807,7 +797,7 @@ module AIManager
       # Determine winner with threshold to avoid constant switching
       threshold = 10  # Minimum difference to change focus
 
-      # If health < 0.5, prefer :focus_b
+      # If health < 0.5, prefer focus_b
       health = nil
       if @shared_context
         if @shared_context.respond_to?(:[]) && @shared_context[:settlement_health]
@@ -817,11 +807,11 @@ module AIManager
         end
       end
       if health && health < 0.5
-        :focus_b
+        focus_b
       elsif adjusted_a > adjusted_b + threshold
-        :focus_a
+        focus_a
       elsif adjusted_b > adjusted_a + threshold
-        :focus_b
+        focus_b
       else
         :balanced_approach
       end

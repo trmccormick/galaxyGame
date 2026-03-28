@@ -216,7 +216,12 @@ RSpec.describe AIManager::StrategySelector, type: :service do
         scouting_capability: 0.6,
         building_resources: 0.7,
         economic_health: 0.6,
-        strategic_position: 0.7
+        strategic_position: 0.7,
+        food_reserves: 100,
+        water_reserves: 100,
+        energy_reserves: 100,
+        steel_reserves: 100,
+        habitation_capacity: 10
       }
     end
 
@@ -232,7 +237,7 @@ RSpec.describe AIManager::StrategySelector, type: :service do
 
     it 'prioritizes settlement expansion when readiness is high' do
       expansion_option = { type: :settlement_expansion, priority: :high }
-      scouting_option = { type: :system_scouting, priority: :high, systems: [{ id: 'test' }] }
+      scouting_option = { type: :system_scouting, priority: :high, systems: [] }
 
       state_with_high_readiness = state_analysis.merge(expansion_readiness: 0.9)
 

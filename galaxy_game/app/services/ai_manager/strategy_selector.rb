@@ -125,14 +125,21 @@ module AIManager
 
     # Score mission options based on strategic value
     def score_mission_options(options, state_analysis)
-      # Use the new prioritization system with detailed analysis
       prioritized_missions = @mission_scorer.prioritize_missions(options, state_analysis)
-
-      # Convert to the expected format for backward compatibility
+      
       prioritized_missions.map do |mission_data|
         original_mission = mission_data[:mission]
+        score = mission_data[:score]
+        
+        # Boost settlement_expansion when readiness is high
+        if original_mission[:type] == :settlement_expansion && 
+          state_analysis[:expansion_readiness].to_f >= 0.8
+          score *= 1.3
+          puts "SCORE_DEBUG: #{original_mission[:type]} boosted=#{score}"
+        end
+        
         original_mission.merge(
-          score: mission_data[:score],
+          score: score,
           analysis: mission_data[:analysis],
           priority_level: mission_data[:priority_level],
           sequencing_info: mission_data[:sequencing_info]
@@ -366,8 +373,8 @@ module AIManager
     # Break ties in strategic focus using current state
     def break_tie_with_state(tied_focuses, state_analysis)
       # Check critical needs first
-      critical_resources = state_analysis[:resource_needs][:critical] || []
-      critical_infrastructure = state_analysis[:infrastructure_needs][:critical] || []
+      critical_resources = state_analysis.dig(:resource_needs, :critical) || []
+      critical_infrastructure = state_analysis.dig(:infrastructure_needs, :critical) || []
 
       if critical_resources.any? && tied_focuses.include?(:resource_focus)
         return :resource_focus
@@ -378,7 +385,7 @@ module AIManager
       end
 
       # Check high-value opportunities
-      high_value_systems = state_analysis[:scouting_opportunities][:high_value] || []
+      high_value_systems = state_analysis.dig(:scouting_opportunities, :high_value) || []
       if high_value_systems.any? && tied_focuses.include?(:scouting_focus)
         return :scouting_focus
       end
