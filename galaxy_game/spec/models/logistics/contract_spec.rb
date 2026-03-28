@@ -50,9 +50,9 @@ RSpec.describe Logistics::Contract, type: :model do
 
     it 'defines transport_method enum' do
       expect(Logistics::Contract.transport_methods).to include(
-        'orbital_transfer' => 0,
-        'surface_conveyance' => 1,
-        'drone_delivery' => 2
+        'orbital_transfer' => 'orbital_transfer',
+        'surface_conveyance' => 'surface_conveyance',
+        'drone_delivery' => 'drone_delivery'
       )
     end
   end
