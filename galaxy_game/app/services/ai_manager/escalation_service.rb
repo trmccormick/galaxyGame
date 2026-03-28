@@ -94,8 +94,7 @@ module AIManager
           'target_material' => 'oxygen',
           'target_quantity' => quantity,
           'extraction_rate' => 10, # kg/hour
-          'mobility_type' => 'stationary',
-          'deployment_site' => 'atmospheric_processor'
+          'mobility_type' => 'stationary'
         }
         operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'stationary'
         Units::Robot.create!(
@@ -112,8 +111,7 @@ module AIManager
           'target_material' => 'water',
           'target_quantity' => quantity,
           'extraction_rate' => 50,
-          'mobility_type' => 'wheeled',
-          'deployment_site' => 'ice_deposit'
+          'mobility_type' => 'wheeled'
         }
         operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'wheeled'
         Units::Robot.create!(
@@ -131,8 +129,7 @@ module AIManager
           'target_material' => material,
           'target_quantity' => quantity,
           'extraction_rate' => 25, # kg/hour
-          'mobility_type' => 'wheeled',
-          'deployment_site' => 'regolith_field'
+          'mobility_type' => 'wheeled'
         }
         operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'wheeled'
         Units::Robot.create!(
