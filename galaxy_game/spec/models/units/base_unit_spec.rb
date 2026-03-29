@@ -2,6 +2,29 @@
 require 'rails_helper'
 
 RSpec.describe Units::BaseUnit, type: :model do
+    describe '#operational?' do
+      let(:settlement) { create(:base_settlement) }
+
+      it 'returns true if status is active' do
+        unit = create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational_data: { 'operational_properties' => { 'status' => 'active' } })
+        expect(unit.operational?).to be true
+      end
+
+      it 'returns false if status is offline' do
+        unit = create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational_data: { 'operational_properties' => { 'status' => 'offline' } })
+        expect(unit.operational?).to be false
+      end
+
+      it 'returns false if status is disabled' do
+        unit = create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational_data: { 'operational_properties' => { 'status' => 'disabled' } })
+        expect(unit.operational?).to be false
+      end
+
+      it 'returns true for legacy units without status' do
+        unit = create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational_data: {})
+        expect(unit.operational?).to be true
+      end
+    end
   let!(:celestial_body) { create(:celestial_body, name: "Luna") }
   let!(:shackleton_crater) { 
     create(:celestial_location, 

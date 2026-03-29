@@ -400,10 +400,10 @@ module Units
     end
 
     def operational?
-      # Simple operational check - unit exists and has valid operational_data
-      operational_data.present? && 
-      operational_data.is_a?(Hash) && 
-      !operational_data.empty?
+      return false unless operational_data.present? && operational_data.is_a?(Hash)
+      status = operational_data.dig('operational_properties', 'status')
+      return true if status.nil? # legacy units without status field
+      status != 'offline' && status != 'disabled' && status != 'destroyed'
     end
 
     def can_store_material?(material_type)
