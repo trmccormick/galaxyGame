@@ -194,12 +194,14 @@ RSpec.describe Structures::BaseStructure, type: :model do
     describe "#build_recommended_units" do
       before do
         structure.operational_data["recommended_units"] = [
-          {"id" => "uranium_enrichment_centrifuge", "count" => 2, "type" => "production/refineries"}
+          {"id" => "compact_solar_panel", "count" => 2, "type" => "power"}
         ]
         structure.save
         
-        # Mock the unit creation to avoid dependency issues
-        unit = build(:base_unit, unit_type: "uranium_enrichment_centrifuge", name: "Mocked Unit", owner: player)
+        unit_data = { 'name' => 'Compact Solar Panel' }
+        allow_any_instance_of(Lookup::UnitLookupService).to receive(:find_unit).and_return(unit_data)
+        
+        unit = build(:base_unit, unit_type: "compact_solar_panel", name: "Mocked Unit", owner: player)
         allow(structure.base_units).to receive(:create!).and_return(unit)
       end
       
