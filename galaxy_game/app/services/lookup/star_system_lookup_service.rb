@@ -16,15 +16,15 @@ module Lookup
       generated_systems = @systems.select { |sys| sys[:_source_type] == :generated }
       
       # Special handling for Sol system: prefer sol.json over sol-complete.json
-      if system_name.to_s.downcase == 'sol'
+      if system_name.to_s.downcase == 'sol' || system_name.to_s == 'SOL-01'
         sol_systems = curated_systems.select do |sys|
-          (sys[:id] == 'Sol' || sys[:id] == 'sol') && 
+          sys[:solar_system]&.[](:name)&.downcase == 'sol' &&
           (sys[:_source_file] == 'sol.json' || sys[:_source_file] == 'sol-complete.json')
         end
         
-        # Prefer sol.json (partial/working version) over sol-complete.json
+        # Prefer sol.json (scaled-down testing version) over sol-complete.json
         system_data = sol_systems.find { |sys| sys[:_source_file] == 'sol.json' } ||
-                     sol_systems.find { |sys| sys[:_source_file] == 'sol-complete.json' }
+                    sol_systems.find { |sys| sys[:_source_file] == 'sol-complete.json' }
       end
       
       # If not found (or not Sol system), search normally

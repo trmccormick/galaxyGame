@@ -1,0 +1,18 @@
+// AI Manager Neon Blue Theme
+// All AI Manager admin pages use this stylesheet
+
+// ── Layout ─────────────────────────────────────────────────────────────────
+
+.ai-manager-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main";
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 100%);
+  color: #e8f5ff;
+}
+
+// ...existing code...

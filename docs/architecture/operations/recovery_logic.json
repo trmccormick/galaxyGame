@@ -1,0 +1,14 @@
+{
+  "reconnection_progress": {
+    "description": "Tracks the progress toward re-establishing the wormhole link between Sol and System A (Eden) after a Snap event.",
+    "value": 0,
+    "max": 100,
+    "milestones": [
+      { "name": "Sol-side High-Energy Beacon Construction", "weight": 0.3 },
+      { "name": "Knowledge Transfer: EM Physics Data-Drop", "weight": 0.2 },
+      { "name": "System A Counterbalance AWS Completion", "weight": 0.3 },
+      { "name": "Consortium Coordination/Handshake", "weight": 0.2 }
+    ],
+    "update_logic": "Each milestone contributes to the total progress. Eden cannot begin AWS construction until the Knowledge Transfer milestone is complete (Sol-side pulse reaches 100% and delivers the blueprints). When all reach 100%, the link is re-established."
+  }
+}

@@ -437,7 +437,7 @@ module Units
     ensure
       @load_unit_info_running = false
     end
-
+    
     def initialize_unit
       return unless @unit_info.present?
       # If operational_data is blank or missing expected storage keys, set from @unit_info

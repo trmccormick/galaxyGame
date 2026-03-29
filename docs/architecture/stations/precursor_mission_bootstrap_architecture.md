@@ -1,0 +1,3 @@
+# Precursor Mission Bootstrap Architecture
+
+...existing content moved from root...

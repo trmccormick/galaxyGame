@@ -1,0 +1,65 @@
+2026-03-22T17:13:24.159Z pid=1100 tid=2l0 INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+2026-03-22T17:13:36.597Z pid=1117 tid=r1 INFO: Sidekiq 7.3.8 connecting to Redis with options {size: 10, pool_name: "internal", url: "redis://redis:6379/1"}
+
+Units::BaseUnit
+  validations
+    is expected to validate that :identifier cannot be empty/falsy
+    is expected to validate that :name cannot be empty/falsy
+    is expected to validate that :unit_type cannot be empty/falsy
+  associations
+    is expected to belong to owner required: true
+    is expected to belong to attachable optional: true
+    is expected to have many attached_units
+    is expected to have one location
+    is expected to have one inventory
+  create new unit
+    creates a valid unit with given attributes
+  location and celestial body
+    returns the correct location
+    returns the correct celestial body
+  storage operations
+    #store_resource
+      stores oxygen in liquid state
+      prevents overfilling tank
+      validates storage compatibility
+    #store_item
+      stores items in both inventory and operational data
+      respects storage capacity limits
+      updates existing items
+  general storage operations
+    #store_resource
+      can store items up to capacity
+      tracks available capacity
+  inventory integration
+    #store_resource
+      creates inventory items when storing resources
+      updates inventory when removing resources
+  unit initialization
+    loads correct storage configuration
+  #process_resources
+@unit_info: nil
+operational_data: {"test_operational" => true}
+    processes material based on composition (FAILED - 1)
+  #store_on_surface
+    calls add_pile on surface storage
+    returns false if attachable does not respond to :surface_storage
+    returns false if surface_storage returns nil
+
+Failures:
+
+  1) Units::BaseUnit#process_resources processes material based on composition
+     Failure/Error: expect(base_unit.operational_data.dig('storage', 'gas_buffer', 'capacity')).to eq(100)
+
+       expected: 100
+            got: nil
+
+       (compared using ==)
+     # ./spec/models/units/base_unit_spec.rb:205:in 'block (3 levels) in <top (required)>'
+
+Finished in 18.91 seconds (files took 25.38 seconds to load)
+26 examples, 1 failure
+
+Failed examples:
+
+rspec ./spec/models/units/base_unit_spec.rb:194 # Units::BaseUnit#process_resources processes material based on composition
+
