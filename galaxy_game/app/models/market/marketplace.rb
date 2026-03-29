@@ -92,7 +92,7 @@ module Market
     # @param resource [String] The resource name
     # @return [Market::Condition, nil] The market condition or nil if not found
     def current_market_condition(resource)
-      market_conditions.find_or_create_by!(resource: resource)
+      market_conditions.find_by(resource: resource)
     end
 
     private
