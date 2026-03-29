@@ -64,6 +64,11 @@ module AIManager
 
     private
 
+    def volatile_amount(value)
+      return 0.0 if value.nil?
+      value.is_a?(Hash) ? value.values.sum.to_f : value.to_f
+    end
+
     def extract_local_resources
       resources = []
 
@@ -118,9 +123,9 @@ module AIManager
       # Volatile deposits
       if geo.stored_volatiles.present?
         reservoirs = geo.stored_volatiles
-        resources << 'water_ice' if reservoirs['H2O']&.values&.sum.to_f > 0
-        resources << 'frozen_co2' if reservoirs['CO2']&.values&.sum.to_f > 0
-        resources << 'methane_ice' if reservoirs['CH4']&.values&.sum.to_f > 0
+        resources << 'water_ice' if volatile_amount(reservoirs['H2O']) > 0
+        resources << 'frozen_co2' if volatile_amount(reservoirs['CO2']) > 0
+        resources << 'methane_ice' if volatile_amount(reservoirs['CH4']) > 0
       end
 
       resources
