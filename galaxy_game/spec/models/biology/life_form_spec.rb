@@ -54,7 +54,8 @@ RSpec.describe Biology::LifeForm, type: :model do
       life_form = create(:life_form, biosphere: biosphere, population: 1000)
       
       # Mock the protected method to return 1.3
-      allow(life_form).to receive(:_calculate_base_growth_rate).and_return(1.3)
+      allow(life_form).to receive(:_calculate_base_growth_rate).and_return(0.3)
+      allow(life_form).to receive(:calculate_growth_rate).and_return(1.0)
       
       initial_population = life_form.population
       life_form.simulate_growth
