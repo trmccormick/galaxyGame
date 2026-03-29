@@ -101,38 +101,53 @@ docs/agent/
 ```
 
 ### Project Documentation
+
 ```
 docs/
-├── GUARDRAILS.md                      ← agent operating rules — read this version only
-├── CURRENT_STATUS.md                  ← live project state
-├── GLOSSARY_SYSTEM_MECHANICS.md       ← game mechanics terminology
-├── MIGRATION_GUIDE.md                 ← database migration patterns
-├── PRACTICAL_TESTING_GUIDE.md         ← testing quick reference
-├── agent/                             ← agent operations (see above)
-├── architecture/                      ← system design, game mechanics, intent docs
-│   ├── ai_manager/                    ← AI manager architecture docs
-│   ├── planetary_patterns/            ← planetary pattern docs
-│   └── planning/                      ← architecture planning docs
-├── ai_manager/                        ← AI manager design and strategy
-├── api/                               ← API documentation
-├── crafts/                            ← craft design docs
-├── data/                              ← data reference docs
-├── developer/                         ← setup guides, coding patterns
-├── economics/                         ← economic system docs
-├── flavor/                            ← easter eggs, narrative flavor
-├── gameplay/                          ← game mechanics and terraforming
-├── legacy/                            ← historical reference only, do not modify
-├── market/                            ← market system docs
-├── mission_profiles/                  ← mission design docs
-├── operations/                        ← operational docs
-├── reference/                         ← technical reference material
-├── storyline/                         ← narrative, lore, faction design
-├── systems/                           ← individual game system docs
-├── testing/                           ← testing guides
-├── tutorials/                         ← user tutorials
-├── user/                              ← user-facing docs
-└── wormhole_expansion/                ← wormhole network expansion docs
+├── GUARDRAILS.md            ← agent operating rules — read this version only
+├── CURRENT_STATUS.md        ← live project state (always authoritative)
+├── GLOSSARY_SYSTEM_MECHANICS.md
+├── MIGRATION_GUIDE.md
+├── PRACTICAL_TESTING_GUIDE.md
+├── agent/                   ← agent operations, protocols, and tasks
+├── architecture/            ← system design, game mechanics, intent docs
+│   ├── ai_manager/          ← AI manager architecture docs
+│   ├── intent/              ← design/intent docs (see also planning/)
+│   ├── patterns/            ← architectural and planetary patterns
+│   ├── planning/            ← architecture planning docs
+│   └── ...                  ← other system architecture subfolders
+├── ai_manager/              ← AI manager design and strategy
+├── api/                     ← API documentation
+├── crafts/                  ← craft design docs
+├── data/                    ← data reference docs
+├── developer/               ← setup guides, coding patterns
+├── economics/               ← economic system docs
+├── flavor/                  ← easter eggs, narrative flavor
+├── gameplay/                ← game mechanics and terraforming
+├── history/                 ← historical docs (reference only)
+├── legacy/                  ← legacy docs (reference only, do not modify)
+├── logic/                   ← logic and simulation docs
+├── market/                  ← market system docs
+├── mission_profiles/        ← mission design docs
+├── operations/              ← operational docs
+├── patterns/                ← pattern docs (see also architecture/patterns)
+├── planning/                ← planning docs (see also architecture/planning)
+├── reference/               ← technical reference material
+├── simulation/              ← simulation docs
+├── storyline/               ← narrative, lore, faction design
+├── systems/                 ← individual game system docs
+├── testing/                 ← testing guides
+├── tutorials/               ← user tutorials
+├── user/                    ← user-facing docs
+├── wormhole_expansion/      ← wormhole network expansion docs
+├── archive/                 ← archived docs (reference only)
+└── ...                      ← additional folders may appear as project evolves
 ```
+
+> **Note:**
+> - Folders like `archive/`, `legacy/`, and `history/` are for reference only and should not be modified.
+> - Always check `CURRENT_STATUS.md` for the live state and new documentation locations.
+> - Some folders may be reorganized or added as the project evolves—always review the directory for the latest structure.
 
 ### Codebase
 ```
@@ -209,6 +224,14 @@ It defines what is and isn't permitted. Use the current version — ignore `.old
 
 **8. Never recreate large or canonical documentation files**
 Always use direct file operations (mv/cp) to move or copy large or canonical documentation files (such as wh-expansion.md or architecture docs). Never attempt to read and then recreate these files, as this risks data loss, corruption, or loss of metadata. This rule applies to all agents and automation.
+
+**9. Always validate JSON data files before saving**
+Before saving any JSON data file, validate it with:
+```bash
+python3 -c "import json; json.load(open('file.json'))"
+```
+A single misplaced comma or comment will silently break the file and can cause unrelated spec failures.
+This validation step is required for all data file edits—add it to your task instructions.
 
 ---
 
