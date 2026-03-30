@@ -72,7 +72,6 @@ module Settlement
     
     def calculate_storage_capacity
       return 0.0 unless base_units.loaded? || persisted?
-      
       base_units
         .select { |unit| unit.operational_data.dig('storage', 'capacity').to_f > 1.0 }
         .sum { |unit| unit.operational_data.dig('storage', 'capacity').to_f }
