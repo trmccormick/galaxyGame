@@ -25,6 +25,14 @@ RSpec.describe FittingService, type: :service do
     inventory.items.create!(name: 'satellite_battery', amount: 1, owner: settlement.owner)
     inventory.items.create!(name: 'efficiency_module', amount: 1, owner: settlement.owner)
     inventory.items.create!(name: 'gpu_coprocessor_rig', amount: 1, owner: settlement.owner)
+    allow_any_instance_of(Craft::BaseCraft).to receive(:get_ports_data).and_return({
+      'internal_module_ports' => 3,
+      'external_module_ports' => 0,
+      'internal_unit_ports' => 5,
+      'external_unit_ports' => 2,
+      'internal_rig_ports' => 2,
+      'external_rig_ports' => 2
+    })
   end
 
   it "fits all components from inventory" do
