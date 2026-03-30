@@ -166,13 +166,7 @@ class AIManager::ISRUEvaluator
   # Count available ISRU units by type
   def inventory_isru_units
     units = @settlement.base_units.where(unit_type: ISRU_UNITS.keys)
-    unit_counts = Hash.new(0)
-
-    units.each do |unit|
-      unit_counts[unit.unit_type] += 1 if unit.operational?
-    end
-
-    unit_counts
+    units.select(&:operational?).group_by(&:unit_type).transform_values(&:count)
   end
 
   # Assess available resources for ISRU processes
