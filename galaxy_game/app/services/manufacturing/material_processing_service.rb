@@ -29,67 +29,31 @@ module Manufacturing
 
     # Process raw regolith through Thermal Extraction Unit (TEU)
     # Converts raw regolith to processed regolith
-    def thermal_extraction(raw_regolith_kg, teu_unit)
-      # Validate inputs
-      return { error: "Invalid raw regolith amount" } unless raw_regolith_kg.positive?
-      return { error: "TEU unit not operational" } unless teu_unit_operational?(teu_unit)
-
-      # Calculate processing cycles
-      cycles = (raw_regolith_kg / TEU_DATA[:input_raw_kg].to_f).floor
-      return { error: "Insufficient raw regolith for processing" } if cycles.zero?
-
-      # Check available raw regolith
-      available_raw = @settlement.inventory.items.find_by(name: "raw_regolith")&.amount || 0
-      return { error: "Insufficient raw regolith in storage" } if available_raw < raw_regolith_kg
-
-      # Create processing job
+    def thermal_extraction(unit, input_material, input_amount)
       MaterialProcessingJob.create!(
         settlement: @settlement,
-        unit: teu_unit,
-        processing_type: 'thermal_extraction',
-        input_material: 'raw_regolith',
-        input_amount: raw_regolith_kg,
-        status: 'pending',
-        production_time_hours: 24.0, # 1 day processing time
-        operational_data: {
-          cycles: cycles,
-          expected_output: cycles * TEU_DATA[:output_processed_kg]
-        }
+        unit: unit,
+        processing_type: :thermal_extraction,
+        input_material: input_material,
+        input_amount: input_amount,
+        status: :pending,
+        production_time_hours: 24.0, # TEU_DATA[:input_raw_kg] based default
+        operational_data: { 'cycles' => 1 }
       )
     end
 
     # Process processed regolith through Planetary Volatiles Extractor (PVE)
     # Converts processed regolith to inert waste + water + gases
-    def volatiles_extraction(processed_regolith_kg, pve_unit)
-      # Validate inputs
-      return { error: "Invalid processed regolith amount" } unless processed_regolith_kg.positive?
-      return { error: "PVE unit not operational" } unless pve_unit_operational?(pve_unit)
-
-      # Calculate processing cycles
-      cycles = (processed_regolith_kg / PVE_DATA[:input_processed_kg].to_f).floor
-      return { error: "Insufficient processed regolith for processing" } if cycles.zero?
-
-      # Check available processed regolith
-      available_processed = @settlement.inventory.items.find_by(name: "processed_regolith")&.amount || 0
-      return { error: "Insufficient processed regolith in inventory" } if available_processed < processed_regolith_kg
-
-      # Create processing job
+    def volatiles_extraction(unit, input_material, input_amount)
       MaterialProcessingJob.create!(
         settlement: @settlement,
-        unit: pve_unit,
-        processing_type: 'volatiles_extraction',
-        input_material: 'processed_regolith',
-        input_amount: processed_regolith_kg,
-        status: 'pending',
-        production_time_hours: 24.0, # 1 day processing time
-        operational_data: {
-          cycles: cycles,
-          expected_outputs: {
-            depleted_regolith: cycles * PVE_DATA[:output_depleted_regolith_kg],
-            water: cycles * PVE_DATA[:output_water_kg],
-            gases: cycles * PVE_DATA[:output_gases_kg]
-          }
-        }
+        unit: unit,
+        processing_type: :volatiles_extraction,
+        input_material: input_material,
+        input_amount: input_amount,
+        status: :pending,
+        production_time_hours: 36.0, # PVE_DATA[:input_processed_kg] based default
+        operational_data: { 'cycles' => 1 }
       )
     end
 
