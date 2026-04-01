@@ -1,12 +1,9 @@
-# spec/factories/settlement/settlements.rb
 FactoryBot.define do
-  # Base Settlement - parent factory that others inherit from
   factory :base_settlement, class: 'Settlement::BaseSettlement' do
     sequence(:name) { |n| "Base Settlement #{n}" }
     settlement_type { :base }
     current_population { 5 }
-    
-    # Add default operational_data
+
     operational_data {
       {
         'consumption_rates' => {
@@ -16,41 +13,33 @@ FactoryBot.define do
         },
         'resource_management' => {
           'consumables' => {
-            'energy_kwh' => {'rate' => 1000, 'current_usage' => 800}
+            'energy_kwh' => { 'rate' => 1000, 'current_usage' => 800 }
           },
           'generated' => {
-            'energy_kwh' => {'rate' => 2000, 'current_output' => 1800}
+            'energy_kwh' => { 'rate' => 2000, 'current_output' => 1800 }
           }
         },
-        'power_grid' => {'status' => 'online', 'efficiency' => 0.95}
+        'power_grid' => { 'status' => 'online', 'efficiency' => 0.95 }
       }
     }
 
     association :owner, factory: :development_corporation
     association :location, factory: :celestial_location
-    
-    # Independent settlement (no colony)
-    trait :independent do
-      colony { nil }
-    end
 
-    # Skip account creation to avoid duplicates during testing
     after(:build) do |settlement|
-      # Only override the callback if it exists
       if settlement.respond_to?(:create_account_and_inventory)
         settlement.define_singleton_method(:create_account_and_inventory) { nil }
       end
-      
-      # Add default inventory without capacity
       settlement.build_inventory if settlement.inventory.nil?
-      
-      # Handle build_units_and_modules if it exists
       if settlement.respond_to?(:build_units_and_modules)
         settlement.define_singleton_method(:build_units_and_modules) { true }
       end
     end
 
-    # Add account only when explicitly needed
+    trait :independent do
+      colony { nil }
+    end
+
     trait :with_account do
       after(:create) do |settlement|
         create(:account, accountable: settlement) unless settlement.account
@@ -72,29 +61,15 @@ FactoryBot.define do
         )
       end
     end
-    
-    # Station trait for orbital stations
-    trait :station do
-      settlement_type { :station }
-      sequence(:name) { |n| "Orbital Station #{n}" }
-      
-      # Ensure no account is created for stations
-      after(:build) do |settlement|
-        if settlement.respond_to?(:create_account_and_inventory)
-          settlement.define_singleton_method(:create_account_and_inventory) { nil }
-        end
-      end
-    end
-    
-    # Settlement with specific resources
+
     trait :with_construction_materials do
       after(:create) do |settlement|
         %w[Steel Glass Planetary\ Regolith Aluminum Carbon Plastics].each do |material|
           settlement.inventory.items.create!(
             name: material,
             amount: 1000,
-            material_type: "raw_material",
-            storage_method: "bulk_storage"
+            material_type: 'raw_material',
+            storage_method: 'bulk_storage'
           )
         end
       end
@@ -106,26 +81,25 @@ FactoryBot.define do
           settlement.inventory.items.create!(
             name: resource,
             amount: 1000,
-            material_type: "critical_resource",
-            storage_method: "bulk_storage"
+            material_type: 'critical_resource',
+            storage_method: 'bulk_storage'
           )
         end
       end
     end
 
-    # Add the for_energy_testing trait here:
     trait :for_energy_testing do
       operational_data {
         {
           'resource_management' => {
             'consumables' => {
-              'energy_kwh' => {'rate' => 1000, 'current_usage' => 1000}
+              'energy_kwh' => { 'rate' => 1000, 'current_usage' => 1000 }
             },
             'generated' => {
-              'energy_kwh' => {'rate' => 1500, 'current_output' => 1500}
+              'energy_kwh' => { 'rate' => 1500, 'current_output' => 1500 }
             }
           },
-          'power_grid' => {'status' => 'optimal', 'efficiency' => 1.0},
+          'power_grid' => { 'status' => 'optimal', 'efficiency' => 1.0 },
           'battery' => {
             'capacity' => 100.0,
             'current_charge' => 50.0,
@@ -135,42 +109,22 @@ FactoryBot.define do
         }
       }
     end
-  end
-  
-  # Standard Settlement - inherits from base_settlement
-  factory :settlement, class: 'Settlement::BaseSettlement' do
-    sequence(:name) { |n| "Settlement #{n}" }
-    association :location, factory: :celestial_location
-    association :owner, factory: :player
 
-    transient do
-      celestial_body { nil }
-    end
+    # Standard settlement variant
+    factory :settlement, class: 'Settlement::BaseSettlement' do
+      sequence(:name) { |n| "Settlement #{n}" }
+      association :owner, factory: :player
 
-    after(:build) do |settlement, evaluator|
-      if evaluator.celestial_body
-        settlement.location ||= build(:celestial_location, celestial_body: evaluator.celestial_body)
+      transient do
+        celestial_body { nil }
+      end
+
+      after(:build) do |settlement, evaluator|
+        if evaluator.celestial_body
+          settlement.location ||= build(:celestial_location,
+            celestial_body: evaluator.celestial_body)
+        end
       end
     end
-
-    trait :independent do
-      colony { nil }
-    end
-  end  
-
-  # Removed obsolete city and outpost STI factories
-  
-  # Space Station - inherits from base_settlement
-  factory :space_station, class: 'Settlement::SpaceStation', parent: :base_settlement do
-    sequence(:name) { |n| "Space Station #{n}" }
-    settlement_type { :space_station }
-    current_population { 50 }
-  end
-
-  # Orbital Depot - inherits from base_settlement (architecture fix)
-  factory :orbital_depot, class: 'Settlement::OrbitalDepot', parent: :base_settlement do
-    sequence(:name) { |n| "Orbital Depot #{n}" }
-    settlement_type { :outpost }
-    current_population { 10 }
   end
 end
