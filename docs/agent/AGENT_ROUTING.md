@@ -1,21 +1,22 @@
 # Agent Routing Guide & Documentation Index
-**Last Updated**: March 22, 2026  
+**Last Updated**: March 31, 2026  
 **Purpose**: Route work to the right agent. Check doc index before creating new documentation.
 
 ---
 
 ## Agent Roster & Routing
-| **Documentation Strategist** | Documentation Integrity | Doc hierarchy, deduplication, mapping, session handoff management |
+
 ### Web Agents — Free, No Request Limits
 
 | Agent | Primary Role | Use For |
 |---|---|---|
-| **Claude** (claude.ai) | Session Strategist, Planner | Session triage, architecture decisions, task file creation, handoff summaries |
-| **Perplexity** | Research | Looking up current libraries, external references, unfamiliar APIs |
-| **Gemini** (web) | Game Design | Brainstorming mechanics, narrative, gameplay systems |
+| **Claude** (claude.ai) | Session Strategist, Planner | Session triage, architecture decisions, task file creation, handoff summaries, game design |
+| **Perplexity** (web) | Research + Planning | Issue diagnosis, session planning, RSpec patterns, Ruby metaprogramming, protocol review |
+| **Gemini** (web) | Documentation + Game Design | Documentation synthesis, brainstorming mechanics, narrative, gameplay systems |
 | **ChatGPT** (web) | Asset Generation | Sprite generation, image assets, visual design |
 
 > Web agents do not touch code or run commands. They create task files and hand off to Copilot agents.
+> Gemini web + GPT-4.1 is the preferred documentation pipeline — do not use Gemini Flash for docs.
 
 ---
 
@@ -23,46 +24,63 @@
 
 | Agent | Cost | Capability | Best For | Supervision |
 |---|---|---|---|---|
-| **GPT-4.1** | 0x | Good, needs guidance | Targeted single-file fixes with fully specified tasks | Watched carefully |
-| **Grok** | 0.25x | Solid, reliable | Light implementation, well-defined tasks | Standard |
-| **Gemini Flash** | 0.33x | Good autonomy | Multi-step implementation, reasonable inference | Standard |
-| **Claude Sonnet 4.6** | 1x | Strong reasoning | Complex fixes, architecture, recovery from stuck agents | Trusted |
-| **Claude Opus 4.6** | 3x | Highest capability | Untested in this workflow — reserve, do not use yet | TBD |
+| **GPT-4.1** | 0x | Good, needs guidance | Targeted single-file fixes, commits, file ops, greps | 🔴 Watched carefully |
+| **GPT-4o** | 0x | Untested | Try for medium complexity tasks — evaluate before relying on | 🔴 Watched carefully |
+| **GPT-5 mini** | 0x | Untested | Try for simple tasks — evaluate before relying on | 🔴 Watched carefully |
+| **Raptor mini** | 0x | Untested preview | Do not use until evaluated | 🔴 Watched carefully |
+| **Grok Code Fast** | 0.25x | Better than GPT-4.1 | Complex multi-file fixes after GPT-4.1 fails twice | 🟡 Standard |
+| **Claude Haiku 4.5** | 0.33x | Fast, limited | Simple reasoning tasks only — prefer free agents | 🟡 Standard |
+| **Gemini Flash** | 0.33x | Good autonomy | Avoid — use Gemini web instead | 🟡 Standard |
+| **GPT-5.1-Codex-Mini** | 0.33x | Untested | Evaluate before using | 🟡 Standard |
+| **GPT-5.4 mini** | 0.33x | Untested | Evaluate before using | 🟡 Standard |
+| **Claude Sonnet 4.6** | 1x | Strong reasoning | Complex fixes, architecture recovery, stuck agents | 🟢 Trusted |
+| **Claude Sonnet 4/4.5** | 1x | Strong reasoning | Same as above — fallback if 4.6 unavailable | 🟢 Trusted |
+| **GPT-5.2** | 1x | Untested | Evaluate before using | 🟡 Standard |
+| **GPT-5.1** | 1x | Untested | Evaluate before using | 🟡 Standard |
+| **GPT-5.1-Codex** | 1x | Untested | Evaluate before using | 🟡 Standard |
+| **GPT-5.2-Codex** | 1x | Untested | Evaluate before using | 🟡 Standard |
+| **GPT-5.3-Codex** | 1x | Untested | Evaluate before using | 🟡 Standard |
+| **GPT-5.1-Codex-Max** | 1x | Untested | Evaluate before using | 🟡 Standard |
+| **Gemini 2.5 Pro** | 1x | Likely strong | Evaluate before using — may replace Sonnet for some tasks | 🟡 Standard |
+| **Gemini 3.1 Pro** | 1x | Untested preview | Do not use until evaluated | 🟡 Standard |
+| **Claude Opus 4.5** | 3x | Highest capability | Genuine deadlocks only — Sonnet couldn't resolve | 🟢 Trusted |
+| **Claude Opus 4.6** | 3x | Highest capability | Genuine deadlocks only — Sonnet couldn't resolve | 🟢 Trusted |
+
+**Supervision Legend**:
+- 🔴 Watched carefully = verify every output before accepting
+- 🟡 Standard = review outputs, apply judgment
+- 🟢 Trusted = can work from lean task file, exercise autonomy
 
 ---
 
 ### Local Agents — Free, Setup In Progress
 
-### Local Agents — **STANDARDIZED 2026-03-22**
 | Agent | Primary Role | Notes |
 |---|---|---|
 | **Ollama** (Llama3.1:70B) | **PRIMARY GRINDER** | Overnight autonomous runs, validated workflow |
-| **Qwen 32B** | Windows backup |  |
-| **Qwen 14B** | M5 speed |  |
+| **Qwen 32B** | Windows backup | |
+| **Qwen 14B** | M5 speed | |
 
-> Ollama is now the default for free, large-scale grinding. Qwen models are available as platform-specific backups.
-| **Perplexity** | **Research + Protocol Review** | RSpec patterns, Ruby metaprogramming, agent workflow docs |
-| **Documentation Strategist** | Documentation Integrity | Doc hierarchy, deduplication, mapping, session handoff management |
+> Ollama is the default for free, large-scale overnight grinding.
 
 ---
 
 ## Routing Decision Guide
-
 ```
 What kind of work is this?
 
-
 PLANNING / ARCHITECTURE / TASK CREATION?
-  └─ Claude web (free, no limit) — stays here, produces task file
+  └─ Claude web (free) — stays here, produces task file
 
-DOCUMENTATION / DOC REFACTOR / INDEXING?
-  └─ Documentation Strategist (docs/agent/DOCUMENTATION_STRATEGIST.md) — manages doc hierarchy, deduplication, mapping, and session handoff archiving
+DOCUMENTATION / DOC SYNTHESIS?
+  └─ Gemini web (free) + GPT-4.1 (free) — preferred pipeline
+     Do NOT use Gemini Flash (0.33x) for documentation
 
-RESEARCH / EXTERNAL REFERENCE?
+RESEARCH / EXTERNAL REFERENCE / ISSUE DIAGNOSIS?
   └─ Perplexity web (free)
 
 GAME DESIGN BRAINSTORMING?
-  └─ Gemini web (free)
+  └─ Gemini web (free) or Claude web (free)
 
 SPRITE / IMAGE GENERATION?
   └─ ChatGPT web (free)
@@ -70,36 +88,37 @@ SPRITE / IMAGE GENERATION?
 IMPLEMENTATION — how complex is the task?
 
   Fully specified, single file, clear fix?
-    └─ GPT-4.1 (0x) — free, but watch carefully
+    └─ GPT-4.1 (0x) — free, watch carefully
        Task file must be complete — explicit paths, methods, commands
 
-  Well-defined, 1-3 files, some inference needed?
-    └─ Grok (0.25x) — cost-effective, reliable
+  Same failure after 2 GPT-4.1 attempts?
+    └─ Grok Code Fast (0.25x) — better capability, worth the cost
        Task file needs good detail
 
-  Multi-step, requires some reasoning?
-    └─ Gemini Flash (0.33x) — good autonomy, reasonable cost
-       Task file can be leaner
-
   Complex root cause, architectural judgment needed?
-  Previous agent got stuck after 2 attempts?
+  Grok failed or unavailable?
     └─ Claude Sonnet (1x) — spend deliberately
        Can work from lean task file
 
   Hardest problems only, Sonnet couldn't resolve?
-    └─ Claude Opus (3x) — untested, last resort
+    └─ Claude Opus (3x) — last resort only
 ```
 
 ---
 
 ## Request Budget Rules
 
-1. **Always start with the cheapest capable agent** — if GPT-4.1 can do it with a well-specified task, use it
-2. **Escalate when stuck** — same failure after 2 attempts = move up one tier, not retry same agent
-3. **Claude Sonnet is the senior agent** — not the default. Use for complexity, not convenience
-4. **Never use Opus until Sonnet is genuinely stuck** — it's untested in this workflow and 3x cost
-5. **Web Claude is free** — use it for all planning, triage, and task creation without hesitation
-6. **Full suite runs burn requests** — don't ask Copilot agents to run the full suite until targeted specs pass
+1. **Always start with the cheapest capable agent** — GPT-4.1 first, always
+2. **Escalate when stuck** — same failure after 2 attempts = move up one tier
+3. **Grok Code Fast is the first escalation** — not Gemini Flash, not Sonnet
+4. **Claude Sonnet is the senior agent** — not the default, use for complexity
+5. **Never use Opus until Sonnet is genuinely stuck** — 3x cost, last resort
+6. **Web agents are free** — Claude, Perplexity, Gemini web have no limit
+7. **Gemini web replaces Gemini Flash** — same quality, zero cost
+8. **Perplexity replaces research premium spend** — use web version
+9. **Full suite runs burn requests** — don't run full suite until targeted specs pass
+10. **Never escalate to premium for diagnosis** — Claude web diagnoses, GPT-4.1 executes
+11. **Single RSpec Runner**: Never run RSpec in parallel across agents. Only one implementation agent may execute RSpec at a time (container lock).
 
 ---
 
@@ -107,17 +126,36 @@ IMPLEMENTATION — how complex is the task?
 
 The task file you hand to an agent should match its capability level.
 A 0x agent handed a lean task file will burn requests on clarification.
-A 1x agent handed an over-specified task file wastes your writing time but works fine.
+A 1x agent handed an over-specified task file wastes writing time but works fine.
 
 **When in doubt — over-specify. It never hurts.**
 
 | Agent | File Paths | Method Names | Step-by-Step Commands | Architecture Context | Recovery Instructions |
 |---|---|---|---|---|---|
 | GPT-4.1 (0x) | Exact | Exact + line numbers | Every command explicit | Full summary | Explicit escalation steps |
-| Grok (0.25x) | Exact | Exact | Most commands explicit | Full summary | Explicit escalation steps |
+| GPT-4o (0x) | Exact | Exact + line numbers | Every command explicit | Full summary | Explicit escalation steps |
+| Grok Code Fast (0.25x) | Exact | Exact | Most commands explicit | Full summary | Explicit escalation steps |
 | Gemini Flash (0.33x) | Exact | Approximate | Key commands | Summary | Standard stop conditions |
 | Claude Sonnet (1x) | Approximate | Can infer | Key commands | High level OK | Standard stop conditions |
+| Claude Opus (3x) | High level OK | Can infer | Key commands | High level OK | Standard stop conditions |
 | Local Ollama | Exact | Exact + line numbers | Every command explicit | Full summary | Explicit escalation steps |
+
+---
+
+## Untested Agents — Evaluation Needed
+The following agents are available but have not been evaluated in this workflow.
+Do not assign implementation tasks until tested on a low-risk isolated spec fix:
+- GPT-4o (0x) — try first, likely capable
+- GPT-5 mini (0x) — try for simple tasks
+- Grok Code Fast (0.25x) — known capable, better than GPT-4.1 per session history
+- GPT-5.1-Codex-Mini (0.33x)
+- GPT-5.4 mini (0.33x)
+- GPT-5.2, GPT-5.1, GPT-5.1-Codex, GPT-5.2-Codex, GPT-5.3-Codex, GPT-5.1-Codex-Max (1x each)
+- Gemini 2.5 Pro, Gemini 3.1 Pro (1x each)
+- Raptor mini Preview (0x)
+
+When evaluating a new agent: assign a single well-specified isolated spec fix,
+watch carefully, assess output quality before trusting with more complex work.
 
 ---
 
@@ -126,7 +164,6 @@ A 1x agent handed an over-specified task file wastes your writing time but works
 > **Check this index before creating any new documentation.**
 > If the topic is already covered, add to the existing file.
 > If it belongs in a new file, note the gap in your completion report — do not create it during an implementation task.
-> All docs should eventually link to the GitHub wiki.
 
 ### `/docs` Root — Project-Wide
 | File | Purpose | Status |
@@ -163,12 +200,9 @@ A 1x agent handed an over-specified task file wastes your writing time but works
 ### `/docs/architecture` — System Design
 | Path | Purpose |
 |---|---|
-| `architecture/` | 40 files — canonical home for all system design docs |
+| `architecture/` | Canonical home for all system design docs |
 | `architecture/life_support_waste_recycling_architecture.md` | Life support material taxonomy, closed loop flow |
 | `architecture/precursor_mission_bootstrap_architecture.md` | Luna bootstrap, ISRU loop, Sol as AI training |
-
-> Architecture decisions live here. Before making a structural change to any
-> game system, check this directory for an existing doc on that system.
 
 ### `/docs/ai_manager` — AI Systems
 | Path | Purpose |
@@ -178,7 +212,7 @@ A 1x agent handed an over-specified task file wastes your writing time but works
 ### `/docs/developer` — Development Reference
 | Path | Purpose |
 |---|---|
-| `developer/` | 50 files — setup guides, coding patterns, service references |
+| `developer/` | Setup guides, coding patterns, service references |
 
 ### `/docs/systems` — Game Systems
 | Path | Purpose |
@@ -197,8 +231,6 @@ A 1x agent handed an over-specified task file wastes your writing time but works
 | `legacy/[pascal file]` | Undergraduate pathfinding implementation — reference for wormhole pathfinding task |
 
 ### Directories Needing Index
-The following directories have files but no index doc yet. Do not create one
-during implementation tasks — flag the gap:
 - `docs/crafts/`
 - `docs/economics/`
 - `docs/market/`
@@ -213,20 +245,18 @@ during implementation tasks — flag the gap:
 ## Doc Creation Rules
 
 1. **Check this index first** — if the topic is covered, add to the existing file
-2. **Never create docs at `/docs` root** — they become orphans. Use the correct subdirectory
-3. **Never create docs during implementation tasks** — flag the gap, create in a separate task
-4. **One doc per system** — if a second doc for the same system exists, consolidate
-5. **Link to GitHub wiki** — all docs are eventually wiki candidates, write accordingly
-6. **Name clearly** — `[system]_[topic].md` e.g. `terraforming_gas_calculations.md`
+2. **Never create docs at `/docs` root** — they become orphans
+3. **Never create docs during implementation tasks** — flag the gap, create separately
+4. **One doc per system** — consolidate duplicates
+5. **Link to GitHub wiki** — all docs are eventually wiki candidates
+6. **Name clearly** — `[system]_[topic].md`
 
 ---
 
 ## Cleanup Backlog
-These are known doc issues that need a dedicated cleanup task:
-
 - [ ] Archive or delete `GUARDRAILS.md.old`, `.old2`, `.old3.md`, `.old4.md`
 - [ ] Move root orphans to correct subdirectories (5 files)
 - [ ] Create index files for undocumented subdirectories
-- [ ] Audit `docs/developer/` (50 files) for duplicates
-- [ ] Audit `docs/architecture/` (40 files) for overlapping content
+- [ ] Audit `docs/developer/` for duplicates
+- [ ] Audit `docs/architecture/` for overlapping content
 - [ ] Establish GitHub wiki sync process
