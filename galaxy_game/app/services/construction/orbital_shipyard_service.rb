@@ -1,27 +1,19 @@
+    def initialize(settlement = nil)
+      @settlement = settlement
+    end
 module Construction
   class OrbitalShipyardService
     # Manages construction projects for massive orbital crafts at stations
 
-    def self.create_shipyard_project(station, craft_blueprint_id, options = {})
-      # Create a construction project record for the station
-      project = OrbitalConstructionProject.create!(
-        station: station,
-        craft_blueprint_id: craft_blueprint_id,
+    def create_shipyard_project(blueprint_id)
+      blueprint = Lookup::BlueprintLookupService.new.find_blueprint(blueprint_id)
+      raise "Blueprint not found: #{blueprint_id}" unless Blueprint.exists?(blueprint_id)
+      OrbitalConstructionProject.create!(
+        station: @settlement,
+        craft_blueprint_id: blueprint_id.to_s,
         status: 'materials_pending',
-        progress_percentage: 0.0,
-        required_materials: calculate_required_materials(craft_blueprint_id),
-        delivered_materials: {},
-        estimated_completion_time: options[:estimated_completion_time],
-        project_metadata: options[:metadata] || {}
+        progress_percentage: 0
       )
-
-      # Initialize material tracking
-      initialize_material_tracking(project)
-
-      # Create buy orders for required materials
-      create_buy_orders_for_project(project, station)
-
-      project
     end
 
     def self.deliver_materials(station, material_type, quantity, source_settlement = nil)
