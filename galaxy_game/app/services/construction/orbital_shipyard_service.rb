@@ -6,8 +6,7 @@ module Construction
     # Manages construction projects for massive orbital crafts at stations
 
     def create_shipyard_project(blueprint_id)
-      blueprint = Lookup::BlueprintLookupService.new.find_blueprint(blueprint_id)
-      raise "Blueprint not found: #{blueprint_id}" unless Blueprint.exists?(blueprint_id)
+      blueprint = self.class.load_craft_blueprint(blueprint_id)
       OrbitalConstructionProject.create!(
         station: @settlement,
         craft_blueprint_id: blueprint_id.to_s,
@@ -171,18 +170,12 @@ module Construction
 
     def self.load_craft_blueprint(blueprint_id)
       # Load blueprint from JSON data
-      blueprint_path = GalaxyGame::Paths::CRAFT_BLUEPRINTS_PATH.join('space', 'spacecraft', "#{blueprint_id}_bp.json")
+      blueprint_path = GalaxyGame::Paths::JSON_DATA.join('json-data', 'blueprints', 'crafts', 'space', 'spacecraft', "#{blueprint_id}_bp.json")
 
       if File.exist?(blueprint_path)
         JSON.parse(File.read(blueprint_path))
       else
-        # Fallback to old data structure
-        old_path = GalaxyGame::Paths::JSON_DATA.join('old-json-data', 'production_old3', 'crafts', 'transport', 'cyclers', "#{blueprint_id}_data.json")
-        if File.exist?(old_path)
-          JSON.parse(File.read(old_path))
-        else
-          raise "Blueprint not found: #{blueprint_id}"
-        end
+        raise "Blueprint not found: #{blueprint_id}"
       end
     end
   end
