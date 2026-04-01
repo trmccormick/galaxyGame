@@ -44,7 +44,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
       end
 
       it 'creates a material processing job record' do
-        job = service.thermal_extraction(10.0, teu_unit)
+        job = service.thermal_extraction(teu_unit, 'raw_regolith', 10.0)
 
         expect(job).to be_a(MaterialProcessingJob)
         expect(job.processing_type).to eq('thermal_extraction')
@@ -60,7 +60,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
       end
 
       it 'updates inventory correctly after job completion' do
-        job = service.thermal_extraction(10.0, teu_unit)
+        job = service.thermal_extraction(teu_unit, 'raw_regolith', 10.0)
         job.start!
         job.process_tick(24.0)
 
@@ -71,7 +71,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
 
     context 'with insufficient raw regolith' do
       it 'returns an error' do
-        result = service.thermal_extraction(100.0, teu_unit)
+        result = service.thermal_extraction(teu_unit, 'raw_regolith', 100.0)
         expect(result[:error]).to include("Insufficient raw regolith")
       end
     end
@@ -92,7 +92,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
       end
 
       it 'creates a material processing job record' do
-        job = service.volatiles_extraction(5.0, pve_unit)
+        job = service.volatiles_extraction(pve_unit, 'processed_regolith', 5.0)
 
         expect(job).to be_a(MaterialProcessingJob)
         expect(job.processing_type).to eq('volatiles_extraction')
@@ -108,7 +108,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
       end
 
       it 'produces gases with correct composition after job completion' do
-        job = service.volatiles_extraction(5.0, pve_unit)
+        job = service.volatiles_extraction(pve_unit, 'processed_regolith', 5.0)
         job.start!
         job.process_tick(24.0)
 
@@ -123,7 +123,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
 
     context 'with insufficient processed regolith' do
       it 'returns an error' do
-        result = service.volatiles_extraction(50.0, pve_unit)
+        result = service.volatiles_extraction(pve_unit, 'processed_regolith', 50.0)
         expect(result[:error]).to include("Insufficient processed regolith")
       end
     end

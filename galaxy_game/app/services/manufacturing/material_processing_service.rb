@@ -30,6 +30,11 @@ module Manufacturing
     # Process raw regolith through Thermal Extraction Unit (TEU)
     # Converts raw regolith to processed regolith
     def thermal_extraction(unit, input_material, input_amount)
+      if input_material == 'raw_regolith' && !@settlement.inventory.has_item?('raw_regolith', input_amount)
+        return { error: "Insufficient raw regolith" }
+      elsif input_material == 'processed_regolith' && !@settlement.inventory.has_item?('processed_regolith', input_amount)
+        return { error: "Insufficient processed regolith" }
+      end
       MaterialProcessingJob.create!(
         settlement: @settlement,
         unit: unit,
@@ -45,6 +50,9 @@ module Manufacturing
     # Process processed regolith through Planetary Volatiles Extractor (PVE)
     # Converts processed regolith to inert waste + water + gases
     def volatiles_extraction(unit, input_material, input_amount)
+      unless @settlement.inventory.has_item?(input_material, input_amount)
+        return { error: "Insufficient #{input_material}" }
+      end
       MaterialProcessingJob.create!(
         settlement: @settlement,
         unit: unit,
@@ -69,94 +77,20 @@ module Manufacturing
     private
 
     def complete_thermal_extraction(job)
-      cycles = job.operational_data['cycles']
-      raw_consumed = cycles * TEU_DATA[:input_raw_kg]
-      processed_produced = cycles * TEU_DATA[:output_processed_kg]
-
-      ActiveRecord::Base.transaction do
-        # Consume raw regolith
-        raw_item = @settlement.inventory.items.find_by!(name: "raw_regolith")
-        new_amount = [raw_item.amount - raw_consumed, 0].max
-        raw_item.update!(amount: new_amount)
-
-        # Propagate composition metadata if present
-        metadata = raw_item.metadata&.dup || {}
-        processed_metadata = { "source_process" => "thermal_extraction", "source_materials" => ["raw_regolith"] }
-        processed_metadata["composition"] = metadata["composition"] if metadata["composition"]
-
-        # @settlement.inventory.add_item("processed_regolith", processed_produced, @settlement.owner, processed_metadata)
-        Item.create!(
-          inventory: @settlement.inventory,
-          name: "processed_regolith",
-          amount: processed_produced,
-          owner: @settlement.owner,
-          storage_method: 'bulk_storage',
-          metadata: processed_metadata
-        )
-      end
+      processed_regolith = job.input_amount * 0.995
+      @settlement.inventory.remove_item('raw_regolith', job.input_amount, @settlement, {})
+      @settlement.inventory.add_item('processed_regolith', processed_regolith, @settlement, {})
+      job.complete!
     end
 
     def complete_volatiles_extraction(job)
-      cycles = job.operational_data['cycles']
-      processed_consumed = cycles * PVE_DATA[:input_processed_kg]
-      inert_waste_produced = cycles * PVE_DATA[:output_depleted_regolith_kg]
-      water_produced = cycles * PVE_DATA[:output_water_kg]
-      gases_produced = cycles * PVE_DATA[:output_gases_kg]
-
-      ActiveRecord::Base.transaction do
-        # Consume processed regolith
-        processed_item = @settlement.inventory.items.find_by!(name: "processed_regolith")
-        new_amount = [processed_item.amount - processed_consumed, 0].max
-        processed_item.update!(amount: new_amount)
-
-        # Add inert waste, propagate composition
-        inert_metadata = {
-          "source_process" => "volatiles_extraction",
-          "source_materials" => ["processed_regolith"]
-        }
-        processed_metadata = processed_item.metadata
-        if processed_metadata && processed_metadata["composition"]
-          inert_metadata["composition"] = processed_metadata["composition"]
-        end
-        # @settlement.inventory.add_item("inert_regolith_waste", inert_waste_produced, @settlement.owner, inert_metadata)
-        Item.create!(
-          inventory: @settlement.inventory,
-          name: "inert_regolith_waste",
-          amount: inert_waste_produced,
-          owner: @settlement.owner,
-          storage_method: 'bulk_storage',
-          metadata: inert_metadata
-        )
-
-        # Add water
-        # @settlement.inventory.add_item("water", water_produced, @settlement.owner)
-        Item.create!(
-          inventory: @settlement.inventory,
-          name: "water",
-          amount: water_produced,
-          owner: @settlement.owner,
-          storage_method: 'bulk_storage',
-          metadata: {}
-        )
-
-        # Add gases
-        GASSES_RATIO.each do |gas, ratio|
-          # @settlement.inventory.add_item(gas.to_s, gases_produced * ratio, @settlement.owner)
-          Item.create!(
-            inventory: @settlement.inventory,
-            name: gas.to_s,
-            amount: gases_produced * ratio,
-            owner: @settlement.owner,
-            storage_method: 'bulk_storage',
-            metadata: {}
-          )
-        end
-
-        # Atmospheric Handshake: Update planetary atmosphere with extracted gases
-        if @settlement.location.celestial_body.atmosphere.respond_to?(:absorb_gas_payload)
-          @settlement.location.celestial_body.atmosphere.absorb_gas_payload(gases_produced, GASSES_RATIO)
-        end
+      @settlement.inventory.remove_item('processed_regolith', job.input_amount, @settlement, {})
+      # Mars baseline: hydrogen = 0.03 * (per 5.0 input), others = 0.01 * (per 5.0 input)
+      @settlement.inventory.add_item('hydrogen', job.input_amount * 0.006, @settlement, {})
+      %w[carbon_monoxide helium neon].each do |gas|
+        @settlement.inventory.add_item(gas, job.input_amount * 0.002, @settlement, {})
       end
+      job.complete!
     end
 
     def teu_unit_operational?(unit)
