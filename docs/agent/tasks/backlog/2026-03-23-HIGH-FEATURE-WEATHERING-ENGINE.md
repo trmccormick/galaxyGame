@@ -1,3 +1,13 @@
+---
+title: Weathering Engine Regression Filter
+status: BACKLOG
+priority: HIGH
+layer: Meso
+created: 2026-03-23
+updated: 2026-03-23
+author: Documentation Strategist
+---
+
 # TASK: Generator Weathering Engine
 
 ## Historical Context
@@ -7,7 +17,6 @@ Lessons from StarSim archives:
 - Early attempts failed to use 4X-style heuristics, resulting in poor playability and resource distribution.
 - Overly global models: Initial Mars settlement JSONs focused on global terraforming and atmospheric skimmers, which proved unmanageable and did not align with new "Quick Win" strategies (local compressors, aerogel panels, gas storage).
 - Lack of weathering/erosion: No regression filter or erosion simulation was applied, so barren states were not convincingly derived from lush/goal states.
-
 
 ## Background
 Current terrain generation produces output that feels noisy and unnatural compared to balanced 4X maps (e.g., Civ4/FreeCiv). Elevation is sampled independently, and features are overlaid without simulating geological regression or weathering. There is no mechanism to regress a lush/terraformed map to a barren state using real-world erosion patterns.
@@ -38,7 +47,6 @@ Current terrain generation produces output that feels noisy and unnatural compar
 
 ---
 
-**Related Files:**
-- app/services/terrain/multi_body_terrain_generator.rb
-- app/services/terrain_analysis/terrain_quality_assessor.rb
-- (to be created/updated) docs/architecture/STAR_SIM_GENERATION.md
+**Simulation Layer:** Meso (Surface)
+**Agent Discipline:** 0x — All changes must be auditable, with explicit commit messages and preserved file dates.
+**Tag:** weathering, regression, terrain, 4X, meso
