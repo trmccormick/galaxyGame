@@ -1,9 +1,11 @@
-    def initialize(settlement = nil)
-      @settlement = settlement
-    end
+
 module Construction
   class OrbitalShipyardService
     # Manages construction projects for massive orbital crafts at stations
+
+    def initialize(settlement = nil)
+      @settlement = settlement
+    end
 
     def create_shipyard_project(blueprint_id)
       blueprint = self.class.load_craft_blueprint(blueprint_id)
