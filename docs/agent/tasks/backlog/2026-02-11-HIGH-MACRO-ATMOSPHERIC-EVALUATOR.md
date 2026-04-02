@@ -1,24 +1,19 @@
-# Atmospheric Evaluator (0x Subtask)
+# Atmospheric Evaluator (0x Task)
 
-**Parent Epic:** atmospheric_maintenance_ai_framework.md
-**Layer:** MACRO (Planetary Simulation)
-**Created:** 2026-02-11
-**Priority:** HIGH
-**Status:** TODO
+**Target**: app/services/ai_manager/atmospheric_evaluator.rb
 
-## Scope
-Implement monitoring of atmospheric retention, seasonal/dust storm impacts.
+**Issue**: Missing retention monitoring and seasonal/dust storm event triggers
 
-## Target Files
-- app/services/ai_manager/atmospheric_evaluator.rb
+**Diagnostic**:
+```bash
+grep -n "retention\|dust_storm\|seasonal" app/services/ai_manager/
+docker exec -it web "RAILS_ENV=test bundle exec rspec spec/services/ai_manager/atmospheric_evaluator_spec.rb -v"
+```
 
-## Acceptance Criteria
-- Retention and event triggers implemented
-- RSpec: retention calculations, event triggers
+**Tasks**:
+1. Synthesis Report (current state analysis) → STOP
+2. Implement retention_rate() and trigger_events() methods
+3. RSpec: expect(service.retention_rate).to be < 0.95
+4. Commit: "feat: atmospheric evaluator with retention + storm triggers"
 
-## Implementation Steps
-1. Create atmospheric_evaluator.rb service
-2. Implement retention and event logic
-3. Write/extend RSpec for calculations and triggers
-
----
+Priority: HIGH | 45min
