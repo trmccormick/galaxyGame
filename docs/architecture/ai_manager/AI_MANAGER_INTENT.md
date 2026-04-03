@@ -299,3 +299,58 @@ AWS Research → Local Bubble → Eden reconnection
 ## CORE RESPONSIBILITIES (Existing):
 3. **L1/LEO Fuel Pipeline** → orbital_depot_mk1_bp.json monitoring
 4. **NPC Deployment** → docs/architecture/NPC_INITIAL_DEPLOYMENT_SEQUENCE.md
+
+## MARS MOONS PIPELINE (Post-L1 Priority #3):
+1. TUG orbit adjustment → Flexible Mars-optimal positioning
+2. 2x Cyclers → L1 modules + Mars atmospheric skimmers
+3. Skimmer harvest → O₂/N₂/Xe (self-fueling)
+4. Moon ISRU → Regolith processing (structure)
+5. Dual orbital depots → Mars surface economics unlocked
+
+## MARS MOONS FUEL PIPELINE:
+1. Titan harvester → CH₄ bootstrap (until local source)
+2. Mars atmospheric skimmers → O₂/N₂/Xe (immediate)
+3. Moon ISRU → Regolith volatiles (structure + backup)
+4. Local CH₄ discovery → Full autarky (Sabatier/clathrates)
+
+## MARS SURFACE STRATEGY (Post-Orbital Pivot):
+1. Orbital running → Lunar-style Lava Tube Build
+2. AI Manager scans → Lava tube resource survey
+3. Modified lunar build → Mars-specific materials/process
+4. Foothold status → Surface economics unlocked
+
+## AI MANAGER DATA-DRIVEN ADAPTATION (Planet-Agnostic):
+```ruby
+def adaptive_build_plan(planet)
+  baseline = lunar_template
+  local_conditions = scan_surface_resources(planet)
+  baseline.substitute_materials(local_conditions)
+  baseline.adjust_processes(local_conditions)
+end
+```
+
+## MARS RESOURCE DIFFERENCES (Adaptive Planning):
+| Resource   | Luna         | Mars Lava Tube      | AI Manager Action         |
+|-----------|--------------|--------------------|--------------------------|
+| Regolith  | Basalt (SiO₂)| Perchlorate-rich   | Process adaptation       |
+| Volatiles | Skimmers     | CO₂ + trace H₂O    | Sabatier priority        |
+| Structure | I-beams      | Sulfur concrete    | Material override        |
+| Energy    | Solar/RTG    | Dust storms        | Power curve adjust       |
+
+## LAVA TUBE REALITY:
+- Radiation shield (30m roof)
+- Temperature stability
+- Dust storm immunity
+- Micrometeorite proof
+
+AI Manager: `if lava_tube.stability > 0.9 && resource_accessible? then primary_target`
+
+## DEPLOYMENT HIERARCHY UPDATED (POST-L1 → MARS COMPLETE):
+- L1/LEO Fuel Pipeline (Skimmers + Depots)
+- Luna ISRU → L1 structural ($5.6k I-beams)
+- Mars Phobos/Deimos → TUG + Cyclers + Titan CH4
+- Mars Lava Tube → Data-driven lunar adaptation
+- Earth USD (emergency fallback only)
+
+## AI MANAGER CORE CAPABILITY (Planet-Agnostic):
+DATA-DRIVEN = Planet-Adaptive
