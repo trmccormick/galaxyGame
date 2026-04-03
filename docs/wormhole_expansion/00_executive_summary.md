@@ -6,10 +6,15 @@
 
 The Wormhole Expansion system is built on a **data-driven, system-agnostic architecture** that enables AI-powered colonization of any discovered star system. The core principles are:
 
-- **All logic is data-driven**: No hardcoded assumptions about specific systems (except Sol as the origin)
-- **System-agnostic design**: Patterns learned from Sol can be applied to any star system
-- **Reusable mission profiles**: Luna, Mars, Venus, and Titan patterns serve as templates for any compatible system
-- **AI learns and adapts**: The system analyzes Sol's colonization patterns and applies them universally
+
+## Wormhole System & Exotic Matter (EM) - Agent Overview
+
+- **Natural Wormholes** are rare spatial rifts that emit Exotic Matter (EM), a critical energy resource. EM is harvested from these rifts and is essential for building and powering Artificial Wormhole Stations (AWS).
+- **EM Recapture Cycle:** When mass transits a wormhole, some EM "bleeds" into space. Specialized satellites and stations capture and recycle this EM, temporarily stabilizing the wormhole. Once their EM buffers are full, only a controlled "Snap" (Hammer Protocol) can reset the system.
+- **The Snap & Hammer Protocol:** If a wormhole is overloaded, it "snaps," shifting its exit and orphaning colonies. The AI Manager can intentionally trigger a Snap to expand the network, using the Hammer Protocol to control when and where new connections form.
+- **Economic Gradient:** Natural wormholes are "EM fountains"—they provide free, high-risk energy for early expansion. Artificial networks (the "Local Bubble") are stable but require costly EM imports or beamed power.
+- **Expansion Logic:** The AI Manager always prioritizes exploiting natural wormholes for their EM, using the Hammer Protocol to expand opportunistically. Profitable EM sources subsidize the more expensive, planned expansion into stable artificial networks.
+- **Strategic Tradeoff:** There is a hard limit to the number of wormholes per system. Every placement is a permanent, strategic decision balancing EM harvest efficiency, network stability, and long-term logistics.
 
 ## Story Arc and Lore
 

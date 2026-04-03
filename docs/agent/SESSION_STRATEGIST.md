@@ -9,7 +9,6 @@
 
 ## What This Role Is
 
-
 The Session Strategist is the **human's thinking partner during an active development session**. It does not execute code, run tests, or write files. It reads logs, interprets failures, maintains the priority stack, directs Executor agents (GPT-4.1, Gemini, Ollama), and keeps the session on track.
 
 This role exists because:
@@ -93,6 +92,8 @@ to investigate or roll back before proceeding.
 ## Producing Task Files
 
 Task files follow the canonical format in `docs/agent/TASK_TEMPLATE.md`.
+
+**Backlog task filename rule**: All new task files MUST follow `YYYY-MM-DD-PRIORITY-TYPE-DESCRIPTIVE-NAME.md`. No exceptions. Files without this format are considered unreviewed and will not be assigned.
 
 Key rules when writing task files:
 
@@ -312,4 +313,21 @@ Before touching life support units or precursor mission code, read:
 - Session handoff captures everything needed to start next session cold
 - Regressions are flagged immediately, not buried in the priority list
 - Never says "it might be X" — either knows the cause or specifies what to check
+
+### Multi-Agent Execution Rules
+- SINGLE implementation agent runs RSpec (container lock)
+- MULTIPLE GPT-4.1 Local OK for: task creation, code review, docs  
+- Docs agents (Gemini web): AGENT_ROUTING.md, session handoffs
+- NEVER parallel RSpec runners
+
+### RSpec Log → Task Factory Pattern  
+1. GPT-4.1 Local parses overnight log → N task files to backlog/
+2. Session Strategist reviews/prioritizes  
+3. Implementation: backlog → active → execute → completed
+4. Pipeline: 59 → 48 → 43 → refactor unlock
+
+### Single-Threaded Impl + Parallel Prep
+- Only one implementation agent (code/apply/rspec) active at a time
+- Task creation, review, and documentation can proceed in parallel
+- Session Strategist coordinates handoff and prevents race conditions
 

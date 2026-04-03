@@ -1,3 +1,5 @@
+# ℹ️ **Note:** The full RSpec suite is run automatically overnight for daily reference. The Implementation Agent must never trigger a full run interactively. Use the results of the latest overnight run (see /home/galaxy_game/log/rspec_full_*.log) for context and diagnosis, but only run targeted specs during interactive work.
+# ⚠️ **WARNING: Never run the full RSpec suite except when explicitly instructed by the user and only after all targeted specs are green. Always work only on the assigned failing spec in isolation. Running the full suite without approval is strictly forbidden.**
 ## Code Location and Path Reference
 
 All application code, specs, and documentation files live on the host filesystem (your local machine) under the project directory. These files are mounted into the Docker containers using the volume mappings defined in `docker-compose.dev.yml`.

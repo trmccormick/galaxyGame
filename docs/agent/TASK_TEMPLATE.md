@@ -3,6 +3,26 @@
 # Delete these instruction comments before saving.
 # Place in docs/agent/tasks/backlog/, critical/, or active/ as appropriate.
 #
+# FILENAME CONVENTION — mandatory for all task files:
+#   YYYY-MM-DD-PRIORITY-TYPE-DESCRIPTIVE-NAME.md
+#
+#   YYYY-MM-DD  = date the task was created (not assigned, not completed)
+#   PRIORITY    = CRITICAL | HIGH | MEDIUM | LOW
+#   TYPE        = bug-fix | feature | refactor | architecture | data | documentation
+#   NAME        = kebab-case, descriptive, no spaces
+#
+#   Examples:
+#     2026-03-29-HIGH-REFACTOR-WORMHOLE-EXPANSION-SERVICE.md
+#     2026-03-27-MEDIUM-FEATURE-FINANCIAL-TRANSACTION-MODEL.md
+#     2026-03-30-LOW-DOCUMENTATION-BACKLOG-AUDIT-AND-RENAME.md
+#
+#   Why this matters:
+#     - Date = recency signal. Stale tasks predate architecture decisions.
+#     - Priority = triage at a glance without opening the file.
+#     - No date prefix = task must be reviewed before assignment, may be obsolete.
+#
+# ⚠️ Files without this convention will not be assigned until renamed and reviewed.
+#
 # DEPTH GUIDE — how much detail to include per agent tier:
 #   0x  (GPT-4.1)         — fill every field, no ambiguity, explicit paths and commands
 #   0.25x (Grok)          — fill every field, commands can be slightly abbreviated
