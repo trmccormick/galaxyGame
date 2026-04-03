@@ -48,9 +48,6 @@ class MaterialProcessingJob < ApplicationRecord
   end
 
   def complete!
-    # Do the actual processing here
-    service = Manufacturing::MaterialProcessingService.new(settlement)
-    service.complete_job(self)
     update!(status: 'completed', completion_date: Time.current)
   end
 end
