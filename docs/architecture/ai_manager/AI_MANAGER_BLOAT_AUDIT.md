@@ -53,8 +53,18 @@ text
 ✅ **Rake demos PASS**: lunar_base:with_isru, ai_base_building:simulate
 ✅ **All services delegate**: UnitLookupService + ConstructionJobService
 ✅ **TaskExecutionEngine orchestrates**: JSON missions only
-Last Updated: 2026-04-03
-Status: DOCUMENTATION → No code changes
 
-text
+## SURGICAL CRITERIA (DELETE if contains):
+- ❌ ISRU_UNITS, resource_profile (UnitLookupService exists)
+- ❌ Earth bulk exports (L1 structural only)
+- ❌ Standalone simulators (Market::PriceHistory exists)
+
+## Existing Systems Cross-Reference (Reinforce Orchestration)
+| Signal        | Source                                 | Doc Reference                        |
+|---------------|----------------------------------------|--------------------------------------|
+| Open orders   | `Market::Order.open`                   | market_monitor.rb                    |
+| Fuel levels   | `OrbitalDepotMk1.cryo_tanks`           | orbital_depot_mk1_bp.json [file:291] |
+| Pricing       | `NpcPriceCalculator.calculate_spread()`| app/services/market/npc_price_calculator.rb |
+| EAP           | `Tier1PriceModeler.calculate_eap()`    | l1_lagrange_facilities.md            |
+| Maturity      | `PriceHistory.count >= 10`             | price_history.rb                     |
 

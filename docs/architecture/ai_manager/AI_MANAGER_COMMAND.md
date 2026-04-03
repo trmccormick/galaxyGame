@@ -1,4 +1,12 @@
+
 AI_MANAGER_COMMAND.md — Final Authority
+
+## MANDATORY DELEGATION (Existing Services)
+
+✅ Market::NpcPriceCalculator.calculate_spread() → Strategic pricing
+✅ Tier1PriceModeler.calculate_eap() → Bootstrap pricing
+✅ Market::PriceHistory.where(...) → Market maturity check
+✅ orbital_depot_mk1_bp.json → L1 fuel monitoring target
 
 **MANDATORY PATTERNS** (Violations = immediate rejection):
 
