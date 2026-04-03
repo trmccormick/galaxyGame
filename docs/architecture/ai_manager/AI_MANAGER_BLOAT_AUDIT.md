@@ -1,61 +1,60 @@
-AI Manager — Bloat Audit & Surgical Refactor
-MUST READ BEFORE DELETING CODE | 88 files → 8 core files max
+AI Manager — Bloat Audit & Refactor Roadmap
+DOCUMENTATION ONLY | 88 files → 8 core files target | No code deletion
 
-Current State (Crime Scene)
+Current Reality (Audit)
 text
 $ find app/services/ai_manager -name "*.rb" | wc -l
-→ 88 files, ~2MB bloat
+→ **88 files, ~2MB** duplicating working services
 
-**Duplicated Working Services**:
-- UnitLookupService → isru_evaluator.rb (11KB), isru_optimizer.rb (15KB)
-- ConstructionJobService → construction_service.rb (3KB)  
-- ResourceTrackingService → resource_flow_simulator.rb (17KB)
-- TaskExecutionEngine → mission_planner_service.rb (32KB)
-Working Core (Keep Forever)
+**Duplication Mapping**:
+UnitLookupService.exists → isru_evaluator.rb (11KB hardcoded)
+ConstructionJobService.exists → construction_service.rb (3KB parallel)
+ResourceTrackingService.exists → resource_flow_simulator.rb (17KB reinvention)
+TaskExecutionEngine.exists → mission_planner_service.rb (32KB bloat)
+Proven Working Core (Reference Implementation)
 text
-✅ task_execution_engine.rb → JSON mission coordination
-✅ manager.rb → State machine + thresholds  
-✅ unit_deployer.rb → Robot workforce deployment
-✅ construction_coordinator.rb → ConstructionJobService wrapper
-DELETE ON SIGHT (88 → 8)
+✅ **task_execution_engine.rb** → JSON mission coordination (rake proven)
+✅ **manager.rb** → State machine + thresholds  
+✅ **ai_base_building.rake** → lunar_precursor → Base complete
+✅ **lunar_base:with_isru.rake** → TEU→PVE→I-beams working
+Refactoring Target (88 → 8 files)
 text
-❌ isru_evaluator.rb → Use UnitLookupService.find_unit()
-❌ isru_optimizer.rb → Use operational_data JSON rates  
-❌ resource_flow_simulator.rb → Use ResourceTrackingService
-❌ decision_tree.rb → Use JSON mission_profiles decision logic
-❌ economic_forecaster_service.rb → Use market data JSON
-❌ mission_scorer.rb → Use survey_score thresholds
-❌ expansion_service.rb → Use stockpile thresholds
-❌ terraforming_manager.rb → Use ConstructionJobService
-❌ wormhole_coordinator.rb → Use wormhole_station.json
-Refactor Rules
+**KEEP** (Orchestration layer):
+- task_execution_engine.rb → JSON mission coordinator
+- manager.rb → Monitors thresholds → Triggers missions  
+- unit_deployer.rb → Robot workforce management
+- construction_coordinator.rb → ConstructionJobService wrapper
+
+**CONSOLIDATE** (Delegate to existing services):
+- isru_evaluator.rb → UnitLookupService.find_unit()
+- resource_flow_simulator.rb → ResourceTrackingService.track_inventory_snapshot()
+- mission_scorer.rb → JSON mission_profile priorities
+Agent Rules (Enforce Before Coding)
 text
-1. **READ AI_MANAGER_COMMAND.md FIRST** or STOP
-2. **No new data models** → settlement.inventory, geosphere.crust_composition
-3. **Delete duplicated logic** → Delegate to existing services
-4. **TaskExecutionEngine orchestrates** → No parallel simulators
-5. **Synthesis Report format** → List deleted files + git commits
-Audit Commands (Run First)
-bash
-# Count bloat
+1. **READ THIS + AI_MANAGER_COMMAND.md FIRST** or STOP
+2. **No parallel data models** → Use settlement.inventory, geosphere.crust_composition
+3. **Delegate, don't duplicate** → UnitLookupService, ConstructionJobService exist
+4. **TaskExecutionEngine orchestrates** → No standalone simulators
+5. **Rake demos are SOURCE OF TRUTH** → Must pass post-refactor
+Audit Commands (Run Before Refactoring)
+
+# Measure bloat baseline
 find app/services/ai_manager -name "*.rb" | wc -l
 
-# Find hardcoded debt  
+# Debt markers (hardcoded constants)
 grep -r "PVE_DATA\|ISRU_UNITS\|resource_profile" app/services/ai_manager/
 
-# Find duplicated services
+# Duplication detection
 grep -r "UnitLookupService\|ConstructionJobService" app/services/ai_manager/ --include="*.rb" | grep -v "task_execution_engine.rb"
-
-# Generate deletion list
-find app/services/ai_manager -name "*.rb" -not -name "task_execution_engine.rb" -not -name "manager.rb" | head -20
-Success Criteria
+Success Metrics (Post-Refactor)
 text
-✅ 88 files → 8 files maximum
-✅ Zero "PVE_DATA" or "ISRU_UNITS" constants  
-✅ All services delegate to UnitLookupService + ConstructionJobService
-✅ TaskExecutionEngine orchestrates JSON missions
-✅ Rake demos PASS: lunar_base:with_isru, ai_base_building:simulate
+✅ **File count**: 88 → 8 maximum  
+✅ **Zero hardcoded constants**: No PVE_DATA, ISRU_UNITS
+✅ **Rake demos PASS**: lunar_base:with_isru, ai_base_building:simulate
+✅ **All services delegate**: UnitLookupService + ConstructionJobService
+✅ **TaskExecutionEngine orchestrates**: JSON missions only
 Last Updated: 2026-04-03
-Target: Surgical reduction, no functionality lost
+Status: DOCUMENTATION → No code changes
 
 text
+
