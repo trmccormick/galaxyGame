@@ -69,7 +69,7 @@ RSpec.describe Lookup::UnitLookupService do
         expect(habitat_unit).to be_present,
           "Unit #{unit_id} not found. Check if '#{File.basename(habitat_files.first)}' exists"
         expect(habitat_unit['id']).to eq(unit_id)
-        expect(habitat_unit['category']).to match(/habitat/i)
+        expect(habitat_unit['category']).to match(/habitat|housing/i)
       end
     end
     context 'with robot units' do

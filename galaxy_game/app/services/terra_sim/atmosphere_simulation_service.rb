@@ -8,7 +8,7 @@ module TerraSim
       @material_lookup = Lookup::MaterialLookupService.new
     end
 
-    def simulate
+    def simulate(days = 1)
       update_pressure
       calculate_greenhouse_effect
       update_temperatures

@@ -6,6 +6,7 @@ class WormholeExpansionService
     medium: 20,
     low: 5
   }.freeze
+
   def initialize
     # Initialize with default values
   end
@@ -19,7 +20,7 @@ class WormholeExpansionService
   # Check if a system can support infrastructure-free deployment (e.g., no major settlements required)
   def infrastructure_free_deployment_possible?(solar_system)
     # Placeholder: Assume true if no settlements or only outposts
-    settlements = solar_system.settlements || []
+    settlements = Settlement::BaseSettlement.where(solar_system: solar_system)
     settlements.all? { |s| s.type == :outpost || s.type == :none }
   end
 
