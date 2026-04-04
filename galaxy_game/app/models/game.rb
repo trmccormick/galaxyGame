@@ -40,6 +40,7 @@ class Game
 
   # Advance game by a specific number of days
   def advance_by_days(days)
+    return if days <= 0
     @elapsed_time += days
 
     # Update game_state if it exists
