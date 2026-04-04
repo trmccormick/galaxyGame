@@ -1,6 +1,6 @@
 # TASK: AI Manager File Audit — Read and Classify All Services
-**Status**: ACTIVE
-**Priority**: HIGH
+**Status**: BACKLOG
+**Priority**: LOW
 **Type**: documentation
 **Created**: 2026-04-03
 **Last Updated**: 2026-04-03
@@ -8,9 +8,9 @@
 ---
 
 ## Agent Assignment
-**Assigned To**: GPT-4.1 0x
-**Why This Agent**: Read-only audit — no code changes, fully specified
-**Supervision Level**: 🔴 Watched carefully
+**Assigned To**: Claude Sonnet 1x
+**Why This Agent**: Read-only audit but requires judgment — classifying CORE/LEGITIMATE/INVENTED/DUPLICATE across ~78 files needs reasoning, not just pattern matching
+**Supervision Level**: 🟢 Autonomous OK
 
 ---
 
