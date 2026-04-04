@@ -5,6 +5,10 @@ FactoryBot.define do
     
     job_type { :crater_dome_construction }
     status { :scheduled }
+
+    after(:build) do |job|
+      job.jobable ||= job.settlement
+    end
     
     # Add target_values for common scenarios
     trait :with_target_values do
