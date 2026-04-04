@@ -31,5 +31,3 @@ module AIManager
     end
   end
 end
-  end
-end

@@ -1,242 +1,407 @@
 # spec/services/ai_manager/isru_evaluator_spec.rb
 #
-# Tests for ISRUEvaluator - ISRU capability assessment and prioritization
+# Tests for ISRUEvaluator — rewired to live settlement models.
+# Resource identifiers use chemical formulas (H2O, O2, CH4, CO2).
+# Human-readable names are UI-layer only.
 
 require 'rails_helper'
 
 RSpec.describe AIManager::ISRUEvaluator do
-  let(:settlement) { create(:base_settlement) }
-  let(:evaluator) { described_class.new(settlement) }
+  let(:celestial_body) { create(:celestial_body) }
+  let(:location)       { create(:celestial_location, celestial_body: celestial_body) }
+  let(:settlement)     { create(:base_settlement, location: location) }
+  let(:evaluator)      { described_class.new(settlement) }
 
+  # ── Shared setup helpers ──────────────────────────────────────────────────
+  def add_solar_power(kw = 200)
+    panels = (kw / 10.0).ceil  # solar_panel_array = 10 kW each
+    create_list(:base_unit, panels,
+                unit_type: 'SOLAR_PANEL_ARRAY',
+                settlement: settlement,
+                operational: true)
+  end
+
+  def setup_surface_storage(regolith_kg: 10_000)
+    unless settlement.surface_storage
+      settlement.inventory.create_surface_storage!(
+        celestial_body: celestial_body,
+        item_type: 'bulk'
+      )
+    end
+    settlement.surface_storage.material_piles.find_or_create_by!(
+      material_type: 'raw_regolith'
+    ) { |p| p.amount = regolith_kg }
+    settlement.surface_storage.material_piles
+              .find_by(material_type: 'raw_regolith')
+              &.update!(amount: regolith_kg)
+  end
+
+  def set_geosphere_volatiles(h2o_kg: 5000)
+    celestial_body.geosphere.update!(
+      stored_volatiles: { 'H2O' => { 'surface' => h2o_kg.to_f } }
+    )
+  end
+
+  # ── #assess_capabilities ─────────────────────────────────────────────────
   describe '#assess_capabilities' do
     context 'with no ISRU units' do
-      it 'returns low readiness score' do
-        capabilities = evaluator.assess_capabilities
+      it 'returns operational status with low readiness and no regolith processing' do
+        result = evaluator.assess_capabilities
 
-        expect(capabilities[:overall_readiness]).to be < 0.3
-        expect(capabilities[:units_available]).to be_empty
-        expect(capabilities[:regolith_processing]).to be false
-        expect(capabilities[:venus_compatible]).to be false
+        expect(result[:status]).to eq(:operational)
+        expect(result[:overall_readiness]).to be < 0.3
+        expect(result[:units_available]).to be_empty
+        expect(result[:regolith_processing]).to be false
+        expect(result[:atmospheric_processing]).to be false
       end
     end
 
-    context 'with TEU and PVE units' do
+    context 'with PVE only — TEU not required' do
       before do
-        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'SOLAR_PANEL_ARRAY', settlement: settlement, operational: true)
-        settlement.inventory.create_surface_storage!(celestial_body: settlement.celestial_body, item_type: 'bulk') unless settlement.surface_storage
-        settlement.surface_storage.material_piles.create!(material_type: 'raw_regolith', amount: 10000)
-        settlement.inventory.add_item('carbon_dioxide', 1000)
-        settlement.inventory.add_item('water_ice', 200)
+        add_solar_power(200)
+        setup_surface_storage(regolith_kg: 10_000)
+        set_geosphere_volatiles(h2o_kg: 5000)
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
       end
 
-      it 'enables regolith processing' do
-        capabilities = evaluator.assess_capabilities
+      it 'enables regolith processing without TEU' do
+        result = evaluator.assess_capabilities
 
-        expect(capabilities[:regolith_processing]).to be true
-        expect(capabilities[:overall_readiness]).to be > 0.5
-        expect(capabilities[:production_rates][:water]).to be > 0
+        expect(result[:status]).to eq(:operational)
+        expect(result[:regolith_processing]).to be true
+        expect(result[:teu_present]).to be false
+        expect(result[:production_rates]['H2O']).to be > 0
+        expect(result[:production_rates]['depleted_regolith']).to be > 0
+      end
+    end
+
+    context 'with TEU + PVE — preferred full chain' do
+      before do
+        add_solar_power(200)
+        setup_surface_storage(regolith_kg: 10_000)
+        set_geosphere_volatiles(h2o_kg: 5000)
+        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1',
+               settlement: settlement, operational: true)
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
       end
 
-      it 'calculates production rates correctly' do
-        capabilities = evaluator.assess_capabilities
+      it 'shows TEU present and enables regolith processing' do
+        result = evaluator.assess_capabilities
 
-        expect(capabilities[:production_rates]).to include(
-          water: be > 0,
-          inert_waste: be > 0
+        expect(result[:status]).to eq(:operational)
+        expect(result[:regolith_processing]).to be true
+        expect(result[:teu_present]).to be true
+        expect(result[:overall_readiness]).to be > 0.5
+        expect(result[:production_rates]['H2O']).to be > 0
+      end
+    end
+
+    context 'with insufficient power — hard gate' do
+      before do
+        # PVE requires 120 kW; no power units added
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
+      end
+
+      it 'returns blocked status with insufficient_power reason' do
+        result = evaluator.assess_capabilities
+
+        expect(result[:status]).to eq(:blocked)
+        expect(result[:reason]).to eq(:insufficient_power)
+        expect(result[:power_capacity]).to be < result[:power_required]
+      end
+
+      it 'does not include production_rates when blocked' do
+        result = evaluator.assess_capabilities
+
+        expect(result).not_to have_key(:production_rates)
+      end
+    end
+
+    context 'with CO2 atmosphere and gas conversion unit' do
+      before do
+        add_solar_power(200)
+        celestial_body.atmosphere.gases.find_or_create_by!(name: 'CO2') do |g|
+          g.percentage = 95.0
+        end
+        create(:base_unit, unit_type: 'GAS_CONVERSION_UNIT_DATA',
+               settlement: settlement, operational: true)
+      end
+
+      it 'enables atmospheric gas processing from available atmosphere' do
+        result = evaluator.assess_capabilities
+
+        expect(result[:atmospheric_processing]).to be true
+        expect(result[:atmospheric_inputs]).to be true
+        # GCU: combined Sabatier+electrolysis — CO2 + 2H2O → CH4 + 2O2
+        expect(result[:production_rates]['CH4']).to be > 0
+        expect(result[:production_rates]['O2']).to be > 0
+        # O2 output is ~4x CH4 by mass (276.36 vs 69.09 kg per cycle)
+        expect(result[:production_rates]['O2']).to be > result[:production_rates]['CH4']
+      end
+    end
+
+    context 'with geosphere CO2 stored volatiles' do
+      before do
+        celestial_body.geosphere.update!(
+          stored_volatiles: { 'H2O' => { 'surface' => 3000.0 }, 'CO2' => { 'polar' => 2000.0 } }
         )
       end
-    end
 
-    context 'with Venus-compatible units' do
-      before do
-        create(:base_unit, unit_type: 'CO2_SPLITTER_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'SOLAR_PANEL_ARRAY', settlement: settlement, operational: true)
-        settlement.inventory.add_item('venus_atmosphere', 50000)
-      end
+      it 'reflects CO2 in resource_availability from geosphere' do
+        result = evaluator.assess_capabilities
 
-      it 'enables Venus atmosphere processing' do
-        capabilities = evaluator.assess_capabilities
-
-        expect(capabilities[:venus_compatible]).to be true
-        expect(capabilities[:production_rates][:liquid_oxygen]).to be > 0
-      end
-    end
-
-    context 'with Sabatier reactor' do
-      before do
-        create(:base_unit, unit_type: 'SABATIER_REACTOR_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'SOLAR_PANEL_ARRAY', settlement: settlement, operational: true)
-        # Add CO2 and H2 to inventory
-        settlement.inventory.add_item('carbon_dioxide', 1000)
-        settlement.inventory.add_item('hydrogen', 4000)
-      end
-
-      it 'enables methane production' do
-        capabilities = evaluator.assess_capabilities
-
-        expect(capabilities[:methane_generation]).to be true
-        expect(capabilities[:production_rates][:methane]).to be > 0
-        expect(capabilities[:production_rates][:water]).to be > 0
+        expect(result[:resource_availability][:regolith_volatiles]['CO2']).to be_present
       end
     end
   end
 
+  # ── #should_use_isru? ─────────────────────────────────────────────────────
   describe '#should_use_isru?' do
-    context 'with sufficient ISRU capability' do
+    context 'with PVE, sufficient power, and regolith' do
       before do
-        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1', settlement: settlement, operational: true)
-        1000.times { create(:base_unit, unit_type: 'SOLAR_PANEL_ARRAY', settlement: settlement, operational: true) }
-        settlement.inventory.create_surface_storage!(celestial_body: settlement.celestial_body, item_type: 'bulk') unless settlement.surface_storage
-        settlement.surface_storage.material_piles.create!(material_type: 'raw_regolith', amount: 10000)
-        settlement.inventory.add_item('carbon_dioxide', 1000)
-        settlement.inventory.add_item('water_ice', 500)
+        add_solar_power(200)
+        setup_surface_storage(regolith_kg: 10_000)
+        set_geosphere_volatiles(h2o_kg: 50_000)
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
       end
 
-      it 'returns true for water production' do
-        result = evaluator.should_use_isru?('water', 30, 30)
-
-        expect(result).to be true
+      it 'returns true for H2O — producible faster than import baseline' do
+        expect(evaluator.should_use_isru?('H2O', 30, 30)).to be true
       end
 
-      it 'returns false for unavailable resources' do
-        result = evaluator.should_use_isru?('unobtainium', 100, 30)
-
-        expect(result).to be false
+      it 'returns false for an unknown compound with no production rate' do
+        expect(evaluator.should_use_isru?('unobtainium', 100, 30)).to be false
       end
     end
 
-    context 'with insufficient ISRU capability' do
+    context 'with no ISRU units' do
       it 'returns false' do
-        result = evaluator.should_use_isru?('water', 100, 30)
+        expect(evaluator.should_use_isru?('H2O', 100, 30)).to be false
+      end
+    end
 
-        expect(result).to be false
+    context 'with blocked power' do
+      before do
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
+      end
+
+      it 'returns false when power is insufficient' do
+        expect(evaluator.should_use_isru?('H2O', 10, 30)).to be false
       end
     end
   end
 
+  # ── #compare_isru_vs_import_cost ──────────────────────────────────────────
   describe '#compare_isru_vs_import_cost' do
-    context 'with ISRU capability' do
+    context 'with operational PVE and sufficient power' do
       before do
-        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1', settlement: settlement, operational: true)
+        add_solar_power(200)
+        setup_surface_storage(regolith_kg: 10_000)
+        set_geosphere_volatiles(h2o_kg: 5000)
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
       end
 
-      it 'calculates cost comparison for water' do
-        comparison = evaluator.compare_isru_vs_import_cost('water', 100)
+      it 'returns cost comparison structure for H2O' do
+        result = evaluator.compare_isru_vs_import_cost('H2O', 100)
 
-        expect(comparison).to include(
-          isru_cost: be > 0,
-          import_cost: be > 0,
-          recommended: be_in(['isru', 'import']),
+        expect(result).to include(
+          isru_cost:          be > 0,
+          import_cost:        be > 0,
+          recommended:        be_in(['isru', 'import']),
           savings_percentage: be_a(Numeric)
         )
       end
 
-      it 'recommends ISRU when cheaper' do
-        comparison = evaluator.compare_isru_vs_import_cost('water', 100)
+      it 'recommends ISRU for H2O (local production cheaper than import)' do
+        result = evaluator.compare_isru_vs_import_cost('H2O', 100)
 
-        expect(comparison[:recommended]).to eq('isru')
-        expect(comparison[:savings_percentage]).to be > 0
+        expect(result[:recommended]).to eq('isru')
+        expect(result[:savings_percentage]).to be > 0
       end
     end
 
     context 'without ISRU capability' do
-      it 'recommends import' do
-        comparison = evaluator.compare_isru_vs_import_cost('water', 100)
+      it 'recommends import when readiness is zero' do
+        result = evaluator.compare_isru_vs_import_cost('H2O', 100)
 
-        expect(comparison[:recommended]).to eq('import')
+        expect(result[:recommended]).to eq('import')
       end
     end
   end
 
+  # ── #calculate_production_rates ───────────────────────────────────────────
   describe '#calculate_production_rates' do
-    context 'with full ISRU pipeline' do
+    context 'with PVE and regolith volatiles' do
       before do
-        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'CO2_SPLITTER_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'SABATIER_REACTOR_MK1', settlement: settlement, operational: true)
-
-        # Add raw materials
-        settlement.inventory.add_item('raw_regolith', 10000)
-        settlement.inventory.add_item('venus_atmosphere', 50000)
-        settlement.inventory.add_item('carbon_dioxide', 1000)
-        settlement.inventory.add_item('hydrogen', 4000)
+        setup_surface_storage(regolith_kg: 10_000)
+        set_geosphere_volatiles(h2o_kg: 5000)
       end
 
-      it 'calculates all production rates' do
-        rates = evaluator.calculate_production_rates(
-          { 'THERMAL_EXTRACTION_UNIT_MK1' => 1, 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1, 'CO2_SPLITTER_MK1' => 1, 'SABATIER_REACTOR_MK1' => 1 },
-          evaluator.send(:assess_resource_availability),
-          200.0 # kW power
-        )
+      it 'returns H2O and depleted_regolith when PVE is present' do
+        units = { 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1 }
+        resources = evaluator.send(:assess_resource_availability)
 
-        expect(rates[:water]).to be > 0
-        expect(rates[:liquid_oxygen]).to be > 0
-        expect(rates[:methane]).to be > 0
-        expect(rates[:inert_waste]).to be > 0
+        rates = evaluator.calculate_production_rates(units, resources)
+
+        expect(rates['H2O']).to be > 0
+        expect(rates['depleted_regolith']).to be > 0
       end
 
-      it 'applies power limitations' do
-        low_power_rates = evaluator.calculate_production_rates(
-          { 'THERMAL_EXTRACTION_UNIT_MK1' => 1, 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1 },
-          evaluator.send(:assess_resource_availability),
-          10.0 # kW - insufficient power
-        )
+      it 'uses DEFAULT_VOLATILE_FRACTION when geosphere has no stored volatiles' do
+        celestial_body.geosphere.update!(stored_volatiles: {})
+        setup_surface_storage(regolith_kg: 10_000)
+        units = { 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1 }
+        resources = evaluator.send(:assess_resource_availability)
 
-        expect(low_power_rates[:water]).to be < 0.1 # Reduced due to power constraint
+        rates = evaluator.calculate_production_rates(units, resources)
+
+        # input_kg = 5.0 from PVE JSON; geo_eff = 0.75; volatile_fraction fallback = DEFAULT_VOLATILE_FRACTION
+        expected_h2o = 5.0 * AIManager::ISRUEvaluator::DEFAULT_VOLATILE_FRACTION * 0.75 * 1
+        expect(rates['H2O']).to be_within(0.01).of(expected_h2o)
+      end
+
+      it 'returns zero H2O when no raw_regolith in surface storage' do
+        setup_surface_storage(regolith_kg: 0)
+        units = { 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1 }
+        resources = evaluator.send(:assess_resource_availability)
+
+        rates = evaluator.calculate_production_rates(units, resources)
+
+        expect(rates['H2O']).to be_nil.or(eq(0))
+      end
+    end
+
+    context 'with TEU adding processed_regolith production' do
+      before do
+        setup_surface_storage(regolith_kg: 10_000)
+      end
+
+      it 'produces processed_regolith from TEU' do
+        units = { 'THERMAL_EXTRACTION_UNIT_MK1' => 1 }
+        resources = evaluator.send(:assess_resource_availability)
+
+        rates = evaluator.calculate_production_rates(units, resources)
+
+        expect(rates['processed_regolith']).to be > 0
       end
     end
   end
 
+  # ── private methods ───────────────────────────────────────────────────────
   describe 'private methods' do
     describe '#inventory_isru_units' do
-      it 'counts operational units by type' do
-        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational: true)
-        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1', settlement: settlement, operational: false)
-        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1', settlement: settlement, operational: true)
+      it 'counts only operational processing-capable units' do
+        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1',
+               settlement: settlement, operational: true)
+        create(:base_unit, unit_type: 'THERMAL_EXTRACTION_UNIT_MK1',
+               settlement: settlement, operational: false)  # not counted
+        create(:base_unit, unit_type: 'PLANETARY_VOLATILES_EXTRACTOR_MK1',
+               settlement: settlement, operational: true)
 
         units = evaluator.send(:inventory_isru_units)
 
         expect(units['THERMAL_EXTRACTION_UNIT_MK1']).to eq(1)
         expect(units['PLANETARY_VOLATILES_EXTRACTOR_MK1']).to eq(1)
       end
+
+      it 'excludes units with no matching JSON in UnitLookupService' do
+        create(:base_unit, unit_type: 'NONEXISTENT_FAKE_UNIT_TYPE',
+               settlement: settlement, operational: true)
+
+        units = evaluator.send(:inventory_isru_units)
+
+        expect(units).not_to have_key('NONEXISTENT_FAKE_UNIT_TYPE')
+      end
     end
 
     describe '#assess_resource_availability' do
-      before do
-        # Ensure surface storage exists
-        settlement.inventory.surface_storage || settlement.inventory.create_surface_storage!(
-          celestial_body: settlement.celestial_body,
-          item_type: 'bulk'
-        )
-        settlement.surface_storage.material_piles.create!(material_type: 'raw_regolith', amount: 5000)
-        settlement.inventory.add_item('carbon_dioxide', 1000)
-        settlement.inventory.add_item('water_ice', 200)
-      end
-
-      it 'returns resource availability hash' do
+      it 'reads raw_regolith from surface_storage material_piles' do
+        setup_surface_storage(regolith_kg: 5000)
         resources = evaluator.send(:assess_resource_availability)
 
-        expect(resources[:raw_regolith]).to eq(5000)
-        expect(resources[:co2]).to eq(1000)
-        expect(resources[:ice]).to eq(200)
+        expect(resources[:raw_regolith]).to eq(5000.0)
+      end
+
+      it 'reads regolith_volatiles from geosphere stored_volatiles' do
+        celestial_body.geosphere.update!(
+          stored_volatiles: { 'H2O' => { 'surface' => 3000.0 } }
+        )
+        resources = evaluator.send(:assess_resource_availability)
+
+        expect(resources[:regolith_volatiles]['H2O']).to include('surface' => 3000.0)
+      end
+
+      it 'reads atmospheric_gases from atmosphere.gases as name→percentage hash' do
+        celestial_body.atmosphere.gases.find_or_create_by!(name: 'CO2') do |g|
+          g.percentage = 95.0
+        end
+        resources = evaluator.send(:assess_resource_availability)
+
+        expect(resources[:atmospheric_gases]['CO2']).to be_within(0.01).of(95.0)
+      end
+
+      it 'returns safe defaults when settlement has no celestial body' do
+        settlement_no_body = create(:base_settlement, location: nil)
+        eval_no_body = described_class.new(settlement_no_body)
+
+        resources = eval_no_body.send(:assess_resource_availability)
+
+        expect(resources[:regolith_volatiles]).to eq({})
+        expect(resources[:atmospheric_gases]).to eq({})
       end
     end
 
     describe '#calculate_overall_readiness' do
-      it 'calculates weighted readiness score' do
-        units = { 'THERMAL_EXTRACTION_UNIT_MK1' => 1, 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1 }
-        resources = { raw_regolith: 10000, co2: 1000, ice: 500 }
-        power = 150.0
+      it 'returns a score between 0.0 and 1.0' do
+        units      = { 'THERMAL_EXTRACTION_UNIT_MK1' => 1, 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 1 }
+        resources  = { raw_regolith: 10_000.0, regolith_volatiles: {}, atmospheric_gases: {} }
+        power      = 200.0
+        required   = 170.0
         maintenance = { score: 1.0 }
 
-        score = evaluator.send(:calculate_overall_readiness, units, resources, power, maintenance)
+        score = evaluator.send(:calculate_overall_readiness, units, resources, power, required, maintenance)
 
         expect(score).to be_between(0.0, 1.0)
+      end
+
+      it 'returns higher score with more units and full regolith stock' do
+        units_full  = { 'PLANETARY_VOLATILES_EXTRACTOR_MK1' => 4 }
+        units_empty = {}
+        resources   = { raw_regolith: 10_000.0, regolith_volatiles: {}, atmospheric_gases: {} }
+        maintenance = { score: 1.0 }
+
+        full_score  = evaluator.send(:calculate_overall_readiness, units_full, resources, 200.0, 0.0, maintenance)
+        empty_score = evaluator.send(:calculate_overall_readiness, units_empty, resources, 0.0, 0.0, maintenance)
+
+        expect(full_score).to be > empty_score
+      end
+    end
+
+    describe '#volatile_fraction' do
+      it 'returns H2O fraction from stored_volatiles' do
+        volatiles = { 'H2O' => { 'surface' => 80.0 }, 'CO2' => { 'polar' => 20.0 } }
+        fraction = evaluator.send(:volatile_fraction, volatiles, 'H2O')
+
+        expect(fraction).to be_within(0.001).of(0.8)
+      end
+
+      it 'returns DEFAULT_VOLATILE_FRACTION when stored_volatiles is empty' do
+        fraction = evaluator.send(:volatile_fraction, {}, 'H2O')
+
+        expect(fraction).to eq(AIManager::ISRUEvaluator::DEFAULT_VOLATILE_FRACTION)
+      end
+
+      it 'returns 0.0 when compound not present in survey data' do
+        volatiles = { 'CO2' => { 'polar' => 100.0 } }
+        fraction = evaluator.send(:volatile_fraction, volatiles, 'H2O')
+
+        expect(fraction).to eq(0.0)
       end
     end
   end

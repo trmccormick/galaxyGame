@@ -1,9 +1,41 @@
 ---
 
-*Last Updated: March 19, 2026*
-*Escalation Architecture Sprint Complete*
-*Summary: EscalationService refactored to state-driven routing architecture. EmergencyMissionService updated — :medicine added to survival resources. escalation_service_spec.rb ✅ 0 failures (1 pending). escalation_integration_spec.rb ✅ 0 failures. See notes below for stubs and domain corrections. All changes validated and committed atomically.*
-# Escalation Architecture Sprint Results (March 19, 2026)
+*Last Updated: April 3, 2026*
+*ISRU Evaluator + Optimizer rewire complete. All JSON data corrected to real-world stoichiometry. State analyzer resource_profile removed. 50 specs, 0 failures.*
+
+# April 3, 2026 — ISRU System Rewire
+
+## ISRU Evaluator (`isru_evaluator.rb`) ✅ COMPLETE
+- Fully data-driven: no hardcoded unit names, reads UnitLookupService JSON
+- Power is a hard gate: returns `{ status: :blocked }` if insufficient
+- `unit_rates` generic loop over `output_resources` — fixed amounts used directly, zero amounts call `world_fraction`
+- `world_fraction` handles: `depleted_regolith`, `processed_regolith`, `mixed_volatiles` (2% baseline), atmospheric compounds
+- Capability flags: `regolith_processing`, `teu_present`, `atmospheric_processing`, `methane_generation`
+- **29/29 specs passing** (`spec/services/ai_manager/isru_evaluator_spec.rb`)
+
+## ISRU Optimizer (`isru_optimizer.rb`) ✅ COMPLETE
+- Rewired to `Market::Order` buy queue + `ISRUEvaluator.assess_capabilities`
+- Removed ~460 lines of invented `target_system`/`settlement_plan` hash interface
+- `DEPLOYMENT_CHAIN` constant: 4 phases (2–5) with `needed_if` lambdas, no hardcoded costs or resource lists
+- Phase 5 (GCU) fires only when CH4 or O2 is actually on order
+- Returns `:no_unfilled_orders`, `:all_satisfied`, `:blocked` passthrough, or phased plan
+- **21/21 specs passing** (`spec/services/ai_manager/isru_optimizer_spec.rb`)
+
+## JSON Data — Real-World Stoichiometry ✅ COMPLETE
+- **GCU (`gas_conversion_unit_data.json`)**: Combined Sabatier+electrolysis net reaction: CO2 + 2H2O → CH4 + 2O2 (0.95 eff). Per 200 kg CO2: H2O in 163.64 kg, CH4 out 69.09 kg, O2 out 276.36 kg. Replaces wrong H2 input + missing O2.
+- **Gas Separator (`gas_separator_unit_data.json`)**: Template fixed (`unit_operational_data`). Cryogenic fractional distillation. Input: `mixed_volatiles` 500 kg. Outputs: CO2, N2, H2O, O2 — all world-driven (amount: 0). Chemical formula keys throughout.
+- **TEU (`thermal_extraction_unit_mk1_data.json`)**: Added `mixed_volatiles` (amount: 0, world-driven) to `output_resources`. 300–800°C thermal volatilization drives off volatile compounds as mixed gas.
+
+## State Analyzer (`state_analyzer.rb`) ✅ COMPLETE (prior agent)
+- Hardcoded `resource_profile` hash removed
+- Reads live: `Market::Order` buy queue, `settlement.inventory`, `settlement.surface_storage`, `UnitLookupService` for power
+
+## Active Tasks Remaining
+- `2026-04-01-HIGH-BUG-FIX-ORBITAL-SHIPYARD-SPEC-STUB-ORBITAL-SETTLEMENT.md` — 7 spec failures in orbital_shipyard_service_spec (HIGH)
+- `2026-04-03-HIGH-DOCUMENTATION-AI-MANAGER-FILE-AUDIT-CLASSIFY-ALL-SERVICES.md` — read-only audit of ~78 ai_manager files (HIGH)
+
+---
+
 
 ## Escalation & Emergency Mission System
 
