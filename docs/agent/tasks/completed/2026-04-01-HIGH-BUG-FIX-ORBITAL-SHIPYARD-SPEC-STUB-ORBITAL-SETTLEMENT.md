@@ -1,9 +1,9 @@
 # TASK: Fix orbital_shipyard_service_spec — Stub OrbitalSettlement + Fix Broken Assertions
-**Status**: ACTIVE
+**Status**: COMPLETED
 **Priority**: HIGH
 **Type**: bug-fix
 **Created**: 2026-04-01
-**Last Updated**: 2026-04-01
+**Last Updated**: 2026-04-03
 
 ---
 
@@ -273,13 +273,44 @@ git push
 ---
 
 ## Completion Report
-*Filled in by implementing agent after completion*
 
-**Completed by**:
-**Completion date**:
-**Final test result**: X examples, Y failures
+**Completed by**: GitHub Copilot (Claude Sonnet 4.6)
+**Completion date**: 2026-04-03
+**Final test result**: 25 examples, 0 failures (commit e1a4b6ae)
 
 ### What was changed
+The 3 fixes described in the task (initialize outside class, bad assertions,
+wrong factory) were already applied by a prior agent. Two additional root
+causes were found and fixed:
+
+1. **`load_craft_blueprint` doubled `json-data` in the path** —
+   `GalaxyGame::Paths::JSON_DATA` already resolves to the `json-data` volume
+   root (`/home/galaxy_game/app/data`), but the method was calling
+   `.join('json-data', 'blueprints', ...)` — doubling the segment.
+   Removed `'json-data'` argument. Fixed in `orbital_shipyard_service.rb`.
+
+2. **`orbital_settlement` factory missing `owner` association** —
+   `spawn_completed_craft` sets `owner: project.station.owner` on
+   `Craft::BaseCraft.create!`. `BaseCraft` validates owner presence (not
+   optional). The `:orbital_settlement` factory had no `owner`, so it was
+   always nil. Added `association :owner, factory: :development_corporation`
+   plus `current_population`, `operational_data`, and `after(:build)` callbacks
+   (copied from `:base_settlement` pattern) to the factory.
+
 ### Issues discovered
+- `settlement_type { :orbital }` attempted briefly — `:orbital` is NOT a valid
+  enum value in BaseSettlement. The architectural refactor task
+  (2026-03-31-HIGH-REFACTOR-ORBITAL-SETTLEMENT-ARCHITECTURE.md) is where that
+  migration belongs. Factory intentionally omits `settlement_type`; DB default
+  of `0` (`:base`) satisfies presence validation for the stub.
+
 ### Follow-up tasks needed
+- `2026-03-31-HIGH-REFACTOR-ORBITAL-SETTLEMENT-ARCHITECTURE.md` (backlog) —
+  full separation of OrbitalSettlement from SpaceStation. Blocker met
+  (suite now below 10 failures in orbital shipyard spec).
+
 ### Lessons learned
+- When a task doc says "7 failures" and the spec runs with 13, verify the
+  task was fully stale rather than partially stale.
+- Always check the Docker volume mount before assuming a path constant
+  is wrong — `JSON_DATA` already includes the `json-data` segment.
