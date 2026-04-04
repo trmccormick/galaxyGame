@@ -9,7 +9,7 @@ module AIManager
     def initialize(shared_context, service_coordinator)
       @shared_context = shared_context
       @service_coordinator = service_coordinator
-      @state_analyzer = StateAnalyzer.new(shared_context)
+      @state_analyzer = StateAnalyzer.new
       @mission_scorer = MissionScorer.new(shared_context)
     end
 
