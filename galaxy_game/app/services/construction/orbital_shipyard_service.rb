@@ -172,7 +172,7 @@ module Construction
 
     def self.load_craft_blueprint(blueprint_id)
       # Load blueprint from JSON data
-      blueprint_path = GalaxyGame::Paths::JSON_DATA.join('json-data', 'blueprints', 'crafts', 'space', 'spacecraft', "#{blueprint_id}_bp.json")
+      blueprint_path = GalaxyGame::Paths::JSON_DATA.join('blueprints', 'crafts', 'space', 'spacecraft', "#{blueprint_id}_bp.json")
 
       if File.exist?(blueprint_path)
         JSON.parse(File.read(blueprint_path))
