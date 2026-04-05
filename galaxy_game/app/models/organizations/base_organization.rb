@@ -111,12 +111,13 @@ module Organizations
       return if net_profit <= 0
       consortium.member_relationships.active.each do |membership|
         member_share = net_profit * (membership.ownership_percentage / 100.0)
-        FinancialTransaction.create!(
-          from_organization: consortium,
-          to_organization: membership.member,
+        Financial::Transaction.create!(
+          account: consortium.account,
+          recipient: membership.member,
           amount: member_share,
-          transaction_type: 'profit_distribution',
-          description: "Consortium profit share for period"
+          transaction_type: :transfer,
+          description: "Consortium profit share for period",
+          currency_id: 1
         )
       end
     end

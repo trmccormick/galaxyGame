@@ -13,11 +13,11 @@ RSpec.describe Organizations::BaseOrganization, type: :model do
   it 'distributes profits to members based on ownership' do
     expect {
       consortium.distribute_consortium_profits(consortium)
-    }.to change { FinancialTransaction.count }.by(1)
-    tx = FinancialTransaction.last
+    }.to change { Financial::Transaction.count }.by(1)
+    tx = Financial::Transaction.last
     expect(tx.amount).to eq(900_000)
-    expect(tx.to_organization).to eq(member)
-    expect(tx.from_organization).to eq(consortium)
-    expect(tx.transaction_type).to eq('profit_distribution')
+    expect(tx.recipient).to eq(member)
+    expect(tx.account.owner).to eq(consortium)
+    expect(tx.transaction_type).to eq('transfer')
   end
 end
