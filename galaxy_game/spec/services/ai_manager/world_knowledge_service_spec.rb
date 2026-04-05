@@ -7,6 +7,7 @@ RSpec.describe AIManager::WorldKnowledgeService, type: :service do
   describe '#generate_system_easter_egg' do
     context 'when has_wormhole is true' do
       it 'returns easter egg data for wormhole systems' do
+        allow(Kernel).to receive(:rand).and_return(0.001)
         result = service.generate_system_easter_egg(true)
         expect(result).to be_a(Hash)
         expect(result.keys).to include(:flavor_text, :easter_egg_id, :manifest_entry)
