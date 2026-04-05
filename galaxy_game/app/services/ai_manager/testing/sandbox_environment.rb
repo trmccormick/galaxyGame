@@ -174,7 +174,6 @@ module AIManager
       # Set up mock data layer
       def setup_mock_data_layer
         # Create mock database connections
-        setup_mock_database
 
         # Create mock external API connections
         setup_mock_apis
@@ -234,18 +233,6 @@ module AIManager
         end
       end
 
-      # Set up mock database
-      def setup_mock_database
-        # Mock ActiveRecord operations to prevent real database writes
-        add_mock_data(:database_mock, true)
-
-        # Override common database methods
-        override_service_method(ActiveRecord::Base, :save, lambda { true })
-        override_service_method(ActiveRecord::Base, :save!, lambda { true })
-        override_service_method(ActiveRecord::Base, :create, lambda { |*args| double('mock_record', id: rand(1000..9999)) })
-        override_service_method(ActiveRecord::Base, :update, lambda { |*args| true })
-        override_service_method(ActiveRecord::Base, :destroy, lambda { true })
-      end
 
       # Set up mock APIs
       def setup_mock_apis
