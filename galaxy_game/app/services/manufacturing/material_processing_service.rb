@@ -18,10 +18,12 @@ module Manufacturing
       operational_data = Lookup::UnitLookupService.new.find_unit(unit.unit_type)
       raise "Operational data not found for unit type: #{unit.unit_type}" unless operational_data
 
-      # Determine processing type from geosphere_processing types
-      geo_types = Array(operational_data.dig("processing_capabilities", "geosphere_processing", "types"))
-      processing_type = if geo_types.include?("volatile_extraction")
+      # Determine processing type from subcategory
+      processing_type = case operational_data.dig("subcategory")
+      when "volatile_extraction"
         :volatiles_extraction
+      when "thermal_extraction"
+        :thermal_extraction
       else
         :thermal_extraction
       end

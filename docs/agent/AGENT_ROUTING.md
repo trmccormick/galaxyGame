@@ -53,15 +53,17 @@
 
 ---
 
-### Local Agents — Free, Setup In Progress
+### Local Agents — Free Claude Sonnet Alternative
 
-| Agent | Primary Role | Notes |
-|---|---|---|
-| **Ollama** (Llama3.1:70B) | **PRIMARY GRINDER** | Overnight autonomous runs, validated workflow |
-| **Qwen 32B** | Windows backup | |
-| **Qwen 14B** | M5 speed | |
+| Agent | Host | Cost | Speed | Capability | Best For |
+|---|---|---|---|---|---|
+| **qwen3-coder:30b** | Windows 10.6.186.50 | **0x** | 🐌 Slow (CPU+4GB Vulkan) | Claude Sonnet tier | **Replace Claude Sonnet (1x)** — heavy background refactors |
+| **qwen2.5-coder:3b** | Windows 10.6.186.50 | **0x** | 🐌 Medium (GPU viable) | GPT-4.1 tier | Overflow when GPT-4.1 busy |
+| **Llama3.1:8b** | Mac localhost | **0x** | Medium | Light tasks | Fallback, autocomplete |
 
-> Ollama is the default for free, large-scale overnight grinding.
+**Access**: Continue CLI `cn --config .continueconfig.yaml` → Windows model  
+**Docker**: `docker exec web` (no `-t` for CLI)  
+**Supervision**: 🟡 Standard — always review results
 
 ---
 

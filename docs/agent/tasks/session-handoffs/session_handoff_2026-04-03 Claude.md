@@ -230,37 +230,53 @@ even if specs pass.
 
 ---
 
-## Task Pipeline — Current State
+## Task Pipeline — Final State
 
 ### Task 1 — COMPLETE ✅
-`2026-04-03-CRITICAL-BUG-FIX-STATE-ANALYZER-REMOVE-RESOURCE-PROFILE.md`
-Committed. Done.
+`state_analyzer.rb` — removed hardcoded `resource_profile`, delegated to
+`Market::Order` + `settlement.inventory`. Commit: f7dc8e57.
 
-### Audit Task — IN PROGRESS 🔄
-`2026-04-03-HIGH-DOCUMENTATION-AI-MANAGER-FILE-AUDIT-CLASSIFY-ALL-SERVICES.md`
-GPT-4.1 working through 7 batches. Complete before assigning Tasks 2 or 3.
+### Task 2 — COMPLETE ✅
+`isru_evaluator.rb` — fully rewired. 29/29 specs passing.
+- No hardcoded unit names or world chemistry
+- `world_fraction` handles any world's volatile composition
+- Chemical formula resource IDs: H2O, O2, CO2, CH4, N2
+- Power is a hard gate
+- Capability flags read from JSON
 
-### Task 2 — READY (pending audit completion)
-`2026-04-03-HIGH-BUG-FIX-ISRU-EVALUATOR-DELEGATE-TO-UNITLOOKUPSERVICE.md`
-Agent: Claude Sonnet 1x
-**Path correction needed before assignment:**
-Change all references from `docs/agent/ai_manager/` to
-`galaxyGame/docs/architecture/ai_manager/`
+### Task 3 — COMPLETE ✅
+`isru_optimizer.rb` — rewired. 21/21 specs passing.
+- Removed ~460 lines of invented target_system/settlement_plan interface
+- `optimize_isru_priorities(settlement)` reads `Market::Order`
+- `DEPLOYMENT_CHAIN` constant: 4 phases with `needed_if` lambdas
+- Phase sequencing: regolith → TEU → PVE → GCU
+- Returns clean status: `:no_unfilled_orders`, `:all_satisfied`, `:blocked`
 
-### Task 3 — ON HOLD (pending audit completion)
-`2026-04-03-HIGH-BUG-FIX-DELETE-REWRITE-ISRU-OPTIMIZER.md`
-"Delete and rewrite" language must be revised after audit.
-May contain useful logic worth preserving.
-Do not assign until audit confirms what isru_optimizer.rb actually contains.
+### Task 4 — COMPLETE ✅
+`orbital_shipyard_service_spec.rb` — 25/25 pass.
+Two root causes found and fixed:
+1. `load_craft_blueprint` doubled json-data in path
+2. `:orbital_settlement` factory missing owner
+Commit: e1a4b6ae.
 
-### Task 4 — NOT YET WRITTEN
-Escalation service rewrite — TEU+PVE chain for Luna water.
-`escalation_service.rb` has one external caller: `galaxy_game/app/services/ai_manager.rb`
-Cannot be written until audit classifies it.
+### JSON Data Corrections — COMPLETE ✅ (disk only, gitignored)
+- GCU: corrected to NASA Mars Direct architecture (CO2 + 2H2O → CH4 + 2O2)
+- Gas Separator: template fixed, cryogenic fractional distillation
+- TEU: added mixed_volatiles output, world-driven amounts
 
-### Task 5 — NOT YET WRITTEN
-Bloat deletion — cannot be written until full audit is complete.
-**Rule: Never bulk delete. Archive first. Confirm rake tasks pass. Then delete.**
+### AI Manager File Audit — DEMOTED TO BACKLOG
+Moved to backlog/LOW, reassigned to Claude Sonnet autonomous.
+Commit: 8ef46587.
+
+### active/ — EMPTY
+Nothing in flight. Clean slate for next session.
+
+## Backlog — 3 Tasks Queued
+| Task | Priority | Notes |
+|---|---|---|
+| `2026-04-03-LOW-DATA-CO2-OXYGEN-PRODUCTION-UNIT-SCHEMA-AND-STOICHIOMETRY.md` | LOW | Wrong H2 stoichiometry, missing CH4 output in life support |
+| AI Manager file audit | LOW | Claude Sonnet autonomous, batches 3-6 remaining |
+| `2026-03-31-HIGH-REFACTOR-ORBITAL-SETTLEMENT-ARCHITECTURE.md` | HIGH | Blocked until <10 failures — **blocker now met for shipyard spec** |
 
 ---
 
@@ -290,31 +306,43 @@ Bloat deletion — cannot be written until full audit is complete.
 
 ## First Actions Tomorrow
 
-1. **Get audit completion report from GPT-4.1** — all 7 batches
-2. **Review audit results** — identify any files with Luna/ISRU/TEU/PVE logic
-3. **Correct paths in Task 2** — change `docs/agent/ai_manager/` to
-   `galaxyGame/docs/architecture/ai_manager/` throughout
-4. **Assign Task 2** — ISRUEvaluator to Claude Sonnet 1x
-5. **Update Task 3** — revise "delete" language based on audit findings
-6. **Write Escalation task file** — after audit classifies escalation_service.rb
+1. **Decide on Orbital Settlement Architecture refactor** — blocker condition
+   met (shipyard spec now 25/25). Review `2026-03-31-HIGH-REFACTOR-ORBITAL-SETTLEMENT-ARCHITECTURE.md`
+   and decide whether to promote to active or continue with spec reduction first.
+2. **Run full suite baseline** — get current failure count after today's fixes
+   ```bash
+   docker exec -it web bash -c "unset DATABASE_URL && RAILS_ENV=test bundle exec rspec \
+     > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1"
+   ```
+3. **Write Escalation service task file** — `escalation_service.rb` is
+   LEGITIMATE per audit, has real buy order escalation logic, needs TEU+PVE
+   chain rewired. One external caller: `ai_manager.rb`.
+4. **Review co2_oxygen_production JSON** — wrong stoichiometry in life support
+   affects lava tube calculations, in the Luna dependency chain.
 
 ## Do Not Do Tomorrow
-- Do not delete any ai_manager files before audit is complete
-- Do not assign Task 3 before audit is complete
-- Do not run the full RSpec suite — ai_manager/ has 42 load errors,
-  investigate root cause before running
-- Do not touch task_execution_engine.rb — proven working foundation
+- Do not bulk delete any ai_manager/ files — audit is incomplete for batches 3-6
+- Do not touch `task_execution_engine.rb` — proven working foundation
+- Do not touch `resource_flow_simulator.rb` until escalation task is written —
+  TEU→PVE chain in RESOURCE_CHAINS is needed for that rewrite
 
 ---
 
 ## Notes for Next Session
-The January rake tasks are the acceptance tests for the AI Manager refactor.
+The January rake tasks are the acceptance tests for the AI Manager.
 After every fix, confirm the relevant rake task still passes:
 ```bash
 docker exec -it web bash -c "unset DATABASE_URL && bundle exec rake ai:sol:gcc_bootstrap"
 docker exec -it web bash -c "unset DATABASE_URL && bundle exec rake ai:lunar_base:with_isru"
 ```
 
-The RSpec suite spec count (58 failures) has not changed today — that was
-not the goal. The goal was to establish a trustworthy foundation so future
-fixes are built on correct understanding. That goal was achieved.
+**The orbital settlement architecture refactor blocker is now met.**
+The shipyard spec is 25/25. The refactor task (`2026-03-31`) is in backlog
+marked HIGH and was blocked by the spec count. Review it carefully before
+promoting — it is a major refactor touching models, factories, and specs.
+The Luna → L1 station → cycler → Mars chain depends on getting this right.
+
+**Rewiring strategy confirmed for remaining ai_manager files:**
+Most files (~45) are LEGITIMATE — real game intent, wrong data sources.
+The approach is rewire, not delete. Read each file before touching it.
+Never bulk delete. Archive first if removing.
