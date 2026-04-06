@@ -1,5 +1,5 @@
 # Agent Routing Guide & Documentation Index
-**Last Updated**: March 31, 2026  
+**Last Updated**: April 6, 2026  
 **Purpose**: Route work to the right agent. Check doc index before creating new documentation.
 
 ---
@@ -57,13 +57,13 @@
 
 | Agent | Host | Cost | Speed | Capability | Best For |
 |---|---|---|---|---|---|
-| **qwen3-coder:30b** | Windows 10.6.186.50 | **0x** | 🐌 Slow (CPU+4GB Vulkan) | Claude Sonnet tier | **Replace Claude Sonnet (1x)** — heavy background refactors |
-| **qwen2.5-coder:3b** | Windows 10.6.186.50 | **0x** | 🐌 Medium (GPU viable) | GPT-4.1 tier | Overflow when GPT-4.1 busy |
+| **qwen3-coder:30b** | Windows 10.6.186.50 | **0x** | 🐌 Slow (20-60 min) | Claude Sonnet+ tier | Primary complex analysis — multi-file bugs, root cause, synthesis reports. VS Code Continue plugin → "Synthesis Report → STOP" → handoff to GPT-4.1 execution |
+| **qwen2.5-coder:3b** | Windows 10.6.186.50 | **0x** | 🐌 Medium | GPT-4.1 tier | Quick validation, overflow |
 | **Llama3.1:8b** | Mac localhost | **0x** | Medium | Light tasks | Fallback, autocomplete |
 
-**Access**: Continue CLI `cn --config .continueconfig.yaml` → Windows model  
-**Docker**: `docker exec web` (no `-t` for CLI)  
-**Supervision**: 🟡 Standard — always review results
+**Access**: VS Code Continue Plugin → Windows model (CLI deprecated)  
+**Docker**: docker exec web (no -t flag)  
+**Supervision**: 🟡 Review synthesis → GPT-4.1 executes
 
 ---
 
