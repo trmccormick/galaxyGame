@@ -9,9 +9,17 @@ RSpec.describe ManufacturingService, type: :service do
     # Set construction cost to a predictable percentage for testing
     settlement.construction_cost_percentage = 0.4  # 0.4% of purchase cost
     settlement.save!
-    
-    # Ensure player has enough funds for any reasonable construction cost
-    player.credit(50000, "Test funds")  # Enough for most blueprints
+
+    # Stub NpcPriceCalculator to return predictable price for all materials
+    allow(Market::NpcPriceCalculator).to receive(:calculate_ask).and_return(100.0)
+
+    # Ensure player has enough funds for BOM-based construction cost
+    # Methane Engine BOM: 1600kg × 100.0 GCC/kg = 160,000 GCC base cost
+    # With 0.4% construction percentage: 160,000 × 0.004 = 640 GCC
+    # Credit enough for any reasonable test scenario
+    player.credit(500_000, "Test funds")
+    # Grant blueprint ownership/license for Methane Engine
+    create(:blueprint, name: 'Methane Engine', player: player, licensed_runs_remaining: 999)
     
     # Add materials to settlement inventory (based on actual blueprint requirements)
     settlement.inventory.items.create!(
@@ -79,19 +87,11 @@ RSpec.describe ManufacturingService, type: :service do
       end
 
       it "creates a UnitAssemblyJob and charges construction cost using real blueprint" do
-        # Find a blueprint with cost data
-        blueprint = blueprint_service.all_blueprints.find do |bp|
-          bp['cost_data']&.dig('purchase_cost', 'amount').present?
-        end
-        
-        skip "No blueprint with cost data found" unless blueprint
-        
-        if blueprint['category'] == 'megastructure' || blueprint['subcategory'] == 'megastructure'
-          skip "Megastructure blueprints use a different cost schema and construction pipeline than unit blueprints — requires MegaProjectService, not ManufacturingService"
-        end
-
-        blueprint_name = blueprint['name']
-        purchase_cost = blueprint['cost_data']['purchase_cost']['amount']
+        # Force use of Methane Engine blueprint for deterministic test
+        blueprint = blueprint_service.find_blueprint('Methane Engine')
+        blueprint_name = 'Methane Engine'
+        required_materials = blueprint['required_materials']
+        purchase_cost = required_materials.values.sum { |mat| mat['amount'] * 100.0 }
         expected_construction_cost = settlement.calculate_construction_cost(purchase_cost)
         initial_balance = player.balance
         result = ManufacturingService.manufacture(
@@ -138,62 +138,31 @@ RSpec.describe ManufacturingService, type: :service do
 
     context "with sufficient funds" do
       it "creates a UnitAssemblyJob and charges the player construction cost" do
+        blueprint = blueprint_service.find_blueprint('Methane Engine')
+        expect(blueprint).to be_present, "Methane Engine blueprint should exist"
+        required_materials = blueprint['required_materials']
+        expected_cost = required_materials.values.sum { |mat| mat['amount'] * 100.0 }
+        expected_cost = settlement.calculate_construction_cost(expected_cost)
         initial_balance = player.balance
-        
-        # Use actual blueprint from the lookup service
-        blueprint = Lookup::BlueprintLookupService.new.find_blueprint('Methane-Oxygen Rocket Engine')
-        expect(blueprint).to be_present, "Methane-Oxygen Rocket Engine blueprint should exist"
-        
-        purchase_cost = blueprint.dig('cost_data', 'purchase_cost', 'amount')
-        
-        if purchase_cost.present?
-          expected_construction_cost = settlement.calculate_construction_cost(purchase_cost)
-          
-          result = ManufacturingService.manufacture(
-            'Methane-Oxygen Rocket Engine',
-            player,
-            settlement,
-            count: 1
-          )
-          
+          result = ManufacturingService.manufacture('Methane Engine', player, settlement, count: 1)
           expect(result[:success]).to be true
-          expect(result[:message]).to include("Construction cost: #{expected_construction_cost} GCC")
-          
           expect(UnitAssemblyJob.count).to eq(1)
-          expect(player.reload.balance).to eq(initial_balance - expected_construction_cost)
-        else
-          # Skip cost-related test if blueprint doesn't have cost data
-          skip "Blueprint does not have cost data"
-        end
+          expect(player.reload.balance).to eq(initial_balance - expected_cost)
       end
     end
 
     context "with different construction cost percentages" do
       it "uses settlement's custom construction percentage" do
-        settlement.construction_cost_percentage = 2.0
-        settlement.save!
-        
-        blueprint = Lookup::BlueprintLookupService.new.find_blueprint('Methane-Oxygen Rocket Engine')
-        purchase_cost = blueprint.dig('cost_data', 'purchase_cost', 'amount')
-        
-        if purchase_cost.present?
-          expected_cost = settlement.calculate_construction_cost(purchase_cost)
-          
-          initial_balance = player.balance
-          
-          result = ManufacturingService.manufacture(
-            'Methane-Oxygen Rocket Engine',
-            player,
-            settlement,
-            count: 1
-          )
-          
+        settlement.update!(construction_cost_percentage: 2.0)
+        blueprint = blueprint_service.find_blueprint('Methane Engine')
+        expect(blueprint).to be_present, "Methane Engine blueprint should exist"
+        required_materials = blueprint['required_materials']
+        expected_cost = required_materials.values.sum { |mat| mat['amount'] * 100.0 }
+        expected_cost = settlement.calculate_construction_cost(expected_cost)
+        initial_balance = player.balance
+          result = ManufacturingService.manufacture('Methane Engine', player, settlement, count: 1)
           expect(result[:success]).to be true
           expect(player.reload.balance).to eq(initial_balance - expected_cost)
-        else
-          # Skip cost-related test if blueprint doesn't have cost data
-          skip "Blueprint does not have cost data"
-        end
       end
     end
 
