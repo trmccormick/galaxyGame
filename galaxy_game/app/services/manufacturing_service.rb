@@ -18,9 +18,19 @@ class ManufacturingService
       return { success: false, error: "No access to settlement" }
     end
     
-    # Calculate construction cost using settlement's percentage
-    purchase_cost = blueprint_data.dig('cost_data', 'purchase_cost', 'amount')
-    construction_cost = settlement.calculate_construction_cost(purchase_cost)
+    # Calculate construction cost from BOM using NpcPriceCalculator
+    required_materials = blueprint_data['required_materials']
+    if required_materials.nil? || required_materials.empty?
+      return { success: false, error: "Blueprint missing required_materials BOM" }
+    end
+
+    bom_cost = required_materials.sum do |material_name, data|
+      quantity_kg = data['amount']
+      unit_price = Market::NpcPriceCalculator.calculate_ask(settlement, material_name)
+      unit_price ||= 0.0
+      unit_price * quantity_kg
+    end
+    construction_cost = settlement.calculate_construction_cost(bom_cost)
     
     # Check if owner can afford the construction cost
     if construction_cost > 0 && !owner.can_afford?(construction_cost)
