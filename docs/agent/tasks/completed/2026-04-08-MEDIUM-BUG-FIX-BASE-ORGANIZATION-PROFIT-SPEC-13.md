@@ -1,28 +1,14 @@
-require 'rails_helper'
+# TASK: base_organization_profit_spec.rb:13 quick win
+**Status**: ACTIVE **Priority**: MEDIUM **Type**: bug-fix **Created**: 2026-04-08
 
+**Assigned To**: GPT-4.1 0x **Why**: Single failure, profit distribution
 
-RSpec.describe Organizations::BaseOrganization, type: :model do
-  let(:currency) { Financial::Currency.find_or_create_by(symbol: 'GCC') { |c| c.name = 'Galactic Crypto Currency'; c.is_system_currency = true; c.precision = 8 } }
-  let(:consortium) { create(:consortium, operational_data: {}, organization_type: :consortium) }
-  let(:member) { create(:corporation) }
+## Problem
+Line 13: BaseOrganization distributes profits to members based on ownership
 
-  before do
-    # Ensure consortium has an account with currency
-    create(:account, accountable: consortium, currency: currency)
-    ConsortiumMembership.create!(consortium: consortium, member: member, investment_amount: 1_000_000, ownership_percentage: 100.0, voting_power: 10000, membership_status: 'active', joined_at: Time.current)
-    allow(consortium).to receive(:calculate_revenue).and_return(1_000_000)
-    allow(consortium).to receive(:calculate_costs).and_return(100_000)
-  end
-
-  it 'distributes profits to members based on ownership' do
-    expect {
-      consortium.distribute_consortium_profits(consortium)
-    }.to change { Financial::Transaction.count }.by(1)
-    tx = Financial::Transaction.last
-    expect(tx.amount).to eq(900_000)
-    expect(tx.recipient).to eq(member)
-    expect(tx.account.accountable).to eq(consortium)
-    expect(tx.transaction_type).to eq('transfer')
-    expect(tx.currency).to eq(currency)
-  end
-end
+## Steps
+1. Run: rspec spec/models/organizations/base_organization_profit_spec.rb:13
+2. Synthesis Report → STOP approval
+3. Fix profit distribution logic  
+4. rspec spec/models/organizations/base_organization_profit_spec.rb → 0 failures
+5. git commit -m "fix: base_organization_profit_spec:13 profit distribution"
