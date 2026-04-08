@@ -222,8 +222,8 @@ module AIManager
       opportunity_cost = calculate_opportunity_cost(resource_score, scouting_score)
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
-      abundant_opportunities = state_analysis[:scouting_opportunities][:high_value]&.any? || false
-      critical_resources = state_analysis.dig(:resource_needs, :critical) || []
+      abundant_opportunities = state_analysis&.dig(:scouting_opportunities, :high_value)&.any? || false
+      critical_resources = state_analysis&.dig(:resource_needs, :critical) || []
       if abundant_opportunities && critical_resources.empty?
         recommended_focus = :scouting_focus
       else
@@ -248,7 +248,7 @@ module AIManager
       risk_adjustment = assess_risk_tolerance(state_analysis)
       long_term_value = calculate_long_term_planning_score(state_analysis)
 
-      critical_infrastructure = state_analysis.dig(:infrastructure_needs, :critical) || []
+      critical_infrastructure = state_analysis&.dig(:infrastructure_needs, :critical) || []
       if critical_infrastructure.any?
         recommended_focus = :building_focus
       else
@@ -320,7 +320,7 @@ module AIManager
           modifier *= 1.5
         end
         # Lower value if we have surplus
-        if state_analysis[:economic_health] > 0.8
+        if (state_analysis&.dig(:economic_health) || 0.5) > 0.8
           modifier *= 0.8
         end
 
@@ -330,13 +330,13 @@ module AIManager
           modifier *= 1.3
         end
         # Higher value if we have expansion capability
-        if state_analysis[:expansion_readiness] > 0.7
+        if (state_analysis&.dig(:expansion_readiness) || 0) > 0.7
           modifier *= 1.2
         end
 
       when :settlement_expansion
         # Higher value if we're ready to expand
-        modifier *= state_analysis[:expansion_readiness] + 0.5
+        modifier *= (state_analysis&.dig(:expansion_readiness) || 0) + 0.5
 
       when :infrastructure_building
         # Higher value if infrastructure is critical
@@ -652,20 +652,20 @@ module AIManager
       base_score = 0
 
       # Resource scarcity drives score up
-      critical_needs = state_analysis[:resource_needs][:critical] || []
-      needed_resources = state_analysis[:resource_needs][:needed] || []
+      critical_needs = state_analysis&.dig(:resource_needs, :critical) || []
+      needed_resources = state_analysis&.dig(:resource_needs, :needed) || []
       base_score += critical_needs.length * 30
       base_score += needed_resources.length * 15
 
       # Economic health modifier
-      economic_health = state_analysis[:economic_health] || 0.5
+      economic_health = state_analysis&.dig(:economic_health) || 0.5
       if economic_health < 0.5
         return 101  # Explicit threshold for poor economy
       end
       base_score *= (2.0 - economic_health)
 
       # Current resource levels (lower levels increase score)
-      current_resources = state_analysis[:current_resources] || {}
+      current_resources = state_analysis&.dig(:current_resources) || {}
       resource_deficit = calculate_resource_deficit(current_resources)
       base_score += resource_deficit * 10
 
@@ -677,21 +677,21 @@ module AIManager
       base_score = 0
 
       # High-value opportunities
-      high_value_systems = state_analysis[:scouting_opportunities][:high_value] || []
-      strategic_systems = state_analysis[:scouting_opportunities][:strategic] || []
+      high_value_systems = state_analysis&.dig(:scouting_opportunities, :high_value) || []
+      strategic_systems = state_analysis&.dig(:scouting_opportunities, :strategic) || []
       base_score += high_value_systems.length * 50  # +25 points boost
       base_score += strategic_systems.length * 30   # +10 points boost
 
       # Exploration readiness
-      exploration_readiness = state_analysis[:exploration_readiness] || 0.5
+      exploration_readiness = state_analysis&.dig(:exploration_readiness) || 0.5
       base_score *= exploration_readiness
 
       # Current knowledge gaps
-      knowledge_gaps = state_analysis[:knowledge_gaps] || []
+      knowledge_gaps = state_analysis&.dig(:knowledge_gaps) || []
       base_score += knowledge_gaps.length * 15
 
       # Strategic position (lower position increases scouting value)
-      strategic_position = state_analysis[:strategic_position] || 0.5
+      strategic_position = state_analysis&.dig(:strategic_position) || 0.5
       if strategic_position < 0.5
         base_score += 40  # Aggressive boost for weak position
       end
@@ -705,17 +705,17 @@ module AIManager
       base_score = 0
 
       # Infrastructure needs
-      critical_infrastructure = state_analysis[:infrastructure_needs][:critical] || []
-      needed_infrastructure = state_analysis[:infrastructure_needs][:needed] || []
+      critical_infrastructure = state_analysis&.dig(:infrastructure_needs, :critical) || []
+      needed_infrastructure = state_analysis&.dig(:infrastructure_needs, :needed) || []
       base_score += critical_infrastructure.length * 125  # +60 points boost
       base_score += needed_infrastructure.length * 30    # +10 points boost
 
       # Expansion readiness
-      expansion_readiness = state_analysis[:expansion_readiness] || 0.5
+      expansion_readiness = state_analysis&.dig(:expansion_readiness) || 0.5
       base_score *= expansion_readiness
 
       # Settlement health (lower health increases building priority)
-      settlement_health = state_analysis[:settlement_health] || 0.8
+      settlement_health = state_analysis&.dig(:settlement_health) || 0.8
       if settlement_health < 0.5
         return 105  # Explicit threshold for poor health
       else
@@ -723,7 +723,7 @@ module AIManager
       end
 
       # Current infrastructure level (lower levels increase score)
-      infrastructure_level = state_analysis[:infrastructure_level] || 0.5
+      infrastructure_level = state_analysis&.dig(:infrastructure_level) || 0.5
       base_score *= (1.5 - infrastructure_level)
 
       [base_score, 100].min
@@ -750,7 +750,7 @@ module AIManager
       base_tolerance += strategic_position * 0.2
 
       # Lower tolerance when settlement health is poor
-      settlement_health = state_analysis[:settlement_health] || 0.8
+      settlement_health = state_analysis&.dig(:settlement_health) || 0.8
       if settlement_health < 0.5
         base_tolerance = [base_tolerance, 0.49].min  # Ensure conservative tolerance
       else
@@ -764,20 +764,20 @@ module AIManager
       base_score = 0
 
       # Future resource projections
-      future_projections = state_analysis[:future_projections] || {}
+      future_projections = state_analysis&.dig(:future_projections) || {}
       future_resource_needs = future_projections[:resource_needs] || []
       base_score += future_resource_needs.length * 10
 
       # Strategic opportunities timeline
-      strategic_timeline = state_analysis[:strategic_timeline] || []
+      strategic_timeline = state_analysis&.dig(:strategic_timeline) || []
       base_score += strategic_timeline.length * 15
 
       # Expansion potential
-      expansion_potential = state_analysis[:expansion_potential] || 0.5
+      expansion_potential = state_analysis&.dig(:expansion_potential) || 0.5
       base_score *= expansion_potential
 
       # Economic projections
-      economic_projections = state_analysis[:economic_projections] || {}
+      economic_projections = state_analysis&.dig(:economic_projections) || {}
       long_term_economic_health = economic_projections[:long_term] || 0.5
       base_score *= long_term_economic_health
 
@@ -833,7 +833,7 @@ module AIManager
     end
 
     def calculate_resource_abundance(state_analysis)
-      current_resources = state_analysis[:current_resources] || {}
+      current_resources = state_analysis&.dig(:current_resources) || {}
       total_current = current_resources.values.sum
       optimal_total = 400  # Sum of optimal levels
 
