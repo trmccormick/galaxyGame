@@ -28,7 +28,7 @@ module AIManager
 
       # Phase 3: Optimize ISRU priorities
       isru_optimizer = AIManager::IsruOptimizer.new(@shared_context)
-      isru_optimization = isru_optimizer.optimize_isru_priorities(target_system, settlement_plan)
+      isru_optimization = settlement ? isru_optimizer.optimize_isru_priorities(settlement) : nil
 
       # Phase 4: Coordinate wormhole network expansion
       wormhole_coordinator = AIManager::WormholeCoordinator.new(@shared_context)
@@ -309,7 +309,7 @@ module AIManager
       # Execute phased expansion with resource awareness
       execute_phased_expansion(settlement, settlement_plan, initial_allocations, isru_optimization)
 
-      { status: :success, allocations: initial_allocations, isru_plan: isru_optimization[:isru_roadmap] }
+      { status: :success, allocations: initial_allocations, isru_plan: isru_optimization&.dig(:isru_roadmap) }
     end
 
     def self.prepare_new_settlement_with_resources(settlement_plan, resource_requirements, isru_optimization)
@@ -336,7 +336,7 @@ module AIManager
       deploy_critical_infrastructure(settlement, critical_allocations)
 
       # Phase 2: ISRU early opportunities
-      early_isru = isru_optimization[:isru_roadmap][:phase_1] || []
+      early_isru = isru_optimization&.dig(:isru_roadmap, :phase_1) || []
       implement_early_isru(settlement, early_isru)
 
       # Phase 3: Habitat and operational systems
@@ -354,17 +354,17 @@ module AIManager
       {
         transport_missions: calculate_transport_missions(logistics),
         procurement_schedule: build_procurement_schedule(resource_requirements[:timeline]),
-        isru_dependency_reduction: isru_optimization[:economic_impact][:import_reduction_percentage],
+        isru_dependency_reduction: isru_optimization&.dig(:economic_impact, :import_reduction_percentage),
         total_logistics_cost: logistics[:fuel_requirements] * 50 # GCC per kg fuel
       }
     end
 
     def self.prepare_isru_timeline(isru_optimization)
-      roadmap = isru_optimization[:isru_roadmap]
+      roadmap = isru_optimization&.dig(:isru_roadmap) || {}
 
       {
-        phase_1_implementation: roadmap[:phase_1].map { |opp| opp[:opportunity] },
-        phase_2_implementation: roadmap[:phase_2].map { |opp| opp[:opportunity] },
+        phase_1_implementation: roadmap[:phase_1]&.map { |opp| opp[:opportunity] } || [],
+        phase_2_implementation: roadmap[:phase_2]&.map { |opp| opp[:opportunity] } || [],
         expected_savings_timeline: calculate_savings_timeline(roadmap),
         capability_buildup: build_capability_timeline(roadmap)
       }
