@@ -126,18 +126,14 @@ module AIManager
     # Score mission options based on strategic value
     def score_mission_options(options, state_analysis)
       prioritized_missions = @mission_scorer.prioritize_missions(options, state_analysis)
-      
-      prioritized_missions.map do |mission_data|
+      boosted = prioritized_missions.map do |mission_data|
         original_mission = mission_data[:mission]
         score = mission_data[:score]
-        
         # Boost settlement_expansion when readiness is high
         if original_mission[:type] == :settlement_expansion && 
           state_analysis[:expansion_readiness].to_f >= 0.8
           score *= 1.3
-          puts "SCORE_DEBUG: #{original_mission[:type]} boosted=#{score}"
         end
-        
         original_mission.merge(
           score: score,
           analysis: mission_data[:analysis],
@@ -145,6 +141,7 @@ module AIManager
           sequencing_info: mission_data[:sequencing_info]
         )
       end
+      boosted.sort_by { |o| -o[:score] }
     end
 
     # Select the optimal action considering current constraints
