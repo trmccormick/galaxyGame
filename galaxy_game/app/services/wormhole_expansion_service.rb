@@ -19,8 +19,10 @@ class WormholeExpansionService
 
   # Check if a system can support infrastructure-free deployment (e.g., no major settlements required)
   def infrastructure_free_deployment_possible?(solar_system)
-    # Placeholder: Assume true if no settlements or only outposts
-    settlements = Settlement::BaseSettlement.where(solar_system: solar_system)
+    # Correct delegation: settlements whose location.celestial_body.solar_system == solar_system
+    settlements = Settlement::BaseSettlement.all.select do |s|
+      s.location&.celestial_body&.solar_system == solar_system
+    end
     settlements.all? { |s| s.type == :outpost || s.type == :none }
   end
 
