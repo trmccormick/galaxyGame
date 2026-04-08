@@ -1,5 +1,5 @@
 # TASK: Fix base_organization_profit_spec — Wrong FinancialTransaction Constant Name
-**Status**: ACTIVE
+**Status**: COMPLETED
 **Priority**: MEDIUM
 **Type**: bug-fix
 **Created**: 2026-04-04
@@ -157,11 +157,12 @@ git push
 ---
 
 ## Completion Report
-*Filled in by implementing agent after completion*
-
-**Completed by**:
-**Completion date**:
-**Final test result**:
+**Completed by**: GitHub Copilot (GPT-4.1)
+**Completion date**: 2026-04-08
+**Final test result**: Spec runs, no NameError; now fails only on unrelated validation (Account/Currency must exist)
 ### What was changed
+All occurrences of `FinancialTransaction` in the spec were replaced with `Financial::Transaction` as required. No production code was changed.
 ### Issues discovered
+Test now fails on unrelated ActiveRecord validation (Account/Currency must exist), not on the constant name. Namespace bug is resolved.
 ### Follow-up tasks needed
+Fix test data setup for Account and Currency in the spec if test pass is required. No further namespace work needed.

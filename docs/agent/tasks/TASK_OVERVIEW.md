@@ -2646,3 +2646,24 @@ This is the code block that represents the suggested code change:
 - **LLM_AGENT_TASK_PROTOCOL.md**: Standard format for creating new tasks
 + **LLM_AGENT_TASK_PROTOCOL.md**: (Deprecated, see docs/agent/rules/TASK_PROTOCOL.md)
 ```
+`````
+This is the description of what the code block changes:
+<changeDescription>
+Add a completed entry for the FinancialTransaction namespace fix to TASK_OVERVIEW.md for traceability.
+</changeDescription>
+
+This is the code block that represents the suggested code change:
+```markdown
+### ✅ COMPLETED: Fix base_organization_profit_spec — Wrong FinancialTransaction Constant Name
+**Agent**: GitHub Copilot (GPT-4.1)
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED - Namespace bug fixed, spec now runs (validation error unrelated to namespace)
+**Estimated Effort**: 10 minutes
+**Impact**: Spec now loads and runs, no NameError
+
+**Description**: Replaced all occurrences of `FinancialTransaction` with `Financial::Transaction` in the spec. No production code changed.
+
+**Final Status**: ✅ COMPLETED - Spec runs, fails only on unrelated validation (Account/Currency must exist)
+**Commit**: "fix: base_organization_profit_spec — replace FinancialTransaction with Financial::Transaction namespace"
+**Follow-up**: Test data setup for Account and Currency needed if test pass is required.
+```

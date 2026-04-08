@@ -249,10 +249,25 @@ git push
 ## Completion Report
 *Filled in by implementing agent after completion*
 
-**Completed by**:
-**Completion date**:
-**Final test result**:
+**Completed by**: GitHub Copilot (Implementation Agent)
+**Completion date**: 2026-04-07
+**Final test result**: 8 examples, 0 failures, 3 pending (manfacturing_service_spec.rb)
 ### What was changed
+- Replaced all references to blueprint['cost_data'] in ManufacturingService with BOM-based cost calculation using Market::NpcPriceCalculator.
+- Updated the manufacture flow to sum costs for each BOM material using the pricing service.
+- Updated the spec to stub NpcPriceCalculator and assert correct cost logic.
+- Ensured nil prices are handled gracefully (fallback to 0.0 in tests).
+- Left cost_data in blueprint JSON untouched (display only).
+
 ### Issues discovered
+- Some blueprints had inconsistent BOM field names; resolved by standardizing on 'required_materials'.
+- Initial spec failures due to outdated cost logic and blueprint naming; fixed in subsequent commits.
+
 ### Follow-up tasks needed
+- Confirm all blueprints use the standardized BOM field name ('required_materials').
+- Update or create docs/systems/manufacturing.md to clarify cost_data is display-only and runtime cost is BOM-based.
+
 ### Lessons learned
+- Always confirm BOM field consistency across blueprints before refactoring.
+- Never rely on cost_data for runtime logic; always use BOM + pricing service.
+- Document architectural decisions in both code and docs for future agents.

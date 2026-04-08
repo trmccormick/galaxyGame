@@ -1,3 +1,6 @@
+# NOTE: The Settlement::SpaceStation model is being refactored into OrbitalSettlement.
+# In the future, SpaceStation will only exist as a structure owned by an OrbitalSettlement.
+
 # spec/models/settlement/space_station_spec.rb
 require 'rails_helper'
 
