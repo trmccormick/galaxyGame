@@ -64,45 +64,45 @@ module AIManager
       options = []
 
       # Resource acquisition options
-      if state_analysis[:resource_needs][:critical].any?
+      if (state_analysis&.dig(:resource_needs, :critical) || []).any?
         options << {
           type: :resource_acquisition,
           priority: :critical,
-          resources: state_analysis[:resource_needs][:critical],
+          resources: state_analysis&.dig(:resource_needs, :critical) || [],
           rationale: "Critical resource shortage"
         }
       end
 
-      if state_analysis[:resource_needs][:needed].any?
+      if (state_analysis&.dig(:resource_needs, :needed) || []).any?
         options << {
           type: :resource_acquisition,
           priority: :high,
-          resources: state_analysis[:resource_needs][:needed],
+          resources: state_analysis&.dig(:resource_needs, :needed) || [],
           rationale: "Resource optimization"
         }
       end
 
       # System scouting options
-      if state_analysis[:scouting_opportunities][:high_value].any?
+      if (state_analysis&.dig(:scouting_opportunities, :high_value) || []).any?
         options << {
           type: :system_scouting,
           priority: :high,
-          systems: state_analysis[:scouting_opportunities][:high_value],
+          systems: state_analysis&.dig(:scouting_opportunities, :high_value) || [],
           rationale: "High-value exploration opportunity"
         }
       end
 
-      if state_analysis[:scouting_opportunities][:strategic].any?
+      if (state_analysis&.dig(:scouting_opportunities, :strategic) || []).any?
         options << {
           type: :system_scouting,
           priority: :medium,
-          systems: state_analysis[:scouting_opportunities][:strategic],
+          systems: state_analysis&.dig(:scouting_opportunities, :strategic) || [],
           rationale: "Strategic expansion planning"
         }
       end
 
       # Settlement expansion options
-      if state_analysis[:expansion_readiness] >= 0.8
+      if (state_analysis&.dig(:expansion_readiness) || 0) >= 0.8
         options << {
           type: :settlement_expansion,
           priority: :high,
@@ -111,11 +111,11 @@ module AIManager
       end
 
       # Infrastructure building options
-      if state_analysis[:infrastructure_needs][:critical].any?
+      if (state_analysis&.dig(:infrastructure_needs, :critical) || []).any?
         options << {
           type: :infrastructure_building,
           priority: :critical,
-          infrastructure: state_analysis[:infrastructure_needs][:critical],
+          infrastructure: state_analysis&.dig(:infrastructure_needs, :critical) || [],
           rationale: "Critical infrastructure required"
         }
       end
