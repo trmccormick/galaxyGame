@@ -26,9 +26,7 @@ module AIManager
       bootstrap_allocator = AIManager::BootstrapResourceAllocator.new(@shared_context)
       resource_requirements = bootstrap_allocator.calculate_bootstrap_requirements(settlement_plan, target_system)
 
-      # Phase 3: Optimize ISRU priorities
-      isru_optimizer = AIManager::IsruOptimizer.new(@shared_context)
-      isru_optimization = settlement ? isru_optimizer.optimize_isru_priorities(settlement) : nil
+
 
       # Phase 4: Coordinate wormhole network expansion
       wormhole_coordinator = AIManager::WormholeCoordinator.new(@shared_context)
@@ -36,16 +34,15 @@ module AIManager
 
       # Phase 5: Execute expansion if settlement exists, or prepare for new settlement
       if settlement
-        execute_expansion_with_resources(settlement, settlement_plan, resource_requirements, isru_optimization)
+        execute_expansion_with_resources(settlement, settlement_plan, resource_requirements)
       else
-        prepare_new_settlement_with_resources(settlement_plan, resource_requirements, isru_optimization)
+        prepare_new_settlement_with_resources(settlement_plan, resource_requirements)
       end
 
       { status: :success,
         plan: settlement_plan,
         probe_data: probe_data,
         resource_requirements: resource_requirements,
-        isru_optimization: isru_optimization,
         network_coordination: network_coordination }
     end
 
@@ -299,7 +296,7 @@ module AIManager
       { status: :prepared, plan: plan }
     end
 
-    def self.execute_expansion_with_resources(settlement, settlement_plan, resource_requirements, isru_optimization)
+    def self.execute_expansion_with_resources(settlement, settlement_plan, resource_requirements)
       Rails.logger.info "[ExpansionService] Executing expansion with resource allocation for settlement #{settlement.id}"
 
       # Allocate initial resources
@@ -307,66 +304,46 @@ module AIManager
       initial_allocations = bootstrap_allocator.allocate_initial_resources(settlement, resource_requirements)
 
       # Execute phased expansion with resource awareness
-      execute_phased_expansion(settlement, settlement_plan, initial_allocations, isru_optimization)
+      execute_phased_expansion(settlement, settlement_plan, initial_allocations)
 
-      { status: :success, allocations: initial_allocations, isru_plan: isru_optimization&.dig(:isru_roadmap) }
+      { status: :success, allocations: initial_allocations }
     end
 
-    def self.prepare_new_settlement_with_resources(settlement_plan, resource_requirements, isru_optimization)
+    def self.prepare_new_settlement_with_resources(settlement_plan, resource_requirements)
       Rails.logger.info "[ExpansionService] Preparing new settlement with resource planning"
 
       # Prepare resource procurement plan
-      procurement_plan = prepare_resource_procurement(resource_requirements, isru_optimization)
-
-      # Prepare ISRU implementation timeline
-      isru_timeline = prepare_isru_timeline(isru_optimization)
+      procurement_plan = prepare_resource_procurement(resource_requirements)
 
       { status: :prepared,
         plan: settlement_plan,
         procurement_plan: procurement_plan,
-        isru_timeline: isru_timeline,
         budget: resource_requirements[:startup_budget] }
     end
 
-    def self.execute_phased_expansion(settlement, settlement_plan, allocations, isru_optimization)
-      Rails.logger.info "[ExpansionService] Executing phased expansion with ISRU integration"
+    def self.execute_phased_expansion(settlement, settlement_plan, allocations)
+      Rails.logger.info "[ExpansionService] Executing phased expansion"
 
       # Phase 1: Critical infrastructure (life support, power)
       critical_allocations = allocations.select { |a| a[:priority] == :critical }
       deploy_critical_infrastructure(settlement, critical_allocations)
 
-      # Phase 2: ISRU early opportunities
-      early_isru = isru_optimization&.dig(:isru_roadmap, :phase_1) || []
-      implement_early_isru(settlement, early_isru)
-
-      # Phase 3: Habitat and operational systems
+      # Phase 2: Habitat and operational systems
       infrastructure_allocations = allocations.select { |a| a[:priority] == :high }
       deploy_infrastructure(settlement, infrastructure_allocations)
 
-      # Phase 4: Research and operational capabilities
+      # Phase 3: Research and operational capabilities
       operational_allocations = allocations.select { |a| [:medium, :low].include?(a[:priority]) }
       deploy_operational_systems(settlement, operational_allocations)
     end
 
-    def self.prepare_resource_procurement(resource_requirements, isru_optimization)
+    def self.prepare_resource_procurement(resource_requirements)
       logistics = resource_requirements[:logistics_requirements]
 
       {
         transport_missions: calculate_transport_missions(logistics),
         procurement_schedule: build_procurement_schedule(resource_requirements[:timeline]),
-        isru_dependency_reduction: isru_optimization&.dig(:economic_impact, :import_reduction_percentage),
         total_logistics_cost: logistics[:fuel_requirements] * 50 # GCC per kg fuel
-      }
-    end
-
-    def self.prepare_isru_timeline(isru_optimization)
-      roadmap = isru_optimization&.dig(:isru_roadmap) || {}
-
-      {
-        phase_1_implementation: roadmap[:phase_1]&.map { |opp| opp[:opportunity] } || [],
-        phase_2_implementation: roadmap[:phase_2]&.map { |opp| opp[:opportunity] } || [],
-        expected_savings_timeline: calculate_savings_timeline(roadmap),
-        capability_buildup: build_capability_timeline(roadmap)
       }
     end
 
@@ -435,14 +412,7 @@ module AIManager
       end
     end
 
-    def self.implement_early_isru(settlement, early_isru_opportunities)
-      Rails.logger.info "[ExpansionService] Implementing early ISRU capabilities"
-      # Set up initial ISRU systems for immediate resource production
-      early_isru_opportunities.each do |opportunity|
-        implement_isru_capability(settlement, opportunity)
-      end
-    end
-
+    
     def self.deploy_infrastructure(settlement, allocations)
       Rails.logger.info "[ExpansionService] Deploying infrastructure systems"
       # Deploy habitat modules and structural systems
@@ -465,11 +435,7 @@ module AIManager
       # Actual deployment logic would go here
     end
 
-    def self.implement_isru_capability(settlement, opportunity)
-      # ISRU capability implementation logic
-      Rails.logger.info "[ExpansionService] Implementing ISRU capability #{opportunity[:opportunity]} for settlement #{settlement.id}"
-      # Actual ISRU implementation logic would go here
-    end
+
 
     def self.pattern_suitable?(settlement, pattern)
       # Check if settlement capabilities match pattern requirements
