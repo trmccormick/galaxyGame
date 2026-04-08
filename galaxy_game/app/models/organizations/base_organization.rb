@@ -117,7 +117,7 @@ module Organizations
           amount: member_share,
           transaction_type: :transfer,
           description: "Consortium profit share for period",
-          currency_id: 1
+          currency_id: consortium.account.currency_id
         )
       end
     end
