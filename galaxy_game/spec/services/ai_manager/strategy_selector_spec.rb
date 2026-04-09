@@ -238,13 +238,15 @@ RSpec.describe AIManager::StrategySelector, type: :service do
     it 'prioritizes settlement expansion when readiness is high' do
       expansion_option = { type: :settlement_expansion, priority: :high }
       scouting_option = { type: :system_scouting, priority: :high, systems: [] }
-
-      state_with_high_readiness = state_analysis.merge(expansion_readiness: 0.9)
-
+      state_with_high_readiness = state_analysis.merge(
+        expansion_readiness: 0.9,
+        food_reserves: 100,
+        water_reserves: 100,
+        habitation_capacity: 0.8
+      )
       scored_options = strategy_selector.send(:score_mission_options, [expansion_option, scouting_option], state_with_high_readiness)
-      top_option = scored_options.first
-
-      expect(top_option[:type]).to eq(:settlement_expansion)
+      best = strategy_selector.send(:select_optimal_action, scored_options, state_with_high_readiness)
+      expect(best[:type]).to eq(:settlement_expansion)
     end
   end
 

@@ -187,8 +187,9 @@ module AIManager
         # Check if we have the capability to acquire these resources
         state_analysis[:acquisition_capability] >= 0.3
       when :system_scouting
-        # Check if we have scouting capability
-        state_analysis[:scouting_capability] >= 0.5
+        # Don't scout when expansion readiness is high — expand instead
+        state_analysis[:scouting_capability] >= 0.5 &&
+          (state_analysis[:expansion_readiness] || 0) < 0.8
       when :settlement_expansion
         # Check if expansion is feasible
         state_analysis[:expansion_readiness] >= 0.7

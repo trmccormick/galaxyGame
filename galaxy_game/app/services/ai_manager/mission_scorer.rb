@@ -329,8 +329,9 @@ module AIManager
         if option[:priority] == :high
           modifier *= 1.3
         end
-        # Higher value if we have expansion capability
-        if (state_analysis&.dig(:expansion_readiness) || 0) > 0.7
+        # Only boost scouting for expansion readiness below 0.8
+        # At high readiness the NPC should expand, not scout
+        if (state_analysis&.dig(:expansion_readiness) || 0).between?(0.1, 0.79)
           modifier *= 1.2
         end
 
