@@ -150,6 +150,11 @@ module Location
       
       gravitational_parameter / (orbital_radius ** 2)
     end
+
+    # G-force at this location (gravity in m/s² divided by 9.81)
+    def gravity_g
+      gravity.to_f / 9.81
+    end
     
     # ============================================================================
     # LOCATION DESCRIPTION
