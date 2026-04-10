@@ -83,8 +83,8 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
         allow(settlement.inventory).to receive(:add_item)
         allow(settlement.celestial_body.geosphere).to receive(:crust_composition).and_return({ 'volatiles' => { 'H2O' => 5.0 } })
       end
-      it 'adds extracted_water based on geosphere H2O percent' do
-        expect(settlement.inventory).to receive(:add_item).with('extracted_water', a_value_within(0.01).of(0.75), settlement, {})
+      it 'adds H2O based on geosphere H2O percent' do
+        expect(settlement.inventory).to receive(:add_item).with('H2O', a_value_within(0.01).of(0.75), settlement, {})
         service.complete_job(job)
       end
     end
@@ -108,7 +108,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
         allow(settlement.inventory).to receive(:add_item)
         allow(settlement.celestial_body.geosphere).to receive(:crust_composition).and_return({ 'volatiles' => { 'CO2' => 3.0, 'N2' => 2.0 } })
       end
-      it 'adds extracted_gases for each non-H2O volatile' do
+      it 'adds mixed_volatiles for each non-H2O volatile' do
         expect(settlement.inventory).to receive(:add_item).with('CO2', a_value_within(0.01).of(0.45), settlement, {})
         expect(settlement.inventory).to receive(:add_item).with('N2', a_value_within(0.01).of(0.30), settlement, {})
         service.complete_job(job)

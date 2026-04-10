@@ -68,13 +68,13 @@ module Manufacturing
           geosphere = @settlement.celestial_body&.geosphere
           crust_volatiles = geosphere&.crust_composition&.dig("volatiles") || {}
           case out_id
-          when 'extracted_water'
+          when 'H2O'
             h2o = crust_volatiles['H2O'] || crust_volatiles['h2o']
             if h2o
               produced = job.input_amount * (h2o.to_f / 100.0) * geosphere_eff
-              @settlement.inventory.add_item('extracted_water', produced, @settlement, {})
+              @settlement.inventory.add_item('H2O', produced, @settlement, {})
             end
-          when 'extracted_gases'
+          when 'mixed_volatiles'
             crust_volatiles.each do |volatile, percent|
               next if volatile.to_s.downcase == 'h2o'
               produced = job.input_amount * (percent.to_f / 100.0) * geosphere_eff
