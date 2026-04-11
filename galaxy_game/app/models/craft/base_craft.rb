@@ -8,7 +8,7 @@ module Craft
     include HasRigs
     include RigAttachable
     include HasUnits
-    include Housing
+    # ...existing code...
     include GameConstants
     include HasUnitStorage
     include HasExternalConnections
@@ -94,6 +94,30 @@ module Craft
     # ============================================
     # INSTANCE METHODS
     # ============================================
+
+    # Population capacity calculated from installed habitat units.
+    # Returns 0 if no units provide capacity — no hardcoded fallback.
+    def population_capacity
+      base_units.sum do |unit|
+        capacity_data = unit.operational_data&.dig('capacity')
+        if capacity_data.is_a?(Hash)
+          capacity_data['passenger_capacity'] || capacity_data['capacity'] || 0
+        else
+          capacity_data&.to_i || 0
+        end
+      end
+    end
+
+    # Available capacity = total capacity - current population
+    def available_capacity
+      population_capacity - current_population.to_i
+    end
+
+    # Check if craft has capacity for additional population
+    def has_capacity_for?(additional_population)
+      available_capacity >= additional_population
+    end
+
     def add_equipment!(equipment_id)
       self.operational_data['equipment'] ||= []
       self.operational_data['equipment'] << equipment_id unless self.operational_data['equipment'].include?(equipment_id)

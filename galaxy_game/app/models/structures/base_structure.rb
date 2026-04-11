@@ -10,7 +10,7 @@ module Structures
     include HasRigs
     include RigAttachable
     include HasUnits
-    include Housing
+    # ...existing code...
     include GameConstants
     include HasUnitStorage
     include HasExternalConnections
@@ -41,6 +41,30 @@ module Structures
     after_create :initialize_atmosphere, if: :needs_atmosphere?
 
     # Core functionality methods
+
+    # Population capacity calculated from installed habitat units.
+    # Returns 0 if no units provide capacity — no hardcoded fallback.
+    def population_capacity
+      base_units.sum do |unit|
+        capacity_data = unit.operational_data&.dig('capacity')
+        if capacity_data.is_a?(Hash)
+          capacity_data['passenger_capacity'] || capacity_data['capacity'] || 0
+        else
+          capacity_data&.to_i || 0
+        end
+      end
+    end
+
+    # Available capacity = total capacity - current population
+    def available_capacity
+      population_capacity - current_population.to_i
+    end
+
+    # Check if structure has capacity for additional population
+    def has_capacity_for?(additional_population)
+      available_capacity >= additional_population
+    end
+
     def input_resources
       operational_data&.dig('resource_management', 'consumables') || {}
     end
