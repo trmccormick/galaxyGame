@@ -1,6 +1,6 @@
 module Settlement
   class BaseSettlement < ApplicationRecord
-    include Housing
+    # ...existing code...
     include GameConstants
     include LifeSupport
     include CryptocurrencyMining

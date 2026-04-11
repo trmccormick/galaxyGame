@@ -10,11 +10,10 @@ RSpec.describe Structures::OrbitalStructure, type: :model do
   end
 
   describe 'included modules' do
-    it 'includes Shell, HasUnits, Housing, EnergyManagement, AtmosphericProcessing, Docking, SpinGravity' do
-      expect(described_class.included_modules).to include(
+    it 'includes Shell, HasUnits, EnergyManagement, AtmosphericProcessing, Docking, SpinGravity' do
+      expect(described_class.ancestors).to include(
         Structures::Shell,
         HasUnits,
-        Housing,
         EnergyManagement,
         AtmosphericProcessing,
         Docking,

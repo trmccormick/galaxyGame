@@ -7,7 +7,7 @@ module Units
 
     include HasModules
     include HasRigs
-    include Housing
+    # ...existing code...
     include EnergyManagement
 
     # ✅ Include existing concerns based on unit type
