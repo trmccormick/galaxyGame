@@ -3,7 +3,9 @@
 **Priority**: HIGH
 **Type**: refactor
 **Created**: 2026-03-31
-**Last Updated**: 2026-03-31
+**Last Updated**: 2026-04-10
+
+NOTE (2026-04-10): OrbitalStructure and OrbitalSettlement models now exist as additive prework. This refactor task covers deprecating Settlement::SpaceStation and migrating its structural concerns to Structures::OrbitalStructure. Do not create Structures::SpaceStation or Structures::OrbitalDepot — these classes are obsolete.
 
 ---
 
@@ -22,24 +24,24 @@ factories, and specs — requires careful reasoning about blast radius
 
 This is architecturally incorrect and limits scalability. Real orbital 
 deployments (e.g., L1 Gateway) require a single settlement to contain 
-multiple peer structures (a shipyard station AND a depot), which the 
+multiple peer structures (all as Structures::OrbitalStructure, blueprint-driven), which the 
 current model cannot support.
 
 `BaseSettlement` already has `has_many :structures` — the correct 
 relationship is already modeled. `Structures::BaseStructure` already has 
 `belongs_to :settlement` — the reverse is already modeled. The refactor 
-is about using these existing relationships correctly.
+is about using these existing relationships correctly, with all orbital structures unified as Structures::OrbitalStructure.
 
 The `Structures::Shell` concern is fully implemented and self-contained — 
 it handles construction lifecycle, panel management, and atmosphere 
 integration. It is currently only included by `Settlement::SpaceStation` 
-but should be included by `Structures::SpaceStation` instead.
+but should be included by `Structures::OrbitalStructure` instead.
 
 **Real-world example — L1 Gateway settlement:**
 ```
 Settlement::OrbitalSettlement "L1 Gateway"
-  ├── Structures::SpaceStation (construction/repair berths)
-  └── Structures::OrbitalDepot (cargo/refueling/processing)
+  ├── Structures::OrbitalStructure (construction/repair berths)
+  └── Structures::OrbitalStructure (cargo/refueling/processing)
 ```
 
 **Explicit Blocker**: Do not implement until test suite is under 10 failures.
@@ -82,8 +84,6 @@ structures manage physical assets
 | File | Purpose |
 |------|---------|
 | `app/models/settlement/orbital_settlement.rb` | New orbital settlement model |
-| `app/models/structures/space_station.rb` | New space station structure model |
-| `app/models/structures/orbital_depot.rb` | New orbital depot structure model |
 | `db/migrate/[timestamp]_add_orbital_settlement_type.rb` | Migration if needed |
 
 ### Primary Files — you will modify
@@ -96,7 +96,7 @@ structures manage physical assets
 ### Reference Files — read but do not edit
 | File | Why You Need It |
 |------|----------------|
-| `app/models/concerns/structures/shell.rb` | Include in Structures::SpaceStation |
+| `app/models/concerns/structures/shell.rb` | Include in Structures::OrbitalStructure |
 | `app/models/structures/base_structure.rb` | Parent class for new structures |
 | `app/models/settlement/base_settlement.rb` | Parent class for OrbitalSettlement |
 | `app/models/structures/worldhouse.rb` | Pattern to follow for structure models |
@@ -113,34 +113,22 @@ module Settlement
     # NO structural concerns — pure settlement
     # Economy, population, jurisdiction, contracts
     # has_many :structures already inherited from BaseSettlement
-    
-    validates :settlement_type, inclusion: { in: %w[orbital_station orbital_depot l1_gateway] }
+    validates :settlement_type, inclusion: { in: %w[orbital_station l1_gateway] }
   end
 end
 ```
 
-### Structures::SpaceStation < BaseStructure
+### Structures::OrbitalStructure < BaseStructure
 ```ruby
 module Structures
-  class SpaceStation < BaseStructure
+  class OrbitalStructure < BaseStructure
     include Structures::Shell    # Construction lifecycle
     include Docking              # Docking ports
     include LifeSupport          # Life support systems
-    
     # belongs_to :settlement already in BaseStructure
     # Physical: shell, dimensions, damage/repair, atmosphere
     # Blueprint-driven via existing load_structure_info
-  end
-end
-```
-
-### Structures::OrbitalDepot < BaseStructure
-```ruby
-module Structures
-  class OrbitalDepot < BaseStructure
-    # belongs_to :settlement already in BaseStructure
-    # Cargo transfer, refueling, processing
-    # Blueprint-driven
+    # All orbital structure types (station, depot, etc.) are blueprint-driven variants of this class
   end
 end
 ```
@@ -165,42 +153,38 @@ Document every file that references `Settlement::SpaceStation`.
 - Keep economy, population, jurisdiction
 - Add new settlement_type validations
 
-### Phase 3 — Create Structures::SpaceStation
+### Phase 3 — Create Structures::OrbitalStructure
 - Inherit from BaseStructure
 - Include Structures::Shell, Docking, LifeSupport
 - Move shell logic from Settlement::SpaceStation
 - Wire blueprint lookup via existing load_structure_info
 - belongs_to :settlement → OrbitalSettlement
+- All orbital structure types (station, depot, etc.) are blueprint-driven variants of this class
 
-### Phase 4 — Create Structures::OrbitalDepot
-- Inherit from BaseStructure
-- Blueprint-driven
-- belongs_to :settlement → OrbitalSettlement
-
-### Phase 5 — Add deprecation to Settlement::SpaceStation
+### Phase 4 — Add deprecation to Settlement::SpaceStation
 ```ruby
 def initialize(*)
   ActiveSupport::Deprecation.warn(
     "Settlement::SpaceStation is deprecated. " \
     "Use Settlement::OrbitalSettlement with " \
-    "Structures::SpaceStation instead."
+    "Structures::OrbitalStructure instead."
   )
   super
 end
 ```
 
-### Phase 6 — Update factories
+### Phase 5 — Update factories
 - Add `:orbital_settlement` factory
-- Add `:structures_space_station` factory
+- Add `:orbital_structure` factory
 - Keep `:space_station` factory pointing to deprecated model 
   until all specs updated
 
-### Phase 7 — Update specs
+### Phase 6 — Update specs
 - Update `orbital_shipyard_service_spec` to use new models
 - Update any spec using `Settlement::SpaceStation` for structural 
-  behavior to use `Structures::SpaceStation`
+  behavior to use `Structures::OrbitalStructure`
 
-### Phase 8 — Verify
+### Phase 7 — Verify
 ```bash
 docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/models/settlement/ spec/services/construction/'
 ```
@@ -209,8 +193,7 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rs
 
 ## Acceptance Criteria
 - [ ] `Settlement::OrbitalSettlement` created, inherits BaseSettlement
-- [ ] `Structures::SpaceStation` created, includes Shell/Docking/LifeSupport
-- [ ] `Structures::OrbitalDepot` created, blueprint-driven
+- [ ] `Structures::OrbitalStructure` created, includes Shell/Docking/LifeSupport, blueprint-driven
 - [ ] L1 Gateway pattern works: one OrbitalSettlement, two structures
 - [ ] `Settlement::SpaceStation` deprecated but not deleted
 - [ ] All orbital shipyard specs pass
@@ -253,12 +236,10 @@ an intermediate connection hub.
 Run git commands on host, not inside container:
 ```bash
 git add app/models/settlement/orbital_settlement.rb \
-        app/models/structures/space_station.rb \
-        app/models/structures/orbital_depot.rb \
         app/models/settlement/space_station.rb \
         spec/factories/settlement/ \
         spec/services/construction/
-git commit -m "refactor: introduce OrbitalSettlement + Structures::SpaceStation — separate settlement from structure"
+git commit -m "refactor: introduce OrbitalSettlement + Structures::OrbitalStructure — separate settlement from structure"
 git push
 ```
 
