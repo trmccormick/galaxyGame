@@ -1,7 +1,9 @@
 ---
 
-*Last Updated: April 3, 2026*
+*Last Updated: April 10, 2026*
 *ISRU Evaluator + Optimizer rewire complete. All JSON data corrected to real-world stoichiometry. State analyzer resource_profile removed. 50 specs, 0 failures.*
+*False positives: 8 (updated April 10, 2026)*
+*New specs added: WorldhouseSegment, OrbitalStructure, ISRU Pricing Model*
 
 # April 3, 2026 — ISRU System Rewire
 

@@ -6,6 +6,9 @@ RSpec.describe Generators::GameDataGenerator do
   let(:output_path) { 'tmp/generated_item.json' }
   let(:params) { { name: 'Test Item', description: 'A test item.' } }
 
+  # Change let to use Rails.root (guaranteed path)
+  let(:template_path) { Rails.root.join('spec/fixtures/sample_template.json').to_s }
+
   before do
     FileUtils.mkdir_p('spec/fixtures')
     File.write(template_path, { metadata: { version: '1.0' }, name: '', description: '' }.to_json)

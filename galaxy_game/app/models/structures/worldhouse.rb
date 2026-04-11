@@ -95,11 +95,12 @@ module Structures
       suitable_types = [
         'CelestialBodies::Features::Valley',
         'CelestialBodies::Features::Canyon', 
-        'CelestialBodies::Features::LavaTube'
+        'CelestialBodies::Features::LavaTube',
+        'CelestialBodies::Features::ExcavatedCavity' # The "Asteroid" specific feature
       ]
       
       unless geological_feature.class.name.in?(suitable_types)
-        errors.add(:geological_feature, 'must be a valley, canyon, or lava tube')
+        errors.add(:geological_feature, 'must be a valley, canyon, lava tube, or excavated cavity')
       end
     end
   end
