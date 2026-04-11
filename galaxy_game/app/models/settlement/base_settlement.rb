@@ -67,8 +67,8 @@ module Settlement
     end
 
     def orbital?
-      is_a?(Settlement::SpaceStation) || settlement_type.to_s == 'station'
-    end    
+      is_a?(Settlement::OrbitalSettlement) || settlement_type.to_s == 'station'
+    end
     
     def construction_cost_percentage
       # FIXED: Simplified - operational_data will return {} for nil thanks to Rails jsonb defaults

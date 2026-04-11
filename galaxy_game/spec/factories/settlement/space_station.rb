@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :space_station, class: 'Settlement::SpaceStation',
+  factory :space_station, class: 'Settlement::OrbitalSettlement',
                           parent: :base_settlement do
     sequence(:name) { |n| "Space Station #{n}" }
     settlement_type { :station }
@@ -68,7 +68,7 @@ FactoryBot.define do
     end
 
     # Orbital depot variant
-    factory :orbital_depot, class: 'Settlement::SpaceStation' do
+    factory :orbital_depot, class: 'Settlement::OrbitalSettlement' do
       sequence(:name) { |n| "Orbital Depot #{n}" }
       settlement_type { :outpost }
       current_population { 10 }

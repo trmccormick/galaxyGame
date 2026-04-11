@@ -4,7 +4,7 @@
 # spec/models/settlement/space_station_spec.rb
 require 'rails_helper'
 
-RSpec.describe Settlement::SpaceStation, type: :model do
+RSpec.describe Settlement::OrbitalSettlement, type: :model do
   let(:mars) { create(:terrestrial_planet, name: 'Mars') }
   
   # ✅ FIX: Use the existing coordinate format and add altitude
@@ -722,39 +722,8 @@ RSpec.describe Settlement::SpaceStation, type: :model do
   end
 
   describe 'integration scenarios' do
-    describe 'orbital depot inheriting from space station' do
-      let(:depot_station) do
-        Settlement::OrbitalDepot.create!(
-          name: 'Mars Orbital Depot',
-          settlement_type: 'outpost',
-          location: orbital_location,
-          current_population: 10
-        )
-      end
-      
-      it 'inherits all Shell/Enclosable functionality' do
-        expect(depot_station).to respond_to(:schedule_shell_construction!)
-        expect(depot_station).to respond_to(:total_power_generation)
-        expect(depot_station).to respond_to(:sealed?)
-      end
-      
-      it 'adds depot-specific gas storage' do
-        depot_station.create_account_and_inventory unless depot_station.inventory
-        # Add a gas storage unit
-        create(:base_unit, :storage,
-          owner: depot_station,
-          attachable: depot_station,
-          operational_data: {
-            'storage' => {
-              'gas' => 2_000_000
-            }
-          }
-        )
-        depot_station.add_gas('H2', 1_000_000.0)
-        
-        expect(depot_station.get_gas('H2')).to eq(1_000_000.0)
-      end
-    end
+    # OrbitalDepot is now OrbitalSettlement; depot-specific gas methods are removed.
+    # Integration scenarios for depot-specific gas storage are now handled in market system specs.
     
     describe 'complete station lifecycle' do
       it 'goes from planned to fully operational' do

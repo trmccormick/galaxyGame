@@ -1,23 +1,8 @@
-# TEMPORARY PORO MODEL FOR TESTING
-# 
-# This is a Plain Old Ruby Object used for rake task testing only.
-# It provides simple in-memory gas storage without database persistence.
-#
-# TODO: Replace with Settlement::OrbitalDepot (app/models/settlement/orbital_depot.rb)
-#       See ORBITAL_DEPOT_MIGRATION_PLAN.md for migration steps
-#
-# Production model features:
-# - Database persistence via Inventory system
-# - Settlement features (location, life support, power, etc.)
-# - Metadata tracking for gas batches (source, purity, import year, etc.)
-# - Integration with game's resource management system
-#
-# Represents an orbital depot/station inventory for gas storage
-# Used for managing imported gases (H2, etc.) that shouldn't be dumped into planetary atmospheres
+  # app/models/orbital_depot.rb
+  # RETIRED 2026-04-10 — legacy PORO replaced by Settlement::OrbitalSettlement
+  # Kept for git history only. Do not use this class.
 class OrbitalDepot
-  attr_accessor :gases, :celestial_body_id, :name
-
-  def initialize(celestial_body_id: nil, name: "Orbital Depot")
+end
     @gases = Hash.new(0.0) # e.g., { 'H2' => 0.0, 'O2' => 0.0, 'N2' => 0.0 }
     @celestial_body_id = celestial_body_id
     @name = name

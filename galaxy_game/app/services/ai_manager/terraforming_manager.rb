@@ -166,12 +166,12 @@ module AIManager
       world = @worlds[world_key]
       depot = @orbital_depots[world_key]
 
-      h2_available = depot.get_gas('H2')
+      h2_available = depot.inventory.items.where(name: 'H2').sum(:amount)
       h2_to_use = [plan[:h2_needed], h2_available].min
       return false if h2_to_use <= 0
 
       # Execute reaction
-      depot.remove_gas('H2', h2_to_use)
+      depot.inventory.remove_item('H2', h2_to_use, depot)
       o2_to_consume = h2_to_use * (32.0 / 2.0)
       o2_to_consume = [o2_to_consume, plan[:o2_to_remove]].min
       
@@ -229,7 +229,7 @@ module AIManager
         next unless co2_gas
 
         co2_available = co2_gas.mass
-        h2_available = depot.get_gas('H2')
+        h2_available = depot.inventory.items.where(name: 'H2').sum(:amount)
 
         # Check if we have enough resources
         next if co2_available < plan[:co2_needed]
@@ -237,7 +237,7 @@ module AIManager
 
         # Execute Sabatier reaction
         source[:world].atmosphere.remove_gas('CO2', plan[:co2_needed])
-        depot.remove_gas('H2', plan[:h2_needed])
+        depot.inventory.remove_item('H2', plan[:h2_needed], depot)
         world.atmosphere.add_gas('CH4', plan[:ch4_needed])
 
         # Add H2O to source world's hydrosphere
@@ -286,7 +286,7 @@ module AIManager
       return false if h2_to_import <= 0
 
       source.atmosphere.remove_gas('H2', h2_to_import)
-      depot.add_gas('H2', h2_to_import)
+      depot.inventory.add_item('H2', h2_to_import, depot)
 
       h2_to_import
     end
@@ -453,7 +453,7 @@ module AIManager
 
     def initialize_depots
       @worlds.each_key do |key|
-        @orbital_depots[key] = OrbitalDepot.new
+        @orbital_depots[key] = AIManager::DepotAdapter.create_depot(key, @worlds[key])
       end
     end
 

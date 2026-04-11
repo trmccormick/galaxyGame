@@ -1,4 +1,13 @@
 # app/models/settlement/orbital_depot.rb
+# RETIRED 2026-04-10
+# Use Settlement::OrbitalSettlement with Structures::OrbitalStructure instead.
+# Gas storage operations belong to the market order system (separate task).
+# This file is kept for git history only. Do not use this class.
+module Settlement
+  class OrbitalDepot < BaseSettlement
+  end
+end
+# app/models/settlement/orbital_depot.rb
 # Production-ready OrbitalDepot as a SpaceStation subclass
 # Uses the game's Inventory system for persistent gas storage
 #
