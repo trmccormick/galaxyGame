@@ -204,7 +204,7 @@ module AIManager
       }
 
       case optimal_strategy[:construction_type]
-      when :full_space_station
+      when :orbital_station
         plan = generate_full_station_implementation_plan(optimal_strategy, target_system)
       when :asteroid_conversion
         plan = generate_asteroid_conversion_implementation_plan(optimal_strategy, target_system)
@@ -289,12 +289,12 @@ module AIManager
     # Construction option generators
     def generate_full_station_option(resource_analysis, strategic_requirements)
       {
-        construction_type: :full_space_station,
-        name: 'Full Space Station Construction',
+        construction_type: :orbital_station,
+        name: 'Orbital Station Construction',
         description: 'Construct a complete space station from prefabricated components',
         estimated_cost: calculate_full_station_cost(strategic_requirements),
         construction_time: calculate_full_station_construction_time(strategic_requirements),
-        capability_score: calculate_capability_score(:full_space_station, strategic_requirements),
+        capability_score: calculate_capability_score(:orbital_station, strategic_requirements),
         risk_level: :medium,
         scalability: :high,
         resource_requirements: calculate_full_station_resources(strategic_requirements),
@@ -626,7 +626,7 @@ module AIManager
 
       capability_matches = strategic_requirements[:capability_requirements].count do |req|
         case construction_type
-        when :full_space_station
+        when :orbital_station
           true  # Full stations can handle most requirements
         when :asteroid_conversion
           [:isru_facilities, :storage_systems].include?(req)
@@ -786,7 +786,7 @@ module AIManager
       score = 0
 
       case station_type
-      when :full_space_station, :orbital_construction
+      when :orbital_station, :orbital_construction
         score += 80  # Best for wormhole anchoring
       when :asteroid_conversion
         score += 60  # Good but less stable
@@ -808,7 +808,7 @@ module AIManager
       case station_type
       when :lunar_surface_station, :asteroid_conversion
         score += 80  # Best for resource processing
-      when :full_space_station
+      when :orbital_station
         score += 60  # Good but needs resource transport
       when :orbital_construction
         score += 50  # Moderate capability
@@ -823,7 +823,7 @@ module AIManager
       score = 0
 
       case station_type
-      when :orbital_construction, :full_space_station
+      when :orbital_construction, :orbital_station
         score += 80  # Best defensive positions
       when :asteroid_conversion
         score += 70  # Good cover and stability
@@ -840,7 +840,7 @@ module AIManager
       score = 0
 
       case station_type
-      when :orbital_construction, :full_space_station
+      when :orbital_construction, :orbital_station
         score += 85  # Best for trade and logistics
       when :lunar_surface_station
         score += 50  # Limited accessibility
@@ -859,7 +859,7 @@ module AIManager
       case station_type
       when :lunar_surface_station
         score += 80  # Best for surface research
-      when :full_space_station, :orbital_construction
+      when :orbital_station, :orbital_construction
         score += 70  # Good for orbital research
       when :asteroid_conversion
         score += 60  # Interesting geological research
@@ -874,7 +874,7 @@ module AIManager
       feasibility = { feasibility_multiplier: 1.0, factors: [] }
 
       case station_type
-      when :full_space_station
+      when :orbital_station
         feasibility[:feasibility_multiplier] = 0.9
         feasibility[:factors] << 'Requires significant prefabricated components'
       when :asteroid_conversion
@@ -922,7 +922,7 @@ module AIManager
       risks = []
 
       case strategy[:construction_type]
-      when :full_space_station
+      when :orbital_station
         risks << { risk: 'Component integration failures', probability: :medium, impact: :high }
         risks << { risk: 'Assembly equipment malfunction', probability: :low, impact: :medium }
       when :asteroid_conversion

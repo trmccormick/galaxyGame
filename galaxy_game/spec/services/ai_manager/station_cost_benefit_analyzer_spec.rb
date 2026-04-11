@@ -9,8 +9,8 @@ RSpec.describe AIManager::StationCostBenefitAnalyzer, type: :service do
   let(:sample_construction_options) do
     [
       {
-        construction_type: :full_space_station,
-        name: 'Full Space Station Construction',
+        construction_type: :orbital_station,
+        name: 'Orbital Station Construction',
         estimated_cost: 100_000_000,
         construction_time: 11.months,
         capability_score: 80,
@@ -218,7 +218,7 @@ RSpec.describe AIManager::StationCostBenefitAnalyzer, type: :service do
         expect(efficiency).to be_between(0, 100)
       end
 
-      it 'gives higher scores to full space stations' do
+      it 'gives higher scores to orbital stations' do
         full_station_efficiency = analyzer.send(:calculate_operational_efficiency, sample_construction_options.first)
         asteroid_efficiency = analyzer.send(:calculate_operational_efficiency, sample_construction_options.second)
 

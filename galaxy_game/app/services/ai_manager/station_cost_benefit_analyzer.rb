@@ -160,7 +160,7 @@ module AIManager
 
       # Adjust based on construction type
       case option[:construction_type]
-      when :full_space_station
+      when :orbital_station
         base_risk *= 1.2  # Higher risk due to complexity
       when :asteroid_conversion
         base_risk *= 1.5  # Higher risk due to unknowns
@@ -240,7 +240,7 @@ module AIManager
 
       fulfilled_count = required_capabilities.count do |capability|
         case option[:construction_type]
-        when :full_space_station
+        when :orbital_station
           true  # Full stations can fulfill most capabilities
         when :asteroid_conversion
           [:isru_facilities, :storage_systems, :defensive_systems].include?(capability)
@@ -261,7 +261,7 @@ module AIManager
 
       # Adjust based on construction type
       case option[:construction_type]
-      when :full_space_station
+      when :orbital_station
         base_efficiency += 20  # Highly optimized systems
       when :asteroid_conversion
         base_efficiency += 5   # Some inefficiencies from conversion
@@ -294,7 +294,7 @@ module AIManager
 
       # Adjust based on construction type
       case option[:construction_type]
-      when :full_space_station
+      when :orbital_station
         base_scalability += 5
       when :hybrid_approach
         base_scalability += 10  # Can scale in multiple ways
@@ -310,7 +310,7 @@ module AIManager
 
       # Annual maintenance as percentage of capital cost
       maintenance_percentage = case option[:construction_type]
-                              when :full_space_station
+                              when :orbital_station
                                 0.05  # 5% - well-designed systems
                               when :asteroid_conversion
                                 0.08  # 8% - more complex maintenance
@@ -332,7 +332,7 @@ module AIManager
 
       # Adjust based on construction type
       case option[:construction_type]
-      when :full_space_station
+      when :orbital_station
         base_lifetime += 10  # 30 years - designed for long life
       when :asteroid_conversion
         base_lifetime -= 5   # 15 years - structural concerns
@@ -460,7 +460,7 @@ module AIManager
     def calculate_purpose_alignment(option, purpose)
       # This would be calculated by the strategy service, but we'll use a simplified version
       case [option[:construction_type], purpose]
-      when [:full_space_station, :wormhole_anchor]
+      when [:orbital_station, :wormhole_anchor]
         90
       when [:asteroid_conversion, :resource_processing]
         85
@@ -608,7 +608,7 @@ module AIManager
     def estimate_annual_benefits(option)
       # Simplified benefit estimation based on strategic purpose and construction type
       base_benefits = case option[:construction_type]
-                     when :full_space_station
+                     when :orbital_station
                        20_000_000  # High operational value
                      when :asteroid_conversion
                        15_000_000  # Resource processing value

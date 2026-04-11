@@ -97,11 +97,11 @@ RSpec.describe AIManager::StationConstructionStrategy, type: :service do
       options = result[:construction_options]
       expect(options.length).to be > 1
 
-      # Should include full space station option
-      full_station_option = options.find { |opt| opt[:construction_type] == :full_space_station }
-      expect(full_station_option).to be_present
-      expect(full_station_option).to have_key(:estimated_cost)
-      expect(full_station_option).to have_key(:construction_time)
+      # Should include orbital station option
+      orbital_station_option = options.find { |opt| opt[:construction_type] == :orbital_station }
+      expect(orbital_station_option).to be_present
+      expect(orbital_station_option).to have_key(:estimated_cost)
+      expect(orbital_station_option).to have_key(:construction_time)
     end
   end
 
@@ -191,15 +191,15 @@ RSpec.describe AIManager::StationConstructionStrategy, type: :service do
     let(:strategic_requirements) { strategy_service.send(:evaluate_strategic_requirements, :wormhole_anchor, sample_target_system) }
 
     describe '#generate_construction_options' do
-      it 'generates full space station option' do
+      it 'generates orbital station option' do
         options = strategy_service.send(:generate_construction_options, resource_analysis, strategic_requirements)
 
-        full_station = options.find { |opt| opt[:construction_type] == :full_space_station }
-        expect(full_station).to be_present
-        expect(full_station[:name]).to eq('Full Space Station Construction')
-        expect(full_station).to have_key(:estimated_cost)
-        expect(full_station).to have_key(:construction_time)
-        expect(full_station).to have_key(:capability_score)
+        orbital_station = options.find { |opt| opt[:construction_type] == :orbital_station }
+        expect(orbital_station).to be_present
+        expect(orbital_station[:name]).to eq('Orbital Station Construction')
+        expect(orbital_station).to have_key(:estimated_cost)
+        expect(orbital_station).to have_key(:construction_time)
+        expect(orbital_station).to have_key(:capability_score)
       end
 
       it 'generates asteroid conversion options' do
@@ -247,7 +247,7 @@ RSpec.describe AIManager::StationConstructionStrategy, type: :service do
   describe 'implementation planning' do
     let(:sample_option) do
       {
-        construction_type: :full_space_station,
+        construction_type: :orbital_station,
         estimated_cost: 100_000_000,
         construction_time: 11.months,
         resource_requirements: { materials: { steel: 50000 } }
@@ -255,7 +255,7 @@ RSpec.describe AIManager::StationConstructionStrategy, type: :service do
     end
 
     describe '#generate_implementation_plan' do
-      it 'generates phased implementation plan for full space station' do
+      it 'generates phased implementation plan for orbital station' do
         plan = strategy_service.send(:generate_implementation_plan, sample_option, sample_target_system)
 
         expect(plan).to have_key(:phases)
