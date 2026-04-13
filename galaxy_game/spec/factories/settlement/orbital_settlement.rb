@@ -11,17 +11,9 @@ FactoryBot.define do
     operational_data { {} }
 
     association :owner, factory: :development_corporation
-    association :location, factory: :celestial_location
 
-    after(:build) do |settlement|
-      if settlement.respond_to?(:create_account_and_inventory)
-        settlement.define_singleton_method(:create_account_and_inventory) { nil }
-      end
-      settlement.build_inventory if settlement.inventory.nil?
-      if settlement.respond_to?(:build_units_and_modules)
-        settlement.define_singleton_method(:build_units_and_modules) { true }
-      end
-    end
+    # No direct location association; OrbitalSettlement location is structure-based.
+
 
     # Earth/Luna L1 Gateway (launch-heavy)
     trait :earth_luna_l1 do

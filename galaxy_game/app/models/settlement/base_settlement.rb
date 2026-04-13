@@ -1,23 +1,16 @@
 module Settlement
   class BaseSettlement < ApplicationRecord
-    # ...existing code...
+    include SettlementCore
     include GameConstants
     include LifeSupport
     include CryptocurrencyMining
     include HasUnitStorage
     include EnergyManagement
-    include FinancialManagement
-    
+    # ...existing code...
+
     # Life support consumption rates
     attr_accessor :food_per_person, :water_per_person, :energy_per_person
-    
-    belongs_to :colony, class_name: 'Colony', foreign_key: 'colony_id', optional: true
-    belongs_to :owner, polymorphic: true, optional: true
-    has_one :account, as: :accountable, dependent: :destroy, class_name: 'Financial::Account' # Legacy/primary account
-      # Multi-currency support (LDC GCC/USD)
-      has_many :accounts, as: :accountable, class_name: 'Financial::Account'
-    # Multi-currency support (LDC GCC/USD)
-    has_many :accounts, as: :accountable, class_name: 'Financial::Account'
+
     has_one :marketplace, 
           class_name: 'Market::Marketplace', 
           foreign_key: 'settlement_id', 
@@ -35,18 +28,14 @@ module Settlement
 
     has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
     alias_attribute :units, :base_units
-    has_many :structures, class_name: 'Structures::BaseStructure', foreign_key: 'settlement_id'
-    has_many :missions, class_name: 'Mission', foreign_key: 'settlement_id'
 
     has_many :orbital_construction_projects, class_name: 'OrbitalConstructionProject', foreign_key: 'station_id'
 
     delegate :surface_storage, to: :inventory, allow_nil: true
     delegate :celestial_body, to: :location, allow_nil: true
-    
-    validates :name, presence: true
-    validates :current_population, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
     validates :settlement_type, presence: true
-    
+
     # Life support validations
     validates :food_per_person, numericality: { greater_than: 0 }, allow_nil: true
     validates :water_per_person, numericality: { greater_than: 0 }, allow_nil: true
@@ -61,43 +50,35 @@ module Settlement
 
     # FIXED: Remove override of operational_data getter - let Rails handle it
     # The attribute accessor works fine with jsonb columns
-    
+
     def operational_data=(value)
       self[:operational_data] = value
     end
 
-    def orbital?
-      is_a?(Settlement::OrbitalSettlement) || settlement_type.to_s == 'station'
-    end
-    
     def construction_cost_percentage
       # FIXED: Simplified - operational_data will return {} for nil thanks to Rails jsonb defaults
       data = read_attribute(:operational_data) || {}
       data.dig('manufacturing', 'construction_cost_percentage') || GameConstants::DEFAULT_CONSTRUCTION_PERCENTAGE
     end
-    
+
     def construction_cost_percentage=(value)
       self.operational_data ||= {}
       self.operational_data['manufacturing'] ||= {}
       self.operational_data['manufacturing']['construction_cost_percentage'] = value.to_f
     end
-    
+
     def calculate_construction_cost(purchase_cost)
       return 0.0 if purchase_cost.nil?
       purchase_cost = purchase_cost.to_f
       (purchase_cost * construction_cost_percentage / 100.0).round(2)
     end
-    
+
     def manufacturing_efficiency
       (operational_data || {}).dig('manufacturing', 'efficiency_bonus') || 1.0
     end
-    
+
     def required_equipment_check_enabled?
       (operational_data || {}).dig('manufacturing', 'check_equipment') != false
-    end
-
-    def age_in_days
-      ((Time.current - created_at) / 1.day).to_i
     end
 
     # FIXED: Consistent namespace and removed duplicate method
@@ -477,8 +458,8 @@ module Settlement
 
     # Returns the GCC account for this settlement, creating it if needed
     public
-    def gcc_account
-      accounts.find_or_create_by(currency: Financial::Currency.find_by(symbol: 'GCC'))
+      def gcc_account
+        accounts.find_or_create_by(currency: Financial::Currency.find_by(symbol: 'GCC'))
+      end
     end
   end
-end

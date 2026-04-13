@@ -1,8 +1,8 @@
 # app/models/settlement/orbital_settlement.rb
 module Settlement
-  class OrbitalSettlement < BaseSettlement
-    # BaseSettlement handles: has_many :structures, has_one :inventory, has_one :account
-    # Note: settlement_type is inherited but ignored for orbital logic as structures define the role.
+  class OrbitalSettlement < ApplicationRecord
+    self.table_name = 'base_settlements'
+    include SettlementCore
 
     # Returns the primary location based on the first deployed structure.
     # Orbital settlements do not have a 1:1 location; they are a constellation.
