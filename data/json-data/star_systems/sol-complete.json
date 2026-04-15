@@ -1,0 +1,2743 @@
+{
+  "galaxy": {
+    "name": "Milky Way",
+    "identifier": "MILKYWAY-01"
+  },
+  "id": "sol",
+  "name": "Sol",
+  "identifier": "SOL-01",
+  "stars": [
+    {
+      "name": "Sol",
+      "identifier": "SOL",
+      "luminosity": 3.828e+26,
+      "mass": 1.989e+30,
+      "type_of_star": "G",
+      "spectral_class": "G2V",
+      "life": 10000000000.0,
+      "stellar_class": "Main Sequence",
+      "age": 4600000000.0,
+      "r_ecosphere": 149600000.0,
+      "radius": 695700000.0,
+      "temperature": 5778
+    }
+  ],
+  "celestial_bodies": [
+    {
+      "name": "Portia",
+      "identifier": "PORTIA-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "1.7e18",
+      "radius": 67000,
+      "density": 1.3,
+      "orbital_period": 0.513,
+      "surface_temperature": 64,
+      "gravity": 0.023,
+      "albedo": 0.08,
+      "geological_activity": 1,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 1,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Rosalind",
+      "identifier": "ROSALIND-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "2.5e17",
+      "radius": 36000,
+      "density": 1.3,
+      "orbital_period": 0.558,
+      "surface_temperature": 64,
+      "gravity": 0.008,
+      "albedo": 0.08,
+      "geological_activity": 1,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 1,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Belinda",
+      "identifier": "BELINDA-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "4.8e17",
+      "radius": 45000,
+      "density": 1.3,
+      "orbital_period": 0.624,
+      "surface_temperature": 64,
+      "gravity": 0.01,
+      "albedo": 0.08,
+      "geological_activity": 1,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 1,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Cressida",
+      "identifier": "CRESSIDA-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "3.4e17",
+      "radius": 41000,
+      "density": 1.3,
+      "orbital_period": 0.463,
+      "surface_temperature": 64,
+      "gravity": 0.009,
+      "albedo": 0.08,
+      "geological_activity": 1,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 1,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Puck",
+      "identifier": "PUCK-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "2.9e18",
+      "radius": 81000,
+      "density": 1.3,
+      "orbital_period": 0.761,
+      "surface_temperature": 64,
+      "gravity": 0.028,
+      "albedo": 0.11,
+      "geological_activity": 2,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 2,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Mercury",
+      "identifier": "MERCURY-01",
+      "type": "terrestrial_planet",
+      "mass": "3.30e23",
+      "radius": 2440000.0,
+      "density": 5.427,
+      "size": 0.3829,
+      "orbital_period": 87.97,
+      "surface_temperature": 440,
+      "gravity": 3.7,
+      "albedo": 0.12,
+      "insolation": 9126,
+      "known_pressure": 0,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 57900000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 1000,
+        "dust": {
+          "concentration": 0,
+          "properties": "Minimal atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "total_crust_mass": 8.1e+22,
+        "total_mantle_mass": 3.9e+23,
+        "total_core_mass": 1.7e+23,
+        "crust_composition": {
+          "silicates": 60.0,
+          "metal_oxides": 30.0,
+          "sulfides": 10.0
+        },
+        "stored_volatiles": {
+          "H2O": {
+            "polar_craters": 100000000000000.0,
+            "regolith": 1000000000000.0
+          },
+          "He3": {
+            "regolith": 500000000.0
+          }
+        },
+        "volcanic_activity": 5
+      },
+      "materials": [
+        {
+          "name": "Helium-3",
+          "mass": 1e+18,
+          "percentage": 0.01,
+          "uses": [
+            "nuclear fusion",
+            "energy production"
+          ]
+        },
+        {
+          "name": "Regolith",
+          "mass": 1e+22,
+          "percentage": 100,
+          "uses": [
+            "construction",
+            "radiation shielding"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Venus",
+      "identifier": "VENUS-01",
+      "type": "terrestrial_planet",
+      "mass": "4.87e24",
+      "radius": 6050000.0,
+      "density": 5.243,
+      "size": 0.9499,
+      "orbital_period": 224.7,
+      "surface_temperature": 737,
+      "gravity": 8.87,
+      "albedo": 0.65,
+      "insolation": 2613,
+      "known_pressure": 92,
+      "geological_activity": 85,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 108000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "CO2": {
+            "percentage": 96.5
+          },
+          "N2": {
+            "percentage": 3.5
+          }
+        },
+        "pressure": 92,
+        "total_atmospheric_mass": 4.8e+20,
+        "dust": {
+          "concentration": 0.1,
+          "properties": "Sulfuric acid clouds and volcanic ash"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 85,
+        "tectonic_activity": true,
+        "total_crust_mass": 2.4e+23,
+        "total_mantle_mass": 3.2e+24,
+        "total_core_mass": 1.4e+24,
+        "crust_composition": {
+          "oxides": {
+            "SiO2": 45.0,
+            "Fe2O3": 18.0,
+            "Al2O3": 10.0,
+            "MgO": 9.0,
+            "CaO": 10.0
+          },
+          "volatiles": {
+            "CO2": 0.01,
+            "SO2": 0.005
+          },
+          "notes": "Volatiles likely trace amounts only due to extreme surface conditions. Primary volatiles reside in atmosphere."
+        },
+        "stored_volatiles": {
+          "H2O": {
+            "regolith": 5e+17
+          }
+        },
+        "volcanic_activity": 90
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1e+16,
+        "liquid_bodies": {},
+        "composition": {
+          "H2SO4": 85.0,
+          "H2O": 0.1
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 0.0,
+          "gas": 100.0
+        }
+      },
+      "materials": [
+        {
+          "name": "Sulfur Compounds",
+          "mass": 2e+20,
+          "percentage": 0.2,
+          "uses": [
+            "chemical production",
+            "industrial processes"
+          ]
+        }
+      ],
+      "properties": {
+        "standard_orbital_altitude_km": 15000
+      }
+    },
+    {
+      "name": "Earth",
+      "identifier": "EARTH-01",
+      "type": "terrestrial_planet",
+      "mass": "5.97e24",
+      "radius": 6371000.0,
+      "density": 5.514,
+      "size": 1.0,
+      "orbital_period": 365.25,
+      "surface_temperature": 288,
+      "gravity": 9.82,
+      "albedo": 0.3,
+      "insolation": 1361,
+      "known_pressure": 1.0,
+      "geological_activity": 70,
+      "axial_tilt": 23.5,
+      "surface_area": 510072000.0,
+      "escape_velocity": 11.186,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 149600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "N2": {
+            "percentage": 78.0
+          },
+          "O2": {
+            "percentage": 21.0
+          },
+          "Ar": {
+            "percentage": 0.9
+          },
+          "CO2": {
+            "percentage": 0.04
+          },
+          "H2O": {
+            "percentage": 0.4
+          }
+        },
+        "pressure": 1.0,
+        "total_atmospheric_mass": 5.15e+18,
+        "dust": {
+          "concentration": 1e-05,
+          "properties": "Various particulates including water vapor"
+        },
+        "pollution": 0.02
+      },
+      "geosphere_attributes": {
+        "geological_activity": 70,
+        "tectonic_activity": true,
+        "total_crust_mass": 2.4e+23,
+        "total_mantle_mass": 3.2e+24,
+        "total_core_mass": 1.4e+24,
+        "crust_composition": {
+          "silicates": 60.0,
+          "aluminum_oxides": 15.0,
+          "iron_oxides": 10.0,
+          "calcium_oxides": 8.0,
+          "other": 7.0
+        },
+        "stored_volatiles": {
+          "H2O": {
+            "ice_mantle": 2e+20
+          },
+          "NH3": {
+            "hydrates": 5e+19
+          },
+          "CO2": {
+            "regolith": 1e+18
+          }
+        },
+        "volcanic_activity": 75
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1.386e+21,
+        "liquid_bodies": {},
+        "composition": [
+          {
+            "compound": "H2O",
+            "percentage": 96.5
+          },
+          {
+            "compound": "dissolved_salts",
+            "percentage": 3.5
+          }
+        ],
+        "state_distribution": {
+          "liquid": 71.0,
+          "solid": 2.0,
+          "gas": 0.5
+        }
+      },
+      "biosphere_attributes": {
+        "biodiversity_index": 1.0,
+        "primary_producers": [
+          "plants",
+          "phytoplankton"
+        ],
+        "consumers": [
+          "animals",
+          "zooplankton"
+        ],
+        "decomposers": [
+          "bacteria",
+          "fungi"
+        ],
+        "estimated_species_count": 8700000
+      },
+      "geological_features": {
+        "canyons": {
+          "celestial_body": "earth",
+          "feature_type": "canyon",
+          "tier": "strategic",
+          "last_updated": "2025-12-17",
+          "features": []
+        }
+      }
+    },
+    {
+      "name": "Mars",
+      "identifier": "MARS-01",
+      "type": "terrestrial_planet",
+      "mass": "6.42e23",
+      "radius": 3389000.0,
+      "density": 3.933,
+      "size": 0.532,
+      "orbital_period": 687,
+      "surface_temperature": 210,
+      "gravity": 3.721,
+      "albedo": 0.25,
+      "insolation": 589,
+      "known_pressure": 0.006,
+      "geological_activity": 30,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 227900000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "CO2": {
+            "percentage": 95.3
+          },
+          "N2": {
+            "percentage": 2.7
+          },
+          "Ar": {
+            "percentage": 1.6
+          }
+        },
+        "pressure": 0.006,
+        "total_atmospheric_mass": 2.5e+16,
+        "dust": {
+          "concentration": 0.0001,
+          "properties": "Predominantly composed of iron oxide."
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 20,
+        "tectonic_activity": false,
+        "total_crust_mass": 2.4e+23,
+        "total_mantle_mass": 3.2e+24,
+        "total_core_mass": 1.4e+24,
+        "stored_volatiles": {
+          "CO2": {
+            "polar_caps": 2.5e+16,
+            "regolith": 5e+16,
+            "clathrates": 3e+17
+          },
+          "H2O": {
+            "polar_caps": 8000000000000000.0,
+            "subsurface_ice": 1e+17
+          }
+        },
+        "crust_composition": {
+          "silicates": 45.0,
+          "iron_oxides": 18.0,
+          "aluminum_oxides": 10.0,
+          "calcium_oxides": 8.0,
+          "other": 19.0
+        },
+        "volcanic_activity": 50
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 5e+18,
+        "liquid_bodies": {},
+        "composition": {
+          "H2O": 98.0,
+          "salts": 2.0
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      },
+      "materials": [
+        {
+          "name": "Iron Oxide",
+          "mass": 5e+20,
+          "percentage": 18.0,
+          "uses": [
+            "construction",
+            "metal production"
+          ]
+        },
+        {
+          "name": "Water Ice",
+          "mass": 8e+18,
+          "percentage": 2.0,
+          "uses": [
+            "life support",
+            "fuel production"
+          ]
+        }
+      ],
+      "geological_features": {
+        "craters": {
+          "celestial_body": "mars",
+          "feature_type": "crater",
+          "tier": "strategic",
+          "last_updated": "2025-12-17",
+          "features": [
+            {
+              "id": "mars_cr_001",
+              "name": "Gale Crater",
+              "feature_type": "crater",
+              "discovered": true,
+              "coordinates": {
+                "latitude": -5.4,
+                "longitude": 137.8,
+                "system": "areographic"
+              },
+              "dimensions": {
+                "diameter_m": 154000,
+                "depth_m": 4500,
+                "rim_height_m": 1200
+              },
+              "crater_type": "impact",
+              "composition": {
+                "layered_sediments": true,
+                "clays": true,
+                "sulfates": true,
+                "water_history": "ancient_lake"
+              },
+              "attributes": {
+                "central_peak": "Mount Sharp (5.5km high)",
+                "explored_by": "Curiosity Rover",
+                "geological_significance": "very_high"
+              },
+              "conversion_suitability": {
+                "crater_dome": "poor",
+                "surface_base": "good",
+                "estimated_cost_multiplier": 1.5,
+                "advantages": [
+                  "extensively studied",
+                  "water history",
+                  "mineral resources"
+                ],
+                "challenges": [
+                  "very large",
+                  "central peak complicates doming"
+                ]
+              },
+              "resources": {
+                "minerals": [
+                  "phyllosilicates",
+                  "jarosite",
+                  "hematite"
+                ],
+                "volatiles": [
+                  "water_ice"
+                ]
+              },
+              "priority": "high",
+              "strategic_value": [
+                "Scientific Research",
+                "Resource Potential",
+                "Terraforming Research"
+              ],
+              "tier": "strategic"
+            }
+          ]
+        },
+        "valles": {
+          "celestial_body": "mars",
+          "feature_type": "valley_system",
+          "tier": "strategic",
+          "last_updated": "2025-12-17",
+          "features": []
+        }
+      },
+      "properties": {
+        "standard_orbital_altitude_km": 20000
+      }
+    },
+    {
+      "name": "Jupiter",
+      "identifier": "JUPITER-01",
+      "type": "gas_giant",
+      "mass": "1.898e27",
+      "radius": 69910000.0,
+      "density": 1.326,
+      "size": 11.209,
+      "orbital_period": 4333,
+      "surface_temperature": 165,
+      "gravity": 24.79,
+      "albedo": 0.52,
+      "insolation": 50.5,
+      "geological_activity": 90,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 778600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "H2": {
+            "percentage": 89.8
+          },
+          "He": {
+            "percentage": 10.2
+          }
+        },
+        "pressure": 0,
+        "total_atmospheric_mass": 1.9e+27,
+        "dust": {
+          "concentration": 0,
+          "properties": "Ammonia clouds"
+        },
+        "pollution": 0
+      },
+      "magnetosphere": true,
+      "magnetic_field_strength": 4.28,
+      "rotation_period": 9.925,
+      "orbital_elements": {
+        "semi_major_axis": 778600000.0,
+        "eccentricity": 0.0489,
+        "inclination": 1.304,
+        "mean_anomaly": 20.02
+      },
+      "geosphere_attributes": {
+        "geological_activity": 90,
+        "core_composition": {
+          "rock": 30.0,
+          "ice": 20.0,
+          "metallic_hydrogen": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Saturn",
+      "identifier": "SATURN-01",
+      "type": "gas_giant",
+      "mass": "5.683e26",
+      "radius": 58232000.0,
+      "density": 0.687,
+      "size": 9.449,
+      "orbital_period": 10759.22,
+      "surface_temperature": 134,
+      "gravity": 10.44,
+      "albedo": 0.342,
+      "geological_activity": 85,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "H2": {
+            "percentage": 96.3
+          },
+          "He": {
+            "percentage": 3.7
+          }
+        },
+        "pressure": 0,
+        "total_atmospheric_mass": 5.7e+26,
+        "dust": {
+          "concentration": 0,
+          "properties": "Hydrocarbon haze"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 85,
+        "core_composition": {
+          "rock": 25.0,
+          "ice": 25.0,
+          "metallic_hydrogen": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Uranus",
+      "identifier": "URANUS-01",
+      "type": "ice_giant",
+      "mass": "8.681e25",
+      "radius": 25362000.0,
+      "density": 1.27,
+      "size": 4.007,
+      "orbital_period": 30688.5,
+      "surface_temperature": 76,
+      "gravity": 8.69,
+      "albedo": 0.51,
+      "geological_activity": 60,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "H2": {
+            "percentage": 82.5
+          },
+          "He": {
+            "percentage": 15.2
+          },
+          "CH4": {
+            "percentage": 2.3
+          }
+        },
+        "pressure": 0,
+        "total_atmospheric_mass": 8.7e+25,
+        "dust": {
+          "concentration": 0,
+          "properties": "Methane clouds"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 60,
+        "core_composition": {
+          "rock": 20.0,
+          "ice": 80.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 8.681e+25,
+        "liquid_bodies": {},
+        "composition": {
+          "H2O": 50.0,
+          "NH3": 25.0,
+          "CH4": 25.0
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Titania",
+      "identifier": "TITANIA-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "3.53e21",
+      "radius": 789000.0,
+      "density": 1.711,
+      "orbital_period": 8.706,
+      "surface_temperature": 60,
+      "gravity": 0.379,
+      "albedo": 0.35,
+      "geological_activity": 25,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 25,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Oberon",
+      "identifier": "OBERON-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "3.01e21",
+      "radius": 761000.0,
+      "density": 1.631,
+      "orbital_period": 13.463,
+      "surface_temperature": 61,
+      "gravity": 0.346,
+      "albedo": 0.31,
+      "geological_activity": 20,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 20,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Umbriel",
+      "identifier": "UMBRIEL-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "1.28e21",
+      "radius": 585000.0,
+      "density": 1.4,
+      "orbital_period": 4.144,
+      "surface_temperature": 61,
+      "gravity": 0.234,
+      "albedo": 0.26,
+      "geological_activity": 15,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 15,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 60.0,
+          "rock": 40.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Ariel",
+      "identifier": "ARIEL-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "1.25e21",
+      "radius": 579000.0,
+      "density": 1.592,
+      "orbital_period": 2.52,
+      "surface_temperature": 59,
+      "gravity": 0.269,
+      "albedo": 0.53,
+      "geological_activity": 30,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 30,
+        "tectonic_activity": true,
+        "crust_composition": {
+          "water_ice": 55.0,
+          "rock": 45.0
+        },
+        "volcanic_activity": 5
+      }
+    },
+    {
+      "name": "Miranda",
+      "identifier": "MIRANDA-01",
+      "type": "moon",
+      "parent_body": "Uranus",
+      "mass": "6.59e19",
+      "radius": 236000.0,
+      "density": 1.2,
+      "orbital_period": 1.413,
+      "surface_temperature": 59,
+      "gravity": 0.079,
+      "albedo": 0.32,
+      "geological_activity": 40,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 2871000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 40,
+        "tectonic_activity": true,
+        "crust_composition": {
+          "water_ice": 70.0,
+          "rock": 30.0
+        },
+        "volcanic_activity": 10
+      }
+    },
+    {
+      "name": "Neptune",
+      "identifier": "NEPTUNE-01",
+      "type": "ice_giant",
+      "mass": "1.024e26",
+      "radius": 24622000.0,
+      "density": 1.638,
+      "size": 3.883,
+      "orbital_period": 60195,
+      "surface_temperature": 72,
+      "gravity": 11.15,
+      "albedo": 0.41,
+      "geological_activity": 70,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 4495000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "H2": {
+            "percentage": 80.0
+          },
+          "He": {
+            "percentage": 19.0
+          },
+          "CH4": {
+            "percentage": 1.0
+          }
+        },
+        "pressure": 0,
+        "total_atmospheric_mass": 1e+26,
+        "dust": {
+          "concentration": 0,
+          "properties": "High-speed winds"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 70,
+        "core_composition": {
+          "rock": 15.0,
+          "ice": 85.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1.024e+26,
+        "liquid_bodies": {},
+        "composition": {
+          "H2O": 60.0,
+          "NH3": 20.0,
+          "CH4": 20.0
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Luna",
+      "identifier": "LUNA-01",
+      "type": "moon",
+      "parent_body": "Earth",
+      "mass": "7.342e22",
+      "radius": 1737000.0,
+      "density": 3.344,
+      "orbital_period": 27.322,
+      "surface_temperature": 250,
+      "gravity": 1.62,
+      "albedo": 0.12,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 149600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Negligible atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "total_crust_mass": 2.4e+23,
+        "total_mantle_mass": 3.2e+24,
+        "total_core_mass": 1.4e+24,
+        "crust_composition": {
+          "anorthosite": 80.0,
+          "norite": 10.0,
+          "troctolite": 5.0,
+          "other": 5.0
+        },
+        "stored_volatiles": {
+          "H2O": {
+            "oceans": 1.35e+21,
+            "ice_caps": 2.7e+19,
+            "groundwater": 2.3e+19
+          },
+          "CO2": {
+            "sedimentary_rocks": 1e+20
+          },
+          "CH4": {
+            "clathrates": 1e+18
+          },
+          "N2": {
+            "atmosphere": 3.9e+18
+          },
+          "He3": {
+            "regolith": 1000000.0
+          }
+        }
+      },
+      "materials": [
+        {
+          "name": "Helium-3",
+          "mass": 500000000.0,
+          "percentage": 0.001,
+          "uses": [
+            "fusion power",
+            "energy production"
+          ]
+        },
+        {
+          "name": "Regolith",
+          "mass": 7e+19,
+          "percentage": 100.0,
+          "uses": [
+            "construction",
+            "radiation shielding"
+          ]
+        },
+        {
+          "name": "KREEP",
+          "mass": 2e+18,
+          "percentage": 1.0,
+          "uses": [
+            "rare element extraction",
+            "research"
+          ]
+        }
+      ],
+      "geological_features": {
+        "craters": {
+          "celestial_body": "luna",
+          "feature_type": "crater",
+          "tier": "strategic",
+          "last_updated": "2025-12-17",
+          "features": [
+            {
+              "id": "luna_cr_001",
+              "name": "Shackleton Crater",
+              "feature_type": "crater",
+              "discovered": true,
+              "coordinates": {
+                "latitude": -89.9,
+                "longitude": 0.0,
+                "system": "selenographic"
+              },
+              "dimensions": {
+                "diameter_m": 21000,
+                "depth_m": 4200,
+                "rim_height_m": 200,
+                "floor_area_m2": 346360000
+              },
+              "crater_type": "impact",
+              "composition": {
+                "rim": "anorthosite",
+                "floor": "mixed_regolith",
+                "ice_present": true,
+                "ice_concentration": "high"
+              },
+              "attributes": {
+                "permanently_shadowed": true,
+                "sunlight_on_rim": "near_continuous",
+                "solar_exposure_percent": 89,
+                "temperature_floor_k": 40,
+                "temperature_rim_k": 220
+              },
+              "conversion_suitability": {
+                "crater_dome": "excellent",
+                "estimated_cost_multiplier": 1.2,
+                "advantages": [
+                  "permanent ice deposits",
+                  "near-continuous solar on rim",
+                  "naturally defensible"
+                ],
+                "challenges": [
+                  "extremely large dome required",
+                  "polar location harsh",
+                  "cold floor temperature"
+                ]
+              },
+              "priority": "high",
+              "strategic_value": [
+                "Protection/Shielding",
+                "Resource Potential"
+              ],
+              "tier": "strategic"
+            }
+          ]
+        },
+        "lava_tubes": {
+          "celestial_body": "luna",
+          "feature_type": "lava_tube",
+          "tier": "strategic",
+          "last_updated": "2025-12-17",
+          "features": [
+            {
+              "id": "luna_lt_001",
+              "name": "Marius Hills Skylight",
+              "feature_type": "lava_tube",
+              "discovered": false,
+              "coordinates": {
+                "latitude": 14.1,
+                "longitude": -58.2,
+                "system": "geographic"
+              },
+              "dimensions": {
+                "length_m": 1500,
+                "width_m": 100,
+                "height_m": 50,
+                "estimated_volume_m3": 11780972
+              },
+              "attributes": {
+                "features": [
+                  "natural shielding",
+                  "near volcanic deposits"
+                ],
+                "natural_shielding": "excellent",
+                "thermal_stability": "moderate"
+              },
+              "conversion_suitability": {
+                "habitat": "excellent",
+                "estimated_cost_multiplier": 0.7,
+                "advantages": [
+                  "natural shielding",
+                  "near volcanic deposits"
+                ],
+                "challenges": []
+              },
+              "priority": "high",
+              "strategic_value": [
+                "Protection/Shielding",
+                "Resource Potential"
+              ],
+              "tier": "strategic"
+            }
+          ]
+        }
+      },
+      "properties": {
+        "standard_orbital_altitude_km": 1800
+      }
+    },
+    {
+      "name": "Ganymede",
+      "identifier": "GANYMEDE-01",
+      "type": "moon",
+      "parent_body": "Jupiter",
+      "mass": "1.4819e23",
+      "radius": 2631000.0,
+      "density": 1.936,
+      "orbital_period": 7.155,
+      "surface_temperature": 110,
+      "gravity": 1.428,
+      "albedo": 0.43,
+      "geological_activity": 30,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 778600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "O2": {
+            "percentage": 100.0
+          }
+        },
+        "pressure": 1e-09,
+        "total_atmospheric_mass": 10000000000.0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Thin oxygen atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 30,
+        "tectonic_activity": true,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1.4819e+23,
+        "liquid_bodies": {
+          "subsurface_ocean": true
+        },
+        "composition": {
+          "H2O": 100.0
+        },
+        "state_distribution": {
+          "liquid": 100.0,
+          "solid": 0.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Callisto",
+      "identifier": "CALLISTO-01",
+      "type": "moon",
+      "parent_body": "Jupiter",
+      "mass": "1.0759e23",
+      "radius": 2410000.0,
+      "density": 1.834,
+      "orbital_period": 16.689,
+      "surface_temperature": 134,
+      "gravity": 1.236,
+      "albedo": 0.22,
+      "geological_activity": 20,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 778600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "CO2": {
+            "percentage": 100.0
+          }
+        },
+        "pressure": 1e-10,
+        "total_atmospheric_mass": 100000000.0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Very thin CO2 atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 20,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 60.0,
+          "rock": 40.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1.0759e+23,
+        "liquid_bodies": {
+          "subsurface_ocean": true
+        },
+        "composition": {
+          "H2O": 100.0
+        },
+        "state_distribution": {
+          "liquid": 100.0,
+          "solid": 0.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Rhea",
+      "identifier": "RHEA-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "2.31e21",
+      "radius": 765000.0,
+      "density": 1.236,
+      "orbital_period": 4.518,
+      "surface_temperature": 99,
+      "gravity": 0.264,
+      "albedo": 0.65,
+      "geological_activity": 15,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 15,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 75.0,
+          "rock": 25.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Iapetus",
+      "identifier": "IAPETUS-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "1.81e21",
+      "radius": 734000.0,
+      "density": 1.088,
+      "orbital_period": 79.321,
+      "surface_temperature": 90,
+      "gravity": 0.223,
+      "albedo": 0.05,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 80.0,
+          "rock": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Dione",
+      "identifier": "DIONE-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "1.10e21",
+      "radius": 561000.0,
+      "density": 1.478,
+      "orbital_period": 2.737,
+      "surface_temperature": 87,
+      "gravity": 0.232,
+      "albedo": 0.55,
+      "geological_activity": 20,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 20,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 70.0,
+          "rock": 30.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Tethys",
+      "identifier": "TETHYS-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "6.18e20",
+      "radius": 531000.0,
+      "density": 0.985,
+      "orbital_period": 1.888,
+      "surface_temperature": 86,
+      "gravity": 0.145,
+      "albedo": 0.8,
+      "geological_activity": 15,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 15,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 85.0,
+          "rock": 15.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Enceladus",
+      "identifier": "ENCELADUS-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "1.08e20",
+      "radius": 252000.0,
+      "density": 1.609,
+      "orbital_period": 1.37,
+      "surface_temperature": 75,
+      "gravity": 0.113,
+      "albedo": 0.99,
+      "geological_activity": 80,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "H2O": {
+            "percentage": 91.0
+          },
+          "N2": {
+            "percentage": 4.0
+          },
+          "CO2": {
+            "percentage": 3.0
+          },
+          "CH4": {
+            "percentage": 2.0
+          }
+        },
+        "pressure": 1e-07,
+        "total_atmospheric_mass": 1000000000000.0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Water vapor plumes"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 80,
+        "tectonic_activity": true,
+        "crust_composition": {
+          "water_ice": 90.0,
+          "rock": 10.0
+        },
+        "volcanic_activity": 10
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1.08e+20,
+        "liquid_bodies": {
+          "subsurface_ocean": true
+        },
+        "composition": {
+          "H2O": 100.0
+        },
+        "state_distribution": {
+          "liquid": 100.0,
+          "solid": 0.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Mimas",
+      "identifier": "MIMAS-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "3.75e19",
+      "radius": 198000.0,
+      "density": 1.15,
+      "orbital_period": 0.942,
+      "surface_temperature": 64,
+      "gravity": 0.064,
+      "albedo": 0.77,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 80.0,
+          "rock": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Titan",
+      "identifier": "TITAN-01",
+      "type": "moon",
+      "parent_body": "Saturn",
+      "mass": "1.345e23",
+      "radius": 2575000.0,
+      "density": 1.88,
+      "orbital_period": 15.945,
+      "surface_temperature": 93.7,
+      "gravity": 1.352,
+      "albedo": 0.22,
+      "geological_activity": 40,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 1434000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "N2": {
+            "percentage": 95.0
+          },
+          "CH4": {
+            "percentage": 5.0
+          }
+        },
+        "pressure": 1.5,
+        "total_atmospheric_mass": 1.5e+19,
+        "dust": {
+          "concentration": 0.001,
+          "properties": "Composed of organic compounds and tholins."
+        },
+        "pollution": 0
+      },
+      "hydrosphere_attributes": {
+        "liquid_bodies": {},
+        "composition": {
+          "CH4": 50.0,
+          "C2H6": 30.0,
+          "N2": 20.0
+        },
+        "state_distribution": {
+          "liquid": 1.5,
+          "solid": 98.5,
+          "gas": 0.0
+        }
+      },
+      "properties": {
+        "standard_orbital_altitude_km": 5000
+      }
+    },
+    {
+      "name": "Io",
+      "identifier": "IO-01",
+      "type": "moon",
+      "parent_body": "Jupiter",
+      "mass": "8.932e22",
+      "radius": 1821500.0,
+      "density": 3.528,
+      "orbital_period": 1.769,
+      "surface_temperature": 110,
+      "gravity": 1.796,
+      "albedo": 0.63,
+      "geological_activity": 95,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 778600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "SO2": {
+            "percentage": 90.0
+          },
+          "S": {
+            "percentage": 10.0
+          }
+        },
+        "pressure": 1e-06,
+        "total_atmospheric_mass": 1000000000000000.0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Volcanic gases"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 95,
+        "tectonic_activity": true,
+        "volcanic_activity": 100
+      }
+    },
+    {
+      "name": "Europa",
+      "identifier": "EUROPA-01",
+      "type": "moon",
+      "parent_body": "Jupiter",
+      "mass": "4.800e22",
+      "radius": 1561000.0,
+      "density": 3.013,
+      "orbital_period": 3.551,
+      "surface_temperature": 102,
+      "gravity": 1.314,
+      "albedo": 0.67,
+      "geological_activity": 65,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 778600000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "O2": {
+            "percentage": 100.0
+          }
+        },
+        "pressure": 1e-07,
+        "total_atmospheric_mass": 1000000000000.0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Thin oxygen atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 65,
+        "tectonic_activity": true,
+        "volcanic_activity": 20
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 4.8e+22,
+        "liquid_bodies": {
+          "subsurface_ocean": true
+        },
+        "composition": {
+          "H2O": 100.0
+        },
+        "state_distribution": {
+          "liquid": 100.0,
+          "solid": 0.0,
+          "gas": 0.0
+        }
+      },
+      "properties": {
+        "standard_orbital_altitude_km": 500
+      }
+    },
+    {
+      "name": "Phobos",
+      "identifier": "PHOBOS-01",
+      "type": "moon",
+      "parent_body": "Mars",
+      "mass": "1.06e16",
+      "radius": 11267,
+      "density": 1.876,
+      "orbital_period": 0.319,
+      "surface_temperature": 233,
+      "gravity": 0.0057,
+      "albedo": 0.071,
+      "geological_activity": 0,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 227900000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 0,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "carbonaceous_chondrite": 100.0
+        }
+      }
+    },
+    {
+      "name": "Deimos",
+      "identifier": "DEIMOS-01",
+      "type": "moon",
+      "parent_body": "Mars",
+      "mass": "1.48e15",
+      "radius": 6200,
+      "density": 1.471,
+      "orbital_period": 1.263,
+      "surface_temperature": 233,
+      "gravity": 0.003,
+      "albedo": 0.068,
+      "geological_activity": 0,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 227900000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 0,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "carbonaceous_chondrite": 100.0
+        }
+      }
+    },
+    {
+      "name": "Ceres",
+      "identifier": "CERES-01",
+      "type": "dwarf_planet",
+      "mass": "9.393e20",
+      "radius": 469000.0,
+      "density": 2.162,
+      "size": 0.074,
+      "orbital_period": 1682,
+      "surface_temperature": 168,
+      "gravity": 0.28,
+      "albedo": 0.09,
+      "geological_activity": 20,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 413000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Occasional water vapor"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 20,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 30.0,
+          "rock": 70.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 9.393e+20,
+        "liquid_bodies": {},
+        "composition": {
+          "H2O": 100.0
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Vesta",
+      "identifier": "VESTA-01",
+      "type": "protoplanet",
+      "mass": "2.59e20",
+      "radius": 262700.0,
+      "density": 3.456,
+      "size": 0.041,
+      "orbital_period": 1325.75,
+      "surface_temperature": 150,
+      "gravity": 0.25,
+      "albedo": 0.423,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 353000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "basalt": 46.0,
+          "pyroxene": 25.0,
+          "olivine": 15.0,
+          "iron": 14.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 0.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Triton",
+      "identifier": "TRITON-01",
+      "type": "moon",
+      "parent_body": "Neptune",
+      "mass": "2.14e22",
+      "radius": 1353000.0,
+      "density": 2.061,
+      "orbital_period": 5.877,
+      "surface_temperature": 38,
+      "gravity": 0.779,
+      "albedo": 0.76,
+      "geological_activity": 60,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 4495000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "N2": {
+            "percentage": 99.0
+          },
+          "CH4": {
+            "percentage": 1.0
+          }
+        },
+        "pressure": 1.4e-05,
+        "total_atmospheric_mass": 2.14e+22,
+        "dust": {
+          "concentration": 0,
+          "properties": "Thin nitrogen atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 60,
+        "tectonic_activity": true,
+        "crust_composition": {
+          "water_ice": 30.0,
+          "rock": 70.0
+        },
+        "volcanic_activity": 20
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 2.14e+22,
+        "liquid_bodies": {},
+        "composition": {
+          "H2O": 100.0
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Nereid",
+      "identifier": "NEREID-01",
+      "type": "moon",
+      "parent_body": "Neptune",
+      "mass": "3.1e19",
+      "radius": 170000.0,
+      "density": 1.5,
+      "orbital_period": 360.136,
+      "surface_temperature": 50,
+      "gravity": 0.071,
+      "albedo": 0.16,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 4495000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 80.0,
+          "rock": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Pluto",
+      "identifier": "PLUTO-01",
+      "type": "dwarf_planet",
+      "mass": "1.303e22",
+      "radius": 1188000.0,
+      "density": 1.854,
+      "orbital_period": 90560,
+      "surface_temperature": 44,
+      "gravity": 0.62,
+      "albedo": 0.49,
+      "geological_activity": 40,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5900000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "N2": {
+            "percentage": 90.0
+          },
+          "CH4": {
+            "percentage": 10.0
+          }
+        },
+        "pressure": 1e-06,
+        "total_atmospheric_mass": 1.3e+22,
+        "dust": {
+          "concentration": 0,
+          "properties": "Seasonal atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 40,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 5
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 1.303e+22,
+        "liquid_bodies": {},
+        "composition": {
+          "H2O": 90.0,
+          "N2": 10.0
+        },
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Eris",
+      "identifier": "ERIS-01",
+      "type": "dwarf_planet",
+      "mass": "1.66e22",
+      "radius": 1163000.0,
+      "density": 2.52,
+      "orbital_period": 203830,
+      "surface_temperature": 30,
+      "gravity": 0.82,
+      "albedo": 0.96,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 10100000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {
+          "N2": {
+            "percentage": 100.0
+          }
+        },
+        "pressure": 1e-06,
+        "total_atmospheric_mass": 10000000000.0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Thin nitrogen atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "methane_ice": 70.0,
+          "nitrogen_ice": 20.0,
+          "water_ice": 10.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Charon",
+      "identifier": "CHARON-01",
+      "type": "moon",
+      "parent_body": "Pluto",
+      "mass": "1.52e21",
+      "radius": 603000.0,
+      "density": 1.702,
+      "orbital_period": 6.387,
+      "surface_temperature": 53,
+      "gravity": 0.289,
+      "albedo": 0.37,
+      "geological_activity": 15,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5900000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 15,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "rock": 50.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Haumea",
+      "identifier": "HAUMEA-01",
+      "type": "dwarf_planet",
+      "mass": "4.006e21",
+      "radius": 816000,
+      "density": 2.6,
+      "orbital_period": 103774,
+      "surface_temperature": 30,
+      "gravity": 0.44,
+      "albedo": 0.51,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 6450000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 70.0,
+          "rock": 30.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Makemake",
+      "identifier": "MAKEMAKE-01",
+      "type": "dwarf_planet",
+      "mass": "3.1e21",
+      "radius": 715000,
+      "density": 1.4,
+      "orbital_period": 112897,
+      "surface_temperature": 30,
+      "gravity": 0.5,
+      "albedo": 0.77,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 6850000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "methane_ice": 50.0,
+          "nitrogen_ice": 30.0,
+          "water_ice": 20.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Gonggong",
+      "identifier": "GONGGONG-01",
+      "type": "dwarf_planet",
+      "mass": "1.75e21",
+      "radius": 615000,
+      "density": 1.74,
+      "orbital_period": 123516,
+      "surface_temperature": 30,
+      "gravity": 0.3,
+      "albedo": 0.35,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 10100000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 60.0,
+          "methane_ice": 40.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Quaoar",
+      "identifier": "QUAOAR-01",
+      "type": "dwarf_planet",
+      "mass": "1.4e21",
+      "radius": 543000,
+      "density": 2.2,
+      "orbital_period": 104347,
+      "surface_temperature": 40,
+      "gravity": 0.3,
+      "albedo": 0.1,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 6520000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 80.0,
+          "rock": 20.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Sedna",
+      "identifier": "SEDNA-01",
+      "type": "dwarf_planet",
+      "mass": "1e21",
+      "radius": 498000,
+      "density": 1.8,
+      "orbital_period": 4152000,
+      "surface_temperature": 12,
+      "gravity": 0.3,
+      "albedo": 0.32,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 13700000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "methane_ice": 60.0,
+          "nitrogen_ice": 40.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Orcus",
+      "identifier": "ORCUS-01",
+      "type": "dwarf_planet",
+      "mass": "6.32e20",
+      "radius": 458000,
+      "density": 1.53,
+      "orbital_period": 89606,
+      "surface_temperature": 40,
+      "gravity": 0.3,
+      "albedo": 0.23,
+      "geological_activity": 10,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5860000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "No atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 10,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 70.0,
+          "methane_ice": 30.0
+        },
+        "volcanic_activity": 0
+      },
+      "hydrosphere_attributes": {
+        "total_hydrosphere_mass": 0,
+        "liquid_bodies": {},
+        "composition": {},
+        "state_distribution": {
+          "liquid": 0.0,
+          "solid": 100.0,
+          "gas": 0.0
+        }
+      }
+    },
+    {
+      "name": "Styx",
+      "identifier": "STYX-01",
+      "type": "moon",
+      "parent_body": "Pluto",
+      "mass": "7.5e15",
+      "radius": 5000,
+      "density": 1.5,
+      "orbital_period": 20.2,
+      "surface_temperature": 40,
+      "gravity": 0.001,
+      "albedo": 0.35,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5900000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Negligible atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "methane_ice": 30.0,
+          "nitrogen_ice": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Nix",
+      "identifier": "NIX-01",
+      "type": "moon",
+      "parent_body": "Pluto",
+      "mass": "4.5e16",
+      "radius": 23000,
+      "density": 1.5,
+      "orbital_period": 24.9,
+      "surface_temperature": 40,
+      "gravity": 0.003,
+      "albedo": 0.35,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5900000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Negligible atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "methane_ice": 30.0,
+          "nitrogen_ice": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Kerberos",
+      "identifier": "KERBEROS-01",
+      "type": "moon",
+      "parent_body": "Pluto",
+      "mass": "1.6e16",
+      "radius": 6000,
+      "density": 1.5,
+      "orbital_period": 32.2,
+      "surface_temperature": 40,
+      "gravity": 0.001,
+      "albedo": 0.35,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5900000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Negligible atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "methane_ice": 30.0,
+          "nitrogen_ice": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    },
+    {
+      "name": "Hydra",
+      "identifier": "HYDRA-01",
+      "type": "moon",
+      "parent_body": "Pluto",
+      "mass": "4.8e16",
+      "radius": 30500,
+      "density": 1.5,
+      "orbital_period": 38.2,
+      "surface_temperature": 40,
+      "gravity": 0.003,
+      "albedo": 0.35,
+      "geological_activity": 5,
+      "star_distances": [
+        {
+          "star_name": "Sol",
+          "distance": 5900000000.0
+        }
+      ],
+      "atmosphere_attributes": {
+        "composition": {},
+        "pressure": 0,
+        "total_atmospheric_mass": 0,
+        "dust": {
+          "concentration": 0,
+          "properties": "Negligible atmosphere"
+        },
+        "pollution": 0
+      },
+      "geosphere_attributes": {
+        "geological_activity": 5,
+        "tectonic_activity": false,
+        "crust_composition": {
+          "water_ice": 50.0,
+          "methane_ice": 30.0,
+          "nitrogen_ice": 20.0
+        },
+        "volcanic_activity": 0
+      }
+    }
+  ],
+  "base_units": [
+    {
+      "name": "Inflatable Habitat Module",
+      "base_materials": {
+        "kevlar_fabric": "500 kg",
+        "aluminum_alloy": "1000 kg",
+        "carbon_fiber": "300 kg"
+      },
+      "operating_requirements": {
+        "power": "5 kW",
+        "H2O": "100 L/day",
+        "air": "500 L/day"
+      }
+    }
+  ],
+  "metadata": {
+    "generation_mode": "Complete_Sol_System",
+    "em_environment": "Solar_System_Core",
+    "data_completeness": "comprehensive",
+    "geological_features_included": true,
+    "material_compositions_included": true,
+    "major_moons_included": true,
+    "last_updated": "2026-01-08",
+    "source_files": [
+      "sol.json",
+      "sol.json-complete",
+      "celestial_bodies/earth/geological_features/",
+      "celestial_bodies/mars/geological_features/",
+      "celestial_bodies/earth/luna/geological_features/"
+    ]
+  }
+}

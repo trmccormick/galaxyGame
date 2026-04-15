@@ -37,16 +37,9 @@ module AIManager
     # @param world [CelestialBody]
     # @return [Float] Altitude in meters
     def self.calculate_orbital_altitude(world)
-      case world.class.name
-      when /Mars/
-        20_000_000.0 # 20,000 km for Mars L1
-      when /Venus/
-        15_000_000.0
-      when /Titan/
-        5_000_000.0
-      else
-        10_000_000.0 # Default 10,000 km
-      end
+      km = world.properties&.dig('standard_orbital_altitude_km')
+      return km.to_f * 1000.0 if km.present?
+      10_000_000.0 # default 10,000 km
     end
   end
 end

@@ -2,7 +2,8 @@ class ExtractionService
   # Service for extracting buffer gases like Argon on Mars at high energy cost
 
   def self.extract_argon_on_mars(settlement, amount_needed)
-    return false unless settlement.location&.celestial_body&.name == 'Mars'
+    body = settlement.location&.celestial_body
+    return false unless body&.atmosphere_composition&.dig('Ar').to_f > 0.01
 
     # Check if N2 levels are critical
     priority_heuristic = AIManager::PriorityHeuristic.new(settlement)
