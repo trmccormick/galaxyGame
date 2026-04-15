@@ -5,7 +5,6 @@ module CelestialBodies
       include HasNaturalOpenings
       
       belongs_to :settlement, class_name: 'Settlement::BaseSettlement', optional: true
-      
       # Set feature_type automatically
       before_validation :set_feature_type, on: :create
       

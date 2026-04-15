@@ -8,6 +8,8 @@ module CelestialBodies
       belongs_to :parent_feature, class_name: 'CelestialBodies::Features::BaseFeature', optional: true
       has_many :child_features, class_name: 'CelestialBodies::Features::BaseFeature', foreign_key: :parent_feature_id, dependent: :destroy
 
+        belongs_to :settlement, polymorphic: true, optional: true
+
       has_one :worldhouse, 
               class_name: 'Structures::Worldhouse',
               foreign_key: :geological_feature_id,

@@ -6,7 +6,6 @@ module CelestialBodies
       include HasNaturalOpenings
       
       belongs_to :settlement, class_name: 'Settlement::BaseSettlement', optional: true
-      
       # Link back to the physical rock to check its spin (Asteroid or SmallMoon)
       belongs_to :host_body, polymorphic: true, foreign_key: 'celestial_body_id'
 
