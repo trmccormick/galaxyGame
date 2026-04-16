@@ -105,7 +105,7 @@ module StarSim
             'protoplanets'
           when 'moon'
             # Check if it's a major moon or regular moon
-            if ['Luna', 'Titan', 'Ganymede', 'Callisto', 'Io', 'Europa', 'Rhea', 'Iapetus', 'Dione', 'Tethys', 'Enceladus', 'Mimas', 'Titania', 'Oberon', 'Umbriel', 'Ariel', 'Miranda'].include?(body[:name])
+            if body.dig(:properties, :major_moon) || body[:mass].to_f > 1e20
               'major_moons'
             else
               'moons'
