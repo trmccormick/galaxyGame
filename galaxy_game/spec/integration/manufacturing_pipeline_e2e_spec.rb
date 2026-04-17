@@ -317,7 +317,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       processing_service = Manufacturing::MaterialProcessingService.new(settlement)
       
       # Process 1000kg raw regolith → processed regolith
-      teu_job = processing_service.thermal_extraction(1000.0, teu_unit)
+      teu_job = processing_service.process(teu_unit, 'raw_regolith', 1000.0)
       
       expect(teu_job).to be_present
       expect(teu_job.status).to eq('pending')
@@ -557,8 +557,8 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       processing_service = Manufacturing::MaterialProcessingService.new(settlement)
       
       # Create multiple TEU jobs
-      job1 = processing_service.thermal_extraction(1000.0, teu_unit)
-      job2 = processing_service.thermal_extraction(1000.0, teu_unit)
+      job1 = processing_service.process(teu_unit, 'raw_regolith', 1000.0)
+      job2 = processing_service.process(teu_unit, 'raw_regolith', 1000.0)
 
       job1.start!
       job2.start!
@@ -606,7 +606,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       processing_service = Manufacturing::MaterialProcessingService.new(settlement)
       
       # TEU processing
-      teu_job = processing_service.thermal_extraction(1000.0, teu_unit)
+      teu_job = processing_service.process(teu_unit, 'raw_regolith', 1000.0)
       teu_job.start!
       game.advance_by_days(1)
 
