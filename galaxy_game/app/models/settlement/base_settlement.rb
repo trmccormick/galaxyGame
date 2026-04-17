@@ -159,25 +159,8 @@ module Settlement
       initialize_storage(capacity, celestial_body) unless inventory
     end
 
-    def establish_from_starship(starship, location)
-      cargo_manifest = CargoManifestLoader.load('starship_settlement_cargo')
-      verify_deployment_cargo(starship.inventory, cargo_manifest)
-    
-      transaction do
-        settlement = create!(
-          name: "#{location.name} Outpost",
-          settlement_type: :outpost,
-          location: location,
-          owner: starship.owner
-        )
-    
-        cargo_manifest['cargo_sections']['deployment_units'].each do |unit_data|
-          deploy_unit(settlement, starship.inventory, unit_data)
-        end
-    
-        transfer_cargo(starship.inventory, settlement.inventory, cargo_manifest)
-        settlement
-      end
+    def establish_from_craft(craft, location, manifest_name: 'precursor_craft_deployment_cargo')
+      SettlementDeploymentService.establish_from_craft(craft, location, manifest_name: manifest_name)
     end
 
     def surface_storage?
@@ -194,32 +177,7 @@ module Settlement
       Float::INFINITY
     end
     
-    private
-    
-    def deploy_unit(settlement, inventory, unit_data)
-      inventory.remove_item(unit_data['id'], 1)
-      
-      unit = Units::BaseUnit.create!(
-        name: unit_data['name'],
-        unit_type: unit_data['deployment_type'],
-        identifier: "#{settlement.name}_#{unit_data['id']}_1",
-        operational_data: unit_data['unit_data'],
-        owner: settlement
-      )
-      
-      settlement.base_units << unit
-    end
-
-    def deploy_housing(settlement, cargo_item)
-      housing = Units::BaseUnit.create!(
-        name: cargo_item.name,
-        unit_type: 'housing',
-        identifier: "#{settlement.name}_housing_1",
-        operational_data: cargo_item.properties['unit_data'],
-        owner: settlement
-      )
-      settlement.base_units << housing
-    end
+    # ...existing code...
 
     def resource_requirements
       calculate_life_support_requirements
