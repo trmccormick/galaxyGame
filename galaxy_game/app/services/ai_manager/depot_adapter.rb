@@ -21,10 +21,11 @@ module AIManager
       end
 
       unless depot.location
+        name_service = NameGeneratorService.new
         Location::CelestialLocation.create!(
           celestial_body: world,
-          latitude: 0.0,
-          longitude: 0.0,
+          name: name_service.generate_identifier,
+          coordinates: '0.00°N 0.00°E',
           altitude: calculate_orbital_altitude(world),
           locationable: depot
         )
