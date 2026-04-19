@@ -1,5 +1,5 @@
 class OrbitalConstructionProject < ApplicationRecord
-  belongs_to :station, class_name: 'Settlement::BaseSettlement', foreign_key: 'station_id'
+  belongs_to :station, class_name: 'Settlement::OrbitalSettlement', foreign_key: 'station_id'
 
   enum status: {
     materials_pending: 0,

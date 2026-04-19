@@ -1,6 +1,7 @@
 # app/models/settlement/orbital_settlement.rb
 module Settlement
   class OrbitalSettlement < ApplicationRecord
+    has_many :orbital_construction_projects, foreign_key: 'station_id'
     self.table_name = 'base_settlements'
     include SettlementCore
 

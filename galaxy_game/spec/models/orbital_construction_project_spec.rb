@@ -2,10 +2,11 @@ require 'rails_helper'
 
 RSpec.describe OrbitalConstructionProject, type: :model do
   let(:player) { create(:player) }
-  let(:station) { create(:base_settlement, :station, owner: player) }
+  let(:settlement) { create(:orbital_settlement, owner: player) }
+   # No OrbitalStructure needed; use settlement directly as station
 
   describe 'associations' do
-    it { should belong_to(:station).class_name('Settlement::BaseSettlement') }
+    it { should belong_to(:station).class_name('Settlement::OrbitalSettlement') }
   end
 
   describe 'validations' do
@@ -18,7 +19,7 @@ RSpec.describe OrbitalConstructionProject, type: :model do
   end
 
   describe '#materials_complete?' do
-    let(:project) { create(:orbital_construction_project, station: station) }
+    let(:project) { create(:orbital_construction_project, station: settlement) }
 
     context 'when all required materials are delivered' do
       before do
@@ -61,7 +62,7 @@ RSpec.describe OrbitalConstructionProject, type: :model do
   end
 
   describe '#completion_percentage' do
-    let(:project) { create(:orbital_construction_project, station: station) }
+    let(:project) { create(:orbital_construction_project, station: settlement) }
 
     context 'when no materials are delivered' do
       before do
@@ -104,7 +105,7 @@ RSpec.describe OrbitalConstructionProject, type: :model do
   end
 
   describe 'JSONB storage' do
-    let(:project) { create(:orbital_construction_project, station: station) }
+    let(:project) { create(:orbital_construction_project, station: settlement) }
 
     it 'stores required_materials as JSONB' do
       materials = { 'ibeam' => 1000, 'aluminum_alloy' => 500 }
