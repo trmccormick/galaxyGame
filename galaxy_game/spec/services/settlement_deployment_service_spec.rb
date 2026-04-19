@@ -21,7 +21,7 @@ describe SettlementDeploymentService do
     allow(SettlementDeploymentService).to receive(:verify_deployment_cargo).and_return(true)
     allow(SettlementDeploymentService).to receive(:deploy_unit).and_return(true)
     allow(SettlementDeploymentService).to receive(:transfer_cargo).and_return(true)
-    allow(Settlement::BaseSettlement).to receive(:create!).and_return(double('Settlement', base_units: []))
+    allow(Settlement::BaseSettlement).to receive(:create!).and_return(double('Settlement', base_units: [], inventory: double('Inventory')))
   end
 
   it 'calls all deployment steps and returns a settlement' do
