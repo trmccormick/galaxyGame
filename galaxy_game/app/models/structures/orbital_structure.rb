@@ -10,7 +10,11 @@ module Structures
     include EnergyManagement
     include AtmosphericProcessing
     include Docking
-  include SpinGravity   # ← add this line
+    include SpinGravity   # ← add this line
+
+    # Override BaseStructure settlement association — orbital structures
+    # belong to OrbitalSettlement, not BaseSettlement
+    belongs_to :settlement, class_name: 'Settlement::OrbitalSettlement', optional: true
 
     # ============================================
     # PHYSICAL PRESENCE
