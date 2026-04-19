@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :orbital_construction_project do
-    association :station, factory: :base_settlement
+    association :station, factory: :orbital_settlement
     craft_blueprint_id { 'earth_mars_cycler' }
     status { :materials_pending }
     progress_percentage { 0.0 }
