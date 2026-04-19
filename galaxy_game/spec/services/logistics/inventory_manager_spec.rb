@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Logistics::InventoryManager, type: :service do
   let(:player) { create(:player) }
-  let(:station) { create(:base_settlement, :station, owner: player) }
+  let(:settlement) { create(:orbital_settlement, owner: player) }
+  let(:station) { create(:orbital_structure, settlement: settlement) }
   let(:surface_settlement) { create(:base_settlement, :base, owner: player) }
   let(:station_inventory) { station.inventory }
   let(:surface_inventory) { surface_settlement.inventory }
@@ -11,7 +12,7 @@ RSpec.describe Logistics::InventoryManager, type: :service do
     let!(:source_item) { create(:item, inventory: surface_inventory, name: 'ibeam', amount: 1000) }
 
     context 'when transferring to a station with orbital construction projects' do
-      let!(:project) { create(:orbital_construction_project, station: station) }
+      let!(:project) { create(:orbital_construction_project, station: settlement) }
 
       before do
         project.update!(
@@ -75,7 +76,7 @@ RSpec.describe Logistics::InventoryManager, type: :service do
     end
 
     context 'when transferring non-orbital materials to orbital station' do
-      let!(:project) { create(:orbital_construction_project, station: station) }
+      let!(:project) { create(:orbital_construction_project, station: settlement) }
       let!(:food_item) { create(:item, inventory: surface_inventory, name: 'food', amount: 200) }
 
       it 'transfers materials normally without interception' do

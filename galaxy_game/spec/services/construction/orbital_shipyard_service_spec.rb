@@ -2,7 +2,9 @@ require 'rails_helper'
 
 
 RSpec.describe Construction::OrbitalShipyardService, type: :service do
-  let(:station) { create(:orbital_settlement) }
+  let(:player) { create(:player) }
+  let(:settlement) { create(:orbital_settlement, owner: player) }
+  let(:station) { create(:orbital_structure, settlement: settlement) }
   let(:service) { described_class.new(station) }
   let(:blueprint_id) { 'l1_shipyard_bp' }  # from JSON data
 
@@ -18,7 +20,7 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
 
       it 'associates the project with the station' do
         project = service.create_shipyard_project(blueprint_id)
-        expect(project.station).to eq(station)
+        expect(project.station).to eq(settlement)
       end
 
       it 'sets the correct blueprint' do
@@ -56,7 +58,7 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
   end
 
   describe '.deliver_materials' do
-    let!(:project) { create(:orbital_construction_project, station: station) }
+    let!(:project) { create(:orbital_construction_project, station: settlement)}
     let(:material_type) { 'ibeam' }
     let(:quantity) { 500 }
 
@@ -115,7 +117,7 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
     end
 
     context 'with multiple projects' do
-      let!(:project2) { create(:orbital_construction_project, station: station) }
+      let!(:project2) { create(:orbital_construction_project, station: settlement) }
 
       before do
         project2.update!(
@@ -141,7 +143,7 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
   end
 
   describe '.update_construction_progress' do
-    let!(:project) { create(:orbital_construction_project, station: station, status: :in_progress) }
+    let!(:project) { create(:orbital_construction_project, station: settlement, status: :in_progress) }
 
     it 'increases progress percentage' do
       initial_progress = project.progress_percentage
@@ -169,7 +171,7 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
   end
 
   describe '.complete_project' do
-    let!(:project) { create(:orbital_construction_project, station: station, status: :in_progress) }
+    let!(:project) { create(:orbital_construction_project, station: settlement, status: :in_progress) }
 
     it 'marks the project as completed' do
       described_class.complete_project(project)
@@ -184,7 +186,7 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
   end
 
   describe '.spawn_completed_craft' do
-    let!(:project) { create(:orbital_construction_project, station: station, craft_blueprint_id: 'earth_mars_cycler') }
+    let!(:project) { create(:orbital_construction_project, station: settlement, craft_blueprint_id: 'earth_mars_cycler') }
 
     it 'creates a new craft' do
       expect {
@@ -193,17 +195,17 @@ RSpec.describe Construction::OrbitalShipyardService, type: :service do
     end
 
     it 'associates the craft with the station' do
-      craft = described_class.spawn_completed_craft(project)
+      craft = described_class.spawn_completed_craft(project, station)
       expect(craft.docked_at).to eq(station)
     end
 
     it 'sets the craft status to docked' do
-      craft = described_class.spawn_completed_craft(project)
+      craft = described_class.spawn_completed_craft(project, station)
       expect(craft.status).to eq('docked')
     end
 
     it 'loads operational data from blueprint' do
-      craft = described_class.spawn_completed_craft(project)
+      craft = described_class.spawn_completed_craft(project, station)
       expect(craft.operational_data).to be_present
       expect(craft.operational_data['cycler_type']).to eq('earth_mars')
     end

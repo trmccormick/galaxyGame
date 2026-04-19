@@ -3,23 +3,30 @@ module Construction
   class OrbitalShipyardService
     # Manages construction projects for massive orbital crafts at stations
 
-    def initialize(settlement = nil)
-      @settlement = settlement
+    def initialize(structure = nil)
+      @structure = structure
     end
 
     def create_shipyard_project(blueprint_id)
       blueprint = self.class.load_craft_blueprint(blueprint_id)
       OrbitalConstructionProject.create!(
-        station: @settlement,
+        station: @structure.settlement,
         craft_blueprint_id: blueprint_id.to_s,
         status: 'materials_pending',
         progress_percentage: 0
       )
     end
 
-    def self.deliver_materials(station, material_type, quantity, source_settlement = nil)
-      # Find active shipyard projects at this station
-      active_projects = station.orbital_construction_projects.where(status: ['materials_pending', 'in_progress'])
+    def self.deliver_materials(station_or_settlement, material_type, quantity, source_settlement = nil)
+      # Accept either a structure or a settlement directly
+      settlement = if station_or_settlement.respond_to?(:orbital_construction_projects)
+        station_or_settlement
+      elsif station_or_settlement.respond_to?(:settlement)
+        station_or_settlement.settlement
+      else
+        raise ArgumentError, "Expected structure or settlement with orbital_construction_projects"
+      end
+      active_projects = settlement.orbital_construction_projects.where(status: ['materials_pending', 'in_progress'])
 
       active_projects.each do |project|
         consumed = consume_materials_for_project(project, material_type, quantity)
@@ -150,8 +157,8 @@ module Construction
       end
     end
 
-    def self.spawn_completed_craft(project)
-      # Create the completed craft at the station
+    def self.spawn_completed_craft(project, structure = nil)
+      # Create the completed craft at the structure (first structure of the station)
       blueprint = load_craft_blueprint(project.craft_blueprint_id)
 
       craft = Craft::BaseCraft.create!(
@@ -160,7 +167,7 @@ module Construction
         craft_type: blueprint['category'],
         owner: project.station.owner, # Station owner
         operational_data: blueprint['operational_data'] || {},
-        docked_at: project.station,
+        docked_at: structure || (project.station.respond_to?(:structures) ? project.station.structures.reload.first : nil),
         status: :docked
       )
 

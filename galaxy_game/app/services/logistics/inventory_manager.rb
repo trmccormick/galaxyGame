@@ -5,15 +5,19 @@ module Logistics
     def self.transfer_item(item_name:, quantity:, from_inventory:, to_inventory:)
       
       # Check if destination is a station with orbital construction projects
-      if to_inventory.inventoryable.is_a?(Settlement::BaseSettlement) && 
-         to_inventory.inventoryable.orbital? && 
+      inventoryable = to_inventory.inventoryable
+      settlement = inventoryable.is_a?(Structures::BaseStructure) ? inventoryable.settlement : inventoryable
+
+      if settlement.respond_to?(:orbital?) && 
+         settlement&.orbital? && 
          should_check_orbital_projects?(item_name)
-        
+
         # Try to deliver to orbital construction projects first
+        # Pass the structure (inventoryable) so deliver_materials can query via structure.settlement
         remaining_quantity = Construction::OrbitalShipyardService.deliver_materials(
-          to_inventory.inventoryable, 
-          item_name, 
-          quantity, 
+          inventoryable,
+          item_name,
+          quantity,
           from_inventory.inventoryable.is_a?(Settlement::BaseSettlement) ? from_inventory.inventoryable : nil
         )
         
