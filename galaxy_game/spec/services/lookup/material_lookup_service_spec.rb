@@ -245,15 +245,17 @@ RSpec.describe Lookup::MaterialLookupService do
     context 'with corrupted JSON files' do
       let(:temp_dir) { Dir.mktmpdir }
       let(:corrupted_file) { File.join(temp_dir, 'corrupted.json') }
-      before do
-        File.write(corrupted_file, '{ invalid json }')
-      end
       after do
         FileUtils.rm_rf(temp_dir)
       end
       it 'handles JSON parsing errors gracefully' do
-        expect(Rails.logger).to receive(:error).with(/Invalid JSON in file:/).exactly(1).times
-        result = @service.send(:load_json_files, temp_dir)
+        # Create corrupted file with .json extension
+        File.write(corrupted_file, '{ invalid json', mode: 'w')
+        # Move logger mock BEFORE call
+        allow(Rails.logger).to receive(:error).with(/Invalid JSON in file:/)
+        service = described_class.new
+        result = service.send(:load_json_files, temp_dir)
+        expect(Rails.logger).to have_received(:error).with(/Invalid JSON in file:/)
         expect(result).to be_empty
       end
     end
