@@ -3,7 +3,7 @@ FactoryBot.define do
   factory :base_unit, class: 'Units::BaseUnit' do
     sequence(:identifier) { |n| "UNIT#{n}" }
     sequence(:name) { |n| "Test Unit #{n}" }
-    unit_type { "basic_unit" } # Default to a generic unit type
+    unit_type { "solar_panel" } # Default to a generic unit type
     operational_data { {} }
     association :owner, factory: :player
     attachable { nil }
