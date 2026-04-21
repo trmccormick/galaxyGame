@@ -66,28 +66,12 @@ class Game
         unit.consume_resources(time_skipped) if unit.respond_to?(:consume_resources)
       end
       
-      # Process active jobs
-      process_jobs(settlement, time_skipped)
       
       puts "#{settlement.name} updated for #{time_skipped} days."
     end
   end
 
-  def process_jobs(settlement, time_skipped)
-    # Convert days to hours (assuming 24 hours per day)
-    time_skipped_hours = time_skipped * 24
-    
-    # Process shell printing jobs
-    ShellPrintingJob.where(settlement: settlement, status: 'in_progress').each do |job|
-      job.progress_hours += time_skipped_hours
-      job.save!
-      
-      # Check if job is complete
-      if job.progress_hours >= job.production_time_hours
-        Manufacturing::ShellPrintingService.new(settlement).complete_job(job)
-      end
-    end
-  end
+
 
   # Simulate units doing their operations over time (e.g., mining, travel)
   def process_units(time_skipped)

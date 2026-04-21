@@ -45,6 +45,14 @@ RSpec.configure do |config|
       with.library :rails
     end
   end
+  config.before(:each, sidekiq: :inline) do
+    require 'sidekiq/testing'
+    Sidekiq::Testing.inline!
+  end
+
+  config.after(:each, sidekiq: :inline) do
+    Sidekiq::Testing.fake!
+  end
 end
 
 RSpec.configure do |config|
