@@ -38,6 +38,23 @@ end
   - `bin/rails zeitwerk:check` (to verify autoloading compliance)
   - The relevant RSpec suite
 
+  ---
+
+  ## Canonical File Move and Archival Policy
+
+  **Always use `mv` in the terminal to move or archive files, especially for task, legacy, or archival operations.**
+
+  - Using `mv` preserves file history in git and prevents the creation of blank or orphaned files.
+  - Do **not** use manual copy/delete or editor-based moves for files tracked by git, as this breaks history and can leave empty files behind.
+  - If using automated tools or scripts, ensure they replicate `mv` behavior and do not leave blank files.
+  - For all task file archival (e.g., moving legacy tasks to backlog/old/), use:
+    ```bash
+    mv path/to/file.md path/to/archive/
+    ```
+  - Reference this policy in all workflow and documentation updates.
+
+  This ensures a clean, auditable project history and prevents confusion during audits or code reviews.
+
 ---
 
 This guide is a living document. Update it whenever new namespace or autoloading patterns are introduced.

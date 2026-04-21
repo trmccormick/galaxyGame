@@ -2,36 +2,25 @@ class JobProcessorWorker
   include Sidekiq::Worker
   sidekiq_options queue: :default
 
-  JOB_CLASSES = [
-    MaterialProcessingJob,
-    ComponentProductionJob,
-    ShellPrintingJob,
-    SealPrintingJob,
-    ConstructionJob,
-    SmeltingJob,
-    UnitAssemblyJob,
-    EnvironmentJob,
-    ResourceJob
-  ].freeze
+  def perform
+    Rails.logger.info("JobProcessorWorker: processing all in-progress jobs (Job, ConstructionJob)")
 
-  def perform(hours_elapsed = 1.0)
-    Rails.logger.info("JobProcessorWorker: ticking all in-progress jobs for #{hours_elapsed}h")
-
-    JOB_CLASSES.each do |job_class|
-      tick_jobs(job_class, hours_elapsed)
-    end
+    process_jobs(Job)
+    process_jobs(ConstructionJob)
   end
 
   private
 
-  def tick_jobs(job_class, hours_elapsed)
-    jobs = job_class.where(status: 'in_progress')
+  def process_jobs(job_class)
+    jobs = job_class.where(status: :in_progress)
     Rails.logger.info("JobProcessorWorker: #{job_class.name} — #{jobs.count} in progress")
 
     jobs.each do |job|
-      job.process_tick(hours_elapsed)
+      if job.respond_to?(:completes_at) && job.completes_at <= Time.current
+        job.update!(status: :ready_to_claim)
+      end
     rescue => e
-      Rails.logger.error("JobProcessorWorker: failed to tick #{job_class.name}##{job.id} — #{e.message}")
+      Rails.logger.error("JobProcessorWorker: failed to process #{job_class.name}##{job.id} — #{e.message}")
     end
   end
 end

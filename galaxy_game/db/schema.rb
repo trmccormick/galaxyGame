@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_27_213844) do
+ActiveRecord::Schema[7.0].define(version: 2026_04_21_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -54,6 +54,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_213844) do
     t.datetime "updated_at", null: false
     t.jsonb "static_data"
     t.jsonb "operational_data", default: {}
+    t.string "settlement_type"
     t.index ["celestial_body_id"], name: "index_adapted_features_on_celestial_body_id"
     t.index ["feature_id", "feature_type", "celestial_body_id"], name: "index_adapted_features_on_feature_and_body", unique: true
     t.index ["operational_data"], name: "index_adapted_features_on_operational_data", using: :gin
@@ -771,6 +772,22 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_213844) do
     t.index ["inventory_id"], name: "index_items_on_inventory_id"
     t.index ["owner_type", "owner_id"], name: "index_items_on_owner"
     t.index ["storage_unit_type", "storage_unit_id"], name: "index_items_on_storage_unit"
+  end
+
+  create_table "jobs", force: :cascade do |t|
+    t.string "owner_type", null: false
+    t.bigint "owner_id", null: false
+    t.bigint "settlement_id", null: false
+    t.bigint "blueprint_id"
+    t.integer "job_type", null: false
+    t.integer "status", default: 0, null: false
+    t.string "output_type", null: false
+    t.datetime "completes_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blueprint_id"], name: "index_jobs_on_blueprint_id"
+    t.index ["owner_type", "owner_id"], name: "index_jobs_on_owner"
+    t.index ["settlement_id"], name: "index_jobs_on_settlement_id"
   end
 
   create_table "ledger_entries", force: :cascade do |t|
@@ -1605,6 +1622,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_213844) do
   add_foreign_key "hydrospheres", "celestial_bodies"
   add_foreign_key "items", "inventories"
   add_foreign_key "items", "items", column: "container_id"
+  add_foreign_key "jobs", "base_settlements", column: "settlement_id"
+  add_foreign_key "jobs", "blueprints"
   add_foreign_key "ledger_entries", "accounts", column: "from_account_id"
   add_foreign_key "ledger_entries", "accounts", column: "to_account_id"
   add_foreign_key "ledger_entries", "currencies"

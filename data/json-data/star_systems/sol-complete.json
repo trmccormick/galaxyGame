@@ -887,6 +887,9 @@
           "rock": 50.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -926,6 +929,9 @@
           "rock": 50.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -965,6 +971,9 @@
           "rock": 40.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1004,6 +1013,9 @@
           "rock": 45.0
         },
         "volcanic_activity": 5
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1043,6 +1055,9 @@
           "rock": 30.0
         },
         "volcanic_activity": 10
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1307,7 +1322,8 @@
         }
       },
       "properties": {
-        "standard_orbital_altitude_km": 1800
+        "standard_orbital_altitude_km": 1800,
+        "major_moon": true
       }
     },
     {
@@ -1365,6 +1381,9 @@
           "solid": 0.0,
           "gas": 0.0
         }
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1422,6 +1441,9 @@
           "solid": 0.0,
           "gas": 0.0
         }
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1461,6 +1483,9 @@
           "rock": 25.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1500,6 +1525,9 @@
           "rock": 20.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1539,6 +1567,9 @@
           "rock": 30.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1578,6 +1609,9 @@
           "rock": 15.0
         },
         "volcanic_activity": 0
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1644,6 +1678,9 @@
           "solid": 0.0,
           "gas": 0.0
         }
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1735,7 +1772,8 @@
         }
       },
       "properties": {
-        "standard_orbital_altitude_km": 5000
+        "standard_orbital_altitude_km": 5000,
+        "major_moon": true
       }
     },
     {
@@ -1778,6 +1816,9 @@
         "geological_activity": 95,
         "tectonic_activity": true,
         "volcanic_activity": 100
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {
@@ -1833,7 +1874,8 @@
         }
       },
       "properties": {
-        "standard_orbital_altitude_km": 500
+        "standard_orbital_altitude_km": 500,
+        "major_moon": true
       }
     },
     {
@@ -2068,6 +2110,9 @@
           "solid": 100.0,
           "gas": 0.0
         }
+      },
+      "properties": {
+        "major_moon": true
       }
     },
     {

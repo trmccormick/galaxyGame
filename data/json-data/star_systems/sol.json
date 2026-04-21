@@ -477,7 +477,8 @@
           }
         },
         "properties": {
-          "standard_orbital_altitude_km": 1800
+          "standard_orbital_altitude_km": 1800,
+          "major_moon": true
         }
       },
       {
@@ -556,7 +557,8 @@
           }
         },
         "properties": {
-          "standard_orbital_altitude_km": 5000
+          "standard_orbital_altitude_km": 5000,
+          "major_moon": true
         }
       },
       {

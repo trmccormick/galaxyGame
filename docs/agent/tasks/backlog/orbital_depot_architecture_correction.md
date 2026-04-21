@@ -1,3 +1,4 @@
+# ARCHIVED 2026-04-17: OrbitalDepot class and architecture are now retired and replaced by Settlement::OrbitalSettlement with Structures::OrbitalStructure. See migration notes in app/models/settlement/orbital_depot.rb. No further action required; file kept for historical reference only.
 # Task: OrbitalDepot Architecture Correction
 
 **Priority:** MEDIUM (backlog, no current failures)  

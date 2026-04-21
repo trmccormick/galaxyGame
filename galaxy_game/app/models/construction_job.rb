@@ -16,7 +16,9 @@ class ConstructionJob < ApplicationRecord
     skylight_cover: 1,
     access_point_conversion: 2,
     habitat_expansion: 3,
-    structure_upgrade: 4
+    structure_upgrade: 4,
+    shell_printing: 5,
+    seal_printing: 6
   }
   
   # Status enum

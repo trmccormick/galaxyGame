@@ -4,7 +4,7 @@ module AIManager
     def self.orbital_resupply_cycle
       Rails.logger.info("Starting orbital resupply cycle check")
       
-      l1_station = Settlement::BaseSettlement.where(settlement_type: :station).first
+      l1_station = Settlement::OrbitalSettlement.where(settlement_type: :station).first
       
       Rails.logger.info("L1 station: #{l1_station&.name}")
       

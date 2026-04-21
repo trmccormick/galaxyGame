@@ -121,11 +121,11 @@ The simulation architecture is divided into four distinct operational layers:
 ## 📚 Documentation Map
 The docs/ directory is governed by the Documentation Strategist to prevent fragmentation.
 
+## ⚠️ File Move & Archival Policy
+
+All file moves and archival (especially for task, legacy, or documentation files) must use `mv` in the terminal to preserve git history and avoid blank files. See [PRACTICAL_TESTING_GUIDE.md](testing/PRACTICAL_TESTING_GUIDE.md#canonical-file-move-and-archival-policy) for details.
 ## ⚖️ Project Governance
 - **GUARDRAILS.md**: Mandatory rules for code, documentation, and agent behavior.
-- **CURRENT_STATUS.md**: Real-time tracking of active failures and sprint progress.
-- **GLOSSARY_SYSTEM_MECHANICS.md**: Unified terminology for all four simulation layers.
-
 ## 🏗️ Architecture & Engineering
 - **architecture/**: High-level designs including the AI Manager and Planetary Patterns.
 - **economics/**: Market mechanics, tax structures, and PLEX trading logic.

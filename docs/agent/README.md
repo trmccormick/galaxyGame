@@ -233,6 +233,23 @@ python3 -c "import json; json.load(open('file.json'))"
 A single misplaced comma or comment will silently break the file and can cause unrelated spec failures.
 This validation step is required for all data file edits—add it to your task instructions.
 
+**10. Host vs Docker Path Policy**
+**IMPORTANT:** All Rails application code, specs, and factories are located in the `galaxy_game/` subfolder of the workspace. All host path references for code, specs, and factories must be relative to `galaxy_game/` (e.g., `galaxy_game/app/services/...`, `galaxy_game/spec/services/...`). Do not look for `app/`, `spec/`, etc. at the workspace root.
+All file operations (read, write, move, edit, copy, ls, grep, etc.) must use host paths (relative to the workspace root, e.g. /Users/tam0013/Documents/git/galaxyGame/ or ./). Only use Docker/container paths (e.g. /home/galaxy_game/) when running RSpec, Rails, or other commands inside the container. Never attempt to move, edit, or read files using container paths from the host, and never use host paths inside Docker commands. This prevents path confusion and ensures all agents use the correct context for file operations and test execution.
+
+**Quick Reference:**
+- Host file operations: always use workspace paths (e.g. ./docs/agent/tasks/active/)
+- Docker commands (RSpec, Rails): always use container paths (e.g. /home/galaxy_game/)
+
+If unsure, check your current working directory and clarify which context (host or container) you are operating in before running commands.
+
+**11. Task Refactor Archival Flow**
+When refactoring or replacing a task file:
+    - Always move the original file (with full content) to `backlog/old` before creating a new task.
+    - Only after the new task is finalized, update the archived original with a reference to the new file that supersedes it.
+    - Never leave a blank or marker file in backlog; only the new canonical file should remain.
+This ensures traceability, prevents data loss, and maintains a clear historical record of all task changes.
+
 ---
 
 ## Key Architectural Decisions
