@@ -71,9 +71,9 @@ class Manufacturing::MaterialRequest
     return [] if needed_gases.empty?
     
     # Create a job to track all the requests
-    pressurization_job = EnvironmentJob.create!(
+    pressurization_job = Job.create!(
+      job_type: :environment_processing,
       jobable: enclosed_environment,
-      job_type: 'pressurization',
       status: 'materials_pending',
       target_values: { pressure: target_pressure }
     )
@@ -102,8 +102,8 @@ class Manufacturing::MaterialRequest
   
   # Helper method to check if a request is for pressurization
   def self.pressurization_request?(material_request)
-    material_request.requestable_type == 'EnvironmentJob' && 
-    material_request.requestable.job_type == 'pressurization'
+    material_request.requestable_type == 'Job' && 
+    material_request.requestable.job_type == 'environment_processing'
   end
   
   # When a pressurization request is fulfilled
