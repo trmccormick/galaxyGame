@@ -78,13 +78,13 @@ class Game
     hours_elapsed = time_skipped * 24
     
     # Process material processing jobs
-    MaterialProcessingJob.active.each do |job|
+    Job.where(job_type: :material_processing, status: 'active').each do |job|
       job.start! if job.status == 'pending'
       job.process_tick(hours_elapsed)
     end
-    
+
     # Process component production jobs
-    ComponentProductionJob.active.each do |job|
+    Job.where(job_type: :component_production, status: 'active').each do |job|
       job.start! if job.status == 'pending'
       job.process_tick(hours_elapsed)
       
