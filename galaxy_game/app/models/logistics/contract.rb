@@ -10,8 +10,13 @@ module Logistics
     enum transport_method: {
       orbital_transfer: 'orbital_transfer',
       surface_conveyance: 'surface_conveyance',
-      drone_delivery: 'drone_delivery'
+      drone_delivery: 'drone_delivery',
+      direct_import: 'direct_import',
+      contracted_harvesting: 'contracted_harvesting'
     }
+  belongs_to :initiated_by, polymorphic: true, optional: true
+
+  EARTH_LUNA_TRANSIT_DAYS = 3
 
     validates :material, :quantity, :transport_method, presence: true
     validates :quantity, numericality: { greater_than: 0 }
@@ -25,8 +30,11 @@ module Logistics
     end
 
     def mark_failed!(reason = nil)
-      update(status: :failed, operational_data: operational_data.merge(failure_reason: reason))
+      update!(status: :failed, failure_reason: reason)
     end
+  validates :arrives_at, presence: true, if: -> { in_transit? || pending? }
+  scope :arriving_soon, -> { where(status: [:in_transit, :pending]).where('arrives_at <= ?', Time.current) }
+  scope :emergency_orders, -> { where(emergency: true) }
 
     def mark_in_transit!
       update(status: :in_transit, started_at: Time.current)
