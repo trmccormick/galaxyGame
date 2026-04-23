@@ -874,7 +874,11 @@ module AIManager
         result[:wormhole_connection] = matching_egg['trigger_conditions']['wormhole_connection'] if matching_egg['trigger_conditions']&.key?('wormhole_connection')
         result
       else
-        nil
+        {
+          flavor_text: nil,
+          easter_egg_id: nil,
+          manifest_entry: nil
+        }
       end
     end
 
