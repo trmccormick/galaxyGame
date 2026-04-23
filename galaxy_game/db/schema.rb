@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_04_21_120000) do
+ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -525,6 +525,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_04_21_120000) do
     t.bigint "blueprint_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "inflatable_id"
+    t.integer "structure_port_id"
+    t.decimal "target_thickness_mm"
+    t.integer "regolith_source_settlement_id"
     t.index ["blueprint_id"], name: "index_construction_jobs_on_blueprint_id"
     t.index ["job_type", "status"], name: "index_construction_jobs_on_job_type_and_status"
     t.index ["jobable_type", "jobable_id"], name: "index_construction_jobs_on_jobable"

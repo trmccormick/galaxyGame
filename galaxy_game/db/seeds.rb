@@ -77,7 +77,12 @@ Logistics::Provider.find_or_create_by!(
   provider.reliability_rating = 4.8
   provider.base_fee_per_kg = 12.0
   provider.speed_multiplier = 1.0
-  provider.capabilities = ['orbital_transfer', 'surface_conveyance']
+  provider.capabilities = [
+    'orbital_transfer',
+    'surface_conveyance',
+    'direct_import',
+    'contracted_harvesting'
+  ]
   provider.cost_modifiers = { 'bulk_discount_thresholds' => [], 'orbital_transfer_discount' => 0.9 }
   provider.time_modifiers = { 'orbital_transfer_speedup' => 0.8 }
 end
@@ -113,3 +118,25 @@ end
 # the first extrasolar system is lost, forcing LDC and AstroLift to collaborate
 # on artificial wormhole technology
 puts "Note: Wormhole Transit Consortium will be created during Snap Event storyline"
+
+earth_body = CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01')
+
+cape_canaveral_location = Location::CelestialLocation.find_or_create_by!(
+  celestial_body: earth_body,
+  coordinates: '28.57°N 80.65°W'
+) do |loc|
+  loc.name = 'Cape Canaveral, Florida'
+end
+
+cape_canaveral = Settlement::BaseSettlement.find_or_create_by!(
+  name: 'Cape Canaveral Spaceport'
+) do |s|
+  s.settlement_type = :base
+  s.current_population = 0
+  s.owner = astrolift
+  s.operational_data = {}
+end
+
+if cape_canaveral_location.locationable.nil?
+  cape_canaveral_location.update!(locationable: cape_canaveral)
+end

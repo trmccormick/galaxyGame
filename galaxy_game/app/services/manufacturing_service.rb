@@ -41,7 +41,8 @@ class ManufacturingService
     end
     
     # Create the manufacturing job
-    job = UnitAssemblyJob.create!(
+    job = Job.create!(
+      job_type: :unit_assembly,
       unit_type: blueprint_name,
       owner: owner,
       base_settlement: settlement,

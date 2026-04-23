@@ -1,4 +1,11 @@
 class ConstructionJob < ApplicationRecord
+  # Shell/seal printing geometry attributes
+  belongs_to :inflatable, class_name: 'Units::BaseUnit', optional: true
+  belongs_to :regolith_source_settlement, class_name: 'Settlement::BaseSettlement', optional: true
+
+  validates :target_thickness_mm, numericality: { greater_than: 0 }, allow_nil: true
+  validates :inflatable_id, presence: true, if: -> { shell_printing? }
+  validates :structure_port_id, presence: true, if: -> { seal_printing? }
   belongs_to :jobable, polymorphic: true
   belongs_to :blueprint, optional: true
   belongs_to :settlement, class_name: 'Settlement::BaseSettlement', foreign_key: 'settlement_id'

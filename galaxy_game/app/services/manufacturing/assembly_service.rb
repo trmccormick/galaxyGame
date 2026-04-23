@@ -214,7 +214,8 @@ module Manufacturing
 
     # Create a unit assembly job
     def self.create_unit_assembly_job(blueprint, blueprint_data, settlement, requester)
-      UnitAssemblyJob.create!(
+      Job.create!(
+        job_type: :unit_assembly,
         base_settlement: settlement,
         owner: requester,
         unit_type: blueprint_data['id'] || blueprint.name.downcase.gsub(' ', '_'),

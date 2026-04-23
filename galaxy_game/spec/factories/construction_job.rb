@@ -62,10 +62,25 @@ FactoryBot.define do
         if job.jobable.respond_to?(:status=)
           job.jobable.update(status: 'under_construction')
         end
-        
         # Set an estimated completion time
         job.update(estimated_completion: 24.hours.from_now)
       end
+    end
+
+    # Shell printing job trait
+    trait :shell_printing do
+      job_type { :shell_printing }
+      association :inflatable, factory: :base_unit
+      target_thickness_mm { 120.0 }
+      regolith_source_settlement { association(:base_settlement) }
+    end
+
+    # Seal printing job trait
+    trait :seal_printing do
+      job_type { :seal_printing }
+      association :structure_port, factory: :skylight
+      target_thickness_mm { 80.0 }
+      regolith_source_settlement { association(:base_settlement) }
     end
   end
 end

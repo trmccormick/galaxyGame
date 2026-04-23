@@ -1,6 +1,6 @@
 # Session Strategist — Role Document
 **Role**: Live Session Triage, Priority Management, and Implementation Agent Direction  
-**Last Updated**: 2026-03-22  
+**Last Updated**: 2026-04-22  
 
 > ⚠️ **Doc Maintenance Rule**: This document uses role names only.
 > Never add model-specific names to this file.
@@ -112,6 +112,16 @@ paste to the Implementation Agent.
 Read docs/agent/README.md first, then your task file at:
 docs/agent/tasks/active/[TASK_FILE_NAME].md
 
+BEFORE DOING ANYTHING ELSE — prove you read the README.
+Your first response must contain ONLY this confirmation block:
+
+  README READ CONFIRMATION
+  Rule 1 (Docker): [paste verbatim]
+  Rule 7 (RSpec Output): [paste verbatim]
+  Rule 10 (Host vs Docker paths): [paste verbatim]
+
+Do not proceed until this confirmation is approved by the human.
+
 [PRIORITY] ISSUE: [one line description]
 
 The issue:
@@ -140,6 +150,16 @@ Start with step 1. Do not apply anything before the Synthesis Report is approved
 Read docs/agent/README.md first, then your task file at:
 docs/agent/tasks/active/solar_system_name_callback_fix.md
 
+BEFORE DOING ANYTHING ELSE — prove you read the README.
+Your first response must contain ONLY this confirmation block:
+
+  README READ CONFIRMATION
+  Rule 1 (Docker): [paste verbatim]
+  Rule 7 (RSpec Output): [paste verbatim]
+  Rule 10 (Host vs Docker paths): [paste verbatim]
+
+Do not proceed until this confirmation is approved by the human.
+
 MEDIUM ISSUE: SolarSystem name callback bypassed by factory sequence
 
 The issue:
@@ -162,6 +182,16 @@ Agent: Low-tier implementation agent — single file, fully specified, no infere
 ```
 Read docs/agent/README.md first, then your task file at:
 docs/agent/tasks/active/unit_assembly_job_materials_fix.md
+
+BEFORE DOING ANYTHING ELSE — prove you read the README.
+Your first response must contain ONLY this confirmation block:
+
+  README READ CONFIRMATION
+  Rule 1 (Docker): [paste verbatim]
+  Rule 7 (RSpec Output): [paste verbatim]
+  Rule 10 (Host vs Docker paths): [paste verbatim]
+
+Do not proceed until this confirmation is approved by the human.
 
 HIGH ISSUE: UnitAssemblyJob#materials_gathered? returns wrong result
 

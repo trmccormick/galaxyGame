@@ -161,7 +161,8 @@ module Manufacturing
     end
 
     def create_production_job(blueprint, quantity, printer_unit, production_time, materials_consumed)
-      ComponentProductionJob.create!(
+      Job.create!(
+        job_type: :component_production,
         settlement: @settlement,
         printer_unit: printer_unit,
         component_blueprint_id: blueprint['id'],

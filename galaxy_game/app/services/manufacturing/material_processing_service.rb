@@ -32,7 +32,8 @@ module Manufacturing
       # Currently using maintenance_interval_hours as proxy — add to unit JSON templates
       production_time = operational_data.dig("operational_properties", "maintenance_interval_hours") || 24.0
 
-      MaterialProcessingJob.create!(
+      Job.create!(
+        job_type: :material_processing,
         settlement: @settlement,
         unit: unit,
         processing_type: processing_type,
