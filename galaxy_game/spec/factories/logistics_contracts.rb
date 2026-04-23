@@ -9,5 +9,20 @@ FactoryBot.define do
     status { :pending }
     scheduled_at { 1.hour.from_now }
     operational_data { { purpose: 'test_transfer' } }
+    trait :direct_import do
+      transport_method { :direct_import }
+      arrives_at { Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS.days.from_now }
+      emergency { false }
+    end
+
+    trait :contracted_harvesting do
+      transport_method { :contracted_harvesting }
+      arrives_at { 7.days.from_now }
+    end
+
+    trait :emergency_import do
+      transport_method { :direct_import }
+      emergency { true }
+    end
   end
 end
