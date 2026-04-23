@@ -234,43 +234,37 @@ class Resource::Acquisition
   
   def try_earth_import(resource_name, amount, priority)
     return nil unless should_import_from_earth?(resource_name)
-    
+
     Rails.logger.info "[Resource] Importing #{amount} of #{resource_name} from Earth (Priority: #{priority})"
-    
-    # Simulate import time based on priority
+
     delivery_time = case priority
-                   when :critical
-                     6.hours
-                   when :high
-                     12.hours
-                   when :medium
-                     24.hours
-                   else
-                     48.hours
+                   when :critical then 6.hours
+                   when :high     then 12.hours
+                   when :medium   then 24.hours
+                   else 48.hours
                    end
-    
-    # Create a simulated import job
-    job = ResourceJob.create!(
-      job_type: 'earth_import',
-      resource_type: resource_name,
-      target_amount: amount,
-      settlement: @settlement,
-      status: 'in_progress',
-      estimated_completion: Time.current + delivery_time,
-      job_data: {
-        priority: priority
-      }
+
+    contract = Logistics::Contract.create!(
+      transport_method: :direct_import,
+      from_settlement: Settlement::BaseSettlement.find_by!(name: "Cape Canaveral Spaceport"),
+      to_settlement: @settlement,
+      material: resource_name,
+      quantity: amount,
+      arrives_at: Time.current + Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS.days,
+      initiated_by: self.class.name,
+      emergency: false,
+      eap_at_order_time: nil,
+      provider: Logistics::Provider.find_by!(identifier: "ASTROLIFT")
     )
-    
-    Rails.logger.info "[Resource] Simulated import order placed for #{amount} #{resource_name}, ETA: #{delivery_time / 1.hour} hours"
-    
-    { success: true, method: :earth_import, amount: amount, job: job, eta: delivery_time }
+
+    Rails.logger.info "[Resource] Logistics contract placed for #{amount} #{resource_name} (direct_import), ETA: #{Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS} days"
+
+    { success: true, method: :earth_import, amount: amount, contract: contract, eta: Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS.days }
   end
   
   def try_contracted_harvesting(resource_name, amount)
     return nil unless can_contract_harvesting?(resource_name)
-    
-    # Resources that would be harvested from other celestial bodies
+
     contracted_resources = {
       'Methane' => 'Titan',
       'Nitrogen' => 'Titan',
@@ -279,119 +273,92 @@ class Resource::Acquisition
       'Carbon Dioxide' => 'Mars',
       'Precious Metals' => 'Asteroids'
     }
-    
-    # Determine the celestial body and contract cost
+
     celestial_body = contracted_resources[resource_name]
     contract_cost = estimate_contract_cost(resource_name, amount)
-    
+
     return nil unless celestial_body && contract_cost
-    
-    # Check if we can afford the contract
+
     if @settlement.credits < contract_cost
       Rails.logger.warn "[Resource] Insufficient credits to contract harvesting: #{contract_cost} needed"
       return nil
     end
-    
-    # Deduct credits for the contract
+
     @settlement.update(credits: @settlement.credits - contract_cost)
-    
-    # Simulate delivery time (longer for outer planets)
+
     delivery_time = case celestial_body
-                   when 'Titan'
-                     72.hours
-                   when 'Mars'
-                     48.hours
-                   when 'Gas Giants'
-                     96.hours
-                   when 'Asteroids'
-                     120.hours
-                   else
-                     24.hours
+                   when 'Titan' then 72.hours
+                   when 'Mars' then 48.hours
+                   when 'Gas Giants' then 96.hours
+                   when 'Asteroids' then 120.hours
+                   else 24.hours
                    end
-    
-    # Create a simulated contract job
-    job = ResourceJob.create!(
-      job_type: 'contracted_harvesting',
-      resource_type: resource_name,
-      target_amount: amount,
-      settlement: @settlement,
-      status: 'in_progress',
-      estimated_completion: Time.current + delivery_time,
-      job_data: {
-        celestial_body: celestial_body,
-        contract_cost: contract_cost,
-        delivery_time: delivery_time
-      }
+
+    contract = Logistics::Contract.create!(
+      transport_method: :contracted_harvesting,
+      from_settlement: nil,
+      to_settlement: @settlement,
+      material: resource_name,
+      quantity: amount,
+      arrives_at: Time.current + (delivery_time / 1.day).days,
+      initiated_by: self.class.name,
+      emergency: false,
+      eap_at_order_time: nil,
+      provider: Logistics::Provider.find_by!(identifier: "ASTROLIFT")
     )
-    
-    Rails.logger.info "[Resource] Contracted harvesting of #{amount} #{resource_name} from #{celestial_body}, ETA: #{delivery_time / 1.hour} hours"
-    
-    { success: true, method: :contracted_harvesting, amount: amount, job: job, eta: delivery_time }
+
+    Rails.logger.info "[Resource] Logistics contract placed for #{amount} #{resource_name} (contracted_harvesting), ETA: #{delivery_time / 1.hour} hours"
+
+    { success: true, method: :contracted_harvesting, amount: amount, contract: contract, eta: delivery_time }
   end
   
   def simulate_market_acquisition(resource_name, amount, priority)
     # Simulate market behavior for testing
     Rails.logger.info "[Resource] Simulating market acquisition of #{amount} #{resource_name}"
-    
-    # Set price based on material type
+
     material_data = Lookup::MaterialLookupService.new.find_material(resource_name)
     category = material_data&.dig('category') || 'raw_material'
-    
+
     base_price = case category
-                when 'ore', 'mineral', 'gas'
-                  50
-                when 'metal', 'alloy'
-                  100
-                when 'chemical_compound'
-                  150
-                when 'component'
-                  250
-                else
-                  75
+                when 'ore', 'mineral', 'gas' then 50
+                when 'metal', 'alloy' then 100
+                when 'chemical_compound' then 150
+                when 'component' then 250
+                else 75
                 end
-    
-    # Calculate total cost
+
     total_cost = base_price * amount
-    
-    # Check if settlement has enough credits
+
     if @settlement.credits < total_cost
       Rails.logger.warn "[Resource] Insufficient credits for market purchase: #{total_cost} needed"
       return nil
     end
-    
-    # Deduct credits
+
     @settlement.update(credits: @settlement.credits - total_cost)
-    
-    # Simulate delivery time based on priority
+
     delivery_time = case priority
-                   when :critical
-                     6.hours
-                   when :high
-                     12.hours
-                   when :medium
-                     24.hours
-                   else
-                     48.hours
+                   when :critical then 6.hours
+                   when :high     then 12.hours
+                   when :medium   then 24.hours
+                   else 48.hours
                    end
-    
-    # Create a simulated delivery job
-    job = ResourceJob.create!(
-      job_type: 'market_delivery',
-      resource_type: resource_name,
-      target_amount: amount,
-      settlement: @settlement,
-      status: 'in_progress',
-      estimated_completion: Time.current + delivery_time,
-      job_data: {
-        price_per_unit: base_price,
-        total_cost: total_cost,
-        delivery_time: delivery_time
-      }
+
+    contract = Logistics::Contract.create!(
+      transport_method: :direct_import,
+      from_settlement: Settlement::BaseSettlement.find_by!(name: "Cape Canaveral Spaceport"),
+      to_settlement: @settlement,
+      material: resource_name,
+      quantity: amount,
+      arrives_at: Time.current + Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS.days,
+      initiated_by: self.class.name,
+      emergency: false,
+      eap_at_order_time: nil,
+      provider: Logistics::Provider.find_by!(identifier: "ASTROLIFT")
     )
-    
-    Rails.logger.info "[Resource] Simulated market order placed for #{amount} #{resource_name}, ETA: #{delivery_time / 1.hour} hours"
-    
-    { success: true, method: :market, amount: amount, job: job, eta: delivery_time }
+
+    Rails.logger.info "[Resource] Logistics contract placed for #{amount} #{resource_name} (market_delivery/direct_import), ETA: #{Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS} days"
+
+    { success: true, method: :market, amount: amount, contract: contract, eta: Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS.days }
   end
   
   # Helper methods
