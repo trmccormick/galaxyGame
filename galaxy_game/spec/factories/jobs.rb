@@ -1,4 +1,8 @@
 FactoryBot.define do
+    trait :overdue do
+      status { :in_progress }
+      completes_at { 1.hour.ago }
+    end
   factory :job do
     association :owner, factory: :player
     association :settlement
