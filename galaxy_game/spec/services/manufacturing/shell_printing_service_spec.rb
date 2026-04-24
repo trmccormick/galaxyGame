@@ -127,9 +127,9 @@ RSpec.describe Manufacturing::ShellPrintingService do
       it 'creates a shell printing job' do
         expect {
           service.enclose_inflatable(inflatable_tank, printer_unit)
-        }.to change { ShellPrintingJob.count }.by(1)
+        }.to change { ConstructionJob.where(job_type: :shell_printing).count }.by(1)
 
-        job = ShellPrintingJob.last
+        job = ConstructionJob.where(job_type: :shell_printing).last
         expect(job.inflatable_tank).to eq(inflatable_tank)
         expect(job.printer_unit).to eq(printer_unit)
         expect(job.production_time_hours).to eq(10.0)
@@ -149,7 +149,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
       it 'stores material composition in job metadata' do
         service.enclose_inflatable(inflatable_tank, printer_unit)
         
-        job = ShellPrintingJob.last
+        job = ConstructionJob.where(job_type: :shell_printing).last
         expect(job.materials_consumed['inert_waste']).to include(
           'amount' => 1400,
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }

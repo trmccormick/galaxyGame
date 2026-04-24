@@ -20,7 +20,8 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
 
       it 'creates a job with correct processing_type :thermal_extraction' do
         job = service.process(unit, 'raw_regolith', 10)
-        expect(job).to be_a(MaterialProcessingJob)
+        expect(job).to be_a(Job)
+        expect(job.job_type).to eq('material_processing')
         expect(job.processing_type).to eq('thermal_extraction')
         expect(job.input_material).to eq('raw_regolith')
         expect(job.input_amount).to eq(10)
@@ -42,7 +43,8 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
     context 'TEU job: removes input, adds processed_regolith' do
       let(:unit) { create(:base_unit, unit_type: 'thermal_extraction_unit_mk1', settlement: settlement) }
       let(:job) do
-        MaterialProcessingJob.create!(
+        Job.create!(
+          job_type: :material_processing,
           settlement: settlement,
           unit: unit,
           processing_type: :thermal_extraction,
@@ -67,7 +69,8 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
     context 'PVE job: calculates extracted_water from geosphere crust_composition' do
       let(:unit) { create(:base_unit, unit_type: 'planetary_volatiles_extractor_mk1', settlement: settlement) }
       let(:job) do
-        MaterialProcessingJob.create!(
+        Job.create!(
+          job_type: :material_processing,
           settlement: settlement,
           unit: unit,
           processing_type: :volatiles_extraction,

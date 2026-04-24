@@ -208,7 +208,8 @@ RSpec.describe Manufacturing::AssemblyService, type: :service do
           buy_missing: false
         )
 
-        expect(result.job).to be_a(UnitAssemblyJob)
+        expect(result.job).to be_a(Job)
+        expect(result.job.job_type).to eq('unit_assembly')
       end
     end
 

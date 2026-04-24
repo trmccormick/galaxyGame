@@ -73,7 +73,7 @@ RSpec.describe Manufacturing::Service, type: :service do
         expect(result[:error]).to be_nil, "Manufacturing failed: #{result[:error]}"
         expect(result[:message]).to include("Construction cost: #{expected_construction_cost} GCC")
         
-        expect(UnitAssemblyJob.count).to eq(1)
+        expect(Job.where(job_type: :unit_assembly).count).to eq(1)
         expect(player.reload.balance).to eq(initial_balance - expected_construction_cost)
       end
 
@@ -97,7 +97,7 @@ RSpec.describe Manufacturing::Service, type: :service do
           
           # Should either succeed or fail gracefully with a clear reason
           if result[:success]
-            expect(UnitAssemblyJob.where(unit_type: blueprint['name']).count).to be >= 1
+            expect(Job.where(job_type: :unit_assembly, unit_type: blueprint['name']).count).to be >= 1
           else
             expect(result[:error]).to be_present
             expect(result[:error]).to be_a(String)
@@ -127,7 +127,7 @@ RSpec.describe Manufacturing::Service, type: :service do
         expect(result[:success]).to be true
         expect(result[:message]).to include("Construction cost: #{expected_construction_cost} GCC")
         
-        expect(UnitAssemblyJob.count).to eq(1)
+        expect(Job.where(job_type: :unit_assembly).count).to eq(1)
         expect(player.reload.balance).to eq(initial_balance - expected_construction_cost)
       end
     end
