@@ -116,17 +116,12 @@ module HasModules
   end
 
   def available_module_ports
-    STDERR.puts "available_module_ports called on #{self.class.name}##{id}"
     ports_data = get_ports_data if respond_to?(:get_ports_data)
-    STDERR.puts "respond_to?(:get_ports_data) = #{respond_to?(:get_ports_data)}"
-    STDERR.puts "ports_data = #{ports_data.inspect}"
     return 0 unless ports_data
-    
+
     internal = ports_data.dig('internal_module_ports') || 0
     external = ports_data.dig('external_module_ports') || 0
-    total = internal + external
-    STDERR.puts "internal=#{internal}, external=#{external}, total=#{total}"
-    total
+    internal + external
   end
 
   def determine_module_class(module_type)
@@ -217,6 +212,4 @@ module HasModules
     energy_data['rate'] = original_rate
     energy_data.delete('original_rate')
   end
-
-  # Add other effect methods as needed...
 end
