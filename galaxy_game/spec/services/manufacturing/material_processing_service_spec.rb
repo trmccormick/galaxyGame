@@ -3,7 +3,21 @@
 require 'rails_helper'
 
 RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
-  let!(:celestial_body) { create(:large_moon, :luna) }
+  # Use a generic celestial body with controlled volatile data.
+  # Do NOT use Luna or any world constant — specs must be independent of real-world data.
+  let!(:celestial_body) do
+    body = create(:celestial_body)
+    body.create_geosphere!(
+      geological_activity: 5,
+      tectonic_activity: false,
+      crust_composition: { 'regolith' => 100.0 },
+      stored_volatiles: { 'H2O' => { 'polar_ice' => 5.0 }, 'He3' => { 'regolith' => 95.0 } }
+    ) unless body.geosphere
+    body.geosphere.update_columns(
+      stored_volatiles: { 'H2O' => { 'polar_ice' => 5.0 }, 'He3' => { 'regolith' => 95.0 } }.to_json
+    )
+    body
+  end
   let(:location) do
     create(:celestial_location,
            name: "Test Location",
@@ -20,11 +34,12 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
 
       it 'creates a job with correct processing_type :thermal_extraction' do
         job = service.process(unit, 'raw_regolith', 10)
+        od = job.operational_data.is_a?(String) ? JSON.parse(job.operational_data) : job.operational_data
         expect(job).to be_a(Job)
         expect(job.job_type).to eq('material_processing')
-        expect(job.processing_type).to eq('thermal_extraction')
-        expect(job.input_material).to eq('raw_regolith')
-        expect(job.input_amount).to eq(10)
+        expect(od['processing_type']).to eq('thermal_extraction')
+        expect(od['input_material']).to eq('raw_regolith')
+        expect(od['input_amount']).to eq(10)
       end
     end
 
@@ -46,125 +61,169 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
         Job.create!(
           job_type: :material_processing,
           settlement: settlement,
-          unit: unit,
-          processing_type: :thermal_extraction,
-          input_material: 'raw_regolith',
-          input_amount: 10,
+          owner: settlement.owner,
+          output_type: 'processed_regolith',
+          completes_at: 1.hour.from_now,
           status: :pending,
-          production_time_hours: 1.0,
-          operational_data: { 'unit_type' => unit.unit_type }
+          operational_data: {
+            'unit_type' => unit.unit_type,
+            'processing_type' => 'thermal_extraction',
+            'input_material' => 'raw_regolith',
+            'input_amount' => 10,
+            'production_time_hours' => 1.0
+          }
         )
       end
       before do
         allow(settlement.inventory).to receive(:remove_item).with('raw_regolith', 10, settlement, {}).and_return(true)
-        allow(settlement.inventory).to receive(:add_item).with('processed_regolith', kind_of(Numeric), settlement, {})
+        # Allow all add_item calls — TEU produces processed_regolith (primary) plus
+        # per-compound volatile byproducts from geosphere crust composition.
+        # Volatile byproducts are world-driven and vary by location.
+        allow(settlement.inventory).to receive(:add_item)
       end
       it 'removes input and adds processed_regolith' do
         expect(settlement.inventory).to receive(:remove_item).with('raw_regolith', 10, settlement, {})
         expect(settlement.inventory).to receive(:add_item).with('processed_regolith', kind_of(Numeric), settlement, {})
+        # Allow volatile byproduct adds — world-driven, not asserted here
+        allow(settlement.inventory).to receive(:add_item)
         service.complete_job(job)
       end
     end
 
-    context 'PVE job: calculates extracted_water from geosphere crust_composition' do
+    context 'PVE job: calculates extracted_water from geosphere stored_volatiles' do
+      # Outer let! body has H2O: 5.0, He3: 95.0 → total mass = 100.0
+      # H2O% = 5%, He3% = 95%
+      # H2O produced = 20 * (5/100) * 0.75 = 0.75
       let(:unit) { create(:base_unit, unit_type: 'planetary_volatiles_extractor_mk1', settlement: settlement) }
       let(:job) do
         Job.create!(
           job_type: :material_processing,
           settlement: settlement,
-          unit: unit,
-          processing_type: :volatiles_extraction,
-          input_material: 'regolith',
-          input_amount: 20,
+          owner: settlement.owner,
+          output_type: 'H2O',
+          completes_at: 1.hour.from_now,
           status: :pending,
-          production_time_hours: 1.0,
-          operational_data: { 'unit_type' => unit.unit_type }
+          operational_data: {
+            'unit_type' => unit.unit_type,
+            'processing_type' => 'volatiles_extraction',
+            'input_material' => 'regolith',
+            'input_amount' => 20,
+            'production_time_hours' => 1.0
+          }
         )
       end
       before do
         allow(settlement.inventory).to receive(:remove_item).with('regolith', 20, settlement, {}).and_return(true)
         allow(settlement.inventory).to receive(:add_item)
-        allow(settlement.celestial_body.geosphere).to receive(:crust_composition).and_return({ 'volatiles' => { 'H2O' => 5.0 } })
       end
-      it 'adds H2O based on geosphere H2O percent' do
+      it 'adds H2O based on geosphere stored_volatiles H2O mass fraction' do
         expect(settlement.inventory).to receive(:add_item).with('H2O', a_value_within(0.01).of(0.75), settlement, {})
+        allow(settlement.inventory).to receive(:add_item)
         service.complete_job(job)
       end
     end
 
-    context 'PVE job: calculates extracted_gases from non-H2O geosphere volatiles' do
+    context 'PVE job: calculates extracted_gases from non-H2O geosphere stored_volatiles' do
+      # Set body geosphere to CO2: 3.0, N2: 2.0 → total mass = 5.0
+      # CO2% = 60%, N2% = 40%
+      # CO2 produced = 20 * (3/5) * 0.75 = 9.0
+      # N2 produced  = 20 * (2/5) * 0.75 = 6.0
       let(:unit) { create(:base_unit, unit_type: 'planetary_volatiles_extractor_mk1', settlement: settlement) }
       let(:job) do
-        MaterialProcessingJob.create!(
+        Job.create!(
+          job_type: :material_processing,
           settlement: settlement,
-          unit: unit,
-          processing_type: :volatiles_extraction,
-          input_material: 'regolith',
-          input_amount: 20,
+          owner: settlement.owner,
+          output_type: 'CO2',
+          completes_at: 1.hour.from_now,
           status: :pending,
-          production_time_hours: 1.0,
-          operational_data: { 'unit_type' => unit.unit_type }
+          operational_data: {
+            'unit_type' => unit.unit_type,
+            'processing_type' => 'volatiles_extraction',
+            'input_material' => 'regolith',
+            'input_amount' => 20,
+            'production_time_hours' => 1.0
+          }
         )
       end
       before do
+        celestial_body.geosphere.update_columns(
+          stored_volatiles: { 'CO2' => { 'deposits' => 3.0 }, 'N2' => { 'deposits' => 2.0 } }.to_json
+        )
         allow(settlement.inventory).to receive(:remove_item).with('regolith', 20, settlement, {}).and_return(true)
         allow(settlement.inventory).to receive(:add_item)
-        allow(settlement.celestial_body.geosphere).to receive(:crust_composition).and_return({ 'volatiles' => { 'CO2' => 3.0, 'N2' => 2.0 } })
       end
-      it 'adds mixed_volatiles for each non-H2O volatile' do
-        expect(settlement.inventory).to receive(:add_item).with('CO2', a_value_within(0.01).of(0.45), settlement, {})
-        expect(settlement.inventory).to receive(:add_item).with('N2', a_value_within(0.01).of(0.30), settlement, {})
+      it 'adds extracted compounds for each volatile in stored_volatiles' do
+        expect(settlement.inventory).to receive(:add_item).with('CO2', a_value_within(0.01).of(9.0), settlement, {})
+        expect(settlement.inventory).to receive(:add_item).with('N2', a_value_within(0.01).of(6.0), settlement, {})
+        allow(settlement.inventory).to receive(:add_item)
         service.complete_job(job)
       end
     end
 
     context 'PVE job: calculates depleted_regolith as remainder after extraction' do
+      # Set body geosphere to H2O: 5.0, CO2: 3.0 → total mass = 8.0
+      # H2O% = 62.5%, CO2% = 37.5%
+      # H2O produced  = 20 * 0.625 * 0.75 = 9.375
+      # CO2 produced  = 20 * 0.375 * 0.75 = 5.625
+      # total extracted = 15.0
+      # depleted_regolith = 20 - 15.0 = 5.0
       let(:unit) { create(:base_unit, unit_type: 'planetary_volatiles_extractor_mk1', settlement: settlement) }
       let(:job) do
-        MaterialProcessingJob.create!(
+        Job.create!(
+          job_type: :material_processing,
           settlement: settlement,
-          unit: unit,
-          processing_type: :volatiles_extraction,
-          input_material: 'regolith',
-          input_amount: 20,
+          owner: settlement.owner,
+          output_type: 'depleted_regolith',
+          completes_at: 1.hour.from_now,
           status: :pending,
-          production_time_hours: 1.0,
-          operational_data: { 'unit_type' => unit.unit_type }
+          operational_data: {
+            'unit_type' => unit.unit_type,
+            'processing_type' => 'volatiles_extraction',
+            'input_material' => 'regolith',
+            'input_amount' => 20,
+            'production_time_hours' => 1.0
+          }
         )
       end
       before do
+        celestial_body.geosphere.update_columns(
+          stored_volatiles: { 'H2O' => { 'deposits' => 5.0 }, 'CO2' => { 'deposits' => 3.0 } }.to_json
+        )
         allow(settlement.inventory).to receive(:remove_item).and_return(true)
         allow(settlement.inventory).to receive(:add_item)
-        allow(settlement.celestial_body.geosphere).to receive(:crust_composition)
-          .and_return({ 'volatiles' => { 'H2O' => 5.0, 'CO2' => 3.0 } })
       end
-      it 'adds depleted_regolith as input minus extracted volatiles' do
-        # 20kg input, H2O: 20*(5/100)*0.75=0.75, CO2: 20*(3/100)*0.75=0.45
-        # total extracted = 1.2, depleted = 20 - 1.2 = 18.8
+      it 'adds depleted_regolith as input minus all extracted volatiles' do
         expect(settlement.inventory).to receive(:add_item)
-          .with('depleted_regolith', a_value_within(0.01).of(18.8), settlement, {})
+          .with('depleted_regolith', a_value_within(0.01).of(5.0), settlement, {})
+        allow(settlement.inventory).to receive(:add_item)
         service.complete_job(job)
       end
     end
 
-    context 'PVE job: returns gracefully if no crust_composition volatiles' do
+    context 'PVE job: returns gracefully if no stored_volatiles' do
       let(:unit) { create(:base_unit, unit_type: 'planetary_volatiles_extractor_mk1', settlement: settlement) }
       let(:job) do
-        MaterialProcessingJob.create!(
+        Job.create!(
+          job_type: :material_processing,
           settlement: settlement,
-          unit: unit,
-          processing_type: :volatiles_extraction,
-          input_material: 'regolith',
-          input_amount: 20,
+          owner: settlement.owner,
+          output_type: 'processed_regolith',
+          completes_at: 1.hour.from_now,
           status: :pending,
-          production_time_hours: 1.0,
-          operational_data: { 'unit_type' => unit.unit_type }
+          operational_data: {
+            'unit_type' => unit.unit_type,
+            'processing_type' => 'volatiles_extraction',
+            'input_material' => 'regolith',
+            'input_amount' => 20,
+            'production_time_hours' => 1.0
+          }
         )
       end
       before do
+        celestial_body.geosphere.update_columns(stored_volatiles: {}.to_json)
         allow(settlement.inventory).to receive(:remove_item).with('regolith', 20, settlement, {}).and_return(true)
         allow(settlement.inventory).to receive(:add_item)
-        allow(settlement.celestial_body.geosphere).to receive(:crust_composition).and_return(nil)
       end
       it 'does not raise error if no volatiles' do
         expect { service.complete_job(job) }.not_to raise_error
