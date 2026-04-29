@@ -4,21 +4,20 @@ require 'rails_helper'
 RSpec.describe SimulationController, type: :controller do
   describe "GET #index" do
     context "with existing solar system" do
-      let!(:solar_system) { create(:solar_system) }
-      let!(:star) { create(:star, solar_system: solar_system) }
-      let!(:planet) { create(:celestial_body, solar_system: solar_system) }
-      
+      # Sol is always present as a world constant — SolarSystem.first returns Sol
+      let!(:solar_system) { SolarSystem.find_by!(identifier: 'SOL-01') }
+      let!(:planet) { CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01') }
+
       it "assigns solar system and its celestial bodies" do
         get :index
-        
+
         expect(assigns(:solar_system)).to eq(solar_system)
         expect(assigns(:celestial_bodies)).to include(planet)
       end
-      
+
       it "assigns the primary star" do
         get :index
-        # Accept either the created star or the assigned primary star
-        expect([star, assigns(:star)]).to include(assigns(:star))
+        expect(assigns(:star)).not_to be_nil
       end
     end
     
