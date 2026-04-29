@@ -24,14 +24,17 @@ RSpec.describe SimulationController, type: :controller do
     
     context "without solar system" do
       let!(:celestial_body) { create(:celestial_body) }
-      
+
       before do
-        SolarSystem.destroy_all # Ensure no solar systems exist
+        allow(SolarSystem).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:includes).and_return(
+          double('relation', first: nil)
+        )
       end
-      
+
       it "assigns all celestial bodies" do
         get :index
-        
+
         expect(assigns(:solar_system)).to be_nil
         expect(assigns(:celestial_bodies)).to include(celestial_body)
       end
@@ -88,12 +91,15 @@ RSpec.describe SimulationController, type: :controller do
     
     context "without solar system" do
       before do
-        SolarSystem.destroy_all # Ensure no solar systems exist
+        allow(SolarSystem).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:includes).and_return(
+          double('relation', first: nil)
+        )
       end
-      
+
       it "handles missing solar system gracefully" do
         get :run_all
-        
+
         expect(response).to redirect_to(simulation_path)
         expect(flash[:alert]).to include("No solar system found")
       end

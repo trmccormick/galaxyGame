@@ -26,7 +26,10 @@ RSpec.describe Admin::SimulationController, type: :controller do
       let!(:celestial_body) { create(:celestial_body) }
       
       before do
-        SolarSystem.destroy_all # Ensure no solar systems exist
+        allow(SolarSystem).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:includes).and_return(
+          double('relation', first: nil)
+        )
       end
       
       it "assigns all celestial bodies" do
@@ -88,7 +91,10 @@ RSpec.describe Admin::SimulationController, type: :controller do
     
     context "without solar system" do
       before do
-        SolarSystem.destroy_all # Ensure no solar systems exist
+        allow(SolarSystem).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:includes).and_return(
+          double('relation', first: nil)
+        )
       end
       
       it "handles missing solar system gracefully" do
