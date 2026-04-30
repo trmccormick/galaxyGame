@@ -3,6 +3,8 @@ class Job < ApplicationRecord
   belongs_to :settlement, class_name: 'Settlement::BaseSettlement'
   belongs_to :blueprint, optional: true
 
+  belongs_to :printer_unit, class_name: 'Units::BaseUnit', optional: true
+
   enum job_type: {
     material_processing: 0,
     component_production: 1,
@@ -17,7 +19,8 @@ class Job < ApplicationRecord
     ready_to_claim: 1,
     claimed: 2,
     failed: 3,
-    cancelled: 4
+    cancelled: 4,
+    pending: 5
   }
 
   validates :job_type, presence: true
