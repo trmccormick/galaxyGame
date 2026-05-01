@@ -116,7 +116,7 @@ module AIManager
       if geo.crust_composition.present?
         composition = geo.crust_composition
         composition.each do |material, percentage|
-          resources << material if percentage.to_f > 0.01
+          resources << material if volatile_amount(percentage) > 0.01
         end
       end
 
@@ -175,8 +175,8 @@ module AIManager
       # Check regolith enrichment
       if geo.crust_composition.present?
         composition = geo.crust_composition
-        resources << 'he3' if composition['he3'].to_f > 0.00001 # Luna-specific
-        resources << 'rare_earth_elements' if composition['rare_earths'].to_f > 0.01
+        resources << 'he3' if volatile_amount(composition['he3']) > 0.00001 # Luna-specific
+        resources << 'rare_earth_elements' if volatile_amount(composition['rare_earths']) > 0.01
       end
 
       resources
