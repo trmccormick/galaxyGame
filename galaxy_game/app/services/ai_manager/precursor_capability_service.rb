@@ -1,10 +1,14 @@
 # app/services/ai_manager/precursor_capability_service.rb
+
 module AIManager
   # Service to determine what resources can be produced locally based on
   # actual celestial body data rather than hardcoded world lists.
   # Replaces hardcoded case statements in MissionPlannerService.
   class PrecursorCapabilityService
     attr_reader :celestial_body
+
+    EARLY_ISRU_STORAGE_MECHANISMS = %w[regolith].freeze
+    METAL_OXIDE_FORMULAS = %w[Fe2O3 FeO Al2O3 TiO2 MgO SiO2 CaO].freeze
 
     def initialize(celestial_body)
       @celestial_body = celestial_body
@@ -15,13 +19,8 @@ module AIManager
     # @return [Boolean] True if resource can be locally sourced
     def can_produce_locally?(resource)
       return false unless celestial_body
-
-      resource_normalized = resource.to_s.downcase
-
-      # Check against actual celestial body data
       local_resources.any? do |available_resource|
-        resource_normalized.include?(available_resource.downcase) ||
-          available_resource.downcase.include?(resource_normalized)
+        available_resource.to_s.downcase == resource.to_s.downcase
       end
     end
 
@@ -84,8 +83,14 @@ module AIManager
       # Water resources from hydrosphere
       resources.concat(water_resources) if celestial_body.hydrosphere
 
-      # Always include regolith for solid bodies
-      resources << 'regolith' if celestial_body.has_solid_surface?
+      # Always include regolith for solid bodies and add O2/H2 if crust composition present
+      if celestial_body.has_solid_surface?
+        resources << 'regolith'
+        if celestial_body.geosphere&.crust_composition&.present?
+          resources << 'O2'  # from PVE metal oxide processing
+          resources << 'H2'  # from TEU bakeout of solar-wind hydrogen
+        end
+      end
 
       resources.uniq.compact
     end
@@ -96,12 +101,11 @@ module AIManager
       atmo = celestial_body.atmosphere
       resources = []
 
-      # Check for gases using the gas_percentage method
-      resources << 'co2' if atmo.gas_percentage('CO2') > 0.01
-      resources << 'nitrogen' if atmo.gas_percentage('N2') > 0.01
-      resources << 'methane' if atmo.gas_percentage('CH4') > 0.01
-      resources << 'oxygen' if atmo.gas_percentage('O2') > 0.01
-      resources << 'argon' if atmo.gas_percentage('Ar') > 0.001
+      resources << 'CO2' if atmo.gas_percentage('CO2') > 0.01
+      resources << 'N2'  if atmo.gas_percentage('N2') > 0.01
+      resources << 'CH4' if atmo.gas_percentage('CH4') > 0.01
+      resources << 'O2'  if atmo.gas_percentage('O2') > 0.01
+      resources << 'Ar'  if atmo.gas_percentage('Ar') > 0.001
 
       resources
     end
@@ -120,12 +124,16 @@ module AIManager
         end
       end
 
-      # Volatile deposits
+      # Volatile deposits — filter by early ISRU storage mechanisms
       if geo.stored_volatiles.present?
-        reservoirs = geo.stored_volatiles
-        resources << 'water_ice' if volatile_amount(reservoirs['H2O']) > 0
-        resources << 'frozen_co2' if volatile_amount(reservoirs['CO2']) > 0
-        resources << 'methane_ice' if volatile_amount(reservoirs['CH4']) > 0
+        geo.stored_volatiles.each do |compound, storage|
+          if storage.is_a?(Hash)
+            accessible = storage.keys.any? do |mechanism|
+              EARLY_ISRU_STORAGE_MECHANISMS.include?(mechanism)
+            end
+            resources << compound if accessible
+          end
+        end
       end
 
       resources
@@ -138,9 +146,8 @@ module AIManager
       resources = []
 
       # Subsurface water - check if stored_volatiles contains H2O
-      if geo.stored_volatiles.is_a?(Hash) && geo.stored_volatiles.key?(:H2O)
-        resources << 'subsurface_water'
-        resources << 'water_ice'
+      if geo.stored_volatiles.is_a?(Hash) && geo.stored_volatiles.key?('H2O')
+        resources << 'H2O'
       end
 
       # Subsurface ocean (Europa-style)
@@ -157,7 +164,7 @@ module AIManager
       hydro = celestial_body.hydrosphere
       resources = []
 
-      resources << 'water' if hydro.water_bodies.present?
+      resources << 'H2O' if hydro.water_bodies.present?
       # Removed: ice_mass, polar_ice_mass not in schema
 
       resources
@@ -165,18 +172,13 @@ module AIManager
 
     def regolith_composition
       return [] unless celestial_body.geosphere
-
       geo = celestial_body.geosphere
-      resources = []
+      resources = ['regolith']
 
-      # Regolith is universal for solid bodies
-      resources << 'regolith'
-
-      # Check regolith enrichment
-      if geo.crust_composition.present?
-        composition = geo.crust_composition
-        resources << 'he3' if volatile_amount(composition['he3']) > 0.00001 # Luna-specific
-        resources << 'rare_earth_elements' if volatile_amount(composition['rare_earths']) > 0.01
+      # He3 is stored in regolith as a volatile — read from stored_volatiles
+      if geo.stored_volatiles.present?
+        he3 = geo.stored_volatiles['He3']
+        resources << 'He3' if volatile_amount(he3) > 0
       end
 
       resources
@@ -185,36 +187,47 @@ module AIManager
     # Capability checks for precursor phases
 
     def can_extract_oxygen?
-      # From atmosphere (Mars MOXIE-style)
-      return true if atmospheric_resources.include?('co2')
-
+      # From atmosphere via MOXIE-style CO2 processing
+      return true if atmospheric_resources.include?('CO2')
       # From water electrolysis
       return true if can_extract_water?
-
-      # From regolith processing (Luna-style)
-      return true if surface_resources.include?('iron_oxide')
-
+      # From regolith metal oxide processing via PVE
+      return true if can_extract_metals?
       false
     end
 
     def can_extract_water?
       water_resources.any? ||
-        subsurface_resources.include?('subsurface_water') ||
-        surface_resources.include?('water_ice')
+        subsurface_resources.include?('H2O') ||
+        surface_resources.include?('H2O')
     end
 
     def can_extract_fuel?
-      # Methane from atmosphere (Titan)
-      return true if atmospheric_resources.include?('methane')
-
-      # Hydrogen from water electrolysis
+      # Methane from atmosphere (Titan/Mars Sabatier reaction)
+      return true if atmospheric_resources.include?('CH4')
+      # H2 from regolith TEU bakeout — primary Luna fuel pathway
+      # H2 + O2 (both from regolith) = LH2/LOX bipropellant
+      return true if local_resources.include?('H2')
+      # Hydrogen from water electrolysis — rationed, last resort
       return true if can_extract_water?
-
       false
     end
 
     def can_extract_metals?
-      surface_resources.any? { |r| ['iron_oxide', 'aluminum', 'titanium', 'silicon'].include?(r) }
+      return false unless celestial_body.geosphere
+      geo = celestial_body.geosphere
+      return false unless geo.crust_composition.present?
+
+      # Check if crust contains known metal oxides
+      has_metal_oxides = geo.crust_composition.keys.any? do |mineral|
+        METAL_OXIDE_FORMULAS.include?(mineral)
+      end
+      return true if has_metal_oxides
+
+      # Any significant crust composition on a solid body implies
+      # metal extraction potential — anorthosite, norite, troctolite
+      # all contain extractable metals via PVE
+      geo.crust_composition.values.any? { |v| volatile_amount(v) > 1.0 }
     end
 
     def has_regolith?

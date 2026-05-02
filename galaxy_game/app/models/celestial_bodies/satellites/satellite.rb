@@ -3,6 +3,7 @@ module CelestialBodies
   module Satellites
     class Satellite < CelestialBody
       include OrbitalMechanics  # ✅ Include the enhanced concern
+      include SolidBodyConcern
       
       # Re-introducing the belongs_to association for the parent celestial body.
       # This links a satellite to its parent (e.g., a planet or another moon).
