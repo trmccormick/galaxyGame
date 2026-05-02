@@ -11,7 +11,7 @@ FactoryBot.define do
     completes_at { 1.hour.from_now }
     
     # Metadata
-    specifications { { "name" => "Default Job Specs" } }
+    operational_data { { "name" => "Default Job Specs" } }
 
     # Traits
     trait :unit_assembly do

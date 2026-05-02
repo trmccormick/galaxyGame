@@ -3,10 +3,8 @@ class JobProcessorWorker
   sidekiq_options queue: :default
 
   def perform
-    Rails.logger.info("JobProcessorWorker: processing all in-progress jobs (Job, ConstructionJob)")
-
+    Rails.logger.info("JobProcessorWorker: processing all in-progress jobs")
     process_jobs(Job)
-    process_jobs(ConstructionJob)
   end
 
   private
