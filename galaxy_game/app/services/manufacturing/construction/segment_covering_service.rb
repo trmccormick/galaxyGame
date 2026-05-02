@@ -1,5 +1,9 @@
 # app/services/construction/segment_covering_service.rb
 class Manufacturing::Construction::SegmentCoveringService < Manufacturing::Construction::CoveringService
+    # Public entry point for covering a segment (bang-style, mutating)
+    def cover!
+      schedule_construction
+    end
   
   protected
   
