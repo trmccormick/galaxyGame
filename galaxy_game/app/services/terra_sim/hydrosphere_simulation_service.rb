@@ -69,7 +69,7 @@ module TerraSim
       @material_lookup = MaterialLookupService.new # Initialize the lookup service
     end
 
-    def simulate
+    def simulate(time_delta = nil)
       return unless @celestial_body && @hydrosphere && @atmosphere
       return if @simulating
       @simulating = true

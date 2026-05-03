@@ -23,7 +23,7 @@ module TerraSim
       self.class.reset_locks! if Rails.env.test?
     end
 
-    def simulate
+    def simulate(time_delta = nil)
       return if @simulation_already_running  # Prevent recursive calls
       @simulation_already_running = true
       
