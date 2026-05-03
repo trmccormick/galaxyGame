@@ -58,6 +58,11 @@ module CelestialBodies
           atmosphere&.gases&.pluck(:name, :percentage)&.to_h || {}
         end
 
+        # Public: Returns the planet's magnetic moment from properties, or 0.0 if missing
+        def magnetic_moment
+          properties&.dig('magnetic_moment') || 0.0
+        end        
+
         private
 
         def initialize_gas_quantities
