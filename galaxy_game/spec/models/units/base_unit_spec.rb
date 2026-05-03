@@ -25,7 +25,7 @@ RSpec.describe Units::BaseUnit, type: :model do
         expect(unit.operational?).to be true
       end
     end
-  let!(:celestial_body) { create(:celestial_body, name: "Luna") }
+  let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   let!(:shackleton_crater) { 
     create(:celestial_location, 
            name: "Shackleton Crater Base", 

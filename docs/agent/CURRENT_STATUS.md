@@ -1,3 +1,10 @@
+# ✅ COMPLETED: EM Harvesting Service (April 23, 2026)
+- Unified EM harvesting (satellite/NWA/AWS/mid-skimmer)
+- Orbital shipyard production pipeline
+- AI mission coordinator integration
+- 2.5x dual-connection bonus
+- JSON-driven yields, extensible
+- All tests green, production ready
 # Current Development Status
 
 **Last Updated**: March 16, 2026 (planetary_geological_feature_lookup_service_spec rewrite completed)

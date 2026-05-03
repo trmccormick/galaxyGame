@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe WormholeConsortiumFormationService, type: :service do
   let!(:consortium) { create(:consortium, identifier: 'WH-CONSORTIUM', operational_data: {}) }
-  let!(:astrolift) { create(:corporation, identifier: 'ASTROLIFT', operational_data: {}) }
+  let!(:astrolift) { Organizations::BaseOrganization.find_by!(identifier: 'ASTROLIFT') }
   let!(:zenith) { create(:corporation, identifier: 'ZENITH', operational_data: {}) }
   let!(:vector) { create(:corporation, identifier: 'VECTOR', operational_data: {}) }
-  let!(:ldc) { create(:corporation, identifier: 'LDC', operational_data: {}) }
+  let!(:ldc) { Organizations::BaseOrganization.find_by!(identifier: 'LDC') }
 
   it 'creates memberships for founding members and updates consortium operational_data' do
     expect {

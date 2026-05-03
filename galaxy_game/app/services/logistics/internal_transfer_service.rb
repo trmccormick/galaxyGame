@@ -14,6 +14,7 @@ module Logistics
         quantity: quantity,
         transport_method: transport_method,
         status: :pending,
+        arrives_at: 1.day.from_now,
         operational_data: {
           contract_type: 'internal_b2b',
           created_at: Time.current

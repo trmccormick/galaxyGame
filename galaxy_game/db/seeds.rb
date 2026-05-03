@@ -119,6 +119,10 @@ end
 # on artificial wormhole technology
 puts "Note: Wormhole Transit Consortium will be created during Snap Event storyline"
 
+# Seed Insurance Companies
+puts "Seeding insurance companies..."
+Insurance::InsuranceMarketService.seed_npc_insurers
+
 earth_body = CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01')
 
 cape_canaveral_location = Location::CelestialLocation.find_or_create_by!(

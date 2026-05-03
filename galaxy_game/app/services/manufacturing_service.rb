@@ -41,14 +41,15 @@ class ManufacturingService
     end
     
     # Create the manufacturing job
+    # Determine production time from blueprint, default to 1 hour if missing
+    production_time_hours = blueprint_data.dig('production_data', 'time_hours') || 1
     job = Job.create!(
       job_type: :unit_assembly,
-      unit_type: blueprint_name,
+      status: :in_progress,
       owner: owner,
-      base_settlement: settlement,
-      count: count,
-      status: 'pending',
-      specifications: blueprint_data
+      settlement: settlement,
+      output_type: blueprint_name,
+      completes_at: Time.current + production_time_hours.hours
     )
     
     # Check material availability

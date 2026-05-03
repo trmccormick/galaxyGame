@@ -3,7 +3,6 @@ class SealPrintingJob < ApplicationRecord
   belongs_to :settlement, class_name: 'Settlement::BaseSettlement'
   belongs_to :printer_unit, class_name: 'Units::BaseUnit', foreign_key: 'printer_unit_id'
   belongs_to :pressurization_target, polymorphic: true
-
   # Validations
   validates :status, presence: true, inclusion: {
     in: %w[pending in_progress completed failed cancelled],
@@ -15,14 +14,12 @@ class SealPrintingJob < ApplicationRecord
     in: %w[plug dome],
     message: "%{value} is not a valid seal type"
   }
-
   # Scopes
   scope :active, -> { where(status: ['pending', 'in_progress']) }
   scope :completed, -> { where(status: 'completed') }
   scope :in_progress, -> { where(status: 'in_progress') }
   scope :for_settlement, ->(settlement_id) { where(settlement_id: settlement_id) }
   scope :by_seal_type, ->(seal_type) { where(seal_type: seal_type) }
-
   # Status transitions
   def start!
     update!(status: 'in_progress', started_at: Time.current)

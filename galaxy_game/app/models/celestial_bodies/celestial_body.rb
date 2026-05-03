@@ -378,13 +378,6 @@ module CelestialBodies
       when CelestialBodies::Planets::Ocean::WaterWorld then 'water_world'
       when CelestialBodies::MinorBodies::DwarfPlanet then 'dwarf_planet'
       
-      # Legacy types for compatibility
-      when CelestialBodies::TerrestrialPlanet then 'terrestrial'
-      when CelestialBodies::GasGiant then 'gas_giant'
-      when CelestialBodies::IceGiant then 'ice_giant'
-      when CelestialBodies::Moon then 'moon'
-      when CelestialBodies::DwarfPlanet then 'dwarf_planet'
-      
       # Satellite types
       when CelestialBodies::Satellites::Satellite then 'satellite'
       when CelestialBodies::Satellites::Moon then 'moon'

@@ -1,18 +1,22 @@
 # ℹ️ **Note:** The full RSpec suite is run automatically overnight for daily reference. The Implementation Agent must never trigger a full run interactively. Use the results of the latest overnight run (see /home/galaxy_game/log/rspec_full_*.log) for context and diagnosis, but only run targeted specs during interactive work.
 # ⚠️ **WARNING: Never run the full RSpec suite except when explicitly instructed by the user and only after all targeted specs are green. Always work only on the assigned failing spec in isolation. Running the full suite without approval is strictly forbidden.**
-## Code Location and Path Reference
 
-All application code, specs, and documentation files live on the host filesystem (your local machine) under the project directory. These files are mounted into the Docker containers using the volume mappings defined in `docker-compose.dev.yml`.
+## 🚨 Path & Context Rules (MANDATORY)
+To prevent execution errors, you must distinguish between Host operations (editing/reading) and Container operations (running code).
 
-- When you edit files locally, changes are immediately visible inside the container.
-- When you run tests or inspect files via `docker exec`, you are operating on the same files as on the host.
-- If you encounter missing files or path errors inside the container, always check the volume mounts in `docker-compose.dev.yml` to ensure the correct directories are mapped.
+| Action Type | Context | Absolute Root Path | Commands |
+|------------|---------|--------------------|----------|
+| File Ops   | HOST    | /Users/tam0013/Documents/git/galaxyGame/galaxy_game/ | cat, grep, sed, ls, file edits |
+| Execution  | DOCKER  | /home/galaxy_game/ | rspec, rails, bundle, rake |
 
-**Reference:**
-- Example mapping: `- ./galaxy_game:/home/galaxy_game` (host:project/galaxy_game → container:/home/galaxy_game)
-- Spec files: `spec/` on host is available as `/home/galaxy_game/spec/` in the container.
+**Rule: No Relative Paths**
+Never use app/models/... or ./spec/.... You must always prefix the path with the Absolute Root for your current context.
 
-This guarantees a single source of truth for all code and specs, and ensures that edits, tests, and diagnostics are always in sync between host and container.
+**Correct File Read (Host):**
+cat /Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/services/manufacturing/service.rb
+
+**Correct Test Run (Docker):**
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/services/manufacturing/service_spec.rb'
 
 ---
 # Implementation Agent — Operating Guide
@@ -67,23 +71,23 @@ This workflow ensures all changes are tracked, tests run in the correct environm
 ---
 
 ```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/path/to/spec.rb'
 ```
 
 **Why `unset DATABASE_URL` is mandatory**: Without it, `DATABASE_URL` overrides `RAILS_ENV=test` and Rails points at the development database. Running RSpec against the dev database will corrupt or wipe it. This flag is required on every single test command, no exceptions.
 
 **Log output to file for full runs:**
 ```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb > /home/galaxy_game/log/rspec_[scope]_$(date +%s).log 2>&1'
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/path/to/spec.rb > /home/galaxy_game/log/rspec_[scope]_$(date +%s).log 2>&1'
 ```
 
 ### Command Reference
 
 | Task | Command |
 |---|---|
-| Run single spec | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'` |
-| Run spec directory | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/'` |
-| Run full suite | `docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'` |
+| Run single spec | `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/path/to/spec.rb'` |
+| Run spec directory | `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/services/ai_manager/'` |
+| Run full suite | `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'` |
 | Rails console | `docker exec -it web bash -c 'bundle exec rails console'` |
 | Run migration | `docker exec -it web bash -c 'bundle exec rake db:migrate'` |
 | Bundle install | `docker exec -it web bash -c 'bundle install'` |
@@ -102,9 +106,9 @@ docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test \
 ### If You See "Connection is Closed" Errors
 Run sequentially to avoid connection pool exhaustion:
 ```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test \
-  bundle exec rspec --order defined \
-  > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test \
+   bundle exec rspec --order defined \
+   > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
 ### Forbidden Commands
@@ -142,8 +146,12 @@ Additionally, always stop and escalate immediately if:
 
 ## Fix Workflow — Step by Step
 
-### 1. Diagnose
+### 1. Investigate
 Read the failure output. Identify the spec file, line, error message, and expected vs actual. Trace the root cause to the relevant model, service, factory, or migration.
+
+**Data Integrity Check:** If the failure is a NoMethodError on a nil object, your report must include the results of a Rails console validation check for the involved model.
+
+**Pattern Audit:** Check if the spec uses local let blocks for dependencies (e.g., let(:corp1) { create(:corporation) }). If it relies on global seeds, propose a refactor to local let blocks as part of the fix.
 
 ### 2. Produce a Synthesis Report
 ```
@@ -179,10 +187,11 @@ Do not proceed. The user will either approve, modify, or redirect.
 ### 4. Apply the Fix
 Make only the change that was approved. Do not clean up unrelated code, rename things, or refactor while you're in the file.
 
+
 ### 5. Verify
 Run the specific spec file in isolation:
 ```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/path/to/spec.rb'
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/[path_to_spec].rb'
 ```
 
 If it fails — produce a new Synthesis Report and stop. Do not attempt another fix without approval.
@@ -190,7 +199,7 @@ If it fails — produce a new Synthesis Report and stop. Do not attempt another 
 ### 6. Run Full Suite (only after targeted specs pass)
 Once all specs assigned in this session are green, you may run the full suite:
 ```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
 Do not run the full suite autonomously at any other time.

@@ -8,6 +8,7 @@ FactoryBot.define do
     transport_method { :orbital_transfer }
     status { :pending }
     scheduled_at { 1.hour.from_now }
+    arrives_at { 3.days.from_now }
     operational_data { { purpose: 'test_transfer' } }
     trait :direct_import do
       transport_method { :direct_import }

@@ -1,24 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Admin::OrganizationsController, type: :controller do
-  describe "GET #index" do
-    let!(:ldc) do
-      Organizations::BaseOrganization.create!(
-        name: 'Lunar Development Corporation',
-        identifier: 'LDC',
-        organization_type: :development_corporation,
-        operational_data: { 'is_npc' => true }
-      )
-    end
-    
-    let!(:astrolift) do
-      Organizations::BaseOrganization.create!(
-        name: 'AstroLift',
-        identifier: 'ASTROLIFT',
-        organization_type: :corporation,
-        operational_data: { 'is_npc' => true, 'specialization' => 'orbital_logistics' }
-      )
-    end
+  describe "GET #index" do    
+    let!(:ldc) { Organizations::BaseOrganization.find_by!(identifier: 'LDC') }
+    let!(:astrolift) { Organizations::BaseOrganization.find_by!(identifier: 'ASTROLIFT') }
     
     let!(:consortium) do
       Organizations::BaseOrganization.create!(
@@ -33,9 +18,7 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
     
     before do
       # Create accounts for organizations (use existing GCC currency)
-      gcc = Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
-        c.name = 'Galactic Credit'
-      end
+      gcc = Financial::Currency.find_by!(symbol: 'GCC')
       
       Financial::Account.create!(
         accountable: ldc,

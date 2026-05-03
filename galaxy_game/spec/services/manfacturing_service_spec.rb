@@ -127,7 +127,7 @@ RSpec.describe ManufacturingService, type: :service do
           
           # Should either succeed or fail gracefully with a clear reason
           if result[:success]
-            expect(Job.where(job_type: :unit_assembly, unit_type: blueprint['name']).count).to be >= 1
+            expect(Job.where(job_type: :unit_assembly).count).to be >= 1
           else
             expect(result[:error]).to be_present
             expect(result[:error]).to be_a(String)

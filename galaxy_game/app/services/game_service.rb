@@ -96,7 +96,7 @@ class Game
     end
     
     # Process shell printing jobs
-    ShellPrintingJob.active.each do |job|
+    ConstructionJob.where(job_type: :shell_printing, status: :in_progress).each do |job|
       job.start! if job.status == 'pending'
       job.process_tick(hours_elapsed)
       

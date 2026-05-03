@@ -31,6 +31,7 @@ module Logistics
         transport_method: transport_method,
         status: :pending,
         scheduled_at: calculate_delivery_time(from_settlement, to_settlement, transport_method),
+        arrives_at: calculate_delivery_time(from_settlement, to_settlement, transport_method),
         provider: provider,
         operational_data: {
           purpose: 'internal_b2b_transfer',

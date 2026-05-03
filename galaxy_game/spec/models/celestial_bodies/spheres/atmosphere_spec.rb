@@ -3,11 +3,6 @@ require 'rails_helper'
 RSpec.describe CelestialBodies::Spheres::Atmosphere, type: :model do
   let(:celestial_body) { create(:celestial_body) }
   let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
-
-  after(:each) do
-    CelestialBodies::Spheres::Atmosphere.destroy_all
-    CelestialBodies::CelestialBody.destroy_all
-  end
   
   describe 'initialization' do
     it 'creates an atmosphere with default attributes' do

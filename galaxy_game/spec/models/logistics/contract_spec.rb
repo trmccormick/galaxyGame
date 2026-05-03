@@ -86,7 +86,7 @@ RSpec.describe Logistics::Contract, type: :model do
       it 'updates status to failed and records reason' do
         contract.mark_failed!('transport failure')
         expect(contract.status).to eq('failed')
-        expect(contract.operational_data['failure_reason']).to eq('transport failure')
+        expect(contract.reload.failure_reason).to eq('transport failure')
       end
     end
   end

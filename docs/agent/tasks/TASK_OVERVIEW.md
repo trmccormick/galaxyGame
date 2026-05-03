@@ -1,7 +1,117 @@
 # Galaxy Game Development - Task Tracking Log
 **Purpose**: Centralized log of all agent tasks, status, and cross-session context
+**Last Updated**: 2026-05-03
+**Monthly Goal**: Luna settled, ISRU producing, AI Manager trained on the pattern
 
 ---
+
+## May 2026 — Monthly Plan
+
+### Agent Budget Rules
+- **0x agents (GPT-4.1 free / Claude web)**: All implementation tasks. Every task in this plan is written with enough precision for 0x execution.
+- **Premium (Claude Sonnet)**: Review gates only — 3 scheduled checkpoints this month. Do not use for implementation.
+- **Premium unscheduled**: Only if 0x hits a multi-file architecture problem it cannot resolve. Not for debugging single errors.
+
+---
+
+## Phase 1 — Luna ISRU Core (May 1–7) 🔴 IN PROGRESS
+
+**Goal**: AI Manager can read any world's properties from DB and execute the Luna ISRU task profile.
+
+| # | Task File | Status | Agent | Gate |
+|---|---|---|---|---|
+| 1 | `completed/2026-05-02-HIGH-REFACTOR-PRECURSOR-CAPABILITY-SERVICE-FORMULA-CONSISTENCY` | ✅ DONE — commit 6d8efd1a | 0x | ✅ |
+| 2 | `active/2026-05-01-HIGH-REFACTOR-TASK-EXECUTION-ENGINE-V2-WORLD-DRIVEN` | 🔴 ACTIVE — ready for GPT-4.1 | 0x | Run spec after fix |
+| 3 | `backlog/2026-05-01-HIGH-DATA-LUNA-SETTLEMENT-MISSION-PROFILE-JSON` | 📋 READY — parallel with task 2 | 0x | Parallel with task 2 |
+| 4 | `backlog/2026-05-01-HIGH-SPEC-LUNA-SETTLEMENT-INTEGRATION-MVP-ACCEPTANCE` | 📋 BACKLOG — blocked on 2+3 | 0x | After 2 + 3 done |
+
+**Supporting work done 2026-05-02:**
+- sol.json + sol-complete.json data integrity cleaned (cross-sphere contamination removed)
+- CELESTIAL_BODY_DATA_CONVENTIONS.md created
+- Job factory + worker + worker spec fixed (commit 7e78a3c7)
+- SolidBodyConcern moved to Satellite base class (fixes Luna/Titan regolith detection)
+- LUNA_BASE_ESTABLISHMENT.md created in docs/mission_profiles/
+- NPC_INITIAL_DEPLOYMENT_SEQUENCE.md updated (L1 two-station model, Luna prerequisites, HLT lifecycle)
+- task_deploy_gas_separator.json created in tasks_v2/ (needed for Luna Phase 3)
+- luna_base_establishment_manifest_v1.json archived (old, common names, wrong units)
+
+**⭐ Premium Review Gate #1**: After task 4 — review integration spec results. If all 4 examples pass, Luna MVP is proven. Decide Phase 2 scope.
+
+---
+
+## Phase 2 — Pipeline Validation + Cleanup (May 8–14)
+
+**Goal**: Rake pipeline runs end-to-end with V2 engine. LunaDevelopmentPlanner removed.
+
+| # | Task File | Agent | Gate |
+|---|---|---|---|
+| 5 | `on-hold/MEDIUM-REFACTOR-LUNAR-PIPELINE-RAKE-MODERNIZE-V2` → move to backlog | 0x | After Phase 1 gate passes |
+| 6 | `backlog/MEDIUM-CLEANUP-REMOVE-LUNA-DEVELOPMENT-PLANNER` | 0x | After task 3 profile JSON exists |
+
+**No premium review needed** — these are mechanical. 0x confirms rake runs and reports output.
+
+---
+
+## Phase 3 — Spec Health (May 15–21)
+
+**Goal**: Eliminate the major spec failure clusters so the test suite gives clean signal.
+
+| # | Task File | Agent | Gate |
+|---|---|---|---|
+| 7 | `on-hold/HIGH-BUGFIX-SPEC-IDENTIFIER-COLLISION-BEFORE-ALL-LEAK` → backlog | 0x | ~26 failures fixed |
+| 8 | `on-hold/HIGH-BUGFIX-PRECURSOR-SPEC-MISSING-SOLAR-SYSTEM-LET` → backlog | 0x | ~18 failures fixed |
+| 9 | `on-hold/HIGH-BUGFIX-CONTROLLER-SPECS-DELETE-ALL-FK-CONSTRAINT` → backlog | 0x | ~10 failures fixed |
+| 10 | `on-hold/HIGH-BUGFIX-MANUFACTURING-ASSEMBLY-SERVICE-UNKNOWN-JOB-ATTRIBUTES` → backlog | 0x | ~4 failures fixed |
+
+**These are independent — run in parallel** if multiple 0x agents are available.
+
+**⭐ Premium Review Gate #2**: After all 4 complete — run full RSpec suite, assess failure count. Target: under 20 failures. Decide Phase 4 scope based on what remains.
+
+---
+
+## Phase 4 — ConstructionJob Audit + ComponentProduction (May 22–31)
+
+**Goal**: Any wrong-model ConstructionJob usages corrected; ComponentProductionService on Job model.
+
+**Architectural Decision — 2026-05-03**: `ConstructionJob` is a **permanent separate model**. The Job unification plan is cancelled. `ConstructionJob` (surface construction: crater domes, shell printing, skylight covers, worldhouse sealing — gathering phase, polymorphic jobable, 8-state lifecycle) and `Job` (manufacturing: ISRU, smelting, components — timer-based, 5 mandatory fields) are structurally incompatible and serve different purposes.
+
+| # | Task File | Status | Agent | Gate |
+|---|---|---|---|---|
+| 11 | `on-hold/HIGH-PURGE-CONSTRUCTIONJOB-REFERENCES-FOR-JOB-UNIFICATION` (now: audit wrong usages) | ON-HOLD | 0x | Synthesis report → premium review |
+| 12 | `on-hold/HIGH-REFACTOR-JOB-SCHEMA-JSON-MIGRATION` (ComponentProductionService only) | ON-HOLD | 0x | After task 11 synthesis approved |
+| — | `on-hold/HIGH-REFACTOR-JOB-MODEL-ADD-CONSTRUCTION-JOB-TYPES` | ❌ CANCELLED | — | Unification plan cancelled |
+| — | `on-hold/HIGH-REFACTOR-JOB-MODEL-MIGRATE-CONSTRUCTION-JOB-COLUMNS` | ❌ CANCELLED | — | Unification plan cancelled |
+| — | `on-hold/HIGH-REFACTOR-JOB-MODEL-REPLACE-CONSTRUCTION-JOB-REFERENCES` | ❌ CANCELLED | — | Unification plan cancelled |
+| — | `on-hold/HIGH-REFACTOR-JOB-MODEL-UPDATE-FACTORIES-AND-SPECS` | ❌ CANCELLED | — | Unification plan cancelled |
+| — | `on-hold/LOW-CLEANUP-DROP-CONSTRUCTION-JOBS-TABLE-AND-MODEL` | ❌ CANCELLED | — | Unification plan cancelled |
+
+**⭐ Premium Review Gate #3**: Task 11 synthesis report — classify the 50 references, approve replacement plan before 0x executes. This is the only task requiring premium before execution, not after.
+
+---
+
+## Remaining On-Hold (Post-May / Deprioritized)
+
+These tasks exist in `on-hold/` and are not scheduled this month:
+- `MEDIUM-BUGFIX-COVER-THICKNESS-GEOSPHERE-MAGNETIC-BUNDLE` — cosmetic failures, not blocking
+- `LOW-BUGFIX-SIX-ISOLATED-SINGLE-FAILURES-BUNDLE` — low impact
+- `HIGH-ARCHITECTURE-SOL-JSON-DATA-INTEGRITY` — data audit, not blocking
+- `HIGH-ARCHITECTURE-REVIEW-PLANETARY-UMBILICAL-HUB-UNIT-REFORM` — not on critical path
+- `HIGH-BUGFIX-JOB-PROCESSOR-WORKER-SPEC-FAILURES` — review after Phase 4
+- `HIGH-REFACTOR-JOB-MODEL-ADD-CONSTRUCTION-JOB-TYPES` — needed only after Phase 4 purge confirms gap
+- `HIGH-REFACTOR-JOB-MODEL-MIGRATE-CONSTRUCTION-JOB-COLUMNS` — same
+- `HIGH-REFACTOR-JOB-MODEL-UPDATE-FACTORIES-AND-SPECS` — same
+
+---
+
+## Premium Budget Summary
+
+| Gate | When | What you review |
+|---|---|---|
+| #1 (Phase 1 end) | ~May 7 | Integration spec results — does Luna ISRU work? |
+| #2 (Phase 3 end) | ~May 21 | Full suite failure count — under 20? |
+| #3 (Phase 4 start) | ~May 22 | ConstructionJob synthesis report — approve before execution |
+
+3 scheduled premium sessions. Everything else is 0x.
 
 ---
 

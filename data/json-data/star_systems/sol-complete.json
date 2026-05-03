@@ -262,7 +262,7 @@
         },
         "stored_volatiles": {
           "H2O": {
-            "polar_craters": 100000000000000.0,
+            "psr_deposits": 100000000000000.0,
             "regolith": 1000000000000.0
           },
           "He3": {
@@ -1165,18 +1165,13 @@
         },
         "stored_volatiles": {
           "H2O": {
-            "oceans": 1.35e+21,
-            "ice_caps": 2.7e+19,
-            "groundwater": 2.3e+19
+            "psr_deposits": 2.7e+19
           },
           "CO2": {
             "sedimentary_rocks": 1e+20
           },
           "CH4": {
             "clathrates": 1e+18
-          },
-          "N2": {
-            "atmosphere": 3.9e+18
           },
           "He3": {
             "regolith": 1000000.0
@@ -1212,115 +1207,6 @@
           ]
         }
       ],
-      "geological_features": {
-        "craters": {
-          "celestial_body": "luna",
-          "feature_type": "crater",
-          "tier": "strategic",
-          "last_updated": "2025-12-17",
-          "features": [
-            {
-              "id": "luna_cr_001",
-              "name": "Shackleton Crater",
-              "feature_type": "crater",
-              "discovered": true,
-              "coordinates": {
-                "latitude": -89.9,
-                "longitude": 0.0,
-                "system": "selenographic"
-              },
-              "dimensions": {
-                "diameter_m": 21000,
-                "depth_m": 4200,
-                "rim_height_m": 200,
-                "floor_area_m2": 346360000
-              },
-              "crater_type": "impact",
-              "composition": {
-                "rim": "anorthosite",
-                "floor": "mixed_regolith",
-                "ice_present": true,
-                "ice_concentration": "high"
-              },
-              "attributes": {
-                "permanently_shadowed": true,
-                "sunlight_on_rim": "near_continuous",
-                "solar_exposure_percent": 89,
-                "temperature_floor_k": 40,
-                "temperature_rim_k": 220
-              },
-              "conversion_suitability": {
-                "crater_dome": "excellent",
-                "estimated_cost_multiplier": 1.2,
-                "advantages": [
-                  "permanent ice deposits",
-                  "near-continuous solar on rim",
-                  "naturally defensible"
-                ],
-                "challenges": [
-                  "extremely large dome required",
-                  "polar location harsh",
-                  "cold floor temperature"
-                ]
-              },
-              "priority": "high",
-              "strategic_value": [
-                "Protection/Shielding",
-                "Resource Potential"
-              ],
-              "tier": "strategic"
-            }
-          ]
-        },
-        "lava_tubes": {
-          "celestial_body": "luna",
-          "feature_type": "lava_tube",
-          "tier": "strategic",
-          "last_updated": "2025-12-17",
-          "features": [
-            {
-              "id": "luna_lt_001",
-              "name": "Marius Hills Skylight",
-              "feature_type": "lava_tube",
-              "discovered": false,
-              "coordinates": {
-                "latitude": 14.1,
-                "longitude": -58.2,
-                "system": "geographic"
-              },
-              "dimensions": {
-                "length_m": 1500,
-                "width_m": 100,
-                "height_m": 50,
-                "estimated_volume_m3": 11780972
-              },
-              "attributes": {
-                "features": [
-                  "natural shielding",
-                  "near volcanic deposits"
-                ],
-                "natural_shielding": "excellent",
-                "thermal_stability": "moderate"
-              },
-              "conversion_suitability": {
-                "habitat": "excellent",
-                "estimated_cost_multiplier": 0.7,
-                "advantages": [
-                  "natural shielding",
-                  "near volcanic deposits"
-                ],
-                "challenges": []
-              },
-              "priority": "high",
-              "strategic_value": [
-                "Protection/Shielding",
-                "Resource Potential"
-              ],
-              "tier": "strategic"
-            }
-          ]
-        }
-      },
       "properties": {
         "standard_orbital_altitude_km": 1800,
         "major_moon": true

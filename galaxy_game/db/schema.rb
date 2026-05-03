@@ -787,6 +787,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
     t.integer "status", default: 0, null: false
     t.string "output_type", null: false
     t.datetime "completes_at", precision: nil, null: false
+    t.jsonb "operational_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["blueprint_id"], name: "index_jobs_on_blueprint_id"
@@ -837,7 +838,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
     t.decimal "shipping_cost", precision: 10, scale: 2
     t.datetime "started_at"
     t.bigint "provider_id"
+    t.datetime "arrives_at", precision: nil
+    t.decimal "eap_at_order_time", precision: 12, scale: 2
+    t.boolean "emergency", default: false, null: false
+    t.string "initiated_by_type"
+    t.bigint "initiated_by_id"
+    t.string "failure_reason"
+    t.index ["arrives_at"], name: "index_logistics_contracts_on_arrives_at"
+    t.index ["emergency"], name: "index_logistics_contracts_on_emergency"
     t.index ["from_settlement_id"], name: "index_logistics_contracts_on_from_settlement_id"
+    t.index ["initiated_by_type", "initiated_by_id"], name: "idx_log_contracts_on_initiator_type_and_id"
     t.index ["provider_id"], name: "index_logistics_contracts_on_provider_id"
     t.index ["to_settlement_id"], name: "index_logistics_contracts_on_to_settlement_id"
   end

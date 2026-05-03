@@ -70,19 +70,18 @@ RSpec.describe SimulationController, type: :controller do
   
   describe "GET #run_all" do
     context "with existing solar system" do
-      let!(:solar_system) { create(:solar_system) }
-      let!(:planet1) { create(:celestial_body, solar_system: solar_system) }
-      let!(:planet2) { create(:celestial_body, solar_system: solar_system) }
-      
+      # Sol is always present as a world constant
+      let!(:solar_system) { SolarSystem.find_by!(identifier: 'SOL-01') }
+      let(:expected_body_count) { solar_system.celestial_bodies.count }
+
       before do
-        # Set up mocks for the simulator
         allow(TerraSim::Simulator).to receive(:new).and_return(double("simulator", calc_current: nil))
       end
-      
+
       it "runs simulation for all celestial bodies" do
         get :run_all
-        
-        expect(TerraSim::Simulator).to have_received(:new).exactly(2).times
+
+        expect(TerraSim::Simulator).to have_received(:new).exactly(expected_body_count).times
         expect(response).to redirect_to(simulation_path)
         expect(flash[:notice]).to include("all celestial bodies")
       end

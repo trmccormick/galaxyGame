@@ -38,7 +38,8 @@ class WormholeExpansionService
       from_settlement: Settlement::BaseSettlement.first,
       to_settlement: Settlement::BaseSettlement.last,
       status: :pending,
-      transport_method: :orbital_transfer
+      transport_method: :orbital_transfer,
+      arrives_at: 3.days.from_now
     )
   end
 
@@ -54,7 +55,8 @@ class WormholeExpansionService
       from_settlement: Settlement::BaseSettlement.first,
       to_settlement: Settlement::BaseSettlement.last,
       status: :pending,
-      transport_method: :orbital_transfer
+      transport_method: :orbital_transfer,
+      arrives_at: 3.days.from_now
     )
   end
     
@@ -147,7 +149,8 @@ class WormholeExpansionService
         status: :pending,
         transport_method: :emergency_rescue,
         special_instructions: "Emergency rescue for disconnected player #{player.name}",
-        reward: 50000.0 # High reward for rescue missions
+        reward: 50000.0, # High reward for rescue missions
+        arrives_at: 3.days.from_now
       )
     end
     

@@ -1,8 +1,6 @@
 module CelestialBodies
   module Satellites
-    class LargeMoon < Moon
-      include SolidBodyConcern
-      
+    class LargeMoon < Moon      
       validates :radius, numericality: { greater_than: 1.0e6 }, allow_nil: true
       before_validation :set_sti_type
       

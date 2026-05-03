@@ -5,7 +5,7 @@ RSpec.describe Manufacturing::Processing, type: :service do
   let!(:owner) { create(:player) }
   
   # Create location
-  let!(:celestial_body) { create(:large_moon, :luna) }
+  let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   let!(:celestial_location) do
     create(:celestial_location, 
       celestial_body: celestial_body,

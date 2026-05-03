@@ -3,11 +3,9 @@ class ShellPrintingJob < ApplicationRecord
   belongs_to :settlement, class_name: 'Settlement::BaseSettlement'
   belongs_to :printer_unit, class_name: 'Units::BaseUnit', foreign_key: 'printer_unit_id'
   belongs_to :inflatable_tank, class_name: 'Units::BaseUnit', foreign_key: 'inflatable_tank_id'
-
   validates :status, presence: true
   validates :production_time_hours, presence: true, numericality: { greater_than: 0 }
   validates :progress_hours, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-
   enum status: {
     pending: 'pending',
     in_progress: 'in_progress',
@@ -15,7 +13,6 @@ class ShellPrintingJob < ApplicationRecord
     failed: 'failed',
     cancelled: 'cancelled'
   }
-
   scope :active, -> { where(status: [:pending, :in_progress]) }
   scope :completed, -> { where(status: :completed) }
   scope :in_progress, -> { where(status: :in_progress) }

@@ -8,6 +8,7 @@ class CreateJobs < ActiveRecord::Migration[6.1]
       t.integer :status, default: 0, null: false
       t.string :output_type, null: false
       t.datetime :completes_at, null: false
+      t.jsonb :operational_data, null: true
       t.timestamps
     end
   end

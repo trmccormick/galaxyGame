@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe Craft::Satellite::BaseSatellite, type: :model do
   # --- Setup Common Test Data ---
-  let!(:celestial_body) { create(:large_moon, :luna) }
+  let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   # ✅ CORRECTED: Use your existing :player factory for the owner
   let!(:owner) { create(:player) }
 

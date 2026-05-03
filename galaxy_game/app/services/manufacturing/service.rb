@@ -32,12 +32,11 @@ module Manufacturing
     Rails.logger.info "Creating UnitAssemblyJob..."
     job = Job.create!(
       job_type: :unit_assembly,
-      unit_type: blueprint_name,
+      status: :in_progress,
       owner: owner,
-      base_settlement: settlement,
-      count: count,
-      status: 'pending',
-      specifications: blueprint_data
+      settlement: settlement,
+      output_type: blueprint_name,
+      completes_at: Time.current + (blueprint_data.dig('production_data', 'time_hours') || 1).hours
     )
     Rails.logger.info "UnitAssemblyJob created with ID: #{job.id}"
     

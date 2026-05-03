@@ -10,7 +10,7 @@ RSpec.describe 'Component Production Game Loop Integration', type: :integration 
     end
   end
 
-  let!(:celestial_body) { create(:large_moon, :luna) }
+  let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   let(:location) do
     create(:celestial_location,
       name: "Shackleton Crater Base",

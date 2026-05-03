@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ConcurrentTaskWorkerJob, type: :job do
   let!(:player) { create(:player) }
-  let!(:celestial_body) { create(:celestial_body, name: 'Luna') }
+  let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   let!(:location) { create(:celestial_location, celestial_body: celestial_body) }
   let!(:settlement) { create(:base_settlement, location: location, owner: player) }
   let!(:mission) { create(:mission, identifier: 'test_mission', settlement: settlement) }

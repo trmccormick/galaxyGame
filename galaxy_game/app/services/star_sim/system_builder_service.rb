@@ -229,6 +229,12 @@ module StarSim
       if existing_body
         puts "Body #{body_name} already exists in DB." if @debug_mode
         @created_celestial_bodies_cache[identifier] = existing_body
+        # Ensure spheres exist for bodies that were created before sphere
+        # creation was fully implemented. Safe to run multiple times —
+        # each create method checks for existence before creating.
+        create_atmosphere(existing_body, body_data[:atmosphere_attributes] || body_data["atmosphere_attributes"] || body_data[:atmosphere] || body_data["atmosphere"]) if (body_data[:atmosphere_attributes] || body_data["atmosphere_attributes"] || body_data[:atmosphere] || body_data["atmosphere"]).present? && existing_body.atmosphere.nil?
+        create_hydrosphere(existing_body, body_data[:hydrosphere_attributes] || body_data["hydrosphere_attributes"] || body_data[:hydrosphere] || body_data["hydrosphere"]) if (body_data[:hydrosphere_attributes] || body_data["hydrosphere_attributes"] || body_data[:hydrosphere] || body_data["hydrosphere"]).present? && existing_body.hydrosphere.nil?
+        create_geosphere(existing_body, body_data[:geosphere_attributes] || body_data["geosphere_attributes"]) if (body_data[:geosphere_attributes] || body_data["geosphere_attributes"]).present? && existing_body.geosphere.nil?
         return existing_body
       end
 
@@ -319,7 +325,7 @@ module StarSim
         # FIX: Support both :atmosphere and :atmosphere_attributes
         create_atmosphere(body, body_data[:atmosphere_attributes] || body_data[:atmosphere]) if body_data[:atmosphere_attributes].present? || body_data[:atmosphere].present?
         create_hydrosphere(body, body_data[:hydrosphere_attributes] || body_data[:hydrosphere]) if body_data[:hydrosphere_attributes].present? || body_data[:hydrosphere].present?
-        create_geosphere(body, body_data[:geosphere_attributes]) if body_data[:geosphere_attributes].present?
+        create_geosphere(body, body_data[:geosphere_attributes] || body_data["geosphere_attributes"]) if body_data[:geosphere_attributes].present? || body_data["geosphere_attributes"].present?
         create_materials(body, body_data[:materials]) if body_data[:materials].present?
         # Only create biosphere for Earth initially (where life is confirmed to exist)
         create_biosphere(body, body_data[:biosphere]) if body.name.downcase == 'earth'
@@ -582,6 +588,7 @@ module StarSim
       
       # Use `build_geosphere` then `save!`
       geosphere = body.build_geosphere(geosphere_attrs)
+      geosphere.stored_volatiles = stored_volatiles if stored_volatiles.present?
       
       geosphere.save!
       puts "Created geosphere for #{body.name}." if @debug_mode

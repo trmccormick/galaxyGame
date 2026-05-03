@@ -139,16 +139,11 @@ end
 [Exact description]
 
 ### Step 3 — Verify
-Run the spec in isolation before doing anything else:
-```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/[path]/[file]_spec.rb'
-```
-Expected result: `X examples, 0 failures`
+DO NOT INFER THE COMMAND. Run this exact string from the host terminal:
 
----
-
-## Synthesis Report Format
-Before applying any fix, produce a report in this format and **stop**:
+Bash
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec [SPEC_PATH_IN_CONTAINER]'
+Expected result: X examples, 0 failures
 
 ```
 THE FAILURE
@@ -172,36 +167,6 @@ READY TO APPLY? — waiting for approval
 Do not apply the fix until the user explicitly approves.
 
 ---
-
-## Testing Sequence
-
-
-> Run in this order. Do not skip steps.
-
-## Docker Escaping Rules
-ALWAYS escape `!` characters in zsh/bash:
-- `save!` → `save\\!` in grep patterns
-- Use single quotes around grep patterns: `'load_unit_info|save\\!'`
-
-Example:
-```bash
-grep -n 'load_unit_info|save\\!|operational_data' app/models/file.rb
-```
-
-1. **Isolation run** — spec file only:
-```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/[path]/[file]_spec.rb'
-```
-
-2. **Related specs** — verify no regressions in nearby area:
-```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/[directory]/']
-```
-
-3. **Full suite** — only after steps 1 and 2 are green:
-```bash
-docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
-```
 
 ---
 

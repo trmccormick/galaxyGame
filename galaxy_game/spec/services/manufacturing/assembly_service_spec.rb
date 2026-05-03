@@ -200,7 +200,7 @@ RSpec.describe Manufacturing::AssemblyService, type: :service do
         settlement.inventory.items.create!(name: 'concrete', amount: 5, owner: player)
       end
 
-      it 'creates a UnitAssemblyJob' do
+      it 'creates a Job with job_type unit_assembly' do
         result = described_class.start_assembly(
           blueprint: blueprint,
           settlement: settlement,

@@ -1,5 +1,15 @@
 module AIManager
   class AtmosphericHarvesterService
+            # EM Skimmer Harvest: Unified EM harvesting for mid-size craft
+            def em_skimmer_harvest(craft, em_field)
+              EmHarvestingService.new(infrastructure: craft, target: em_field).harvest_cycle
+            end
+
+            alias_method :titan_harvest_em, :em_skimmer_harvest
+        # EM Skimmer Harvest: Unified EM harvesting for mid-size craft
+        def em_skimmer_harvest(craft, target)
+          EmHarvestingService.new(infrastructure: craft, target: target).harvest_cycle
+        end
     # Venus: H2 import, local methane production
     def venus_harvest(venus)
       h2_imported = import_h2(venus)

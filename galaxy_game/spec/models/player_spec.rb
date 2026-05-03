@@ -3,7 +3,7 @@ require 'rails_helper'
 require 'support/mock_craft_lookup_service'
 
 RSpec.describe Player, type: :model do
-  let!(:celestial_body) { create(:large_moon, :luna) }
+  let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   # let!(:location_on_surface) { create(:location, :on_celestial_body, celestial_body: celestial_body) }
   let!(:location_on_surface) { Location::CelestialLocation.create(name: "Test Location #{SecureRandom.hex(4)}", coordinates: "#{SecureRandom.hex(4)}°N #{SecureRandom.hex(4)}°E", celestial_body: celestial_body) }
   let!(:craft) { create(:base_craft) }

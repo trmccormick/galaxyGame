@@ -1,31 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CelestialBodiesController, type: :controller do
-  let(:valid_attributes) {
-    {
-      name: "Earth",
-      size: 1.0,
-      gravity: 9.8,
-      density: 5.5,
-      orbital_period: 365,
-      total_pressure: 10.0,
-      gas_quantities: { "Nitrogen" => 780800, "Oxygen" => 209500 },
-      temperature: -60
-    }
-  }
-
-  let(:luna) {
-    CelestialBodies::Satellites::Moon.create!(
-      name: "Luna",
-      identifier: "LUNA-01",
-      size: 0.273,
-      gravity: 1.62,
-      density: 3.344,
-      mass: 7.342e22,
-      radius: 1.737e6,
-      orbital_period: 27.322
-    )
-  }
+  let!(:luna) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
 
   describe "GET #show" do
     # it "returns a success response" do

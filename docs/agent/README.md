@@ -216,7 +216,9 @@ Flag the gap in your completion report. Create docs in a separate task.
 **6. Read `GUARDRAILS.md` before making architectural changes**  
 It defines what is and isn't permitted. Use the current version — ignore `.old` files.
 
+
 **7. RSpec Output Policy — Never Stream Full Output**
+
 - Single spec file: `rspec spec/path/to/file_spec.rb` OK to stream
 - Multiple files or full suite: ALWAYS redirect → `rspec spec/... > log/rspec_full_$(date +%s).log 2>&1`
 - Report back ONLY: final summary line + targeted failure snippets from the log
@@ -234,8 +236,13 @@ A single misplaced comma or comment will silently break the file and can cause u
 This validation step is required for all data file edits—add it to your task instructions.
 
 **10. Host vs Docker Path Policy**
-**IMPORTANT:** All Rails application code, specs, and factories are located in the `galaxy_game/` subfolder of the workspace. All host path references for code, specs, and factories must be relative to `galaxy_game/` (e.g., `galaxy_game/app/services/...`, `galaxy_game/spec/services/...`). Do not look for `app/`, `spec/`, etc. at the workspace root.
-All file operations (read, write, move, edit, copy, ls, grep, etc.) must use host paths (relative to the workspace root, e.g. /Users/tam0013/Documents/git/galaxyGame/ or ./). Only use Docker/container paths (e.g. /home/galaxy_game/) when running RSpec, Rails, or other commands inside the container. Never attempt to move, edit, or read files using container paths from the host, and never use host paths inside Docker commands. This prevents path confusion and ensures all agents use the correct context for file operations and test execution.
+**CRITICAL**  
+All agents must use this mapping to avoid path corruption and execution errors.
+
+| Context | Absolute Root Path                                     | Permitted Operations                        |
+|---------|--------------------------------------------------------|---------------------------------------------|
+| HOST    | /Users/tam0013/Documents/git/galaxyGame/galaxy_game/   | cat, grep, sed, git, file edits             |
+| DOCKER  | /home/galaxy_game/                                     | rspec, rails, rake, bundle                  | 
 
 **Quick Reference:**
 - Host file operations: always use workspace paths (e.g. ./docs/agent/tasks/active/)
@@ -249,6 +256,23 @@ When refactoring or replacing a task file:
     - Only after the new task is finalized, update the archived original with a reference to the new file that supersedes it.
     - Never leave a blank or marker file in backlog; only the new canonical file should remain.
 This ensures traceability, prevents data loss, and maintains a clear historical record of all task changes.
+
+**12. The "Nil Guard" Diagnostic Requirement**
+If an RSpec failure reports `NoMethodError: undefined method '...' for nil:NilClass` immediately following a model creation (e.g., `Job.last` or `result[:job]`), the agent MUST stop and run a validation check before attempting to fix any service logic.
+
+**Required Diagnostic Command:**
+```bash
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rails c -e test <<EOF
+j = [Model].new([attributes_from_spec]); puts "VALIDATION ERRORS: #{j.errors.full_messages}" if j.invalid?
+EOF'
+```
+
+**Goal:** Identify missing mandatory fields in the Factory or Model before assuming the Service code is broken. If validations are failing, the agent must report the missing fields to the human.
+
+**13. Never create world constants in factories**
+Sol bodies, GCC, USD, LDC, and AstroLift always exist in the test database.
+Use finders — never factories — to reference them in specs.
+See `TEST_ENVIRONMENT_SETUP.md` for the full world constants list and correct patterns.
 
 ---
 
