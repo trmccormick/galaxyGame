@@ -163,13 +163,16 @@ module Manufacturing
       ConstructionJob.create!(
         job_type: :shell_printing,
         settlement: @settlement,
-        printer_unit: printer_unit,
+        jobable: printer_unit,
         inflatable_id: inflatable_tank.id,
         target_thickness_mm: inflatable_tank.operational_data&.dig('target_thickness_mm'),
-        regolith_source_settlement_id: inflatable_tank.regolith_source_settlement_id,
-        production_time_hours: production_time,
-        status: :pending,
-        materials_consumed: format_materials_for_storage(materials_consumed)
+        regolith_source_settlement_id: inflatable_tank.attachable_type == 'BaseSettlement' ? inflatable_tank.attachable_id : nil,
+        estimated_completion: Time.current + production_time.hours,
+        status: :scheduled,
+        target_values: {
+          'production_time_hours' => production_time,
+          'materials_consumed' => format_materials_for_storage(materials_consumed)
+        }
       )
     end
 
