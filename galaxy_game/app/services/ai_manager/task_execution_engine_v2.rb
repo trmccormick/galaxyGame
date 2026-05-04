@@ -64,11 +64,22 @@ module AIManager
 
     # --- Helpers ---
 
-    def load_environment(target_body)
-      # Placeholder: In real use, query DB or API for body properties
-      # Example: { "name" => "Luna", "atmosphere" => false, "regolith" => true }
-      { "name" => target_body, "atmosphere" => false, "regolith" => true }
-    end
+      def load_environment(target_body)
+        body = CelestialBodies::CelestialBody.find_by(identifier: target_body)
+        return { "name" => target_body, "status" => :not_found } unless body
+
+        capabilities = AIManager::PrecursorCapabilityService.new(body).production_capabilities
+
+        {
+          "name"            => body.name,
+          "identifier"      => body.identifier,
+          "atmosphere"      => body.atmosphere.present?,
+          "has_regolith"    => capabilities[:surface].any?,
+          "local_resources" => capabilities[:surface] + capabilities[:atmosphere],
+          "isru_capable"    => capabilities[:surface].any? || capabilities[:regolith].any?,
+          "capabilities"    => capabilities
+        }
+      end
 
     def load_task_library
       # Loads all tasks_v2 JSON files into an array
