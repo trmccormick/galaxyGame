@@ -78,7 +78,7 @@ module Manufacturing
           }
         else
           # Mark as missing but don't raise yet
-          needed_amount = req['quantity'] * quantity
+          needed_amount = req['amount'] * quantity
           materials[req['material']] = {
             amount: needed_amount,
             composition: {},
@@ -91,7 +91,7 @@ module Manufacturing
     end
 
     def find_available_material(requirement, quantity)
-      needed_amount = requirement['quantity'] * quantity
+      needed_amount = requirement['amount'] * quantity
       material_name = requirement['material']
       
       # Check if we have acceptable materials defined (future feature)
@@ -164,13 +164,19 @@ module Manufacturing
       Job.create!(
         job_type: :component_production,
         settlement: @settlement,
-        printer_unit: printer_unit,
-        component_blueprint_id: blueprint['id'],
-        component_name: blueprint['name'],
-        quantity: quantity,
-        production_time_hours: production_time,
-        status: 'pending',
-        materials_consumed: format_materials_for_storage(materials_consumed)
+        jobable: printer_unit,
+        output_type: blueprint['name'],
+        owner: printer_unit.owner,
+        start_date: Time.current,
+        completes_at: Time.current + production_time.hours,
+        status: :in_progress,
+        operational_data: {
+          'component_blueprint_id' => blueprint['id'],
+          'component_name' => blueprint['name'],
+          'quantity' => quantity,
+          'production_time_hours' => production_time,
+          'materials_consumed' => format_materials_for_storage(materials_consumed)
+        }
       )
     end
 
