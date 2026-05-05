@@ -28,17 +28,27 @@ module Manufacturing
       }
     end
     
-    # Create the manufacturing job
-    Rails.logger.info "Creating UnitAssemblyJob..."
+    # Prepare operational_data: only store dynamic/production-specific data, not the full blueprint
+    operational_data = {
+      'manufacturing_time_hours' => blueprint_data.dig('production_data', 'manufacturing_time_hours') ||
+                                    blueprint_data.dig('production_data', 'time_hours'),
+      'required_materials' => get_required_materials(blueprint_data),
+      'count' => count
+    }.compact
+
+    # Create the manufacturing job (unified model)
+    Rails.logger.info "Creating Job (unified model)..."
     job = Job.create!(
       job_type: :unit_assembly,
       status: :in_progress,
       owner: owner,
       settlement: settlement,
       output_type: blueprint_name,
-      completes_at: Time.current + (blueprint_data.dig('production_data', 'time_hours') || 1).hours
+      start_date: Time.current,
+      completes_at: Time.current + (operational_data['manufacturing_time_hours'] || 1).hours,
+      operational_data: operational_data
     )
-    Rails.logger.info "UnitAssemblyJob created with ID: #{job.id}"
+    Rails.logger.info "Job created with ID: #{job.id}"
     
     # Check material availability
     required_materials = get_required_materials(blueprint_data)
@@ -62,34 +72,27 @@ module Manufacturing
       # Change 'materials_ready' to 'in_progress' since that's a valid status
       job.update(status: 'in_progress')
       
-      # Set start date and estimated completion
-      manufacturing_time = blueprint_data.dig('production_data', 'manufacturing_time_hours') || 24
-      job.update(
-        start_date: Time.current,
-        estimated_completion: Time.current + manufacturing_time.hours
-      )
+      # Set start date and completes_at (already set on creation)
       
       # Consume materials
       consume_materials(settlement, required_materials, count)
     end
     
     # Charge construction cost
-    if owner.respond_to?(:charge)
-      # If the owner has a charge method (like through FinancialManagement)
-      owner.charge(construction_cost, "Construction cost for #{blueprint_name}")
-    elsif owner.respond_to?(:withdraw)
-      # If the owner has a withdraw method (like through an Account)
-      owner.withdraw(construction_cost, "Construction cost for #{blueprint_name}")
-    elsif owner.respond_to?(:debit)
-      # Alternative method name for withdrawing
-      owner.debit(construction_cost, "Construction cost for #{blueprint_name}")
-    else
-      # Look at the owner's account directly
-      account = owner.account
-      if account
-        account.withdraw(construction_cost, "Construction cost for #{blueprint_name}")
+    if construction_cost > 0
+      if owner.respond_to?(:charge)
+        owner.charge(construction_cost, "Construction cost for #{blueprint_name}")
+      elsif owner.respond_to?(:withdraw)
+        owner.withdraw(construction_cost, "Construction cost for #{blueprint_name}")
+      elsif owner.respond_to?(:debit)
+        owner.debit(construction_cost, "Construction cost for #{blueprint_name}")
       else
-        raise "Cannot charge construction cost - no suitable payment method found"
+        account = owner.account
+        if account
+          account.withdraw(construction_cost, "Construction cost for #{blueprint_name}")
+        else
+          raise "Cannot charge construction cost - no suitable payment method found"
+        end
       end
     end
     
