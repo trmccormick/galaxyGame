@@ -563,9 +563,9 @@ def create_test_settlement_with_resources
   settlement.inventory.add_item("oxygen", 150)
 
   # Add construction materials
-  settlement.inventory.add_item("inert_regolith_waste", 1000)
+  settlement.inventory.add_item(" depleted_regolith", 1000)
 
-  puts "  Added resources: 5000 raw_regolith, 2000 regolith, 200 water, 150 oxygen, 1000 inert_regolith_waste"
+  puts "  Added resources: 5000 raw_regolith, 2000 regolith, 200 water, 150 oxygen, 1000  depleted_regolith"
 
   settlement.save!
   settlement
@@ -580,7 +580,7 @@ def create_test_settlement_with_lava_tube
   settlement.inventory.add_item("regolith", 5000)
   settlement.inventory.add_item("water", 500)
   settlement.inventory.add_item("oxygen", 300)
-  settlement.inventory.add_item("inert_regolith_waste", 2000)
+  settlement.inventory.add_item(" depleted_regolith", 2000)
 
   # Generate a lava tube as if first precursor mission completed
   moon = settlement.location.celestial_body

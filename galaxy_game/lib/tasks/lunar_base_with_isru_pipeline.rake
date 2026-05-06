@@ -47,8 +47,8 @@ class LunarBaseProductionService
       # 2. Produce Inert Waste and Volatiles (from TEU -> PVE)
       inert_waste_produced = calculations[:inert_waste_produced]
 
-      surface_storage.add_pile(material_name: "inert_regolith_waste", amount: inert_waste_produced, source_unit: "PVE_MK1")
-      inventory.add_item("inert_regolith_waste", inert_waste_produced, @settlement, { "storage_location" => "surface_pile" })
+      surface_storage.add_pile(material_name: " depleted_regolith", amount: inert_waste_produced, source_unit: "PVE_MK1")
+      inventory.add_item(" depleted_regolith", inert_waste_produced, @settlement, { "storage_location" => "surface_pile" })
 
       inventory.add_item("water", total_water, @settlement)
 
@@ -59,8 +59,8 @@ class LunarBaseProductionService
       end
 
       # 3. Consume Inert Waste and Produce Final Component (I-Beam)
-      surface_storage.material_piles.find_by!(material_type: "inert_regolith_waste").decrement!(:amount, inert_req_kg)
-      inventory.remove_item("inert_regolith_waste", inert_req_kg, @settlement, { "storage_location" => "surface_pile" })
+      surface_storage.material_piles.find_by!(material_type: " depleted_regolith").decrement!(:amount, inert_req_kg)
+      inventory.remove_item(" depleted_regolith", inert_req_kg, @settlement, { "storage_location" => "surface_pile" })
 
       surface_storage.add_pile(material_name: blueprint_data[:id], amount: target_units, source_unit: "3D_PRINTER_MK1")
       inventory.add_item(blueprint_data[:id], target_units, @settlement, { "storage_location" => "surface_pile" })

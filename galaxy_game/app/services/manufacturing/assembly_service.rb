@@ -212,7 +212,7 @@ module Manufacturing
       end
     end
 
-    # Create a unit assembly job
+    # Create a unit assembly job 
     def self.create_unit_assembly_job(blueprint, blueprint_data, settlement, requester)
       Job.create!(
         job_type: :unit_assembly,

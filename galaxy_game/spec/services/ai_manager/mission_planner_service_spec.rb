@@ -161,7 +161,7 @@ RSpec.describe AIManager::MissionPlannerService do
       capabilities = results[:local_capabilities]
       
       expect(capabilities[:available]).to be true
-      expect(capabilities[:atmosphere]).to include('co2')
+      expect(capabilities[:atmosphere]).to include('CO2')
       expect(capabilities[:precursor_enables][:oxygen]).to be true
     end
     

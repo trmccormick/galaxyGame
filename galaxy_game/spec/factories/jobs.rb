@@ -8,6 +8,7 @@ FactoryBot.define do
     job_type { :material_processing }
     status { :in_progress } # Changed from :pending to stay within your enum
     output_type { "Material" }
+    start_date { 2.hours.ago }
     completes_at { 1.hour.from_now }
     
     # Metadata

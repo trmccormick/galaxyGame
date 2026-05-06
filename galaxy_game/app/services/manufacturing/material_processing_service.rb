@@ -37,6 +37,7 @@ module Manufacturing
         settlement: @settlement,
         owner: @settlement.owner,
         output_type: 'processed_regolith',
+        start_date: Time.current,
         completes_at: 1.hour.from_now,
         status: :pending,
         operational_data: {

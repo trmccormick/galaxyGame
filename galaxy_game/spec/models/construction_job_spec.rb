@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ConstructionJob, type: :model do
   # Basic factories for testing
-  let(:mars) { create(:terrestrial_planet, :mars) }
+  let!(:mars) { CelestialBodies::CelestialBody.find_by!(identifier: 'MARS-01') }
   let(:location) { create(:celestial_location, name: "Test Location", celestial_body: mars) }
   let(:player) { create(:player) }
   let(:settlement) { create(:settlement, name: "Test Settlement", location: location, owner: player) }

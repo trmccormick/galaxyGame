@@ -42,18 +42,19 @@ RSpec.describe GameController, type: :controller do
     end
 
     context "solar system seeding and display" do
-      before do
-        CelestialBodies::Materials::Gas.delete_all
-        Atmosphere.delete_all
-        CelestialBodies::CelestialBody.delete_all
-        SolarSystem.delete_all
-        allow(StarSim::SystemBuilderService).to receive(:new).and_return(double(build!: true))
-      end
-      let!(:sol_system) { FactoryBot.create(:solar_system, name: 'Sol', identifier: 'SOL-01') }
-      let!(:earth) { FactoryBot.create(:terrestrial_planet, name: 'Earth', identifier: 'EARTH-01', solar_system: sol_system, orbital_period: 365, surface_temperature: 288) }
-      let!(:luna) { FactoryBot.create(:moon, name: 'Luna', identifier: 'LUNA-01', solar_system: sol_system, orbital_period: 27, parent_celestial_body: earth, surface_temperature: 250) }
-      let!(:jupiter) { FactoryBot.create(:gas_giant, name: 'Jupiter', identifier: 'JUPITER-01', solar_system: sol_system, orbital_period: 4331, surface_temperature: 165) }
-      let!(:phobos) { FactoryBot.create(:moon, name: 'Phobos', identifier: 'PHOBOS-01', solar_system: sol_system, orbital_period: 0.3, parent_celestial_body: earth, surface_temperature: 233) }
+      # before do
+      #   CelestialBodies::Materials::Gas.delete_all
+      #   Atmosphere.delete_all
+      #   CelestialBodies::CelestialBody.delete_all
+      #   SolarSystem.delete_all
+      #   allow(StarSim::SystemBuilderService).to receive(:new).and_return(double(build!: true))
+      # end
+
+      let!(:sol_system) { SolarSystem.find_or_create_by!(name: 'Sol', identifier: 'SOL-01') }
+      let!(:earth) { CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01') }
+      let!(:luna) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
+      let!(:jupiter) { CelestialBodies::CelestialBody.find_by!(identifier: 'JUPITER-01') }
+      let!(:phobos) { CelestialBodies::CelestialBody.find_by!(identifier: 'PHOBOS-01') }
 
       before do
         allow(SolarSystem).to receive(:find_by).and_call_original

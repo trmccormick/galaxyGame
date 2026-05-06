@@ -63,6 +63,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
           settlement: settlement,
           owner: settlement.owner,
           output_type: 'processed_regolith',
+          start_date: 1.hour.ago,
           completes_at: 1.hour.from_now,
           status: :pending,
           operational_data: {
@@ -101,6 +102,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
           settlement: settlement,
           owner: settlement.owner,
           output_type: 'H2O',
+          start_date: 1.hour.ago,
           completes_at: 1.hour.from_now,
           status: :pending,
           operational_data: {
@@ -135,6 +137,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
           settlement: settlement,
           owner: settlement.owner,
           output_type: 'CO2',
+          start_date: 1.hour.ago,
           completes_at: 1.hour.from_now,
           status: :pending,
           operational_data: {
@@ -175,6 +178,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
           settlement: settlement,
           owner: settlement.owner,
           output_type: 'depleted_regolith',
+          start_date: 1.hour.ago,
           completes_at: 1.hour.from_now,
           status: :pending,
           operational_data: {
@@ -209,6 +213,7 @@ RSpec.describe Manufacturing::MaterialProcessingService, type: :service do
           settlement: settlement,
           owner: settlement.owner,
           output_type: 'processed_regolith',
+          start_date: 1.hour.ago,
           completes_at: 1.hour.from_now,
           status: :pending,
           operational_data: {

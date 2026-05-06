@@ -10,7 +10,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
     end
   end
 
-  let!(:luna) { create(:large_moon, :luna) }
+  let!(:luna) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
 
   let(:location) do
     create(:celestial_location,
@@ -101,7 +101,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
         'operational' => true,
         'shell_requirements' => {
           'material_requirements' => [
-            { 'material' => 'inert_regolith_waste', 'amount' => 1400 },
+            { 'material' => ' depleted_regolith', 'amount' => 1400 },
             { 'material' => '3D-Printed I-Beam Mk1', 'amount' => 5 }
           ],
           'printing_time_hours' => 48.0,
@@ -145,9 +145,9 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
 
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
-      .with('inert_regolith_waste')
+      .with(' depleted_regolith')
       .and_return({
-        'id' => 'inert_regolith_waste',
+        'id' => ' depleted_regolith',
         'name' => 'Inert Regolith Waste',
         'type' => 'processed_material',
         'physical_properties' => { 'mass_kg' => 1.0, 'volume_m3' => 0.001 }
@@ -250,7 +250,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
         'category' => 'storage',
         'shell_requirements' => {
           'material_requirements' => [
-            { 'material' => 'inert_regolith_waste', 'amount' => 1400 },
+            { 'material' => ' depleted_regolith', 'amount' => 1400 },
             { 'material' => '3D-Printed I-Beam Mk1', 'amount' => 5 }
           ],
           'printing_time_hours' => 48.0,
@@ -370,7 +370,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       puts "✓ PVE job completed"
 
       # Verify outputs
-      inert_waste = settlement.inventory.items.find_by(name: 'inert_regolith_waste')
+      inert_waste = settlement.inventory.items.find_by(name: ' depleted_regolith')
       expect(inert_waste).to be_present
       expect(inert_waste.amount).to be >= 900.0 # ~97% yield
       puts "✓ Produced #{inert_waste.amount}kg inert waste"
@@ -458,7 +458,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       puts "\n=== STAGE 4: Shell Printing (Tank Enclosure) ==="
       
       # Ensure we have enough inert waste for shell
-      remaining_inert = settlement.inventory.items.find_by(name: 'inert_regolith_waste')
+      remaining_inert = settlement.inventory.items.find_by(name: ' depleted_regolith')
       if !remaining_inert || (remaining_inert.amount || 0) < 1400
         current_amount = remaining_inert&.amount || 0
         needed = 1400 - current_amount
@@ -466,7 +466,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
           remaining_inert.update!(amount: current_amount + needed)
         else
           settlement.inventory.items.create!(
-            name: 'inert_regolith_waste',
+            name: ' depleted_regolith',
             amount: needed,
             owner: player,
             storage_method: 'bulk_storage',
@@ -633,7 +633,7 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       game.advance_by_days(1)
 
       # Check inert waste has composition traced back
-      inert = settlement.inventory.items.find_by(name: 'inert_regolith_waste')
+      inert = settlement.inventory.items.find_by(name: ' depleted_regolith')
       expect(inert.metadata['composition']).to be_present
       expect(inert.metadata['source_materials']).to include('processed_regolith')
     end

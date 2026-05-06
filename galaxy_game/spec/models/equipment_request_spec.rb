@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe EquipmentRequest, type: :model do
   # Basic setup
   let(:player) { create(:player) }
-  let(:mars) { create(:terrestrial_planet, :mars) }
+  let!(:mars) { CelestialBodies::CelestialBody.find_by!(identifier: 'MARS-01') }
   let(:location) { create(:celestial_location, name: "Test Location", celestial_body: mars) }
   let(:settlement) { create(:base_settlement, name: "Test Settlement", location: location, owner: player) }
   let(:crater_dome) { create(:crater_dome, :with_dimensions, name: "Test Dome", settlement: settlement) }

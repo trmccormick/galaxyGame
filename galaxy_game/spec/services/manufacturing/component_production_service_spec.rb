@@ -45,12 +45,12 @@ RSpec.describe Manufacturing::ComponentProductionService do
           'material_requirements' => [
             {
               'material' => 'inert_waste',
-              'quantity' => 90,
+              'amount' => 90,
               'unit' => 'kg'
             },
             {
               'material' => 'binding_agent',
-              'quantity' => 10,
+              'amount' => 10,
               'unit' => 'kg'
             }
           ],

@@ -275,10 +275,7 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'regolith handling' do
-    let!(:luna) do
-      # Create Luna - the factory should set identifier to "LUNA-01"
-      create(:large_moon, :luna)
-    end
+    let!(:luna) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
 
     let(:regolith) do
       # Regolith item - metadata uses identifier, not name
@@ -305,10 +302,10 @@ RSpec.describe Item, type: :model do
       
       # Check that regolith gets composition from Luna's geosphere
       expect(regolith.material_properties["composition"]).to eq({
-        "Silicon" => 45.0,
-        "Oxygen" => 35.0,
-        "Aluminum" => 10.0,
-        "Titanium" => 5.0
+        "anorthosite" => 80.0, 
+        "norite" => 10.0, 
+        "other" => 5.0, 
+        "troctolite" => 5.0
       })
     end
 

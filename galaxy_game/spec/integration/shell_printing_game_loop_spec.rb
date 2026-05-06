@@ -74,7 +74,7 @@ RSpec.describe 'Shell Printing Game Loop Integration', type: :integration do
         'shell_requirements' => {
           'material_requirements' => [
             {
-              'material' => 'inert_regolith_waste',
+              'material' => ' depleted_regolith',
               'quantity' => 1400,
               'unit' => 'kg'
             },
@@ -91,9 +91,9 @@ RSpec.describe 'Shell Printing Game Loop Integration', type: :integration do
     # Stub item lookups
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
-      .with('inert_regolith_waste')
+      .with(' depleted_regolith')
       .and_return({
-        'id' => 'inert_regolith_waste',
+        'id' => ' depleted_regolith',
         'name' => 'Inert Regolith Waste',
         'type' => 'processed_material'
       })
@@ -108,7 +108,7 @@ RSpec.describe 'Shell Printing Game Loop Integration', type: :integration do
       })
 
     # Add materials to inventory
-    Item.create!(name: 'inert_regolith_waste', amount: 2000, owner: player, inventory: settlement.inventory, metadata: {'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }}, storage_method: 'bulk_storage')
+    Item.create!(name: ' depleted_regolith', amount: 2000, owner: player, inventory: settlement.inventory, metadata: {'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }}, storage_method: 'bulk_storage')
     Item.create!(name: '3D-Printed I-Beam Mk1', amount: 10, owner: player, inventory: settlement.inventory, metadata: {}, storage_method: 'bulk_storage')
 
     # Force reload to ensure items are persisted and visible
@@ -123,7 +123,7 @@ RSpec.describe 'Shell Printing Game Loop Integration', type: :integration do
     # puts "All items in DB: #{Item.all.pluck(:name, :amount, :inventory_id)}"
     # puts "Items via association: #{settlement.inventory.items.pluck(:name, :amount, :owner_id, :inventory_id)}"
     # puts "All items in DB for inventory #{settlement.inventory.id}: #{Item.where(inventory_id: settlement.inventory.id).pluck(:name, :amount)}"
-    # puts "Total inert_regolith_waste: #{settlement.inventory.current_storage_of('inert_regolith_waste')}kg"
+    # puts "Total  depleted_regolith: #{settlement.inventory.current_storage_of(' depleted_regolith')}kg"
     # puts "=== END DEBUG ==="
   end
 
@@ -167,8 +167,8 @@ RSpec.describe 'Shell Printing Game Loop Integration', type: :integration do
       inflatable_tank.reload
       shell_materials = inflatable_tank.operational_data['shell_materials']
       
-      expect(shell_materials['inert_regolith_waste']['amount']).to eq(1400)
-      expect(shell_materials['inert_regolith_waste']['composition']).to include(
+      expect(shell_materials[' depleted_regolith']['amount']).to eq(1400)
+      expect(shell_materials[' depleted_regolith']['composition']).to include(
         'SiO2' => 43.0,
         'Al2O3' => 24.0
       )

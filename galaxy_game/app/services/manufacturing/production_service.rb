@@ -42,10 +42,10 @@ module Manufacturing
       # STUB: Call @inventory.add_item("water", ...) 
       
       # 6. Produce Inert Waste to Surface Pile (Logistics step)
-      # STUB: Call helper to increment "inert_regolith_waste" pile and Inventory Item.
+      # STUB: Call helper to increment " depleted_regolith" pile and Inventory Item.
       
       # 7. Consume Inert Waste & Produce Final Component (3D Printer cycle)
-      # STUB: Call helper to consume "inert_regolith_waste" and produce "3d_printed_ibeam_mk1"
+      # STUB: Call helper to consume " depleted_regolith" and produce "3d_printed_ibeam_mk1"
       
       # For now, return the expected PVE metrics for Rake task reporting
       pve_cycles = (inert_req_kg / PVE_DATA[:output_inert_waste_kg]).ceil 

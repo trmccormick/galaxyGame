@@ -19,18 +19,12 @@ RSpec.describe Craft::BaseCraft, type: :model do
       c.precision = 2
     end
 
-    # Create Celestial Body, Location, and Settlement locally for this spec.
-    # Ensure factories for these models use `sequence` for identifiers to prevent conflicts.
-    solar_system = FactoryBot.create(:solar_system)
-    @celestial_body_instance = FactoryBot.create(:large_moon, 
-      identifier: "TEST-LUNA-#{SecureRandom.hex(4)}",
-      solar_system: solar_system
-    )
+    @luna = CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01')
     
     @shackleton_crater_location_instance = FactoryBot.create(:celestial_location, 
       name: "Shackleton Crater Base", 
       coordinates: "89.90°S 0.00°E",
-      celestial_body: @celestial_body_instance
+      celestial_body: @luna
     )
 
     @alpha_base_settlement_instance = FactoryBot.create(:base_settlement, 
@@ -83,12 +77,6 @@ RSpec.describe Craft::BaseCraft, type: :model do
     @craft_instance&.destroy # Destroy the craft and its dependent associations (inventory, base_units, etc.)
     @alpha_base_settlement_instance&.destroy # Destroy the settlement and its dependents
     @shackleton_crater_location_instance&.destroy # Destroy the location
-    @celestial_body_instance&.destroy # Destroy the celestial body
-    
-    # Destroy currencies if they were created by this spec and not globally seeded
-    # Skip destroying system currencies that may be referenced
-    @gcc&.destroy unless @gcc&.is_system_currency
-    @usd&.destroy unless @usd&.is_system_currency
   end
 
   # Use `let` to access the instances created in before(:all)

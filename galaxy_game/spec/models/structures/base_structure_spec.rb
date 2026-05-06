@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Structures::BaseStructure, type: :model do
   let(:player) { create(:player) }
-  let(:celestial_body) { create(:celestial_body, :luna) }
+  let(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   let(:settlement) { create(:base_settlement, owner: player) }
   
   # Define a minimal structure directly in the test

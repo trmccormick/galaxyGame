@@ -255,7 +255,7 @@ These do not scale with thickness — they are structural, not volumetric.
 material quality of regolith used. Not an inventory item. The shell is part of
 the structure, not something claimed.
 
-**Note on blueprint JSON**: Existing blueprints may reference `inert_regolith_waste`
+**Note on blueprint JSON**: Existing blueprints may reference ` depleted_regolith`
 as a material. This is an incorrect agent-generated label. The correct taxonomy is
 `raw_regolith` / `processed_regolith` / `depleted_regolith`. Blueprint JSON cleanup
 is a separate backlog task — do not fix during the job model task.

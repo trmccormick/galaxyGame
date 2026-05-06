@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Storage::SurfaceStorage, type: :model do
-  let(:celestial_body) { create(:celestial_body, :luna) }
+  let(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
   let(:location) { 
     create(:celestial_location, 
       name: "Shackleton Crater Base", 
