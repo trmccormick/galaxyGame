@@ -164,18 +164,12 @@ module Manufacturing
       Job.create!(
         job_type: :component_production,
         settlement: @settlement,
-        jobable: printer_unit,
+        owner: @settlement.owner,
         output_type: blueprint['name'],
-        owner: printer_unit.owner,
-        start_date: Time.current,
+        status: :pending,
         completes_at: Time.current + production_time.hours,
-        status: :in_progress,
         operational_data: {
-          'component_blueprint_id' => blueprint['id'],
-          'component_name' => blueprint['name'],
-          'quantity' => quantity,
-          'production_time_hours' => production_time,
-          'materials_consumed' => format_materials_for_storage(materials_consumed)
+          'quantity' => quantity
         }
       )
     end

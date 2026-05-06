@@ -216,12 +216,17 @@ module Manufacturing
     def self.create_unit_assembly_job(blueprint, blueprint_data, settlement, requester)
       Job.create!(
         job_type: :unit_assembly,
-        base_settlement: settlement,
+        settlement: settlement,
         owner: requester,
-        unit_type: blueprint_data['id'] || blueprint.name.downcase.gsub(' ', '_'),
-        count: 1,
-        status: :materials_pending,
-        priority: :normal
+        output_type: blueprint_data['id'] || blueprint['name'].downcase.gsub(' ', '_'),
+        start_date: Time.current,
+        completes_at: Time.current + 1.hour,
+        status: :pending,
+        operational_data: {
+          'unit_type' => blueprint_data['id'] || blueprint['name'].downcase.gsub(' ', '_'),
+          'count' => 1,
+          'priority' => 'normal'
+        }
       )
     end
 
