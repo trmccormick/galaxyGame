@@ -785,9 +785,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
     t.bigint "blueprint_id"
     t.integer "job_type", null: false
     t.integer "status", default: 0, null: false
-    t.string "output_type", null: false
+    t.string "output_type"
     t.datetime "start_date", precision: nil
-    t.datetime "completes_at", precision: nil, null: false
+    t.datetime "completes_at", precision: nil
     t.jsonb "operational_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

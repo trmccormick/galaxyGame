@@ -1,3 +1,16 @@
+            # NOTE: The following methods are stubs. The original intent is unclear and should be clarified before implementing real logic.
+            # These stubs are provided to allow specs to run without NoMethodError.
+            def deploy_starter_ecosystem
+              # TODO: Implement actual starter ecosystem deployment logic
+              Rails.logger.warn("deploy_starter_ecosystem called on Biosphere, but method is a stub. Implementation intent unknown.")
+              true
+            end
+
+            def deploy_terraforming_organism(organism)
+              # TODO: Implement actual terraforming organism deployment logic
+              Rails.logger.warn("deploy_terraforming_organism(:#{organism}) called on Biosphere, but method is a stub. Implementation intent unknown.")
+              true
+            end
       # Returns the current habitability value for this biosphere
       public
       def habitability

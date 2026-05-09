@@ -7,7 +7,6 @@ module Units
 
     include HasModules
     include HasRigs
-    # ...existing code...
     include EnergyManagement
 
     # ✅ Include existing concerns based on unit type
@@ -34,6 +33,22 @@ module Units
     attr_accessor :internal_modules, :external_modules, :rigs
 
     delegate :storage_capacity, :storage_capacity_by_type, to: :storage_manager
+
+    def job_types
+      operational_data&.dig('job_types', 'supported') || []
+    end
+
+    def max_concurrent_jobs
+      operational_data&.dig('job_types', 'max_concurrent') || 1
+    end
+
+    def supports_job_type?(job_type)
+      job_types.include?(job_type.to_s)
+    end
+
+    def processing_type
+      operational_data&.dig('processing_type')
+    end
 
     def storage_manager
       @storage_manager ||= Storage::StorageManager.new(self)

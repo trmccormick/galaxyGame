@@ -1,3 +1,9 @@
+## NOTE: This concern is currently unused in the codebase.
+#
+# All storage logic is handled via operational_data['storage'] and manager classes (see BaseUnit and StorageManager).
+# If you want to use this concern, refactor it to read/write from operational_data['storage'] instead of direct attributes.
+# Otherwise, consider removing it to avoid confusion.
+#
 # app/models/concerns/storage.rb
 module Storage
     extend ActiveSupport::Concern

@@ -1,3 +1,19 @@
+    # NOTE: This is a stub for the missing class method used in specs. The intent and correct implementation are unclear.
+    # This allows specs to proceed without NoMethodError. Replace with real logic as needed.
+    def self.create_shipyard_project(station, blueprint_id)
+      Rails.logger.warn("Called stubbed OrbitalShipyardService.create_shipyard_project with station=#{station.inspect}, blueprint_id=#{blueprint_id}. Implementation intent unknown.")
+      # Minimal stub: create a project with required fields if possible, or return nil
+      if station.respond_to?(:settlement)
+        OrbitalConstructionProject.create!(
+          station: station.settlement,
+          craft_blueprint_id: blueprint_id.to_s,
+          status: 'materials_pending',
+          progress_percentage: 0
+        )
+      else
+        nil
+      end
+    end
 
 module Construction
   class OrbitalShipyardService

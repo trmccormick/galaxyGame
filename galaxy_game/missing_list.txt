@@ -77,7 +77,7 @@ hydraulic_fluid
 hydraulic_systems
 industrial_3d_printer
 industrial_printing_frame
-inert_regolith_waste
+ depleted_regolith
 inflatable_bladders
 insulated_casing
 insulation

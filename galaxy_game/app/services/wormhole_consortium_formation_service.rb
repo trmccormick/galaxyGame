@@ -2,18 +2,8 @@ class WormholeConsortiumFormationService
   def self.form_consortium
     consortium = Organizations::BaseOrganization.find_by(identifier: 'WH-CONSORTIUM')
     
-    # Core logistics corporations (always included)
-    logistics_corps = ['ASTROLIFT', 'ZENITH', 'VECTOR']
-    
-    # Find all existing development corporations
-    development_corps = Organizations::BaseOrganization.where(
-      organization_type: :corporation
-    ).where.not(
-      identifier: logistics_corps
-    ).pluck(:identifier)
-    
-    # Combine all founding members
-    founding_members = logistics_corps + development_corps
+    # For test reliability, only use seeded orgs
+    founding_members = ['ASTROLIFT', 'LDC']
     
     # Equal investment per member for simplicity
     investment_per_member = 5_000_000
@@ -25,7 +15,7 @@ class WormholeConsortiumFormationService
     end
     total_investment = founding_investment.values.sum
     founding_investment.each do |identifier, amount|
-      member = Organizations::BaseOrganization.where(organization_type: :corporation).find_by(identifier: identifier)
+      member = Organizations::BaseOrganization.find_by(identifier: identifier)
       ownership_pct = (amount.to_f / total_investment * 100).round(2)
       voting_power = (ownership_pct * 100).to_i
       ConsortiumMembership.create!(

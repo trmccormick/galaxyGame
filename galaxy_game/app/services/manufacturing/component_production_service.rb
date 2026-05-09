@@ -32,7 +32,7 @@ module Manufacturing
     end
 
     def complete_job(job)
-      blueprint = load_blueprint(job.component_blueprint_id)
+      blueprint = load_blueprint(job.operational_data['component_blueprint_id'])
       
       # Add finished component to inventory with composition metadata
       add_component_to_inventory(job, blueprint)
@@ -165,11 +165,13 @@ module Manufacturing
         job_type: :component_production,
         settlement: @settlement,
         owner: @settlement.owner,
-        output_type: blueprint['name'],
         status: :pending,
         completes_at: Time.current + production_time.hours,
         operational_data: {
-          'quantity' => quantity
+          'quantity' => quantity,
+          'component_blueprint_id' => blueprint['id'],
+          'component_name' => blueprint['name'],
+          'materials_consumed' => format_materials_for_storage(materials_consumed)
         }
       )
     end
@@ -184,24 +186,25 @@ module Manufacturing
     end
 
     def add_component_to_inventory(job, blueprint)
-      composition_data = job.materials_consumed.map do |material_name, data|
-        {
-          'material' => material_name,
-          'amount' => data['amount'],
-          'composition' => data['composition']
-        }
-      end
-      
       metadata = {
-        'source_materials' => composition_data,
         'manufactured_at' => @settlement.name,
         'manufactured_date' => Time.current.iso8601,
         'blueprint_id' => blueprint['id']
       }
-      
+      # Add source_materials if present in job.operational_data
+      if job.operational_data && job.operational_data['materials_consumed']
+        # Convert to array of hashes for metadata
+        metadata['source_materials'] = job.operational_data['materials_consumed'].map do |mat, data|
+          {
+            'material' => mat,
+            'amount' => data['amount'],
+            'composition' => data['composition']
+          }
+        end
+      end
       @settlement.inventory.add_item(
         blueprint['name'],
-        job.quantity,
+        job.operational_data['quantity'],
         @settlement.owner,
         metadata
       )
@@ -213,7 +216,7 @@ module Manufacturing
       waste_products.each do |waste|
         @settlement.inventory.add_item(
           waste['material'],
-          waste['quantity'] * job.quantity,
+          waste['quantity'] * job.operational_data['quantity'],
           @settlement.owner,
           { 'recyclable' => waste['recyclable'] }
         )

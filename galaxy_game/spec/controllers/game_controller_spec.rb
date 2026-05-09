@@ -118,7 +118,7 @@ RSpec.describe GameController, type: :controller do
         phobos_json = celestial_bodies_json.find { |b| b['name'] == 'Phobos' }
         expect(earth_json['parent_body_identifier']).to be_nil
         expect(luna_json['parent_body_identifier']).to eq('EARTH-01')
-        expect(phobos_json['parent_body_identifier']).to eq('EARTH-01')
+        expect(phobos_json['parent_body_identifier']).to eq('MARS-01')
         expect(luna_json['is_moon']).to be true
         expect(luna_json['body_category']).to eq('moon')
         expect(earth_json['is_moon']).to be false

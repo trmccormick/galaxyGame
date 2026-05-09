@@ -8,7 +8,6 @@ module Craft
     include HasRigs
     include RigAttachable
     include HasUnits
-    # ...existing code...
     include GameConstants
     include HasUnitStorage
     include HasExternalConnections

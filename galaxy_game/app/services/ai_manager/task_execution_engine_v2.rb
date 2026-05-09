@@ -8,9 +8,9 @@
 module AIManager
   class TaskExecutionEngineV2
     def initialize(target_body, manifest = {})
-      @target_body = target_body
+      @target_body = target_body.is_a?(String) ? target_body : target_body.identifier
       @manifest = manifest
-      @environment = load_environment(target_body)
+      @environment = load_environment(@target_body)
       @task_library = load_task_library
       @task_plan = []
       @current_task_index = 0
@@ -64,22 +64,22 @@ module AIManager
 
     # --- Helpers ---
 
-      def load_environment(target_body)
-        body = CelestialBodies::CelestialBody.find_by(identifier: target_body)
-        return { "name" => target_body, "status" => :not_found } unless body
+    def load_environment(target_body)
+      body = CelestialBodies::CelestialBody.find_by(identifier: target_body)
+      return { "name" => target_body, "status" => :not_found } unless body
 
-        capabilities = AIManager::PrecursorCapabilityService.new(body).production_capabilities
+      capabilities = AIManager::PrecursorCapabilityService.new(body).production_capabilities
 
-        {
-          "name"            => body.name,
-          "identifier"      => body.identifier,
-          "atmosphere"      => body.atmosphere.present?,
-          "has_regolith"    => capabilities[:surface].any?,
-          "local_resources" => capabilities[:surface] + capabilities[:atmosphere],
-          "isru_capable"    => capabilities[:surface].any? || capabilities[:regolith].any?,
-          "capabilities"    => capabilities
-        }
-      end
+      {
+        "name"            => body.name,
+        "identifier"      => body.identifier,
+        "atmosphere"      => body.atmosphere.present?,
+        "has_regolith"    => capabilities[:surface].any?,
+        "local_resources" => capabilities[:surface] + capabilities[:atmosphere].to_a,
+        "isru_capable"    => capabilities[:isru_options].any?,
+        "capabilities"    => capabilities
+      }
+    end
 
     def load_task_library
       # Loads all tasks_v2 JSON files into an array

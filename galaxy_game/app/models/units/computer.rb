@@ -1,3 +1,11 @@
+## NOTE: This model is currently specialized for mining/efficiency simulation.
+#
+# The operational data in data/json-data/operational_data/units/computers/ covers a much broader range of computer/controller types:
+# - Automation, facility management, navigation, quantum computing, server farms, etc.
+# - Focus on control, automation, computation, interfaces, software, and management—not just mining.
+#
+# SUGGESTION: Refactor this model to be a generic, data-driven Units::Computer (or Units::Controller) that exposes methods for power usage, interfaces, control capabilities, data processing, software, etc., matching the JSON structure.
+#
 # app/models/units/computer.rb
 module Units
   class Computer < BaseUnit

@@ -71,4 +71,11 @@ class ConstructionJob < ApplicationRecord
   scope :active, -> { where(status: [:scheduled, :materials_pending, :equipment_pending, :workers_pending, :in_progress]) }
   scope :completed, -> { where(status: :completed) }
   scope :failed, -> { where(status: :failed) }
+  
+  # NOTE: Stub implementation. This may need to be updated to match business logic for ConstructionJob lifecycle.
+  # This method is required for interface compatibility with other job types.
+  def start!
+    # TODO: Implement actual start logic for ConstructionJob if needed.
+    update!(status: :in_progress)
+  end
 end

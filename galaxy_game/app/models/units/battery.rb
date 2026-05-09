@@ -1,80 +1,28 @@
 module Units
   class Battery < BaseUnit
-
-        # For test: expose charge_level as alias for battery_level
-        def charge_level
-          battery_level
-        end
     include BatteryManagement
 
-    # ...existing code...
-        def charge_battery(amount)
-          current = operational_data.dig('battery', 'current_charge') || 0
-          capacity = operational_data.dig('battery', 'capacity') || 0
-          max_charge = operational_data.dig('battery', 'max_charge_rate_kw') || 10.0
-          # Limit by max charge rate
-          amount = [amount, max_charge].min
-          # Don't exceed capacity
-          new_charge = [current + amount, capacity].min
-          # Update the operational data
-          operational_data['battery']['current_charge'] = new_charge
-          save!
-          # Return the amount actually charged
-          new_charge - current
-        end
-
-        # ...existing code...
-    
-    def battery_capacity
-      operational_data.dig('battery', 'capacity') || 0
-    end
-    
-    def battery_level
-      operational_data.dig('battery', 'current_charge') || 0
-    end
-    
-    def battery_percentage
-      return 0 if battery_capacity == 0
-      (battery_level / battery_capacity) * 100
-    end
-    
-    def charge_battery(amount)
-      current = operational_data.dig('battery', 'current_charge') || 0
-      capacity = operational_data.dig('battery', 'capacity') || 0
-      max_charge = operational_data.dig('battery', 'max_charge_rate_kw') || 10.0
-      # Limit by max charge rate
-      amount = [amount, max_charge].min
-      # Don't exceed capacity
-      new_charge = [current + amount, capacity].min
-      # Update the operational data
-      operational_data['battery']['current_charge'] = new_charge
-      save!
-      # Return the amount actually charged
-      new_charge - current
+    # For test: expose charge_level as alias for battery_level
+    def charge_level
+      battery_level
     end
 
-    def recharge_battery(amount)
-      charge_battery(amount)
+    # Optionally override max charge/discharge rates for this unit
+    def max_charge_rate
+      operational_data.dig('battery', 'max_charge_rate_kw') || 50.0
     end
 
-    alias_method :recharge_battery, :charge_battery
-    
-    def discharge_battery(amount)
-      current = operational_data.dig('battery', 'current_charge') || 0
-      max_discharge = operational_data.dig('battery', 'max_discharge_rate_kw') || 15.0
-      
-      # Limit by max discharge rate
-      amount = [amount, max_discharge].min
-      
-      # Don't go below zero
-      amount = [amount, current].min
-      
-      # Update the operational data
-      operational_data['battery']['current_charge'] = current - amount
-      save!
-      
-      # Return the amount actually discharged
-      amount
+    def max_discharge_rate
+      operational_data.dig('battery', 'max_discharge_rate_kw') || 75.0
+    end
+
+    # Untested: Self-discharge logic (needs integration with simulation tick/maintenance)
+    # Reduces battery charge by self_discharge_rate (fraction per hour) over time
+    def apply_self_discharge(time_elapsed_hours = 1)
+      rate = operational_data.dig('battery', 'self_discharge_rate') || 0.001 # Default: 0.1% per hour
+      loss = battery_capacity * rate * time_elapsed_hours
+      operational_data['battery']['current_charge'] = [battery_level - loss, 0].max
+      save! if respond_to?(:save!)
     end
   end
 end

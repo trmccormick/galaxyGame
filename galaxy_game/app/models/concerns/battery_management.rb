@@ -34,35 +34,54 @@ module BatteryManagement
     (battery_level.to_f / battery_capacity) * 100.0
   end
 
-  # Consumes a specified amount of battery charge.
-  # Automatically saves the record if it's an ActiveRecord object.
-  def consume_battery(amount)
-    return if amount.nil? || amount <= 0
 
-    operational_data['battery'] ||= {} # Ensure battery hash exists
-    current = battery_level
-    new_level = [current - amount, 0.0].max # Charge cannot go below zero
-    operational_data['battery']['current_charge'] = new_level
-
-    save if respond_to?(:save) # Save if the including class is an ActiveRecord model
+  # Returns the max charge rate (kW) for this battery. Override in including class if needed.
+  def max_charge_rate
+    operational_data.dig('battery', 'max_charge_rate_kw')
   end
 
-  # Recharges the battery by a specified amount.
-  # Automatically saves the record if it's an ActiveRecord object.
-  def recharge_battery(amount)
-    return if amount.nil? || amount <= 0
-
-    operational_data['battery'] ||= {} # Ensure battery hash exists
-    current = battery_level
-    max_capacity = battery_capacity
-    new_level = [current + amount, max_capacity].min
-    operational_data['battery']['current_charge'] = new_level
-
-    save if respond_to?(:save) # Save if the including class is an ActiveRecord model
+  # Returns the max discharge rate (kW) for this battery. Override in including class if needed.
+  def max_discharge_rate
+    operational_data.dig('battery', 'max_discharge_rate_kw')
   end
 
-  # Alias for recharge_battery, providing an alternative method name.
-  alias charge_battery recharge_battery
+  # Charges the battery by the specified amount, respecting max charge rate and capacity.
+  # Returns the amount actually charged.
+  def charge_battery(amount)
+    return 0.0 if amount.nil? || amount <= 0
+    operational_data['battery'] ||= {}
+    current = battery_level
+    capacity = battery_capacity
+    max_rate = max_charge_rate || amount
+    # Limit by max charge rate
+    charge_amt = [amount, max_rate].min
+    # Don't exceed capacity
+    new_charge = [current + charge_amt, capacity].min
+    actual_charged = new_charge - current
+    operational_data['battery']['current_charge'] = new_charge
+    save! if respond_to?(:save!)
+    actual_charged
+  end
+
+  # Alias for charge_battery
+  alias_method :recharge_battery, :charge_battery
+
+  # Discharges the battery by the specified amount, respecting max discharge rate and available charge.
+  # Returns the amount actually discharged.
+  def discharge_battery(amount)
+    return 0.0 if amount.nil? || amount <= 0
+    operational_data['battery'] ||= {}
+    current = battery_level
+    max_rate = max_discharge_rate || amount
+    # Limit by max discharge rate and available charge
+    discharge_amt = [amount, max_rate, current].min
+    operational_data['battery']['current_charge'] = current - discharge_amt
+    save! if respond_to?(:save!)
+    discharge_amt
+  end
+
+  # For compatibility: consume_battery is an alias for discharge_battery
+  alias_method :consume_battery, :discharge_battery
 
   # Returns the inherent constant drain rate of the battery itself (e.g., self-discharge).
   # This is a power rate (kW equivalent) that might be added to total power usage.

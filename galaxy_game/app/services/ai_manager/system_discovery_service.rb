@@ -205,7 +205,7 @@ module AIManager
 
       {
         metal_richness: calculate_metal_score(geological_features),
-        volatile_availability: calculate_volatile_score(geological_features),
+        volatile_availability: calculate_volatile_score_from_features(geological_features),
         rare_earth_potential: calculate_rare_earth_score(geological_features),
         energy_potential: calculate_energy_potential(system),
         construction_materials: assess_construction_materials(geological_features)
@@ -251,7 +251,9 @@ module AIManager
       [score / 10.0, 1.0].min # Normalize to 0-1
     end
 
-    def calculate_volatile_score(features)
+    # NOTE: This method was renamed from calculate_volatile_score to avoid conflict with the planet-based version.
+    # The original conflict caused NoMethodError when a planet was passed instead of an array of features.
+    def calculate_volatile_score_from_features(features)
       volatile_features = features.select { |f| f.name =~ /water|ice|methane|ammonia|carbon_dioxide/i }
       score = volatile_features.sum { |f| f.concentration.to_f * f.accessibility.to_f }
       [score / 10.0, 1.0].min

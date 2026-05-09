@@ -28,11 +28,6 @@ RSpec.describe Job, type: :model do
     expect(job).not_to be_valid
   end
 
-  it "is invalid without an output_type" do
-    job = build(:job, output_type: nil)
-    expect(job).not_to be_valid
-  end
-
   it "is invalid without a completes_at" do
     job = build(:job, completes_at: nil)
     expect(job).not_to be_valid
