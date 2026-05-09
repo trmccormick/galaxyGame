@@ -1,3 +1,7 @@
+    # Returns the target shell thickness in mm, sourced from operational_data or @unit_info
+    def target_thickness_mm
+      operational_data&.dig('target_thickness_mm') || @unit_info&.dig('target_thickness_mm')
+    end
 module Units
   class BaseUnit < ApplicationRecord
     # Tell Rails to use the 'units' table instead of 'base_units'
