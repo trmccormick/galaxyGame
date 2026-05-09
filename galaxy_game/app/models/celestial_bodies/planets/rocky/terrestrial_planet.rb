@@ -1,3 +1,12 @@
+        # Public: Returns geological features association or properties['geological_features'] or []
+        public
+        def geological_features
+          if respond_to?(:features) && features.present?
+            features
+          else
+            properties&.dig('geological_features') || []
+          end
+        end
 # app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb
 module CelestialBodies
   module Planets
