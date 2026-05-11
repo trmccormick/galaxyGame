@@ -16,7 +16,7 @@ RSpec.describe Lookup::EarthReferenceService, type: :service do
       
       # Check atmosphere composition has expected gases
       expect(service.atmosphere_composition).to include("N2", "O2")
-      expect(service.atmosphere_composition["N2"]["percentage"]).to be_within(5).of(78)
+      expect(service.atmosphere_composition["N2"]).to be_within(5).of(78)
     end
   end
   

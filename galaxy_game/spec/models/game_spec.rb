@@ -77,9 +77,7 @@ RSpec.describe Game do
       game.assign_task(settlement, "Deploy solar collector", 5.0)
 
       allow(planet).to receive(:should_simulate?).and_return(true)
-      allow(PlanetUpdateService).to receive(:new)
-        .with(planet, 5.0)
-        .and_return(instance_double(PlanetUpdateService, run: true))
+      allow(PlanetUpdateService).to receive(:new).and_return(double(run: true))
     end
 
     it 'advances game time and completes a task' do

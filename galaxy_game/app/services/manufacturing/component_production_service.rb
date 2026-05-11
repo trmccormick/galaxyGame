@@ -40,8 +40,8 @@ module Manufacturing
       # Add waste products to inventory
       add_waste_products(job, blueprint)
       
-      # Mark job as complete
-      job.complete!
+      # Mark job as ready to claim
+      job.update!(status: :ready_to_claim)
       
       job
     end

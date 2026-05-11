@@ -590,7 +590,7 @@ module Units
       material&.dig('storage_requirements')&.include?('surface_storage')
     end
 
-    def store_on_surface(resource_name, amount)
+    def store_on_surface(resource_name, amount, source_unit = self)
       # First check if attachable has a surface_storage method and it returns something
       return false unless attachable&.respond_to?(:surface_storage)
       
@@ -602,7 +602,7 @@ module Units
       surface_store.add_pile(
         material_name: resource_name,
         amount: amount,
-        source_unit: self
+        source_unit: source_unit
       )
     end
 

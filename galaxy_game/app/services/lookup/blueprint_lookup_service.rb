@@ -117,7 +117,7 @@ module Lookup
         BLUEPRINT_PATHS.each do |type, config|
           if config.is_a?(Hash)
             base_path = config[:path].call
-            Rails.logger.debug "Checking base path: #{base_path}"
+            # Rails.logger.debug "Checking base path: #{base_path}"
             
             # Process direct files in this path if configured
             if config[:direct_files] && File.directory?(base_path)
@@ -170,7 +170,7 @@ module Lookup
       return [] unless File.directory?(base_path)
 
       files = Dir.glob(File.join(base_path, "**", "*.json"))
-      Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
+      # Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
 
       files.map do |file|
         begin

@@ -1,7 +1,7 @@
 # app/controllers/materials_controller.rb
 class MaterialsController < ApplicationController
     def show
-      service = MaterialLookupService.new
+      service = Lookup::MaterialLookupService.new
       @material = service.find_material(params[:name])
   
       if @material

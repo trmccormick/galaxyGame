@@ -75,7 +75,7 @@ class ManufacturingService
       manufacturing_time = blueprint_data.dig('production_data', 'manufacturing_time_hours') || 24
       job.update(
         start_date: Time.current,
-        estimated_completion: Time.current + manufacturing_time.hours
+        operational_data: { estimated_completion: Time.current + manufacturing_time.hours }
       )
       
       # Consume materials

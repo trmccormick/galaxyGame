@@ -236,25 +236,25 @@ RSpec.describe Units::BaseUnit, type: :model do
   describe '#store_on_surface' do
     # Use a real settlement for attachable, and then stub its surface_storage
     let(:settlement_with_storage) { create(:base_settlement) }
-    let!(:surface_storage_real) { create(:surface_storage, inventory: settlement_with_storage.inventory) } # Create a real surface_storage
+    let!(:surface_storage_real) { create(:surface_storage, inventory: settlement_with_storage.inventory) }
 
     # Create base_unit attached to the real settlement
     let(:base_unit) { create(:base_unit, attachable: settlement_with_storage) }
 
     before do
-      # Stub the add_pile method on the real surface_storage instance
-      allow(surface_storage_real).to receive(:add_pile).and_return(true)
+      # Ensure the stub is applied to the actual object returned by settlement_with_storage.surface_storage
+      allow(settlement_with_storage.surface_storage).to receive(:add_pile).and_return(true)
     end
 
     it 'calls add_pile on surface storage' do
       # Call the method under test
-      base_unit.send(:store_on_surface, 'processed_regolith', 100) # Use send as it's a private method
+      base_unit.send(:store_on_surface, 'processed_regolith', 100)
 
-      # Assert that add_pile was received by the real surface_storage_double
-      expect(surface_storage_real).to have_received(:add_pile).with(
+      # Assert that add_pile was received by the actual surface_storage instance
+      expect(settlement_with_storage.surface_storage).to have_received(:add_pile).with(
         material_name: 'processed_regolith',
         amount: 100,
-        source_unit: base_unit # base_unit is a real object, so it will match
+        source_unit: base_unit
       )
     end
 

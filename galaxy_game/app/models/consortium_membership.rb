@@ -9,11 +9,16 @@ class ConsortiumMembership < ApplicationRecord
 
   validates :investment_amount, numericality: { greater_than: 0 }
   validates :ownership_percentage, numericality: { greater_than: 0, less_than_or_equal_to: 100 }
-
-
+  validate :member_must_be_corporation  # Add this line back
 
   scope :active, -> { where(membership_status: 'active') }
   scope :founding, -> { where("membership_terms->>'founding_member' = 'true'") }
 
-  # Removed member_must_be_corporation validation to allow any BaseOrganization as member
+  private  # Add this if not already present
+
+  def member_must_be_corporation
+    unless member&.corporation?
+      errors.add(:member, 'must be a corporation')
+    end
+  end
 end

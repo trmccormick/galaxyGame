@@ -185,7 +185,7 @@ module Lookup
       begin
         UNIT_PATHS.each do |type, config|
           base_path = config[:path].call
-          Rails.logger.debug "Checking base path: #{base_path}"
+          # Rails.logger.debug "Checking base path: #{base_path}"
           
           if config[:direct_files] && File.directory?(base_path)
             units.concat(load_json_files(base_path))
@@ -229,7 +229,7 @@ module Lookup
       return [] unless File.directory?(base_path)
 
       files = Dir.glob(base_path.join("**", "*.json")) # Using Pathname#join
-      Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
+      # Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
 
       files.map do |file|
         begin

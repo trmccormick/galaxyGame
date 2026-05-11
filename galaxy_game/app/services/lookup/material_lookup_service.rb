@@ -55,7 +55,7 @@ module Lookup
     def find_material(query)
       query = query.to_s.downcase
       found = @materials.find { |material| match_material?(material, query) }
-      Rails.logger.debug "Material lookup for '#{query}': #{found ? 'found' : 'not found'}"
+      #Rails.logger.debug "Material lookup for '#{query}': #{found ? 'found' : 'not found'}"
       found
     rescue => e
       Rails.logger.error "Error finding material: #{e.message}"
@@ -158,7 +158,7 @@ module Lookup
         MATERIAL_PATHS.each do |type, config|
           if config.is_a?(Hash)
             base_path = config[:path].call
-            Rails.logger.debug "Checking base path: #{base_path}"
+            # Rails.logger.debug "Checking base path: #{base_path}"
             
             # Process direct files in this path if configured
             if config[:direct_files] && File.directory?(base_path)
@@ -195,7 +195,7 @@ module Lookup
       files.map do |file|
         begin
           data = JSON.parse(File.read(file))
-          Rails.logger.debug "Loaded material from #{file}"
+          # Rails.logger.debug "Loaded material from #{file}"
           data
         rescue JSON::ParserError => e
           Rails.logger.error "Invalid JSON in file: #{file} - #{e.message}"
@@ -212,12 +212,12 @@ module Lookup
       return [] unless File.directory?(base_path)
 
       files = Dir.glob(File.join(base_path, "**", "*.json")) # ** scans all subdirectories
-      Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
+      # Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
 
       files.map do |file|
         begin
           data = JSON.parse(File.read(file))
-          Rails.logger.debug "Loaded material from #{file}"
+          # Rails.logger.debug "Loaded material from #{file}"
           data
         rescue JSON::ParserError => e
           Rails.logger.error "Invalid JSON in file: #{file} - #{e.message}"

@@ -76,7 +76,7 @@ module Lookup
       begin
         CRAFT_PATHS.each do |type, config|
           base_path = config[:path].call
-          Rails.logger.debug "Checking base path: #{base_path}"
+          # Rails.logger.debug "Checking base path: #{base_path}"
           
           if config[:recursive_scan] && File.directory?(base_path)
             crafts.concat(load_json_files_recursively(base_path))
@@ -95,7 +95,7 @@ module Lookup
       return [] unless File.directory?(base_path)
 
       files = Dir.glob(File.join(base_path, "**", "*.json"))
-      Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
+      # Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
 
       files.map do |file|
         begin

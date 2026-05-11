@@ -140,11 +140,11 @@ class SolarSystem < ApplicationRecord
     
     # Set required defaults
     params[:identifier] ||= "IG-#{SecureRandom.hex(4)}"
-    params[:gravity] ||= 0
+    params[:gravity] ||= nil
     params[:density] = params[:density].to_f > 0 && params[:density].to_f < 2.0 ? params[:density].to_f : 1.5
-    params[:radius] ||= 0
-    params[:orbital_period] ||= 0
-    params[:mass] ||= 0
+    params[:radius] ||= nil
+    params[:orbital_period] ||= nil
+    params[:mass] ||= nil
     
     # IMPORTANT: Set the solar_system_id explicitly
     params[:solar_system_id] = self.id
@@ -183,11 +183,11 @@ class SolarSystem < ApplicationRecord
     
     # Set required defaults with valid values
     params[:identifier] ||= "MOON-#{SecureRandom.hex(4)}"
-    params[:gravity] ||= 0
-    params[:density] ||= 0
-    params[:radius] ||= 0
+    params[:gravity] ||= nil
+    params[:density] ||= nil
+    params[:radius] ||= nil
     params[:orbital_period] = params[:orbital_period].present? ? [params[:orbital_period].to_f, 0.1].max : 27.3
-    params[:mass] ||= 0
+    params[:mass] ||= nil
     
     # Very important: Explicitly set the solar_system_id to ensure association
     params[:solar_system_id] = self.id

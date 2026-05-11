@@ -66,7 +66,7 @@ module TerraSim
       @celestial_body = celestial_body
       @hydrosphere = celestial_body.hydrosphere
       @atmosphere = celestial_body.atmosphere
-      @material_lookup = MaterialLookupService.new # Initialize the lookup service
+      @material_lookup = Lookup::MaterialLookupService.new # Initialize the lookup service
     end
 
     def simulate(time_delta = nil)

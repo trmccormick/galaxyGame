@@ -244,8 +244,8 @@ module TerraSim
     end
 
     def calculate_biosphere_conditions
-      tropical_temp = @biosphere.tropical_temperature
-      polar_temp = @biosphere.polar_temperature
+      tropical_temp = @biosphere.tropical_temperature.to_f
+      polar_temp = @biosphere.polar_temperature.to_f
 
       if tropical_temp > 273 && polar_temp < 273
         habitable_ratio = ((tropical_temp - 273) / (tropical_temp - polar_temp))**0.666667

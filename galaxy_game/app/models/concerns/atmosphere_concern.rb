@@ -17,7 +17,7 @@ module AtmosphereConcern
     return gas.percentage if gas
     # Fallback to composition hash
     if composition.present?
-      return composition[formula_or_name].to_f if composition[formula_or_name]
+      return composition[formula_or_name] if composition[formula_or_name]
     end
     0.0
   end

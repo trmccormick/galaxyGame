@@ -42,12 +42,12 @@ module CelestialBodies
     has_many :stars, through: :star_distances
 
     validates :identifier, presence: true, uniqueness: true   
-    validates :size, presence: true, numericality: { greater_than: 0 }
+    validates :size, presence: true, numericality: { greater_than: 0 }, allow_nil: true
     validates :gravity, :density, :radius, :orbital_period, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validates :mass, format: { 
       with: /\A-?\d+(\.\d+)?([eE][-+]?\d+)?\z/, 
       message: "must be a valid number" 
-    }
+    }, allow_nil: true
     validates :known_pressure, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
     enum status: { active: 0, mined_out: 1 }
