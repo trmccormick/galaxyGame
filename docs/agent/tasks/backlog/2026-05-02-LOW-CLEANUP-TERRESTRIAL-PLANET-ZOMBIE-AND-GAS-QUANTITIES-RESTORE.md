@@ -133,6 +133,26 @@ The `luna` let block is correct — keep it.
 
 ---
 
+## Progress (as of 2026-05-08)
+
+### Current Status
+- This cleanup task is **partially complete**.
+- The duplicate (zombie) `TerrestrialPlanet` model at the wrong namespace (`app/models/celestial_bodies/terrestrial_planet.rb`) has already been removed.
+- Only the correct STI-compliant model remains: `app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb`.
+- Remaining steps (removal of dead `gas_quantities` code and legacy case in `celestial_body.rb`) have not yet been completed.
+- The task's remaining steps and acceptance criteria are still relevant and actionable.
+
+### Findings
+- No file exists at the old zombie model path; only the correct model is present.
+- Dead code and legacy references still need to be cleaned up as described in the task.
+- The task is **not stale** and should remain in the backlog until fully completed.
+
+### Next Steps
+- Remove dead `gas_quantities` code and legacy compatibility block from `celestial_body.rb` as described.
+- Leave task in BACKLOG until all cleanup steps are finished.
+
+---
+
 ## Verification Steps
 
 ```bash

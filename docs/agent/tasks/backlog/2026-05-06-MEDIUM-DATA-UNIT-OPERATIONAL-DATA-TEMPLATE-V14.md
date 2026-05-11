@@ -109,6 +109,20 @@ Add:
 
 ---
 
-## Completion Report
-**Completed by**:
-**Completion date**:
+## Progress (as of 2026-05-08)
+
+### Current Status
+- This data update task is **on hold** and not yet started.
+- The operational data template and unit JSON files have not been updated to v1.4.
+- The new `job_types`, `processing_type`, and `resources` blocks are not present in the template or unit files.
+- The task's requirements and acceptance criteria remain fully relevant and actionable, pending completion of Task A.
+
+### Findings
+- No evidence of v1.4 metadata or changelog entries in the template.
+- The task is **not stale** and should remain in the backlog until Task A is complete and this update is prioritized.
+
+### Next Steps
+- Leave task in BACKLOG until Task A is complete and this data update is ready to proceed.
+- When reactivated: update the template and all unit JSON files as described.
+
+---

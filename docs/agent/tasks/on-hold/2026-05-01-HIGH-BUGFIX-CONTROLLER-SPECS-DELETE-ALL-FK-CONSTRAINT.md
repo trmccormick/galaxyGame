@@ -106,6 +106,27 @@ Expected: 0 failures.
 
 ---
 
+## Progress (as of 2026-05-08)
+
+### Current Status
+- Controller spec FK constraint bugfix is **on hold**; not actively fixing at this time.
+- Recent controller spec runs show **no ActiveRecord::InvalidForeignKey errors**.
+- `delete_all` is still present in test logs for `game_states` and `solar_systems`, but does **not cause FK constraint errors**.
+- All controller actions and DB operations complete without error; specs fail for other reasons (not FK constraints).
+- No evidence of unhandled FK constraint violations in recent output.
+
+### Findings
+- The original issue (FK constraint error from `delete_all` on `celestial_bodies`) is **not currently reproducible** in recent runs.
+- Test data setup/teardown uses `delete_all` for some tables, but this does not break FK constraints in the current schema/data.
+- All controller specs return 200 OK or 302 Found as expected.
+- No further action required unless the FK constraint error reappears or requirements change.
+
+### Next Steps
+- Leave task in BACKLOG until/unless FK constraint errors return or spec requirements change.
+- If reactivated: follow Implementation Steps above, focusing on scoping assertions and avoiding table-wide `delete_all`.
+
+---
+
 ## Acceptance Criteria
 - [ ] No `ActiveRecord::InvalidForeignKey` errors in controller specs.
 - [ ] `delete_all` removed from all controller spec `before` blocks.

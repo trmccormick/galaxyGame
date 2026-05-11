@@ -1,10 +1,15 @@
 # TASK: Fix Four Isolated MEDIUM Failures — cover!, target_thickness_mm, GeosphereSimulation arity, magnetic_moment
 
-**Status**: BACKLOG
+**Status**: COMPLETED
 **Priority**: MEDIUM
 **Type**: bugfix
 **Created**: 2026-05-01
 **Failure Count**: 5 failures (1 + 2 + 1 + 1)
+---
+
+## Completion Note (2026-05-08)
+
+All four bugs (cover!, target_thickness_mm, GeosphereSimulation arity, magnetic_moment) have been fixed and individually committed. Full regression and targeted specs pass. No new failures introduced. See commit history for details.
 
 ---
 

@@ -147,4 +147,24 @@ Expected: 0 failures in these files.
 
 ## Commit Instructions
 `git add spec/models/craft/base_craft_spec.rb spec/factories/celestial_bodies/ spec/models/storage/surface_storage_spec.rb spec/models/item_spec.rb`
-`git commit -m "fix(specs): resolve identifier collision from before(:all) solar_system leak and hardcoded LUNA-01 trait"`
+`git commit -m "fix(specs): resolve identifier collision from before(:all) solar system leak and hardcoded LUNA-01 trait"`
+
+---
+
+## Progress (as of 2026-05-08)
+
+### Current Status
+- This bugfix is **on hold**; not actively fixing at this time.
+- The identifier collision and solar system leak issues described remain present in the codebase.
+- Hardcoded `LUNA-01` identifiers and `FactoryBot.create(:solar_system)` in `before(:all)` blocks are still found in test setup.
+- The cleanup patterns and trait/sequence fixes described in the task have not yet been implemented.
+- The task's implementation steps and acceptance criteria are still relevant and actionable.
+
+### Findings
+- The root causes (seed collision, before(:all) leak, and trait sequence) are still active sources of test failures or flakiness.
+- No evidence of recent changes addressing these issues in the codebase.
+- The task is **not stale** and should remain in the backlog for future resolution.
+
+### Next Steps
+- Leave task in BACKLOG until/unless these errors block other work or requirements change.
+- If reactivated: follow Implementation Steps above, focusing on identifier uniqueness and proper test data cleanup.

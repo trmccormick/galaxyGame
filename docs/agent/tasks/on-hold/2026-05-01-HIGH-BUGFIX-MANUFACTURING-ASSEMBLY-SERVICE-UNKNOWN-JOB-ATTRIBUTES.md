@@ -117,6 +117,25 @@ docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS
 
 ---
 
+## Progress (as of 2026-05-08)
+
+### Current Status
+- This refactor is **on hold**; not actively fixing at this time.
+- The errors are well-understood: both services attempt to set attributes on `Job` that are not columns, and must migrate these to `operational_data`.
+- No changes have been made to the service or spec files yet; the file documents the full migration plan and acceptance criteria.
+- No new related failures or regressions have been reported.
+
+### Findings
+- `manufacturing_service.rb` and `assembly_service.rb` both require migration of non-schema attributes to `operational_data` and must ensure all mandatory fields are present in `Job.create!`.
+- The spec files will need to update assertions to check `operational_data` instead of direct attributes.
+- The reference implementation in `material_processing_service.rb` is available and should be followed exactly when this task is resumed.
+
+### Next Steps
+- Leave task in BACKLOG until/unless these errors block other work or requirements change.
+- If reactivated: follow Implementation Steps above, focusing on correct attribute migration and spec assertion updates.
+
+---
+
 ## Acceptance Criteria
 - [ ] No `ActiveModel::UnknownAttributeError` in manufacturing_service or assembly_service.
 - [ ] `Job.create!` in both services includes all 5 mandatory fields.

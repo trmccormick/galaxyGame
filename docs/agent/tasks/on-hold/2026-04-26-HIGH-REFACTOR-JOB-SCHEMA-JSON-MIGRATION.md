@@ -19,9 +19,9 @@
 ## Context
 The `Job` model requires 5 mandatory fields on every create: `owner`, `settlement`, `job_type`, `output_type`, `completes_at`. All dynamic job metadata beyond these must live in the `operational_data` JSON column — not as top-level attributes.
 
-**Progress as of 2026-05-01:**
+**Progress as of 2026-05-08 (reviewed):**
 - ✅ `MaterialProcessingService` — fully migrated: uses `operational_data` hash, all 5 mandatory fields present, spec updated and passing.
-- ❌ `ComponentProductionService` — NOT migrated: `create_production_job` (line 164) passes `component_blueprint_id`, `component_name`, `quantity`, `production_time_hours`, `printer_unit`, `materials_consumed` as direct top-level attributes, AND is missing `owner`, `completes_at`, `output_type`. This will raise `ActiveRecord::RecordInvalid`.
+- ⚠️ `ComponentProductionService` — *almost complete*: `create_production_job` now provides all required fields except `output_type`. All non-column metadata is correctly stored in `operational_data`, and specs reference the correct structure. Only `output_type` is missing from the Job record; add `output_type: 'Component'` to fully align with requirements.
 
 **Relevant Architecture Docs** — read before starting:
 - `docs/architecture/job_model_architecture.md` (if available)

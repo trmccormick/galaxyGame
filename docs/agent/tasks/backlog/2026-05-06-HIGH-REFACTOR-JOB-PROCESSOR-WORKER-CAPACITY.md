@@ -127,7 +127,20 @@ settlement capacity from unit job_types"
 
 ---
 
-## Completion Report
-**Completed by**:
-**Completion date**:
-**Final test result**:
+## Progress (as of 2026-05-08)
+
+### Current Status
+- This refactor task is **on hold** and not yet started.
+- No evidence that the `JobProcessorWorker` has been updated to include the new `promote_pending_jobs` logic or settlement capacity checks.
+- The required changes, acceptance criteria, and commit instructions remain fully relevant and actionable.
+- Task is blocked until Task A (job_types on BaseUnit) and Task B (unit JSON files) are complete.
+
+### Findings
+- No code or spec changes related to settlement job capacity or pending job promotion have been made.
+- The task is **not stale** and should remain in the backlog until dependencies are resolved and the refactor is prioritized.
+
+### Next Steps
+- Leave task in BACKLOG until Task A and Task B are complete and this refactor is ready to proceed.
+- When reactivated: implement the new logic and update specs as described.
+
+---

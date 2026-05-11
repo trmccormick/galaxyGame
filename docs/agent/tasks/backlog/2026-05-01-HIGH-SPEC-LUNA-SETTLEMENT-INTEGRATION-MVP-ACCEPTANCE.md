@@ -64,6 +64,24 @@ The pattern from the archived backlog is clear: we've planned Luna settlement mu
 
 ---
 
+## Progress (as of 2026-05-08)
+
+### Current Status
+- This MVP acceptance spec task is **on hold** and not yet started.
+- No evidence that `luna_settlement_integration_spec.rb` exists or that the outlined examples have been implemented.
+- The required spec structure, setup notes, and acceptance criteria remain fully relevant and actionable.
+- Task is blocked until all 3 prior Luna MVP tasks are complete.
+
+### Findings
+- No integration spec exists to prove Luna ISRU works end to end.
+- The task is **not stale** and should remain in the backlog until dependencies are resolved and the spec is prioritized.
+
+### Next Steps
+- Leave task in BACKLOG until all prior Luna MVP tasks are complete and this spec is ready to proceed.
+- When reactivated: implement the spec exactly as outlined, with no extras.
+
+---
+
 ## Setup Notes
 - Use `let(:luna)` via the existing `:luna` factory (or seed data — check DatabaseCleaner except list)
 - Use `let(:settlement)` — create a minimal settlement associated with luna

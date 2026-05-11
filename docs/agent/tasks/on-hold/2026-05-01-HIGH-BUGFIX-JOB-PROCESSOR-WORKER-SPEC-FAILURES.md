@@ -186,17 +186,21 @@ git push
 
 ---
 
-## Completion Report
-*Filled in by the implementing agent after completion*
+## Progress (as of 2026-05-08)
 
-**Completed by**:  
-**Completion date**:  
-**Final test result**:  
+### Current Status
+- This bugfix is **on hold**; not actively fixing at this time.
+- The spec failures are well-understood and isolated to test code, not worker logic.
+- No changes have been made to the worker or factories; the spec file remains as described above.
+- No new regressions or related failures have been reported.
 
-### What was changed
+### Findings
+- Failure 1: `completes_at` is not present on `ConstructionJob` — spec must use `:job` factory for construction context.
+- Failure 2: `allow_any_instance_of(Job)` is too broad; must scope stub to failing instance, but AR reload may require further adjustment if the stub does not apply.
+- The spec file contains clear instructions for the next implementer, including stop conditions and escalation points.
 
-### Issues discovered
+### Next Steps
+- Leave task in BACKLOG until/unless spec failures block other work or requirements change.
+- If reactivated: follow Implementation Steps above, focusing on correct factory usage and stub scoping.
 
-### Follow-up tasks needed
-
-### Lessons learned
+---
