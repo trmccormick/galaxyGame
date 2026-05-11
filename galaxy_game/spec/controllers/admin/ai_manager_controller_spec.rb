@@ -2,101 +2,13 @@ require 'rails_helper'
 require_relative '../../../app/services/ai_manager'
 
 RSpec.describe Admin::AiManagerController, type: :controller do
-  # Mock market and transport services
+  let!(:earth) { CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01') }
+  let!(:mars) { CelestialBodies::CelestialBody.find_by!(identifier: 'MARS-01') }
+  # Add more planets as needed for your tests
+
   before(:each) do
-    # Create shared doubles for celestial bodies
-    mars_atmosphere = double('MarsAtmosphere', composition: {'CO2' => 0.95, 'N2' => 0.03})
-    allow(mars_atmosphere).to receive(:gas_percentage) { |gas| ({'CO2' => 0.95, 'N2' => 0.03}[gas] || 0.0).to_f }
-    allow(mars_atmosphere).to receive(:pressure).and_return(0.006)
-    allow(mars_atmosphere).to receive(:temperature).and_return(210) # Mars average surface temperature in Kelvin
-    allow(mars_atmosphere).to receive(:gases).and_return([
-      double('Gas', name: 'CO2', percentage: 0.95),
-      double('Gas', name: 'N2', percentage: 0.03)
-    ])
-    allow(mars_atmosphere).to receive(:density).and_return(0.020)
-    
-    mars_double = double('Mars', id: 1, identifier: 'mars', name: 'Mars', has_solid_surface?: true,
-             atmosphere: mars_atmosphere,
-             geosphere: double('MarsGeosphere', 
-               surface_composition: {'iron_oxide' => 0.2, 'silicon' => 0.3}, 
-               volatile_reservoirs: {'H2O' => 0.1}, 
-               subsurface_water_mass: 0.0,
-               crust_composition: {'iron_oxide' => 0.2, 'silicon' => 0.3},
-               total_crust_mass: 1.0e23,
-               stored_volatiles: {'H2O' => 0.1}), 
-             hydrosphere: nil,
-             biosphere: nil,
-             gravity: 0.38,
-             radius: 3389500.0,
-             axial_tilt: 25.19,
-             reload: mars_double)
-    
-    earth_atmosphere = double('EarthAtmosphere', composition: {'N2' => 0.78, 'O2' => 0.21})
-    allow(earth_atmosphere).to receive(:gas_percentage) { |gas| ({'N2' => 0.78, 'O2' => 0.21}[gas] || 0.0).to_f }
-    allow(earth_atmosphere).to receive(:pressure).and_return(1.0)
-    allow(earth_atmosphere).to receive(:temperature).and_return(288) # Earth average surface temperature in Kelvin
-    allow(earth_atmosphere).to receive(:gases).and_return([
-      double('Gas', name: 'N2', percentage: 0.78),
-      double('Gas', name: 'O2', percentage: 0.21)
-    ])
-    allow(earth_atmosphere).to receive(:density).and_return(1.225)
-    
-    earth_double = double('Earth', id: 2, identifier: 'earth', name: 'Earth', has_solid_surface?: true,
-             atmosphere: earth_atmosphere,
-             geosphere: double('EarthGeosphere', 
-               surface_composition: {'silicon' => 0.3, 'aluminum' => 0.1}, 
-               volatile_reservoirs: {}, 
-               subsurface_water_mass: 0.0,
-               crust_composition: {'silicon' => 0.3, 'aluminum' => 0.1},
-               total_crust_mass: 2.5e22,
-               stored_volatiles: {}), 
-             hydrosphere: double('EarthHydrosphere', ocean_coverage: 0.7),
-             biosphere: nil,
-             gravity: 1.0,
-             radius: 6371000.0,
-             axial_tilt: 23.44,
-             reload: earth_double)
-    # Mock CelestialBody lookups - handle both lowercase and capitalized identifiers
-    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'mars').and_return(mars_double)
-    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'Mars').and_return(mars_double)
-    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'earth').and_return(earth_double)
-    allow(CelestialBodies::CelestialBody).to receive(:find_by).with(identifier: 'Earth').and_return(earth_double)
-    
-    # Mock case-insensitive name lookups for target_location
-    mars_where = double('MarsWhere')
-    allow(mars_where).to receive(:first).and_return(mars_double)
-    allow(CelestialBodies::CelestialBody).to receive(:where).with('LOWER(name) = ?', 'mars').and_return(mars_where)
-    
-    earth_where = double('EarthWhere')
-    allow(earth_where).to receive(:first).and_return(earth_double)
-    allow(CelestialBodies::CelestialBody).to receive(:where).with('LOWER(name) = ?', 'earth').and_return(earth_where)
-    
-    # Mock settlements
-    earth_settlement = double('EarthSettlement', 
-      id: 1, 
-      name: 'Earth Hub', 
-      location: double('EarthLocation', celestial_body_id: 2, celestial_body: double('Earth', id: 2, identifier: 'earth', name: 'Earth'))
-    )
-    
-    # Mock Settlement::BaseSettlement query chains
-    empty_relation = double('EmptyRelation')
-    allow(empty_relation).to receive(:limit).and_return([])
-    
-    where_not_relation = double('WhereNotRelation')
-    allow(where_not_relation).to receive(:not).and_return(empty_relation)
-    allow(where_not_relation).to receive(:limit).and_return([])
-    
-    joins_relation = double('JoinsRelation')
-    allow(joins_relation).to receive(:where).and_return(where_not_relation)
-    allow(joins_relation).to receive(:find_by).and_return(earth_settlement)
-    
-    allow(Settlement::BaseSettlement).to receive(:find_by).and_return(earth_settlement)
-    allow(Settlement::BaseSettlement).to receive(:joins).and_return(joins_relation)
-    
-    # Mock Market::NpcPriceCalculator
+    # Only mock external services, not celestial bodies
     allow(Market::NpcPriceCalculator).to receive(:calculate_ask).and_return(100.0)
-    
-    # Mock Logistics::TransportCostService
     allow(Logistics::TransportCostService).to receive(:calculate_cost_per_kg).and_return(50.0)
   end
   

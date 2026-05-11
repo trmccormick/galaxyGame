@@ -89,16 +89,16 @@ The spec tries to load `spec/fixtures/sample_template.json` which doesn't exist.
 
 ---
 
-### Bug 6 — `BaseUnit#store_on_surface` argument mismatch (failure #51)
+### Bug 6 — `BaseUnit#store_on_surface` stub not applied (failure #51)
 
 **Spec**: `spec/models/units/base_unit_spec.rb:254`
 **Error**: `add_pile` was expected with `{material_name: ..., amount: ..., source_unit: ...}` but received 0 times.
 
 **Fix**:
 1. Read `spec/models/units/base_unit_spec.rb` around line 249-260.
-2. Read `app/models/units/base_unit.rb` — find `store_on_surface`.
-3. The method is calling `add_pile` but with different keyword arguments than what the spec expects. Either the method signature changed or the spec is wrong about the argument names.
-4. Align the spec expectation with the actual call, or fix the production code call to use the expected keys.
+2. The issue is that the stub for `add_pile` is applied to a specific `SurfaceStorage` instance (`surface_storage_real`), but the `store_on_surface` method calls `add_pile` on a different instance (reloaded from DB via `settlement_with_storage.surface_storage`).
+3. Change the stub to use `allow_any_instance_of(Storage::SurfaceStorage).to receive(:add_pile).and_return(true)` to ensure it applies to all instances.
+4. Run the spec to confirm it passes.
 
 ---
 
@@ -145,5 +145,5 @@ git commit -m "fix: contract_service calculate_delivery_time returns nil — add
 git commit -m "fix: earth_reference_service atmosphere_composition format key mismatch"
 git commit -m "fix: wormhole consortium formation membership count"
 git commit -m "fix(spec): game_spec PlanetUpdateService stub too specific — use flexible argument match"
-git commit -m "fix(spec): base_unit store_on_surface add_pile argument mismatch"
+git commit -m "fix(spec): base_unit store_on_surface stub not applied to correct instance"
 ```
