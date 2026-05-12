@@ -548,11 +548,69 @@ module StarSim
       puts "Created hydrosphere for #{body.name}." if @debug_mode
     end
 
+    # Validates geosphere data for cross-sphere contamination and logs warnings.
+    # @param body [CelestialBodies::CelestialBody] The celestial body.
+    # @param geosphere_data [Hash] Geosphere data from JSON.
+    def validate_geosphere_data(body, geosphere_data)
+      return unless geosphere_data.present?
+      
+      stored_volatiles = geosphere_data[:stored_volatiles] || geosphere_data['stored_volatiles']
+      return unless stored_volatiles.present?
+      
+      # Known atmosphere gases that should not be in geosphere stored_volatiles for vacuum bodies
+      atmosphere_gases = ['N2', 'O2', 'Ar', 'Ne', 'He', 'Kr', 'Xe']
+      
+      # Check if body is a vacuum body (no significant atmosphere)
+      is_vacuum_body = body.atmosphere.nil? || (body.atmosphere&.pressure.to_f < 0.001)
+      
+      # Check for atmosphere gases in stored_volatiles on vacuum bodies
+      if is_vacuum_body
+        stored_volatiles.each do |compound, locations|
+          if atmosphere_gases.include?(compound)
+            if locations.is_a?(Hash) && locations.key?('atmosphere')
+              puts "[WARNING]: #{body.name} (vacuum body) has atmosphere gas '#{compound}' in geosphere stored_volatiles. Should be in atmosphere sphere." if @debug_mode
+            elsif locations.is_a?(String) && locations == 'atmosphere'
+              puts "[WARNING]: #{body.name} (vacuum body) has atmosphere gas '#{compound}' in geosphere stored_volatiles. Should be in atmosphere sphere." if @debug_mode
+            end
+          end
+        end
+      end
+      
+      # Check for hydrosphere data in stored_volatiles when body has no hydrosphere
+      has_hydrosphere = body.hydrosphere.present?
+      
+      unless has_hydrosphere
+        stored_volatiles.each do |compound, locations|
+          if locations.is_a?(Hash)
+            locations.each do |location, amount|
+              if ['oceans', 'groundwater', 'lakes', 'rivers'].include?(location)
+                puts "[WARNING]: #{body.name} (no hydrosphere) has hydrosphere location '#{location}' for #{compound} in geosphere stored_volatiles. Should be in hydrosphere sphere." if @debug_mode
+              end
+            end
+          end
+        end
+      end
+      
+      # Check for physically impossible reservoirs
+      stored_volatiles.each do |compound, locations|
+        if locations.is_a?(Hash)
+          locations.each do |location, amount|
+            if location == 'oceans' && body.name.downcase != 'earth' && !['ocean_planet', 'water_world', 'hycean'].include?(body.type&.downcase)
+              puts "[WARNING]: #{body.name} has 'oceans' location for #{compound} in geosphere stored_volatiles, but is not an ocean world." if @debug_mode
+            end
+          end
+        end
+      end
+    end
+
     # Creates a Geosphere record for a celestial body.
     # @param body [CelestialBodies::CelestialBody] The body to create geosphere for.
     # @param geosphere_data [Hash] Geosphere data from JSON.
     def create_geosphere(body, geosphere_data)
       return unless geosphere_data.present? && body.respond_to?(:create_geosphere!) # Check for method existence
+      
+      # Validate geosphere data for cross-sphere contamination
+      validate_geosphere_data(body, geosphere_data)
       
       geosphere_attrs = geosphere_data.deep_dup
       
