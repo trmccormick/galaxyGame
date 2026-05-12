@@ -1,0 +1,141 @@
+# Project Galaxy Game: Architectural & Economic Decisions
+**Last Updated**: 2026-05-11
+**Maintained By**: Session Strategist (Claude)
+
+> This file is the source of truth for all locked decisions.
+> No agent may contradict these without explicit human approval.
+> All new decisions go here BEFORE any code is written.
+
+---
+
+## Economic Constants
+
+| Rule | Value | Notes |
+|---|---|---|
+| Currency Peg | 1 USD = 1 GCC (Galaxy Core Credit) | No conversion logic needed |
+| SCC Surcharge | 0.5% | Applied to all Trading PLEX transactions |
+| Broker Fee | 0.3% | Applied to all Trading PLEX transactions |
+| Sales Tax | 3.37% | Applied to all Trading PLEX transactions |
+| Lunar Iron Loss Rate | 15% | Applies to iron AND silicate sourcing |
+| Manufacturing Logic | Market vs. Build balance | Never hardcode "always buy" or "always build" |
+
+---
+
+## Lunar Industrial Constants
+
+- **Primary resource**: Depleted Regolith (primary mass)
+- **Secondary resource**: Iron (additive)
+- **Loss rate**: 15% on all early-stage sourcing of iron and silicates
+  - 100 units regolith input → 85 units usable output
+  - 100 units iron input → 85 units usable output
+- **CNT dependency**: Carbon Nanotubes (Venusian import) required for Mk2 Composite parts
+- **No conflicts** with 1:1 USD/GCC peg logic
+
+---
+
+## Architecture Decisions
+
+### No Hardcoded Luna Logic
+All Luna-specific behavior must be data-driven from `operational_data` or JSON config files.
+No Ruby class may contain hardcoded Luna resource values, capacities, or production rates.
+If a value is Luna-specific, it belongs in the Luna mission profile JSON, not in code.
+
+### Unit Model Pattern
+All unit subclasses follow the Robot/Battery pattern:
+- Read everything from `operational_data`
+- No `attr_accessor` for config values
+- No `initialize` overrides
+- No hardcoded unit type lists in BaseUnit
+- `job_types` driven by `operational_data`
+
+### Habitat Unit — Locked 2026-05-11
+- **Habitat unit has one job**: expose `population_capacity` from `operational_data`
+- Population capacity = how many people can sleep here (beds)
+- **PopulationManagement concern belongs on Settlement and Craft — NOT Habitat**
+- Remove all `Resource.consume` / `Resource.produce` calls from Habitat — dead code
+- Remove all population management logic from Habitat — delegate to concern on Settlement
+- Basic needs (food, water, O2 consumption / CO2, wastewater, biowaste production)
+  are defined in game constants and calculated by services that adjust inventory
+- Habitat does not calculate or adjust inventory directly
+
+### .old File Convention — Locked 2026-05-11
+Files renamed to `.old` are mid-refactor placeholders — not intentional deletions.
+When a `.old` file exists without a corresponding `.rb`:
+- Restore from `.old` as the starting point
+- Rewrite to follow Robot/Battery pattern
+- Once rewritten and specs pass, delete the `.old` file
+- Never leave `.old` files in place after task completion
+
+### Population & Life Support Model — Locked 2026-05-11
+Basic needs defined in game constants, not in unit classes:
+- **Consumption per person per day**: food, water, O2
+- **Waste per person per day**: CO2, wastewater, biowaste
+- Services calculate and adjust settlement inventory
+- Habitat contributes `population_capacity` only
+- PopulationManagement concern lives on Settlement and Craft
+
+### Job Model (Manufacturing)
+- `Job` = manufacturing (ISRU, smelting, components) — timer-based, 5 mandatory fields
+- `ConstructionJob` = surface construction (crater domes, shell printing) — permanent separate model
+- Job unification plan: CANCELLED (2026-05-03)
+- `output_type` on Job: nullable column, not required
+
+### Job Lifecycle
+```
+Created     → status: :pending, start_date: nil, completes_at: nil
+Slot opens  → status: :in_progress, start_date: Time.current, completes_at: start_date + production_time
+Completes   → output added to inventory, status: :ready_to_claim
+Cancelled   → materials returned (if before start), status: :cancelled
+```
+
+### Data Paths
+- Always use `GalaxyGame::Paths` constants — never `Rails.root.join` directly
+- JSON operational data lives in `data/json-data/`
+- Sphere data is strictly separated — geosphere stores only ground-accessible volatiles
+
+---
+
+## Development Hardware Topology
+
+### Current State (2026-05-11)
+| Node | IP | Role | Runs |
+|---|---|---|---|
+| Intel Mac | — | Primary dev, orchestration | VS Code, Continue, git |
+| M4 Mac | 10.6.186.161 | Model serving | Codestral, Qwen2.5-14B, DeepSeek-16B |
+| Windows (Ryzen 7) | 10.6.186.50 | Model serving | Qwen3-30B, Qwen2.5-3B, Llama-8B, Nomic Embed |
+| Pi 4 | — | Infrastructure | Samba shares, Docker (game stack capable) |
+
+### Target State (post Ryzen 7 Linux Mint setup)
+| Node | Role |
+|---|---|
+| Ryzen 7 Linux Mint | Primary dev machine — full game stack + models |
+| Pi 4 | Infrastructure — PostgreSQL, Open WebUI, Samba |
+| M4 Mac | Ollama models only |
+| Intel Mac | Secondary / backup orchestration |
+
+### Local Model Routing
+| Task Type | Model | Node |
+|---|---|---|
+| Architecture / synthesis reports | Codestral | M4 |
+| Multi-file implementation | Qwen2.5-Coder 14B | M4 |
+| Logic verification | DeepSeek 16B | M4 |
+| Heavy implementation | Qwen3-Coder 30B | Windows |
+| Fast single-file edits | Qwen2.5-Coder 3B | Windows |
+| RAG / codebase indexing | Nomic Embed | Windows (always-on) |
+| Tab autocomplete | Qwen2.5-Coder 1.5B | Windows (always-on) |
+| Fallback (Llama 8B) | General chat only if 30B unavailable | Windows |
+
+### Cloud Agent Rules
+- **GPT-4.1**: Primary implementation agent. All 0x tasks. Free tier.
+- **Grok**: Logic audits only. Retires 2026-05-15 — do not plan work here after that date.
+- **Claude**: Planning and strategy only. Never implementation. Premium — use at gates only.
+- **Premium gates**: 3 scheduled this month. No unscheduled premium unless local hits multi-file architecture blocker.
+
+---
+
+## May 2026 Schedule Constraints
+- Premium available: May 11–19
+- Vacation (no premium): May 20–27
+- GPT-4.1 runs unattended during vacation week
+- Post-vacation premium review: May 28–31
+- Monthly goal: Luna settled, ISRU producing, AI Manager trained on pattern
