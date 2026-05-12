@@ -193,9 +193,23 @@ Stop conditions:
 ---
 
 ## Completion Report
-**Completed by**:
-**Completion date**:
-**Final test result**:
-### What was changed
-### Issues discovered
-### Follow-up tasks needed
+
+Completed by: GPT-4.1
+Completion date: 2026-05-11
+Final test result: 60 examples, 0 failures (unit specs), 0 regressions (model specs)
+
+What was changed:
+  - app/models/units/base_unit.rb — removed hardcoded unit type methods (lines 609-617)
+  - app/models/units/habitat.rb — rewritten to operational_data pattern, single responsibility
+  - spec/models/units/base_unit_spec.rb — added specs for job_types, supports_job_type?, processing_type
+  - app/models/units/lunar_regolith_processor.rb.old — deleted (dead code, zero references)
+  - app/models/units/moxie_unit.rb.old — deleted (dead code, zero references)
+
+Issues discovered:
+  - lunar_regolith_processor and moxie_unit were already dead code — not restored
+  - base_unit.rb.old and unit.rb.old exist but are out of scope — flagged for separate review
+  - Duplicate currency symbol (USD) pre-existing before(:suite) error — out of scope
+
+Follow-up tasks needed:
+  - Review base_unit.rb.old and unit.rb.old — determine if safe to delete
+  - has_modules_spec.rb 4 failures — pre-existing, needs separate task
