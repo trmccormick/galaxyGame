@@ -15,29 +15,10 @@
 
 module Units
   class Habitat < BaseUnit
-    # All configuration/state is in operational_data
-
     def population_capacity
-      operational_data&.dig('population_capacity') || 0
+      operational_data&.dig('habitat_systems', 'capacity') || 0
     end
-
-    def current_population
-      operational_data&.dig('current_population') || 0
-    end
-
-    def add_population(amount)
-      operational_data['current_population'] = current_population + amount
-      save if respond_to?(:save)
-    end
-
-    def remove_population(amount)
-      operational_data['current_population'] = [current_population - amount, 0].max
-      save if respond_to?(:save)
-    end
-
-    def population_full?
-      current_population >= population_capacity
-    end
+  end
 
     def available_capacity
       population_capacity - current_population

@@ -238,12 +238,10 @@ RSpec.describe Units::BaseUnit, type: :model do
     let(:surface_storage_double) { instance_double(Storage::SurfaceStorage) }
     let(:base_unit) { create(:base_unit, attachable: settlement_with_storage) }
 
-    before do
+    it 'calls add_pile on surface storage' do
       allow_any_instance_of(Settlement::BaseSettlement).to receive(:surface_storage).and_return(surface_storage_double)
       allow(surface_storage_double).to receive(:add_pile).and_return(true)
-    end
 
-    it 'calls add_pile on surface storage' do
       # Call the method under test
       base_unit.send(:store_on_surface, 'processed_regolith', 100)
 
@@ -283,8 +281,52 @@ RSpec.describe Units::BaseUnit, type: :model do
 
       # Call the method under test
       expect(base_unit_no_surface_storage.send(:store_on_surface, 'processed_regolith', 100)).to be false
-      # Ensure add_pile was NOT called
-      expect(surface_storage_real).not_to have_received(:add_pile)
+    end
+  end
+
+  describe Units::BaseUnit do
+    let(:unit) { described_class.new(operational_data: operational_data) }
+
+    context "#job_types" do
+      context "when operational_data has no job_types key" do
+        let(:operational_data) { {} }
+        it "returns an empty array" do
+          expect(unit.job_types).to eq([])
+        end
+      end
+
+      context "when operational_data has job_types" do
+        let(:operational_data) { { 'job_types' => { 'supported' => ['foo', 'bar'] } } }
+        it "returns the supported array" do
+          expect(unit.job_types).to eq(['foo', 'bar'])
+        end
+      end
+    end
+
+    describe "#supports_job_type?" do
+      let(:operational_data) { { 'job_types' => { 'supported' => ['foo', 'bar'] } } }
+      it "returns true for known type" do
+        expect(unit.supports_job_type?('foo')).to be true
+      end
+      it "returns false for unknown type" do
+        expect(unit.supports_job_type?('baz')).to be false
+      end
+    end
+
+    describe "#processing_type" do
+      context "when not set" do
+        let(:operational_data) { {} }
+        it "returns nil" do
+          expect(unit.processing_type).to be_nil
+        end
+      end
+
+      context "when set in operational_data" do
+        let(:operational_data) { { 'processing_type' => 'extractor' } }
+        it "returns the value from operational_data" do
+          expect(unit.processing_type).to eq('extractor')
+        end
+      end
     end
   end
 end

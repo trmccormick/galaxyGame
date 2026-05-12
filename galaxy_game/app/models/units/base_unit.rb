@@ -607,16 +607,10 @@ module Units
     end
 
     def atmospheric_unit_types
-      %w[co2_oxygen_production_unit oxygen_production_unit gas_separator]
     end
     
-    def geosphere_unit_types
-      %w[planetary_volatiles_extractor thermal_extraction_unit lunar_oxygen_extractor mining_drill]
-    end
     
-    def extraction_unit_types
-      %w[mining_drone resource_extractor]
-    end    
+    
 
     def get_or_create_surface_storage
       # First try to get existing surface storage
