@@ -37,7 +37,10 @@ module AIManager
         atmosphere: atmospheric_resources,
         surface: surface_resources,
         subsurface: subsurface_resources,
-        regolith: regolith_composition
+        regolith: regolith_composition,
+        has_regolith: has_regolith?,
+        isru_options: isru_options,
+        isru_capable: isru_options.any?
       }
     end
 
@@ -58,6 +61,14 @@ module AIManager
         has_regolith?
       else
         false
+      end
+    end
+
+    # Get list of ISRU options enabled by precursor phase
+    # @return [Array<Symbol>]
+    def isru_options
+      [:oxygen, :water, :fuel, :metals, :regolith_processing].select do |capability|
+        precursor_enables?(capability)
       end
     end
 

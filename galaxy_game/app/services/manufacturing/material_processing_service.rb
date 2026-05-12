@@ -15,7 +15,7 @@ module Manufacturing
       end
 
       # Load operational data for the unit
-      operational_data = Lookup::UnitLookupService.new.find_unit(unit.unit_type)
+      operational_data = unit
       raise "Operational data not found for unit type: #{unit.unit_type}" unless operational_data
 
       # Determine processing type from subcategory
@@ -41,7 +41,7 @@ module Manufacturing
         completes_at: 1.hour.from_now,
         status: :pending,
         operational_data: {
-          'unit_type' => unit.unit_type,
+          'unit_type' => unit['unit_type'],
           'processing_type' => processing_type.to_s,
           'input_material' => input_material,
           'input_amount' => input_amount,

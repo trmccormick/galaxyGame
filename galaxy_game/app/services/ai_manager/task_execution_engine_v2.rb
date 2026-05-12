@@ -30,10 +30,10 @@ module AIManager
       # Use extracted required_capabilities from manifest, or fallback
       capabilities = @required_capabilities
       capabilities = ["power", "habitat", "comms"] if capabilities.nil? || capabilities.empty?
-      @task_plan = []
+      @task_plan = {}
       capabilities.each do |capability|
         task = select_task_for_capability(capability)
-        @task_plan << parameterize_task(task) if task
+        @task_plan[capability] = parameterize_task(task) if task
       end
     end
 
@@ -49,14 +49,21 @@ module AIManager
           end
         end
       end
-      # Optionally, add more extraction logic for other manifest fields
+      # Support for mission profiles: look for phases[*].phase_id
+      if manifest["phases"].is_a?(Array)
+        manifest["phases"].each do |phase|
+          if phase["phase_id"]
+            capabilities << phase["phase_id"]
+          end
+        end
+      end
       capabilities.uniq
     end
 
     # Step 2: Execute planned tasks
     def execute_tasks
-      @task_plan.each_with_index do |task, idx|
-        puts "Executing task #{idx+1}/#{@task_plan.length}: #{task["metadata"]["name"]}"
+      @task_plan.each do |capability, task|
+        puts "Executing task for #{capability}: #{task["metadata"]["name"]}"
         result = execute_task(task)
         puts result ? "✓ Success" : "✗ Failure"
       end
@@ -73,7 +80,7 @@ module AIManager
       {
         "name"            => body.name,
         "identifier"      => body.identifier,
-        "atmosphere"      => body.atmosphere.present?,
+        "atmosphere"      => body.atmosphere.present? && body.atmosphere.pressure.to_f > 0,
         "has_regolith"    => capabilities[:surface].any?,
         "local_resources" => capabilities[:surface] + capabilities[:atmosphere].to_a,
         "isru_capable"    => capabilities[:isru_options].any?,
