@@ -57,6 +57,11 @@ RSpec.describe GameController, type: :controller do
       let!(:phobos) { CelestialBodies::CelestialBody.find_by!(identifier: 'PHOBOS-01') }
 
       before do
+        # Associate celestial bodies with the Sol system
+        earth.update!(solar_system: sol_system)
+        luna.update!(solar_system: sol_system)  
+        jupiter.update!(solar_system: sol_system)
+        
         allow(SolarSystem).to receive(:find_by).and_call_original
         allow(SolarSystem).to receive(:find_by).with(name: 'Sol').and_return(sol_system)
       end
@@ -91,7 +96,7 @@ RSpec.describe GameController, type: :controller do
 
       it "correctly calculates @planet_count excluding satellites" do
         get :index
-        expect(assigns(:planet_count)).to eq(2)
+        expect(assigns(:planet_count)).to eq(3)
       end
 
       it "defines is_moon and body_category singleton methods on celestial bodies" do
