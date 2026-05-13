@@ -302,7 +302,7 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
     end
 
     it 'calculates orbital period correctly' do
-      allow(Kernel).to receive(:rand).and_return(0.5, 1.0) # Use HZ placement, distance = 1.5 AU
+      allow(Kernel).to receive(:rand).and_return(0.0, 1.0) # Use HZ placement, distance = 1.0 AU
       
       result = generator.send(:generate_optimized_orbital_parameters, 0, mock_star)
 
