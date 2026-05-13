@@ -1,5 +1,5 @@
 # Project Galaxy Game: Economic & Strategic Decisions
-- **Currency Peg**: 1 USD = 1 GCC (Galaxy Core Credit)
+- **Currency Peg**: 1 USD = 1 GCC (Galactic Crypto Currency)
 - **Market Taxes (Trading PLEX)**:
   - SCC Surcharge: 0.5%
   - Broker Fee: 0.3%

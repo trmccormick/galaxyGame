@@ -1,18 +1,11 @@
 # TASK: Luna Settlement Integration Spec — MVP Acceptance Test (Seed Data)
 
-**Status**: SUPERSEDED
+**Status**: ACTIVE
 **Priority**: HIGH
 **Type**: spec
 **Created**: 2026-05-01 (updated 2026-05-11 for sol.json seed data)
-**Last Updated**: 2026-05-12
-**Superseded By**: 2026-05-12-HIGH-BUGFIX-LUNA-SETTLEMENT-INTEGRATION-SPEC-API-FIXES.md
 **MVP Gate**: YES — this is the definition of "Luna settlement works"
 **Depends On**: luna_settlement_profile_v1.json exists ✓
-
----
-
-## Status Update (2026-05-12)
-**SUPERSEDED** — Spec was created but has API usage issues. Replaced with focused bugfix task for existing spec corrections.
 
 ---
 

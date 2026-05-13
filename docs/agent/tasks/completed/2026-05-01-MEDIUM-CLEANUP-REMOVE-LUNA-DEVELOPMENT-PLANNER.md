@@ -1,6 +1,6 @@
 # TASK: Remove LunaDevelopmentPlanner — Wrong Design, Luna Knowledge Moved to JSON
 
-**Status**: BACKLOG
+**Status**: COMPLETED
 **Priority**: MEDIUM
 **Type**: cleanup
 **Created**: 2026-05-01
@@ -49,22 +49,21 @@ Once `luna_settlement_profile_v1.json` exists, this file has no purpose.
 
 ---
 
-## Progress (as of 2026-05-08)
+## Progress (as of 2026-05-11)
 
 ### Current Status
-- This cleanup task is **on hold** and not yet started.
-- `luna_development_planner.rb` still exists in the codebase and contains hardcoded Luna bootstrap phases and resource constants.
-- No evidence that the file has been deleted or that its logic has been fully migrated to JSON.
-- The task's steps and acceptance criteria remain fully relevant and actionable.
+- Task activated 2026-05-11 after Luna JSON profile completion.
+- grep found no callers to `AIManager::LunaDevelopmentPlanner` (only class definition itself).
+- No corresponding spec file exists.
+- `luna_development_planner.rb` deleted from app/services/ai_manager/.
+- No Ruby files contain hardcoded Luna bootstrap phases or resource constants.
 
 ### Findings
-- The anti-pattern of hardcoded Luna logic in Ruby is still present and must be removed before the Luna profile is considered complete.
-- No references to `LunaDevelopmentPlanner` have been removed or updated in the codebase.
-- The task is **not stale** and should remain in the backlog for future cleanup.
+- Anti-pattern fully removed. No references remain in codebase.
+- All cleanup steps completed as required.
 
 ### Next Steps
-- Leave task in BACKLOG until the Luna JSON profile is complete and the Ruby file is confirmed unused and deleted.
-- When reactivated: follow the steps to confirm no callers, then delete the file and any related specs.
+- None. Task is fully complete and archived.
 
 ---
 

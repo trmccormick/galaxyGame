@@ -56,12 +56,16 @@
 
 **Goal**: Eliminate the major spec failure clusters so the test suite gives clean signal.
 
-| # | Task File | Agent | Gate |
-|---|---|---|---|
-| 7 | `on-hold/HIGH-BUGFIX-SPEC-IDENTIFIER-COLLISION-BEFORE-ALL-LEAK` → backlog | 0x | ~26 failures fixed |
-| 8 | `on-hold/HIGH-BUGFIX-PRECURSOR-SPEC-MISSING-SOLAR-SYSTEM-LET` → backlog | 0x | ~18 failures fixed |
-| 9 | `on-hold/HIGH-BUGFIX-CONTROLLER-SPECS-DELETE-ALL-FK-CONSTRAINT` → backlog | 0x | ~10 failures fixed |
-| 10 | `on-hold/HIGH-BUGFIX-MANUFACTURING-ASSEMBLY-SERVICE-UNKNOWN-JOB-ATTRIBUTES` → backlog | 0x | ~4 failures fixed |
+| # | Task File | Status | Agent | Gate |
+|---|---|---|---|---|
+| 7 | `on-hold/HIGH-BUGFIX-SPEC-IDENTIFIER-COLLISION-BEFORE-ALL-LEAK` → backlog | ON-HOLD | 0x | ~26 failures fixed |
+| 8 | `on-hold/HIGH-BUGFIX-PRECURSOR-SPEC-MISSING-SOLAR-SYSTEM-LET` → backlog | ON-HOLD | 0x | ~18 failures fixed |
+| 9 | `backlog/2026-05-12-TASK-A-INVESTIGATION-CONTROLLER-SPEC-COUNT-MISMATCHES` | 📋 READY | GPT-4.1 (0.5x) | Investigation report complete |
+| 10 | `backlog/2026-05-12-TASK-B-SYNTHESIS-CONTROLLER-SPEC-COUNT-MISMATCHES` | 📋 BLOCKED | Human | After Task A complete |
+| 11 | `backlog/2026-05-12-TASK-C-IMPLEMENTATION-CONTROLLER-SPEC-COUNT-MISMATCHES` | 📋 BLOCKED | GPT-4.1 (0.75x) | After Task B approval |
+| 12 | `on-hold/HIGH-BUGFIX-MANUFACTURING-ASSEMBLY-SERVICE-UNKNOWN-JOB-ATTRIBUTES` → backlog | ON-HOLD | 0x | ~4 failures fixed |
+
+**Controller spec decomposition**: Original monolithic task split into 3 phases to enable GPT-4.1 participation while preserving human judgment for synthesis.
 
 **These are independent — run in parallel** if multiple 0x agents are available.
 
