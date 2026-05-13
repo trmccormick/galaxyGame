@@ -203,7 +203,8 @@ module AIManager
 
       # Use TerraSim services for actual planetary simulation
       begin
-        simulate_with_terrasim(target_location)
+        result = simulate_with_terrasim(target_location)
+        result
       rescue => e
         Rails.logger.error "[MissionPlanner] TerraSim integration failed: #{e.message}, falling back to estimates"
         default_planetary_changes
@@ -221,8 +222,8 @@ module AIManager
       final_state = run_terrasim_simulation(target_location, simulation_years)
 
       # Calculate changes
-      changes = calculate_state_changes(initial_state, final_state, simulation_years)
-      changes.empty? ? default_planetary_changes : changes
+      changes = calculate_state_changes(initial_state, final_state, simulation_years, @pattern)
+      changes
     end
 
     def capture_initial_state(celestial_body)
@@ -269,45 +270,45 @@ module AIManager
       capture_initial_state(celestial_body.reload)
     end
 
-    def calculate_state_changes(initial_state, final_state, years)
-      changes = {}
+    def calculate_state_changes(initial_state, final_state, years, pattern)
+      # Start with default pattern-specific structure
+      defaults = default_planetary_changes
 
-      # Atmospheric changes
+      # Update defaults with actual changes from TerraSim simulation
       if initial_state[:atmosphere] && final_state[:atmosphere]
         initial_atm = initial_state[:atmosphere]
         final_atm = final_state[:atmosphere]
 
-        changes[:atmosphere] = {
-          pressure_change: format_change(final_atm[:pressure] - initial_atm[:pressure], 'bar', years),
-          temperature_change: format_change(final_atm[:temperature] - initial_atm[:temperature], 'K', years),
-          composition_changes: calculate_gas_changes(initial_atm[:composition], final_atm[:composition])
-        }
+        # Update atmosphere changes in defaults
+        if defaults[:atmosphere]
+          temp_diff = final_atm[:temperature] - initial_atm[:temperature]
+          pressure_diff = final_atm[:pressure] - initial_atm[:pressure]
+          
+          defaults[:atmosphere][:temperature_change] = format_change(temp_diff, 'K', years) if temp_diff != 0
+          defaults[:atmosphere][:pressure_change] = format_change(pressure_diff, 'bar', years) if pressure_diff != 0
+          
+          # Update composition changes
+          defaults[:atmosphere][:composition_changes] = calculate_gas_changes(initial_atm[:composition], final_atm[:composition])
+        end
+
+        # Update temperature in defaults (for mars patterns)
+        if defaults[:temperature] && defaults[:temperature].is_a?(Hash)
+          temp_diff = final_atm[:temperature] - initial_atm[:temperature]
+          defaults[:temperature][:average_change] = format_change(temp_diff, '°C', years) if temp_diff != 0
+        end
       end
 
-      # Hydrosphere changes
-      if initial_state[:hydrosphere] && final_state[:hydrosphere]
+      # Similar updates for hydrosphere, biosphere, etc.
+      if initial_state[:hydrosphere] && final_state[:hydrosphere] && defaults[:hydrosphere]
         initial_hydro = initial_state[:hydrosphere]
         final_hydro = final_state[:hydrosphere]
-
-        changes[:hydrosphere] = {
-          mass_change: format_change(final_hydro[:total_mass] - initial_hydro[:total_mass], 'kg', years),
-          state_distribution_changes: calculate_state_changes_hash(initial_hydro[:state_distribution], final_hydro[:state_distribution])
-        }
+        
+        mass_diff = final_hydro[:total_mass] - initial_hydro[:total_mass]
+        defaults[:hydrosphere][:mass_change] = format_change(mass_diff, 'kg', years) if mass_diff != 0
       end
 
-      # Biosphere changes
-      if initial_state[:biosphere] && final_state[:biosphere]
-        initial_bio = initial_state[:biosphere]
-        final_bio = final_state[:biosphere]
-
-        changes[:biosphere] = {
-          habitability_change: format_change(final_bio[:habitable_ratio] - initial_bio[:habitable_ratio], '', years),
-          biodiversity_change: format_change(final_bio[:biodiversity_index] - initial_bio[:biodiversity_index], '', years),
-          species_count_change: final_bio[:life_forms_count] - initial_bio[:life_forms_count]
-        }
-      end
-
-      changes
+      # Return the updated defaults (never generic keys)
+      defaults
     end
 
     def calculate_gas_changes(initial_composition, final_composition)
@@ -356,7 +357,7 @@ module AIManager
     def default_planetary_changes
       # Fallback estimates when TerraSim integration fails
       case @pattern
-      when 'mars-terraforming'
+      when 'mars-terraforming', 'mars-standard'
         {
           atmosphere: {
             pressure_change: '+15 kPa over 10 years',
