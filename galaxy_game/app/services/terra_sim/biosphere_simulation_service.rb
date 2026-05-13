@@ -348,7 +348,7 @@ module TerraSim
     def balance_biomes
       puts "Balancing biomes based on climate and ecosystem conditions"
 
-      global_water_availability = @celestial_body.hydrosphere&.state_distribution&.dig('liquid').to_f || 0.0
+      global_water_availability = (@celestial_body.hydrosphere&.state_distribution&.dig('liquid').to_f || 0.0) / 100.0
       puts "Global liquid water availability: #{global_water_availability}"
       
       total_suitability = 0.0
