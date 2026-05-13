@@ -27,6 +27,10 @@ module Organizations
       organization_type == 'consortium'
     end
 
+    def corporation?
+      ['corporation', 'development_corporation', 'insurance_corporation'].include?(organization_type)
+    end
+
     def is_npc?
       # Development Corporations are NPCs by default
       return true if development_corporation?
