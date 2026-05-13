@@ -80,9 +80,9 @@ RSpec.describe "Terraforming Integration", type: :integration do
           population: 5_000_000_000,
           diet: "photosynthetic",
           properties: {
-            'oxygen_production_rate' => 0.08,
-            'co2_consumption_rate' => 0.10,
-            'nitrogen_fixation_rate' => 0.02
+            'oxygen_production_rate' => 0.000008,    # 0.0008% per day per billion organisms
+            'co2_consumption_rate' => 0.000010,      # 0.0010% per day per billion organisms
+            'nitrogen_fixation_rate' => 0.000002     # 0.0002% per day per billion organisms
           }
         )
       end
@@ -95,8 +95,8 @@ RSpec.describe "Terraforming Integration", type: :integration do
           population: 1_000_000_000,
           diet: "photosynthetic",
           properties: {
-            'oxygen_production_rate' => 0.12,
-            'co2_consumption_rate' => 0.15
+            'oxygen_production_rate' => 0.000012,   # 0.0012% per day per billion organisms
+            'co2_consumption_rate' => 0.000015      # 0.0015% per day per billion organisms
           }
         )
       end
@@ -134,7 +134,9 @@ RSpec.describe "Terraforming Integration", type: :integration do
           atmosphere.reload
           atmosphere.gases.reload
           
-          expect(atmosphere.co2_percentage).to be < initial_co2
+          # With realistic rates, CO2 decrease is very tiny but should be detectable
+          co2_change = initial_co2 - atmosphere.co2_percentage
+          expect(co2_change).to be > 0.00001  # At least 0.001% decrease
         end
         
         it "shows progressive changes over 100 days" do
@@ -143,29 +145,32 @@ RSpec.describe "Terraforming Integration", type: :integration do
           
           # Simulate in stages to track progress
           snapshots = []
-          [10, 25, 50, 100].each do |total_days|
-            days_to_run = total_days - snapshots.length * 10
-            service.simulate(days_to_run)
+          cumulative_days = 0
+          [10, 15, 25, 50].each do |days|
+            service.simulate(days)
+            cumulative_days += days
             
-          atmosphere.reload
-          atmosphere.gases.reload
-          snapshots << {
-              day: total_days,
-              o2: atmosphere.o2_percentage,
-              co2: atmosphere.co2_percentage,
-              temp: atmosphere.temperature
-            }
+            atmosphere.reload
+            atmosphere.gases.reload
+            snapshots << {
+                day: cumulative_days,
+                o2: atmosphere.o2_percentage,
+                co2: atmosphere.co2_percentage,
+                temp: atmosphere.temperature
+              }
           end
           
-          # Verify trends
+          # Verify trends - with realistic rates, changes are small but consistent
           expect(snapshots.last[:o2]).to be > snapshots.first[:o2]
           expect(snapshots.last[:co2]).to be < snapshots.first[:co2]
           
-          # O2 should show cumulative increase
-          expect(snapshots.last[:o2]).to be > initial_o2
+          # O2 should show cumulative increase (tiny but measurable)
+          o2_increase = snapshots.last[:o2] - snapshots.first[:o2]
+          expect(o2_increase).to be > 0.0001  # At least 0.01% increase
           
-          # CO2 should show cumulative decrease
-          expect(snapshots.last[:co2]).to be < initial_co2
+          # CO2 should show cumulative decrease (tiny but measurable)
+          co2_decrease = snapshots.first[:co2] - snapshots.last[:co2]
+          expect(co2_decrease).to be > 0.0001  # At least 0.01% decrease
         end
         
         it "scales effects by time parameter" do
@@ -307,8 +312,8 @@ RSpec.describe "Terraforming Integration", type: :integration do
         population: 10_000_000_000,
         diet: "photosynthetic",
         properties: {
-          'oxygen_production_rate' => 0.5,   # Plausible but visible for test
-          'co2_consumption_rate' => 0.6      # Plausible but visible for test
+          'oxygen_production_rate' => 0.000005,   # Much more realistic: 0.0005% per day per billion organisms
+          'co2_consumption_rate' => 0.000006      # Much more realistic: 0.0006% per day per billion organisms
         }
       )
       
@@ -322,9 +327,17 @@ RSpec.describe "Terraforming Integration", type: :integration do
       atm.reload
       
       # 4. Verify changes
-      # Expect significant change after 100 days (biosphere active)
+      # Expect measurable change after 100 days (biosphere active)
+      # With realistic rates, changes are small but detectable
       expect(atm.o2_percentage).to be > initial_o2
       expect(atm.co2_percentage).to be < 95.32
+      
+      # Changes should be small but positive (realistic terraforming)
+      o2_increase = atm.o2_percentage - initial_o2
+      co2_decrease = 95.32 - atm.co2_percentage
+      
+      expect(o2_increase).to be > 0.0001  # At least 0.01% increase
+      expect(co2_decrease).to be > 0.0001  # At least 0.01% decrease
       
       puts "\n✓ Terraforming Demo Complete"
       puts "  Initial O2: #{initial_o2.round(6)}%"

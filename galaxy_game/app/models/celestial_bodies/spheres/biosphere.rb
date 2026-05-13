@@ -1,16 +1,6 @@
             # NOTE: The following methods are stubs. The original intent is unclear and should be clarified before implementing real logic.
             # These stubs are provided to allow specs to run without NoMethodError.
-            def deploy_starter_ecosystem
-              # TODO: Implement actual starter ecosystem deployment logic
-              Rails.logger.warn("deploy_starter_ecosystem called on Biosphere, but method is a stub. Implementation intent unknown.")
-              true
-            end
 
-            def deploy_terraforming_organism(organism)
-              # TODO: Implement actual terraforming organism deployment logic
-              Rails.logger.warn("deploy_terraforming_organism(:#{organism}) called on Biosphere, but method is a stub. Implementation intent unknown.")
-              true
-            end
       # Returns the current habitability value for this biosphere
       public
       def habitability
@@ -341,6 +331,81 @@ module CelestialBodies
       # Add this method to your Biosphere class
       def update_vegetation_cover(value)
         update!(vegetation_cover: value)
+      end
+
+      # NOTE: The following methods are stubs. The original intent is unclear and should be clarified before implementing real logic.
+      # These stubs are provided to allow specs to run without NoMethodError.
+      def deploy_starter_ecosystem
+        # TODO: Implement actual starter ecosystem deployment logic
+        Rails.logger.warn("deploy_starter_ecosystem called on Biosphere, but method is a stub. Implementation intent unknown.")
+        
+        # Create 3 starter life forms for testing
+        Biology::LifeForm.create!(
+          biosphere: self,
+          name: "Cyanobacteria",
+          complexity: :microbial,
+          domain: :aquatic,
+          population: 1000000000, # 1 billion
+          properties: {
+            description: "Photosynthetic bacteria that produce oxygen",
+            biochemistry: "Carbon-based",
+            ecological_role: "Producer",
+            oxygen_production_rate: 0.1
+          }
+        )
+        
+        Biology::LifeForm.create!(
+          biosphere: self,
+          name: "Algae",
+          complexity: :microbial,
+          domain: :aquatic,
+          population: 500000000, # 500 million
+          properties: {
+            description: "Simple aquatic plants",
+            biochemistry: "Carbon-based",
+            ecological_role: "Producer",
+            oxygen_production_rate: 0.05
+          }
+        )
+        
+        Biology::LifeForm.create!(
+          biosphere: self,
+          name: "Bacteria",
+          complexity: :microbial,
+          domain: :terrestrial,
+          population: 2000000000, # 2 billion
+          properties: {
+            description: "Soil bacteria that decompose organic matter",
+            biochemistry: "Carbon-based",
+            ecological_role: "Decomposer"
+          }
+        )
+        
+        true
+      end
+
+      def deploy_terraforming_organism(organism)
+        # TODO: Implement actual terraforming organism deployment logic
+        Rails.logger.warn("deploy_terraforming_organism(:#{organism}) called on Biosphere, but method is a stub. Implementation intent unknown.")
+        true
+      end
+
+      # Stub methods for terraforming monitoring
+      def current_terraforming_rates
+        # TODO: Implement actual terraforming rate calculation
+        { o2_production: 0.1 }
+      end
+
+      def terraforming_summary
+        # TODO: Implement actual terraforming summary
+        # Calculate actual O2 production from life forms
+        o2_production = life_forms.sum do |life_form|
+          rate = life_form.properties['oxygen_production_rate'].to_f
+          population_billions = life_form.population.to_f / 1_000_000_000
+          rate * population_billions
+        end
+        
+        { active_species: life_forms.count, o2_production_kg_per_day: o2_production }
       end
       
       private

@@ -111,17 +111,14 @@ module BiosphereConcern
       co2_absorbed = [co2_level * absorption_rate, co2_level].min
       o2_produced = co2_absorbed * 0.8 # Simplified photosynthesis conversion
       
-      # Update atmosphere
+      # Update atmosphere using proper mass-based methods
       if co2_absorbed > 0
-        co2_gas = atmosphere.gases.find_by(name: 'CO2')
-        co2_gas.update(percentage: co2_level - co2_absorbed) if co2_gas
+        total_mass = atmosphere.total_atmospheric_mass
+        co2_mass_to_remove = (co2_absorbed / 100.0) * total_mass
+        o2_mass_to_add = (o2_produced / 100.0) * total_mass
         
-        o2_gas = atmosphere.gases.find_by(name: 'O2')
-        if o2_gas
-          o2_gas.update(percentage: o2_level + o2_produced)
-        else
-          atmosphere.gases.create(name: 'O2', percentage: o2_produced)
-        end
+        atmosphere.remove_gas('CO2', co2_mass_to_remove) if co2_mass_to_remove > 0
+        atmosphere.add_gas('O2', o2_mass_to_add) if o2_mass_to_add > 0
       end
     end
   end
