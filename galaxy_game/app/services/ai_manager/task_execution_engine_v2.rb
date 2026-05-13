@@ -7,14 +7,21 @@
 
 module AIManager
   class TaskExecutionEngineV2
-    def initialize(target_body, manifest = {})
+    def initialize(target_body, manifest_or_path = {})
       @target_body = target_body.is_a?(String) ? target_body : target_body.identifier
-      @manifest = manifest
+      @manifest = case manifest_or_path
+                  when String
+                    JSON.parse(File.read(GalaxyGame::Paths::MISSIONS_PATH.join(manifest_or_path)))
+                  when Hash
+                    manifest_or_path
+                  else
+                    {}
+                  end
       @environment = load_environment(@target_body)
       @task_library = load_task_library
       @task_plan = []
       @current_task_index = 0
-      @required_capabilities = extract_required_capabilities_from_manifest(manifest)
+      @required_capabilities = extract_required_capabilities_from_manifest(@manifest)
     end
 
     attr_reader :target_body, :environment, :manifest, :task_plan
@@ -119,7 +126,7 @@ module AIManager
         phase_data["tasks"].each do |task_ref|
           task_file = task_ref["task_ref"]
           if task_file
-            task_path = File.expand_path("../../../../app/data/missions/#{task_file}", __dir__)
+            task_path = GalaxyGame::Paths::MISSIONS_PATH.join(task_file).to_s
             if File.exist?(task_path)
               task_data = JSON.parse(File.read(task_path))
               tasks << parameterize_task(task_data) if task_data
@@ -147,8 +154,9 @@ module AIManager
     end
 
     def parameterize_task(task)
-      # Replace $target_body in steps with actual target
+      return task unless task.is_a?(Hash)
       task = Marshal.load(Marshal.dump(task)) # deep copy
+      return task unless task["steps"].is_a?(Array)
       task["steps"].each do |step|
         step.each do |k, v|
           if v.is_a?(String) && v.include?("$target_body")
@@ -157,7 +165,7 @@ module AIManager
         end
       end
       task
-    end
+    end    
 
     def execute_task(task)
       # Prototype: just print steps
