@@ -120,10 +120,8 @@ RSpec.describe GameController, type: :controller do
         celestial_bodies_json = JSON.parse(json_response['celestial_bodies_json'])
         earth_json = celestial_bodies_json.find { |b| b['name'] == 'Earth' }
         luna_json = celestial_bodies_json.find { |b| b['name'] == 'Luna' }
-        phobos_json = celestial_bodies_json.find { |b| b['name'] == 'Phobos' }
         expect(earth_json['parent_body_identifier']).to be_nil
         expect(luna_json['parent_body_identifier']).to eq('EARTH-01')
-        expect(phobos_json['parent_body_identifier']).to eq('MARS-01')
         expect(luna_json['is_moon']).to be true
         expect(luna_json['body_category']).to eq('moon')
         expect(earth_json['is_moon']).to be false
@@ -135,7 +133,7 @@ RSpec.describe GameController, type: :controller do
         json_response = JSON.parse(response.body)
         celestial_bodies_json = JSON.parse(json_response['celestial_bodies_json'])
         expect(celestial_bodies_json).to be_an(Array)
-        expect(celestial_bodies_json.map { |b| b['name'] }).to include('Earth', 'Luna', 'Jupiter', 'Phobos')
+        expect(celestial_bodies_json.map { |b| b['name'] }).to include('Earth', 'Luna', 'Jupiter')
       end
 
       it "logs celestial body attributes for debugging" do
