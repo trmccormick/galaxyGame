@@ -66,9 +66,36 @@ class Game
         unit.consume_resources(time_skipped) if unit.respond_to?(:consume_resources)
       end
       
+      # Process jobs at this settlement
+      process_jobs_for_settlement(settlement, time_skipped)
       
       puts "#{settlement.name} updated for #{time_skipped} days."
     end
+  end
+
+  def process_jobs_for_settlement(settlement, time_skipped)
+    # Convert days to hours
+    hours_elapsed = time_skipped * 24
+    
+    # Process other job types as needed
+    # settlement.component_production_jobs.in_progress.each do |job|
+    #   job.process_tick(hours_elapsed)
+    # end
+  end
+
+  def process_jobs_for_settlement(settlement, time_skipped)
+    # Convert days to hours
+    hours_elapsed = time_skipped * 24
+    
+    # Process shell printing jobs
+    settlement.shell_printing_jobs.in_progress.each do |job|
+      job.process_tick(hours_elapsed)
+    end
+    
+    # Process other job types as needed
+    # settlement.component_production_jobs.in_progress.each do |job|
+    #   job.process_tick(hours_elapsed)
+    # end
   end
 
 

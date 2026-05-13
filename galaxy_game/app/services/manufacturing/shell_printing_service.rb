@@ -46,9 +46,6 @@ module Manufacturing
         )
       )
       
-      # 2. Update job status
-      job.complete!
-      
       job
     end
 
@@ -160,19 +157,13 @@ module Manufacturing
     end
 
     def create_shell_printing_job(inflatable_tank, printer_unit, production_time, materials_consumed)
-      ConstructionJob.create!(
-        job_type: :shell_printing,
+      ShellPrintingJob.create!(
         settlement: @settlement,
-        jobable: printer_unit,
-        inflatable_id: inflatable_tank.id,
-        target_thickness_mm: inflatable_tank.operational_data&.dig('target_thickness_mm'),
-        regolith_source_settlement_id: inflatable_tank.attachable_type == 'BaseSettlement' ? inflatable_tank.attachable_id : nil,
-        estimated_completion: Time.current + production_time.hours,
-        status: :scheduled,
-        target_values: {
-          'production_time_hours' => production_time,
-          'materials_consumed' => format_materials_for_storage(materials_consumed)
-        }
+        printer_unit: printer_unit,
+        inflatable_tank: inflatable_tank,
+        production_time_hours: production_time,
+        materials_consumed: format_materials_for_storage(materials_consumed),
+        status: :pending
       )
     end
 

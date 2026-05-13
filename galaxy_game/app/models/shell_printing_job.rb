@@ -1,6 +1,6 @@
 # app/models/shell_printing_job.rb
 class ShellPrintingJob < ApplicationRecord
-  belongs_to :settlement, class_name: 'Settlement::BaseSettlement'
+  belongs_to :settlement, class_name: 'Settlement::BaseSettlement', foreign_key: 'settlement_id'
   belongs_to :printer_unit, class_name: 'Units::BaseUnit', foreign_key: 'printer_unit_id'
   belongs_to :inflatable_tank, class_name: 'Units::BaseUnit', foreign_key: 'inflatable_tank_id'
   validates :status, presence: true
@@ -24,6 +24,9 @@ class ShellPrintingJob < ApplicationRecord
 
   def complete!
     update!(status: 'completed', completed_at: Time.current, progress_hours: production_time_hours)
+    
+    # Enclose the inflatable tank
+    Manufacturing::ShellPrintingService.new(settlement).complete_job(self)
   end
 
   def fail!(reason = nil)
@@ -65,10 +68,8 @@ class ShellPrintingJob < ApplicationRecord
     self.progress_hours ||= 0
     self.progress_hours += hours_elapsed
     if progress_hours >= production_time_hours
-      self.status = 'completed'
-      self.completed_at = Time.current
-      self.progress_hours = production_time_hours
+      complete!
     end
-    save!
+    save! unless completed?  # Don't save again if complete! already saved
   end
 end

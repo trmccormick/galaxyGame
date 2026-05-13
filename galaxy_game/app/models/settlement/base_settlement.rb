@@ -31,6 +31,10 @@ module Settlement
 
     has_many :orbital_construction_projects, class_name: 'OrbitalConstructionProject', foreign_key: 'station_id'
 
+    has_many :shell_printing_jobs, foreign_key: 'settlement_id', dependent: :destroy
+    has_many :component_production_jobs, dependent: :destroy
+    has_many :material_processing_jobs, dependent: :destroy
+
     delegate :surface_storage, to: :inventory, allow_nil: true
     delegate :celestial_body, to: :location, allow_nil: true
 
