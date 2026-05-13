@@ -27,13 +27,26 @@ module AIManager
 
     # Step 1: Plan tasks based on environment and manifest
     def plan_tasks
-      # Use extracted required_capabilities from manifest, or fallback
-      capabilities = @required_capabilities
-      capabilities = ["power", "habitat", "comms"] if capabilities.nil? || capabilities.empty?
       @task_plan = {}
-      capabilities.each do |capability|
-        task = select_task_for_capability(capability)
-        @task_plan[capability] = parameterize_task(task) if task
+      
+      # If manifest has phases, load tasks from phase files
+      if @manifest["phases"].is_a?(Array)
+        @manifest["phases"].each do |phase|
+          phase_id = phase["phase_id"]
+          task_list_file = phase["task_list_file"]
+          if task_list_file
+            phase_tasks = load_phase_tasks(task_list_file)
+            @task_plan[phase_id] = phase_tasks if phase_tasks.any?
+          end
+        end
+      else
+        # Fallback to capability-based planning
+        capabilities = @required_capabilities
+        capabilities = ["power", "habitat", "comms"] if capabilities.nil? || capabilities.empty?
+        capabilities.each do |capability|
+          task = select_task_for_capability(capability)
+          @task_plan[capability] = parameterize_task(task) if task
+        end
       end
     end
 
@@ -81,7 +94,7 @@ module AIManager
         "name"            => body.name,
         "identifier"      => body.identifier,
         "atmosphere"      => body.atmosphere.present? && body.atmosphere.pressure.to_f > 0,
-        "has_regolith"    => capabilities[:surface].any?,
+        "has_regolith"    => capabilities[:has_regolith],
         "local_resources" => capabilities[:surface] + capabilities[:atmosphere].to_a,
         "isru_capable"    => capabilities[:isru_options].any?,
         "capabilities"    => capabilities
@@ -90,18 +103,43 @@ module AIManager
 
     def load_task_library
       # Loads all tasks_v2 JSON files into an array
-      task_dir = File.expand_path("../../../../data/json-data/missions/tasks_v2", __dir__)
+      task_dir = GalaxyGame::Paths::TASKS_V2_PATH.to_s
       Dir[File.join(task_dir, "task_*.json")].map { |f| JSON.parse(File.read(f)) }
     end
 
+    def load_phase_tasks(task_list_file)
+      # Load phase file and return array of parameterized tasks
+      phase_path = GalaxyGame::Paths::MISSIONS_PATH.join("luna_base_establishment/#{task_list_file}").to_s
+      return [] unless File.exist?(phase_path)
+      
+      phase_data = JSON.parse(File.read(phase_path))
+      tasks = []
+      
+      if phase_data["tasks"].is_a?(Array)
+        phase_data["tasks"].each do |task_ref|
+          task_file = task_ref["task_ref"]
+          if task_file
+            task_path = File.expand_path("../../../../app/data/missions/#{task_file}", __dir__)
+            if File.exist?(task_path)
+              task_data = JSON.parse(File.read(task_path))
+              tasks << parameterize_task(task_data) if task_data
+            end
+          end
+        end
+      end
+      
+      tasks
+    end
+
     def select_task_for_capability(capability)
-      # If capability looks like a task_id, match by metadata.name or file name
+      # If capability looks like a task_id, match by metadata.name, task_id, or file name
       task = @task_library.find do |t|
         t["metadata"] && (
           t["metadata"]["name"] == capability ||
           t["metadata"]["name"] == capability.sub(/^task_/, "") ||
           t["metadata"]["name"] == capability.sub(/_v\d+$/, "")
-        )
+        ) ||
+        t["tasks"]&.any? { |task_def| task_def["task_id"] == capability }
       end
       return task if task
       # Fallback: try tags

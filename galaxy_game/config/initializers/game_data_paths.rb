@@ -240,6 +240,7 @@ module GalaxyGame
 
     # ==== Mission Paths ====
     MISSIONS_PATH = JSON_DATA.join('missions').freeze
+    TASKS_V2_PATH = MISSIONS_PATH.join('tasks_v2').freeze
     QUESTS_MISSIONS_PATH = MISSIONS_PATH.join('quests').freeze
     TASKS_MISSIONS_PATH = MISSIONS_PATH.join('tasks').freeze
     EVENTS_MISSIONS_PATH = MISSIONS_PATH.join('events').freeze
