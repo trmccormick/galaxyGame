@@ -201,7 +201,8 @@ module AIManager
     # Sub-Task 1.3: Resource Assessment
     def assess_resources(system)
       all_bodies = get_all_celestial_bodies(system)
-      geological_features = all_bodies.flat_map(&:geological_features)
+      bodies_with_geology = all_bodies.select { |body| body.respond_to?(:geological_features) }
+      geological_features = bodies_with_geology.flat_map(&:geological_features)
 
       {
         metal_richness: calculate_metal_score(geological_features),
