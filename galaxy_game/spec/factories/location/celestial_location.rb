@@ -51,7 +51,12 @@ FactoryBot.define do
 
     trait :shackleton_base do
       name { "Shackleton Crater Base" }
-      coordinates { "89.90°S 0.00°E" }
+      coordinates do
+        # Generate unique coordinates within Shackleton crater region (south pole)
+        lat = sprintf("%.2f", 89.0 + rand(0.0..1.0)) # 89.00°S to 90.00°S
+        lng = sprintf("%.2f", rand(0.0..360.0)) # 0.00° to 360.00°
+        "#{lat}°S #{lng}°E"
+      end
     end
     
     trait :iss_orbit do
