@@ -2,21 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Generators::GameDataGenerator do
   let(:generator) { described_class.new('llama3') }
-  let(:template_path) { 'spec/fixtures/sample_template.json' }
-  let(:output_path) { 'tmp/generated_item.json' }
+  let(:template_path) { Rails.root.join('spec', 'fixtures', 'sample_template.json').to_s }
+  let(:output_path) { Rails.root.join('tmp', 'generated_item.json').to_s }
   let(:params) { { name: 'Test Item', description: 'A test item.' } }
 
-  # Change let to use Rails.root (guaranteed path)
-  let(:template_path) { Rails.root.join('spec/fixtures/sample_template.json').to_s }
-
-  before do
-    FileUtils.mkdir_p('spec/fixtures')
-    File.write(template_path, { metadata: { version: '1.0' }, name: '', description: '' }.to_json)
-  end
-
   after do
-    FileUtils.rm_rf('tmp')
-    FileUtils.rm_f(template_path)
+    FileUtils.rm_rf(Rails.root.join('tmp'))
   end
 
   it 'generates and saves a valid JSON item' do
