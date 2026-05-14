@@ -46,6 +46,9 @@ module Manufacturing
         )
       )
       
+      # 2. Mark job as completed
+      job.update!(status: 'completed', completed_at: Time.current)
+      
       job
     end
 
