@@ -26,12 +26,7 @@ RSpec.describe Units::BaseUnit, type: :model do
       end
     end
   let!(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
-  let!(:shackleton_crater) { 
-    create(:celestial_location, 
-           name: "Shackleton Crater Base", 
-           coordinates: "89.90°S 0.00°E",
-           celestial_body: celestial_body) 
-  }
+  let!(:shackleton_crater) { create(:celestial_location, :shackleton_base, celestial_body: celestial_body) }
   let!(:base_settlement) { 
     create(:base_settlement, 
            name: "Alpha Base", 

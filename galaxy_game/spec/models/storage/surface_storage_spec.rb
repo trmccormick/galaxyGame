@@ -2,13 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Storage::SurfaceStorage, type: :model do
   let(:celestial_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }
-  let(:location) { 
-    create(:celestial_location, 
-      name: "Shackleton Crater Base", 
-      coordinates: "89.90°S 0.00°E",
-      celestial_body: celestial_body
-    ) 
-  }
+  let(:location) { create(:celestial_location, :shackleton_base, celestial_body: celestial_body) }
   let(:player) { create(:player, active_location: "Shackleton Crater Base") }
   let(:settlement) { create(:base_settlement, owner: player, location: location) }
   let(:inventory) { settlement.inventory }

@@ -48,6 +48,11 @@ FactoryBot.define do
     trait :high_orbit do
       altitude { rand(35_786_000..100_000_000) } # 35,786 km to 100,000 km
     end
+
+    trait :shackleton_base do
+      name { "Shackleton Crater Base" }
+      coordinates { "89.90°S 0.00°E" }
+    end
     
     trait :iss_orbit do
       altitude { 408_000 } # ~408 km, typical ISS altitude
