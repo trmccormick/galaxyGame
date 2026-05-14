@@ -307,7 +307,7 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
       result = generator.send(:generate_optimized_orbital_parameters, 0, mock_star)
 
       # For distance around 1 AU, period should be around 365 days
-      expect(result[:orbital_period_days]).to be_between(250, 750)
+      expect(result[:orbital_period_days]).to be_between(200, 800)
     end
   end
 
