@@ -21,11 +21,12 @@ RSpec.describe Craft::BaseCraft, type: :model do
 
     @luna = CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01')
     
-    @shackleton_crater_location_instance = FactoryBot.create(:celestial_location, 
-      name: "Shackleton Crater Base", 
-      coordinates: "89.90°S 0.00°E",
+    @shackleton_crater_location_instance = Location::CelestialLocation.find_or_create_by!(
+      coordinates: "89.90°S 0.00°E", 
       celestial_body: @luna
-    )
+    ) do |location|
+      location.name = "Shackleton Crater Base"
+    end
 
     @alpha_base_settlement_instance = FactoryBot.create(:base_settlement, 
       name: "Alpha Base",
