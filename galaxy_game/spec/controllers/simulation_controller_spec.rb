@@ -91,8 +91,9 @@ RSpec.describe SimulationController, type: :controller do
     context "without solar system" do
       before do
         allow(SolarSystem).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:find_by).and_return(nil)
         allow(SolarSystem).to receive(:includes).and_return(
-          double('relation', first: nil)
+          double('relation', first: nil, find_by: nil)
         )
       end
 
