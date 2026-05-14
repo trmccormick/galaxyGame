@@ -1,7 +1,7 @@
 class SimulationController < ApplicationController
   def index
     # Default to our current solar system
-    @solar_system = SolarSystem.includes(:stars, :celestial_bodies).first
+    @solar_system = SolarSystem.includes(:stars, :celestial_bodies).find_by(identifier: 'SOL-01') || SolarSystem.includes(:stars, :celestial_bodies).first
     
     if @solar_system.nil?
       # If no solar system exists, show all celestial bodies

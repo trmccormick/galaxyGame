@@ -4,8 +4,8 @@ require 'rails_helper'
 RSpec.describe SimulationController, type: :controller do
   describe "GET #index" do
     context "with existing solar system" do
-      # Sol is always present as a world constant — SolarSystem.first returns Sol
-      let!(:solar_system) { SolarSystem.first }
+      # Sol is always present as a world constant — use same lookup as controller
+      let!(:solar_system) { SolarSystem.includes(:stars, :celestial_bodies).find_by(identifier: 'SOL-01') || SolarSystem.includes(:stars, :celestial_bodies).first }
       let!(:planet) { CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01') }
 
       it "assigns solar system and its celestial bodies" do
