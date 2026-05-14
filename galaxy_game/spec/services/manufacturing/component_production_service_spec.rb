@@ -54,7 +54,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
               'unit' => 'kg'
             }
           ],
-          'construction_time_hours' => 2.0,
+          'production_time_hours' => 2.0,
           'waste_products' => [
             {
               'material' => 'manufacturing_dust',
@@ -116,13 +116,13 @@ RSpec.describe Manufacturing::ComponentProductionService do
       it 'creates a component production job' do
         expect {
           service.produce_component('3d_printed_ibeam', 2, printer_unit)
-        }.to change { Job.where(job_type: :component_production).count }.by(1)
+        }.to change { ComponentProductionJob.count }.by(1)
 
-        job = Job.where(job_type: :component_production).last
-        expect(job.operational_data['component_blueprint_id']).to eq('3d_printed_ibeam')
-        expect(job.operational_data['component_name']).to eq('3D-Printed I-Beam')
-        expect(job.operational_data['quantity']).to eq(2)
-        # Optionally check production time if stored in operational_data
+        job = ComponentProductionJob.last
+        expect(job.component_blueprint_id).to eq('3d_printed_ibeam')
+        expect(job.component_name).to eq('3D-Printed I-Beam')
+        expect(job.quantity).to eq(2)
+        expect(job.production_time_hours).to eq(4.0) # 2 hours * 2 quantity
         # expect(job.operational_data['production_time_hours']).to eq(4.0)
         expect(job.status).to eq('pending')
       end
@@ -140,8 +140,8 @@ RSpec.describe Manufacturing::ComponentProductionService do
       it 'stores material composition in job metadata' do
         service.produce_component('3d_printed_ibeam', 1, printer_unit)
         
-        job = Job.where(job_type: :component_production).last
-        expect(job.operational_data['materials_consumed']['inert_waste']).to include(
+        job = ComponentProductionJob.last
+        expect(job.materials_consumed['inert_waste']).to include(
           'amount' => 90,
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         )
