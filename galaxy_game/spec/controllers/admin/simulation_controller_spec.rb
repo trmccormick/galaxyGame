@@ -5,7 +5,7 @@ RSpec.describe Admin::SimulationController, type: :controller do
   describe "GET #index" do
     context "with existing solar system" do
       # Sol is always present as a world constant — SolarSystem.first returns Sol
-      let!(:solar_system) { SolarSystem.includes(:stars, :celestial_bodies).find_by!(identifier: 'SOL-01') }
+      let!(:solar_system) { SolarSystem.includes(:stars, :celestial_bodies).first }
       let!(:planet) { solar_system.celestial_bodies.first }
 
       it "assigns solar system and its celestial bodies" do
