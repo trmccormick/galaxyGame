@@ -1,12 +1,3 @@
-        # Public: Returns geological features association or properties['geological_features'] or []
-        public
-        def geological_features
-          if respond_to?(:features) && features.present?
-            features
-          else
-            properties&.dig('geological_features') || []
-          end
-        end
 # app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb
 module CelestialBodies
   module Planets
@@ -25,6 +16,7 @@ module CelestialBodies
         # All your existing methods from the original TerrestrialPlanet go here
         # e.g., update_gravity, atmosphere_composition, habitable_zone?, habitability_score, etc.
         validates :surface_temperature, numericality: true, allow_nil: true
+        validates :name, presence: true
 
         def temperature
           surface_temperature
@@ -41,6 +33,14 @@ module CelestialBodies
         # Public: Returns the planet's magnetic moment from properties, or 0.0 if missing
         def magnetic_moment
           properties&.dig('magnetic_moment') || 0.0
+        end        
+
+        def geological_features
+          if respond_to?(:features) && features.present?
+            features
+          else
+            properties&.dig('geological_features') || []
+          end
         end        
 
         private
