@@ -5,8 +5,8 @@ RSpec.describe Admin::SimulationController, type: :controller do
   describe "GET #index" do
     context "with existing solar system" do
       # Sol is always present as a world constant — SolarSystem.first returns Sol
-      let!(:solar_system) { SolarSystem.find_by!(identifier: 'SOL-01') }
-      let!(:planet) { CelestialBodies::CelestialBody.find_by!(identifier: 'EARTH-01') }
+      let!(:solar_system) { SolarSystem.includes(:stars, :celestial_bodies).find_by!(identifier: 'SOL-01') }
+      let!(:planet) { solar_system.celestial_bodies.first }
 
       it "assigns solar system and its celestial bodies" do
         get :index
@@ -26,9 +26,11 @@ RSpec.describe Admin::SimulationController, type: :controller do
       
       before do
         allow(SolarSystem).to receive(:first).and_return(nil)
-        allow(SolarSystem).to receive(:includes).and_return(
-          double('relation', first: nil)
-        )
+        allow(SolarSystem).to receive(:find_by).and_return(nil)
+        relation_double = double('relation')
+        allow(relation_double).to receive(:find_by).and_return(nil)
+        allow(relation_double).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:includes).and_return(relation_double)
       end
       
       it "assigns all celestial bodies" do
@@ -90,6 +92,7 @@ RSpec.describe Admin::SimulationController, type: :controller do
     context "without solar system" do
       before do
         allow(SolarSystem).to receive(:first).and_return(nil)
+        allow(SolarSystem).to receive(:find_by).and_return(nil)
         allow(SolarSystem).to receive(:includes).and_return(
           double('relation', first: nil)
         )
