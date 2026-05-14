@@ -32,7 +32,7 @@ class SimulationController < ApplicationController
   
   def run_all
     # Run simulation for all bodies in our solar system
-    @solar_system = SolarSystem.first
+    @solar_system = SolarSystem.includes(:stars, :celestial_bodies).find_by(identifier: 'SOL-01') || SolarSystem.includes(:stars, :celestial_bodies).first
     
     if @solar_system
       @solar_system.celestial_bodies.each do |body|
