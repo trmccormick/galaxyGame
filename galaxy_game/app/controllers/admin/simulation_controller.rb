@@ -2,7 +2,7 @@ module Admin
   class SimulationController < ApplicationController
     def index
       # Load solar system and celestial bodies for simulation control
-      @solar_system = SolarSystem.includes(:stars, :celestial_bodies).first
+      @solar_system = SolarSystem.includes(:stars, :celestial_bodies).find_by(identifier: 'SOL-01') || SolarSystem.includes(:stars, :celestial_bodies).first
       
       if @solar_system.nil?
         @celestial_bodies = ::CelestialBodies::CelestialBody.all
@@ -29,7 +29,7 @@ module Admin
     
     def run_all
       # Run simulation for all bodies in our solar system
-      @solar_system = SolarSystem.first
+      @solar_system = SolarSystem.find_by(identifier: 'SOL-01') || SolarSystem.first
       
       if @solar_system
         @solar_system.celestial_bodies.each do |body|
