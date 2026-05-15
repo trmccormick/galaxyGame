@@ -62,15 +62,15 @@ class Atmosphere < ApplicationRecord
   end
 
   def o2_percentage
-    composition.dig('O2') || 0.0
+    gas_percentage('O2')
   end
 
   def co2_percentage
-    composition.dig('CO2') || 0.0
+    gas_percentage('CO2')
   end
 
   def n2_percentage
-    composition.dig('N2') || 0.0
+    gas_percentage('N2')
   end
   
   private

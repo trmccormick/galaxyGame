@@ -202,7 +202,7 @@ class PlanetUpdateService
   end
   
   def update_surface_temperature
-    if @planet.atmosphere && @planet.atmosphere.pressure > 0
+    if @planet.atmosphere && @planet.atmosphere.pressure > 0 && @planet.insolation.present? && @planet.albedo.present? && @planet.albedo > 0
       # Get greenhouse gas concentrations
       co2_percentage = get_gas_percentage('CO2')
       ch4_percentage = get_gas_percentage('CH4')

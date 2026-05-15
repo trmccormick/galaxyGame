@@ -94,8 +94,10 @@ module Manufacturing
       needed_amount = requirement['amount'] * quantity
       material_name = requirement['material']
       
-      # Check if we have acceptable materials defined (future feature)
+      # Check acceptable materials: primary material plus any acceptable types
       acceptable_materials = [material_name]
+      acceptable_materials.concat(requirement['acceptable_types']) if requirement['acceptable_types']
+      acceptable_materials.uniq!
       
       acceptable_materials.each do |mat_name|
         item = @settlement.inventory.items.find_by(name: mat_name)
@@ -148,7 +150,7 @@ module Manufacturing
     end
 
     def calculate_production_time(blueprint, quantity, printer_unit)
-      base_time = blueprint['blueprint_data']['construction_time_hours']
+      base_time = blueprint['blueprint_data']['production_time_hours']
       total_time = base_time * quantity
       
       # Apply printer efficiency multiplier if available

@@ -7,6 +7,46 @@ module Manufacturing
       @settlement = settlement
     end
 
+    # Create a processing job for a specific unit type and job type
+    def create_processing_job(job_type:, unit_type:)
+      # Look up unit operational data
+      lookup_service = Lookup::UnitLookupService.new
+      unit_data = lookup_service.find_unit(unit_type)
+      
+      unless unit_data
+        raise "Unit type '#{unit_type}' not found"
+      end
+
+      # Determine processing type from subcategory
+      processing_type = case unit_data.dig("subcategory")
+      when "volatile_extraction"
+        :volatiles_extraction
+      when "thermal_extraction"
+        :thermal_extraction
+      else
+        :thermal_extraction
+      end
+
+      # TODO: operational data JSON needs explicit processing_time_hours field
+      # Currently using maintenance_interval_hours as proxy — add to unit JSON templates
+      production_time = unit_data.dig("operational_properties", "maintenance_interval_hours") || 24.0
+
+      Job.create!(
+        job_type: job_type.to_sym,
+        settlement: @settlement,
+        owner: @settlement.owner,
+        output_type: 'processed_regolith',
+        start_date: Time.current,
+        completes_at: production_time.hours.from_now,
+        status: :pending,
+        operational_data: {
+          'unit_type' => unit_type,
+          'processing_type' => processing_type.to_s,
+          'production_time_hours' => production_time
+        }
+      )
+    end
+
     # Generic process method for any material processing unit
     def process(unit, input_material, input_amount)
       # Validate input inventory

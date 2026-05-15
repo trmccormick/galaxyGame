@@ -101,7 +101,7 @@ module CelestialBodies
         # For each plate, calculate new position with slight random movement
         plate_count = self.plates["count"].to_i
         plate_count.times do |i|
-          movement_factor = geological_activity / 10.0
+          movement_factor = (geological_activity.to_f) / 10.0
           max_movement = distance || (0.5 * movement_factor)
           
           latitude_shift = rand(-max_movement..max_movement)
@@ -248,7 +248,7 @@ module CelestialBodies
           compound_release = 0
 
           locations.each do |location, amount|
-            next if amount.nil? || amount <= 0
+            next if amount.nil? || amount.to_f <= 0
 
             release_rate = case location
                           when 'polar_caps', 'surface_ice'
@@ -261,11 +261,11 @@ module CelestialBodies
                             0.01
                           end
 
-            released = amount * release_rate
+            released = amount.to_f * release_rate
             compound_release += released
             
             # Update stored amount (set attribute, no save)
-            new_amount = amount - released
+            new_amount = amount.to_f - released
             if new_amount > 0
               self.stored_volatiles[compound][location] = new_amount
             else

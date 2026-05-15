@@ -17,7 +17,7 @@ module TerraSim
       
       # Use safe navigation and default values
       @plate_tectonics_enabled = @geosphere&.tectonic_activity || false
-      @geological_activity = @geosphere&.geological_activity || 0
+      @geological_activity = (@geosphere&.geological_activity || 0).to_f
 
       # Reset locks for testing
       self.class.reset_locks! if Rails.env.test?
@@ -322,6 +322,14 @@ module TerraSim
       [@geological_activity * 0.05, 1].min
     end
 
+    def cryovolcanic_activity_chance
+      0.1 # 10% chance for ice giant cryovolcanism
+    end
+
+    def diamond_formation_chance
+      0.05 # 5% chance for diamond formation on carbon planets
+    end
+
     def simulate_diamond_formation
       puts "Diamond formation process occurring in high pressure zones..."
       carbon_amount = @geosphere.geological_materials.find_by(name: 'Carbon')&.mass || 0
@@ -363,6 +371,51 @@ module TerraSim
           add_exotic_material_to_surface(material, mass_released)
         end
       end
+    end
+
+    def simulate_carbide_volcanism
+      puts "Carbide volcanism occurring on carbon planet..."
+      # Stub implementation for carbide volcanism
+    end
+
+    def simulate_methane_cycle
+      puts "Methane cycle simulation for ice giant..."
+      # Stub implementation for methane cycle
+    end
+
+    def simulate_metallic_hydrogen_dynamics
+      puts "Metallic hydrogen dynamics simulation for hot Jupiter..."
+      # Stub implementation for metallic hydrogen dynamics
+    end
+
+    def simulate_silicate_cloud_formation
+      puts "Silicate cloud formation simulation..."
+      # Stub implementation for silicate cloud formation
+    end
+
+    def simulate_substellar_volcanism
+      puts "Substellar volcanism simulation for tidally locked planet..."
+      # Stub implementation for substellar volcanism
+    end
+
+    def simulate_terminator_storms
+      puts "Terminator storms simulation..."
+      # Stub implementation for terminator storms
+    end
+
+    def handle_gas_emission(material, mass)
+      puts "Handling gas emission: #{material[:name]}, mass: #{mass}"
+      # Stub implementation for gas emission
+    end
+
+    def add_liquid_to_hydrosphere(material, mass)
+      puts "Adding liquid to hydrosphere: #{material[:name]}, mass: #{mass}"
+      # Stub implementation for adding liquid to hydrosphere
+    end
+
+    def add_exotic_material_to_surface(material, mass)
+      puts "Adding exotic material to surface: #{material[:name]}, mass: #{mass}"
+      # Stub implementation for adding exotic material to surface
     end
 
     def simulate_volatile_phase_transitions

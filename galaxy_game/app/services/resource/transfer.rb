@@ -135,7 +135,7 @@ class Resource::Transfer
     return false unless craft_connection && craft_connection['status'] == 'active'
     
     # Find the hub connected to this settlement
-    hub = settlement.structures.where(type: 'PlanetaryUmbilicalHub').first
+    hub = settlement.units.where(type: 'Units::PlanetaryUmbilicalHub').first
     return false unless hub
     
     hub_connections = hub.operational_data&.dig('umbilical_connections') || {}
@@ -180,7 +180,7 @@ class Resource::Transfer
   
   # Get craft connected to settlement via umbilical
   def self.get_umbilically_connected_craft(settlement)
-    hub = settlement.structures.where(type: 'Structures::PlanetaryUmbilicalHub').first
+    hub = settlement.units.where(type: 'Units::PlanetaryUmbilicalHub').first
     return [] unless hub
     
     hub.connected_craft

@@ -5,10 +5,19 @@ module AIManager
         settlement = order.base_settlement
         resource = order.resource
 
-        if emergency_required?(settlement, resource)
-          create_special_mission_for_order(order)
-        else
-          add_to_resupply_manifest(order)
+        strategy = determine_escalation_strategy(order)
+
+        case strategy
+        when :automated_harvesting
+          deploy_automated_harvesters(order)
+        when :deploy_manufacturing_unit
+          deploy_manufacturing_unit(order)
+        when :scheduled_import
+          if emergency_required?(settlement, resource)
+            create_special_mission_for_order(order)
+          else
+            add_to_resupply_manifest(order)
+          end
         end
       end
     end
@@ -86,6 +95,21 @@ module AIManager
       schedule_harvester_completion(harvester, order)
     end
 
+    def self.deploy_manufacturing_unit(order)
+      settlement = order.base_settlement
+      material = order.resource
+      quantity = order.quantity
+
+      # Create manufacturing unit (smelter for metals)
+      unit = create_manufacturing_unit(settlement, material, quantity)
+
+      # Deploy to appropriate location
+      deploy_unit_to_site(unit, settlement.celestial_body, material)
+
+      # Schedule completion
+      schedule_manufacturing_completion(unit, order)
+    end
+
     def self.create_automated_harvester(settlement, material, quantity)
       case material.downcase
       when 'oxygen'
@@ -140,6 +164,31 @@ module AIManager
           attachable: settlement,
           operational_data: operational_data
         )
+      end
+    end
+
+    def self.create_manufacturing_unit(settlement, material, quantity)
+      case material.downcase
+      when 'iron', 'titanium', 'aluminum'
+        operational_data = {
+          'task_type' => 'smelting',
+          'input_material' => 'raw_regolith',
+          'target_material' => material,
+          'target_quantity' => quantity,
+          'processing_rate' => 10, # kg/hour
+          'mobility_type' => 'stationary'
+        }
+        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'stationary'
+        Units::Robot.create!(
+          name: "#{material.titleize} Smelter",
+          identifier: "ROBOT-#{SecureRandom.hex(4)}",
+          unit_type: "robot",
+          owner: settlement.owner,
+          attachable: settlement,
+          operational_data: operational_data
+        )
+      else
+        raise "No manufacturing unit defined for #{material}"
       end
     end
 
@@ -207,6 +256,31 @@ module AIManager
       harvester.save!
     end
 
+    def self.deploy_unit_to_site(unit, celestial_body, material)
+      # Deploy manufacturing unit to site
+
+      deployment_data = {
+        'deployment_site' => 'industrial_zone',
+        'coordinates' => random_coordinates
+      }
+
+      # Similar to harvester deployment
+      if unit.is_a?(Units::Robot)
+        loc = Location::CelestialLocation.create!(
+          name: "#{material.titleize} Manufacturing Site (#{deployment_data['coordinates']})",
+          celestial_body: celestial_body,
+          coordinates: deployment_data['coordinates'],
+          locationable: unit
+        )
+        unit.location = loc
+        unit.save!
+      end
+
+      # Update operational_data
+      unit.operational_data = unit.operational_data.merge(deployment_data)
+      unit.save!
+    end
+
     def self.schedule_harvester_completion(harvester, order)
       # Calculate completion time based on extraction rate and quantity
       extraction_rate = harvester.operational_data['extraction_rate'].to_f
@@ -222,6 +296,21 @@ module AIManager
                 .perform_later(harvester.id, order.id)
     end
 
+    def self.schedule_manufacturing_completion(unit, order)
+      # Calculate completion time based on processing rate and quantity
+      processing_rate = unit.operational_data['processing_rate'].to_f
+      target_quantity = order.quantity.to_f
+      hours_to_complete = (target_quantity / processing_rate).ceil
+
+      # Use unit's created_at as start time if available, else now
+      start_time = unit.created_at || Time.current
+      completion_time = start_time + hours_to_complete.hours
+
+      # Schedule completion job (reuse HarvesterCompletionJob for now, or create ManufacturingCompletionJob)
+      HarvesterCompletionJob.set(wait_until: completion_time)
+                .perform_later(unit.id, order.id)
+    end
+
     private
 
     def self.determine_escalation_strategy(order)
@@ -229,8 +318,14 @@ module AIManager
       settlement = order.base_settlement
       celestial_body = settlement.celestial_body
 
+      # ISRU requires human oversight/supervision
+      return :scheduled_import unless humans_present?(settlement)
+
       # Priority 1: ISRU-first — always harvest locally if possible
       return :automated_harvesting if can_harvest_locally?(settlement, material)
+
+      # Priority 1.5: Manufacture locally if possible (e.g., smelt iron from regolith)
+      return :deploy_manufacturing_unit if can_manufacture_locally?(settlement, material)
 
       # Priority 2: Material supplied via active HLT skimmer missions
       # Venus HLT → O2/N2 to Luna
@@ -291,6 +386,17 @@ module AIManager
       else
         # Check regolith composition for other materials
         celestial_body.materials.where(location: 'geosphere', name: material).exists?
+      end
+    end
+
+    def self.can_manufacture_locally?(settlement, material)
+      celestial_body = settlement.celestial_body
+      case material.downcase
+      when 'iron', 'titanium', 'aluminum' # metals that can be smelted from regolith
+        # Check if regolith is available for smelting
+        celestial_body.materials.where(location: 'geosphere', name: 'raw_regolith').exists?
+      else
+        false
       end
     end
 
