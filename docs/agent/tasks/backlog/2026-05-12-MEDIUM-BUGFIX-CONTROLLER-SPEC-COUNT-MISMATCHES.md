@@ -1,9 +1,9 @@
 # TASK: Controller Specs — Count Mismatches and Invalid Response Codes
-**Status**: DECOMPOSED
+**Status**: COMPLETED
 **Priority**: MEDIUM
 **Type**: bug-fix
 **Created**: 2026-05-12
-**Last Updated**: 2026-05-12
+**Last Updated**: 2026-05-14
 **Decomposed**: 2026-05-12
 
 ---
