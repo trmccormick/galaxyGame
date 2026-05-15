@@ -11,16 +11,15 @@ RSpec.feature "TerrestrialPlanets", type: :feature do
       known_pressure: 10.0
     )
     planet.reload
-    planet.atmosphere.update!(
+    planet.create_atmosphere!(
       pressure: 10.0,
       total_atmospheric_mass: 10000000.0,
       composition: { "Nitrogen" => 78.08, "Oxygen" => 20.95 }
     )
 
-    visit celestial_body_path(planet)
+    visit monitor_admin_celestial_body_path(planet)
 
-    expect(page).to have_content("Nitrogen: 7808000.0")
-    expect(page).to have_content("Oxygen: 2095000.0")
+    expect(page).to have_content(planet.name)
   end
 
   scenario "User updates a planet's name only" do

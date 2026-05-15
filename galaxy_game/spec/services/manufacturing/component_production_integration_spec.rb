@@ -20,28 +20,6 @@ RSpec.describe 'Component Production Integration', type: :integration do
   let(:service) { Manufacturing::ComponentProductionService.new(settlement) }
 
   describe 'with real blueprint files' do
-    before do
-      # Stub blueprint lookup for 3d_printed_ibeam_mk1
-      allow_any_instance_of(Lookup::BlueprintLookupService)
-        .to receive(:find_blueprint)
-        .with('3d_printed_ibeam_mk1')
-        .and_return({
-          'id' => '3d_printed_ibeam_mk1',
-          'name' => '3D-Printed I-Beam Mk1',
-          'template' => 'component_blueprint',
-          'category' => 'structural',
-          'blueprint_data' => {
-            'material_requirements' => [
-              {
-                'material' => 'depleted_regolith',
-                'amount' => 75
-              }
-            ],
-            'construction_time_hours' => 2.0
-          }
-        })
-    end
-    
     it 'finds the 3d_printed_ibeam_mk1 blueprint' do
       lookup = Lookup::BlueprintLookupService.new
       blueprint = lookup.find_blueprint('3d_printed_ibeam_mk1')
@@ -98,25 +76,6 @@ RSpec.describe 'Component Production Integration', type: :integration do
             'id' => '3d_printed_ibeam_mk1',
             'name' => '3D-Printed I-Beam Mk1',
             'type' => 'component'
-          })
-        
-        # Stub blueprint lookup for 3d_printed_ibeam_mk1
-        allow_any_instance_of(Lookup::BlueprintLookupService)
-          .to receive(:find_blueprint)
-          .with('3d_printed_ibeam_mk1')
-          .and_return({
-            'id' => '3d_printed_ibeam_mk1',
-            'name' => '3D-Printed I-Beam Mk1',
-            'category' => 'structural',
-            'blueprint_data' => {
-              'material_requirements' => [
-                {
-                  'material' => 'depleted_regolith',
-                  'amount' => 75
-                }
-              ],
-              'construction_time_hours' => 2.0
-            }
           })
       end
 

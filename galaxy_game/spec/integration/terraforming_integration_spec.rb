@@ -28,7 +28,9 @@ RSpec.describe "Terraforming Integration", type: :integration do
         base_values: {
           'composition' => { 
             'CO2' => { 'percentage' => 95.32 },
-            'O2' => { 'percentage' => 0.13 }
+            'O2' => { 'percentage' => 0.13 },
+            'N2' => { 'percentage' => 4.0 },
+            'Ar' => { 'percentage' => 0.55 }
           },
           'total_atmospheric_mass' => 2.5e16,
           'dust' => { 'concentration' => 0.5 }
@@ -116,6 +118,10 @@ RSpec.describe "Terraforming Integration", type: :integration do
       
       describe "simulation over time" do
         let(:service) { TerraSim::BiosphereSimulationService.new(celestial_body) }
+        
+        before do
+          atmosphere.reset
+        end
         
         it "increases oxygen levels after 1 day" do
           initial_o2 = atmosphere.o2_percentage
@@ -281,7 +287,9 @@ RSpec.describe "Terraforming Integration", type: :integration do
         base_values: { 
           'composition' => { 
             'CO2' => { 'percentage' => 95.32 },
-            'O2' => { 'percentage' => 0.13 }
+            'O2' => { 'percentage' => 0.13 },
+            'N2' => { 'percentage' => 4.0 },
+            'Ar' => { 'percentage' => 0.55 }
           },
           'total_atmospheric_mass' => 2.5e16
         }

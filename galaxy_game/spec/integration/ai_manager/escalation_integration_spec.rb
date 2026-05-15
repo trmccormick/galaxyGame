@@ -134,10 +134,13 @@ end
           # DEBUG: Print hydrosphere association for water order
           puts "Water base_settlement hydro: #{expired_water_order.base_settlement.celestial_body.hydrosphere&.total_liquid_mass}"
           puts "Settlement reloaded: #{settlement.is_a?(Settlement::BaseSettlement) ? 'yes' : 'no'}"
+        # Add raw_regolith to enable iron manufacturing
+        geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
+        create(:material, name: 'raw_regolith', location: 'geosphere', celestial_body: celestial_body, materializable: geosphere)
         # ISRU-first: all locally available materials -> automated harvesting
         expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_oxygen_order)).to eq(:automated_harvesting)
         expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_water_order)).to eq(:automated_harvesting)
-        expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_iron_order)).to eq(:scheduled_import)
+        expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_iron_order)).to eq(:deploy_manufacturing_unit)
       end
     end
 
@@ -180,20 +183,23 @@ end
              quantity: 200)
     end
 
-    let(:iron_order) do
+    let(:processed_regolith_order) do
       create(:market_order,
              :buy,
              base_settlement: settlement,
-             resource: 'iron',
-             quantity: 50)
+             resource: 'processed_regolith',
+             quantity: 1000)
     end
 
     before do
+      # Luna ISRU setup: oxygen/water from PVE processing, processed_regolith from TEU
       create_atmosphere_with_oxygen(celestial_body)
       create_hydrosphere_with_water(celestial_body)
-      create_regolith_with_iron(celestial_body)
-      celestial_body.reload # Ensure associations are up to date
-      settlement.reload # Ensure base_settlement has updated associations
+      # Create raw regolith for TEU processing into processed_regolith
+      geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
+      create(:material, name: 'raw_regolith', location: 'geosphere', celestial_body: celestial_body, materializable: geosphere)
+      celestial_body.reload
+      settlement.reload
     end
 
     it 'deploys oxygen harvester with correct configuration' do
@@ -219,13 +225,13 @@ end
       expect(harvester.operational_data['deployment_site']).to eq('ice_deposit')
     end
 
-    it 'deploys regolith miner for other materials' do
-      AIManager::EscalationService.deploy_automated_harvesters(iron_order)
+    it 'deploys regolith processor for processed_regolith' do
+      AIManager::EscalationService.deploy_automated_harvesters(processed_regolith_order)
 
       harvester = Units::Robot.last
-      expect(harvester.name).to eq("Automated Iron Miner")
+      expect(harvester.name).to eq("Automated Processed Regolith Miner")
       expect(harvester.operational_data['task_type']).to eq('regolith_mining')
-      expect(harvester.operational_data['target_material']).to eq('iron')
+      expect(harvester.operational_data['target_material']).to eq('processed_regolith')
       expect(harvester.operational_data['extraction_rate']).to eq(25)
       expect(harvester.operational_data['deployment_site']).to eq('regolith_field')
     end
@@ -388,7 +394,9 @@ end
     before do
       create_atmosphere_with_oxygen(celestial_body)
       create_hydrosphere_with_water(celestial_body)
-      create_regolith_with_iron(celestial_body)
+      # Add raw_regolith to enable iron manufacturing
+      geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
+      create(:material, name: 'raw_regolith', location: 'geosphere', celestial_body: celestial_body, materializable: geosphere)
       # Remove local titanium to force scheduled import
       celestial_body.materials.where(name: 'titanium').destroy_all
 
@@ -432,8 +440,8 @@ end
       # ISRU-first — locally available -> automated_harvesting
       expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[0])).to eq(:automated_harvesting) # oxygen
       expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[1])).to eq(:automated_harvesting) # water
-      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[2])).to eq(:automated_harvesting) # iron
-      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[3])).to eq(:scheduled_import)     # titanium
+      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[2])).to eq(:deploy_manufacturing_unit)     # iron
+      expect(AIManager::EscalationService.send(:determine_escalation_strategy, expired_orders[3])).to eq(:deploy_manufacturing_unit)     # titanium
     end
   end
 
@@ -455,7 +463,7 @@ end
 
   def create_regolith_with_iron(celestial_body)
     geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
-    create(:material, celestial_body: celestial_body, materializable: geosphere)
+    create(:material, name: 'iron', location: 'geosphere', celestial_body: celestial_body, materializable: geosphere)
   end
 
   def enqueued_jobs_count

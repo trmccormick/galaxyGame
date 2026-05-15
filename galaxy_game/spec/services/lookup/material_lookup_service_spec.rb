@@ -251,8 +251,8 @@ RSpec.describe Lookup::MaterialLookupService do
       it 'handles JSON parsing errors gracefully' do
         # Create corrupted file with .json extension
         File.write(corrupted_file, '{ invalid json', mode: 'w')
-        # Move logger mock BEFORE call
-        allow(Rails.logger).to receive(:error).with(/Invalid JSON in file:/)
+        # Allow any error logging
+        allow(Rails.logger).to receive(:error)
         service = described_class.new
         result = service.send(:load_json_files, temp_dir)
         expect(Rails.logger).to have_received(:error).with(/Invalid JSON in file:/)

@@ -129,7 +129,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
         # Add water to hydrosphere
         hydrosphere = celestial_body.hydrosphere
         hydrosphere.update!(total_liquid_mass: 1.386e21)
-        settlement.update!(current_population: 0)
+        settlement.update!(current_population: 5) # ISRU requires human oversight
       end
 
       it 'returns :automated_harvesting for oxygen when locally available' do

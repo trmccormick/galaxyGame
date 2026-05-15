@@ -30,9 +30,10 @@ RSpec.describe Admin::MapStudioController, type: :controller do
     end
 
     it 'assigns celestial bodies count' do
+      initial_count = ::CelestialBodies::CelestialBody.count
       create_list(:celestial_body, 5) # Assuming you have a celestial_body factory
       get :index
-      expect(assigns(:celestial_bodies_count)).to eq(5)
+      expect(assigns(:celestial_bodies_count)).to eq(initial_count + 5)
     end
 
     it 'assigns recent activities' do
@@ -49,10 +50,11 @@ RSpec.describe Admin::MapStudioController, type: :controller do
     end
 
     it 'assigns target planets' do
+      initial_count = ::CelestialBodies::CelestialBody.count
       create_list(:celestial_body, 3)
       get :generate
       expect(assigns(:target_planets)).to be_a(ActiveRecord::Relation)
-      expect(assigns(:target_planets).size).to eq(3)
+      expect(assigns(:target_planets).size).to eq(initial_count + 3)
     end
 
     it 'assigns celestial bodies options' do

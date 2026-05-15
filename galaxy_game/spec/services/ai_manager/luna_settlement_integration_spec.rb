@@ -22,10 +22,11 @@ RSpec.describe 'Luna Settlement Integration (MVP)', type: :integration do
   end
 
   it "MaterialProcessingService creates TEU job" do
-    allow(@settlement.inventory).to receive(:has_item?).with("regolith", 1000).and_return(true)
     service = Manufacturing::MaterialProcessingService.new(@settlement)
-    unit = Lookup::UnitLookupService.new.find_unit("thermal_extraction_unit_mk1")
-    job = service.process(unit, "regolith", 1000)
+    job = service.create_processing_job(
+      job_type: "material_processing", 
+      unit_type: "thermal_extraction_unit_mk1"
+    )
     expect(job.job_type).to eq "material_processing"
     expect(job.settlement).to eq @settlement
     expect(job.output_type).to eq "processed_regolith"
