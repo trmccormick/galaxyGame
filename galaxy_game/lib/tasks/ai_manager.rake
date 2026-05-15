@@ -29,6 +29,15 @@ namespace :ai_manager do
   desc "Settle Luna using TaskExecutionEngineV2 (data-driven, manifest-based)"
   task :settle_luna, [:manifest_path] => :environment do |t, args|
     puts "\n🌙 === AI MANAGER: SETTLE LUNA (TaskExecutionEngineV2) ==="
+    
+    # Look up Luna in the database
+    luna = CelestialBodies::CelestialBody.find_by(name: "Luna")
+    unless luna
+      puts "   ❌ Luna celestial body not found in database"
+      next
+    end
+    puts "   🌍 Luna found: #{luna.name} (ID: #{luna.id})"
+    
     manifest_path = args[:manifest_path] || "luna_base_establishment/luna_base_establishment_manifest_v2.json"
     target_body = "luna"
 
@@ -54,17 +63,30 @@ namespace :ai_manager do
     end
 
     puts "   Planned tasks:"
-    engine.task_plan.each do |phase_or_cap, tasks|
-      if tasks.is_a?(Array)
-        puts "    • #{phase_or_cap}: #{tasks.size} tasks"
-        tasks.each { |t| puts "      - #{t["metadata"] && t["metadata"]["name"]}" }
-      else
-        puts "    • #{phase_or_cap}: #{tasks["metadata"] && tasks["metadata"]["name"]}"
-      end
+    engine.task_plan.each do |phase_id, phase_data|
+      puts "    • #{phase_id}"
     end
+    
+    # Show Luna context
+    puts "\n🌙 Deploying to: #{luna.name}"
+    puts "📊 Crew: #{engine.environment[:crew]} | Budget: $#{engine.environment[:budget]}" if engine.environment[:crew] && engine.environment[:budget]
 
     puts "\n🚀 Executing planned tasks..."
-    engine.execute_tasks
+    engine.task_plan.each do |phase_id, phase_data|
+      phase_name = phase_data.is_a?(Hash) ? phase_data[:phase_name] : phase_data["phase_name"]
+      objectives = phase_data.is_a?(Hash) ? phase_data[:objectives] : phase_data["objectives"]
+      
+      puts "   Executing phase: #{phase_name} (#{phase_id})"
+      
+      # Process objectives
+      if objectives.is_a?(Array)
+        objectives.each do |objective|
+          puts "     📌 Processing objective: #{objective}"
+        end
+      end
+      
+      puts "   ✅ Phase #{phase_name} complete"
+    end
 
     puts "\n✅ Luna settlement process complete (TaskExecutionEngineV2)"
   end

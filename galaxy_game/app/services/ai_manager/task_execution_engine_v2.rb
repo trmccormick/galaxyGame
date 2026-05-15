@@ -36,15 +36,24 @@ module AIManager
     def plan_tasks
       @task_plan = {}
       
-      # If manifest has phases, load tasks from phase files
+      # Build environment from mission resources
+      if @manifest["resources"].is_a?(Hash)
+        @environment.merge!(
+          crew: @manifest["resources"]["initial_crew"],
+          equipment: @manifest["resources"]["initial_equipment"],
+          budget: @manifest["resources"]["budget"]
+        )
+      end
+      
+      # Parse phases from profile data
       if @manifest["phases"].is_a?(Array)
         @manifest["phases"].each do |phase|
           phase_id = phase["phase_id"]
-          task_list_file = phase["task_list_file"]
-          if task_list_file
-            phase_tasks = load_phase_tasks(task_list_file)
-            @task_plan[phase_id] = phase_tasks if phase_tasks.any?
-          end
+          @task_plan[phase_id] = {
+            phase_name: phase["phase_name"],
+            location: phase["location"],
+            objectives: phase["objectives"] || []
+          }
         end
       else
         # Fallback to capability-based planning
