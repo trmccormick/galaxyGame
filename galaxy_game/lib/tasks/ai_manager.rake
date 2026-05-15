@@ -25,6 +25,49 @@ namespace :ai_manager do
     
     puts "\n💾 Patterns saved to: data/json-data/ai-manager/learned_patterns.json"
   end
+
+  desc "Settle Luna using TaskExecutionEngineV2 (data-driven, manifest-based)"
+  task :settle_luna, [:manifest_path] => :environment do |t, args|
+    puts "\n🌙 === AI MANAGER: SETTLE LUNA (TaskExecutionEngineV2) ==="
+    manifest_path = args[:manifest_path] || "luna_base_establishment/luna_base_establishment_manifest_v2.json"
+    target_body = "luna"
+
+    # Validate manifest file
+    manifest_full_path = GalaxyGame::Paths::MISSIONS_PATH.join(manifest_path)
+    unless File.exist?(manifest_full_path)
+      puts "   ❌ Manifest file not found: #{manifest_full_path}"
+      puts "   Provide a valid manifest path as an argument, e.g.: rake ai_manager:settle_luna['luna_base_establishment/luna_base_establishment_manifest_v2.json']"
+      next
+    end
+
+    puts "   Using manifest: #{manifest_full_path}"
+    manifest = JSON.parse(File.read(manifest_full_path))
+
+    # Initialize TaskExecutionEngineV2
+    engine = AIManager::TaskExecutionEngineV2.new(target_body, manifest)
+
+    puts "\n📝 Planning tasks for Luna settlement..."
+    engine.plan_tasks
+    if engine.task_plan.nil? || engine.task_plan.empty?
+      puts "   ❌ No tasks planned. Check manifest and task library."
+      next
+    end
+
+    puts "   Planned tasks:"
+    engine.task_plan.each do |phase_or_cap, tasks|
+      if tasks.is_a?(Array)
+        puts "    • #{phase_or_cap}: #{tasks.size} tasks"
+        tasks.each { |t| puts "      - #{t["metadata"] && t["metadata"]["name"]}" }
+      else
+        puts "    • #{phase_or_cap}: #{tasks["metadata"] && tasks["metadata"]["name"]}"
+      end
+    end
+
+    puts "\n🚀 Executing planned tasks..."
+    engine.execute_tasks
+
+    puts "\n✅ Luna settlement process complete (TaskExecutionEngineV2)"
+  end
   
   desc "Compare mission profile patterns to find similarities"
   task compare_patterns: :environment do
