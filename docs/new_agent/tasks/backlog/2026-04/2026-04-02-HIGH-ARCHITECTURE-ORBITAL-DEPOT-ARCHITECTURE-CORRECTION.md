@@ -1,0 +1,58 @@
+# 2026-04-02-HIGH-ARCHITECTURE-ORBITAL DEPOT ARCHITECTURE CORRECTION
+
+**Agent:** GPT-4.1 (0.25x)
+**Priority:** HIGH
+**Type:** ARCHITECTURE
+**Status:** BACKLOG
+
+## Context
+Migrated from backlog_april_2026 archive.
+
+## Summary
+# ARCHIVED 2026-04-17: OrbitalDepot class and architecture are now retired and replaced by Settlement::OrbitalSettlement with Structures::OrbitalStructure. See migration notes in app/models/settlement...
+
+---
+
+## Original Content
+
+# ARCHIVED 2026-04-17: OrbitalDepot class and architecture are now retired and replaced by Settlement::OrbitalSettlement with Structures::OrbitalStructure. See migration notes in app/models/settlement/orbital_depot.rb. No further action required; file kept for historical reference only.
+# Task: OrbitalDepot Architecture Correction
+
+**Priority:** MEDIUM (backlog, no current failures)  
+**Agent:** GPT-4.1
+
+## Problem
+OrbitalDepot currently inherits from SpaceStation which is wrong. They are siblings not parent/child.
+
+SpaceStation = shipyard/manufacturing hub (L1 Station)  
+OrbitalDepot = logistics hub, refueling, cargo swap (LEO depot, L1 depot)
+
+Both use Structures::Shell but serve distinct purposes. Capabilities determined by fitted Units::BaseUnit modules not class hierarchy.
+
+## Change
+app/models/settlement/orbital_depot.rb
+
+FROM:
+  class OrbitalDepot < SpaceStation
+
+TO:
+  class OrbitalDepot < BaseSettlement
+    include Structures::Shell
+    include Docking
+
+## Add operational_data documentation
+Document standard fitted configurations in operational_data:
+- LEO depot: fuel_tanks, docking_ports, cargo_bays
+- L1 depot: fuel_tanks, docking_ports, cargo_bays, fabricators (optional)
+
+## Do NOT change
+- SpaceStation (keep as-is)
+- BaseSettlement (keep as-is)
+- Any existing OrbitalDepot instances or seeds
+
+## No rspec changes required unless existing depot specs break
+Run after changes:
+docker exec -it web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/ -t type:model --format progress 2>&1 | tail -20'
+
+## Commit message
+"Fix OrbitalDepot inheritance - sibling of SpaceStation not subclass"
