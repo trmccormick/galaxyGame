@@ -1,52 +1,90 @@
 # Routing Logic — Quick Reference
-**Last Updated**: 2026-05-12
+**Last Updated**: 2026-05-14
 
-> Full routing table is in `rules/AGENT_ROUTING.md`.
+> Full routing table and agent details are in `rules/AGENT_ROUTING.md`.
 > This file is a quick-reference summary only.
 
 ---
 
 ## The One Rule
-**Local models handle file reads and targeted edits.
-Cloud agents handle reasoning, investigation, and multi-file work.
-Claude handles planning only — never implementation.**
+
+**Local models handle file reads and targeted edits.**
+**Cloud agents handle reasoning, review, and planning.**
+**Cloud agents never receive the full codebase — snippets only.**
 
 ---
 
-## Quick Routing
+## AI Stack at a Glance
 
-| I need to... | Use |
+| Agent | Cost | When to Use |
+|---|---|---|
+| Codestral (M4) | Free/local | Architecture, complex multi-file reasoning |
+| Qwen3-30B (Windows) | Free/local | Primary coding workhorse, implementation |
+| Qwen2.5-14B (M4) | Free/local | Implementation, code refinement |
+| DeepSeek 16B (M4) | Free/local | Logic analysis, second opinion |
+| Qwen2.5-3B (Windows) | Free/local | Small targeted edits, JSON, docs |
+| Llama 3.1 8B (Windows) | Free/local | General tasks, lightweight chat |
+| Claude (web) | Free tier | Planning sessions, documentation writing |
+| Gemini (web) | Free | Galaxy Game review, plan preparation |
+| Perplexity (web) | Free | Research, Samvera/Hyku docs lookup |
+| GitHub Copilot | Tokens (conserve) | Work/Samvera tasks only — see note below |
+
+> **Copilot note**: Token-based billing takes effect June 2026.
+> Do not route Galaxy Game tasks to Copilot.
+> Routing rules will be updated after Gemini research is complete.
+
+---
+
+## Quick Routing Table
+
+| Task | Agent |
 |---|---|
-| Plan a session / triage failures | Claude (premium gate) |
-| Audit logic before implementing | Grok → Codestral after May 15 |
-| Fix a single spec — cause is known | GPT-4.1 or Qwen2.5-3B |
-| Fix a single spec — cause unknown | Grok → Codestral after May 15 |
-| Multi-file refactor | Codestral synthesis → GPT-4.1 or Qwen3-30B |
-| Search the codebase | Qwen3-30B + Nomic Embed (local) |
-| Edit a JSON file | Qwen2.5-3B (local) |
-| Write docs after a change | GPT-4.1 or Qwen2.5-3B |
+| Plan a session / triage failures | Claude (web) |
+| First-level review, Galaxy Game | Gemini |
+| Research Samvera/Hyku community | Perplexity |
+| Architecture decision / multi-file design | Codestral (M4) |
+| Audit logic before implementing | Codestral (M4) |
+| Fix a single spec — cause is known | Qwen3-30B or Qwen2.5-3B |
+| Fix a single spec — cause unknown | Codestral → Qwen3-30B |
+| Multi-file refactor | Codestral synthesis → Qwen3-30B |
+| Search the codebase | Qwen3-30B + Nomic Embed |
+| Edit a JSON / small config file | Qwen2.5-3B |
+| Write docs after a change | Qwen2.5-3B or Qwen3-30B |
+| Complex logic / second opinion | DeepSeek 16B (M4) |
+| Work/Samvera tasks | Copilot (token budget aware) |
 
 ---
 
 ## Hard Rules
-- M4 must stay caffeinated (caffeinate / pmset) for stable connection
+
+- M4 must stay caffeinated (`caffeinate` / `pmset`) for stable Ollama connection
 - All codebase-wide scans go to local models — never send full codebase to cloud
 - Cloud agents receive only the specific file snippets needed for the task
-- One RSpec runner at a time — never parallel
-- Grok retires 2026-05-15 — all Grok tasks must complete before that date
+- One RSpec runner at a time — never run parallel spec execution
+- Commits always from the Intel Mac (host/orchestration node)
+- Do not route to Copilot until new routing rules are documented post-June 2026
 
 ---
 
-## After May 15 (Grok Retired)
-- Logic audits → Codestral (M4)
-- Synthesis reports → Codestral (M4)  
-- Second opinion → DeepSeek 16B (M4)
-- If M4 unavailable → wait for next Claude premium gate
+## Workflow Sequence
 
----
-
-## June 2026
-GitHub Copilot workflow changes take effect.
-Update `AGENT_ROUTING.md` when Gemini's research on new Copilot
-capabilities is complete. Do not route tasks to Copilot until
-routing rules are formally documented here.
+```
+Cloud Agent (plan/review)
+       │
+       ▼
+Task file written to tasks/active/
+       │
+       ▼
+Local Agent reads task → Synthesis Report → STOP
+       │
+  Human approves
+       │
+       ▼
+Local Agent applies fix → runs specs → confirms 0 new failures
+       │
+       ▼
+Commit from Intel Mac → completion report → move to completed/
+       │
+       ▼
+Session handoff written to tasks/session-handoffs/
+```
