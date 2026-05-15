@@ -18,7 +18,6 @@ class GameController < ApplicationController
     end
 
     @celestial_bodies.each do |body|
-      body.define_singleton_method(:is_moon) { respond_to?(:parent_celestial_body) && parent_celestial_body.present? }
       body.define_singleton_method(:body_category) do
         case self.class.name
         when /TerrestrialPlanet/ then 'terrestrial'

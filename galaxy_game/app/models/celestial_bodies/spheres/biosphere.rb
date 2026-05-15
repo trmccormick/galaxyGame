@@ -385,8 +385,16 @@ module CelestialBodies
       end
 
       def deploy_terraforming_organism(organism)
-        # TODO: Implement actual terraforming organism deployment logic
-        Rails.logger.warn("deploy_terraforming_organism(:#{organism}) called on Biosphere, but method is a stub. Implementation intent unknown.")
+        # Deploy a terraforming organism using the LifeFormLibrary
+        case organism
+        when :cyanobacteria
+          Biology::LifeFormLibrary.cyanobacteria(self)
+        when :nitrogen_fixer
+          Biology::LifeFormLibrary.nitrogen_fixer(self)
+        else
+          Rails.logger.warn("deploy_terraforming_organism(:#{organism}) - unknown organism type")
+          return false
+        end
         true
       end
 
