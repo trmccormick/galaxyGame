@@ -12,12 +12,19 @@ module AtmosphereConcern
   # 2. Then falls back to the composition hash
   # 3. Returns 0.0 if not found anywhere
   def gas_percentage(formula_or_name)
-    gases.reset if gases.loaded?
+    # Always reload gases to ensure we have the latest data
+    gases.reload
+    # First try to find the gas in gas records
     gas = gases.find_by(name: formula_or_name)
     return gas.percentage if gas
-    # Fallback to composition hash
+    # Not found in gas records, fall back to composition hash
     if composition.present?
-      return composition[formula_or_name] if composition[formula_or_name]
+      gas_data = composition[formula_or_name]
+      if gas_data.is_a?(Hash)
+        return gas_data['percentage'] || 0.0
+      else
+        return gas_data || 0.0
+      end
     end
     0.0
   end
