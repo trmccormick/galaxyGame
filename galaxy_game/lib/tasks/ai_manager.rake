@@ -38,7 +38,7 @@ namespace :ai_manager do
     end
     puts "   🌍 Luna found: #{luna.name} (ID: #{luna.id})"
     
-    manifest_path = args[:manifest_path] || "luna_base_establishment/luna_base_establishment_manifest_v2.json"
+    manifest_path = args[:manifest_path] || "luna_base_establishment/luna_settlement_profile_v1.json"
     target_body = "luna"
 
     # Validate manifest file
@@ -53,7 +53,7 @@ namespace :ai_manager do
     manifest = JSON.parse(File.read(manifest_full_path))
 
     # Initialize TaskExecutionEngineV2
-    engine = AIManager::TaskExecutionEngineV2.new(target_body, manifest)
+    engine = AIManager::TaskExecutionEngineV2.new(target_body, manifest_path)
 
     puts "\n📝 Planning tasks for Luna settlement..."
     engine.plan_tasks
