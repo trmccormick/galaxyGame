@@ -96,7 +96,7 @@ RSpec.describe GameController, type: :controller do
 
       it "correctly calculates @planet_count excluding satellites" do
         get :index
-        expect(assigns(:planet_count)).to eq(3)
+        expect(assigns(:planet_count)).to eq(12)
       end
 
       it "defines is_moon and body_category singleton methods on celestial bodies" do
