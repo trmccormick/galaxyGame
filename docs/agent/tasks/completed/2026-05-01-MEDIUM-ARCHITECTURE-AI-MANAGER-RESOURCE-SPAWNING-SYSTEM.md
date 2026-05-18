@@ -1,10 +1,10 @@
 # TASK: AI Manager Resource Spawning System
-**Status**: BACKLOG
+**Status**: COMPLETED - DECOMPOSED
 **Priority**: MEDIUM
 **Type**: architecture
 **Created**: 2026-05-01
-**Promote to active**: Phase 3
-**Last Updated**: 2026-05-01
+**Decomposed**: 2026-05-18
+**Last Updated**: 2026-05-18
 
 ---
 
@@ -78,3 +78,26 @@ This task designs and implements that spawning system.
   and discovered deposit location
 - Equipment tier gates what the player can access regardless of
   what exists in the data
+
+---
+
+## COMPLETION NOTES (2026-05-18)
+
+This monolithic skeleton task has been **decomposed into 7 focused work items** in the new_agent workflow:
+
+**Design Investigation Tasks** (require collaborative refinement):
+- 2026-05-18-DESIGN-Resource-Deposit-Model-And-Persistence.md
+- 2026-05-18-DESIGN-Deposit-Plausibility-Engine.md
+- 2026-05-18-DESIGN-Deposit-Trigger-System-And-Equipment-Gating.md
+
+**Implementation-Ready Tasks** (blocked until design approval):
+- 2026-05-18-IMPL-Create-ResourceDeposit-Model.md
+- 2026-05-18-IMPL-Create-DepositSpawner-Service.md
+- 2026-05-18-IMPL-Integrate-Spawning-With-Game-Events.md
+
+**Overview & Tracking**:
+- 2026-05-18-OVERVIEW-Resource-Spawning-Task-Breakdown.md
+
+Location: `docs/new_agent/tasks/backlog/2026-05/`
+
+Each task includes specific acceptance criteria, design questions, dependencies, and implementation steps. This decomposition allows for collaborative design refinement before implementation begins.
