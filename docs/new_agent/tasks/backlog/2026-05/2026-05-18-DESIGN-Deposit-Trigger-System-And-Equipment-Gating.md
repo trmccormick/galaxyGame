@@ -4,8 +4,8 @@ priority: HIGH
 type: design
 system_domain: AI_MANAGER
 parent_task: AI Manager Resource Spawning System (2026-05-01)
-created: 2026-05-18
-depends_on: 2026-05-18-DESIGN-Resource-Deposit-Model-And-Persistence.md
+created: 2026-05-18supervision_level: 🔴 WATCHED CAREFULLY - Core progression mechanic
+assigned_to: You (game design/UX) + Gemini (progression balance)depends_on: 2026-05-18-DESIGN-Resource-Deposit-Model-And-Persistence.md
 ---
 
 # DESIGN: Deposit Trigger System and Equipment Gating
@@ -14,10 +14,31 @@ depends_on: 2026-05-18-DESIGN-Resource-Deposit-Model-And-Persistence.md
 **Priority**: HIGH  
 **Type**: design  
 **Parent**: AI Manager Resource Spawning System  
-**Depends On**: Resource Deposit Model (design must come first)
+**Supervision**: 🔴 Watched carefully — gates early vs advanced game progression  
+**Depends On**: Resource Deposit Model (design must come first)  
 **Blockers**: Blocks all trigger-based spawning implementation
 
 ---
+
+## Design Principles (Inherited from Architecture)
+
+### Equipment tier gates access, not existence
+- All deposits exist on a celestial body regardless of player equipment
+- Equipment tier determines **visibility** and **accessibility**
+- Tier-0 equipment: only surface resources visible
+- Tier-1 equipment: subsurface resources revealed
+- Tier-2+ equipment: deep resource access unlocked
+- **This separation enables early/mid/late game progression pacing**
+
+### Surface resources are always accessible (early ISRU)
+- Regolith, PSR deposits always visible
+- No survey required for surface resources
+- Enables basic settlement ISRU from Day 1
+
+### Subsurface resources require progressive unlocks
+- Survey missions reveal what tier-2+ deposits exist
+- Mining equipment tier gates which deposits are accessible
+- Gating creates mid-game progression bottleneck
 
 ## Problem Statement
 

@@ -5,6 +5,8 @@ type: design
 system_domain: AI_MANAGER
 parent_task: AI Manager Resource Spawning System (2026-05-01)
 created: 2026-05-18
+supervision_level: 🔴 WATCHED CAREFULLY - Core balance mechanic
+assigned_to: Gemini (geological domain) + You (game balance)
 depends_on: 2026-05-18-DESIGN-Resource-Deposit-Model-And-Persistence.md
 ---
 
@@ -26,6 +28,26 @@ The codebase reads body properties like `stored_volatiles`, `materials`, `crust_
 - Deposits of resources that don't exist on that body
 - Deposits in impossible locations (water ice on Venus)
 - Deposits that violate real scientific data constraints
+
+## Design Principles (Inherited from Architecture)
+
+### Real data drives plausibility
+- `stored_volatiles` = scientific upper bound on what exists
+- `materials` array = confirmed resource types present
+- `crust_composition` = mineral makeup informing ore types
+- **Plausibility engine must never allow deposits of resources not in `materials`**
+
+### Equipment tier gates discovery, not existence
+- Deposits exist regardless of equipment tier
+- Equipment tier determines which deposits are visible/accessible
+- Tier-0 equipment: only surface resources revealed
+- Tier-2 equipment: deep subsurface resources revealed
+- **Model must support this separation**
+
+### Civ4-style clustering (geological realism)
+- Rare resources spawn clustered (not evenly distributed)
+- Abundant resources spread across multiple regions
+- Resource rarity should map to real geological frequency
 
 ## Design Questions to Answer
 
