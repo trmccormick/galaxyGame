@@ -43,14 +43,14 @@ Local Qwen3.5     = 0 tokens (local, unlimited) ← BECOMES PRIMARY
 
 **Impact**: Your unlimited GPT-4.1 0x tier is **GONE**. All execution work now has a cost UNLESS you use local models.
 
-### GitHub Copilot Pro: Usage-Based Billing Model
+### GitHub Copilot Pro: Usage-Based Billing Model (OFFICIAL)
 
 **Pricing & Credits**:
 - Subscription fee: **$10/month** (unchanged from old pricing)
-- Monthly credit allotment: **$10 USD = 1,000 AI Credits**
+- Monthly credit allotment: **$10 in AI Credits** (1:1 dollar to credit ratio)
 - Credit consumption: Based on **input tokens + output tokens + cached tokens**
-- Token multipliers: **UNKNOWN** — do 0.33x/0.5x/1x apply to Copilot credits?
-- When depleted: **Copilot stops working** (no fallback to cheaper models)
+- Cost per credit: **~$0.01 per credit**, but varies significantly by model
+- When depleted: **Agent usage halts completely** — NO fallback to cheaper models
 
 **What's Free** (doesn't consume credits):
 - ✅ Standard inline code completions
@@ -58,164 +58,161 @@ Local Qwen3.5     = 0 tokens (local, unlimited) ← BECOMES PRIMARY
 - ✅ Basic autocomplete in VS Code
 
 **What Costs Credits**:
-- ❌ Multi-step coding interactions (chats, agent tasks)
-- ❌ Code Review via GitHub Actions (also consumes Actions minutes)
-- ❌ Caching benefits (technically saves tokens, but still consumed from budget)
+- ❌ Standard chat & coding agents (all multi-step interactions)
+- ❌ Code Review via GitHub Actions (ALSO consumes Actions minutes at GitHub standard rates)
+- ❌ Complex multi-file agent sessions (burn through credits "significantly faster")
+
+**Credit Consumption Rates by Model Type** (from official policy):
+- Lightweight models: Fraction of a credit per task
+- Standard models (Sonnet): Variable, roughly 1-2 credits per moderate task
+- Complex multi-file sessions: 5-10+ credits per task
+- **GPT-4.1 rates: NOT SPECIFIED** in official policy
 
 **Annual Plan Subscribers**:
 - Old annual plans remain valid until expiration
-- Token consumption multiplier applied (requests consume quota more rapidly)
-- After expiration: Move to Copilot Free tier
-- Option: Transition to monthly paid plan
+- Updated with "model multipliers" (method for computing quota consumption not specified)
+- After expiration: Move to Copilot Free tier or upgrade to monthly Pro
 
-### Credit Economics (PENDING MULTIPLIER CLARIFICATION)
+**Other Plans** (for reference):
+- Copilot Pro+: $39/month = $39 in AI Credits
+- Copilot Business: $19/user/month + $30 promo credits through August
+- Copilot Enterprise: $39/user/month + $70 promo credits through August
 
-**If Copilot Pro applies cost multipliers to credits**:
+### What Changed From Old Policy
 
-Example calculations (using hypothetical multipliers):
-```
-Simple fix via Haiku 0.33x:      50 credits
-Simple fix via GPT-4.1 0.5x:    100 credits  
-Simple fix via Sonnet 1x:       200 credits
-Complex task via Sonnet 1x:     800 credits
-```
+**Old System (Pre-June 1)**:
+- Premium Request Units (PRUs)
+- Fallback to cheaper model when limits reached
+- Unclear cost structure
 
-**At $10/month = 1,000 credits**:
-- Heavy Haiku usage: ~20 tasks/month
-- Mixed GPT-4.1 (0.5x) + Sonnet: ~8-10 tasks/month
-- Heavy Sonnet usage: ~5 tasks/month
-
-**Critical Unknown**: What multipliers does Copilot Pro apply?
+**New System (June 1+)**:
+- GitHub AI Credits ($1 = 100 credits? NO — $1 = 1 credit, 1:1 ratio)
+- NO fallback mechanisms — stops completely when depleted
+- Clear: ~$0.01 per credit, varies by model
+- All 0x free tiers eliminated
 
 ### Tracking & Billing
 
 **How to monitor**:
-- GitHub Billing Overview page shows credit consumption
-- "Billing Preview" experience displays token usage
-- Can see how agentic tasks drain budget
-- Official guide: "Models and Pricing for GitHub Copilot"
+- GitHub Copilot Billing Settings page
+- "Billing Preview" shows estimated spend
+- Real-time view of which models/tasks consuming credits
+- Hard spending limits available for organizations (not individual Pro accounts)
 
 ---
 
-## Analysis & Unknowns (Critical for June 1 Decision)
+## Analysis & What's Still Unknown
 
-### The Core Problem: GPT-4.1 0x Is Disappearing
+### What We Now Know (Concrete)
 
-**Current reality** (May 31, 2026):
-- You rely on unlimited GPT-4.1 0x for 70% of execution work
-- Gemini (0) → Qwen3.5 (0) → Perplexity (0) → **GPT-4.1 0x (0, unlimited)** ← YOUR FOUNDATION
+1. ✅ **$10 credit budget, period.** No "1,000 credits" ambiguity — $10 = 10 credits at ~$0.01/credit
+2. ✅ **No fallback.** When depleted, agent usage STOPS until next billing cycle
+3. ✅ **Lightweight models use fractions of a credit** (good for cheap tasks)
+4. ✅ **Code completions remain free** (no credit consumption)
+5. ✅ **Avoid Code Review** (costs both Actions minutes + credits)
+6. ✅ **Complex multi-file sessions are expensive** ("burn through credits significantly faster")
 
-**After June 1**:
-- GPT-4.1 will still exist BUT is no longer 0x (no longer free)
-- Cost multiplier unknown (0.5x? 1x? 2x?)
-- May no longer be available through standard APIs, only Copilot Pro?
-- Your unlimited tier **VANISHES**
+### Critical Remaining Unknown #1: GPT-4.1 Availability & Pricing
 
-**Impact**: You MUST route to either:
-1. **Copilot Pro** (if GPT-4.1 available + cost is reasonable)
-2. **Local Codestral/Qwen3.5** (unlimited, always free)
-3. **Claude premium** (expensive, reserved for complex only)
+**The Policy Says**: "Standard Chat & Coding Agents consume AI Credits at varying API rates per model"
 
-### Critical Unknown #1: GPT-4.1 Availability in Copilot Pro
+**What This Means**: Each model has a different cost multiplier.
 
-**Question**: Will GitHub include GPT-4.1 in Copilot Pro's model selection?
+**What's Missing**: 
+- ❌ Is GPT-4.1 available in Copilot Pro at all?
+- ❌ If yes, what's its cost multiplier? (Cheaper than Sonnet? Same as Sonnet? More?)
+- ❌ Is there any 0x equivalent in Copilot Pro?
 
-**If YES (likely)**:
-- Cost multiplier would be 0.33x? 0.5x? or 1x?
-- Copilot Pro might be viable (depends on multiplier)
+**Why It Matters**: If GPT-4.1 is expensive (>Sonnet) or unavailable, Path A (keep Copilot Pro) becomes unviable.
 
-**If NO (unlikely but possible)**:
-- You lose access to GPT-4.1 through Copilot
-- Stuck with Claude/Sonnet models only
-- Downgrade to Copilot Free, use local models exclusively
+### Critical Remaining Unknown #2: Model Multiplier Mapping
 
-### Critical Unknown #2: Token Multipliers in Copilot Pro
+**The Policy Hints**: Annual plans get "updated usage multipliers" for computing quota consumption
 
-**Current system** (pre-June 1):
-- Haiku = 0.33x cost (cheaper)
-- Claude Sonnet = 1x cost (standard)
-- GPT-4.1 = 0x cost (FREE)
+**What This Means**: Different models cost different amounts
 
-**Question**: Do these multipliers apply within Copilot's 1,000 monthly credits?
+**What's Missing**:
+- ❌ Exact multiplier for Haiku (0.33x equivalent? Less?)
+- ❌ Exact multiplier for Sonnet (1x equivalent?)
+- ❌ Exact multiplier for Opus (1.5x equivalent?)
+- ❌ Do these multipliers apply to monthly Pro credits too, or only annual plans?
 
-**Scenario A: Multipliers Apply to Copilot Credits**
-```
-1,000 credits budget:
-├─ Heavy Haiku 0.33x → ~30 complex tasks/month
-├─ Mixed GPT-4.1 0.5x → ~10-15 tasks/month
-└─ Heavy Sonnet 1x → ~5-7 tasks/month
-```
-**Impact**: Copilot Pro MIGHT be viable if GPT-4.1 is 0.5x or cheaper
+**Why It Matters**: Budget sustainability depends on knowing which model to use for which task.
 
-**Scenario B: Copilot Standardizes to 1x for All Models**
-```
-1,000 credits budget:
-└─ Any model = 1x cost → ~5-7 tasks/month (regardless of model)
-```
-**Impact**: Copilot Pro becomes expensive relative to local models. Not worth keeping.
+### What You CAN Infer Now
 
-**Scenario C: Different Pricing Tiers (Copilot Pro Base vs. Pro+)**
-```
-Copilot Pro ($10) = access to Sonnet only
-Copilot Pro+ ($39?) = access to GPT-4.1, Opus, etc.
-```
-**Impact**: You might be on wrong tier. Need to evaluate Pro vs. Pro+.
+**From "~$0.01 per credit" and "complex multi-file sessions burn through significantly faster"**:
 
-### What This Means for Your June 1 Decision
+A simple fix might cost:
+- 0.1-0.5 credits (cheap models)
+- 0.5-2 credits (standard models)
 
-**If Unknowns Resolve Favorably** (GPT-4.1 available + 0.5x multiplier):
-- ✅ Keep Copilot Pro
-- ✅ Route simple work through Copilot Pro
-- ✅ Use local models for large/complex tasks
-- **Monthly budget**: 1,000 credits ÷ 150 credits/task = ~6-7 tasks sustainable
+A complex multi-file refactor might cost:
+- 5-10+ credits (at standard rates)
 
-**If Unknowns Resolve Unfavorably** (No GPT-4.1 OR 1x multiplier):
-- ❌ Downgrade to Copilot Free
-- ❌ Route ALL mechanical work to local Codestral/Qwen3.5
-- ❌ Save $10/month
-- **New workflow**: Gemini → Qwen3.5 → Perplexity → Codestral (local, unlimited) → Claude 1x (premium only)
+**At $10/month**:
+- Best case: 20+ simple fixes per month (if lightweight models cheap enough)
+- Worst case: 1-2 complex tasks per month (if multi-file expensive)
+- Most likely: 5-10 mixed tasks per month
 
-### Recommended Pre-June 1 Action
+### Decision Framework (Updated)
 
-**Before June 1 cutover**:
-1. [ ] Test GPT-4.1 through Copilot Pro if available in beta
-2. [ ] Measure actual credit consumption for sample task
-3. [ ] Check GitHub billing page for cost multipliers
-4. [ ] Decide: Keep Pro ($10) or downgrade to Free ($0)?
+**The fundamental question**: Is local Codestral/Qwen3.5 execution faster or more economical than Copilot Pro?
 
-**After June 1**:
-1. [ ] Verify GPT-4.1 is available in Copilot Pro
-2. [ ] Run test task, measure credits
-3. [ ] Calculate: cost per task via Copilot vs. local model
-4. [ ] Make permanent subscription decision based on data
+**Path A Decision Rule** (Keep Copilot Pro):
+- IF GPT-4.1 available in Copilot Pro
+- AND GPT-4.1 costs ≤ Sonnet equivalent cost
+- AND simple fixes cost <0.5 credits
+- THEN keep Copilot Pro ($10/month sustainable)
+
+**Path B Decision Rule** (Downgrade to Free):
+- IF GPT-4.1 not available
+- OR GPT-4.1 costs > Sonnet equivalent
+- OR simple fixes cost >1 credit
+- THEN downgrade to Free, use local Codestral/Qwen3.5 exclusively
+
+**Test Metrics** (June 1-3):
+1. Assign 1 simple RSpec fix to Copilot Pro
+2. Check Billing Preview: How many credits consumed?
+3. Calculate: $10 ÷ credits_per_task = tasks_sustainable_per_month
+4. Compare to: How many tasks can M4 Codestral handle daily?
+5. Choose path based on which is faster/cheaper
 
 ---
 
 ## Decision: Revised Routing Strategy (Post-June 1)
 
-**THE FUNDAMENTAL SHIFT**: You're losing unlimited GPT-4.1 0x. Everything now has a cost.
+**THE FUNDAMENTAL SHIFT**: All 0x free agents disappear. GPT-4.1 will have a cost (amount unknown). You MUST choose between Copilot Pro or local models.
+
+**Your $10 Budget Reality**:
+- $10/month in credits
+- ~$0.01 per credit average
+- Simple fixes: likely 0.1-0.5 credits each (20-100 tasks if lightweight models cheap)
+- Complex multi-file: likely 5-10+ credits each (1-2 tasks max)
+- Most likely sustainable: 5-10 mixed tasks/month
 
 **Two Possible Workflows**:
 
-### Path A: Copilot Pro Becomes Primary Execution (IF GPT-4.1 Available + Reasonable Cost)
+### Path A: Copilot Pro Becomes Primary Execution (IF GPT-4.1 Available + Cheap)
 
 ```
 Planning: Gemini (0)
 Triage: Qwen3.5 (0, local)
 Validation: Perplexity (0)
 
-IMPLEMENTATION:
+IMPLEMENTATION (if GPT-4.1 cheap):
 ├─ Simple fixes (RSpec, model, controller)
-│  └─ Copilot Pro (1,000 credits/month budget)
+│  └─ Copilot Pro ($10/month = 5-10 tasks sustainable)
 │
 ├─ Complex multi-file work
-│  └─ Local Codestral (unlimited) OR Copilot Pro (if budget)
+│  └─ Local Codestral (unlimited) [Copilot too expensive for this]
 │
 └─ Rare architectural work
    └─ Claude 1x (premium, expensive)
 ```
 
-**Sustainability**: 5-7 Copilot Pro tasks/month, 20+ local Codestral tasks/month
+**Sustainability**: 5-10 Copilot Pro tasks/month, 20+ local Codestral tasks/month  
+**Budget risk**: Medium — if GPT-4.1 is expensive or unavailable, Path A fails
 
 ### Path B: Local Models Become Primary Execution (IF Copilot Pro Too Expensive)
 
@@ -224,41 +221,43 @@ Planning: Gemini (0)
 Triage: Qwen3.5 (0, local)
 Validation: Perplexity (0)
 
-IMPLEMENTATION:
+IMPLEMENTATION (primary execution):
 ├─ All mechanical work (90%)
 │  └─ Local Codestral (unlimited) OR Qwen3.5 (unlimited)
 │
 ├─ When local models overwhelmed
-│  └─ Copilot Pro (1,000 credits/month) OR Claude 1x
+│  └─ Copilot Pro (for urgent work, if budget permits)
 │
 └─ Rare architectural work
    └─ Claude 1x (premium, expensive)
 ```
 
-**Sustainability**: Unlimited local work, minimal Copilot/Claude spend
+**Sustainability**: Unlimited local work, minimal Copilot/Claude spend  
+**Budget risk**: Low — local unlimited, $10 saved monthly
 
 ### Updated AI Stack (June 1+, Post-Decision)
 
-**OPTION A: Keep Copilot Pro** (if GPT-4.1 available + ≤0.5x cost)
+**OPTION A: Keep Copilot Pro** (if GPT-4.1 available + cost ≤ Sonnet)
 
-| Tier | Agent | Cost | Role | Monthly Volume |
+| Tier | Agent | Cost | Role | Monthly Capacity |
 |---|---|---|---|---|
 | **0-Token** | Gemini | 0 | Planner | Unlimited |
 | **0-Token** | Qwen3.5 (local) | 0 | Detail, triage | Unlimited |
 | **0-Token** | Perplexity | 0 | Validation | Unlimited |
-| **Paid** | Copilot Pro (1K credits) | $10/mo | Primary execution | 5-7 tasks |
-| **Premium** | Claude 1x | 1x cost | Rare complex work | 1-2 tasks |
+| **Paid** | Copilot Pro | $10/mo | Primary execution (simple work) | 5-10 tasks |
+| **Local** | Codestral (M4) | 0 | Complex/large context | Unlimited |
+| **Premium** | Claude 1x | 1x cost | Rare architectural | 1-2 tasks |
 
 **OPTION B: Downgrade to Copilot Free** (if Pro too expensive)
 
-| Tier | Agent | Cost | Role | Monthly Volume |
+| Tier | Agent | Cost | Role | Monthly Capacity |
 |---|---|---|---|---|
 | **0-Token** | Gemini | 0 | Planner | Unlimited |
 | **0-Token** | Qwen3.5 (local) | 0 | Detail, triage, execution | Unlimited |
-| **0-Token** | Codestral (local) | 0 | Primary execution | Unlimited |
+| **0-Token** | Codestral (M4) | 0 | Primary execution | Unlimited |
 | **0-Token** | Perplexity | 0 | Validation | Unlimited |
 | **Free** | Copilot Free | 0 (completions only) | Inline suggestions | Unlimited |
-| **Premium** | Claude 1x | 1x cost | Rare complex work | 1-2 tasks |
+| **Premium** | Claude 1x | 1x cost | Rare architectural | 1-2 tasks |
 
 ---
 
@@ -301,10 +300,11 @@ IMPLEMENTATION (choose based on work type):
 ```
 
 **Characteristics**:
-- ✅ Limited Copilot Pro budget (1K credits/month)
-- ✅ Local Codestral/Qwen3.5 as overflow
-- ✅ Must be strategic about which work goes where
-- ⚠️ Need to track credit usage monthly
+- ✅ Limited Copilot Pro budget ($10/month = ~10 credits at $0.01/credit)
+- ✅ Local Codestral/Qwen3.5 as overflow for complex work
+- ✅ Must route strategically: simple → Copilot, complex → local
+- ⚠️ Need to track credit usage monthly (can run out mid-month)
+- ⚠️ When depleted: NO fallback, Copilot stops working
 
 ### After June 1 (OPTION B: Local-First + Claude Premium)
 
