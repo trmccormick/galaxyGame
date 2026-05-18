@@ -12,11 +12,16 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 
 **⚠️ IMPORTANT**: Update `prepaid_expiration` date at top once you check your GitHub Billing page.
 
+**Tracking Categories**:
+- **Emergency Escalation**: Local model failed on urgent task → escalated to Copilot immediately
+- **Month-End Burn**: Backlog task assigned to Copilot at month-end to use remaining credits productively
+
 **Measurement Goal**: 
-- Track every escalation
-- Identify patterns (which task types need Copilot?)
-- Calculate average credits/month
-- Target: <1 credit/month (proves local models work for 95% of tasks)
+- Track both emergency escalations AND month-end burns separately
+- Emergency escalations: Measure how often local fails (should be low)
+- Month-End burns: Track backlog cleared per month (should be high)
+- Combined usage: Calculate average credits/month
+- Target: Use ALL prepaid credits productively (don't waste, don't hoard)
 
 **Usage at Renewal (30 days before expiration)**:
 - If <1 credit/month average: Downgrade to Free ($0/month)
@@ -27,13 +32,14 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 
 ## May 2026
 
-| Date | Task Name | Local Model Used | Local Outcome | Escalated to Copilot? | Credits Used | Notes |
-|------|-----------|---|---|---|---|---|
-| — | — | — | — | — | — | *No entries yet* |
+| Date | Task Name | Local Model Used | Local Outcome | Escalated? | Type | Credits Used | Notes |
+|------|-----------|---|---|---|---|---|---|
+| — | — | — | — | — | — | — | *No entries yet* |
 
 **Monthly Summary**:
 - Tasks completed locally: —
-- Escalations to Copilot: —
+- Emergency escalations to Copilot: —
+- Month-end burn tasks: —
 - Total credits used: —
 - Average credits per task: —
 
@@ -41,17 +47,18 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 
 ## June 2026
 
-| Date | Task Name | Local Model Used | Local Outcome | Escalated to Copilot? | Credits Used | Notes |
-|------|-----------|---|---|---|---|---|
-| — | — | — | — | — | — | *Add entries as tasks complete* |
+| Date | Task Name | Local Model Used | Type* | Credits Used | Notes |
+|------|-----------|---|---|---|---|
+| — | — | — | — | — | *Add entries as tasks complete* |
 
 **Monthly Summary**:
 - Tasks completed locally: —
-- Escalations to Copilot: —
+- Emergency escalations to Copilot: —
+- Month-end burn tasks: —
 - Total credits used: —
 - Average credits per task: —
 
----
+*Type: "Emergency Escalation" (local failed) or "Month-End Burn" (backlog task)
 
 ## July 2026
 
@@ -202,15 +209,26 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 
 - **Total tasks completed**: —
 - **Total completed locally**: —
-- **Total escalated to Copilot Pro**: —
+- **Total escalated to Copilot Pro**: — (breakdown: — emergency + — month-end burn)
+- **Emergency escalations**: — tasks (when local failed)
+- **Month-end burns**: — tasks (backlog work)
 - **Total credits consumed**: —
 - **Average credits per month**: —
 - **Average credits per task**: —
-- **Local model success rate**: —%
+- **Local model success rate**: —% (tasks completed locally without escalation)
+- **Backlog cleared via month-end burns**: — tasks
+
+### Strategy Effectiveness Analysis
+
+**Did month-end burn strategy work?**
+- Emergency escalations low (<1 per month on average): ✅ Local models reliable
+- Month-end burns cleared backlog: ✅ Copilot productive on backlog
+- All prepaid credits used productively: ✅ No waste, no hoarding
+- Confidence in local models for production work: ✅ Yes / ⚠️ Partial / ❌ No
 
 ### Escalation Pattern Analysis
 
-**By task type** (identify which types needed Copilot most):
+**Emergency escalations by task type** (when did local fail?):
 - RSpec fixes: — escalations out of — total
 - Model layer: — escalations out of — total
 - Controllers: — escalations out of — total
@@ -227,25 +245,38 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 
 ### Renewal Decision
 
-**Average monthly usage**: — credits/month
+**Average monthly usage**: — credits/month (— emergency + — month-end burn per month)
 
-**Decision Rule**:
-- IF <1 credit/month: ✅ Downgrade to Free (Path B)
-- IF 1-3 credits/month: ⚠️ Marginal, analyze more
-- IF >3 credits/month: ⚠️ Consider renewing (Path A)
+**Decision Framework** (month-end burn strategy):
 
-**Recommended action**: 
-- [ ] Path B: Downgrade to Copilot Free ($0/month)
-- [ ] Path A: Renew Copilot Pro ($10/month)
-- [ ] Path C: Other (describe)
+1. **Emergency escalations**: How many times did local models fail on urgent work?
+   - If <1 per month: ✅ Local models very reliable
+   - If 1-3 per month: ✅ Local models mostly reliable
+   - If >3 per month: ⚠️ Local models struggling
 
-**Justification**: 
+2. **Month-end burns**: How much backlog cleared per month?
+   - If backlog decreasing: ✅ Copilot accelerated backlog, strategy working
+   - If backlog steady: ⚠️ Backlog not changing despite burns
+   - If backlog increasing: ❌ Can't keep up even with month-end burns
+
+3. **Credit usage**: Did you use all prepaid credits productively?
+   - If all credits used: ✅ No waste, no hoarding
+   - If credits remaining: ⚠️ Possible, didn't need all month-end burns
+
+**Recommended action**:
+- [ ] **Path B: Downgrade to Free** (if emergency escalations <1/month AND backlog decreasing)
+- [ ] **Path A: Renew Copilot Pro** (if emergency escalations >3/month OR backlog growing despite burns)
+- [ ] **Path C: Adjust strategy** (describe changes needed)
+
+**Justification**: [Document your reasoning based on metrics above]
 
 ---
 
 ## Notes & Learnings
 
-- When completed, document key insights about local model reliability
-- Record unexpected patterns or surprising results
-- Update AGENT_ROUTING.md with findings if needed
-- Consider architectural changes to reduce Copilot Pro dependency if patterns emerge
+- Record whether month-end burn strategy was efficient (did it clear meaningful backlog?)
+- Document which backlog tasks benefit most from Copilot vs local models
+- Note any emerging patterns in emergency escalations
+- Consider architectural changes based on local model performance
+- Track time savings: Did Copilot accelerate work enough to justify renewal?
+

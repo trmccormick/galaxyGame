@@ -456,49 +456,52 @@ THEN downgrade to Copilot Free ($0) + local primary
 
 ---
 
-## Phase 1 Routing Strategy: Local-First, Credits-Conservative
+## Phase 1 Routing Strategy: Local-First + Month-End Credit Burn
 
-**Philosophy**: Your prepaid Copilot Pro credits are limited and valuable. Use local models for 95% of work. Reserve credits for when local models genuinely fail.
+**Philosophy**: Your prepaid Copilot Pro credits are already paid. Use local models during the month (gather data), then burn remaining credits at month-end on backlog tasks.
 
 **Updated AI Stack (From Now Until Expiration)**:
 
 | Tier | Agent | Cost | Role | When To Use |
 |---|---|---|---|---|
-| **Primary** | Codestral (M4 local) | 0 | Mechanical work, RSpec, controllers | 80% of tasks (default first) |
-| **Primary** | Qwen3.5 (local) | 0 | Detail, triage, model layer | 10% of tasks (default first) |
-| **0-Token** | Gemini | 0 | Planning, prioritization | Always in workflow |
+| **Primary** | Codestral (M4 local) | 0 | Mechanical work, RSpec, controllers | Throughout month (default first) |
+| **Primary** | Qwen3.5 (local) | 0 | Detail, triage, model layer | Throughout month (default first) |
+| **0-Token** | Gemini | 0 | Planning, prioritization, coordination | Always in workflow |
 | **0-Token** | Perplexity | 0 | Validation, research | When needed |
-| **Secondary** | Copilot Pro | ~$0.50-1/task | Hard work ONLY (escalation) | 5-10% of tasks (when local fails) |
+| **Secondary** | Copilot Pro | Prepaid (burn at month-end) | Escalations + month-end backlog tasks | (1) Local failures anytime, (2) Backlog burn at month-end |
 | **Premium** | Claude 1x | 1x cost | Rare architectural decisions | <1% of tasks (emergencies only) |
 
 **Decision Logic**:
+
+**During the Month** (Local-First):
 ```
 Task arrives:
-├─ Complexity level?
-│  ├─ Simple (RSpec, model layer, controller)
-│  │  └─ Route to Codestral/Qwen3.5 (local, free)
-│  │     ├─ Success? Done. (0 credits used)
-│  │     └─ Failure? Escalate to Copilot Pro
-│  │
-│  └─ Complex (multi-file refactor, architecture, novel patterns)
-│     └─ Try local first? (or skip to Copilot to save credits?)
-│        ├─ YES (to test local capability)
-│        │  └─ Escalate to Copilot Pro if fails (~0.5-1 credit)
-│        │
-│        └─ NO (save credits, go direct to Copilot)
-│           └─ Use Copilot Pro immediately (~0.5-1 credit)
+├─ Simple (RSpec, models, controllers)
+│  └─ Route to Codestral/Qwen3.5 (local, free)
+│
+├─ Complex (multi-file refactor, architecture)
+│  └─ Try local first if you have time
+│     ├─ Success? Done.
+│     └─ Failure? Escalate to Copilot Pro (urgent)
+│
+└─ Backlog task
+   └─ Log in queue for month-end burn
 ```
 
-**Credit Tracking & Target**:
-- Log every Copilot Pro task: Name, complexity, cost, why needed
-- Measure: Average credits consumed per month
-- **Target**: <1 credit/month average (~0.08 credits/task)
-- **Expected**: 8-12 escalations/month to Copilot Pro (everything else local)
+**At Month-End** (Credit Burn):
+```
+Review backlog queue:
+├─ How many Copilot credits remain?
+├─ How many queued backlog tasks?
+└─ Assign backlog tasks to Copilot Pro until credits ~depleted
+   (Don't hoard credits — you've already paid for them)
+```
 
-**Why This Strategy**: 
-- At renewal date, if you've proven <1 credit/month usage, downgrading to Free is obvious
-- You'll have documented evidence: Local models handled 90%+ of work reliably
-- You save $10/month and keep the same execution speed
+**Tracking & Target**:
+- Track month-end burn separately from emergency escalations
+- Mark in COPILOT_USAGE_LOG.md: "Month-end burn" vs "Emergency escalation"
+- Measure: Average credits used/month
+- Target: Use ALL prepaid credits productively (don't leave unused)
 
 ---
 
@@ -507,26 +510,25 @@ Task arrives:
 ### Path B (Downgrade to Free) — Most Likely Outcome
 
 **Switch if** (expected at renewal):
-- ✅ You averaged <1 credit/month during prepaid period
-- ✅ Local models (Codestral/Qwen3.5) handled 90%+ of work reliably
-- ✅ Only 8-12 escalations/month truly needed Copilot Pro
-- ✅ You're confident local models can continue sustaining 95% of work
+- ✅ You successfully used month-end burn strategy (all prepaid credits productive)
+- ✅ Local models (Codestral/Qwen3.5) handled urgent/priority work reliably
+- ✅ Only 10-20% of monthly tasks needed Copilot (emergency escalations)
+- ✅ Backlog was cleared using month-end credit burns (no waste)
 
-**Save**: $10/month, keep same execution speed
+**Outcome**: Downgrade to Free ($0/month), keep local models as primary
 
-**Become**: Copilot Free (completions only) + Codestral/Qwen3.5 primary execution
+**Save**: $10/month, same execution speed
 
-### Path A (Renew Copilot Pro) — Unlikely, But Possible
+### Path A (Renew Copilot Pro) — Unlikely
 
 **Keep if** (unexpected at renewal):
-- ❓ You averaged >3 credits/month during prepaid period
-- ❓ Local models frequently failed on critical work
-- ❓ Copilot Pro was genuinely essential for productivity
-- ❓ The $10/month cost is acceptable vs. time savings
+- ❓ Month-end backlog never cleared (too much work for month-end burn to handle)
+- ❓ Emergency escalations consistently exceeded local capability
+- ❓ $10/month is worth accelerating backlog clearance
 
-**Cost**: $10/month for ~10-15 escalation tasks
-  
-**Unlikely because**: If local-first strategy works as expected, you'll have proven Free tier + local models are sufficient
+**Cost**: $10/month to accelerate backlog work
+
+**Decision Insight**: If month-end burn worked well (cleared backlog tasks), that's proof you DON'T need renewal. Downgrade to Free.
 
 ---
 
@@ -603,10 +605,19 @@ GPT-4.1 available in Copilot Pro?
 
 ---
 
-## FAQ: Prepaid Copilot Pro + Local-First Strategy
+## FAQ: Prepaid Copilot Pro + Local-First Strategy + Month-End Burn
 
-**Q: Should I try to use up my prepaid Copilot budget before it expires?**  
-A: NO. Use it only when needed. The goal is to prove local models work for 95% of your tasks. If you're not using Copilot Pro much, that's SUCCESS, not waste.
+**Q: Should I try to use up my prepaid Copilot budget?**  
+A: YES, at month-end. During the month, prioritize local models to gather reliability data. At month-end, review queued backlog tasks and assign them to Copilot Pro until credits are ~depleted. You've already paid for it — use it productively on backlog work.
+
+**Q: How do I decide which backlog tasks to burn on Copilot at month-end?**  
+A: Pick tasks that are moderately complex but clearly benefiting from Copilot (multi-file refactors, tricky patterns, etc.). Avoid trivial fixes (those stay local) and avoid impossible tasks (Copilot won't help). Target tasks that would take Codestral longer but Copilot could handle faster.
+
+**Q: What if I don't have queued backlog at month-end?**  
+A: Then don't artificially create work. You've proven local models work — that's a win. Leave credits unspent that month (though this is unlikely given your project size).
+
+**Q: What if I have more backlog than credits?**  
+A: Great! Means backlog exists. Month-end burn clears some of it. Next month, repeat. Eventually backlog will stabilize or clear. This actually proves demand for Copilot if consistent.
 
 **Q: What if local Codestral fails on a task?**  
 A: Escalate to Copilot Pro. Log it in COPILOT_USAGE_LOG.md. This data is gold for your renewal decision.
