@@ -97,45 +97,69 @@ Cancelled   → materials returned (if before start), status: :cancelled
 
 ## Development Hardware Topology
 
-### Current State (2026-05-11)
+### Current State (2026-05-15 — confirmed via curl)
 | Node | IP | Role | Runs |
 |---|---|---|---|
 | Intel Mac | — | Primary dev, orchestration | VS Code, Continue, git |
-| M4 Mac | 10.6.186.161 | Model serving | Codestral, Qwen2.5-14B, DeepSeek-16B |
-| Windows (Ryzen 7) | 10.6.186.50 | Model serving | Qwen3-30B, Qwen2.5-3B, Llama-8B, Nomic Embed |
+| M4 Mac | 10.6.186.161 | Model serving (sleep when lid closed) | Codestral, Qwen2.5-14B, Qwen2.5-7B, DeepSeek-16B, Nomic Embed |
+| Windows (Ryzen 7) | 10.6.186.50 | Model serving (128GB RAM, always on) | Qwen2.5-32B, Qwen3.5-9B, Qwen3-30B, Qwen2.5-3B, Llama-8B, Qwen2.5-1.5B, Nomic Embed |
 | Pi 4 | — | Infrastructure | Samba shares, Docker (game stack capable) |
 
-### Target State (post Ryzen 7 Linux Mint setup)
-| Node | Role |
-|---|---|
-| Ryzen 7 Linux Mint | Primary dev machine — full game stack + models |
-| Pi 4 | Infrastructure — PostgreSQL, Open WebUI, Samba |
-| M4 Mac | Ollama models only |
-| Intel Mac | Secondary / backup orchestration |
+### Confirmed Model Roster
 
-### Local Model Routing
+#### M4 Mac (10.6.186.161)
+| Model | Role |
+|---|---|
+| `codestral:latest` | Architecture reasoning, synthesis reports |
+| `qwen2.5-coder:14b` | Multi-file implementation with context |
+| `qwen2.5-coder:7b` | Medium complexity targeted edits |
+| `deepseek-coder-v2:16b` | Logic verification, second opinion |
+| `nomic-embed-text:latest` | RAG indexing — always on |
+
+#### Windows Ryzen 7 (10.6.186.50)
+| Model | Role |
+|---|---|
+| `qwen2.5-coder:32b` | Primary worker — heavy implementation |
+| `qwen3.5:9b` | Reasoning and logic tasks |
+| `qwen3-coder:30b` | Fallback only — tool calls unreliable (MoE architecture) |
+| `qwen2.5-coder:3b` | Fast single-file edits |
+| `llama3.1:8b` | General chat fallback only |
+| `qwen2.5-coder:1.5b` | Tab autocomplete — always on |
+| `nomic-embed-text:latest` | RAG indexing — always on |
+
+### Local Model Routing (Updated 2026-05-15)
 | Task Type | Model | Node |
 |---|---|---|
 | Architecture / synthesis reports | Codestral | M4 |
 | Multi-file implementation | Qwen2.5-Coder 14B | M4 |
-| Logic verification | DeepSeek 16B | M4 |
-| Heavy implementation | Qwen3-Coder 30B | Windows |
+| Medium targeted edits | Qwen2.5-Coder 7B | M4 |
+| Logic verification | DeepSeek-Coder 16B | M4 |
+| Heavy implementation | Qwen2.5-Coder 32B | Windows (primary) |
+| Reasoning / logic tasks | Qwen3.5 9B | Windows |
 | Fast single-file edits | Qwen2.5-Coder 3B | Windows |
-| RAG / codebase indexing | Nomic Embed | Windows (always-on) |
+| RAG / codebase indexing | Nomic Embed | Both nodes (always-on) |
 | Tab autocomplete | Qwen2.5-Coder 1.5B | Windows (always-on) |
-| Fallback (Llama 8B) | General chat only if 30B unavailable | Windows |
+| Fallback chat | Llama 3.1 8B | Windows (if others unavailable) |
+| DO NOT USE for analysis | Qwen3-Coder 30B | Tool calls broken — MoE arch |
 
 ### Cloud Agent Rules
 - **GPT-4.1**: Primary implementation agent. All 0x tasks. Free tier.
-- **Grok**: Logic audits only. Retires 2026-05-15 — do not plan work here after that date.
+- **Haiku 4.5**: 0.33x — implementation, spec fixes, handoffs. Weekly limit applies.
+- **Grok**: RETIRED 2026-05-15.
 - **Claude**: Planning and strategy only. Never implementation. Premium — use at gates only.
-- **Premium gates**: 3 scheduled this month. No unscheduled premium unless local hits multi-file architecture blocker.
+- **Perplexity/Gemini**: Manual strategist fallback when Claude unavailable.
+
+### Testing Principle — Locked 2026-05-15
+Integration specs use real JSON data and real service calls.
+Stubs only for external dependencies.
+Never stub internal lookup services in integration specs.
+If JSON changes, the test must catch it.
 
 ---
 
-## May 2026 Schedule Constraints
-- Premium available: May 11–19
-- Vacation (no premium): May 20–27
-- GPT-4.1 runs unattended during vacation week
+## May–June 2026 Schedule
+- Vacation (no development): May 20–27
 - Post-vacation premium review: May 28–31
-- Monthly goal: Luna settled, ISRU producing, AI Manager trained on pattern
+- GitHub Copilot weekly reset: May 17 at 8pm
+- June workflow shift: Copilot changes take effect — update AGENT_ROUTING.md when confirmed
+- Monthly goal: Luna settled ✅, ISRU producing ✅, AI Manager settles Luna via TaskExecutionEngineV2 ✅

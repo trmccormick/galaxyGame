@@ -91,6 +91,7 @@ docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS
 | Rails console | `docker exec -it web bash -c 'bundle exec rails console'` |
 | Run migration | `docker exec -it web bash -c 'bundle exec rake db:migrate'` |
 | Bundle install | `docker exec -it web bash -c 'bundle install'` |
+| Check Ruby syntax (host) | `ruby -c /Users/tam0013/Documents/git/galaxyGame/galaxy_game/app/services/my_service.rb` |
 | Git commands | Run on **host directly** — the only exception to the container rule |
 
 ### Before Starting — Verify Database
@@ -111,6 +112,17 @@ docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS
    > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 ```
 
+### Allowed Host-Only Commands
+
+Ruby syntax validation (lightweight, no database needed):
+```bash
+# OK — Host syntax check only
+ruby -c galaxy_game/app/services/my_service.rb
+ruby -c galaxy_game/lib/tasks/my_task.rake
+```
+
+**Important:** `ruby -c` is for syntax validation ONLY. All actual execution (rspec, rails, bundle, rake) must use Docker.
+
 ### Forbidden Commands
 
 ```bash
@@ -124,6 +136,9 @@ docker exec -it web bash -c 'RAILS_ENV=test bundle exec rspec'
 bundle exec rspec
 rails console
 rake db:migrate
+
+# NEVER — running actual code execution on host (even syntax checks that import code)
+ruby -c will work for syntax, but any Rails/database operation on host is forbidden
 ```
 
 ---

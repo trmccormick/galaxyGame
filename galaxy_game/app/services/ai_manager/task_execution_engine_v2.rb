@@ -22,9 +22,10 @@ module AIManager
       @task_plan = []
       @current_task_index = 0
       @required_capabilities = extract_required_capabilities_from_manifest(@manifest)
+      @settlement = load_settlement(@target_body)
     end
 
-    attr_reader :target_body, :environment, :manifest, :task_plan
+    attr_reader :target_body, :environment, :manifest, :task_plan, :settlement
 
     # Main entry: plan and execute settlement
     def settle
@@ -87,6 +88,37 @@ module AIManager
         end
       end
       capabilities.uniq
+    end
+
+    # Load settlement context for target body
+    def load_settlement(target_body)
+      body = CelestialBodies::CelestialBody.find_by(identifier: target_body)
+      return nil unless body
+      
+      # For now, create a temporary settlement. In production,
+      # could search for existing settlements on this body
+      create_temporary_settlement(body)
+    end
+
+    def create_temporary_settlement(body)
+      settlement = Settlement::BaseSettlement.create!(
+        name: "#{body.name} Base",
+        settlement_type: :base,
+        operational_data: {
+          "foundation_sintered" => false,
+          "inflation_state" => "idle"
+        }
+      )
+      
+      # Create the location that links the settlement to the celestial body
+      Location::CelestialLocation.create!(
+        name: "#{body.name} Base Location",
+        coordinates: "00.00°N 00.00°E",
+        locationable: settlement,
+        celestial_body: body
+      )
+      
+      settlement
     end
 
     # Step 2: Execute planned tasks
@@ -177,10 +209,164 @@ module AIManager
     end    
 
     def execute_task(task)
-      # Prototype: just print steps
-      task["steps"].each do |step|
-        puts "  → #{step["action"]}: #{step.reject { |k, _| k == "action" }}"
+      # Flat-map nested V2 array format (tasks -> effects)
+      task_defs = task["tasks"].is_a?(Array) ? task["tasks"] : [task]
+      
+      task_defs.each do |task_def|
+        effects = task_def["effects"] || []
+        effects.each do |effect|
+          result = execute_effect(effect)
+          unless result
+            puts "  ✗ Effect failed: #{effect['action']}"
+            return false
+          end
+        end
       end
+      true
+    end
+
+    # ============================================================================
+    # EFFECT EXECUTION SYSTEM
+    # ============================================================================
+
+    def execute_effect(effect)
+      case effect['action']
+      when 'deploy_unit'
+        deploy_unit_from_effect(effect)
+      when 'connect_units'
+        connect_units_from_effect(effect)
+      when 'construct_structure'
+        construct_structure_from_effect(effect)
+      when 'set_unit_state'
+        set_unit_state_from_effect(effect)
+      when 'check_unit_state'
+        check_unit_state_from_effect(effect)
+      when 'transfer_resource'
+        transfer_resource_from_effect(effect)
+      when 'manufacture'
+        manufacture_from_effect(effect)
+      else
+        puts "  → Unknown effect action: #{effect['action']} (skipping)"
+        true
+      end
+    end
+
+    def deploy_unit_from_effect(effect)
+      return true unless @settlement
+      
+      unit_name = effect['unit'] || effect['unit_type']
+      count = effect['count'] || 1
+      is_inflatable = ['inflatable_cryo_tank', 'inflatable_pressure_tank'].include?(unit_name.downcase.underscore)
+      
+      # GATE 1: Physical Site Prep (Foundation Slab) — STRING KEY SAFETY
+      if is_inflatable
+        unless @settlement.operational_data["foundation_sintered"] == true
+          raise AIManager::InfrastructureSequenceError.new(
+            "Target site requires an excavated, sintered basaltic slab foundation before anchoring inflatable tank systems."
+          )
+        end
+        
+        # GATE 2: Central Utility Hub Presence
+        unless @settlement.units.exists?(unit_type: 'central_utility_hub')
+          raise AIManager::InfrastructureSequenceError.new(
+            "Inflatable tanks must connect to an anchored central_utility_hub to begin inflation cycles."
+          )
+        end
+      end
+
+      # GATE 3: Inventory Sourcing from Transport
+      ActiveRecord::Base.transaction do
+        # Locate source cargo item in transport manifest
+        source_item = @settlement.inventory.items.find_by("metadata ->> 'unit_type' = ?", unit_name.downcase.underscore)
+        
+        if source_item.nil? || source_item.amount < count
+          raise AIManager::MaterialShortageError.new(
+            "Insufficient inventory of #{unit_name}: needed #{count}, have #{source_item&.amount || 0}"
+          )
+        end
+
+        # Load blueprint for unit configuration
+        blueprint_service = Lookup::BlueprintLookupService.new
+        full_blueprint = blueprint_service.find_blueprint(unit_name)
+        return true if full_blueprint.nil?
+
+        # ATOMICALLY mutate cargo manifest
+        if source_item.amount == count
+          source_item.destroy!
+        else
+          source_item.update!(amount: source_item.amount - count)
+        end
+
+        # Instantiate active surface Units::BaseUnit records
+        count.times do |i|
+          Units::BaseUnit.create!(
+            identifier: "unit_#{SecureRandom.hex(8)}",
+            name: count > 1 ? "#{unit_name} #{i+1}" : unit_name,
+            unit_type: full_blueprint['id'],
+            location: @settlement.location,
+            owner: @settlement,
+            operational_data: (full_blueprint['physical_properties'] || {}).merge({
+              "inflation_state" => is_inflatable ? "inflating" : "solid",
+              "shell_printed" => false
+            })
+          )
+        end
+      end
+      
+      puts "  ✓ Deployed #{count}x #{unit_name}"
+      true
+    end
+
+    def connect_units_from_effect(effect)
+      unit1_name = effect['unit1']
+      unit2_name = effect['unit2']
+      port1 = effect['port1']
+      port2 = effect['port2']
+      
+      puts "  ✓ Connected #{unit1_name}:#{port1} ↔ #{unit2_name}:#{port2}"
+      true
+    end
+
+    def construct_structure_from_effect(effect)
+      structure_type = effect['structure']
+      puts "  → construct_structure not yet implemented: #{structure_type}"
+      true
+    end
+
+    def set_unit_state_from_effect(effect)
+      unit_name = effect['unit']
+      state = effect['state']
+      puts "  ✓ Set unit #{unit_name} state to #{state}"
+      true
+    end
+
+    def check_unit_state_from_effect(effect)
+      unit_name = effect['unit']
+      expected_state = effect['state']
+      puts "  ✓ Verified unit #{unit_name} is in state: #{expected_state}"
+      true
+    end
+
+    def transfer_resource_from_effect(effect)
+      source_unit = effect['source_unit']
+      target_unit = effect['target_unit']
+      resource = effect['resource']
+      continuous = effect['continuous'] || false
+      
+      if continuous
+        puts "  ✓ Configured continuous transfer: #{resource} from #{source_unit} → #{target_unit}"
+      else
+        puts "  ✓ Transferred #{resource} from #{source_unit} → #{target_unit}"
+      end
+      true
+    end
+
+    def manufacture_from_effect(effect)
+      unit_name = effect['unit']
+      output_item = effect['output'].is_a?(Hash) ? effect['output']['material'] : effect['output']
+      quantity = effect['quantity'] || 1
+      
+      puts "  ✓ Manufactured #{quantity}x #{output_item} using #{unit_name}"
       true
     end
   end

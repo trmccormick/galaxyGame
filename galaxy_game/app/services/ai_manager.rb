@@ -1,6 +1,7 @@
 # app/services/ai_manager.rb
 module AIManager
   # Load all AI Manager service classes
+  require_relative 'ai_manager/errors'
   require_relative 'ai_manager/ai_priority_system'
   require_relative 'ai_manager/builder'
   require_relative 'ai_manager/construction'
@@ -34,6 +35,7 @@ module AIManager
   require_relative 'ai_manager/system_architect'
   require_relative 'ai_manager/system_intelligence_service'
   require_relative 'ai_manager/task_execution_engine'
+  require_relative 'ai_manager/task_execution_engine_v2'
   require_relative 'ai_manager/terraforming_manager'
   require_relative 'ai_manager/test_scenario_extractor'
   require_relative 'ai_manager/world_knowledge_service'

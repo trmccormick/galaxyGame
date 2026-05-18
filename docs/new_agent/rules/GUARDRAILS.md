@@ -115,3 +115,22 @@ Stop immediately and report to human if:
 - A database migration is needed
 - Any architectural decision is required
 - Fix requires changing more files than the task specifies
+
+### Rule 20 — Local Model Fabrication Prohibition
+**Applies to all local models running via Continue.**
+
+Local models CANNOT execute terminal commands, Docker, RSpec, or git.
+Local models CAN read files and create/edit files via Continue.
+
+If a task requires command execution:
+- Ask the human to run the command and paste the output
+- Never fabricate what the output would look like
+- Never mix real file data with invented command results
+
+If asked to analyze test failures:
+- Only report failures that were provided as input
+- Never invent failure lists from directory listings
+- State clearly: "I cannot run tests. Please provide the test output."
+
+Fabricated output that looks real is more dangerous than obvious failure.
+A model that says "I can't do this" is always preferable to one that invents results.

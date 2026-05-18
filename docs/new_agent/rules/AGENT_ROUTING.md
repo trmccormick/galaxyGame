@@ -12,9 +12,11 @@
 ### Cloud Agents
 | Agent | Cost | Capability | Available Until |
 |---|---|---|---|
-| Claude | Premium | Planning, strategy, architecture gates | May 2026 gates only |
-| Grok | 0.25x | Logic audit, synthesis reports, investigation | Retires 2026-05-15 |
+| Claude | Premium | Planning, strategy, architecture gates | Gates only |
+| Grok | 0.25x | Logic audit, synthesis reports, investigation | RETIRED 2026-05-15 |
 | GPT-4.1 | 0x free | Mechanical implementation, file tasks | Ongoing |
+| Haiku 4.5 | 0.33x | Implementation, spec fixes, handoffs | Weekly limit applies |
+| Perplexity/Gemini | Manual | Strategist fallback when Claude unavailable | Manual only |
 
 ### Local Agents (via Continue on Intel Mac)
 | Model | Node | IP | Best For |
@@ -27,6 +29,45 @@
 | Llama 3.1 8B | Windows | 10.6.186.50 | Fallback chat only — not for implementation |
 | Nomic Embed | Windows | 10.6.186.50 | RAG/codebase indexing — always on, never reassign |
 | Qwen2.5-Coder 1.5B | Windows | 10.6.186.50 | Tab autocomplete — always on, never reassign |
+
+---
+
+## Critical Local Model Limitations
+
+> These limitations apply to ALL local models via Continue.
+> Violating these rules produces fabricated output that looks real.
+
+### What local models CAN do
+- Create and edit files when exact content is provided
+- Read files that Continue can access on the filesystem
+- Apply specific code changes with clear before/after
+- List directory contents via Continue file tools
+
+### What local models CANNOT do
+- Execute terminal commands (no shell access)
+- Run Docker commands or RSpec
+- Run git commands
+- Access the internet or external APIs
+- Know which tests are currently failing without being told
+- Analyze real runtime behavior without actual output provided
+
+### The Fabrication Rule — CRITICAL
+**Local models MUST NOT report output from commands they did not actually run.**
+
+If asked to analyze test failures without actual test output provided:
+- ✅ CORRECT: "I can see these spec files exist but I cannot report which are failing. Please run the tests and paste the output."
+- ❌ WRONG: Inventing a list of failing tests based on file names seen in the directory
+
+If asked to run a command the model cannot execute:
+- ✅ CORRECT: "I cannot execute this command. Please run it on the host and paste the output."
+- ❌ WRONG: Fabricating what the output would look like
+
+**Mixing real file data with fabricated command output is the most dangerous failure mode.**
+A document that is 30% real makes the 70% fabrication look credible.
+
+### RAG Status Warning
+Local model codebase search is only reliable when Nomic Embed has actively indexed
+the codebase. If RAG status is unknown, use a cloud agent for any codebase search.
 
 ---
 

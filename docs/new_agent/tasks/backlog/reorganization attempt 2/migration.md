@@ -52,7 +52,6 @@ Migration of on-hold tasks is complete. No further action required unless new on
 | Original File | Status | New File | Notes |
 |---------------|--------|----------|-------|
 
-| 2026-02-11-HIGH-AI_MANAGER-STRATEGIC-EVALUATION-ALGORITHM.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-STRATEGIC-EVALUATION-ALGORITHM.md | Migrated as feature task for strategic evaluation algorithm. |
 | 2026-02-11-CRITICAL-MONITOR-FIX-MONITOR-LOADING.md | migrated | 2026-02/2026-02-11-CRITICAL-MONITOR-FIX-MONITOR-LOADING.md | Root cause: monitor.js not loaded in planetary view. Fixed by pinning in importmap and including JS tag. |
 | 2026-02-11-HIGH-ADMIN-ADD-CELESTIAL-BODY-SHOW-VIEW.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-ADD-ADMIN-CELESTIAL-BODY-SHOW-VIEW.md | Root cause: Missing admin show route and view. Admin celestial_bodies only has :index, no :show action. |
 
@@ -64,6 +63,26 @@ Migration of on-hold tasks is complete. No further action required unless new on
 | 2026-02-11-HIGH-AI_MANAGER-SYSTEM-DISCOVERY-IMPLEMENTATION.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-AI_MANAGER-SYSTEM-DISCOVERY-IMPLEMENTATION.md | Root cause: AI system discovery used mock data instead of real database queries. Implementation verified with 3 passing tests. |
 | 2026-02-11-HIGH-AI_MANAGER-WORMHOLE-INTEGRATION.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-AI_MANAGER-WORMHOLE-INTEGRATION.md | Root cause: Wormhole integration for network-aware expansion was not implemented. Implementation verified with 19 passing tests. |
 | 2026-02-11-HIGH-AI_MANAGER-TASK1-SCSS-LAYOUT.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-AI-MANAGER-TASK1-SCSS-LAYOUT.md | Migrated as feature task for standardized SCSS layout and theme. |
+| 2026-02-11-HIGH-AI_MANAGER-AUTONOMOUS-EXPANSION-MVP-FOCUS.md | migrated | 2026-02/2026-02-11-HIGH-DOCUMENTATION-AI_MANAGER-AUTONOMOUS-EXPANSION-MVP-FOCUS.md | Migrated as documentation task for AI autonomous expansion MVP focus. |
+| 2026-02-11-HIGH-AI_MANAGER-AUTONOMOUS-EXPANSION.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-AI_MANAGER-AUTONOMOUS-EXPANSION.md | Migrated as feature task for AI autonomous expansion. |
+| 2026-02-11-HIGH-AI_MANAGER-AUTONOMOUS-TESTING-FRAMEWORK.md | migrated | 2026-02/2026-02-11-HIGH-DOCUMENTATION-AI_MANAGER-AUTONOMOUS-TESTING-FRAMEWORK.md | Migrated as documentation task for AI autonomous testing framework. |
+| 2026-02-11-HIGH-AI_MANAGER-ESCALATION-DEPENDENCIES.md | migrated | 2026-02/2026-02-11-HIGH-DOCUMENTATION-AI_MANAGER-ESCALATION-DEPENDENCIES.md | Migrated as documentation task for AI escalation dependencies. |
+| 2026-02-11-HIGH-AI_MANAGER-MULTI-WORMHOLE-LEARNING-EVENT.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-AI_MANAGER-MULTI-WORMHOLE-LEARNING-EVENT.md | Migrated as feature task for AI multi-wormhole learning event. |
+| 2026-02-11-HIGH-AI_MANAGER-TASK2-PERFORMANCE-DATA.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-AI_MANAGER-TASK2-PERFORMANCE-DATA.md | Migrated as feature task for AI manager task2 performance data. |
+| 2026-02-11-HIGH-CRAFT-BASE-CRAFT-MODEL-REFACTOR.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-CRAFT-BASE-CRAFT-MODEL-REFACTOR.md | Migrated as feature task for base craft model refactor. |
+| 2026-02-11-HIGH-CRAFT-BLUEPRINT-POLYMORPHIC-OWNERSHIP.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-CRAFT-BLUEPRINT-POLYMORPHIC-OWNERSHIP.md | Migrated as feature task for blueprint polymorphic ownership. |
+| 2026-02-11-HIGH-DOCS-AGENT-CLEANUP.md | migrated | 2026-02/2026-02-11-HIGH-DOCUMENTATION-DOCS-AGENT-CLEANUP.md | Migrated as documentation task for agent cleanup. |
+| 2026-02-11-HIGH-ESCALATION-FIX-WATER-ESCALATION-ISRU-CHAIN.md | migrated | 2026-02/2026-02-11-HIGH-BUGFIX-ESCALATION-WATER-ESCALATION-ISRU-CHAIN.md | Migrated as bugfix task for water escalation ISRU chain. |
+| 2026-02-11-HIGH-GUARDRAILS-SPLIT.md | migrated | 2026-02/2026-02-11-HIGH-DOCUMENTATION-GUARDRAILS-SPLIT.md | Migrated as documentation task for guardrails split. |
+| 2026-02-11-HIGH-LOGIC-CLARIFY-SYSTEM-ORCHESTRATOR-COORDINATION.md | migrated | 2026-02/2026-02-11-HIGH-DOCUMENTATION-LOGIC-CLARIFY-SYSTEM-ORCHESTRATOR-COORDINATION.md | Migrated as documentation task for system orchestrator coordination logic. |
+| 2026-02-11-HIGH-MONITOR-FIX-MONITOR-LOADING.md | migrated | 2026-02/2026-02-11-HIGH-BUGFIX-MONITOR-LOADING.md | Migrated as bugfix task for monitor loading fix. |
+| 2026-02-11-HIGH-TERRAIN-FIX-TERRAIN-GRID-RENDERING-MISMATCH.md | migrated | 2026-02/2026-02-11-HIGH-BUGFIX-TERRAIN-GRID-RENDERING-MISMATCH.md | Migrated as bugfix task for terrain grid rendering mismatch. |
+| 2026-02-11-HIGH-TERRAIN-FIX-TERRAIN-PIXELATION-RESOLUTION.md | migrated | 2026-02/2026-02-11-HIGH-BUGFIX-TERRAIN-PIXELATION-RESOLUTION.md | Migrated as bugfix task for terrain pixelation resolution. |
+| 2026-02-11-HIGH-TERRAIN-FIX-TERRAIN-QUALITY.md | migrated | 2026-02/2026-02-11-HIGH-FEATURE-TERRAIN-QUALITY-SERVICE.md | Migrated as feature task for terrain quality service. |
+| 2026-02-11-MEDIUM-AI_MANAGER-TASK3-PATTERNS-DECISIONS.md | migrated | 2026-02/2026-02-11-MEDIUM-FEATURE-AI_MANAGER-TASK3-PATTERNS-DECISIONS.md | Migrated as feature task for AI manager task3 patterns decisions. |
+| 2026-02-11-MEDIUM-AI_MANAGER-TASK4-INDEX-DASHBOARD.md | migrated | 2026-02/2026-02-11-MEDIUM-FEATURE-AI_MANAGER-TASK4-INDEX-DASHBOARD.md | Migrated as feature task for AI manager task4 index dashboard. |
+| 2026-02-11-MEDIUM-MONITOR-FIX-AI-MISSION-CONTROL-SECTION.md | migrated | 2026-02/2026-02-11-MEDIUM-BUGFIX-MONITOR-AI-MISSION-CONTROL-SECTION.md | Migrated as bugfix task for monitor AI mission control section. |
+| 2026-02-11-MEDIUM-MONITOR-FIX-BIOME-VALIDATION-BUTTON.md | migrated | 2026-02/2026-02-11-MEDIUM-BUGFIX-MONITOR-BIOME-VALIDATION-BUTTON.md | Migrated as bugfix task for biome validation button. |
 
 ## Archive Tasks (150 total)
 - Total tasks reviewed: 44

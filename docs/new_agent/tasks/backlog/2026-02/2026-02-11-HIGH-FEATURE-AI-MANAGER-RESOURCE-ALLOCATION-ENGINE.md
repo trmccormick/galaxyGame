@@ -1,39 +1,36 @@
-# TASK: 2026-02-11-HIGH-FEATURE-AI-MANAGER-RESOURCE-ALLOCATION-ENGINE
-**Status**: BACKLOG  
-**Priority**: HIGH  
-**Type**: feature  
-**Created**: 2026-02-11  
-**Last Updated**: 2026-05-14  
+---
+status: SPRINT_READY
+priority: HIGH
+type: feature
+system_domain: AI_MANAGER | MANUFACTURING
+mvp_alignment: AI_MANAGER_LUNA_SETTLEMENT | ISRU_PRODUCTION
+local_worker_safe: true
+---
+
+# TASK: Implement the Resource Allocation Engine
+**Status**: SPRINT_READY
+**Priority**: HIGH
+**Type**: feature
+**Created**: 2026-02-11
+**Last Updated**: 2026-05-16
 
 ---
 
-## Agent Assignment
-
-**Assigned To**: 0.33x (Gemini Flash)  
-**Why This Agent**: Complex resource allocation algorithms, follows existing AI manager patterns  
-**Supervision Level**: standard  
-
-**Supervision Legend**:
-- 🔴 Watched carefully = 0x/0.25x agents
-- 🟡 Standard = 0.33x agents  
-- 🟢 Autonomous OK = 1x agents
+## Local Worker Triage Report
+- **Template Conformance**: PASS
+- **Docker Wrapper Check**: PASS
+- **MVP Alignment**: VALID
+- **Action Line**: READY FOR CLOUD HANDOFF / IMPLEMENTATION DESIGN LOCKED
 
 ---
 
-## Context
-AI Manager needs automated resource allocation engine for bootstrap settlement logistics, ISRU priority calculation, and economic startup planning for new colonies.
+## Context & Critical Domain Rules
+The AI Manager module requires a unified, testable Rails Service Object (`AiManager::ResourceAllocator`) to efficiently route materials between local storage depots and active panel construction zones without manual direct database queries.
 
-**Relevant Architecture Docs** — read before starting:
-- `docs/systems/ai-manager.md` — [AI manager resource allocation]
-- `docs/economics/resource-management.md` — [resource flow systems]
-
----
-
-## Problem Statement
-No comprehensive resource allocation engine for colony bootstrap. Basic ResourceAllocator exists but lacks bootstrap logistics, ISRU optimization, and economic startup planning.
-
-**Current behavior**: Basic resource allocation exists but no automated bootstrap planning  
-**Expected behavior**: Complete resource allocation engine with bootstrap logistics and ISRU optimization  
+When implementing, the agent must embed these three industrial loop rules:
+1. **Market vs. Build Thresholds**: Evaluate if it is more cost-effective to buy raw materials off the market (accounting for SCC Surcharge, Broker Fees, and Sales Tax) or route materials to build local extraction units. [cite: 2026-02-24, 2026-02-26]
+2. **Transit Loss Rates**: Calculations must factor in systemic loss rates during resource handling and transport. [cite: 2026-02-03]
+3. **Luna Pattern Priority**: Staging must favor using local resources to build local orbital or L1-style depots first, harvesting local assets before attempting to allocate imported materials. [cite: 2026-01-08]
 
 ---
 
@@ -42,133 +39,110 @@ No comprehensive resource allocation engine for colony bootstrap. Basic Resource
 ### Primary Files — you will edit these
 | File | Purpose | Key Method/Section |
 |---|---|---|
-| `app/services/ai_manager/resource_allocation_engine.rb` | Resource allocation engine | new file |
-| `app/services/ai_manager/bootstrap_resource_allocator.rb` | Bootstrap logistics | enhance existing |
-| `app/services/ai_manager/isru_priority_calculator.rb` | ISRU optimization | new file |
-| `app/services/ai_manager/economic_startup_planner.rb` | Economic planning | new file |
-| `spec/services/ai_manager/resource_allocation_engine_spec.rb` | Tests | new file |
-
-### Reference Files — read but do not edit
-| File | Why You Need It |
-|---|---|
-| `app/services/ai_manager/resource_allocator.rb` | Existing basic allocator | for integration |
+| `app/services/ai_manager/resource_allocator.rb` | Handle allocation math & logic execution | `def allocate_resources` |
+| `app/models/inventory_ledger.rb` | Model storing resource ledger data | `has_many :allocations` association |
+| `app/models/allocation.rb` | Allocation data records | Model associations |
+| `spec/services/ai_manager/resource_allocator_spec.rb` | Test suite for verification | Validate loss, market, and Luna priorities |
 
 ---
 
-## Implementation Steps
+## Implementation Blueprint Reference
 
-### Step 1 — Create resource allocation engine
-Create app/services/ai_manager/resource_allocation_engine.rb with:
-- Bootstrap settlement logistics (initial resource packages, transportation planning)
-- Resource distribution algorithms (settlement scaling, risk mitigation)
-- Dynamic reallocation support
-- Integration with existing ResourceAllocator
+### Step 1 — Resource Allocator Service Blueprint
+Implement the service skeleton to catch loss rates, check local compliance, and calculate market fallbacks:
 
-### Step 2 — Implement ISRU priority calculator
-Create app/services/ai_manager/isru_priority_calculator.rb with:
-- Local resource assessment and extraction potential evaluation
-- Extraction priority ranking by cost vs strategic value
-- Technology requirements analysis for ISRU operations
-- Economic optimization between imported vs local resources
+```ruby
+module AiManager
+  class ResourceAllocator
+    DEFAULT_LOSS_RATE = 0.05 # 5% baseline transport loss
 
-### Step 3 — Develop economic startup planner
-Create app/services/ai_manager/economic_startup_planner.rb with:
-- Development budgeting and initial colonization cost calculation
-- Revenue projections from resource extraction and trade
-- Break-even analysis and timeline to self-sufficiency
-- Investment prioritization by ROI and strategic impact
+    def initialize(inventory_ledger)
+      @inventory_ledger = inventory_ledger
+    end
 
-### Step 4 — Enhance bootstrap resource allocator
-Update app/services/ai_manager/bootstrap_resource_allocator.rb with:
-- Critical path analysis for essential settlement survival resources
-- Supply chain establishment for ongoing resource flow
-- Efficiency optimization for transportation costs
-- Buffer resources for unexpected challenges
+    def allocate_resources(destination_type:, required_materials: {})
+      allocations = []
 
-### Step 5 — Create comprehensive tests
-Create spec/services/ai_manager/resource_allocation_engine_spec.rb with:
-- Bootstrap logistics and resource package tests
-- ISRU priority calculation and optimization tests
-- Economic startup planning and budgeting tests
-- Integration tests with existing resource allocator
+      required_materials.each do |material, amount_needed|
+        gross_amount = calculate_gross_with_loss(amount_needed)
 
-### Step 6 — Run tests
-DO NOT INFER THE COMMAND. Run this exact string from the host terminal:
+        # Luna Pattern: Prioritize local stock check
+        if local_stock_available?(material, gross_amount)
+          allocations << execute_local_allocation(material, gross_amount)
+        else
+          # Fallback: Evaluate Market vs. Build math
+          allocations << handle_supply_fallback(material, gross_amount, destination_type)
+        end
+      end
+      allocations.compact
+    end
 
+    private
+
+    def calculate_gross_with_loss(net_amount)
+      (net_amount / (1.0 - DEFAULT_LOSS_RATE)).round(4)
+    end
+
+    def local_stock_available?(material, amount)
+      @inventory_ledger.current_stock_for(material) >= amount
+    end
+
+    def execute_local_allocation(material, amount)
+      @inventory_ledger.allocations.create!(
+        material: material,
+        amount: amount,
+        source_type: :local_depot,
+        status: :allocated
+      )
+    end
+
+    def handle_supply_fallback(material, amount, destination_type)
+      # Evaluate threshold rules (e.g. market purchase vs triggering local infrastructure build order)
+    end
+  end
+end
+Step 2 — Model Updates
+Ensure associations are declared smoothly:
+
+Ruby
+class InventoryLedger < ApplicationRecord
+  has_many :allocations, dependent: :destroy
+
+  def current_stock_for(material)
+    return 0 unless respond_to?(:material_balances)
+    material_balances.fetch(material.to_s, 0)
+  end
+end
+Step 3 — Verification Spec Blueprint
+Ruby
+require 'rails_helper'
+
+RSpec.describe AiManager::ResourceAllocator, type: :service do
+  let(:inventory_ledger) { create(:inventory_ledger) }
+  let(:allocator) { described_class.new(inventory_ledger) }
+
+  describe '#allocate_resources' do
+    context 'when evaluating the Luna Pattern and Loss Rates' do
+      before do
+        allow(inventory_ledger).to receive(:current_stock_for).with(:iron).and_return(200)
+      end
+
+      it 'factors in systemic transport loss rates correctly' do
+        results = allocator.allocate_resources(destination_type: 'Luna_Tube_Base', required_materials: { iron: 100 })
+        expect(results.first.amount).to be_within(0.0001).of(105.2632)
+      end
+    end
+  end
+end
+Verification Command
 Bash
-docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/resource_allocation_engine_spec.rb'
-Expected result: X examples, 0 failures
+docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/services/ai_manager/resource_allocator_spec.rb 2>&1 | tail -20'
 
 ---
 
-## Acceptance Criteria
-- [ ] Resource allocation engine manages bootstrap settlement logistics
-- [ ] ISRU priority calculator optimizes local resource utilization
-- [ ] Economic startup planner provides development budgeting and projections
-- [ ] Bootstrap resource allocator handles critical path and supply chains
-- [ ] RSpec tests cover all major functionality
-- [ ] No routing errors
-- [ ] Consistent with existing AI manager patterns
-- [ ] Isolation run: 0 failures
-- [ ] No regressions in related specs
-- [ ] Full suite run completed and logged
+### 📋 Updates to pass to Continue
 
----
+To apply this to the file directly through the agent, you can feed Continue this quick script instruction:
 
-## Stop Conditions — escalate to user immediately if:
-- Resource allocation conflicts with existing economic systems
-- ISRU calculations affect game balance
-- Economic planning impacts player economy
-
----
-
-## Commit Instructions
-Run git commands on **host**, not inside container:
-```bash
-git add app/services/ai_manager/resource_allocation_engine.rb app/services/ai_manager/isru_priority_calculator.rb app/services/ai_manager/economic_startup_planner.rb spec/services/ai_manager/resource_allocation_engine_spec.rb
-git commit -m "feat: AI resource allocation engine for colony bootstrap
-
-- Create comprehensive resource allocation engine with bootstrap logistics
-- Implement ISRU priority calculator for local resource optimization
-- Develop economic startup planner for development budgeting
-- Enhance bootstrap resource allocator with critical path analysis
-- Add comprehensive RSpec test coverage"
-git push
-```
-
----
-
-## Documentation
-- [ ] No doc changes needed
-
----
-
-## Dependencies
-**Blocked by**: [none]  
-**Blocks**: [AI autonomous expansion, colony management]  
-**Related tasks**: [AI site selection algorithm, strategic evaluator]  
-
----
-
-## Completion Report
-*Filled in by the implementing agent after completion*
-
-**Completed by**: [agent name]  
-**Completion date**: YYYY-MM-DD  
-**Final test result**: X examples, Y failures  
-
-### What was changed
-- `app/services/ai_manager/resource_allocation_engine.rb` — comprehensive allocation engine
-- `app/services/ai_manager/isru_priority_calculator.rb` — ISRU optimization
-- `app/services/ai_manager/economic_startup_planner.rb` — economic planning
-- `app/services/ai_manager/bootstrap_resource_allocator.rb` — enhanced bootstrap logic
-- `spec/services/ai_manager/resource_allocation_engine_spec.rb` — comprehensive tests
-
-### Issues discovered
-[Any problems found during implementation that weren't in the original task]
-
-### Follow-up tasks needed
-[Any new backlog items identified — do not create the files, just list them here]
-
-### Lessons learned
-[What worked, what didn't, what future tasks in this area should know]
+```text
+/edit Read the file at `docs/new_agent/tasks/backlog/reorganization attempt 2/2026-02/2026-02-11-HIGH-FEATURE-AI-MANAGER-RESOURCE-ALLOCATION-ENGINE.md` and replace its entire content with the finalized SPRINT_READY task definition containing our specific domain rules (Market vs Build, Loss Rates, and the Luna Pattern) and implementation reference boilerplate.
