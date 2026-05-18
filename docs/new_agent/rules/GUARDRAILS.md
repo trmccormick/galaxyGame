@@ -173,3 +173,50 @@ When a Continue model hits these limits:
 - ✅ CORRECT: "This code requires database verification. Please check the schema."
 - ❌ WRONG: Inventing what the test output would be
 - ❌ WRONG: Assuming database schema based on Rails conventions
+
+### Rule 23 — Token Conservation (Core Strategy)
+**Applies to all agents in the planning/triage/implementation chain.**
+
+Token conservation is THE core constraint. Follow this hierarchy:
+
+1. **0 Token Tier (Always Use First)**
+   - Gemini for planning/triage (web, free tier)
+   - Qwen3.5 for task detailing (Continue, local)
+   - Perplexity for task validation (web, free tier)
+   - Local models for implementation synthesis (Continue, 0 tokens)
+   - GPT-4.1 0x for mechanical implementation (free tier)
+
+2. **Free Token Tier (Use if 0-token option exhausted)**
+   - Claude free web (~0 tokens) for alignment checks only
+   - Haiku 0.33x for fast fixes on well-specified tasks
+
+3. **Premium Tier (RESERVE for complex work)**
+   - Claude 1x only when:
+     - Codestral synthesis insufficient
+     - Cross-session memory required
+     - New architectural pattern design needed
+   - Use sparingly — maybe once per month
+
+**Golden Rule**: If a task can be completed with 0 tokens, using premium tokens is a bug.
+
+### Rule 24 — Perplexity Workflow Integration
+**Applies to task validation phase before cloud agent handoff.**
+
+Perplexity's role in the workflow:
+
+1. **Task Clarity Validation**: "Is this task clear enough for GPT-4.1?"
+   - Review Qwen3.5 output for ambiguities
+   - Flag if acceptance criteria are testable
+   - Verify docker commands are correct
+
+2. **Routing Verification**: "Is this task routed to the right agent?"
+   - Confirm task complexity level matches agent tier
+   - Check if parallelization is safe
+   - Suggest re-routing if needed
+
+3. **Workflow Management**: "Can we run these tasks in parallel?"
+   - Review task dependencies
+   - Identify blocking relationships
+   - Optimize execution order
+
+**Perplexity does NOT replace task creation** — it validates Qwen3.5 output before cloud handoff.

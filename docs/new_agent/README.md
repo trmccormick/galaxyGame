@@ -17,17 +17,21 @@ models with selective cloud assistance.
 
 ## AI Stack
 
-| Agent | Access | Role |
-|---|---|---|
-| Gemini | Web, free | **PRIMARY GATEKEEPER** — planning, triage, session strategy |
-| Claude | Web, premium | Secondary planning/architecture when Gemini unavailable |
-| Qwen3.5 (Continue) | Local M4/Windows | **NEW** — Task detail, template conformance, triage reports |
-| GitHub Copilot | Pro ($10/mo, June 2026+) | Conservative routing — research/non-critical only |
-| GPT-4.1 / Haiku | Cloud, token-based | Implementation after Qwen3.5 detailing |
-| Local ollama cluster | Always available | Code implementation, synthesis reports, second opinions |
+| Agent | Access | Cost | Role |
+|---|---|---|---|
+| **Gemini** | Web, free | 0 tokens | **PRIMARY PLANNER** — planning, triage, session strategy |
+| **Qwen3.5 (Continue)** | Local M4/Windows | 0 tokens | **TRIAGE LAYER** — task detail, template conformance, implementation prep |
+| **Perplexity** | Web, free | 0 tokens | **TASK MANAGEMENT** — review, deployment, clearly-written task validation |
+| Claude (free web) | Web, free tier | ~0 tokens | High-level overview and alignment checks when needed |
+| **Premium Reserved** | Cloud, paid | 0.33x-1x | Complex reasoning, large multi-file tasks, architecture — use sparingly |
+| GitHub Copilot | Pro ($10/mo) | Token pool | June 2026 policy update pending |
+| Local ollama cluster | Always available | 0 tokens | Code implementation, synthesis reports, second opinions |
 
-**Token conservation is the core constraint of this workflow.**  
-Gemini plans. Qwen3.5 (Continue) details locally. Cloud agents execute. Local agents implement.
+**Token conservation strategy**: 
+- Gemini/Continue/Perplexity handle 90% of workflow (planning, triage, management)
+- Premium agents reserved for complex reasoning and large tasks only
+- Mechanical work routes to GPT-4.1 0x (free) when possible
+- Save premium tokens for work that actually needs Claude 1x or Haiku 0.33x judgment
 
 ---
 
