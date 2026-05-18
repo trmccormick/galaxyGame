@@ -4,14 +4,16 @@ status: POLICY_RELEASED
 date_created: 2026-05-18
 last_updated: 2026-05-18
 policy_release_date: 2026-06-01
+subscriber_status: ANNUAL_PREPAID
 ---
 
 # GitHub Copilot June 1, 2026 Changes — Usage-Based Billing Model
 
 **Status**: ✅ POLICY RELEASED — Effective June 1, 2026  
-**Current Setup**: Pro subscription at $10/month → $10 in AI Credits/month  
-**New Model**: Usage-based with monthly credit allotment  
-**Impact**: Changes Copilot from unlimited to resource-constrained tier
+**Your Subscription**: 📌 **ANNUAL PREPAID** (June 1 policy does NOT apply until prepaid year expires)  
+**When Policy Affects You**: End of prepaid year (likely May 2027)  
+**Current Implication**: Path A (Copilot Pro) is locked in. No June 1-3 testing needed.  
+**Action Timeline**: Defer final decision until 30 days before prepaid expiration
 
 ---
 
@@ -98,6 +100,28 @@ Local Qwen3.5     = 0 tokens (local, unlimited) ← BECOMES PRIMARY
 - "Billing Preview" shows estimated spend
 - Real-time view of which models/tasks consuming credits
 - Hard spending limits available for organizations (not individual Pro accounts)
+
+---
+
+## Your Status: Annual Prepaid Plan
+
+**What This Means**:
+- ✅ You locked in Copilot Pro before June 1 via annual prepaid subscription
+- ✅ June 1 policy change does NOT affect your billing until prepaid year expires
+- ✅ You are NOT subject to the $10/month usage-based credit system until renewal
+- ✅ You have unlimited Copilot Pro access through end of prepaid term
+
+**Your Implications**:
+- **NOW (May-June 2026)**: Use Copilot Pro freely, no credit tracking needed
+- **30 days before expiration**: Decide whether to renew at new usage-based rates ($10/month credits)
+- **Path A locked in**: You're automatically on Path A (Copilot Pro) until prepaid ends
+- **Can ignore**: June 1-3 testing, credit budgeting, route optimization for Pro tier
+- **Can focus on**: Testing local models (Codestral/Qwen3.5) in parallel to prep for potential Path B
+
+**When You Need To Decide**:
+- Decision window: Last 30 days of prepaid year
+- Question: Is $10/month AI Credits worth it, or downgrade to Copilot Free + local models?
+- Information needed: How many Copilot tasks do you actually need per month?
 
 ---
 
@@ -331,75 +355,126 @@ IMPLEMENTATION (primary execution):
 
 ---
 
-## June 1 Decision Framework
+## June 1 Decision Framework (UPDATED FOR PREPAID STATUS)
 
-**Before committing to Option A or B, TEST**:
+**Your Situation**: Prepaid annual plan = no decision needed until expiration
 
-### Pre-June 1 Test (May 25-31)
-1. [ ] Assign one simple RSpec fix to Copilot Pro
-2. [ ] Measure: Credits consumed
-3. [ ] Calculate: Cost per task
-4. [ ] Compare to: Local Codestral cost (unlimited)
-5. [ ] Decide: Is $10/month worth the convenience?
+**Revised Action Plan**:
 
-### Post-June 1 Confirmation (June 1-7)
-1. [ ] Verify GPT-4.1 availability in Copilot Pro
-2. [ ] Confirm token multipliers apply (or don't)
-3. [ ] Run 3 sample tasks through chosen path
-4. [ ] Finalize subscription decision
-5. [ ] Update AGENT_ROUTING.md with confirmed workflow
+### Phase 1: NOW through Prepaid Expiration (Use Copilot Pro Freely)
 
----
+**What you can do**:
+- ✅ Route complex work to Copilot Pro without budget constraints
+- ✅ Test local Codestral/Qwen3.5 in parallel (preparing for potential Path B)
+- ✅ Measure: How much Copilot work do you actually do per month?
+- ✅ Collect: Data on local model performance for same tasks
 
-## Next Steps (May 31 - June 7)
+**What you DON'T need to do**:
+- ❌ Test June 1-3 (prepaid = not affected)
+- ❌ Track Copilot credits (unlimited until expiration)
+- ❌ Make Path A vs B decision now (do it 30 days before expiration)
 
-### Immediate (May 31, 2026 - 1 Day Before June 1)
+### Phase 2: 30 Days Before Prepaid Expiration (Make Renewal Decision)
 
-**Decision Point**: Which path will you take June 1+?
+**At that point, decide**:
+- **Option 1**: Renew at new usage-based rates ($10/month = ~$10 AI Credits/month)
+  - Only viable if you use <5-10 Copilot tasks/month on average
+  - Measure this data during Phase 1
+  
+- **Option 2**: Downgrade to Copilot Free + use local models exclusively
+  - Costs $0/month
+  - Requires local Codestral/Qwen3.5 to be reliable (test during Phase 1)
 
-**Option A: Test Copilot Pro** (if you want to keep $10/mo subscription)
-1. [ ] Assign one simple RSpec fix to Copilot Pro today
-2. [ ] Check GitHub Billing page tomorrow for credits consumed
-3. [ ] Calculate: `task_complexity × cost_per_credit = monthly_estimate`
-4. [ ] Ask: "Is this cost acceptable vs. local model?"
-
-**Option B: Prepare Local Model Fallback** (if considering downgrade)
-1. [ ] Test recent Codestral performance on Rails work
-2. [ ] Document which models available on M4 Mac
-3. [ ] Verify Continue gem integration working smoothly
-4. [ ] Plan: How many concurrent local tasks can M4 handle?
-
-### Critical (June 1, 2026 - Official Cutover)
-
-**When policy takes effect**:
-1. [ ] Verify GPT-4.1 status: Available in Copilot Pro? What cost?
-2. [ ] Confirm which models available in Copilot Pro
-3. [ ] Check GitHub Billing page: Do token multipliers apply?
-4. [ ] Update GITHUB_COPILOT_POLICY_TRACKING.md with findings
-
-**Make Subscription Decision**:
-- [ ] Option A: Keep Copilot Pro at $10/mo (if reasonable cost)
-- [ ] Option B: Downgrade to Copilot Free (save $10, use local models)
-
-### Confirmation (June 2-7, 2026)
-
-**Run through new workflow**:
-1. [ ] Assign 3 test tasks to chosen execution tier
-2. [ ] Measure actual token consumption / credit usage
-3. [ ] Compare quality and speed vs. alternatives
-4. [ ] Document lessons in GITHUB_COPILOT_POLICY_TRACKING.md
-
-**Update Routing Docs**:
-1. [ ] Update README.md AI Stack table with confirmed workflow
-2. [ ] Update AGENT_ROUTING.md with June 1+ routing logic
-3. [ ] Create COPILOT_PRO_MONTHLY_LOG.md if keeping Pro
-4. [ ] Commit with clear "Post-June 1 Cutover" message
+**Decision Criteria**:
+- **Keep Copilot Pro if**: Average 1-2 tasks/month actually need Copilot (vs local)
+- **Switch to Free if**: Local models handle 95%+ of your execution work
 
 ---
 
-## Critical Unknowns Summary
+## Next Steps (May 18 - Prepaid Expiration)
 
-**These MUST be resolved by June 1 to make routing decisions**:
+### Phase 1A: NOW (May 18 - June 30, 2026) - Baseline Measurement
+
+**Objective**: Collect data on typical Copilot usage to inform future decision
+
+**What to do**:
+1. [ ] Track: How many Copilot Pro tasks do you actually assign per month?
+2. [ ] Record: Task complexity (simple RSpec fix vs. complex multi-file refactor)
+3. [ ] Note: Alternative — could this have been done with local Codestral?
+4. [ ] Collect baseline for 1-2 months
+
+**Why**: At prepaid expiration, you'll need to know if $10/month credit budget is sustainable
+
+### Phase 1B: Parallel (Any Time) - Local Model Testing
+
+**Objective**: Prepare for potential Path B (downgrade to Free + local only)
+
+**What to do**:
+1. [ ] Test: Codestral on recent Rails RSpec fixes
+2. [ ] Test: Qwen3.5 on model layer issues
+3. [ ] Measure: Are local models good enough for 90% of work?
+4. [ ] Document: Which tasks still need Copilot Pro?
+
+**Why**: If local models are reliable, Path B becomes attractive at renewal
+
+### Phase 2: 30 Days Before Prepaid Expiration (Likely Late April 2027)
+
+**Decision Window Opens**:
+1. [ ] Review Phase 1 data: Average monthly Copilot usage?
+2. [ ] Calculate: At new $10/month credit rate, is it sustainable?
+3. [ ] Compare: Local model cost (time/compute) vs. $10/month
+4. [ ] Decide: Renew Path A (Pro) or switch Path B (Free + local)?
+
+**Example Decision Tree**:
+```
+IF average usage >5 Copilot tasks/month
+AND local models struggled in testing
+THEN renew Copilot Pro ($10/month)
+
+ELSE IF average usage <5 tasks/month
+AND local models handled 95% of work
+THEN downgrade to Copilot Free ($0) + local primary
+```
+
+---
+
+## June 1, 2026 - What Changes for You (Prepaid)
+
+**You**: Nothing changes immediately. Your prepaid subscription continues.
+
+**Everyone Else on monthly billing**: Moves to usage-based $10/month credits, limited budget.
+
+**Implication**: You have an unfair advantage during June 1 - August 2026 (roughly). Everyone else is struggling with credit budgets; you're unlimited.
+
+**Smart Move**: Use this window to test Codestral/Qwen3.5 extensively while you have unlimited Copilot as backup.
+
+---
+
+## Renewal Decision Reference (For ~April/May 2027)
+
+### Path A: Renew Copilot Pro at $10/month
+
+**Keep if**:
+- ✅ You consistently use 5+ Copilot tasks per month
+- ✅ Those tasks are complex enough that local models frequently fail
+- ✅ The $10/month cost is acceptable vs. your alternatives
+- ✅ You value Copilot's UX over local model setup/management
+
+**Renew as**: Monthly Copilot Pro subscription ($10/month = $10 AI Credits)
+
+### Path B: Downgrade to Copilot Free
+
+**Switch if**:
+- ✅ Local models (Codestral/Qwen3.5) handle 90%+ of your work reliably
+- ✅ You average <2 Copilot tasks per month on non-local work
+- ✅ You're willing to manage Continue gem + local ollama cluster
+- ✅ You want to save $10/month
+
+**Switch to**: Copilot Free (code completions only) + all execution work to local Codestral/Qwen3.5
+
+---
+
+## Critical Unknowns Summary (For Future Reference)
 
 | Unknown | Why It Matters | Test Method |
 |---|---|---|
@@ -421,211 +496,88 @@ GPT-4.1 available in Copilot Pro?
 
 ---
 
-## Immediate Action Items (May 31 - June 2)
+## Immediate Action Items (May 18, 2026)
 
-### Subtask 1: Update AGENT_ROUTING.md
-Add new section: **GitHub Copilot Pro (Usage-Based Credits)**
+### Priority 1: Establish Measurement Baseline (This Week)
 
-Content to add:
-```markdown
-## GitHub Copilot Pro — Secondary Execution Tier ($10/month = ~1K credits)
+**Goal**: Start collecting data on actual Copilot usage
 
-**Placement**: Secondary execution agent for simple, single-file work  
-**Budget**: 5-7 tasks/month estimated (1,000 credits ÷ 150-200 per task)  
-**When to route here**: Single-file RSpec fixes, boilerplate, factories, simple tweaks  
-**When NOT to route**: Multi-file refactors, complex reasoning, architectural work  
-**Fallback**: If credits exhausted mid-month, use GPT-4.1 0x
+**Action**:
+1. [ ] Create or update a tracking file: `docs/new_agent/COPILOT_PRO_USAGE_TRACKING.md`
+2. [ ] Log task details: Date, complexity level, whether local model could work
+3. [ ] Plan to review this data when prepaid expires (~12 months from now)
 
-**Credit tracking**: See docs/new_agent/COPILOT_PRO_MONTHLY_LOG.md
-```
+**Why**: Data drives decision at renewal time
 
-### Subtask 2: Create COPILOT_PRO_MONTHLY_LOG.md Template
-File: `docs/new_agent/COPILOT_PRO_MONTHLY_LOG.md`
+### Priority 2: Test Local Models (Ongoing, 1-2 months)
 
-Content:
-```markdown
-# GitHub Copilot Pro Monthly Budget Log
+**Goal**: Collect parallel data on Codestral/Qwen3.5 performance
 
-**Month**: June 2026  
-**Total Budget**: 1,000 AI Credits  
-**Beginning Balance**: 1,000 credits  
-**Ending Balance**: [TO FILL]  
-**Overage**: [IF ANY]
+**Action**:
+1. [ ] Assign mix of tasks to local Codestral (not Copilot Pro)
+2. [ ] Record: Quality, speed, any failures
+3. [ ] Identify: Which task types local models struggle with?
+4. [ ] Document in: `docs/new_agent/LOCAL_MODEL_TESTING_LOG.md`
 
-## Task Log
+**Why**: At renewal, you'll know if downgrading to Free is viable
 
-| Date | Task | Est. Credits | Actual* | Notes |
-|------|------|---|---|---|
-| 2026-06-01 | [task name] | 150 | TBD | [notes] |
+### Priority 3: No Action Needed Before June 1
 
-*Actual credits consumed per GitHub Billing page. Fill in after month-end.
-
-## Summary
-
-- **Tasks completed**: X
-- **Avg credits/task**: Y
-- **Burn rate**: Z credits/day
-- **Lessons for next month**: [notes]
+**NOT required**:
+- ❌ Test credit consumption (your prepaid plan doesn't use credits yet)
+- ❌ Verify GPT-4.1 availability (doesn't affect you until renewal)
+- ❌ Update routing docs for June 1 (your workflow unchanged)
+- ❌ Make subscription decision (do it April/May 2027)
 
 ---
 
-*Start a new section each month. Archive previous months.*
-```
+## FAQ: GitHub Copilot Pro Billing
 
-### Subtask 3: Test One Simple Task with Copilot Pro
-**Goal**: Measure actual credit consumption vs. estimates
+**Q: Since I'm prepaid, when does usage-based billing affect me?**  
+A: Not until your prepaid year expires. You have unlimited Copilot Pro access through renewal. Use this time to test local models.
 
-**Steps**:
-1. Pick a simple single-file RSpec fix from backlog
-2. Assign to Copilot Pro in VS Code
-3. Complete the task
-4. Check GitHub Billing page for credits used
-5. Calculate: Task scope → Estimated credits vs. Actual
-6. Document in COPILOT_PRO_MONTHLY_LOG.md
-7. Use data to calibrate future estimates
+**Q: What happens at renewal (likely April/May 2027)?**  
+A: You choose: (1) Renew at new $10/month usage-based rates, OR (2) Downgrade to Copilot Free ($0). Your prepaid discount ends.
 
-**What to measure**:
-- Input tokens (file size + context)
-- Output tokens (generated code)
-- Total credits consumed
-- Compare to 150-credit estimate
+**Q: Can I cancel mid-prepaid term?**  
+A: Check your GitHub account. Most annual subscriptions allow cancellation, but you may lose the discount. Downgrade to Free instead.
 
----
+**Q: What's the advantage of prepaid vs. monthly?**  
+A: You locked in an old unlimited tier. Monthly billing (June 1+) uses the new credit system. You got lucky.
 
-## FAQ: GitHub Copilot Pro Usage-Based Billing
+**Q: Should I use all my prepaid Copilot time before renewal?**  
+A: Not necessary, but might as well — you've already paid for it. Use it to test complex tasks vs. local models.
 
-**Q: If I don't use Copilot Pro, can I downgrade to Free?**  
-A: Yes, but you lose inline completions enhancements. Basic completions still free. Worth keeping Pro for completions alone if you do steady coding.
+**Q: What if I don't actually need Copilot at renewal?**  
+A: Downgrade to Copilot Free. Keep it for inline code completions (free) and avoid the $10/month subscription.
 
-**Q: What happens if I exceed 1,000 credits mid-month?**  
-A: Copilot stops working until next billing cycle. GitHub doesn't charge overage; it just disables the feature.
-
-**Q: Can I check my current credit balance?**  
-A: Yes, GitHub Billing Overview page shows real-time consumption. Check weekly to avoid surprises.
-
-**Q: Does caching help save credits?**  
-A: Slightly, but it's not magic. Repeated patterns on same files do benefit, but don't rely on caching to extend budget significantly.
-
-**Q: Should we use Copilot Code Review in GitHub Actions?**  
-A: NO — during heavy development months. Code Review consumes both Actions minutes AND AI credits. Manual review is free alternative.
-
-**Q: What if my team members also use Copilot Pro?**  
-A: Each person has own 1,000 credits/month. Credits are NOT shared unless on Enterprise plan (future). Track each person's usage separately.
-
-**Q: Can we pool credits across the team?**  
-A: Only on GitHub Enterprise tier. Current plan (Pro) has individual budgets.
-
-**Q: What models does Copilot Pro use?**  
-A: Typically Claude 3.5 Sonnet or equivalent. Exact model not disclosed, but quality is high for the price.
-
-**Q: Is this better than paying for Claude directly?**  
-A: Depends on usage. $10/month Copilot = ~6-7 complex Claude tasks. Direct Claude at similar cost gives unlimited API requests. Tradeoff: Copilot integrated in VS Code (convenient) vs. Claude API (flexible).
+**Q: Can I downgrade now, then re-upgrade later?**  
+A: Yes, but you lose the prepaid discount immediately and lose the rest of your prepaid time. Not recommended.
 
 ---
 
-## Current Workflow (Effective June 1, 2026)
+## Summary: What Prepaid Means for You
 
-✅ **GitHub Copilot Pro INTEGRATED into routing**
-
-```
-Planning Gate (0 tokens):
-  Gemini — Review session, prioritize work
-
-Triage & Detailing (0 tokens):
-  Qwen3.5 (Continue) — Detail tasks, add code examples
-
-Validation (0 tokens):
-  Perplexity — Check clarity, routing, test-ability
-
-Implementation Decision:
-  IF simple single-file fix AND credits available
-    → Route to GitHub Copilot Pro ($10/mo budget)
-  ELSE
-    → Route to GPT-4.1 0x (unlimited, free)
-
-Complex reasoning (rare):
-  Claude 1x (reserved for architectural/multi-session work only)
-```
-
-**Key difference from pre-June 1**: Copilot Pro now has a defined place in the routing, with credit budget tracked monthly.
-
----
-
-## Next Steps (Post June 1)
-
-1. **Update docs/new_agent/README.md AI Stack table**
-   - Change GitHub Copilot from "unknown" to "Pro $10/mo, 1K credits/month, secondary execution"
-
-2. **Update docs/new_agent/rules/AGENT_ROUTING.md**
-   - Add GitHub Copilot Pro section with routing logic
-   - Link to COPILOT_PRO_MONTHLY_LOG.md
-
-3. **Create docs/new_agent/COPILOT_PRO_MONTHLY_LOG.md**
-   - Monthly tracking template for credit consumption
-   - Starts June 1, 2026
-
-4. **Test with one real task** (June 1-3)
-   - Measure actual credit consumption
-   - Calibrate estimates for future months
-   - Document learnings
-
-5. **Monitor GitHub Billing page**
-   - Check weekly during June
-   - Adjust routing if burn rate too high
-   - Plan for July based on actual usage
-
----
-
-## The Big Picture: What June 1 Means for You
-
-**The Shift**:
-```
-BEFORE June 1          AFTER June 1
-────────────           ────────────
-Unlimited GPT-4.1 0x   → GPT-4.1 costs something (unknown multiplier)
-All work free          → All cloud work has a cost (unless local)
-Simple decision        → Complex routing decision
-```
-
-**The Problem**:
-Your entire workflow depends on unlimited GPT-4.1 0x. June 1 breaks that assumption. You need a new primary execution tier:
-- **Option A**: Copilot Pro (if GPT-4.1 available + cost reasonable)
-- **Option B**: Local Codestral (unlimited, always free)
-
-**The Decision**:
-Can't be made until unknowns are resolved (GPT-4.1 availability, cost multiplier, etc.). This will be tested June 1-3.
-
-**The Stakes**:
-- **If you guess wrong**: Burnout credits mid-month or lose execution capacity
-- **If you plan right**: Seamless transition, maybe save $10/month
-
----
-
-## Document Status
-
-| Document | Status | Purpose |
-|---|---|---|
-| GITHUB_COPILOT_POLICY_TRACKING.md | ✅ Updated with policy + unknowns | Decision framework for June 1 |
-| README.md (AI Stack table) | ⏳ Blocked on June 1 decision | Will update after testing Path A/B |
-| AGENT_ROUTING.md | ⏳ Blocked on June 1 decision | Will add confirmed routing post-test |
-| COPILOT_PRO_MONTHLY_LOG.md | ⏳ Conditional on keeping Pro | Create IF choosing Path A |
-
-**Action Owner**: Session Strategist (You)  
-**Decision Deadline**: June 1, 2026  
-**Test Window**: June 1-7, 2026  
-**Implementation**: June 7+, 2026
-
----
-
-## Glossary: Key Terms
-
-| Term | Definition |
+| Factor | Impact |
 |---|---|
-| **AI Credits** | Monthly budget for Copilot Pro. $1 USD = 100 credits. $10/month = 1,000 credits. |
-| **Input tokens** | Tokens in your prompt/context. Counted toward credits. |
-| **Output tokens** | Tokens in Copilot's response. Counted toward credits. |
-| **Cached tokens** | Saved tokens from repeated patterns. Still consume budget but save on repeated queries. |
-| **Budget cycle** | Monthly reset on billing date (typically 1st of month). |
-| **Overage** | If you exceed 1,000 credits, Copilot stops working until next month. GitHub does NOT charge overage. |
-| **Fallback** | When Copilot Pro budget exhausted, route work to GPT-4.1 0x or Continue instead. |
+| **June 1 policy change** | Doesn't affect you immediately ✅ |
+| **Urgency to decide** | Low — decide April/May 2027 when prepaid expires ✅ |
+| **Action now** | Collect data on actual usage + test local models 📊 |
+| **Advantage** | Unlimited Copilot while others are budget-constrained 🎯 |
+| **Smart move** | Use this window to thoroughly evaluate Codestral/Qwen3.5 📈 |
+
+**Recommendation**: Keep using Copilot Pro as-is until prepaid expires. In parallel, test local models extensively. When renewal comes, you'll have solid data to choose Path A (renew) or Path B (downgrade + local).
+
+---
+
+## Old Action Items (Deprecated - These Were for Monthly Billing Users)
+
+The following testing tasks were written for users on monthly plans starting June 1. Since you have prepaid, these don't apply now:
+
+- ❌ Test credit consumption June 1-3
+- ❌ Verify GPT-4.1 availability immediately
+- ❌ Update routing docs for June 1 cutover
+- ❌ Create monthly credit tracking June 1 (defer to April 2027)
+
+These will become relevant when your prepaid year expires (likely April/May 2027).
 
