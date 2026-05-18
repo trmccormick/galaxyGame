@@ -1,3 +1,5 @@
+
+**Claude (web) usage:** Only use Claude for occasional high-level review or planning prompts. Do not use Claude as a primary session planner or for triage. Gemini is the main session planner.
 # Galaxy Game — Agent Workspace
 **Version**: 2.1 (Local-First Architecture)
 **Last Updated**: 2026-05-14
@@ -22,7 +24,7 @@ models with selective cloud assistance.
 | **Gemini** | Web, free | 0 tokens | **PRIMARY PLANNER** — planning, triage, session strategy |
 | **Qwen3.5 (Continue)** | Local M4/Windows | 0 tokens | **TRIAGE LAYER** — task detail, template conformance, implementation prep |
 | **Perplexity** | Web, free | 0 tokens | **TASK MANAGEMENT** — review, deployment, clearly-written task validation |
-| Claude (free web) | Web, free tier | ~0 tokens | High-level overview and alignment checks when needed |
+| Claude (free web) | Web, free tier | ~0 tokens | **SUPPLEMENTARY REVIEW** — only for occasional high-level review or planning prompts; not used for primary planning or triage |
 | **Premium Reserved** | Cloud, paid | 0.33x-1x | Complex reasoning, large multi-file tasks, architecture — use sparingly |
 | GitHub Copilot | Pro ($10/mo) | Token pool | June 2026 policy update pending |
 | Local ollama cluster | Always available | 0 tokens | Code implementation, synthesis reports, second opinions |
@@ -46,6 +48,9 @@ models with selective cloud assistance.
 
 **M4 must stay caffeinated**: run `caffeinate` or set `pmset` before long sessions.
 Full model routing in `rules/AGENT_ROUTING.md`.
+
+**Automation Recommendation:**
+Automate the `caffeinate` (or `pmset`) step on the M4 Mac as part of session startup scripts to prevent accidental sleep and ensure stable Ollama/model connections.
 
 ---
 
@@ -74,8 +79,7 @@ Full details in [`CONTINUE_WORKFLOW_AUDIT.md`](CONTINUE_WORKFLOW_AUDIT.md).
 ## How a Session Works
 
 ### 1. Plan with Gemini (PRIMARY GATE)
-Use Gemini to review session handoff, current RSpec baseline, and produce a priority stack
-and task recommendations. Gemini routes which tasks need Qwen3.5 detailing vs. direct cloud handoff.
+Use Gemini to review session handoff, current RSpec baseline, and produce a priority stack and task recommendations. Gemini is the PRIMARY PLANNER for all session planning and triage. Claude (web) may be used for occasional high-level review or planning prompts only, not as a primary planner.
 
 ### 2. Triage & Detail with Qwen3.5 (Continue)
 For each selected task file:
@@ -86,8 +90,7 @@ For each selected task file:
 - Routes to appropriate cloud agent
 
 ### 3. Route tasks to the right cloud agent
-Read `rules/AGENT_ROUTING.md` after Qwen3.5 has triaged.
-Qwen3.5 recommendations + task detail + MVP alignment → cloud agent routing decision.
+Read `rules/AGENT_ROUTING.md` after Qwen3.5 has triaged. Qwen3.5 recommendations + task detail + MVP alignment → cloud agent routing decision. Claude (web) is not used for regular routing or triage.
 
 ### 4. One implementation agent at a time
 Never run two agents executing RSpec simultaneously.
@@ -106,6 +109,12 @@ Implementation cannot.
 9. Fill in completion report
 10. Move task to `completed/`
 
+**Flaky Spec Note:**
+If any specs become flaky (pass in isolation but fail in suite), investigate for shared state, global config, or order-dependent setup. Address these before major milestones or breaks.
+
+**Important Task Order Warning:**
+If the water escalation ISRU chain task is completed, always run the full RSpec suite and verify no regressions before starting Task 1 (Effect Execution Engine v2). This prevents compounding unknowns and follows the handoff’s instructions.
+
 ### 6. Session ends with a handoff document
 Save to: `docs/new_agent/tasks/session-handoffs/session_handoff_YYYY-MM-DD.md`
 
@@ -118,25 +127,30 @@ new_agent/
 ├── README.md                          ← you are here
 ├── ROUTING_LOGIC.md                   ← quick-reference routing (read this second)
 ├── TASK_OVERVIEW.md                   ← current session task stack
+├── TASK_TEMPLATE.md                   ← template for new tasks
+├── TASKS_ORGANIZATION.md              ← ⭐ NEW: where task files live (separate repo)
 ├── COMMUNICATION_PROTOCOL.md         ← how agents must format output
 ├── rules/
 │   ├── GUARDRAILS.md                  ← execution rules — read before every task
 │   ├── DECISIONS.md                   ← locked architectural decisions
 │   └── AGENT_ROUTING.md              ← full routing table
 ├── agent_guides/
-│   └── codestral_architect.md        ← Codestral role and system context
-├── research/
-│   └── LUNAR_GEOSPHERE_BASE.md       ← lunar resource baseline
-├── context/
-│   ├── PATTERNS.md                    ← Robot/Battery pattern, job lifecycle
-│   └── CODEBASE_MAP.md               ← where things live in the codebase
-└── tasks/
-    ├── active/                        ← currently assigned tasks
-    ├── backlog/
-    │   ├── 2026_04/
-    │   └── 2026_05/
-    └── completed/                     ← finished tasks with completion reports
+│   ├── galaxy_game.md                ← Galaxy Game domain context
+│   ├── samvera_hyku.md               ← Hyku domain context
+│   ├── samvera_hyrax.md              ← Hyrax domain context
+│   ├── wvulibraries_acda_portal.md   ← ACDA Portal domain context
+│   └── wvulibraries_knapsack.md      ← Knapsack domain context
+├── projects/
+│   └── galaxy_game/
+│       ├── status.md                  ← current project baseline
+│       └── context/
+│           ├── CODEBASE_MAP.md       ← where things live
+│           └── PATTERNS.md           ← code patterns in use
+└── (task files moved to separate agent-tasks repo — see TASKS_ORGANIZATION.md)
 ```
+
+**⭐ IMPORTANT**: Task files are now in a separate repository: `/Users/tam0013/Documents/git/agent-tasks/`
+See [`TASKS_ORGANIZATION.md`](TASKS_ORGANIZATION.md) for details on the new structure.
 
 ---
 
@@ -156,8 +170,10 @@ Stop and flag the conflict before proceeding.
 ---
 
 ## Current Baseline
-- **3956 examples, 22 failures, 57 pending**
+- **3960 examples, 0 failures, 57 pending** (RSpec suite clean as of 2026-05-18)
 - Branch: `regional-view-phase2`
 - Monthly goal: Luna settled, ISRU producing, AI Manager trained on pattern
 - **Copilot routing freeze**: Do not route tasks to Copilot until
   `AGENT_ROUTING.md` is updated after June 2026 Gemini research is complete
+
+**Reminder:** Schedule a Copilot policy review for June 2026 to align with the new token-based billing and update routing rules accordingly.

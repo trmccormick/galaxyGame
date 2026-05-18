@@ -31,6 +31,11 @@ tmp/
 # ✅ FIX: Include fixture data with correct path
 !/galaxy_game/spec/fixtures/
 
+# ✅ NOTE: Task files moved to separate agent-tasks repo
+# Task directories should NOT be in this repo
+docs/new_agent/projects/*/tasks/
+docs/agent/tasks/
+
 personal_notes.txt
 data.zip
 gemni-chat.md
