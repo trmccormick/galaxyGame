@@ -507,28 +507,29 @@ Review backlog queue:
 
 ## Renewal Decision Reference (At Expiration Date)
 
-### Path B (Downgrade to Free) — Most Likely Outcome
+### Path A (Renew Copilot Pro) — Most Likely Outcome
 
-**Switch if** (expected at renewal):
-- ✅ You successfully used month-end burn strategy (all prepaid credits productive)
-- ✅ Local models (Codestral/Qwen3.5) handled urgent/priority work reliably
-- ✅ Only 10-20% of monthly tasks needed Copilot (emergency escalations)
-- ✅ Backlog was cleared using month-end credit burns (no waste)
+**Keep if** (expected at renewal):
+- ✅ Emergency escalations stayed low (<1-2/month): Local models reliable for urgent work
+- ✅ Month-end burns cleared meaningful backlog: Copilot accelerated backlog work
+- ✅ $10/month is acceptable cost for productivity boost
+- ✅ Premium agents (Copilot Pro) provide measurable value vs local-only approach
 
-**Outcome**: Downgrade to Free ($0/month), keep local models as primary
+**Outcome**: Renew Copilot Pro at $10/month = $10 AI Credits/month
 
-**Save**: $10/month, same execution speed
+**Keep because**: Local models handle production work reliably. Copilot Pro accelerates backlog clearance. $10/month is small cost for that acceleration.
 
-### Path A (Renew Copilot Pro) — Unlikely
+### Path B (Downgrade to Free) — If Local Models Exceed Expectations
 
-**Keep if** (unexpected at renewal):
-- ❓ Month-end backlog never cleared (too much work for month-end burn to handle)
-- ❓ Emergency escalations consistently exceeded local capability
-- ❓ $10/month is worth accelerating backlog clearance
+**Switch if** (unlikely but possible at renewal):
+- ❓ Emergency escalations were zero (local models never failed)
+- ❓ Backlog cleared so fast via month-end burns that you questioned the value
+- ❓ $10/month felt wasteful despite productivity gains
+- ❓ New local models (Qwen4, etc.) surpassed Copilot Pro in your tests
 
-**Cost**: $10/month to accelerate backlog work
+**Outcome**: Downgrade to Free ($0/month), all work to local Codestral/Qwen3.5
 
-**Decision Insight**: If month-end burn worked well (cleared backlog tasks), that's proof you DON'T need renewal. Downgrade to Free.
+**Unlikely because**: Premium agents provide consistent value; $10/month is minimal cost
 
 ---
 
@@ -657,12 +658,19 @@ A: Absolutely. They'll hit the $10 credit limit hard if on monthly billing. Your
 |---|---|
 | **June 1 policy change** | Doesn't affect you immediately ✅ |
 | **Urgency to decide** | Low — decide at renewal (30 days before expiration) ✅ |
-| **Action now** | Collect data on actual usage + test local models 📊 |
-| **Advantage** | Unlimited Copilot while others are budget-constrained 🎯 |
-| **Next step** | Find your expiration date in GitHub Billing 🔍 |
-| **Smart move** | Use this window to thoroughly evaluate Codestral/Qwen3.5 📈 |
+| **Action now** | Collect data on local model reliability 📊 |
+| **Expected renewal** | Path A (Keep Copilot Pro) — $10/month is worth it 🎯 |
+| **Local models role** | Reliable for production work? Escalate failures to Copilot. 🔍 |
+| **Advantage** | Prepaid period lets you test before renewal decision 📈 |
+| **Next step** | Execute month-end burn strategy, track both emergency + burn |
 
-**Recommendation**: Keep using Copilot Pro as-is until prepaid expires. In parallel, test local models extensively. When renewal comes, you'll have solid data to choose Path A (renew) or Path B (downgrade + local).
+**Recommendation**: At renewal, you're likely keeping Copilot Pro. $10/month is minimal cost for productivity boost. Use this prepaid period to:
+1. Test local models (Codestral/Qwen3.5) on production work — are they reliable?
+2. Measure month-end burn effectiveness — how much backlog clears?
+3. Track emergency escalations — do you need Copilot Pro for urgent work?
+4. Build confidence — prove which tasks local models handle well
+
+**At Renewal Decision**: If local models are reliable for urgent work + month-end burns clear meaningful backlog, renewal is justified. $10/month is worth the acceleration.
 
 ---
 
