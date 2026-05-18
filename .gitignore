@@ -31,10 +31,12 @@ tmp/
 # ✅ FIX: Include fixture data with correct path
 !/galaxy_game/spec/fixtures/
 
-# ✅ NOTE: Task files moved to separate agent-tasks repo
-# Task directories should NOT be in this repo
+# ✅ NOTE: Agent workspace moved to separate agent-tasks repo
+# Only Galaxy Game project-specific files remain in docs/new_agent/
+# See docs/new_agent/README.md for where agent guidance lives
 docs/new_agent/projects/*/tasks/
 docs/agent/tasks/
+docs/agent/
 
 personal_notes.txt
 data.zip
