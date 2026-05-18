@@ -72,7 +72,7 @@ Rails.application.routes.draw do
     get 'ai_manager/testing', to: 'ai_manager#testing', as: 'ai_manager_testing'
     
     # Celestial Bodies routes
-    resources :celestial_bodies, only: [:index] do
+    resources :celestial_bodies, only: [:index, :show] do
       member do
         get :monitor                 # Monitor view → monitor_admin_celestial_body_path
         get :planetary               # Main monitoring interface

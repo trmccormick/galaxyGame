@@ -1,0 +1,58 @@
+<%#
+  Admin Celestial Body Show View
+  Renders key system metadata for a celestial body profile.
+  Fields: name, identifier, mass, radius, gravity, density, surface coordinates, atmosphere, geosphere, hydrosphere, biosphere markers, status, and associations.
+%>
+
+<div class="admin-celestial-body-show">
+  <h1>Celestial Body: <%= @celestial_body.name %></h1>
+  <dl>
+    <dt>Identifier</dt>
+    <dd><%= @celestial_body.identifier %></dd>
+
+    <dt>Status</dt>
+    <dd><%= @celestial_body.status %></dd>
+
+    <dt>Mass (kg)</dt>
+    <dd><%= number_with_precision(@celestial_body.mass, precision: 3, delimiter: ',') if @celestial_body.mass %></dd>
+
+    <dt>Radius (m)</dt>
+    <dd><%= number_with_precision(@celestial_body.radius, precision: 2, delimiter: ',') if @celestial_body.radius %></dd>
+
+    <dt>Gravity (m/s²)</dt>
+    <dd><%= number_with_precision(@celestial_body.gravity, precision: 3) if @celestial_body.gravity %></dd>
+
+    <dt>Density (kg/m³)</dt>
+    <dd><%= number_with_precision(@celestial_body.density, precision: 2) if @celestial_body.density %></dd>
+
+    <dt>Surface Coordinates</dt>
+    <dd>
+      <% if @celestial_body.spatial_location %>
+        Lat: <%= @celestial_body.spatial_location.latitude %>,
+        Lon: <%= @celestial_body.spatial_location.longitude %>
+      <% else %>
+        <em>Not available</em>
+      <% end %>
+    </dd>
+
+    <dt>Atmosphere</dt>
+    <dd><%= @celestial_body.atmosphere.present? ? 'Present' : 'None' %></dd>
+
+    <dt>Geosphere</dt>
+    <dd><%= @celestial_body.geosphere.present? ? 'Present' : 'None' %></dd>
+
+    <dt>Hydrosphere</dt>
+    <dd><%= @celestial_body.hydrosphere.present? ? 'Present' : 'None' %></dd>
+
+    <dt>Biosphere</dt>
+    <dd><%= @celestial_body.biosphere.present? ? 'Present' : 'None' %></dd>
+  </dl>
+
+  <h2>Associations</h2>
+  <ul>
+    <li>Solar System: <%= @celestial_body.solar_system&.name || 'N/A' %></li>
+    <li>Colonies: <%= @celestial_body.colonies.count %></li>
+    <li>Base Settlements: <%= @celestial_body.colonies.map { |c| c.base_settlements.count }.sum %></li>
+    <li>Materials: <%= @celestial_body.materials.count %></li>
+  </ul>
+</div>

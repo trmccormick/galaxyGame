@@ -19,7 +19,6 @@ module CelestialBodies
     has_one :hydrosphere, class_name: 'CelestialBodies::Spheres::Hydrosphere', dependent: :destroy
 
     has_many :colonies
-    has_many :base_settlements
     has_many :materials
 
     has_one :spatial_location, as: :spatial_context, 
