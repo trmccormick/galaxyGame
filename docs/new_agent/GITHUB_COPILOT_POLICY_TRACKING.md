@@ -393,29 +393,29 @@ IMPLEMENTATION (primary execution):
 
 ## Next Steps (May 18 - Prepaid Expiration)
 
-### Phase 1A: NOW (May 18 - June 30, 2026) - Baseline Measurement
+### Phase 1: NOW through May 2027 - Strategic Credit Conservation
 
-**Objective**: Collect data on typical Copilot usage to inform future decision
-
-**What to do**:
-1. [ ] Track: How many Copilot Pro tasks do you actually assign per month?
-2. [ ] Record: Task complexity (simple RSpec fix vs. complex multi-file refactor)
-3. [ ] Note: Alternative — could this have been done with local Codestral?
-4. [ ] Collect baseline for 1-2 months
-
-**Why**: At prepaid expiration, you'll need to know if $10/month credit budget is sustainable
-
-### Phase 1B: Parallel (Any Time) - Local Model Testing
-
-**Objective**: Prepare for potential Path B (downgrade to Free + local only)
+**Strategic Approach**: Use local models (Codestral/Qwen3.5 via Continue) as PRIMARY execution. Reserve Copilot Pro credits for hard work only.
 
 **What to do**:
-1. [ ] Test: Codestral on recent Rails RSpec fixes
-2. [ ] Test: Qwen3.5 on model layer issues
-3. [ ] Measure: Are local models good enough for 90% of work?
-4. [ ] Document: Which tasks still need Copilot Pro?
 
-**Why**: If local models are reliable, Path B becomes attractive at renewal
+1. **Route by default to local models**:
+   - Simple RSpec fixes → Codestral (local, free)
+   - Model layer issues → Qwen3.5 (local, free)
+   - Boilerplate, controllers → Codestral (local, free)
+   - Only escalate to Copilot Pro if local fails
+
+2. **Track which tasks REQUIRE Copilot Pro**:
+   - Record: Task name, complexity level, why local model wasn't sufficient
+   - Pattern: Complex multi-file reasoning? Architectural decisions? Novel patterns?
+   - Goal: Identify when Copilot Pro is truly needed vs. optional convenience
+
+3. **Measure credit efficiency**:
+   - Copilot Pro budget: ~$10 AI Credits (prepaid, spread across 12 months)
+   - Target: Use <1 credit/month on average (save credits for emergencies)
+   - If achievable: Demonstrates local models can handle 95%+ of work
+
+**Why**: At renewal (April/May 2027), if you averaged <1 credit/month usage, downgrading to Free is a no-brainer. You'll have proven local models work for your workflow.
 
 ### Phase 2: 30 Days Before Prepaid Expiration (Likely Late April 2027)
 
@@ -450,27 +450,77 @@ THEN downgrade to Copilot Free ($0) + local primary
 
 ---
 
-## Renewal Decision Reference (For ~April/May 2027)
+## Phase 1 Routing Strategy: Local-First, Credits-Conservative
 
-### Path A: Renew Copilot Pro at $10/month
+**Philosophy**: Your prepaid Copilot Pro credits are limited and valuable. Use local models for 95% of work. Reserve credits for when local models genuinely fail.
 
-**Keep if**:
-- ✅ You consistently use 5+ Copilot tasks per month
-- ✅ Those tasks are complex enough that local models frequently fail
-- ✅ The $10/month cost is acceptable vs. your alternatives
-- ✅ You value Copilot's UX over local model setup/management
+**Updated AI Stack (May 18 - May 2027)**:
 
-**Renew as**: Monthly Copilot Pro subscription ($10/month = $10 AI Credits)
+| Tier | Agent | Cost | Role | When To Use |
+|---|---|---|---|---|
+| **Primary** | Codestral (M4 local) | 0 | Mechanical work, RSpec, controllers | 80% of tasks (default first) |
+| **Primary** | Qwen3.5 (local) | 0 | Detail, triage, model layer | 10% of tasks (default first) |
+| **0-Token** | Gemini | 0 | Planning, prioritization | Always in workflow |
+| **0-Token** | Perplexity | 0 | Validation, research | When needed |
+| **Secondary** | Copilot Pro | ~$0.50-1/task | Hard work ONLY (escalation) | 5-10% of tasks (when local fails) |
+| **Premium** | Claude 1x | 1x cost | Rare architectural decisions | <1% of tasks (emergencies only) |
 
-### Path B: Downgrade to Copilot Free
+**Decision Logic**:
+```
+Task arrives:
+├─ Complexity level?
+│  ├─ Simple (RSpec, model layer, controller)
+│  │  └─ Route to Codestral/Qwen3.5 (local, free)
+│  │     ├─ Success? Done. (0 credits used)
+│  │     └─ Failure? Escalate to Copilot Pro
+│  │
+│  └─ Complex (multi-file refactor, architecture, novel patterns)
+│     └─ Try local first? (or skip to Copilot to save credits?)
+│        ├─ YES (to test local capability)
+│        │  └─ Escalate to Copilot Pro if fails (~0.5-1 credit)
+│        │
+│        └─ NO (save credits, go direct to Copilot)
+│           └─ Use Copilot Pro immediately (~0.5-1 credit)
+```
 
-**Switch if**:
-- ✅ Local models (Codestral/Qwen3.5) handle 90%+ of your work reliably
-- ✅ You average <2 Copilot tasks per month on non-local work
-- ✅ You're willing to manage Continue gem + local ollama cluster
-- ✅ You want to save $10/month
+**Credit Tracking & Target**:
+- Log every Copilot Pro task: Name, complexity, cost, why needed
+- Measure: Average credits consumed per month
+- **Target**: <1 credit/month average (~0.08 credits/task)
+- **Expected**: 8-12 escalations/month to Copilot Pro (everything else local)
 
-**Switch to**: Copilot Free (code completions only) + all execution work to local Codestral/Qwen3.5
+**Why This Strategy**: 
+- At renewal (April/May 2027), if you've proven <1 credit/month usage, downgrading to Free is obvious
+- You'll have documented evidence: Local models handled 90%+ of work reliably
+- You save $10/month and keep the same execution speed
+
+---
+
+## Renewal Decision Reference (April/May 2027)
+
+### Path B (Downgrade to Free) — Most Likely Outcome
+
+**Switch if** (expected by April 2027):
+- ✅ You averaged <1 credit/month during Phase 1
+- ✅ Local models (Codestral/Qwen3.5) handled 90%+ of work reliably
+- ✅ Only 8-12 escalations/month truly needed Copilot Pro
+- ✅ You're confident local models can continue sustaining 95% of work
+
+**Save**: $10/month, keep same execution speed
+
+**Become**: Copilot Free (completions only) + Codestral/Qwen3.5 primary execution
+
+### Path A (Renew Copilot Pro) — Unlikely, But Possible
+
+**Keep if** (unexpected by April 2027):
+- ❓ You averaged >3 credits/month during Phase 1
+- ❓ Local models frequently failed on critical work
+- ❓ Copilot Pro was genuinely essential for productivity
+- ❓ The $10/month cost is acceptable vs. time savings
+
+**Cost**: $10/month for ~10-15 escalation tasks
+  
+**Unlikely because**: If local-first strategy works as expected, you'll have proven Free tier + local models are sufficient
 
 ---
 
@@ -498,61 +548,78 @@ GPT-4.1 available in Copilot Pro?
 
 ## Immediate Action Items (May 18, 2026)
 
-### Priority 1: Establish Measurement Baseline (This Week)
+### Priority 1: Implement Local-First Routing (This Week)
 
-**Goal**: Start collecting data on actual Copilot usage
-
-**Action**:
-1. [ ] Create or update a tracking file: `docs/new_agent/COPILOT_PRO_USAGE_TRACKING.md`
-2. [ ] Log task details: Date, complexity level, whether local model could work
-3. [ ] Plan to review this data when prepaid expires (~12 months from now)
-
-**Why**: Data drives decision at renewal time
-
-### Priority 2: Test Local Models (Ongoing, 1-2 months)
-
-**Goal**: Collect parallel data on Codestral/Qwen3.5 performance
+**Goal**: Set up Codestral/Qwen3.5 as default agents in Continue + AGENT_ROUTING.md
 
 **Action**:
-1. [ ] Assign mix of tasks to local Codestral (not Copilot Pro)
-2. [ ] Record: Quality, speed, any failures
-3. [ ] Identify: Which task types local models struggle with?
-4. [ ] Document in: `docs/new_agent/LOCAL_MODEL_TESTING_LOG.md`
+1. [ ] Update docs/new_agent/rules/AGENT_ROUTING.md: Add "Local First" section
+   - Simple tasks (RSpec, models, controllers) → Codestral
+   - Triage/detail → Qwen3.5
+   - Only escalate to Copilot Pro on local failure
+2. [ ] Test one RSpec fix with local Codestral (verify it works well)
+3. [ ] Create docs/new_agent/COPILOT_USAGE_LOG.md for tracking escalations
 
-**Why**: At renewal, you'll know if downgrading to Free is viable
+**Why**: Establishes the baseline for measuring credit efficiency over next 12 months
 
-### Priority 3: No Action Needed Before June 1
+### Priority 2: Track Every Copilot Escalation (Ongoing)
+
+**Goal**: Collect data on when/why Copilot Pro is actually needed
+
+**Action**:
+1. [ ] Every time local model fails, escalate to Copilot Pro
+2. [ ] Log in COPILOT_USAGE_LOG.md: Date, task name, why local failed, credits used
+3. [ ] Review monthly: Identify patterns in escalation types
+4. [ ] Target: <1 credit/month average (8-12 escalations/month)
+
+**Why**: At renewal, this data proves whether downgrading to Free is viable
+
+### Priority 3: No Credits-Tracking Burden Needed
 
 **NOT required**:
-- ❌ Test credit consumption (your prepaid plan doesn't use credits yet)
-- ❌ Verify GPT-4.1 availability (doesn't affect you until renewal)
-- ❌ Update routing docs for June 1 (your workflow unchanged)
-- ❌ Make subscription decision (do it April/May 2027)
+- ❌ Weekly credit audits (your prepaid is unlimited through May 2027)
+- ❌ Monthly budget warnings (no monthly resets until renewal)
+- ❌ Immediate routing doc overhauls (Phase 1 is 12 months long)
+- ❌ Credit optimization obsession (focus on local reliability instead)
+
+**Actually focus on**: Making sure local models work well for your tasks
 
 ---
 
-## FAQ: GitHub Copilot Pro Billing
+## FAQ: Prepaid Copilot Pro + Local-First Strategy
 
-**Q: Since I'm prepaid, when does usage-based billing affect me?**  
-A: Not until your prepaid year expires. You have unlimited Copilot Pro access through renewal. Use this time to test local models.
+**Q: Should I try to use up my prepaid Copilot budget before it expires?**  
+A: NO. Use it only when needed. The goal is to prove local models work for 95% of your tasks. If you're not using Copilot Pro much, that's SUCCESS, not waste.
 
-**Q: What happens at renewal (likely April/May 2027)?**  
-A: You choose: (1) Renew at new $10/month usage-based rates, OR (2) Downgrade to Copilot Free ($0). Your prepaid discount ends.
+**Q: What if local Codestral fails on a task?**  
+A: Escalate to Copilot Pro. Log it in COPILOT_USAGE_LOG.md. This data is gold for your renewal decision.
 
-**Q: Can I cancel mid-prepaid term?**  
-A: Check your GitHub account. Most annual subscriptions allow cancellation, but you may lose the discount. Downgrade to Free instead.
+**Q: Should I compare Codestral vs Qwen3.5 performance?**  
+A: Yes, try both on similar tasks. You might find one is better for RSpec fixes, the other for model layer work. Document which works best.
 
-**Q: What's the advantage of prepaid vs. monthly?**  
-A: You locked in an old unlimited tier. Monthly billing (June 1+) uses the new credit system. You got lucky.
+**Q: What if local models frequently fail?**  
+A: That would argue for renewing Copilot Pro (Path A). But based on your strategy, you're expecting <1 credit/month, so frequent failures are unlikely if local models are reasonable.
 
-**Q: Should I use all my prepaid Copilot time before renewal?**  
-A: Not necessary, but might as well — you've already paid for it. Use it to test complex tasks vs. local models.
+**Q: Can I use Copilot Pro for learning/experiments?**  
+A: Technically yes (you've paid for it), but avoid it. Save credits for production work. Use local models for experiments.
 
-**Q: What if I don't actually need Copilot at renewal?**  
-A: Downgrade to Copilot Free. Keep it for inline code completions (free) and avoid the $10/month subscription.
+**Q: How do I know if a task is "hard enough" for Copilot Pro?**  
+A: If local model output is completely wrong or non-functional after 1-2 attempts, escalate. If it's 80% right and just needs tweaks, use local. Copilot Pro is for "local failed" not "local suboptimal".
 
-**Q: Can I downgrade now, then re-upgrade later?**  
-A: Yes, but you lose the prepaid discount immediately and lose the rest of your prepaid time. Not recommended.
+**Q: Should I track time spent on each agent too?**  
+A: Good idea. If Codestral takes 10 minutes (wrong output), Qwen3.5 takes 5 minutes (right output), and Copilot Pro takes 2 minutes (faster)... you have a cost/benefit case for renewal.
+
+**Q: What if my M4 Mac gets overwhelmed by local models?**  
+A: Unlikely. Codestral/Qwen3.5 are reasonable models. If they're causing system slowdown, that's a hardware limitation, not a model quality issue. Still use them; just accept slower response time.
+
+**Q: Will my local models improve by April 2027?**  
+A: Maybe. New local models might release. By renewal time, you can evaluate latest options (Qwen4, DeepSeek improvements, etc.) and decide if local-first is still best for your workflow.
+
+**Q: Since I prepaid for a year, how does that affect June 1 policy?**  
+A: Not at all. June 1 policy only affects new monthly subscribers. Your prepaid continues unchanged. You have an unfair advantage for 12 months.
+
+**Q: Should I mention to other team members they need to watch June 1?**  
+A: Absolutely. They'll hit the $10 credit limit hard if on monthly billing. Your local-first strategy is a good template for them to consider too.
 
 ---
 
