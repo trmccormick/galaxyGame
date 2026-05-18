@@ -134,3 +134,42 @@ If asked to analyze test failures:
 
 Fabricated output that looks real is more dangerous than obvious failure.
 A model that says "I can't do this" is always preferable to one that invents results.
+
+### Rule 21 — Qwen3.5 Triage Phase Requirements
+**Applies to Continue-based Qwen3.5 models during task triage.**
+
+When Qwen3.5 is triaging task files, it MUST:
+1. Add frontmatter fields: `status`, `priority`, `type`, `system_domain`, `mvp_alignment`, `local_worker_safe`
+2. Add "Local Worker Triage Report" section with:
+   - Template Conformance: PASS/FAIL
+   - Docker Wrapper Check: PASS/FAIL/N/A
+   - MVP Alignment: VALID/STALE/OBSOLETE
+   - MVP Impact Note: one-line connection to goal
+   - Action Line: READY FOR CLOUD HANDOFF | NEEDS MANUAL REVIEW | OBSOLETE
+3. Verify Agent Assignment is present with "Why This Agent" rationale
+4. Add implementation steps if not present or enhance if incomplete
+5. Add code examples/PORO patterns where applicable
+6. Cross-reference DECISIONS.md and GUARDRAILS.md
+
+**Triage Phase Output Quality**: Task file should be 100% ready for cloud agent handoff with no additional human specification needed.
+
+### Rule 22 — Continue Model Scope Limits
+**Applies to all Continue agents (any model/size).**
+
+Continue models have these fixed constraints:
+- ✅ CAN read task files, model definitions, service code, specs
+- ✅ CAN understand Rails patterns and Ruby syntax
+- ✅ CAN generate code examples and PORO patterns
+- ✅ CAN verify template conformance structurally
+- ❌ CANNOT execute terminal commands or shell scripts
+- ❌ CANNOT run Docker, RSpec, or rails commands
+- ❌ CANNOT execute git commands
+- ❌ CANNOT verify code actually works
+- ❌ CANNOT access the live database
+- ❌ CANNOT see which tests are currently failing
+
+When a Continue model hits these limits:
+- ✅ CORRECT: "I cannot run this test. Please paste the RSpec output and I'll analyze it."
+- ✅ CORRECT: "This code requires database verification. Please check the schema."
+- ❌ WRONG: Inventing what the test output would be
+- ❌ WRONG: Assuming database schema based on Rails conventions

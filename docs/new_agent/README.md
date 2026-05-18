@@ -19,14 +19,15 @@ models with selective cloud assistance.
 
 | Agent | Access | Role |
 |---|---|---|
-| Claude (web, free tier) | When available | Planning, documentation, architecture review |
-| Gemini | Web, free | Galaxy Game first-level review, plan preparation |
-| Perplexity | Web, free | Research, documentation lookup, community questions |
-| GitHub Copilot | Pro ($10/mo, token-based from June 2026) | Work/Samvera tasks only — conserve tokens |
-| Local ollama cluster | Always available | All implementation — primary execution layer |
+| Gemini | Web, free | **PRIMARY GATEKEEPER** — planning, triage, session strategy |
+| Claude | Web, premium | Secondary planning/architecture when Gemini unavailable |
+| Qwen3.5 (Continue) | Local M4/Windows | **NEW** — Task detail, template conformance, triage reports |
+| GitHub Copilot | Pro ($10/mo, June 2026+) | Conservative routing — research/non-critical only |
+| GPT-4.1 / Haiku | Cloud, token-based | Implementation after Qwen3.5 detailing |
+| Local ollama cluster | Always available | Code implementation, synthesis reports, second opinions |
 
-**Token conservation is the core constraint of this workflow.**
-Cloud agents think and plan. Local agents execute.
+**Token conservation is the core constraint of this workflow.**  
+Gemini plans. Qwen3.5 (Continue) details locally. Cloud agents execute. Local agents implement.
 
 ---
 
@@ -44,33 +45,64 @@ Full model routing in `rules/AGENT_ROUTING.md`.
 
 ---
 
+## Continue Integration (NEW — May 2026)
+
+Continue is a VS Code extension providing local-first access to ollama models. This enables a new triage layer:
+
+**Qwen3.5 Triage Phase** (runs BEFORE cloud agent involvement):
+- ✅ Reads task files from backlog
+- ✅ Verifies template conformance against TASK_TEMPLATE.md
+- ✅ Assesses MVP alignment (valid vs. stale vs. obsolete)
+- ✅ Adds implementation detail and code examples
+- ✅ Routes to appropriate cloud agent (0x vs. 0.33x vs. 1x)
+- ✅ Produces "Local Worker Triage Report" section
+
+**What Continue CAN do**: Read files, understand Rails/RSpec patterns, generate code, analyze structure, verify template compliance
+
+**What Continue CANNOT do**: Execute commands, run RSpec, access database, run git, see test output
+
+**Key Rule**: If a Continue model needs to report command output or test results, ask for them to be pasted — never fabricate.
+
+Full details in [`CONTINUE_WORKFLOW_AUDIT.md`](CONTINUE_WORKFLOW_AUDIT.md).
+
+---
+
 ## How a Session Works
 
-### 1. Plan with a cloud agent
-Use Claude, Gemini, or Perplexity to review the session handoff, current RSpec
-baseline, and produce a priority stack and task files. This is the only time
-cloud agents are used — planning and review gates only.
+### 1. Plan with Gemini (PRIMARY GATE)
+Use Gemini to review session handoff, current RSpec baseline, and produce a priority stack
+and task recommendations. Gemini routes which tasks need Qwen3.5 detailing vs. direct cloud handoff.
 
-### 2. Route tasks to the right local agent
-Read `rules/AGENT_ROUTING.md` before assigning any task.
-Wrong agent = wasted time and degraded output.
+### 2. Triage & Detail with Qwen3.5 (Continue)
+For each selected task file:
+- Qwen3.5 reads the task file
+- Verifies template conformance
+- Adds implementation detail, code examples
+- Produces "Local Worker Triage Report"
+- Routes to appropriate cloud agent
 
-### 3. One implementation agent at a time
+### 3. Route tasks to the right cloud agent
+Read `rules/AGENT_ROUTING.md` after Qwen3.5 has triaged.
+Qwen3.5 recommendations + task detail + MVP alignment → cloud agent routing decision.
+
+### 4. One implementation agent at a time
 Never run two agents executing RSpec simultaneously.
-Task creation, research, and documentation can run in parallel.
+Task creation (Qwen3.5), research, and documentation can run in parallel.
 Implementation cannot.
 
-### 4. Every task follows the same pattern
-1. Read task file completely before touching anything
-2. Produce Synthesis Report and STOP
-3. Wait for human approval
-4. Apply fix
-5. Run specs — confirm 0 new failures
-6. Commit from host (Intel Mac)
-7. Fill in completion report
-8. Move task to `completed/`
+### 5. Every task follows the same pattern
+1. Qwen3.5 reads and details the task (Continue phase)
+2. Human reviews Qwen3.5 output and approves
+3. Cloud agent reads the detailed task
+4. Produce Synthesis Report and STOP
+5. Wait for human approval
+6. Apply fix
+7. Run specs — confirm 0 new failures
+8. Commit from host (Intel Mac)
+9. Fill in completion report
+10. Move task to `completed/`
 
-### 5. Session ends with a handoff document
+### 6. Session ends with a handoff document
 Save to: `docs/new_agent/tasks/session-handoffs/session_handoff_YYYY-MM-DD.md`
 
 ---

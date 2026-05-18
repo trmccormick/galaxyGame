@@ -9,16 +9,44 @@
 
 ## The Cluster
 
-### Cloud Agents
-| Agent | Cost | Capability | Available Until |
+### Planning Gate (ALWAYS FIRST)
+| Agent | Role | Cost | Status |
 |---|---|---|---|
-| Claude | Premium | Planning, strategy, architecture gates | Gates only |
-| Grok | 0.25x | Logic audit, synthesis reports, investigation | RETIRED 2026-05-15 |
-| GPT-4.1 | 0x free | Mechanical implementation, file tasks | Ongoing |
-| Haiku 4.5 | 0.33x | Implementation, spec fixes, handoffs | Weekly limit applies |
-| Perplexity/Gemini | Manual | Strategist fallback when Claude unavailable | Manual only |
+| **Gemini** | PRIMARY planner, session triage | Free web | Always available |
+| Claude | Secondary planning (Gemini fallback) | Premium | Gates only |
+| Perplexity | Research fallback | Free web | Manual only |
 
-### Local Agents (via Continue on Intel Mac)
+---
+
+### Triage & Detailing Phase (NEW — May 2026)
+| Model | Node | Provider | Role |
+|---|---|---|---|
+| **Qwen3.5 27B** | M4 | Continue | Heavy auditing, complex multi-file reasoning, architectural gap checking |
+| **Qwen3.5 9B** | M4 / Windows | Continue | Markdown formatting, template conformance, implementation detail |
+
+**What Qwen3.5 does in this phase**:
+- ✅ Reads task files from backlog
+- ✅ Verifies template conformance against TASK_TEMPLATE.md
+- ✅ Assesses MVP alignment (valid vs. stale vs. obsolete)
+- ✅ Adds implementation detail, code examples, acceptance criteria
+- ✅ Produces "Local Worker Triage Report" section
+- ✅ Routes to appropriate cloud agent
+
+**Output**: Detailed task file + triage report → Cloud agent gets fully-specified task
+
+---
+
+### Cloud Implementation Agents
+| Agent | Cost | Capability | When to Use |
+|---|---|---|---|
+| Gemini | Free web | Strategic decisions after triage | Rarely — already used for planning |
+| Claude Sonnet | 1x | Complex reasoning, architecture | Blocked until Gemini detail is approved |
+| GPT-4.1 | 0x free | Mechanical implementation | Standard for Qwen3.5-prepared tasks |
+| Haiku 4.5 | 0.33x | Fast implementation, spec fixes | Well-specified tasks from Qwen3.5 |
+
+---
+
+### Local Execution Agents (via Continue on Intel/M4/Windows)
 | Model | Node | IP | Best For |
 |---|---|---|---|
 | Codestral | M4 | 10.6.186.161 | Architecture reasoning, synthesis before implementation |
@@ -73,47 +101,59 @@ the codebase. If RAG status is unknown, use a cloud agent for any codebase searc
 
 ## Routing Table
 
-### Planning & Strategy
+### Planning Gate (Session Start)
 | Task | Agent | Reason |
 |---|---|---|
-| Session triage and priority stack | Claude | Premium gate only |
-| Produce task files | Claude | Premium gate only |
-| Session handoff review | Claude | Premium gate only |
-| Perplexity/Gemini fallback planning | Perplexity or Gemini | Manual — when Claude not available |
+| Session triage and priority stack | Gemini | PRIMARY gatekeeper |
+| Produce initial task recommendations | Gemini | Understand MVP alignment |
+| Route tasks for Qwen3.5 triage vs direct handoff | Gemini | Quality assessment |
 
-### Investigation & Synthesis
+### Qwen3.5 Triage Phase (All Tasks)
 | Task | Agent | Reason |
 |---|---|---|
-| Read 8+ files and produce risk report | Grok (until May 15) then Codestral | Cross-file reasoning |
-| Logic audit before implementation | Grok (until May 15) then DeepSeek 16B | Needs judgment |
-| Codebase search and summarize | Qwen3-30B + Nomic Embed | Fully local, RAG-assisted |
-| Identify root cause from error | Grok (until May 15) then Codestral | Pattern recognition |
+| Read backlog task files and assess | Qwen3.5 27B (M4) | Heavy reasoning, multi-file |
+| Verify template conformance | Qwen3.5 9B (M4 or Windows) | Structural analysis |
+| Add implementation detail, code examples | Qwen3.5 (either size) | Code pattern understanding |
+| Identify MVP alignment | Qwen3.5 27B (M4) | Requires reasoning |
+| Produce triage report | Qwen3.5 (either size) | Structured output |
+| Route to cloud agent | Qwen3.5 27B (M4) | Complex decision-making |
 
-### Implementation
+**Output from this phase**: Task file with "Local Worker Triage Report" + detailed implementation steps
+
+### Investigation & Synthesis (After Triage)
 | Task | Agent | Reason |
 |---|---|---|
-| Single file edit — exact before/after specified | Qwen2.5-Coder 3B or GPT-4.1 | Mechanical |
-| Single file edit — needs some inference | Qwen2.5-Coder 14B | Better context handling |
-| Multi-file refactor — patterns specified | GPT-4.1 or Qwen3-30B | Heavy lifting |
-| Multi-file refactor — needs reasoning | Codestral → Qwen2.5-14B | Architect then implement |
-| Create missing fixture or config file | GPT-4.1 | Zero reasoning needed |
-| Factory trait fix | GPT-4.1 | Mechanical |
-| Add logger call to rescue block | GPT-4.1 | Mechanical |
-| Architecture refactor | Codestral synthesis → GPT-4.1 implement | Never skip synthesis |
+| Cross-file reasoning (8+ files) | Claude Sonnet (1x) | Only after Qwen3.5 triage |
+| Logic audit before implementation | Claude or Codestral | Judgment call on architecture |
+| Codebase search | Qwen3-Coder 30B + Nomic Embed | RAG-assisted local search |
+| Identify root cause from error | Claude or Codestral | Pattern recognition |
+
+### Implementation (Cloud Agents)
+| Task | Agent | Reason |
+|---|---|---|
+| Single file edit — exact specs from Qwen3.5 | GPT-4.1 0x or Haiku 0.33x | Mechanical, well-prepared task |
+| Single file edit — needs some inference | GPT-4.1 0x | Better context handling |
+| Multi-file refactor — patterns specified | GPT-4.1 0x or Claude 1x | Heavy lifting |
+| Multi-file refactor — needs reasoning | Codestral → GPT-4.1 | Architect then implement |
+| Create missing fixture or config | GPT-4.1 0x | Mechanical |
+| Factory trait fix | GPT-4.1 0x | Mechanical |
+| Add logger call to rescue block | GPT-4.1 0x | Mechanical |
+| Architecture refactor | Claude 1x (synthesis only) → GPT-4.1 | Never skip synthesis |
 
 ### Data & JSON
 | Task | Agent | Reason |
 |---|---|---|
-| JSON file edits — small targeted | Qwen2.5-Coder 3B | Fast, low risk |
-| JSON file audits — cross-file validation | Grok or Codestral | Needs judgment |
-| Large JSON generation | GPT-4.1 | Free, handles volume |
+| JSON file edits — small targeted | Qwen2.5-Coder 3B (Windows) | Fast, low risk |
+| JSON file audits — validation | Qwen3.5 27B (M4) | Needs judgment |
+| Large JSON generation | GPT-4.1 0x | Free, handles volume |
 
 ### Documentation
 | Task | Agent | Reason |
 |---|---|---|
 | Update .md files after code change | Qwen2.5-Coder 3B or GPT-4.1 | Mechanical |
-| Write new architecture docs | Claude | Premium gate |
-| Session handoff document | GPT-4.1 or Grok | End of session |
+| Write new architecture docs | Claude 1x | Premium gate |
+| Session handoff document | GPT-4.1 0x or Haiku 0.33x | End of session |
+| Update task files (post-implementation) | GPT-4.1 0x | Mechanical update |
 
 ### Repository Operations
 | Task | Agent | Reason |
