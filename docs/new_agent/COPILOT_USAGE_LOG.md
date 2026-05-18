@@ -1,14 +1,16 @@
 ---
 title: Copilot Pro Usage Log (Prepaid Year)
 date_started: 2026-05-18
-prepaid_expiration: ~2027-05-18
+prepaid_expiration: CHECK_GITHUB_BILLING (update when you find actual expiration)
 target_monthly_usage: <1 credit
 objective: Track escalations to prove local models sufficient for renewal decision
 ---
 
-# Copilot Pro Usage Log (May 2026 - May 2027)
+# Copilot Pro Usage Log (Prepaid Period)
 
 **Strategy**: Local-first execution. Only escalate to Copilot Pro when local models (Codestral/Qwen3.5) genuinely fail.
+
+**⚠️ IMPORTANT**: Update `prepaid_expiration` date at top once you check your GitHub Billing page.
 
 **Measurement Goal**: 
 - Track every escalation
@@ -16,7 +18,7 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 - Calculate average credits/month
 - Target: <1 credit/month (proves local models work for 95% of tasks)
 
-**Usage at Renewal (April/May 2027)**:
+**Usage at Renewal (30 days before expiration)**:
 - If <1 credit/month average: Downgrade to Free ($0/month)
 - If 1-3 credits/month average: Marginal, need more analysis
 - If >3 credits/month average: Consider renewing Copilot Pro ($10/month)
@@ -191,7 +193,10 @@ objective: Track escalations to prove local models sufficient for renewal decisi
 
 ---
 
-## Year Summary & Renewal Decision (April/May 2027)
+## Year Summary & Renewal Decision (At Expiration Date)
+
+**⚠️ NOTE**: This summary section updates when you hit your actual expiration date. 
+(If your expiration is NOT in May 2027, adjust the timeline and monthly tables as needed.)
 
 ### Aggregate Metrics
 

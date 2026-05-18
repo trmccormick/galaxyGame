@@ -5,15 +5,15 @@ date_created: 2026-05-18
 last_updated: 2026-05-18
 policy_release_date: 2026-06-01
 subscriber_status: ANNUAL_PREPAID
+subscription_expiration: UNKNOWN (check GitHub billing page)
 ---
 
 # GitHub Copilot June 1, 2026 Changes — Usage-Based Billing Model
 
 **Status**: ✅ POLICY RELEASED — Effective June 1, 2026  
-**Your Subscription**: 📌 **ANNUAL PREPAID** (June 1 policy does NOT apply until prepaid year expires)  
-**When Policy Affects You**: End of prepaid year (likely May 2027)  
-**Current Implication**: Path A (Copilot Pro) is locked in. No June 1-3 testing needed.  
-**Action Timeline**: Defer final decision until 30 days before prepaid expiration
+**Your Subscription**: 📌 **ANNUAL PREPAID** (exact expiration date unknown)  
+**Where to Check**: GitHub Account → Billing & Plans → Subscriptions (shows renewal date)  
+**Current Implication**: Path A (Copilot Pro) is locked in until renewal. No action needed before expiration date.
 
 ---
 
@@ -103,23 +103,29 @@ Local Qwen3.5     = 0 tokens (local, unlimited) ← BECOMES PRIMARY
 
 ---
 
-## Your Status: Annual Prepaid Plan
+## Your Status: Annual Prepaid Plan (Expiration Date Unknown)
 
 **What This Means**:
 - ✅ You locked in Copilot Pro before June 1 via annual prepaid subscription
-- ✅ June 1 policy change does NOT affect your billing until prepaid year expires
+- ✅ June 1 policy change does NOT affect your billing until prepaid expires
 - ✅ You are NOT subject to the $10/month usage-based credit system until renewal
-- ✅ You have unlimited Copilot Pro access through end of prepaid term
+- ✅ You have unlimited Copilot Pro access until your renewal date
+
+**Where to Find Your Expiration Date**:
+1. Go to GitHub → Settings → Billing & Plans
+2. Look for "Subscriptions" section
+3. Find "GitHub Copilot Pro" → shows renewal/expiration date
+4. **UPDATE THIS DOCUMENT** once you know the exact date
 
 **Your Implications**:
-- **NOW (May-June 2026)**: Use Copilot Pro freely, no credit tracking needed
-- **30 days before expiration**: Decide whether to renew at new usage-based rates ($10/month credits)
+- **NOW ([until expiration date])**: Use Copilot Pro freely, no credit tracking needed
+- **30 days before [expiration date]**: Decide whether to renew at new usage-based rates ($10/month credits)
 - **Path A locked in**: You're automatically on Path A (Copilot Pro) until prepaid ends
-- **Can ignore**: June 1-3 testing, credit budgeting, route optimization for Pro tier
+- **Can ignore**: June 1-3 testing, credit budgeting, route optimization for Pro tier (until expiration)
 - **Can focus on**: Testing local models (Codestral/Qwen3.5) in parallel to prep for potential Path B
 
 **When You Need To Decide**:
-- Decision window: Last 30 days of prepaid year
+- Decision window: Last 30 days before [expiration date]
 - Question: Is $10/month AI Credits worth it, or downgrade to Copilot Free + local models?
 - Information needed: How many Copilot tasks do you actually need per month?
 
@@ -454,7 +460,7 @@ THEN downgrade to Copilot Free ($0) + local primary
 
 **Philosophy**: Your prepaid Copilot Pro credits are limited and valuable. Use local models for 95% of work. Reserve credits for when local models genuinely fail.
 
-**Updated AI Stack (May 18 - May 2027)**:
+**Updated AI Stack (From Now Until Expiration)**:
 
 | Tier | Agent | Cost | Role | When To Use |
 |---|---|---|---|---|
@@ -490,18 +496,18 @@ Task arrives:
 - **Expected**: 8-12 escalations/month to Copilot Pro (everything else local)
 
 **Why This Strategy**: 
-- At renewal (April/May 2027), if you've proven <1 credit/month usage, downgrading to Free is obvious
+- At renewal date, if you've proven <1 credit/month usage, downgrading to Free is obvious
 - You'll have documented evidence: Local models handled 90%+ of work reliably
 - You save $10/month and keep the same execution speed
 
 ---
 
-## Renewal Decision Reference (April/May 2027)
+## Renewal Decision Reference (At Expiration Date)
 
 ### Path B (Downgrade to Free) — Most Likely Outcome
 
-**Switch if** (expected by April 2027):
-- ✅ You averaged <1 credit/month during Phase 1
+**Switch if** (expected at renewal):
+- ✅ You averaged <1 credit/month during prepaid period
 - ✅ Local models (Codestral/Qwen3.5) handled 90%+ of work reliably
 - ✅ Only 8-12 escalations/month truly needed Copilot Pro
 - ✅ You're confident local models can continue sustaining 95% of work
@@ -512,8 +518,8 @@ Task arrives:
 
 ### Path A (Renew Copilot Pro) — Unlikely, But Possible
 
-**Keep if** (unexpected by April 2027):
-- ❓ You averaged >3 credits/month during Phase 1
+**Keep if** (unexpected at renewal):
+- ❓ You averaged >3 credits/month during prepaid period
 - ❓ Local models frequently failed on critical work
 - ❓ Copilot Pro was genuinely essential for productivity
 - ❓ The $10/month cost is acceptable vs. time savings
@@ -546,9 +552,20 @@ GPT-4.1 available in Copilot Pro?
 
 ---
 
-## Immediate Action Items (May 18, 2026)
+## Immediate Action Items (Before Expiration Date)
 
-### Priority 1: Implement Local-First Routing (This Week)
+### Priority 1: Find Your Exact Expiration Date (THIS WEEK)
+
+**Action**:
+1. [ ] Go to GitHub → Settings → Billing & Plans → Subscriptions
+2. [ ] Find "GitHub Copilot Pro" subscription
+3. [ ] Note the renewal/expiration date
+4. [ ] Update this document (replace "[expiration date]" with actual date)
+5. [ ] Add to calendar: Renewal decision deadline (30 days before expiration)
+
+**Why**: Everything else depends on knowing when your prepaid ends
+
+### Priority 2: Implement Local-First Routing (This Week)
 
 **Goal**: Set up Codestral/Qwen3.5 as default agents in Continue + AGENT_ROUTING.md
 
@@ -558,11 +575,11 @@ GPT-4.1 available in Copilot Pro?
    - Triage/detail → Qwen3.5
    - Only escalate to Copilot Pro on local failure
 2. [ ] Test one RSpec fix with local Codestral (verify it works well)
-3. [ ] Create docs/new_agent/COPILOT_USAGE_LOG.md for tracking escalations
+3. [ ] Confirm docs/new_agent/COPILOT_USAGE_LOG.md is ready for tracking
 
-**Why**: Establishes the baseline for measuring credit efficiency over next 12 months
+**Why**: Establishes the baseline for measuring credit efficiency over prepaid period
 
-### Priority 2: Track Every Copilot Escalation (Ongoing)
+### Priority 3: Track Every Copilot Escalation (Ongoing)
 
 **Goal**: Collect data on when/why Copilot Pro is actually needed
 
@@ -574,12 +591,12 @@ GPT-4.1 available in Copilot Pro?
 
 **Why**: At renewal, this data proves whether downgrading to Free is viable
 
-### Priority 3: No Credits-Tracking Burden Needed
+### Priority 4: No Credits-Tracking Burden Until 30 Days Before Expiration
 
-**NOT required**:
-- ❌ Weekly credit audits (your prepaid is unlimited through May 2027)
+**NOT required now**:
+- ❌ Weekly credit audits (your prepaid is unlimited until expiration)
 - ❌ Monthly budget warnings (no monthly resets until renewal)
-- ❌ Immediate routing doc overhauls (Phase 1 is 12 months long)
+- ❌ Immediate routing doc overhauls (you have time)
 - ❌ Credit optimization obsession (focus on local reliability instead)
 
 **Actually focus on**: Making sure local models work well for your tasks
@@ -612,8 +629,8 @@ A: Good idea. If Codestral takes 10 minutes (wrong output), Qwen3.5 takes 5 minu
 **Q: What if my M4 Mac gets overwhelmed by local models?**  
 A: Unlikely. Codestral/Qwen3.5 are reasonable models. If they're causing system slowdown, that's a hardware limitation, not a model quality issue. Still use them; just accept slower response time.
 
-**Q: Will my local models improve by April 2027?**  
-A: Maybe. New local models might release. By renewal time, you can evaluate latest options (Qwen4, DeepSeek improvements, etc.) and decide if local-first is still best for your workflow.
+**Q: Will my local models improve by renewal date?**  
+A: Maybe. New local models might release over time. By renewal, you can evaluate latest options (Qwen4, DeepSeek improvements, etc.) and decide if local-first is still best for your workflow.
 
 **Q: Since I prepaid for a year, how does that affect June 1 policy?**  
 A: Not at all. June 1 policy only affects new monthly subscribers. Your prepaid continues unchanged. You have an unfair advantage for 12 months.
@@ -628,9 +645,10 @@ A: Absolutely. They'll hit the $10 credit limit hard if on monthly billing. Your
 | Factor | Impact |
 |---|---|
 | **June 1 policy change** | Doesn't affect you immediately ✅ |
-| **Urgency to decide** | Low — decide April/May 2027 when prepaid expires ✅ |
+| **Urgency to decide** | Low — decide at renewal (30 days before expiration) ✅ |
 | **Action now** | Collect data on actual usage + test local models 📊 |
 | **Advantage** | Unlimited Copilot while others are budget-constrained 🎯 |
+| **Next step** | Find your expiration date in GitHub Billing 🔍 |
 | **Smart move** | Use this window to thoroughly evaluate Codestral/Qwen3.5 📈 |
 
 **Recommendation**: Keep using Copilot Pro as-is until prepaid expires. In parallel, test local models extensively. When renewal comes, you'll have solid data to choose Path A (renew) or Path B (downgrade + local).
