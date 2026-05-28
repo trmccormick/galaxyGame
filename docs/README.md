@@ -1,233 +1,71 @@
-# Galaxy Game Documentation
+# Galaxy Game
 
-A SimEarth-inspired Rails game featuring realistic space colonization, manufacturing chains, and AI-driven mission planning.
+**A SimEarth-inspired space colonization game featuring realistic manufacturing chains, AI-driven mission planning, and player-driven economics.**
 
-**Tech Stack**: Rails 7.0.8.4 • Ruby 3.2 • PostgreSQL 16
-
----
-
-## 📋 Quick Navigation
-
-### 👤 For Players
-- [Game Mechanics](gameplay/mechanics.md) - Core gameplay loops
-- [Terraforming Guide](gameplay/terraforming.md) - Planet transformation
-- [User Documentation](user/) - How to play
-
-### 💻 For Developers
-
-#### Getting Started
-- [Setup Guide](developer/setup.md) - Development environment
-- [Architecture Overview](architecture/overview.md) - System design
-- **[Current Status](agent/CURRENT_STATUS.md)** ⭐ - Active work tracker
-
-#### Agent Documentation
-- **[Grok Rules](agent/GROK_RULES.md)** - Agent behavior guidelines
-- **[Current Work](agent/GROK_CURRENT_WORK.md)** - Active agent tasks
-
-#### Active Development (NEW)
-- **[Restoration Plan](agent/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)** - 6-phase roadmap
-- [Environment Boundaries](agent/rules/ENVIRONMENT_BOUNDARIES.md) - Docker/Git rules
-- [Grok Task Templates](agent/reference/grok_notes.md) - Workflow patterns
-
-#### Completed Work (NEW)
-- [Construction Refactor](agent/completed/CONSTRUCTION_REFACTOR.md) - Manufacturing pipeline history
-- [Admin Dashboard Redesign](developer/ADMIN_DASHBOARD_REDESIGN.md) - Multi-galaxy support with hierarchical navigation
-
-#### Technical Reference
-- [Data-Driven Systems](developer/DATA_DRIVEN_SYSTEMS.md) - JSON configuration patterns
-- [Blueprint Cost Schema](developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) - Crafting system
-- [Testing Framework](developer/ai_testing_framework.md) - AI simulation testing
-- **[Practical Testing Guide](testing/PRACTICAL_TESTING_GUIDE.md)** ⭐ - RSpec best practices
-- **[CI/CD Pipeline](testing/CI_CD_PIPELINE.md)** ⭐ - Deployment automation
-- **[API Documentation](api/README.md)** ⭐ - Admin endpoints reference
-- **[Deployment Guide](operations/DEPLOYMENT.md)** ⭐ - Production setup
-
-#### Documentation Organization
-- [Reference Docs](reference/) - Stable guides and design intent
-- [Archive Docs](archive/) - Historic materials and legacy code
-- [Agent Docs](agent/) - AI agent instructions and rules
+Build settlements across the solar system and beyond. Process raw regolith into manufactured goods. Manage complex supply chains. Make critical decisions about terraforming alien worlds. Guide humanity's expansion through wormhole networks into the unknown.
 
 ---
 
-## 🏗️ Core Systems
+## 🎮 Game Vision
 
-### Industry & Manufacturing
-- [Construction System](architecture/construction_system.md) - Building infrastructure
-- [Industrial Chains](architecture/SYSTEM_INDUSTRIAL_CHAINS.md) - Production pipelines
-- [Foundry & Lunar Elevator](architecture/foundry_logic_and_lunar_elevator.md) - Heavy industry
+### SimEarth Inspiration
+- **Planetary Simulation**: Test terraforming scenarios with accelerated time (100-year projections in minutes)
+- **Admin Control**: Manual mission design teaching AI patterns for autonomous deployment
+- **Economic Projection**: Resource flow visualization showing GCC movement across solar system
+- **Emergent Complexity**: Simple controls creating realistic planetary evolution and economic outcomes
 
-### Economic Systems
-- [Financial System](architecture/financial_system.md) - Currency and banking
-- [Organizations](architecture/organizations_system.md) - Corporations and consortiums
-- [Economic Baseline](market/economic_baseline.md) - Market fundamentals
-- [Trading & Logistics](../README.md#trading--logistics-system) - Player contracts & insurance
+### Eve Online Inspiration  
+- **Player-Driven Economy**: Contracts, insurance, logistics markets controlled by players
+- **Mission Generation**: Procedural missions with pattern learning and AI adaptation
+- **Corporation Mechanics**: Organizations, consortiums, reputation systems
 
-### Planetary Systems
-- [Solar System](architecture/solar_system.md) - Sol system generation
-- [Geosphere](architecture/geosphere_system.md) - Planetary geology
-- [Hydrosphere](architecture/hydrosphere_system.md) - Water systems
-- **[Atmospheric Maintenance](architecture/atmospheric_maintenance_system.md)** ⭐ - Stabilization & terraforming physics
-- [Biosphere](architecture/biosphere_system.md) - Life and ecosystems
-- [Hycean Planets](architecture/hycean_planet_system.md) - Ocean worlds
+### Realistic Science
+Grounded in real physics, chemistry, and orbital mechanics while maintaining engaging gameplay.
 
-### Transportation
-- [Cycler System](architecture/ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md) - Orbital logistics
-- [Wormhole System](architecture/wormhole_system.md) - FTL travel
-- [Asteroid Relocation](crafts/asteroid_relocation_tug.md) - Resource transport
-
-### AI & Automation
-- [AI Manager Overview](ai_manager/00_architecture_overview.md) - AI decision framework
-- [Probe System](ai_manager/01_probe_system.md) - Autonomous exploration
-- [Settlement Planning](ai_manager/02_settlement_planning.md) - Colony optimization
-- [Precursor Infrastructure](ai_manager/PRECURSOR_INFRASTRUCTURE_CAPABILITIES.md) - System bootstrapping
+**Deep Dive**: [SimEarth Admin Vision](docs/architecture/SIMEARTH_ADMIN_VISION.md) - Comprehensive guide to planetary simulation, mission control, and AI pattern learning
 
 ---
 
-## 📖 Storyline & Lore
+## 🚀 Current Development Status
 
-### Main Arc
-1. [Story Arc](storyline/01_story_arc.md) - Campaign narrative
-2. [Crisis Mechanics](storyline/02_crisis_mechanics.md) - Events and challenges
-3. [Consortium Framework](storyline/03_consortium_framework.md) - Faction system
-4. [Physics & Topology](storyline/04_physics_topology.md) - Universe rules
-
-### Game Design
-5. [Deployment Hierarchy](storyline/05_deployment_hierarchy.md) - Settlement expansion
-6. [Procedural Generation](storyline/05_procedural_generation.md) - Content creation
-7. [AI Intelligence](storyline/06_ai_intelligence.md) - NPC behavior
-8. [Economic Systems](storyline/07_economic_systems.md) - Market simulation
-9. [Implementation Phases](storyline/08_implementation_phases.md) - Development roadmap
-10. [Lore Canon](storyline/09_lore_canon.md) - Universe background
-
----
-
-## 🎯 Development Phases
-
-### Current: Phase 3 - Integration & Restoration
-**Goal**: Reduce test failures from 401 → <50  
-**Status**: ~393 failures remaining  
-**Approach**: Surgical fixes preserving post-Jan-8 improvements
+**Phase 3**: Integration & Restoration (Active)  
+**Test Failures**: ~393 (down from 420) - Target: <50  
+**Next Phase**: UI Enhancement (SimEarth admin panel + Eve mission builder)
 
 **Recent Progress**:
-- ✅ shell_spec.rb - 66/66 passing
-- ✅ consortium_membership_spec.rb - 5/5 passing
-- ✅ covering_service_spec.rb - 23/24 passing
-- ✅ protoplanet_spec.rb - 10/10 passing (new protoplanet model)
-- ✅ terrain generation - Titan GeoTIFF support, protoplanet terrain
-- 🔄 financial/account_spec.rb - in progress
+- ✅ Shell construction system - 66/66 specs passing
+- ✅ Consortium membership - 5/5 specs passing  
+- ✅ Crater dome covering - 23/24 specs passing
+- ✅ TradeService pricing logic - fixed factory issues and method implementations
+- ✅ UnitAssemblyJob currency seeding - added GCC/USD currencies to test environment
+- ✅ Orbital resupply cycle - updated craft type and mocking strategy
+- ✅ Protoplanet classification - implemented for large asteroids (Vesta, Psyche)
+- ✅ Terrain generation fixes - Titan GeoTIFF usage, protoplanet support
+- 🔄 GameController singleton methods - moved method definitions before usage
 
-### Next: Phase 4 - UI Enhancement
-**Prerequisite**: <50 test failures  
-**Vision**: SimEarth admin panel + Eve Online mission builder
-
-**Planned Features**:
-- System economic projection dashboard
-- D3.js resource flow visualization
-- Mission profile builder interface
-- AI pattern library viewer
-
-### Future: Phase 5 - AI Pattern Learning
-**Goal**: Autonomous wormhole expansion  
-**Components**:
-- Pattern extraction from missions
-- Success metric calculation
-- Autonomous deployment decisions
-- Local resource adaptation
+📊 **[View Current Status](docs/development/active/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
 
 ---
 
-## 🔧 Common Development Tasks
+## 🛠️ Tech Stack & Environment
 
-### Run Tests
+- **Backend:** Rails 7.0.8.4 | Ruby 3.2 | PostgreSQL 16
+- **Environment:** Docker-managed development environment
+- **Testing Engine:** RSpec + Capybara + Selenium
+- **Quality Control:** SimpleCov + CircleCI + Code Climate
+
+### 🚀 Quick Start
+
 ```bash
-# Full suite (in container)
+# Clone repository
+git clone [https://github.com/yourusername/galaxyGame.git](https://github.com/yourusername/galaxyGame.git)
+cd galaxyGame
+
+# Start development environment
+docker-compose -f docker-compose.dev.yml up
+
+# Run tests (in container)
 docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
 
-# Specific file
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/models/shell_spec.rb
-
-# Check failures
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --format documentation --dry-run 2>&1 | grep "failed"
-```
-
-### Git Workflow (Host Only - NEVER in container)
-```bash
-git status
-git diff galaxy_game/path/to/file.rb
-git add galaxy_game/path/to/file.rb
-git commit -m "fix: descriptive commit message"
-```
-
-### Database Operations
-```bash
-# Migrate (in container)
-docker-compose -f docker-compose.dev.yml exec web bundle exec rails db:migrate
-
-# Seed data
-docker-compose -f docker-compose.dev.yml exec web bundle exec rails db:seed
-```
-
----
-
-## 📚 Additional Resources
-
-### Mission Profiles
-- [Complete Profile Library](mission_profiles/00_complete_profile_library.md) - All mission templates
-- Mission categories: Bootstrapping, Mining, Manufacturing, Exploration
-
-### API Documentation
-- [Materials API](api/materials.md) - Material lookup and properties
-
-### System Guides
-- [Systems Documentation](systems/) - Detailed subsystem docs
-- [Tutorials](tutorials/) - Step-by-step guides
-
-### Wormhole Expansion
-- [Wormhole Integration](developer/WORMHOLE_SCOUTING_INTEGRATION.md) - Scouting implementation
-- [Expansion Documentation](wormhole_expansion/) - Network mechanics
-
----
-
-## 🎮 Game Philosophy
-
-**SimEarth Inspiration**: Planetary projection systems showing economic forecasts, resource flows, and terraforming progress
-
-**Eve Online Inspiration**: Complex player-driven economics, mission generation systems, and admin tools for managing universe state
-
-**Realistic Science**: Grounded in real physics and chemistry while maintaining playability
-
-**Player Agency**: Players control logistics, markets, and expansion - NPCs fill gaps but don't dominate
-
----
-
-## 📝 Documentation Standards
-
-### File Organization
-- **development/active/** - Current work tracking
-- **development/planning/** - Future roadmaps
-- **development/completed/** - Historical records
-- **development/reference/** - Technical guides
-
-### Commit Messages
-```
-fix: restore construction_date tracking in Shell model
-feat: add D3.js resource flow visualization
-docs: update manufacturing pipeline documentation
-test: add E2E integration test for ISRU chain
-```
-
-### Documentation Mandate
-Every code change must update corresponding .md files to maintain accuracy.
-
----
-
-**Last Updated**: February 11, 2026  
-**Documentation Version**: 2.2 (Atmospheric maintenance & real science integration)
-
-- [Project README](../README.md) - Project setup and overview
-- [Planning Documents](architecture/planning/) - Future development plans
-- [Legacy Documentation](../Documentation/) - Original documentation (being migrated)
-
----
-
-*This documentation is a work in progress. Please report issues or suggest improvements.*
+# Access application
+open http://localhost:3000

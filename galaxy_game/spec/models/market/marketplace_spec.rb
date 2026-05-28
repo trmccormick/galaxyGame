@@ -1,15 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Market::Marketplace, type: :model do
-  # Stub NPCPriceCalculator if it doesn't exist or to avoid loading it
-  before(:all) do
-    unless defined?(NPCPriceCalculator)
-      class NPCPriceCalculator
-        def self.calculate_bid(settlement, resource_name)
-          48.0 # Default stub value
-        end
-      end
-    end
+  # Stub Market::NpcPriceCalculator at the correct namespace so specs that
+  # exercise find_matching_orders don't require the full calculator to be loaded.
+  # Individual describe blocks that need specific return values override this via allow().
+  before do
+    allow(Market::NpcPriceCalculator).to receive(:calculate_bid).and_return(48.0)
+    allow(Market::NpcPriceCalculator).to receive(:calculate_ask).and_return(48.0)
   end
 
   describe 'associations' do
@@ -41,8 +38,16 @@ RSpec.describe Market::Marketplace, type: :model do
       expect(marketplace.current_market_condition('LOX')).to eq(lox_condition)
     end
 
-    it 'returns nil for a resource that does not exist' do
-      expect(marketplace.current_market_condition('UNKNOWN')).to be_nil
+    it 'creates and returns a new condition for a resource that does not exist' do
+      # current_market_condition uses find_or_create_by! -- it never returns nil.
+      # A missing resource gets a new Market::Condition record on first access.
+      expect {
+        marketplace.current_market_condition('UNKNOWN')
+      }.to change(Market::Condition, :count).by(1)
+
+      result = marketplace.current_market_condition('UNKNOWN')
+      expect(result).to be_a(Market::Condition)
+      expect(result.resource).to eq('UNKNOWN')
     end
   end
 
@@ -72,21 +77,80 @@ RSpec.describe Market::Marketplace, type: :model do
       )
     end
 
-    context 'when order is a Sell order' do
-      # Note: These tests are difficult to properly mock due to complex dependencies
-      # The functionality is adequately covered by the #place_order integration tests
-      # Skipping these tests for now - consider refactoring find_matching_orders
-      # to be more testable (e.g., dependency injection)
-      
+    context 'when order is a sell order' do
       before do
-        allow(settlement).to receive(:npc_market_bid).and_return(48.0)
-        allow(settlement).to receive(:npc_buy_capacity).and_return(500)
+        # find_matching_orders delegates price lookup to Market::NpcPriceCalculator.calculate_bid.
+        # The top-level before block stubs this to 48.0; override here for explicit clarity.
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid)
+          .with(settlement, 'LOX', demand: 100)
+          .and_return(48.0)
       end
-      
-      it 'calls the settlement NPC methods' do
-        # Just verify the method is callable
-        expect(marketplace).to respond_to(:find_matching_orders)
-        expect { marketplace.find_matching_orders(sell_order) }.not_to raise_error
+
+      it 'returns a single synthetic NPC buy order' do
+        result = marketplace.find_matching_orders(sell_order)
+        expect(result.length).to eq(1)
+      end
+
+      it 'returns an OpenStruct with order_type Buy' do
+        result = marketplace.find_matching_orders(sell_order)
+        expect(result.first.order_type).to eq('Buy')
+      end
+
+      it 'returns the NPC bid price on the synthetic order' do
+        result = marketplace.find_matching_orders(sell_order)
+        expect(result.first.price).to eq(48.0)
+      end
+
+      it 'returns the correct resource on the synthetic order' do
+        result = marketplace.find_matching_orders(sell_order)
+        expect(result.first.resource).to eq('LOX')
+      end
+
+      it 'sets the synthetic order id to -1' do
+        result = marketplace.find_matching_orders(sell_order)
+        expect(result.first.id).to eq(-1)
+      end
+
+      it 'caps trade volume at the NPC capacity ceiling of 1000' do
+        large_order = Market::Order.create!(
+          market_condition: market_condition,
+          orderable: player,
+          base_settlement_id: settlement.id,
+          resource: 'LOX',
+          quantity: 5000,
+          order_type: 'sell'
+        )
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid)
+          .with(settlement, 'LOX', demand: 5000)
+          .and_return(48.0)
+
+        result = marketplace.find_matching_orders(large_order)
+        expect(result.first.quantity).to eq(1000)
+      end
+
+      it 'returns empty array when NpcPriceCalculator returns zero' do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid)
+          .with(settlement, 'LOX', demand: 100)
+          .and_return(0)
+
+        expect(marketplace.find_matching_orders(sell_order)).to be_empty
+      end
+
+      it 'returns empty array when NpcPriceCalculator returns nil' do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid)
+          .with(settlement, 'LOX', demand: 100)
+          .and_return(nil)
+
+        expect(marketplace.find_matching_orders(sell_order)).to be_empty
+      end
+
+      # Regression guard against reintroducing the original string comparison bug
+      it 'matches via sell? predicate, not string equality against order_type' do
+        # If the guard were `order_type == 'Sell'` this would return []
+        # because the enum stores integers and returns lowercase strings.
+        result = marketplace.find_matching_orders(sell_order)
+        expect(result).not_to be_empty,
+          'find_matching_orders returned [] for a sell order -- ensure the guard uses sell? not string equality'
       end
     end
 

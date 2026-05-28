@@ -73,14 +73,26 @@ module Market
       end
     end
 
-    # Finds matching orders for a given order
+    # Finds matching orders for a given order.
+    #
+    # Only sell orders are eligible for NPC matching. Buy-side matching
+    # is not yet implemented and intentionally returns [].
+    #
+    # FIX: Previously checked `new_order.order_type == 'Sell'` (string comparison),
+    # which always evaluated false against the integer-backed enum
+    # `{ buy: 0, sell: 1 }`. Now uses the enum predicate `sell?` instead.
+    #
     # @param new_order [Market::Order] The order to find matches for
-    # @return [Array<OpenStruct>] Array of matching orders (can be synthetic NPC orders)
+    # @return [Array<OpenStruct>] Array of matching synthetic NPC orders, or []
     def find_matching_orders(new_order)
-      return [] unless new_order.order_type == 'Sell'
+      return [] unless new_order.sell?
 
-      npc_price = Market::NpcPriceCalculator.calculate_bid(settlement, new_order.resource, demand: new_order.quantity)
-      npc_capacity = 1000 # Default NPC buy capacity - can be made dynamic later
+      npc_price = Market::NpcPriceCalculator.calculate_bid(
+        settlement,
+        new_order.resource,
+        demand: new_order.quantity
+      )
+      npc_capacity = 1000 # Default NPC buy capacity — TODO: make dynamic
       trade_volume = [new_order.quantity, npc_capacity].min
 
       return [] unless trade_volume > 0 && npc_price > 0
