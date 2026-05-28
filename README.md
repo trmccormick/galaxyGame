@@ -1,67 +1,8 @@
-
 # Galaxy Game
 
-**The Ultimate Multi-Layer Space Colonization Simulator**  
-A high-fidelity hybrid of SimEarth, FreeCiv/Civ4, SimCity, and EVE Online.
+**A SimEarth-inspired space colonization game featuring realistic manufacturing chains, AI-driven mission planning, and player-driven economics.**
 
-Galaxy Game is a comprehensive industrial and planetary simulation built on Ruby on Rails. It scales from the microscopic chemical composition of regolith to the macroscopic expansion of interstellar empires.
-
----
-
-## 🚀 Development Status
-
-**Phase 4 (Expansion)**
-
-**Current Focus:** Surface Layer MVP & Industrial Loop Balancing.
-
-**Test Suite Health:** <82 Failures (Restoration "Grinder" phase terminated).
-
-**Backlog:** 178 Active Tasks identified for the current sprint.
-
-**Key Achievement:** Transitioned to a strictly JSON-driven blueprint system for unit architecture.
-
-📊 **[View Current Status](docs/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/agent/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
-
----
-
-## 🎮 The Four-Layer Vision
-The simulation architecture is divided into four distinct operational layers:
-
-1. **Macro: Planetary Simulation (SimEarth)**
-  - Focus: Global habitability, 100+ year terraforming projections, and atmospheric chemistry.
-  - Digital Twin Service: A high-speed "What If?" sandbox for projecting deep-time planetary outcomes before resource commitment.
-
-2. **Meso: Grand Strategy & Expansion (Civ4 / FreeCiv)**
-  - Focus: Settlement placement, unit deployment, and territorial expansion.
-  - Current MVP: Deploying heavy lift craft to surface tiles (e.g., lava tube entrances) for harvesting and initial base setup.
-
-3. **Micro: Industrial Construction (SimCity / TerrainForge)**
-  - Focus: Detailed settlement simulation, worldhouse enclosures, and infrastructure.
-  - TerrainForge: The "X-ray" layer for monitoring active construction events, managing I-beams, and panel configurations.
-
-4. **Economic: Industrial Logistics (EVE Online)**
-  - Focus: Player-driven markets and "Market vs. Build" industrial logic.
-  - Tax Structure: SCC Surcharge (0.5%), Broker Fee (0.3%), Sales Tax (3.37%).
-
----
-
-## 📚 Documentation Map
-The `docs/` directory is governed by the Documentation Strategist to prevent fragmentation.
-
-## ⚖️ Project Governance
-- **GUARDRAILS.md**: Mandatory rules for code, documentation, and agent behavior.
-- **CURRENT_STATUS.md**: Real-time tracking of active failures and sprint progress.
-- **GLOSSARY_SYSTEM_MECHANICS.md**: Unified terminology for all four simulation layers.
-
-## 🏗️ Architecture & Engineering
-- `architecture/`: High-level designs including the AI Manager and Planetary Patterns.
-- `economics/`: Market mechanics, tax structures, and PLEX trading logic.
-- `systems/`: Technical deep dives into ISRU, Shell Printing, and Wormholes.
-
-## 👨‍💻 Developer Resources
-- `docs/agent/`: Clean-root directory for active implementation agents.
-- `WORKFLOW_README.md`: Documentation process overview and core deliverable standards.
-
+Build settlements across the solar system and beyond. Process raw regolith into manufactured goods. Manage complex supply chains. Make critical decisions about terraforming alien worlds. Guide humanity's expansion through wormhole networks into the unknown.
 
 ---
 
@@ -85,56 +26,24 @@ Grounded in real physics, chemistry, and orbital mechanics while maintaining eng
 
 ---
 
+## 🚀 Current Development Status
 
-## 🚀 Development Status
+**Phase 3**: Integration & Restoration (Active)  
+**Test Failures**: ~393 (down from 420) - Target: <50  
+**Next Phase**: UI Enhancement (SimEarth admin panel + Eve mission builder)
 
-**Phase 4 (Expansion)**
+**Recent Progress**:
+- ✅ Shell construction system - 66/66 specs passing
+- ✅ Consortium membership - 5/5 specs passing  
+- ✅ Crater dome covering - 23/24 specs passing
+- ✅ TradeService pricing logic - fixed factory issues and method implementations
+- ✅ UnitAssemblyJob currency seeding - added GCC/USD currencies to test environment
+- ✅ Orbital resupply cycle - updated craft type and mocking strategy
+- ✅ Protoplanet classification - implemented for large asteroids (Vesta, Psyche)
+- ✅ Terrain generation fixes - Titan GeoTIFF usage, protoplanet support
+- 🔄 GameController singleton methods - moved method definitions before usage
 
-**Current Focus:** Surface Layer MVP & Industrial Loop Balancing
-
-**Test Suite Health:** 3941 examples, 87 failures, 22 pending (as of last run)
-
-**Backlog:** 178 Active Tasks identified for the current sprint
-
-**Key Achievement:** Transitioned to a strictly JSON-driven blueprint system for unit architecture
-
-📊 **[View Current Status](docs/agent/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/agent/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
-## 🎮 The Four-Layer Vision
-The simulation architecture is divided into four distinct operational layers:
-
-1. **Macro: Planetary Simulation (SimEarth)**
-  - Focus: Global habitability, 100+ year terraforming projections, and atmospheric chemistry.
-  - Digital Twin Service: A high-speed "What If?" sandbox for projecting deep-time planetary outcomes before resource commitment.
-
-2. **Meso: Grand Strategy & Expansion (Civ4 / FreeCiv)**
-  - Focus: Settlement placement, unit deployment, and territorial expansion.
-  - Current MVP: Deploying heavy lift craft to surface tiles (e.g., lava tube entrances) for harvesting and initial base setup.
-
-3. **Micro: Industrial Construction (SimCity / TerrainForge)**
-  - Focus: Detailed settlement simulation, worldhouse enclosures, and infrastructure.
-  - TerrainForge: The "X-ray" layer for monitoring active construction events, managing I-beams, and panel configurations.
-
-4. **Economic: Industrial Logistics (EVE Online)**
-  - Focus: Player-driven markets and "Market vs. Build" industrial logic.
-  - Tax Structure: SCC Surcharge (0.5%), Broker Fee (0.3%), Sales Tax (3.37%).
-
-## 📚 Documentation Map
-The docs/ directory is governed by the Documentation Strategist to prevent fragmentation.
-
-## ⚠️ File Move & Archival Policy
-
-All file moves and archival (especially for task, legacy, or documentation files) must use `mv` in the terminal to preserve git history and avoid blank files. See [PRACTICAL_TESTING_GUIDE.md](testing/PRACTICAL_TESTING_GUIDE.md#canonical-file-move-and-archival-policy) for details.
-## ⚖️ Project Governance
-- **GUARDRAILS.md**: Mandatory rules for code, documentation, and agent behavior.
-## 🏗️ Architecture & Engineering
-- **architecture/**: High-level designs including the AI Manager and Planetary Patterns.
-- **economics/**: Market mechanics, tax structures, and PLEX trading logic.
-- **systems/**: Technical deep dives into ISRU, Shell Printing, and Wormholes.
-
-## 👨‍💻 Developer Resources
-- **docs/agent/**: Clean-root directory for active implementation agents.
-- **WORKFLOW_README.md**: Documentation process overview and core deliverable standards.
-
+📊 **[View Current Status](docs/development/active/CURRENT_STATUS.md)** | 🗺️ **[Development Roadmap](docs/development/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md)**
 
 ---
 
@@ -259,8 +168,8 @@ contract_data = {
 }
 
 result = Logistics::PlayerContractService.create_logistics_contract(contract_data)
-**Last Updated**: March 22, 2026
-**Project Lead**: Tracy McCormick
+```
+
 **Full API Documentation**: [docs/architecture/organizations_system.md](docs/architecture/organizations_system.md)
 
 ### Economic Impact
@@ -292,12 +201,6 @@ We welcome contributions! Current focus areas:
 3. Follow commit message format: `fix:`, `feat:`, `docs:`, `test:`
 4. Update documentation with every code change
 5. Submit PRs with passing tests
-
-
-### Data-Driven Unit Architecture & JSON Migration
-- **BiogasUnit Migration**: The `biogas_generator` and `biogas_unit` have been migrated to a JSON-driven BaseUnit architecture. All legacy Ruby models have been removed in favor of template-compliant JSON blueprints and operational data.
-- **JSON Data Protocol**: JSON blueprint and operational data files (e.g., `biogas_generator_bp.json`, `biogas_generator_data.json`) are **NOT** committed to GitHub. Contributors must follow the documented workflow for local creation and validation.
-- **Standards & Workflow**: See [docs/developer/JSON_DATA_GUIDE.md](docs/developer/JSON_DATA_GUIDE.md) for naming conventions, required fields, and validation steps for all unit JSON data.
 
 ### Development Workflow
 - **Git Practices**: Be selective with staging - avoid `git add .` as it can interfere with other developers' work
@@ -355,6 +258,5 @@ Humanity has discovered a network of wormholes enabling FTL travel. Your role: g
 
 ---
 
-**Last Updated**: March 22, 2026  
-**Project Lead**: Tracy McCormick
-**Version**: Development (Phase 4 - Expansion)
+**Last Updated**: February 9, 2026  
+**Version**: Development (Phase 3 - Test Restoration) 
