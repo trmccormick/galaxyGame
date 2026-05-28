@@ -249,7 +249,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
         job_type: :shell_printing,
         status: :in_progress,
         settlement: settlement,
-        inflatable: inflatable_tank,
+        target_unit: inflatable_tank,
         jobable: printer_unit,
         target_values: {
           printer_unit_id: printer_unit.id,

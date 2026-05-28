@@ -1,6 +1,6 @@
 class ConstructionJob < ApplicationRecord
   # Shell/seal printing geometry attributes
-  belongs_to :inflatable, class_name: 'Units::BaseUnit', optional: true
+  belongs_to :target_unit, class_name: 'Units::BaseUnit', optional: true, foreign_key: 'inflatable_id'
   belongs_to :regolith_source_settlement, class_name: 'Settlement::BaseSettlement', optional: true
 
   validates :target_thickness_mm, numericality: { greater_than: 0 }, allow_nil: true
@@ -95,11 +95,6 @@ class ConstructionJob < ApplicationRecord
 
   def materials_consumed
     target_values&.dig('materials_consumed')
-  end
-
-  # Convenience alias for inflatable association
-  def inflatable_tank
-    inflatable
   end
 
   def printer_unit

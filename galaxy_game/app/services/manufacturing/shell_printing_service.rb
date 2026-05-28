@@ -40,9 +40,9 @@ module Manufacturing
     end
 
     def complete_job(job)
-      # 1. Mark tank as enclosed
-      job.inflatable_tank.update!(
-        operational_data: job.inflatable_tank.operational_data.merge(
+      # 1. Mark target unit as enclosed
+      job.target_unit.update!(
+        operational_data: job.target_unit.operational_data.merge(
           'enclosed' => true,
           'shell_printed_at' => Time.current.iso8601,
           'shell_materials' => job.materials_consumed
