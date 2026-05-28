@@ -236,8 +236,7 @@ module AIManager
 
     def self.check_active_player_production(settlement, item)
       # Check if any players have active manufacturing jobs for this item
-      Job.where(
-        job_type: :unit_assembly,
+      UnitAssemblyJob.where(
         base_settlement: settlement,
         unit_type: item,
         status: ['pending', 'in_progress', 'materials_pending']

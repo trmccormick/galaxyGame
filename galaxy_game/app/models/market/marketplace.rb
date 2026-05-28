@@ -73,14 +73,26 @@ module Market
       end
     end
 
-    # Finds matching orders for a given order
+    # Finds matching orders for a given order.
+    #
+    # Only sell orders are eligible for NPC matching. Buy-side matching
+    # is not yet implemented and intentionally returns [].
+    #
+    # FIX: Previously checked `new_order.order_type == 'Sell'` (string comparison),
+    # which always evaluated false against the integer-backed enum
+    # `{ buy: 0, sell: 1 }`. Now uses the enum predicate `sell?` instead.
+    #
     # @param new_order [Market::Order] The order to find matches for
-    # @return [Array<OpenStruct>] Array of matching orders (can be synthetic NPC orders)
+    # @return [Array<OpenStruct>] Array of matching synthetic NPC orders, or []
     def find_matching_orders(new_order)
-      return [] unless new_order.order_type == 'Sell'
+      return [] unless new_order.sell?
 
-      npc_price = Market::NpcPriceCalculator.calculate_bid(settlement, new_order.resource, demand: new_order.quantity)
-      npc_capacity = 1000 # Default NPC buy capacity - can be made dynamic later
+      npc_price = Market::NpcPriceCalculator.calculate_bid(
+        settlement,
+        new_order.resource,
+        demand: new_order.quantity
+      )
+      npc_capacity = 1000 # Default NPC buy capacity — TODO: make dynamic
       trade_volume = [new_order.quantity, npc_capacity].min
 
       return [] unless trade_volume > 0 && npc_price > 0
@@ -92,7 +104,7 @@ module Market
     # @param resource [String] The resource name
     # @return [Market::Condition, nil] The market condition or nil if not found
     def current_market_condition(resource)
-      market_conditions.find_by(resource: resource)
+      market_conditions.find_or_create_by!(resource: resource)
     end
 
     private
@@ -143,7 +155,7 @@ module Market
         id: -1,
         orderable: settlement,
         resource: new_order.resource,
-        order_type: 'buy',
+        order_type: 'Buy',
         quantity: trade_volume,
         price: npc_price,
         market_condition: new_order.market_condition

@@ -1,8 +1,3 @@
-      # Returns true if the order is fulfilled
-      public
-      def fulfilled?
-        fulfilled_at.present? || status.in?(%w[fulfilled completed]) || (respond_to?(:quantity_fulfilled) && quantity_fulfilled >= quantity)
-      end
 # app/models/market/market_order.rb (Renamed to Order)
 module Market
     class Order < ApplicationRecord
