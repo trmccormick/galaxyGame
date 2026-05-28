@@ -96,4 +96,13 @@ class ConstructionJob < ApplicationRecord
   def materials_consumed
     target_values&.dig('materials_consumed')
   end
+
+  # Convenience alias for inflatable association
+  def inflatable_tank
+    inflatable
+  end
+
+  def printer_unit
+    Units::BaseUnit.find(printer_unit_id) if printer_unit_id.present?
+  end
 end

@@ -245,19 +245,24 @@ RSpec.describe Manufacturing::ShellPrintingService do
 
   describe '#complete_job' do
     let!(:job) do
-      create(:shell_printing_job,
+      create(:construction_job,
+        job_type: :shell_printing,
+        status: :in_progress,
         settlement: settlement,
-        printer_unit: printer_unit,
-        inflatable_tank: inflatable_tank,
-        status: 'in_progress',
-        materials_consumed: {
-          'inert_waste' => {
-            'amount' => 1400,
-            'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
-          },
-          '3D-Printed I-Beam Mk1' => {
-            'amount' => 5,
-            'composition' => {}
+        inflatable: inflatable_tank,
+        jobable: printer_unit,
+        target_values: {
+          printer_unit_id: printer_unit.id,
+          inflatable_tank_id: inflatable_tank.id,
+          materials_consumed: {
+            'inert_waste' => {
+              'amount' => 1400,
+              'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
+            },
+            '3D-Printed I-Beam Mk1' => {
+              'amount' => 5,
+              'composition' => {}
+            }
           }
         }
       )
@@ -285,7 +290,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
       service.complete_job(job)
       
       expect(job.reload.status).to eq('completed')
-      expect(job.completed_at).to be_present
+      expect(job.completion_date).to be_present
     end
   end
 end

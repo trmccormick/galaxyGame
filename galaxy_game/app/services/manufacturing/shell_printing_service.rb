@@ -50,7 +50,7 @@ module Manufacturing
       )
       
       # 2. Mark job as completed
-      job.update!(status: :completed, completed_at: Time.current)
+      job.update!(status: :completed, completion_date: Time.current)
       
       # 3. Check for next pending job for this printer and promote it to scheduled
       promote_next_pending_job(job.printer_unit_id)
