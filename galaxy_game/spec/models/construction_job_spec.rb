@@ -168,7 +168,7 @@ RSpec.describe ConstructionJob, type: :model do
       expect(job.status).to eq("materials_pending")
       
       # Test setting an integer directly
-      job.update!(status: 4)  # This should map to in_progress
+      job.update!(status: 5)  # This should map to in_progress
       job.reload
       expect(job.status).to eq("in_progress")
       

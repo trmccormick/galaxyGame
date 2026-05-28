@@ -87,15 +87,15 @@ class Game
     # Convert days to hours
     hours_elapsed = time_skipped * 24
     
-    # Process shell printing jobs
-    settlement.shell_printing_jobs.in_progress.each do |job|
-      job.process_tick(hours_elapsed)
+    # Process shell printing jobs (now part of ConstructionJob)
+    settlement.construction_jobs.where(job_type: :shell_printing).in_progress.each do |job|
+      job.process_tick(hours_elapsed) if job.respond_to?(:process_tick)
     end
     
-    # Process other job types as needed
-    # settlement.component_production_jobs.in_progress.each do |job|
-    #   job.process_tick(hours_elapsed)
-    # end
+    # Process component production jobs (now part of Job)
+    settlement.jobs.where(job_type: :component_production).where(status: :in_progress).each do |job|
+      job.process_tick(hours_elapsed) if job.respond_to?(:process_tick)
+    end
   end
 
 
