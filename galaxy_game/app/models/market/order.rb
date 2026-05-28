@@ -61,6 +61,11 @@ module Market
         fulfilled_at
       end
 
+      # Check if order is fulfilled
+      def fulfilled?
+        fulfilled_at.present?
+      end
+
       private
 
       def set_resource_from_market_condition

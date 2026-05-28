@@ -132,18 +132,19 @@ class Resource::Acquisition
     hours_needed = calculate_lunar_harvesting_time(resource_name, amount)
     
     # Create a resource job
-    job = ResourceJob.create!(
-      job_type: 'harvesting',
-      resource_type: resource_name,
-      target_amount: amount,
+    job = Job.create!(
+      owner: @settlement,
       settlement: @settlement,
-      location: @location,
-      status: 'scheduled',
-      estimated_completion: Time.current + hours_needed.hours,
-      job_data: {
-        harvester_type: harvester_type,
-        estimated_hours: hours_needed,
-        location_name: 'Lunar Surface'
+      job_type: :resource_processing,
+      status: :pending,
+      completes_at: Time.current + hours_needed.hours,
+      operational_data: {
+        'resource_type' => resource_name,
+        'target_amount' => amount,
+        'location' => @location,
+        'harvester_type' => harvester_type,
+        'estimated_hours' => hours_needed,
+        'location_name' => 'Lunar Surface'
       }
     )
     
@@ -152,13 +153,12 @@ class Resource::Acquisition
     harvester.update(
       status: 'working',
       current_job_id: job.id,
-      current_job_type: 'ResourceJob'
+      current_job_type: 'Job'
     )
     
     # Update job
     job.update(
-      status: 'in_progress',
-      assigned_units: [harvester.id]
+      status: :in_progress
     )
     
     Rails.logger.info "[Resource] Started lunar harvesting of #{amount} of #{resource_name}, ETA: #{hours_needed} hours"
@@ -193,16 +193,17 @@ class Resource::Acquisition
     hours_needed = calculate_processing_time(resource_name, amount)
     
     # Create job
-    job = ResourceJob.create!(
-      job_type: 'processing',
-      resource_type: resource_name,
-      target_amount: amount,
+    job = Job.create!(
+      owner: @settlement,
       settlement: @settlement,
-      status: 'scheduled',
-      estimated_completion: Time.current + hours_needed.hours,
-      job_data: {
-        processor_type: processor_type,
-        source_materials: source_materials
+      job_type: :resource_processing,
+      status: :pending,
+      completes_at: Time.current + hours_needed.hours,
+      operational_data: {
+        'resource_type' => resource_name,
+        'target_amount' => amount,
+        'processor_type' => processor_type,
+        'source_materials' => source_materials
       }
     )
     
@@ -218,13 +219,12 @@ class Resource::Acquisition
     processor.update(
       status: 'working',
       current_job_id: job.id,
-      current_job_type: 'ResourceJob'
+      current_job_type: 'Job'
     )
     
     # Update job
     job.update(
-      status: 'in_progress',
-      assigned_units: [processor.id]
+      status: :in_progress
     )
     
     Rails.logger.info "[Resource] Started processing #{amount} of #{resource_name}, ETA: #{hours_needed} hours"

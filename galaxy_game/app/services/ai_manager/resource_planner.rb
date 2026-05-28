@@ -74,17 +74,14 @@ module AIManager
     
     # Check current resource jobs
     def resource_job_status
-      # Using a placeholder for ResourceJob model
-      jobs = ResourceJob.where(settlement: @settlement).active 
-      
+      jobs = Job.where(settlement: @settlement, job_type: :resource_processing).active
+
       {
         total_jobs: jobs.count,
         by_type: jobs.group(:job_type).count,
         by_resource: jobs.group(:resource_type).count,
         estimated_completion: jobs.order(:estimated_completion).first&.estimated_completion
       }
-    rescue NameError # Handle if ResourceJob model doesn't exist yet
-      { status: "ResourceJob model missing." }
     end
     
     private

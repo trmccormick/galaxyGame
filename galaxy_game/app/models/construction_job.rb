@@ -30,14 +30,15 @@ class ConstructionJob < ApplicationRecord
   
   # Status enum
   enum status: {
-    scheduled: 0,
-    materials_pending: 1,
-    equipment_pending: 2,
-    workers_pending: 3,
-    in_progress: 4,
-    completed: 5,
-    failed: 6,
-    canceled: 7
+    pending: 0,
+    scheduled: 1,
+    materials_pending: 2,
+    equipment_pending: 3,
+    workers_pending: 4,
+    in_progress: 5,
+    completed: 6,
+    failed: 7,
+    canceled: 8
   }
   
   # Add the missing helper methods
@@ -68,7 +69,7 @@ class ConstructionJob < ApplicationRecord
   end
   
   # Add convenience scopes
-  scope :active, -> { where(status: [:scheduled, :materials_pending, :equipment_pending, :workers_pending, :in_progress]) }
+  scope :active, -> { where(status: [:pending, :materials_pending, :equipment_pending, :workers_pending, :in_progress]) }
   scope :completed, -> { where(status: :completed) }
   scope :failed, -> { where(status: :failed) }
   
@@ -77,5 +78,22 @@ class ConstructionJob < ApplicationRecord
   def start!
     # TODO: Implement actual start logic for ConstructionJob if needed.
     update!(status: :in_progress)
+  end
+
+  # Accessor methods for target_values fields
+  def production_time_hours
+    target_values&.dig('production_time_hours')
+  end
+
+  def printer_unit_id
+    target_values&.dig('printer_unit_id')
+  end
+
+  def inflatable_tank_id
+    target_values&.dig('inflatable_tank_id')
+  end
+
+  def materials_consumed
+    target_values&.dig('materials_consumed')
   end
 end

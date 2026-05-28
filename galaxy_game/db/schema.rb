@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -1241,6 +1241,28 @@ ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
     t.datetime "disconnected_at"
   end
 
+  create_table "resource_deposits", force: :cascade do |t|
+    t.string "depositable_type", null: false
+    t.bigint "depositable_id", null: false
+    t.bigint "feature_id"
+    t.bigint "celestial_location_id"
+    t.bigint "spatial_location_id"
+    t.string "material_name", null: false
+    t.decimal "initial_mass_kg", precision: 20, scale: 6, null: false
+    t.decimal "current_mass_kg", precision: 20, scale: 6, null: false
+    t.float "extraction_difficulty"
+    t.string "depletion_curve"
+    t.integer "status", default: 0, null: false
+    t.jsonb "operational_data", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["celestial_location_id"], name: "index_resource_deposits_on_celestial_location_id"
+    t.index ["depositable_type", "depositable_id"], name: "index_resource_deposits_on_depositable"
+    t.index ["feature_id"], name: "index_resource_deposits_on_feature_id"
+    t.index ["spatial_location_id"], name: "index_resource_deposits_on_spatial_location_id"
+    t.check_constraint "((feature_id IS NOT NULL)::integer + (celestial_location_id IS NOT NULL)::integer + (spatial_location_id IS NOT NULL)::integer) = 1", name: "resource_deposits_location_exclusivity"
+  end
+
   create_table "rigs", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -1672,6 +1694,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_04_23_131010) do
   add_foreign_key "planet_biomes", "biospheres"
   add_foreign_key "plant_environments", "environments"
   add_foreign_key "plant_environments", "plants"
+  add_foreign_key "resource_deposits", "adapted_features", column: "feature_id"
+  add_foreign_key "resource_deposits", "celestial_locations"
+  add_foreign_key "resource_deposits", "spatial_locations"
   add_foreign_key "route_proposal_votes", "organizations", column: "voter_id"
   add_foreign_key "route_proposal_votes", "route_proposals"
   add_foreign_key "route_proposals", "organizations", column: "consortium_id"

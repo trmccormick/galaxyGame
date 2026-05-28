@@ -1,0 +1,1600 @@
+M	.gitignore
+D	.vscode/settings.json
+D	.vscode/tasks.json
+M	CURRENT_STATUS.md
+M	Dockerfile
+D	__pycache__/chromakey_gemini.cpython-314.pyc
+A	app/assets/javascripts/simple_tileset_loader.js
+A	app/assets/javascripts/surface_view.js
+D	chromakey_gemini.py
+M	data/json-data/contract/wormhole_contract.json
+D	data/json-data/missions/mars_settlement/phases/mars_genesis_phase7_gateway_shielding.json
+D	data/json-data/operational_data/units/production/extractors/planetary_volatiles_extractor_mk1_data.json
+D	data/json-data/star_systems/sol-complete.json
+D	data/json-data/star_systems/sol.json
+D	data/json-data/tech_tree/power_generation.json
+D	data/json-data/templates/unit_blueprint_v1.3.json
+D	data/json-data/templates/unit_operational_data_v1.3.json
+R100	docs/architecture/operations/ADMIN_DASHBOARD_REDESIGN.md	docs/ADMIN_DASHBOARD_REDESIGN.md
+M	docs/CURRENT_STATUS.md
+M	docs/GLOSSARY_SYSTEM_MECHANICS.md
+M	docs/GUARDRAILS.md
+D	docs/PRACTICAL_TESTING_GUIDE.md
+D	docs/agent/AGENT_ROUTING.md
+M	docs/agent/CURRENT_STATUS.md
+A	docs/agent/CURRENT_WORK.md
+D	docs/agent/DOCUMENTATION_STRATEGIST.md
+D	docs/agent/GPT41_VACATION_BATCH.md
+R055	docs/agent/archive/RULES.md	docs/agent/RULES.md
+D	docs/agent/SESSION_STRATEGIST.md
+A	docs/agent/TASK_PROTOCOL.md
+D	docs/agent/TASK_TEMPLATE.md
+D	docs/agent/TEST_ENVIRONMENT_SETUP.md
+D	docs/agent/archive/CURRENT_WORK.md
+D	docs/agent/archive/SESSION_STRATEGIST.md
+D	docs/agent/archive/backlog_april_2026/2026-02-11-HIGH-MESO-WORLDHOUSE-FAILURE-ANALYSIS.md
+D	docs/agent/archive/backlog_april_2026/2026-02-11-HIGH-MESO-WORLDHOUSE-MAINTENANCE.md
+D	docs/agent/archive/backlog_april_2026/2026-02-11-MEDIUM-BIOLOGY-CURIOSITY_ORGANICS_CHUNKING_PLAN.md
+D	docs/agent/archive/backlog_april_2026/2026-02-11-MEDIUM-ECONOMIC-ATMOSPHERIC-BALANCING.md
+D	docs/agent/archive/backlog_april_2026/2026-03-23-HIGH-FEATURE-WEATHERING-ENGINE.md
+D	docs/agent/archive/backlog_april_2026/2026-03-24-MEDIUM-SCOUT_SEISMIC_SURVEY_IMPLEMENTATION.md
+D	docs/agent/archive/backlog_april_2026/2026-03-26-DATA-FOUNDATION-SOLARSYSTEM-CONNECTIVITY-STATUS.MD
+D	docs/agent/archive/backlog_april_2026/2026-03-26-MISSION-PLANNER-NO-MAGIC-SOURCING-LOGIC-&-ORPHANED-SYSTEM-SUPPORT.MD
+D	docs/agent/archive/backlog_april_2026/2026-03-27-HIGH-REFACTOR-ESCALATION-SERVICE-NO-MAGIC-ROBOT-DEPLOYMENT.md
+D	docs/agent/archive/backlog_april_2026/2026-03-27-HIGH-REFACTOR-TERRAFORMING-MANAGER-DATA-DRIVEN.md
+D	docs/agent/archive/backlog_april_2026/2026-03-27-MEDIUM-FEATURE-FINANCIAL-TRANSACTION-MODEL.md
+D	docs/agent/archive/backlog_april_2026/2026-03-29-HIGH-REFACTOR-WORMHOLE-EXPANSION-SERVICE.md
+D	docs/agent/archive/backlog_april_2026/2026-03-30-HIGH-BUG-FIX-BLUEPRINT-PORTS-REMOVE-FALLBACK.md
+D	docs/agent/archive/backlog_april_2026/2026-03-30-HIGH-FEATURE-DIGITAL-TWIN-SCHEMA.md
+D	docs/agent/archive/backlog_april_2026/2026-03-30-HIGH-REFACTOR-MATERIAL-PROCESSING-GEOSPHERE-DRIVEN-YIELDS.md
+D	docs/agent/archive/backlog_april_2026/2026-03-30-LOW-CHORE-REMOVE-STALE-BASE-CRAFT-FILES.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-HIGH-BUG-FIX-FITTING-SERVICE-INVENTORY.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-HIGH-BUG-FIX-MATERIAL-PROCESSING-GAS-YIELDS.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-HIGH-BUG-FIX-STORAGE-CAPACITY-FILTER.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-LOW-BUG-FIX-ADVANCE-BY-DAYS-GUARD.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-LOW-BUG-FIX-JSON-PARSING.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-MEDIUM-BUG-FIX-ITEM-REGOLITH-GEOSHERE.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-MEDIUM-BUG-FIX-JSON-ITEM-GENERATION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-MEDIUM-BUG-FIX-MATERIAL-REQUEST-CREATION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-01-MEDIUM-BUG-FIX-PROFITS-TRANSACTION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-03-LOW-DATA-CO2-OXYGEN-PRODUCTION-UNIT-SCHEMA-AND-STOICHIOMETRY.md
+D	docs/agent/archive/backlog_april_2026/2026-04-03-LOW-DOCUMENTATION-AI-MANAGER-FILE-AUDIT-CLASSIFY-ALL-SERVICES.md
+D	docs/agent/archive/backlog_april_2026/2026-04-04-HIGH-BUG-FIX-MATERIAL-PROCESSING-SERVICE-PVE-GEOSPHERE-VOLATILE-OUTPUTS.md
+D	docs/agent/archive/backlog_april_2026/2026-04-04-MEDIUM-BUG-FIX-GAME-ADVANCE-BY-DAYS-NEGATIVE-GUARD.md
+D	docs/agent/archive/backlog_april_2026/2026-04-04-MEDIUM-BUG-FIX-MANUFACTURING-PIPELINE-E2E-THERMAL-EXTRACTION-INTERFACE.md
+D	docs/agent/archive/backlog_april_2026/2026-04-07-HIGH-DATA-AI-MANAGER-MISSION-PROFILE-TRAINING-REFRESH.md
+D	docs/agent/archive/backlog_april_2026/2026-04-08-LOW-BUG-FIX-GAME-DATA-GENERATOR-SPEC-19-OLLAMA-REVIEW.md
+D	docs/agent/archive/backlog_april_2026/2026-04-10-HIGH-ARCHITECTURE-ORBITAL-MARKET-SYSTEM.md
+D	docs/agent/archive/backlog_april_2026/2026-04-10-MEDIUM-ARCHITECTURE-ORBITAL-SETTLEMENT-LOCATION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-10-MEDIUM-REFACTOR-HARDCODED-SOL-WORLD-NAMES-DATA-DRIVEN.md
+D	docs/agent/archive/backlog_april_2026/2026-04-12-HIGH-FEATURE-ORBITAL-STRUCTURE-LOCATION-DEPLOYMENT.md
+D	docs/agent/archive/backlog_april_2026/2026-04-12-MEDIUM-ARCHITECTURE-POPULATION-MANAGEMENT-CONCERN.md
+D	docs/agent/archive/backlog_april_2026/2026-04-16-HIGH-ARCHITECTURE-RAW-RESOURCE-EXTRACTION-PRICING.md
+D	docs/agent/archive/backlog_april_2026/2026-04-16-HIGH-FEATURE-DOCKING-TRANSACTION-SERVICE.md
+D	docs/agent/archive/backlog_april_2026/2026-04-16-HIGH-FEATURE-MARKETPLACE-ON-STRUCTURE.md
+D	docs/agent/archive/backlog_april_2026/2026-04-16-HIGH-REFACTOR-AI_MANAGER-USE-SETTLEMENT_DEPLOYMENT_SERVICE.md
+D	docs/agent/archive/backlog_april_2026/2026-04-16-MEDIUM-ARCHITECTURE-MATERIAL-STORAGE-CLASSIFICATION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-16-MEDIUM-DATA-ECONOMIC-PARAMETERS-MARKET-FEES.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-ADVANCED-CLAUDE-IMPLEMENT-AI-MANAGER-OPERATIONAL-ESCALATION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-ADVANCED-CLAUDE-INVESTIGATE-TERRAIN-QUALITY.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-ADVANCED-CLAUDE-OPTIMIZE-MISSION-PLANS-AI-TRAINING.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-ADVANCED-CLAUDE-REFINE-MISSION-AI-MANAGER-ALIGNMENT.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-CRITICAL-ARCHITECTURE-ENCLOSED-ATMOSPHERE-FAILURE-PREDICTION-PLANNING.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-CRITICAL-FIX-MONITOR-LOADING.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-ECONOMIC-EM-ECONOMY-PLANNER.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-IMPLEMENT-GGMAP-SCIENTIFIC-LAYER.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-IMPLEMENT-GGMAP-STRATEGIC-LAYER.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-MACRO-WORMHOLE-STABILITY-MONITOR.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-MESO-WORLDHOUSE-CONSTRUCTION.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-MESO-WORLDHOUSE-FAILURE-ANALYSIS.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-HIGH-MESO-WORLDHOUSE-MAINTENANCE.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-MEDIUM-IMPLEMENT-SCIENTIFIC-DATA-DISPLAY.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-MEDIUM-IMPLEMENT-STRATEGIC-DATA-DISPLAY.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-MEDIUM-MACRO-ATMOSPHERIC-STATE-SCHEMA.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-MEDIUM-MESO-WORLDHOUSE-AI-LEARNING.md
+D	docs/agent/archive/backlog_april_2026/2026-04-17-MEDIUM-MESO-WORLDHOUSE-STATE-SCHEMA.md
+D	docs/agent/archive/backlog_april_2026/2026-04-18-CRITICAL-ARCHITECTURE-TASK-EXECUTION-ENGINE-BLUEPRINT-DRIVEN.md
+D	docs/agent/archive/backlog_april_2026/2026-04-20-CRITICAL-ARCHITECTURE-JOB-PROCESSOR-WORKER.md
+D	docs/agent/archive/backlog_april_2026/2026-04-20-CRITICAL-ARCHITECTURE-UNIFIED-JOB-MODEL.md
+D	docs/agent/archive/backlog_april_2026/2026-04-23-HIGH-BUGFIX-WORMHOLE-SERVICE-LOGISTICS-CONTRACT-ARRIVES-AT.md
+D	docs/agent/archive/backlog_april_2026/2026-04-23-MEDIUM-ARCHITECTURE-TUG-CONSTRUCTION-DESIGN.md
+D	docs/agent/archive/backlog_april_2026/PHASE_2_REGIONAL_VIEW_IMPLEMENTATION.md
+D	docs/agent/archive/backlog_april_2026/TASK_DOCS_AGENT_CLEANUP.md
+D	docs/agent/archive/backlog_april_2026/TASK_GUARDRAILS_SPLIT.md
+D	docs/agent/archive/backlog_april_2026/TASK_WEDNESDAY_SURGICAL_AUDIT.md
+D	docs/agent/archive/backlog_april_2026/ai_manager_task1_scss_layout.md
+D	docs/agent/archive/backlog_april_2026/ai_manager_task2_performance_data.md
+D	docs/agent/archive/backlog_april_2026/ai_manager_task3_patterns_decisions.md
+D	docs/agent/archive/backlog_april_2026/ai_manager_task4_index_dashboard.md
+D	docs/agent/archive/backlog_april_2026/base_craft_model_refactor.md
+D	docs/agent/archive/backlog_april_2026/blueprint_polymorphic_ownership.md
+D	docs/agent/archive/backlog_april_2026/courier_handshake_integration.md
+D	docs/agent/archive/backlog_april_2026/dc_bond_financing_system.md
+D	docs/agent/archive/backlog_april_2026/dynamic_logistics_refactor.md
+D	docs/agent/archive/backlog_april_2026/dynamic_surface_liquid_coverage.md
+D	docs/agent/archive/backlog_april_2026/dynamic_wormhole_pathfinding_service.md
+D	docs/agent/archive/backlog_april_2026/escalation_service_redesign.md
+D	docs/agent/archive/backlog_april_2026/escalation_service_robot_identifier_fix.md
+D	docs/agent/archive/backlog_april_2026/fix_escalation_service_water_escalation_isru_chain.md
+D	docs/agent/archive/backlog_april_2026/geosphere_initializer_architecture_backlog.md
+D	docs/agent/archive/backlog_april_2026/geosphere_initializer_procedural_architecture.md
+D	docs/agent/archive/backlog_april_2026/heavy_lift_solar_rig_updates.md
+D	docs/agent/archive/backlog_april_2026/hydrosphere_state_distribution_fallback_and_doc_update.md
+D	docs/agent/archive/backlog_april_2026/implement_constraint_validation_system.md
+D	docs/agent/archive/backlog_april_2026/implement_settlement_pattern_tracking.md
+D	docs/agent/archive/backlog_april_2026/implement_terrainforge_data_models.md
+D	docs/agent/archive/backlog_april_2026/implement_terrainforge_display_requirements.md
+D	docs/agent/archive/backlog_april_2026/implement_terrainforge_layer.md
+D	docs/agent/archive/backlog_april_2026/implement_terrainforge_routes_controllers.md
+D	docs/agent/archive/backlog_april_2026/implement_terrainforge_view.md
+D	docs/agent/archive/backlog_april_2026/implement_time_resource_simulation.md
+D	docs/agent/archive/backlog_april_2026/layer_architecture_exotic_bodies.md
+D	docs/agent/archive/backlog_april_2026/legacy_tracy_bfs_pathfinding.md
+D	docs/agent/archive/backlog_april_2026/logistics_provider_capabilities_serialization_fix.md
+D	docs/agent/archive/backlog_april_2026/market_decoupling_logic.md
+D	docs/agent/archive/backlog_april_2026/megaproject_service_manufacturing_pipeline.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-ECONOMIC-EM-ECONOMY-PLANNER.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-ATMOSPHERIC-EVALUATOR.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-EM-HARVESTING-SERVICE.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-EM-VAULT.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-FAILURE-PREDICTOR.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-MAINTENANCE-SCHEDULER.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-STABILIZATION-PLANNER.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MACRO-WORMHOLE-STABILITY-MONITOR.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-HIGH-MESO-WORLDHOUSE-CONSTRUCTION.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-MEDIUM-MACRO-ATMOSPHERIC-STATE-SCHEMA.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-MEDIUM-MACRO-EM-NETWORK-SCHEMA.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-MEDIUM-MESO-WORLDHOUSE-AI-LEARNING.md
+D	docs/agent/archive/backlog_april_2026/old/2026-02-11-MEDIUM-MESO-WORLDHOUSE-STATE-SCHEMA.md
+D	docs/agent/archive/backlog_april_2026/old/2026-03-22-LOW-DOCUMENTATION-DOCS-AGENT-CLEANUP.md
+D	docs/agent/archive/backlog_april_2026/old/orbital_depot_architecture_correction.md
+D	docs/agent/archive/backlog_april_2026/orbital_depot_architecture_correction.md
+D	docs/agent/archive/backlog_april_2026/phase4b_task_breakdown.md
+D	docs/agent/archive/backlog_april_2026/planetary-view-phase1.md
+D	docs/agent/archive/backlog_april_2026/planetary_naming_system_architecture_v2.md
+D	docs/agent/archive/backlog_april_2026/planetbiome_bridge_terrasim_prerequisites.md
+D	docs/agent/archive/backlog_april_2026/population_morale_wellbeing_system.md
+D	docs/agent/archive/backlog_april_2026/refactor_css_structure.md
+D	docs/agent/archive/backlog_april_2026/refactor_internal_resource_keys_to_chemical_formulas.md
+D	docs/agent/archive/backlog_april_2026/refactor_terraforming_manager_identify_available_resources.md
+D	docs/agent/archive/backlog_april_2026/refactor_wormhole_generation_job_for_starsim_rules.md
+D	docs/agent/archive/backlog_april_2026/regional-view-phase2.md
+D	docs/agent/archive/backlog_april_2026/remove_obsolete_poro_storage_classes.md
+D	docs/agent/archive/backlog_april_2026/remove_unit_lookup_monkey_patch.md
+D	docs/agent/archive/backlog_april_2026/scouting_recovery_integration.md
+D	docs/agent/archive/backlog_april_2026/separate_biome_data_from_geosphere.md
+D	docs/agent/archive/backlog_april_2026/settlement-view-phase3.md
+D	docs/agent/archive/backlog_april_2026/settlement_dome_cleanup.md
+D	docs/agent/archive/backlog_april_2026/settlement_gcc_account_convenience_method.md
+D	docs/agent/archive/backlog_april_2026/shell_printing_job_factory_string_status_fix.md
+D	docs/agent/archive/backlog_april_2026/shell_printing_job_status_factory_validation_tick.md
+D	docs/agent/archive/backlog_april_2026/space_station_use_base_settlement_capacity.md
+D	docs/agent/archive/backlog_april_2026/strategy_selector_scoring_spec_fixes.md
+D	docs/agent/archive/backlog_april_2026/surface_view_mars_color_mismatch.md
+D	docs/agent/archive/backlog_april_2026/terraforming_vs_engineered_worlds_architecture.md
+D	docs/agent/archive/backlog_april_2026/ui_planner_orphaned_state.md
+D	docs/agent/archive/backlog_april_2026/unit_assembly_job_materials_fix.md
+D	docs/agent/archive/backlog_april_2026/validate_layer_data_filtering_monitor_view.md
+D	docs/agent/archive/backlog_april_2026/wormhole_factory_and_injection.md
+D	docs/agent/archive/outputs/galaxy_regional_atlax.json
+D	docs/agent/chat-logs/claude-03-31-26.md
+D	docs/agent/chat-logs/perplexity-03-30-26.md
+R100	docs/agent/archive/claude-suggested-tasks/AI_MANAGER_EXPANSION_PRIORITIES.md	docs/agent/claude-suggested-tasks/AI_MANAGER_EXPANSION_PRIORITIES.md
+R100	docs/agent/archive/claude-suggested-tasks/COMPREHENSIVE_TASK_PLANNING.md	docs/agent/claude-suggested-tasks/COMPREHENSIVE_TASK_PLANNING.md
+R100	docs/agent/archive/claude-suggested-tasks/EXECUTIVE_SUMMARY_FOR_PLANNING.md	docs/agent/claude-suggested-tasks/EXECUTIVE_SUMMARY_FOR_PLANNING.md
+R100	docs/agent/archive/claude-suggested-tasks/PLANNING_AGENT_HANDOFF.md	docs/agent/claude-suggested-tasks/PLANNING_AGENT_HANDOFF.md
+R100	docs/agent/archive/claude-suggested-tasks/PLANNING_AGENT_TASK_CODE_REVIEW.md	docs/agent/claude-suggested-tasks/PLANNING_AGENT_TASK_CODE_REVIEW.md
+R100	docs/agent/archive/claude-suggested-tasks/TERRAIN_GENERATOR_CODE_REVIEW.md	docs/agent/claude-suggested-tasks/TERRAIN_GENERATOR_CODE_REVIEW.md
+R100	docs/agent/tasks/completed/CONSTRUCTION_REFACTOR.md	docs/agent/completed/CONSTRUCTION_REFACTOR.md
+R100	docs/agent/archive/gemni-chats/gemini-chat-02-12-26.md	docs/agent/gemini-chat-02-12-26.md
+R100	docs/agent/archive/gemni-chats/archive/gemni-2-11-26.md	docs/agent/gemni-chats/archive/gemni-2-11-26.md
+D	docs/agent/image-generation/ASSET_PROMPTS.md
+D	docs/agent/image-generation/ChatGPT Image Feb 28, 2026, 10_13_24 PM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 02_34_17 PM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 11_33_09 AM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 11_33_34 AM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 11_33_35 AM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 11_36_44 AM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 11_39_30 AM.png
+D	docs/agent/image-generation/ChatGPT Image Mar 1, 2026, 11_39_38 AM.png
+D	docs/agent/image-generation/PHASE_2_SPRITE_SHEET_PROMPT.md
+D	docs/agent/image-generation/Space colonization terrain tileset.png
+D	docs/agent/image-generation/Tracy_McCormick_Generate_a_single_PNG_image_with_EXACT_dimensions_288x32_pixelsT_36eb60f8-2093-40c1-82f0-9854258e00f7.png
+D	docs/agent/image-generation/biomes.png
+R100	docs/agent/archive/CODE_REVIEW_STRATEGY_SELECTOR.md	docs/agent/outputs/CODE_REVIEW_STRATEGY_SELECTOR.md
+D	docs/agent/planning/PHASE_2_REGIONAL_VIEW_PLAN.md
+D	docs/agent/planning/PHASE_3_SETTLEMENT_VIEW_PLAN.md
+D	docs/agent/planning/PHASE_3_SPRITE_SHEET_PROMPT.md
+D	docs/agent/planning/PLANETARY_VIEW_INTENT.md
+M	docs/agent/planning/RESTORATION_AND_ENHANCEMENT_PLAN.md
+D	docs/agent/planning/courier_network_plan.md
+D	docs/agent/rules/PHASE2_CANVAS_COMMIT.md
+D	docs/agent/rules/TASK_PROTOCOL.md
+M	docs/agent/tasks/TASK_OVERVIEW.md
+D	docs/agent/tasks/VALIDATED_FOLDER_AUDIT_2026-05-15.md
+A	docs/agent/tasks/active/design_phase_4b_ui_enhancements.md
+R083	docs/agent/archive/backlog_april_2026/implement_maturity_based_snap_triggers.md	docs/agent/tasks/active/implement_maturity_based_snap_triggers.md
+A	docs/agent/tasks/active/resume_rspec_grinding.md
+A	docs/agent/tasks/active/resume_test_suite_grinding.md
+R098	docs/agent/archive/backlog_april_2026/test_ai_manager_mvp.md	docs/agent/tasks/active/test_ai_manager_mvp.md
+A	docs/agent/tasks/active/test_suite_restoration_continuation.md
+D	docs/agent/tasks/archive/ai_escalation_harvester_fix.md
+D	docs/agent/tasks/archive/fix_biosphere_guard_terrain_generation.md
+D	docs/agent/tasks/archive/fix_surface_map_tileset_integration.md
+D	docs/agent/tasks/archive/fix_terrain_grid_rendering_mismatch.md
+D	docs/agent/tasks/archive/implement_ai_decision_audit_trail.md
+D	docs/agent/tasks/archive/implement_settlement_pattern_logic.md
+D	docs/agent/tasks/archive/remove_name_based_earth_density_check.md
+D	docs/agent/tasks/backlog/2026-05-01-MEDIUM-REFACTOR-LUNAR-PIPELINE-RAKE-MODERNIZE-V2.md
+D	docs/agent/tasks/backlog/2026-05-03-MEDIUM-DOCS-DEPLOYMENT-PATTERN-AND-OPERATIONS-DOCUMENTATION.md
+D	docs/agent/tasks/backlog/2026-05-06-HIGH-REFACTOR-JOB-PROCESSOR-WORKER-CAPACITY.md
+D	docs/agent/tasks/backlog/2026-05-06-MEDIUM-DATA-UNIT-OPERATIONAL-DATA-TEMPLATE-V14.md
+R100	docs/agent/archive/backlog_april_2026/add_admin_celestial_body_show_view.md	docs/agent/tasks/backlog/add_admin_celestial_body_show_view.md
+R100	docs/agent/archive/backlog_april_2026/add_ai_manager_priority_controls.md	docs/agent/tasks/backlog/add_ai_manager_priority_controls.md
+R100	docs/agent/archive/backlog_april_2026/add_solar_system_monitor_route.md	docs/agent/tasks/backlog/add_solar_system_monitor_route.md
+A	docs/agent/tasks/backlog/add_surface_button_to_admin_solar_system_view.md
+R100	docs/agent/archive/backlog_april_2026/ai_autonomous_expansion_mvp_focus.md	docs/agent/tasks/backlog/ai_autonomous_expansion_mvp_focus.md
+R100	docs/agent/archive/backlog_april_2026/ai_manager_autonomous_expansion.md	docs/agent/tasks/backlog/ai_manager_autonomous_expansion.md
+R100	docs/agent/archive/backlog_april_2026/ai_manager_autonomous_testing_framework.md	docs/agent/tasks/backlog/ai_manager_autonomous_testing_framework.md
+R094	docs/agent/tasks/completed/ai_manager_service_integration.md	docs/agent/tasks/backlog/ai_manager_service_integration.md
+R100	docs/agent/archive/backlog_april_2026/ai_multi_wormhole_learning_event.md	docs/agent/tasks/backlog/ai_multi_wormhole_learning_event.md
+R100	docs/agent/archive/backlog_april_2026/ai_resource_allocation_engine.md	docs/agent/tasks/backlog/ai_resource_allocation_engine.md
+R100	docs/agent/archive/backlog_april_2026/ai_site_selection_algorithm.md	docs/agent/tasks/backlog/ai_site_selection_algorithm.md
+R100	docs/agent/archive/backlog_april_2026/ai_strategic_evaluation_algorithm.md	docs/agent/tasks/backlog/ai_strategic_evaluation_algorithm.md
+R100	docs/agent/archive/backlog_april_2026/ai_system_discovery_implementation.md	docs/agent/tasks/backlog/ai_system_discovery_implementation.md
+R100	docs/agent/archive/backlog_april_2026/ai_wormhole_integration.md	docs/agent/tasks/backlog/ai_wormhole_integration.md
+R100	docs/agent/archive/backlog_april_2026/analyze_industrial_pipeline_gaps.md	docs/agent/tasks/backlog/analyze_industrial_pipeline_gaps.md
+R100	docs/agent/archive/backlog_april_2026/analyze_technology_tree_gaps.md	docs/agent/tasks/backlog/analyze_technology_tree_gaps.md
+R100	docs/agent/archive/backlog_april_2026/archive_critical_terrain_data_assets.md	docs/agent/tasks/backlog/archive_critical_terrain_data_assets.md
+A	docs/agent/tasks/backlog/assess_map_studio_state.md
+R100	docs/agent/archive/backlog_april_2026/old/atmospheric_maintenance_ai_framework.md	docs/agent/tasks/backlog/atmospheric_maintenance_ai_framework.md
+R100	docs/agent/archive/backlog_april_2026/avoiding_eve_online_pitfalls.md	docs/agent/tasks/backlog/avoiding_eve_online_pitfalls.md
+R100	docs/agent/archive/backlog_april_2026/clarify_system_orchestrator_coordination.md	docs/agent/tasks/backlog/clarify_system_orchestrator_coordination.md
+R100	docs/agent/archive/backlog_april_2026/complete_admin_dashboard_navigation_integration.md	docs/agent/tasks/backlog/complete_admin_dashboard_navigation_integration.md
+R100	docs/agent/archive/backlog_april_2026/complete_admin_dashboard_testing_validation.md	docs/agent/tasks/backlog/complete_admin_dashboard_testing_validation.md
+R100	docs/agent/archive/backlog_april_2026/complete_mvp_planning_framework.md	docs/agent/tasks/backlog/complete_mvp_planning_framework.md
+R100	docs/agent/archive/backlog_april_2026/complete_terrain_data_system.md	docs/agent/tasks/backlog/complete_terrain_data_system.md
+R100	docs/agent/archive/backlog_april_2026/complete_vision_philosophy.md	docs/agent/tasks/backlog/complete_vision_philosophy.md
+R100	docs/agent/archive/backlog_april_2026/constructive_space_colonization_vision.md	docs/agent/tasks/backlog/constructive_space_colonization_vision.md
+R100	docs/agent/archive/backlog_april_2026/craft_configuration_system_review.md	docs/agent/tasks/backlog/craft_configuration_system_review.md
+R100	docs/agent/archive/backlog_april_2026/create_ai_manager_landing_page.md	docs/agent/tasks/backlog/create_ai_manager_landing_page.md
+R100	docs/agent/archive/backlog_april_2026/create_missing_service_documentation.md	docs/agent/tasks/backlog/create_missing_service_documentation.md
+R100	docs/agent/archive/backlog_april_2026/create_terrain_data_operations.md	docs/agent/tasks/backlog/create_terrain_data_operations.md
+R100	docs/agent/archive/backlog_april_2026/curiosity_organics_mars_game_implications.md	docs/agent/tasks/backlog/curiosity_organics_mars_game_implications.md
+R050	docs/agent/archive/backlog_april_2026/2026-04-17-ADVANCED-CLAUDE-DEFINE-GGMAP-FORMAT.md	docs/agent/tasks/backlog/define_ggmap_format.md
+R100	docs/agent/archive/backlog_april_2026/develop_nasa_data_acquisition_pipeline.md	docs/agent/tasks/backlog/develop_nasa_data_acquisition_pipeline.md
+R100	docs/agent/archive/backlog_april_2026/digital_twin_service.md	docs/agent/tasks/backlog/digital_twin_service.md
+R100	docs/agent/archive/backlog_april_2026/eap_market_integration_completion.md	docs/agent/tasks/backlog/eap_market_integration_completion.md
+R100	docs/agent/archive/backlog_april_2026/easter_egg_system_cleanup.md	docs/agent/tasks/backlog/easter_egg_system_cleanup.md
+R092	docs/agent/archive/backlog_april_2026/old/em_harvesting_network_integration.md	docs/agent/tasks/backlog/em_harvesting_network_integration.md
+R092	docs/agent/archive/backlog_april_2026/old/enhance_exoplanet_terrain_realism.md	docs/agent/tasks/backlog/enhance_exoplanet_terrain_realism.md
+R100	docs/agent/archive/backlog_april_2026/enhance_pattern_learning_documentation.md	docs/agent/tasks/backlog/enhance_pattern_learning_documentation.md
+R100	docs/agent/archive/backlog_april_2026/expand_celestial_body_coverage.md	docs/agent/tasks/backlog/expand_celestial_body_coverage.md
+R100	docs/agent/archive/backlog_april_2026/extract_reusable_terrain_patterns.md	docs/agent/tasks/backlog/extract_reusable_terrain_patterns.md
+R100	docs/agent/archive/backlog_april_2026/final_design_philosophy_summary.md	docs/agent/tasks/backlog/final_design_philosophy_summary.md
+A	docs/agent/tasks/backlog/fix_ai_manager_dashboard_styling.md
+R100	docs/agent/archive/backlog_april_2026/fix_ai_manager_escalation_dependencies.md	docs/agent/tasks/backlog/fix_ai_manager_escalation_dependencies.md
+R100	docs/agent/archive/backlog_april_2026/fix_ai_mission_control_section_monitor.md	docs/agent/tasks/backlog/fix_ai_mission_control_section_monitor.md
+R100	docs/agent/archive/backlog_april_2026/fix_biome_validation_button_monitor.md	docs/agent/tasks/backlog/fix_biome_validation_button_monitor.md
+R089	docs/agent/archive/backlog_april_2026/old/fix_monitor_loading.md	docs/agent/tasks/backlog/fix_monitor_loading.md
+A	docs/agent/tasks/backlog/fix_surface_map_tileset_integration.md
+R100	docs/agent/archive/backlog_april_2026/fix_terrain_grid_rendering_mismatch.md	docs/agent/tasks/backlog/fix_terrain_grid_rendering_mismatch.md
+R100	docs/agent/archive/backlog_april_2026/fix_terrain_pixelation_resolution.md	docs/agent/tasks/backlog/fix_terrain_pixelation_resolution.md
+R095	docs/agent/archive/backlog_april_2026/old/fix_terrain_quality.md	docs/agent/tasks/backlog/fix_terrain_quality.md
+R100	docs/agent/archive/backlog_april_2026/galaxy_game_comprehensive_gap_analysis.md	docs/agent/tasks/backlog/galaxy_game_comprehensive_gap_analysis.md
+R100	docs/agent/archive/backlog_april_2026/galaxy_game_synthesis_not_clone.md	docs/agent/tasks/backlog/galaxy_game_synthesis_not_clone.md
+A	docs/agent/tasks/backlog/implement_ai_manager_operational_escalation.md
+R100	docs/agent/archive/backlog_april_2026/implement_ai_station_construction_strategy.md	docs/agent/tasks/backlog/implement_ai_station_construction_strategy.md
+R100	docs/agent/tasks/archive/implement_automatic_terrain_loading.md	docs/agent/tasks/backlog/implement_automatic_terrain_loading.md
+R100	docs/agent/archive/backlog_april_2026/implement_counterbalance_effect_calculations.md	docs/agent/tasks/backlog/implement_counterbalance_effect_calculations.md
+R100	docs/agent/archive/backlog_april_2026/implement_data_center_establishment.md	docs/agent/tasks/backlog/implement_data_center_establishment.md
+R100	docs/agent/archive/backlog_april_2026/implement_foothold_establishment_system.md	docs/agent/tasks/backlog/implement_foothold_establishment_system.md
+R084	docs/agent/archive/backlog_april_2026/implement_geotiff_auto_detection_system.md	docs/agent/tasks/backlog/implement_geotiff_auto_detection_system.md
+A	docs/agent/tasks/backlog/implement_ggmap_scientific_layer.md
+A	docs/agent/tasks/backlog/implement_ggmap_strategic_layer.md
+R100	docs/agent/archive/backlog_april_2026/implement_luna_base_buildup_test_case.md	docs/agent/tasks/backlog/implement_luna_base_buildup_test_case.md
+R100	docs/agent/archive/backlog_april_2026/implement_phosphorus_mechanics.md	docs/agent/tasks/backlog/implement_phosphorus_mechanics.md
+R100	docs/agent/archive/backlog_april_2026/implement_protoplanet_terrain_generation.md	docs/agent/tasks/backlog/implement_protoplanet_terrain_generation.md
+A	docs/agent/tasks/backlog/implement_scientific_data_display.md
+R100	docs/agent/archive/backlog_april_2026/implement_simulation_metrics_page.md	docs/agent/tasks/backlog/implement_simulation_metrics_page.md
+R100	docs/agent/archive/backlog_april_2026/implement_small_body_terrain_generation.md	docs/agent/tasks/backlog/implement_small_body_terrain_generation.md
+A	docs/agent/tasks/backlog/implement_strategic_data_display.md
+R100	docs/agent/archive/backlog_april_2026/improve_celestial_bodies_number_formatting.md	docs/agent/tasks/backlog/improve_celestial_bodies_number_formatting.md
+R100	docs/agent/archive/backlog_april_2026/inactive_star_system_management.md	docs/agent/tasks/backlog/inactive_star_system_management.md
+R090	docs/agent/archive/backlog_april_2026/initiate_nightly_grinder_protocol.md	docs/agent/tasks/backlog/initiate_nightly_grinder_protocol.md
+A	docs/agent/tasks/backlog/investigate_terrain_quality.md
+R100	docs/agent/archive/backlog_april_2026/manual_terrasim_test_execution.md	docs/agent/tasks/backlog/manual_terrasim_test_execution.md
+R100	docs/agent/archive/backlog_april_2026/meaningful_activities_vs_eve_grind.md	docs/agent/tasks/backlog/meaningful_activities_vs_eve_grind.md
+R100	docs/agent/archive/backlog_april_2026/mining_automation_harvesters_ai.md	docs/agent/tasks/backlog/mining_automation_harvesters_ai.md
+R100	docs/agent/archive/backlog_april_2026/monitor_grinder_completion.md	docs/agent/tasks/backlog/monitor_grinder_completion.md
+R100	docs/agent/archive/backlog_april_2026/mvp_documentation_planning.md	docs/agent/tasks/backlog/mvp_documentation_planning.md
+R100	docs/agent/archive/backlog_april_2026/mvp_enhancement_planning_summary.md	docs/agent/tasks/backlog/mvp_enhancement_planning_summary.md
+R100	docs/agent/archive/backlog_april_2026/mvp_gameplay_enhancement_planning.md	docs/agent/tasks/backlog/mvp_gameplay_enhancement_planning.md
+R100	docs/agent/archive/backlog_april_2026/mvp_optimization_planning.md	docs/agent/tasks/backlog/mvp_optimization_planning.md
+R100	docs/agent/archive/backlog_april_2026/npc_resource_harvesting_behavior.md	docs/agent/tasks/backlog/npc_resource_harvesting_behavior.md
+A	docs/agent/tasks/backlog/optimize_mission_plans_ai_training.md
+R100	docs/agent/archive/backlog_april_2026/organic_integration_tasks_assessment.md	docs/agent/tasks/backlog/organic_integration_tasks_assessment.md
+R100	docs/agent/archive/backlog_april_2026/phase_4_digital_twin_schema.md	docs/agent/tasks/backlog/phase_4_digital_twin_schema.md
+R088	docs/agent/tasks/completed/phase_6_documentation_cleanup.md	docs/agent/tasks/backlog/phase_6_documentation_cleanup.md
+R100	docs/agent/archive/backlog_april_2026/player_automation_systems.md	docs/agent/tasks/backlog/player_automation_systems.md
+R100	docs/agent/archive/backlog_april_2026/priority_information_updates.md	docs/agent/tasks/backlog/priority_information_updates.md
+R100	docs/agent/archive/backlog_april_2026/realtime_strategy_planning_summary.md	docs/agent/tasks/backlog/realtime_strategy_planning_summary.md
+R100	docs/agent/archive/backlog_april_2026/realtime_vs_turnbased_differences.md	docs/agent/tasks/backlog/realtime_vs_turnbased_differences.md
+R100	docs/agent/archive/backlog_april_2026/redesign_admin_celestial_bodies_edit_page.md	docs/agent/tasks/backlog/redesign_admin_celestial_bodies_edit_page.md
+R100	docs/agent/archive/backlog_april_2026/redesign_main_landing_page.md	docs/agent/tasks/backlog/redesign_main_landing_page.md
+R100	docs/agent/archive/backlog_april_2026/redirect_admin_simulation_to_digital_twins.md	docs/agent/tasks/backlog/redirect_admin_simulation_to_digital_twins.md
+A	docs/agent/tasks/backlog/refine_mission_ai_manager_alignment.md
+R100	docs/agent/archive/backlog_april_2026/refine_time_controls_for_ai_testing.md	docs/agent/tasks/backlog/refine_time_controls_for_ai_testing.md
+R100	docs/agent/archive/backlog_april_2026/review_ai_mission_json_configuration.md	docs/agent/tasks/backlog/review_ai_mission_json_configuration.md
+R100	docs/agent/archive/backlog_april_2026/simearth_admin_panel_enhancement.md	docs/agent/tasks/backlog/simearth_admin_panel_enhancement.md
+R100	docs/agent/archive/backlog_april_2026/solo_player_interface_testing_refinement.md	docs/agent/tasks/backlog/solo_player_interface_testing_refinement.md
+R100	docs/agent/archive/backlog_april_2026/systematic_test_failure_reduction.md	docs/agent/tasks/backlog/systematic_test_failure_reduction.md
+R100	docs/agent/archive/backlog_april_2026/systemorchestrator_development.md	docs/agent/tasks/backlog/systemorchestrator_development.md
+R100	docs/agent/archive/backlog_april_2026/task_16_psyche_mining_site.md	docs/agent/tasks/backlog/task_16_psyche_mining_site.md
+R100	docs/agent/archive/backlog_april_2026/task_ai_organic_prioritization.md	docs/agent/tasks/backlog/task_ai_organic_prioritization.md
+R100	docs/agent/archive/backlog_april_2026/task_ceres_nutrient_catalyst_update.md	docs/agent/tasks/backlog/task_ceres_nutrient_catalyst_update.md
+R100	docs/agent/archive/backlog_april_2026/task_jupiter_trojans_mining.md	docs/agent/tasks/backlog/task_jupiter_trojans_mining.md
+R100	docs/agent/archive/backlog_april_2026/task_legacy_organics_bonus_system.md	docs/agent/tasks/backlog/task_legacy_organics_bonus_system.md
+R100	docs/agent/archive/backlog_april_2026/task_near_earth_asteroids.md	docs/agent/tasks/backlog/task_near_earth_asteroids.md
+R100	docs/agent/archive/backlog_april_2026/task_organic_database_integration.md	docs/agent/tasks/backlog/task_organic_database_integration.md
+R100	docs/agent/archive/backlog_april_2026/task_organic_scanning_technology.md	docs/agent/tasks/backlog/task_organic_scanning_technology.md
+R100	docs/agent/archive/backlog_april_2026/task_pallas_mining_settlement.md	docs/agent/tasks/backlog/task_pallas_mining_settlement.md
+R100	docs/agent/archive/backlog_april_2026/task_pluto_charon_settlement.md	docs/agent/tasks/backlog/task_pluto_charon_settlement.md
+R100	docs/agent/archive/backlog_april_2026/task_solar_operations_infrastructure.md	docs/agent/tasks/backlog/task_solar_operations_infrastructure.md
+R100	docs/agent/archive/backlog_april_2026/task_solar_system_locations_review.md	docs/agent/tasks/backlog/task_solar_system_locations_review.md
+R100	docs/agent/archive/backlog_april_2026/task_vesta_mining_settlement.md	docs/agent/tasks/backlog/task_vesta_mining_settlement.md
+R100	docs/agent/archive/backlog_april_2026/terragen_eden_integration.md	docs/agent/tasks/backlog/terragen_eden_integration.md
+R100	docs/agent/archive/backlog_april_2026/terrasim_biome_placement_refinements.md	docs/agent/tasks/backlog/terrasim_biome_placement_refinements.md
+R100	docs/agent/archive/backlog_april_2026/test_ai_manager_escalation.md	docs/agent/tasks/backlog/test_ai_manager_escalation.md
+R100	docs/agent/archive/backlog_april_2026/time_speed_mechanics_discussion.md	docs/agent/tasks/backlog/time_speed_mechanics_discussion.md
+R100	docs/agent/archive/backlog_april_2026/update_biosphere_docs_phosphorus.md	docs/agent/tasks/backlog/update_biosphere_docs_phosphorus.md
+R100	docs/agent/archive/backlog_april_2026/update_color_scheme_blue_theme.md	docs/agent/tasks/backlog/update_color_scheme_blue_theme.md
+R100	docs/agent/archive/backlog_april_2026/update_player_contract_documentation.md	docs/agent/tasks/backlog/update_player_contract_documentation.md
+R100	docs/agent/archive/backlog_april_2026/update_workflow_docs_agent_neutral.md	docs/agent/tasks/backlog/update_workflow_docs_agent_neutral.md
+R100	docs/agent/archive/backlog_april_2026/validate_operational_manager_integration.md	docs/agent/tasks/backlog/validate_operational_manager_integration.md
+R100	docs/agent/archive/backlog_april_2026/validate_sol_system_terrain_recreation.md	docs/agent/tasks/backlog/validate_sol_system_terrain_recreation.md
+R100	docs/agent/archive/backlog_april_2026/venus_tug_transition_strategy.md	docs/agent/tasks/backlog/venus_tug_transition_strategy.md
+R061	docs/agent/tasks/completed/verify_terrasim_test_fixes.md	docs/agent/tasks/backlog/verify_terrasim_test_fixes.md
+R100	docs/agent/archive/backlog_april_2026/old/worldhouse_progression_system.md	docs/agent/tasks/backlog/worldhouse_progression_system.md
+R084	docs/agent/archive/backlog_april_2026/wormhole_documentation_update.md	docs/agent/tasks/backlog/wormhole_documentation_update.md
+R100	docs/agent/archive/backlog_april_2026/wormhole_easter_egg_integration.md	docs/agent/tasks/backlog/wormhole_easter_egg_integration.md
+D	docs/agent/tasks/completed/2026-03-24-LOW-PROTOCOL_CONSOLIDATION.md
+D	docs/agent/tasks/completed/2026-03-28-HIGH-REFACTOR-STRATEGY-SELECTOR-SCORING-CALIBRATION.md
+D	docs/agent/tasks/completed/2026-03-30-HIGH-FIX-ISRU-EVALUATOR-COUNT.md
+D	docs/agent/tasks/completed/2026-03-30-HIGH-FIX-MATERIAL-PROCESSING-EXTRACTION.md
+D	docs/agent/tasks/completed/2026-03-30-HIGH-FIX-MATERIAL-PROCESSING-INVENTORY.md
+D	docs/agent/tasks/completed/2026-03-30-HIGH-FIX-ORBITAL-SHIPYARD-VALIDATIONS.md
+D	docs/agent/tasks/completed/2026-03-30-HIGH-FIX-SPACESTATION-STORAGE-CAPACITY.md
+D	docs/agent/tasks/completed/2026-03-31-HIGH-REFACTOR-ORBITAL-SETTLEMENT-ARCHITECTURE.md
+D	docs/agent/tasks/completed/2026-04-01-HIGH-BUG-FIX-ORBITAL-SHIPYARD-SPEC-STUB-ORBITAL-SETTLEMENT.md
+D	docs/agent/tasks/completed/2026-04-01-HIGH-BUG-FIX-RESTORE-MATERIAL-PROCESSING-SERVICE-INTENDED-DESIGN.md
+D	docs/agent/tasks/completed/2026-04-01-HIGH-BUG-FIX-UNITS-FACTORY-OPERATIONAL-FLAG-ISRU-REGRESSION.md
+D	docs/agent/tasks/completed/2026-04-02-HIGH-BUG-FIX-RESTORE-ISRU-EVALUATOR-INTENDED-DESIGN.md
+D	docs/agent/tasks/completed/2026-04-03-CRITICAL-BUG-FIX-STATE-ANALYZER-REMOVE-RESOURCE-PROFILE.md
+D	docs/agent/tasks/completed/2026-04-03-CRITICAL-state_analyzer_resource_profile_delegation.md
+D	docs/agent/tasks/completed/2026-04-03-DIAGNOSTIC-AI-MANAGER-CURRENT-STATE.md
+D	docs/agent/tasks/completed/2026-04-03-HIGH-BUG-FIX-REWIRE-ISRU-EVALUATOR.md
+D	docs/agent/tasks/completed/2026-04-03-HIGH-BUG-FIX-REWIRE-ISRU-OPTIMIZER.md
+D	docs/agent/tasks/completed/2026-04-04-HIGH-BUG-FIX-AIMANAGER-TESTING-FILES-REMOVE-FROM-APP-AUTOLOAD.md
+D	docs/agent/tasks/completed/2026-04-04-HIGH-BUG-FIX-STATE-ANALYZER-CONSTRUCTOR-CASCADE.md
+D	docs/agent/tasks/completed/2026-04-04-HIGH-REFACTOR-MANUFACTURING-SERVICE-BOM-COST-VIA-NPC-PRICE-CALCULATOR.md
+D	docs/agent/tasks/completed/2026-04-04-LOW-BUG-FIX-WORLD-KNOWLEDGE-SERVICE-EASTER-EGG-RARITY-SPEC.md
+D	docs/agent/tasks/completed/2026-04-04-MEDIUM-BUG-FIX-BASE-ORGANIZATION-DISTRIBUTE-PROFITS-INVENTED-TRANSACTION-ATTRIBUTE.md
+D	docs/agent/tasks/completed/2026-04-04-MEDIUM-BUG-FIX-BASE-ORGANIZATION-PROFIT-SPEC-FINANCIAL-TRANSACTION-NAMESPACE.md
+D	docs/agent/tasks/completed/2026-04-04-MEDIUM-BUG-FIX-CONSTRUCTION-JOB-FACTORY-MISSING-JOBABLE.md
+D	docs/agent/tasks/completed/2026-04-06-HIGH-BUG-FIX-MANUFACTURING-SERVICE-SPEC-BOM-REWRITE-SURGICAL.md
+D	docs/agent/tasks/completed/2026-04-06-HIGH-DOCUMENTATION-MARKET-ISRU-PRICING.md
+D	docs/agent/tasks/completed/2026-04-07-HIGH-BUG-FIX-AI-MANAGER-EXPANSION-SERVICE-ISRU-OPTIMIZER-ARGUMENTS.md
+D	docs/agent/tasks/completed/2026-04-07-HIGH-BUG-FIX-EXPANSION-SERVICE-REMOVE-ISRU-CALL.md
+D	docs/agent/tasks/completed/2026-04-07-HIGH-REFIT-AI-MANAGER-ISRU-OPTIMIZER-SETTLEMENT-INTERFACE.md
+D	docs/agent/tasks/completed/2026-04-07-MEDIUM-BUG-FIX-AI-MANAGER-STRATEGY-SELECTOR-STATE-ANALYSIS-DEFAULT-VALUES.md
+D	docs/agent/tasks/completed/2026-04-08-HIGH-BUG-FIX-PROCESSING-SERVICE-SPEC-LINES-101-114-126.md
+D	docs/agent/tasks/completed/2026-04-08-HIGH-BUG-FIX-STRATEGY-SELECTOR-SORT-ORDER-AFTER-READINESS-BOOST.md
+D	docs/agent/tasks/completed/2026-04-08-HIGH-FEATURE-ORBITAL-STRUCTURE-ORBITAL-SETTLEMENT-ADDITIVE-IMPLEMENTATION.md
+D	docs/agent/tasks/completed/2026-04-08-HIGH-FEATURE-ORBITAL-STRUCTURE-ORBITAL-SETTLEMENT-SPECS.md
+D	docs/agent/tasks/completed/2026-04-08-MEDIUM-BUG-FIX-BASE-ORGANIZATION-PROFIT-SPEC-13.md
+D	docs/agent/tasks/completed/2026-04-08-MEDIUM-BUG-FIX-MATERIAL-LOOKUP-SPEC-254.md
+D	docs/agent/tasks/completed/2026-04-08-MEDIUM-BUG-FIX-WORMHOLE-EXPANSION-SPEC-17.md
+D	docs/agent/tasks/completed/2026-04-08-MEDIUM-PREPARE-ORBITAL-SETTLEMENT-FACTORY.md
+D	docs/agent/tasks/completed/2026-04-09-HIGH-BUG-FIX-SPIN-GRAVITY-SPEC-CELESTIAL-LOCATION-GRAVITY-G.md
+D	docs/agent/tasks/completed/2026-04-10-HIGH-BUG-FIX-MATERIAL-PROCESSING-SERVICE-PVE-OUTPUT-IDS.md
+D	docs/agent/tasks/completed/2026-04-10-HIGH-REFACTOR-AI-MANAGER-FULL-SPACE-STATION-CLEANUP.md
+D	docs/agent/tasks/completed/2026-04-10-HIGH-REFACTOR-RETIRE-SPACESTATION-ORBITALDEPOT.md
+D	docs/agent/tasks/completed/2026-04-10-MEDIUM-ARCHITECTURE-HOUSING-CONCERN-BASECRAFT-INCLUDE-AUDIT.md
+D	docs/agent/tasks/completed/2026-04-10-MEDIUM-DATA-ACR-200-SPACE-CONSTRUCTOR-MISSING-OPERATIONAL-DATA.md
+D	docs/agent/tasks/completed/2026-04-10-MEDIUM-FEATURE-BASECRAFT-POPULATION-CAPACITY-HOUSING-REMOVAL.md
+D	docs/agent/tasks/completed/2026-04-10-MEDIUM-FEATURE-WORLDHOUSE-SEGMENT-SPEC.md
+D	docs/agent/tasks/completed/2026-04-12-HIGH-ARCHITECTURE-GAS-STORAGE-CONCERN-DESIGN.md
+D	docs/agent/tasks/completed/2026-04-12-HIGH-ARCHITECTURE-ORBITAL-SETTLEMENT-DECOUPLE-FROM-BASE.md
+D	docs/agent/tasks/completed/2026-04-12-HIGH-ARCHITECTURE-UNIFIED-DOCKING-EXCHANGE-MARKET-SYSTEM.md
+D	docs/agent/tasks/completed/2026-04-12-HIGH-BUG-FIX-BASE-SETTLEMENT-ESTABLISH-FROM-STARSHIP-BACKLOG.md
+D	docs/agent/tasks/completed/2026-04-12-LOW-BUG-FIX-GEOLOGICAL-FEATURES-SETTLEMENT-POLYMORPHIC.md
+D	docs/agent/tasks/completed/2026-04-12-MEDIUM-BUG-FIX-PHASE1-SOL-WORLD-NAMES-DATA-DRIVEN.md
+D	docs/agent/tasks/completed/2026-04-14-MEDIUM-BUG-FIX-EXTRACTION-SERVICE-SPEC-MISSING.md
+D	docs/agent/tasks/completed/2026-04-14-MEDIUM-REFACTOR-SYSTEM-BUILDER-MAJOR-MOON-HARDCODED-NAMES.md
+D	docs/agent/tasks/completed/2026-04-17-HIGH-BUG-FIX-ORBITAL-CONSTRUCTION-PROJECT-STATION-ASSOCIATION.md
+D	docs/agent/tasks/completed/2026-04-17-HIGH-MACRO-ATMOSPHERIC-EVALUATOR.md
+D	docs/agent/tasks/completed/2026-04-17-HIGH-MACRO-EM-HARVESTING-SERVICE.md
+D	docs/agent/tasks/completed/2026-04-17-MEDIUM-BUG-FIX-CARGO-MANIFEST-LOADER-MISSING-CLASS.md
+D	docs/agent/tasks/completed/2026-04-17-MEDIUM-BUG-FIX-DEPOT-ADAPTER-CELESTIAL-LOCATION-NAME-MISSING.md
+D	docs/agent/tasks/completed/2026-04-18-HIGH-ARCHITECTURE-STRUCTURE-CORE-CONCERN.md
+D	docs/agent/tasks/completed/2026-04-18-HIGH-BUG-FIX-ORBITAL-SHIPYARD-SERVICE-STRUCTURE-SETTLEMENT-NAMING.md
+D	docs/agent/tasks/completed/2026-04-18-HIGH-BUG-FIX-ORBITAL-STRUCTURE-SETTLEMENT-ASSOCIATION.md
+D	docs/agent/tasks/completed/2026-04-18-MEDIUM-BUG-FIX-GAME-DATA-GENERATOR-MISSING-FIXTURE.md
+D	docs/agent/tasks/completed/2026-04-18-MEDIUM-BUG-FIX-MATERIAL-LOOKUP-SERVICE-JSON-ERROR-LOG.md
+D	docs/agent/tasks/completed/2026-04-18-MEDIUM-BUG-FIX-WORLD-KNOWLEDGE-SERVICE-EASTER-EGG-NIL.md
+D	docs/agent/tasks/completed/2026-04-20-CRITICAL-ARCHITECTURE-UNIFIED-JOB-MODEL.md
+D	docs/agent/tasks/completed/2026-04-20-HIGH-BUG-FIX-MATERIAL-PROCESSING-SERVICE-BASIC-UNIT-DATA.md
+D	docs/agent/tasks/completed/2026-04-20-MEDIUM-BUG-FIX-SASSC-AI-MANAGER-IMPORT.md
+D	docs/agent/tasks/completed/2026-04-20-MEDIUM-BUG-FIX-STATION-CONSTRUCTION-STRATEGY-RISKS-NIL.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-ARCHITECTURE-JOB-SYSTEM-PHASE4B-IMPORT-ORDER-MODEL.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-ARCHITECTURE-JOB-SYSTEM-PHASE8-CONSTRUCTION-JOB-COLUMNS.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE2-MANUFACTURING-SERVICES.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE3-ENVIRONMENT-SERVICES.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE4-RESOURCE-SERVICES.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE4A-RESOURCE-PRODUCTION-JOBS.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE5-AI-MANAGER-SERVICES.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE6-GAME-SERVICE.md
+D	docs/agent/tasks/completed/2026-04-21-HIGH-REFACTOR-JOB-SYSTEM-PHASE7-RETIRE-LEGACY-MODELS.md
+D	docs/agent/tasks/completed/2026-04-21-MEDIUM-BUGFIX-JOB-SYSTEM-PHASE9-INTEGRATION-SPECS.md
+D	docs/agent/tasks/completed/2026-04-22-HIGH-REFACTOR-JOB-SYSTEM-PHASE4B-LOGISTICS-CONTRACT-MIGRATION.md
+D	docs/agent/tasks/completed/2026-04-22-HIGH-REFACTOR-JOB-SYSTEM-PHASE8B-SHELL-SEAL-SERVICE-MIGRATION.md
+D	docs/agent/tasks/completed/2026-04-23-HIGH-BUGFIX-JOB-PROCESSOR-WORKER-SPEC-REWRITE.md
+D	docs/agent/tasks/completed/2026-04-23-HIGH-BUGFIX-LOGISTICS-CONTRACT-FACTORY-ARRIVES-AT.md
+D	docs/agent/tasks/completed/2026-04-23-HIGH-BUGFIX-LOGISTICS-CONTRACT-REMAINING-ARRIVES-AT.md
+D	docs/agent/tasks/completed/2026-04-23-HIGH-BUGFIX-MANUFACTURING-SERVICE-SPECS-LEGACY-JOB-EXPECTATIONS.md
+D	docs/agent/tasks/completed/2026-04-23-MEDIUM-CHORE-TUG-CONSTRUCTION-SPEC-MARK-PENDING.md
+D	docs/agent/tasks/completed/2026-04-25-HIGH-BUG-FIX-BASE-SETTLEMENT-FACTORY-IDENTIFIER-UNIQUENESS.md
+D	docs/agent/tasks/completed/2026-04-26-HIGH-ARCHITECTURE-SOL-JSON-DATA-INTEGRITY-AND-STARSIM-VALIDATION.md
+D	docs/agent/tasks/completed/2026-04-26-HIGH-FEATURE-JOB-MODEL-ADD-PENDING-STATUS.md
+D	docs/agent/tasks/completed/2026-04-26-HIGH-REFACTOR-JOB-SCHEMA-MIGRATION-COMPLETION.md
+D	docs/agent/tasks/completed/2026-05-01-HIGH-BUGFIX-PRECURSOR-SURFACE-RESOURCES-NESTED-HASH-TO-F.md
+D	docs/agent/tasks/completed/2026-05-01-HIGH-DATA-LUNA-SETTLEMENT-MISSION-PROFILE-JSON.md
+D	docs/agent/tasks/completed/2026-05-01-HIGH-REFACTOR-TASK-EXECUTION-ENGINE-V2-WORLD-DRIVEN.md
+D	docs/agent/tasks/completed/2026-05-01-HIGH-SPEC-LUNA-SETTLEMENT-INTEGRATION-MVP-ACCEPTANCE.md
+D	docs/agent/tasks/completed/2026-05-01-MEDIUM-ARCHITECTURE-AI-MANAGER-RESOURCE-SPAWNING-SYSTEM.md
+D	docs/agent/tasks/completed/2026-05-01-MEDIUM-BUGFIX-COVER-THICKNESS-GEOSPHERE-MAGNETIC-BUNDLE.md
+D	docs/agent/tasks/completed/2026-05-01-MEDIUM-CLEANUP-REMOVE-LUNA-DEVELOPMENT-PLANNER.md
+D	docs/agent/tasks/completed/2026-05-02-HIGH-REFACTOR-PRECURSOR-CAPABILITY-SERVICE-FORMULA-CONSISTENCY.md
+D	docs/agent/tasks/completed/2026-05-02-LOW-CLEANUP-TERRESTRIAL-PLANET-ZOMBIE-AND-GAS-QUANTITIES-RESTORE.md
+D	docs/agent/tasks/completed/2026-05-06-HIGH-ARCHITECTURE-UNIT-MODEL-REFACTOR.md
+D	docs/agent/tasks/completed/2026-05-11-HIGH-REFACTOR-UNIT-MODEL-IMPLEMENTATION.md
+D	docs/agent/tasks/completed/2026-05-11-HIGH-SPEC-luna-settlement-integration-mvp-updated.md
+D	docs/agent/tasks/completed/2026-05-12-HIGH-BUGFIX-LUNA-SETTLEMENT-INTEGRATION-SPEC-API-FIXES.md
+D	docs/agent/tasks/completed/2026-05-12-HIGH-BUGFIX-MISSION-PLANNER-PATTERN-SPECIFIC-KEYS.md
+D	docs/agent/tasks/completed/2026-05-12-LOW-BUGFIX-GAME-DATA-GENERATOR-MISSING-FIXTURE.md
+D	docs/agent/tasks/completed/2026-05-12-MEDIUM-BUGFIX-BIOSPHERE-MOISTURE-DIFFERENTIATION.md
+D	docs/agent/tasks/completed/2026-05-12-MEDIUM-BUGFIX-CONTROLLER-SPEC-COUNT-MISMATCHES.md
+D	docs/agent/tasks/completed/2026-05-12-MEDIUM-BUGFIX-MATERIAL-LOOKUP-SERVICE-JSON-ERROR-LOGGING.md
+D	docs/agent/tasks/completed/2026-05-12-MEDIUM-BUGFIX-WORMHOLE-CONSORTIUM-CORPORATION-VALIDATION.md
+D	docs/agent/tasks/completed/2026-05-12-TASK-C-IMPLEMENTATION-CONTROLLER-SPEC-COUNT-MISMATCHES.md
+D	docs/agent/tasks/completed/2026-05-15-AI-Manager-Luna-Settlement-Rake-Task.md
+D	docs/agent/tasks/completed/2026-05-18-COMPLETED-Luna-Settlement-Rake-Task-GPT4.1.md
+D	docs/agent/tasks/completed/2026-05-18-HIGH-ARCHITECTURE-REVIEW-PLANETARY-UMBILICAL-HUB-UNIT-REFORM.md
+D	docs/agent/tasks/completed/add_surface_button_to_admin_solar_system_view.md
+D	docs/agent/tasks/completed/admin_monitor_js_map_initialization_fix.md
+D	docs/agent/tasks/completed/ai_manager_doc_inventory.md
+D	docs/agent/tasks/completed/ai_manager_task1_scss_layout.md
+D	docs/agent/tasks/completed/assembly_service_spec_balance_fix.md
+D	docs/agent/tasks/completed/base_structure_unit_slots_fix.md
+D	docs/agent/tasks/completed/base_unit_operational_shell_printing_fix.md
+D	docs/agent/tasks/completed/base_unit_operational_status_fix.md
+D	docs/agent/tasks/completed/battery_method_preference_fix.md
+D	docs/agent/tasks/completed/biogas_unit_json_migration_cleanup.md
+D	docs/agent/tasks/completed/biology_growth_via_biosphere.md
+D	docs/agent/tasks/completed/biology_lifeform_growth_fix.md
+D	docs/agent/tasks/completed/biome_architecture_review_cleanup.md
+D	docs/agent/tasks/completed/biome_terrasim_digitaltwin_prerequisites_review.md
+D	docs/agent/tasks/completed/biosphere_spec_607_terrasim_prereq.md
+D	docs/agent/tasks/completed/blueprint_player_association_fix.md
+D	docs/agent/tasks/completed/component_production_job_factory_symbols.md
+D	docs/agent/tasks/completed/component_production_job_remaining_specs.md
+D	docs/agent/tasks/completed/computer_upgrade_efficiency_fix.md
+D	docs/agent/tasks/completed/contract_service_independent_trait_fix.md
+D	docs/agent/tasks/completed/contract_service_provider_fix.md
+D	docs/agent/tasks/completed/diagnose_unit_lookup_service.md
+D	docs/agent/tasks/completed/dome_cleanup.md
+D	docs/agent/tasks/completed/dome_schema_architecture_review.md
+D	docs/agent/tasks/completed/escalation_architecture_review.md
+D	docs/agent/tasks/completed/escalation_architecture_sprint.md
+D	docs/agent/tasks/completed/escalation_final_2_fixes.md
+D	docs/agent/tasks/completed/escalation_final_fixes.md
+D	docs/agent/tasks/completed/escalation_integration_spec_fix.md
+D	docs/agent/tasks/completed/escalation_integration_spec_followup.md
+D	docs/agent/tasks/completed/escalation_material_name_cleanup.md
+D	docs/agent/tasks/completed/escalation_robot_association_fix.md
+D	docs/agent/tasks/completed/escalation_service_debug.md
+D	docs/agent/tasks/completed/escalation_test_data_fix.md
+D	docs/agent/tasks/completed/fix_celestial_body_spec_2_failures.md
+D	docs/agent/tasks/completed/fix_database_cleaner_connection.md
+D	docs/agent/tasks/completed/fix_dome_model_spec_namespace.md
+D	docs/agent/tasks/completed/fix_dome_service_financial_account_alias.md
+D	docs/agent/tasks/completed/fix_escalation_integration_spec.md
+D	docs/agent/tasks/completed/fix_escalation_service_spec_failures.md
+D	docs/agent/tasks/completed/fix_geosphere_composition_percentages.md
+D	docs/agent/tasks/completed/fix_item_lookup_service.md
+D	docs/agent/tasks/completed/fix_mars_terrain_color_scheme_monitor.md
+D	docs/agent/tasks/completed/fix_missing_domes_table.md
+D	docs/agent/tasks/completed/fix_module_lookup_service_spec_path.md
+D	docs/agent/tasks/completed/fix_surface_erb.md
+D	docs/agent/tasks/completed/fix_surface_view_viewport.md
+D	docs/agent/tasks/completed/geosphere_initializer_architecture_backlog.md
+D	docs/agent/tasks/completed/geosphere_initializer_spec_fix_and_architecture.md
+D	docs/agent/tasks/completed/hydrosphere_concern_spec_fix.md
+D	docs/agent/tasks/completed/implement_live_system_health_checks_enhanced.md
+D	docs/agent/tasks/completed/logistics_regression_and_processing_fix.md
+D	docs/agent/tasks/completed/logistics_spec_fixes.md
+D	docs/agent/tasks/completed/manufacturing_spec_fixes.md
+D	docs/agent/tasks/completed/merge_claude_documentation_files.md
+D	docs/agent/tasks/completed/mission_planner_spec_fixes_v2.md
+D	docs/agent/tasks/completed/mission_scorer_spec_fix.md
+D	docs/agent/tasks/completed/modernize_biomass_recycler.md
+D	docs/agent/tasks/completed/npc_colony_obsolete_cleanup.md
+D	docs/agent/tasks/completed/operational_manager_spec_fix.md
+D	docs/agent/tasks/completed/orbital_depot_architecture_correction.md
+D	docs/agent/tasks/completed/planetary_geological_feature_lookup_service_spec_rewrite.md
+D	docs/agent/tasks/completed/pressurization_service_architecture_fix.md
+D	docs/agent/tasks/completed/pressurization_spec_duplicate_block_fix.md
+D	docs/agent/tasks/completed/pressurization_spec_rewrite_v3.md
+D	docs/agent/tasks/completed/priority_heuristic_spec_account_fix.md
+D	docs/agent/tasks/completed/remove_obsolete_poro_storage_classes.md
+D	docs/agent/tasks/completed/resume_rspec_grinding.md
+D	docs/agent/tasks/completed/resume_test_suite_grinding.md
+D	docs/agent/tasks/completed/settlement_factory_dc_default_contract_spec_fix.md
+D	docs/agent/tasks/completed/settlement_model_cleanup.md
+D	docs/agent/tasks/completed/shell_printing_job_factory_string_status_fix.md
+D	docs/agent/tasks/completed/shell_printing_job_status_factory_validation_tick.md
+D	docs/agent/tasks/completed/space_station_filter_non_storage_units.md
+D	docs/agent/tasks/completed/storage_poro_cleanup.md
+D	docs/agent/tasks/completed/task_cleanup_march15.md
+D	docs/agent/tasks/completed/tax_authority_singleton_fix.md
+D	docs/agent/tasks/completed/terra_sim_spec_fixes.md
+D	docs/agent/tasks/completed/test_suite_restoration_continuation.md
+D	docs/agent/tasks/completed/update_surface_view_biome_colors.md
+R100	docs/agent/tasks/completed/eap_market_integration.md	docs/agent/tasks/critical/eap_market_integration.md
+R100	docs/agent/tasks/completed/eap_resource_economics_enhancement.md	docs/agent/tasks/critical/eap_resource_economics_enhancement.md
+D	docs/agent/tasks/deprecated/2026-05-01-HIGH-SPEC-LUNA-SETTLEMENT-INTEGRATION-MVP-ACCEPTANCE.md
+D	docs/agent/tasks/deprecated/2026-05-02-LOW-CLEANUP-TERRESTRIAL-PLANET-ZOMBIE-AND-GAS-QUANTITIES-RESTORE.md
+D	docs/agent/tasks/deprecated/2026-05-12-HIGH-BUGFIX-LUNA-SETTLEMENT-INTEGRATION-SPEC-API-FIXES.md
+D	docs/agent/tasks/deprecated/2026-05-12-HIGH-BUGFIX-MISSION-PLANNER-PATTERN-SPECIFIC-KEYS.md
+D	docs/agent/tasks/deprecated/2026-05-12-LOW-BUGFIX-GAME-DATA-GENERATOR-MISSING-FIXTURE.md
+D	docs/agent/tasks/deprecated/2026-05-12-MEDIUM-BUGFIX-BIOSPHERE-MOISTURE-DIFFERENTIATION.md
+D	docs/agent/tasks/deprecated/2026-05-12-MEDIUM-BUGFIX-CONTROLLER-SPEC-COUNT-MISMATCHES.md
+D	docs/agent/tasks/deprecated/2026-05-12-MEDIUM-BUGFIX-MATERIAL-LOOKUP-SERVICE-JSON-ERROR-LOGGING.md
+D	docs/agent/tasks/deprecated/2026-05-12-MEDIUM-BUGFIX-WORMHOLE-CONSORTIUM-CORPORATION-VALIDATION.md
+D	docs/agent/tasks/deprecated/2026-05-12-TASK-A-INVESTIGATION-CONTROLLER-SPEC-COUNT-MISMATCHES.md
+D	docs/agent/tasks/deprecated/2026-05-12-TASK-B-SYNTHESIS-CONTROLLER-SPEC-COUNT-MISMATCHES.md
+D	docs/agent/tasks/deprecated/2026-05-12-TASK-C-IMPLEMENTATION-CONTROLLER-SPEC-COUNT-MISMATCHES.md
+D	docs/agent/tasks/on-hold/2026-04-25-HIGH-BUGFIX-MANUFACTURING-SPEC-CELESTIAL-BODY-FACTORY-AUDIT.md
+D	docs/agent/tasks/on-hold/2026-04-26-HIGH-REFACTOR-JOB-SCHEMA-JSON-MIGRATION.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-BUGFIX-CONTROLLER-SPECS-DELETE-ALL-FK-CONSTRAINT.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-BUGFIX-JOB-PROCESSOR-WORKER-SPEC-FAILURES.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-BUGFIX-MANUFACTURING-ASSEMBLY-SERVICE-UNKNOWN-JOB-ATTRIBUTES.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-BUGFIX-PRECURSOR-SPEC-MISSING-SOLAR-SYSTEM-LET.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-BUGFIX-SPEC-IDENTIFIER-COLLISION-BEFORE-ALL-LEAK.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-PURGE-CONSTRUCTIONJOB-REFERENCES-FOR-JOB-UNIFICATION.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-REFACTOR-JOB-MODEL-ADD-CONSTRUCTION-JOB-TYPES.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-REFACTOR-JOB-MODEL-MIGRATE-CONSTRUCTION-JOB-COLUMNS.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-REFACTOR-JOB-MODEL-REPLACE-CONSTRUCTION-JOB-REFERENCES.md
+D	docs/agent/tasks/on-hold/2026-05-01-HIGH-REFACTOR-JOB-MODEL-UPDATE-FACTORIES-AND-SPECS.md
+D	docs/agent/tasks/on-hold/2026-05-01-LOW-BUGFIX-SIX-ISOLATED-SINGLE-FAILURES-BUNDLE.md
+D	docs/agent/tasks/on-hold/2026-05-01-LOW-CLEANUP-DROP-CONSTRUCTION-JOBS-TABLE-AND-MODEL.md
+D	docs/agent/tasks/on-hold/2026-05-01-MEDIUM-ARCHITECTURE-AI-MANAGER-RESOURCE-SPAWNING-SYSTEM.md
+D	docs/agent/tasks/on-hold/2026-05-01-MEDIUM-REFACTOR-LUNAR-PIPELINE-RAKE-MODERNIZE-V2.md
+D	docs/agent/tasks/run_baseline_rspec_after_cleanups.md
+D	docs/agent/tasks/session-handoffs/handoff_note_job_processor_worker_2026-04-20.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-22.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-25 (Session B).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-25 (Session C).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-25.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-26 (Session D) Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-26 (Session D).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-29 (Session E).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-29.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-30.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-31 Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-03-31 Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-02 Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-03 Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-05_Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-06 Perplexity (Session B).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-06 Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-07 Perplexity (Session B).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-07 Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-09_Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-10_Claude (Session B).md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-10_Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-11.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-12.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-14.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-16_Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-17 Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-19_Claude.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-20 Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-20.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-20_evening.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-22_evening.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-23.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-25-evening.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-04-25.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-01.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-02.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-03 .md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-09.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-11 Perplexity.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-11.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-14.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-15.md
+D	docs/agent/tasks/session-handoffs/session_handoff_2026-05-15_EVENING.md
+D	docs/agent/tasks/session-handoffs/session_handoff_march13.md
+D	docs/agent/tasks/session-handoffs/session_handoff_march14.md
+D	docs/agent/tasks/session-handoffs/session_handoff_march15.md
+D	docs/agent/tasks/validated/2026-02-11-CRITICAL-MONITOR-FIX-MONITOR-LOADING.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-ADMIN-ADD-CELESTIAL-BODY-SHOW-VIEW.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-ATMOSPHERIC-MAINTENANCE.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-AUTONOMOUS-EXPANSION-MVP-FOCUS.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-AUTONOMOUS-EXPANSION.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-AUTONOMOUS-TESTING-FRAMEWORK.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-ESCALATION-DEPENDENCIES.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-MULTI-WORMHOLE-LEARNING-EVENT.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-RESOURCE-ALLOCATION-ENGINE.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-STRATEGIC-EVALUATION-ALGORITHM.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-SYSTEM-DISCOVERY-IMPLEMENTATION.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-TASK1-SCSS-LAYOUT.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-TASK2-PERFORMANCE-DATA.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-AI_MANAGER-WORMHOLE-INTEGRATION.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-CRAFT-BASE-CRAFT-MODEL-REFACTOR.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-CRAFT-BLUEPRINT-POLYMORPHIC-OWNERSHIP.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-DOCS-AGENT-CLEANUP.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-ESCALATION-FIX-WATER-ESCALATION-ISRU-CHAIN.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-GUARDRAILS-SPLIT.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-LOGIC-CLARIFY-SYSTEM-ORCHESTRATOR-COORDINATION.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-MONITOR-FIX-MONITOR-LOADING.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-TERRAIN-FIX-TERRAIN-GRID-RENDERING-MISMATCH.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-TERRAIN-FIX-TERRAIN-PIXELATION-RESOLUTION.md
+D	docs/agent/tasks/validated/2026-02-11-HIGH-TERRAIN-FIX-TERRAIN-QUALITY.md
+D	docs/agent/tasks/validated/2026-02-11-MEDIUM-AI_MANAGER-TASK3-PATTERNS-DECISIONS.md
+D	docs/agent/tasks/validated/2026-02-11-MEDIUM-AI_MANAGER-TASK4-INDEX-DASHBOARD.md
+D	docs/agent/tasks/validated/2026-02-11-MEDIUM-MONITOR-FIX-AI-MISSION-CONTROL-SECTION.md
+D	docs/agent/tasks/validated/2026-02-11-MEDIUM-MONITOR-FIX-BIOME-VALIDATION-BUTTON.md
+M	docs/ai_manager/01_probe_system.md
+D	docs/ai_manager/03_resource_decisions.md
+D	"docs/ai_manager/89\342\206\2228_EXECUTION_PLAN.md"
+D	"docs/ai_manager/89\342\206\2228_SURGICAL_MAP.md"
+D	docs/ai_manager/AI_MANAGER_ARCHITECTURE.md
+D	docs/ai_manager/AI_MANAGER_EVENT_FLOW.md
+D	docs/ai_manager/CLAUDE_5PM_GO.md
+D	docs/ai_manager/CLAUDE_HANDOFF.md
+D	docs/ai_manager/CONSORTIUM_VOTING_ENGINE.md
+D	docs/ai_manager/FINAL_VALIDATION.md
+D	docs/ai_manager/MISSION_COMPLETE.md
+D	docs/ai_manager/PLAYER_HANDOFF.md
+D	docs/ai_manager/RESUPPLY_AND_ESCALATION_ARCHITECTURE.md
+D	docs/ai_manager/escalation_data_flow.md
+D	docs/ai_manager/luna_ai_manager_visualization.md
+R100	docs/architecture/operations/DEVELOPMENT_ROADMAP.md	docs/architecture/DEVELOPMENT_ROADMAP.md
+R093	docs/architecture/intent/DUAL_ECONOMY_INTENT.md	docs/architecture/DUAL_ECONOMY_INTENT.md
+A	docs/architecture/NPC_INITIAL_DEPLOYMENT_SEQUENCE.md
+R100	docs/architecture/economy/PLAYER_CONTRACT_SYSTEM.md	docs/architecture/PLAYER_CONTRACT_SYSTEM.md
+R100	docs/architecture/intent/PLAYER_UI_VISION.md	docs/architecture/PLAYER_UI_VISION.md
+R100	docs/architecture/intent/SIMEARTH_ADMIN_VISION.md	docs/architecture/SIMEARTH_ADMIN_VISION.md
+A	docs/architecture/SIMULATION_SANDBOX.md
+R100	docs/architecture/intent/SYSTEM_CLASSIFICATION_INTENT.md	docs/architecture/SYSTEM_CLASSIFICATION_INTENT.md
+R090	docs/architecture/logistics/SYSTEM_INDUSTRIAL_CHAINS.md	docs/architecture/SYSTEM_INDUSTRIAL_CHAINS.md
+R081	docs/architecture/intent/WORMHOLE_NETWORK_INTENT.md	docs/architecture/WORMHOLE_NETWORK_INTENT.md
+R100	docs/architecture/services/ai_manager/AI_LEARNING_SYSTEM.md	docs/architecture/ai_manager/AI_LEARNING_SYSTEM.md
+D	docs/architecture/ai_manager/AI_MANAGER_ARCHITECTURE.md
+D	docs/architecture/ai_manager/AI_MANAGER_BLOAT_AUDIT.md
+D	docs/architecture/ai_manager/AI_MANAGER_CODE_REVIEW_PROTOCOL.md
+D	docs/architecture/ai_manager/AI_MANAGER_COMMAND.md
+R100	docs/architecture/services/ai_manager/AI_MANAGER_CYCLER_CONFIGURATION_LOGIC.md	docs/architecture/ai_manager/AI_MANAGER_CYCLER_CONFIGURATION_LOGIC.md
+D	docs/architecture/ai_manager/AI_MANAGER_DAMAGE_INVENTORY.md
+D	docs/architecture/ai_manager/AI_MANAGER_DESIGN_FAILURES.md
+D	docs/architecture/ai_manager/AI_MANAGER_ECONOMIC_LOGIC_UPDATE.md
+D	docs/architecture/ai_manager/AI_MANAGER_HAMMER_INTEGRATION.md
+D	docs/architecture/ai_manager/AI_MANAGER_INTENT.md
+D	docs/architecture/ai_manager/AI_MANAGER_MASTER_PLAN.md
+D	docs/architecture/ai_manager/AI_MANAGER_ORCHESTRATOR_SPEC.md
+D	docs/architecture/ai_manager/AI_MANAGER_PRICING_INTENT.md
+D	docs/architecture/ai_manager/AI_MANAGER_ROLE.md
+D	docs/architecture/ai_manager/AI_MANAGER_WAYFINDING.md
+D	docs/architecture/ai_manager/AI_MANAGER_WORMHOLE_EXPANSION.md
+R100	docs/architecture/services/ai_manager/AI_PATTERN_LEARNING_SYSTEM.md	docs/architecture/ai_manager/AI_PATTERN_LEARNING_SYSTEM.md
+A	docs/architecture/ai_manager/AI_PRIORITY_SYSTEM.md
+R100	docs/architecture/services/ai_manager/CYCLER_MISSION_TIMELINES.md	docs/architecture/ai_manager/CYCLER_MISSION_TIMELINES.md
+R091	docs/architecture/services/ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md	docs/architecture/ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md
+R100	docs/architecture/services/ai_manager/EQUIPMENT_TRANSFER_SYSTEM.md	docs/architecture/ai_manager/EQUIPMENT_TRANSFER_SYSTEM.md
+R100	docs/architecture/services/ai_manager/PATTERN_LEARNING.md	docs/architecture/ai_manager/PATTERN_LEARNING.md
+A	docs/architecture/ai_manager/PLAYER_EMERGENCY_MISSION.md
+R100	docs/architecture/services/ai_manager/TERRAFORMING_PATTERNS.md	docs/architecture/ai_manager/TERRAFORMING_PATTERNS.md
+A	docs/architecture/ai_manager/ai_manager_expansion_and_wormhole_network.md
+D	docs/architecture/ai_manager/astrolift_corporation.md
+R088	docs/architecture/services/ai_manager/settlement_plan_example.txt	docs/architecture/ai_manager/settlement_plan_example.txt
+R100	docs/architecture/simulation/atmospheric_maintenance_system.md	docs/architecture/atmospheric_maintenance_system.md
+D	docs/architecture/biology/biology_models.md
+D	docs/architecture/biology/biome_model.md
+D	docs/architecture/biology/terrasim_service.md
+R100	docs/architecture/simulation/biology_system.md	docs/architecture/biology_system.md
+R100	docs/architecture/simulation/biology_terraforming_guide.md	docs/architecture/biology_terraforming_guide.md
+R088	docs/architecture/simulation/biosphere_system.md	docs/architecture/biosphere_system.md
+R100	docs/architecture/starsim/celestial_bodies.md	docs/architecture/celestial_bodies.md
+D	docs/architecture/concerns/has_units.md
+R100	docs/architecture/simulation/construction_system.md	docs/architecture/construction_system.md
+D	docs/architecture/core/modular_containers.md
+D	docs/architecture/economy/CURRENCY_AND_EXCHANGE.md
+D	docs/architecture/economy/FISCAL_POLICY_AND_FEES.md
+D	docs/architecture/economy/ISRU_PRICING_MODEL.md
+D	docs/architecture/economy/MARKET_OPERATIONS.md
+D	docs/architecture/economy/PRICE_DISCOVERY_LIFECYCLE.md
+R100	docs/architecture/simulation/equipment_request_system.md	docs/architecture/equipment_request_system.md
+R100	docs/architecture/economy/financial_system.md	docs/architecture/financial_system.md
+A	docs/architecture/foundry_logic_and_lunar_elevator.md
+R100	docs/architecture/simulation/geosphere_system.md	docs/architecture/geosphere_system.md
+D	docs/architecture/glossary/system_mechanics.md
+R100	docs/architecture/simulation/hycean_planet_system.md	docs/architecture/hycean_planet_system.md
+R100	docs/architecture/simulation/hydrosphere_system.md	docs/architecture/hydrosphere_system.md
+D	docs/architecture/intent/LOGISTICS_PROVIDER_INTENT.md
+D	docs/architecture/intent/base_rig_intent.md
+D	docs/architecture/intent/l1_depot_shell_intent.md
+D	docs/architecture/intent/operational_data_guardrails.md
+D	docs/architecture/intent/precursor_bootstrap_intent.md
+D	docs/architecture/intent/skimmer_craft_intent.md
+D	docs/architecture/intent/worldhouse_intent.md
+D	docs/architecture/isru/3d_printing.md
+D	docs/architecture/isru/cnt_production.md
+A	docs/architecture/l1_lagrange_facilities.md
+R100	docs/architecture/simulation/location_system.md	docs/architecture/location_system.md
+D	docs/architecture/logic/modular_refinery_integration.md
+D	docs/architecture/logic/shipyard_generational_progression.md
+D	docs/architecture/logic/universal_unit_interface.md
+D	docs/architecture/logistics/STARSIM_GENERATION_RULES.md
+D	docs/architecture/logistics/l1_depot_processing_intent.md
+D	docs/architecture/logistics/life_support_waste_recycling_architecture.md
+D	docs/architecture/logistics/logistics_architecture.md
+D	docs/architecture/logistics/navigation/INNER_SYSTEM_EXCLUSION.md
+D	docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md
+D	docs/architecture/logistics/navigation/TRACY_BFS_MAPPING.md
+D	docs/architecture/logistics/navigation/WORMHOLE_NETWORK.md
+D	docs/architecture/logistics/precursor_supply_tether.md
+D	docs/architecture/logistics/wormhole_maintenance_job.md
+D	docs/architecture/lookup/unit_lookup_service.md
+D	docs/architecture/manufacturing/MANUFACTURING_SYSTEM_OVERVIEW.md
+D	docs/architecture/operations/NPC_INITIAL_DEPLOYMENT_SEQUENCE.md
+D	docs/architecture/operations/component_production_logic.md
+D	docs/architecture/operations/isru_operations.md
+D	docs/architecture/operations/precursor_industrial_loop.md
+D	docs/architecture/operations/precursor_mission_bootstrap_architecture.md
+D	docs/architecture/operations/recovery_logic.json
+D	docs/architecture/operations/work_camp_to_settlement_flow.md
+R100	docs/architecture/simulation/organizations_system.md	docs/architecture/organizations_system.md
+R100	docs/architecture/patterns/planetary_patterns/INTERPLANETARY_BASE_TIMELINE_COST_ANALYSIS.md	docs/architecture/planetary_patterns/INTERPLANETARY_BASE_TIMELINE_COST_ANALYSIS.md
+R100	docs/architecture/patterns/planetary_patterns/lunar_isru_flow.md	docs/architecture/planetary_patterns/lunar_isru_flow.md
+R100	docs/architecture/patterns/planetary_patterns/lunar_isru_flow_2.md	docs/architecture/planetary_patterns/lunar_isru_flow_2.md
+R100	docs/architecture/patterns/planetary_patterns/lunar_landing_pads_and_storage.md	docs/architecture/planetary_patterns/lunar_landing_pads_and_storage.md
+R100	docs/architecture/patterns/planetary_patterns/saturn_jupiter_pattern_comparison.md	docs/architecture/planetary_patterns/saturn_jupiter_pattern_comparison.md
+R100	docs/architecture/patterns/planetary_patterns/three_tier_infrastructure.md	docs/architecture/planetary_patterns/three_tier_infrastructure.md
+D	docs/architecture/planning/geological_features_architecture.md
+D	docs/architecture/planning/geological_features_design_intent.md
+D	docs/architecture/services/ai_manager/AI_MANAGER_CONSTRUCTION_ECONOMICS.md
+D	docs/architecture/services/ai_manager/AI_PRIORITY_SYSTEM.md
+D	docs/architecture/services/ai_manager/PLAYER_EMERGENCY_MISSION.md
+D	docs/architecture/services/ai_manager/ai_manager_expansion_and_wormhole_network.md
+D	docs/architecture/services/ai_manager/emergency_requisition.md
+D	docs/architecture/services/ai_manager/escalation_service.md
+D	docs/architecture/services/ai_manager/governance_and_chaos.md
+D	docs/architecture/services/ai_manager/learning_integration.md
+D	docs/architecture/services/ai_manager/mission_scorer.md
+D	docs/architecture/services/ai_manager/planner.md
+D	docs/architecture/services/ai_manager/priority_mapping.md
+D	docs/architecture/services/ai_manager/sol_validation_protocol.md
+D	docs/architecture/services/ai_manager/strategy_selector.md
+R100	docs/architecture/patterns/settlement_patterns.md	docs/architecture/settlement_patterns.md
+D	docs/architecture/simulation/SIMULATION_SANDBOX.md
+R100	docs/architecture/simulation/solar_system.md	docs/architecture/solar_system.md
+D	docs/architecture/starsim/MISSING_HOOKS.md
+D	docs/architecture/starsim/OVERVIEW.md
+D	docs/architecture/starsim/PROCEDURAL_INTENT.md
+D	docs/architecture/starsim/TECHNICAL_HISTORY.md
+D	docs/architecture/starsim/star_naming_architecture.md
+D	docs/architecture/stations/CERES_GATEWAY.md
+D	docs/architecture/stations/CONVERTED_ROCK_STATIONS.md
+D	docs/architecture/stations/SPECIALIZED_WH_STATIONS.md
+D	docs/architecture/stations/SYNTHETIC_MEGA_STATIONS.md
+D	docs/architecture/stations/foundry_logic_and_lunar_elevator.md
+D	docs/architecture/stations/l1_lagrange_facilities.md
+D	docs/architecture/stations/precursor_mission_bootstrap_architecture.md
+D	docs/architecture/systems/ai_manager_economic_loop.md
+D	docs/architecture/systems/asteroid_conversion_physics.md
+D	docs/architecture/systems/em_technology_tree.md
+D	docs/architecture/systems/environmental_volume_intent.md
+D	docs/architecture/systems/job_system_mechanics_spec.md
+D	docs/architecture/systems/orphaned_system_economics.md
+D	docs/architecture/systems/rig_system.md
+D	docs/architecture/systems/survey_and_handshake_protocol.md
+D	docs/architecture/terrasim/OVERVIEW.md
+D	docs/architecture/units/3d_printed_fabricators.md
+D	docs/architecture/units/base_unit.md
+D	docs/architecture/units/initial_3d_printer.md
+D	docs/architecture/units/manifest_integration.md
+D	docs/architecture/units/propulsion.md
+D	docs/architecture/units/robots.md
+R087	docs/architecture/logistics/wormhole_system.md	docs/architecture/wormhole_system.md
+D	docs/developer/JSON_DATA_GUIDE.md
+M	docs/developer/LLM_AGENT_TASK_PROTOCOL.md
+M	docs/developer/SURFACE_VIEW_IMPLEMENTATION_PLAN.md
+M	docs/developer/WORMHOLE_SCOUTING_INTEGRATION.md
+D	docs/history/LLM_AGENT_TASK_PROTOCOL_IMPLEMENTATION_HISTORY.md
+D	docs/legacy/PATHS.PAS
+D	docs/logic/asteroid_conversion_logic.md
+D	docs/mission_profiles/LUNA_BASE_ESTABLISHMENT.md
+D	docs/mission_profiles/orbital_settlement_strategies.md
+D	docs/new_agent
+D	docs/patterns/deployment/NPC_INITIAL_DEPLOYMENT_SEQUENCE.md
+D	docs/planning/MISSION_PHASING_AND_TIMELINE.md
+D	docs/reference/CELESTIAL_BODY_DATA_CONVENTIONS.md
+D	docs/reference/INVENTORY_AND_STORAGE.md
+D	docs/simulation/SIMULATION_SANDBOX.md
+D	docs/simulation/terrainforge_layer.md
+D	docs/simulation/visual_layer_stack.md
+M	docs/storyline/01_story_arc.md
+M	docs/storyline/02_crisis_mechanics.md
+M	docs/storyline/03_consortium_framework.md
+M	docs/storyline/04_terra_gen_consortium.md
+D	docs/storyline/snap_event_and_network_expansion.md
+R100	docs/architecture/systems/BIOME_TERRAFORMING_DESIGN.md	docs/systems/BIOME_TERRAFORMING_DESIGN.md
+M	docs/systems/aol-732356.md
+D	docs/testing/FLAKY_TESTS_ANALYSIS.md
+M	docs/wormhole_expansion/00_executive_summary.md
+D	fix_2026_02_migrations.rb
+D	galaxy_game/.vscode/tasks.json
+D	galaxy_game/FLAKY_TESTS_ANALYSIS.md
+M	galaxy_game/app/assets/config/manifest.js
+D	galaxy_game/app/assets/data/galaxy_regional_atlas.json
+D	galaxy_game/app/assets/data/settlement_tileset.json
+D	galaxy_game/app/assets/images/GalaxyGame-Clean.png
+D	galaxy_game/app/assets/images/GalaxyGame-Clean2.png
+D	galaxy_game/app/assets/images/GalaxyGame-Clean3.png
+D	galaxy_game/app/assets/images/GalaxyGame2.png
+D	galaxy_game/app/assets/images/GalaxyGame3.png
+D	galaxy_game/app/assets/images/GalaxyGame4.png
+D	galaxy_game/app/assets/images/galaxy_surface.png
+D	galaxy_game/app/assets/images/hero-banner.png
+D	galaxy_game/app/assets/images/settlement_atlas.json
+D	galaxy_game/app/assets/images/settlement_sprites.png
+D	galaxy_game/app/assets/images/settlement_sprites_DEBUG.png
+D	galaxy_game/app/assets/images/settlement_sprites_final.jpg
+D	galaxy_game/app/assets/images/settlement_sprites_final.png
+D	galaxy_game/app/assets/images/settlement_terrain.png
+D	galaxy_game/app/assets/images/source_preview.jpg
+D	galaxy_game/app/assets/javascripts/biome_renderer.js
+A	galaxy_game/app/assets/javascripts/game_interface_enhanced.js
+M	galaxy_game/app/assets/javascripts/surface_view.js
+D	galaxy_game/app/assets/stylesheets/_mixins.scss
+D	galaxy_game/app/assets/stylesheets/_variables.scss
+D	galaxy_game/app/assets/stylesheets/admin/_admin_sidebar.scss
+D	galaxy_game/app/assets/stylesheets/admin/_dashboard_styles.scss
+D	galaxy_game/app/assets/stylesheets/admin/_monitor_styles.scss
+D	galaxy_game/app/assets/stylesheets/admin/_shared.scss
+D	galaxy_game/app/assets/stylesheets/admin/admin_cards.scss
+D	galaxy_game/app/assets/stylesheets/admin/celestial_bodies.scss
+D	galaxy_game/app/assets/stylesheets/admin/celestial_bodies_tiles.css
+D	galaxy_game/app/assets/stylesheets/admin/dashboard.scss
+D	galaxy_game/app/assets/stylesheets/application.scss
+D	galaxy_game/app/assets/stylesheets/base/_layout.scss
+D	galaxy_game/app/assets/stylesheets/base/_reset.scss
+D	galaxy_game/app/assets/stylesheets/base/_typography.scss
+D	galaxy_game/app/assets/stylesheets/base/_utilities.scss
+D	galaxy_game/app/assets/stylesheets/components/_alerts.scss
+D	galaxy_game/app/assets/stylesheets/components/_buttons.scss
+D	galaxy_game/app/assets/stylesheets/components/_cards.scss
+D	galaxy_game/app/assets/stylesheets/components/_forms.scss
+D	galaxy_game/app/assets/stylesheets/components/_modals.scss
+D	galaxy_game/app/assets/stylesheets/components/_navigation.scss
+D	galaxy_game/app/assets/stylesheets/layouts/_footer.scss
+D	galaxy_game/app/assets/stylesheets/layouts/_header.scss
+D	galaxy_game/app/assets/stylesheets/layouts/_sidebar.scss
+D	galaxy_game/app/assets/stylesheets/pages/_admin.scss
+D	galaxy_game/app/assets/stylesheets/pages/_auth.scss
+D	galaxy_game/app/assets/stylesheets/pages/_game.scss
+D	galaxy_game/app/assets/stylesheets/pages/_landing.scss
+M	galaxy_game/app/controllers/admin/ai_manager_controller.rb
+M	galaxy_game/app/controllers/admin/celestial_bodies_controller.rb
+M	galaxy_game/app/controllers/admin/simulation_controller.rb
+A	galaxy_game/app/controllers/domes_controller.rb
+M	galaxy_game/app/controllers/game_controller.rb
+D	galaxy_game/app/controllers/landing_controller.rb
+M	galaxy_game/app/controllers/materials_controller.rb
+M	galaxy_game/app/controllers/simulation_controller.rb
+M	galaxy_game/app/controllers/stars_controller.rb
+M	galaxy_game/app/javascript/admin/monitor.js
+D	galaxy_game/app/javascript/admin/monitor_patched.js
+M	galaxy_game/app/jobs/harvester_completion_job.rb
+D	galaxy_game/app/models/ai_decision.rb
+D	galaxy_game/app/models/ai_decision_log.rb
+M	galaxy_game/app/models/atmosphere.rb
+M	galaxy_game/app/models/biology/life_form.rb
+M	galaxy_game/app/models/celestial_bodies/celestial_body.rb
+M	galaxy_game/app/models/celestial_bodies/features/base_feature.rb
+D	galaxy_game/app/models/celestial_bodies/features/excavated_cavity.rb
+M	galaxy_game/app/models/celestial_bodies/features/lava_tube.rb
+M	galaxy_game/app/models/celestial_bodies/material.rb
+M	galaxy_game/app/models/celestial_bodies/planets/rocky/terrestrial_planet.rb
+M	galaxy_game/app/models/celestial_bodies/satellites/large_moon.rb
+M	galaxy_game/app/models/celestial_bodies/satellites/satellite.rb
+M	galaxy_game/app/models/celestial_bodies/spheres/atmosphere.rb
+A	galaxy_game/app/models/celestial_bodies/spheres/atmosphere.rb-github_version
+A	galaxy_game/app/models/celestial_bodies/spheres/atmosphere.rb.current
+M	galaxy_game/app/models/celestial_bodies/spheres/biosphere.rb
+M	galaxy_game/app/models/celestial_bodies/spheres/geosphere.rb
+M	galaxy_game/app/models/celestial_bodies/spheres/hydrosphere.rb
+A	galaxy_game/app/models/celestial_bodies/spheres/hydrosphere.rb.current
+M	galaxy_game/app/models/celestial_bodies/star.rb
+A	galaxy_game/app/models/celestial_bodies/terrestrial_planet.rb
+M	galaxy_game/app/models/concerns/atmosphere_concern.rb
+M	galaxy_game/app/models/concerns/battery_management.rb
+M	galaxy_game/app/models/concerns/biosphere_concern.rb
+M	galaxy_game/app/models/concerns/energy_management.rb
+M	galaxy_game/app/models/concerns/geosphere_concern.rb
+M	galaxy_game/app/models/concerns/has_modules.rb
+M	galaxy_game/app/models/concerns/has_units.rb
+A	galaxy_game/app/models/concerns/housing.rb
+M	galaxy_game/app/models/concerns/hydrosphere_concern.rb
+M	galaxy_game/app/models/concerns/material_management_concern.rb
+A	galaxy_game/app/models/concerns/mineable.rb
+D	galaxy_game/app/models/concerns/rig_attachable.rb
+D	galaxy_game/app/models/concerns/settlement/settlement_core.rb
+D	galaxy_game/app/models/concerns/spin_gravity.rb
+M	galaxy_game/app/models/concerns/storage.rb
+M	galaxy_game/app/models/consortium_membership.rb
+M	galaxy_game/app/models/construction_job.rb
+M	galaxy_game/app/models/craft/base_craft.rb
+M	galaxy_game/app/models/craft/variant_manager.rb
+M	galaxy_game/app/models/game.rb
+M	galaxy_game/app/models/inventory.rb
+D	galaxy_game/app/models/job.rb
+M	galaxy_game/app/models/location/celestial_location.rb
+M	galaxy_game/app/models/logistics/contract.rb
+M	galaxy_game/app/models/logistics/provider.rb
+M	galaxy_game/app/models/material_processing_job.rb
+A	galaxy_game/app/models/n_p_c_colony.rb
+M	galaxy_game/app/models/orbital_construction_project.rb
+M	galaxy_game/app/models/orbital_depot.rb
+M	galaxy_game/app/models/organizations/base_organization.rb
+M	galaxy_game/app/models/organizations/tax_authority.rb
+M	galaxy_game/app/models/planet_biome.rb
+M	galaxy_game/app/models/player.rb
+M	galaxy_game/app/models/route_proposal_vote.rb
+M	galaxy_game/app/models/scheduled_arrival.rb
+M	galaxy_game/app/models/scheduled_departure.rb
+M	galaxy_game/app/models/seal_printing_job.rb
+M	galaxy_game/app/models/settlement/base_settlement.rb
+A	galaxy_game/app/models/settlement/city.rb
+A	galaxy_game/app/models/settlement/colony.rb
+A	galaxy_game/app/models/settlement/dome.rb
+A	galaxy_game/app/models/settlement/habitat.rb
+A	galaxy_game/app/models/settlement/n_p_c_colony.rb
+M	galaxy_game/app/models/settlement/orbital_depot.rb
+D	galaxy_game/app/models/settlement/orbital_settlement.rb
+A	galaxy_game/app/models/settlement/outpost.rb
+A	galaxy_game/app/models/settlement/settlement.rb
+M	galaxy_game/app/models/settlement/space_station.rb
+M	galaxy_game/app/models/shell_printing_job.rb
+A	galaxy_game/app/models/smelting_jobs.rb
+M	galaxy_game/app/models/solar_system.rb
+A	galaxy_game/app/models/spaceship.rb
+A	galaxy_game/app/models/storage/base_storage.rb
+A	galaxy_game/app/models/storage/energy_storage.rb
+A	galaxy_game/app/models/storage/gas_storage.rb
+A	galaxy_game/app/models/storage/liquid_storage.rb
+A	galaxy_game/app/models/storage/solid_storage.rb
+M	galaxy_game/app/models/structures/base_structure.rb
+D	galaxy_game/app/models/structures/converted_base.rb
+D	galaxy_game/app/models/structures/orbital_structure.rb
+R082	galaxy_game/app/models/units/planetary_umbilical_hub.rb	galaxy_game/app/models/structures/planetary_umbilical_hub.rb
+M	galaxy_game/app/models/structures/worldhouse.rb
+M	galaxy_game/app/models/unit_assembly_job.rb
+A	galaxy_game/app/models/units/algae_bio_reactor.rb
+A	galaxy_game/app/models/units/automated_factory.rb
+M	galaxy_game/app/models/units/base_unit.rb
+A	galaxy_game/app/models/units/base_unit.rb.git.version
+A	galaxy_game/app/models/units/base_unit.rb.working-git-version
+A	galaxy_game/app/models/units/base_unit_new.rb
+M	galaxy_game/app/models/units/battery.rb
+A	galaxy_game/app/models/units/biogas_generator.rb
+A	galaxy_game/app/models/units/biogas_unit.rb
+A	galaxy_game/app/models/units/biomass_recycler.rb
+A	galaxy_game/app/models/units/composting.rb
+A	galaxy_game/app/models/units/composting_unit.rb
+A	galaxy_game/app/models/units/composting_unit_new.rb
+M	galaxy_game/app/models/units/computer.rb
+D	galaxy_game/app/models/units/extractor.rb
+D	galaxy_game/app/models/units/fabricator.rb
+A	galaxy_game/app/models/units/greenhouse.rb
+M	galaxy_game/app/models/units/habitat.rb
+D	galaxy_game/app/models/units/life_support.rb
+A	galaxy_game/app/models/units/lunar_regolith_processor.rb
+A	galaxy_game/app/models/units/moxie_unit.rb
+D	galaxy_game/app/models/units/processor.rb
+D	galaxy_game/app/models/units/propulsion.rb
+A	galaxy_game/app/models/units/smelter.rb
+D	galaxy_game/app/models/units/storage.rb
+A	galaxy_game/app/models/units/unit.rb
+A	galaxy_game/app/models/units/waste_treatment_unit.rb
+A	galaxy_game/app/models/units/water_treatment.rb
+M	galaxy_game/app/services/ai_manager.rb
+D	galaxy_game/app/services/ai_manager/ai_colony_manager.rb
+D	galaxy_game/app/services/ai_manager/atmospheric_harvester_service.rb
+D	galaxy_game/app/services/ai_manager/consortium_manager.rb
+M	galaxy_game/app/services/ai_manager/depot_adapter.rb
+D	galaxy_game/app/services/ai_manager/em_mission_coordinator_service.rb
+M	galaxy_game/app/services/ai_manager/emergency_mission_service.rb
+D	galaxy_game/app/services/ai_manager/errors.rb
+M	galaxy_game/app/services/ai_manager/escalation_service.rb
+M	galaxy_game/app/services/ai_manager/expansion_decision_service.rb
+M	galaxy_game/app/services/ai_manager/expansion_service.rb
+M	galaxy_game/app/services/ai_manager/isru_evaluator.rb
+M	galaxy_game/app/services/ai_manager/isru_optimizer.rb
+A	galaxy_game/app/services/ai_manager/luna_development_planner.rb
+M	galaxy_game/app/services/ai_manager/mission_planner_service.rb
+M	galaxy_game/app/services/ai_manager/mission_scorer.rb
+M	galaxy_game/app/services/ai_manager/operational_manager.rb
+M	galaxy_game/app/services/ai_manager/precursor_capability_service.rb
+M	galaxy_game/app/services/ai_manager/priority_heuristic.rb
+M	galaxy_game/app/services/ai_manager/production_manager.rb
+M	galaxy_game/app/services/ai_manager/state_analyzer.rb
+M	galaxy_game/app/services/ai_manager/station_construction_strategy.rb
+M	galaxy_game/app/services/ai_manager/station_cost_benefit_analyzer.rb
+D	galaxy_game/app/services/ai_manager/station_placement_service.rb
+M	galaxy_game/app/services/ai_manager/strategy_selector.rb
+M	galaxy_game/app/services/ai_manager/system_architect.rb
+M	galaxy_game/app/services/ai_manager/system_discovery_service.rb
+M	galaxy_game/app/services/ai_manager/task_execution_engine.rb
+D	galaxy_game/app/services/ai_manager/task_execution_engine_v2.rb
+M	galaxy_game/app/services/ai_manager/terraforming_manager.rb
+D	galaxy_game/app/services/ai_manager/testing.rb
+M	galaxy_game/app/services/ai_manager/testing/performance_monitor.rb
+M	galaxy_game/app/services/ai_manager/testing/sandbox_environment.rb
+M	galaxy_game/app/services/ai_manager/testing/validation_suite.rb
+D	galaxy_game/app/services/ai_manager/transit_fee_service.rb
+M	galaxy_game/app/services/ai_manager/world_knowledge_service.rb
+M	galaxy_game/app/services/ai_manager/wormhole_scouting_service.rb
+D	galaxy_game/app/services/cargo_manifest_loader.rb
+M	galaxy_game/app/services/construction/orbital_shipyard_service.rb
+D	galaxy_game/app/services/em_harvesting_service.rb
+M	galaxy_game/app/services/extraction_service.rb
+M	galaxy_game/app/services/game_service.rb
+M	galaxy_game/app/services/logistics/contract_service.rb
+M	galaxy_game/app/services/logistics/internal_transfer_service.rb
+M	galaxy_game/app/services/logistics/inventory_manager.rb
+M	galaxy_game/app/services/lookup/base_lookup_service.rb
+M	galaxy_game/app/services/lookup/blueprint_lookup_service.rb
+M	galaxy_game/app/services/lookup/craft_lookup_service.rb
+M	galaxy_game/app/services/lookup/earth_reference_service.rb
+M	galaxy_game/app/services/lookup/item_lookup_service.rb
+M	galaxy_game/app/services/lookup/material_lookup_service.rb
+M	galaxy_game/app/services/lookup/module_lookup_service.rb
+M	galaxy_game/app/services/lookup/star_system_lookup_service.rb
+M	galaxy_game/app/services/lookup/unit_lookup_service.rb
+M	galaxy_game/app/services/manufacturing/assembly_service.rb
+M	galaxy_game/app/services/manufacturing/byproduct_manufacturing_service.rb
+M	galaxy_game/app/services/manufacturing/component_production_service.rb
+M	galaxy_game/app/services/manufacturing/construction/segment_covering_service.rb
+M	galaxy_game/app/services/manufacturing/cost_calculator.rb
+M	galaxy_game/app/services/manufacturing/material_processing_service.rb
+M	galaxy_game/app/services/manufacturing/material_request.rb
+M	galaxy_game/app/services/manufacturing/processing.rb
+M	galaxy_game/app/services/manufacturing/production_service.rb
+M	galaxy_game/app/services/manufacturing/service.rb
+M	galaxy_game/app/services/manufacturing/shell_printing_service.rb
+M	galaxy_game/app/services/manufacturing/unit_deployment.rb
+M	galaxy_game/app/services/manufacturing_service.rb
+A	galaxy_game/app/services/material_lookup_service.rb
+M	galaxy_game/app/services/material_request_service.rb
+M	galaxy_game/app/services/planet_update_service.rb
+M	galaxy_game/app/services/pressurization/structure_pressurization_service.rb
+M	galaxy_game/app/services/processing_service.rb
+M	galaxy_game/app/services/resource/acquisition.rb
+M	galaxy_game/app/services/resource/job_processor.rb
+M	galaxy_game/app/services/resource/transfer.rb
+D	galaxy_game/app/services/settlement_deployment_service.rb
+M	galaxy_game/app/services/star_sim/automatic_terrain_generator.rb
+M	galaxy_game/app/services/star_sim/system_builder_service.rb
+M	galaxy_game/app/services/star_sim/wormholes/generator.rb
+M	galaxy_game/app/services/star_sim/wormholes/splicer.rb
+M	galaxy_game/app/services/terra_sim/atmosphere_simulation_service.rb
+M	galaxy_game/app/services/terra_sim/biosphere_simulation_service.rb
+M	galaxy_game/app/services/terra_sim/geosphere_simulation_service.rb
+M	galaxy_game/app/services/terra_sim/hydrosphere_simulation_service.rb
+M	galaxy_game/app/services/wormhole_consortium_formation_service.rb
+M	galaxy_game/app/services/wormhole_expansion_service.rb
+D	galaxy_game/app/services/wormhole_navigator.rb
+M	galaxy_game/app/views/admin/ai_manager/decisions.html.erb
+M	galaxy_game/app/views/admin/ai_manager/index.html.erb
+M	galaxy_game/app/views/admin/ai_manager/missions.html.erb
+M	galaxy_game/app/views/admin/ai_manager/patterns.html.erb
+M	galaxy_game/app/views/admin/ai_manager/performance.html.erb
+M	galaxy_game/app/views/admin/ai_manager/planner.html.erb
+M	galaxy_game/app/views/admin/celestial_bodies/monitor.html.erb
+D	galaxy_game/app/views/admin/celestial_bodies/monitor.html.erb.current
+D	galaxy_game/app/views/admin/celestial_bodies/planetary.html.erb
+D	galaxy_game/app/views/admin/celestial_bodies/regional.html.erb
+D	galaxy_game/app/views/admin/celestial_bodies/show.html.erb
+M	galaxy_game/app/views/admin/celestial_bodies/surface.html.erb
+D	galaxy_game/app/views/admin/dashboard/index.html.erb.github-version
+M	galaxy_game/app/views/admin/solar_systems/show.html.erb
+D	galaxy_game/app/views/landing/about.html.erb
+D	galaxy_game/app/views/landing/index.html.erb
+D	galaxy_game/app/workers/job_processor_worker.rb
+D	galaxy_game/chromakey_spritesheet.py
+M	galaxy_game/config/initializers/game_data_paths.rb
+M	galaxy_game/config/routes.rb
+D	galaxy_game/data/json-data/orbital_em_skimmer_mid.json
+A	galaxy_game/data/logs/ai_manager_mvp_test_1771100018.json
+A	galaxy_game/data/logs/ai_manager_mvp_test_1771100120.json
+A	galaxy_game/data/logs/ai_manager_mvp_test_1771100224.json
+A	galaxy_game/data/logs/ai_manager_mvp_test_1771100264.json
+A	galaxy_game/data/logs/ai_manager_mvp_test_1771100276.json
+A	galaxy_game/data/logs/ai_manager_mvp_test_1771100289.json
+A	galaxy_game/db/migrate/20241028161027_create_npc_colonies.rb
+D	galaxy_game/db/migrate/20260218235549_make_docked_at_polymorphic.rb
+D	galaxy_game/db/migrate/20260302120000_create_ai_decision_logs.rb
+D	galaxy_game/db/migrate/20260316220232_add_layer_to_materials.rb
+D	galaxy_game/db/migrate/20260317015900_add_route_proposal_ref_to_route_proposal_votes.rb
+D	galaxy_game/db/migrate/20260317021641_remove_proposal_id_from_route_proposal_votes.rb
+D	galaxy_game/db/migrate/20260322133723_allow_null_name_on_solar_systems.rb
+D	galaxy_game/db/migrate/20260327213844_add_capabilities_to_logistics_providers.rb
+D	galaxy_game/db/migrate/20260415183457_add_settlement_type_to_adapted_features.rb
+D	galaxy_game/db/migrate/20260421120000_create_jobs.rb
+D	galaxy_game/db/migrate/20260423000100_add_logistics_contract_fields.rb
+D	galaxy_game/db/migrate/20260423131010_add_shell_seal_columns_to_construction_jobs.rb
+M	galaxy_game/db/schema.rb
+M	galaxy_game/db/seeds.rb
+M	galaxy_game/import/brown-dwarf-data.rb
+M	galaxy_game/integration-tests/old-integration-test-scripts/archived_scripts/check_blueprint_materials.rb
+M	galaxy_game/integration-tests/old-integration-test-scripts/starship_integration_test.rb
+M	galaxy_game/lib/tasks/ai_base_building.rake
+M	galaxy_game/lib/tasks/ai_manager.rake
+M	galaxy_game/lib/tasks/ai_manager_teaching.rake
+M	galaxy_game/lib/tasks/isru_production_validation.rake
+M	galaxy_game/lib/tasks/lunar_base_with_isru_pipeline.rake
+M	galaxy_game/lib/tasks/structures_assembly_validation.rake
+A	galaxy_game/logs/download_sol_bodies_20260202_132503.log
+M	galaxy_game/missing_list.txt
+D	galaxy_game/patch_major_moons_sol_complete.py
+D	galaxy_game/public/tilesets/Gemini_Generated_Image_l9892hl9892hl989.png
+D	galaxy_game/public/tilesets/alio.tilespec
+D	galaxy_game/public/tilesets/alio/alio.tilespec
+D	galaxy_game/public/tilesets/amplio/ancientcities.png
+D	galaxy_game/public/tilesets/amplio/ancientcities.spec
+D	galaxy_game/public/tilesets/amplio/explosions.png
+D	galaxy_game/public/tilesets/amplio/explosions.spec
+D	galaxy_game/public/tilesets/amplio/fog.png
+D	galaxy_game/public/tilesets/amplio/fog.spec
+D	galaxy_game/public/tilesets/amplio/grid.png
+D	galaxy_game/public/tilesets/amplio/grid.spec
+D	galaxy_game/public/tilesets/amplio/maglev.png
+D	galaxy_game/public/tilesets/amplio/maglev.spec
+D	galaxy_game/public/tilesets/amplio/medievalcities.png
+D	galaxy_game/public/tilesets/amplio/medievalcities.spec
+D	galaxy_game/public/tilesets/amplio/moderncities.png
+D	galaxy_game/public/tilesets/amplio/moderncities.spec
+D	galaxy_game/public/tilesets/amplio/nuke.png
+D	galaxy_game/public/tilesets/amplio/nuke.spec
+D	galaxy_game/public/tilesets/amplio/ocean.png
+D	galaxy_game/public/tilesets/amplio/ocean.spec
+D	galaxy_game/public/tilesets/amplio/select-alpha.png
+D	galaxy_game/public/tilesets/amplio/select.spec
+D	galaxy_game/public/tilesets/amplio/terrain1.png
+D	galaxy_game/public/tilesets/amplio/terrain1.spec
+D	galaxy_game/public/tilesets/amplio/terrain2.png
+D	galaxy_game/public/tilesets/amplio/terrain2.spec
+D	galaxy_game/public/tilesets/amplio/tiles.png
+D	galaxy_game/public/tilesets/amplio/tiles.spec
+D	galaxy_game/public/tilesets/amplio/units.png
+D	galaxy_game/public/tilesets/amplio/units.spec
+D	galaxy_game/public/tilesets/amplio/upkeep.png
+D	galaxy_game/public/tilesets/amplio/upkeep.spec
+D	galaxy_game/public/tilesets/amplio/water.png
+D	galaxy_game/public/tilesets/amplio/water.spec
+D	galaxy_game/public/tilesets/amplio2.tilespec
+D	galaxy_game/public/tilesets/amplio2/.gitignore
+D	galaxy_game/public/tilesets/amplio2/Makefile.am
+D	galaxy_game/public/tilesets/amplio2/activities.png
+D	galaxy_game/public/tilesets/amplio2/activities.spec
+D	galaxy_game/public/tilesets/amplio2/animals.png
+D	galaxy_game/public/tilesets/amplio2/animals.spec
+D	galaxy_game/public/tilesets/amplio2/bases.png
+D	galaxy_game/public/tilesets/amplio2/bases.spec
+D	galaxy_game/public/tilesets/amplio2/cities.png
+D	galaxy_game/public/tilesets/amplio2/cities.spec
+D	galaxy_game/public/tilesets/amplio2/explosions.png
+D	galaxy_game/public/tilesets/amplio2/explosions.spec
+D	galaxy_game/public/tilesets/amplio2/extra_units.png
+D	galaxy_game/public/tilesets/amplio2/extra_units.spec
+D	galaxy_game/public/tilesets/amplio2/fog.png
+D	galaxy_game/public/tilesets/amplio2/fog.spec
+D	galaxy_game/public/tilesets/amplio2/grid.png
+D	galaxy_game/public/tilesets/amplio2/grid.spec
+D	galaxy_game/public/tilesets/amplio2/hills.png
+D	galaxy_game/public/tilesets/amplio2/hills.spec
+D	galaxy_game/public/tilesets/amplio2/maglev.png
+D	galaxy_game/public/tilesets/amplio2/maglev.spec
+D	galaxy_game/public/tilesets/amplio2/mountains.png
+D	galaxy_game/public/tilesets/amplio2/mountains.spec
+D	galaxy_game/public/tilesets/amplio2/nuke.png
+D	galaxy_game/public/tilesets/amplio2/nuke.spec
+D	galaxy_game/public/tilesets/amplio2/ocean.png
+D	galaxy_game/public/tilesets/amplio2/ocean.spec
+D	galaxy_game/public/tilesets/amplio2/select-alpha.png
+D	galaxy_game/public/tilesets/amplio2/select.spec
+D	galaxy_game/public/tilesets/amplio2/terrain1.png
+D	galaxy_game/public/tilesets/amplio2/terrain1.spec
+D	galaxy_game/public/tilesets/amplio2/terrain2.png
+D	galaxy_game/public/tilesets/amplio2/terrain2.spec
+D	galaxy_game/public/tilesets/amplio2/tiles.png
+D	galaxy_game/public/tilesets/amplio2/tiles.spec
+D	galaxy_game/public/tilesets/amplio2/units.png
+D	galaxy_game/public/tilesets/amplio2/units.spec
+D	galaxy_game/public/tilesets/amplio2/upkeep.png
+D	galaxy_game/public/tilesets/amplio2/upkeep.spec
+D	galaxy_game/public/tilesets/amplio2/veterancy.png
+D	galaxy_game/public/tilesets/amplio2/veterancy.spec
+D	galaxy_game/public/tilesets/amplio2/volcano.png
+D	galaxy_game/public/tilesets/amplio2/volcano.spec
+D	galaxy_game/public/tilesets/amplio2/water.png
+D	galaxy_game/public/tilesets/amplio2/water.spec
+D	galaxy_game/public/tilesets/bigtrident.tilespec
+D	galaxy_game/public/tilesets/galaxy_game/base_terrain.png
+D	galaxy_game/public/tilesets/galaxy_game/biomes.json
+D	galaxy_game/public/tilesets/galaxy_game/gemini_base_terrain.png
+D	galaxy_game/public/tilesets/galaxy_game/gemini_galaxy_base_tileset.json
+D	galaxy_game/public/tilesets/galaxy_game/gemini_space_colonization_tileset.json
+D	galaxy_game/public/tilesets/hexemplio.tilespec
+D	galaxy_game/public/tilesets/hexemplio/.gitignore
+D	galaxy_game/public/tilesets/hexemplio/Makefile.am
+D	galaxy_game/public/tilesets/hexemplio/activities.png
+D	galaxy_game/public/tilesets/hexemplio/activities.spec
+D	galaxy_game/public/tilesets/hexemplio/bases.png
+D	galaxy_game/public/tilesets/hexemplio/bases.spec
+D	galaxy_game/public/tilesets/hexemplio/cities.png
+D	galaxy_game/public/tilesets/hexemplio/cities.spec
+D	galaxy_game/public/tilesets/hexemplio/embellishments.png
+D	galaxy_game/public/tilesets/hexemplio/embellishments.spec
+D	galaxy_game/public/tilesets/hexemplio/forests.png
+D	galaxy_game/public/tilesets/hexemplio/forests.spec
+D	galaxy_game/public/tilesets/hexemplio/grid.png
+D	galaxy_game/public/tilesets/hexemplio/grid.spec
+D	galaxy_game/public/tilesets/hexemplio/hills.png
+D	galaxy_game/public/tilesets/hexemplio/hills.spec
+D	galaxy_game/public/tilesets/hexemplio/mountains.png
+D	galaxy_game/public/tilesets/hexemplio/mountains.spec
+D	galaxy_game/public/tilesets/hexemplio/rivers.png
+D	galaxy_game/public/tilesets/hexemplio/rivers.spec
+D	galaxy_game/public/tilesets/hexemplio/roads-maglevs.png
+D	galaxy_game/public/tilesets/hexemplio/roads-maglevs.spec
+D	galaxy_game/public/tilesets/hexemplio/roads-rails.png
+D	galaxy_game/public/tilesets/hexemplio/roads-rails.spec
+D	galaxy_game/public/tilesets/hexemplio/roads.png
+D	galaxy_game/public/tilesets/hexemplio/roads.spec
+D	galaxy_game/public/tilesets/hexemplio/savannah.png
+D	galaxy_game/public/tilesets/hexemplio/savannah.spec
+D	galaxy_game/public/tilesets/hexemplio/select.png
+D	galaxy_game/public/tilesets/hexemplio/select.spec
+D	galaxy_game/public/tilesets/hexemplio/terrain.png
+D	galaxy_game/public/tilesets/hexemplio/terrain.spec
+D	galaxy_game/public/tilesets/hexemplio/tiles.png
+D	galaxy_game/public/tilesets/hexemplio/tiles.spec
+D	galaxy_game/public/tilesets/hexemplio/unitcost.png
+D	galaxy_game/public/tilesets/hexemplio/unitcost.spec
+D	galaxy_game/public/tilesets/hexemplio/unitextras.png
+D	galaxy_game/public/tilesets/hexemplio/unitextras.spec
+D	galaxy_game/public/tilesets/hexemplio/water1.png
+D	galaxy_game/public/tilesets/hexemplio/water1.spec
+D	galaxy_game/public/tilesets/hexemplio/water2.png
+D	galaxy_game/public/tilesets/hexemplio/water2.spec
+D	galaxy_game/public/tilesets/hexemplio/water3.png
+D	galaxy_game/public/tilesets/hexemplio/water3.spec
+D	galaxy_game/public/tilesets/isophex.tilespec
+D	galaxy_game/public/tilesets/isotrident/.gitignore
+D	galaxy_game/public/tilesets/isotrident/Makefile.am
+D	galaxy_game/public/tilesets/isotrident/cities.png
+D	galaxy_game/public/tilesets/isotrident/cities.spec
+D	galaxy_game/public/tilesets/isotrident/fog.png
+D	galaxy_game/public/tilesets/isotrident/fog.spec
+D	galaxy_game/public/tilesets/isotrident/grid.png
+D	galaxy_game/public/tilesets/isotrident/grid.spec
+D	galaxy_game/public/tilesets/isotrident/morecities.png
+D	galaxy_game/public/tilesets/isotrident/morecities.spec
+D	galaxy_game/public/tilesets/isotrident/nuke.png
+D	galaxy_game/public/tilesets/isotrident/nuke.spec
+D	galaxy_game/public/tilesets/isotrident/select.png
+D	galaxy_game/public/tilesets/isotrident/select.spec
+D	galaxy_game/public/tilesets/isotrident/terrain1.png
+D	galaxy_game/public/tilesets/isotrident/terrain1.spec
+D	galaxy_game/public/tilesets/isotrident/terrain2.png
+D	galaxy_game/public/tilesets/isotrident/terrain2.spec
+D	galaxy_game/public/tilesets/isotrident/tiles.png
+D	galaxy_game/public/tilesets/isotrident/tiles.spec
+D	galaxy_game/public/tilesets/isotrident/unitcost.png
+D	galaxy_game/public/tilesets/isotrident/unitcost.spec
+D	galaxy_game/public/tilesets/isotrident/unitextras.png
+D	galaxy_game/public/tilesets/isotrident/unitextras.spec
+D	galaxy_game/public/tilesets/roundsquare.tilespec
+D	galaxy_game/public/tilesets/roundsquare/cities.png
+D	galaxy_game/public/tilesets/roundsquare/cities.spec
+D	galaxy_game/public/tilesets/roundsquare/citybar.png
+D	galaxy_game/public/tilesets/roundsquare/citybar.spec
+D	galaxy_game/public/tilesets/roundsquare/explosions.png
+D	galaxy_game/public/tilesets/roundsquare/explosions.spec
+D	galaxy_game/public/tilesets/roundsquare/fog.png
+D	galaxy_game/public/tilesets/roundsquare/fog.spec
+D	galaxy_game/public/tilesets/roundsquare/grid.png
+D	galaxy_game/public/tilesets/roundsquare/grid.spec
+D	galaxy_game/public/tilesets/roundsquare/nuke.png
+D	galaxy_game/public/tilesets/roundsquare/nuke.spec
+D	galaxy_game/public/tilesets/roundsquare/numbers.png
+D	galaxy_game/public/tilesets/roundsquare/numbers.spec
+D	galaxy_game/public/tilesets/roundsquare/paths.png
+D	galaxy_game/public/tilesets/roundsquare/paths.spec
+D	galaxy_game/public/tilesets/roundsquare/roads.png
+D	galaxy_game/public/tilesets/roundsquare/roads.spec
+D	galaxy_game/public/tilesets/roundsquare/select.png
+D	galaxy_game/public/tilesets/roundsquare/select.spec
+D	galaxy_game/public/tilesets/roundsquare/specialists.png
+D	galaxy_game/public/tilesets/roundsquare/specialists.spec
+D	galaxy_game/public/tilesets/roundsquare/tile_extras.png
+D	galaxy_game/public/tilesets/roundsquare/tile_extras.spec
+D	galaxy_game/public/tilesets/roundsquare/tiles.png
+D	galaxy_game/public/tilesets/roundsquare/tiles.spec
+D	galaxy_game/public/tilesets/roundsquare/unit_info.png
+D	galaxy_game/public/tilesets/roundsquare/unit_info.spec
+D	galaxy_game/public/tilesets/roundsquare/units.png
+D	galaxy_game/public/tilesets/roundsquare/units.spec
+D	galaxy_game/public/tilesets/roundsquare/units_LT.png
+D	galaxy_game/public/tilesets/roundsquare/units_LT.spec
+D	galaxy_game/public/tilesets/roundsquare/upkeep.png
+D	galaxy_game/public/tilesets/roundsquare/upkeep.spec
+D	galaxy_game/public/tilesets/roundsquare/yields.png
+D	galaxy_game/public/tilesets/roundsquare/yields.spec
+D	galaxy_game/public/tilesets/roundsquare/yields_f.png
+D	galaxy_game/public/tilesets/roundsquare/yields_f.spec
+D	galaxy_game/public/tilesets/trident.tilespec
+D	galaxy_game/public/tilesets/trident/.gitignore
+D	galaxy_game/public/tilesets/trident/Makefile.am
+D	galaxy_game/public/tilesets/trident/auto_ll.spec
+D	galaxy_game/public/tilesets/trident/cities.png
+D	galaxy_game/public/tilesets/trident/cities.spec
+D	galaxy_game/public/tilesets/trident/earth.png
+D	galaxy_game/public/tilesets/trident/earth.spec
+D	galaxy_game/public/tilesets/trident/explosions.png
+D	galaxy_game/public/tilesets/trident/explosions.spec
+D	galaxy_game/public/tilesets/trident/extra_units.png
+D	galaxy_game/public/tilesets/trident/extra_units.spec
+D	galaxy_game/public/tilesets/trident/fog.png
+D	galaxy_game/public/tilesets/trident/fog.spec
+D	galaxy_game/public/tilesets/trident/grid.png
+D	galaxy_game/public/tilesets/trident/grid.spec
+D	galaxy_game/public/tilesets/trident/highways.png
+D	galaxy_game/public/tilesets/trident/highways.spec
+D	galaxy_game/public/tilesets/trident/roads.png
+D	galaxy_game/public/tilesets/trident/roads.spec
+D	galaxy_game/public/tilesets/trident/select.png
+D	galaxy_game/public/tilesets/trident/select.spec
+D	galaxy_game/public/tilesets/trident/tiles.png
+D	galaxy_game/public/tilesets/trident/tiles.spec
+D	galaxy_game/public/tilesets/trident/units.png
+D	galaxy_game/public/tilesets/trident/units.spec
+M	galaxy_game/spec/controllers/admin/ai_manager_controller_spec.rb
+M	galaxy_game/spec/controllers/admin/celestial_bodies_controller_spec.rb
+M	galaxy_game/spec/controllers/admin/map_studio_controller_spec.rb
+M	galaxy_game/spec/controllers/admin/organizations_controller_spec.rb
+M	galaxy_game/spec/controllers/admin/simulation_controller_spec.rb
+M	galaxy_game/spec/controllers/celestial_bodies_spec.rb
+M	galaxy_game/spec/controllers/game_controller_spec.rb
+M	galaxy_game/spec/controllers/simulation_controller_spec.rb
+M	galaxy_game/spec/controllers/stars_spec.rb
+A	galaxy_game/spec/factories/accounts.rb
+M	galaxy_game/spec/factories/atmospheres.rb
+M	galaxy_game/spec/factories/blueprint.rb
+M	galaxy_game/spec/factories/celestial_bodies/brown_dwarfs.rb
+M	galaxy_game/spec/factories/celestial_bodies/celestial_bodies.rb
+M	galaxy_game/spec/factories/celestial_bodies/materials.rb
+M	galaxy_game/spec/factories/celestial_bodies/spheres/geosphere.rb
+M	galaxy_game/spec/factories/component_production_jobs.rb
+M	galaxy_game/spec/factories/construction_job.rb
+A	galaxy_game/spec/factories/domes.rb
+M	galaxy_game/spec/factories/financial/accounts.rb
+M	galaxy_game/spec/factories/financial/transactions.rb
+D	galaxy_game/spec/factories/jobs.rb
+M	galaxy_game/spec/factories/location/celestial_location.rb
+M	galaxy_game/spec/factories/logistics_contracts.rb
+M	galaxy_game/spec/factories/orbital_construction_projects.rb
+M	galaxy_game/spec/factories/organizations.rb
+D	galaxy_game/spec/factories/route_proposals.rb
+M	galaxy_game/spec/factories/settlement/base_settlement.rb
+D	galaxy_game/spec/factories/settlement/orbital_settlement.rb
+D	galaxy_game/spec/factories/settlement/space_station.rb
+M	galaxy_game/spec/factories/shell_printing_jobs.rb
+M	galaxy_game/spec/factories/solar_systems.rb
+D	galaxy_game/spec/factories/structures/converted_base.rb
+M	galaxy_game/spec/factories/structures/crater_dome.rb
+D	galaxy_game/spec/factories/structures/orbital_structure.rb
+M	galaxy_game/spec/factories/units/units.rb
+D	galaxy_game/spec/features/admin/celestial_bodies_spec.rb
+M	galaxy_game/spec/features/terrestrial_planets_feature_spec.rb
+D	galaxy_game/spec/fixtures/sample_template.json
+M	galaxy_game/spec/integration/ai_manager/escalation_integration_spec.rb
+M	galaxy_game/spec/integration/component_production_game_loop_spec.rb
+M	galaxy_game/spec/integration/manufacturing_pipeline_e2e_spec.rb
+M	galaxy_game/spec/integration/shell_printing_game_loop_spec.rb
+M	galaxy_game/spec/integration/terraforming_integration_spec.rb
+M	galaxy_game/spec/integration/tug_construction_integration_spec.rb
+M	galaxy_game/spec/jobs/concurrent_task_worker_job_spec.rb
+D	galaxy_game/spec/models/ai_decision_log_spec.rb
+A	galaxy_game/spec/models/atmosphere_spec.rb
+A	galaxy_game/spec/models/biogas_generator_spec.rb
+M	galaxy_game/spec/models/biology/life_form_library_spec.rb
+M	galaxy_game/spec/models/biology/life_form_spec.rb
+A	galaxy_game/spec/models/biomass_recycler_spec.rb
+A	galaxy_game/spec/models/biosphere_spec.rb
+M	galaxy_game/spec/models/celestial_bodies/material_spec.rb
+M	galaxy_game/spec/models/celestial_bodies/planet_biome_spec.rb
+M	galaxy_game/spec/models/celestial_bodies/planets/rocky/terrestrial_planets_spec.rb
+M	galaxy_game/spec/models/celestial_bodies/spheres/atmosphere_spec.rb
+M	galaxy_game/spec/models/celestial_bodies/spheres/biosphere_spec.rb
+M	galaxy_game/spec/models/celestial_bodies/spheres/hydrosphere_spec.rb
+M	galaxy_game/spec/models/celestial_body_spec.rb
+A	galaxy_game/spec/models/composting_unit_spec.rb
+M	galaxy_game/spec/models/concerns/energy_management_spec.rb
+M	galaxy_game/spec/models/concerns/geosphere_concern_spec.rb
+M	galaxy_game/spec/models/concerns/has_units_spec.rb
+A	galaxy_game/spec/models/concerns/housing_spec.rb
+M	galaxy_game/spec/models/concerns/hydrosphere_concern_spec.rb
+M	galaxy_game/spec/models/concerns/material_management_concern_spec.rb
+M	galaxy_game/spec/models/concerns/material_properties_concern_spec.rb
+A	galaxy_game/spec/models/concerns/mineable_spec.rb
+M	galaxy_game/spec/models/concerns/orbital_mechanics_spec.rb
+D	galaxy_game/spec/models/concerns/spin_gravity_spec.rb
+M	galaxy_game/spec/models/construction_job_spec.rb
+M	galaxy_game/spec/models/craft/base_craft_spec.rb
+M	galaxy_game/spec/models/craft/satellite/base_satellite_spec.rb
+A	galaxy_game/spec/models/dome_spec.rb
+A	galaxy_game/spec/models/dwarf_planet_spec.rb
+M	galaxy_game/spec/models/equipment_request_spec.rb
+M	galaxy_game/spec/models/game_spec.rb
+A	galaxy_game/spec/models/gas_giant_spec.rb
+A	galaxy_game/spec/models/hydrosphere_spec.rb
+A	galaxy_game/spec/models/ice_giant_spec.rb
+M	galaxy_game/spec/models/inventory_spec.rb
+M	galaxy_game/spec/models/item_spec.rb
+D	galaxy_game/spec/models/job_spec.rb
+M	galaxy_game/spec/models/liquid_material_spec.rb
+M	galaxy_game/spec/models/location/celestial_location_spec.rb
+D	galaxy_game/spec/models/logistics/provider_spec.rb
+R092	galaxy_game/spec/models/logistics/contract_spec.rb	galaxy_game/spec/models/logistics_contract_spec.rb
+M	galaxy_game/spec/models/market/order_spec.rb
+M	galaxy_game/spec/models/material_request_spec.rb
+A	galaxy_game/spec/models/material_spec.rb
+M	galaxy_game/spec/models/modules/base_module_spec.rb
+M	galaxy_game/spec/models/orbital_construction_project_spec.rb
+M	galaxy_game/spec/models/organizations/base_organization_dashboard_spec.rb
+A	galaxy_game/spec/models/organizations/base_organization_profit_spec.rb
+M	galaxy_game/spec/models/organizations/tax_authority_spec.rb
+A	galaxy_game/spec/models/planet_biome_spec.rb
+M	galaxy_game/spec/models/player_spec.rb
+M	galaxy_game/spec/models/route_proposal_spec.rb
+M	galaxy_game/spec/models/route_proposal_vote_spec.rb
+M	galaxy_game/spec/models/settlement/base_settlement_spec.rb
+A	galaxy_game/spec/models/settlement/city_spec.rb
+A	galaxy_game/spec/models/settlement/n_p_c_colony_spec.rb
+A	galaxy_game/spec/models/settlement/orbital_depot_spec.rb
+D	galaxy_game/spec/models/settlement/orbital_settlement_spec.rb
+A	galaxy_game/spec/models/settlement/outpost_spec.rb
+A	galaxy_game/spec/models/settlement/settlement_spec.rb
+A	galaxy_game/spec/models/settlement/space_station_spec.rb
+M	galaxy_game/spec/models/solar_system_spec.rb
+A	galaxy_game/spec/models/storage/base_storage_spec.rb
+A	galaxy_game/spec/models/storage/gas_storage_spec.rb
+A	galaxy_game/spec/models/storage/solid_storage_spec.rb
+M	galaxy_game/spec/models/storage/surface_storage_spec.rb
+M	galaxy_game/spec/models/structures/base_structure_spec.rb
+D	galaxy_game/spec/models/structures/converted_base_spec.rb
+D	galaxy_game/spec/models/structures/orbital_structure_spec.rb
+D	galaxy_game/spec/models/structures/worldhouse_segment_spec.rb
+A	galaxy_game/spec/models/terrestrial_planets_spec.rb
+M	galaxy_game/spec/models/unit_assembly_job_spec.rb
+M	galaxy_game/spec/models/units/base_unit_spec.rb
+M	galaxy_game/spec/models/units/battery_spec.rb
+D	galaxy_game/spec/models/units/robot_spec.rb
+A	galaxy_game/spec/models/waste_treatment_unit_spec.rb
+M	galaxy_game/spec/rails_helper.rb
+D	galaxy_game/spec/services/ai_manager/cycler_hitchhiker_spec.rb
+D	galaxy_game/spec/services/ai_manager/em_mission_coordinator_spec.rb
+M	galaxy_game/spec/services/ai_manager/escalation_service_spec.rb
+M	galaxy_game/spec/services/ai_manager/isru_evaluator_spec.rb
+M	galaxy_game/spec/services/ai_manager/isru_optimizer_spec.rb
+D	galaxy_game/spec/services/ai_manager/luna_settlement_integration_spec.rb
+M	galaxy_game/spec/services/ai_manager/manifest_parser_spec.rb
+M	galaxy_game/spec/services/ai_manager/mission_planner_service_spec.rb
+M	galaxy_game/spec/services/ai_manager/mission_scorer_spec.rb
+M	galaxy_game/spec/services/ai_manager/operational_manager_spec.rb
+M	galaxy_game/spec/services/ai_manager/precursor_capability_service_spec.rb
+M	galaxy_game/spec/services/ai_manager/priority_heuristic_spec.rb
+M	galaxy_game/spec/services/ai_manager/resource_flow_simulator_spec.rb
+M	galaxy_game/spec/services/ai_manager/service_orchestrator_spec.rb
+M	galaxy_game/spec/services/ai_manager/station_construction_strategy_spec.rb
+M	galaxy_game/spec/services/ai_manager/station_cost_benefit_analyzer_spec.rb
+M	galaxy_game/spec/services/ai_manager/strategy_selector_spec.rb
+M	galaxy_game/spec/services/ai_manager/system_architect_spec.rb
+M	galaxy_game/spec/services/ai_manager/task_execution_engine_spec.rb
+M	galaxy_game/spec/services/ai_manager/world_knowledge_service_spec.rb
+D	galaxy_game/spec/services/consortium/reconnection_spec.rb
+M	galaxy_game/spec/services/construction/orbital_shipyard_service_spec.rb
+D	galaxy_game/spec/services/em_harvesting_spec.rb
+D	galaxy_game/spec/services/extraction_service_spec.rb
+M	galaxy_game/spec/services/fitting_service_spec.rb
+M	galaxy_game/spec/services/generators/game_data_generator_spec.rb
+M	galaxy_game/spec/services/logistics/contract_service_spec.rb
+M	galaxy_game/spec/services/logistics/inventory_manager_spec.rb
+M	galaxy_game/spec/services/lookup/earth_reference_service_spec.rb
+M	galaxy_game/spec/services/lookup/material_lookup_service_spec.rb
+M	galaxy_game/spec/services/lookup/module_lookup_service_spec.rb
+M	galaxy_game/spec/services/lookup/planetary_geological_feature_lookup_service_spec.rb
+M	galaxy_game/spec/services/lookup/unit_lookup_service_spec.rb
+M	galaxy_game/spec/services/manfacturing_service_spec.rb
+M	galaxy_game/spec/services/manufacturing/assembly_service_spec.rb
+M	galaxy_game/spec/services/manufacturing/component_production_integration_spec.rb
+M	galaxy_game/spec/services/manufacturing/component_production_service_spec.rb
+M	galaxy_game/spec/services/manufacturing/material_processing_service_spec.rb
+M	galaxy_game/spec/services/manufacturing/processing_spec.rb
+M	galaxy_game/spec/services/manufacturing/service_spec.rb
+M	galaxy_game/spec/services/manufacturing/shell_printing_service_spec.rb
+M	galaxy_game/spec/services/market/trade_execution_service_spec.rb
+A	galaxy_game/spec/services/material_lookup_service_spec.rb
+M	galaxy_game/spec/services/naming/planet_name_service_spec.rb
+M	galaxy_game/spec/services/pressurization/structure_pressurization_service_spec.rb
+M	galaxy_game/spec/services/processing_service_spec.rb
+D	galaxy_game/spec/services/settlement_deployment_service_spec.rb
+M	galaxy_game/spec/services/star_sim/automatic_terrain_generator_spec.rb
+M	galaxy_game/spec/services/star_sim/procedural_generator_spec.rb
+M	galaxy_game/spec/services/terra_sim/geosphere_initializer_spec.rb
+D	galaxy_game/spec/services/tileset/biome_renderer_config_spec.rb
+M	galaxy_game/spec/services/wormhole_consortium_formation_service_spec.rb
+M	galaxy_game/spec/support/database_cleaner.rb
+M	galaxy_game/spec/transactions/guaranteed_market_sale_spec.rb
+D	galaxy_game/spec/workers/job_processor_worker_spec.rb
+A	galaxy_game/test/factories/celestial_bodies/spheres/cryospheres.rb
+A	galaxy_game/test/factories/celestial_bodies/star_distances.rb
+A	galaxy_game/test/factories/migration_logs.rb
+R068	galaxy_game/spec/factories/special_mission.rb	galaxy_game/test/factories/special_missions.rb
+A	galaxy_game/test/factories/structures/planetary_umbilical_hubs.rb
+A	galaxy_game/test/jobs/concurrent_task_worker_job_test.rb
+A	galaxy_game/test/models/celestial_bodies/spheres/cryosphere_test.rb
+A	galaxy_game/test/models/celestial_bodies/star_distance_test.rb
+A	galaxy_game/test/models/logistics_contract_test.rb
+A	galaxy_game/test/models/migration_log_test.rb
+A	galaxy_game/test/models/special_mission_test.rb
+A	galaxy_game/test/models/structures/planetary_umbilical_hub_test.rb
+D	generate_sprites.py
+D	last_base_unit_run.txt
+D	migrate_backlog_tasks.rb
+D	missing_methods.rb
+D	monitor_gitlog.txt
+D	process_titan_dem.rb
+D	public/tilesets/gemini_space_colonization_tileset.json
+D	restore_migrations.rb
+D	resume_rspec_grinding.md
+D	scripts/chromakey_spritesheet.py
+M	scripts/setup.sh
+A	spec/fixtures/data/resources/materials/gases/co2.json
+A	spec/fixtures/data/resources/materials/gases/n2.json
+A	spec/fixtures/data/resources/materials/gases/o2.json
+A	spec/services/ai_manager/cycler_hitchhiker_spec.rb
+A	spec/services/ai_manager/decision_logic_spec.rb
+A	spec/services/ai_manager/sabatier_refinements_spec.rb
+A	spec/services/ai_manager/super_mars_settlement_spec.rb
+A	spec/services/ai_manager/system_discovery_service_spec.rb
+A	spec/services/ai_manager/universal_docking_spec.rb
+A	spec/services/ai_manager/wormhole_shift_spec.rb
+A	spec/services/lookup/unit_lookup_service_spec.rb
+R093	docs/architecture/operations/wh-expansion.md	wh-expansion.md

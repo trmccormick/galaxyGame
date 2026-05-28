@@ -95,7 +95,7 @@ module Market
       npc_capacity = 1000 # Default NPC buy capacity — TODO: make dynamic
       trade_volume = [new_order.quantity, npc_capacity].min
 
-      return [] unless trade_volume > 0 && npc_price > 0
+      return [] unless trade_volume > 0 && npc_price && npc_price > 0
 
       [create_synthetic_npc_order(new_order, trade_volume, npc_price)]
     end
@@ -104,7 +104,7 @@ module Market
     # @param resource [String] The resource name
     # @return [Market::Condition, nil] The market condition or nil if not found
     def current_market_condition(resource)
-      market_conditions.find_or_create_by!(resource: resource)
+      market_conditions.find_by(resource: resource)
     end
 
     private
@@ -113,6 +113,9 @@ module Market
       order_params = params.dup
       resource = order_params[:resource]
       condition = current_market_condition(resource)
+      
+      # Create condition if it doesn't exist (for placing new orders)
+      condition ||= market_conditions.create!(resource: resource)
       
       order_params[:market_condition] = condition
       order_params[:quantity] = order_params.delete(:volume) if order_params.key?(:volume)
