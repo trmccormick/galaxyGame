@@ -82,12 +82,13 @@ RSpec.describe 'Component Production Integration', type: :integration do
       it 'creates a production job using real blueprint' do
         expect {
           service.produce_component('3d_printed_ibeam_mk1', 2, @printer_unit)
-        }.to change { ComponentProductionJob.count }.by(1)
+        }.to change { Job.count }.by(1)
 
-        job = ComponentProductionJob.last
-        expect(job.component_blueprint_id).to eq('3d_printed_ibeam_mk1')
-        expect(job.component_name).to eq('3D-Printed I-Beam Mk1')
-        expect(job.quantity).to eq(2)
+        job = Job.last
+        expect(job.job_type).to eq('component_production')
+        expect(job.operational_data['component_blueprint_id']).to eq('3d_printed_ibeam_mk1')
+        expect(job.output_type).to eq('3D-Printed I-Beam Mk1')
+        expect(job.operational_data['output_quantity']).to eq(2)
       end
 
       it 'consumes depleted_regolith from inventory' do
