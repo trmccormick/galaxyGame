@@ -23,10 +23,13 @@ FactoryBot.define do
       }
     }
 
-    association :owner, factory: :development_corporation
-    association :location, factory: :celestial_location
+    # Location is optional - only create if needed
+    location { nil }
 
-    after(:build) do |settlement|
+    after(:build) do |settlement, evaluator|
+      # Only create owner if not explicitly provided
+      settlement.owner = create(:development_corporation) if settlement.owner.blank?
+      
       if settlement.respond_to?(:create_account_and_inventory)
         settlement.define_singleton_method(:create_account_and_inventory) { nil }
       end
@@ -41,8 +44,25 @@ FactoryBot.define do
     end
 
     trait :with_account do
+      after(:build) do |settlement|
+        # Override the disable — allow account creation for this trait
+        settlement.define_singleton_method(:create_account_and_inventory) { nil } if settlement.respond_to?(:create_account_and_inventory)
+      end
       after(:create) do |settlement|
-        create(:account, accountable: settlement) unless settlement.account
+        unless settlement.account
+          gcc = Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
+            c.name = 'Galactic Crypto Currency'
+            c.is_system_currency = true
+            c.precision = 8
+          end
+          Financial::Account.create!(
+            accountable: settlement,
+            currency: gcc,
+            balance: 1_000.00,
+            lock_version: 0
+          )
+          settlement.reload
+        end
       end
     end
 

@@ -22,10 +22,33 @@ RSpec.describe "Guaranteed Market Sale Transaction", type: :transaction_flow do
 
   # Test entities
   let!(:player) { create(:player) }
-  let!(:luna_settlement) { create(:base_settlement, name: 'Luna Base') }
+  let!(:ldc) { Organizations::BaseOrganization.find_by!(identifier: 'LDC') }
+  let!(:luna_settlement) do
+    settlement = build(:base_settlement, name: 'Luna Base', owner: ldc)
+    settlement.save!
+    # Create and properly associate the account with explicit type
+    gcc = Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
+      c.name = 'Galactic Crypto Currency'
+      c.is_system_currency = true
+      c.precision = 8
+    end
+    Financial::Account.create!(
+      accountable_type: 'Settlement::BaseSettlement',
+      accountable_id: settlement.id,
+      currency: gcc,
+      balance: 10_000.00,
+      lock_version: 0
+    )
+    settlement.reload  # Clear association cache
+    settlement
+  end
   let!(:marketplace) { Market::Marketplace.create!(settlement: luna_settlement) }
+
   let!(:player_account) { player.account }
-  let!(:settlement_account) { luna_settlement.account }
+
+  before do
+    # Account is already created with sufficient balance
+  end
   
   let!(:market_condition) do
     Market::Condition.create!(
@@ -93,6 +116,14 @@ RSpec.describe "Guaranteed Market Sale Transaction", type: :transaction_flow do
 
   describe 'guaranteed sell order execution' do
     it 'executes atomically and creates all required records' do
+      # VERIFY TEST SETUP FIRST - check account exists in database
+      account = Financial::Account.find_by(accountable_type: 'Settlement::BaseSettlement', accountable_id: luna_settlement.id)
+      expect(account).to be_present, "Settlement should have account in database"
+      expect(account.balance).to be >= 5_000, "Account should have balance >= 5000"
+      expect(account.currency.symbol).to eq('GCC'), "Account should use GCC"
+      expect(luna_settlement.owner.is_npc?).to eq(true), "Settlement owner should be NPC"
+
+      # NOW run the actual test flow
       expected_trade_value = SALE_VOLUME * GUARANTEED_BID_PRICE
 
       expect {
@@ -121,14 +152,14 @@ RSpec.describe "Guaranteed Market Sale Transaction", type: :transaction_flow do
       # Validate inventory was removed
       expect(player).to have_received(:remove_inventory).with('LOX', SALE_VOLUME)
 
-          # Validate trade record
-          trade = Market::Trade.last
-          expect(trade.price).to eq(GUARANTEED_BID_PRICE)
-          expect(trade.volume).to eq(SALE_VOLUME)
-          expect(trade.seller).to eq(player)
-          expect(trade.buyer).to eq(luna_settlement)
-          
-          # Validate supply chain record
+      # Validate trade record
+      trade = Market::Trade.last
+      expect(trade.price).to eq(GUARANTEED_BID_PRICE)
+      expect(trade.volume).to eq(SALE_VOLUME)
+      expect(trade.seller).to eq(player)
+      expect(trade.buyer).to eq(luna_settlement)
+
+      # Validate supply chain record
           supply_chain = Market::SupplyChain.last
           expect(supply_chain.volume).to eq(SALE_VOLUME)
           expect(supply_chain.status).to eq('Awaiting Launch')
