@@ -32,7 +32,7 @@ RSpec.describe Craft::BaseCraft, type: :model do
       name: "Alpha Base",
       current_population: 100,
       location: @shackleton_crater_location_instance,
-      owner: FactoryBot.create(:organization, identifier: "BASE_CRAFT_TEST_ORG") # Create an owner organization for the settlement
+      owner: Organizations::BaseOrganization.find_or_create_by(identifier: "BASE_CRAFT_TEST_ORG") { |org| org.name = "Base Craft Test Org" } # Create or find owner organization for the settlement
     )
 
     # Create the main craft instance for this spec suite
