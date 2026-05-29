@@ -78,6 +78,10 @@ RSpec.describe Market::TradeExecutionService, type: :service do
     allow(Financial::TransactionManager).to receive(:create_transfer).and_return(
       OpenStruct.new(id: 'mock-net-txn-1')
     )
+    
+    # Fund settlement account (buyer needs funds to pay seller)
+    settlement_account.update!(balance: gross_revenue)
+    seller_account.update!(balance: 0.0)
   end
 
   subject do
@@ -100,18 +104,17 @@ RSpec.describe Market::TradeExecutionService, type: :service do
     )
   end
 
-  it 'calls TransactionManager.create_transfer with the NET amount' do
+  it 'calls transfer_funds with the NET amount using virtual ledger' do
     subject
     
-    # The transfer_net_funds logic uses the TransactionManager
-    expect(Financial::TransactionManager).to have_received(:create_transfer).with(
-      hash_including(
-        from: settlement_account,
-        to: seller_account,
-        amount: expected_net, # Verifies the net amount is transferred (4320.0)
-        description: "Net proceeds from market sale."
-      )
-    )
+    # Reload accounts to get latest balances from database
+    settlement_account.reload
+    seller_account.reload
+    
+    # Verify the transfer_funds method was called (which enforces virtual ledger for NPCs)
+    # Settlement starts with gross_revenue (4800), transfers net_amount (4320), has 480 left
+    expect(settlement_account.balance).to eq(gross_revenue - expected_net)
+    expect(seller_account.balance).to eq(expected_net)
   end
   
   # --- RECORD KEEPING & INVENTORY TESTS ---

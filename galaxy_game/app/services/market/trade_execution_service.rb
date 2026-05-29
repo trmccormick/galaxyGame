@@ -22,15 +22,29 @@ module Market
       tax_amount = tax_result[:tax_paid] 
       net_revenue = gross_revenue - tax_amount
 
-      # 2. Net Funds Transfer (from Settlement to Seller)
-      transfer_net_funds(seller_organization, settlement_organization, net_revenue, currency)
+
+      # Integration: GuaranteedMarketSale for NPC buyers
+      is_npc_buyer = settlement_organization.owner&.is_npc? == true
+      if is_npc_buyer
+        # Route through top-level ::Marketplace::GuaranteedMarketSale for NPC buyers
+        ::Marketplace::GuaranteedMarketSale.execute(
+          player_settlement: seller_organization,
+          resource: sell_order.resource,
+          volume: trade_volume,
+          bid_price: trade_price,
+          ldc_settlement: settlement_organization
+        )
+      else
+        # Player-to-player trades use normal transfer_net_funds
+        transfer_net_funds(seller_organization, settlement_organization, net_revenue, currency)
+      end
 
       # 3. Update Inventory
       seller_organization.remove_inventory(sell_order.resource, trade_volume)
 
       # 4. Create Records
       create_trade_record(sell_order, trade_volume, trade_price, settlement_organization)
-      create_price_history(settlement_organization, trade_price)
+      create_price_history(settlement_organization, trade_price, sell_order.resource)
       create_supply_chain_record(sell_order, trade_volume, settlement_organization)
       
       return true
@@ -50,13 +64,8 @@ module Market
         currency: currency
       )
 
-      Financial::TransactionManager.create_transfer(
-        from: settlement_account,
-        to: seller_account,
-        amount: net_amount,
-        currency: currency,
-        description: "Net proceeds from market sale."
-      )
+      # Transfer funds using virtual ledger when available (NPC overdraft)
+      settlement_account.transfer_funds(net_amount, seller_account, "Net proceeds from market sale.")
     end
 
     def self.create_trade_record(sell_order, trade_volume, trade_price, settlement_organization)
@@ -71,10 +80,11 @@ module Market
       )
     end
 
-    def self.create_price_history(settlement_organization, trade_price)
-      # This logic assumes the settlement has a method/association called market_condition
+    def self.create_price_history(settlement_organization, trade_price, resource)
+      # Use the correct market condition lookup for the resource
+      market_condition = settlement_organization.marketplace.current_market_condition(resource)
       Market::PriceHistory.create!(
-        market_condition_id: settlement_organization.market_condition.id,
+        market_condition_id: market_condition&.id,
         price: trade_price
       )
     end
