@@ -16,6 +16,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:deletion, except: %w[
       galaxies
       solar_systems
+      stars
       celestial_bodies
       locations
       materials
@@ -25,9 +26,12 @@ RSpec.configure do |config|
 
     # Re-seed world constants after suite-level clean.
     # Sol bodies, currencies, and NPC orgs must always exist before any spec runs.
-    # All calls use find_or_create — safe to run multiple times.
+    # Sol celestial bodies are in the :except list so they persist across runs —
+    # only call build! if Sol hasn't been seeded yet (first run or fresh DB).
     # See docs/agent/TEST_ENVIRONMENT_SETUP.md for full explanation.
-    StarSim::SystemBuilderService.new(name: 'sol', debug_mode: false).build!
+    unless CelestialBodies::Star.exists?(name: 'Sol')
+      StarSim::SystemBuilderService.new(name: 'sol', debug_mode: false).build!
+    end
     Financial::Currency.find_or_create_by!(
       symbol: 'GCC',
       name: 'Galactic Crypto Currency',

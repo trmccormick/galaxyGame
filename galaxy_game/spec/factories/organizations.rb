@@ -9,7 +9,7 @@ FactoryBot.define do
         operational_data { { 'is_npc' => true, 'status' => 'Active' } }
       end
     sequence(:name) { |n| "Test Organization #{n}" }
-    sequence(:identifier) { |n| "ORG#{n}" }
+    identifier { "ORG-#{SecureRandom.hex(8)}" }
     organization_type { 'corporation' }
 
     trait :consortium do

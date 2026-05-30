@@ -13,6 +13,7 @@ RSpec.describe Market::TradeExecutionService, type: :service do
 
   # Organizations and Mocks
   let(:settlement) { Settlement::BaseSettlement.create!(name: 'Test Settlement') }
+  let!(:marketplace) { Market::Marketplace.create!(settlement: settlement) }
   let(:seller_organization) { Organizations::Corporation.create!(
     name: 'Seller Corp', 
     identifier: 'SC-01',

@@ -2,7 +2,7 @@ FactoryBot.define do
   # Base factory with all required attributes
   factory :celestial_body, class: 'CelestialBodies::CelestialBody' do
     sequence(:name) { |n| "CelestialBody#{n}" }
-    sequence(:identifier) { |n| "CBODY-#{n}" } # Required field
+    identifier { "CBODY-#{SecureRandom.hex(6).upcase}" } # Required field — SecureRandom avoids collisions with persisted sol.json seed data
     size { 1.0 }
     gravity { 9.807 }
     density { 5.514 }
@@ -95,7 +95,7 @@ FactoryBot.define do
     
     trait :luna do
       name { "Luna" }
-      identifier { "LUNA-01" }  # Match the identifier in the seed data
+      identifier { CelestialBodies::CelestialBody.find_by(identifier: 'LUNA-01')&.identifier || 'LUNA-01' }  # Use seeded Luna from sol.json
       size { 0.273 }
       gravity { 1.62 }
       density { 3.344 }  # Match the precise value

@@ -23,13 +23,20 @@ FactoryBot.define do
       }
     }
 
-    # Location is optional - only create if needed
-    location { nil }
+    transient do
+      owner_type { :development_corporation }
+    end
+    association :location, factory: :celestial_location
 
     after(:build) do |settlement, evaluator|
-      # Only create owner if not explicitly provided
-      settlement.owner = create(:development_corporation) if settlement.owner.blank?
-      
+      settlement.owner ||= case evaluator.owner_type
+                          when :development_corporation
+                            build(:development_corporation)
+                          when :player
+                            build(:player)
+                          else
+                            build(:development_corporation)
+                          end
       if settlement.respond_to?(:create_account_and_inventory)
         settlement.define_singleton_method(:create_account_and_inventory) { nil }
       end
@@ -128,6 +135,10 @@ FactoryBot.define do
           }
         }
       }
+    end
+
+    trait :station do
+      settlement_type { :station }
     end
 
     # Standard settlement variant

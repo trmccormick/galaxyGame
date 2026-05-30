@@ -12,8 +12,12 @@ FactoryBot.define do
       "#{lat}°#{lat_dir} #{lng}°#{lng_dir}"
     end
     
-    association :celestial_body
-    
+    # Prefer seeded Luna from sol.json to avoid creating new celestial bodies
+    # Falls back to factory-created body only if Luna doesn't exist yet
+    celestial_body do
+      CelestialBodies::CelestialBody.find_by(identifier: 'LUNA-01') || association(:celestial_body)
+    end
+
     # NEW: Default to surface location (altitude = nil)
     altitude { nil }
     
