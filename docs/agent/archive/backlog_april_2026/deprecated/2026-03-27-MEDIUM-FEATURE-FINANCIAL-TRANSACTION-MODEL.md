@@ -1,9 +1,9 @@
 # TASK: Implement FinancialTransaction Model for Consortium Profit Distribution
-**Status**: BACKLOG
+**Status**: SUPERSEDED
 **Priority**: MEDIUM
 **Type**: feature
 **Created**: 2026-03-27
-**Last Updated**: 2026-03-27
+**Last Updated**: 2026-05-28
 
 ---
 
@@ -277,13 +277,37 @@ git push
 ---
 
 ## Completion Report
-*Filled in by the implementing agent after completion*
-
-**Completed by**:
-**Completion date**:
-**Final test result**:
+**Status**: SUPERSEDED BY ALTERNATE IMPLEMENTATION
+**Reviewed by**: GitHub Copilot Agent
+**Review date**: 2026-05-28
+**Final status**: Task obsolete — implementation already exists
 
 ### What was changed
+No changes applied. Task marked as superseded after code review.
+
 ### Issues discovered
+**Core implementation already exists**: `Financial::Transaction` model is fully implemented at `galaxy_game/app/models/financial/transaction.rb` with:
+- Polymorphic associations (account + recipient)
+- Transaction type enum (deposit, withdraw, transfer, tax_collection)
+- Currency association
+- Full validations
+- Self.table_name routing to 'transactions' table
+
+**distribute_consortium_profits method uses correct model**: Method at `galaxy_game/app/models/organizations/base_organization.rb#L110` correctly calls `Financial::Transaction.create!()` with proper attributes (not the separate `FinancialTransaction` class this task was planning).
+
+**What's missing**: 
+- No spec exists for `distribute_consortium_profits` method (no base_organization_profit_spec.rb)
+- Transaction type enum is incomplete — missing: profit_distribution, transit_fee, maintenance_levy, import_payment, debt_repayment
+- No architecture documentation for Financial::Transaction system
+
 ### Follow-up tasks needed
+See new task: `2026-05-28-LOW-FEATURE-FINANCIAL-TRANSACTION-ENUM-AND-SPEC.md`
+- Add missing transaction types to Financial::Transaction enum
+- Write comprehensive spec for distribute_consortium_profits
+- Create Financial::Transaction architecture documentation
+
 ### Lessons learned
+- Someone already solved this problem using the existing Financial::Transaction model (better design than creating a separate class)
+- Original task predated the actual implementation by ~2 months — architectural decisions were made differently than planned
+- Always check for alternate implementations before creating new models with similar responsibilities
+- Task file staleness visible in dates — created 2026-03-27, implementation existed by 2026-05-28
