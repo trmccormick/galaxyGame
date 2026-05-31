@@ -2,7 +2,7 @@
 require 'rails_helper'
 require_relative '../../../app/services/ai_manager'
 
-RSpec.describe AIManager::PrecursorCapabilityService do
+RSpec.describe AIManager::PrecursorCapabilityService, :uses_seeded_bodies do
   let!(:solar_system) { SolarSystem.find_by!(id: '1') }
   let!(:mars) { CelestialBodies::CelestialBody.find_by!(identifier: 'MARS-01') }
   let!(:luna) { CelestialBodies::CelestialBody.find_by!(identifier: 'LUNA-01') }

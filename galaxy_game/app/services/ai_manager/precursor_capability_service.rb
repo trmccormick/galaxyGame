@@ -27,7 +27,7 @@ module AIManager
     # Get list of all locally available resources from celestial body data
     # @return [Array<String>] List of resource identifiers
     def local_resources
-      @local_resources ||= extract_local_resources
+      extract_local_resources
     end
 
     # Get production capabilities summary
@@ -74,35 +74,32 @@ module AIManager
 
     private
 
+    # Helper to get stored_volatiles from geosphere, falling back to crust_composition if needed
+    def stored_volatiles(geo)
+      geo.stored_volatiles.presence || geo.crust_composition&.dig('stored_volatiles') || {}
+    end
+
+
     def volatile_amount(value)
       return 0.0 if value.nil?
       value.is_a?(Hash) ? value.values.sum.to_f : value.to_f
     end
 
     def extract_local_resources
+      # Force reload associations to bypass cache
+      celestial_body.reload
       resources = []
-
-      # Atmospheric resources
       resources.concat(atmospheric_resources) if celestial_body.atmosphere
-
-      # Surface resources from geosphere
       resources.concat(surface_resources) if celestial_body.geosphere
-
-      # Subsurface resources
       resources.concat(subsurface_resources) if celestial_body.geosphere
-
-      # Water resources from hydrosphere
       resources.concat(water_resources) if celestial_body.hydrosphere
-
-      # Always include regolith for solid bodies and add O2/H2 if crust composition present
       if celestial_body.has_solid_surface?
         resources << 'regolith'
         if celestial_body.geosphere&.crust_composition&.present?
-          resources << 'O2'  # from PVE metal oxide processing
-          resources << 'H2'  # from TEU bakeout of solar-wind hydrogen
+          resources << 'O2'
+          resources << 'H2'
         end
       end
-
       resources.uniq.compact
     end
 
@@ -136,14 +133,12 @@ module AIManager
       end
 
       # Volatile deposits — filter by early ISRU storage mechanisms
-      if geo.stored_volatiles.present?
-        geo.stored_volatiles.each do |compound, storage|
-          if storage.is_a?(Hash)
-            accessible = storage.keys.any? do |mechanism|
-              EARLY_ISRU_STORAGE_MECHANISMS.include?(mechanism)
-            end
-            resources << compound if accessible
+      stored_volatiles(geo).each do |compound, storage|
+        if storage.is_a?(Hash)
+          accessible = storage.keys.any? do |mechanism|
+            EARLY_ISRU_STORAGE_MECHANISMS.include?(mechanism)
           end
+          resources << compound if accessible
         end
       end
 
@@ -157,7 +152,8 @@ module AIManager
       resources = []
 
       # Subsurface water - check if stored_volatiles contains H2O
-      if geo.stored_volatiles.is_a?(Hash) && geo.stored_volatiles.key?('H2O')
+      vols = stored_volatiles(geo)
+      if vols.is_a?(Hash) && vols.key?('H2O')
         resources << 'H2O'
       end
 
@@ -187,10 +183,9 @@ module AIManager
       resources = ['regolith']
 
       # He3 is stored in regolith as a volatile — read from stored_volatiles
-      if geo.stored_volatiles.present?
-        he3 = geo.stored_volatiles['He3']
-        resources << 'He3' if volatile_amount(he3) > 0
-      end
+      vols = stored_volatiles(geo)
+      he3 = vols['He3']
+      resources << 'He3' if volatile_amount(he3) > 0
 
       resources
     end

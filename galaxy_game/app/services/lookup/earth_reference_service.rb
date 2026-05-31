@@ -1,8 +1,8 @@
 module Lookup
   class EarthReferenceService
     def initialize
-      @earth = CelestialBodies::Planets::Rocky::TerrestrialPlanet.find_by!(identifier: 'EARTH-01')     
-      load_earth_data if @earth.nil?
+      @earth = CelestialBodies::Planets::Rocky::TerrestrialPlanet.find_by(identifier: 'EARTH-01')
+      load_earth_data # always load as fallback data
     end
     
     def radius

@@ -119,15 +119,18 @@ RSpec.describe AIManager::EscalationService, type: :service do
     let(:celestial_body) { settlement.celestial_body }
 
     context 'with harvestable resources and ISRU equipment' do
-      let(:oxygen_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen') }
-      let(:water_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'water') }
-      let(:nitrogen_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'nitrogen') }
+        let(:mars_body) { CelestialBodies::CelestialBody.find_by!(identifier: 'MARS-01') }
+        let(:mars_location) { create(:celestial_location, celestial_body: mars_body) }
+        let(:settlement) { create(:base_settlement, location: mars_location) }
+        let(:oxygen_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'oxygen') }
+        let(:water_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'water') }
 
       before do
-        atmosphere = create(:atmosphere, celestial_body: celestial_body)
+        atmosphere = celestial_body.atmosphere || create(:atmosphere, celestial_body: celestial_body)
         create(:gas, :o2, atmosphere: atmosphere, percentage: 21.0)
-        # Add water to hydrosphere
+        celestial_body.reload  # force reload associations
         hydrosphere = celestial_body.hydrosphere
+        hydrosphere ||= create(:hydrosphere, celestial_body: celestial_body)
         hydrosphere.update!(total_liquid_mass: 1.386e21)
         settlement.update!(current_population: 5) # ISRU requires human oversight
       end
@@ -142,12 +145,16 @@ RSpec.describe AIManager::EscalationService, type: :service do
           .to eq(:automated_harvesting)
       end
 
-      it 'returns :scheduled_import for nitrogen when not locally available' do
-        # Nitrogen has no local source on Luna — permanent planned import
-        # On bodies with atmospheric N2 or Ar, routing would differ
-        # See RESUPPLY_AND_ESCALATION_ARCHITECTURE.md
-        expect(described_class.send(:determine_escalation_strategy, nitrogen_order))
-          .to eq(:scheduled_import)
+      # End Mars context
+      context 'with no local nitrogen (Luna)' do
+        let(:settlement) { create(:base_settlement) } # default Luna
+        let(:nitrogen_order) { create(:market_order, :buy, base_settlement: settlement, resource: 'nitrogen') }
+
+        it 'returns :scheduled_import for nitrogen when not locally available' do
+          # Nitrogen has no local source on Luna — permanent planned import
+          expect(described_class.send(:determine_escalation_strategy, nitrogen_order))
+            .to eq(:scheduled_import)
+        end
       end
     end
 

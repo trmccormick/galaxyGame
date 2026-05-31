@@ -18,6 +18,10 @@ RSpec.configure do |config|
       solar_systems
       stars
       celestial_bodies
+      atmospheres
+      geospheres
+      hydrospheres
+      gases
       locations
       materials
       ar_internal_metadata
@@ -57,9 +61,17 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
-    # For most tests, use transaction strategy (fast, isolated)
-    # Transactions automatically rollback, preserving seed data
-    DatabaseCleaner.strategy = :transaction
+    if example.metadata[:uses_seeded_bodies]
+      DatabaseCleaner.strategy = :deletion, {
+        except: %w[
+          galaxies solar_systems stars celestial_bodies
+          atmospheres geospheres hydrospheres gases
+          locations materials ar_internal_metadata schema_migrations
+        ]
+      }
+    else
+      DatabaseCleaner.strategy = :transaction
+    end
     DatabaseCleaner.start
   end
 
@@ -70,7 +82,12 @@ RSpec.configure do |config|
       except: %w[
         galaxies
         solar_systems
+        stars
         celestial_bodies
+        atmospheres
+        geospheres
+        hydrospheres
+        gases
         locations
         materials
         ar_internal_metadata
