@@ -10,6 +10,11 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:suite) do
+    # Ensure database connection is active after fresh reset
+    # After `docker-compose down`, connection pool may be closed; reconnect before cleaner
+    ActiveRecord::Base.connection_pool.disconnect!
+    ActiveRecord::Base.establish_connection
+    
     # Clean all tables EXCEPT core reference data
     # Note: celestial_bodies and materials have FK relationships, both must be preserved
     # Using :deletion instead of :truncation to avoid PostgreSQL deadlocks (2026-01-18)
