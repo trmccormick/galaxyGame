@@ -63,19 +63,17 @@ RSpec.configure do |config|
     end
 
     # Create system currencies needed for tests
-    Financial::Currency.find_or_create_by!(
-      name: 'Galactic Crypto Currency',
-      symbol: 'GCC',
-      is_system_currency: true,
-      precision: 8
-    )
+    Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
+      c.name = 'Galactic Crypto Currency'
+      c.is_system_currency = true
+      c.precision = 8
+    end
 
-    Financial::Currency.find_or_create_by!(
-      name: 'US Dollar',
-      symbol: 'USD',
-      is_system_currency: true,
-      precision: 2
-    )
+    Financial::Currency.find_or_create_by!(symbol: 'USD') do |c|
+      c.name = 'US Dollar'
+      c.is_system_currency = true
+      c.precision = 2
+    end
   end
 
   config.before(:each) do
