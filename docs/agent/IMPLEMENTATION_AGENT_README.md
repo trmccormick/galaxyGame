@@ -1,4 +1,18 @@
 # ℹ️ **Note:** The full RSpec suite is run automatically overnight for daily reference. The Implementation Agent must never trigger a full run interactively. Use the results of the latest overnight run (see /home/galaxy_game/log/rspec_full_*.log) for context and diagnosis, but only run targeted specs during interactive work.
+# ⚠️ **CRITICAL: AGENTS MUST NEVER RUN FULL RSPEC SUITES**
+- **FORBIDDEN**: `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec'` (full suite)
+- **FORBIDDEN**: `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_*.log 2>&1'` (full suite to file)
+- **FORBIDDEN**: Background RSpec processes (`&`)
+- **FORBIDDEN**: `--exclude-pattern` spanning multiple services (too broad)
+
+**ALLOWED**: Targeted specs only
+- `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/services/logistics/shortage_detector_spec.rb'`
+- `docker exec -it web bash -c 'cd /home/galaxy_game && unset DATABASE_URL && RAILS_ENV=test bundle exec rspec /home/galaxy_game/spec/services/logistics/'`
+
+**Why**: Full runs consume buffer, overflow output, require manual batch runs. If full suite validation is needed, STOP and ask the human explicitly.
+
+See `/Documents/git/agent-tasks/rules/GUARDRAILS.md` Rule 3 for enforced details.
+
 # ⚠️ **WARNING: Never run the full RSpec suite except when explicitly instructed by the user and only after all targeted specs are green. Always work only on the assigned failing spec in isolation. Running the full suite without approval is strictly forbidden.**
 
 ## 🚨 Path & Context Rules (MANDATORY)
