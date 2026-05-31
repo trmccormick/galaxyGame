@@ -24,6 +24,7 @@ RSpec.configure do |config|
       gases
       locations
       materials
+      organizations
       ar_internal_metadata
       schema_migrations
     ])
@@ -66,7 +67,7 @@ RSpec.configure do |config|
         except: %w[
           galaxies solar_systems stars celestial_bodies
           atmospheres geospheres hydrospheres gases
-          locations materials ar_internal_metadata schema_migrations
+          locations materials organizations ar_internal_metadata schema_migrations
         ]
       }
     else
@@ -90,6 +91,7 @@ RSpec.configure do |config|
         gases
         locations
         materials
+        organizations
         ar_internal_metadata
         schema_migrations
       ]
