@@ -43,18 +43,16 @@ RSpec.configure do |config|
     unless CelestialBodies::Star.exists?(name: 'Sol')
       StarSim::SystemBuilderService.new(name: 'sol', debug_mode: false).build!
     end
-    Financial::Currency.find_or_create_by!(
-      symbol: 'GCC',
-      name: 'Galactic Crypto Currency',
-      is_system_currency: true,
-      precision: 8
-    )
-    Financial::Currency.find_or_create_by!(
-      symbol: 'USD',
-      name: 'US Dollar',
-      is_system_currency: true,
-      precision: 2
-    )
+    Financial::Currency.find_or_create_by!(symbol: 'GCC') do |c|
+      c.name = 'Galactic Crypto Currency'
+      c.is_system_currency = true
+      c.precision = 8
+    end
+    Financial::Currency.find_or_create_by!(symbol: 'USD') do |c|
+      c.name = 'US Dollar'
+      c.is_system_currency = true
+      c.precision = 2
+    end
     Organizations::BaseOrganization.find_or_create_by!(identifier: 'LDC') do |o|
       o.name = 'Lunar Development Corporation'
       o.organization_type = :development_corporation
