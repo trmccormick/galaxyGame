@@ -11,9 +11,24 @@
 
 **Why**: Full runs consume buffer, overflow output, require manual batch runs. If full suite validation is needed, STOP and ask the human explicitly.
 
-See `/Documents/git/agent-tasks/rules/GUARDRAILS.md` Rule 3 for enforced details.
+**MANDATORY PRE-EXECUTION CHECK** (see `/Documents/git/agent-tasks/rules/GUARDRAILS.md` Rule 3a):
+Before running ANY RSpec command, you MUST perform and state this check:
+```
+✅ PRE-RSPEC EXECUTION CHECK:
+- Command: [EXACT command]
+- Scope: [single file | directory | specific line]  
+- Targeted: YES | NO
+- File path: [path]
+- NOT a full suite: YES | NO
+- Ready to execute: YES | NO
+```
+If ANY answer is NO, STOP and ask human before proceeding.
+
+See `/Documents/git/agent-tasks/rules/GUARDRAILS.md` Rule 3 & 3a for enforced details.
 
 # ⚠️ **WARNING: Never run the full RSpec suite except when explicitly instructed by the user and only after all targeted specs are green. Always work only on the assigned failing spec in isolation. Running the full suite without approval is strictly forbidden.**
+
+**Critical Incident (2026-05-31)**: GPT-4.1 violated this rule and created multiple cascading RSpec processes that conflicted and required Docker restart. Full suite violations cause infrastructure damage. Do not assume permission. Ask the human explicitly if unsure.
 
 ## 🚨 Path & Context Rules (MANDATORY)
 To prevent execution errors, you must distinguish between Host operations (editing/reading) and Container operations (running code).

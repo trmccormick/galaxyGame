@@ -135,11 +135,6 @@ class EconomicConfig
       true
     end
 
-    def self.transport_rate(category)
-      config = self.current_config
-      config.dig('economy', 'transport', 'rates_per_kg', category) || 100.0
-    end
-    
     # Cryptocurrency mining methods
     def gcc_max_supply
       get('cryptocurrency.gcc_mining.max_supply', 21_000_000_000)

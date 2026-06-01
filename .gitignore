@@ -36,7 +36,6 @@ tmp/
 # See docs/new_agent/README.md for where agent guidance lives
 docs/new_agent/projects/*/tasks/
 docs/agent/tasks/
-docs/agent/
 
 personal_notes.txt
 data.zip

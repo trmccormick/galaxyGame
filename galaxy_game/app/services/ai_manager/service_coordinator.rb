@@ -1,3 +1,14 @@
+    # Phase 3: Detect shortages and request imports
+    def detect_and_request_imports(settlement)
+      shortages = Logistics::ShortageDetector.detect_shortages(settlement)
+      results = []
+      shortages.each do |shortage|
+        req = Logistics::ImportRequestGenerator.generate_import_request(settlement, shortage)
+        results << req
+      end
+      Rails.logger.info "[ServiceCoordinator] Detected and requested imports: #{results.map(&:id)}"
+      results
+    end
 # app/services/ai_manager/service_coordinator.rb
 module AIManager
   class ServiceCoordinator

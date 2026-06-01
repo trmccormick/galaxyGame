@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_30_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -471,29 +471,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
     t.index ["celestial_body_id"], name: "index_colonies_on_celestial_body_id"
   end
 
-  create_table "component_production_jobs", force: :cascade do |t|
-    t.bigint "settlement_id", null: false
-    t.bigint "printer_unit_id", null: false
-    t.string "component_blueprint_id", null: false
-    t.string "component_name", null: false
-    t.integer "quantity", default: 1, null: false
-    t.string "status", default: "pending", null: false
-    t.decimal "production_time_hours", precision: 10, scale: 2, null: false
-    t.decimal "progress_hours", precision: 10, scale: 2, default: "0.0"
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.jsonb "materials_consumed", default: {}
-    t.decimal "import_cost_gcc", precision: 10, scale: 2, default: "0.0"
-    t.jsonb "metadata", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["component_blueprint_id"], name: "index_component_production_jobs_on_component_blueprint_id"
-    t.index ["printer_unit_id"], name: "index_component_production_jobs_on_printer_unit_id"
-    t.index ["settlement_id", "status"], name: "index_component_production_jobs_on_settlement_id_and_status"
-    t.index ["settlement_id"], name: "index_component_production_jobs_on_settlement_id"
-    t.index ["status"], name: "index_component_production_jobs_on_status"
-  end
-
   create_table "consortium_memberships", force: :cascade do |t|
     t.bigint "consortium_id", null: false
     t.bigint "member_id", null: false
@@ -853,6 +830,37 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
     t.index ["to_settlement_id"], name: "index_logistics_contracts_on_to_settlement_id"
   end
 
+  create_table "logistics_import_requests", force: :cascade do |t|
+    t.bigint "settlement_id", null: false
+    t.bigint "manifest_id"
+    t.string "resource", null: false
+    t.integer "quantity_needed", null: false
+    t.json "cost_analysis"
+    t.integer "status", default: 0, null: false
+    t.integer "tier", default: 0, null: false
+    t.integer "priority", default: 1, null: false
+    t.integer "category", default: 2, null: false
+    t.datetime "resolved_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["manifest_id"], name: "index_logistics_import_requests_on_manifest_id"
+    t.index ["settlement_id"], name: "index_logistics_import_requests_on_settlement_id"
+  end
+
+  create_table "logistics_manifests", force: :cascade do |t|
+    t.string "manifest_id", null: false
+    t.integer "source_settlement_id", null: false
+    t.integer "destination_settlement_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.text "items"
+    t.integer "total_items", default: 0, null: false
+    t.float "total_cost", default: 0.0, null: false
+    t.integer "status", default: 0, null: false
+    t.index ["destination_settlement_id"], name: "index_logistics_manifests_on_destination_settlement_id"
+    t.index ["manifest_id"], name: "index_logistics_manifests_on_manifest_id", unique: true
+    t.index ["source_settlement_id"], name: "index_logistics_manifests_on_source_settlement_id"
+  end
+
   create_table "logistics_providers", force: :cascade do |t|
     t.string "name", null: false
     t.string "identifier", null: false
@@ -972,26 +980,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
     t.datetime "updated_at", null: false
     t.index ["surface_storage_id", "material_type"], name: "index_material_piles_on_surface_storage_id_and_material_type"
     t.index ["surface_storage_id"], name: "index_material_piles_on_surface_storage_id"
-  end
-
-  create_table "material_processing_jobs", force: :cascade do |t|
-    t.bigint "settlement_id", null: false
-    t.bigint "unit_id", null: false
-    t.string "processing_type"
-    t.string "input_material"
-    t.decimal "input_amount"
-    t.jsonb "output_materials"
-    t.string "status"
-    t.datetime "start_date"
-    t.datetime "estimated_completion"
-    t.datetime "completion_date"
-    t.jsonb "operational_data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.decimal "progress_hours"
-    t.decimal "production_time_hours"
-    t.index ["settlement_id"], name: "index_material_processing_jobs_on_settlement_id"
-    t.index ["unit_id"], name: "index_material_processing_jobs_on_unit_id"
   end
 
   create_table "material_requests", force: :cascade do |t|
@@ -1328,31 +1316,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
     t.index ["source_settlement_id"], name: "index_scheduled_imports_on_source_settlement_id"
   end
 
-  create_table "seal_printing_jobs", force: :cascade do |t|
-    t.bigint "settlement_id", null: false
-    t.bigint "printer_unit_id", null: false
-    t.string "pressurization_target_type", null: false
-    t.bigint "pressurization_target_id", null: false
-    t.string "seal_type", null: false
-    t.string "status", default: "pending", null: false
-    t.decimal "production_time_hours", precision: 10, scale: 2, null: false
-    t.decimal "progress_hours", precision: 10, scale: 2, default: "0.0"
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.jsonb "materials_consumed", default: {}
-    t.jsonb "position_data", default: {}
-    t.jsonb "metadata", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["pressurization_target_type", "pressurization_target_id"], name: "index_seal_printing_jobs_on_pressurization_target"
-    t.index ["pressurization_target_type", "pressurization_target_id"], name: "index_seal_printing_jobs_on_target"
-    t.index ["printer_unit_id"], name: "index_seal_printing_jobs_on_printer_unit_id"
-    t.index ["seal_type"], name: "index_seal_printing_jobs_on_seal_type"
-    t.index ["settlement_id", "status"], name: "index_seal_printing_jobs_on_settlement_id_and_status"
-    t.index ["settlement_id"], name: "index_seal_printing_jobs_on_settlement_id"
-    t.index ["status"], name: "index_seal_printing_jobs_on_status"
-  end
-
   create_table "segment_components", force: :cascade do |t|
     t.bigint "segment_id", null: false
     t.bigint "item_id", null: false
@@ -1363,26 +1326,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
     t.index ["component_type"], name: "index_segment_components_on_component_type"
     t.index ["item_id"], name: "index_segment_components_on_item_id"
     t.index ["segment_id"], name: "index_segment_components_on_segment_id"
-  end
-
-  create_table "shell_printing_jobs", force: :cascade do |t|
-    t.bigint "settlement_id", null: false
-    t.bigint "printer_unit_id", null: false
-    t.bigint "inflatable_tank_id", null: false
-    t.string "status", default: "pending", null: false
-    t.decimal "production_time_hours", precision: 10, scale: 2, null: false
-    t.decimal "progress_hours", precision: 10, scale: 2, default: "0.0"
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.jsonb "materials_consumed", default: {}
-    t.jsonb "metadata", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["inflatable_tank_id"], name: "index_shell_printing_jobs_on_inflatable_tank_id"
-    t.index ["printer_unit_id"], name: "index_shell_printing_jobs_on_printer_unit_id"
-    t.index ["settlement_id", "status"], name: "index_shell_printing_jobs_on_settlement_id_and_status"
-    t.index ["settlement_id"], name: "index_shell_printing_jobs_on_settlement_id"
-    t.index ["status"], name: "index_shell_printing_jobs_on_status"
   end
 
   create_table "skylights", force: :cascade do |t|
@@ -1541,26 +1484,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
     t.index ["recipient_type", "recipient_id"], name: "index_transactions_on_recipient_type_and_recipient_id"
   end
 
-  create_table "unit_assembly_jobs", force: :cascade do |t|
-    t.bigint "base_settlement_id", null: false
-    t.string "owner_type"
-    t.bigint "owner_id"
-    t.string "unit_type", null: false
-    t.integer "count", default: 1
-    t.string "status", default: "pending"
-    t.string "priority", default: "normal"
-    t.string "blueprint_id"
-    t.jsonb "specifications", default: {}
-    t.datetime "start_date"
-    t.datetime "completion_date"
-    t.datetime "estimated_completion"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["base_settlement_id"], name: "index_unit_assembly_jobs_on_base_settlement_id"
-    t.index ["owner_type", "owner_id"], name: "index_unit_assembly_jobs_on_owner"
-    t.index ["unit_type", "status"], name: "index_unit_assembly_jobs_on_unit_type_and_status"
-  end
-
   create_table "worldhouse_segments", force: :cascade do |t|
     t.bigint "worldhouse_id", null: false
     t.integer "segment_index", null: false
@@ -1641,8 +1564,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
   add_foreign_key "celestial_bodies_spheres_cryospheres", "celestial_bodies"
   add_foreign_key "celestial_locations", "celestial_bodies"
   add_foreign_key "colonies", "celestial_bodies"
-  add_foreign_key "component_production_jobs", "base_settlements", column: "settlement_id"
-  add_foreign_key "component_production_jobs", "base_units", column: "printer_unit_id"
   add_foreign_key "consortium_memberships", "organizations", column: "consortium_id"
   add_foreign_key "consortium_memberships", "organizations", column: "member_id"
   add_foreign_key "construction_jobs", "base_settlements", column: "settlement_id"
@@ -1669,6 +1590,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
   add_foreign_key "logistics_contracts", "base_settlements", column: "from_settlement_id"
   add_foreign_key "logistics_contracts", "base_settlements", column: "to_settlement_id"
   add_foreign_key "logistics_contracts", "logistics_providers", column: "provider_id"
+  add_foreign_key "logistics_import_requests", "base_settlements", column: "settlement_id"
+  add_foreign_key "logistics_import_requests", "logistics_manifests", column: "manifest_id"
   add_foreign_key "logistics_providers", "organizations"
   add_foreign_key "market_conditions", "market_marketplaces"
   add_foreign_key "market_marketplaces", "base_settlements", column: "settlement_id"
@@ -1678,8 +1601,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
   add_foreign_key "market_trades", "base_settlements", column: "buyer_settlement_id"
   add_foreign_key "market_trades", "base_settlements", column: "seller_settlement_id"
   add_foreign_key "material_piles", "surface_storages"
-  add_foreign_key "material_processing_jobs", "base_settlements", column: "settlement_id"
-  add_foreign_key "material_processing_jobs", "base_units", column: "unit_id"
   add_foreign_key "materials", "celestial_bodies"
   add_foreign_key "mega_projects", "base_settlements", column: "settlement_id"
   add_foreign_key "mega_projects", "players", column: "project_manager_id"
@@ -1705,13 +1626,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
   add_foreign_key "scheduled_departures", "cyclers"
   add_foreign_key "scheduled_imports", "base_settlements", column: "destination_settlement_id"
   add_foreign_key "scheduled_imports", "base_settlements", column: "source_settlement_id"
-  add_foreign_key "seal_printing_jobs", "base_settlements", column: "settlement_id"
-  add_foreign_key "seal_printing_jobs", "base_units", column: "printer_unit_id"
   add_foreign_key "segment_components", "items"
   add_foreign_key "segment_components", "worldhouse_segments", column: "segment_id"
-  add_foreign_key "shell_printing_jobs", "base_settlements", column: "settlement_id"
-  add_foreign_key "shell_printing_jobs", "base_units", column: "inflatable_tank_id"
-  add_foreign_key "shell_printing_jobs", "base_units", column: "printer_unit_id"
   add_foreign_key "skylights", "adapted_features", column: "lavatube_id"
   add_foreign_key "solar_systems", "galaxies"
   add_foreign_key "solar_systems", "stars", column: "current_star_id"
@@ -1727,7 +1643,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_120000) do
   add_foreign_key "surface_storages", "inventories"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "currencies"
-  add_foreign_key "unit_assembly_jobs", "base_settlements"
   add_foreign_key "worldhouse_segments", "structures", column: "worldhouse_id"
   add_foreign_key "wormholes", "solar_systems", column: "solar_system_a_id"
   add_foreign_key "wormholes", "solar_systems", column: "solar_system_b_id"
