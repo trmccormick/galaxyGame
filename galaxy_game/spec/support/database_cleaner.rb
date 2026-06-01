@@ -61,7 +61,17 @@ RSpec.configure do |config|
     Organizations::BaseOrganization.find_or_create_by!(identifier: 'ASTROLIFT') do |o|
       o.name = 'AstroLift'
       o.organization_type = :corporation
-      o.operational_data = { 'is_npc' => true }
+      o.operational_data = { 'is_npc' => true, 'specialization' => 'orbital_logistics' }
+    end
+    Organizations::BaseOrganization.find_or_create_by!(identifier: 'ZENITH') do |o|
+      o.name = 'Zenith Orbital'
+      o.organization_type = :corporation
+      o.operational_data = { 'is_npc' => true, 'specialization' => 'station_construction' }
+    end
+    Organizations::BaseOrganization.find_or_create_by!(identifier: 'VECTOR') do |o|
+      o.name = 'Vector Hauling'
+      o.organization_type = :corporation
+      o.operational_data = { 'is_npc' => true, 'specialization' => 'cargo_transport' }
     end
   end
 
