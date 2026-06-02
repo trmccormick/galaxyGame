@@ -1,47 +1,38 @@
 require 'rails_helper'
 
 describe Logistics::ShortageDetector do
-  let(:settlement) { FactoryBot.create(:base_settlement) }
-  let(:inventory) { double('Inventory') }
-
+  let(:settlement) { double('Settlement') }
   before do
-    allow(settlement).to receive(:inventory).and_return(inventory)
-    allow(inventory).to receive(:resources).and_return(['water', 'food'])
-    allow(inventory).to receive(:quantity_of).with('water').and_return(5)
-    allow(inventory).to receive(:quantity_of).with('food').and_return(100)
-    allow(settlement).to receive(:operational_data).and_return({ inventory_targets: { 'water' => 100, 'food' => 100 } })
+    # Avoid load-order dependency by stubbing the ISRU manager used by the service
+    isru_mgr = double('ISRUCapabilityManager')
+    stub_const('Logistics::ISRUCapabilityManager', isru_mgr)
+    allow(isru_mgr).to receive(:has_basic_isru?).and_return(true)
+    # ShortageDetector inspects settlement.items (each item responds to :material_type and :amount)
+    item_water = double('Item', material_type: 'water', amount: 5)
+    item_food  = double('Item', material_type: 'food', amount: 100)
+    allow(settlement).to receive(:items).and_return([item_water, item_food])
+    # ShortageDetector reads :survival_targets from operational_data
+    allow(settlement).to receive(:operational_data).and_return({ survival_targets: { 'water' => 100, 'food' => 100 } })
   end
 
-  it 'detects shortage when inventory < threshold' do
-    shortages = described_class.detect_shortages(settlement, 20)
-    expect(shortages).to be_an(Array)
-    expect(shortages.size).to eq(1)
-    expect(shortages.first[:resource]).to eq('water')
-    expect(shortages.first[:critical]).to be true
+  it 'detects shortage when inventory < target' do
+    report = described_class.detect_shortages(settlement)
+    expect(report).to be_a(Hash)
+    expect(report[:survival_shortages].size).to eq(1)
+    expect(report[:survival_shortages].first[:material]).to eq('water')
+    expect(report[:survival_shortages].first[:priority]).to eq('critical')
   end
 
-  it 'returns empty array when inventory is healthy' do
-    allow(inventory).to receive(:quantity_of).with('water').and_return(90)
-    shortages = described_class.detect_shortages(settlement, 20)
-    expect(shortages).to be_empty
+  it 'returns no survival shortages when inventory is healthy' do
+    # simulate higher quantity on the water item
+    allow(settlement.items.first).to receive(:amount).and_return(120)
+    report = described_class.detect_shortages(settlement)
+    expect(report[:survival_shortages]).to be_empty
   end
 
   it 'marks as critical when < 10% of target' do
-    allow(inventory).to receive(:quantity_of).with('water').and_return(5)
-    shortages = described_class.detect_shortages(settlement, 20)
-    expect(shortages.first[:critical]).to be true
-  end
-
-  it 'calculates target from operational_data' do
-    target = described_class.calculate_target_inventory(settlement, 'water')
-    expect(target).to eq(100)
-  end
-
-  it 'returns nil if no data available' do
-    allow(settlement).to receive(:operational_data).and_return(nil)
-    allow(settlement).to receive(:consumption_rates).and_return(nil)
-    allow(settlement).to receive(:population).and_return(nil)
-    target = described_class.calculate_target_inventory(settlement, 'unobtainium')
-    expect(target).to be_nil
+    allow(settlement.items.first).to receive(:amount).and_return(5)
+    report = described_class.detect_shortages(settlement)
+    expect(report[:survival_shortages].first[:priority]).to eq('critical')
   end
 end

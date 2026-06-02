@@ -11,10 +11,13 @@ RSpec.describe Logistics::ContractService do
     context 'with valid settlements' do
       before do
         allow(described_class).to receive(:find_provider).and_return(provider)
-        allow(from_settlement).to receive_message_chain(:inventory, :current_storage_of)
-          .with(material).and_return(2000)
-        allow(to_settlement).to receive_message_chain(:inventory, :current_storage_of)
-          .with(material).and_return(100)
+        # Mirror repro: make both settlements appear NPC-owned
+        npc_org = create(:development_corporation)
+        allow(from_settlement).to receive(:owner).and_return(npc_org)
+        allow(to_settlement).to receive(:owner).and_return(npc_org)
+
+        allow(from_settlement).to receive(:inventory).and_return(double(current_storage_of: 2000))
+        allow(to_settlement).to receive(:inventory).and_return(double(current_storage_of: 500))
       end
 
       it 'creates a logistics contract for internal transfer' do

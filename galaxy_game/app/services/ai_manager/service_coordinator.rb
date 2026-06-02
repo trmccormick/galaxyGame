@@ -1,15 +1,4 @@
     # Phase 3: Detect shortages and request imports
-    def detect_and_request_imports(settlement)
-      shortages = Logistics::ShortageDetector.detect_shortages(settlement)
-      results = []
-      shortages.each do |shortage|
-        req = Logistics::ImportRequestGenerator.generate_import_request(settlement, shortage)
-        results << req
-      end
-      Rails.logger.info "[ServiceCoordinator] Detected and requested imports: #{results.map(&:id)}"
-      results
-    end
-# app/services/ai_manager/service_coordinator.rb
 module AIManager
   class ServiceCoordinator
     attr_reader :shared_context, :task_engine, :resource_service, :scout_logic
@@ -154,6 +143,17 @@ module AIManager
       @shared_context.update_economic_state(:resource_storage, settlement.operational_data.dig('resource_management', 'storage_capacity') || 0)
 
       Rails.logger.info "[ServiceCoordinator] Updated economic metrics for #{settlement.name}"
+    end
+
+    # Phase 3: Detect shortages and request imports
+    public
+    def detect_and_request_imports(settlement)
+      shortages = Logistics::ShortageDetector.detect_shortages(settlement)
+      results = shortages.map do |shortage|
+        Logistics::ImportRequestGenerator.generate_import_request(settlement, shortage)
+      end
+      Rails.logger.info "[ServiceCoordinator] Detected and requested imports: #{results.map(&:id)}"
+      results
     end
 
     # Batch operations

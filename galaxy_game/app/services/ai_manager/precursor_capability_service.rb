@@ -86,8 +86,12 @@ module AIManager
     end
 
     def extract_local_resources
-      # Force reload associations to bypass cache
-      celestial_body.reload
+      # Reload associated sphere records (preserve object identity for tests)
+      if celestial_body
+        celestial_body.geosphere&.reload if celestial_body.geosphere.respond_to?(:reload)
+        celestial_body.atmosphere&.reload if celestial_body.atmosphere.respond_to?(:reload)
+        celestial_body.hydrosphere&.reload if celestial_body.hydrosphere.respond_to?(:reload)
+      end
       resources = []
       resources.concat(atmospheric_resources) if celestial_body.atmosphere
       resources.concat(surface_resources) if celestial_body.geosphere

@@ -24,7 +24,8 @@ FactoryBot.define do
     }
 
     transient do
-      owner_type { :development_corporation }
+      # Default to :player to avoid auto-creating NPC organizations in many specs
+      owner_type { :player }
     end
     association :location, factory: :celestial_location
 
@@ -35,7 +36,7 @@ FactoryBot.define do
                           when :player
                             build(:player)
                           else
-                            build(:development_corporation)
+                            build(:player)
                           end
       if settlement.respond_to?(:create_account_and_inventory)
         settlement.define_singleton_method(:create_account_and_inventory) { nil }

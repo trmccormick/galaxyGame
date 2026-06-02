@@ -24,7 +24,7 @@ module Market
 
 
       # Integration: GuaranteedMarketSale for NPC buyers
-      is_npc_buyer = settlement_organization.owner&.is_npc? == true
+      is_npc_buyer = settlement_organization.owner.is_a?(Organizations::BaseOrganization) && settlement_organization.owner&.is_npc? == true
       if is_npc_buyer
         # Route through top-level ::Marketplace::GuaranteedMarketSale for NPC buyers
         ::Marketplace::GuaranteedMarketSale.execute(

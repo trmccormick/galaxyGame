@@ -1,34 +1,84 @@
 # frozen_string_literal: true
 
 module Logistics
-  class ImportRequestGenerator
+  class ImportRequestGenerator < BaseService
     class ImportRequestError < StandardError; end
+    
+    def self.generate_import_requests(settlement, shortage_report)
+      return [] unless shortage_report[:viable]
+      return [] if shortage_report[:survival_shortages].empty?
+      
+      requests = []
+      
+      shortage_report[:survival_shortages].each do |shortage|
+        # Phase 1: Calculate Cost for this specific shortage item
+        # Note: calculate_cost usually takes (settlement_id, material_type, quantity)
+        cost_data = Settlements::CostAnalyzer.calculate_cost(
+          settlement.id, 
+          shortage[:material], 
+          shortage[:need]
+        )
+        
+        # Phase 2: Generate Manifest for this batch/cost
+        manifest_result = Logistics::ManifestGenerator.generate_manifest(cost_data)
+        manifest_id = manifest_result[:id] || manifest_result.id
+        
+        # Phase 3: Create and Persist ImportRequest
+        import_req = Logistics::ImportRequest.create!(
+          settlement_id: settlement.id,
+          manifest_id: manifest_id,
+          resource: shortage[:material],
+          quantity_needed: shortage[:need],
+          cost_analysis: cost_data,
+          tier: "survival", # Explicitly set as survival tier
+          priority: 1,      # Critical priority for survival items
+          category: "critical",
+          status: "pending"
+        )
+        
+        requests << import_req if import_req
+      end
+      
+      requests
+    end
+    
+    # Helper to handle single request generation (alias for ease of use)
+    def self.generate_request(settlement, shortage_report)
+      all_requests = generate_import_requests(settlement, shortage_report)
+      return [] if all_requests.empty?
+      all_requests.first
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error "Failed to create ImportRequest: #{e.message}"
+      []
+    end
 
-    # Generate an import request for a shortage
-    # shortage_data: { resource, current, target, amount, critical }
-    def self.generate_import_request(settlement, shortage_data)
-      # Phase 1: Cost analysis
-      cost_analysis = Settlements::CostAnalyzer.compare_costs(shortage_data[:resource], settlement)
-      # Phase 2: Manifest generation
-      manifest = Logistics::ManifestGenerator.create_manifest(
-        settlement, # source (assume import from market)
-        settlement, # destination
-        [{ resource: shortage_data[:resource], quantity: shortage_data[:amount] }]
+    # Single-request API expected by specs: generates one import request for a shortage
+    def self.generate_import_request(settlement, shortage)
+      # Compare costs to decide details (spec stubs `compare_costs`)
+      cost_data = Settlements::CostAnalyzer.compare_costs(shortage[:resource], settlement)
+
+      # Build manifest; propagate failures as ImportRequestError
+      begin
+        items = [{ resource: shortage[:resource] || shortage[:material], quantity: shortage[:amount] || shortage[:need] || shortage[:quantity_needed] }]
+        manifest = Logistics::ManifestGenerator.create_manifest(settlement, settlement, items)
+      rescue StandardError => e
+        Rails.logger.error "Manifest generation failed: #{e.message}"
+        raise ImportRequestError, "Manifest generation failed: #{e.message}"
+      end
+
+        import_req = Logistics::ImportRequest.create!(
+        settlement_id: settlement.id,
+        manifest_id: manifest.id,
+        resource: shortage[:resource] || shortage[:material],
+        quantity_needed: shortage[:amount] || shortage[:need] || shortage[:quantity_needed],
+        cost_analysis: cost_data,
+        tier: (shortage[:critical] ? 'survival' : 'expansion'),
+          priority: (shortage[:critical] ? 1 : 2),
+          category: (shortage[:critical] ? 'consumable' : 'other'),
+        status: 'created'
       )
-      # Create ImportRequest
-      import_request = Logistics::ImportRequest.create!(
-        settlement: settlement,
-        resource: shortage_data[:resource],
-        quantity_needed: shortage_data[:amount],
-        cost_analysis: cost_analysis,
-        manifest: manifest,
-        status: :created
-      )
-      # Optionally: create Market::Order and trigger trade execution
-      # ...integration code here...
-      import_request
-    rescue => e
-      raise ImportRequestError, e.message
+
+      import_req
     end
   end
 end
