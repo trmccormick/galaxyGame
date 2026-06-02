@@ -139,6 +139,15 @@ RSpec.describe Market::Marketplace, type: :model do
       allow_any_instance_of(Logistics::ShippingCalculator).to receive(:calculate_shipping).and_return(
         { shipping_cost: 200.00, total_cost: 0, base_cost: 0 }
       )
+
+      # Ensure buyer settlement account has funds to cover matched NPC buys
+      required_amount = (100 * 48.0 * 1.2).to_f
+      currency = Financial::Currency.find_by(symbol: 'GCC') || Financial::Currency.first
+      buyer_account = Financial::Account.find_or_create_by!(accountable: settlement, currency: currency) do |acct|
+        acct.balance = 0.0
+        acct.lock_version = 0
+      end
+      buyer_account.update!(balance: required_amount)
     end
 
     it 'creates an order' do
@@ -354,6 +363,23 @@ RSpec.describe Market::Marketplace, type: :model do
         end
         allow(settlement).to receive(:market_condition).and_return(market_condition)
         # We no longer need to mock FinancialManager or TaxCollectionService here!
+        # Ensure buyer (settlement) and seller organization have sufficient funds
+        required_amount = (trade_volume * unit_price * 1.2).to_f
+        currency = Financial::Currency.find_by(symbol: 'GCC') || Financial::Currency.first
+
+        buyer_account = Financial::Account.find_or_create_by!(accountable: settlement, currency: currency) do |acct|
+          acct.balance = 0.0
+          acct.lock_version = 0
+        end
+        buyer_account.update!(balance: required_amount)
+
+
+        seller_account = Financial::Account.find_or_create_by!(accountable: seller_organization, currency: currency) do |acct|
+          acct.balance = 0.0
+          acct.lock_version = 0
+        end
+        seller_account.update!(balance: required_amount)
+        # debug prints removed
       end
 
       it 'delegates the entire trade execution to Market::TradeExecutionService' do
