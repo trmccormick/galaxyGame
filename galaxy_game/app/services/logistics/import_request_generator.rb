@@ -12,11 +12,10 @@ module Logistics
       
       shortage_report[:survival_shortages].each do |shortage|
         # Phase 1: Calculate Cost for this specific shortage item
-        # Note: calculate_cost usually takes (settlement_id, material_type, quantity)
-        cost_data = Settlements::CostAnalyzer.calculate_cost(
-          settlement.id, 
-          shortage[:material], 
-          shortage[:need]
+        # Use the public CostAnalyzer API: compare_costs(resource_name, settlement)
+        cost_data = Settlements::CostAnalyzer.compare_costs(
+          shortage[:material],
+          settlement
         )
         
         # Phase 2: Generate Manifest for this batch/cost
