@@ -44,18 +44,19 @@ module Construction
       end
       active_projects = settlement.orbital_construction_projects.where(status: ['materials_pending', 'in_progress'])
 
+      unconsumed = quantity
       active_projects.each do |project|
-        consumed = consume_materials_for_project(project, material_type, quantity)
-        quantity -= consumed
+        consumed = consume_materials_for_project(project, material_type, unconsumed)
+        unconsumed -= consumed
 
         # Check if project is ready to start construction
         check_project_readiness(project)
 
-        break if quantity <= 0
+        break if unconsumed <= 0
       end
 
       # Return unconsumed quantity
-      quantity
+      unconsumed
     end
 
     def self.update_construction_progress

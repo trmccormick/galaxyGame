@@ -207,23 +207,19 @@ module Lookup
       end.compact
     end
 
-    # New method for recursive loading
-    def load_json_files_recursively(base_path)
-      return [] unless File.directory?(base_path)
+    def load_json_files_recursively(path)
+      return [] unless File.directory?(path)
 
-      files = Dir.glob(File.join(base_path, "**", "*.json")) # ** scans all subdirectories
-      # Rails.logger.debug "Found #{files.size} JSON files recursively in #{base_path}"
-
+      files = Dir.glob(File.join(path, "**", "*.json"))
+      Rails.logger.debug "Found #{files.size} JSON files in #{path}"
+      
       files.map do |file|
         begin
           data = JSON.parse(File.read(file))
           # Rails.logger.debug "Loaded material from #{file}"
           data
         rescue JSON::ParserError => e
-          Rails.logger.error "Invalid JSON in file: #{file} - #{e.message}"
-          nil
-        rescue StandardError => e
-          Rails.logger.error "Error loading #{file}: #{e.message}"
+          Rails.logger.error "Invalid JSON in file: #{file}: #{e.message}"
           nil
         end
       end.compact

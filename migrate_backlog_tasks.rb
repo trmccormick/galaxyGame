@@ -132,7 +132,7 @@ def create_task_file(task_name, content, inferred_date)
   task_content = <<~TASK
     # #{date_str}-#{priority}-#{task_type}-#{title}
     
-    **Agent:** GPT-4.1 (0.25x)
+    **Agent:** GPT-5 mini (0x)
     **Priority:** #{priority}
     **Type:** #{task_type}
     **Status:** BACKLOG
