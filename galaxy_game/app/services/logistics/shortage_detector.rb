@@ -15,8 +15,10 @@ module Logistics
       } unless viable
       
       # 2. Retrieve Targets from operational_data hash
-      survival_targets = settlement.operational_data[:survival_targets] || {}
-      expansion_targets = settlement.operational_data[:expansion_targets] || {}
+      # operational_data is a JSONB column (string keys). Use string keys to
+      # avoid silent nils when accessing values.
+      survival_targets = settlement.operational_data['survival_targets'] || settlement.operational_data[:survival_targets] || {}
+      expansion_targets = settlement.operational_data['expansion_targets'] || settlement.operational_data[:expansion_targets] || {}
       
       # 3. Build current inventory map (Hash of MaterialType -> Quantity)
       current_stock = {}

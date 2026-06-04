@@ -149,7 +149,17 @@ module AIManager
     public
     def detect_and_request_imports(settlement)
       shortages = Logistics::ShortageDetector.detect_shortages(settlement)
-      results = shortages.map do |shortage|
+      # Support both old behavior (detect_shortages returning an Array) and
+      # new behavior returning a Hash with arrays under :survival_shortages
+      # or :total_shortages.
+      shortages_list = if shortages.is_a?(Array)
+        shortages
+      elsif shortages.is_a?(Hash)
+        shortages[:survival_shortages] || shortages[:total_shortages] || []
+      else
+        []
+      end
+      results = shortages_list.map do |shortage|
         Logistics::ImportRequestGenerator.generate_import_request(settlement, shortage)
       end
       Rails.logger.info "[ServiceCoordinator] Detected and requested imports: #{results.map(&:id)}"
