@@ -403,4 +403,108 @@ RSpec.describe AIManager::StrategySelector, type: :service do
       end
     end
   end
+
+  describe 'cost_reduction integration' do
+    let(:base_state_analysis) do
+      {
+        resource_needs: { critical: [], needed: [] },
+        scouting_opportunities: { high_value: [], strategic: [] },
+        expansion_readiness: 0.5,
+        infrastructure_needs: { critical: [], needed: [] },
+        acquisition_capability: 0.8,
+        scouting_capability: 0.6,
+        building_resources: 0.7,
+        economic_health: 0.6,
+        strategic_position: 0.7
+      }
+    end
+
+    describe '#generate_mission_options' do
+      context 'when cost_pressure >= 0.6' do
+        before do
+          allow_any_instance_of(AIManager::StateAnalyzer).to receive(:analyze_state).and_return(
+            base_state_analysis.merge(
+              cost_analysis: {
+                viable: true,
+                cost_pressure: 0.7,
+                recommendations: ['Iron', 'Coal']
+              }
+            )
+          )
+        end
+
+        it 'includes :cost_reduction option' do
+          options = strategy_selector.send(:generate_mission_options, settlement, base_state_analysis.merge(
+            cost_analysis: { viable: true, cost_pressure: 0.7, recommendations: ['Iron', 'Coal'] }
+          ))
+
+          cost_reduction_option = options.find { |o| o[:type] == :cost_reduction }
+          expect(cost_reduction_option).to be_present
+          expect(cost_reduction_option[:priority]).to eq(:high)
+          expect(cost_reduction_option[:resources]).to include('Iron', 'Coal')
+        end
+      end
+
+      context 'when cost_pressure < 0.6' do
+        before do
+          allow_any_instance_of(AIManager::StateAnalyzer).to receive(:analyze_state).and_return(
+            base_state_analysis.merge(
+              cost_analysis: {
+                viable: true,
+                cost_pressure: 0.4,
+                recommendations: ['Iron']
+              }
+            )
+          )
+        end
+
+        it 'excludes :cost_reduction option' do
+          options = strategy_selector.send(:generate_mission_options, settlement, base_state_analysis.merge(
+            cost_analysis: { viable: true, cost_pressure: 0.4, recommendations: ['Iron'] }
+          ))
+
+          cost_reduction_option = options.find { |o| o[:type] == :cost_reduction }
+          expect(cost_reduction_option).to be_nil
+        end
+      end
+    end
+
+    describe '#viable_action?' do
+      context 'when viable: true' do
+        it 'returns true for :cost_reduction' do
+          action = { type: :cost_reduction, resources: ['Iron'] }
+          state = base_state_analysis.merge(
+            cost_analysis: { viable: true, cost_pressure: 0.7, recommendations: ['Iron'] }
+          )
+
+          expect(strategy_selector.send(:viable_action?, action, state)).to be true
+        end
+      end
+
+      context 'when viable: false' do
+        it 'returns false for :cost_reduction' do
+          action = { type: :cost_reduction, resources: ['Iron'] }
+          state = base_state_analysis.merge(
+            cost_analysis: { viable: false, cost_pressure: 0.7, recommendations: [] }
+          )
+
+          expect(strategy_selector.send(:viable_action?, action, state)).to be false
+        end
+      end
+    end
+
+    describe '#execute_action' do
+      context 'with :cost_reduction type' do
+        it 'handles :cost_reduction without raising' do
+          action = {
+            type: :cost_reduction,
+            resources: ['Iron', 'Coal'],
+            rationale: 'High cost pressure'
+          }
+
+          expect { strategy_selector.execute_action(action, settlement) }.not_to raise_error
+        end
+      end
+    end
+  end
 end

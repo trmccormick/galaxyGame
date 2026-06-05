@@ -51,6 +51,8 @@ module AIManager
         execute_settlement_expansion(action, settlement)
       when :infrastructure_building
         execute_infrastructure_building(action, settlement)
+      when :cost_reduction
+        execute_cost_reduction(action, settlement)
       else
         Rails.logger.warn "[StrategySelector] Unknown action type: #{action[:type]}"
         false
@@ -117,6 +119,17 @@ module AIManager
           priority: :critical,
           infrastructure: state_analysis&.dig(:infrastructure_needs, :critical) || [],
           rationale: "Critical infrastructure required"
+        }
+      end
+
+      # Cost reduction options — Phase 1 of Luna autonomous management
+      if state_analysis&.dig(:cost_analysis, :cost_pressure) && 
+         state_analysis[:cost_analysis][:cost_pressure] >= 0.6
+        options << {
+          type: :cost_reduction,
+          priority: :high,
+          resources: state_analysis[:cost_analysis][:recommendations],
+          rationale: "High cost pressure — optimize local production"
         }
       end
 
@@ -196,6 +209,9 @@ module AIManager
       when :infrastructure_building
         # Check if we have building resources
         state_analysis[:building_resources] >= 0.4
+      when :cost_reduction
+        # Check if cost reduction is viable
+        state_analysis.dig(:cost_analysis, :viable) == true
       else
         true
       end
@@ -227,6 +243,15 @@ module AIManager
       # This would trigger building mission creation
       Rails.logger.info "[StrategySelector] Initiating infrastructure building for #{settlement.name}"
       # For now, just log - building logic would be implemented in a separate service
+      true
+    end
+
+    def execute_cost_reduction(action, settlement)
+      # Phase 1: Log-only implementation — no ManifestGenerator, no ShortageDetector calls
+      Rails.logger.info "[StrategySelector] Cost reduction recommended for #{settlement.name}"
+      action[:resources]&.each do |resource|
+        Rails.logger.info "  - Consider producing locally: #{resource}"
+      end
       true
     end
 
@@ -271,6 +296,8 @@ module AIManager
           strategic_multiplier = option[:type] == :system_scouting ? 1.3 : 0.8
         when :building_focus
           strategic_multiplier = [:settlement_expansion, :infrastructure_building].include?(option[:type]) ? 1.3 : 0.8
+        when :cost_focus
+          strategic_multiplier = option[:type] == :cost_reduction ? 1.3 : 0.8
         when :balanced_approach
           strategic_multiplier = 1.0
         end
@@ -345,6 +372,7 @@ module AIManager
         resource_focus: 0,
         scouting_focus: 0,
         building_focus: 0,
+        cost_focus: 0,
         balanced_approach: 0
       }
 
