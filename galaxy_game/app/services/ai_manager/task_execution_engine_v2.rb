@@ -95,8 +95,11 @@ module AIManager
       body = CelestialBodies::CelestialBody.find_by(identifier: target_body)
       return nil unless body
       
-      # For now, create a temporary settlement. In production,
-      # could search for existing settlements on this body
+      # Find existing settlement linked to this celestial body
+      existing = find_existing_settlement(body)
+      return existing if existing
+      
+      # Only create if none exists
       create_temporary_settlement(body)
     end
 
@@ -119,6 +122,14 @@ module AIManager
       )
       
       settlement
+    end
+
+    private
+
+    def find_existing_settlement(body)
+      location = Location::CelestialLocation.find_by(celestial_body: body)
+      return nil unless location
+      Settlement::BaseSettlement.find_by(location: location)
     end
 
     # Step 2: Execute planned tasks
