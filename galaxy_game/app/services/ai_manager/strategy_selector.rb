@@ -61,6 +61,14 @@ module AIManager
 
     private
 
+    def find_source_settlement
+      Settlement::BaseSettlement.find_by(name: 'Cape Canaveral Spaceport')
+    end
+
+    def default_quantity_for(resource)
+      10
+    end    
+
     # Generate available mission options based on current state
     def generate_mission_options(settlement, state_analysis)
       options = []
@@ -247,12 +255,33 @@ module AIManager
     end
 
     def execute_cost_reduction(action, settlement)
-      # Phase 1: Log-only implementation — no ManifestGenerator, no ShortageDetector calls
-      Rails.logger.info "[StrategySelector] Cost reduction recommended for #{settlement.name}"
-      action[:resources]&.each do |resource|
-        Rails.logger.info "  - Consider producing locally: #{resource}"
+      recommendations = action[:resources] || []
+      if recommendations.empty?
+        Rails.logger.info "[StrategySelector] Cost reduction: no resources recommended"
+        return true
       end
-      true
+
+      source = find_source_settlement
+      unless source
+        Rails.logger.info "[StrategySelector] Cost reduction recommended for #{settlement.name} — no source settlement available for manifest creation"
+        recommendations.each do |resource|
+          Rails.logger.info "  - Consider producing locally: #{resource}"
+        end
+        return true
+      end
+
+      items = recommendations.map do |resource|
+        { resource: resource, quantity: default_quantity_for(resource) }
+      end
+
+      begin
+        manifest = Logistics::ManifestGenerator.create_manifest(source, settlement, items)
+        Rails.logger.info "[StrategySelector] Manifest created: #{manifest.manifest_id}"
+        manifest
+      rescue Logistics::ManifestGenerator::ManifestError => e
+        Rails.logger.warn "[StrategySelector] Manifest creation failed: #{e.message}"
+        false
+      end
     end
 
     # === STRATEGIC DECISION LOGIC ===

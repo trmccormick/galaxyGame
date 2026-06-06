@@ -505,6 +505,41 @@ RSpec.describe AIManager::StrategySelector, type: :service do
           expect { strategy_selector.execute_action(action, settlement) }.not_to raise_error
         end
       end
+
+      context 'execute_cost_reduction' do
+        let(:action) { { type: :cost_reduction, resources: ['Iron', 'Coal'] } }
+        let(:empty_action) { { type: :cost_reduction, resources: [] } }
+
+        it 'returns true when recommendations are empty' do
+          expect(strategy_selector.send(:execute_cost_reduction, empty_action, settlement)).to eq(true)
+        end
+
+        it 'returns true when no source settlement available' do
+          allow(strategy_selector).to receive(:find_source_settlement).and_return(nil)
+          expect(strategy_selector.send(:execute_cost_reduction, action, settlement)).to eq(true)
+        end
+
+        it 'creates manifest when source settlement is available' do
+          source = create(:base_settlement)
+          allow(strategy_selector).to receive(:find_source_settlement).and_return(source)
+          allow(Logistics::ManifestGenerator).to receive(:create_manifest).and_return(
+            double(manifest_id: 'test-uuid')
+          )
+          strategy_selector.send(:execute_cost_reduction, action, settlement)
+          expect(Logistics::ManifestGenerator).to have_received(:create_manifest).with(
+            source, settlement, [{ resource: 'Iron', quantity: 10 }, { resource: 'Coal', quantity: 10 }]
+          )
+        end
+
+        it 'returns false and logs warning when ManifestError raised' do
+          source = create(:base_settlement)
+          allow(strategy_selector).to receive(:find_source_settlement).and_return(source)
+          allow(Logistics::ManifestGenerator).to receive(:create_manifest).and_raise(
+            Logistics::ManifestGenerator::ManifestError, 'insufficient inventory'
+          )
+          expect(strategy_selector.send(:execute_cost_reduction, action, settlement)).to eq(false)
+        end
+      end
     end
   end
 end
