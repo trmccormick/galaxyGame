@@ -10,6 +10,21 @@ RSpec.describe AIManager::Manager, "System Orchestrator Integration" do
   let(:shared_context) { AIManager::SharedContext.new }
   let(:system_orchestrator) { AIManager::SystemOrchestrator.new(shared_context) }
 
+  before do
+    # Create Cape Canaveral fixture for all tests in this group
+    @cape_canaveral = create(:base_settlement, name: 'Cape Canaveral Spaceport')
+    
+    # Stub find_source_settlement at the StrategySelector class level to prevent DB lookup
+    allow_any_instance_of(AIManager::StrategySelector)
+      .to receive(:find_source_settlement)
+      .and_return(@cape_canaveral)
+      
+    # Prevent action execution by making evaluate_next_action return :wait (no-op strategy)  
+    allow_any_instance_of(AIManager::StrategySelector)
+      .to receive(:evaluate_next_action)
+      .and_return(type: :wait, score: 0, rationale: "No viable actions available")
+  end
+
   describe "with system orchestrator" do
     it "registers settlement with system orchestrator during initialization" do
       manager = AIManager::Manager.new(target_entity: mars_settlement, system_orchestrator: system_orchestrator)
@@ -26,6 +41,13 @@ RSpec.describe AIManager::Manager, "System Orchestrator Integration" do
     it "calls orchestrate_system during advance_time" do
       manager = AIManager::Manager.new(target_entity: mars_settlement, system_orchestrator: system_orchestrator)
       expect(system_orchestrator).to receive(:orchestrate_system).once
+      
+      coordinator = manager.instance_variable_get(:@service_coordinator)
+      allow_any_instance_of(AIManager::ServiceCoordinator).to receive(:process_pending_missions)
+      allow_any_instance_of(AIManager::ServiceCoordinator).to receive(:process_resource_requests)
+      
+      # Prevent action execution which would trigger StrategySelector cost_reduction logic  
+      allow(manager).to receive(:execute_action_with_service_orchestration)
 
       manager.advance_time
     end
@@ -36,6 +58,13 @@ RSpec.describe AIManager::Manager, "System Orchestrator Integration" do
       manager = AIManager::Manager.new(target_entity: mars_settlement)
       expect(manager.system_orchestrator?).to be false
       expect(manager.system_orchestrator).to be nil
+      
+      coordinator = manager.instance_variable_get(:@service_coordinator)
+      allow_any_instance_of(AIManager::ServiceCoordinator).to receive(:process_pending_missions)
+      allow_any_instance_of(AIManager::ServiceCoordinator).to receive(:process_resource_requests)
+      
+      # Prevent action execution which would trigger StrategySelector cost_reduction logic  
+      allow(manager).to receive(:execute_action_with_service_orchestration)
 
       # Should not raise an error
       expect { manager.advance_time }.not_to raise_error

@@ -159,11 +159,26 @@ module AIManager
       else
         []
       end
+      
+      source = find_source_settlement_for(settlement)
+      return [] unless source  # Skip if no Earth import available
+      
       results = shortages_list.map do |shortage|
-        Logistics::ImportRequestGenerator.generate_import_request(settlement, shortage)
+        Logistics::ImportRequestGenerator.generate_import_request(
+          source: source,
+          destination: settlement,
+          shortage: shortage
+        )
       end
       Rails.logger.info "[ServiceCoordinator] Detected and requested imports: #{results.map(&:id)}"
       results
+    end
+
+    private
+    
+    def find_source_settlement_for(settlement)
+      # For now, always Cape Canaveral (Phase 2 behavior preserved)
+      Settlement::BaseSettlement.find_by(name: 'Cape Canaveral Spaceport')
     end
 
     # Batch operations

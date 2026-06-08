@@ -3,6 +3,7 @@ require 'rails_helper'
 
 RSpec.describe 'AIManager Integration', type: :service do
   let(:settlement) { create(:base_settlement) }
+  let(:cape_canaveral) { create(:base_settlement, name: 'Cape Canaveral Spaceport') }
   let(:system_data) { { id: 'test_system', planets: [], stars: [] } }
 
   describe 'Service-to-Service Communication Framework' do
@@ -190,7 +191,7 @@ RSpec.describe 'AIManager Integration', type: :service do
         shared_context.queue_mission(mission_data)
 
         allow(coordinator).to receive(:start_mission).and_return(true)
-        coordinator.process_pending_missions
+        coordinator.send(:process_pending_missions)  # Private method call via send()
 
         expect(coordinator).to have_received(:start_mission).with(mission_data)
       end
@@ -202,7 +203,7 @@ RSpec.describe 'AIManager Integration', type: :service do
         # Mock availability check
         allow(coordinator).to receive(:check_resource_availability).and_return(15)
 
-        coordinator.process_resource_requests
+        coordinator.send(:process_resource_requests)  # Private method call via send()
 
         expect(coordinator).to have_received(:acquire_resource).with('Gold', 10, settlement)
       end

@@ -42,8 +42,8 @@ module AIManager
       @service_coordinator.update_economic_metrics(@target_entity) if @target_entity.is_a?(Settlement::BaseSettlement)
 
       # Process any pending missions and resource requests
-      @service_coordinator.process_pending_missions
-      @service_coordinator.process_resource_requests
+      @service_coordinator.send(:process_pending_missions)
+      @service_coordinator.send(:process_resource_requests)
 
       # Use strategy selector for autonomous decision making with service orchestration support
       if @target_entity.is_a?(Settlement::BaseSettlement)

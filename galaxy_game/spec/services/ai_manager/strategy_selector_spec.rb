@@ -508,36 +508,218 @@ RSpec.describe AIManager::StrategySelector, type: :service do
 
       context 'execute_cost_reduction' do
         let(:action) { { type: :cost_reduction, resources: ['Iron', 'Coal'] } }
-        let(:empty_action) { { type: :cost_reduction, resources: [] } }
-
-        it 'returns true when recommendations are empty' do
-          expect(strategy_selector.send(:execute_cost_reduction, empty_action, settlement)).to eq(true)
-        end
-
-        it 'returns true when no source settlement available' do
+        
+        # Phase 3 behavior — these old specs updated to reflect new implementation
+        
+        it 'returns false when no source settlement available (Phase 3 change)' do
           allow(strategy_selector).to receive(:find_source_settlement).and_return(nil)
-          expect(strategy_selector.send(:execute_cost_reduction, action, settlement)).to eq(true)
+          
+          result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+          
+          expect(result).to eq(false) # Changed from true in Phase 2 per task file requirements
         end
-
-        it 'creates manifest when source settlement is available' do
+        
+        it 'calls ShortageDetector and processes shortages when source available' do
           source = create(:base_settlement)
           allow(strategy_selector).to receive(:find_source_settlement).and_return(source)
-          allow(Logistics::ManifestGenerator).to receive(:create_manifest).and_return(
-            double(manifest_id: 'test-uuid')
-          )
-          strategy_selector.send(:execute_cost_reduction, action, settlement)
-          expect(Logistics::ManifestGenerator).to have_received(:create_manifest).with(
-            source, settlement, [{ resource: 'Iron', quantity: 10 }, { resource: 'Coal', quantity: 10 }]
-          )
+          
+          shortage_report = {
+            viable: true,
+            survival_shortages: [
+              { material: 'Food Rations', need: 100, have: 30, priority: 'critical' }
+            ],
+            expansion_shortages: []
+          }
+          
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+          allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request).and_return(double(id: 1))
+          
+          result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+          
+          expect(result).to eq(true)
         end
-
-        it 'returns false and logs warning when ManifestError raised' do
-          source = create(:base_settlement)
-          allow(strategy_selector).to receive(:find_source_settlement).and_return(source)
-          allow(Logistics::ManifestGenerator).to receive(:create_manifest).and_raise(
-            Logistics::ManifestGenerator::ManifestError, 'insufficient inventory'
-          )
-          expect(strategy_selector.send(:execute_cost_reduction, action, settlement)).to eq(false)
+      end
+      
+      describe 'Phase 3 — ShortageDetector integration' do
+        let(:action) { { type: :cost_reduction, resources: [] } }
+        let(:source_settlement) { create(:base_settlement, name: 'Cape Canaveral Spaceport') }
+        
+        before do
+          allow(strategy_selector).to receive(:find_source_settlement).and_return(source_settlement)
+        end
+        
+        context 'when ShortageDetector returns viable: false' do
+          it 'logs warning and returns false without calling generate_import_request' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+              viable: false,
+              survival_shortages: [],
+              expansion_shortages: []
+            })
+            
+            # Stub to prevent actual calls
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request)
+            
+            result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(result).to eq(false)
+            expect(Logistics::ImportRequestGenerator).not_to have_received(:generate_import_request)
+          end
+        end
+        
+        context 'when survival_shortages is empty' do
+          it 'logs info and returns false without calling generate_import_request' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+              viable: true,
+              survival_shortages: [],
+              expansion_shortages: [{ material: 'Gold', need: 100, have: 50, priority: 'expansion' }]
+            })
+            
+            # Stub to prevent actual calls
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request)
+            
+            result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(result).to eq(false)
+            expect(Logistics::ImportRequestGenerator).not_to have_received(:generate_import_request)
+          end
+        end
+        
+        context 'with survival shortages detected' do
+          let(:shortage_report) do
+            {
+              viable: true,
+              survival_shortages: [
+                { material: 'Food Rations', need: 365, have: 90, priority: 'critical' },
+                { material: 'Industrial Equipment', need: 10, have: 2, priority: 'critical' }
+              ],
+              expansion_shortages: [{ material: 'Advanced Robotics', need: 20, have: 5, priority: 'expansion' }]
+            }
+          end
+          
+          it 'calls ShortageDetector.detect_shortages first' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request).and_return(double(id: 1))
+            
+            strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(Logistics::ShortageDetector).to have_received(:detect_shortages).with(settlement)
+          end
+          
+          it 'calls generate_import_request once per survival shortage item' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request).and_return(double(id: 1))
+            
+            strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(Logistics::ImportRequestGenerator).to have_received(:generate_import_request).exactly(2).times
+          end
+          
+          it 'passes correct quantity (need - have = deficit)' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            
+            # Stub to capture arguments
+            captured_args = []
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+              captured_args << shortage
+              double(id: 1)
+            end
+            
+            strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            # Food Rations deficit should be 275 (need=365 - have=90), not stub value of 10 or target amount 365
+            food_call = captured_args.find { |s| s[:material] == 'Food Rations' }
+            expect(food_call).to be_present
+            expect(food_call[:need]).to eq(275) # Deficit, not target
+            
+            # Industrial Equipment deficit should be 8 (need=10 - have=2)
+            equipment_call = captured_args.find { |s| s[:material] == 'Industrial Equipment' }
+            expect(equipment_call).to be_present
+            expect(equipment_call[:need]).to eq(8) # Deficit, not target
+          end
+          
+          it 'returns true when at least one ImportRequest created successfully' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request).and_return(double(id: 1))
+            
+            result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(result).to eq(true)
+          end
+          
+          it 'continues processing remaining shortages when one raises ImportRequestError' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            
+            # First call fails (Food Rations), second succeeds (Industrial Equipment)
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+              if shortage[:material] == 'Food Rations'
+                raise Logistics::ImportRequestGenerator::ImportRequestError, "Failed for Food Rations"
+              else
+                double(id: 2)
+              end
+            end
+            
+            result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(result).to eq(true) # Partial success still returns true
+          end
+          
+          it 'does NOT call generate_import_request for expansion shortages' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            
+            called_materials = []
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+              called_materials << shortage[:material]
+              double(id: 1)
+            end
+            
+            strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            # Should NOT be called with Advanced Robotics (expansion shortage)
+            expect(called_materials).not_to include('Advanced Robotics')
+          end
+          
+          it 'returns false when all ImportRequests fail' do
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request)
+              .and_raise(Logistics::ImportRequestGenerator::ImportRequestError, "All failed")
+            
+            result = strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            expect(result).to eq(false)
+          end
+          
+          it 'skips zero-deficit items (deficit clamping)' do
+            shortage_with_zero_deficit = {
+              viable: true,
+              survival_shortages: [
+                { material: 'Oxygen', need: 100, have: 150, priority: 'critical' }, # Stock exceeds target — deficit should be 0
+                { material: 'Water', need: 200, have: 180, priority: 'critical' }   # Deficit = 20
+              ],
+              expansion_shortages: []
+            }
+            
+            allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_with_zero_deficit)
+            allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request).and_return(double(id: 1))
+            
+            strategy_selector.send(:execute_cost_reduction, action, settlement)
+            
+            # Should only be called once (for Water), not for Oxygen which has zero deficit after clamping
+            expect(Logistics::ImportRequestGenerator).to have_received(:generate_import_request).once
+          end
+        end
+        
+        context 'when find_source_settlement returns nil' do
+          before do
+            allow(strategy_selector).to receive(:find_source_settlement).and_return(nil)
+          end
+          
+          it 'logs warning and returns false without calling ShortageDetector' do
+            action_with_resources = { type: :cost_reduction, resources: ['Food Rations'] }
+            
+            result = strategy_selector.send(:execute_cost_reduction, action_with_resources, settlement)
+            
+            expect(result).to eq(false) # Changed from Phase 2 behavior (was true)
+          end
         end
       end
     end

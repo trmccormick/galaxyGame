@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe AIManager::ServiceCoordinator do
   let(:settlement) { FactoryBot.create(:base_settlement) }
+  let(:cape_canaveral) { FactoryBot.create(:base_settlement, name: 'Cape Canaveral Spaceport') }
   let(:shortage) { { resource: 'water', current: 5, target: 100, amount: 95, critical: true } }
   let(:import_request) { FactoryBot.create(:import_request) }
 
@@ -12,6 +13,10 @@ describe AIManager::ServiceCoordinator do
 
   it 'detects and requests imports for shortages' do
     coordinator = described_class.new(double('SharedContext', add_listener: nil))
+    
+    # Stub the private instance method find_source_settlement_for
+    allow(coordinator).to receive(:find_source_settlement_for).and_return(cape_canaveral)
+    
     results = coordinator.detect_and_request_imports(settlement)
     expect(results).to be_an(Array)
     expect(results.first).to eq(import_request)

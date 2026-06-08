@@ -65,10 +65,6 @@ module AIManager
       Settlement::BaseSettlement.find_by(name: 'Cape Canaveral Spaceport')
     end
 
-    def default_quantity_for(resource)
-      10
-    end    
-
     # Generate available mission options based on current state
     def generate_mission_options(settlement, state_analysis)
       options = []
@@ -254,34 +250,72 @@ module AIManager
       true
     end
 
-    def execute_cost_reduction(action, settlement)
-      recommendations = action[:resources] || []
-      if recommendations.empty?
-        Rails.logger.info "[StrategySelector] Cost reduction: no resources recommended"
-        return true
-      end
+    # === KNOWN LIMITATIONS (Phase 3) ===
+    # - Transit Consumption Blindness: Does not factor consumption rate during transit time; 
+    #   import quantity = current deficit only, may be understated for long transits.
+    # - Single-Source Routing: All imports default to Cape Canaveral Spaceport via AstroLift;
+    #   LEO depot routing and multi-source selection are Phase 4+ concerns.
+    # - Skimmer Supply Chain Not Yet Available: Gas shortages (Methane, Hydrogen) routed to 
+    #   Earth imports via AstroLift. This is correct for early game — Titan/Venus skimmers have 
+    #   multi-year transit times and cannot respond to critical shortages. Once ISRU fuel production
+    #   matures AND skimmer logistics are operational (late-game), resource→supply_chain routing can
+    #   optimize gas sourcing in Phase 4+. For now, all survival shortages use Earth import path.
+    # - HLT Fuel Consumption Uncertainty: Liquid Oxygen and Methane requirements for Heavy Lift 
+    #   Transport round-trip operations not yet calibrated through simulation testing. ISRU LOX 
+    #   production comes online first; methane reserves built via resupply manifests until local 
+    #   fuel production is validated.
+    # === END LIMITATIONS ===
 
+    def execute_cost_reduction(action, settlement)
+      # Call ShortageDetector to get real shortage quantities (Phase 3 integration)
+      shortage_report = Logistics::ShortageDetector.detect_shortages(settlement)
+      
+      # Handle viable: false — ISRU not basic yet, cannot detect shortages
+      unless shortage_report[:viable]
+        Rails.logger.warn "[StrategySelector] #{settlement.name} ISRU not viable — cannot detect shortages"
+        return false
+      end
+      
+      # Handle empty survival_shortages — no critical imports needed
+      if shortage_report[:survival_shortages].empty?
+        Rails.logger.info "[StrategySelector] #{settlement.name} has no critical shortages — imports not needed"
+        return false
+      end
+      
+      # Get source settlement (Cape Canaveral for Earth imports)
       source = find_source_settlement
       unless source
-        Rails.logger.info "[StrategySelector] Cost reduction recommended for #{settlement.name} — no source settlement available for manifest creation"
-        recommendations.each do |resource|
-          Rails.logger.info "  - Consider producing locally: #{resource}"
+        Rails.logger.warn "[StrategySelector] No Earth import source available for #{settlement.name}"
+        return false
+      end
+      
+      # Process each survival shortage individually with error handling per item
+      success_count = 0
+      
+      shortage_report[:survival_shortages].each do |shortage|
+        # Calculate deficit quantity (need - have), clamped to prevent negative quantities
+        deficit = [0, shortage[:need] - shortage[:have]].max
+        
+        # Skip zero-deficit items (stock already meets or exceeds target)
+        next if deficit == 0
+        
+        begin
+          import_req = Logistics::ImportRequestGenerator.generate_import_request(
+            source: source,
+            destination: settlement,
+            shortage: { material: shortage[:material], need: deficit }
+          )
+          
+          success_count += 1 if import_req
+          Rails.logger.info "[StrategySelector] Import request created for #{shortage[:material]} (#{deficit} units)"
+        rescue Logistics::ImportRequestGenerator::ImportRequestError => e
+          Rails.logger.warn "[StrategySelector] Failed to create import for #{shortage[:material]}: #{e.message}"
+          # Continue processing remaining shortages — don't abort full batch on single failure
         end
-        return true
       end
-
-      items = recommendations.map do |resource|
-        { resource: resource, quantity: default_quantity_for(resource) }
-      end
-
-      begin
-        manifest = Logistics::ManifestGenerator.create_manifest(source, settlement, items)
-        Rails.logger.info "[StrategySelector] Manifest created: #{manifest.manifest_id}"
-        manifest
-      rescue Logistics::ManifestGenerator::ManifestError => e
-        Rails.logger.warn "[StrategySelector] Manifest creation failed: #{e.message}"
-        false
-      end
+      
+      # Return true if at least one ImportRequest created successfully; false only if all fail or no shortages detected
+      success_count > 0
     end
 
     # === STRATEGIC DECISION LOGIC ===

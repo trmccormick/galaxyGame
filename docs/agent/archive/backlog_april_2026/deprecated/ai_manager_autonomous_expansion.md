@@ -1,3 +1,28 @@
+---
+ARCHIVED TASK — Reference Only (June 7, 2026)
+Original Date: April 2026  
+Status: Actionable Components Extracted to New Task Files; Original Over-Scoped for Luna MVP Timeline
+
+Why Archived:
+✅ Multi-system expansion scope is Phase 5+ per current roadmap (docs/README.md — explicitly listed under "Phase 5 - AI Pattern Learning")
+✅ Luna Phases 1-3 are Sol-system only (Earth→Moon supply chain focus)  
+✅ Core actionable components extracted to three independent task files in /tasks/backlog/2026-06/:
+   - Wormhole Topology Integration for System Expansion Planning: docs/new_agent/projects/galaxy_game/tasks/backlog/2026-06/2026-06-07-MEDIUM-FEATURE-WORMHOLE-TOPOLOGY-INTEGRATION.md  
+   - Foothold Establishment Service Design for Multi-System Colonization: docs/new_agent/projects/galaxy_game/tasks/backlog/2026-06/2026-06-07-MEDIUM-FEATURE-FOOTHOLD-ESTABLISHMENT-SERVICE.md
+   - Multi-System Resource Coordination Algorithms (blocked by both above): docs/new_agent/projects/galaxy_game/tasks/backlog/2026-06/2026-06-07-MEDIUM-FEATURE-MULTI-SYSTEM-RESOURCE-COORDINATION.md
+
+Keep As Reference For:
+📌 Understanding historical architectural thinking patterns from April 2026 planning sessions  
+📌 Potential source of additional ideas when Luna phases complete and multi-system scope becomes active priority (TerraGen consortium formation, Eden system prioritization special cases may warrant future extraction)  
+📌 Context for why certain design decisions were made in current AI Manager architecture
+
+Related Active Work: 
+- Current implementation: docs/new_agent/projects/galaxy_game/tasks/active/2026-06/2026-06-06-HIGH-FEATURE-LUNA-PHASE-3-SHORTAGE-DETECTOR-IMPORT-REQUEST-GENERATOR.md
+- Future Phase 5+ tasks: docs/new_agent/projects/galaxy_game/tasks/backlog/2026-06/ (see files above)
+
+Extraction Date: June 7, 2026  
+---
+
 # AI Manager Autonomous System Expansion
 
 ## Problem
