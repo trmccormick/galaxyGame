@@ -10,7 +10,11 @@ describe Logistics::ImportRequestGenerator do
   end
 
   it 'creates an import request for a shortage' do
-    req = described_class.generate_import_request(settlement, shortage_data)
+    req = described_class.generate_import_request(
+      source: settlement,
+      destination: settlement,
+      shortage: shortage_data
+    )
     expect(req).to be_persisted
     expect(req.resource).to eq('water')
     expect(req.quantity_needed).to eq(95)
@@ -20,7 +24,11 @@ describe Logistics::ImportRequestGenerator do
   it 'raises error if manifest fails' do
     allow(Logistics::ManifestGenerator).to receive(:create_manifest).and_raise(StandardError, 'fail')
     expect {
-      described_class.generate_import_request(settlement, shortage_data)
+      described_class.generate_import_request(
+        source: settlement,
+        destination: settlement,
+        shortage: shortage_data
+      )
     }.to raise_error(Logistics::ImportRequestGenerator::ImportRequestError)
   end
 end
