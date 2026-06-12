@@ -722,6 +722,96 @@ RSpec.describe AIManager::StrategySelector, type: :service do
           end
         end
       end
+
+      describe 'Phase 4 — Consumption-aware ordering' do
+        let(:populated_settlement) { create(:base_settlement, current_population: 5) }
+        let(:robotic_settlement) { create(:base_settlement, current_population: 0) }
+        let(:source) { create(:base_settlement, name: 'Cape Canaveral Spaceport') }
+        let(:action) { { type: :cost_reduction, resources: [] } }
+
+        before do
+          allow(strategy_selector).to receive(:find_source_settlement).and_return(source)
+          allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request).and_return(double(id: 1))
+        end
+
+        it 'adds transit buffer to life-support material orders when population present' do
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+            viable: true,
+            survival_shortages: [{ material: 'Food', need: 20, have: 10, priority: 'critical' }],
+            expansion_shortages: []
+          })
+          captured = []
+          allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+            captured << shortage
+            double(id: 1)
+          end
+          strategy_selector.send(:execute_cost_reduction, action, populated_settlement)
+          expect(captured[0][:need]).to be > 10
+        end
+
+        it 'does not add transit buffer to non-life-support materials' do
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+            viable: true,
+            survival_shortages: [{ material: 'Steel', need: 20, have: 10, priority: 'critical' }],
+            expansion_shortages: []
+          })
+          captured = []
+          allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+            captured << shortage
+            double(id: 1)
+          end
+          strategy_selector.send(:execute_cost_reduction, action, populated_settlement)
+          expect(captured[0][:need]).to eq(10)
+        end
+
+        it 'skips life-support materials when population is zero' do
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+            viable: true,
+            survival_shortages: [{ material: 'Food', need: 20, have: 10, priority: 'critical' }],
+            expansion_shortages: []
+          })
+          strategy_selector.send(:execute_cost_reduction, action, robotic_settlement)
+          expect(Logistics::ImportRequestGenerator).not_to have_received(:generate_import_request)
+        end
+
+        it 'allows non-life-support materials when population is zero' do
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+            viable: true,
+            survival_shortages: [{ material: 'Steel', need: 20, have: 10, priority: 'critical' }],
+            expansion_shortages: []
+          })
+          strategy_selector.send(:execute_cost_reduction, action, robotic_settlement)
+          expect(Logistics::ImportRequestGenerator).to have_received(:generate_import_request).once
+        end
+
+        it 'orders life-support with transit buffer when population is present' do
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+            viable: true,
+            survival_shortages: [{ material: 'Water', need: 20, have: 10, priority: 'critical' }],
+            expansion_shortages: []
+          })
+          captured = []
+          allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+            captured << shortage
+            double(id: 1)
+          end
+          strategy_selector.send(:execute_cost_reduction, action, populated_settlement)
+          expect(captured[0][:need]).to be > 10
+        end
+
+        it 'returns false when all life-support orders skipped in precursor phase' do
+          allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return({
+            viable: true,
+            survival_shortages: [
+              { material: 'Food', need: 20, have: 10, priority: 'critical' },
+              { material: 'Water', need: 20, have: 10, priority: 'critical' }
+            ],
+            expansion_shortages: []
+          })
+          result = strategy_selector.send(:execute_cost_reduction, action, robotic_settlement)
+          expect(result).to eq(false)
+        end
+      end
     end
   end
 end
