@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_30_130000) do
+ActiveRecord::Schema[7.0].define(version: 2026_06_13_135038) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -856,8 +856,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_30_130000) do
     t.integer "total_items", default: 0, null: false
     t.float "total_cost", default: 0.0, null: false
     t.integer "status", default: 0, null: false
+    t.integer "manifest_type", default: 0, null: false
+    t.decimal "estimated_revenue_gcc", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "total_weight_kg", precision: 12, scale: 2, default: "0.0", null: false
     t.index ["destination_settlement_id"], name: "index_logistics_manifests_on_destination_settlement_id"
     t.index ["manifest_id"], name: "index_logistics_manifests_on_manifest_id", unique: true
+    t.index ["manifest_type"], name: "index_logistics_manifests_on_manifest_type"
     t.index ["source_settlement_id"], name: "index_logistics_manifests_on_source_settlement_id"
   end
 
