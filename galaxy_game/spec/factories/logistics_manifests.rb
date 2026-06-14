@@ -9,7 +9,7 @@ FactoryBot.define do
     total_items { 100 }
     total_cost { 500.0 }
     status { :pending }
-    manifest_type { Logistics::Manifest.IMPORT_TYPE }  # Default to import for backward compatibility
+    manifest_type { 0 }
     estimated_revenue_gcc { 0.0 }
     total_weight_kg { 100.0 }
 
@@ -27,10 +27,10 @@ FactoryBot.define do
     
     # Export manifest traits for return cargo optimization testing
     trait :export_manifest do
-      manifest_type { Logistics::Manifest.EXPORT_TYPE }
+      manifest_type { 1 }
       items { [{ resource: 'Helium-3', quantity_kg: 10.0, category: 'rare_isotope', market_price_gcc_per_kg: 5_000.0, total_value: 50_000.0 }] }
       estimated_revenue_gcc { 50_000.0 }
-      status { :pending_approval }
+      status { :pending }
     end
     
     trait :luna_export do
