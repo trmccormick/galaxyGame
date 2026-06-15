@@ -6,6 +6,17 @@ module AIManager
   class StrategySelector
     attr_reader :shared_context, :service_coordinator, :state_analyzer, :mission_scorer
 
+    # Phase 4 — Consumption-Aware Ordering Constants
+    LUNA_MARGIN_FACTOR = 1.25
+    LIFE_SUPPORT_MATERIALS = %w[Food Water Oxygen Energy].freeze
+    LUNA_TRANSIT_DAYS = 3
+    DAILY_CONSUMPTION_RATES = {
+      'Food'   => 2.0,
+      'Water'  => 1.0,
+      'Oxygen' => 3.0,
+      'Energy' => 3.0
+    }.freeze
+
     def initialize(shared_context, service_coordinator)
       @shared_context = shared_context
       @service_coordinator = service_coordinator
@@ -299,17 +310,31 @@ module AIManager
         # Skip zero-deficit items (stock already meets or exceeds target)
         next if deficit == 0
         
+        material = shortage[:material]
+        
+        if life_support_material?(material)
+          # Precursor phase: no humans present, skip life-support ordering entirely
+          next if precursor_phase?(settlement)
+          
+          # Active settlement: add transit buffer for life-support materials
+          daily_rate = daily_consumption_rate_for(material, settlement)
+          transit_buffer = (LUNA_TRANSIT_DAYS * daily_rate * LUNA_MARGIN_FACTOR).ceil
+          order_quantity = deficit + transit_buffer
+        else
+          order_quantity = deficit
+        end
+        
         begin
           import_req = Logistics::ImportRequestGenerator.generate_import_request(
             source: source,
             destination: settlement,
-            shortage: { material: shortage[:material], need: deficit }
+            shortage: { material: material, need: order_quantity }
           )
           
           success_count += 1 if import_req
-          Rails.logger.info "[StrategySelector] Import request created for #{shortage[:material]} (#{deficit} units)"
+          Rails.logger.info "[StrategySelector] Import request created for #{material} (#{order_quantity} units)"
         rescue Logistics::ImportRequestGenerator::ImportRequestError => e
-          Rails.logger.warn "[StrategySelector] Failed to create import for #{shortage[:material]}: #{e.message}"
+          Rails.logger.warn "[StrategySelector] Failed to create import for #{material}: #{e.message}"
           # Continue processing remaining shortages — don't abort full batch on single failure
         end
       end
@@ -481,6 +506,21 @@ module AIManager
 
       # Default to balanced approach if tie persists
       :balanced_approach
+    end
+
+    # Phase 4 — Consumption-Aware Ordering Helper Methods
+
+    def precursor_phase?(settlement)
+      settlement.current_population == 0
+    end
+
+    def life_support_material?(material)
+      LIFE_SUPPORT_MATERIALS.include?(material)
+    end
+
+    def daily_consumption_rate_for(material, settlement)
+      rate = DAILY_CONSUMPTION_RATES[material] || 0.0
+      rate * settlement.current_population
     end
   end
 end
