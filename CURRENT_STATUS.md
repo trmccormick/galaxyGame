@@ -1,5 +1,32 @@
 ---
 
+# June 15, 2026 — Luna AI Manager Training Refresh ✅ COMPLETE
+
+## Summary
+Refreshed Luna settlement training data to reflect post-January refactors and current design (worldhouse expansion via lava tube sealing).
+
+## Changes Made
+- **`mission_profile_patterns.json`**: Populated hollow `lunar_pattern` with:
+  - Environmental conditions (0.16g gravity, vacuum atmosphere, 708-hour day/night cycle)
+  - Equipment requirements (nuclear power, ISRU units, CAR-300 rovers, comms equipment)
+  - Economic model ($2.5M GCC cost, 40% import ratio, LDC backstop, He₃ sales revenue streams)
+  - Expansion model: worldhouse via lava tube sealing as primary path after positive GCC flow
+  - tasks_v2 viable options (5 tasks mapped for Luna conditions)
+
+- **`learned_patterns.json`**: Removed duplicate `lunar-precursor_lunar` key (hyphenated version), preserved canonical underscore entry with success_rate 0.92
+
+## Validation Results
+- ✅ All January success rates preserved: lunar_precursor_lunar (0.92), venus_pattern (0.88), venus_atmospheric_elevators (0.85), venus_forge_operations (0.78)
+- ✅ AI Manager suite baseline maintained: 746 examples, 3 failures (flaky only), 4 pending — no new regressions introduced
+
+## Known Issues Documented
+- `rake ai_manager:analyze_mission_profiles` has pre-existing bug (`NoMethodError: undefined method 'gsub' for nil` in `load_manifest_for_profile`) — documented per task requirements, not fixed within scope
+
+---
+
+*Last Updated: June 15, 2026*
+*Luna AI Manager training refresh complete. lunar_pattern populated with environmental conditions, equipment requirements, economic model (extraction outpost), expansion_model (worldhouse via lava tube). Duplicate learned pattern key removed. January success rates preserved. Analyzer bug documented.*
+
 # May 31, 2026 — Database Cleaner Fix (223 Cascading Failures Resolved)
 
 ## Problem
