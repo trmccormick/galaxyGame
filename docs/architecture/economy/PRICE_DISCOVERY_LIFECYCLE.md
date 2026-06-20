@@ -16,15 +16,74 @@ arrive to a market that reflects the actual state of development.
 
 ---
 
+### LDC as the Mint
+
+LDC is the sole issuer of GCC. GCC supply is backed by Luna's productive
+capacity — resource extraction output, infrastructure value, and settlement
 economic activity. Other DCs earn GCC through productivity; they do not
+create it.
+
+The virtual ledger is the monetary base — GCC seeded into DC accounts before
+real revenue flows exist. It bootstraps the early game economy and is wound
 down gradually as real revenue replaces virtual credits.
 
 See `docs/architecture/ai_manager/AI_MANAGER_CONSTRUCTION_ECONOMICS.md`
 for the full DC financial model.
 
+## GCC/USD Peg — The Market Primer
+
+### Initial State: Hard Peg (1 GCC = 1 USD)
+At game launch, GCC is pegged 1:1 to USD. This is intentional — it primes
 the space economy with a stable, Earth-anchored price baseline. All EAP
+calculations work identically in both currencies at launch.
+
+**Why peg?**
+- GCC supply is tiny at launch (only LDC mining satellites producing it)
+- No independent space economy exists yet to set GCC value
+- Earth prices provide the only reliable reference point
+- Pegging prevents hyperinflation/deflation before market depth develops
+
+**Implementation:** `Financial::ExchangeRateService` defaults to 1:1.
+The rate hash `{ ["USD", "GCC"] => 1.0 }` is set at seed time.
+
+### The Decoupling Progression
+As the space economy grows, GCC supply increases and space-side demand
 develops independently of Earth. The peg loosens in stages:
 
+**Stage 1: Soft Peg (early game)**
+- GCC still roughly 1:1 with USD
+- Small fluctuations allowed (±10%)
+- LDC mining satellites primary GCC source
+- All space transactions use GCC, Earth transactions use USD
+
+**Stage 2: Managed Float (mid game)**
+- GCC supply sufficient to support independent pricing
+- Exchange rate set by market forces with AI Manager stabilization
+- Space-produced goods priced in GCC below EAP
+- Earth imports still anchored in USD, converted at current rate
+
+**Stage 3: Full Float (late game / Act 3+)**
+- GCC trades freely against USD
+- Wormhole activity, infrastructure ROI, and GCC mining rate drive value
+- Space economy fully self-sustaining
+- Wormhole Transit Consortium fees ($1,000 USD/transit) create USD demand
+- GCC appreciation possible if space economy outgrows Earth anchor
+
+### Currency Conversion in EAP Calculations
+EAP is calculated in USD (Earth spot prices). When GCC ≠ USD:
+
+```
+EAP_gcc = EAP_usd / exchange_rate(USD → GCC)
+```
+
+Example at 1.3 GCC/USD (GCC depreciation scenario from integration tests):
+- Titanium EAP: $187.50 USD = 243.75 GCC
+- Players selling titanium to NPCs get paid in GCC at current rate
+- NPC buy orders update when exchange rate changes
+
+**Implementation:** `Financial::ExchangeRateService.convert(amount, from, to)`
+handles all conversions. `NpcPriceCalculator` must use this service when
+posting buy/sell orders rather than assuming 1:1.
 
 ### Practical Impact on Market Priming
 At launch with 1:1 peg:
@@ -43,7 +102,21 @@ for bond mechanics.
 
 ---
 
+## The Earth Anchor Price (EAP)
+
+EAP is the price ceiling for any resource at any destination. If a resource
+costs more than EAP, an NPC will always choose to import from Earth instead.
+
+**Formula:**
+```
+EAP = (Earth spot price × refining factor) + transport cost to destination
+```
+
+**Implementation:** `Tier1PriceModeler` calculates EAP per material per
 destination using:
+- Earth spot prices from `config/economic_parameters.yml`
+- Transport rates by category (bulk: $100/kg, manufactured: $150/kg, high_tech: $200/kg)
+- Route modifiers via `Logistics::TransportCostService`
 
 **Categories:**
 - `bulk_material` — $100/kg transport (LOX, water, regolith products)
@@ -133,6 +206,27 @@ cyclers on all major routes.
 
 ---
 
+## How the AI Manager Uses EAP
+
+### Resource Acquisition Decision Logic
+```
+IF local_production_cost < EAP:
+  source locally (ISRU or local market)
+ELSIF npc_market_price < EAP:
+  buy from NPC market (Virtual Ledger if GCC scarce)
+ELSE:
+  import from Earth (requires USD)
+```
+
+### NPC Pricing Logic (`NpcPriceCalculator`)
+- NPC buy orders: posted at EAP ceiling (won't pay more)
+- NPC sell orders: posted slightly below EAP (undercuts Earth import)
+- Local production available: posted at production cost + margin
+- Players can sell to NPCs at any price up to EAP
+
+### Construction Cost Evaluation
+
+Before posting buy orders or importing for construction, the AI Manager
 evaluates profitability:
 ```
 proceed_if: (acquisition_cost + transport + overhead) < construction_value
@@ -150,6 +244,11 @@ Excess side-effect resources (volatiles from regolith, etc.) listed at
 See `docs/architecture/ai_manager/AI_MANAGER_CONSTRUCTION_ECONOMICS.md`
 for the complete construction economics model.
 
+### Price Ceiling Enforcement
+If a player posts a sell order above EAP, AI Manager:
+1. Rejects the order (won't pay more than import cost)
+2. Schedules an Earth import instead
+3. Creates a logistics contract for import delivery
 
 ---
 
@@ -170,6 +269,18 @@ instead of static config when infrastructure milestone tracking is implemented.
 
 ---
 
+## Currency Flow Summary
+
+```
+Earth grants (USD) → LDC → GCC mining satellites → GCC supply
+Luna exports (He-3, samples) → USD revenue → Earth imports (N2, electronics)
+AstroLift transport fees (GCC) → AstroLift fleet expansion
+LEO depot fuel sales (USD) → LDC USD revenue
+L1 shipyard construction → local ships → transport cost reduction
+Cycler operations → bulk cargo economics → price stability
+```
+
+---
 
 ## Player Economic Opportunities by Phase
 

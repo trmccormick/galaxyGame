@@ -39,10 +39,6 @@
 
 **Goal**: Run the Luna simulation with current AI Manager logic to identify gaps in fuel loop viability. This is **observation**, not feature development.
 
-### Active Tasks
-- **`2026-06-19-HIGH-VERIFICATION-LUNA-PRECURSOR-V2-SEQUENCE-RECONCILIATION.md`** — Verify v2 manifest sequence, fix stub handlers, build test rake task. Replaces stale `starship_integration_precursor_mission.rb`. Agent currently working on this.
-- **`2026-06-20-HIGH-FEATURE-MEGA-STRUCTURE-CONSTRUCTION-PIPELINE.md`** — Create task_v2 template, generate 9 construction/simulation tasks for worldhouse system, wire to TaskExecutionEngineV2. Phase 6 prerequisite.
-
 ### What We're Testing
 - Fuel loop closes reliably without Earth dependency
 - Consumption modeling, precursor phase gating, life support ordering under realistic conditions

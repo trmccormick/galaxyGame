@@ -11,7 +11,7 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 ### 👤 For Players
 - [Game Mechanics](gameplay/mechanics.md) - Core gameplay loops
 - [Terraforming Guide](gameplay/terraforming.md) - Planet transformation
-- [User Documentation](user/) - How to play
+- [User Documentation](wiki/getting_started.md) - How to play
 
 ### 💻 For Developers
 
@@ -44,12 +44,34 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 - **Standards & Workflow**: See [developer/JSON_DATA_GUIDE.md](developer/JSON_DATA_GUIDE.md) for naming conventions, required fields, and validation steps for all unit JSON data.
 - **[CI/CD Pipeline](testing/CI_CD_PIPELINE.md)** ⭐ - Deployment automation
 - **[API Documentation](api/README.md)** ⭐ - Admin endpoints reference
-- **[Deployment Guide](operations/DEPLOYMENT.md)** ⭐ - Production setup
+- **[Deployment Guide](developer/DEPLOYMENT.md)** ⭐ - Production setup
 
 #### Documentation Organization
 - [Reference Docs](reference/) - Stable guides and design intent
 - [Archive Docs](archive/) - Historic materials and legacy code
-- [Agent Docs](agent/) - AI agent instructions and rules
+- [Planning Docs](planning/) - Phase alignment, planning goals, Luna behavior goals
+- [Mission Profiles](mission_profiles/) - Mission templates and strategies
+
+---
+
+## 📋 Documentation Structure
+
+| Folder | Purpose | Files |
+|--------|---------|-------|
+| `developer/` | Dev setup, architecture overview, deployment guides | ~50 files |
+| `architecture/` | Core system architecture (AI Manager, economy, stations, simulation, etc.) | 150+ files |
+| `gameplay/` | Player-facing mechanics and terraforming | 3 files |
+| `storyline/` | Narrative arc, lore, crisis mechanics | 18 files |
+| `planning/` | Phase alignment, planning goals, Luna behavior goals | 4 files |
+| `testing/` | Testing guides, CI/CD pipeline, practical testing | 5 files |
+| `reference/` | Stable guides and design intent | 8 files |
+| `wiki/` | Player wiki (getting started, roles, logistics) | 12 files |
+| `mission_profiles/` | Mission templates and strategies | 3 files |
+| `api/` | API documentation | 2 files |
+| `archive/` | Historic materials and legacy code | 48 files |
+| `agent/` | Agent instructions and rules (legacy, being migrated) | 657 files |
+| `new_agent/` | Symlink → agent-tasks repo (current agent management) | symlink |
+| `legacy/` | Personal legacy code (PATHS.PAS) | 1 file |
 
 ---
 
@@ -63,7 +85,7 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 ### Economic Systems
 - [Financial System](architecture/financial_system.md) - Currency and banking
 - [Organizations](architecture/organizations_system.md) - Corporations and consortiums
-- [Economic Baseline](market/economic_baseline.md) - Market fundamentals
+- [Economic Baseline](architecture/economy/economic_baseline.md) - Market fundamentals
 - [Trading & Logistics](../README.md#trading--logistics-system) - Player contracts & insurance
 
 ### Planetary Systems
@@ -77,12 +99,12 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 ### Transportation
 - [Cycler System](architecture/ai_manager/CYCLER_SYSTEM_ARCHITECTURE.md) - Orbital logistics
 - [Wormhole System](architecture/wormhole_system.md) - FTL travel
-- [Asteroid Relocation](crafts/asteroid_relocation_tug.md) - Resource transport
+- [Asteroid Relocation](architecture/stations/asteroid_relocation_tug.md) - Resource transport
 
 ### AI & Automation
-- [AI Manager Overview](ai_manager/00_architecture_overview.md) - AI decision framework
-- [Probe System](ai_manager/01_probe_system.md) - Autonomous exploration
-- [Settlement Planning](ai_manager/02_settlement_planning.md) - Colony optimization
+- [AI Manager Overview](architecture/ai_manager/00_architecture_overview.md) - AI decision framework
+- [Probe System](architecture/ai_manager/01_probe_system.md) - Autonomous exploration
+- [Settlement Planning](architecture/ai_manager/02_settlement_planning.md) - Colony optimization
 - [Precursor Infrastructure](ai_manager/PRECURSOR_INFRASTRUCTURE_CAPABILITIES.md) - System bootstrapping
 
 ---

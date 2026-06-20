@@ -1,3 +1,0 @@
-# Simulation Sandbox
-
-...existing content moved from root...
