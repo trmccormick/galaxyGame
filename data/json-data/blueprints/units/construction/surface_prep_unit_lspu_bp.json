@@ -1,0 +1,112 @@
+{
+  "template": "unit_blueprint_v1.3",
+  "id": "surface_prep_unit_lspu",
+  "name": "Surface Preparation Unit (LSPU)",
+  "description": "Mobile microwave-sintering unit for compacting processed regolith into stable foundation material. Takes depleted regolith from TEU/PVE output and produces compacted foundation slabs for landing pads and tank farm infrastructure.",
+  "type": "unit",
+  "category": "construction",
+  "role": "infrastructure_preparation",
+
+  "physical_properties": {
+    "length_m": 4.2,
+    "width_m": 3.1,
+    "height_m": 2.8,
+    "empty_mass_kg": 1200.0,
+    "volume_m3": 28.0,
+    "drag_coefficient": 0.85,
+    "deployable": true,
+    "deployment_data": {
+      "deployable": true,
+      "default_deployment_time_hours": 2,
+      "printer_required": false,
+      "transport_mode": "craft_cargo",
+      "surface_prep_capability": "microwave_sintering"
+    }
+  },
+
+  "ports": {
+    "internal_unit_ports": 0,
+    "external_unit_ports": 0,
+    "propulsion_ports": 0,
+    "rig_ports": 0,
+    "storage_ports": 2
+  },
+
+  "processing_capability": {
+    "input_material": "depleted_regolith",
+    "input_rate_kg_per_hour": 150.0,
+    "processing_method": "microwave_sintering",
+    "output_material": "compacted_foundation_material",
+    "output_rate_kg_per_hour": 180.0,
+    "energy_requirement_kw": 45.0,
+    "operating_temperature_celsius": 900
+  },
+
+  "blueprint_data": {
+    "base_material_efficiency": 0.0,
+    "base_time_efficiency": 0.0,
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 85000
+    },
+    "materials": [
+      {
+        "id": "stainless_steel",
+        "amount": 400.0,
+        "unit": "kilogram"
+      },
+      {
+        "id": "titanium_alloy",
+        "amount": 150.0,
+        "unit": "kilogram"
+      },
+      {
+        "id": "ceramics",
+        "amount": 200.0,
+        "unit": "kilogram"
+      },
+      {
+        "id": "electronics",
+        "amount": 80.0,
+        "unit": "kilogram"
+      },
+      {
+        "id": "cable_harness",
+        "amount": 50.0,
+        "unit": "kilogram"
+      }
+    ],
+    "assembly_time": 12000,
+    "maintenance": {
+      "time_to_repair": 480,
+      "repair_cost_gcc": 2500,
+      "materials_needed_for_repair": [
+        {
+          "id": "stainless_steel",
+          "amount": 80.0,
+          "unit": "kilogram"
+        },
+        {
+          "id": "ceramics",
+          "amount": 40.0,
+          "unit": "kilogram"
+        },
+        {
+          "id": "electronics",
+          "amount": 20.0,
+          "unit": "kilogram"
+        }
+      ]
+    },
+    "research_required": "Advanced Regolith Processing"
+  },
+
+  "metadata": {
+    "version": "1.0",
+    "type": "unit_blueprint",
+    "template_compliance": "unit_blueprint_v1.3",
+    "design_rationale": "Mobile sintering platform for closed-loop regolith recycling. Processes volatile-depleted regolith from TEU/PVE pipeline into compacted foundation material suitable for landing pads and tank farm infrastructure. Reduces raw regolith volume by ~20%, improves bearing strength by ~4x compared to loose regolith.",
+    "author": "Tracy (design), AI Copilot (implementation)",
+    "date_created": "2026-06-23"
+  }
+}
