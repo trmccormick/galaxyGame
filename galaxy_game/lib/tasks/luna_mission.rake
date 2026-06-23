@@ -1,0 +1,439 @@
+namespace :luna_mission do
+  desc "Execute Luna Precursor V2 mission sequence end-to-end via TaskExecutionEngineV2"
+  task execute: :environment do
+    puts "\n" + "=" * 80
+    puts "LUNA PRECURSOR V2 MISSION SEQUENCE - EXECUTION REPORT"
+    puts "=" * 80
+
+    target = "LUNA-01"
+    legacy_profile_rel_path = "luna_base_establishment/luna_settlement_profile_v1.json"
+    modern_profile_path = GalaxyGame::Paths::MISSIONS_PATH.join("profiles", "luna_base_establishment_profile_v1.json").to_s
+    legacy_profile_path = GalaxyGame::Paths::MISSIONS_PATH.join(legacy_profile_rel_path).to_s
+    manifest_path = GalaxyGame::Paths::MISSIONS_PATH.join("manifests_v2", "lunar_precursor_manifest_v2_DRAFT.json").to_s
+
+    body = CelestialBodies::CelestialBody.find_by(identifier: target)
+    if body.nil?
+      puts "\nFATAL: Celestial body '#{target}' not found in database."
+      exit 1
+    end
+
+    profile_path = if File.exist?(legacy_profile_path)
+      legacy_profile_path
+    elsif File.exist?(modern_profile_path)
+      modern_profile_path
+    else
+      nil
+    end
+
+    if profile_path.nil?
+      puts "\nFATAL: Could not find profile in profiles/ or legacy path."
+      exit 1
+    end
+
+    profile = JSON.parse(File.read(profile_path))
+    puts "\nTarget body: #{body.name} (#{target})"
+    puts "Profile: #{profile_path}"
+
+    # Guard against unique location constraints by reusing existing body location.
+    existing_location = Location::CelestialLocation.find_by(celestial_body: body)
+    if existing_location && Settlement::BaseSettlement.find_by(location: existing_location).nil?
+      bootstrap_settlement = Settlement::BaseSettlement.create!(
+        name: "#{body.name} Base",
+        settlement_type: :base,
+        operational_data: {
+          "foundation_sintered" => false,
+          "inflation_state" => "idle"
+        }
+      )
+      existing_location.update!(locationable: bootstrap_settlement)
+    end
+
+    engine = AIManager::TaskExecutionEngineV2.new(target, legacy_profile_rel_path)
+
+    seed_inventory_from_manifest = lambda do |settlement, manifest|
+      return unless settlement && manifest.is_a?(Hash)
+      item_owner = settlement.owner
+      if item_owner.nil?
+        item_owner = Organizations::BaseOrganization.find_or_create_by!(
+          identifier: "LDC-AUTOGEN",
+          name: "Lunar Development Corporation",
+          organization_type: :development_corporation
+        )
+      end
+
+      (manifest["required_hardware"] || []).each do |hw|
+        count = hw["count"].to_i
+        next if count <= 0
+
+        settlement.inventory.items.create!(
+          name: hw["id"],
+          amount: count,
+          owner: item_owner,
+          metadata: {
+            "unit_type" => hw["id"],
+            "role" => hw["role"],
+            "task_affinity" => hw["task_affinity"]
+          }
+        )
+      end
+
+      (manifest["consumables"] || []).each do |cons|
+        count = cons["count"].to_i
+        next if count <= 0
+
+        settlement.inventory.items.create!(
+          name: cons["id"],
+          amount: count,
+          owner: item_owner,
+          metadata: {
+            "unit_type" => cons["id"],
+            "purpose" => cons["purpose"]
+          }
+        )
+      end
+    end
+
+    settlement = engine.settlement
+    if settlement.nil?
+      puts "\nFATAL: Could not create or find settlement for #{target}."
+      exit 1
+    end
+
+    puts "Settlement: #{settlement.name} (ID: #{settlement.id})"
+
+    # Launch origin context (seeded): Cape Canaveral Spaceport.
+    earth_body = CelestialBodies::CelestialBody.find_by(identifier: 'EARTH-01')
+    cape_canaveral_location = if earth_body
+      Location::CelestialLocation.find_by(celestial_body: earth_body, coordinates: '28.57°N 80.65°W')
+    end
+    cape_canaveral = Settlement::BaseSettlement.find_by(name: 'Cape Canaveral Spaceport')
+    astrolift = Organizations::BaseOrganization.find_by(identifier: 'ASTROLIFT')
+
+    if cape_canaveral_location && cape_canaveral
+      puts "Launch origin: #{cape_canaveral.name} @ #{cape_canaveral_location.coordinates}"
+    else
+      puts "WARNING: Cape Canaveral seed context not fully present; using direct settlement seed fallback."
+    end
+
+    if File.exist?(manifest_path)
+      manifest = JSON.parse(File.read(manifest_path))
+      puts "Manifest: #{manifest_path}"
+      puts "Manifest ID: #{manifest["manifest_id"]}"
+      puts "Required hardware entries: #{(manifest["required_hardware"] || []).count}"
+
+      # Clear and reseed inventory to keep runs deterministic.
+      settlement.inventory.items.destroy_all
+
+      # Prefer legacy-intent staging pattern: load cargo at Cape Canaveral then transfer to Luna settlement.
+      staged_via_launch = false
+      if astrolift && cape_canaveral
+        craft_lookup = Lookup::CraftLookupService.new
+        heavy_lift_data = craft_lookup.find_craft('heavy_lift_transport')
+
+        if heavy_lift_data
+          heavy_lift = Craft::Transport::HeavyLander.create!(
+            name: "LunaMission-HLT-#{SecureRandom.hex(4)}",
+            craft_name: heavy_lift_data['name'],
+            craft_type: heavy_lift_data['subcategory'] || heavy_lift_data['category'],
+            owner: astrolift,
+            deployed: false,
+            operational_data: heavy_lift_data
+          )
+          heavy_lift.create_inventory! unless heavy_lift.inventory
+
+          (manifest["required_hardware"] || []).each do |hw|
+            count = hw["count"].to_i
+            next if count <= 0
+            heavy_lift.inventory.items.create!(
+              name: hw["id"],
+              amount: count,
+              owner: astrolift,
+              metadata: {
+                "unit_type" => hw["id"],
+                "role" => hw["role"],
+                "task_affinity" => hw["task_affinity"]
+              }
+            )
+          end
+
+          (manifest["consumables"] || []).each do |cons|
+            count = cons["count"].to_i
+            next if count <= 0
+            heavy_lift.inventory.items.create!(
+              name: cons["id"],
+              amount: count,
+              owner: astrolift,
+              metadata: {
+                "unit_type" => cons["id"],
+                "purpose" => cons["purpose"]
+              }
+            )
+          end
+
+          heavy_lift.inventory.items.find_each do |item|
+            existing = settlement.inventory.items.find_or_initialize_by(
+              name: item.name,
+              owner: astrolift,
+              metadata: item.metadata || {}
+            )
+            existing.amount = (existing.amount || 0) + item.amount
+            existing.save!
+          end
+
+          staged_via_launch = true
+          puts "Staged cargo via HLT launch flow from Cape Canaveral."
+        end
+      end
+
+      seed_inventory_from_manifest.call(settlement, manifest) unless staged_via_launch
+      puts "Seeded inventory items: #{settlement.inventory.items.count}"
+    else
+      puts "WARNING: V2 manifest not found at #{manifest_path}."
+      puts "Deployment tasks may fail with MaterialShortageError."
+    end
+
+    phase_path_for = lambda do |phase_def|
+      task_list_file = phase_def["task_list_file"].to_s
+      modern_candidate = GalaxyGame::Paths::MISSIONS_PATH.join(task_list_file).to_s
+      legacy_candidate = GalaxyGame::Paths::MISSIONS_PATH.join("luna_base_establishment", task_list_file).to_s
+
+      return modern_candidate if File.exist?(modern_candidate)
+      return legacy_candidate if File.exist?(legacy_candidate)
+
+      nil
+    end
+
+    ensure_deploy_inventory_from_v2_tasks = lambda do |settlement_obj, profile_obj|
+      item_owner = settlement_obj.owner
+      if item_owner.nil?
+        item_owner = Organizations::BaseOrganization.find_or_create_by!(
+          identifier: "LDC-AUTOGEN",
+          name: "Lunar Development Corporation",
+          organization_type: :development_corporation
+        )
+      end
+
+      deploy_requirements = Hash.new(0)
+
+      (profile_obj["phases"] || []).each do |phase_def|
+        phase_file_path = phase_path_for.call(phase_def)
+        next if phase_file_path.nil?
+
+        phase_data = JSON.parse(File.read(phase_file_path))
+        (phase_data["tasks"] || []).each do |task_entry|
+          task_ref = task_entry["task_ref"]
+          next if task_ref.nil?
+
+          task_path = GalaxyGame::Paths::MISSIONS_PATH.join(task_ref).to_s
+          next unless File.exist?(task_path)
+
+          task_data = JSON.parse(File.read(task_path))
+          task_defs = task_data["tasks"].is_a?(Array) ? task_data["tasks"] : [task_data]
+
+          task_defs.each do |task_def|
+            (task_def["effects"] || []).each do |effect|
+              next unless effect["action"] == "deploy_unit"
+
+              unit_name = effect["unit"] || effect["unit_type"]
+              next if unit_name.nil?
+
+              normalized = unit_name.to_s.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/^_+|_+$/, "")
+              deploy_requirements[normalized] += (effect["count"] || 1).to_i
+            end
+          end
+        end
+      end
+
+      deploy_requirements.each do |normalized_unit_type, required_count|
+        existing = settlement_obj.inventory.items.where("metadata ->> 'unit_type' = ?", normalized_unit_type).sum(:amount)
+        missing = required_count - existing
+        next if missing <= 0
+
+        settlement_obj.inventory.items.create!(
+          name: normalized_unit_type,
+          amount: missing,
+          owner: item_owner,
+          metadata: {
+            "unit_type" => normalized_unit_type,
+            "seed_source" => "v2_task_effects"
+          }
+        )
+      end
+    end
+
+    # Prefer explicit v2 execution order for this mission.
+    execution_order = ["power_comms", "isru_deployment", "gas_processing"]
+
+    phase_index = {}
+    (profile["phases"] || []).each do |phase_def|
+      phase_id = phase_def["phase_id"].to_s
+      phase_index[phase_id] = phase_def
+    end
+
+    ensure_deploy_inventory_from_v2_tasks.call(settlement, profile)
+    settlement.reload
+    settlement.inventory.reload if settlement.inventory
+
+    # Use a fresh settlement instance inside the engine so inventory queries are not stale.
+    fresh_settlement = Settlement::BaseSettlement.find(settlement.id)
+    engine.instance_variable_set(:@settlement, fresh_settlement)
+    settlement = fresh_settlement
+
+    # Preflight inventory keys used by TaskExecutionEngineV2 deploy lookup.
+    puts "\nPreflight deploy inventory keys:"
+    %w[
+      solar_expansion_rig
+      comms_equipment
+      planetary_umbilical_hub
+      planetary_power_management_unit
+      thermal_extraction_unit
+      planetary_volatiles_extractor_mk1
+      gas_separator
+      inflatable_pressure_tank
+      inflatable_gas_storage
+      inflatable_cryogenic_tank
+    ].each do |unit_type_key|
+      qty = settlement.inventory.items.where("metadata ->> 'unit_type' = ?", unit_type_key).sum(:amount)
+      puts "  - #{unit_type_key}: #{qty}"
+    end
+
+    results = {}
+
+    execution_order.each do |phase_id|
+      phase_def = phase_index[phase_id]
+      if phase_def.nil?
+        puts "\n------------------------------------------------------------"
+        puts "PHASE: #{phase_id}"
+        puts "------------------------------------------------------------"
+        puts "  SKIPPED - phase not present in loaded profile"
+        results[phase_id] = { tasks: [], passed: false }
+        next
+      end
+
+      phase_name = phase_def["name"] || phase_id
+      puts "\n------------------------------------------------------------"
+      puts "PHASE: #{phase_name} (#{phase_id})"
+      puts "------------------------------------------------------------"
+
+      phase_result = { tasks: [], passed: true }
+      phase_file_path = phase_path_for.call(phase_def)
+
+      if phase_file_path.nil?
+        puts "  SKIPPED - phase file missing"
+        phase_result[:passed] = false
+        results[phase_id] = phase_result
+        next
+      end
+
+      phase_data = JSON.parse(File.read(phase_file_path))
+      task_entries = phase_data["tasks"] || []
+
+      task_entries.each do |task_entry|
+        task_ref = task_entry["task_ref"]
+        if task_ref.nil?
+          task_id = task_entry["task_id"] || "unknown_task"
+          puts "  - #{task_id}: SKIPPED (non-v2 phase task entry)"
+          phase_result[:tasks] << { task_id: task_id, status: :skipped_non_v2 }
+          phase_result[:passed] = false
+          next
+        end
+
+        task_path = GalaxyGame::Paths::MISSIONS_PATH.join(task_ref).to_s
+        unless File.exist?(task_path)
+          puts "  - #{task_ref}: FAIL (file not found)"
+          phase_result[:tasks] << { task_id: task_ref, status: :file_missing }
+          phase_result[:passed] = false
+          next
+        end
+
+        task_data = JSON.parse(File.read(task_path))
+        task_id = task_data["task_id"] || task_data.dig("tasks", 0, "task_id") || task_ref
+
+        # Deploy lookup debug: show exact key TaskExecutionEngineV2 will use.
+        task_defs_for_debug = task_data["tasks"].is_a?(Array) ? task_data["tasks"] : [task_data]
+        task_defs_for_debug.each do |task_def|
+          (task_def["effects"] || []).each do |effect|
+            next unless effect["action"] == "deploy_unit"
+
+            unit_name = effect["unit"] || effect["unit_type"]
+            lookup_key = unit_name.to_s.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/^_+|_+$/, "")
+            found = settlement.inventory.items.find_by("metadata ->> 'unit_type' = ?", lookup_key)
+            puts "    deploy_lookup: unit='#{unit_name}' key='#{lookup_key}' found=#{!found.nil?} amount=#{found&.amount || 0}"
+          end
+        end
+
+        begin
+          success = engine.send(:execute_task, task_data)
+          if success
+            puts "  - #{task_id}: PASS"
+            phase_result[:tasks] << { task_id: task_id, status: :passed }
+          else
+            puts "  - #{task_id}: FAIL (engine returned false)"
+            phase_result[:tasks] << { task_id: task_id, status: :failed }
+            phase_result[:passed] = false
+          end
+        rescue AIManager::InfrastructureSequenceError => e
+          puts "  - #{task_id}: FAIL (InfrastructureSequenceError: #{e.message})"
+          phase_result[:tasks] << { task_id: task_id, status: :error, error_type: "InfrastructureSequenceError", error: e.message }
+          phase_result[:passed] = false
+        rescue AIManager::MaterialShortageError => e
+          puts "  - #{task_id}: FAIL (MaterialShortageError: #{e.message})"
+          phase_result[:tasks] << { task_id: task_id, status: :error, error_type: "MaterialShortageError", error: e.message }
+          phase_result[:passed] = false
+        rescue StandardError => e
+          puts "  - #{task_id}: FAIL (#{e.class}: #{e.message})"
+          phase_result[:tasks] << { task_id: task_id, status: :error, error_type: e.class.name, error: e.message }
+          phase_result[:passed] = false
+        end
+      end
+
+      phase_status = phase_result[:passed] ? "PASSED" : "PARTIAL_OR_FAILED"
+      puts "\n  Phase status: #{phase_status}"
+      results[phase_id] = phase_result
+    end
+
+    puts "\n" + "=" * 80
+    puts "FINAL UNIT AND CONNECTION STATE"
+    puts "=" * 80
+
+    units = settlement.units.order(:created_at)
+    if units.empty?
+      puts "No units deployed at settlement."
+    else
+      puts "Deployed units: #{units.count}"
+      units.each do |unit|
+        op = unit.operational_data || {}
+        raw_connections = op["connections"] || []
+        connections = raw_connections.is_a?(Array) ? raw_connections : [raw_connections]
+        puts "- #{unit.name} (type=#{unit.unit_type}, id=#{unit.id}, connections=#{connections.count})"
+        connections.each do |conn|
+          next unless conn.is_a?(Hash)
+          target_unit = conn["target_unit"] || conn[:target_unit]
+          port_label = conn["port_label"] || conn[:port_label]
+          puts "    -> #{target_unit} (port_label=#{port_label})"
+        end
+      end
+    end
+
+    total_tasks = results.values.sum { |r| r[:tasks].count }
+    passed_tasks = results.values.sum { |r| r[:tasks].count { |t| t[:status] == :passed } }
+    failed_tasks = total_tasks - passed_tasks
+
+    puts "\n" + "=" * 80
+    puts "SUMMARY"
+    puts "=" * 80
+    puts "Phases: #{results.keys.join(', ')}"
+    puts "Tasks: #{passed_tasks} passed / #{failed_tasks} not-passed (#{total_tasks} total)"
+
+    puts "\n" + "=" * 80
+    puts "KNOWN, UNRESOLVED GAPS (NOT HANDLED BY THIS RUN)"
+    puts "=" * 80
+    puts "[3c] Tank stage advancement gap remains unresolved."
+    puts "      inflate -> print_shell -> pressurize still has no real stage-advancement handler."
+    puts "[3d] Landing pad task remains unsequenced in current v2 phase order."
+
+    puts "\n" + "=" * 80
+    puts "END OF REPORT"
+    puts "=" * 80 + "\n"
+  end
+end

@@ -5,6 +5,18 @@
 - Phase 5+ calibration work → Prerequisite for all future expansion
 - Phase 9+ features → Acts 2, 3, and 4 implementation
 
+## Strategic Context: Phases 5–13 as AI Manager Training Framework
+
+**Phases 5–13 constitute AI Manager training and infrastructure code testing**, not true gameplay or permanent world buildup. During these phases:
+1. **The AI Manager learns** infrastructure patterns from phase-by-phase expansion (worldhouse, depots, shipyards, footholds, cyclers, terraforming)
+2. **Code is validated** for settlement expansion, material flow, terraforming, and multi-world operations
+3. **Learned pattern data accumulates**, enabling independent decision-making
+4. **Economics data guides** expansion priorities within the training framework
+
+**Wormhole Trigger Mechanism**: Once the AI Manager independently and consistently manages Luna settlement and the Earth-Mars-Venus-Psyche core loop, a **game trigger event** spawns the natural wormhole. This ensures the AI Manager has learned foundational patterns before expanding to extrasolar systems. True multi-system expansion and wormhole-era gameplay then begin.
+
+**Player Experience**: Phases 5–13 are not directly experienced as immersive gameplay. Instead, they establish the training data and infrastructure patterns the AI Manager uses to independently settle Luna and manage the core loop. Once this self-sufficiency triggers the wormhole event, true gameplay and multi-system expansion begin.
+
 ---
 
 ## ✅ COMPLETED: System A Phases 1–4 (Act 1 Content - Live)
@@ -64,81 +76,153 @@ This phase is **NOT about building new features**. It's about:
 
 These phases require **successful Luna simulation calibration** before implementation begins. They represent the transition to multi-system operations and correspond to Acts 2–4 in narrative structure.
 
-### Phase 6: Wormhole Integration (Expansion) — NOT YET IMPLEMENTED
-**Status**: Future work, requires Luna calibration complete  
-**Gate Condition**: After System B Phase 5 acceptance criteria met ✅ prerequisite needed first
+### Phase 6: Luna Worldhouse Buildout — NOT YET IMPLEMENTED
+**Status**: Future work, requires Luna calibration complete
+**Gate Condition**: After Phase 5 acceptance criteria met
 
-This phase implements the technical foundation for Act 2 expansion:
-- **Artificial Wormhole Targeting**: Uses stored natural wormhole location data to precisely target artificial wormhole creation to known EM-rich locations
-- **EM Opportunity Assessment**: Prioritizes systems with detected residual EM for artificial wormhole development  
-- **Wormhole Lifecycle Transition**: Defines progression from Natural Anomaly → Harvesting Site → Permanent Anchor, facilitating the 'Act 2 Urbanization' transition through systematic EM resource development:
-  - *Natural Anomaly*: Initial detection and mapping of EM signatures (via ScoutLogic Phase 3)
-  - *Harvesting Site*: Deployment of temporary stabilization satellites for EM extraction
-  - *Permanent Anchor*: Construction of Artificial Wormhole Stations for sustained network integration
+This phase expands Luna from a calibrated simulation into a stronger foothold:
+- Lavatube/worldhouse construction and settlement hardening
+- Live ISRU calibration under settlement operating conditions
+- Earth import management for the new settlement
+- Supply-chain stabilization for habitation, manufacturing, and maintenance
 
-**Player Impact**: Players discover natural wormholes after Luna proves viability, then begin developing Eden system to operational maturity before expansion risks.
+**Player Impact**: Players inherit a more durable, believable Luna settlement where habitation, imports, and ISRU operate as a coherent foothold rather than a temporary bootstrap.
 
 ---
 
-### Phase 7: Wormhole Scouting Probe Development — NOT YET IMPLEMENTED  
-**Status**: Future work, requires Act 2 infrastructure in place
-**Gate Condition**: After L1 Depot/LEO Depot operational (Phase 6 prerequisite)
+### Phase 7: L1 Depot and LEO Depot Buildout — NOT YET IMPLEMENTED
+**Status**: Future work, requires Phase 6 infrastructure in place
+**Gate Condition**: After Luna worldhouse and settlement operations are stable
 
-This phase develops specialized probes for surveying systems discovered through wormholes:
-- **Base Platform**: Create generic_probe similar to generic_satellite using proper `base_craft` blueprint template and `craft_operational_data` operational template
-- **System Survey Probe**: Comprehensive reconnaissance with multi-spectrum sensors  
-- **EM Detection Probe**: Specialized for Exotic Matter signature detection, feeds data directly into AI Manager's memory systems for wormhole location mapping
-- **Atmospheric Probe**: Atmospheric analysis and entry capabilities
+This phase establishes the first functional orbital logistics layer:
+- L1 Depot construction and operations
+- LEO Depot construction and operations
+- LOX and methane logistics loops that reduce Earth-delivered prices
+- Titan-linked import/processing chains that support depot economics
 
-**Player Impact**: Players can deploy autonomous scouting probes to newly discovered systems via wormholes, gathering critical intelligence before committing resources.
-
----
-
-### Phase 8: The Snap Event & Dual-Link Reconnection (Crisis) — NOT YET IMPLEMENTED
-**Status**: Future work, requires Act 2 maturity achieved  
-**Gate Condition**: After Eden system reaches operational maturity thresholds defined in `system_maturity_conditions.md`
-
-This phase implements the crisis mechanics for Act 3:
-- **Phased Stabilization Process**:
-  - *Phase 1*: Deploy orbiting stabilization satellites that gather expelled EM and refocus it at wormhole throat to maintain temporary stability  
-  - *Phase 2*: Construct Artificial Wormhole Stations (AWS) to replace temporary satellites
-  - *Phase 3*: Build additional AWS on opposite side of system (L3 Lagrange point) for gravitational counterbalance, similar to Jupiter stabilizing Sol's wormhole
-
-**Technical Requirements**:
-- Dual-link model: AWS deployed to counterbalance natural/other artificial wormholes, reducing EM requirements and stabilizing network
-- Brown Dwarfs can serve as secondary anchors for additional stability  
-- All logic is data-driven and adapts to system metadata (no hardcoded crisis scenarios)
-
-**Player Impact**: Players experience the tension of a broken interstellar connection during Snap event, coordinating rescue efforts while managing limited resources and EM budgets. The narrative emphasizes cooperation over competition — WTC forms as coalition rather than corporate entity.
+**Player Impact**: Players enter a world where orbital depots are already making logistics cheaper and more capable, reinforcing the living-economy foundation.
 
 ---
 
-### Phase 9: Inter-System Network Management (Topology) — NOT YET IMPLEMENTED
-**Status**: Future work, requires Act 3 crisis resolved  
-**Gate Condition**: After successful knowledge transfer through High-Energy Beacon delivery
+### Phase 8: L1 Station Shipyards and Orbital Craft — NOT YET IMPLEMENTED
+**Status**: Future work, requires depot infrastructure complete
+**Gate Condition**: After L1/LEO Depot operations are established
 
-This phase implements advanced network management for Act 4 mastery:
-- **Traffic Splitting Logic**: AI Manager splits traffic based on link properties and system data
-- **EM Budget Management**: Maintains gravitational tension and EM budgets using real-time metrics across all wormhole links  
-- **Brown Dwarf Hub Integration**: Secondary anchors serve as logistics batteries and gateways for expanded network reach
+This phase turns L1 from a depot network into a production foothold:
+- Functional L1 station growth rather than idealized final-station buildout
+- L1 shipyard construction and operation
+- Tug craft construction
+- Cycler craft construction
+- Hybrid Luna-material plus Earth-import manufacturing loops
 
-**Player Impact**: Players manage a mature interstellar network with sophisticated optimization capabilities, balancing multiple systems through data-driven AI decisions.
+**Player Impact**: Players inherit a system capable of building the specialized craft needed to extend footholds beyond Luna orbit.
+
+---
+
+### Phase 9: Mars Foothold Expansion — NOT YET IMPLEMENTED
+**Status**: Future work, requires shipyards and first tug/cycler pair complete
+**Gate Condition**: After Phase 8 orbital craft production is operational
+
+This phase uses the first tug-cycler loop to extend footholds around Mars:
+- Phobos repositioning work
+- Deimos repositioning work
+- Hollowing operations
+- Initial module fit-out and functional stationization
+- First cycler return to Earth for more cargo after basic module delivery
+
+**Player Impact**: Players discover a simulation where the Mars-side foothold pattern is already underway and logistics assets are being reused, not discarded after one build.
 
 ---
 
-### Phase 10: Consortium Integration (Governance) — NOT YET IMPLEMENTED
-**Status**: Future work, final expansion phase  
-**Gate Condition**: After all previous Acts completed successfully
+### Phase 10: Venus Foothold Repeat Loop — NOT YET IMPLEMENTED
+**Status**: Future work, requires Mars foothold loop proven
+**Gate Condition**: After Phase 9 repositioning/hollowing loop demonstrates repeatability
 
-This phase implements governance mechanics for Act 4 collaborative management:
-- **Consortium Formation**: Implement upon first Snap event as rescue coalition mechanism
-- **Voting System**: Route Proposals voting system with player/NPC participation rights
-- **Dividend Distribution**: Automated transit fee distribution to Consortium members  
-- **Governance Participation**: Enable player and NPC involvement in network governance decisions
+This phase repeats the Mars pattern at Venus while scaling orbital production in parallel:
+- Tug with full slag propellant heads to the asteroid belt
+- Phobos-sized and Deimos-sized asteroids are moved toward Venus
+- Mars-style repositioning, hollowing, and station setup are repeated at Venus
+- A second cycler-tug pair is built in parallel at Earth/L1 shipyards
 
-**Player Impact**: Players participate in collaborative interstellar governance, making collective decisions about route priorities and resource allocation through transparent democratic processes. The narrative emphasizes that successful wormhole mastery requires both technical excellence (AI Manager tuning) AND collaborative governance (Consortium voting).
+**Player Impact**: Players see the simulation expand by repeating proven foothold patterns across worlds, increasing system capability rather than relying on one-off scripted growth.
 
 ---
+
+### Phase 11: Earth-Mars-Venus Cycler Logistics Loop — NOT YET IMPLEMENTED
+**Status**: Future work, requires Venus foothold operations established
+**Gate Condition**: After Phase 10 proves the Venus foothold can participate in repeat logistics
+
+This phase normalizes heavy logistics across the inner-system footholds:
+- Establish regular cycler operations between Earth, Mars, and Venus
+- Validate ships docking with cyclers, undocking near worlds, transferring cargo, and re-docking later
+- Test new craft docking onto active cyclers and inheriting the logistics loop correctly
+- Expand tug/cycler usage as additional assets come online in parallel
+
+**Player Impact**: Players see a living logistics network where heavy material movement is routine, tested, and scalable rather than a sequence of one-off construction missions.
+
+---
+
+### Phase 12: Optional Parallel Branch Expansion — NOT YET IMPLEMENTED
+**Status**: Future work, optional split from Phase 11 if branch logistics need a separate boundary
+**Gate Condition**: After the core Earth-Mars-Venus cycler loop is stable enough to support additional branches
+
+This phase separates branch growth if Phase 11 becomes too broad:
+- Mars→Ceres mission support and belt mining logistics
+- Mars→Titan/Saturn settlement and long-haul support logistics
+- Additional cyclers and tugs taking on parallel expansion duties outside the core inner-system loop
+
+**Player Impact**: Players encounter a simulation that can branch into specialized logistics theaters while the main inner-system cycler network continues operating.
+
+---
+
+### Phase 13: Psyche Asteroid Mining & Mars Terraforming Initiation — NOT YET IMPLEMENTED
+**Status**: Future work, opens premium metal resources while beginning Mars atmospheric buildup
+**Gate Condition**: After the core cycler-logistics and branch-expansion phases establish repeatable patterns
+
+**Psyche Asteroid Operations** (believed to be a planetary core remnant, metal-rich):
+- Psyche orbital establishment and mining site identification
+- Asteroid surface mining operations targeting high-value metals
+- Relocation of Psyche material toward inner-system footholds
+- Industrial refining and processing of premium metals for advanced manufacturing
+
+**Parallel Mars Terraforming Initiation**:
+- Limited atmospheric buildup work begins using Venus and Titan gas exports
+- Establishes Venus→Mars and Titan→Mars logistics chains for atmospheric gases
+- Sets foundation for larger-scale terraforming in later phases
+- Demonstrates viability of multi-world atmospheric engineering
+
+**Player Impact**: These are not direct player experiences but training data for the AI Manager. Phase 5–13 establishes the infrastructure patterns and learned behaviors the AI Manager uses to independently manage Luna settlement and core-loop logistics. Once this AI independence is achieved, the wormhole trigger event occurs.
+
+---
+
+### Phase 14: AI Manager Operational Independence Test — NOT YET IMPLEMENTED
+**Status**: Future work, tests AI Manager's ability to manage Sol operations and initiate expansion
+**Gate Condition**: After Phase 13, the AI Manager has learned all core patterns and can operate independently
+
+Phase 14 transitions from training to operational deployment:
+- **Sol Operations Management**: AI Manager takes full control of Luna/Mars/Venus/Psyche operations; admins observe but do not intervene
+- **Resource Reallocation**: AI Manager discovers natural wormhole to Eden system and begins redirecting Sol resources for exploration
+- **Eden Initial Settlement**: First attempts to establish footholds using Sol-learned patterns; discovers Eden has superior terraforming targets
+- **Pattern Adaptation**: AI Manager begins adapting Sol resource-allocation strategies to Eden's resource base and opportunities
+
+**Player Impact**: Players experience the transition from "training" to "autonomous operations." The AI Manager makes independent decisions, discovers the Eden system, and starts expansion without explicit admin approval. This is the AI Manager's operational debut.
+
+---
+
+### Phase 15: Unplanned Eden Expansion & Wormhole Mass-Limit Discovery — NOT YET IMPLEMENTED
+**Status**: Future work, unplanned expansion leads to crisis discovery
+**Gate Condition**: Phase 14 operational independence established; Eden exploration ongoing
+
+Phase 15 represents unplanned but inevitable expansion driven by resource advantage:
+- **Accelerated Infrastructure**: AI Manager redirects more Sol resources to Eden due to superior terraforming targets
+- **Eden Settlement Scaling**: Multiple settlements and industrial facilities established without prior planning
+- **Heavy Cycler Operations**: Cycler-tug pairs shuttle materials between Sol and Eden at increasing rates
+- **Mass Accumulation**: Infrastructure and operational cargo flows exceed natural wormhole stability thresholds
+- **Wormhole Stress Discovery**: AI Manager observes wormhole instability increases with operational traffic; learns about mass limits through real-time feedback
+
+**Crisis Event Trigger**: As accumulated infrastructure mass approaches the wormhole's stability limit (300,000 tons for Eden system), the natural wormhole reaches critical instability. The Snap event occurs, shifting the wormhole exit point away from Eden and orphaning the colony. This catastrophic failure forces the formation of the Wormhole Transit Consortium and begins true Act 2 crisis gameplay.
+
+**Player Impact**: Players do not experience Phases 14–15 directly. These phases are "off-stage" infrastructure and AI learning. The Snap crisis is the first major player-facing event after Act 1, representing the catastrophic failure of unplanned expansion and the beginning of true multi-system crisis management.
 
 ## Cross-Reference: Technical Implementation Phases vs Narrative Acts
 
@@ -148,12 +232,17 @@ This phase implements governance mechanics for Act 4 collaborative management:
 | **System A 2** (ManifestGenerator) | ✅ Complete | Witness real-time resource acquisition decisions and consumption-aware ordering with transit buffers | Act 1: Pattern Learning | `backlog/2026-06/` — active work<br>`phase5+/` — simulation testing/tuning | None - already live |
 | **System A 3** (ShortageDetector) | ✅ Complete | See precursor phase awareness in action; population = 0 skips life support, allows non-life-support materials | Act 1: Pattern Learning | `backlog/2026-06/` — active work<br>`phase5+/` — simulation testing/tuning | None - already live |
 | **System A 4** (StrategySelector) | ✅ Complete | Understand Luna is not a blank slate; AI Manager making autonomous decisions based on real data, no `rand()` calls | Act 1: Pattern Learning | `backlog/2026-06/` — active work<br>`phase5+/` — simulation testing/tuning | None - already live |
-| **Phase 5** (SystemOrchestrator) | 🎯 Current Focus | Tune Luna simulation to prove fuel loop viability; observation-driven calibration before expansion begins | Act 1 → Act 2 transition | `phase9+/` — requires:<br>- Luna calibration complete<br>- L1/LEO Depot operational | ✅ System A Phases 1–4 complete<br>🎯 Current focus: Simulation tuning and parameter validation |
-| **Phase 6** (Wormhole Integration) | ⏭️ Future | Apply learned patterns to new wormhole discovery; develop Eden system to maturity through multi-settlement orchestration | Act 2: Wormhole Discovery & Eden System Development | `phase9+/` — requires:<br>- Luna calibration complete<br>- L1/LEO Depot operational | ✅ Phase 5 acceptance criteria met (Luna simulation calibrated)<br>⏭️ Requires successful fuel loop proof before expansion begins |
-| **Phase 7** (Scouting Probes) | ⏭️ Future | Deploy autonomous scouting probes to newly discovered systems via wormholes, gathering intelligence before committing resources | Act 2: Wormhole Discovery & Eden System Development | `phase9+/` — requires:<br>- L1 Depot operational<br>- LEO Depot operational | ✅ Phase 6 infrastructure complete (L1/LEO Depots)<br>⏭️ Requires successful multi-system operations established first |
-| **Phase 8** (Snap Event) | ⏭️ Future | Experience tension of broken interstellar connection during crisis; coordinate rescue efforts while managing limited resources and EM budgets | Act 3: The Orphaned Era (Tech Gap & Rescue) | `phase9+/` — requires:<br>- L1 Shipyard operational<br>- Crisis protocols implemented | ✅ Phase 6–7 complete (wormhole infrastructure)<br>⏭️ Requires Eden system maturity thresholds met before Snap event can occur naturally |
-| **Phase 9** (Network Management) | ⏭️ Future | Manage mature interstellar network with sophisticated optimization capabilities; balance multiple systems through data-driven AI decisions | Act 4: Hammer Protocol & Network Mastery | `phase9+/` — requires:<br>- All previous Acts completed<br>- Knowledge transfer successful | ✅ Phase 8 crisis resolved (High-Energy Beacon delivered)<br>⏭️ Requires all prior expansion phases complete before network mastery begins |
-| **Phase 10** (Consortium Governance) | ⏭️ Future | Participate in collaborative interstellar governance; make collective decisions about route priorities and resource allocation through democratic processes | Act 4: Hammer Protocol & Network Mastery | `phase9+/` — requires:<br>- All previous Acts completed<br>- First Snap event occurred | ✅ Phase 8–9 complete (crisis resolved, network operational)<br>⏭️ Requires successful knowledge transfer before governance system can activate |
+| **Phase 5** (Simulation Calibration) | 🎯 Current Focus | Tune Luna simulation to prove fuel loop viability; observation-driven calibration before expansion begins | Act 1 → inner-system foothold transition | `phase5+/` — simulation blockers and calibration work | ✅ System A Phases 1–4 complete<br>🎯 Current focus: Simulation tuning and parameter validation |
+| **Phase 6** (Worldhouse Buildout) | ⏭️ Future | Stabilize Luna habitation, imports, and live ISRU as a durable foothold | Pre-Act 2 Infrastructure | `phase6+/` — worldhouse, ISRU, Earth import work | ✅ Phase 5 acceptance criteria met<br>⏭️ Requires successful fuel loop proof before settlement hardening begins |
+| **Phase 7** (Depot Buildout) | ⏭️ Future | Reduce logistics costs and increase orbital capability through L1/LEO depots | Pre-Act 2 Infrastructure | `phase7+/` — depot, gas pipeline, price-reduction loops | ✅ Phase 6 settlement operations stable<br>⏭️ Requires working Luna foothold first |
+| **Phase 8** (Shipyards and Orbital Craft) | ⏭️ Future | Build the tugs and cyclers needed for repeated foothold expansion | Pre-Act 2 Infrastructure | `phase8+/` — shipyards, tugs, cyclers, functional L1 stations | ✅ Phase 7 depot operations complete<br>⏭️ Requires orbital logistics layer first |
+| **Phase 9** (Mars Foothold Expansion) | ⏭️ Future | Reposition and hollow Phobos/Deimos, fit basic modules, then reuse the first cycler-tug loop through Earth resupply | Pre-Act 2 Infrastructure | `phase9+/` — Mars foothold loop and first resupply return | ✅ Phase 8 tug/cycler production complete<br>⏭️ Requires first orbital craft pair in service |
+| **Phase 10** (Venus Foothold Repeat) | ⏭️ Future | Repeat the Mars foothold pattern at Venus while a second cycler-tug pair is built in parallel | Pre-Act 2 Infrastructure | `phase10+/` — Venus repeat loop and parallel second pair | ✅ Phase 9 Mars loop proven repeatable<br>⏭️ Requires first foothold loop to validate the pattern |
+| **Phase 11** (Cycler Logistics Loop) | ⏭️ Future | Run normal Earth-Mars-Venus cycler operations with docking, undocking, and cargo transfer validation | Pre-Act 2 Infrastructure | `phase11+/` — heavy logistics loop validation | ✅ Phase 10 Venus foothold operational<br>⏭️ Requires repeatable multi-world logistics first |
+| **Phase 12** (Optional Branch Expansion) | ⏭️ Future | Split Ceres belt mining and Titan/Saturn branch growth into dedicated logistics theaters if Phase 11 needs to stay focused | Pre-Act 2 Infrastructure | `phase12+/` — optional Ceres and Titan/Saturn branch work | ✅ Phase 11 core logistics loop stable<br>⏭️ Requires spare tug/cycler capacity for parallel expansion |
+| **Phase 13** (Psyche Mining & Mars Terraforming) | ⏭️ Future | Advance to Psyche asteroid mining (planetary core remnant) while initiating Mars atmospheric buildup with Venus/Titan gas exports | Pre-Act 2 Infrastructure | `phase13+/` — Psyche mining/refining and Mars terraforming logistics | ✅ Phase 12 branch patterns established<br>⏭️ Requires repeatable belt-mining and multi-world logistics first |
+| **Phase 14** (AI Manager Operational Independence) | ⏭️ Future | AI Manager takes full control of Sol operations; discovers Eden system and begins expansion attempts | Pre-Act 2 / Act 2 Transition | `phase14+/` — Sol operational management and initial Eden exploration/settlement | ✅ Phase 13 complete, AI Manager trained<br>⏭️ First autonomous operations and expansion decision |
+| **Phase 15** (Unplanned Eden Expansion & Crisis) | ⏭️ Future | Unplanned expansion to Eden accelerates; AI Manager discovers natural wormhole mass limits through operations; Snap crisis triggered | Act 2 Trigger: The Snap | `phase15+/` — Eden infrastructure buildup, cycler operations, wormhole mass-limit discovery | ✅ Phase 14 expansion initiated<br>⏭️ Leads to Snap event and Act 2 crisis gameplay |
 
 ---
 
@@ -171,7 +260,7 @@ This phase implements governance mechanics for Act 4 collaborative management:
 
 **What's Live**: System A Phases 1–4 complete — Luna AI Manager making autonomous decisions with working markets  
 **Current Focus**: Phase 5+ calibration work to prove fuel loop viability before expansion begins  
-**Next Milestone**: Successful Luna simulation tuning → transition to Act 2/3/4 implementation (Phase 9+)
+**Player Impact**: Players do not directly experience Phases 5–13 as immersive gameplay. Instead, these phases establish the training data and infrastructure patterns the AI Manager uses to independently settle Luna and manage the core loop. Once this self-sufficiency triggers the wormhole event, true gameplay and multi-system expansion begin.
 
 This phased approach ensures players inherit a **living universe**, not a blank slate. The AI Manager is already making decisions based on real data, markets are active and responsive, and the foundation for multi-system expansion exists — it just needs calibration before we begin expanding beyond Luna.
 

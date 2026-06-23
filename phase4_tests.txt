@@ -1,0 +1,207 @@
+  describe 'Phase 4 — Consumption-aware ordering' do
+    let(:settlement) { create(:base_settlement, current_population: 5) }
+    let(:source_settlement) { create(:base_settlement, name: 'Cape Canaveral Spaceport') }
+
+    before do
+      allow(strategy_selector).to receive(:find_source_settlement).and_return(source_settlement)
+    end
+
+    describe '#precursor_phase? helper' do
+      it 'returns true when current_population is 0 (robotic-only settlement)' do
+        precursor_settlement = create(:base_settlement, current_population: 0)
+        
+        expect(strategy_selector.send(:precursor_phase?, precursor_settlement)).to be true
+      end
+
+      it 'returns false when current_population > 0' do
+        populated_settlement = create(:base_settlement, current_population: 50)
+        
+        expect(strategy_selector.send(:precursor_phase?, populated_settlement)).to be false
+      end
+    end
+
+    describe '#daily_consumption_rate_for helper' do
+      it 'returns correct rate for Food based on population' do
+        settlement_with_pop = create(:base_settlement, current_population: 10)
+        
+        expected_rate = GameConstants::FOOD_PER_PERSON * 10
+        
+        expect(strategy_selector.send(:daily_consumption_rate_for('Food', settlement_with_pop))).to eq(expected_rate)
+      end
+
+      it 'returns correct rate for Oxygen based on population' do
+        settlement_with_pop = create(:base_settlement, current_population: 5)
+        
+        expected_rate = GameConstants::HUMAN_LIFE_SUPPORT['oxygen_per_person_day'] * 5
+        
+        expect(strategy_selector.send(:daily_consumption_rate_for('Oxygen', settlement_with_pop))).to eq(expected_rate)
+      end
+
+      it 'returns 0 for unknown materials' do
+        settlement_with_pop = create(:base_settlement, current_population: 10)
+        
+        expect(strategy_selector.send(:daily_consumption_rate_for('UnknownMaterial', settlement_with_pop))).to eq(0)
+      end
+    end
+
+    describe 'transit buffer calculation' do
+      let(:populated_settlement) { create(:base_settlement, current_population: 10) }
+      
+      it 'adds transit buffer to Food order quantity (deficit + LUNA_TRANSIT_DAYS × rate × margin)' do
+        shortage_report = {
+          viable: true,
+          survival_shortages: [
+            { material: 'Food', need: 365, have: 90 } # deficit = 275
+          ],
+          expansion_shortages: []
+        }
+
+        allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+
+        captured_order_quantity = nil
+        allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+          captured_order_quantity = shortage[:need]
+          double(id: 1)
+        end
+
+        strategy_selector.send(:execute_cost_reduction, { type: :cost_reduction }, populated_settlement)
+
+        expected_daily_consumption = GameConstants::FOOD_PER_PERSON * 10 # 20 units/day
+        expected_transit_buffer = (AIManager::StrategySelector::LUNA_TRANSIT_DAYS * expected_daily_consumption * AIManager::StrategySelector::LUNA_MARGIN_FACTOR).to_i # 75
+
+        expect(captured_order_quantity).to eq(350) # deficit + buffer
+      end
+      
+      it 'does NOT add transit buffer to Steel order quantity (deficit only)' do
+        shortage_report = {
+          viable: true,
+          survival_shortages: [
+            { material: 'Steel', need: 500, have: 200 } # deficit = 300
+          ],
+          expansion_shortages: []
+        }
+
+        allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+
+        captured_order_quantity = nil
+        allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+          captured_order_quantity = shortage[:need]
+          double(id: 1)
+        end
+
+        strategy_selector.send(:execute_cost_reduction, { type: :cost_reduction }, populated_settlement)
+
+        expect(captured_order_quantity).to eq(300) # deficit only, no buffer
+      end
+    end
+    
+    describe 'precursor phase gating' do
+      let(:precursor_settlement) { create(:base_settlement, current_population: 0) }
+
+      it 'skips Food order when settlement in precursor phase (population=0)' do
+        shortage_report = {
+          viable: true,
+          survival_shortages: [
+            { material: 'Food', need: 1000, have: 200 }, # Large deficit but should be skipped
+            { material: 'Steel', need: 500, have: 300 }   # Non-life-support — should still order
+          ],
+          expansion_shortages: []
+        }
+
+        allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+
+        called_materials = []
+        allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+          called_materials << shortage[:material]
+          double(id: 1)
+        end
+
+        strategy_selector.send(:execute_cost_reduction, { type: :cost_reduction }, precursor_settlement)
+
+        expect(called_materials).not_to include('Food')
+      end
+      
+      it 'allows Steel order when settlement in precursor phase (non-consumable)' do
+        shortage_report = {
+          viable: true,
+          survival_shortages: [
+            { material: 'Steel', need: 500, have: 300 }, # Non-life-support — should still order
+            { material: 'Titanium', need: 200, have: 100 } # Also non-consumable
+          ],
+          expansion_shortages: []
+        }
+
+        allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+
+        called_materials = []
+        allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+          called_materials << shortage[:material]
+          double(id: 1)
+        end
+
+        strategy_selector.send(:execute_cost_reduction, { type: :cost_reduction }, precursor_settlement)
+
+        expect(called_materials).to include('Steel')
+        expect(called_materials).to include('Titanium')
+      end
+      
+      it 'orders Food and Water normally with transit buffer when population > 0' do
+        populated_settlement = create(:base_settlement, current_population: 10)
+        
+        shortage_report = {
+          viable: true,
+          survival_shortages: [
+            { material: 'Food', need: 365, have: 90 },    # deficit = 275 + buffer
+            { material: 'Water', need: 180, have: 40 }     # deficit = 140 + buffer
+          ],
+          expansion_shortages: []
+        }
+
+        allow(Logistics::ShortageDetector).to receive(:detect_shortages).and_return(shortage_report)
+
+        captured_orders = {}
+        allow(Logistics::ImportRequestGenerator).to receive(:generate_import_request) do |source:, destination:, shortage:|
+          material_name = shortage[:material].to_s
+          captured_orders[material_name] = shortage[:need]
+          double(id: 1)
+        end
+
+        strategy_selector.send(:execute_cost_reduction, { type: :cost_reduction }, populated_settlement)
+
+        expect(captured_orders.keys).to include('Food')
+        expect(captured_orders.keys).to include('Water')
+
+        food_deficit = 275
+        water_deficit = 140
+
+        expect(captured_orders['Food']).to be > food_deficit
+        expect(captured_orders['Water']).to be > water_deficit
+      end
+    end
+    
+    describe 'constants' do
+      it 'LIFE_SUPPORT_MATERIALS includes Food, Water, Oxygen, Energy' do
+        expected_materials = %w[Food Water Oxygen Energy].freeze
+
+        expect(AIManager::StrategySelector::LIFE_SUPPORT_MATERIALS).to eq(expected_materials)
+      end
+      
+      it 'DAILY_CONSUMPTION_RATES maps Food to FOOD_PER_PERSON from GameConstants' do
+        expected_rate = GameConstants::FOOD_PER_PERSON
+
+        expect(AIManager::StrategySelector::DAILY_CONSUMPTION_RATES['Food']).to eq(expected_rate)
+      end
+      
+      it 'LUNA_TRANSIT_DAYS uses EARTH_LUNA_TRANSIT_DAYS from Logistics::Contract (fallback to 3)' do
+        expected_days = Logistics::Contract::EARTH_LUNA_TRANSIT_DAYS
+
+        expect(AIManager::StrategySelector::LUNA_TRANSIT_DAYS).to eq(expected_days)
+      end
+      
+      it 'LUNA_MARGIN_FACTOR uses 1.25 as safety margin factor' do
+        expected_factor = 1.25
+
+        expect(AIManager::StrategySelector::LUNA_MARGIN_FACTOR).to eq(expected_factor)
+      end
+    end
+  end # closes describe 'Phase 4 — Consumption-aware ordering'

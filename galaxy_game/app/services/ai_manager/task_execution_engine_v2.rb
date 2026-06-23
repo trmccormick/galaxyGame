@@ -250,6 +250,8 @@ module AIManager
         construct_structure_from_effect(effect)
       when 'set_unit_state'
         set_unit_state_from_effect(effect)
+      when 'set_settlement_state'
+        set_settlement_state_from_effect(effect)
       when 'check_unit_state'
         check_unit_state_from_effect(effect)
       when 'transfer_resource'
@@ -267,7 +269,8 @@ module AIManager
       
       unit_name = effect['unit'] || effect['unit_type']
       count = effect['count'] || 1
-      is_inflatable = ['inflatable_cryo_tank', 'inflatable_pressure_tank'].include?(unit_name.downcase.underscore)
+      unit_lookup_key = unit_name.to_s.downcase.gsub(/[^a-z0-9]+/, '_').gsub(/^_+|_+$/, '')
+      is_inflatable = ['inflatable_cryo_tank', 'inflatable_pressure_tank'].include?(unit_lookup_key)
       
       # GATE 1: Physical Site Prep (Foundation Slab) — STRING KEY SAFETY
       if is_inflatable
@@ -278,9 +281,9 @@ module AIManager
         end
         
         # GATE 2: Central Utility Hub Presence
-        unless @settlement.units.exists?(unit_type: 'central_utility_hub')
+        unless @settlement.units.exists?(unit_type: 'planetary_umbilical_hub')
           raise AIManager::InfrastructureSequenceError.new(
-            "Inflatable tanks must connect to an anchored central_utility_hub to begin inflation cycles."
+            "Inflatable tanks must connect to an anchored planetary_umbilical_hub to begin inflation cycles."
           )
         end
       end
@@ -288,7 +291,7 @@ module AIManager
       # GATE 3: Inventory Sourcing from Transport
       ActiveRecord::Base.transaction do
         # Locate source cargo item in transport manifest
-        source_item = @settlement.inventory.items.find_by("metadata ->> 'unit_type' = ?", unit_name.downcase.underscore)
+        source_item = @settlement.inventory.items.find_by("metadata ->> 'unit_type' = ?", unit_lookup_key)
         
         if source_item.nil? || source_item.amount < count
           raise AIManager::MaterialShortageError.new(
@@ -315,6 +318,7 @@ module AIManager
             name: count > 1 ? "#{unit_name} #{i+1}" : unit_name,
             unit_type: full_blueprint['id'],
             location: @settlement.location,
+            attachable: @settlement,
             owner: @settlement,
             operational_data: (full_blueprint['physical_properties'] || {}).merge({
               "inflation_state" => is_inflatable ? "inflating" : "solid",
@@ -329,12 +333,110 @@ module AIManager
     end
 
     def connect_units_from_effect(effect)
+      return true unless @settlement
+      
       unit1_name = effect['unit1']
       unit2_name = effect['unit2']
-      port1 = effect['port1']
-      port2 = effect['port2']
+      port1_label = effect['port1']  # descriptive label only, not matched against data
+      port2_label = effect['port2']  # descriptive label only, not matched against data
       
-      puts "  ✓ Connected #{unit1_name}:#{port1} ↔ #{unit2_name}:#{port2}"
+      # Verify both units exist and are deployed
+      unit1 = @settlement.units.find_by(name: unit1_name) || @settlement.units.where("name LIKE ?", "#{unit1_name}%").first
+      unless unit1
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot connect: unit '#{unit1_name}' is not deployed at settlement #{@settlement.name}"
+        )
+      end
+      
+      unit2 = @settlement.units.find_by(name: unit2_name) || @settlement.units.where("name LIKE ?", "#{unit2_name}%").first
+      unless unit2
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot connect: unit '#{unit2_name}' is not deployed at settlement #{@settlement.name}"
+        )
+      end
+      
+      # Determine the relevant port category for this connection
+      port_category = determine_port_category(unit1, unit2)
+      
+      # Check and decrement available ports on each unit
+      check_and_decrement_port(unit1, port_category)
+      check_and_decrement_port(unit2, port_category)
+      
+      # Record the connection with descriptive labels for human reference
+      op1 = unit1.operational_data || {}
+      op1['connections'] = Array(op1['connections'])
+      op1['connections'] << { 
+        port_label: port1_label, 
+        target_unit: unit2_name, 
+        target_port_label: port2_label 
+      }
+      unit1.update!(operational_data: op1)
+      
+      op2 = unit2.operational_data || {}
+      op2['connections'] = Array(op2['connections'])
+      op2['connections'] << { 
+        port_label: port2_label, 
+        target_unit: unit1_name, 
+        target_port_label: port1_label 
+      }
+      unit2.update!(operational_data: op2)
+      
+      puts "  ✓ Connected #{unit1_name}:#{port1_label} ↔ #{unit2_name}:#{port2_label}"
+      true
+    end
+
+    def determine_port_category(unit1, unit2)
+      # Check if either unit is propulsion/rig/storage specific
+      [unit1, unit2].each do |unit|
+        case unit.unit_type.to_s.downcase
+        when /propulsion/
+          return 'propulsion_ports'
+        when /rig/
+          return 'rig_ports'
+        when /storage/
+          return 'storage_ports'
+        end
+      end
+      # Default to standard unit ports for most cases
+      'internal_unit_ports'
+    end
+
+    def check_and_decrement_port(unit, port_category)
+      op = unit.operational_data || {}
+      
+      # Get total available ports for this category (from blueprint or operational_data)
+      total_ports = op.dig(port_category.to_sym, :total) || 
+                    op.dig(port_category, :total) || 0
+      
+      # If not yet initialized from blueprint, look it up now
+      if total_ports == 0
+        blueprint_service = Lookup::BlueprintLookupService.new
+        bp = blueprint_service.find_blueprint(unit.name)
+        # Ports live under a nested "ports" key on canonical blueprints (e.g. HLT, cycler).
+        # Fall back to top-level for legacy files that haven't been migrated yet.
+        total_ports = bp&.dig('ports', port_category) || bp&.[](port_category) || 0
+        # Initialize tracking in operational_data for future connections
+        op[port_category.to_sym] ||= {}
+        op[port_category.to_sym][:total] = total_ports
+        unit.update!(operational_data: op)
+      end
+      
+      # Get used ports count
+      used_ports = op.dig(port_category.to_sym, :used) || 
+                   op.dig(port_category, :used) || 0
+      
+      available = total_ports - used_ports
+      unless available > 0
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot connect: unit '#{unit.name}' has no available #{port_category} ports (#{available} of #{total_ports} free)"
+        )
+      end
+      
+      # Decrement by incrementing used count
+      op[port_category.to_sym] ||= {}
+      op[port_category.to_sym][:used] = used_ports + 1
+      unit.update!(operational_data: op)
+      
       true
     end
 
@@ -345,9 +447,48 @@ module AIManager
     end
 
     def set_unit_state_from_effect(effect)
+      return true unless @settlement
+      
       unit_name = effect['unit']
       state = effect['state']
+      
+      # Verify unit exists and is deployed
+      unit = @settlement.units.find_by(name: unit_name)
+      unless unit
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot set state: unit '#{unit_name}' is not deployed at settlement #{@settlement.name}"
+        )
+      end
+      
+      # Verify the target state is valid for this unit type
+      valid_states = unit.operational_data&.dig('valid_states') || ['ready', 'active', 'idle', 'maintenance']
+      unless valid_states.include?(state)
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot set state: unit '#{unit_name}' (type: #{unit.unit_type}) does not support state '#{state}' (valid: #{valid_states.join(', ')})"
+        )
+      end
+      
+      # Update the unit's operational state
+      op_data = unit.operational_data || {}
+      op_data['state'] = state
+      op_data['last_state_change'] = Time.now.iso8601
+      unit.update!(operational_data: op_data)
+      
       puts "  ✓ Set unit #{unit_name} state to #{state}"
+      true
+    end
+
+    def set_settlement_state_from_effect(effect)
+      return true unless @settlement
+      
+      key = effect['key']
+      value = effect['value']
+      
+      op_data = @settlement.operational_data || {}
+      op_data[key] = value
+      @settlement.update!(operational_data: op_data)
+      
+      puts "  ✓ Set settlement #{key} to #{value}"
       true
     end
 

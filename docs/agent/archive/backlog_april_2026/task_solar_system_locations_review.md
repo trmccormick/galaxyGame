@@ -83,40 +83,85 @@
 - **Game potential**: Early warning systems, fundamental research
 - **Strategic value**: Represents true Solar System boundary exploration
 
-## Portal Technology Integration & ROI Considerations
+## Portal Technology Integration & Correct Mechanics
 
-### Portal Tech Characteristics (Late Game)
-**Universal Deployment**: Can be installed anywhere with EM power, working in matching pairs
-**Hub Network System**: Functions like airports with connections to different hubs for transfers
-**Inter-System Access**: Can connect to AWS stations for travel to other star systems
-**Transit Replacement**: Replaces long hull transit and small cargo transfers
+### Portal Tech Characteristics (Late Game - Phase 15+)
+- **Quantum Entanglement Basis**: Portal pairs generate instantaneous connection via entangled matter
+- **Paired Deployment**: Portals built in matching pairs connecting two specific locations within SAME system
+- **EM Power Source**: Each portal pair powered by Exotic Matter harvested from natural wormholes
+- **Player Rapid-Transport**: Instantaneous travel for personnel between paired locations in system
+- **NOT Bulk Transport**: Cyclers continue operating for large cargo, resources, equipment
+- **System-Local Only**: Portals cannot cross between systems (inter-system via primary wormhole only)
+- **Network Architecture**: Multiple portal pairs create connected settlement network within Sol system
+- **Hub-Style Access**: Players can hop between pairs to reach settlements in Sol system
+- **Sustained Cycler Operations**: Bulk logistics unchanged (cyclers still backbone)
 
-### Critical Clarification: Portal Tech = Inter-System Enablement
-**Portals enable hub-based travel within and between star systems.** Late-game portal networks transform Solar System economics by providing airport-like connectivity.
+### Portal Tech Does NOT Replace Cyclers
+- Cyclers continue operating for all bulk cargo transport (inter-system and intra-system)
+- Terraforming resources, industrial equipment, large-scale mining still use cyclers
+- Cycler networks provide economic backbone (pricing, supply chains, trade routes)
+- Portals complement cycler network by enabling rapid player movement within system
+- Economy remains driven by cycler-based logistics
+- EM harvesting from natural wormhole is shared resource (portals + stabilization competing for EM)
 
-### Pre-Portal Economics (Early/Mid Game)
+### Portal Hub Network: Airport-Style Architecture
+
+**Portal Hub Locations (Major Worlds)**:
+- **Earth/L1** - Primary solar system hub (connects to inner and outer systems)
+- **Mercury** - Inner system hub (connects to Mars, Earth)
+- **Mars** - Mid-system hub (connects to Mercury, Ceres, Earth)
+- **Ceres** - Asteroid belt hub (connects to Mars, Jupiter)
+- **Jupiter** - Outer system hub (connects to Ceres, Saturn)
+- **Saturn** - Extended outer hub (connects to Jupiter, Pluto)
+- **Pluto** - Frontier hub (connects to Saturn, Earth for research)
+
+*Note: Unknown system accessible via primary natural wormhole only (not portal network)*
+
+**Portal Pair Model**:
+- Each portal pair = one quantum-entangled connection between two hubs
+- Player can route through multiple hubs: Earth → Mercury → Mars → Ceres → Jupiter → Saturn → Pluto
+- Airport-style transfers: arrive at Mercury, take different portal to Mars, etc.
+- Any major settlement can become portal hub if EM budget permits
+
+**Player Travel Pattern Within Sol System**:
+- Start at Earth hub → Portal to Mercury
+- From Mercury → Portal to Mars (observe settlements)
+- From Mars → Portal to Ceres (mining operations)
+- From Ceres → Portal to Jupiter (atmospheric extraction)
+- From Jupiter → Portal to Saturn (Titan operations)
+- From Saturn → Portal to Pluto (Kuiper frontier)
+- Wormhole travel to unknown system (primary connection, not portal network)
+
+### Pre-Portal Economics (Phases 5-14a) — CYCLER-DEPENDENT
+
 **Distance = Cost**: High delta-V requirements penalize distant locations
 - **NEAs**: Low delta-V, high accessibility, excellent ROI
 - **Mars Belt**: Moderate delta-V, established infrastructure, solid ROI
 - **Jupiter Trojans**: High delta-V but stable positions, moderate ROI
-- **Pluto/Kuiper Belt**: Extreme delta-V, permanently poor ROI
+- **Pluto/Kuiper Belt**: Extreme delta-V, poor ROI (isolated, inaccessible)
 
-### Post-Portal Economics (Late Game)
-**Hub network connectivity dramatically improves ROI for distant locations**
-- **NEAs**: Excellent ROI maintained, becomes major hub for inner system transfers
-- **Mars Belt**: Strong ROI enhanced, strategic hub positioning
-- **Jupiter Trojans**: High ROI for stable L4/L5 hub locations
-- **Pluto/Kuiper Belt**: Strong ROI through AWS connections and frontier research value
+### Post-Portal Economics (Phase 15+) — PLAYER MOBILITY ENABLED
 
-### Portal Network Impact
-**Airport-style connectivity enables efficient transfers:**
-- **Personnel Transport**: Rapid deployment across Solar System
-- **Small Cargo**: High-value material transfers
-- **Hub Connections**: Transfer points for inter-system travel via AWS
-- **Emergency Response**: Crisis intervention capabilities and ship-based evacuations
+**Portal Pairs Enable Player Accessibility**:
+- **Personnel Transport**: Rapid deployment across Solar System (instantaneous)
+- **Settlement Visitation**: Players can reach any paired location
+- **Hub Connections**: Transfer points between portal pairs
 - **Research Collaboration**: Real-time coordination across sites
-- **Fleet Operations**: Crew rotation and emergency transport from ships to home bases
-- **Bulk Transport**: Cycler craft still required for large assets, terraforming resources, and industrial equipment
+- **Crisis Response**: Rapid player movement for emergency intervention
+- **BUT**: Bulk cargo still uses cyclers (no change to economic fundamentals)
+
+**What Portal Pairs DO**:
+- Enable players to experience 10+ settlements without travel delays
+- Allow participation in multi-settlement operations
+- Support tourism/exploration gameplay
+- Facilitate multi-settlement trade coordination for players
+
+**What Portal Pairs DO NOT**:
+- Replace cycler cargo transport
+- Eliminate distance-based economics for bulk goods
+- Change settlement bootstrap requirements
+- Reduce need for local ISRU and resource networks
+- Affect AI Manager's cycler-based logistics planning
 
 ## Updated Development Priority (Portal Tech Progression)
 
@@ -125,13 +170,18 @@
 2. **Vesta** - Strong ROI, inner belt position, research value
 3. **Solar Monitoring** - Essential safety infrastructure
 
-### Phase 6-10: Mid-Game Expansion
+### Phase 6-10: Mid-Game Expansion (Cycler-Based)
 4. **Pallas** - Good ROI for specialty materials
 5. **Jupiter Trojans** - Moderate ROI, strategic positioning
 
-### Phase 11-15: Portal Network Development
-6. **Pluto System** - Poor pre-portal ROI → Strong post-portal ROI through AWS connections
-7. **Portal Hub Establishment** - Key locations become transfer points
+### Phase 11-14: Extended Cycler Network
+6. **Pluto System** - Poor pre-portal ROI, isolated (future portal link candidate)
+7. **Additional Belt Objects** - Expanding mining network
+
+### Phase 15: Portal Network Deployment
+8. **Portal Hub Establishment** - Key locations connected by portal pairs
+9. **Unknown System Access** - Wormhole portal established
+10. **Player Accessibility** - All settlements now visitable
 
 ### Phase 15+: Portal Era Opportunities
 - **Kuiper Belt Objects** - Frontier research with hub connectivity
@@ -139,23 +189,97 @@
 - **Inter-System Trade Routes** - Solar System locations as gateway hubs
 - **Portal Network Optimization** - Strategic hub placement for maximum connectivity
 
-### Phase 20+: Dynamic Portal Networks (Research Breakthrough)
-**EM-Constrained Expansion**: Removal of pairing requirement enables dynamic connectivity, but EM budget limits network scale
-- **Energy-Driven Strategy**: Portal deployment determined by EM availability rather than distance
-- **Strategic Rebalancing**: EM-rich locations gain disproportionate value through network centrality
-- **Exploration Challenge**: New gameplay around energy management and competitive EM markets
+### Phase 15+: Portal Hub Networks (Operational - System-Local)
+**Quantum-Entangled Hub Deployment**: Portal networks established at major worlds in airport-style hub topology
+- **Multi-Hub Model**: Each major world becomes portal hub (Earth, Mercury, Mars, Ceres, Jupiter, Saturn, Pluto)
+- **Flexible Pairing**: Portal pairs connect different hubs based on EM budget and strategic routing
+- **EM-Powered Quantum Entanglement**: Each portal pair requires continuous EM supply from natural wormhole
+- **System-Local Only**: All portal hubs within Sol system (unknown system requires primary wormhole)
+- **Player Mobility Focus**: Enable rapid player travel between settlement hubs in Sol system
+- **Bulk Cargo Unchanged**: Cycler networks continue operating for large-scale transport
+- **Shared EM Resource**: EM harvesting from natural wormhole split between portal network and wormhole stabilization
 
-**Location Reassessment**:
-- **Active Wormhole Control**: AI can maintain temporary access or force shifts for strategic scouting
-- **Inter-System Wormhole Assets**: Natural wormholes in other systems become high-value strategic targets
-- **Natural Wormhole Priority**: Systems with active EM-expelling wormholes get preferential stabilization investment
-- **Local Bubble Cost Assessment**: Artificial connections require higher EM justification without natural EM sources
-- **ROI-Driven Access**: Portal connectivity requires proving EM investment value over alternatives
-- **Wormhole Harvesting Strategy**: Temporary resource extraction from natural wormholes vs permanent investment
-- **EM Resource Priority**: Locations with abundant EM generation become portal network hubs
-- **High-Value Focus**: Inner system and major trade routes prioritized over marginal distant sites
-- **AWS Competition**: EM allocation decisions between wormhole stations and portal networks
-- **Network Monopoly**: Corporations controlling EM resources dominate portal connectivity
+**Hub Network Topology (Airport-Style)**:
+- **Primary Hub**: Earth/L1 (connects to inner and outer system)
+- **Inner System**: Mercury, Mars (connected via portals)
+- **Belt Hub**: Ceres (connects to inner and outer systems)
+- **Outer System**: Jupiter, Saturn, Pluto (connected via portals)
+- **Scalable**: Additional hubs can be created as EM budget allows
+
+**Location Value Evolution**:
+- **Phase 15 Entry**: Major settlements become portal hub bases
+- **Hub Importance**: Connectivity position determines strategic value (hub traffic, accessibility)
+- **Primary Hubs**: Earth, Mercury, Mars, Ceres become central transfer points
+- **Frontier Hubs**: Pluto accessible but lower throughput (research, frontier missions)
+- **Economic Integration**: Players coordinate multi-hub trade via portal accessibility
+- **Inter-System Access**: Unknown system reached via primary natural wormhole (gateway)
+
+**What Portal Hub Network Do NOT Provide**:
+- ❌ Inter-system connectivity (quantum entanglement local to origin system only)
+- ❌ Unlimited hubs (EM budget limits number of portal pairs)
+- ❌ Bulk cargo transport (cyclers still required)
+- ❌ EM independence (depends on natural wormhole harvesting)
+- ❌ Removal of distance economics (bulk goods still distance-sensitive)
+
+### EM Resource Competition: Portal Hubs vs Wormhole Stabilization
+
+**Shared EM Budget from Natural Wormhole**:
+- **EM Harvesting**: Limited supply extracted from natural wormhole
+- **Portal Hub Network**: Each portal pair consumes continuous EM (operating cost)
+- **Wormhole Stabilization**: Maintaining artificial wormhole link to unknown system consumes EM
+- **Strategic Decision**: How to allocate limited EM between portal expansion vs wormhole strength
+- **Growth Constraint**: EM budget limits how many portal pairs can operate simultaneously
+
+**Example EM Allocation Problem** (airport-style expansion):
+- Natural wormhole harvests 1,000 EM/cycle
+- Each portal pair costs 50 EM/cycle to operate
+- Wormhole stabilization costs 400 EM/cycle
+- Starting with 6 portal pairs: 300 + 400 = 700 EM/cycle (300 EM surplus)
+- Question: Use surplus to add 6th pair (50 EM), 7th pair (50 EM), or increase stabilization?
+- EM becomes strategic resource driving Phase 15+ hub expansion decisions
+
+**Hub Network Scaling**:
+- **Early Phase 15**: Core hubs only (Earth, Mercury, Mars, Ceres)
+- **Mid Phase 15**: Extended hubs (Jupiter, Saturn)
+- **Late Phase 15**: Frontier hubs (Pluto)
+- **Post-Phase 15**: Additional specialized hubs based on EM efficiency and gameplay needs
+
+### Inter-System Travel Architecture: WS/AWS + Portal Hubs
+
+**Wormhole Stations (WS & AWS)**:
+- **WS (Wormhole Station)**: Natural wormhole location (Sol system has one primary WS)
+- **AWS (Artificial Wormhole Station)**: Artificial wormhole created/stabilized via Exotic Matter tech
+- **Purpose**: Gateway to other star systems
+- **Travel Method**: Board craft (ship), transit through wormhole, dock at receiving station
+
+**Inter-System Travel Sequence**:
+1. Player travels to WS/AWS (via portal hub network if in same system, or overland)
+2. Board craft for wormhole transit
+3. Transit through wormhole to destination system
+4. Dock at receiving station (WS/AWS) in destination system
+5. Access portal hub network in that system (if portals are deployed there)
+
+**Portal Hub Networks (System-Local)**:
+- Each star system can have its own portal hub network (independent of other systems)
+- Portals deployable anywhere if EM harvesting available
+- Each system develops independently (AI can explore and deploy portals in new systems)
+- Unknown system: Will have its own potential portal hub network once stabilized
+
+**Example: Player Journey to Unknown System**:
+- Start at Mercury portal hub (Sol system)
+- Travel via portal to Saturn hub
+- Travel to WS (Sol natural wormhole)
+- Board craft, transit through WS
+- Dock at receiving station (unknown system WS/AWS)
+- Unknown system has no portal hubs yet (early exploration phase)
+- Build initial settlement → establish EM harvesting → deploy portal hubs eventually
+
+**What This Enables**:
+- ✅ Multiple independent portal networks across multiple systems
+- ✅ Each system develops its own hub network based on AI/player expansion
+- ✅ Inter-system travel is slow/intentional (craft-based)
+- ✅ Intra-system travel is fast/convenient (portals)
+- ✅ Procedurally-generated frontier systems accessible via WS/AWS
 
 ## Integration Opportunities
 
