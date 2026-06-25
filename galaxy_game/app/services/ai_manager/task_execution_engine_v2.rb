@@ -411,7 +411,10 @@ module AIManager
       # If not yet initialized from blueprint, look it up now
       if total_ports == 0
         blueprint_service = Lookup::BlueprintLookupService.new
-        bp = blueprint_service.find_blueprint(unit.name)
+        # Use unit_type (canonical blueprint id) for lookup; unit.name may have
+        # numeric suffixes ("Inflatable Cryogenic Tank 1") that won't match.
+        bp = blueprint_service.find_blueprint(unit.unit_type) ||
+             blueprint_service.find_blueprint(unit.name)
         # Ports live under a nested "ports" key on canonical blueprints (e.g. HLT, cycler).
         # Fall back to top-level for legacy files that haven't been migrated yet.
         total_ports = bp&.dig('ports', port_category) || bp&.[](port_category) || 0
