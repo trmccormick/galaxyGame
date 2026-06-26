@@ -31,6 +31,7 @@
     "rig_ports": 0,
     "storage_ports": 2
   },
+  "valid_states": ["ready", "active", "idle", "maintenance", "printing"],
 
   "processing_capability": {
     "input_material": "depleted_regolith",

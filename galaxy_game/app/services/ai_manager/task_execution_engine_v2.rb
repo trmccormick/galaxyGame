@@ -299,11 +299,14 @@ module AIManager
           )
         end
 
-        # Load blueprint for unit configuration
+        # Load blueprint for unit configuration — use normalized key for reliable lookup
         blueprint_service = Lookup::BlueprintLookupService.new
-        full_blueprint = blueprint_service.find_blueprint(unit_name)
-        return true if full_blueprint.nil?
-
+        full_blueprint = blueprint_service.find_blueprint(unit_lookup_key)
+        
+        # If blueprint not found, create a minimal BaseUnit with defaults (don't silently skip deployment)
+        blueprint_id = full_blueprint&.dig('id') || unit_lookup_key
+        physical_props = full_blueprint&.dig('physical_properties') || {}
+        
         # ATOMICALLY mutate cargo manifest
         if source_item.amount == count
           source_item.destroy!
@@ -313,16 +316,18 @@ module AIManager
 
         # Instantiate active surface Units::BaseUnit records
         count.times do |i|
+          valid_states = full_blueprint&.dig('valid_states') || ['ready', 'active', 'idle', 'maintenance']
           Units::BaseUnit.create!(
             identifier: "unit_#{SecureRandom.hex(8)}",
             name: count > 1 ? "#{unit_name} #{i+1}" : unit_name,
-            unit_type: full_blueprint['id'],
+            unit_type: blueprint_id,
             location: @settlement.location,
             attachable: @settlement,
             owner: @settlement,
-            operational_data: (full_blueprint['physical_properties'] || {}).merge({
+            operational_data: physical_props.merge({
               "inflation_state" => is_inflatable ? "inflating" : "solid",
-              "shell_printed" => false
+              "shell_printed" => false,
+              "valid_states" => valid_states
             })
           )
         end
@@ -480,7 +485,17 @@ module AIManager
       end
       
       # Verify the target state is valid for this unit type
-      valid_states = unit.operational_data&.dig('valid_states') || ['ready', 'active', 'idle', 'maintenance']
+      # Check operational_data first, then fall back to blueprint if not set
+      valid_states = unit.operational_data&.dig('valid_states')
+      unless valid_states
+        bp_service = Lookup::BlueprintLookupService.new
+        bp = bp_service.find_blueprint(unit.unit_type)
+        valid_states = bp&.dig('valid_states') || ['ready', 'active', 'idle', 'maintenance']
+        # Cache it back to operational_data for future checks
+        op_data = unit.operational_data || {}
+        op_data['valid_states'] = valid_states
+        unit.update!(operational_data: op_data)
+      end
       unless valid_states.include?(state)
         raise AIManager::InfrastructureSequenceError.new(
           "Cannot set state: unit '#{unit_name}' (type: #{unit.unit_type}) does not support state '#{state}' (valid: #{valid_states.join(', ')})"
