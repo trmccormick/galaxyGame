@@ -118,12 +118,15 @@ module Lookup
     end
 
     # Check for legacy flat port structure (GOTCHA 4: these should be removed after migration)
+    # IMPORTANT: Must check BOTH nested ports (blueprint['ports'][category]) AND top-level (blueprint[category])
+    # because older blueprints have ports at the top level (e.g., "internal_unit_ports": 4)
     def has_legacy_flat_ports?(blueprint)
-      return false unless blueprint['ports'].is_a?(Hash)
-      
       LEGACY_PORT_CATEGORIES.any? do |category|
-        blueprint.dig('ports', category).to_i > 0 || 
-        blueprint[category].to_i > 0
+        # Check nested ports first (canonical style per task_execution_engine_v2.rb)
+        nested = blueprint.dig('ports', category).to_i > 0
+        # Then check top-level (backward compatibility for legacy blueprints)
+        toplevel = blueprint[category].to_i > 0
+        nested || toplevel
       end
     rescue => e
       Rails.logger.error "Error checking legacy flat ports: #{e.message}"
