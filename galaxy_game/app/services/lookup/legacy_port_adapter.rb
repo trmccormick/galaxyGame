@@ -7,6 +7,8 @@
 #   3. Native reading of pre-v1.9 typed schemas (inflatable_gas_storage's input/output/utility_ports)
 #   4. Zero-port handling for port-less units (pressure tanks, bulk storage)
 
+require_relative 'blueprint_lookup_service'
+
 module Lookup
   class LegacyPortAdapter < BlueprintLookupService
     # Schema version constants

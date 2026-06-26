@@ -1,34 +1,28 @@
 {
   "metadata": {
-    "template": "generic_task",
-    "description": "Deploy the Surface Preparation Unit (LSPU) for sintering depleted regolith into foundation material for landing pads and tank farms.",
+    "template": "generic_repeatable_task",
+    "description": "Deploy the Surface Preparation Unit (LSPU) for sintering depleted regolith into foundation material.",
     "intended_usage": "Reference in Phase 1 after rover deployment, before site prep foundation finalization.",
     "author": "AI Copilot",
     "date_created": "2026-06-23"
   },
-  "task": {
-    "task_id": "deploy_lspu",
-    "name": "Deploy Surface Preparation Unit (LSPU)",
-    "description": "Transport and deploy the LSPU mobile sintering unit to the landing site. The LSPU processes depleted regolith from the TEU/PVE pipeline using microwave sintering to produce compacted foundation material for infrastructure.",
-    "priority": 2,
-    "phase": "phase_1_power_comms",
-    "execution_order": 6,
-    "effects": [
-      {
-        "action": "deploy_unit",
-        "unit_name": "Surface Preparation Unit (LSPU)",
-        "unit_id": "surface_prep_unit_lspu",
-        "count": 1,
-        "location_context": "landing_site_processing_zone"
+  "tasks": [
+    {
+      "task_id": "deploy_lspu",
+      "name": "Deploy Surface Preparation Unit (LSPU)",
+      "description": "Transport and deploy the LSPU mobile sintering unit to the landing site.",
+      "priority": 2,
+      "effects": [
+        {
+          "action": "deploy_unit",
+          "unit": "Surface Prep Unit LSPU",
+          "count": 1
+        }
+      ],
+      "completion_criteria": {
+        "type": "event",
+        "event": "lspu_deployed"
       }
-    ],
-    "prerequisites": [
-      "deploy_regolith_harvester_rover"
-    ],
-    "completion_criteria": {
-      "type": "event",
-      "event": "unit_deployed",
-      "unit_id": "surface_prep_unit_lspu"
     }
-  }
+  ]
 }

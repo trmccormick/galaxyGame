@@ -410,14 +410,30 @@ module AIManager
       
       # If not yet initialized from blueprint, look it up now
       if total_ports == 0
-        blueprint_service = Lookup::BlueprintLookupService.new
-        # Use unit_type (canonical blueprint id) for lookup; unit.name may have
-        # numeric suffixes ("Inflatable Cryogenic Tank 1") that won't match.
-        bp = blueprint_service.find_blueprint(unit.unit_type) ||
-             blueprint_service.find_blueprint(unit.name)
-        # Ports live under a nested "ports" key on canonical blueprints (e.g. HLT, cycler).
-        # Fall back to top-level for legacy files that haven't been migrated yet.
-        total_ports = bp&.dig('ports', port_category) || bp&.[](port_category) || 0
+        # Use LegacyPortAdapter to handle both legacy flat ports and v1.9 connection_schema
+        adapter = Lookup::LegacyPortAdapter.new
+        bp_id = unit.unit_type
+        
+        resolved = adapter.resolve_port_schema(bp_id)
+        
+        # For v1.9 schemas, check if the port category maps to utility_ports or storage_bays
+        if resolved[:schema_version] == 'v1.9'
+          schema = resolved[:connection_schema]
+          case port_category.to_s
+          when 'storage_ports'
+            total_ports = Array(schema['storage_bays'] || []).size
+          when 'internal_unit_ports', 'external_unit_ports'
+            total_ports = Array(schema['mounting_slots'] || []).size
+          else
+            # Utility ports cover gas streams, power, data — count all utility ports
+            total_ports = Array(schema['utility_ports'] || []).size
+          end
+        else
+          # Legacy flat ports or typed ports — use adapter's projected hash
+          total_ports = resolved[:ports_hash][port_category.to_sym] || 
+                        resolved[:ports_hash][port_category.to_s] || 0
+        end
+        
         # Initialize tracking in operational_data for future connections
         op[port_category.to_sym] ||= {}
         op[port_category.to_sym][:total] = total_ports
