@@ -23,7 +23,7 @@ Only the converged model is documented here. The earlier framings are dead ends 
 
 1. **Blueprint (the engineering spec)** — dimensions, ports, interfaces, materials, tolerances, function. Fixed. Does not change based on who builds it or where.
 2. **Technology Level** — the settlement/civilization's manufacturing *capability*. Gates which Manufacturing Methods are available and sets the baseline visual maturity language.
-3. **Blueprint Generation (MK1 / MK2 / MK3...)** — engineering design evolution. Independent of Tech Level. A Tech-3 factory can still be stamping out a MK1-design unit if that's the only blueprint it has acquired; it will be beautifully built but based on an older design.
+3. **Blueprint Generation (MK1 / MK2 / MK3...)** — engineering design evolution, confirmed in real blueprints (see precedent below) as a sequential upgrade chain gated by a per-generation `required_technology` and `required_facility_type`, not a free-floating label. **Revision from initial framing**: MK is not fully independent of tech — it's tied to a specific named tech unlock per generation. Whether that named unlock is the same thing as the broader visual Technology Level tier (1–4+) below, or a separate layer derived from it, is the open question — see Open Question #3.
 
 Two supporting style inputs (derived, not independent axes):
 - **Manufacturing Method** (precision factory / large-scale additive / cast construction / modular assembly / heavy industrial fabrication) — gated by Tech Level, drives the actual visual style.
@@ -37,6 +37,18 @@ Two supporting style inputs (derived, not independent axes):
 | 2 — Developing | Better machining/additive, standardized parts, improved alloys | cleaner prints, refined shapes, lighter structures |
 | 3 — Mature Precision | Precision machining, high-performance alloys, composites, automated factories | clean aerospace hardware, integrated systems (this is where HLT/TEU/PVE sit today) |
 | 4+ — Advanced | Molecular manufacturing, exotic materials, ultra-light structures | not yet designed |
+
+---
+
+## Confirmed Real Precedent — `regolith_shell_printer` MK1/MK2/MK3
+
+Three live blueprint files confirm how MK actually works today, ahead of any Art Bible field being added:
+
+- **MK is three separate blueprint documents** (`regolith_shell_printer_mk1`, `_mk2`, `_mk3` — distinct `id`s), not one blueprint rendered differently by builder capability. This settles the "fixed vs. computed-at-build-time" question: **fixed, per-blueprint.**
+- **MK is gated by a named `required_technology` per generation**: `regolith_3d_printing` → `advanced_regolith_3d_printing` → `autonomous_regolith_3d_printing`. `required_facility_type` scales the same way: `assembly_factory` → `intermediate_manufacturing_facility` → `advanced_manufacturing_facility`. MK is therefore **not orthogonal to tech** the way the original "independent axes" framing assumed — each MK is bound to a specific tech/facility requirement, just not necessarily the same thing as a settlement-wide visual Technology Level tier (see revised Open Question #3 below).
+- **MK is a sequential build chain, not parallel options.** MK2's `required_materials` consumes one literal `regolith_shell_printer_mk1` unit as an input; MK3 consumes one MK2. You upgrade into a higher MK rather than building it from raw materials directly. `design_generation` should be understood as a sequential upgrade state, not an arbitrary per-unit pick.
+- **No structured MK field exists today** — MK is only encoded in `id`/`name`/`description` strings (e.g. `"regolith_shell_printer_mk1"`, `"Regolith Shell Printer Mk1"`). The proposed `design_generation` field is genuinely new metadata, not a duplicate of anything existing — but it should be sourced from / kept consistent with the existing `_mk1`/`_mk2`/`_mk3` id suffix, not allowed to drift independently.
+- `metadata.version: "1.3"` is identical across all three MK files, confirming it's purely template-compliance (`blueprint_template_version`) and has zero relationship to MK — consistent with the naming split agreed above.
 
 ---
 
@@ -116,7 +128,7 @@ Only the bracketed fields change per unit; the structure stays constant, giving 
 
 1. **"version" field name collision.** The codebase already has two distinct meanings for "version" (`unit_blueprint_v1.3` template compliance; bare `"1.9"` connection_schema). This proposal introduces a third (MK generation). Resolved above by using three explicit field names (`blueprint_template_version`, `connection_schema_version`, `design_generation`) — never reuse bare `version` for a new concept. **Confirm this naming before any field is added to a real blueprint file.**
 2. **Schema placement.** Confirmed here as an additive optional block, not a new required template version — avoids forcing a migration pass across all existing units the way the port-schema work did for real engine reasons. Worth an explicit sign-off that this is the intended placement.
-3. **Does Technology Level need new backing data, or does it already exist?** This doc assumes Tech Level is new scope (a settlement/civilization capability gate). Unconfirmed whether any research-tree or manufacturing-capability concept already exists in the domain model. **Needs a direct check before scoping further** — do not assume either way.
+3. **Is the proposed Technology Level (Tier 1–4+) the same thing as the existing per-blueprint `required_technology`, or a separate abstraction layered on top?** Confirmed real: `regolith_shell_printer` mk1/mk2/mk3 each carry their own named `required_technology` (`regolith_3d_printing` → `advanced_regolith_3d_printing` → `autonomous_regolith_3d_printing`) and `required_facility_type`. So *some* tech-gating concept clearly already exists — the open question is narrower than originally framed: does a settlement's broad visual Technology Level get **derived** from which named techs it has unlocked (e.g. count/tier of unlocked techs maps to Tier 1-4), or is it an independent new property that needs its own backing data? **Needs an explicit design decision, not just a data-existence check.**
 4. **No engine-logic risk, confirmed.** This is cosmetic/documentation-only. Should not touch `TaskExecutionEngineV2`, the port/connection-schema system, or any capacity-check logic. Flagging explicitly so a future executor doesn't quietly expand scope into gameplay-affecting territory.
 5. **Cross-reference against the corporate roster once scheduled** — LDC/MDC/VDC/TDC/SDC, AstroLift, Vector Hauling, Zenith Orbital, Wormhole Transit Consortium/Station, Terragen. Tech-Level-as-capability gives a natural way for different corporate actors to sit at different tiers; worth confirming alignment with existing corporate logo/style docs before art generation work starts.
 
