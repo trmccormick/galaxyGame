@@ -299,6 +299,97 @@ namespace :luna_mission do
 
     results = {}
 
+    # Helper: verify task outcomes using real state checks (not just "no error")
+    verify_task_outcome = lambda do |task_data, settlement_obj|
+      verification_results = []
+      task_defs = task_data["tasks"].is_a?(Array) ? task_data["tasks"] : [task_data]
+
+      task_defs.each do |task_def|
+        (task_def["effects"] || []).each do |effect|
+          action = effect["action"]
+          case action
+          when "deploy_unit"
+            unit_name = effect["unit"] || effect["unit_type"]
+            deployed_unit = settlement_obj.units.find_by(name: unit_name)
+            if deployed_unit
+              verification_results << "deployed #{unit_name} (id=#{deployed_unit.id})"
+            else
+              verification_results << "FAIL: #{unit_name} not found in settlement.units"
+            end
+
+          when "connect_units"
+            unit1_name = effect["unit1"]
+            unit2_name = effect["unit2"]
+            unit1 = settlement_obj.units.find_by(name: unit1_name)
+            if unit1
+              connections = Array(unit1.operational_data&.dig("connections") || [])
+              connected_to = connections.any? { |c| c.is_a?(Hash) && c["target_unit"] == unit2_name }
+              if connected_to
+                verification_results << "connected #{unit1_name} -> #{unit2_name}"
+              else
+                verification_results << "FAIL: #{unit1_name} not connected to #{unit2_name}"
+              end
+            else
+              verification_results << "FAIL: #{unit1_name} not deployed"
+            end
+
+          when "set_unit_state"
+            unit_name = effect["unit"]
+            expected_state = effect["state"]
+            unit = settlement_obj.units.find_by(name: unit_name)
+            if unit
+              actual_state = unit.operational_data&.dig("state")
+              if actual_state == expected_state
+                verification_results << "set #{unit_name} state to #{expected_state}"
+              else
+                verification_results << "FAIL: #{unit_name} state is '#{actual_state}', expected '#{expected_state}'"
+              end
+            else
+              verification_results << "FAIL: #{unit_name} not deployed"
+            end
+
+          when "set_settlement_state"
+            key = effect["key"]
+            value = effect["value"]
+            actual_value = settlement_obj.operational_data&.dig(key.to_s)
+            if actual_value == value
+              verification_results << "set settlement #{key} to #{value}"
+            else
+              verification_results << "FAIL: settlement #{key} is '#{actual_value}', expected '#{value}'"
+            end
+
+          when "check_unit_state"
+            unit_name = effect["unit"]
+            expected_state = effect["state"]
+            unit = settlement_obj.units.find_by(name: unit_name)
+            if unit
+              actual_state = unit.operational_data&.dig("state")
+              if actual_state == expected_state
+                verification_results << "verified #{unit_name} is #{expected_state}"
+              else
+                verification_results << "FAIL: #{unit_name} state is '#{actual_state}', expected '#{expected_state}'"
+              end
+            else
+              verification_results << "FAIL: #{unit_name} not deployed"
+            end
+
+          else
+            verification_results << "#{action} (unverified)"
+          end
+        end
+      end
+
+      # Determine overall pass/fail from verification results
+      failures = verification_results.select { |r| r.start_with?("FAIL:") }
+      passed = verification_results.empty? || failures.empty?
+
+      {
+        passed: passed,
+        details: verification_results,
+        failure_count: failures.count
+      }
+    end
+
     execution_order.each do |phase_id|
       phase_def = phase_index[phase_id]
       if phase_def.nil?
@@ -364,9 +455,18 @@ namespace :luna_mission do
 
         begin
           success = engine.send(:execute_task, task_data)
+
           if success
-            puts "  - #{task_id}: PASS"
-            phase_result[:tasks] << { task_id: task_id, status: :passed }
+            # Real state verification — not just "no error raised"
+            verification = verify_task_outcome.call(task_data, settlement)
+            if verification[:passed]
+              puts "  - #{task_id}: PASS (verified: #{verification[:details].join(', ')})"
+              phase_result[:tasks] << { task_id: task_id, status: :passed, verified: verification[:details] }
+            else
+              puts "  - #{task_id}: FAIL (verification: #{verification[:details].select { |d| d.start_with?('FAIL:') }.join(', ')})"
+              phase_result[:tasks] << { task_id: task_id, status: :failed, verified: verification[:details] }
+              phase_result[:passed] = false
+            end
           else
             puts "  - #{task_id}: FAIL (engine returned false)"
             phase_result[:tasks] << { task_id: task_id, status: :failed }
