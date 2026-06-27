@@ -310,9 +310,11 @@ namespace :luna_mission do
           case action
           when "deploy_unit"
             unit_name = effect["unit"] || effect["unit_type"]
-            deployed_unit = settlement_obj.units.find_by(name: unit_name)
+            # Handle numbered suffixes (e.g., "Inflatable Cryogenic Tank 1")
+            deployed_unit = settlement_obj.units.find_by(name: unit_name) || 
+                           settlement_obj.units.where("name LIKE ?", "#{unit_name}%").first
             if deployed_unit
-              verification_results << "deployed #{unit_name} (id=#{deployed_unit.id})"
+              verification_results << "deployed #{deployed_unit.name} (id=#{deployed_unit.id})"
             else
               verification_results << "FAIL: #{unit_name} not found in settlement.units"
             end

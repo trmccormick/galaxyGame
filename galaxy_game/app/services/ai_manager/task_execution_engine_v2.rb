@@ -555,5 +555,63 @@ module AIManager
       puts "  ✓ Manufactured #{quantity}x #{output_item} using #{unit_name}"
       true
     end
+
+    def advance_deployment_stages_from_effect(effect)
+      return true unless @settlement
+      
+      target_type = effect['target_type'] || 'inflatable'
+      stage = effect['stage']
+      
+      # Find all inflatable tanks at the settlement
+      tanks = @settlement.units.where("unit_type LIKE ?", "%#{target_type}%")
+      
+      if tanks.empty?
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot advance stages: no #{target_type} units found at settlement #{@settlement.name}"
+        )
+      end
+      
+      # Define the deployment stage progression
+      stage_progression = {
+        'transport' => 'anchor',
+        'anchor' => 'inflate',
+        'inflate' => 'print_shell',
+        'print_shell' => 'pressurize',
+        'pressurize' => 'operational'
+      }
+      
+      tanks.each do |tank|
+        op_data = tank.operational_data || {}
+        deployment = op_data['deployment'] || {}
+        stages = Array(deployment['stages'])
+        
+        # Find current stage index
+        current_idx = stages.index(stage)
+        if current_idx.nil?
+          puts "  ⚠ Unit '#{tank.name}' not at stage '#{stage}', skipping"
+          next
+        end
+        
+        # Advance to next stage
+        next_stage = stage_progression[stage]
+        if next_stage.nil?
+          puts "  ⚠ No progression defined for stage '#{stage}', stopping"
+          next
+        end
+        
+        stages << next_stage
+        deployment['stages'] = stages
+        deployment['current_stage'] = next_stage
+        deployment['progress_percent'] = ((stages.length - 1) * 20).to_i
+        deployment['time_remaining_hours'] = [deployment['time_remaining_hours'].to_f - 2.5, 0].max
+        
+        op_data['deployment'] = deployment
+        tank.update!(operational_data: op_data)
+        
+        puts "  ✓ Advanced '#{tank.name}' from '#{stage}' → '#{next_stage}' (progress: #{deployment['progress_percent']}%)"
+      end
+      
+      true
+    end
   end
 end
