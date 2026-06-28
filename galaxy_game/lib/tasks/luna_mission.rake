@@ -530,9 +530,29 @@ namespace :luna_mission do
     puts "\n" + "=" * 80
     puts "KNOWN, UNRESOLVED GAPS (NOT HANDLED BY THIS RUN)"
     puts "=" * 80
-    puts "[3c] Tank stage advancement gap remains unresolved."
-    puts "      inflate -> print_shell -> pressurize still has no real stage-advancement handler."
-    puts "[3d] Landing pad task remains unsequenced in current v2 phase order."
+
+    gaps_found = false
+
+    # [3c] Stage-advancement tracking exists but no shell status/thickness field is written yet
+    puts "[3c] Stage-advancement tracking exists, but no shell status/thickness field is"
+    puts "      written yet — see phase6+/2026-06-27-MEDIUM-FEATURE-SHELL-STATUS-THICKNESS-FIELD.md for remaining work."
+    gaps_found = true
+
+    # [3d] Landing pad sequencing check (uses same phase_path_for lambda as rest of rake)
+    phase3_def = (profile["phases"] || []).find { |p| p["phase_id"] == "gas_processing" }
+    if phase3_def
+      phase3_path = phase_path_for.call(phase3_def)
+      if phase3_path && File.exist?(phase3_path)
+        phase3 = JSON.parse(File.read(phase3_path))
+        has_landing_pad = (phase3.dig("tasks") || []).any? { |t| t["task_ref"]&.include?("surface_preparation_unit_operations") }
+        unless has_landing_pad
+          puts "[3d] Landing pad task remains unsequenced in current v2 phase order."
+          gaps_found = true
+        end
+      end
+    end
+
+    puts "(none)" unless gaps_found
 
     puts "\n" + "=" * 80
     puts "END OF REPORT"
