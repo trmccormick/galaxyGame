@@ -1,8 +1,23 @@
-# The Story Arc
+# The Story Arc — Updated 2026-06-27
 
 **Important Note on Narrative vs. Technical Phases**: This document describes the **player narrative experience** (Acts 1–4). For technical implementation phases, see `implementation_phases.md` and cross-reference with:
 - System A AI Manager Service Integration Phases (`status.md`) — what's been implemented
 - Phase folder structure (`LUNA-MVP-SIMULATION-DESIGN.md`) — where tasks belong in backlog
+
+---
+
+**Updated Framework (2026-06-28)**: Each phase now includes explicit sub-phases for:
+1. **Mission Validation** — Ensure JSON mission profiles work with codebase
+2. **Settlement Option Testing** — Test multiple approaches and cost compare them
+3. **AI Training** — Feed validated patterns to AI Manager decision logic
+
+This ensures robust, tested expansion patterns before AI autonomy.
+
+**Phase Structure**: 
+- Act 1 = Phases 1–13: NPC-only Sol system expansion and early terraforming (AI Manager training)
+- Act 2 = Phase 14+: Eden system expansion test (AI Manager operational independence)
+- Act 3 = Phase 15+: Snap crisis event (wormhole mass-limit discovery)
+- Act 4 = Not yet planned: Post-Snap narrative content (deferred until Act 3 framework established)
 
 ---
 
@@ -14,106 +29,92 @@ Train AI Manager to autonomously build and manage settlements using proven, data
 
 ---
 
-## Act 1: Pattern Learning (Tutorial Phase)
-**Narrative Focus**: Player discovers the Luna settlement already has an operational AI Manager making autonomous decisions based on learned patterns. They witness how the system handles resource acquisition, consumption-aware ordering, precursor phase awareness, and life support logistics.
+## Act 1: Sol System Expansion & Early Terraforming (Phases 1–13) — NPC-Only AI Training
 
-**Technical Implementation Mapping**: This corresponds to **System A Phases 1–4**, which are **already complete**:
-- ✅ Phase 1: `Settlements::CostAnalyzer` → AI Manager integration (commit cd4d6800)
-- ✅ Phase 2: `Logistics::ManifestGenerator` → AI Manager integration (commit 21b10ef0)  
-- ✅ Phase 3: `Logistics::ShortageDetector` + `ImportRequestGenerator` → AI Manager (commit 32b31f54)
-- ✅ Phase 4: Consumption-aware ordering + precursor phase awareness (re-implemented commit 5a2af17a)
+**Narrative Focus**: The AI Manager autonomously expands across the Sol system using pattern-based decision-making trained on JSON mission data. This is **not player-facing content** — players do not enter the game during Act 1. Instead, they inherit a living universe that has been built by the AI Manager learning to expand autonomously.
 
-**Sol System Setup**: The AI Manager learns these techniques by executing them in the Earth-Moon-Lagrange network, mastering deployment patterns through hands-on application on Luna. These patterns are defined in JSON and are system-agnostic — they work for any celestial body once properly configured.
+**Critical Act 1 Process**: Mission Validation → Settlement Option Testing → AI Training → Autonomous Decision Making
 
-**The Learning Loop**: Each successful deployment refines the AI's understanding, creating a growing library of reusable techniques that enable continuous expansion across the galaxy. Players observe this loop in action during Act 1 as Luna proves its economic viability through:
-- Real-time resource acquisition decisions (player market → NPC → Earth priority)
-- Consumption-aware ordering with transit buffers for life-support materials
-- Precursor phase awareness (population = 0 skips life support, allows non-life-support)
-- Market stabilization and GCC/USD peg mechanics
+Each settlement location follows this workflow to ensure robust, tested expansion patterns:
+1. **Mission Validation**: Run JSON mission profiles to ensure they work with current codebase
+2. **Settlement Option Testing**: Test multiple settlement approaches (orbital vs surface, different material sources, various infrastructure options)
+3. **AI Training**: Feed validated patterns to AI Manager for pattern learning
+4. **Autonomous Decision Making**: AI learns to evaluate options and pick by real cost (ROI, available resources, economics)
 
-**Player Engagement Goal**: By the end of Act 1, players understand that Luna is **not a blank slate** — it's an active settlement with:
-- Working import/export markets
-- AI Manager making autonomous decisions based on real data (no `rand()` calls)
-- Economic loops proving viability before expansion begins
+**Technical Implementation Mapping**: This corresponds to **Phases 1–13**, which represent the complete Sol system expansion and early terraforming effort:
+- ✅ Phases 1–4: Foundation (already complete) — CostAnalyzer, ManifestGenerator, ShortageDetector, ImportRequestGenerator
+- ⏭️ Phase 5 (5a-5c): Luna mission validation + AI training
+- ⏭️ Phase 6 (6a-6c): Luna infrastructure validation + AI training
+- ⏭️ Phase 7 (7a-7c): Orbital depot validation + AI training
+- ⏭️ Phase 8 (8a-8c): Shipyard/craft validation + AI training
+- ⏭️ Phase 9 (9a-9e): Mars multi-option validation (orbital + surface + terraforming) + AI training
+- ⏭️ Phase 10 (10a-10d): Venus moon-free adaptation + AI training
+- ⏭️ Phase 11 (11a-11d): Multi-world logistics validation + AI training
+- ⏭️ Phase 12 (12a-12c): Optional branch expansion testing
+- ⏭️ Phase 13 (13a-13c): Psyche mining + terraforming validation + AI training
 
----
+**Key Principle: NPC-Only Expansion During Act 1**
 
-## Act 2: Wormhole Discovery & Eden System Development (Application Phase)
-**Narrative Focus**: After Luna proves the fuel loop closes, players discover natural wormholes and must develop an "Eden system" to operational maturity. The AI Manager applies learned patterns to this new discovery using ScoutLogic analysis and pattern matching.
+During Phases 1–13, the AI Manager expands across the Sol system **autonomously**, using:
+- Pattern-based decision-making trained on JSON mission data
+- Real cost evaluation for each settlement opportunity
+- No hardcoded sequences — the AI evaluates options and picks by real cost
+- Multiple possible settlement strategies (not limited to one prescribed path)
 
-**Technical Implementation Mapping**: This corresponds to **Phase 9+ work in backlog**, requiring:
-- Luna simulation calibrated (System B Phase 5 acceptance criteria met) ✅ prerequisite
-- L1 Depot/LEO Depot infrastructure operational ✅ prerequisite  
-- Wormhole topology integration for system expansion planning
-- Multi-system resource coordination algorithms
+**This is simulation work.** We're testing whether the AI Manager can:
+1. Learn deployment patterns from JSON mission definitions
+2. Apply those patterns across different celestial bodies with varying conditions
+3. Make autonomous expansion decisions that result in a coherent, living universe
 
-**Eden System Maturation**: The AI Manager focuses on developing the initial colonized system ("Eden system") to operational maturity before expansion risks. This includes:
-- Establishing interconnected settlements across multiple systems
-- Building comprehensive orbital infrastructure (L1 Station, LEO Depot)
-- Creating stable economic and resource flows between systems
-- Accumulating sufficient mass to eventually trigger wormhole instability
+The resulting world-state becomes the backstory players inherit when they arrive post-Snap.
 
-**Maturity Conditions**: See `system_maturity_conditions.md` for detailed requirements that must be met before the Snap event can occur. These conditions ensure players don't face premature expansion failures — everything is tested in Luna simulation first, then applied to Eden system once maturity thresholds are reached.
-
-**Wormhole Expansion**: When the Eden system reaches maturity (through accumulated infrastructure and resource flows), natural wormhole connections become unstable, leading to the "Snap" event that opens new expansion opportunities. This transition from Act 1 → Act 2 is marked by:
-- Successful Luna simulation proving fuel loop viability ✅ prerequisite for all Phase 9+ work
-- First discovery of natural wormholes via ScoutLogic analysis (Phase 3 technical milestone)
-- Pattern matching to select appropriate deployment strategy for Eden system (Phase 4 technical milestone)
-
-**Player Engagement Goal**: Players experience the transition from single-system operations to multi-system expansion, witnessing how Luna's proven patterns scale to new discoveries. The AI Manager now handles:
-- System analysis and EM detection via ScoutLogic
-- Pattern selection based on discovered system characteristics  
-- Multi-settlement orchestration across wormhole-connected systems
+**Scope**: Earth → Luna → Mars (orbital + surface settlement options) → Venus (moon-free adaptation) → Optional Branches (Ceres/Titan-Saturn) → Psyche/Terraforming initiation
+**Player Experience**: None during Act 1. Players inherit the result post-Snap.
 
 ---
 
-## Act 3: The Orphaned Era (Tech Gap & Rescue)
-**Narrative Focus**: A catastrophic Snap event creates an asymmetrical technology divide between Sol side and Eden side. Players must navigate the crisis, coordinate rescue efforts through WTC, and deliver critical EM Physics knowledge to stranded survivors.
+## Act 2: Eden Expansion Test (Phase 14+) — NPC-Only AI Training Continues
 
-**Technical Implementation Mapping**: This corresponds to **Phase 9+ work in backlog**, requiring:
-- L1 Shipyard operational ✅ prerequisite for Act 3/4 features
-- Artificial Wormhole Station construction logic (AWS)
-- Dual-link counterbalance model implementation
-- High-Energy Beacon infrastructure development
+**Narrative Focus**: The AI Manager takes full operational control of Sol and discovers/begins expanding into the Eden system using learned patterns. This is the first test of whether the AI can successfully apply Sol-system training to a new environment.
 
-**The Crisis Event**: The Snap event creates an asymmetrical technology divide that players must resolve through coordinated action:
+**Technical Implementation Mapping**: This corresponds to **Phase 14+**, requiring:
+- ✅ All Phases 1–13 complete (Sol system mastery)
+- ✅ Luna simulation calibrated and validated
+- ✅ Inner-system footholds operational (Mars, Venus, etc.)
+- ✅ Cycler logistics loop stable and repeatable
 
-- **Sol Side (WTC)**: The Wormhole Transit Consortium forms as a rescue coalition. Sol-side scientists, including the MDC, begin to unravel EM Physics (post-Snap tech) and construct the High-Energy Beacon. This Beacon is critical for delivering the EM Physics Data-Drop to Eden.
-  
-- **Eden Side**: Stranded survivors, including the Martian Brain Trust, are limited to conventional/jury-rigged technology and remain in EM-ignorance. They cannot begin building a Counterbalance AWS until the Sol-side Beacon delivers the EM Physics Data-Drop and blueprints.
+**Eden Expansion Test**: The AI Manager applies learned patterns to the Eden system without human intervention. This tests:
+- Whether the AI can successfully transfer Sol-system knowledge to a new environment
+- Whether pattern-based decision-making generalizes across different celestial bodies
+- Whether the AI can handle novel conditions not encountered during training
 
-**Technical Requirements for Act 3 Implementation**:
-1. **Snap Event Logic**: Handle wormhole crisis state transitions (Natural Anomaly → Harvesting Site → Permanent Anchor)
-2. **Dual-Link Model**: Implement counterbalance logic where AWS deployed to stabilize natural/other artificial wormholes, reducing EM requirements and stabilizing network
-3. **High-Energy Beacon Construction**: Develop infrastructure for delivering critical knowledge transfer between systems
-4. **Emergency Response Protocols**: AI Manager must handle crisis scenarios with degraded capabilities
-
-**Player Engagement Goal**: Players experience the tension of a broken interstellar connection during Snap event, coordinating rescue efforts while managing limited resources and EM budgets during the crisis period. The narrative emphasizes cooperation over competition — WTC forms as coalition rather than corporate entity.
+**Gate**: AI Manager demonstrates sustained independent Sol management. Eden expansion underway — proceeds to Phase 15+ where this independence gets stress-tested.
 
 ---
 
-## Act 4: Hammer Protocol & Network Mastery (Post-Data-Drop)
-**Narrative Focus**: After successful knowledge transfer through High-Energy Beacon, players unlock advanced wormhole management capabilities via the Hammer Protocol. The AI Manager now operates a mature interstellar network with sophisticated logistics and economic optimization.
+## Act 3: Snap Crisis (Phase 15+) — NPC-Only Crisis Response
 
-**Technical Implementation Mapping**: This corresponds to **Phase 9+ work in backlog**, requiring:
-- Consortium formation upon first Snap event (governance system)
-- Voting system for Route Proposals implementation
-- Dividend distribution from transit fees automation
-- Player/NPC participation mechanisms in network governance
+**Narrative Focus**: Unplanned Eden expansion pushes past natural wormhole mass-limit stability, triggering the Snap crisis. This is where the test reveals its result — the AI Manager's confidence from successful Sol patterns leads it to overbuild Eden infrastructure.
 
-**The Hammer Protocol Emerges**: Only after the tragedy of the first Snap and successful knowledge transfer does the Hammer Protocol emerge as a deliberate strategy. The AI Manager now manages:
-- A mature wormhole network with multiple interconnected systems
-- Real-time EM budget balancing across all links
-- ROI-based expansion decisions using comprehensive metrics
-- Branching networks where secondary hubs enable parallel expansion into new systems
+**Technical Implementation Mapping**: This corresponds to **Phase 15+**, requiring:
+- ✅ Phase 14 complete (Eden expansion underway)
+- ✅ Wormhole stability monitoring operational
+- ✅ Mass-limit threshold detection implemented
 
-**Advanced Capabilities Unlocked**: Players gain access to sophisticated management tools including:
-- **Network Topology Management**: AI Manager splits traffic based on link properties and system data, maintaining gravitational tension and EM budgets via real-time metrics
-- **Brown Dwarf Hub Integration**: Secondary anchors serve as logistics batteries and gateways for expanded network reach
-- **Consortium Governance**: Voting systems allow player/NPC participation in Route Proposals with dividend distribution from transit fees
-- **Adaptive Pattern Application**: All logic remains pattern-based and system-agnostic, adapting to any new system profile discovered through expansion
+**The Crisis Event**: The Snap event occurs when:
+- Eden infrastructure buildup exceeds natural wormhole mass-limit stability
+- Wormhole reaches instability and shifts exit point
+- Eden becomes orphaned from Sol system
 
-**Player Engagement Goal**: Players experience the transition from crisis management to strategic optimization — managing a thriving interstellar economy where AI decisions are transparent, data-driven, and continuously improving based on network-wide performance metrics. The narrative emphasizes that successful wormhole mastery requires both technical excellence (AI Manager tuning) and collaborative governance (Consortium voting).
+**Post-Snap State**: This is where player-facing gameplay (Act 2) begins. Everything in Phases 5–15 has been building the world-state players inherit at this moment.
+
+---
+
+## Act 4: Not Yet Planned
+
+**Status**: Deferred until Act 3 framework is established.
+
+**Planned Content**: Post-Snap narrative including wormhole mastery, Hammer Protocol, and network optimization — to be defined once the Snap crisis event framework is complete.
 
 ---
 
@@ -129,7 +130,7 @@ The AI Manager learns repeatable patterns across Luna settlement, multi-world lo
 
 ---
 
-**Override for backlog triage**: If any table entry below conflicts with the current planning map, use this sequence: `phase5+` Luna simulation calibration, `phase6+` Luna worldhouse/ISRU/import work, `phase7+` L1/LEO depots, `phase8+` L1 shipyards/tugs/cyclers, `phase9+` Mars footholds, `phase10+` Venus repeat loop, `phase11+` Earth-Mars-Venus logistics loop, `phase12+` for optional Ceres/Titan-Saturn branch splits, `phase13+` for Psyche asteroid mining and Mars terraforming initiation, `phase14+` for AI Manager operational test and Eden expansion, and `phase15+` for unplanned Eden expansion and wormhole mass-limit discovery. The Snap crisis event occurs post-Phase 15, beginning true Act 2 gameplay.
+**Override for backlog triage**: If any table entry below conflicts with the current planning map, use this sequence: `phase5` (Luna mission validation + AI training), `phase6` (Luna infrastructure validation + AI training), `phase7` (orbital depot validation + AI training), `phase8` (shipyard/craft validation + AI training), `phase9` (Mars multi-option testing: orbital infrastructure integration, Phobos/Deimos repositioning, surface outpost establishment, resource infrastructure, advanced mining, worldhouse construction, atmospheric enrichment, human settlement, and gateway shielding — then Mars option comparison and AI training), `phase10` (Venus moon-free adaptation + AI training), `phase11` (Earth-Mars-Venus logistics validation + AI training), `phase12` (optional Ceres/Titan-Saturn branch testing), `phase13` (Psyche mining + terraforming validation + AI training), `phase14+` (AI Manager operational test and Eden expansion), and `phase15+` (unplanned Eden expansion and wormhole mass-limit discovery). The Snap crisis event occurs post-Phase 15, beginning true Act 2 gameplay.
 
 | Narrative Act | Player Experience Focus | Technical Phase Mapping | Backlog Task Classification | Status/Requirements |
 |---|---|---|---|---|
