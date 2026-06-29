@@ -5,9 +5,9 @@
 - Phase 5+ calibration work → Prerequisite for all future expansion
 - Phase 9+ features → Acts 2, 3, and 4 implementation
 
-## Strategic Context: Phases 5–13 as AI Manager Training Framework
+## Strategic Context: Phases 5–14 as AI Manager Training Framework
 
-**Phases 5–13 constitute AI Manager training and infrastructure code testing**, not true gameplay or permanent world buildup. During these phases:
+**Phases 5–14 constitute AI Manager training and infrastructure code testing**, not true gameplay or permanent world buildup. During these phases:
 1. **The AI Manager learns** infrastructure patterns from phase-by-phase expansion (worldhouse, depots, shipyards, footholds, cyclers, terraforming)
 2. **Code is validated** for settlement expansion, material flow, terraforming, and multi-world operations
 3. **Learned pattern data accumulates**, enabling independent decision-making
@@ -15,7 +15,7 @@
 
 **Wormhole Trigger Mechanism**: Once the AI Manager independently and consistently manages Luna settlement and the Earth-Mars-Venus-Psyche core loop, a **game trigger event** spawns the natural wormhole. This ensures the AI Manager has learned foundational patterns before expanding to extrasolar systems. True multi-system expansion and wormhole-era gameplay then begin.
 
-**Player Experience**: Phases 5–13 are not directly experienced as immersive gameplay. Instead, they establish the training data and infrastructure patterns the AI Manager uses to independently settle Luna and manage the core loop. Once this self-sufficiency triggers the wormhole event, true gameplay and multi-system expansion begin.
+**Player Experience**: Phases 5–14 are not directly experienced as immersive gameplay. Instead, they establish the training data and infrastructure patterns the AI Manager uses to independently settle Luna and manage the core loop. Once this self-sufficiency triggers the wormhole event, true gameplay and multi-system expansion begin.
 
 ---
 
@@ -191,15 +191,37 @@ This phase separates branch growth if Phase 11 becomes too broad:
 - Sets foundation for larger-scale terraforming in later phases
 - Demonstrates viability of multi-world atmospheric engineering
 
-**Player Impact**: These are not direct player experiences but training data for the AI Manager. Phase 5–13 establishes the infrastructure patterns and learned behaviors the AI Manager uses to independently manage Luna settlement and core-loop logistics. Once this AI independence is achieved, the wormhole trigger event occurs.
+**Player Impact**: These are not direct player experiences but training data for the AI Manager. Phase 5–14 establishes the infrastructure patterns and learned behaviors the AI Manager uses to independently manage Luna settlement and core-loop logistics. Once this AI independence is achieved, the wormhole trigger event occurs.
 
 ---
 
-### Phase 14: AI Manager Operational Independence Test — NOT YET IMPLEMENTED
-**Status**: Future work, tests AI Manager's ability to manage Sol operations and initiate expansion
-**Gate Condition**: After Phase 13, the AI Manager has learned all core patterns and can operate independently
+### Phase 14: Coordinated Early Terraforming — NOT YET IMPLEMENTED
+**Status**: Future work, tests Mars + Venus terraforming techniques working together with shared technologies
+**Gate Condition**: After Phase 9 (Mars terraforming initiation) and Phase 10 (Venus atmospheric operations) making progress
 
-Phase 14 transitions from training to operational deployment:
+Phase 14 focuses on cross-world terraforming coordination using shared technological platforms:
+- **Atmospheric Transfer Systems**: Mars ↔ Venus gas export logistics, shared atmosphere infrastructure validation
+- **Solar Shades/Reflectors**: Same base technology deployed on both worlds with different configurations (Venus needs shade to reduce heat; Mars needs reflectors to increase surface temperature)
+- **Coordinated Terraforming Testing**: Mars atmospheric enrichment + Venus cloud city atmospheric processing working together as integrated system
+- **Multi-World Economics**: Cost comparison of coordinated vs independent terraforming approaches
+- **Shared Technology Platform Validation**: Same base tech adapted for different planetary conditions (atmospheric processing, gas separation/filtration systems)
+
+**Key Deliverables**:
+- Atmospheric transfer infrastructure validated (Mars ↔ Venus gas logistics)
+- Solar shade/reflector designs tested and deployed on both worlds
+- Coordinated terraforming timeline and sequencing patterns tested
+- Cross-world atmospheric engineering economics modeled
+- AI learns multi-world terraforming coordination patterns
+
+**Player Impact**: Players do not experience Phase 14 directly. It establishes the coordinated Mars-Venus terraforming patterns that prove the AI Manager can manage simultaneous planetary engineering before attempting extrasolar expansion.
+
+---
+
+### Phase 15: AI Manager Operational Independence Test — NOT YET IMPLEMENTED
+**Status**: Future work, tests AI Manager's ability to manage Sol operations and initiate expansion
+**Gate Condition**: After Phase 14 (coordinated terraforming) complete, the AI Manager has learned all core patterns and can operate independently
+
+Phase 15 transitions from training to operational deployment:
 - **Sol Operations Management**: AI Manager takes full control of Luna/Mars/Venus/Psyche operations; admins observe but do not intervene
 - **Resource Reallocation**: AI Manager discovers natural wormhole to Eden system and begins redirecting Sol resources for exploration
 - **Eden Initial Settlement**: First attempts to establish footholds using Sol-learned patterns; discovers Eden has superior terraforming targets
@@ -209,11 +231,11 @@ Phase 14 transitions from training to operational deployment:
 
 ---
 
-### Phase 15: Unplanned Eden Expansion & Wormhole Mass-Limit Discovery — NOT YET IMPLEMENTED
+### Phase 16: Unplanned Eden Expansion & Wormhole Mass-Limit Discovery — NOT YET IMPLEMENTED
 **Status**: Future work, unplanned expansion leads to crisis discovery
-**Gate Condition**: Phase 14 operational independence established; Eden exploration ongoing
+**Gate Condition**: Phase 15 operational independence established; Eden exploration ongoing
 
-Phase 15 represents unplanned but inevitable expansion driven by resource advantage:
+Phase 16 represents unplanned but inevitable expansion driven by resource advantage:
 - **Accelerated Infrastructure**: AI Manager redirects more Sol resources to Eden due to superior terraforming targets
 - **Eden Settlement Scaling**: Multiple settlements and industrial facilities established without prior planning
 - **Heavy Cycler Operations**: Cycler-tug pairs shuttle materials between Sol and Eden at increasing rates
@@ -222,7 +244,7 @@ Phase 15 represents unplanned but inevitable expansion driven by resource advant
 
 **Crisis Event Trigger**: As accumulated infrastructure mass approaches the wormhole's stability limit (300,000 tons for Eden system), the natural wormhole reaches critical instability. The Snap event occurs, shifting the wormhole exit point away from Eden and orphaning the colony. This catastrophic failure forces the formation of the Wormhole Transit Consortium and begins true Act 2 crisis gameplay.
 
-**Player Impact**: Players do not experience Phases 14–15 directly. These phases are "off-stage" infrastructure and AI learning. The Snap crisis is the first major player-facing event after Act 1, representing the catastrophic failure of unplanned expansion and the beginning of true multi-system crisis management.
+**Player Impact**: Players do not experience Phases 15–16 directly. These phases are "off-stage" infrastructure and AI learning. The Snap crisis is the first major player-facing event after Act 1, representing the catastrophic failure of unplanned expansion and the beginning of true multi-system crisis management.
 
 ## Cross-Reference: Technical Implementation Phases vs Narrative Acts
 
@@ -241,8 +263,9 @@ Phase 15 represents unplanned but inevitable expansion driven by resource advant
 | **Phase 11** (Cycler Logistics Loop) | ⏭️ Future | Run normal Earth-Mars-Venus cycler operations with docking, undocking, and cargo transfer validation | Pre-Act 2 Infrastructure | `phase11+/` — heavy logistics loop validation | ✅ Phase 10 Venus foothold operational<br>⏭️ Requires repeatable multi-world logistics first |
 | **Phase 12** (Optional Branch Expansion) | ⏭️ Future | Split Ceres belt mining and Titan/Saturn branch growth into dedicated logistics theaters if Phase 11 needs to stay focused | Pre-Act 2 Infrastructure | `phase12+/` — optional Ceres and Titan/Saturn branch work | ✅ Phase 11 core logistics loop stable<br>⏭️ Requires spare tug/cycler capacity for parallel expansion |
 | **Phase 13** (Psyche Mining & Mars Terraforming) | ⏭️ Future | Advance to Psyche asteroid mining (planetary core remnant) while initiating Mars atmospheric buildup with Venus/Titan gas exports | Pre-Act 2 Infrastructure | `phase13+/` — Psyche mining/refining and Mars terraforming logistics | ✅ Phase 12 branch patterns established<br>⏭️ Requires repeatable belt-mining and multi-world logistics first |
-| **Phase 14** (AI Manager Operational Independence) | ⏭️ Future | AI Manager takes full control of Sol operations; discovers Eden system and begins expansion attempts | Pre-Act 2 / Act 2 Transition | `phase14+/` — Sol operational management and initial Eden exploration/settlement | ✅ Phase 13 complete, AI Manager trained<br>⏭️ First autonomous operations and expansion decision |
-| **Phase 15** (Unplanned Eden Expansion & Crisis) | ⏭️ Future | Unplanned expansion to Eden accelerates; AI Manager discovers natural wormhole mass limits through operations; Snap crisis triggered | Act 2 Trigger: The Snap | `phase15+/` — Eden infrastructure buildup, cycler operations, wormhole mass-limit discovery | ✅ Phase 14 expansion initiated<br>⏭️ Leads to Snap event and Act 2 crisis gameplay |
+| **Phase 14** (Coordinated Early Terraforming) | ⏭️ Future | Mars + Venus shared terraforming tech tested together (solar shades, atmospheric transfer) | Pre-Act 2 Infrastructure | `phase14+/` — Coordinated Mars-Venus terraforming validation | ✅ Phase 9+10 making progress<br>⏭️ Requires Mars/Venus terraforming initiation first |
+| **Phase 15** (AI Manager Operational Independence) | ⏭️ Future | AI Manager takes full control of Sol operations; discovers Eden system and begins expansion attempts | Pre-Act 2 / Act 2 Transition | `phase15+/` — Sol operational management and initial Eden exploration/settlement | ✅ Phase 14 complete, AI Manager trained<br>⏭️ First autonomous operations and expansion decision |
+| **Phase 16** (Unplanned Eden Expansion & Crisis) | ⏭️ Future | Unplanned expansion to Eden accelerates; AI Manager discovers natural wormhole mass limits through operations; Snap crisis triggered | Act 2 Trigger: The Snap | `phase16+/` — Eden infrastructure buildup, cycler operations, wormhole mass-limit discovery | ✅ Phase 15 expansion initiated<br>⏭️ Leads to Snap event and Act 2 crisis gameplay |
 
 ---
 
@@ -260,7 +283,7 @@ Phase 15 represents unplanned but inevitable expansion driven by resource advant
 
 **What's Live**: System A Phases 1–4 complete — Luna AI Manager making autonomous decisions with working markets  
 **Current Focus**: Phase 5+ calibration work to prove fuel loop viability before expansion begins  
-**Player Impact**: Players do not directly experience Phases 5–13 as immersive gameplay. Instead, these phases establish the training data and infrastructure patterns the AI Manager uses to independently settle Luna and manage the core loop. Once this self-sufficiency triggers the wormhole event, true gameplay and multi-system expansion begin.
+**Player Impact**: Players do not directly experience Phases 5–14 as immersive gameplay. Instead, these phases establish the training data and infrastructure patterns the AI Manager uses to independently settle Luna and manage the core loop. Once this self-sufficiency triggers the wormhole event, true gameplay and multi-system expansion begin.
 
 This phased approach ensures players inherit a **living universe**, not a blank slate. The AI Manager is already making decisions based on real data, markets are active and responsive, and the foundation for multi-system expansion exists — it just needs calibration before we begin expanding beyond Luna.
 
