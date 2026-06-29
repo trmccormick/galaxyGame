@@ -1,5 +1,38 @@
 module AIManager
+  # NOTE: Referred to as "EscalationHandler" in some task files/docs — actual class is EscalationService.
   class EscalationService
+    # Handle a resource shortage handed off from the AI Manager's decision loop.
+    # Accepts a structured action hash (not an Order object) so the AI Manager
+    # can short-circuit when inventory falls below a critical threshold.
+    #
+    # @param action_hash [Hash] Shaped like { type:, material:, deficit:, settlement: }
+    # @param settlement  [Settlement::BaseSettlement] The affected settlement context
+    def self.handle_resource_shortage(action_hash, settlement)
+      material = action_hash[:material] || action_hash['material']
+      deficit  = action_hash[:deficit]  || action_hash['deficit']  || 0
+      shortage_type = action_hash[:type] || action_hash['type']    || 'unknown'
+
+      return nil if material.blank? || settlement.blank?
+
+      # Normalize material to chemical formula (codebase convention)
+      material = normalize_material(material)
+
+      # Price-threshold check using confirmed-real data source
+      bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, material)
+      cost_estimate = bid_price * deficit
+
+      # Check if settlement can fund the emergency purchase
+      if settlement_can_fund_shortage?(settlement, cost_estimate)
+        Rails.logger.info "[EscalationService] Resource shortage: #{material} x#{deficit} " \
+                          "(type: #{shortage_type}) — funding approved, escalating to emergency mission"
+        create_emergency_mission_for_shortage(settlement, material, deficit, bid_price)
+      else
+        Rails.logger.warn "[EscalationService] Resource shortage: #{material} x#{deficit} " \
+                          "(type: #{shortage_type}) — funding insufficient, adding to resupply manifest"
+        add_shortage_to_resupply_manifest(settlement, material, deficit)
+      end
+    end
+
     def self.handle_expired_buy_orders(expired_orders)
       expired_orders.each do |order|
         settlement = order.base_settlement
@@ -22,6 +55,23 @@ module AIManager
       end
     end
     # --- Escalation Sprint Additions ---
+    # Normalize material name to chemical formula (codebase convention)
+    # Display names are for UI only; code uses chemical formulas.
+    def self.normalize_material(material)
+      return material if material.nil?
+      mat = material.to_s.strip.downcase
+      case mat
+      when 'oxygen' then 'O2'
+      when 'water', 'ice' then 'H2O'
+      when 'nitrogen' then 'N2'
+      when 'carbon_dioxide', 'co2' then 'CO2'
+      when 'methane' then 'CH4'
+      when 'ethane' then 'C2H6'
+      when 'hydrocarbons', 'hc' then 'HC'
+      else material.to_s
+      end
+    end
+
     private
 
     def self.humans_present?(settlement)
@@ -59,6 +109,57 @@ module AIManager
     rescue => e
       Rails.logger.error "[EscalationService] GCC check failed: #{e.message}"
       false
+    end
+
+    def self.settlement_can_fund_shortage?(settlement, cost_estimate)
+      gcc_currency = Financial::Currency.find_by(symbol: 'GCC')
+      return false unless gcc_currency
+
+      account = Financial::Account.find_or_create_for_entity_and_currency(
+        accountable_entity: settlement,
+        currency: gcc_currency
+      )
+      account.balance >= cost_estimate
+    rescue => e
+      Rails.logger.error "[EscalationService] Funding check failed: #{e.message}"
+      false
+    end
+
+    def self.create_emergency_mission_for_shortage(settlement, material, deficit, bid_price)
+      # Convert chemical formula back to display-name symbol for EmergencyMissionService.
+      # EmergencyMissionService.qualifies_for_emergency? checks [:oxygen, :water, :food, :medicine]
+      # — all callers use display-name symbols. EscalationService's internal convention is formulas.
+      resource_symbol = formula_to_resource_symbol(material)
+      mission = EmergencyMissionService.create_emergency_mission(settlement, resource_symbol)
+      Rails.logger.info "[EscalationService] Emergency mission created for shortage: " \
+                        "#{material} x#{deficit}, estimated cost #{bid_price * deficit}" if mission
+      mission
+    rescue => e
+      Rails.logger.error "[EscalationService] Failed to create emergency mission: #{e.message}"
+      nil
+    end
+
+    # Map chemical formulas (EscalationService internal convention) back to
+    # display-name symbols that EmergencyMissionService expects.
+    FORMULA_TO_RESOURCE = {
+      'O2' => :oxygen,
+      'H2O' => :water,
+      'N2' => :nitrogen,
+      'CO2' => :carbon_dioxide,
+      'CH4' => :methane,
+      'C2H6' => :ethane,
+      'HC' => :hydrocarbons
+    }.freeze
+
+    def self.formula_to_resource_symbol(formula)
+      FORMULA_TO_RESOURCE.fetch(formula.to_s, formula.to_sym)
+    end
+
+    def self.add_shortage_to_resupply_manifest(settlement, material, deficit)
+      Rails.logger.info "[EscalationService] Adding shortage to resupply manifest: " \
+                        "#{material} x#{deficit} for settlement #{settlement.id}"
+      # TODO: ResupplyManifest.add_shortage(settlement, material, deficit) when model exists
+      nil
     end
 
     def self.emergency_required?(settlement, resource)
@@ -111,11 +212,11 @@ module AIManager
     end
 
     def self.create_automated_harvester(settlement, material, quantity)
-      case material.downcase
-      when 'oxygen'
+      case normalize_material(material)
+      when 'O2'
         operational_data = {
           'task_type' => 'atmospheric_harvesting',
-          'target_material' => 'oxygen',
+          'target_material' => 'O2',
           'target_quantity' => quantity,
           'extraction_rate' => 10, # kg/hour
           'mobility_type' => 'stationary'
@@ -129,10 +230,10 @@ module AIManager
           attachable: settlement,
           operational_data: operational_data
         )
-      when 'water'
+      when 'H2O'
         operational_data = {
           'task_type' => 'ice_extraction',
-          'target_material' => 'water',
+          'target_material' => 'H2O',
           'target_quantity' => quantity,
           'extraction_rate' => 50,
           'mobility_type' => 'wheeled'
@@ -168,7 +269,7 @@ module AIManager
     end
 
     def self.create_manufacturing_unit(settlement, material, quantity)
-      case material.downcase
+      case normalize_material(material)
       when 'iron', 'titanium', 'aluminum'
         operational_data = {
           'task_type' => 'smelting',
@@ -207,13 +308,13 @@ module AIManager
         format_coordinates(lat, lon)
       end
 
-      deployment_data = case material.downcase
-      when 'oxygen'
+      deployment_data = case normalize_material(material)
+      when 'O2'
         {
           'deployment_site' => 'atmospheric_processor',
           'coordinates' => random_coordinates
         }
-      when 'water'
+      when 'H2O'
         {
           'deployment_site' => 'ice_deposit',
           'coordinates' => random_coordinates
@@ -351,10 +452,10 @@ module AIManager
       # See: NPC_INITIAL_DEPLOYMENT_SEQUENCE.md, solar_system_progression.rake
       case celestial_body.name.downcase
       when 'luna'
-        ['oxygen', 'nitrogen', 'methane', 'carbon_dioxide',
-         'ethane', 'hydrocarbons', 'co2', 'n2', 'ch4']
+        ['O2', 'N2', 'CH4', 'CO2',
+         'C2H6', 'hydrocarbons', 'CO2', 'N2', 'CH4']
       when 'mars'
-        ['nitrogen'] # Supplementing for terraforming via HLT
+        ['N2'] # Supplementing for terraforming via HLT
       else
         []
       end
@@ -374,14 +475,14 @@ module AIManager
     def self.can_harvest_locally?(settlement, material)
       # Check if settlement's celestial body has the resource
       celestial_body = settlement.celestial_body
-      case material.downcase
-      when 'oxygen'
+      case normalize_material(material)
+      when 'O2'
         celestial_body.atmosphere&.gases&.any? { |g| g.name == 'O2' }
-      when 'water'
+      when 'H2O'
         hydrosphere_has_water = celestial_body.hydrosphere&.total_liquid_mass&.positive?
         geosphere_has_ice = celestial_body.materials.where(location: 'geosphere').where("name ILIKE ?", "%ice%").exists?
         hydrosphere_has_water || geosphere_has_ice
-      when 'nitrogen'
+      when 'N2'
         celestial_body.atmosphere&.gases&.any? { |g| g.name == 'N2' }
       else
         # Check regolith composition for other materials
@@ -391,7 +492,7 @@ module AIManager
 
     def self.can_manufacture_locally?(settlement, material)
       celestial_body = settlement.celestial_body
-      case material.downcase
+      case normalize_material(material)
       when 'iron', 'titanium', 'aluminum' # metals that can be smelted from regolith
         # Check if regolith is available for smelting
         celestial_body.materials.where(location: 'geosphere', name: 'raw_regolith').exists?

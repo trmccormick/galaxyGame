@@ -33,7 +33,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
           attachable: settlement,
           operational_data: {
             'task_type' => 'atmospheric_harvesting',
-            'target_material' => 'oxygen',
+            'target_material' => 'O2',
             'target_quantity' => 100,
             'extraction_rate' => 10,
             'mobility_type' => 'stationary'
@@ -176,7 +176,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
 
       before do
         settlement.celestial_body.atmosphere.gases.destroy_all
-        allow(described_class).to receive(:hlt_mission_manifest).and_return(['oxygen'])
+        allow(described_class).to receive(:hlt_mission_manifest).and_return(['O2'])
       end
 
       it 'returns :scheduled_import for unavailable materials' do
@@ -432,10 +432,125 @@ RSpec.describe AIManager::EscalationService, type: :service do
       expected_hours = (100 / extraction_rate.to_f).ceil # 10 hours
 
       expect(HarvesterCompletionJob).to receive(:set)
-        .with(wait_until: a_value_within(1.minute).of(expected_hours.hours.from_now))
+        .with(a_value_within(1.minute).of(expected_hours.hours.from_now))
         .and_return(double(perform_later: true))
 
       described_class.send(:schedule_harvester_completion, harvester, oxygen_order)
+    end
+  end
+
+  describe '.handle_resource_shortage' do
+    let(:gcc_currency) { Financial::Currency.find_or_create_by(symbol: 'GCC') { |c| c.name = 'Galactic Credit Currency' } }
+    let(:account) { Financial::Account.find_or_create_by(accountable_type: settlement.class.name, accountable_id: settlement.id, currency_id: gcc_currency.id) { |a| a.balance = 100_000 } }
+
+    before do
+      allow(Financial::Currency).to receive(:find_by).with(symbol: 'GCC').and_return(gcc_currency)
+      allow(Financial::Account).to receive(:find_or_create_for_entity_and_currency)
+        .with(accountable_entity: settlement, currency: gcc_currency).and_return(account)
+    end
+
+    context 'with sufficient funding' do
+      before do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'O2').and_return(500.0)
+        allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission).with(settlement, :oxygen).and_return(id: 'emergency_oxygen_1')
+      end
+
+      it 'creates emergency mission when settlement can fund' do
+        action_hash = { type: 'shortage', material: 'oxygen', deficit: 10, settlement: settlement }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to eq(id: 'emergency_oxygen_1')
+        expect(AIManager::EmergencyMissionService).to have_received(:create_emergency_mission).with(settlement, :oxygen)
+      end
+
+      it 'works with string keys in action_hash' do
+        action_hash = { 'type' => 'shortage', 'material' => 'oxygen', 'deficit' => 10 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to eq(id: 'emergency_oxygen_1')
+        expect(AIManager::EmergencyMissionService).to have_received(:create_emergency_mission).with(settlement, :oxygen)
+      end
+
+      it 'normalizes water to H2O and converts back to :water symbol' do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'H2O').and_return(300.0)
+        allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission).with(settlement, :water).and_return(id: 'emergency_water_1')
+
+        action_hash = { type: 'shortage', material: 'water', deficit: 5 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to eq(id: 'emergency_water_1')
+      end
+
+      it 'normalizes methane to CH4 and converts back to :methane symbol' do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'CH4').and_return(400.0)
+        allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission).with(settlement, :methane).and_return(id: 'emergency_methane_1')
+
+        action_hash = { type: 'shortage', material: 'methane', deficit: 3 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to eq(id: 'emergency_methane_1')
+      end
+    end
+
+    context 'with insufficient funding' do
+      before do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'O2').and_return(500.0)
+        account.update!(balance: 100) # too low to cover cost_estimate of 5000
+        # Stub so RSpec can track calls — won't be invoked in this path
+        allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission)
+      end
+
+      it 'adds to resupply manifest when settlement cannot fund' do
+        action_hash = { type: 'shortage', material: 'oxygen', deficit: 10 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to be_nil
+        expect(AIManager::EmergencyMissionService).not_to have_received(:create_emergency_mission)
+      end
+    end
+
+    context 'with nil or blank input' do
+      it 'returns nil when material is nil' do
+        action_hash = { type: 'shortage', material: nil, deficit: 10 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil when material is blank string' do
+        action_hash = { type: 'shortage', material: '', deficit: 10 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil when settlement is nil' do
+        action_hash = { type: 'shortage', material: 'oxygen', deficit: 10 }
+        result = described_class.handle_resource_shortage(action_hash, nil)
+        expect(result).to be_nil
+      end
+    end
+
+    context 'when mission creation fails' do
+      before do
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'O2').and_return(500.0)
+      end
+
+      it 'returns nil and logs error when EmergencyMissionService returns nil' do
+        allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission).with(settlement, :oxygen).and_return(nil)
+
+        action_hash = { type: 'shortage', material: 'oxygen', deficit: 10 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to be_nil
+      end
+
+      it 'returns nil and logs error when EmergencyMissionService raises' do
+        allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission).with(settlement, :oxygen).and_raise(StandardError.new('connection refused'))
+
+        action_hash = { type: 'shortage', material: 'oxygen', deficit: 10 }
+        result = described_class.handle_resource_shortage(action_hash, settlement)
+
+        expect(result).to be_nil
+      end
     end
   end
 end

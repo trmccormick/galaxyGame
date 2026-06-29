@@ -258,6 +258,8 @@ module AIManager
         transfer_resource_from_effect(effect)
       when 'manufacture'
         manufacture_from_effect(effect)
+      when 'advance_deployment_stages'
+        advance_deployment_stages_from_effect(effect)
       else
         puts "  → Unknown effect action: #{effect['action']} (skipping)"
         true
