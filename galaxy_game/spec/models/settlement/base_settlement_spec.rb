@@ -234,6 +234,20 @@ RSpec.describe Settlement::BaseSettlement, type: :model do
   end
 
   # --- DELEGATION & OTHER LOGIC ---
+
+  describe '#gcc_account' do
+    it 'returns the settlement GCC account' do
+      gcc_currency = Financial::Currency.find_by!(symbol: 'GCC')
+      expect(base_settlement.gcc_account.currency).to eq(gcc_currency)
+    end
+
+    it 'auto-creates GCC account if missing' do
+      # Remove existing GCC account
+      gcc_currency = Financial::Currency.find_by(symbol: 'GCC')
+      Financial::Account.where(accountable: base_settlement, currency: gcc_currency).delete_all
+      expect { base_settlement.gcc_account }.to change { base_settlement.accounts.count }.by(1)
+    end
+  end
   describe 'celestial body delegation' do
     it 'delegates celestial_body to location' do
       expect(base_settlement.celestial_body).to eq(celestial_body)

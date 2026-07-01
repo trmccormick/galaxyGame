@@ -15,7 +15,7 @@ RSpec.describe ExtractionService, type: :service do
   before do
     allow(settlement).to receive(:location).and_return(location)
     allow(location).to receive(:celestial_body).and_return(celestial_body)
-    allow(settlement).to receive(:account).and_return(account)
+    allow(settlement).to receive(:gcc_account).and_return(account)
     allow(settlement).to receive(:id).and_return(1)
     allow(Structures::BaseStructure).to receive(:where).with(settlement_id: 1).and_return(structures)
     allow(AIManager::PriorityHeuristic).to receive(:new).with(settlement).and_return(priority_heuristic)

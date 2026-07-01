@@ -87,7 +87,7 @@ module AIManager
     end
 
     def self.settlement_funds(settlement)
-      [settlement.account&.balance || 0, 0].max
+      [settlement.gcc_account&.balance || 0, 0].max
     end
 
     def self.corporate_debt_level(corporation)

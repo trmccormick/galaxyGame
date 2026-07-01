@@ -6,7 +6,7 @@ class CraterDomeConstructionService
     @service_provider = service_provider || entity  # Default to self-construction
     @layer_type = layer_type
     @settlement = get_current_settlement
-    @currency = currency || (@settlement&.account&.currency)
+    @currency = currency || (Financial::Currency.find_by(symbol: 'GCC'))
   end
 
   def construct

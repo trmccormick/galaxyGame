@@ -41,7 +41,7 @@ module Settlement
     end
 
     def gcc_account
-      accounts.find_by(
+      accounts.find_or_create_by(
         currency: Financial::Currency.find_by(symbol: 'GCC')
       )
     end

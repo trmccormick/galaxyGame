@@ -418,10 +418,5 @@ module Settlement
       end
     end
 
-    # Returns the GCC account for this settlement, creating it if needed
-    public
-      def gcc_account
-        accounts.find_or_create_by(currency: Financial::Currency.find_by(symbol: 'GCC'))
-      end
-    end
   end
+end

@@ -808,11 +808,11 @@ require_relative 'scout_logic'
     end
 
     def outstanding_debt
-      settlement.account&.balance&.negative? ? settlement.account.balance.abs : 0
+      settlement.gcc_account&.balance&.negative? ? settlement.gcc_account.balance.abs : 0
     end
 
     def settlement_funds
-      [settlement.account&.balance || 0, 0].max
+      [settlement.gcc_account&.balance || 0, 0].max
     end
 
     def corporate_debt_level

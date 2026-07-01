@@ -14,11 +14,11 @@ class ExtractionService
     total_energy_cost = amount_needed * energy_cost_per_kg
 
     # Check if settlement has enough energy
-    available_energy = settlement.account&.balance || 0
+    available_energy = settlement.gcc_account&.balance || 0
     return false if available_energy < total_energy_cost
 
     # Deduct energy cost
-    settlement.account.update!(balance: available_energy - total_energy_cost)
+    settlement.gcc_account.update!(balance: available_energy - total_energy_cost)
 
     # Add Argon to gas_storage
     structures = Structures::BaseStructure.where(settlement_id: settlement.id)
