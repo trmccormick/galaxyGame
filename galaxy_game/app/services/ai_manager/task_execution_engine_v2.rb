@@ -237,8 +237,89 @@ module AIManager
     end
 
     # ============================================================================
+        # ============================================================================
     # EFFECT EXECUTION SYSTEM
     # ============================================================================
+
+    # Price threshold for import requests — TODO: calibrate against Luna simulation testing
+    IMPORT_PRICE_THRESHOLD = 50.0
+
+    class << self
+      # Execute resource acquisition via TaskExecutionEngineV2
+      # @param engine [TaskExecutionEngineV2] the engine instance (or nil to create one)
+      # @param settlement [Settlement::BaseSettlement] the target settlement
+      # @param action [Hash] the action hash from StrategySelector
+      # @return [Boolean] true if all resources were acquired, false otherwise
+      def execute_resource_task(engine, settlement, action)
+        engine ||= TaskExecutionEngineV2.new(
+          settlement.location&.celestial_body || settlement,
+          {}
+        )
+
+        resources = action[:resources] || []
+        return false if resources.empty?
+
+        success_count = 0
+
+        resources.each do |resource_name|
+          # Check price threshold before requesting import
+          bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, resource_name)
+          
+          if bid_price > IMPORT_PRICE_THRESHOLD
+            Rails.logger.warn "[TaskExecutionEngineV2] Skipping #{resource_name} — bid price #{bid_price} GCC exceeds threshold #{IMPORT_PRICE_THRESHOLD} GCC"
+            next
+          end
+
+          # Delegate to ServiceCoordinator for actual import logistics
+          result = engine.request_import(settlement, resource_name)
+          success_count += 1 if result
+        end
+
+        success_count > 0
+      end
+    end
+
+    def request_import(settlement, resource_name)
+      Rails.logger.info "[TaskExecutionEngineV2] Requesting import of #{resource_name} for #{settlement.name}"
+      
+      # Delegate to ServiceCoordinator's existing import logic
+      result = AIManager::ServiceCoordinator.detect_and_request_imports(settlement)
+      
+      if result && result[:imports_requested]
+        Rails.logger.info "[TaskExecutionEngineV2] Import request successful for #{resource_name}"
+        true
+      else
+        Rails.logger.warn "[TaskExecutionEngineV2] Import request failed for #{resource_name}"
+        false
+      end
+    end
+
+    def request_import_from_effect(effect)
+      resource = effect['resource'] || effect['material']
+      quantity = effect['quantity'] || 100
+      settlement = @settlement
+      
+      return false unless settlement
+      
+      # Check price threshold before requesting import
+      bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, resource)
+      
+      if bid_price > IMPORT_PRICE_THRESHOLD
+        Rails.logger.warn "[TaskExecutionEngineV2] Import skipped — #{resource} bid price #{bid_price} GCC exceeds threshold #{IMPORT_PRICE_THRESHOLD} GCC"
+        return false
+      end
+      
+      # Delegate to ServiceCoordinator for actual import logistics
+      result = AIManager::ServiceCoordinator.detect_and_request_imports(settlement)
+      
+      if result && result[:imports_requested]
+        Rails.logger.info "[TaskExecutionEngineV2] Import request successful for #{resource} (#{quantity} units)"
+        true
+      else
+        Rails.logger.warn "[TaskExecutionEngineV2] Import request failed for #{resource}"
+        false
+      end
+    end
 
     def execute_effect(effect)
       case effect['action']
@@ -260,6 +341,8 @@ module AIManager
         manufacture_from_effect(effect)
       when 'advance_deployment_stages'
         advance_deployment_stages_from_effect(effect)
+      when 'request_import'
+        request_import_from_effect(effect)
       else
         puts "  → Unknown effect action: #{effect['action']} (skipping)"
         true

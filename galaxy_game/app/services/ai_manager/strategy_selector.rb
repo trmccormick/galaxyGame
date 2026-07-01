@@ -55,7 +55,7 @@ module AIManager
     def execute_action(action, settlement)
       case action[:type]
       when :resource_acquisition
-        execute_resource_acquisition(action, settlement)
+        execute_via_task_engine(action, settlement)
       when :system_scouting
         execute_system_scouting(action, settlement)
       when :settlement_expansion
@@ -276,6 +276,16 @@ module AIManager
     #   production comes online first; methane reserves built via resupply manifests until local 
     #   fuel production is validated.
     # === END LIMITATIONS ===
+
+    # Execute resource acquisition through TaskExecutionEngineV2 (full cutover from legacy path)
+    def execute_via_task_engine(action, settlement)
+      engine = AIManager::TaskExecutionEngineV2.new(
+        settlement.location&.celestial_body || settlement,
+        {}
+      )
+      
+      AIManager::TaskExecutionEngineV2.execute_resource_task(engine, settlement, action)
+    end
 
     def execute_cost_reduction(action, settlement)
       # Call ShortageDetector to get real shortage quantities (Phase 3 integration)
