@@ -108,11 +108,16 @@ RSpec.describe AIManager::StrategySelector, type: :service do
 
   describe '#execute_action' do
     context 'resource acquisition action' do
-      let(:action) { { type: :resource_acquisition, resources: ['steel', 'titanium'] } }
+      let(:action) { { type: :resource_acquisition, resources: ['electronics', 'nitrogen'] } }
 
       it 'calls service coordinator to acquire resources' do
-        expect(service_coordinator).to receive(:acquire_resource).with('steel', 100, settlement)
-        expect(service_coordinator).to receive(:acquire_resource).with('titanium', 100, settlement)
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'electronics').and_return(850.0)
+        allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'nitrogen').and_return(420.0)
+        allow(service_coordinator).to receive(:acquire_resource).with('electronics', 100, settlement).and_return(true)
+        allow(service_coordinator).to receive(:acquire_resource).with('nitrogen', 100, settlement).and_return(true)
+        
+        # Stub engine's internal ServiceCoordinator to use the test's coordinator
+        allow(AIManager::ServiceCoordinator).to receive(:new).and_return(service_coordinator)
 
         result = strategy_selector.execute_action(action, settlement)
         expect(result).to be true

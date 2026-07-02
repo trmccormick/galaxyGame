@@ -237,12 +237,8 @@ module AIManager
     end
 
     # ============================================================================
-        # ============================================================================
     # EFFECT EXECUTION SYSTEM
     # ============================================================================
-
-    # Price threshold for import requests — TODO: calibrate against Luna simulation testing
-    IMPORT_PRICE_THRESHOLD = 50.0
 
     class << self
       # Execute resource acquisition via TaskExecutionEngineV2
@@ -262,13 +258,15 @@ module AIManager
         success_count = 0
 
         resources.each do |resource_name|
-          # Check price threshold before requesting import
+          # Use real pricing data — no magic threshold
           bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, resource_name)
           
-          if bid_price > IMPORT_PRICE_THRESHOLD
-            Rails.logger.warn "[TaskExecutionEngineV2] Skipping #{resource_name} — bid price #{bid_price} GCC exceeds threshold #{IMPORT_PRICE_THRESHOLD} GCC"
+          if bid_price.nil? || bid_price.zero?
+            Rails.logger.warn "[TaskExecutionEngineV2] No valid price for #{resource_name} — skipping import"
             next
           end
+
+          Rails.logger.info "[TaskExecutionEngineV2] Importing #{resource_name} at #{bid_price.round(2)} GCC/kg (real pricing)"
 
           # Delegate to ServiceCoordinator for actual import logistics
           result = engine.request_import(settlement, resource_name)
@@ -279,13 +277,26 @@ module AIManager
       end
     end
 
+    public
+
     def request_import(settlement, resource_name)
       Rails.logger.info "[TaskExecutionEngineV2] Requesting import of #{resource_name} for #{settlement.name}"
       
-      # Delegate to ServiceCoordinator's existing import logic
-      result = AIManager::ServiceCoordinator.detect_and_request_imports(settlement)
+      # PriceHistory location awareness deferred — requires settlement_id migration on market_price_histories
+      bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, resource_name)
       
-      if result && result[:imports_requested]
+      if bid_price.nil? || bid_price.zero?
+        Rails.logger.warn "[TaskExecutionEngineV2] No valid price for #{resource_name} — import aborted"
+        return false
+      end
+
+      Rails.logger.info "[TaskExecutionEngineV2] Import price for #{resource_name}: #{bid_price.round(2)} GCC/kg"
+
+      # Delegate to ServiceCoordinator for actual import logistics
+      coordinator = AIManager::ServiceCoordinator.new(@shared_context)
+      result = coordinator.acquire_resource(resource_name, 100, settlement)
+      
+      if result
         Rails.logger.info "[TaskExecutionEngineV2] Import request successful for #{resource_name}"
         true
       else
@@ -301,18 +312,21 @@ module AIManager
       
       return false unless settlement
       
-      # Check price threshold before requesting import
+      # PriceHistory location awareness deferred — requires settlement_id migration on market_price_histories
       bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, resource)
       
-      if bid_price > IMPORT_PRICE_THRESHOLD
-        Rails.logger.warn "[TaskExecutionEngineV2] Import skipped — #{resource} bid price #{bid_price} GCC exceeds threshold #{IMPORT_PRICE_THRESHOLD} GCC"
+      if bid_price.nil? || bid_price.zero?
+        Rails.logger.warn "[TaskExecutionEngineV2] No valid price for #{resource} — import aborted"
         return false
       end
+
+      Rails.logger.info "[TaskExecutionEngineV2] Import price for #{resource}: #{bid_price.round(2)} GCC/kg"
       
       # Delegate to ServiceCoordinator for actual import logistics
-      result = AIManager::ServiceCoordinator.detect_and_request_imports(settlement)
+      coordinator = AIManager::ServiceCoordinator.new(@shared_context)
+      result = coordinator.acquire_resource(resource, quantity, settlement)
       
-      if result && result[:imports_requested]
+      if result
         Rails.logger.info "[TaskExecutionEngineV2] Import request successful for #{resource} (#{quantity} units)"
         true
       else
