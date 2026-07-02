@@ -110,4 +110,145 @@ RSpec.describe AIManager::TaskExecutionEngineV2, type: :service do
       expect(result).to be true
     end
   end
+
+  describe '#register_to_bus_from_effect' do
+    let(:hub) { create(:planetary_umbilical_hub, attachable: settlement, owner: settlement) }
+    let(:effect) { { 'unit' => 'Gas Separator', 'hub' => 'Planetary Umbilical Hub', 'port_type' => 'input', 'hub_port' => 'volatiles_processing' } }
+
+    it 'returns false when no settlement is set' do
+      engine.instance_variable_set(:@settlement, nil)
+      result = engine.register_to_bus_from_effect(effect)
+      expect(result).to be true  # early return true for nil settlement
+    end
+
+    it 'raises error when unit is not deployed' do
+      engine.instance_variable_set(:@settlement, settlement)
+      expect { engine.register_to_bus_from_effect(effect) }.to raise_error(AIManager::InfrastructureSequenceError, /Gas Separator.*not deployed/)
+    end
+
+    it 'raises error when hub is not deployed' do
+      unit_double = instance_double('Units::BaseUnit', name: 'Gas Separator', unit_type: 'gas_separator_unit')
+      allow(settlement.units).to receive(:find_by).with(name: 'Gas Separator').and_return(unit_double)
+      
+      allow(settlement.units).to receive(:find_by).with(name: 'Planetary Umbilical Hub').and_return(nil)
+      allow(settlement.units).to receive(:where).with("name LIKE ?", "Planetary Umbilical Hub%").and_return([])
+      
+      engine.instance_variable_set(:@settlement, settlement)
+      expect { engine.register_to_bus_from_effect(effect) }.to raise_error(AIManager::InfrastructureSequenceError, /Planetary Umbilical Hub.*not deployed/)
+    end
+
+    it 'registers unit port with hub routing table' do
+      # Create a mock unit with operational_data stubbed
+      unit = instance_double('Units::BaseUnit', name: 'Gas Separator', unit_type: 'gas_separator_unit')
+      allow(unit).to receive(:operational_data).and_return({})
+      allow(unit).to receive(:update!)
+      
+      allow(settlement.units).to receive(:find_by).with(name: 'Gas Separator').and_return(unit)
+      
+      hub_mock = instance_double('Units::BaseUnit', name: 'Planetary Umbilical Hub', unit_type: 'planetary_umbilical_hub')
+      allow(hub_mock).to receive(:operational_data).and_return({ 'bus_routing_table' => { registered_units: [], routing_rules: [] } })
+      allow(hub_mock).to receive(:update!)
+      
+      allow(settlement.units).to receive(:find_by).with(name: 'Planetary Umbilical Hub').and_return(hub_mock)
+      
+      # Mock LegacyPortAdapter to return non-zero ports so registration succeeds
+      adapter_double = instance_double('Lookup::LegacyPortAdapter')
+      allow(adapter_double).to receive(:resolve_port_schema).with('gas_separator_unit').and_return({
+        schema_version: 'legacy_flat',
+        ports_hash: { input: 1 },
+        connection_schema: nil
+      })
+      allow(Lookup::LegacyPortAdapter).to receive(:new).and_return(adapter_double)
+      
+      engine.instance_variable_set(:@settlement, settlement)
+      result = engine.register_to_bus_from_effect(effect)
+      
+      expect(result).to be true
+    end
+
+    it 'handles multi-port registration' do
+      multi_port_effect = {
+        'unit' => 'Gas Separator',
+        'hub' => 'Planetary Umbilical Hub',
+        'ports' => [
+          { 'port_type' => 'input', 'hub_port' => 'volatiles_processing' },
+          { 'port_type' => 'hydrogen_output', 'hub_port' => 'cryo_grid_h2' }
+        ]
+      }
+      
+      unit = instance_double('Units::BaseUnit', name: 'Gas Separator', unit_type: 'gas_separator_unit')
+      allow(unit).to receive(:operational_data).and_return({})
+      allow(unit).to receive(:update!)
+      
+      allow(settlement.units).to receive(:find_by).with(name: 'Gas Separator').and_return(unit)
+      
+      hub_mock = instance_double('Units::BaseUnit', name: 'Planetary Umbilical Hub', unit_type: 'planetary_umbilical_hub')
+      allow(hub_mock).to receive(:operational_data).and_return({ 'bus_routing_table' => { registered_units: [], routing_rules: [] } })
+      allow(hub_mock).to receive(:update!)
+      
+      allow(settlement.units).to receive(:find_by).with(name: 'Planetary Umbilical Hub').and_return(hub_mock)
+      
+      # Mock LegacyPortAdapter to return non-zero ports so registration succeeds
+      adapter_double = instance_double('Lookup::LegacyPortAdapter')
+      allow(adapter_double).to receive(:resolve_port_schema).with('gas_separator_unit').and_return({
+        schema_version: 'legacy_flat',
+        ports_hash: { input: 1, hydrogen_output: 1 },
+        connection_schema: nil
+      })
+      allow(Lookup::LegacyPortAdapter).to receive(:new).and_return(adapter_double)
+      
+      engine.instance_variable_set(:@settlement, settlement)
+      result = engine.register_to_bus_from_effect(multi_port_effect)
+      
+      expect(result).to be true
+    end
+
+    it 'rejects non-hub units as bus targets' do
+      unit = instance_double('Units::BaseUnit', name: 'Gas Separator', unit_type: 'gas_separator_unit')
+      allow(settlement.units).to receive(:find_by).with(name: 'Gas Separator').and_return(unit)
+      
+      non_hub = instance_double('Units::BaseUnit', name: 'Cryo Tank', unit_type: 'inflatable_cryo_tank')
+      allow(settlement.units).to receive(:find_by).with(name: 'Planetary Umbilical Hub').and_return(nil)
+      allow(settlement.units).to receive(:where).with("name LIKE ?", "Planetary Umbilical Hub%").and_return([non_hub])
+      
+      engine.instance_variable_set(:@settlement, settlement)
+      expect { engine.register_to_bus_from_effect(effect) }.to raise_error(AIManager::InfrastructureSequenceError, /not a valid hub/)
+    end
+  end
+
+  describe '#register_bus_routing_rules' do
+    let(:hub_mock) { instance_double('Units::BaseUnit', name: 'Planetary Umbilical Hub', unit_type: 'planetary_umbilical_hub') }
+
+    before do
+      allow(settlement.units).to receive(:find_by).with(name: 'Planetary Umbilical Hub').and_return(hub_mock)
+    end
+
+    it 'registers downstream routing rules on the hub' do
+      output_ports = [
+        { 'from_port' => 'hydrogen_output', 'to_hub_port' => 'cryo_grid_h2', 'formula' => 'H2' },
+        { 'from_port' => 'oxygen_output', 'to_hub_port' => 'cryo_grid_o2', 'formula' => 'O2' }
+      ]
+      
+      allow(hub_mock).to receive(:operational_data).and_return({ 'bus_routing_table' => { registered_units: [], routing_rules: [] } })
+      allow(hub_mock).to receive(:update!)
+      
+      engine.instance_variable_set(:@settlement, settlement)
+      result = engine.register_bus_routing_rules('Gas Separator', 'Planetary Umbilical Hub', output_ports)
+      
+      expect(result).to be true
+    end
+
+    it 'does not duplicate existing routing rules' do
+      hub_op = { 'bus_routing_table' => { registered_units: [], routing_rules: [{ from_hub_port: 'hydrogen_output', to_hub_port: 'cryo_grid_h2', formula: 'H2' }] } }
+      allow(hub_mock).to receive(:operational_data).and_return(hub_op)
+      allow(hub_mock).to receive(:update!)
+      
+      engine.instance_variable_set(:@settlement, settlement)
+      result = engine.register_bus_routing_rules('Gas Separator', 'Planetary Umbilical Hub', [
+        { 'from_port' => 'hydrogen_output', 'to_hub_port' => 'cryo_grid_h2', 'formula' => 'H2' }
+      ])
+      
+      expect(result).to be true
+    end
+  end
 end

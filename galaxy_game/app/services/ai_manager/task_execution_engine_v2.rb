@@ -357,6 +357,8 @@ module AIManager
         advance_deployment_stages_from_effect(effect)
       when 'request_import'
         request_import_from_effect(effect)
+      when 'register_to_bus'
+        register_to_bus_from_effect(effect)
       else
         puts "  → Unknown effect action: #{effect['action']} (skipping)"
         true
@@ -560,6 +562,144 @@ module AIManager
       op[port_category.to_sym][:used] = used_ports + 1
       unit.update!(operational_data: op)
       
+      true
+    end
+
+    def register_to_bus_from_effect(effect)
+      return true unless @settlement
+      
+      unit_name = effect['unit']
+      hub_name = effect['hub']
+      
+      # Verify both units exist and are deployed
+      unit = @settlement.units.find_by(name: unit_name) || @settlement.units.where("name LIKE ?", "#{unit_name}%").first
+      unless unit
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot register to bus: unit '#{unit_name}' is not deployed at settlement #{@settlement.name}"
+        )
+      end
+      
+      hub = @settlement.units.find_by(name: hub_name) || @settlement.units.where("name LIKE ?", "#{hub_name}%").first
+      unless hub
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot register to bus: hub '#{hub_name}' is not deployed at settlement #{@settlement.name}"
+        )
+      end
+      
+      # Verify hub is a valid bus-type unit (planetary_umbilical_hub or similar)
+      unless hub.unit_type.to_s.downcase.include?('umbilical') || hub.unit_type.to_s.downcase.include?('hub')
+        raise AIManager::InfrastructureSequenceError.new(
+          "Cannot register to bus: '#{hub_name}' is not a valid hub/bus unit"
+        )
+      end
+      
+      # Initialize hub routing table if it doesn't exist
+      hub_op = hub.operational_data || {}
+      hub_op['bus_routing_table'] ||= { registered_units: [], routing_rules: [] }
+      
+      # Handle single-port or multi-port registration
+      ports_to_register = effect['ports'] || [{ port_type: effect['port_type'], hub_port: effect['hub_port'] }]
+      
+      ports_to_register.each do |port_def|
+        port_type = port_def['port_type'] || port_def[:port_type]
+        hub_port = port_def['hub_port'] || port_def[:hub_port]
+        
+        # Resolve available ports for this unit using LegacyPortAdapter
+        adapter = Lookup::LegacyPortAdapter.new
+        resolved = adapter.resolve_port_schema(unit.unit_type)
+        
+        # Check available capacity on the unit side
+        total_ports = resolved[:ports_hash][port_type.to_sym] || 
+                      resolved[:ports_hash][port_type.to_s] || 0
+        
+        if total_ports == 0 && resolved[:schema_version] == 'v1.9'
+          schema = resolved[:connection_schema]
+          case port_type.to_s
+          when 'storage_ports'
+            total_ports = Array(schema['storage_bays'] || []).size
+          when 'internal_unit_ports', 'external_unit_ports'
+            total_ports = Array(schema['mounting_slots'] || []).size
+          else
+            total_ports = Array(schema['utility_ports'] || []).size
+          end
+        end
+        
+        # Check used ports on the unit
+        op = unit.operational_data || {}
+        used_ports = op.dig(port_type.to_sym, :used) || op.dig(port_type, :used) || 0
+        available = total_ports - used_ports
+        
+        unless available > 0
+          Rails.logger.warn "[register_to_bus] Unit '#{unit_name}' has no available #{port_type} ports (#{available} of #{total_ports} free)"
+          next
+        end
+        
+        # Decrement unit port capacity
+        op[port_type.to_sym] ||= {}
+        op[port_type.to_sym][:used] = used_ports + 1
+        unit.update!(operational_data: op)
+        
+        # Register with hub routing table (inside the each loop so port_type is in scope)
+        registered_units = hub_op['bus_routing_table']['registered_units'] || []
+        existing_reg = registered_units.find { |r| r['unit_name'] == unit_name }
+        
+        if existing_reg
+          # Update existing registration — add port to it
+          existing_ports = Array(existing_reg['ports'])
+          existing_ports << { port_type: port_type, hub_port: hub_port, direction: 'in' }
+          existing_reg['ports'] = existing_ports
+        else
+          # New registration
+          registered_units << {
+            unit_name: unit_name,
+            unit_type: unit.unit_type,
+            ports: [{ port_type: port_type, hub_port: hub_port, direction: 'in' }]
+          }
+        end
+        
+        hub_op['bus_routing_table']['registered_units'] = registered_units
+        hub.update!(operational_data: hub_op)
+        
+        puts "  ✓ Registered #{unit_name}:#{port_type} → #{hub_name}:#{hub_port}"
+      end
+      
+      true
+    end
+    
+    # Register downstream routing rules for a unit's output ports to hub utility ports
+    def register_bus_routing_rules(unit_name, hub_name, output_ports)
+      return true unless @settlement
+      
+      hub = @settlement.units.find_by(name: hub_name) || @settlement.units.where("name LIKE ?", "#{hub_name}%").first
+      return true unless hub
+      
+      hub_op = hub.operational_data || {}
+      routing_table = hub_op['bus_routing_table'] ||= { registered_units: [], routing_rules: [] }
+      
+      # Ensure routing_rules is always an array (defensive against nil)
+      routing_table['routing_rules'] = Array(routing_table['routing_rules'])
+      
+      output_ports.each do |port_def|
+        from_port = port_def['from_port'] || port_def[:from_port]
+        to_hub_port = port_def['to_hub_port'] || port_def[:to_hub_port]
+        formula = port_def['formula'] || port_def[:formula]
+        
+        # Check if this routing rule already exists
+        existing_rule = routing_table['routing_rules'].find { |r| r['from_hub_port'] == from_port && r['to_hub_port'] == to_hub_port }
+        next if existing_rule
+        
+        routing_table['routing_rules'] << {
+          from_unit: unit_name,
+          from_hub_port: from_port,
+          to_hub_port: to_hub_port,
+          formula: formula
+        }
+      end
+      
+      hub_op['bus_routing_table'] = routing_table
+      hub.update!(operational_data: hub_op)
+      
+      puts "  ✓ Registered bus routing rules for #{unit_name} on #{hub_name}"
       true
     end
 
