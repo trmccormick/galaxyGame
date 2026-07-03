@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "template": "generic_repeatable_task",
+    "description": "Deploy a Sabatier Reactor unit and connect it to the local hub bus for CH4 production from CO2 and H2 inputs. Enables any ISRU-capable body to produce methane fuel locally.",
+    "intended_usage": "Mid-game infrastructure task on any body with CO2 and H2 supply. Deploys reactor and wires all gas routing through the hub bus.",
+    "author": "Claude (Session Strategist)",
+    "date_created": "2026-07-01"
+  },
+  "tasks": [
+    {
+      "task_id": "deploy_sabatier_reactor",
+      "name": "Deploy Sabatier Reactor",
+      "description": "Deploy the Sabatier Reactor unit and connect it to the local hub bus. The reactor processes CO2 and H2 inputs to produce CH4 fuel with H2O byproduct recycled back to the electrolysis loop via hub bus routing.",
+      "priority": 6,
+      "preconditions": [
+        { "type": "unit_state", "unit": "Hub Bus", "state": "ready" },
+        { "type": "resource_available", "resource": "carbon_dioxide", "amount_kg": 100 },
+        { "type": "resource_available", "resource": "hydrogen", "amount_kg": 20 }
+      ],
+      "effects": [
+        { "action": "deploy_unit", "unit": "Sabatier Reactor", "count": 1 },
+        {
+          "action": "register_to_bus",
+          "unit": "Sabatier Reactor",
+          "hub": "Hub Bus",
+          "ports": [
+            { "port_type": "co2_input", "hub_port": "cryo_grid_co2", "direction": "in" },
+            { "port_type": "h2_input", "hub_port": "cryo_grid_h2", "direction": "in" },
+            { "port_type": "ch4_output", "hub_port": "cryo_grid_methane", "direction": "out" },
+            { "port_type": "water_output", "hub_port": "cryo_grid_water", "direction": "out" }
+          ]
+        },
+        { "action": "set_unit_state", "unit": "Sabatier Reactor", "state": "ready" }
+      ],
+      "completion_criteria": { "type": "unit_state", "unit": "Sabatier Reactor", "state": "ready" }
+    }
+  ]
+}
