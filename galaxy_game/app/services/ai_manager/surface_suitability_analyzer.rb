@@ -274,7 +274,7 @@ module AIManager
           end
         end
       else
-        { "concentration" => cell_num }
+        { "concentration" => cell.to_f }
       end
     end
 
