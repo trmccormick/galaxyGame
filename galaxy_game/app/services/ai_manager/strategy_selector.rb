@@ -70,9 +70,7 @@ module AIManager
       end
     end
 
-    private
-
-    def find_source_settlement
+    # Execute resource acquisition through TaskExecutionEngineV2 (full cutover from legacy path)
       Settlement::BaseSettlement.find_by(name: 'Cape Canaveral Spaceport')
     end
 
