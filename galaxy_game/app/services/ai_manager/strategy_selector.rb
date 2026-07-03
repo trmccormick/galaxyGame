@@ -70,7 +70,8 @@ module AIManager
       end
     end
 
-    # Execute resource acquisition through TaskExecutionEngineV2 (full cutover from legacy path)
+    # Find the source settlement for Earth imports (Cape Canaveral)
+    def find_source_settlement
       Settlement::BaseSettlement.find_by(name: 'Cape Canaveral Spaceport')
     end
 
