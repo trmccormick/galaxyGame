@@ -145,7 +145,7 @@ RSpec.describe AIManager::SurfaceSuitabilityAnalyzer do
         celestial_body.update!(gravity: 1.62)
         # Atmosphere is an association, not a string column
         if celestial_body.atmosphere
-          celestial_body.atmosphere.update!(name: "thin")
+          celestial_body.atmosphere.update!(pressure: 0.006, temperature: 210.0)
         end
       end
 
