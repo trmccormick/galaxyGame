@@ -432,7 +432,7 @@ RSpec.describe AIManager::EscalationService, type: :service do
       expected_hours = (100 / extraction_rate.to_f).ceil # 10 hours
 
       expect(HarvesterCompletionJob).to receive(:set)
-        .with(a_value_within(1.minute).of(expected_hours.hours.from_now))
+        .with(hash_including(wait_until: a_value_within(1.minute).of(expected_hours.hours.from_now)))
         .and_return(double(perform_later: true))
 
       described_class.send(:schedule_harvester_completion, harvester, oxygen_order)
