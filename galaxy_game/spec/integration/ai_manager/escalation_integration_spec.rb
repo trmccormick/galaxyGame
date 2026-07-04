@@ -208,7 +208,7 @@ end
       harvester = Units::Robot.last
       expect(harvester.name).to eq("Automated Oxygen Harvester")
       expect(harvester.operational_data['task_type']).to eq('atmospheric_harvesting')
-      expect(harvester.operational_data['target_material']).to eq('oxygen')
+      expect(harvester.operational_data['target_material']).to eq('O2')
       expect(harvester.operational_data['extraction_rate']).to eq(10)
       expect(harvester.operational_data['deployment_site']).to eq('atmospheric_processor')
     end
@@ -220,7 +220,7 @@ end
       harvester = Units::Robot.last
       expect(harvester.name).to eq("Automated Water Extractor")
       expect(harvester.operational_data['task_type']).to eq('ice_extraction')
-      expect(harvester.operational_data['target_material']).to eq('water')
+      expect(harvester.operational_data['target_material']).to eq('H2O')
       expect(harvester.operational_data['extraction_rate']).to eq(50)
       expect(harvester.operational_data['deployment_site']).to eq('ice_deposit')
     end
