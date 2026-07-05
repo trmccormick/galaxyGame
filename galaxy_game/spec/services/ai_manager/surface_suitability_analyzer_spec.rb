@@ -16,7 +16,7 @@ RSpec.describe AIManager::SurfaceSuitabilityAnalyzer do
     let(:geosphere) { create(:geosphere, celestial_body: celestial_body) }
     let(:terrain_map_data) do
       {
-        "elevation" => [[0.0, 10.0, 20.0], [5.0, 15.0, 25.0], [10.0, 20.0, 30.0]],
+        "elevation" => [[15.0, 15.0, 15.0], [15.0, 15.0, 15.0], [15.0, 15.0, 15.0]],
         "resource_grid" => [[10, 20, 30], [40, 50, 60], [70, 80, 90]],
         "biomes" => [[1, 1, 2], [1, 3, 1], [2, 1, 1]],  # Numeric biome IDs (craters are geological features, not biomes)
         "width" => 3,
