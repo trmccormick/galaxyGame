@@ -87,3 +87,15 @@ end
 - Implement expansion protocol in orchestration layer
 - Validate with test WH events and system profiles
 - Integrate with mission prioritization and fleet dispatch logic
+
+---
+
+## Anchor Law Constraints (from GUARDRAILS.md §2: The Anchor Law)
+- **Mass Requirement:** A wormhole link cannot be declared "stable" or "open for heavy traffic" unless the "Sweet Spot" contains a gravitational anchor of at least **10^16 kg** (minimum threshold for stable gravitational field generation).
+- **Counterbalance Physics:** Wormhole stability requires gravitational anchors at 180° opposite the exit point. Jupiter provides Sol's natural counterbalance; artificial systems need AWS stations or asteroid placement.
+- **Atmospheric Maintenance Mandate:** Terraformed worlds require ongoing technological support. AI Manager must maintain >95% system integrity or face reversion cascades. No "set and forget" terraforming.
+- **The Phobos/Luna Pattern:** 
+  - **No Moons:** Relocate a Phobos-sized asteroid (mass ≈ 1.0×10^16 kg) to act as a station/depot anchor.
+  - **Large Moon:** Establish the "Luna Pattern" first—settle the moon, build materials, then establish the L1/Depot gateway.
+  - **Reference Implementation:** See [AOL-732356 System Documentation](systems/aol-732356.md) for successful Phobos Pattern deployment using Asteroid XXXV ($2.44 \times 10^{19}$ kg) anchored to Gas Giant 18 ($5.72 \times 10^{27}$ kg).
+- **Harvest First:** The AI Manager must prioritize local resource harvesting (ISRU) to build station components rather than importing them, unless the surface is strictly inaccessible.

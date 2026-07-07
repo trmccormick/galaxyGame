@@ -32,3 +32,20 @@
 - Earth Anchor Price (EAP) acts as a price ceiling; if local or NPC prices exceed EAP, imports are triggered and paid in USD.
 
 ---
+
+## Debt and Overdraft Controls (from GUARDRAILS.md §8)
+- **Virtual Ledger Limits:** NPC entities cannot exceed 50% of their asset value in overdraft to prevent economic collapse
+- **Player Debt Ceilings:** Players cannot accumulate debt exceeding 200% of their net worth
+- **Interest Rate Floors:** Minimum 2% annual interest on all overdrafts to discourage excessive borrowing
+
+## Currency Stability Measures
+- **Exchange Rate Bands:** GCC/USD exchange rates limited to ±5% daily movement to prevent speculation
+- **Minting Limits:** LDC limited to 5% annual GCC supply increase to control inflation
+- **Burn Mechanisms:** Automatic GCC destruction for Earth exports to maintain supply equilibrium
+
+## NPC Debt Decision Influence
+- **Virtual Ledger Trading:** NPCs can trade among themselves without GCC limitations using the virtual ledger, allowing inter-NPC debt accumulation
+- **Expansion Restrictions:** High debt levels (>30% of assets) prevent NPC base construction and new settlement establishment
+- **Procurement Conservatism:** NPCs with corporate debt exceeding 30% of total assets become conservative buyers, refusing purchases from players to preserve capital
+- **AI Manager Integration:** Debt levels are continuously monitored and influence OperationalManager decision-making for resource allocation and expansion planning
+- **Expected Behavior:** Inter-NPC debt is normal and expected for efficient resource distribution, but excessive debt triggers conservative decision-making

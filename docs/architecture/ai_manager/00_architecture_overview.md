@@ -302,4 +302,14 @@ graph TD
 - Habitability models refined with real operational data
 - Resource availability predictions improved over time
 
+---
+
+## Path Configuration Standards (from GUARDRAILS.md §7: Path Configuration)
+- **Centralized Path Management:** All data file paths must be defined in `galaxy_game/config/initializers/game_data_paths.rb` using `GalaxyGame::Paths` constants.
+- **No Hardcoded Paths:** Never use `Rails.root.join('app/data/...')` directly in application code. Always use `GalaxyGame::Paths::CONSTANT`.
+- **Docker Volume Awareness:** Data files must be stored in root `data/` directory (gitignored) for proper Docker volume mounting, not in `galaxy_game/data/` (git-tracked).
+- **Script Portability:** Shell scripts must use `PROJECT_ROOT` variable to work from any directory.
+- **Directory Name Consistency:** Path constants must match actual directory names (e.g., `ai_manager` not `ai-manager`).
+- **Path Resolution:** `GalaxyGame::Paths::JSON_DATA` resolves to `/home/galaxy_game/app/data` in container (mounted from host `./data/`).
+
 This architecture enables autonomous interplanetary expansion while maintaining economic viability and strategic adaptability.

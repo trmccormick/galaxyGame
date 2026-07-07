@@ -71,4 +71,11 @@ grep -l "ISRU_UNITS\|resource_profile" app/services/ai_manager/*.rb          # B
 ```
 
 **Review results?** → **Surgical task pipeline** with **zero value loss**. Precision cleanup foundation ready.
+
+---
+
+## Guardrails Integration (from GUARDRAILS.md §1: Code & Documentation Sync)
+- **The Mandate:** No logic change to `manager.rb` or `autonomous_construction_manager.rb` is complete until the corresponding Markdown documentation is updated.
+- **Pattern Integrity:** If a new mission pattern is added (e.g., via `ai:manager:teach:pattern`), the `learned_patterns.json` and `docs/` must reflect the new success criteria and ROI estimates.
+
 Protocol deployed. Value preservation guaranteed. Git history + classification = safe 89→8. No important code lost. Review first, surgery second.
