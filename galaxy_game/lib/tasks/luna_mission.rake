@@ -17,7 +17,10 @@ namespace :luna_mission do
       exit 1
     end
 
-    profile_path = if File.exist?(legacy_profile_path)
+    v2_profile_path = GalaxyGame::Paths::MISSIONS_V2_PROFILES_PATH.join("luna_base_profile_v2.json").to_s
+    profile_path = if File.exist?(v2_profile_path)
+      v2_profile_path
+    elsif File.exist?(legacy_profile_path)
       legacy_profile_path
     elsif File.exist?(modern_profile_path)
       modern_profile_path
@@ -48,7 +51,22 @@ namespace :luna_mission do
       existing_location.update!(locationable: bootstrap_settlement)
     end
 
-    engine = AIManager::TaskExecutionEngineV2.new(target, legacy_profile_rel_path)
+    # Determine manifest path for engine init based on which profile was resolved.
+    # The engine joins its second param with MISSIONS_PATH, so we need a relative path.
+    engine_manifest_param = legacy_profile_rel_path
+    if profile_path == v2_profile_path && File.exist?(v2_profile_path)
+      v2_data = JSON.parse(File.read(v2_profile_path))
+      manifest_ref = v2_data["manifest_ref"]&.to_s
+      # manifest_ref is absolute-ish (e.g. "data/json-data/missions/manifests_v2/...");
+      # strip the MISSIONS_PATH prefix to get a relative path for engine.join().
+      if manifest_ref.start_with?("data/json-data/missions/")
+        engine_manifest_param = manifest_ref.sub("data/json-data/missions/", "")
+      else
+        engine_manifest_param = manifest_ref
+      end
+    end
+
+    engine = AIManager::TaskExecutionEngineV2.new(target, engine_manifest_param)
 
     seed_inventory_from_manifest = lambda do |settlement, manifest|
       return unless settlement && manifest.is_a?(Hash)
@@ -194,9 +212,12 @@ namespace :luna_mission do
 
     phase_path_for = lambda do |phase_def|
       task_list_file = phase_def["task_list_file"].to_s
+
+      v2_candidate = GalaxyGame::Paths::MISSIONS_V2_PHASES_PATH.join(task_list_file).to_s
       modern_candidate = GalaxyGame::Paths::MISSIONS_PATH.join(task_list_file).to_s
       legacy_candidate = GalaxyGame::Paths::MISSIONS_PATH.join("luna_base_establishment", task_list_file).to_s
 
+      return v2_candidate if File.exist?(v2_candidate)
       return modern_candidate if File.exist?(modern_candidate)
       return legacy_candidate if File.exist?(legacy_candidate)
 
@@ -264,10 +285,48 @@ namespace :luna_mission do
     # Prefer explicit v2 execution order for this mission.
     execution_order = ["power_comms", "isru_deployment", "gas_processing", "robot_logistics_site_hardening"]
 
+    # Build phase_index from profile["phases"] (v1) or from mission_plan_v2 (v2).
     phase_index = {}
-    (profile["phases"] || []).each do |phase_def|
-      phase_id = phase_def["phase_id"].to_s
-      phase_index[phase_id] = phase_def
+    if profile["phases"].is_a?(Array) && !profile["phases"].empty?
+      # v1 profile: phases array at top level
+      profile["phases"].each do |phase_def|
+        phase_id = phase_def["phase_id"].to_s
+        phase_index[phase_id] = phase_def
+      end
+    elsif profile["mission_plan_ref"].to_s.present?
+      # v2 profile: load mission plan to get phases
+      # mission_plan_ref is relative to MISSIONS_V2_PATH (e.g. "mission_plans/luna_precursor_mission_plan_v2.json")
+      # Strip the "mission_plans/" prefix since we join with MISSIONS_V2_PLANS_PATH
+      plan_filename = profile["mission_plan_ref"].to_s.sub("mission_plans/", "")
+      mission_plan_path = GalaxyGame::Paths::MISSIONS_V2_PLANS_PATH.join(plan_filename).to_s
+      if File.exist?(mission_plan_path)
+        mission_plan = JSON.parse(File.read(mission_plan_path))
+        (mission_plan["phases"] || []).each do |phase_entry|
+          phase_id = phase_entry["phase_id"].to_s
+          # reference_file in mission plan is "phases/xxx_v2.json" — strip the "phases/" prefix
+          # since phase_path_for will join with MISSIONS_V2_PHASES_PATH.
+          ref_file = phase_entry["reference_file"].to_s.sub("phases/", "")
+          phase_index[phase_id] = { "task_list_file" => ref_file }
+        end
+      else
+        puts "WARNING: mission_plan_ref '#{profile['mission_plan_ref']}' not found at #{mission_plan_path}"
+      end
+    end
+
+    # Fallback: if still no phases, try success_conditions.complete_phases as last resort
+    if phase_index.empty? && profile["success_conditions"]["complete_phases"].is_a?(Array)
+      puts "WARNING: No phases found in profile or mission plan; using success_conditions.complete_phases as fallback"
+      # Map v2 phase_ids to their actual file names in missions_v2/phases/
+      phase_file_map = {
+        "power_comms" => "power_comms_v2.json",
+        "isru_deployment" => "isru_deployment_v2.json",
+        "gas_processing" => "gas_processing_v2.json",
+        "robot_logistics" => "robot_logistics_v2.json"
+      }
+      profile["success_conditions"]["complete_phases"].each do |phase_id|
+        filename = phase_file_map[phase_id] || "#{phase_id}_v2.json"
+        phase_index[phase_id] = { "task_list_file" => filename }
+      end
     end
 
     ensure_deploy_inventory_from_v2_tasks.call(settlement, profile)
@@ -431,7 +490,16 @@ namespace :luna_mission do
           next
         end
 
-        task_path = GalaxyGame::Paths::MISSIONS_PATH.join(task_ref).to_s
+        # Resolve task_ref: v2 refs start with "tasks_v2/" (relative to MISSIONS_V2_PATH),
+        # v1 refs are relative to MISSIONS_PATH. Detect by prefix.
+        if task_ref.start_with?("tasks_v2/")
+          # Strip "tasks_v2/" prefix, append "_v2" suffix for actual filename, join with MISSIONS_V2_TASKS_PATH
+          base_name = task_ref.sub("tasks_v2/", "")
+          v2_filename = base_name.sub(/\.json$/, "_v2.json")
+          task_path = GalaxyGame::Paths::MISSIONS_V2_TASKS_PATH.join(v2_filename).to_s
+        else
+          task_path = GalaxyGame::Paths::MISSIONS_PATH.join(task_ref).to_s
+        end
         unless File.exist?(task_path)
           puts "  - #{task_ref}: FAIL (file not found)"
           phase_result[:tasks] << { task_id: task_ref, status: :file_missing }
