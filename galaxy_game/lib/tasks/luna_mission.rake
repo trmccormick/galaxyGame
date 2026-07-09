@@ -9,7 +9,7 @@ namespace :luna_mission do
     legacy_profile_rel_path = "luna_base_establishment/luna_settlement_profile_v1.json"
     modern_profile_path = GalaxyGame::Paths::MISSIONS_PATH.join("profiles", "luna_base_establishment_profile_v1.json").to_s
     legacy_profile_path = GalaxyGame::Paths::MISSIONS_PATH.join(legacy_profile_rel_path).to_s
-    manifest_path = GalaxyGame::Paths::MISSIONS_PATH.join("manifests_v2", "lunar_precursor_manifest_v2_DRAFT.json").to_s
+    manifest_path = GalaxyGame::Paths::MISSIONS_V2_MANIFESTS_PATH.join("lunar_precursor_manifest_v2.json").to_s
 
     body = CelestialBodies::CelestialBody.find_by(identifier: target)
     if body.nil?
@@ -51,18 +51,18 @@ namespace :luna_mission do
       existing_location.update!(locationable: bootstrap_settlement)
     end
 
-    # Determine manifest path for engine init based on which profile was resolved.
-    # The engine joins its second param with MISSIONS_PATH, so we need a relative path.
+    # Determine manifest for engine init based on which profile was resolved.
+    # The engine joins its second param with MISSIONS_PATH when it's a String,
+    # or uses it directly when it's a Hash. For v2 profiles the manifest lives
+    # under missions_v2/manifests/ which is NOT under MISSIONS_PATH, so we pass
+    # the parsed manifest as a Hash to avoid incorrect path joining.
     engine_manifest_param = legacy_profile_rel_path
     if profile_path == v2_profile_path && File.exist?(v2_profile_path)
       v2_data = JSON.parse(File.read(v2_profile_path))
       manifest_ref = v2_data["manifest_ref"]&.to_s
-      # manifest_ref is absolute-ish (e.g. "data/json-data/missions/manifests_v2/...");
-      # strip the MISSIONS_PATH prefix to get a relative path for engine.join().
-      if manifest_ref.start_with?("data/json-data/missions/")
-        engine_manifest_param = manifest_ref.sub("data/json-data/missions/", "")
-      else
-        engine_manifest_param = manifest_ref
+      if manifest_ref
+        # Read the manifest file directly and pass as Hash to avoid path joining issues
+        engine_manifest_param = JSON.parse(File.read(manifest_ref))
       end
     end
 

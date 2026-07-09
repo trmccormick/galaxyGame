@@ -252,6 +252,7 @@ module GalaxyGame
     MISSIONS_V2_PLANS_PATH = MISSIONS_V2_PATH.join('mission_plans').freeze
     MISSIONS_V2_TASKS_PATH = MISSIONS_V2_PATH.join('tasks').freeze
     MISSIONS_V2_REGISTRY_PATH = MISSIONS_V2_PATH.join('phase_registry.json').freeze
+    MISSIONS_V2_MANIFESTS_PATH = MISSIONS_V2_PATH.join('manifests').freeze
 
     # === AI Manager Paths ===
     AI_MANAGER_PATH = JSON_DATA.join('ai_manager').freeze
