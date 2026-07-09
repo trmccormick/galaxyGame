@@ -1,0 +1,114 @@
+{
+  "template": "unit_blueprint",
+  "id": "hrv_400_resource_harvester_mk1",
+  "name": "HRV-400 Resource Harvester Mk1",
+  "description": "Automated robot specialized in resource harvesting and material transport on planetary surfaces.",
+  "category": "robot",
+  "subcategory": "resource_harvesting",
+
+  "physical_properties": {
+    "length_m": 4.5,
+    "width_m": 3.2,
+    "height_m": 2.8,
+    "empty_mass_kg": 850.0,
+    "volume_m3": 12.0
+  },
+
+  "port_type": "module",
+
+  "item_produced": {
+    "id": "hrv_400_resource_harvester_mk1",
+    "amount": 1,
+    "unit": "unit"
+  },
+
+  "required_materials": {
+    "advanced_composites": {
+      "amount": 120,
+      "unit": "kilogram"
+    },
+    "hydraulic_systems": {
+      "amount": 50,
+      "unit": "kilogram"
+    },
+    "navigation_module": {
+      "amount": 1,
+      "unit": "unit"
+    },
+    "communication_relay": {
+      "amount": 1,
+      "unit": "unit"
+    },
+    "radiation_shielding": {
+      "amount": 30,
+      "unit": "kilogram"
+    }
+  },
+
+  "production_data": {
+    "time_hours": 180,
+    "power_consumption_kw": 25,
+    "required_facility_type": "robotics_assembly_line",
+    "required_technology": "robotics",
+    "base_material_efficiency": 0.75,
+    "base_time_efficiency": 0.85
+  },
+
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 85000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 1500,
+      "repair_cost_gcc": 12000,
+      "materials_needed_for_repair": [
+        {
+          "id": "advanced_composites",
+          "amount": 40,
+          "unit": "kilogram"
+        },
+        {
+          "id": "hydraulic_systems",
+          "amount": 15,
+          "unit": "kilogram"
+        }
+      ]
+    }
+  },
+
+  "byproducts": [],
+
+  "hazard_level": 1,
+  "special_handling": [
+    "sensitive_electronics",
+    "requires_maintenance"
+  ],
+
+  "operational_data_reference": {
+    "file": "units/robots/resource/hrv_400_resource_harvester_mk1_data.json",
+    "operational_properties": {},
+    "physical_properties": {}
+  },
+
+  "storage_properties": {
+    "capacity": 0,
+    "stored_material": "",
+    "phase": "",
+    "requires_cooling": false
+  },
+
+  "deployment_data": {
+    "deployable": true,
+    "printer_required": false,
+    "requires_shell": false,
+    "default_deployment_time_hours": 5
+  },
+
+  "metadata": {
+    "version": "1.0",
+    "type": "blueprint",
+    "category": "robot",
+    "template_compliance": "unit_blueprint"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "id": "hrv_400_resource_harvester_mk1",
+  "name": "HRV-400 Resource Harvester Mk1",
+  "unit_type": "hrv_400_resource_harvester_mk1",
+  "category": "robots_resource",
+  "subcategory": "resource_harvesting",
+
+  "operational_data": {
+    "mobility_type": "wheeled",
+    "power_source": "nuclear_battery",
+    "operating_temperature_range_c": [-120, 50],
+    "dust_protection": true,
+    "autonomy_level": "high",
+    "max_speed_mph": 2.5,
+    "task_flexibility": ["atmospheric_harvesting", "ice_extraction", "regolith_mining"]
+  },
+  "description": "Automated robot specialized in resource harvesting and material transport on planetary surfaces. This data describes its current operational state.",
+  "power": {
+    "consumption_idle_kw": 5,
+    "consumption_active_kw": 25,
+    "generation_kw": 0,
+    "battery_capacity_kwh": 100,
+    "recharge_time_hours": 10
+  },
+  "sensors": [
+    {
+      "type": "navigation_radar",
+      "range_m": 500,
+      "accuracy": 0.95,
+      "field_of_view_deg": 360
+    },
+    {
+      "type": "material_scanner",
+      "range_m": 50,
+      "accuracy": 0.98,
+      "field_of_view_deg": 180
+    },
+    {
+      "type": "proximity_sensor",
+      "range_m": 10,
+      "accuracy": 0.99,
+      "field_of_view_deg": 270
+    }
+  ],
+  "actuators": [
+    {
+      "type": "articulated_arm",
+      "max_force_newton": 1500,
+      "degrees_of_freedom": 6
+    },
+    {
+      "type": "mobility_system",
+      "max_force_newton": 5000,
+      "degrees_of_freedom": 3
+    }
+  ],
+  "processing_capabilities": {
+    "enabled": true,
+    "task_types": [
+      "resource_identification",
+      "pathfinding",
+      "data_logging"
+    ],
+    "efficiency": 0.9
+  },
+  "deployment": {
+    "deployed": true,
+    "current_stage": "operational",
+    "stages": [
+      "transport",
+      "initial_setup",
+      "operational"
+    ],
+    "progress_percent": 100,
+    "time_remaining_hours": 0,
+    "resource_usage": {
+      "power_kw": 0,
+      "materials": {}
+    }
+  },
+  "maintenance": {
+    "failure_rate_per_hour": 0.0001,
+    "maintenance_interval_hours": 500,
+    "average_repair_time_hours": 1500,
+    "materials_needed_for_repair": [
+      {
+        "id": "advanced_composites",
+        "amount": 40,
+        "unit": "kilogram"
+      },
+      {
+        "id": "hydraulic_systems",
+        "amount": 15,
+        "unit": "kilogram"
+      }
+    ]
+  },
+  "storage": {
+    "capacity": 200,
+    "current_level": 0,
+    "stored_resource_type": "raw_material_common"
+  },
+  "interfaces": [
+    {
+      "type": "data_port",
+      "protocol": "standard_dataconn"
+    },
+    {
+      "type": "power_input",
+      "voltage_v": 240
+    }
+  ],
+  "hazards": {
+    "radiation_emission": "low",
+    "noise_level_db": 70
+  },
+  "required_technologies": [
+    "robotics",
+    "advanced_materials",
+    "autonomous_systems"
+  ],
+  "metadata": {
+    "version": "1.1",
+    "type": "robot_operational_data",
+    "category": "robots",
+    "template_compliance": "robot_operational_data"
+  },
+  "template": "robot_operational_data",
+  "base_cost_eap": 1.5,
+  "usd_import_fee": 1000.0
+}

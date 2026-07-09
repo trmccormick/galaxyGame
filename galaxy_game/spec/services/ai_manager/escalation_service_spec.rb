@@ -23,42 +23,38 @@ RSpec.describe AIManager::EscalationService, type: :service do
   end
 
   describe '.create_automated_harvester' do
-    context 'oxygen harvesting' do
-      it 'creates robot unit for oxygen' do
-        expect(Units::Robot).to receive(:create!).with(
-          name: "Automated Oxygen Harvester",
-          identifier: match(/^ROBOT-/),
-          unit_type: "robot",
-          owner: settlement.owner,
-          attachable: settlement,
-          operational_data: {
-            'task_type' => 'atmospheric_harvesting',
-            'target_material' => 'O2',
-            'target_quantity' => 100,
-            'extraction_rate' => 10,
-            'mobility_type' => 'stationary'
-          }
-        )
+    let(:lookup_service) { instance_double(Lookup::UnitLookupService) }
 
-        described_class.create_automated_harvester(settlement, 'oxygen', 100)
+    before do
+      allow(Lookup::UnitLookupService).to receive(:new).and_return(lookup_service)
+      allow(lookup_service).to receive(:find_unit).with('hrv_400_resource_harvester_mk1').and_return(
+        { 'id' => 'hrv_400_resource_harvester_mk1', 'operational_data' => { 'mobility_type' => 'wheeled', 'power_source' => 'nuclear_battery' } }
+      )
+    end
+
+    context 'oxygen harvesting' do
+      it 'creates robot unit with correct blueprint ID and merged operational data' do
+        result = described_class.create_automated_harvester(settlement, 'oxygen', 100)
+
+        expect(result.unit_type).to eq('hrv_400_resource_harvester_mk1')
+        expect(result.operational_data['task_type']).to eq('atmospheric_harvesting')
+        expect(result.operational_data['target_material']).to eq('O2')
+        expect(result.operational_data['target_quantity']).to eq(100)
+        expect(result.operational_data['extraction_rate']).to eq(10)
+        # Blueprint default merged with task override
+        expect(result.operational_data['power_source']).to eq('nuclear_battery')
       end
     end
 
     context 'water harvesting' do
-      xit 'creates harvester craft for water' do
-        expect(Craft::Harvester).to receive(:create!).with(
-          name: "Automated Water Extractor",
-          craft_name: "water_extractor",
-          craft_type: "harvester",
-          owner: settlement.owner,
-          docked_at: settlement,
-          operational_data: {
-            'extraction_rate' => 50,
-            'target_body' => settlement.celestial_body
-          }
-        )
+      it 'creates robot unit with ice_extraction task type' do
+        result = described_class.create_automated_harvester(settlement, 'water', 200)
 
-        described_class.create_automated_harvester(settlement, 'water', 200)
+        expect(result.unit_type).to eq('hrv_400_resource_harvester_mk1')
+        expect(result.operational_data['task_type']).to eq('ice_extraction')
+        expect(result.operational_data['target_material']).to eq('H2O')
+        expect(result.operational_data['target_quantity']).to eq(200)
+        expect(result.operational_data['extraction_rate']).to eq(50)
       end
     end
   end

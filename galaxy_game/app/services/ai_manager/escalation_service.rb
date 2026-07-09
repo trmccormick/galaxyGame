@@ -212,60 +212,32 @@ module AIManager
     end
 
     def self.create_automated_harvester(settlement, material, quantity)
-      case normalize_material(material)
+      # Use HRV-400 blueprint for all harvester types (Earth-delivered for MVP)
+      unit_data = Lookup::UnitLookupService.new.find_unit('hrv_400_resource_harvester_mk1')
+
+      return { status: :blocked, reason: 'HRV-400 blueprint not found' } unless unit_data
+
+      # Merge blueprint defaults with task-specific overrides
+      base_operational = unit_data['operational_data'] || {}
+      task_operational = case normalize_material(material)
       when 'O2'
-        operational_data = {
-          'task_type' => 'atmospheric_harvesting',
-          'target_material' => 'O2',
-          'target_quantity' => quantity,
-          'extraction_rate' => 10, # kg/hour
-          'mobility_type' => 'stationary'
-        }
-        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'stationary'
-        Units::Robot.create!(
-          name: "Automated Oxygen Harvester",
-          identifier: "ROBOT-#{SecureRandom.hex(4)}",
-          unit_type: "robot",
-          owner: settlement.owner,
-          attachable: settlement,
-          operational_data: operational_data
-        )
+        { 'task_type' => 'atmospheric_harvesting', 'target_material' => 'O2', 'target_quantity' => quantity, 'extraction_rate' => 10 }
       when 'H2O'
-        operational_data = {
-          'task_type' => 'ice_extraction',
-          'target_material' => 'H2O',
-          'target_quantity' => quantity,
-          'extraction_rate' => 50,
-          'mobility_type' => 'wheeled'
-        }
-        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'wheeled'
-        Units::Robot.create!(
-          name: "Automated Water Extractor",
-          identifier: "ROBOT-#{SecureRandom.hex(4)}",
-          unit_type: "robot",
-          owner: settlement.owner,
-          attachable: settlement,
-          operational_data: operational_data
-        )
+        { 'task_type' => 'ice_extraction', 'target_material' => 'H2O', 'target_quantity' => quantity, 'extraction_rate' => 50 }
       else
-        # Regolith mining robot
-        operational_data = {
-          'task_type' => 'regolith_mining',
-          'target_material' => material,
-          'target_quantity' => quantity,
-          'extraction_rate' => 25, # kg/hour
-          'mobility_type' => 'wheeled'
-        }
-        operational_data['mobility_type'] = operational_data['mobility_type'].to_s.presence || 'wheeled'
-        Units::Robot.create!(
-          name: "Automated #{material.titleize} Miner",
-          identifier: "ROBOT-#{SecureRandom.hex(4)}",
-          unit_type: "robot",
-          owner: settlement.owner,
-          attachable: settlement,
-          operational_data: operational_data
-        )
+        { 'task_type' => 'regolith_mining', 'target_material' => material, 'target_quantity' => quantity, 'extraction_rate' => 25 }
       end
+
+      operational_data = base_operational.merge(task_operational)
+
+      Units::Robot.create!(
+        name: "Automated #{material.titleize} Harvester",
+        identifier: "ROBOT-#{SecureRandom.hex(4)}",
+        unit_type: 'hrv_400_resource_harvester_mk1',
+        owner: settlement.owner,
+        attachable: settlement,
+        operational_data: operational_data
+      )
     end
 
     def self.create_manufacturing_unit(settlement, material, quantity)
