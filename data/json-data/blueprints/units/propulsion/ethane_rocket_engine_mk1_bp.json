@@ -1,0 +1,126 @@
+{
+  "template": "unit_blueprint",
+  "id": "ethane_rocket_engine_mk1",
+  "name": "Ethane Rocket Engine Mk1",
+  "description": "A rocket engine designed to run exclusively on ethane fuel and liquid oxygen oxidizer. Optimized for Titan atmospheric operations where ethane is harvested directly from the atmosphere.",
+  "category": "propulsion",
+  "subcategory": "chemical_rocket_engine",
+  "port_type": "propulsion",
+
+  "physical_properties": {
+    "length_m": 2.8,
+    "width_m": 1.2,
+    "height_m": 1.2,
+    "empty_mass_kg": 1350,
+    "volume_m3": 4.03
+  },
+
+  "item_produced": {
+    "id": "ethane_rocket_engine_mk1",
+    "amount": 1,
+    "unit": "unit"
+  },
+
+  "required_materials": {
+    "titanium_alloy": {
+      "amount": 700,
+      "unit": "kilogram"
+    },
+    "electronics": {
+      "amount": 180,
+      "unit": "kilogram"
+    },
+    "superalloy": {
+      "amount": 450,
+      "unit": "kilogram"
+    },
+    "precision_components": {
+      "amount": 90,
+      "unit": "kilogram"
+    }
+  },
+
+  "production_data": {
+    "time_hours": 75.0,
+    "power_consumption_kw": 140.0,
+    "required_facility_type": "advanced_manufacturing",
+    "required_technology": "ethane_combustion_engines",
+    "base_material_efficiency": 0.9,
+    "base_time_efficiency": 0.85
+  },
+
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 200000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 7.5,
+      "repair_cost_gcc": 20000,
+      "materials_needed_for_repair": [
+        {
+          "id": "titanium_alloy",
+          "amount": 55,
+          "unit": "kilogram"
+        },
+        {
+          "id": "superalloy",
+          "amount": 30,
+          "unit": "kilogram"
+        }
+      ]
+    }
+  },
+
+  "byproducts": [],
+
+  "hazard_level": 3,
+  "special_handling": [
+    "high_temperature_materials",
+    "precision_assembly_required",
+    "pressure_testing_required"
+  ],
+
+  "operational_data_reference": {
+    "file": "units/propulsion/ethane_rocket_engine_mk1_data.json",
+    "operational_properties": {
+      "power_output_kw": 1600,
+      "fuel_consumption_kg_per_hour": 480,
+      "efficiency": 0.88,
+      "maintenance_interval_hours": 450,
+      "operational_temperature_c": 3400
+    },
+    "fuel_requirements": {
+      "primary_fuel": ["ethane"],
+      "oxidizer": ["liquid_oxygen"]
+    }
+  },
+
+  "storage_properties": {
+    "capacity": 0,
+    "stored_material": "",
+    "phase": "",
+    "requires_cooling": false
+  },
+
+  "deployment_data": {
+    "deployable": false,
+    "printer_required": false,
+    "requires_shell": false,
+    "default_deployment_time_hours": 0
+  },
+
+  "connection_schema": {
+    "mounting_slots": [
+      { "slot_id": "propulsion_bus_1", "bus_type": "propulsion", "location": "rear" }
+    ]
+  },
+
+  "units": {},
+  "metadata": {
+    "version": "1.0",
+    "type": "blueprint",
+    "category": "propulsion",
+    "template_compliance": "unit_blueprint"
+  }
+}
