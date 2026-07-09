@@ -283,7 +283,7 @@ namespace :luna_mission do
     end
 
     # Prefer explicit v2 execution order for this mission.
-    execution_order = ["power_comms", "isru_deployment", "gas_processing", "robot_logistics_site_hardening"]
+    execution_order = ["power_comms", "isru_deployment", "gas_processing", "robot_logistics"]
 
     # Build phase_index from profile["phases"] (v1) or from mission_plan_v2 (v2).
     phase_index = {}
