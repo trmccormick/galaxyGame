@@ -1,0 +1,63 @@
+{
+  "registry_version": "1.0",
+  "last_updated": "2026-07-09",
+  "phases": [
+    {
+      "phase_id": "power_comms",
+      "phase_file": "data/json-data/missions_v2/phases/power_comms_v2.json",
+      "name": "Initial Power and Comms",
+      "applicable_body_types": ["airless_rocky", "thin_atmosphere", "atmospheric"],
+      "required_capabilities": ["power_generation", "communications", "site_prep"],
+      "task_count": 6,
+      "task_affinity": [
+        "deploy_regolith_harvester_rover",
+        "deploy_lspu",
+        "site_prep_foundation",
+        "deploy_comms_equipment",
+        "deploy_puh_and_ppmu",
+        "deploy_solar_rig"
+      ]
+    },
+    {
+      "phase_id": "isru_deployment",
+      "phase_file": "data/json-data/missions_v2/phases/isru_deployment_v2.json",
+      "name": "ISRU Unit Deployment",
+      "applicable_body_types": ["airless_rocky"],
+      "required_capabilities": ["resource_extraction", "processing", "tank_manufacturing"],
+      "task_count": 4,
+      "task_affinity": [
+        "deploy_thermal_extraction_unit",
+        "deploy_pve_unit",
+        "inflatable_tank_deployment",
+        "print_inflatable_tank_shells"
+      ]
+    },
+    {
+      "phase_id": "gas_processing",
+      "phase_file": "data/json-data/missions_v2/phases/gas_processing_v2.json",
+      "name": "Gas Separation and Cryo Storage",
+      "applicable_body_types": ["airless_rocky"],
+      "required_capabilities": ["gas_separation", "cryogenic_storage"],
+      "task_count": 3,
+      "task_affinity": [
+        "deploy_volatiles_storage",
+        "deploy_gas_separator",
+        "surface_preparation_unit_operations"
+      ]
+    },
+    {
+      "phase_id": "robot_logistics",
+      "phase_file": "data/json-data/missions_v2/phases/robot_logistics_v2.json",
+      "name": "Robot Logistics & Site Hardening",
+      "applicable_body_types": ["airless_rocky"],
+      "required_capabilities": ["robot_charging", "autonomous_operations", "stockpile_management"],
+      "task_count": 4,
+      "task_affinity": [
+        "deploy_robot_charging_port",
+        "car_300_charge_cycle",
+        "isru_stockpile_initiation",
+        "construction_zone_leveling"
+      ]
+    }
+  ]
+}
