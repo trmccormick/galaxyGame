@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Deploy inflatable pressure and cryogenic tanks for volatile storage.",
+    "intended_usage": "Reference in mission profiles for tank deployment.",
+    "author": "AI Copilot",
+    "date_created": "2026-04-10"
+  },
+  "tasks": [
+    {
+      "task_id": "inflatable_tank_deployment",
+      "name": "Inflatable Tank Deployment",
+      "description": "Deploy inflatable pressure and cryogenic tanks.",
+      "priority": 5,
+      "effects": [
+        { "action": "deploy_unit", "unit": "Inflatable Pressure Tank", "count": 2 },
+        { "action": "deploy_unit", "unit": "Inflatable Cryogenic Tank", "count": 2 }
+      ],
+      "completion_criteria": { "type": "event", "event": "tanks_deployed" }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Deploy a Gas Separator unit and connect it to volatiles storage for cryogenic separation of H2, O2, He3 and other extracted gases.",
+    "intended_usage": "Reference in mission profiles for Phase 3 gas processing on any ISRU-capable body. Required after TEU and PVE are operational.",
+    "author": "Claude (Session Strategist)",
+    "date_created": "2026-05-02"
+  },
+  "tasks": [
+    {
+      "task_id": "deploy_gas_separator",
+      "name": "Deploy Gas Separator",
+      "description": "Deploy the Gas Separator unit, connect to volatiles storage input, and configure for target gas fractions (H2, O2, He3). Unit performs cryogenic separation of mixed gas output from TEU and PVE during daytime operating cycles.",
+      "priority": 8,
+      "preconditions": [
+        { "type": "unit_state", "unit": "Thermal Extraction Unit Mk1", "state": "ready" },
+        { "type": "unit_state", "unit": "Planetary Volatiles Extractor Mk1", "state": "ready" }
+      ],
+      "effects": [
+        { "action": "deploy_unit", "unit": "Gas Separator", "count": 1 },
+        {
+          "action": "register_to_bus",
+          "unit": "Gas Separator",
+          "hub": "Planetary Umbilical Hub Mk1",
+          "ports": [
+            { "port_type": "input", "hub_port": "volatiles_processing", "direction": "in" },
+            { "port_type": "methane_output", "hub_port": "cryo_grid_methane", "direction": "out" },
+            { "port_type": "oxygen_output", "hub_port": "cryo_grid_o2", "direction": "out" },
+            { "port_type": "water_output", "hub_port": "cryo_grid_water", "direction": "out" },
+            { "port_type": "hydrogen_output", "hub_port": "cryo_grid_h2", "direction": "out" },
+            { "port_type": "carbon_dioxide_output", "hub_port": "cryo_grid_co2", "direction": "out" },
+            { "port_type": "nitrogen_output", "hub_port": "cryo_grid_nitrogen", "direction": "out" }
+          ]
+        },
+        { "action": "set_unit_state", "unit": "Gas Separator", "state": "ready" }
+      ],
+      "completion_criteria": { "type": "unit_state", "unit": "Gas Separator", "state": "ready" }
+    }
+  ]
+}

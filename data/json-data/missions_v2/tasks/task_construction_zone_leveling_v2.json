@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "CAR-300 robots clear, compact, and level designated construction pad for future habitat modules.",
+    "intended_usage": "Reference in mission profiles for site preparation after robot activation.",
+    "author": "AI Copilot",
+    "date_created": "2026-07-03"
+  },
+  "tasks": [
+    {
+      "task_id": "construction_zone_leveling",
+      "name": "Construction Pad Leveling",
+      "description": "CAR-300 robots conduct site prep work: clear debris, compact regolith, and level terrain for future habitat module foundation. Marks construction zone as leveled in settlement operational data.",
+      "priority": 6,
+      "effects": [
+        { "action": "set_settlement_state", "key": "construction_zone_status", "value": "leveled" },
+        { "action": "transfer_resource", "from": "settlement_inventory", "to": "unit", "material": "robot_power", "quantity": 50, "unit": "CAR-300 Robot" }
+      ],
+      "completion_criteria": {
+        "type": "settlement_state",
+        "key": "construction_zone_status",
+        "value": "leveled"
+      }
+    }
+  ]
+}

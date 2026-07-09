@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Deploy the Thermal Extraction Unit (TEU) for initial regolith heating.",
+    "intended_usage": "Reference in mission profiles for any TEU deployment.",
+    "author": "AI Copilot",
+    "date_created": "2026-04-09"
+  },
+  "tasks": [
+    {
+      "task_id": "deploy_thermal_extraction_unit",
+      "name": "Deploy Thermal Extraction Unit",
+      "description": "Deploy the Thermal Extraction Unit (TEU) for initial regolith heating.",
+      "priority": 6,
+      "effects": [
+        { "action": "deploy_unit", "unit": "Thermal Extraction Unit Mk1", "count": 1 },
+        { "action": "set_unit_state", "unit": "Thermal Extraction Unit Mk1", "state": "ready" }
+      ],
+      "completion_criteria": { "type": "unit_state", "unit": "Thermal Extraction Unit Mk1", "state": "ready" }
+    }
+  ]
+}

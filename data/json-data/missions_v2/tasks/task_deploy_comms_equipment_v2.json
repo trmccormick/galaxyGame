@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Deploy and activate the Comms Equipment for uplink.",
+    "intended_usage": "Reference in mission profiles for any comms equipment deployment.",
+    "author": "AI Copilot",
+    "date_created": "2026-04-09"
+  },
+  "tasks": [
+    {
+      "task_id": "deploy_comms_equipment",
+      "name": "Deploy Comms Equipment",
+      "description": "Deploy and activate the Comms Equipment for uplink.",
+      "priority": 2,
+      "effects": [
+        { "action": "deploy_unit", "unit": "Comms Equipment Mk1", "count": 1 },
+        { "action": "set_unit_state", "unit": "Comms Equipment Mk1", "state": "active" }
+      ],
+      "completion_criteria": {
+        "type": "unit_state",
+        "unit": "Comms Equipment Mk1",
+        "state": "active"
+      }
+    }
+  ]
+}

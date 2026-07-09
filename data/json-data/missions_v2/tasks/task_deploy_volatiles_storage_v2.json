@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Deploy inflatable pressure, gas storage, and cryogenic tanks for raw gas buffering.",
+    "intended_usage": "Reference in mission profiles for any volatiles storage deployment.",
+    "author": "AI Copilot",
+    "date_created": "2026-04-09"
+  },
+  "tasks": [
+    {
+      "task_id": "deploy_volatiles_storage",
+      "name": "Deploy Volatiles Storage",
+      "description": "Deploy inflatable pressure, gas storage, and cryogenic tanks for raw gas buffering.",
+      "priority": 8,
+      "effects": [
+        { "action": "deploy_unit", "unit": "Inflatable Pressure Tank", "count": 1 },
+        { "action": "deploy_unit", "unit": "Inflatable Gas Storage", "count": 1 },
+        { "action": "deploy_unit", "unit": "Inflatable Cryogenic Tank", "count": 2 }
+      ],
+      "completion_criteria": { "type": "resource_count", "resource": "Inflatable Cryogenic Tank", "amount_deployed": 2 }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Deploy and activate robot charging port for autonomous and crewed robots.",
+    "intended_usage": "Reference in mission profiles for any robot charging port deployment.",
+    "author": "AI Copilot",
+    "date_created": "2026-04-10"
+  },
+  "tasks": [
+    {
+      "task_id": "deploy_robot_charging_port",
+      "name": "Deploy Robot Charging Port",
+      "description": "Deploy and activate robot charging port for autonomous and crewed robots.",
+      "priority": 5,
+      "effects": [
+        { "action": "deploy_unit", "unit": "Robot Charging Port", "count": 1 },
+        { "action": "set_unit_state", "unit": "Robot Charging Port", "state": "active" }
+      ],
+      "completion_criteria": {
+        "type": "unit_state",
+        "unit": "Robot Charging Port",
+        "state": "active"
+      }
+    }
+  ]
+}

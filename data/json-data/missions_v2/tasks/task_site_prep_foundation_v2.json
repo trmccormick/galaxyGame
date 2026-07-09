@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "template": "task_v2.1",
+    "version": "2.1",
+    "description": "Prepare the landing site with an excavated, sintered basaltic slab foundation required before anchoring inflatable tank systems.",
+    "intended_usage": "Reference in mission profiles before any inflatable tank deployment.",
+    "author": "AI Copilot",
+    "date_created": "2026-06-22"
+  },
+  "tasks": [
+    {
+      "task_id": "site_prep_foundation",
+      "name": "Site Prep — Sintered Foundation Slab",
+      "description": "Excavate and sinter a basaltic slab foundation at the target site.",
+      "priority": 1,
+      "effects": [
+        { "action": "set_settlement_state", "key": "foundation_sintered", "value": true }
+      ],
+      "completion_criteria": { "type": "event", "event": "foundation_sintered" }
+    }
+  ]
+}
