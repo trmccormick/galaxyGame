@@ -59,10 +59,10 @@ namespace :luna_mission do
     engine_manifest_param = legacy_profile_rel_path
     if profile_path == v2_profile_path && File.exist?(v2_profile_path)
       v2_data = JSON.parse(File.read(v2_profile_path))
-      manifest_ref = v2_data["manifest_ref"]&.to_s
-      if manifest_ref
-        # Read the manifest file directly and pass as Hash to avoid path joining issues
-        engine_manifest_param = JSON.parse(File.read(manifest_ref))
+      # Build correct path using MISSIONS_V2_MANIFESTS_PATH constant (works in both host and container)
+      manifest_file = GalaxyGame::Paths::MISSIONS_V2_MANIFESTS_PATH.join("lunar_precursor_manifest_v2.json").to_s
+      if File.exist?(manifest_file)
+        engine_manifest_param = JSON.parse(File.read(manifest_file))
       end
     end
 
