@@ -846,6 +846,14 @@ module AIManager
         deployment['progress_percent'] = ((stages.length - 1) * 20).to_i
         deployment['time_remaining_hours'] = [deployment['time_remaining_hours'].to_f - 2.5, 0].max
         
+        # Initialize shell status when the print_shell stage is reached
+        if next_stage == 'print_shell' && !op_data['shell']
+          op_data['shell'] = {
+            'status' => 'intact',
+            'thickness_cm' => 2.0
+          }
+        end
+        
         op_data['deployment'] = deployment
         tank.update!(operational_data: op_data)
         
