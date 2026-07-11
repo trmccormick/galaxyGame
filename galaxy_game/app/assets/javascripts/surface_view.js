@@ -23,6 +23,31 @@ window.SurfaceView = {
   /* ── Constants ─────────────────────────────────────────────────── */
   TILE_SIZE: 32,
 
+  /* ── Terrain Pipeline (property-driven asset lookup) ───────────── */
+  VARIANT_COUNTS: {
+    'regolith':  { plain: 1, rocky: 1, crater: 1 },
+    'dust':      { plain: 1, dunes: 1, rocky: 1  },
+    'frozen':    { plain: 1, mountains: 1        },
+    'volcanic':  { plain: 1, lava: 1             },
+    'temperate': { plain: 1, mountains: 1        },
+    'tropical':  { plain: 1, hills: 1            },
+    'barren':    { plain: 1, rocky: 1            },
+  },
+
+  /* Static known-assets set — expand as terrain tiles are generated. */
+  KNOWN_ASSETS: new Set(),
+
+  /* Image cache for terrain tiles — lazy-loaded by path. */
+  _terrainImageCache: null,
+
+  /** Lazily initialise the image cache on first use. */
+  _ensureTerrainCache: function() {
+    if (!this._terrainImageCache) {
+      this._terrainImageCache = new Map();
+    }
+    return this._terrainImageCache;
+  },
+
   /* ── Viewport state ────────────────────────────────────────────── */
   scale:              1.0,
   offsetX:            0,
@@ -338,6 +363,9 @@ window.SurfaceView = {
     // Never rely on planetData.has_biosphere — it may be missing or wrong for this view
     const hasBiosphere = this.layers.biomes !== null;
 
+    // Reset per-frame terrain log flag so first tile of each render gets logged
+    this._terrainLogged = false;
+
     for (let row = vp.startRow; row <= vp.endRow; row++) {
       const eRow = elevGrid[row];
       if (!eRow) continue;
@@ -355,20 +383,37 @@ window.SurfaceView = {
         const x = col * tileSize + this.offsetX;
         const y = row * tileSize + this.offsetY;
 
-        // ── Layer 0: base elevation colour ──────────────────────────
+        // ── Layer 0: terrain tile or elevation colour ───────────────
         let color = this._getElevationColor(normElev);
+        let spriteDrawn = false;
+
+        // Attempt property-driven terrain tile lookup (Layer 0)
+        const tRef = this._terrainTileRef(this.planetData, null, rawElev, col, row);
+        if (tRef \u0026\u0026 tRef.path) {
+          const cache = this._ensureTerrainCache();
+          let img = cache.get(tRef.path);
+          if (!img) {
+            img = new Image();
+            img.src = tRef.path;
+            cache.set(tRef.path, img);
+          }
+          if (img.complete \u0026\u0026 img.naturalWidth > 0) {
+            ctx.drawImage(img, x, y, tileSize, tileSize);
+            spriteDrawn = true;
+          }
+        }
 
         // ── Layer 1: liquid ─────────────────────────────────────────
         const waterDepth = lRow ? (lRow[col] || 0) : 0;
         const isWet = waterDepth > 0;
-        if (this.visibleLayers.has('liquid') && isWet) {
+        if (this.visibleLayers.has('liquid') \u0026\u0026 isWet) {
           color = this._getWaterColor(waterDepth);
         }
 
         // ── Layer 2: biomes ─────────────────────────────────────────
-        if (this.visibleLayers.has('biomes') && hasBiosphere && bRow && !isWet) {
+        if (this.visibleLayers.has('biomes') \u0026\u0026 hasBiosphere \u0026\u0026 bRow \u0026\u0026 !isWet) {
           const biome = bRow[col];
-          if (biome && biome !== 'ocean' && biome !== 'none') {
+          if (biome \u0026\u0026 biome !== 'ocean' \u0026\u0026 biome !== 'none') {
             const biomeColor = this._getBiomeColor(biome);
             if (biomeColor) color = biomeColor;
             // null return = geological feature — keep elevation base colour
@@ -376,13 +421,13 @@ window.SurfaceView = {
         }
 
         // ── Layer 3: resources (yellow tint) ────────────────────────
-        if (this.visibleLayers.has('resources') && rRow && rRow[col] && rRow[col] !== 'none') {
+        if (this.visibleLayers.has('resources') \u0026\u0026 rRow \u0026\u0026 rRow[col] \u0026\u0026 rRow[col] !== 'none') {
           color = this._blendColors(color, '#FFFF00', 0.35);
         }
 
         // ── PNG sprite overlay (biome worlds, when loaded) ───────────
         const biome = bRow ? bRow[col] : null;
-        if (this.showSprites && this.renderer && !isWet && biome) {
+        if (this.showSprites \u0026\u0026 this.renderer \u0026\u0026 !isWet \u0026\u0026 biome) {
           const tileName = this._biomeTileKey(rawElev, biome);
           if (tileName) {
             const tileCvs = this.renderer.tiles.get(tileName);
@@ -393,8 +438,10 @@ window.SurfaceView = {
           }
         }
 
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, tileSize, tileSize);
+        if (!spriteDrawn) {
+          ctx.fillStyle = color;
+          ctx.fillRect(x, y, tileSize, tileSize);
+        }
       }
     }
 
@@ -561,6 +608,119 @@ window.SurfaceView = {
     // Unknown biome — return null so caller can fall back to elevation colour
     console.warn(`⚠️  Unknown biome type: "${biome}" — using elevation fallback`);
     return null;
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     TERRAIN PIPELINE — Property-Driven Asset Lookup
+     Maps physical properties → terrain family → type → variant.
+     Used for Layer 0 (geological base) only. Biome sprites (Layer 2)
+     continue using _biomeTileKey() + BiomeRenderer as before.
+  ═══════════════════════════════════════════════════════════════ */
+
+  /**
+   * Select terrain family from planet physical properties.
+   * Order matters — most specific rules first.
+   */
+  _selectTerrainFamily: function(planetData) {
+    const temp     = planetData?.surface_temperature;
+    const pressure = planetData?.atmosphere_pressure || 0;
+    const ironOx   = planetData?.crust_iron_oxide_percentage || 0;
+    const geoAct   = planetData?.geological_activity || 0;
+    const hasLife  = planetData?.has_biosphere || false;
+    const liquid   = planetData?.hydrosphere_liquid_type || null;
+
+    if (geoAct > 80 && temp > 700)        return 'volcanic';
+    if (temp != null && temp < -100 && liquid === 'CH4') return 'frozen'; // Titan-type
+    if (temp != null && temp < -50)        return 'frozen';
+    if (ironOx > 10 && pressure < 0.1)     return 'dust';     // Mars-type
+    if (pressure == null || pressure < 0.001) return 'regolith'; // Airless
+    if (hasLife && temp != null && temp > -10 && temp < 50) return 'temperate';
+    if (temp != null && temp > 30 && pressure > 0.5)     return 'tropical';
+    return 'barren'; // default fallback
+  },
+
+  /**
+   * Select terrain type within a family from biome string or elevation.
+   */
+  _selectTerrainType: function(family, biome, elev) {
+    const typeMap = {
+      'mountains': 'mountains', 'hills': 'hills',
+      'crater': 'crater', 'plains': 'plain',
+      'rocky': 'rocky', 'dunes': 'dunes',
+      'canyon': 'canyon', 'glacier': 'glacier',
+      'lava': 'lava', 'ash': 'ash'
+    };
+    if (biome && typeMap[biome]) return typeMap[biome];
+
+    // Fall back to elevation hints
+    if (elev > 3500) return 'mountains';
+    if (elev > 1500) return 'hills';
+    if (elev < 0)    return null; // hydrosphere layer handles this
+    return 'plain';
+  },
+
+  /**
+   * Count available variants for a family/type pair.
+   */
+  _countVariants: function(family, type) {
+    const familyCounts = this.VARIANT_COUNTS[family];
+    if (!familyCounts) return 1;
+    return familyCounts[type] || 1;
+  },
+
+  /**
+   * Deterministic variant selection from world seed + tile position.
+   */
+  _selectVariant: function(family, type, col, row) {
+    const seed    = window.WORLD_SEED || 42;
+    const maxVars = this._countVariants(family, type);
+    // Simple deterministic hash from seed + position
+    const hash = (seed * 31 + col * 17 + row * 13) % maxVars;
+    return String(hash + 1).padStart(2, '0'); // '01', '02' etc.
+  },
+
+  /**
+   * Check if an asset path is known to exist (static set).
+   */
+  _assetExists: function(path) {
+    return this.KNOWN_ASSETS.has(path);
+  },
+
+  /**
+   * Build tile path with fallback chain.
+   * Returns the path string if a known asset exists, else null (use colour).
+   */
+  _buildTilePath: function(family, type, variant) {
+    if (!type) return null; // hydrosphere cell — no terrain tile
+    const base = '/assets';
+    const paths = [
+      `${base}/${family}/${type}_${variant}.png`,
+      `${base}/${family}/${type}_01.png`,
+      `${base}/${family}/plain_01.png`,
+    ];
+    for (const p of paths) {
+      if (this._assetExists(p)) return p;
+    }
+    return null; // fall back to elevation colour
+  },
+
+  /**
+   * Public entry point — returns {family, type, variant, path}.
+   * Called from render loop for each tile.
+   */
+  _terrainTileRef: function(planetData, biome, elev, col, row) {
+    const family = this._selectTerrainFamily(planetData);
+    const type   = this._selectTerrainType(family, biome, elev);
+    const variant = this._selectVariant(family, type, col, row);
+    const path   = this._buildTilePath(family, type, variant);
+
+    // Debug log (throttled to first tile only)
+    if (!this._terrainLogged) {
+      console.log(`[TerrainPipeline] ${this.planetName}: family=${family} type=${type || 'none'} variant=${variant} ${path ? '(tile: ' + path + ')' : '(fallback: colour)'}`);
+      this._terrainLogged = true;
+    }
+
+    return { family, type, variant, path };
   },
 
   /* Map biome string → BiomeRenderer PNG key (one of the 10 loaded PNGs).
