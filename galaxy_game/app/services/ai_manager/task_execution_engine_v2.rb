@@ -382,7 +382,7 @@ module AIManager
         end
         
         # GATE 2: Central Utility Hub Presence
-        unless @settlement.units.exists?(unit_type: 'planetary_umbilical_hub')
+        unless @settlement.units.exists?(["unit_type LIKE ?", "%planetary_umbilical_hub%"])
           raise AIManager::InfrastructureSequenceError.new(
             "Inflatable tanks must connect to an anchored planetary_umbilical_hub to begin inflation cycles."
           )
@@ -717,6 +717,8 @@ module AIManager
       
       # Verify unit exists and is deployed
       unit = @settlement.units.find_by(name: unit_name)
+      unit ||= @settlement.units.find_by(unit_type: unit_name)
+      unit ||= @settlement.units.find_by(["unit_type LIKE ?", "%#{unit_name}%"])
       unless unit
         raise AIManager::InfrastructureSequenceError.new(
           "Cannot set state: unit '#{unit_name}' is not deployed at settlement #{@settlement.name}"
