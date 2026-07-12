@@ -25,6 +25,19 @@ module AIManager
       end
     end
 
+    # Real atmospheric extraction — replaces mock harvester data
+    def execute_atmospheric_extraction(skimmer, source_body, target_body: nil, capacity: nil)
+      extraction = AIManager::AtmosphericExtractionService.new(skimmer, source_body, target_body: target_body)
+      result = extraction.execute_extraction(capacity: capacity || skimmer.atmosphere&.total_atmospheric_mass || 5000)
+
+      # Offload to cycler after successful extraction
+      if result[:success] && skimmer.docked_at.is_a?(Craft::Transport::Cycler)
+        extraction.dock_and_transfer_to_cycler(skimmer.docked_at)
+      end
+
+      result
+    end
+
     # Vessel identification — prerequisite step before any processing
     def identify_vessel_variant(vessel)
       # Method 1: Check operational_data flag (preferred)
