@@ -824,7 +824,10 @@ window.AdminMonitor = (function() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const hasBiosphere = planetData?.has_biosphere || false;
+    // hasBiosphere: true only if we actually have a biome grid
+    // Never rely on planetData.has_biosphere — it may be missing or wrong (e.g., database record not created)
+    // Check the actual data structure instead, matching surface_view.js pattern
+    const hasBiosphere = layers.biomes && layers.biomes.grid ? true : false;
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
