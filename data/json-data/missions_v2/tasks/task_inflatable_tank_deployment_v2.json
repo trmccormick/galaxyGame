@@ -14,8 +14,8 @@
       "description": "Deploy inflatable pressure and cryogenic tanks.",
       "priority": 5,
       "effects": [
-        { "action": "deploy_unit", "unit": "Inflatable Pressure Tank", "count": 2 },
-        { "action": "deploy_unit", "unit": "Inflatable Cryogenic Tank", "count": 2 }
+        { "action": "deploy_unit", "unit": "inflatable_pressure_tank", "count": 2 },
+        { "action": "deploy_unit", "unit": "inflatable_cryo_tank", "count": 2 }
       ],
       "completion_criteria": { "type": "event", "event": "tanks_deployed" }
     }

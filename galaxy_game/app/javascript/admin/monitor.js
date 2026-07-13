@@ -684,10 +684,29 @@ window.AdminMonitor = (function() {
           if (terrainData.biomes[y][x]) uniqueBiomes.add(terrainData.biomes[y][x]);
         }
       }
-      console.log('Using NASA biome grid data');
-      console.log('Unique biome types found:', Array.from(uniqueBiomes));
+      console.log('✅ Using biome grid data');
+      console.log('   Grid dimensions:', terrainData.biomes[0].length, 'x', terrainData.biomes.length);
+      console.log('   Unique biome types found:', Array.from(uniqueBiomes));
     } else {
-      console.log('Biomes grid missing - will show pure elevation heightmap');
+      // Detailed diagnostic logging
+      if (!terrainData) {
+        console.warn('❌ Biomes: terrainData is missing');
+      } else if (!terrainData.biomes) {
+        console.warn('❌ Biomes: terrainData.biomes is null/undefined');
+      } else if (!Array.isArray(terrainData.biomes)) {
+        console.warn('❌ Biomes: terrainData.biomes is not an array');
+      } else if (terrainData.biomes.length === 0) {
+        console.warn('❌ Biomes: terrainData.biomes is empty');
+      } else if (!Array.isArray(terrainData.biomes[0])) {
+        console.warn('❌ Biomes: terrainData.biomes[0] is not an array (not 2D)');
+      } else if (!layers.elevation) {
+        console.warn('❌ Biomes: elevation layer not initialized');
+      } else if (terrainData.biomes.length !== layers.elevation.height) {
+        console.warn('❌ Biomes: height mismatch - biomes:', terrainData.biomes.length, 'vs elevation:', layers.elevation.height);
+      } else if (terrainData.biomes[0].length !== layers.elevation.width) {
+        console.warn('❌ Biomes: width mismatch - biomes:', terrainData.biomes[0].length, 'vs elevation:', layers.elevation.width);
+      }
+      console.log('⚠️  Biomes grid missing - will show pure elevation heightmap');
     }
 
     // Resources
@@ -726,7 +745,12 @@ window.AdminMonitor = (function() {
     }
 
     console.log('Celestial body:', planetName);
-    console.log('Layers extracted:', layers);
+    console.log('Layers extracted:', Object.keys(layers));
+    if (layers.biomes) {
+      console.log('✅ Biomes layer READY for rendering');
+    } else {
+      console.warn('⚠️  Biomes layer NOT available');
+    }
 
     if (!layers.elevation) {
       console.warn('No elevation data available');
@@ -1002,6 +1026,27 @@ window.AdminMonitor = (function() {
     }
 
     console.log(`NASA-first terrain rendered: ${width}x${height}`);
+    
+    // Debug: count rendered layers
+    let statsStr = 'Rendered stats: ';
+    if (visibleLayers.has('biomes') && layers.biomes) {
+      statsStr += '✅ Biomes active, ';
+    } else if (visibleLayers.has('biomes')) {
+      statsStr += '⚠️ Biomes enabled but no data, ';
+    } else {
+      statsStr += '🔲 Biomes hidden, ';
+    }
+    if (visibleLayers.has('liquid') && layers.liquid) {
+      statsStr += '✅ Hydrosphere active, ';
+    }
+    if (visibleLayers.has('temperature')) {
+      statsStr += '✅ Temperature active, ';
+    }
+    if (visibleLayers.has('rainfall')) {
+      statsStr += '✅ Rainfall active';
+    }
+    console.log(statsStr);
+    
     logConsole(`NASA terrain rendered: ${width}x${height}`, 'success');
 
     setTimeout(centerMapView, 50);
@@ -1304,6 +1349,17 @@ window.AdminMonitor = (function() {
       terrainData = data.terrain_data;
       planetData  = data.planet_data;
 
+      // Debug: log what terrain data we received
+      if (terrainData) {
+        console.log('🌍 Received terrain_data for', planetName, {
+          has_biomes: !!terrainData.biomes,
+          biomes_is_array: Array.isArray(terrainData.biomes),
+          biomes_length: Array.isArray(terrainData.biomes) ? terrainData.biomes.length : 'N/A',
+          has_elevation: !!terrainData.elevation || !!terrainData.grid,
+          has_resources: !!terrainData.resource_grid
+        });
+      }
+
       visibleLayers = new Set(['terrain']);
 
       const availableLayers = monitorData.available_layers || {
@@ -1338,12 +1394,26 @@ window.AdminMonitor = (function() {
     setupScrollableMap();
     startDataPolling();
 
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        renderTerrainMap();
-        logConsole('System initialized', 'info');
+    // Robust initialization: wait for DOM + canvas to be ready
+    function scheduleRender() {
+      const canvas = document.getElementById('planetCanvas');
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        setTimeout(scheduleRender, 100);
+        return;
+      }
+      renderTerrainMap();
+      logConsole('System initialized', 'info');
+    }
+
+    // For Turbo: wait for page:render then page:after-render for full DOM stability
+    if (typeof Turbo !== 'undefined') {
+      document.addEventListener('turbo:load', function onFirstLoad() {
+        document.removeEventListener('turbo:load', onFirstLoad);
+        setTimeout(scheduleRender, 200);
       });
-    });
+    } else {
+      setTimeout(scheduleRender, 100);
+    }
 
     window.addEventListener('beforeunload', function() {
       if (updateInterval) clearInterval(updateInterval);

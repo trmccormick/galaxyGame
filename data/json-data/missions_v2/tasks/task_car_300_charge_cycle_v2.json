@@ -14,15 +14,15 @@
       "description": "CAR-300 robots transition from idle state to docked at charging ports, complete full charge cycle, and run diagnostics. Validates robot readiness for construction support operations.",
       "priority": 8,
       "effects": [
-        { "action": "deploy_unit", "unit": "CAR-300 Robot", "count": 2 },
-        { "action": "set_unit_state", "unit": "CAR-300 Robot 1", "state": "active" },
-        { "action": "set_unit_state", "unit": "CAR-300 Robot 2", "state": "active" },
-        { "action": "check_unit_state", "unit": "CAR-300 Robot 1", "state": "active" },
-        { "action": "check_unit_state", "unit": "CAR-300 Robot 2", "state": "active" }
+        { "action": "deploy_unit", "unit": "car_300_deployment_robot_mk1", "count": 2 },
+        { "action": "set_unit_state", "unit": "car_300_deployment_robot_mk1 1", "state": "active" },
+        { "action": "set_unit_state", "unit": "car_300_deployment_robot_mk1 2", "state": "active" },
+        { "action": "check_unit_state", "unit": "car_300_deployment_robot_mk1 1", "state": "active" },
+        { "action": "check_unit_state", "unit": "car_300_deployment_robot_mk1 2", "state": "active" }
       ],
       "completion_criteria": {
         "type": "unit_state",
-        "unit": "CAR-300 Robot 1",
+        "unit": "car_300_deployment_robot_mk1 1",
         "state": "active"
       }
     }

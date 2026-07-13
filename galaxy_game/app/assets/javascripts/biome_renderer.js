@@ -1,7 +1,7 @@
 /**
  * BiomeRenderer — ES6 class
  *
- * Loads 10 individual biome PNGs from the asset pipeline and pre-scales each
+ * Loads 12 individual biome PNGs from the asset pipeline and pre-scales each
  * to exactly 142×142 pixels (crisp nearest-neighbour, no smoothing).
  *
  * Designed for 20fps integration with surface_view.js.
@@ -29,12 +29,14 @@ class BiomeRenderer {
 
   /** Canonical ordered list — must match biomes.json keys exactly */
   static BIOME_NAMES = [
-    'desert',
+    'hot_desert',
+    'cold_desert',
+    'polar_desert',
     'forest',
     'grasslands',
     'jungle',
-    'mountains',
-    'mountains_snow_covered',
+    'tropical_jungle',
+    'savanna',
     'ocean',
     'plains',
     'swamp',
@@ -66,7 +68,7 @@ class BiomeRenderer {
   /* ─── Public API ──────────────────────────────────────────────── */
 
   /**
-   * Load biomes.json then fetch and scale all 10 PNGs in parallel.
+   * Load biomes.json then fetch and scale all 12 PNGs in parallel.
    * Safe to await; always resolves — PNG failures degrade to colour fallbacks.
    *
    * @returns {Promise<BiomeRenderer>} this (chainable)

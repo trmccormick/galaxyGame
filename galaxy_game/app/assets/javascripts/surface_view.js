@@ -131,8 +131,8 @@ window.SurfaceView = {
       const loaded  = this.renderer.tiles.size;
       const missing = this.renderer.missingBiomes();
       if (missing.length) console.warn('⚠️  Missing PNGs (colour fallback):', missing);
-      if (loadedEl) loadedEl.textContent = `${loaded}/10`;
-      if (statusEl) statusEl.textContent = loaded === 10 ? '✅ All 10 loaded' : `⚠️ ${loaded}/10`;
+      if (loadedEl) loadedEl.textContent = `${loaded}/12`;
+      if (statusEl) statusEl.textContent = loaded === 12 ? '✅ All 12 loaded' : `⚠️ ${loaded}/12`;
     } else {
       if (nameEl)   nameEl.textContent   = hasBiomes ? 'Biome Colours' : 'Elevation Grayscale';
       if (statusEl) statusEl.textContent = '✅ Ready';
@@ -389,7 +389,7 @@ window.SurfaceView = {
 
         // Attempt property-driven terrain tile lookup (Layer 0)
         const tRef = this._terrainTileRef(this.planetData, null, rawElev, col, row);
-        if (tRef \u0026\u0026 tRef.path) {
+        if (tRef && tRef.path) {
           const cache = this._ensureTerrainCache();
           let img = cache.get(tRef.path);
           if (!img) {
@@ -397,7 +397,7 @@ window.SurfaceView = {
             img.src = tRef.path;
             cache.set(tRef.path, img);
           }
-          if (img.complete \u0026\u0026 img.naturalWidth > 0) {
+          if (img.complete && img.naturalWidth > 0) {
             ctx.drawImage(img, x, y, tileSize, tileSize);
             spriteDrawn = true;
           }
@@ -406,14 +406,14 @@ window.SurfaceView = {
         // ── Layer 1: liquid ─────────────────────────────────────────
         const waterDepth = lRow ? (lRow[col] || 0) : 0;
         const isWet = waterDepth > 0;
-        if (this.visibleLayers.has('liquid') \u0026\u0026 isWet) {
+        if (this.visibleLayers.has('liquid') && isWet) {
           color = this._getWaterColor(waterDepth);
         }
 
         // ── Layer 2: biomes ─────────────────────────────────────────
-        if (this.visibleLayers.has('biomes') \u0026\u0026 hasBiosphere \u0026\u0026 bRow \u0026\u0026 !isWet) {
+        if (this.visibleLayers.has('biomes') && hasBiosphere && bRow && !isWet) {
           const biome = bRow[col];
-          if (biome \u0026\u0026 biome !== 'ocean' \u0026\u0026 biome !== 'none') {
+          if (biome && biome !== 'ocean' && biome !== 'none') {
             const biomeColor = this._getBiomeColor(biome);
             if (biomeColor) color = biomeColor;
             // null return = geological feature — keep elevation base colour
@@ -421,13 +421,13 @@ window.SurfaceView = {
         }
 
         // ── Layer 3: resources (yellow tint) ────────────────────────
-        if (this.visibleLayers.has('resources') \u0026\u0026 rRow \u0026\u0026 rRow[col] \u0026\u0026 rRow[col] !== 'none') {
+        if (this.visibleLayers.has('resources') && rRow && rRow[col] && rRow[col] !== 'none') {
           color = this._blendColors(color, '#FFFF00', 0.35);
         }
 
         // ── PNG sprite overlay (biome worlds, when loaded) ───────────
         const biome = bRow ? bRow[col] : null;
-        if (this.showSprites \u0026\u0026 this.renderer \u0026\u0026 !isWet \u0026\u0026 biome) {
+        if (this.showSprites && this.renderer && !isWet && biome) {
           const tileName = this._biomeTileKey(rawElev, biome);
           if (tileName) {
             const tileCvs = this.renderer.tiles.get(tileName);
@@ -587,8 +587,10 @@ window.SurfaceView = {
       temperate_rainforest:     '#006633',
       rainforest:               '#004000',
       hot_desert:               '#F4A460',
-      polar_desert:             '#E8DCC8',
       cold_desert:              '#C2B280',
+      polar_desert:             '#E8E8F0',
+      tropical_jungle:          '#0a3a0a',
+      savanna:                  '#9ACD32',
       polar_ice:                '#F0FFFF',
       snow:                     '#FFFAFA',
       marsh:                    '#6B8E23',
@@ -734,8 +736,7 @@ window.SurfaceView = {
       ' ': 'ocean', ':': 'ocean', '.': 'ocean',
       'a': 'tundra', 't': 'tundra',
       'f': 'forest', 'g': 'grasslands', 'p': 'plains',
-      'd': 'desert', 'j': 'jungle',     's': 'swamp',
-      'h': 'mountains', 'm': 'mountains'
+      'd': 'hot_desert', 'j': 'jungle', 's': 'swamp'
     };
     if (b.length === 1) return charMap[b] || null;
 
@@ -766,16 +767,16 @@ window.SurfaceView = {
       tropical_forest:          'jungle',
       rainforest:               'jungle',
       jungle:                   'jungle',
+      tropical_jungle:          'tropical_jungle',
 
-      desert:                   'desert',
-      hot_desert:               'desert',
-      polar_desert:             'desert',
-      cold_desert:              'desert',
+      hot_desert:               'hot_desert',
+      cold_desert:              'cold_desert',
+      polar_desert:             'polar_desert',
 
       grassland:                'grasslands',
       grasslands:               'grasslands',
-      savanna:                  'grasslands',
-      savannah:                 'grasslands',
+      savanna:                  'savanna',
+      savannah:                 'savanna',
       temperate_grassland:      'grasslands',
       tropical_grassland:       'grasslands',
 
@@ -787,27 +788,18 @@ window.SurfaceView = {
       marsh:                    'swamp',
       wetlands:                 'swamp',
       wetland:                  'swamp',
-      bog:                      'swamp',
-
-      highlands:                'mountains',
-      montane:                  'mountains',
-      alpine:                   'mountains',
-      mountain:                 'mountains',
-      mountains:                'mountains',
-      hill:                     'mountains'
+      bog:                      'swamp'
     };
 
     if (exactMap[b]) {
-      const key = exactMap[b];
-      if (key === 'mountains' && elev > 3500) return 'mountains_snow_covered';
-      return key;
+      return exactMap[b];
     }
 
     // Elevation hints for unlabelled tiles
     if (elev !== undefined) {
       if (elev < 0)    return null;   // below sea level — liquid layer handles it
-      if (elev > 3500) return 'mountains_snow_covered';
-      if (elev > 2000) return 'mountains';
+      if (elev > 3500) return 'polar_desert';
+      if (elev > 2000) return 'cold_desert';
     }
     return 'plains'; // final fallback for unrecognised biome strings
   },

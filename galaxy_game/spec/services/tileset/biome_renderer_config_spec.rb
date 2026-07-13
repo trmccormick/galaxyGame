@@ -15,14 +15,16 @@ RSpec.describe 'BiomeRenderer configuration', type: :service do
   BIOME_ASSETS_DIR = Rails.root.join('public', 'assets', 'biomes').freeze
 
   EXPECTED_BIOME_KEYS = %w[
-    desert
+    hot_desert
+    cold_desert
+    polar_desert
     forest
     grasslands
     jungle
-    mountains
-    mountains_snow_covered
+    tropical_jungle
     ocean
     plains
+    savanna
     swamp
     tundra
   ].freeze
@@ -61,8 +63,8 @@ RSpec.describe 'BiomeRenderer configuration', type: :service do
 
   # ── biome key completeness ────────────────────────────────────────
   describe 'biome registry' do
-    it 'contains exactly 10 biome entries' do
-      expect(config['biomes'].keys.length).to eq(10)
+    it 'contains exactly 12 biome entries' do
+      expect(config['biomes'].keys.length).to eq(12)
     end
 
     EXPECTED_BIOME_KEYS.each do |biome|

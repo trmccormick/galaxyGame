@@ -1,16 +1,32 @@
 {
   "version": "1.0.0",
-  "description": "Biome tile configuration for BiomeRenderer — 10 individual 142×142 PNGs",
+  "description": "Biome tile configuration for BiomeRenderer — 11 individual 142×142 PNGs (8 core + 3 desert variants)",
   "tile_size": 142,
   "asset_path": "/assets/biomes/",
   "biomes": {
-    "desert": {
-      "file": "desert.png",
-      "label": "Desert",
-      "color_fallback": "#c2a04a",
+    "hot_desert": {
+      "file": "hot_desert.png",
+      "label": "Hot Desert",
+      "color_fallback": "#d4a017",
       "elevation_range": [0, 1000],
-      "climate": "arid",
-      "description": "Hot, dry sandy terrain with minimal vegetation"
+      "climate": "arid_hot",
+      "description": "Sandy dune desert with golden/orange tones (Sahara-type)"
+    },
+    "cold_desert": {
+      "file": "cold_desert.png",
+      "label": "Cold Desert",
+      "color_fallback": "#8a7a6a",
+      "elevation_range": [0, 1500],
+      "climate": "arid_cold",
+      "description": "Rocky gravel desert with grey-brown tones (Gobi-type)"
+    },
+    "polar_desert": {
+      "file": "polar_desert.png",
+      "label": "Polar Desert",
+      "color_fallback": "#e8e8f0",
+      "elevation_range": [0, 2000],
+      "climate": "arctic_polar",
+      "description": "Uniform white ice sheet with minimal life (Antarctic interior)"
     },
     "forest": {
       "file": "forest.png",
@@ -36,22 +52,23 @@
       "climate": "tropical",
       "description": "Dense tropical rainforest with high humidity"
     },
-    "mountains": {
-      "file": "mountains.png",
-      "label": "Mountains",
-      "color_fallback": "#7a6a5a",
-      "elevation_range": [1500, 5000],
-      "climate": "alpine",
-      "description": "Rocky high-altitude terrain with exposed ridgelines"
+    "tropical_jungle": {
+      "file": "tropical_jungle.png",
+      "label": "Tropical Jungle",
+      "color_fallback": "#0a4a0a",
+      "elevation_range": [0, 500],
+      "climate": "tropical_dense",
+      "description": "Ultra-dense tropical canopy with layered understory (distinct from standard jungle)"
     },
-    "mountains_snow_covered": {
-      "file": "mountains_snow_covered.png",
-      "label": "Snow-Capped Mountains",
-      "color_fallback": "#d0d8e8",
-      "elevation_range": [3000, 9000],
-      "climate": "arctic_alpine",
-      "description": "High-altitude peaks with permanent ice and snowpack"
+    "savanna": {
+      "file": "savanna.png",
+      "label": "Savanna",
+      "color_fallback": "#9ACD32",
+      "elevation_range": [0, 800],
+      "climate": "tropical_grassland",
+      "description": "Grassy plains with scattered trees (tropical grassland)"
     },
+
     "ocean": {
       "file": "ocean.png",
       "label": "Ocean",

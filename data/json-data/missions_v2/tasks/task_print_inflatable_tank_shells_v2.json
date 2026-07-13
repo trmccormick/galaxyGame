@@ -22,7 +22,6 @@
         },
         {
           "action": "advance_deployment_stages",
-          "target_type": "cryogenic_tank",
           "stage": "inflate"
         }
       ],

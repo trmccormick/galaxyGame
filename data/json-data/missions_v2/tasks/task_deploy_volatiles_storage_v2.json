@@ -14,11 +14,11 @@
       "description": "Deploy inflatable pressure, gas storage, and cryogenic tanks for raw gas buffering.",
       "priority": 8,
       "effects": [
-        { "action": "deploy_unit", "unit": "Inflatable Pressure Tank", "count": 1 },
-        { "action": "deploy_unit", "unit": "Inflatable Gas Storage", "count": 1 },
-        { "action": "deploy_unit", "unit": "Inflatable Cryogenic Tank", "count": 2 }
+        { "action": "deploy_unit", "unit": "inflatable_pressure_tank", "count": 1 },
+        { "action": "deploy_unit", "unit": "inflatable_gas_storage", "count": 1 },
+        { "action": "deploy_unit", "unit": "inflatable_cryo_tank", "count": 2 }
       ],
-      "completion_criteria": { "type": "resource_count", "resource": "Inflatable Cryogenic Tank", "amount_deployed": 2 }
+      "completion_criteria": { "type": "resource_count", "resource": "inflatable_cryo_tank", "amount_deployed": 2 }
     }
   ]
 }

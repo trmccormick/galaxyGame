@@ -14,11 +14,9 @@
       "description": "Mark ISRU units as producing and initialize first production cycle. Tracks material output (regolith, volatiles, O2, H2, cryo-gases) to settlement inventory. This is a simulation trigger event, not real-time production.",
       "priority": 7,
       "effects": [
-        { "action": "deploy_unit", "unit": "Regolith Extraction Unit", "count": 1 },
-        { "action": "set_unit_state", "unit": "Regolith Extraction Unit", "state": "active" },
         { "action": "set_unit_state", "unit": "Planetary Volatiles Extractor Mk1", "state": "active" },
         { "action": "set_unit_state", "unit": "Gas Separator", "state": "active" },
-        { "action": "manufacture", "unit": "Regolith Extraction Unit", "material": "regolith_processed", "quantity": 1000 },
+        { "action": "manufacture", "unit": "Thermal Extraction Unit Mk1", "material": "regolith_processed", "quantity": 1000 },
         { "action": "manufacture", "unit": "Planetary Volatiles Extractor Mk1", "material": "volatiles_processed", "quantity": 500 },
         { "action": "manufacture", "unit": "Gas Separator", "material": "O2", "quantity": 300 }
       ],
