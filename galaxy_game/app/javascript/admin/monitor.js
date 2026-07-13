@@ -22,6 +22,7 @@ window.AdminMonitor = (function() {
   let monitorData     = null;
   let layers          = {};
   let visibleLayers   = new Set(['terrain']);
+  let initialized     = false; // Guard against turbo:load double-init
   
   // Viewport state for pan/zoom
   let viewport = {
@@ -1385,6 +1386,13 @@ window.AdminMonitor = (function() {
       return;
     }
 
+    // Guard: prevent turbo:load from re-running setup on navigation
+    if (initialized) {
+      console.log('Monitor already initialized; skipping duplicate init');
+      return;
+    }
+    initialized = true;
+
     if (window.monitorUpdateInterval) {
       clearInterval(window.monitorUpdateInterval);
       window.monitorUpdateInterval = null;
@@ -1410,6 +1418,10 @@ window.AdminMonitor = (function() {
         });
       }
 
+      // Preserve user's layer toggles across init() calls.
+      // Without this, every turbo:load or data refresh resets visibleLayers to ['terrain'],
+      // wiping any biome/hydrosphere toggle the user just clicked.
+      const savedLayers = new Set(visibleLayers);
       visibleLayers = new Set(['terrain']);
 
       const availableLayers = monitorData.available_layers || {
@@ -1421,10 +1433,17 @@ window.AdminMonitor = (function() {
         features:   true
       };
 
-      if (planetData.has_hydrosphere && availableLayers.water) {
-        visibleLayers.add('liquid'); // internal name
+      // Restore user toggles (only add if planet supports it)
+      savedLayers.forEach(layer => {
+        if (layer === 'liquid' && planetData.has_hydrosphere) visibleLayers.add('liquid');
+        else if (['biomes','resources','temperature','rainfall','features'].includes(layer)) visibleLayers.add(layer);
+      });
+
+      // Add defaults for this planet (only if user hasn't toggled them off)
+      if (planetData.has_hydrosphere && !savedLayers.has('liquid') && availableLayers.water) {
+        visibleLayers.add('liquid');
       }
-      if (availableLayers.biomes) {
+      if (availableLayers.biomes && !savedLayers.has('biomes')) {
         visibleLayers.add('biomes');
       }
 
@@ -1471,11 +1490,78 @@ window.AdminMonitor = (function() {
     });
   }
 
+  // ============================================
+  // Sphere CRUD Operations (from monitor_patched.js)
+  // ============================================
+
+  function createSphere(sphereType) {
+    logConsole(`Creating ${sphereType}...`, 'info');
+    
+    fetch(`/admin/celestial_bodies/${planetId}/spheres`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ 
+        sphere_type: sphereType,
+        sphere: { 
+          temperature: sphereType.includes('hydro') ? 300 : 200,
+          pressure: sphereType === 'atmosphere' ? 1.0 : 0,
+          thickness: sphereType === 'cryosphere' ? 10000 : null
+        }
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        logConsole(`${sphereType} created successfully`, 'success');
+        location.reload();
+      } else {
+        logConsole(`Failed to create ${sphereType}: ${data.error}`, 'error');
+      }
+    })
+    .catch(error => {
+      logConsole(`Error creating ${sphereType}: ${error.message}`, 'error');
+    });
+  }
+
+  function editSphere(sphereId, sphereType) {
+    logConsole(`Editing ${sphereType}...`, 'info');
+    window.location.href = `/admin/celestial_bodies/${planetId}/spheres/${sphereId}/edit?type=${sphereType}`;
+  }
+
+  function deleteSphere(sphereId, sphereType) {
+    logConsole(`Deleting ${sphereType}...`, 'warning');
+    
+    fetch(`/admin/celestial_bodies/${planetId}/spheres/${sphereId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        logConsole(`${sphereType} deleted successfully`, 'success');
+        location.reload();
+      } else {
+        logConsole(`Failed to delete ${sphereType}: ${data.error}`, 'error');
+      }
+    })
+    .catch(error => {
+      logConsole(`Error deleting ${sphereType}: ${error.message}`, 'error');
+    });
+  }
+
   return {
     init: init,
     renderTerrainMap: renderTerrainMap,
     toggleLayer: toggleLayer,
-    logConsole: logConsole
+    logConsole: logConsole,
+    createSphere: createSphere,
+    editSphere: editSphere,
+    deleteSphere: deleteSphere
   };
 })();
 
