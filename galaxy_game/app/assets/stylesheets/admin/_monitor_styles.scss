@@ -17,6 +17,7 @@
   background: #1a1a1a;
   padding: 15px 20px;
   border-bottom: 2px solid #00d4ff;
+
   h1 {
     font-size: 20px;
     color: #00d4ff;
@@ -139,7 +140,10 @@ footer .console-line {
   max-height: 100vh;
   margin: 0;
   box-sizing: border-box;
-  &:active { cursor: grabbing; }
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 
@@ -178,7 +182,7 @@ footer .console-line {
 
 #featureTooltip {
   position: absolute;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0, 0, 0, 0.9);
   border: 1px solid #0f3460;
   border-radius: 4px;
   padding: 10px;
@@ -186,7 +190,10 @@ footer .console-line {
   z-index: 20;
   pointer-events: none;
   font-size: 11px;
-  &.hidden { display: none; }
+
+  &.hidden {
+    display: none;
+  }
 }
 
 
@@ -195,6 +202,7 @@ footer .console-line {
   margin-bottom: 15px;
   border: 1px solid #333;
   padding: 10px;
+
   h3 {
     color: #00ccff;
     font-size: 12px;
@@ -218,11 +226,24 @@ footer .console-line {
   font-size: 10px;
   font-family: inherit;
   transition: all 0.2s;
-  &.active { background: #0066cc; color: #000; border-color: #0066cc; }
-  &:hover:not(:disabled) { border-color: #0066cc; }
-  &:disabled, &.unavailable {
-    background: #1a1a1a; border-color: #2a2a2a;
-    color: #444; cursor: not-allowed; opacity: 0.5;
+
+  &.active {
+    background: #0066cc;
+    color: #000;
+    border-color: #0066cc;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: #0066cc;
+  }
+
+  &:disabled,
+  &.unavailable {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+    color: #444;
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 
@@ -232,9 +253,13 @@ footer .console-line {
   padding: 8px;
   margin: 5px 0;
   border-radius: 6px;
+
   &.active {
     box-shadow: 0 0 12px rgba(0, 204, 255, 0.6);
-    .mission-status { animation: pulse 2s infinite; }
+
+    .mission-status {
+      animation: pulse 2s infinite;
+    }
   }
 }
 
@@ -244,30 +269,59 @@ footer .console-line {
   margin-bottom: 5px;
 }
 
-.mission-type   { color: #00ccff; font-size: 11px; font-weight: bold; }
-.mission-status { color: #0066cc; font-size: 10px; }
+.mission-type {
+  color: #00ccff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.mission-status {
+  color: #0066cc;
+  font-size: 10px;
+}
 
 .mission-progress {
   display: flex;
   align-items: center;
   gap: 5px;
-  .progress-text { color: #888; font-size: 10px; min-width: 35px; }
-}
 
+  .progress-text {
+    color: #888;
+    font-size: 10px;
+    min-width: 35px;
+  }
+}
 
 .console-line {
   margin: 2px 0;
   color: #00d4ff;
   font-family: 'Courier New', monospace;
-  &.info    { color: #00d4ff; }
-  &.success { color: #00cc44; }
-  &.warning { color: #ff0; }
-  &.error   { color: #f00; }
+
+  &.info {
+    color: #00d4ff;
+  }
+
+  &.success {
+    color: #00cc44;
+  }
+
+  &.warning {
+    color: #ff0;
+  }
+
+  &.error {
+    color: #f00;
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.7; }
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 
@@ -276,12 +330,16 @@ footer .console-line {
     grid-template-columns: 1fr;
     grid-template-rows: 60px auto auto auto 200px;
   }
-  .admin-sidebar, aside#dataPanel {
+
+  .admin-sidebar,
+  aside#dataPanel {
     border: none;
     border-bottom: 2px solid #00d4ff;
   }
+
   footer {
     grid-column: 1 / -1;
     position: static;
   }
+}
 }

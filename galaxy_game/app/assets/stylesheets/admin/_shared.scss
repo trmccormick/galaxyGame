@@ -24,17 +24,40 @@ $monitor-dark: #0a0a0a;
 
 .data-value {
   color: #0066cc;
-  &.warning  { color: #ffaa00; }
-  &.critical { color: #f00; }
-  &.good     { color: #0066cc; }
-  &.neutral  { color: #888; }
+
+  &.warning {
+    color: #ffaa00;
+  }
+
+  &.critical {
+    color: #f00;
+  }
+
+  &.good {
+    color: #0066cc;
+  }
+
+  &.neutral {
+    color: #888;
+  }
 }
 
 // Status colors (used everywhere)
-.text-success { color: #00cc44; }
-.text-danger  { color: #ff0044; }
-.text-warning { color: #ffaa00; }
-.text-accent  { color: #00ccff; }
+.text-success {
+  color: #00cc44;
+}
+
+.text-danger {
+  color: #ff0044;
+}
+
+.text-warning {
+  color: #ffaa00;
+}
+
+.text-accent {
+  color: #00ccff;
+}
 
 // Progress bars (used in monitor AND missions)
 .progress-bar {
@@ -54,7 +77,20 @@ $monitor-dark: #0a0a0a;
 }
 
 // Scrollbars
-::-webkit-scrollbar       { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #1a1a1a; }
-::-webkit-scrollbar-thumb { background: #0066cc; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #00ccff; }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0066cc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ccff;
+}
