@@ -277,7 +277,7 @@ window.AdminMonitor = (function() {
     return `rgb(${r}, ${g}, ${b})`;
   }
 
-  function getBiomeColor(biome) {
+  function getBiomeColor(biome, latitude) {
     const biomeColors = {
       desert:          '#DAA520',
       polar_desert:    '#E8DCC8',
@@ -326,7 +326,15 @@ window.AdminMonitor = (function() {
 
     if (biome) {
       const lower = biome.toLowerCase();
-      if (lower.includes('desert'))   return '#DAA520';
+      if (lower.includes('desert')) {
+        // Dynamic desert color based on latitude (from monitor_patched.js)
+        if (latitude != null) {
+          const absLat = Math.abs(latitude);
+          if (absLat > 60) return '#ffeedd';   // ice desert — lighter
+          if (absLat > 30) return '#f4d89e';   // temperate desert — golden tan
+        }
+        return '#DAA520';  // default warm desert
+      }
       if (lower.includes('forest'))   return '#228B22';
       if (lower.includes('grass'))    return '#7CCD7C';
       if (lower.includes('tundra'))   return '#B8C4C8';
@@ -891,7 +899,9 @@ window.AdminMonitor = (function() {
                 layers.liquid.grid[y] && layers.liquid.grid[y][x] > 0;
 
               if (!isUnderwater) {
-                const biomeColor = getBiomeColor(biome);
+                // Calculate latitude for dynamic biome coloring
+                const latitude = (y / height - 0.5) * 180;
+                const biomeColor = getBiomeColor(biome, latitude);
                 if (x === 0 && y === 0 && !window.biomesColorDebugLogged) {
                   window.biomesColorDebugLogged = true;
                   console.log('🎨 First biome rendered:', { biome, biomeColor, isUnderwater });
