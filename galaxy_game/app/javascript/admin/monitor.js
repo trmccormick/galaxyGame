@@ -861,18 +861,39 @@ window.AdminMonitor = (function() {
         // LAYER 2: biomes
         if (visibleLayers.has('biomes') &&
             hasBiosphere &&
-            layers.biomes &&
-            layers.biomes.grid[y] &&
-            layers.biomes.grid[y][x]) {
+            layers.biomes) {
 
-          const biome = layers.biomes.grid[y][x];
-          if (biome && biome !== 'ocean' && biome !== 'none') {
-            const isUnderwater =
-              layers.liquid && layers.liquid.grid &&
-              layers.liquid.grid[y] && layers.liquid.grid[y][x] > 0;
+          // Debug first pixel
+          if (x === 0 && y === 0 && !window.biomesDebugLogged) {
+            window.biomesDebugLogged = true;
+            console.log('🔍 Biome layer structure:', {
+              hasBiomesGrid: !!layers.biomes.grid,
+              gridType: typeof layers.biomes.grid,
+              firstRowExists: !!layers.biomes.grid?.[0],
+              firstCellType: typeof layers.biomes.grid?.[0]?.[0],
+              firstCellValue: layers.biomes.grid?.[0]?.[0],
+              gridDimensions: {
+                rows: layers.biomes.grid?.length,
+                firstRowLength: layers.biomes.grid?.[0]?.length
+              }
+            });
+          }
 
-            if (!isUnderwater) {
-              color = getBiomeColor(biome);
+          if (layers.biomes.grid && layers.biomes.grid[y] && layers.biomes.grid[y][x]) {
+            const biome = layers.biomes.grid[y][x];
+            if (biome && biome !== 'ocean' && biome !== 'none') {
+              const isUnderwater =
+                layers.liquid && layers.liquid.grid &&
+                layers.liquid.grid[y] && layers.liquid.grid[y][x] > 0;
+
+              if (!isUnderwater) {
+                const biomeColor = getBiomeColor(biome);
+                if (x === 0 && y === 0 && !window.biomesColorDebugLogged) {
+                  window.biomesColorDebugLogged = true;
+                  console.log('🎨 First biome rendered:', { biome, biomeColor, isUnderwater });
+                }
+                color = biomeColor;
+              }
             }
           }
         }
@@ -1016,6 +1037,19 @@ window.AdminMonitor = (function() {
         }
 
         if (color) {
+          // Track first few pixels drawn with biome color
+          if (visibleLayers.has('biomes') && 
+              !window.pixelsDrawnWithBiomes) {
+            window.pixelsDrawnWithBiomes = 0;
+          }
+          
+          if (color !== getElevationColor(normalizedElevation, planetData) && visibleLayers.has('biomes')) {
+            window.pixelsDrawnWithBiomes = (window.pixelsDrawnWithBiomes || 0) + 1;
+            if (window.pixelsDrawnWithBiomes <= 5) {
+              console.log(`📍 Pixel [${x},${y}] drawn with biome color:`, color);
+            }
+          }
+
           ctx.fillStyle = color;
           const screenX = x * tileSize * viewport.scale + viewport.offsetX;
           const screenY = y * tileSize * viewport.scale + viewport.offsetY;
@@ -1026,6 +1060,19 @@ window.AdminMonitor = (function() {
     }
 
     console.log(`NASA-first terrain rendered: ${width}x${height}`);
+    
+    // Debug: count biome cells
+    if (visibleLayers.has('biomes') && layers.biomes?.grid) {
+      let biomeCellsFound = 0;
+      for (let y = 0; y < Math.min(height, 5); y++) {
+        for (let x = 0; x < Math.min(width, 5); x++) {
+          if (layers.biomes.grid[y]?.[x] && layers.biomes.grid[y][x] !== 'none' && layers.biomes.grid[y][x] !== 'ocean') {
+            biomeCellsFound++;
+          }
+        }
+      }
+      console.log(`🔬 Sample check (5x5): Found ${biomeCellsFound} non-ocean biome cells`);
+    }
     
     // Debug: count rendered layers
     let statsStr = 'Rendered stats: ';
