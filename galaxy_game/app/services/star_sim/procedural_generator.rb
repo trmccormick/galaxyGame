@@ -12,10 +12,13 @@ module StarSim
       solar_system = nil,
       atmosphere_generator = nil,
       hydrosphere_generator = nil,
-      material_lookup = nil, # Add MaterialLookupService
+      material_lookup = nil,
       planet_name_service = nil,
       force_complex_biosphere = false,
-      use_accretion = false
+      use_accretion = false,
+      generate_biospheres: true,           # Enable/disable biosphere generation
+      biosphere_complexity: :auto,         # :auto, :none, :primitive, :basic, :complex
+      seed_era: :present_day               # :present_day, :early_solar_system, :terraformed
     )
       @solar_system = solar_system
       @name_generator = NameGeneratorService.new
@@ -23,9 +26,15 @@ module StarSim
       @planet_counter = 0
       @output_path = GalaxyGame::Paths::GENERATED_STAR_SYSTEMS_PATH
       FileUtils.mkdir_p(@output_path) unless File.directory?(@output_path)
-      @atmosphere_generator = atmosphere_generator || AtmosphereGeneratorService.new(material_lookup || Lookup::MaterialLookupService.new, {}) # Default instance if not provided
-      @hydrosphere_generator = hydrosphere_generator || HydrosphereGeneratorService.new({}) # Default instance if not provided
-      @material_lookup = material_lookup || Lookup::MaterialLookupService.new # Ensure MaterialLookupService is available
+      @atmosphere_generator = atmosphere_generator || AtmosphereGeneratorService.new(material_lookup || Lookup::MaterialLookupService.new, {})
+      @hydrosphere_generator = hydrosphere_generator || HydrosphereGeneratorService.new({})
+      @biosphere_generator = BiosphereGeneratorService.new
+      @material_lookup = material_lookup || Lookup::MaterialLookupService.new
+      
+      # Biosphere generation options
+      @generate_biospheres = generate_biospheres
+      @biosphere_complexity = biosphere_complexity
+      @seed_era = seed_era
       
       # Load terraformable planet templates
       @terraformable_templates = load_terraformable_templates
@@ -539,9 +548,9 @@ module StarSim
         hydrosphere_data = @hydrosphere_generator.generate(planet_data)
         planet_data[:hydrosphere] = hydrosphere_data
 
-        # Generate biosphere data
-        biosphere_data = generate_biosphere_data(planet_data)
-        planet_data[:biosphere] = biosphere_data
+        # Generate biosphere attributes (will be used by SystemBuilderService)
+        biosphere_attrs = generate_biosphere_data(planet_data)
+        planet_data[:biosphere_attributes] = biosphere_attrs if biosphere_attrs.present?
 
         # Generate moons for this planet (some planets have moons)
         if rand < 0.6 # 60% of terrestrial planets have moons
@@ -616,9 +625,9 @@ module StarSim
         hydrosphere_data = @hydrosphere_generator.generate(planet_data)
         planet_data[:hydrosphere] = hydrosphere_data
 
-        # Generate biosphere data
-        biosphere_data = generate_biosphere_data(planet_data)
-        planet_data[:biosphere] = biosphere_data
+        # Generate biosphere attributes (will be used by SystemBuilderService)
+        biosphere_attrs = generate_biosphere_data(planet_data)
+        planet_data[:biosphere_attributes] = biosphere_attrs if biosphere_attrs.present?
 
         # Tag as procedural for market
         planet_data["market_status"] = "unclaimed_procedural"
@@ -1028,79 +1037,29 @@ module StarSim
     end
 
     def generate_biosphere_data(planet_data)
-      # Only generate biosphere data for terrestrial planets with atmosphere
-      return { biodiversity_index: 0.0, habitable_ratio: 0.0, biome_distribution: {} } unless planet_data["type"] == 'terrestrial' && planet_data["atmosphere"]
+      # Return nil if biosphere generation is disabled
+      return nil unless @generate_biospheres
       
-      # Get temperature and pressure
-      temp = planet_data["surface_temperature"] || 288
-      
-      # Check if this planet came from a template (more likely to be terraformable)
-      from_template = planet_data.key?('geosphere_attributes')
-      
-      # Basic biosphere data
-      biosphere_data = {
-        biodiversity_index: 0.0,
-        habitable_ratio: 0.0,
-        biome_distribution: {}
-      }
-      
-      # Planets from templates or with good conditions get better starting biosphere
-      good_conditions = temp.between?(260, 310) && 
-                       planet_data["atmosphere"]["pressure"].to_f.between?(0.5, 2.0) &&
-                       planet_data["gravity"].to_f.between?(0.5, 1.5)
-      
-      if from_template || good_conditions || @force_complex_biosphere
-        # Template planets or planets with good conditions get starter biomes
-        base_habitability = from_template ? 0.15 : 0.05
-        biosphere_data[:biodiversity_index] = rand(base_habitability..base_habitability * 2)
-        biosphere_data[:habitable_ratio] = rand(base_habitability..base_habitability * 1.5)
-        
-        # Add some basic biome distribution
-        if temp.between?(270, 300)
-          biosphere_data[:biome_distribution] = {
-            'temperate' => rand(0.3..0.7),
-            'desert' => rand(0.1..0.3),
-            'ocean' => rand(0.2..0.5)
-          }
-        end
-      end
-      
-      # Extremely rare: Generate complex biosphere (second Earth scenario)
-      # ~1 in 50,000 chance for a planet to have existing complex life
-      # Or force it for testing
-      if @force_complex_biosphere
-        # Force complex biosphere for testing
-        biosphere_data[:biodiversity_index] = rand(0.8..1.0)
-        biosphere_data[:habitable_ratio] = rand(0.9..1.0)
-        biosphere_data[:estimated_species_count] = rand(1000000..20000000)
-        biosphere_data[:primary_producers] = ["plants", "phytoplankton", "algae"]
-        biosphere_data[:consumers] = ["animals", "zooplankton", "insects"]
-        biosphere_data[:decomposers] = ["bacteria", "fungi", "microorganisms"]
-        biosphere_data[:biome_distribution] = {
-          'temperate' => rand(0.4..0.6),
-          'tropical' => rand(0.2..0.4),
-          'desert' => rand(0.05..0.15),
-          'ocean' => rand(0.6..0.8),
-          'polar' => rand(0.1..0.2)
-        }
-      elsif rand < 0.00002 && good_conditions
-        # Rare natural occurrence
-        biosphere_data[:biodiversity_index] = rand(0.8..1.0)
-        biosphere_data[:habitable_ratio] = rand(0.9..1.0)
-        biosphere_data[:estimated_species_count] = rand(1000000..20000000)
-        biosphere_data[:primary_producers] = ["plants", "phytoplankton", "algae"]
-        biosphere_data[:consumers] = ["animals", "zooplankton", "insects"]
-        biosphere_data[:decomposers] = ["bacteria", "fungi", "microorganisms"]
-        biosphere_data[:biome_distribution] = {
-          'temperate' => rand(0.4..0.6),
-          'tropical' => rand(0.2..0.4),
-          'desert' => rand(0.05..0.15),
-          'ocean' => rand(0.6..0.8),
-          'polar' => rand(0.1..0.2)
-        }
-      end
-      
-      biosphere_data
+      # Only generate biosphere data for terrestrial planets with atmosphere and hydrosphere
+      return nil unless planet_data['type'] == 'terrestrial' && 
+                        planet_data['atmosphere'] && 
+                        planet_data.dig('hydrosphere', 'state_distribution', 'liquid').to_f > 0
+
+      # Determine complexity level
+      complexity = if @force_complex_biosphere
+                     :complex
+                   else
+                     @biosphere_complexity
+                   end
+
+      # Generate biosphere attributes using the service
+      biosphere_attrs = @biosphere_generator.generate(
+        planet_data,
+        complexity_level: complexity,
+        seed_era: @seed_era
+      )
+
+      biosphere_attrs
     end
 
     def generate_moons_for_planet(planet_data, count, system_identifier)
