@@ -594,4 +594,308 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
       end
     end
   end
+
+  describe 'biosphere generation options' do
+    describe '#initialize with biosphere options' do
+      it 'accepts generate_biospheres parameter' do
+        gen = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator,
+          mock_material_lookup,
+          nil,
+          false,
+          false,
+          generate_biospheres: false
+        )
+        expect(gen.instance_variable_get(:@generate_biospheres)).to eq(false)
+      end
+
+      it 'accepts biosphere_complexity parameter' do
+        gen = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator,
+          mock_material_lookup,
+          nil,
+          false,
+          false,
+          biosphere_complexity: :primitive
+        )
+        expect(gen.instance_variable_get(:@biosphere_complexity)).to eq(:primitive)
+      end
+
+      it 'accepts seed_era parameter' do
+        gen = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator,
+          mock_material_lookup,
+          nil,
+          false,
+          false,
+          seed_era: :early_solar_system
+        )
+        expect(gen.instance_variable_get(:@seed_era)).to eq(:early_solar_system)
+      end
+
+      it 'defaults to generate_biospheres: true' do
+        gen = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator
+        )
+        expect(gen.instance_variable_get(:@generate_biospheres)).to eq(true)
+      end
+
+      it 'defaults to biosphere_complexity: :auto' do
+        gen = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator
+        )
+        expect(gen.instance_variable_get(:@biosphere_complexity)).to eq(:auto)
+      end
+
+      it 'defaults to seed_era: :present_day' do
+        gen = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator
+        )
+        expect(gen.instance_variable_get(:@seed_era)).to eq(:present_day)
+      end
+    end
+
+    describe '#generate_biosphere_data' do
+      let(:basic_planet_data) do
+        {
+          'type' => 'terrestrial',
+          'surface_temperature' => 288,
+          'gravity' => 1.0,
+          'atmosphere' => { 'pressure' => 1.0 },
+          'hydrosphere' => { 'state_distribution' => { 'liquid' => 0.5 } }
+        }
+      end
+
+      context 'when generate_biospheres is false' do
+        let(:gen) do
+          described_class.new(
+            nil,
+            mock_atmosphere_generator,
+            mock_hydrosphere_generator,
+            nil,
+            nil,
+            false,
+            false,
+            generate_biospheres: false
+          )
+        end
+
+        it 'returns nil' do
+          result = gen.send(:generate_biosphere_data, basic_planet_data)
+          expect(result).to be_nil
+        end
+      end
+
+      context 'when planet lacks hydrosphere' do
+        let(:gen) { generator }
+        let(:dry_planet) do
+          {
+            'type' => 'terrestrial',
+            'atmosphere' => { 'pressure' => 1.0 }
+          }
+        end
+
+        it 'returns nil' do
+          result = gen.send(:generate_biosphere_data, dry_planet)
+          expect(result).to be_nil
+        end
+      end
+
+      context 'when planet has liquid water' do
+        let(:gen) { generator }
+
+        it 'generates biosphere_attributes hash' do
+          result = gen.send(:generate_biosphere_data, basic_planet_data)
+          
+          expect(result).to be_a(Hash)
+          expect(result).to have_key(:habitable_ratio)
+          expect(result).to have_key(:biodiversity_index)
+        end
+
+        it 'respects biosphere_complexity setting' do
+          gen_primitive = described_class.new(
+            nil,
+            mock_atmosphere_generator,
+            mock_hydrosphere_generator,
+            nil,
+            nil,
+            false,
+            false,
+            biosphere_complexity: :primitive
+          )
+
+          result = gen_primitive.send(:generate_biosphere_data, basic_planet_data)
+
+          expect(result[:biodiversity_index]).to be < 0.15
+        end
+
+        it 'uses :auto to detect complexity' do
+          gen_auto = described_class.new(
+            nil,
+            mock_atmosphere_generator,
+            mock_hydrosphere_generator,
+            nil,
+            nil,
+            false,
+            false,
+            biosphere_complexity: :auto
+          )
+
+          result = gen_auto.send(:generate_biosphere_data, basic_planet_data)
+
+          expect(result).not_to be_nil
+        end
+      end
+    end
+
+    describe 'biosphere integration in #generate_terrestrial_planets' do
+      let(:template_data) do
+        {
+          'terrestrial_planets' => [
+            {
+              'name' => 'Template Planet',
+              'identifier' => 'TPL-001',
+              'mass' => '5.0e24',
+              'radius' => 6.0e6,
+              'albedo' => 0.3,
+              'geosphere_attributes' => {
+                'geological_activity' => 50,
+                'tectonic_activity' => true
+              }
+            }
+          ]
+        }
+      end
+
+      before do
+        allow(File).to receive(:exist?).with(template_path).and_return(true)
+        allow(File).to receive(:read).with(template_path).and_return(template_data.to_json)
+        allow(File).to receive(:exist?).with(fallback_template_path).and_return(false)
+        generator.instance_variable_set(:@terraformable_templates, template_data['terrestrial_planets'])
+      end
+
+      it 'includes biosphere_attributes in generated planets' do
+        planets = generator.send(:generate_terrestrial_planets, 3, 'TEST-SYSTEM')
+
+        planets.each do |planet|
+          # Only planets with liquid water should have biosphere_attributes
+          if planet.dig('hydrosphere', 'state_distribution', 'liquid').to_f > 0
+            expect(planet).to have_key(:biosphere_attributes).or have_key('biosphere_attributes')
+          end
+        end
+      end
+
+      it 'outputs biosphere_attributes (not :biosphere)' do
+        planets = generator.send(:generate_terrestrial_planets, 3, 'TEST-SYSTEM')
+
+        planets.each do |planet|
+          if planet.dig('hydrosphere', 'state_distribution', 'liquid').to_f > 0
+            expect(planet).to have_key(:biosphere_attributes)
+            expect(planet).not_to have_key(:biosphere)
+          end
+        end
+      end
+    end
+
+    describe 'early_solar_system scenario' do
+      let(:gen) do
+        described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator,
+          nil,
+          nil,
+          false,
+          false,
+          biosphere_complexity: :primitive,
+          seed_era: :early_solar_system
+        )
+      end
+
+      let(:mars_like_planet) do
+        {
+          'type' => 'terrestrial',
+          'surface_temperature' => 210,
+          'gravity' => 0.4,
+          'atmosphere' => { 'pressure' => 0.01 },
+          'hydrosphere' => { 'state_distribution' => { 'liquid' => 0.05 } }
+        }
+      end
+
+      it 'generates primitive biosphere for early solar system' do
+        result = gen.send(:generate_biosphere_data, mars_like_planet)
+
+        expect(result).not_to be_nil
+        expect(result[:primary_producers]).to include('cyanobacteria')
+      end
+
+      it 'marks biosphere as non-oxygen-producing' do
+        result = gen.send(:generate_biosphere_data, mars_like_planet)
+
+        expect(result[:oxygen_producing]).to be false
+      end
+    end
+
+    describe 'terraformed scenario' do
+      let(:gen) do
+        described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator,
+          nil,
+          nil,
+          false,
+          false,
+          biosphere_complexity: :basic,
+          seed_era: :terraformed
+        )
+      end
+
+      let(:terraformed_planet) do
+        {
+          'type' => 'terrestrial',
+          'surface_temperature' => 285,
+          'gravity' => 0.9,
+          'atmosphere' => { 'pressure' => 1.1 },
+          'hydrosphere' => { 'state_distribution' => { 'liquid' => 0.6 } }
+        }
+      end
+
+      it 'generates terraformed biosphere with terraformation_index' do
+        result = gen.send(:generate_biosphere_data, terraformed_planet)
+
+        expect(result).to have_key(:terraformation_index)
+      end
+
+      it 'enhanced habitable_ratio for terraformed world' do
+        basic_result = described_class.new(
+          nil,
+          mock_atmosphere_generator,
+          mock_hydrosphere_generator,
+          nil,
+          nil,
+          false,
+          false,
+          biosphere_complexity: :basic,
+          seed_era: :present_day
+        ).send(:generate_biosphere_data, terraformed_planet)
+
+        result = gen.send(:generate_biosphere_data, terraformed_planet)
+
+        expect(result[:habitable_ratio]).to be >= basic_result[:habitable_ratio]
+      end
+    end
+  end
 end
