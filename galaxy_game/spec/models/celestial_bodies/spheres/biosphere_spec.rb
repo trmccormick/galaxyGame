@@ -711,4 +711,32 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       expect(body.can_support_surface_life?).to be false
     end
   end
+
+  describe 'auto-creation gating — negative tests for non-habitable worlds' do
+    it 'does NOT create biosphere for a Mars-like body (no liquid water)' do
+      mars = create(:celestial_body, solar_system: solar_system)
+      create(:atmosphere, celestial_body: mars)
+      hydrosphere = create(:hydrosphere, celestial_body: mars)
+      allow(hydrosphere).to receive(:state_distribution).and_return({ 'liquid' => 0.0 })
+      # known_pressure is nil or very low for Mars
+
+      expect(mars.can_support_surface_life?).to be false
+      expect {
+        mars.create_biosphere_with_defaults if mars.can_support_surface_life?
+      }.not_to change { CelestialBodies::Spheres::Biosphere.count }
+    end
+
+    it 'does NOT create biosphere for a Venus-like body (insufficient liquid water)' do
+      venus = create(:celestial_body, solar_system: solar_system)
+      create(:atmosphere, celestial_body: venus)
+      hydrosphere = create(:hydrosphere, celestial_body: venus)
+      allow(hydrosphere).to receive(:state_distribution).and_return({ 'liquid' => 0.0 })
+      # Venus has vaporized water — no liquid
+
+      expect(venus.can_support_surface_life?).to be false
+      expect {
+        venus.create_biosphere_with_defaults if venus.can_support_surface_life?
+      }.not_to change { CelestialBodies::Spheres::Biosphere.count }
+    end
+  end
 end
