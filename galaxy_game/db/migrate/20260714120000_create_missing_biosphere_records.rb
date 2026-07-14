@@ -1,18 +1,23 @@
 # frozen_string_literal: true
 
-# Backfill biosphere records for planets where liquid water can exist on surface.
-# Fixes data integrity gap where planets have terrain_map but no biosphere record.
+# Backfill biosphere records for planets where liquid water can exist on surface,
+# but biosphere records were not explicitly provided in seed JSON.
+#
+# This migration:
+# 1. Respects JSON-provided biosphere data (if JSON has biosphere_attributes, record already exists)
+# 2. Fills gaps for planets with liquid water that somehow lack biosphere records
+# 3. Enables future flexibility: alien life (methane-based on Titan), terraformed worlds, etc.
+#
+# The system is DATA-DRIVEN: if JSON provides biosphere_attributes, use it. Otherwise,
+# auto-create if liquid water is viable (planet can naturally support surface life).
 class CreateMissingBiosphereRecords < ActiveRecord::Migration[7.2]
   def up
-    # Find all celestial bodies that:
-    # 1. Have a hydrosphere with liquid water
-    # 2. Do NOT already have a biosphere record
-    bodies_needing_biosphere = CelestialBodies::CelestialBody.joins(:hydrosphere)
-      .where('biospheres.id' => nil)
-      .left_joins(biosphere: :celestial_body)
-      .where.not(id: CelestialBodies::CelestialBody.where.not(biosphere_id: nil).select(:id))
+    # Find planets with liquid water that DON'T have biosphere records
+    bodies_with_liquid_water = CelestialBodies::CelestialBody
+      .joins(:hydrosphere)
+      .where(biosphere_id: nil)
       .find_each do |body|
-        # Check if this body can support surface life (liquid water exists)
+        # Check if this body has liquid water on the surface
         liquid_water = body.hydrosphere&.state_distribution&.dig('liquid').to_f || 0
         next if liquid_water < 0.01
 
@@ -33,10 +38,11 @@ class CreateMissingBiosphereRecords < ActiveRecord::Migration[7.2]
   end
 
   def down
-    # Remove biospheres created by this migration (those with default values)
+    # Remove biospheres created by this migration (those with exactly these default values)
     CelestialBodies::CelestialBody.joins(:biosphere).find_each do |body|
       next unless body.biosphere&.habitable_ratio == 0.95 &&
-                  body.biosphere&.biodiversity_index == 0.95
+                  body.biosphere&.biodiversity_index == 0.95 &&
+                  body.biosphere&.vegetation_cover == 0.75
 
       body.biosphere.destroy
     end

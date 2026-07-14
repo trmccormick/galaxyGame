@@ -327,8 +327,17 @@ module StarSim
         create_hydrosphere(body, body_data[:hydrosphere_attributes] || body_data[:hydrosphere]) if body_data[:hydrosphere_attributes].present? || body_data[:hydrosphere].present?
         create_geosphere(body, body_data[:geosphere_attributes] || body_data["geosphere_attributes"]) if body_data[:geosphere_attributes].present? || body_data["geosphere_attributes"].present?
         create_materials(body, body_data[:materials]) if body_data[:materials].present?
-        # Only create biosphere for Earth initially (where life is confirmed to exist)
-        create_biosphere(body, body_data[:biosphere]) if body.name.downcase == 'earth'
+        
+        # Create biosphere if explicitly provided in data (JSON-driven), or auto-create if viable
+        # Support both :biosphere and :biosphere_attributes from JSON (mirrors atmosphere pattern)
+        biosphere_data = body_data[:biosphere_attributes] || body_data[:biosphere]
+        if biosphere_data.present?
+          # Explicit biosphere data from JSON: trust the data (enables alien life, terraformed worlds, etc.)
+          create_biosphere(body, biosphere_data)
+        elsif body.can_support_surface_life?
+          # No explicit data but world is habitable: auto-create with defaults (for programmatic planets)
+          body.create_biosphere_with_defaults
+        end
 
         # Generate automatic terrain for planets that don't have it
         generate_automatic_terrain(body) if should_generate_terrain?(body)
