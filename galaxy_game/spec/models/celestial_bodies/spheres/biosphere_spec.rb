@@ -645,4 +645,70 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       expect(new_life_form.properties['derived_from']).to eq(parent_life_form.name)
     end
   end
+
+  describe 'create_biosphere_with_defaults' do
+    it 'creates a biosphere with sensible defaults' do
+      new_body = create(:celestial_body, solar_system: solar_system)
+      create(:atmosphere, celestial_body: new_body)
+      
+      # Add hydrosphere with liquid water so can_support_surface_life? returns true
+      allow(new_body).to receive(:can_support_surface_life?).and_return(true)
+      
+      expect {
+        new_body.create_biosphere_with_defaults
+      }.to change { CelestialBodies::Spheres::Biosphere.count }.by(1)
+
+      created = new_body.biosphere
+      expect(created.habitable_ratio).to eq(0.95)
+      expect(created.biodiversity_index).to eq(0.95)
+      expect(created.vegetation_cover).to eq(0.75)
+      expect(created.biome_count).to eq(10)
+      expect(created.soil_health).to eq(80)
+      expect(created.soil_organic_content).to eq(0.08)
+      expect(created.soil_microbial_activity).to eq(0.8)
+    end
+
+    it 'allows overriding defaults' do
+      new_body = create(:celestial_body, solar_system: solar_system)
+      create(:atmosphere, celestial_body: new_body)
+      
+      allow(new_body).to receive(:can_support_surface_life?).and_return(true)
+      
+      new_body.create_biosphere_with_defaults(
+        habitable_ratio: 0.5,
+        biodiversity_index: 0.3
+      )
+
+      expect(new_body.biosphere.habitable_ratio).to eq(0.5)
+      expect(new_body.biosphere.biodiversity_index).to eq(0.3)
+    end
+  end
+
+  describe 'can_support_surface_life?' do
+    let(:body) { create(:celestial_body, solar_system: solar_system) }
+
+    it 'returns false when hydrosphere is absent' do
+      expect(body.can_support_surface_life?).to be false
+    end
+
+    it 'returns false when liquid water is below threshold' do
+      create(:hydrosphere, celestial_body: body)
+      allow(body.hydrosphere).to receive(:state_distribution).and_return({ 'liquid' => 0.001 })
+      expect(body.can_support_surface_life?).to be false
+    end
+
+    it 'returns true when liquid water meets threshold and pressure is sufficient' do
+      hydrosphere = create(:hydrosphere, celestial_body: body)
+      allow(hydrosphere).to receive(:state_distribution).and_return({ 'liquid' => 0.5 })
+      body.update!(known_pressure: 101.326) # Earth-like pressure
+      expect(body.can_support_surface_life?).to be true
+    end
+
+    it 'returns false when atmospheric pressure is below triple point' do
+      hydrosphere = create(:hydrosphere, celestial_body: body)
+      allow(hydrosphere).to receive(:state_distribution).and_return({ 'liquid' => 0.5 })
+      body.update!(known_pressure: 0.001) # Below triple point
+      expect(body.can_support_surface_life?).to be false
+    end
+  end
 end

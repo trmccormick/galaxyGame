@@ -833,10 +833,16 @@ window.AdminMonitor = (function() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // hasBiosphere: true only if we actually have a biome grid
-    // Never rely on planetData.has_biosphere — it may be missing or wrong (e.g., database record not created)
-    // Check the actual data structure instead, matching surface_view.js pattern
-    const hasBiosphere = layers.biomes && layers.biomes.grid ? true : false;
+    // hasBiosphere: Use canonical check from server-side ERB (has_biosphere flag)
+    // This is the source of truth — biosphere record exists iff liquid water can exist on surface
+    const hasBiosphere = planetData?.has_biosphere || false;
+
+    if (!hasBiosphere) {
+      // No biosphere: disable biomes button and skip rendering
+      const biomesBtn = document.querySelector('[data-layer="biomes"]');
+      if (biomesBtn) biomesBtn.disabled = true;
+      return; // early exit from biome render
+    }
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {

@@ -1383,6 +1383,20 @@ module Admin
 
       geosphere.save!
 
+      # Auto-create biosphere when terrain_map is assigned and surface life is viable
+      if celestial_body.can_support_surface_life? && !celestial_body.biosphere.present?
+        celestial_body.create_biosphere_with_defaults(
+          habitable_ratio: 0.95,
+          biodiversity_index: 0.95,
+          vegetation_cover: 0.75,
+          biome_count: 10,
+          soil_health: 80,
+          soil_organic_content: 0.08,
+          soil_microbial_activity: 0.8
+        )
+        Rails.logger.info "[Earth Map Generation] Auto-created biosphere for #{celestial_body.name}"
+      end
+
       Rails.logger.info "[Earth Map Generation] Saved generated Earth map to #{celestial_body.name}"
     end
 

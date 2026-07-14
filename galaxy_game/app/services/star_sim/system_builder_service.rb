@@ -678,6 +678,20 @@ module StarSim
         terrain_generator = StarSim::AutomaticTerrainGenerator.new
         terrain_generator.generate_terrain_for_body(body)
         puts "Generated automatic terrain for #{body.name}." if @debug_mode
+
+        # Auto-create biosphere when terrain_map is assigned and surface life is viable
+        if body.can_support_surface_life? && !body.biosphere.present?
+          body.create_biosphere_with_defaults(
+            habitable_ratio: 0.95,
+            biodiversity_index: 0.95,
+            vegetation_cover: 0.75,
+            biome_count: 10,
+            soil_health: 80,
+            soil_organic_content: 0.08,
+            soil_microbial_activity: 0.8
+          )
+          puts "Auto-created biosphere for #{body.name}." if @debug_mode
+        end
       rescue => e
         puts "WARNING: Failed to generate automatic terrain for #{body.name}: #{e.class}: #{e.message}"
         puts e.backtrace.first(10).join("\n")
