@@ -13,9 +13,10 @@
 class CreateMissingBiosphereRecords < ActiveRecord::Migration[7.0]
   def up
     # Find planets with liquid water that DON'T have biosphere records
-    bodies_with_liquid_water = CelestialBodies::CelestialBody
+    CelestialBodies::CelestialBody
       .joins(:hydrosphere)
-      .where(biosphere_id: nil)
+      .left_joins(:biosphere)
+      .where(celestial_bodies_spheres_biospheres: { id: nil })
       .find_each do |body|
         # Check if this body has liquid water on the surface
         liquid_water = body.hydrosphere&.state_distribution&.dig('liquid').to_f || 0
