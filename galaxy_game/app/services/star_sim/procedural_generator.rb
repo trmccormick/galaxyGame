@@ -549,8 +549,13 @@ module StarSim
         planet_data[:hydrosphere] = hydrosphere_data
 
         # Generate biosphere attributes (will be used by SystemBuilderService)
-        biosphere_attrs = generate_biosphere_data(planet_data)
-        planet_data[:biosphere_attributes] = biosphere_attrs if biosphere_attrs.present?
+        # Create a normalized copy with string keys for the biosphere generator
+        planet_data_for_biosphere = planet_data.dup
+        planet_data_for_biosphere['atmosphere'] = planet_data[:atmosphere]
+        planet_data_for_biosphere['hydrosphere'] = planet_data[:hydrosphere]
+        
+        biosphere_attrs = generate_biosphere_data(planet_data_for_biosphere)
+        planet_data[:biosphere] = biosphere_attrs if biosphere_attrs.present?
 
         # Generate moons for this planet (some planets have moons)
         if rand < 0.6 # 60% of terrestrial planets have moons
@@ -626,8 +631,13 @@ module StarSim
         planet_data[:hydrosphere] = hydrosphere_data
 
         # Generate biosphere attributes (will be used by SystemBuilderService)
-        biosphere_attrs = generate_biosphere_data(planet_data)
-        planet_data[:biosphere_attributes] = biosphere_attrs if biosphere_attrs.present?
+        # Create a normalized copy with string keys for the biosphere generator
+        planet_data_for_biosphere = planet_data.dup
+        planet_data_for_biosphere['atmosphere'] = planet_data[:atmosphere]
+        planet_data_for_biosphere['hydrosphere'] = planet_data[:hydrosphere]
+        
+        biosphere_attrs = generate_biosphere_data(planet_data_for_biosphere)
+        planet_data[:biosphere] = biosphere_attrs if biosphere_attrs.present?
 
         # Tag as procedural for market
         planet_data["market_status"] = "unclaimed_procedural"
