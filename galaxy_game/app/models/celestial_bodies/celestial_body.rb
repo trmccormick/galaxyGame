@@ -761,6 +761,35 @@ module CelestialBodies
       end
     end
 
+    def ensure_spatial_location
+      if spatial_location.nil?
+        create_spatial_location(
+          x_coordinate: 0.0,
+          y_coordinate: 0.0,
+          z_coordinate: 0.0
+        )
+      end
+    end
+
+    def load_gas_giant(params)
+      body_type = params.delete(:body_type)
+      gas_giant = gas_giants.find_or_create_by(name: params[:name])
+      
+      params[:identifier] ||= "GG-#{SecureRandom.hex(4)}"
+      params[:gravity] ||= 0
+      params[:density] ||= 0
+      params[:radius] ||= 0
+      params[:orbital_period] ||= 0
+      params[:mass] ||= 0
+      
+      props = gas_giant.properties || {}
+      props['body_type'] = 'gas_giant'
+      params[:properties] = props
+      
+      gas_giant.update!(params)
+      gas_giant
+    end
+
     private
 
     def set_defaults
