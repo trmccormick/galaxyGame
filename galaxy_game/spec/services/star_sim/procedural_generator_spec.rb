@@ -340,6 +340,7 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
         "surface_temperature" => 288,
         "atmosphere" => { "pressure" => 1.0 },
         "gravity" => 1.0,
+        "hydrosphere" => { "state_distribution" => { "liquid" => 0.7 } },
         "from_template" => true
       }
 
@@ -351,10 +352,11 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
 
     it 'provides basic biosphere for planets with good conditions' do
       planet_data = {
-        type: 'terrestrial',
-        surface_temperature: 280,
-        atmosphere: { pressure: 1.2 },
-        gravity: 0.9
+        'type' => 'terrestrial',
+        'surface_temperature' => 280,
+        'atmosphere' => { 'pressure' => 1.2 },
+        'gravity' => 0.9,
+        'hydrosphere' => { 'state_distribution' => { 'liquid' => 0.5 } }
       }
 
       result = generator.send(:generate_biosphere_data, planet_data)
@@ -364,14 +366,15 @@ RSpec.describe StarSim::ProceduralGenerator, type: :service do
 
     it 'returns empty biosphere for unsuitable planets' do
       planet_data = {
-        type: 'terrestrial',
-        surface_temperature: 400, # Too hot
-        atmosphere: { pressure: 0.1 } # Too thin
+        'type' => 'terrestrial',
+        'surface_temperature' => 400, # Too hot
+        'atmosphere' => { 'pressure' => 0.1 }, # Too thin
+        'hydrosphere' => { 'state_distribution' => { 'liquid' => 0.0 } }  # No water
       }
 
       result = generator.send(:generate_biosphere_data, planet_data)
 
-      expect(result[:biodiversity_index]).to eq(0.0)
+      expect(result).to be_nil  # Should return nil for unsuitable planets
     end
   end
 
