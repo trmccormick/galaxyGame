@@ -555,7 +555,8 @@ module StarSim
         planet_data_for_biosphere['hydrosphere'] = planet_data[:hydrosphere]
         
         biosphere_attrs = generate_biosphere_data(planet_data_for_biosphere)
-        planet_data[:biosphere] = biosphere_attrs if biosphere_attrs.present?
+        # Always add biosphere key, even if attrs are nil (will create empty hash)
+        planet_data[:biosphere] = biosphere_attrs || {}
 
         # Generate moons for this planet (some planets have moons)
         if rand < 0.6 # 60% of terrestrial planets have moons
@@ -637,7 +638,8 @@ module StarSim
         planet_data_for_biosphere['hydrosphere'] = planet_data[:hydrosphere]
         
         biosphere_attrs = generate_biosphere_data(planet_data_for_biosphere)
-        planet_data[:biosphere] = biosphere_attrs if biosphere_attrs.present?
+        # Always add biosphere key, even if attrs are nil (will create empty hash)
+        planet_data[:biosphere] = biosphere_attrs || {}
 
         # Tag as procedural for market
         planet_data["market_status"] = "unclaimed_procedural"
