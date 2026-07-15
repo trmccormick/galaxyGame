@@ -216,7 +216,7 @@ module StarSim
       }
 
       range = base_counts[complexity_level] || 0
-      return 0 if range.zero?
+      return 0 if range == 0 || complexity_level == :none
 
       count = range_value(range).to_i
       # Adjust by biodiversity_index
