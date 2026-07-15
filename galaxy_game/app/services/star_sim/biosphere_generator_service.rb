@@ -124,6 +124,12 @@ module StarSim
       habitable_range = @complexity_levels[complexity_level][:habitable_ratio]
       biodiversity_range = @complexity_levels[complexity_level][:biodiversity_index]
 
+      # Terraformed worlds start with enhanced habitability
+      if seed_era == :terraformed && habitable_range.is_a?(Range)
+        habitable_range = (habitable_range.min + 0.3)..(habitable_range.max + 0.3)
+        habitable_range = (habitable_range.min)..[1.0, habitable_range.max].min  # Cap at 1.0
+      end
+
       habitable_ratio = range_value(habitable_range)
       biodiversity_index = range_value(biodiversity_range)
 
@@ -161,9 +167,8 @@ module StarSim
         attrs[:biodiversity_index] *= 0.5
         attrs[:oxygen_producing] = false
       when :terraformed
-        # Human-terraformed world: enhanced habitability
+        # Human-terraformed world: enhanced habitability (range is already increased above)
         attrs[:terraformation_index] = range_value(0.3..0.8)
-        attrs[:habitable_ratio] *= 1.2
       end
 
       # Estimate species count based on complexity and biodiversity
