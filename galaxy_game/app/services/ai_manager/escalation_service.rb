@@ -230,8 +230,18 @@ module AIManager
 
       operational_data = base_operational.merge(task_operational)
 
+      # Material-specific naming convention
+      harvester_suffix = case normalize_material(material)
+      when 'O2'
+        'Harvester'
+      when 'H2O'
+        'Extractor'
+      else
+        'Miner'
+      end
+
       Units::Robot.create!(
-        name: "Automated #{material.titleize} Harvester",
+        name: "Automated #{material.titleize} #{harvester_suffix}",
         identifier: "ROBOT-#{SecureRandom.hex(4)}",
         unit_type: 'hrv_400_resource_harvester_mk1',
         owner: settlement.owner,
