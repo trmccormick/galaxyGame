@@ -10,7 +10,7 @@
 #
 # The system is DATA-DRIVEN: if JSON provides biosphere_attributes, use it. Otherwise,
 # auto-create if liquid water is viable (planet can naturally support surface life).
-class CreateMissingBiosphereRecords < ActiveRecord::Migration[7.2]
+class CreateMissingBiosphereRecords < ActiveRecord::Migration[7.0]
   def up
     # Find planets with liquid water that DON'T have biosphere records
     bodies_with_liquid_water = CelestialBodies::CelestialBody
