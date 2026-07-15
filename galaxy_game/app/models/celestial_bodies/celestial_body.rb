@@ -724,6 +724,43 @@ module CelestialBodies
       end
     end
 
+    # Can liquid water exist on the surface? Primary gate for biosphere creation.
+    # Returns true when atmospheric conditions allow liquid water (and thus natural biomes).
+    # This is forward-compatible with terraforming: as a planet's conditions improve,
+    # this method will return true and trigger automatic biosphere creation.
+    def can_support_surface_life?
+      return false unless hydrosphere.present? && atmosphere.present?
+
+      liquid_water = hydrosphere.state_distribution&.dig('liquid').to_f || 0
+      return false if liquid_water < 0.01 # Threshold: needs at least some liquid water
+
+      # Also check atmospheric pressure — water must not vaporize instantly
+      # Minimum ~6.1 mbar (triple point) for liquid water to exist
+      min_pressure = 0.0061 # kPa equivalent of triple point
+      return false if known_pressure.present? && known_pressure < min_pressure
+
+      true
+    end
+
+    # Create a biosphere record with sensible defaults for this celestial body.
+    # Called by migration and auto-creation hooks.
+    def create_biosphere_with_defaults(attrs = {})
+      default_attrs = {
+        habitable_ratio: attrs[:habitable_ratio] || 0.95,
+        biodiversity_index: attrs[:biodiversity_index] || 0.95,
+        vegetation_cover: attrs[:vegetation_cover] || 0.75,
+        biome_count: attrs[:biome_count] || 10,
+        soil_health: attrs[:soil_health] || 80,
+        soil_organic_content: attrs[:soil_organic_content] || 0.08,
+        soil_microbial_activity: attrs[:soil_microbial_activity] || 0.8
+      }
+
+      build_biosphere(default_attrs.merge(attrs)).tap do |biosphere|
+        biosphere.skip_simulation = true if biosphere.respond_to?(:skip_simulation=)
+        biosphere.save!
+      end
+    end
+
     private
 
     def set_defaults
@@ -793,74 +830,6 @@ module CelestialBodies
         if escape_velocity.nil? || escape_velocity == 0
           self.escape_velocity = calculate_escape_velocity
         end
-      end
-    end
-    
-    # Add this method to the public section
-    def ensure_spatial_location
-      if spatial_location.nil?
-        create_spatial_location(
-          x_coordinate: 0.0,
-          y_coordinate: 0.0,
-          z_coordinate: 0.0
-        )
-      end
-    end
-    
-    # Example for load_gas_giant
-    def load_gas_giant(params)
-      body_type = params.delete(:body_type)
-      gas_giant = gas_giants.find_or_create_by(name: params[:name])
-      
-      params[:identifier] ||= "GG-#{SecureRandom.hex(4)}"
-      params[:gravity] ||= 0
-      params[:density] ||= 0
-      params[:radius] ||= 0
-      params[:orbital_period] ||= 0
-      params[:mass] ||= 0
-      
-      props = gas_giant.properties || {}
-      props['body_type'] = 'gas_giant'
-      params[:properties] = props
-      
-      gas_giant.update!(params)
-      gas_giant
-    end
-
-    # Can liquid water exist on the surface? Primary gate for biosphere creation.
-    # Returns true when atmospheric conditions allow liquid water (and thus natural biomes).
-    # This is forward-compatible with terraforming: as a planet's conditions improve,
-    # this method will return true and trigger automatic biosphere creation.
-    def can_support_surface_life?
-      return false unless hydrosphere.present? && atmosphere.present?
-
-      liquid_water = hydrosphere.state_distribution&.dig('liquid').to_f || 0
-      return false if liquid_water < 0.01 # Threshold: needs at least some liquid water
-
-      # Also check atmospheric pressure — water must not vaporize instantly
-      # Minimum ~6.1 mbar (triple point) for liquid water to exist
-      min_pressure = 0.0061 # kPa equivalent of triple point
-      return false if known_pressure.present? && known_pressure < min_pressure
-
-      true
-    end
-
-    # Create a biosphere record with sensible defaults for this celestial body.
-    # Called by migration and auto-creation hooks.
-    def create_biosphere_with_defaults(attrs = {})
-      default_attrs = {
-        habitable_ratio: attrs[:habitable_ratio] || 0.95,
-        biodiversity_index: attrs[:biodiversity_index] || 0.95,
-        vegetation_cover: attrs[:vegetation_cover] || 0.75,
-        biome_count: attrs[:biome_count] || 10,
-        soil_health: attrs[:soil_health] || 80,
-        soil_organic_content: attrs[:soil_organic_content] || 0.08,
-        soil_microbial_activity: attrs[:soil_microbial_activity] || 0.8
-      }
-
-      build_biosphere(default_attrs.merge(attrs)).tap do |biosphere|
-        biosphere.skip_simulation = true if biosphere.respond_to?(:skip_simulation=)
-        biosphere.save!
       end
     end
 
