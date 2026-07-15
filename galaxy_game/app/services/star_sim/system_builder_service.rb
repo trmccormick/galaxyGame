@@ -668,8 +668,15 @@ module StarSim
       return unless body.respond_to?(:build_biosphere)
 
       biosphere_attrs = biosphere_data ? biosphere_data.deep_dup : {}
-        biosphere_attrs[:habitable_ratio] ||= 0.0
-        biosphere_attrs[:biodiversity_index] ||= 0.0
+      
+      # Filter to only valid biosphere column attributes
+      # Ignore computed fields and metadata that aren't database columns
+      valid_keys = %w[habitable_ratio biodiversity_index vegetation_cover biome_count 
+                      biome_distribution soil_health soil_organic_content soil_microbial_activity]
+      biosphere_attrs = biosphere_attrs.slice(*valid_keys.map(&:to_sym))
+      
+      biosphere_attrs[:habitable_ratio] ||= 0.0
+      biosphere_attrs[:biodiversity_index] ||= 0.0
 
       # Use `build_biosphere` then `save!` to ensure it's part of the transaction
       biosphere = body.build_biosphere(biosphere_attrs)
