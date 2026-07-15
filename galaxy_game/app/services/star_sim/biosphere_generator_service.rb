@@ -104,8 +104,9 @@ module StarSim
       temp_ok = temp.between?(260, 320)
       pressure_ok = pressure.between?(0.5, 2.0)
       gravity_ok = gravity.between?(0.5, 1.5)
+      water_ok = liquid_water > 0.1  # Strict threshold: more than 10% liquid water
 
-      case [temp_ok, pressure_ok, gravity_ok, liquid_water >= 0.1].count(true)
+      case [temp_ok, pressure_ok, gravity_ok, water_ok].count(true)
       when 4
         :complex  # Optimal conditions = Earth-like complexity
       when 3
