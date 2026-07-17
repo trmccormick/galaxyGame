@@ -126,7 +126,6 @@ Rails.application.routes.draw do
     get 'simulation', to: 'simulation#index', as: 'simulation'
     post 'simulation/run/:id', to: 'simulation#run', as: 'simulation_run'
     post 'simulation/run_all', to: 'simulation#run_all', as: 'simulation_run_all'
-    get 'simulation/spheres', to: 'simulation#spheres', as: 'simulation_spheres'
     get 'simulation/time_control', to: 'simulation#time_control', as: 'simulation_time_control'
     get 'simulation/testing', to: 'simulation#testing', as: 'simulation_testing'
     post 'simulation/update_ai_priorities', to: 'simulation#update_ai_priorities', as: 'simulation_update_ai_priorities'

@@ -42,11 +42,6 @@ module Admin
       end
     end
     
-    def spheres
-      # Sphere simulation controls
-      @celestial_bodies = ::CelestialBodies::CelestialBody.includes(:atmosphere, :hydrosphere, :geosphere, :biosphere).all
-    end
-    
     def time_control
       # Time advancement controls
     end
