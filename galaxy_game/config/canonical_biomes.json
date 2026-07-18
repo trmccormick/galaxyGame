@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "description": "Canonical biome tile mappings — all aliases resolve to these tiles",
+  "canonical_tiles": {
+    "Ice Group": {
+      "arctic": "smooth_ice_sheet_white",
+      "polar_ice": "pack_ice",
+      "snow": "smooth_ice",
+      "glacier": "glacier_texture"
+    },
+    "Forest Group": {
+      "boreal_forest": "forest",
+      "temperate_forest": "forest",
+      "forest": "forest",
+      "boreal": "forest",
+      "taiga": "forest",
+      "tropical_rainforest": "tropical_jungle",
+      "rainforest": "tropical_jungle",
+      "tropical_forest": "tropical_jungle"
+    },
+    "Wet Group": {
+      "wetlands": "swamp",
+      "marsh": "swamp",
+      "bog": "swamp",
+      "wetland": "swamp"
+    },
+    "Grass Group": {
+      "grassland": "grasslands",
+      "grasslands": "grasslands",
+      "temperate_grassland": "grasslands",
+      "tropical_grassland": "grasslands",
+      "steppe": "plains",
+      "lowlands": "plains"
+    },
+    "Mountain Group": {
+      "alpine": "mountains_snow_covered",
+      "montane": "mountains",
+      "highlands": "rocky_plains"
+    },
+    "Other": {
+      "desert": "desert",
+      "ocean": "ocean",
+      "mountains": "mountains",
+      "savanna": "savanna",
+      "savannah": "savanna",
+      "tundra": "tundra",
+      "agricultural": "agricultural_fields"
+    }
+  },
+  "layer_0_terrain": {
+    "desert": "desert",
+    "tundra": "tundra",
+    "ocean": "ocean",
+    "mountains": "mountains"
+  },
+  "hydrosphere_tiles": {
+    "H2O": { "liquid": "ocean.png", "frozen": "smooth_ice_sheet_white.png" },
+    "CH4": { "liquid": "methane_lake.png", "frozen": "frozen_methane.png" },
+    "C2H6": { "liquid": "ethane_lake.png", "frozen": "frozen_ethane.png" },
+    "N2": { "liquid": "nitrogen_liquid.png", "frozen": "frozen_nitrogen.png" },
+    "NH3": { "liquid": "ammonia_liquid.png", "frozen": "frozen_ammonia.png" }
+  }
+}
