@@ -86,6 +86,10 @@ window.SurfaceView = {
   /* ── Visible overlay layers ────────────────────────────────────── */
   visibleLayers: new Set(['terrain', 'liquid', 'biomes']),
 
+  /* ── Unit/Structure Layer (Layer 5) ────────────────────────────── */
+  showUnits: true,
+  unitSprites: [],
+
   /* ═══════════════════════════════════════════════════════════════
      INIT
   ═══════════════════════════════════════════════════════════════ */
@@ -112,6 +116,9 @@ window.SurfaceView = {
 
     // Build layers exactly like monitor does
     this._buildLayers();
+
+    // Load unit sprites (Layer 5)
+    this.loadUnitSprites();
 
     // Decide whether this world can show biomes
     const hasBiomes = this.layers.biomes !== null;
@@ -163,6 +170,17 @@ window.SurfaceView = {
 
     // Layer toggle buttons (terrain/grid/features etc.)
     this._setupLayerToggles();
+
+    // Unit layer toggle button
+    const showUnitsBtn = document.getElementById('showUnitsBtn');
+    if (showUnitsBtn) {
+      showUnitsBtn.addEventListener('click', () => {
+        this.showUnits = !this.showUnits;
+        showUnitsBtn.classList.toggle('active', this.showUnits);
+        showUnitsBtn.textContent = this.showUnits ? 'Show Units' : 'Hide Units';
+        this.dirty = true;
+      });
+    }
 
     this.setupZoom();
     this.setupPan();
@@ -264,6 +282,18 @@ window.SurfaceView = {
         width:  td.resource_grid[0]?.length || 0,
         height: td.resource_grid.length
       };
+    }
+
+    // ── Units (Layer 5) ───────────────────────────────────────────
+    if (td.unit_grid &&
+        Array.isArray(td.unit_grid) &&
+        td.unit_grid.length > 0) {
+      this.layers.units = {
+        grid:   td.unit_grid,
+        width:  td.unit_grid[0]?.length || 0,
+        height: td.unit_grid.length
+      };
+      console.log(`🚀 Unit layer loaded: ${this.layers.units.width}x${this.layers.units.height}`);
     }
   },
 
@@ -444,6 +474,9 @@ window.SurfaceView = {
         }
       }
     }
+
+    // ── Layer 5: Units/Structures (on top of all terrain layers) ───
+    this.drawUnits();
 
     const now = Date.now();
     if (now - this._lastLogTime > 5000) {
@@ -852,6 +885,53 @@ window.SurfaceView = {
         this.dirty = true;
       });
     });
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     UNIT LAYER (Layer 5)
+  ═══════════════════════════════════════════════════════════════ */
+
+  /** Load unit/structure sprites from the sprite sheet. */
+  loadUnitSprites: function() {
+    if (this.unitSprites.length > 0) return; // already loaded
+    
+    this.unitSprites = [];
+    for (let i = 0; i < 16; i++) {
+      const img = new Image();
+      img.src = `/assets/unit_sprites/sprite_${String(i).padStart(2, '0')}.png`;
+      this.unitSprites.push(img);
+    }
+    console.log(`🎨 Unit sprites loaded: ${this.unitSprites.length}`);
+  },
+
+  /** Draw unit/structure sprites on top of terrain/biomes layers. */
+  drawUnits: function() {
+    if (!this.showUnits) return;
+    
+    const grid = this.layers.units?.grid;
+    if (!grid) return;
+    
+    const ctx = this.ctx;
+    const tileSize = this.TILE_SIZE * this.scale;
+    
+    // Viewport culling for units
+    const vp = this._getVisibleTileRange(grid[0].length, grid.length, tileSize);
+    
+    for (let y = vp.startRow; y <= vp.endRow; y++) {
+      for (let x = vp.startCol; x <= vp.endCol; x++) {
+        const cell = grid[y]?.[x];
+        if (!cell) continue;
+        
+        const screenX = x * tileSize + this.offsetX;
+        const screenY = y * tileSize + this.offsetY;
+        
+        // Draw sprite at tile position
+        const sprite = this.unitSprites[cell.sprite_index];
+        if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+          ctx.drawImage(sprite, screenX, screenY, tileSize, tileSize);
+        }
+      }
+    }
   },
 
   /* ═══════════════════════════════════════════════════════════════

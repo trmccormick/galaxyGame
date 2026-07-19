@@ -18,7 +18,6 @@ module Units
     def population_capacity
       operational_data&.dig('habitat_systems', 'capacity') || 0
     end
-  end
 
     def available_capacity
       population_capacity - current_population

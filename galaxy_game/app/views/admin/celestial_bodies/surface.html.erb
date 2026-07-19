@@ -11,7 +11,6 @@
     <%# Data injection - identical to monitor but surface-focused %>
     <script type="application/json" id="surface-data">
     <%
-      terrain_map_data = @celestial_body&.geosphere&.terrain_map
       has_hydrosphere = @celestial_body.hydrosphere.present? && (
           @celestial_body.hydrosphere.state_distribution&.dig('liquid').to_f > 0 ||
           (@celestial_body.hydrosphere.liquid_type.present? && @celestial_body.hydrosphere.liquid_type.to_s.downcase != 'none')
@@ -26,16 +25,8 @@
         radius: @celestial_body.radius,
         tileset_name: @tileset_name || 'trident',
         
-        # Terrain data (core for surface view)
-        terrain_data: terrain_map_data ? {
-          elevation: terrain_map_data['elevation'] || terrain_map_data['grid'],
-          biomes: terrain_map_data['biomes'],  # Removed grid fallback. If biomes is nil, no biomes.
-          resources: terrain_map_data['resource_grid'],
-          width: terrain_map_data['width'],
-          height: terrain_map_data['height'] || (terrain_map_data['elevation']&.length || 0),
-          quality_score: terrain_map_data['quality_score'],
-          generation_method: terrain_map_data['generation_method']
-        } : nil,
+        # Terrain data (includes unit_grid from TerrainDataBuilder)
+        terrain_data: @terrain_data,
         
         # Sphere data (same as monitor for consistency)
         planet_data: {
@@ -110,9 +101,15 @@
                     <button class="layer-btn active" data-layer="terrain">Terrain</button>
                     <button class="layer-btn" data-layer="grid">Grid</button>
                     <button class="layer-btn" data-layer="features">Features</button>
-                    <button class="layer-btn" data-layer="settlements">Settlements</button>
+                    <button class="layer-btn" data-layer="settlements">Settlementments</button>
                     <button class="layer-btn" data-layer="resources">Resources</button>
                 </div>
+            </div>
+
+            <!-- Unit Layer Toggle -->
+            <div class="admin-tool-section">
+                <h3>🚀 UNITS</h3>
+                <button id="showUnitsBtn" class="layer-btn active" data-layer="units">Show Units</button>
             </div>
         </aside>
 

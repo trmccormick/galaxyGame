@@ -86,7 +86,19 @@ module Admin
     # Surface view with biome tileset rendering
     def surface
       @tileset_name = params[:tileset] || 'galaxy_game'
-      @terrain = @celestial_body.geosphere&.terrain_map
+      
+      # Build terrain data with unit_grid using TerrainDataBuilder
+      builder = TerrainDataBuilder.new(@celestial_body)
+      @terrain_data = builder.build(
+        @celestial_body.geosphere&.terrain_map,
+        {
+          water_coverage: @celestial_body.hydrosphere&.state_distribution&.dig('liquid') || 0,
+          liquid_name: @celestial_body.hydrosphere&.liquid_type || 'H2O',
+          surface_temperature: @celestial_body.surface_temperature,
+          crust_iron_oxide_percentage: @celestial_body.geosphere&.crust_composition&.dig('iron_oxide') || 0
+        }
+      )
+      
       @geological_features = begin
         if @celestial_body.geosphere
           service = Lookup::PlanetaryGeologicalFeatureLookupService.new(@celestial_body)
