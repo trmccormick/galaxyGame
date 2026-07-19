@@ -99,18 +99,19 @@ module Generators
           json_end = json_string.rindex('}') + 1
           json_string = json_string[json_start...json_end]
         end
-        JSON.parse(json_string)
-        return json_string
+        parsed = JSON.parse(json_string)
+        return parsed.is_a?(Hash) ? parsed : JSON.parse(parsed.to_s)
       else
-        return response_text
+        # response_text was valid JSON but not an envelope — return the parsed object
+        return full_response
       end
     rescue JSON::ParserError
       if response_text.include?('{') && response_text.include?('}')
         json_start = response_text.index('{')
         json_end = response_text.rindex('}') + 1
         json_string = response_text[json_start...json_end]
-        JSON.parse(json_string)
-        return json_string
+        parsed = JSON.parse(json_string)
+        return parsed.is_a?(Hash) ? parsed : JSON.parse(parsed.to_s)
       else
         raise "Failed to extract valid JSON"
       end
