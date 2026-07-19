@@ -58,23 +58,12 @@ namespace :luna_mission do
   # ---------------------------------------------------------------------------
 
   def load_profile(profile_id)
-    # Try MISSIONS_V2_PROFILES_PATH first (mounted app/data location)
     path = GalaxyGame::Paths::MISSIONS_V2_PROFILES_PATH.join("#{profile_id}.json")
-    if File.exist?(path)
-      data = JSON.parse(File.read(path))
-      puts "\n[INFO] Loaded profile from: #{path}"
-      return data
-    end
+    return nil unless File.exist?(path)
 
-    # Fallback: try galaxy_game/data/json-data path (mounted at /home/galaxy_game/data/json-data)
-    fallback_path = Pathname.new('/home/galaxy_game/data/json-data/missions_v2/profiles').join("#{profile_id}.json")
-    if File.exist?(fallback_path)
-      data = JSON.parse(File.read(fallback_path))
-      puts "\n[INFO] Loaded profile from (fallback): #{fallback_path}"
-      return data
-    end
-
-    nil
+    data = JSON.parse(File.read(path))
+    puts "\n[INFO] Loaded profile from: #{path}"
+    data
   end
 
   def load_manifest(manifest_id)
