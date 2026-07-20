@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Market::NpcPriceCalculator do
-  # BOILERPLATE FIX: Ensure Settlement::BaseSettlement has all required methods 
+  # BOILERPLATE FIX: Ensure Settlement::BaseSettlement has required methods 
   # for successful mocking during these tests.
   before(:all) do
     settlement_class = Settlement::BaseSettlement
@@ -16,11 +16,6 @@ RSpec.describe Market::NpcPriceCalculator do
     # Required for: with inventory adjustments (inventory_level)
     unless settlement_class.method_defined?(:inventory_level)
       settlement_class.class_eval { def inventory_level(resource); 0.50; end }
-    end
-
-    # Required for: local production pricing (has_facility?)
-    unless settlement_class.method_defined?(:has_facility?)
-      settlement_class.class_eval { def has_facility?(facility_name); false; end }
     end
   end
 
@@ -279,8 +274,12 @@ RSpec.describe Market::NpcPriceCalculator do
     
     context 'when settlement can produce locally' do
       before do
-        allow_any_instance_of(Settlement::BaseSettlement).to receive(:has_facility?)
-          .with('water_mining').and_return(true)
+        # Mock PrecursorCapabilityService to indicate water can be produced locally
+        celestial_body = settlement_with_mining.location.celestial_body
+        allow(AIManager::PrecursorCapabilityService).to receive(:new)
+          .with(celestial_body).and_return(
+            double(can_produce_locally?: true)
+          )
       end
       
       it 'uses local production cost instead of import cost' do
@@ -289,20 +288,34 @@ RSpec.describe Market::NpcPriceCalculator do
       end
       
       it 'offers much cheaper prices than import' do
+        celestial_body = settlement_with_mining.location.celestial_body
+        
+        # First call: can produce locally
+        allow(AIManager::PrecursorCapabilityService).to receive(:new)
+          .with(celestial_body).and_return(
+            double(can_produce_locally?: true)
+          )
         local_ask = described_class.calculate_ask(settlement_with_mining, 'water')
         
-        allow(settlement_with_mining).to receive(:has_facility?)
-          .with('water_mining').and_return(false)
-        
+        # Second call: cannot produce locally
+        allow(AIManager::PrecursorCapabilityService).to receive(:new)
+          .with(celestial_body).and_return(
+            double(can_produce_locally?: false)
+          )
         import_ask = described_class.calculate_ask(settlement_with_mining, 'water')
+        
         expect(local_ask).to be < (import_ask * 0.05)
       end
     end
     
     context 'when settlement cannot produce locally' do
       before do
-        allow_any_instance_of(Settlement::BaseSettlement).to receive(:has_facility?)
-          .with('water_mining').and_return(false)
+        # Mock PrecursorCapabilityService to indicate water cannot be produced locally
+        celestial_body = settlement_with_mining.location.celestial_body
+        allow(AIManager::PrecursorCapabilityService).to receive(:new)
+          .with(celestial_body).and_return(
+            double(can_produce_locally?: false)
+          )
       end
       
       it 'falls back to import pricing' do

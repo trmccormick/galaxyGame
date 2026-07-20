@@ -24,17 +24,15 @@ module AIManager
     private
 
     def self.can_produce_locally?(settlement, resource, amount)
-      # Check if settlement has ISRU capabilities for this resource
-      case resource
-      when :oxygen
-        settlement_has_facility?(settlement, :atmospheric_processor)
-      when :water
-        settlement_has_facility?(settlement, :isru_processor)
-      when :structural_carbon
-        settlement_has_facility?(settlement, :cnt_fabricator)
-      else
-        false
-      end
+      # Check if settlement location can produce this resource via ISRU
+      return false unless settlement
+      
+      resource_name = resource.is_a?(Symbol) ? resource.to_s : resource
+      celestial_body = settlement.location&.celestial_body
+      return false unless celestial_body
+      
+      # Delegate to PrecursorCapabilityService which queries celestial body data
+      PrecursorCapabilityService.new(celestial_body).can_produce_locally?(resource_name)
     end
 
     def self.produce_locally(settlement, resource, amount)
@@ -78,12 +76,6 @@ module AIManager
       # Execute market purchase
       Rails.logger.info "[ProcurementService] Purchasing #{amount} #{resource} for #{cost} GCC"
       # This would interact with market/trading system
-    end
-
-    def self.settlement_has_facility?(settlement, facility_type)
-      # Check if settlement has required facility
-      # Placeholder
-      true
     end
 
     def self.settlement_funds(settlement)

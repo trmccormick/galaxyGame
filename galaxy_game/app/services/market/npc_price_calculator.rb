@@ -207,10 +207,11 @@ module Market
         lunar_prod = material_data.dig('pricing', 'lunar_production')
         return false unless lunar_prod && lunar_prod['available']
         
-        facility = lunar_prod['facility_required']
-        return true if facility.blank?
+        # Delegate to PrecursorCapabilityService which checks celestial body data
+        celestial_body = settlement.location&.celestial_body
+        return false unless celestial_body
         
-        settlement.respond_to?(:has_facility?) && settlement.has_facility?(facility)
+        AIManager::PrecursorCapabilityService.new(celestial_body).can_produce_locally?(resource_name)
       end
       
       def settlement_has_storage_capacity?(settlement, resource_name)
