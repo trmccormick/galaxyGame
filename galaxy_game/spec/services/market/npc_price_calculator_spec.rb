@@ -280,6 +280,10 @@ RSpec.describe Market::NpcPriceCalculator do
           .with(celestial_body).and_return(
             double(can_produce_locally?: true)
           )
+        
+        # Mock settlement units to have water extraction equipment
+        mock_unit = double(output_resources: ['water', 'oxygen'])
+        allow(settlement_with_mining).to receive(:units).and_return([mock_unit])
       end
       
       it 'uses local production cost instead of import cost' do
@@ -290,18 +294,21 @@ RSpec.describe Market::NpcPriceCalculator do
       it 'offers much cheaper prices than import' do
         celestial_body = settlement_with_mining.location.celestial_body
         
-        # First call: can produce locally
+        # First call: can produce locally with equipment
         allow(AIManager::PrecursorCapabilityService).to receive(:new)
           .with(celestial_body).and_return(
             double(can_produce_locally?: true)
           )
+        mock_unit = double(output_resources: ['water', 'oxygen'])
+        allow(settlement_with_mining).to receive(:units).and_return([mock_unit])
         local_ask = described_class.calculate_ask(settlement_with_mining, 'water')
         
-        # Second call: cannot produce locally
+        # Second call: location has resource but settlement has no equipment
         allow(AIManager::PrecursorCapabilityService).to receive(:new)
           .with(celestial_body).and_return(
-            double(can_produce_locally?: false)
+            double(can_produce_locally?: true)
           )
+        allow(settlement_with_mining).to receive(:units).and_return([])
         import_ask = described_class.calculate_ask(settlement_with_mining, 'water')
         
         expect(local_ask).to be < (import_ask * 0.05)

@@ -207,11 +207,32 @@ module Market
         lunar_prod = material_data.dig('pricing', 'lunar_production')
         return false unless lunar_prod && lunar_prod['available']
         
-        # Delegate to PrecursorCapabilityService which checks celestial body data
+        # Check if location has the resource available
         celestial_body = settlement.location&.celestial_body
         return false unless celestial_body
         
-        AIManager::PrecursorCapabilityService.new(celestial_body).can_produce_locally?(resource_name)
+        location_can_provide = AIManager::PrecursorCapabilityService.new(celestial_body).can_produce_locally?(resource_name)
+        return false unless location_can_provide
+        
+        # Check if settlement has equipment to extract/process this resource
+        settlement_has_extraction_equipment?(settlement, resource_name)
+      end
+      
+      def settlement_has_extraction_equipment?(settlement, resource_name)
+        # Check if settlement has any unit that can produce this resource
+        return false unless settlement.respond_to?(:units)
+        
+        settlement.units.any? do |unit|
+          next unless unit.respond_to?(:output_resources)
+          output_resources = unit.output_resources
+          next unless output_resources.is_a?(Array) || output_resources.is_a?(Hash)
+          
+          if output_resources.is_a?(Array)
+            output_resources.any? { |r| r.to_s.downcase == resource_name.to_s.downcase }
+          elsif output_resources.is_a?(Hash)
+            output_resources.keys.any? { |r| r.to_s.downcase == resource_name.to_s.downcase }
+          end
+        end
       end
       
       def settlement_has_storage_capacity?(settlement, resource_name)

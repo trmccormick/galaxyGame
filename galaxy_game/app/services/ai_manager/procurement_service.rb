@@ -24,15 +24,19 @@ module AIManager
     private
 
     def self.can_produce_locally?(settlement, resource, amount)
-      # Check if settlement location can produce this resource via ISRU
+      # Check if settlement location can produce this resource AND settlement has equipment
       return false unless settlement
       
       resource_name = resource.is_a?(Symbol) ? resource.to_s : resource
       celestial_body = settlement.location&.celestial_body
       return false unless celestial_body
       
-      # Delegate to PrecursorCapabilityService which queries celestial body data
-      PrecursorCapabilityService.new(celestial_body).can_produce_locally?(resource_name)
+      # Check if location has the resource available
+      location_can_provide = PrecursorCapabilityService.new(celestial_body).can_produce_locally?(resource_name)
+      return false unless location_can_provide
+      
+      # Check if settlement has equipment to extract/process this resource
+      settlement_has_extraction_equipment?(settlement, resource_name)
     end
 
     def self.produce_locally(settlement, resource, amount)
@@ -78,6 +82,23 @@ module AIManager
       # This would interact with market/trading system
     end
 
+    def self.settlement_has_extraction_equipment?(settlement, resource_name)
+      # Check if settlement has any unit that can produce this resource
+      return false unless settlement.respond_to?(:units)
+      
+      settlement.units.any? do |unit|
+        next unless unit.respond_to?(:output_resources)
+        output_resources = unit.output_resources
+        next unless output_resources.is_a?(Array) || output_resources.is_a?(Hash)
+        
+        if output_resources.is_a?(Array)
+          output_resources.any? { |r| r.to_s.downcase == resource_name.to_s.downcase }
+        elsif output_resources.is_a?(Hash)
+          output_resources.keys.any? { |r| r.to_s.downcase == resource_name.to_s.downcase }
+        end
+      end
+    end
+    
     def self.settlement_funds(settlement)
       [settlement.gcc_account&.balance || 0, 0].max
     end
