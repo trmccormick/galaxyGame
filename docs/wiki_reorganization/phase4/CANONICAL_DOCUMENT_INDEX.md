@@ -44,7 +44,7 @@ Each entry has:
 
 ---
 
-## 2. Story & Timeline
+## 2. Story
 
 ### Story Overview
 - **Canonical**: STORY_OVERVIEW (synthesized from 01_story_arc.md + 03_consortium_framework.md + 04_terra_gen_consortium.md)
@@ -78,8 +78,7 @@ Each entry has:
 
 ---
 
-## 3. Universe
-
+## 3. Universe Generation
 ### Universe Overview
 - **Canonical**: UNIVERSE_OVERVIEW (synthesized from celestial_bodies.md + Celestial-Systems.md)
 - **Supporting**: docs/architecture/starsim/celestial_bodies.md, docs/wiki/Celestial-Systems.md
@@ -122,8 +121,7 @@ Each entry has:
 
 ---
 
-## 4. Simulation
-
+## 4. Planetary Simulation
 ### Simulation Overview
 - **Canonical**: SIMULATION_OVERVIEW
 - **Supporting**: docs/storyline/05_physics_topology.md
@@ -176,7 +174,90 @@ Each entry has:
 
 ---
 
-## 5. Economy
+## 5. Game World Model
+
+### World Model Overview
+- **Canonical**: WORLD_MODEL_OVERVIEW
+- **Supporting**: docs/architecture/settlement/README.md, docs/architecture/structures/README.md
+- **Historical**: docs/storyline/06_deployment_hierarchy.md, docs/architecture/concerns/has_units.md
+
+### Galaxy
+- **Canonical**: GALAXY
+- **Supporting**: (create new)
+- **Historical**: (none)
+
+### Solar System
+- **Canonical**: SOLAR_SYSTEM (synthesized from solar_system.md + DIAGNOSTIC_SOL_SEEDING.md)
+- **Supporting**: docs/architecture/starsim/solar_system.md, docs/developer/DIAGNOSTIC_SOL_SEEDING.md
+- **Historical**: (none)
+
+### Star
+- **Canonical**: STAR
+- **Supporting**: docs/architecture/starsim/star_naming_architecture.md
+- **Historical**: (none)
+
+### Celestial Body
+- **Canonical**: CELESTIAL_BODY (synthesized from celestial_bodies.md + CELESTIAL_BODY_DATA_CONVENTIONS.md)
+- **Supporting**: docs/architecture/starsim/celestial_bodies.md, docs/reference/CELESTIAL_BODY_DATA_CONVENTIONS.md
+- **Historical**: (none)
+
+### Planet Environment
+- **Canonical**: PLANET_ENVIRONMENT
+- **Supporting**: docs/architecture/simulation/geosphere_system.md, docs/architecture/biology/biology_models.md
+- **Historical**: (none)
+
+### Settlement
+- **Canonical**: SETTLEMENT
+- **Supporting**: docs/architecture/settlement/README.md
+- **Historical**: (none)
+
+### Structure
+- **Canonical**: STRUCTURE
+- **Supporting**: docs/architecture/structures/README.md
+- **Historical**: (none)
+
+### Unit
+- **Canonical**: UNIT
+- **Supporting**: (create new)
+- **Historical**: (none)
+
+---
+
+## 6. Simulation Engine
+
+### Simulation Engine Overview
+- **Canonical**: SIMULATION_ENGINE_OVERVIEW
+- **Supporting**: docs/architecture/simulation/SIMULATION_SANDBOX.md, docs/storyline/05_physics_topology.md
+- **Historical**: (none)
+
+### StarSim Pipeline
+- **Canonical**: STAR_SIM_PIPELINE
+- **Supporting**: docs/architecture/starsim/OVERVIEW.md, docs/architecture/starsim/PROCEDURAL_INTENT.md
+- **Historical**: docs/architecture/starsim/TECHNICAL_HISTORY.md
+
+### TerraSim Pipeline
+- **Canonical**: TERRA_SIM_PIPELINE
+- **Supporting**: docs/architecture/biology/terrasim_service.md, docs/architecture/terrasim/OVERVIEW.md
+- **Historical**: (none)
+
+### Simulation Data Ownership
+- **Canonical**: SIMULATION_DATA_OWNERSHIP
+- **Supporting**: docs/architecture/starsim/MISSING_HOOKS.md, docs/architecture/simulation/geosphere_system.md
+- **Historical**: (none)
+
+### Simulation Integration
+- **Canonical**: SIMULATION_INTEGRATION
+- **Supporting**: docs/architecture/simulation/terrainforge_layer.md, docs/architecture/systems/sphere_creation_optimization.md
+- **Historical**: docs/architecture/simulation/visual_layer_stack.md (archived)
+
+### Simulation Pipeline
+- **Canonical**: SIMULATION_PIPELINE (synthesized from terrain generation + visual layers + sphere optimization)
+- **Supporting**: docs/architecture/terrain/generation_and_rendering.md, docs/architecture/simulation/terrainforge_layer.md, docs/architecture/systems/sphere_creation_optimization.md
+- **Historical**: docs/architecture/simulation/visual_layer_stack.md (archived)
+
+---
+
+## 7. Economy
 
 ### Economy Overview
 - **Canonical**: ECONOMY_OVERVIEW (synthesized from economic_baseline.md + financial_system.md + FISCAL_POLICY_AND_FEES.md)
@@ -210,7 +291,7 @@ Each entry has:
 
 ---
 
-## 6. Manufacturing
+## 8. Manufacturing
 
 ### Manufacturing Overview
 - **Canonical**: MANUFACTURING_OVERVIEW
@@ -244,7 +325,7 @@ Each entry has:
 
 ---
 
-## 7. Settlements
+## 9. Settlements
 
 ### Settlements Overview
 - **Canonical**: SETTLEMENTS_OVERVIEW
@@ -278,7 +359,7 @@ Each entry has:
 
 ---
 
-## 8. Transportation
+## 10. Transportation
 
 ### Transportation Overview
 - **Canonical**: TRANSPORTATION_OVERVIEW
@@ -312,7 +393,7 @@ Each entry has:
 
 ---
 
-## 9. AI Manager
+## 11. AI Manager
 
 ### AI Manager Overview
 - **Canonical**: AI_MANAGER_OVERVIEW (synthesized from 00_architecture_overview.md + AI_MANAGER_ARCHITECTURE.md + AI_MANAGER_ORCHESTRATOR_SPEC.md)
@@ -336,7 +417,7 @@ Each entry has:
 
 ---
 
-## 10. Gameplay
+## 12. Gameplay
 
 ### Gameplay Overview
 - **Canonical**: GAMEPLAY_OVERVIEW
@@ -350,7 +431,7 @@ Each entry has:
 
 ---
 
-## 11. Development
+## 13. Development
 
 ### Development Overview
 - **Canonical**: DEVELOPMENT_OVERVIEW
@@ -384,7 +465,7 @@ Each entry has:
 
 ---
 
-## 12. Reference
+## 14. Reference
 
 ### Glossary
 - **Canonical**: GLOSSARY (synthesized from GLOSSARY_SYSTEM_MECHANICS.md + system_mechanics.md)

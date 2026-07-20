@@ -14,7 +14,7 @@ Phase 4 transforms the current documentation collection into a coherent knowledg
 
 - Surveyed **188+ documents** across the entire docs tree
 - Classified every document into one of 7 categories (Canonical, Supporting, Merge, Split, Archive, Historical, Redirect)
-- Designed a complete **12-section wiki navigation hierarchy**
+- Designed a complete **14-section wiki navigation hierarchy**
 - Identified **ONE authoritative page** for every major topic
 - Mapped **all required cross-references** between sections
 - Identified **89 missing pages** that should exist (33 P0 critical, 38 P1 high, 18 P2 medium)
@@ -38,33 +38,37 @@ Phase 4 transforms the current documentation collection into a coherent knowledg
 ```
 Galaxy Game Wiki
 ├── 1. Vision          (What is Galaxy Game? Why does it exist?)
-├── 2. Story & Timeline (Narrative, acts, timeline, Snap Event)
-├── 3. Universe        (Sol, Eden, planets, stars, wormholes)
-├── 4. Simulation      (StarSim, TerraSim, spheres, biomes, terraforming)
-├── 5. Economy         (Currency, markets, trading, NPC economy, pricing)
-├── 6. Manufacturing   (Resources, ISRU, blueprints, construction, tech levels)
-├── 7. Settlements     (Colonies, settlements, structures, worldhouses, orbital)
-├── 8. Transportation  (Craft, stations, depots, cyclers, logistics)
-├── 9. AI Manager      (Architecture, subsystems, service portfolio)
-├── 10. Gameplay       (Planetary, orbital, industry, mining, trading, exploration)
-├── 11. Development    (Architecture, standards, phases, testing, AI workflow)
-└── 12. Reference      (Glossary, terminology, constants, indices, schemas)
+├── 2. Story           (Narrative, acts, timeline, Snap Event)
+├── 3. Universe Generation       (Sol, Eden, planets, stars, wormholes)
+├── 4. Planetary Simulation     (StarSim, TerraSim, spheres, biomes, terraforming)
+├── 5. Game World Model      (Galaxy, Solar System, Star, Celestial Body, Planet Environment, Settlement, Structure, Units)
+├── 6. Simulation Engine       (StarSim pipeline, TerraSim pipeline, data ownership, integration)
+├── 7. Economy         (Currency, markets, trading, NPC economy, pricing)
+├── 8. Manufacturing   (Resources, ISRU, blueprints, construction, tech levels)
+├── 9. Settlements     (Colonies, settlements, structures, worldhouses, orbital)
+├── 10. Transportation  (Craft, stations, depots, cyclers, logistics)
+├── 11. AI Manager      (Architecture, subsystems, service portfolio)
+├── 12. Gameplay       (Planetary, orbital, industry, mining, trading, exploration)
+├── 13. Development    (Architecture, standards, phases, testing, AI workflow)
+└── 14. Reference      (Glossary, terminology, constants, indices, schemas)
 ```
 
 ### Reading Order for New Contributors
 
 1. **Vision** — What is Galaxy Game? Design philosophy
-2. **Story & Timeline** — The narrative setting
-3. **Universe** — Sol system and beyond
-4. **Simulation** — How the world works
-5. **Economy** — NPC-first economy
-6. **Manufacturing** — Resource pipeline
-7. **Settlements** — Colony hierarchy
-8. **Transportation** — Logistics network
-9. **AI Manager** — Orchestration layer
-10. **Gameplay** — Player experience
-11. **Development** — For contributors
-12. **Reference** — Glossary and indices
+2. **Story** — The narrative setting
+3. **Universe Generation** — How star systems are created and loaded
+4. **Planetary Simulation** — How planetary states are evaluated
+5. **Game World Model** — Galaxy → Solar System → Star → Celestial Body → Planet Environment → Settlement → Structure → Units
+6. **Simulation Engine** — How StarSim and TerraSim coordinate
+7. **Economy** — NPC-first economy
+8. **Manufacturing** — Resource pipeline
+9. **Settlements** — Colony hierarchy
+10. **Transportation** — Logistics network
+11. **AI Manager** — Orchestration layer
+12. **Gameplay** — Player experience
+13. **Development** — For contributors
+14. **Reference** — Glossary and indices
 
 ---
 

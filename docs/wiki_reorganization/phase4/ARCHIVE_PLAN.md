@@ -399,7 +399,7 @@ These documents should remain in their current locations:
 
 After archiving, the docs tree will have:
 
-- **docs/** — Active wiki structure (12 sections)
+- **docs/** — Active wiki structure (14 sections)
 - **docs/archive/** — Historical reference material
 - **docs/wiki_reorganization/phase4/** — This blueprint (can be archived after implementation)
 

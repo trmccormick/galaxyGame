@@ -30,7 +30,7 @@ Each section has:
 
 ---
 
-## 2. Story & Timeline
+## 2. Story
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -43,40 +43,78 @@ Each section has:
 
 ---
 
-## 3. Universe
+## 3. Universe Generation
+
+> **Core truth**: StarSim is the solar system generation and initialization framework. It creates, loads, and completes star systems. It does NOT simulate planetary states.
 
 | Page | Type | Purpose |
 |------|------|---------|
-| [UNIVERSE_OVERVIEW.md](#) | Canonical | The universe at a glance — Sol, Eden, Local Bubble |
-| [SOL_SYSTEM.md](#) | Canonical | Sun, planets, moons, natural resources |
-| [EDEN_SYSTEM.md](#) | Supporting | Target colonization system |
-| [LOCAL_BUBBLE.md](#) | Supporting | Regional stellar context |
-| [STARS.md](#) | Reference | Star catalog and classification |
+| [UNIVERSE_GENERATION_OVERVIEW.md](#) | Canonical | How star systems are created, loaded, and completed — StarSim framework |
+| [STARSIM.md](#) | Canonical | Solar system generation and initialization framework (NOT planetary simulation) |
+| [PROCEDURAL_GENERATION.md](#) | Supporting | Wormhole-triggered system generation |
+| [JSON_SCHEMAS_AND_IMPORT.md](#) | Canonical | JSON system definitions, import pipeline, known vs generated systems |
+| [HYBRID_COMPLETION.md](#) | Supporting | Filling incomplete astronomical data |
+| [KNOWN_SYSTEMS.md](#) | Reference | Sol, Eden, Alpha Centauri — pre-defined systems |
 | [CELESTIAL_BODIES.md](#) | Canonical | Planets, moons, asteroids — unified reference |
 | [NATURAL_WORMHOLES.md](#) | Supporting | Natural wormhole network |
 | [ARTIFICIAL_WORMHOLES.md](#) | Supporting | Artificial wormhole construction and maintenance |
+| [LOCAL_BUBBLE.md](#) | Supporting | Regional stellar context |
 
 ---
 
-## 4. Simulation
+## 4. Planetary Simulation
+
+> **Core truth**: TerraSim is the planetary simulation engine. It evaluates the current state of an existing world. It does NOT create solar systems.
 
 | Page | Type | Purpose |
 |------|------|---------|
-| [SIMULATION_OVERVIEW.md](#) | Canonical | How simulation works at a high level |
-| [STARSIM.md](#) | Canonical | Star system generation — fidelity tiers, procedural vs static |
-| [TERRASIM.md](#) | Canonical | Planetary simulation — sphere model overview |
-| [GEO SPHERE.md](#) | Supporting | Geosphere simulation layer |
+| [PLANETARY_SIMULATION_OVERVIEW.md](#) | Canonical | How planetary states are evaluated and evolved — TerraSim engine |
+| [TERRASIM.md](#) | Canonical | Planetary simulation engine (does NOT generate planets; evaluates existing worlds) |
+| [GEOSPHERE.md](#) | Supporting | Geosphere simulation layer |
 | [ATMOSPHERE.md](#) | Supporting | Atmosphere simulation layer |
 | [HYDROSPHERE.md](#) | Supporting | Hydrosphere simulation layer |
 | [BIOSPHERE.md](#) | Canonical | Biosphere — planet-scale biological envelope |
 | [CRYOSPHERE.md](#) | Supporting | Cryosphere simulation layer |
 | [BIOME_SYSTEM.md](#) | Canonical | Biome classification, PlanetBiome instances, terraforming-seeds |
-| [TERRAFORMING.md](#) | Canonical | Terraforming pipeline — from hostile to habitable |
-| [SIMULATION_PIPELINE.md](#) | Supporting | How StarSim and TerraSim connect |
+| [TERRAFORMING.md](#) | Canonical | Terraforming as incremental industrial accumulation over time |
+| [CLIMATE_CHANGES.md](#) | Supporting | How atmospheric/hydrospheric/geospheric changes propagate |
 
 ---
 
-## 5. Economy
+## 5. Game World Model
+
+> **Hierarchy**: Galaxy → Solar System → Star → Celestial Body → Planet Environment → Settlement → Structure → Units
+
+| Page | Type | Purpose |
+|------|------|---------|
+| [WORLD_MODEL_OVERVIEW.md](#) | Canonical | Complete world model hierarchy from galaxy to units |
+| [GALAXY.md](#) | Supporting | Galaxy-level organization |
+| [SOLAR_SYSTEM.md](#) | Canonical | Solar system structure and components |
+| [STAR.md](#) | Supporting | Star properties and stellar classification |
+| [CELESTIAL_BODY.md](#) | Canonical | Celestial body hierarchy and relationships |
+| [PLANET_ENVIRONMENT.md](#) | Canonical | Planet environment model (mass, radius, gravity, orbital position, atmosphere, hydrosphere, geosphere, biosphere) |
+| [SETTLEMENT.md](#) | Supporting | Settlement administration model |
+| [STRUCTURE.md](#) | Supporting | Structure asset model |
+| [UNIT.md](#) | Supporting | Unit model (craft, vessels, etc.) |
+
+---
+
+## 6. Simulation Engine
+
+> **Core truth**: The simulation engine coordinates StarSim and TerraSim. StarSim creates/loads solar systems; TerraSim evaluates planetary states. They are fundamentally different concerns that work together in a pipeline.
+
+| Page | Type | Purpose |
+|------|------|---------|
+| [SIMULATION_ENGINE_OVERVIEW.md](#) | Canonical | How StarSim and TerraSim coordinate — the simulation pipeline |
+| [STAR_SIM_PIPELINE.md](#) | Supporting | StarSim → Solar System → Celestial Bodies flow |
+| [TERRA_SIM_PIPELINE.md](#) | Supporting | Celestial Bodies → TerraSim → Planetary State flow |
+| [SIMULATION_DATA_OWNERSHIP.md](#) | Canonical | Which system owns which data (StarSim owns systems; TerraSim owns planetary state) |
+| [SIMULATION_INTEGRATION.md](#) | Supporting | How StarSim and TerraSim interact (import pipeline, initialization) |
+| [SIMULATION_PIPELINE.md](#) | Supporting | End-to-end simulation flow from system generation to planetary evaluation |
+
+---
+
+## 7. Economy
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -94,7 +132,7 @@ Each section has:
 
 ---
 
-## 6. Manufacturing
+## 8. Manufacturing
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -111,7 +149,7 @@ Each section has:
 
 ---
 
-## 7. Settlements
+## 9. Settlements
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -127,7 +165,7 @@ Each section has:
 
 ---
 
-## 8. Transportation
+## 10. Transportation
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -143,7 +181,7 @@ Each section has:
 
 ---
 
-## 9. AI Manager
+## 11. AI Manager
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -160,7 +198,7 @@ Each section has:
 
 ---
 
-## 10. Gameplay
+## 12. Gameplay
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -177,7 +215,7 @@ Each section has:
 
 ---
 
-## 11. Development
+## 13. Development
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -194,7 +232,7 @@ Each section has:
 
 ---
 
-## 12. Reference
+## 14. Reference
 
 | Page | Type | Purpose |
 |------|------|---------|
@@ -220,26 +258,27 @@ Galaxy Game Wiki
 │   ├── CORE_PRINCIPLES
 │   ├── PLAYER_EXPERIENCE
 │   └── PROJECT_GOALS
-├── 2. Story & Timeline
+├── 2. Story
 │   ├── STORY_OVERVIEW
 │   ├── NARRATIVE_ACTS
 │   ├── IMPLEMENTATION_PHASES
 │   ├── HISTORICAL_TIMELINE
 │   ├── SNAP_EVENT
 │   └── WORMHOLE_HISTORY
-├── 3. Universe
-│   ├── UNIVERSE_OVERVIEW
-│   ├── SOL_SYSTEM
-│   ├── EDEN_SYSTEM
-│   ├── LOCAL_BUBBLE
-│   ├── STARS (reference)
+├── 3. Universe Generation
+│   ├── UNIVERSE_GENERATION_OVERVIEW
+│   ├── STARSIM (solar system generation, NOT planetary simulation)
+│   ├── PROCEDURAL_GENERATION
+│   ├── JSON_SCHEMAS_AND_IMPORT
+│   ├── HYBRID_COMPLETION
+│   ├── KNOWN_SYSTEMS
 │   ├── CELESTIAL_BODIES
 │   ├── NATURAL_WORMHOLES
-│   └── ARTIFICIAL_WORMHOLES
-├── 4. Simulation
-│   ├── SIMULATION_OVERVIEW
-│   ├── STARSIM
-│   ├── TERRASIM
+│   ├── ARTIFICIAL_WORMHOLES
+│   └── LOCAL_BUBBLE
+├── 4. Planetary Simulation
+│   ├── PLANETARY_SIMULATION_OVERVIEW
+│   ├── TERRASIM (planetary evaluation, NOT system generation)
 │   ├── GEOSPHERE
 │   ├── ATMOSPHERE
 │   ├── HYDROSPHERE
@@ -247,8 +286,25 @@ Galaxy Game Wiki
 │   ├── CRYOSPHERE
 │   ├── BIOME_SYSTEM
 │   ├── TERRAFORMING
+│   └── CLIMATE_CHANGES
+├── 5. Game World Model
+│   ├── WORLD_MODEL_OVERVIEW
+│   ├── GALAXY
+│   ├── SOLAR_SYSTEM
+│   ├── STAR
+│   ├── CELESTIAL_BODY
+│   ├── PLANET_ENVIRONMENT
+│   ├── SETTLEMENT
+│   ├── STRUCTURE
+│   └── UNIT
+├── 6. Simulation Engine
+│   ├── SIMULATION_ENGINE_OVERVIEW
+│   ├── STAR_SIM_PIPELINE
+│   ├── TERRA_SIM_PIPELINE
+│   ├── SIMULATION_DATA_OWNERSHIP
+│   ├── SIMULATION_INTEGRATION
 │   └── SIMULATION_PIPELINE
-├── 5. Economy
+├── 7. Economy
 │   ├── ECONOMY_OVERVIEW
 │   ├── CURRENCY
 │   ├── MARKETS
@@ -260,7 +316,7 @@ Galaxy Game Wiki
 │   ├── IMPORT_EXPORT
 │   ├── PRICING
 │   └── ECONOMIC_PHILOSOPHY
-├── 6. Manufacturing
+├── 8. Manufacturing
 │   ├── MANUFACTURING_OVERVIEW
 │   ├── RESOURCES
 │   ├── ISRU
@@ -271,7 +327,7 @@ Galaxy Game Wiki
 │   ├── FACTORIES
 │   ├── RESOURCE_PROCESSING
 │   └── MANUFACTURING_PIPELINE
-├── 7. Settlements
+├── 9. Settlements
 │   ├── SETTLEMENTS_OVERVIEW
 │   ├── COLONIES
 │   ├── SETTLEMENTS
@@ -281,7 +337,7 @@ Galaxy Game Wiki
 │   ├── POPULATION
 │   ├── INFRASTRUCTURE
 │   └── EXPANSION
-├── 8. Transportation
+├── 10. Transportation
 │   ├── TRANSPORTATION_OVERVIEW
 │   ├── CRAFT
 │   ├── STATIONS
@@ -291,7 +347,7 @@ Galaxy Game Wiki
 │   ├── CARGO
 │   ├── DOCKING
 │   └── LOGISTICS_NETWORK
-├── 9. AI Manager
+├── 11. AI Manager
 │   ├── AI_MANAGER_OVERVIEW
 │   ├── MISSION_VALIDATION
 │   ├── PATTERN_LEARNING
@@ -302,7 +358,7 @@ Galaxy Game Wiki
 │   ├── DECISION_MAKING
 │   ├── SIMULATION_INTEGRATION
 │   └── SERVICE_PORTFOLIO
-├── 10. Gameplay
+├── 12. Gameplay
 │   ├── GAMEPLAY_OVERVIEW
 │   ├── PLANETARY_GAMEPLAY
 │   ├── ORBITAL_GAMEPLAY
@@ -313,7 +369,7 @@ Galaxy Game Wiki
 │   ├── EXPLORATION_GAMEPLAY
 │   ├── CORPORATIONS
 │   └── PLAYER_PROGRESSION
-├── 11. Development
+├── 13. Development
 │   ├── DEVELOPMENT_OVERVIEW
 │   ├── ARCHITECTURE
 │   ├── CODING_STANDARDS
@@ -324,7 +380,7 @@ Galaxy Game Wiki
 │   ├── BACKLOG
 │   ├── TESTING
 │   └── AI_WORKFLOW
-└── 12. Reference
+└── 14. Reference
     ├── GLOSSARY
     ├── TERMINOLOGY
     ├── GAME_CONSTANTS
@@ -355,16 +411,18 @@ A new contributor should read in this order:
 2. **VISION_AND_PURPOSE** — Why this project exists
 3. **DESIGN_PHILOSOPHY** — Core design principles
 4. **STORY_OVERVIEW** — The narrative setting
-5. **UNIVERSE_OVERVIEW** — Sol system and beyond
-6. **SIMULATION_OVERVIEW** — How the world works
-7. **ECONOMY_OVERVIEW** — NPC-first economy
-8. **MANUFACTURING_OVERVIEW** — Resource pipeline
-9. **SETTLEMENTS_OVERVIEW** — Colony hierarchy
-10. **TRANSPORTATION_OVERVIEW** — Logistics network
-11. **AI_MANAGER_OVERVIEW** — Orchestration layer
-12. **GAMEPLAY_OVERVIEW** — Player experience
-13. **DEVELOPMENT_OVERVIEW** — For contributors
-14. **GLOSSARY** — Terminology reference
+5. **UNIVERSE_GENERATION_OVERVIEW** — How star systems are created and loaded
+6. **PLANETARY_SIMULATION_OVERVIEW** — How planetary states are evaluated
+7. **GAME_WORLD_MODEL_OVERVIEW** — Galaxy → Solar System → Star → Celestial Body → Planet Environment → Settlement → Structure → Units
+8. **SIMULATION_ENGINE_OVERVIEW** — How StarSim and TerraSim coordinate
+9. **ECONOMY_OVERVIEW** — NPC-first economy
+10. **MANUFACTURING_OVERVIEW** — Resource pipeline
+11. **SETTLEMENTS_OVERVIEW** — Colony hierarchy
+12. **TRANSPORTATION_OVERVIEW** — Logistics network
+13. **AI_MANAGER_OVERVIEW** — Orchestration layer
+14. **GAMEPLAY_OVERVIEW** — Player experience
+15. **DEVELOPMENT_OVERVIEW** — For contributors
+16. **GLOSSARY** — Terminology reference
 
 ---
 

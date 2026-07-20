@@ -70,7 +70,7 @@
 
 ---
 
-## 2. Story & Timeline Section Relocations
+## 2. Story Section Relocations
 
 ### STORY_OVERVIEW
 
@@ -125,7 +125,7 @@
 
 ---
 
-## 3. Universe Section Relocations
+## 3. Universe Generation Section Relocations
 
 ### UNIVERSE_OVERVIEW
 
@@ -192,7 +192,7 @@
 
 ---
 
-## 4. Simulation Section Relocations
+## 4. Planetary Simulation Section Relocations
 
 ### SIMULATION_OVERVIEW
 
@@ -279,7 +279,122 @@
 
 ---
 
-## 5. Economy Section Relocations
+## 5. Game World Model Section Relocations
+
+### WORLD_MODEL_OVERVIEW
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/settlement/README.md | Move to | WORLD_MODEL_OVERVIEW |
+| docs/architecture/structures/README.md | Merge into | WORLD_MODEL_OVERVIEW |
+| docs/storyline/06_deployment_hierarchy.md | Merge into | WORLD_MODEL_OVERVIEW |
+| docs/architecture/concerns/has_units.md | Merge into | WORLD_MODEL_OVERVIEW |
+
+### GALAXY
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| (create new page) | Create | GALAXY |
+
+### SOLAR_SYSTEM
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/starsim/solar_system.md | Move to | SOLAR_SYSTEM |
+| docs/developer/DIAGNOSTIC_SOL_SEEDING.md | Merge into | SOLAR_SYSTEM |
+| docs/developer/sol_data_organization.md | Merge into | SOLAR_SYSTEM |
+
+### STAR
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| (create new page) | Create | STAR |
+
+### CELESTIAL_BODY
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/starsim/celestial_bodies.md | Move to | CELESTIAL_BODY |
+| docs/reference/CELESTIAL_BODY_DATA_CONVENTIONS.md | Merge into | CELESTIAL_BODY |
+
+### PLANET_ENVIRONMENT
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| (create new page) | Create | PLANET_ENVIRONMENT |
+
+### SETTLEMENT
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/settlement/README.md | Move to | SETTLEMENT |
+
+### STRUCTURE
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/structures/README.md | Move to | STRUCTURE |
+
+### UNIT
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| (create new page) | Create | UNIT |
+
+---
+
+## 6. Simulation Engine Section Relocations
+
+### SIMULATION_ENGINE_OVERVIEW
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/simulation/SIMULATION_SANDBOX.md | Archive (purpose unclear per Phase 3) |
+| docs/storyline/05_physics_topology.md | Merge into | SIMULATION_ENGINE_OVERVIEW |
+
+### STAR_SIM_PIPELINE
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/starsim/OVERVIEW.md | Move to | STAR_SIM_PIPELINE |
+| docs/architecture/starsim/PROCEDURAL_INTENT.md | Merge into | STAR_SIM_PIPELINE |
+| docs/architecture/starsim/MISSING_HOOKS.md | Merge into | STAR_SIM_PIPELINE |
+
+### TERRA_SIM_PIPELINE
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/biology/terrasim_service.md | Move to | TERRA_SIM_PIPELINE |
+| docs/architecture/terrasim/OVERVIEW.md | Merge into | TERRA_SIM_PIPELINE |
+
+### SIMULATION_DATA_OWNERSHIP
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| (create new page) | Create | SIMULATION_DATA_OWNERSHIP |
+
+### SIMULATION_INTEGRATION
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/simulation/terrainforge_layer.md | Merge into | SIMULATION_INTEGRATION |
+| docs/architecture/systems/sphere_creation_optimization.md | Merge into | SIMULATION_INTEGRATION |
+
+### SIMULATION_PIPELINE
+
+| Source | Action | Target Wiki Page |
+|--------|--------|-----------------|
+| docs/architecture/terrain/generation_and_rendering.md | Merge into | SIMULATION_PIPELINE |
+| docs/architecture/simulation/visual_layer_stack.md | Archive (visual layers) |
+| docs/developer/AI_EARTH_MAP_GENERATION.md | Merge into | SIMULATION_PIPELINE |
+| docs/developer/AUTOMATIC_TERRAIN_GENERATOR.md | Merge into | SIMULATION_PIPELINE |
+| docs/developer/ELEVATION_DATA.md | Merge into | SIMULATION_PIPELINE |
+| docs/developer/LAYERED_RENDERING.md | Merge into | SIMULATION_PIPELINE |
+| docs/developer/MAP_SYSTEM.md | Merge into | SIMULATION_PIPELINE |
+
+---
+
+## 7. Economy Section Relocations
 
 ### ECONOMY_OVERVIEW
 
@@ -361,7 +476,7 @@
 
 ---
 
-## 6. Manufacturing Section Relocations
+## 8. Manufacturing Section Relocations
 
 ### MANUFACTURING_OVERVIEW
 
@@ -440,7 +555,7 @@
 
 ---
 
-## 7. Settlements Section Relocations
+## 9. Settlements Section Relocations
 
 ### SETTLEMENTS_OVERVIEW
 
@@ -503,7 +618,7 @@
 
 ---
 
-## 8. Transportation Section Relocations
+## 10. Transportation Section Relocations
 
 ### TRANSPORTATION_OVERVIEW
 
@@ -573,7 +688,7 @@
 
 ---
 
-## 9. AI Manager Section Relocations
+## 11. AI Manager Section Relocations
 
 ### AI_MANAGER_OVERVIEW
 
@@ -652,7 +767,7 @@
 
 ---
 
-## 10. Gameplay Section Relocations
+## 12. Gameplay Section Relocations
 
 ### GAMEPLAY_OVERVIEW
 
@@ -718,7 +833,7 @@
 
 ---
 
-## 11. Development Section Relocations
+## 13. Development Section Relocations
 
 ### DEVELOPMENT_OVERVIEW
 
@@ -809,7 +924,7 @@
 
 ---
 
-## 12. Reference Section Relocations
+## 14. Reference Section Relocations
 
 ### GLOSSARY
 

@@ -48,7 +48,7 @@ Every canonical page should link to:
 | WORMHOLE_HISTORY | NATURAL_WORMHOLES | "Natural wormhole network" |
 | WORMHOLE_HISTORY | ARTIFICIAL_WORMHOLES | "Artificial wormhole construction" |
 
-### 3. Universe → Simulation, Transportation
+### 3. Universe Generation → Simulation, Transportation
 
 | From | To | Context |
 |------|-----|---------|
@@ -62,7 +62,7 @@ Every canonical page should link to:
 | CELESTIAL_BODIES | BIOME_SYSTEM | "Biome types by celestial body" |
 | CELESTIAL_BODIES | TERRAFORMING | "Terraforming potential by body" |
 
-### 4. Simulation → Economy, Manufacturing, Terraforming
+### 4. Planetary Simulation → Economy, Manufacturing, Terraforming
 
 | From | To | Context |
 |------|-----|---------|
@@ -84,7 +84,47 @@ Every canonical page should link to:
 | TERRAFORMING | WORLDHOUSES | "Worldhouse terraforming-seeds" |
 | TERRAFORMING | ISRU | "ISRU for terraforming materials" |
 
-### 5. Economy → Manufacturing, Settlements, Transportation
+---
+
+### 5. Game World Model → Universe, Simulation, Settlements
+
+| From | To | Context |
+|------|-----|---------|
+| WORLD_MODEL_OVERVIEW | GALAXY | "Galaxy-level organization" |
+| WORLD_MODEL_OVERVIEW | SOLAR_SYSTEM | "Solar system structure" |
+| WORLD_MODEL_OVERVIEW | CELESTIAL_BODY | "Celestial body hierarchy" |
+| WORLD_MODEL_OVERVIEW | PLANET_ENVIRONMENT | "Planet environment model" |
+| WORLD_MODEL_OVERVIEW | SETTLEMENT | "Settlement administration" |
+| WORLD_MODEL_OVERVIEW | STRUCTURE | "Structure asset model" |
+| SOLAR_SYSTEM | STAR | "Star properties" |
+| SOLAR_SYSTEM | CELESTIAL_BODY | "Celestial bodies in system" |
+| CELESTIAL_BODY | PLANET_ENVIRONMENT | "Planet environment attributes" |
+| SETTLEMENT | STRUCTURE | "Settlement-owned structures" |
+| SETTLEMENT | UNIT | "Settlement-managed units" |
+
+---
+
+### 6. Simulation Engine → Universe, Planetary Simulation
+
+| From | To | Context |
+|------|-----|---------|
+| SIMULATION_ENGINE_OVERVIEW | STAR_SIM_PIPELINE | "StarSim system generation pipeline" |
+| SIMULATION_ENGINE_OVERVIEW | TERRA_SIM_PIPELINE | "TerraSim planetary evaluation pipeline" |
+| SIMULATION_ENGINE_OVERVIEW | SIMULATION_DATA_OWNERSHIP | "Data ownership boundaries" |
+| SIMULATION_ENGINE_OVERVIEW | SIMULATION_INTEGRATION | "StarSim ↔ TerraSim integration" |
+| STAR_SIM_PIPELINE | CELESTIAL_BODIES | "Generated celestial bodies" |
+| STAR_SIM_PIPELINE | NATURAL_WORMHOLES | "Natural wormhole generation" |
+| TERRA_SIM_PIPELINE | BIOSPHERE | "Biosphere simulation layer" |
+| TERRA_SIM_PIPELINE | ATMOSPHERE | "Atmosphere simulation layer" |
+| TERRA_SIM_PIPELINE | HYDROSPHERE | "Hydrosphere simulation layer" |
+| TERRA_SIM_PIPELINE | GEOSPHERE | "Geosphere simulation layer" |
+| SIMULATION_DATA_OWNERSHIP | STARSIM | "StarSim owns system data" |
+| SIMULATION_DATA_OWNERSHIP | TERRASIM | "TerraSim owns planetary state" |
+| SIMULATION_INTEGRATION | JSON_SCHEMAS_AND_IMPORT | "Import pipeline connects systems" |
+
+---
+
+### 7. Economy → Manufacturing, Settlements, Transportation
 
 | From | To | Context |
 |------|-----|---------|
@@ -102,7 +142,7 @@ Every canonical page should link to:
 | CONTRACTS | PLAYER_GAMEPLAY | "Player contract gameplay" |
 | ECONOMIC_PHILOSOPHY | CORE_PRINCIPLES | "Core principle: transport never free" |
 
-### 6. Manufacturing → Resources, Blueprints, Technology
+### 8. Manufacturing → Resources, Blueprints, Technology
 
 | From | To | Context |
 |------|-----|---------|
@@ -119,7 +159,7 @@ Every canonical page should link to:
 | TECHNOLOGY_LEVELS | MK_GENERATIONS | "TL/MK two-axis system" |
 | CONSTRUCTION | STRUCTURES | "Structure construction" |
 
-### 7. Settlements → Structures, Worldhouses, Orbital
+### 9. Settlements → Structures, Worldhouses, Orbital
 
 | From | To | Context |
 |------|-----|---------|
@@ -136,7 +176,7 @@ Every canonical page should link to:
 | ORBITAL_SETTLEMENTS | CYCLERS | "Cycler transport to orbital depots" |
 | ORBITAL_SETTLEMENTS | DEPOTS | "Orbital depot facilities" |
 
-### 8. Transportation → Logistics, Craft, Stations
+### 10. Transportation → Logistics, Craft, Stations
 
 | From | To | Context |
 |------|-----|---------|
@@ -151,7 +191,7 @@ Every canonical page should link to:
 | CYCLERS | TRANSPORT_COSTS | "Cycler transport costs" |
 | LOGISTICS_NETWORK | WORMHOLE_NETWORK | "Wormhole network integration" |
 
-### 9. AI Manager → All Systems
+### 11. AI Manager → All Systems
 
 | From | To | Context |
 |------|-----|---------|
@@ -170,7 +210,7 @@ Every canonical page should link to:
 | EXPANSION_LOGIC | SETTLEMENTS | "Settlement expansion planning" |
 | PATTERN_LEARNING | PRECURSOR_INTELLIGENCE | "Precursor pattern learning" |
 
-### 10. Gameplay → All Systems
+### 12. Gameplay → All Systems
 
 | From | To | Context |
 |------|-----|---------|
@@ -193,7 +233,7 @@ Every canonical page should link to:
 | PLAYER_PROGRESSION | TECHNOLOGY_LEVELS | "Technology progression" |
 | PLAYER_PROGRESSION | IMPLEMENTATION_PHASES | "MVP roadmap phases" |
 
-### 11. Development → All Sections
+### 13. Development → All Sections
 
 | From | To | Context |
 |------|-----|---------|
@@ -213,7 +253,7 @@ Every canonical page should link to:
 | TESTING | PRACTICAL_TESTING_GUIDE | "Practical testing guide" |
 | AI_WORKFLOW | LLM_AGENT_TASK_PROTOCOL | "Agent task protocol" |
 
-### 12. Reference → All Sections
+### 14. Reference → All Sections
 
 | From | To | Context |
 |------|-----|---------|

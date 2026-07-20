@@ -35,7 +35,7 @@ Each major topic has ONE authoritative page. All other pages on that topic link 
 
 ### Distinguish Active from Historical
 
-- **Active docs** live in the wiki structure (12 sections)
+- **Active docs** live in the wiki structure (14 sections)
 - **Historical docs** live in `docs/archive/`
 - **Status reports, execution plans, agent handoffs** are ephemeral — archive after use
 
@@ -48,17 +48,17 @@ Each major topic has ONE authoritative page. All other pages on that topic link 
 | Your Topic Goes In | Section Number |
 |---------------------|---------------|
 | What is Galaxy Game? Why does it exist? | 1. Vision |
-| Story, narrative, acts, timeline | 2. Story & Timeline |
-| Sol system, Eden, planets, stars, wormholes | 3. Universe |
-| StarSim, TerraSim, spheres, biomes, terraforming | 4. Simulation |
-| Currency, markets, trading, NPC economy, contracts, pricing | 5. Economy |
-| Resources, ISRU, blueprints, construction, tech levels, manufacturing | 6. Manufacturing |
-| Colonies, settlements, structures, worldhouses, orbital depots | 7. Settlements |
-| Craft, stations, depots, shipyards, cyclers, logistics | 8. Transportation |
-| AI Manager architecture, subsystems, service portfolio | 9. AI Manager |
-| Planetary gameplay, orbital gameplay, industry, mining, trading, terraforming, exploration | 10. Gameplay |
-| Architecture, coding standards, JSON standards, development phases, testing, AI workflow | 11. Development |
-| Glossary, terminology, game constants, resource lists, blueprint index, schemas | 12. Reference |
+| Story, narrative, acts, timeline | 2. Story |
+| Sol system, Eden, planets, stars, wormholes | 3. Universe Generation |
+| StarSim, TerraSim, spheres, biomes, terraforming | 4. Planetary Simulation |
+| Currency, markets, trading, NPC economy, contracts, pricing | 7. Economy |
+| Resources, ISRU, blueprints, construction, tech levels, manufacturing | 8. Manufacturing |
+| Colonies, settlements, structures, worldhouses, orbital depots | 9. Settlements |
+| Craft, stations, depots, shipyards, cyclers, logistics | 10. Transportation |
+| AI Manager architecture, subsystems, service portfolio | 11. AI Manager |
+| Planetary gameplay, orbital gameplay, industry, mining, trading, terraforming, exploration | 12. Gameplay |
+| Architecture, coding standards, JSON standards, development phases, testing, AI workflow | 13. Development |
+| Glossary, terminology, game constants, resource lists, blueprint index, schemas | 14. Reference |
 
 ### If You're Unsure
 
