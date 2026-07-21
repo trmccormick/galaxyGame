@@ -1268,7 +1268,7 @@
 | `app/services/terrain_analysis/hydrosphere_analyzer.rb` | Hydrosphere analyzer | Simulation |
 | `app/services/terrain_analysis/hydrosphere_volume_service.rb` | Hydrosphere volume | Simulation |
 | `app/services/terrain_analysis/terrain_decomposition_service.rb` | Terrain decomposition | Rendering |
-| `app/services/terrain_analysis/terrain_quality_assessor.rb` | Terrain quality assessment | Rendering |
+| `app/services/terrain/terrain_quality_assessor.rb` | Terrain quality assessment | Rendering |
 
 ### Tileset Services
 | File Path | Purpose | Category |

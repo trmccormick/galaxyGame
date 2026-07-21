@@ -1,4 +1,4 @@
-# galaxy_game/app/services/terrain_analysis/terrain_quality_assessor.rb
+# galaxy_game/app/services/terrain/terrain_quality_assessor.rb
 # Assesses the quality and realism of generated terrain
 # Provides feedback for terrain generation improvements
 

@@ -4,7 +4,7 @@
 
 require_relative 'config/environment'
 require_relative 'app/services/star_sim/automatic_terrain_generator'
-require_relative 'app/services/terrain_analysis/terrain_quality_assessor'
+require_relative 'app/services/terrain/terrain_quality_assessor'
 
 puts "Testing Automatic Terrain Generation Integration"
 puts "=" * 50

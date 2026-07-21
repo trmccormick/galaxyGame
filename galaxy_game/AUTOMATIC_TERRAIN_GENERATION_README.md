@@ -17,7 +17,7 @@ Main service that orchestrates terrain generation for celestial bodies.
 - Special handling for Earth-like planets
 - Quality assessment and metadata storage
 
-### 2. TerrainQualityAssessor (`app/services/terrain_analysis/terrain_quality_assessor.rb`)
+### 2. TerrainQualityAssessor (`app/services/terrain/terrain_quality_assessor.rb`)
 Evaluates generated terrain for realism, playability, diversity, and balance.
 
 **Quality Metrics:**
