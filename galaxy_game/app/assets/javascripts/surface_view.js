@@ -86,8 +86,11 @@ window.SurfaceView = {
   /* ── Visible overlay layers ────────────────────────────────────── */
   visibleLayers: new Set(['terrain', 'liquid', 'biomes']),
 
-  /* ── Unit/Structure Layer (Layer 5) ────────────────────────────── */
-  showUnits: true,
+  /* ── Unit/Structure Layer (Layer 5) — GATED: placeholder-quality sprites ───────── */
+  // ⚠️ DEFAULT OFF — sprites are misaligned/malformed (sourced from non-gridded AI collage).
+  // sprite_00 OK, sprite_15+ severely degraded. See NEEDS_REVIEW.md (2026-07-19) for details.
+  // Do NOT re-crop. Proper asset regeneration required before enabling.
+  showUnits: false,
   unitSprites: [],
 
   /* ═══════════════════════════════════════════════════════════════
