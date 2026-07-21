@@ -132,7 +132,7 @@ RSpec.describe 'Admin Monitor Canvas', type: :feature do
         celestial_body.create_atmosphere unless celestial_body.atmosphere
         celestial_body.create_hydrosphere unless celestial_body.hydrosphere  
         celestial_body.create_biosphere unless celestial_body.biosphere
-        celestial_body.geosphere.update!(terrain_map: {'elevation' => [1.0]})
+        celestial_body.geosphere.update!(terrain_map: {'elevation' => [[1.0]]})
       end
       
       it 'renders complete planetary data with all spheres' do
@@ -157,7 +157,7 @@ RSpec.describe 'Admin Monitor Canvas', type: :feature do
       
       before do
         # Ensure geosphere has terrain_map for this test
-        celestial_body.geosphere.update!(terrain_map: {'elevation' => [1.0]})
+        celestial_body.geosphere.update!(terrain_map: {'elevation' => [[1.0]]})
       end
       
       it 'renders planetary view correctly' do
