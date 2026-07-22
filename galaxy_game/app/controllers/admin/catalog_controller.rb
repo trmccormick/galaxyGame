@@ -3,7 +3,7 @@ class Admin::CatalogController < ApplicationController
 
   def index
     @categories = catalog_service.entries.map { |e| e[:category] }.uniq.sort
-    @subcategories = catalog_service.entries.map { |e| e[:subcategory] }.compact.uniq.sortce.entries.map { |e| e[:subcategory] }.compact.uniq.sort
+    @subcategories = catalog_service.entries.map { |e| e[:subcategory] }.compact.uniq.sort
     @selected_category = params[:category].presence
     @selected_subcategory = params[:subcategory].presence
     @search_query = params[:q].presence
