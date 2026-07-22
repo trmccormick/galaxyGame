@@ -43,7 +43,8 @@ class CatalogService
 
   # Find operational_data entry by blueprint filename
   def find_operational_data_by_name(blueprint_filename)
-    base = File.basename(blueprint_filename, '_bp')
+    # Strip .json extension, then remove _bp suffix if present
+    base = File.basename(blueprint_filename, '.json').sub(/_bp$/, '')
     entries.find do |e|
       e[:source_type] == 'operational_data' &&
         (File.basename(e[:file_path], '.json') == base ||
@@ -53,7 +54,8 @@ class CatalogService
 
   # Find blueprint entry by operational_data filename
   def find_blueprint_by_name(op_filename)
-    base = File.basename(op_filename, '.json')
+    # Strip .json extension, then remove _data suffix if present
+    base = File.basename(op_filename, '.json').sub(/_data$/, '')
     entries.find do |e|
       e[:source_type] == 'blueprint' &&
         (File.basename(e[:file_path], '.json') == base ||

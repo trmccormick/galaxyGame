@@ -32,9 +32,9 @@ RSpec.describe CatalogService do
       skip 'No entries to sort' if entries.empty?
       
       (0...(entries.size - 1)).each do |i|
-        current = [entries[i][:category], entries[i][:subcategory], entries[i][:name]]
-        next_item = [entries[i + 1][:category], entries[i + 1][:subcategory], entries[i + 1][:name]]
-        expect(current <= next_item).to be true
+        current = [entries[i][:category], entries[i][:subcategory] || '', entries[i][:name]]
+        next_item = [entries[i + 1][:category], entries[i + 1][:subcategory] || '', entries[i + 1][:name]]
+        expect(current <=> next_item).to be <= 0
       end
     end
   end
