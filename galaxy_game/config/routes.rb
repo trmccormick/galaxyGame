@@ -116,6 +116,10 @@ Rails.application.routes.draw do
     get 'settlements/:id/details', to: 'settlements#details', as: 'settlement_details'
     get 'settlements/construction_jobs', to: 'settlements#construction_jobs', as: 'settlement_construction_jobs'
     
+    # Catalog routes — blueprint + operational data unified view
+    get 'catalog', to: 'catalog#index', as: 'catalog'
+    get 'catalog/:id', to: 'catalog#show', as: 'catalog_entry'
+    
     # Resources & Economy routes
     get 'resources', to: 'resources#index', as: 'resources'
     get 'resources/flows', to: 'resources#flows', as: 'resource_flows'

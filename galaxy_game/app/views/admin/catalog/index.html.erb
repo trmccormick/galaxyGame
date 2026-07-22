@@ -1,0 +1,108 @@
+<div class="catalog-container">
+  <!-- Filters -->
+  <div class="catalog-filters">
+    <div class="filter-row">
+      <div class="search-box">
+        <%= form_tag admin_catalog_path, method: :get, class: 'search-form' do %>
+          <input type="text" name="q" value="<%= @search_query %>" placeholder="Search by name or type..." class="catalog-search-input" id="catalog-search">
+          <button type="submit" class="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        <% end %>
+      </div>
+
+      <div class="filter-group">
+        <label>Category:</label>
+        <%= select_tag :category,
+          options_for_select(@categories.map { |c| [c.capitalize, c] }, @selected_category),
+          include_blank: 'All Categories',
+          class: 'catalog-filter-select',
+          id: 'category-filter',
+          data: { action: 'change->catalog#filter' }
+        %>
+      </div>
+
+      <div class="filter-group">
+        <label>Subcategory:</label>
+        <%= select_tag :subcategory,
+          options_for_select(
+            (@subcategories[@selected_subcategory&.to_sym] || []).map { |s| [s.gsub('_', ' ').capitalize, s] },
+            @selected_subcategory
+          ),
+          include_blank: 'All Subcategories',
+          class: 'catalog-filter-select',
+          id: 'subcategory-filter',
+          data: { action: 'change->catalog#filter' }
+        %>
+      </div>
+    </div>
+
+    <div class="filter-summary">
+      Showing <%= @entries.total_count %> of <%= @total_entries %> entries
+      <% if @selected_category || @selected_subcategory || @search_query %>
+        <%= link_to 'Clear filters', admin_catalog_path, class: 'clear-filters-link' %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Catalog Grid -->
+  <div class="catalog-grid" id="catalog-grid">
+    <% if @entries.empty? %>
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No entries found matching your criteria.</p>
+      </div>
+    <% else %>
+      <% @entries.to_a.each do |entry| %>
+        <div class="catalog-card" data-category="<%= entry[:category] %>" data-subcategory="<%= entry[:subcategory] %>">
+          <div class="card-thumbnail">
+            <% if entry[:has_image] %>
+              <%= image_tag "/images/#{entry[:thumbnail_path]}", alt: entry[:name], class: 'card-image' %>
+            <% else %>
+              <div class="placeholder-icon">
+                <i class="<%= thumbnail_icon(entry) %>"></i>
+              </div>
+            <% end %>
+          </div>
+          <div class="card-content">
+            <div class="card-meta">
+              <span class="card-category"><%= entry[:category]&.capitalize %></span>
+              <% if entry[:subcategory] %>
+                <span class="card-subcategory"><%= entry[:subcategory].gsub('_', ' ') %></span>
+              <% end %>
+            </div>
+            <h3 class="card-title">
+              <%= link_to entry[:name], admin_catalog_path(entry[:id]), class: 'card-link' %>
+            </h3>
+            <p class="card-type"><%= entry[:type] %></p>
+            <div class="card-footer">
+              <span class="source-badge source-<%= entry[:source_type] %>">
+                <%= entry[:source_type].gsub('_', ' ').titleize %>
+              </span>
+              <% unless entry[:has_image] %>
+                <span class="missing-image-badge">No Image</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Pagination -->
+  <% if @entries.total_pages > 1 %>
+    <div class="catalog-pagination">
+      <div class="pagination-controls">
+        <% if !@entries.first_page? %>
+          <%= link_to '← Previous', url_for(params.merge(page: @entries.current_page - 1)), class: 'pagination-link' %>
+        <% end %>
+        <span class="pagination-info">Page <%= @entries.current_page %> of <%= @entries.total_pages %></span>
+        <% if !@entries.last_page? %>
+          <%= link_to 'Next →', url_for(params.merge(page: @entries.current_page + 1)), class: 'pagination-link' %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%= javascript_include_tag 'admin/catalog' %>

@@ -1,0 +1,77 @@
+<div class="catalog-detail">
+  <div class="detail-header">
+    <%= link_to admin_catalog_path, class: 'back-link' do %>
+      <i class="fas fa-arrow-left"></i> Back to Catalog
+    <% end %>
+    <h1><%= @entry[:name] %></h1>
+    <div class="detail-meta">
+      <span class="meta-badge"><%= @entry[:category]&.capitalize %></span>
+      <% if @entry[:subcategory] %>
+        <span class="meta-badge subcategory"><%= @entry[:subcategory].gsub('_', ' ') %></span>
+      <% end %>
+      <span class="source-badge source-<%= @entry[:source_type] %>">
+        <%= @entry[:source_type].gsub('_', ' ').titleize %>
+      </span>
+    </div>
+  </div>
+
+  <div class="detail-body">
+    <!-- Image Preview -->
+    <div class="detail-image-section">
+      <% if @entry[:has_image] %>
+        <%= image_tag "/images/#{@entry[:thumbnail_path]}", alt: @entry[:name], class: 'detail-image' %>
+      <% else %>
+        <div class="image-placeholder-large">
+          <i class="<%= thumbnail_icon(@entry) %>"></i>
+          <p>No image generated yet</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- JSON Data Panel -->
+    <div class="detail-data-section">
+      <h2>Blueprint Data</h2>
+      <div class="collapsible-panel">
+        <button class="panel-toggle" onclick="togglePanel(this)">
+          <i class="fas fa-code"></i> Show JSON Data
+        </button>
+        <pre class="panel-content"><%= highlight_json(@entry[:data]) %></pre>
+      </div>
+
+      <!-- Cross-Reference -->
+      <% if @cross_ref %>
+        <div class="cross-reference">
+          <h3>Related <%= @cross_ref[:source_type].gsub('_', ' ') %></h3>
+          <%= link_to admin_catalog_path(@cross_ref[:id]), class: 'cross-ref-link' do %>
+            <i class="fas fa-link"></i> <%= @cross_ref[:name] %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="no-cross-ref">
+          <p>No related <%= @entry[:source_type].gsub('_', ' ') %> found.</p>
+        </div>
+      <% end %>
+
+      <!-- File Info -->
+      <div class="file-info">
+        <h3>File Information</h3>
+        <table class="info-table">
+          <tr>
+            <th>File Path</th>
+            <td><code><%= @entry[:file_path].gsub(Rails.root.join('..', '..', 'data', 'json-data').to_s, 'data/json-data/') %></code></td>
+          </tr>
+          <tr>
+            <th>Last Modified</th>
+            <td><%= @entry[:created_at].strftime('%Y-%m-%d %H:%M:%S') %></td>
+          </tr>
+          <tr>
+            <th>Entry ID</th>
+            <td><code><%= @entry[:id] %></code></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_include_tag 'admin/catalog' %>
