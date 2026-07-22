@@ -1,20 +1,9 @@
 class Admin::CatalogController < ApplicationController
   PER_PAGE = 24
-  CATEGORIES = %w[units modules rigs structures crafts components materials items].freeze
-  SUBCATEGORIES = {
-    units:        %w[life_support propulsion energy mining construction medical],
-    modules:      %w[habitation laboratory storage docking power_production],
-    rigs:         %w[oil_gas helium3 methane ammonia hydrogen],
-    structures:   %w[habitation industrial agricultural military commercial],
-    crafts:       %w[ground space satellites probes landersrovers],
-    components:   %w[sensors actuators processors batteries wiring structural],
-    materials:    %w[metals polymers ceramics composites gases liquids],
-    items:        %w[food medicine tools weapons parts raw_materials]
-  }.freeze
 
   def index
-    @categories = CATEGORIES
-    @subcategories = SUBCATEGORIES
+    @categories = catalog_service.entries.map { |e| e[:category] }.uniq.sort
+    @subcategories = catalog_service.entries.map { |e| e[:subcategory] }.compact.uniq.sortce.entries.map { |e| e[:subcategory] }.compact.uniq.sort
     @selected_category = params[:category].presence
     @selected_subcategory = params[:subcategory].presence
     @search_query = params[:q].presence

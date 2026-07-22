@@ -2,16 +2,9 @@
 
 # Service for loading, indexing, and querying blueprint + operational_data entries
 class CatalogService
-  # Base path: data/json-data/ (gitignored, outside Rails.root)
+  # Base path: uses existing GalaxyGame::Paths::JSON_DATA (RAILS_ROOT.join('app', 'data'))
   def base_path
-    @base_path ||= begin
-      env_path = ENV['CATALOG_DATA_PATH']
-      if env_path&.present? && File.directory?(env_path)
-        Pathname.new(env_path)
-      else
-        Rails.root.join('..', '..', 'data', 'json-data')
-      end
-    end
+    @base_path ||= GalaxyGame::Paths::JSON_DATA
   end
 
   # All entries (lazy-loaded, cached per request)
@@ -84,26 +77,25 @@ class CatalogService
 
     entries = []
 
-    # Load blueprints
-    bp_path = base_path.join('blueprints')
-    if bp_path.directory?
-      Dir.glob(bp_path.join('**/*.json')).each do |f|
+    # Load blueprints using GalaxyGame::Paths
+    if GalaxyGame::Paths::BLUEPRINTS_PATH.exist?
+      Dir.glob(GalaxyGame::Paths::BLUEPRINTS_PATH.join('**/*.json')).each do |f|
         entry = build_entry(f, 'blueprint')
         entries << entry if entry
       end
     end
 
-    # Load operational_data
+    # Load operational_data using GalaxyGame::Paths
     od_path = base_path.join('operational_data')
-    if od_path.directory?
+    if od_path.exist?
       Dir.glob(od_path.join('**/*.json')).each do |f|
         entry = build_entry(f, 'operational_data')
         entries << entry if entry
       end
     end
 
-    # Sort by category then name
-    entries.sort_by { |e| [e.category, e.subcategory, e.name] }
+    # Sort by category then name (use empty string for nil subcategory to avoid comparison errors)
+    entries.sort_by { |e| [e[:category], e[:subcategory] || '', e[:name]] }
   end
 
   def build_entry(file_path, source_type)
@@ -115,22 +107,28 @@ class CatalogService
     end
 
     relative = Pathname.new(file_path).relative_path_from(base_path)
-    parts = relative.parts
-    category = parts[0].to_s if parts.size > 0
-    subcategory = parts[1].to_s if parts.size > 1
+    parts = relative.to_s.split('/')  # ["blueprints", "crafts", "space", "probes", "thermal_probe_bp.json"]
+    
+    # Category is always parts[1] (first dir after source type: blueprints/ or operational_data/)
+    category = parts[1].to_s if parts.size > 1
+    
+    # Subcategory only exists at depth >= 4 (blueprints/cat/subcat/file.json)
+    # At depth 3, parts[2] IS the filename, not a subdirectory
+    subcategory = parts[2].to_s if parts.size > 3
 
     # Extract name from filename
     filename = File.basename(file_path, '.json')
-    # Remove _bp suffix for blueprints
-    name = filename.sub(/_bp$/, '')
-    # Convert snake_case to Title Case
-    name = name.split('_').map(&:capitalize).join(' ')
+    name = filename.sub(/_bp$/, '').split('_').map(&:capitalize).join(' ')
 
     # Get type from data if available
     entry_type = data['type'] || data['craft_type'] || data['unit_type'] || data['structure_type'] || category&.capitalize || ''
 
+    # ID: relative path from source type dir with .json and _bp stripped
+    # e.g., blueprints/crafts/space/probes/thermal_probe_bp.json → crafts/space/probes/thermal_probe
+    id = relative.to_s.sub("#{parts[0]}/", '').sub('.json', '').sub(/_bp$/, '')
+
     {
-      id: relative.to_s.gsub('.json', ''),
+      id: id,
       name: name,
       type: entry_type,
       category: category,
