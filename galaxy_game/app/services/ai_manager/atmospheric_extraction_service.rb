@@ -19,9 +19,14 @@ module AIManager
       transfer_mode = :raw
       capacity = transfer_params[:capacity] || default_skimmer_capacity
 
-      TerraSim::AtmosphericTransferService
+      transfer_result = TerraSim::AtmosphericTransferService
         .new(source_body, target_body, mode: transfer_mode, logger: Rails.logger)
         .transfer_atmosphere({ capacity: capacity })
+
+      # Apply exhaust emissions from harvester operation to source body atmosphere
+      apply_harvester_exhaust
+
+      transfer_result
     end
 
     # Skimmer docks with Cycler to offload cargo
@@ -109,6 +114,15 @@ module AIManager
     def default_skimmer_capacity
       # Use skimmer's atmosphere total mass as default extraction amount
       skimmer.atmosphere&.total_atmospheric_mass || 5000
+    end
+
+    # Apply exhaust emissions from harvester operation to source body atmosphere
+    def apply_harvester_exhaust
+      return unless skimmer.respond_to?(:apply_exhaust_to_atmosphere!)
+
+      skimmer.apply_exhaust_to_atmosphere!
+    rescue => e
+      Rails.logger.warn "[Exhaust] Failed to apply harvester exhaust: #{e.message}"
     end
   end
 end

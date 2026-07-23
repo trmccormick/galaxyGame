@@ -3,9 +3,30 @@ module Craft
     include HasExtraction
     include Crafts::HasProcessing  # Updated to use namespaced concern
 
+    # Association to track which celestial body the harvester is operating on
+    belongs_to :source_body, class_name: 'CelestialBodies::CelestialBody', optional: true
+
     store_accessor :operational_data, :extraction_rate
 
     validates :extraction_rate, numericality: { greater_than: 0 }
+
+    #---------------------------------------------------------------------------
+    # Exhaust Emissions — propellant type → atmospheric impact
+    #---------------------------------------------------------------------------
+
+    # Exhaust gas composition by propellant type (mass fractions)
+    EXHAUST_COMPOSITION = {
+      'CH4_O2'     => { 'CO2' => 0.73, 'H2O' => 0.27 },   # Methane/oxygen (SpaceX Raptor)
+      'LH2_LOX'    => { 'H2O' => 1.0 },                     # Liquid hydrogen/oxygen (SSME)
+      'HYPERGOLIC' => { 'NO2' => 0.67, 'N2' => 0.33 }       # N2O4/UDMH (traditional)
+    }.freeze
+
+    # Exhaust mass multiplier: kg of exhaust per kg of propellant consumed
+    EXHAUST_RATE = {
+      'CH4_O2'     => 1.37,   # ~1.37 kg exhaust per kg CH4+O2 consumed
+      'LH2_LOX'    => 9.0,    # ~9 kg H2O per kg LH2+LOX consumed
+      'HYPERGOLIC' => 1.0     # ~1:1 ratio
+    }.freeze
 
     # Primary function of the harvester is to extract resources
     def extract_resources(target_body, amount)
@@ -59,6 +80,41 @@ module Craft
       if dust_amount && dust_amount.to_f > 0
         harvest_dust(atmosphere, dust_amount)
       end
+    end
+
+    # Apply exhaust emissions from harvester operation to the source body's atmosphere.
+    # Called during extraction loops to track atmospheric impact of propellant consumption.
+    # Follows the same pattern as volcanic emissions in GeosphereSimulationService.
+    def apply_exhaust_to_atmosphere!
+      return unless source_body&.atmosphere&.present?
+      return unless operational?
+
+      propellant_type = (operational_data || {})['propellant_type'] || 'CH4_O2'
+      
+      # Default to CH4_O2 if unknown propellant type
+      return unless EXHAUST_COMPOSITION.key?(propellant_type)
+      
+      exhaust_composition = EXHAUST_COMPOSITION[propellant_type]
+      exhaust_rate = EXHAUST_RATE[propellant_type]
+
+      # Derive propellant consumption from extraction rate as proxy
+      # Harvester uses propellant proportional to how much it extracts
+      propellant_consumed = (extraction_rate || 100) * 0.01
+
+      exhaust_mass_total = propellant_consumed * exhaust_rate
+
+      exhaust_composition.each do |gas_name, fraction|
+        gas_mass = exhaust_mass_total * fraction
+        source_body.atmosphere.add_gas(gas_name, gas_mass)
+
+        Rails.logger.info "[Exhaust: #{gas_name}_#{SecureRandom.hex(4)}] " \
+          "Harvester #{id} on #{source_body.name}: +#{gas_mass.round(2)}kg"
+      end
+    end
+
+    # Check if the harvester is currently operational
+    def operational?
+      (status || '').in?(['active', 'operational', 'harvesting'])
     end
 
     private
