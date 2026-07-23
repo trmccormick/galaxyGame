@@ -17,12 +17,12 @@ class FittingService
 
       # Install modules
       if fit_data['modules']
-        install_modules(target, fit_data['modules'], result, dry_run)
+        install_modules(target, fit_data['modules'], result, dry_run, check_inventory)
       end
 
       # Install rigs
       if fit_data['rigs']
-        install_rigs(target, fit_data['rigs'], result, dry_run)
+        install_rigs(target, fit_data['rigs'], result, dry_run, check_inventory)
       end
 
       unless dry_run
@@ -70,10 +70,17 @@ class FittingService
       end
     end
 
-    def self.install_modules(target, modules, result, dry_run)
+    def self.install_modules(target, modules, result, dry_run, check_inventory)
       modules.each do |module_config|
         module_id = module_config['id']
         count = module_config['count'] || 1
+        
+        # Check inventory first
+        unless check_inventory.call(module_id)
+          result.missing << module_id
+          result.add_error("Missing inventory item: #{module_id}")
+          next
+        end
         
         puts "  - Installing #{count}x #{module_id}"
         
@@ -93,10 +100,17 @@ class FittingService
       end
     end
 
-    def self.install_rigs(target, rigs, result, dry_run)
+    def self.install_rigs(target, rigs, result, dry_run, check_inventory)
       rigs.each do |rig_config|
         rig_id = rig_config['id']
         count = rig_config['count'] || 1
+        
+        # Check inventory first
+        unless check_inventory.call(rig_id)
+          result.missing << rig_id
+          result.add_error("Missing inventory item: #{rig_id}")
+          next
+        end
         
         puts "  - Installing #{count}x #{rig_id}"
         

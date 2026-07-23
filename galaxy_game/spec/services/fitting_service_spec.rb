@@ -62,4 +62,28 @@ RSpec.describe FittingService, type: :service do
     result = described_class.fit!(target: craft, fit_data: fit_data, inventory: inventory, dry_run: true)
     expect(result.fitted.all? { |c| !c.persisted? }).to be true
   end
+
+  it "rejects modules not in inventory" do
+    inventory.items.where(name: 'efficiency_module').destroy_all
+    result = described_class.fit!(target: craft, fit_data: fit_data, inventory: inventory)
+    expect(result.success?).to be false
+    expect(result.errors.any? { |e| e.include?('efficiency_module') }).to be true
+    expect(result.missing).to include('efficiency_module')
+  end
+
+  it "rejects rigs not in inventory" do
+    inventory.items.where(name: 'gpu_coprocessor_rig').destroy_all
+    result = described_class.fit!(target: craft, fit_data: fit_data, inventory: inventory)
+    expect(result.success?).to be false
+    expect(result.errors.any? { |e| e.include?('gpu_coprocessor_rig') }).to be true
+    expect(result.missing).to include('gpu_coprocessor_rig')
+  end
+
+  it "fits all components from inventory (modules and rigs)" do
+    result = described_class.fit!(target: craft, fit_data: fit_data, inventory: inventory)
+    expect(result.success?).to be true
+    expect(result.fitted.size).to eq(3)
+    expect(result.errors).to be_empty
+    expect(result.missing).to be_empty
+  end
 end
