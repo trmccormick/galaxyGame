@@ -128,11 +128,28 @@ module AIManager
       geo = celestial_body.geosphere
       resources = []
 
-      # Surface composition from geosphere
+      # Surface composition from geosphere — bridge mineral names to chemical formulas and elements
       if geo.crust_composition.present?
         composition = geo.crust_composition
         composition.each do |material, percentage|
-          resources << material if volatile_amount(percentage) > 0.01
+          next unless volatile_amount(percentage) > 0.01
+
+          # Look up the mineral in MaterialLookupService for its chemical_formula and element composition
+          lookup = Lookup::MaterialLookupService.new
+          found = lookup.find_material(material)
+          if found
+            # Add the chemical formula (e.g., FeS)
+            resources << found['chemical_formula'] if found['chemical_formula']
+            # Also add individual element symbols from composition array (e.g., S, Fe)
+            if found['composition'].is_a?(Array)
+              found['composition'].each do |comp|
+                resources << comp['chemical_symbol'] if comp['chemical_symbol']
+              end
+            end
+          else
+            # Fallback: use raw mineral name if no material definition exists
+            resources << material
+          end
         end
       end
 
