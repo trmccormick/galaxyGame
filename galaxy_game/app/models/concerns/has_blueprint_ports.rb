@@ -8,18 +8,8 @@ module HasBlueprintPorts
       return operational_data['ports']
     end
     
-    # Fallback to blueprint data
+    # Look up blueprint data using the craft's own blueprint_id and category
     blueprint_service = Lookup::BlueprintLookupService.new
-    
-    # Try the specific blueprint ID first
-    blueprint_id = 'generic_satellite'
-    blueprint_data = blueprint_service.find_blueprint(blueprint_id, 'satellite')
-    
-    if blueprint_data&.dig('ports')
-      return blueprint_data['ports']
-    end
-    
-    # If that fails, try the default_blueprint_id from the class
     blueprint_id = default_blueprint_id
     blueprint_data = blueprint_service.find_blueprint(blueprint_id, blueprint_category)
     
@@ -27,13 +17,12 @@ module HasBlueprintPorts
       return blueprint_data['ports']
     end
     
-    # Return default ports if no blueprint data found
-    {
-      'internal_module_ports' => 5,
-      'external_module_ports' => 5,
-      'internal_rig_ports' => 5,
-      'external_rig_ports' => 5
-    }
+    # Log error and return nil instead of silently granting ports
+    Rails.logger.error(
+      "No ports data found for #{self.class.name} " \
+      "(blueprint_id: #{blueprint_id}, category: #{blueprint_category})"
+    )
+    nil
   end
 
   private
