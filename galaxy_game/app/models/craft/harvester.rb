@@ -3,8 +3,7 @@ module Craft
     include HasExtraction
     include Crafts::HasProcessing  # Updated to use namespaced concern
 
-    # Association to track which celestial body the harvester is operating on
-    belongs_to :source_body, class_name: 'CelestialBodies::CelestialBody', optional: true
+    delegate :source_body, to: :orbiting_celestial_body, allow_nil: true
 
     store_accessor :operational_data, :extraction_rate
 
