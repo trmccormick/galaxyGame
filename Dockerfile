@@ -26,5 +26,11 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN apt-get update && apt-get install yarn
 RUN yarn install --check-files
 
+# Create non-root user for security
+RUN useradd -m -u 1000 rails && chown -R rails:rails /home/galaxy_game
+
+# Switch to non-root user
+USER rails
+
 # Expose port 3000 to the Docker host
 EXPOSE 3000
