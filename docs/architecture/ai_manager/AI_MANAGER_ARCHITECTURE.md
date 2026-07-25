@@ -1,14 +1,14 @@
 # AI Manager Architecture
 
 > **Last Updated**: 2026-07-25
-> **Total Files**: 89 Ruby files in `app/services/ai_manager/` (flat directory)
-> **Related Services**: 14 manufacturing services + 1 imported terraforming service
+> **Total Files**: 93 Ruby files in `app/services/ai_manager/` (flat directory)
+> **Related Services**: 31 manufacturing services + 1 imported terraforming service
 > **Service Inventory**: [Full inventory with descriptions](../../new_agent/projects/galaxy_game/services/ai_manager_service_inventory.md)
 > **Contributor Guide**: [Adding a new AI Manager service](../../new_agent/projects/galaxy_game/contributors/adding-ai-manager-service.md)
 
 ## Overview
 
-The AI Manager is the largest subsystem in galaxy_game, containing **89 Ruby files** all within a single flat directory (`app/services/ai_manager/`). It is responsible for autonomous decision-making across the game world: settlement management, mission planning, expansion, terraforming, wormhole infrastructure, market stabilization, and resource logistics.
+The AI Manager is the largest subsystem in galaxy_game, containing **93 Ruby files** all within a single flat directory (`app/services/ai_manager/`). It is responsible for autonomous decision-making across the game world: settlement management, mission planning, expansion, terraforming, wormhole infrastructure, market stabilization, and resource logistics.
 
 This document provides the architectural overview. For a complete service-by-service inventory with responsibilities, key methods, and MVP phase classification, see [AI Manager Service Inventory](../../new_agent/projects/galaxy_game/services/ai_manager_service_inventory.md).
 
@@ -24,7 +24,7 @@ This document provides the architectural overview. For a complete service-by-ser
 | `brown_dwarf_hub_manager.rb` | ❌ Does not exist. No equivalent service |
 | `em_harvesting_service.rb` | ❌ Does not exist. EM harvesting integrated into `WormholeManager.harvest_em_bloom` |
 | `expansion_assessment.rb` | ❌ Does not exist. Functionality lives in `ExpansionService`, `SystemDiscoveryService`, `ProbeDeploymentService` |
-| **8 core files** | ✅ **89 actual files** (see [service inventory](../../new_agent/projects/galaxy_game/services/ai_manager_service_inventory.md)) |
+| **8 core files** | ✅ **93 actual files** (see [service inventory](../../new_agent/projects/galaxy_game/services/ai_manager_service_inventory.md)) |
 
 ## Core Services (MVP-relevant)
 
