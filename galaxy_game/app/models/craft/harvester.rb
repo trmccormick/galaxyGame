@@ -3,7 +3,9 @@ module Craft
     include HasExtraction
     include Crafts::HasProcessing  # Updated to use namespaced concern
 
-    delegate :source_body, to: :orbiting_celestial_body, allow_nil: true
+    def source_body
+      orbiting_celestial_body
+    end
 
     store_accessor :operational_data, :extraction_rate
 
