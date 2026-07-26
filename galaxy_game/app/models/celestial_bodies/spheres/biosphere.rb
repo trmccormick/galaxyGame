@@ -1,17 +1,4 @@
-            # NOTE: The following methods are stubs. The original intent is unclear and should be clarified before implementing real logic.
-            # These stubs are provided to allow specs to run without NoMethodError.
-
-      # Returns the current habitability value for this biosphere
-      public
-      def habitability
-        # Use habitable_ratio if present, otherwise calculate
-        if self.habitable_ratio.present?
-          self.habitable_ratio
-        else
-          calculate_habitability
-        end
-      end
-# app/models/celestial_bodies/spheres/biosphere.rb
+            # app/models/celestial_bodies/spheres/biosphere.rb
 module CelestialBodies
   module Spheres
     class Biosphere < ApplicationRecord
@@ -48,6 +35,13 @@ module CelestialBodies
       
       after_initialize :set_defaults
       after_update :run_simulation, unless: :simulation_running
+
+      # Returns the current habitability value for this biosphere.
+      # Uses habitable_ratio if present; otherwise calculates from atmosphere/temperature.
+      def habitability
+        return habitable_ratio if habitable_ratio.present?
+        calculate_habitability
+      end
 
       # Reset biosphere to base values
       def reset

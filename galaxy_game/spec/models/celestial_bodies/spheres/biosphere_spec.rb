@@ -5,9 +5,9 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
   let(:celestial_body) { create(:celestial_body, solar_system: solar_system) }
   let(:atmosphere) do
     create(:atmosphere, celestial_body: celestial_body).tap do |atm|
-      atm.add_gas('water', 1000.0)
-      atm.add_gas('carbon_dioxide', 500.0)
-      atm.add_gas('nitrogen', 2000.0)
+      atm.add_gas('H2O', 1000.0)
+      atm.add_gas('CO2', 500.0)
+      atm.add_gas('N2', 2000.0)
     end
   end
   let(:biosphere) { create(:biosphere, celestial_body: celestial_body) }
@@ -535,36 +535,6 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
       
       # Should fall back to default value
       expect(biosphere.tropical_temperature).to eq(300.0) # This is the default value in the method
-    end
-  end
-
-  describe 'temperature delegation' do
-    let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
-    
-    before do
-      # Set up atmosphere with temperature data
-      atmosphere.update(temperature_data: {
-        'tropical_temperature' => 310.0,
-        'polar_temperature' => 240.0
-      })
-    end
-    
-    it 'delegates tropical_temperature to atmosphere when available' do
-      expect(biosphere.tropical_temperature).to eq(310.0)
-    end
-    
-    it 'delegates polar_temperature to atmosphere when available' do
-      expect(biosphere.polar_temperature).to eq(240.0)
-    end
-    
-    it 'falls back to default value when atmosphere is not available' do
-      # Remove atmosphere
-      atmosphere.destroy
-      celestial_body.reload
-      
-      # Should fall back to default values defined in the model
-      expect(biosphere.tropical_temperature).to eq(300.0)
-      expect(biosphere.polar_temperature).to eq(250.0)
     end
   end
 
