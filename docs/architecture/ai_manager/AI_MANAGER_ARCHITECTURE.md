@@ -1,14 +1,14 @@
 # AI Manager Architecture
 
-> **Last Updated**: 2026-07-25
-> **Total Files**: 93 Ruby files in `app/services/ai_manager/` (flat directory)
+> **Last Updated**: 2026-07-26
+> **Total Services**: 121 (93 ai_manager + 31 manufacturing + 1 terraforming import — 7 noise files excluded)
 > **Related Services**: 31 manufacturing services + 1 imported terraforming service
 > **Service Inventory**: [Full inventory with descriptions](../../new_agent/projects/galaxy_game/services/ai_manager_service_inventory.md)
 > **Contributor Guide**: [Adding a new AI Manager service](../../new_agent/projects/galaxy_game/contributors/adding-ai-manager-service.md)
 
 ## Overview
 
-The AI Manager is the largest subsystem in galaxy_game, containing **93 Ruby files** all within a single flat directory (`app/services/ai_manager/`). It is responsible for autonomous decision-making across the game world: settlement management, mission planning, expansion, terraforming, wormhole infrastructure, market stabilization, and resource logistics.
+The AI Manager is the largest subsystem in galaxy_game, containing **121 Ruby files** across multiple directories: `app/services/ai_manager/` (93 files), `app/services/manufacturing/` (31 files including subdirectories), and `app/services/import/terrain_terraforming_service.rb` (1 file). It is responsible for autonomous decision-making across the game world: settlement management, mission planning, expansion, terraforming, wormhole infrastructure, market stabilization, and resource logistics.
 
 This document provides the architectural overview. For a complete service-by-service inventory with responsibilities, key methods, and MVP phase classification, see [AI Manager Service Inventory](../../new_agent/projects/galaxy_game/services/ai_manager_service_inventory.md).
 
