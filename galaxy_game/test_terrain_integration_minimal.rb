@@ -11,8 +11,8 @@ puts "\n1. Testing class loading..."
 begin
   # Test loading the quality assessor
   require_relative 'app/services/terrain/terrain_quality_assessor'
-  quality_assessor = TerrainAnalysis::TerrainQualityAssessor.new
-  puts "✓ TerrainQualityAssessor loaded successfully"
+  quality_assessor = Terrain::QualityAssessor.new
+  puts "✓ QualityAssessor loaded successfully"
 rescue => e
   puts "✗ Failed to load TerrainQualityAssessor: #{e.message}"
 end

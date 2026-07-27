@@ -45,7 +45,7 @@ module StarSim
     end
 
     def quality_assessor
-      @quality_assessor ||= TerrainAnalysis::TerrainQualityAssessor.new
+      @quality_assessor ||= Terrain::QualityAssessor.new
     end
 
     def planetary_map_generator

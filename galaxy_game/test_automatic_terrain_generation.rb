@@ -60,7 +60,7 @@ end
 # Test 3: Assess terrain quality
 puts "\n3. Assessing terrain quality..."
 if generated_terrain
-  quality_assessor = TerrainAnalysis::TerrainQualityAssessor.new
+  quality_assessor = Terrain::QualityAssessor.new
   planet_properties = {
     radius: test_planet.radius,
     surface_temperature: test_planet.surface_temperature,

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require_relative '../../../../galaxy_game/app/services/terrain/terrain_quality_assessor'
 
-RSpec.describe TerrainAnalysis::TerrainQualityAssessor do
+RSpec.describe Terrain::QualityAssessor do
   let(:assessor) { described_class.new }
 
   # Public method coverage

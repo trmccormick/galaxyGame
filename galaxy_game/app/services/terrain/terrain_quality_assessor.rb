@@ -2,8 +2,8 @@
 # Assesses the quality and realism of generated terrain
 # Provides feedback for terrain generation improvements
 
-module TerrainAnalysis
-  class TerrainQualityAssessor
+module Terrain
+  class QualityAssessor
     # Assess overall terrain quality
     def assess_terrain_quality(terrain_data, planet_properties = {})
       scores = {
