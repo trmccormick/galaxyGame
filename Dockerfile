@@ -26,11 +26,18 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN apt-get update && apt-get install yarn
 RUN yarn install --check-files
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Create non-root user for security
 RUN useradd -m -u 1000 rails && chown -R rails:rails /home/galaxy_game
 
 # Switch to non-root user
 USER rails
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 # Expose port 3000 to the Docker host
 EXPOSE 3000
