@@ -146,13 +146,13 @@ Tactical-level settlement management: resource/improvement display, unit movemen
 | Aspect | Current State | Notes |
 |---|---|---|
 | **Rendering Pipeline** | 4-layer canvas compositing | Layer 0: elevation, Layer 1: liquid, Layer 2: biomes, Layer 3: resources |
-| **Tile Size** | Fixed 32px (Civ4 feel) | Player zooms in/out rather than auto-scaling |
+| **Tile Size** | Fixed 32px base (`TILE_SIZE: 32`) | Scaled by `this.scale` at render time; player zooms in/out rather than auto-scaling |
 | **Viewport Culling** | ✅ Implemented | Only visible tiles drawn each frame |
 | **RAF Loop** | ✅ Dirty-flag pattern | `rafId`, `dirty` flag, RAF-based re-render |
 | **Camera State** | `scale`, `offsetX`, `offsetY`, `isDragging` | Pan and zoom via mouse drag + scroll wheel |
 | **Layer Toggles** | `visibleLayers` Set | terrain, liquid, biomes toggles |
 | **BiomeRenderer** | ✅ PNG sprite support | 12 biome tiles; falls back to color if sprites missing |
-| **Unit Layer (Layer 5)** | ⚠️ GATED OFF | `showUnits: false` — sprites misaligned/malformed (see NEEDS_REVIEW.md) |
+| **Unit Layer (Layer 5)** | ⚠️ GATED OFF | `showUnits: false` — sprites misaligned/malformed (see NEEDS_REVIEW.md). 16 pre-rendered single-image sprites (`sprite_00.png`–`sprite_15.png`), NO engine-side rotation, NO direction enums. Grid cells store `[sprite_index, unit_class, owner_id]`. Drawn via `ctx.drawImage(sprite, screenX, screenY, tileSize, tileSize)` — full tile fill, no facing logic |
 | **Terrain Data** | `this.terrain = this.data.terrain_data` | Loaded from injected JSON (`surface-data` element) |
 | **Planet Identity** | `window.PLANET_NAME`, `window.PLANET_TYPE` | Set via ERB footer unescaped globals |
 
@@ -170,11 +170,13 @@ Layer 5: Units (probes, scouts, harvesters, transports) — always on top, GATED
 #### Surface View Architecture Specification
 
 ##### Grid System
-| Celestial Body | Grid Size | @64px tiles | Total Tiles |
+| Celestial Body | Grid Size (tiles) | FreeCiv Tileset Sprite Size (source art) | Total Tiles |
 |---|---|---|---|
-| Earth | 180×90 | 11,520×5,760 | 16,200 |
-| Mars | 96×48 | 6,144×3,072 | 4,608 |
-| Luna | 50×25 | 3,200×1,600 | 1,250 |
+| Earth | 180×90 | 64×64px sprites (stretched to 32px grid cells at scale=1) | 16,200 |
+| Mars | 96×48 | 64×64px sprites (stretched to 32px grid cells at scale=1) | 4,608 |
+| Luna | 50×25 | 64×64px sprites (stretched to 32px grid cells at scale=1) | 1,250 |
+
+> **Note**: `TILE_SIZE: 32` is the base rendering size in `surface_view.js`. FreeCiv tileset PNGs are 64×64px source art — drawn via `ctx.drawImage(img, x, y, tileSize, tileSize)` where `tileSize = TILE_SIZE * scale`. At scale=1, a 64px sprite fills a 32px cell (stretched 2:1).
 
 ##### Camera Zoom Levels
 | Zoom Level | Scale | Use Case |
@@ -465,7 +467,7 @@ function exitTerrainForge() {
 | Aspect | Current Tech | Status |
 |---|---|---|
 | **Rendering** | 2D Canvas (existing `surface_view.js`) | ✅ Production-ready |
-| **Projection** | Orthographic/isometric grid | ✅ Matches Civ4/FreeCiv style |
+| **Projection** | Top-down square-grid (axis-aligned, NOT isometric/diamond) — `x = col * tileSize + offsetX`, `y = row * tileSize + offsetY` | ✅ Matches Civ4-style tactical gameplay (visual projection differs from Civ4's diamond view) |
 | **Sprites** | PNG biome tiles + color fallback | ✅ Working, some sprites gated off |
 | **Viewport Culling** | RAF dirty-flag loop | ✅ Only visible tiles drawn |
 | **Camera** | scale/offsetX/offsetY + mouse drag | ✅ Pan and zoom working |
