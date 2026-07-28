@@ -6,10 +6,14 @@ module Lookup
     def initialize
       super
       Rails.logger.debug "Star system data path: #{SYSTEMS_PATH.inspect}"
-      @systems = load_systems
+      @systems = nil  # Lazy-load on first access
+      @systems_loaded = false
     end
 
     def fetch(system_name)
+      # Ensure systems are loaded before fetching
+      ensure_systems_loaded
+      
       # Find the system by name from already loaded systems
       # Prefer curated systems over generated ones
       curated_systems = @systems.select { |sys| sys[:_source_type] == :curated }
@@ -96,6 +100,9 @@ module Lookup
     end
 
     def system_exists?(identifier)
+      # Ensure systems are loaded before checking
+      ensure_systems_loaded
+      
       # Check if a system with this identifier exists in the loaded data
       @systems.any? do |system|
         system[:id] == identifier.to_s || 
@@ -106,17 +113,25 @@ module Lookup
       end
     end
 
+    private
+
+    # Lazy-load systems only on first access to avoid parsing all 137 JSON files during initialization
+    def ensure_systems_loaded
+      return if @systems_loaded
+      @systems = load_systems
+      @systems_loaded = true
+    end
+
     def list_systems
+      ensure_systems_loaded
       @systems.map { |s| s[:id] || s[:name] }
     end
 
     def reload!
       puts "Explicitly reloading system data..."
       @systems = nil  # Clear any cached data
-      initialize      # Re-initialize the service
+      @systems_loaded = false  # Force reload on next access
     end
-
-    private
 
     def load_systems
       systems = []
