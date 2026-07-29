@@ -149,7 +149,7 @@ module Economics
           next unless material
 
           # Check if destination has ISRU capability for this material
-          if AIManager::PrecursorCapabilityService.can_produce?(destination, material.chemical_formula)
+          if AIManager::PrecursorCapabilityService.can_produce_locally?(material.chemical_formula)
             producible_materials += 1
           end
         end
