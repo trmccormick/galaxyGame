@@ -279,7 +279,7 @@ class Item < ApplicationRecord
 
   def set_item_attributes
     self.material_type ||= properties&.dig('type') || material_properties['type'] || 'unknown'
-    self.storage_method ||= properties.dig('storage', 'method') || :bulk_storage
+    self.storage_method ||= properties&.dig('storage', 'method') || :bulk_storage
   end
 
   def validate_item_exists
