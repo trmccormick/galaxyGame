@@ -1,4 +1,7 @@
 # app/models/settlement/space_station.rb
+# RETIRED 2026-04-10
+# Use Settlement::OrbitalSettlement with Structures::OrbitalStructure instead.
+# This file is kept for git history only. Do not use this class.
 module Settlement
   class SpaceStation < BaseSettlement
     include LifeSupport
@@ -17,12 +20,5 @@ module Settlement
     after_initialize :set_defaults, if: :new_record?
     after_create :initialize_core_systems
     after_update :trigger_shell_callbacks, if: :saved_change_to_operational_data?
-    
-    # app/models/settlement/space_station.rb
-    # RETIRED 2026-04-10
-    # Use Settlement::OrbitalSettlement with Structures::OrbitalStructure instead.
-    # This file is kept for git history only. Do not use this class.
-    
-  end
   end
 end

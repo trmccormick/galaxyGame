@@ -83,6 +83,9 @@ window.SurfaceView = {
   renderer:    null,
   showSprites: true,   // toggle between PNG sprites and colour fallback
 
+  /* ── TerrainTileRenderer (45 terrain family sprites) ──────────── */
+  terrainRenderer: null,
+
   /* ── Visible overlay layers ────────────────────────────────────── */
   visibleLayers: new Set(['terrain', 'liquid', 'biomes']),
 
@@ -148,6 +151,13 @@ window.SurfaceView = {
       if (statusEl) statusEl.textContent = '✅ Ready';
       if (loadedEl) loadedEl.textContent = 'N/A';
       this.renderer = null;
+    }
+
+    // Load terrain tile renderer (45 tiles across 5 terrain families)
+    if (window.TerrainTileRenderer) {
+      this.terrainRenderer = new window.TerrainTileRenderer();
+      await this.terrainRenderer.init();
+      console.log(`✅ TerrainTileRenderer initialized`);
     }
 
     // Toggle button (biome worlds only)

@@ -3,20 +3,6 @@
 # Use Settlement::OrbitalSettlement with Structures::OrbitalStructure instead.
 # Gas storage operations belong to the market order system (separate task).
 # This file is kept for git history only. Do not use this class.
-module Settlement
-  class OrbitalDepot < BaseSettlement
-  end
-end
-# app/models/settlement/orbital_depot.rb
-# Production-ready OrbitalDepot as a SpaceStation subclass
-# Uses the game's Inventory system for persistent gas storage
-#
-# TODO: This replaces the temporary PORO OrbitalDepot in app/models/orbital_depot.rb
-# Migration steps:
-# 1. Create orbital depot settlements via seeds or admin interface
-# 2. Update AIManager::TerraformingManager to use Settlement::OrbitalDepot
-# 3. Add RSpec tests for gas storage operations
-# 4. Remove temporary PORO model
 
 module Settlement
   class OrbitalDepot < BaseSettlement

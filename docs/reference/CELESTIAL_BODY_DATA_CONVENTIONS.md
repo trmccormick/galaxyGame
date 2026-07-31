@@ -1,7 +1,7 @@
 # Celestial Body Data Conventions
 **Created**: 2026-05-01
 **Last Updated**: 2026-05-02
-**Location**: /docs/reference/CELESTIAL_BODY_DATA_CONVENTIONS.md
+**Location**: /docs/reference/asset-generation/CELESTIAL_BODY_DATA_CONVENTIONS.md
 
 ---
 

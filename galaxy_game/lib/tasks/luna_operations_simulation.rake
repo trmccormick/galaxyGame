@@ -4,8 +4,8 @@
 # NOT an extension of venus_mars:pipeline_v2 (different scale/domain).
 
 namespace :luna do
-  desc "Simulate Luna base operations for N days (default: 30) -- daily tick loop with inventory tracking and import decisions"
-  task :simulate_operations, [:day_count] => :environment do
+  desc "Simulate Luna base operations for N days (default: 30) -- daily tick loop with inventory tracking and import decisions. Accepts optional settlement_id as third argument: rake luna:simulate_operations[30,6]"
+  task :simulate_operations, [:day_count, :settlement_id] => :environment do |t, args|
     day_count = (args[:day_count] || 30).to_i
     raise ArgumentError, "Day count must be positive (got #{day_count})" if day_count <= 0
 
@@ -17,15 +17,39 @@ namespace :luna do
       exit 1
     end
 
-    settlement = Settlement::BaseSettlement.joins(:location)
-      .where(location: { celestial_body: luna_body })
-      .order(created_at: :desc)
-      .first
+    settlement = if args[:settlement_id].present?
+      # Explicit ID provided by user.
+      Settlement::BaseSettlement.find_by(id: args[:settlement_id])
+    else
+      # No ID given: prefer the most recently created Luna settlement that has inventory items.
+      # This avoids picking up stray/sanity-check settlements with zero hardware.
+      # Use Ruby-side filtering since :inventory is a polymorphic has_one (via concern)
+      # and raw SQL joins are fragile across environments.
+      luna_settlements = Settlement::BaseSettlement
+        .joins(:location)
+        .where(location: { celestial_body: luna_body })
+        .order(created_at: :desc)
+        .to_a
+
+      settlement_with_inv = luna_settlements.find do |s|
+        s.inventory && s.inventory.items.any?
+      end
+
+      settlement_with_inv || luna_settlements.first
+    end
 
     if settlement.nil?
       puts "\n[ERROR] No deployed Luna settlement found."
       puts "Run `rake luna_mission:execute` first to deploy a Luna base."
+      puts "Or specify a settlement ID explicitly: rake luna:simulate_operations[30,6]"
       exit 1
+    end
+
+    # Warn if the selected settlement has zero inventory items (likely a stray/test settlement).
+    inv_count = settlement.inventory ? settlement.inventory.items.count : 0
+    if inv_count == 0 && args[:settlement_id].blank?
+      puts "\n[WARNING] Selected settlement '#{settlement.name}' (ID: #{settlement.id}) has 0 inventory items."
+      puts "This may be a stray/test settlement. Use `rake luna:simulate_operations[30,<id>]` to target a specific settlement."
     end
 
     puts "\n" + "=" * 80

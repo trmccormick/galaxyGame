@@ -4,6 +4,62 @@ require 'pathname'  # Add this to ensure Pathname is available
 
 module Lookup
   class MaterialLookupService < BaseLookupService
+    # Class-level cache: materials loaded once per process lifetime.
+    def self.materials_cache
+      @materials_cache ||= begin
+        raw = load_materials_class
+        raw.each_with_object({}) do |mat, h|
+          next unless mat.is_a?(Hash) && mat['id']
+          key = mat['id'].to_s.downcase.strip
+          h[key] = mat
+          h[mat['name'].to_s.downcase.strip] = mat if mat['name']
+          formula = mat.dig('properties', 'chemical_formula') || mat.dig('properties', 'chemicalFormula')
+          h[formula.to_s.downcase.strip] = mat if formula
+        end
+      end
+    end
+
+    # Class-level loading (bypasses instance private methods).
+    def self.load_materials_class
+      materials = []
+      MATERIAL_PATHS.each do |type, config|
+        next unless config.is_a?(Hash)
+        base_path = config[:path].call
+        if config[:direct_files] && File.directory?(base_path)
+          materials.concat(load_json_files_class(base_path))
+        end
+        if config[:recursive_scan] && File.directory?(base_path)
+          materials.concat(load_json_files_recursively_class(base_path))
+        end
+      end
+      Rails.logger.debug "Loaded #{materials.size} materials in total"
+      materials
+    end
+
+    def self.load_json_files_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.load_json_files_recursively_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "**", "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.reset_cache!
+      @materials_cache = nil
+    end
+
     # Use the GalaxyGame::Paths module for consistent path handling
     def self.base_materials_path
       # Return a Pathname object, not a String
@@ -42,21 +98,19 @@ module Lookup
       }
     }
 
+    # Per-instance initialize kept for backward compat — no longer does disk I/O.
     def initialize
-      begin
-        @materials = load_materials
-      rescue StandardError => e
-        Rails.logger.error "Fatal error loading materials: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        @materials = []  # ✅ FIX: Initialize empty array instead of failing
-      end
+      # Materials are loaded lazily on first call to self.class.materials_cache
     end
 
+    # Public API: look up a material by id, name, or chemical formula.
+    # Uses the class-level cache for O(1) lookups — no disk I/O after first call.
     def find_material(query)
-      query = query.to_s.downcase
-      found = @materials.find { |material| match_material?(material, query) }
-      #Rails.logger.debug "Material lookup for '#{query}': #{found ? 'found' : 'not found'}"
-      found
+      query_key = query.to_s.downcase.strip
+      material = self.class.materials_cache[query_key]
+      return material if material
+      # Fallback: partial match (for queries not in the index, e.g. short substrings)
+      self.class.materials_cache.find { |_, m| match_material?(m, query_key) }&.last
     rescue => e
       Rails.logger.error "Error finding material: #{e.message}"
       nil
