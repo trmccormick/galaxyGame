@@ -5,6 +5,7 @@
 require 'import/freeciv_map_processor'
 require 'import/civ4_map_processor'
 require 'terrain/multi_body_terrain_generator'
+require 'terrain/quality_assessor'
 require_relative '../../../lib/geotiff_reader'
 
 module StarSim
