@@ -155,9 +155,17 @@ window.SurfaceView = {
 
     // Load terrain tile renderer (45 tiles across 5 terrain families)
     if (window.TerrainTileRenderer) {
-      this.terrainRenderer = new window.TerrainTileRenderer();
-      await this.terrainRenderer.init();
-      console.log(`✅ TerrainTileRenderer initialized`);
+      try {
+        this.terrainRenderer = new window.TerrainTileRenderer();
+        await this.terrainRenderer.init();
+        console.log(`✅ TerrainTileRenderer initialized`);
+      } catch (error) {
+        console.error('⚠️  TerrainTileRenderer init failed:', error);
+        this.terrainRenderer = null;
+      }
+    } else {
+      console.warn('⚠️  TerrainTileRenderer not loaded (script tag missing?)');
+      this.terrainRenderer = null;
     }
 
     // Toggle button (biome worlds only)
