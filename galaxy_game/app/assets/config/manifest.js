@@ -17,5 +17,6 @@
 //= link simple_tileset_loader.js
 
 //= link biome_renderer.js
+//= link terrain_tile_renderer.js
 
 //= link game_interface_enhanced.js
