@@ -1,9 +1,10 @@
 require 'sidekiq/web'
+require_dependency 'api/assets_controller'
 
 Rails.application.routes.draw do
   # API routes for asset serving
   namespace :api do
-    get 'assets/*path', to: 'assets#get_asset', as: 'asset'
+    get 'assets/*path', to: 'assets#get_asset', as: 'asset', constraints: { path: /.*/ }, format: false
   end
 
   # Temporary placeholder routes until Devise is installed
