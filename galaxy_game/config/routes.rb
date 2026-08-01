@@ -1,6 +1,11 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  # API routes for asset serving
+  namespace :api do
+    get 'assets/*path', to: 'assets#get_asset', as: 'asset'
+  end
+
   # Temporary placeholder routes until Devise is installed
   get 'users/sign_in', to: 'landing#index', as: :new_user_session
   get 'users/sign_up', to: 'landing#index', as: :new_user_registration

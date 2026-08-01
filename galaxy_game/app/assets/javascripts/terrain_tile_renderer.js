@@ -1,7 +1,7 @@
 /**
  * TerrainTileRenderer — ES6 class
  *
- * Loads 45 terrain family PNG sprites from /assets/terrain/:terrain_type/variant_XX.png
+ * Loads 45 terrain family PNG sprites from /api/assets/terrain/:terrain_type/variant_XX.png
  * and provides deterministic variant selection for surface view rendering.
  *
  * Tile inventory:
@@ -30,7 +30,7 @@ class TerrainTileRenderer {
   static TILE_SIZE    = 150;
   static TERRAINS     = ['dust', 'frozen', 'regolith', 'temperate', 'volcanic'];
   static VARIANT_COUNT = 9;
-  static BASE_PATH     = '/assets/terrain/';
+  static BASE_PATH     = '/api/assets/terrain/';
 
   /** Canonical ordered list — must match directory names under data/images/terrain/ */
   static TERRAIN_NAMES = TerrainTileRenderer.TERRAINS;

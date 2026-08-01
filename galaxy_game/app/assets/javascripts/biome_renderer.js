@@ -80,7 +80,7 @@ class BiomeRenderer {
       if (!resp.ok) throw new Error(`biomes.json fetch failed: ${resp.status}`);
       this.config = await resp.json();
 
-      const assetPath    = this.config.asset_path || '/assets/biomes/';
+      const assetPath    = this.config.asset_path || '/api/assets/biomes/';
       const biomeEntries = Object.entries(this.config.biomes);
 
       /* 2 ── seed fallback colours */

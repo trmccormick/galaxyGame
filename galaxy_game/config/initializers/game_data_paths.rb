@@ -271,6 +271,11 @@ module GalaxyGame
     TOPOLOGY_MAPS_PATH = MAPS_PATH.join('topology_maps').freeze
     GENERATED_MAPS_PATH = MAPS_PATH.join('galaxy_game').freeze
 
+    # === Asset Paths ===
+    ASSETS_PATH = JSON_DATA.join('images').freeze
+    TERRAIN_ASSETS_PATH = ASSETS_PATH.join('terrain').freeze
+    BIOME_ASSETS_PATH = ASSETS_PATH.join('biomes').freeze
+
     # === Helper methods for path generation ===
     def self.material_path(category, subcategory, material_id)
       MATERIALS_PATH.join(category, subcategory, "#{material_id}.json").freeze
