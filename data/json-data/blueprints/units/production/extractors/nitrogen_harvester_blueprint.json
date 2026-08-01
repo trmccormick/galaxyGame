@@ -1,0 +1,60 @@
+{
+  "template": "unit_blueprint",
+  "id": "nitrogen_harvester_blueprint",
+  "name": "Nitrogen Harvester Blueprint",
+  "description": "A mobile harvesting unit for collecting nitrogen-rich materials from surface deposits and atmospheric sources.",
+  "category": "production",
+  "subcategory": "extractors",
+  "port_type": "standard",
+  "physical_properties": {
+    "length_m": 6.0,
+    "width_m": 4.0,
+    "height_m": 3.0,
+    "empty_mass_kg": 800.0,
+    "volume_m3": 72.0
+  },
+  "item_produced": {
+    "id": "nitrogen_harvester",
+    "amount": 1,
+    "unit": "unit"
+  },
+  "required_materials": {
+    "aluminum_alloy": { "amount": 250.0, "unit": "kilogram" },
+    "collection_mechanisms": { "amount": 100.0, "unit": "kilogram" },
+    "cryogenic_fluids": { "amount": 50.0, "unit": "kilogram" },
+    "electronic_components": { "amount": 40.0, "unit": "kilogram" }
+  },
+  "production_data": {
+    "time_hours": 1200,
+    "power_consumption_kw": 8,
+    "required_facility_type": "manufacturing_plant",
+    "required_technology": "atmospheric_harvesting",
+    "base_material_efficiency": 0.92,
+    "base_time_efficiency": 1.0
+  },
+  "cost_data": {
+    "purchase_cost": { "currency": "GCC", "amount": 1800 },
+    "maintenance": {
+      "time_to_repair_hours": 15,
+      "repair_cost_gcc": 150,
+      "materials_needed_for_repair": [
+        { "id": "collection_mechanisms", "amount": 10.0, "unit": "kilogram" }
+      ]
+    }
+  },
+  "byproducts": [
+    { "id": "atmospheric_residue", "amount": 20.0, "unit": "kilogram", "description": "Non-nitrogen atmospheric components." }
+  ],
+  "hazard_level": 2,
+  "special_handling": ["cryogenic_operations"],
+  "operational_data_reference": {
+    "file": "units/production/extractors/nitrogen_harvester_operational_data.json",
+    "notes": "Mobile unit for efficient nitrogen collection in thin atmospheres."
+  },
+  "metadata": {
+    "version": "1.0",
+    "author": "AI Manager",
+    "last_updated": "2026-01-09",
+    "compatibility": ["triton_atmosphere", "future_fusion_power_upgrade"]
+  }
+}

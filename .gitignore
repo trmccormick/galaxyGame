@@ -28,6 +28,10 @@ tmp/
 # Exclude root-level data directory (production/development data)
 /data/
 
+# ✅ Include blueprint and configuration data (ISRU, units, settlements)
+!/data/json-data/blueprints/
+!/data/json-data/schemas/
+
 # ✅ FIX: Include fixture data with correct path
 !/galaxy_game/spec/fixtures/
 

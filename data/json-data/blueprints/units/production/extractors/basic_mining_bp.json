@@ -1,0 +1,101 @@
+{
+  "template": "unit_blueprint",
+  "id": "basic_mining_unit",
+  "name": "Basic Mining Unit",
+  "description": "Standard equipment for extracting resources",
+  "category": "units",
+  "subcategory": "production/extractors",
+  
+  "port_type": "power,storage,control",
+  
+  "item_produced": {
+    "id": "basic_mining_rig",
+    "amount": 1,
+    "unit": "unit"
+  },
+  
+  "required_materials": {
+    "steel_alloy": {
+      "amount": 1500,
+      "unit": "kilogram"
+    },
+    "electronic_components": {
+      "amount": 200,
+      "unit": "kilogram"
+    },
+    "lubricant": {
+      "amount": 100,
+      "unit": "liter"
+    }
+  },
+  
+  "production_data": {
+    "time_hours": 48,
+    "power_consumption_kw": 10,
+    "required_facility_type": "manufacturing",
+    "required_technology": "basic_mining_tech",
+    "base_material_efficiency": 1.0,
+    "base_time_efficiency": 1.0
+  },
+  
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 75000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 12,
+      "repair_cost_gcc": 5000,
+      "materials_needed_for_repair": [
+        {
+          "id": "lubricant",
+          "amount": 10,
+          "unit": "liter"
+        },
+        {
+          "id": "electronic_components",
+          "amount": 5,
+          "unit": "kilogram"
+        }
+      ]
+    }
+  },
+  
+  "byproducts": [
+    {
+      "id": "heat",
+      "amount": 50,
+      "unit": "kj"
+    }
+  ],
+  
+  "hazard_level": 2,
+  "special_handling": ["lubricant_handling", "heavy_equipment"],
+  
+  "operational_data_reference": {
+    "file": "units/production/extractors/basic_mining_rig.json",
+    "operational_properties": {},
+    "physical_properties": {}
+  },
+  
+  "storage_properties": {
+    "capacity": 0,
+    "stored_material": "",
+    "phase": "",
+    "requires_cooling": false
+  },
+  
+  "deployment_data": {
+    "deployable": true,
+    "printer_required": false,
+    "requires_shell": false,
+    "default_deployment_time_hours": 6
+  },
+  
+  "metadata": {
+    "version": "1.2",
+    "type": "blueprint",
+    "category": "units",
+    "template_compliance": "unit_blueprint"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "template": "unit_blueprint",
+  "id": "cryogenic_extractor_blueprint",
+  "name": "Cryogenic Extractor Blueprint",
+  "description": "A specialized extraction unit for harvesting cryovolcanic materials and subsurface ices in extreme cold environments.",
+  "category": "production",
+  "subcategory": "extractors",
+  "port_type": "standard",
+  "physical_properties": {
+    "length_m": 12.0,
+    "width_m": 8.0,
+    "height_m": 5.0,
+    "empty_mass_kg": 1800.0,
+    "volume_m3": 480.0
+  },
+  "item_produced": {
+    "id": "cryogenic_extractor",
+    "amount": 1,
+    "unit": "unit"
+  },
+  "required_materials": {
+    "titanium_alloy": { "amount": 600.0, "unit": "kilogram" },
+    "thermal_insulation": { "amount": 300.0, "unit": "kilogram" },
+    "drilling_components": { "amount": 200.0, "unit": "kilogram" },
+    "electronic_components": { "amount": 100.0, "unit": "kilogram" }
+  },
+  "production_data": {
+    "time_hours": 2400,
+    "power_consumption_kw": 25,
+    "required_facility_type": "manufacturing_plant",
+    "required_technology": "cryogenic_drilling",
+    "base_material_efficiency": 0.90,
+    "base_time_efficiency": 1.0
+  },
+  "cost_data": {
+    "purchase_cost": { "currency": "GCC", "amount": 4000 },
+    "maintenance": {
+      "time_to_repair_hours": 30,
+      "repair_cost_gcc": 300,
+      "materials_needed_for_repair": [
+        { "id": "thermal_insulation", "amount": 30.0, "unit": "kilogram" }
+      ]
+    }
+  },
+  "byproducts": [
+    { "id": "cryogenic_waste", "amount": 50.0, "unit": "kilogram", "description": "Frozen waste materials from extraction process." }
+  ],
+  "hazard_level": 3,
+  "special_handling": ["extreme_cold_operations"],
+  "operational_data_reference": {
+    "file": "units/production/extractors/cryogenic_extractor_operational_data.json",
+    "notes": "Designed for Triton cryovolcanic environments; compatible with future fusion power systems."
+  },
+  "metadata": {
+    "version": "1.0",
+    "author": "AI Manager",
+    "last_updated": "2026-01-09",
+    "compatibility": ["triton_cryovolcanic_zones", "future_fusion_power_upgrade"]
+  }
+}
