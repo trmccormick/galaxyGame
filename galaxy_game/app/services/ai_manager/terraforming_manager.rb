@@ -3,7 +3,8 @@ module AIManager
     attr_reader :worlds, :simulation_params
 
     def initialize(worlds:, simulation_params: {})
-      @worlds = worlds # Hash: { mars:, venus:, titan:, saturn: }
+      # worlds: Hash of world keys to celestial body objects (e.g., { mars: mars_world, europa: europa_world })
+      @worlds = worlds
       @simulation_params = default_params.merge(simulation_params)
       @orbital_depots = {}
       @patterns = AIManager::PatternLoader.load_terraforming_patterns
@@ -29,7 +30,7 @@ module AIManager
       # Fallback to original logic if pattern not available
       temp = world.surface_temperature
       liquid_water = world.hydrosphere&.state_distribution&.dig('liquid').to_f || 0.0
-      threshold = @simulation_params[:mars_liquid_water_threshold]
+      threshold = @simulation_params[:liquid_water_threshold]
 
       if temp < 273.0 || liquid_water < threshold
         :warming
@@ -104,7 +105,7 @@ module AIManager
 
       # Fallback to original logic
       liquid_water = world.hydrosphere.state_distribution&.dig('liquid').to_f || 0.0
-      threshold = @simulation_params[:mars_liquid_water_threshold]
+      threshold = @simulation_params[:liquid_water_threshold]
       temp = world.surface_temperature
 
       liquid_water >= threshold && temp >= 273.0
@@ -200,7 +201,7 @@ module AIManager
       return nil if ch4_pct >= 0.5
 
       ch4_needed_mass = ((target_ch4 - ch4_pct) / 100.0) * world.atmosphere.total_atmospheric_mass
-      capacity_limit = @simulation_params[:titan_capacity] || 1.0e13
+      capacity_limit = @simulation_params[:cycler_capacity] || 1.0e13
       ch4_to_make = [ch4_needed_mass, capacity_limit].min
 
       {
@@ -218,7 +219,7 @@ module AIManager
       world = @worlds[world_key]
       depot = @orbital_depots[world_key]
 
-      # Try Mars CO2 first, then Venus if needed
+      # Try available CO2 sources (prefer local world, then specified source)
       sources = [
         { key: world_key, world: world },
         { key: co2_source_key, world: @worlds[co2_source_key] }
@@ -295,7 +296,8 @@ module AIManager
 
     def determine_phase_from_pattern(world, phase_pattern, target_params)
       current_pressure = world.atmosphere&.pressure || 0
-      target_pressure = target_params['total_pressure']&.gsub(' bar', '')&.to_f || 0.81
+      # Default to 0 if not specified — caller should provide target from world template
+      target_pressure = target_params['total_pressure']&.gsub(' bar', '')&.to_f
 
       warming_threshold = target_pressure * 0.6 # 60% as per pattern
 
@@ -307,21 +309,20 @@ module AIManager
     end
 
     def identify_available_resources(world_key)
-      # Simplified resource identification - in real implementation would check orbital depots, nearby bodies, etc.
+      # Identify available atmospheric resources across all worlds
+      # NOTE: Thresholds should be data-driven from world templates, not hardcoded
       world = @worlds[world_key]
       return [] unless world
 
       resources = []
       @worlds.each_value do |w|
         next unless w&.atmosphere&.composition.present?
-        resources << "#{w.identifier}_atmosphere" if w.atmosphere.composition.dig('CO2', 'percentage').to_f > 90
-        resources << "#{w.identifier}_atmosphere" if w.atmosphere.composition.dig('CH4', 'percentage').to_f > 1
-        resources << "#{w.identifier}_atmosphere" if w.atmosphere.composition.dig('H2', 'percentage').to_f > 80
+        # Generic resource detection — thresholds should come from world templates
+        co2_pct = w.atmosphere.composition.dig('CO2', 'percentage').to_f
+        ch4_pct = w.atmosphere.composition.dig('CH4', 'percentage').to_f
+        h2_pct = w.atmosphere.composition.dig('H2', 'percentage').to_f
+        resources << "#{w.identifier}_atmosphere" if co2_pct > 50 || ch4_pct > 1 || h2_pct > 80
       end
-      resources << 'CO2' if world.atmosphere&.composition&.dig('CO2', 'percentage').to_f > 50
-      resources << 'CH4' if world.atmosphere&.composition&.dig('CH4', 'percentage').to_f > 0.1
-      resources << 'H2' if world.atmosphere&.composition&.dig('H2', 'percentage').to_f > 0.1
-
       resources
     end
 
@@ -334,8 +335,8 @@ module AIManager
 
       case phase
       when :warming
-        # Focus on CO2 for greenhouse effect
-        target_co2 = 95.0
+        # Focus on CO2 for greenhouse effect — target from pattern or world template preferred
+        target_co2 = target_params['co2_percentage']&.gsub('%', '')&.to_f || 95.0
         current_co2 = world.atmosphere&.co2_percentage || 0
         if current_co2 < target_co2
           co2_needed = (target_co2 - current_co2) * world.atmosphere.total_atmospheric_mass * efficiency_adjustments['co2_to_o2_efficiency'].to_f
@@ -343,8 +344,10 @@ module AIManager
         end
       when :maintenance
         # Fine-tune composition
+        # Default to 18% if not specified — should come from world template
         target_params = @patterns.dig('terraforming_phases', 'data', 'target_parameters') || {}
 
+        # Default to 18% if not specified — should come from world template
         target_o2 = target_params['o2_percentage']&.gsub('%', '')&.to_f || 18.0
         current_o2 = world.atmosphere&.o2_percentage || 0
 
@@ -386,7 +389,7 @@ module AIManager
     end
 
     def create_optimized_starter_organisms(biosphere, total_population)
-      # Distribute population across optimized species from Mars demo pattern
+      # Distribute population across species — config should come from world/biome template
       species_distribution = {
         'Extremophile Cyanobacteria' => 0.5,  # 50%
         'Cold-Adapted Green Algae' => 0.3,    # 30%
@@ -438,23 +441,9 @@ module AIManager
     private
 
     def default_params
-      {
-        safe_o2_threshold: 22.0,
-        target_ch4_pct: 1.0,
-        target_n2_pct: 70.0,
-        target_o2_pct: 18.0,
-        target_co2_pct: 0.04,
-        target_total_pressure_bar: 0.81,
-        mars_liquid_water_threshold: 1.0,
-        cycler_capacity: 1.0e13,
-        titan_capacity: 1.0e13
-      }
-    end
-
-    def initialize_depots
-      @worlds.each_key do |key|
-        @orbital_depots[key] = AIManager::DepotAdapter.create_depot(key, @worlds[key])
-      end
+      # NOTE: All atmospheric composition targets are world-specific and should come from
+      # world templates/data, not hardcoded here. Only universal simulation parameters belong here.
+      {}
     end
 
     def calculate_warming_phase_needs(world)
@@ -488,10 +477,10 @@ module AIManager
       pressure = world.atmosphere.pressure
       target_pressure = @simulation_params[:target_total_pressure_bar]
 
-      mars_n2_pct = get_gas_percentage(world, 'N2')
-      mars_o2_pct = get_gas_percentage(world, 'O2')
-      mars_co2_pct = get_gas_percentage(world, 'CO2')
-      mars_ch4_pct = get_gas_percentage(world, 'CH4')
+      n2_pct = get_gas_percentage(world, 'N2')
+      o2_pct = get_gas_percentage(world, 'O2')
+      co2_pct = get_gas_percentage(world, 'CO2')
+      ch4_pct = get_gas_percentage(world, 'CH4')
 
       target_n2 = @simulation_params[:target_n2_pct]
       target_o2 = @simulation_params[:target_o2_pct]
@@ -504,10 +493,10 @@ module AIManager
       needs = {}
       # Only import gas if we're below target pressure AND composition needs adjustment
       unless at_or_above_target
-        needs['N2'] = :high if mars_n2_pct < (target_n2 - 2.0)
-        needs['O2'] = :high if mars_o2_pct < (target_o2 - 0.5)
-        needs['CO2'] = :low if mars_co2_pct < target_co2
-        needs['CH4'] = :medium if mars_ch4_pct < (target_ch4 - 0.1)
+        needs['N2'] = :high if n2_pct < (target_n2 - 2.0)
+        needs['O2'] = :high if o2_pct < (target_o2 - 0.5)
+        needs['CO2'] = :low if co2_pct < target_co2
+        needs['CH4'] = :medium if ch4_pct < (target_ch4 - 0.1)
       end
 
       {
@@ -543,58 +532,58 @@ module AIManager
     end
 
     def create_starter_organisms(biosphere)
-      Biology::LifeForm.create!(
-        biosphere: biosphere,
-        name: "Extremophile Cyanobacteria",
-        complexity: :simple,
-        population: 1_000_000_000,
-        diet: "photosynthetic",
-        properties: {
-          'oxygen_production_rate' => 0.00005,
-          'co2_consumption_rate' => 0.00006,
-          'nitrogen_fixation_rate' => 0.00001,
-          'preferred_biome' => 'Regolith',
-          'min_temperature' => 170.0,
-          'max_temperature' => 320.0
-        }
-      )
+      # NOTE: Species names and properties should be data-driven from world/biome config.
+      # Current values are defaults — override via simulation_params[:starter_species] for custom worlds.
+      species_config = @simulation_params[:starter_species] || default_starter_species
 
-      Biology::LifeForm.create!(
-        biosphere: biosphere,
-        name: "Cold-Adapted Green Algae",
-        complexity: :simple,
-        population: 500_000_000,
-        diet: "photosynthetic",
-        properties: {
-          'oxygen_production_rate' => 0.00007,
-          'co2_consumption_rate' => 0.00008,
-          'preferred_biome' => 'Polar Cap',
-          'min_temperature' => 180.0,
-          'max_temperature' => 310.0
-        }
-      )
-
-      Biology::LifeForm.create!(
-        biosphere: biosphere,
-        name: "Methanogenic Archaea",
-        complexity: :simple,
-        population: 800_000_000,
-        diet: "chemosynthetic",
-        properties: {
-          'methane_production_rate' => 0.00003,
-          'co2_consumption_rate' => 0.00002,
-          'preferred_biome' => 'Subsurface',
-          'min_temperature' => 160.0,
-          'max_temperature' => 330.0
-        }
-      )
+      species_config.each do |species_name, config|
+        Biology::LifeForm.create!(
+          biosphere: biosphere,
+          name: species_name,
+          complexity: :simple,
+          population: config[:population],
+          diet: config[:diet],
+          properties: config[:properties]
+        )
+      end
     end
 
-    private
-
-    def default_params
+    def default_starter_species
       {
-        mars_liquid_water_threshold: 1.0
+        "Extremophile Cyanobacteria" => {
+          population: 1_000_000_000,
+          diet: "photosynthetic",
+          properties: {
+            'oxygen_production_rate' => 0.00005,
+            'co2_consumption_rate' => 0.00006,
+            'nitrogen_fixation_rate' => 0.00001,
+            'preferred_biome' => 'Regolith',
+            'min_temperature' => 170.0,
+            'max_temperature' => 320.0
+          }
+        },
+        "Cold-Adapted Green Algae" => {
+          population: 500_000_000,
+          diet: "photosynthetic",
+          properties: {
+            'oxygen_production_rate' => 0.00007,
+            'co2_consumption_rate' => 0.00008,
+            'preferred_biome' => 'Polar Cap',
+            'min_temperature' => 180.0,
+            'max_temperature' => 310.0
+          }
+        },
+        "Methanogenic Archaea" => {
+          population: 800_000_000,
+          diet: "chemosynthetic",
+          properties: {
+            'methane_production_rate' => 0.00003,
+            'co2_consumption_rate' => 0.00002,
+            'preferred_biome' => 'Subsurface',
+            'min_temperature' => 160.0,
+            'max_temperature' => 330.0
+          }
+        }
       }
     end
 
