@@ -351,8 +351,6 @@ module CelestialBodies
         'kuiper_belt_object'
 
       # Other
-      when /AlienLifeForm$/
-        'alien_life_form'
       when /Material$/
         'material'
 
