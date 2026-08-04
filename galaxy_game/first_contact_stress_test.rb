@@ -26,7 +26,7 @@ atmosphere_composition = atmosphere_service.generate_composition_for_body(
   planet_data['radius'],
   1.0, # orbital_distance (AU)
   'G', # stellar_type
-  false # has_magnetic_field
+  planet_data[:magnetosphere_strength] || 0.0 # numeric magnetosphere_strength
 )
 
 puts "Atmospheric composition generated:"

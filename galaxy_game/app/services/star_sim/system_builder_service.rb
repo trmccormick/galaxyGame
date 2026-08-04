@@ -409,13 +409,16 @@ module StarSim
         if body_data[:surface_temperature].to_f > 500
           attrs[:properties]['volcanic_activity'] = 'high'
         end
-        if body_data.dig(:hydrosphere, :water_coverage).to_f > 50
-          attrs[:properties]['water_dominant'] = true
-        elsif body_data.dig(:hydrosphere, :water_coverage).to_f > 0
+        if body_data.dig(:hydrosphere, :water_coverage).to_f > 0
           attrs[:properties]['has_water'] = true
         end
-        if body_data[:magnetic_field].to_f > 30
-          attrs[:properties]['strong_magnetosphere'] = true
+        # Read magnetosphere_strength directly from generated data (0.0-1.0)
+        if body_data[:magnetosphere_strength].present?
+          attrs[:properties]['magnetosphere_strength'] = body_data[:magnetosphere_strength].to_f
+        elsif body_data[:magnetic_field].present?
+          # Fallback for legacy data: convert old magnetic_field value to strength scale
+          # Assume magnetic_field > 30 means Earth-like (1.0)
+          attrs[:properties]['magnetosphere_strength'] = body_data[:magnetic_field].to_f > 30 ? 1.0 : 0.0
         end
         
       when /GasGiant/

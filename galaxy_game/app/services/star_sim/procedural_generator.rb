@@ -421,6 +421,13 @@ module StarSim
       volume = (4.0/3.0) * Math::PI * (radius ** 3)
       density = mass / volume
       
+      # Rotation period: Earth-like planets typically 6-48 hours
+      rotation_period = rand(6.0..48.0)
+      
+      # Calculate magnetosphere from physical properties
+      magnetosphere_strength = calculate_magnetosphere_strength(mass, rotation_period)
+      magnetosphere_radius = calculate_magnetosphere_radius(mass, magnetosphere_strength)
+      
       {
         "name" => planet_name,
         "identifier" => planet_identifier,
@@ -434,6 +441,9 @@ module StarSim
         "size" => radius / 6.371e6, # Earth radii
         "known_pressure" => rand(0.1..2.0),
         "geological_activity" => rand(10..90),
+        "rotation_period_hours" => rotation_period,
+        "magnetosphere_strength" => magnetosphere_strength,
+        "magnetosphere_radius_km" => magnetosphere_radius, # Omitted if nil
         "geosphere_attributes" => {
           "geological_activity" => rand(10..90),
           "tectonic_activity" => rand < 0.4,
@@ -533,6 +543,7 @@ module StarSim
         planet_data["surface_temperature"] = calculate_surface_temperature(orbital_parameters[:semi_major_axis_au])
         
         # Generate atmosphere using existing generators
+        magnetosphere_strength = planet_data[:magnetosphere_strength] || 0.0
         atmosphere_data = @atmosphere_generator.generate_composition_for_body(
           planet_name,
           planet_data["surface_temperature"],
@@ -540,7 +551,7 @@ module StarSim
           planet_data["radius"],
           orbital_parameters[:semi_major_axis_au],
           star_for_planets&.type,
-          rand < 0.5
+          magnetosphere_strength
         )
         planet_data[:atmosphere] = atmosphere_data
         
@@ -616,6 +627,7 @@ module StarSim
         planet_data["surface_temperature"] = calculate_surface_temperature(orbital_parameters[:semi_major_axis_au])
 
         # Generate atmosphere
+        magnetosphere_strength = planet_data[:magnetosphere_strength] || 0.0
         atmosphere_data = @atmosphere_generator.generate_composition_for_body(
           planet_name,
           planet_data["surface_temperature"],
@@ -623,7 +635,7 @@ module StarSim
           planet_data["radius"],
           orbital_parameters[:semi_major_axis_au],
           star["type"] || "G-type",
-          rand < 0.5
+          magnetosphere_strength
         )
         planet_data[:atmosphere] = atmosphere_data
 
@@ -731,7 +743,7 @@ module StarSim
           radius,
           semi_major_axis_au,
           (star['type_of_star'] || star['type'] || 'G-type'),
-          rand < 0.5
+          planet_data[:magnetosphere_strength] || 0.0
         ),
         "biosphere_attributes" => generate_biosphere_data({
           type: "terrestrial",
@@ -790,7 +802,7 @@ module StarSim
           radius,
           orbital_parameters[:semi_major_axis_au],
           star_for_planets&.type,
-          true # Assume gas giants have magnetic fields
+          1.0 # Gas giants have strong magnetospheres
         )
         planet_data[:atmosphere] = atmosphere_data
 
@@ -846,7 +858,7 @@ module StarSim
           radius,
           orbital_parameters[:semi_major_axis_au],
           star_for_planets&.type,
-          true
+          1.0 # Ice giants have strong magnetospheres
         )
         planet_data[:atmosphere] = atmosphere_data
 
@@ -899,7 +911,7 @@ module StarSim
           radius,
           orbital_parameters[:semi_major_axis_au],
           star_for_planets&.type,
-          rand < 0.2
+          0.8 # Dwarf planets have weak magnetospheres
         )
         planet_data[:atmosphere] = atmosphere_data
 
@@ -1096,6 +1108,8 @@ module StarSim
           "name" => moon_name,
           "identifier" => moon_identifier,
           "type" => "moon",
+          "parent_body" => planet_data["name"],  # NEW: Reference to parent for protection inheritance
+          "orbital_distance_km" => orbital_distance / 1000.0,  # NEW: Top-level field in km
           "mass" => mass,
           "radius" => radius,
           "diameter_km" => (radius * 2) / 1000, # Convert to km for AI analysis
@@ -1114,8 +1128,25 @@ module StarSim
           }]
         }
         
+        # Some moons have intrinsic magnetospheres (rare, like Ganymede ~1% chance)
+        if rand < 0.01
+          moon_magnetosphere_strength = calculate_magnetosphere_strength(
+            mass,
+            24,  # Moons rotate with parent
+            4.5e9  # Assume solar system age
+          )
+          if moon_magnetosphere_strength > 0.01
+            moon_data["magnetosphere_strength"] = moon_magnetosphere_strength
+            moon_data["magnetosphere_radius_km"] = calculate_magnetosphere_radius(
+              mass,
+              moon_magnetosphere_strength
+            )
+          end
+        end
+        
         # Some moons have thin atmospheres
         if rand < 0.3
+          magnetosphere_strength = moon_data["magnetosphere_strength"] || 0.0
           atmosphere_data = @atmosphere_generator.generate_composition_for_body(
             moon_name,
             moon_data["surface_temperature"],
@@ -1123,7 +1154,7 @@ module StarSim
             radius,
             moon_data["orbits"].first["semi_major_axis_au"],
             nil, # No star type for moon
-            false
+            magnetosphere_strength  # Pass numeric value instead of boolean
           )
           moon_data[:atmosphere] = atmosphere_data
         end
@@ -1254,16 +1285,6 @@ module StarSim
       
       system_data = JSON.parse(File.read(vetted_path))
       
-      # Ensure Prize status with required attributes
-      system_data['celestial_bodies']['terrestrial_planets'].each do |planet|
-        if planet['name'] == 'Topaz' # The prize planet
-          planet['magnetic_moment'] = 0.82
-          planet['tei_score'] = 0.88
-          planet['aliases'] ||= []
-          planet['aliases'] << 'Topaz' unless planet['aliases'].include?('Topaz')
-        end
-      end
-      
       # Sanitize identifiers to enforce [System]-[Letter] formatting
       sanitize_identifiers!(system_data)
       
@@ -1347,6 +1368,50 @@ module StarSim
         "dwarf_planets" => dwarf_planets,
         "asteroids" => [] # No asteroids from accretion
       }
+    end
+
+    # Calculate magnetosphere strength (0.0-1.0) based on physical properties
+    # Mass, rotation speed, and age all contribute to dynamo effect
+    def calculate_magnetosphere_strength(mass_kg, rotation_period_hours = 24, age_years = 4.5e9)
+      earth_mass_kg = 5.972e24
+      earth_age_years = 4.5e9
+      earth_rotation_hours = 24.0
+      
+      # Mass factor: normalized to Earth (1.0 for Earth-mass)
+      mass_ratio = mass_kg / earth_mass_kg
+      mass_factor = mass_ratio ** 0.33
+      
+      # Rotation factor: normalized to Earth (1.0 for 24h rotation)
+      # Faster rotation amplifies field (up to 3x), slower reduces it
+      rotation_factor = [earth_rotation_hours / [rotation_period_hours, 6.0].max, 3.0].min
+      
+      # Age factor: normalized to Earth (1.0 for 4.5Gy age)
+      # Older planets have cooler cores, weaker fields
+      # exp(-(age - earth_age) / (2 * earth_age)) = 1.0 at earth_age
+      age_factor = Math.exp(-(age_years - earth_age_years) / (2.0 * earth_age_years))
+      
+      # Combine factors into 0.0-1.0 scale
+      base_strength = mass_factor * rotation_factor * age_factor
+      
+      # Clamp to [0.0, 1.0]
+      [[base_strength, 0.0].max, 1.0].min
+    end
+
+    # Calculate magnetosphere radius (km) based on strength and mass
+    # Returns nil if no meaningful magnetosphere exists
+    def calculate_magnetosphere_radius(mass_kg, magnetosphere_strength)
+      # No magnetosphere (strength 0.0): radius undefined/omit
+      return nil if magnetosphere_strength < 0.01
+      
+      earth_mass_kg = 5.972e24
+      mass_ratio = mass_kg / earth_mass_kg
+      
+      # Base radius for Earth-like: 60,000 km
+      # Scale by mass (larger = extends further) and strength (stronger = reaches further)
+      base_radius = 60000.0
+      radius = base_radius * (mass_ratio ** 0.25) * (magnetosphere_strength ** 0.5)
+      
+      radius.round(0)
     end
   end
 end

@@ -9,7 +9,7 @@ module StarSim
       @stefan_boltzmann_constant = 5.67e-8
     end
 
-    def generate_composition_for_body(name, surface_temp_override, mass, radius, orbital_distance, stellar_type = nil, has_magnetic_field = false)
+    def generate_composition_for_body(name, surface_temp_override, mass, radius, orbital_distance, stellar_type = nil, magnetosphere_strength = 0.0)
       surface_temp = surface_temp_override || estimate_initial_surface_temperature(orbital_distance, stellar_type, @body_data[:albedo].to_f)
       composition = generate_initial_gas_mix(mass, surface_temp, @body_data.dig(:geosphere_attributes, :volatile_content)&.to_sym)
 
@@ -25,7 +25,7 @@ module StarSim
       refined_surface_temp = greenhouse_adjusted_temp(surface_temp, composition).round(2)
       @body_data[:surface_temperature] = refined_surface_temp # Update for other services
 
-      composition = model_atmospheric_escape(composition, mass, radius, refined_surface_temp, stellar_type, has_magnetic_field)
+      composition = model_atmospheric_escape(composition, mass, radius, refined_surface_temp, stellar_type, magnetosphere_strength)
 
       initial_dust = calculate_initial_dust(geosphere_activity)
       composition["dust"] = {"concentration" => initial_dust.round(4), "properties" => "Generated dust"} if initial_dust > 0
@@ -137,7 +137,9 @@ module StarSim
       (base_temp * greenhouse_factor).clamp(150, 350)       # Clamp to plausible range in Kelvin
     end
 
-    def model_atmospheric_escape(composition, mass, radius, surface_temp, stellar_type, has_magnetic_field)
+    def model_atmospheric_escape(composition, mass, radius, surface_temp, stellar_type, magnetosphere_strength)
+      # magnetosphere_strength: 0.0 (no protection) to 1.0 (full protection)
+      
       escape_velocity = Math.sqrt((2 * @gravitational_constant * mass) / radius)
 
       composition.each do |gas_formula, properties|
@@ -150,10 +152,15 @@ module StarSim
           # Very simplified escape model - lighter gases escape more easily
           escape_probability = Math.exp(-escape_velocity / thermal_velocity)
 
-          if gas_formula == "H2" && escape_probability > 0.1 && !has_magnetic_field
-            properties["percentage"] = [properties["percentage"].to_f * (1 - 0.05 * escape_probability), 0].max.round(4)
-          elsif gas_formula == "He" && escape_probability > 0.2 && !has_magnetic_field
-            properties["percentage"] = [properties["percentage"].to_f * (1 - 0.02 * escape_probability), 0].max.round(4)
+          # Apply magnetosphere protection as a reduction in escape probability
+          # Strong magnetosphere (1.0) blocks most losses; no field (0.0) allows all losses
+          protection_factor = 1.0 - magnetosphere_strength  # 0.0 (protected) to 1.0 (exposed)
+          protected_escape = escape_probability * protection_factor
+
+          if gas_formula == "H2" && protected_escape > 0.1
+            properties["percentage"] = [properties["percentage"].to_f * (1 - 0.05 * protected_escape), 0].max.round(4)
+          elsif gas_formula == "He" && protected_escape > 0.2
+            properties["percentage"] = [properties["percentage"].to_f * (1 - 0.02 * protected_escape), 0].max.round(4)
           end
         end
       end
