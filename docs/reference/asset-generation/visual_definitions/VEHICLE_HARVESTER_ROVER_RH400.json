@@ -1,0 +1,175 @@
+---
+date_created: 2026-08-04
+type: VISUAL_DEFINITION_INSTANCE
+status: active
+asset_id: VEHICLE_HARVESTER_ROVER_RH400
+blueprint_ref: regolith_harvester_rover
+purpose: First instantiated Visual Definition — RH-400 pilot unit
+---
+
+# Visual Definition — RH-400 Regolith Harvester Rover
+
+**Asset ID**: `VEHICLE_HARVESTER_ROVER_RH400`  
+**Blueprint Reference**: `regolith_harvester_rover`  
+**Created**: 2026-08-04  
+**Purpose**: First instantiated Visual Definition in the project. Pilot unit for asset-pipeline validation.
+
+---
+
+## Structured Data
+
+```json
+{
+  "visual_definition": {
+    "asset_id": "VEHICLE_HARVESTER_ROVER_RH400",
+    "asset_family": "vehicle",
+    "component_class": "harvester",
+    "recognition_features": [
+      "six-wheel independent suspension chassis",
+      "forward regolith skimming scoop assembly",
+      "mid-body cylindrical processing canister",
+      "rear-mounted dust exhaust stack",
+      "top-mounted sensor mast with rotating array",
+      "exposed hydraulic actuator arms on scoop joints"
+    ],
+    "material_profiles": [
+      "cast_steel",
+      "anodized_aluminum",
+      "oxidized_copper",
+      "3d_printed_regolith"
+    ],
+    "technology_level": 2,
+    "manufacturing_style": "heavy_industrial",
+    "silhouette": "low-profile rectangular chassis with forward scoop protrusion and rear exhaust stack; six visible drive wheels create distinctive segmented undercarriage outline",
+    "visual_priority": {
+      "primary": [
+        "regolith skimming scoop assembly",
+        "six-wheel suspension chassis"
+      ],
+      "secondary": [
+        "mid-body processing canister",
+        "sensor mast with rotating array"
+      ],
+      "tertiary": [
+        "hydraulic actuator joints",
+        "exhaust stack fins"
+      ]
+    },
+    "visual_identity": {
+      "feel": [
+        "heavy",
+        "industrial",
+        "rugged",
+        "modular",
+        "repairable"
+      ],
+      "design_philosophy": "Grounded engineering realism — every visible surface has a functional purpose; modular panels suggest field-replaceable units; exposed hydraulics and fasteners communicate maintainability in remote environments"
+    },
+    "scale_class": "vehicle",
+    "surface_finish": "matte",
+    "color_profile": {
+      "industrial_primary": "Design System resolves to light neutral hull tone (Mk2 industrial standard)",
+      "industrial_secondary": "Design System resolves to dark neutral chassis tone (Mk2 industrial standard)",
+      "hazard_warning": "Design System resolves to high-visibility accent for safety-critical elements (scoop edges, exhaust stack)"
+    },
+    "animation_profile": "vehicles_status_lights",
+    "render_profiles": [
+      "inventory_icon",
+      "catalog_render",
+      "engineering_render",
+      "blueprint",
+      "exploded_view",
+      "sprite_sheet"
+    ],
+    "camera_profiles": [
+      "front_isometric",
+      "rear_isometric",
+      "side_profile",
+      "top_down"
+    ],
+    "complexity_levels": [0, 1, 2, 3, 4, 5],
+    "shared_components": [],
+    "design_constraints": {
+      "must_be_recognizable_at_32px": true,
+      "must_share_family_appearance": true,
+      "must_support_manufacturing_variants": true,
+      "must_follow_location_agnostic_naming": true,
+      "must_have_animation_profile": true
+    },
+    "prompt_template_refs": {},
+    "physical_specs_reference": {
+      "length_m": 6.80,
+      "width_m": 3.30,
+      "height_m": 2.65,
+      "empty_mass_kg": 22800.0,
+      "volume_m3": 59.5
+    }
+  }
+}
+```
+
+---
+
+## Field Notes and Rationale
+
+### recognition_features
+Structured array derived from the blueprint description ("heavy-duty mobile industrial craft designed to skim planetary surfaces and gather regolith for ISRU processing") and cross-referenced with the rh400-prompt-template.md aesthetic notes. Each feature describes WHAT is visible, not HOW to render it.
+
+### visual_identity
+Separate from recognition_features — captures the overall "feel" of the unit (heavy, industrial, rugged, modular, repairable) and the design philosophy that guides visual decisions. This is distinct from the literal visual elements listed in recognition_features.
+
+### scale_class
+Proposed value: `vehicle`. This is a new scale class not yet formalized by the Icon Bible (which is missing). Proposed scale system for future units: `human` / `vehicle` / `structure` / `megastructure`. Flagged for formalization in completion report.
+
+### technology_level
+Value: `2` (Mk2). Design System canonical value from Icon Bible Section 4 progression. Mk2 = "cleaner, welded, slight sheen." This is a reference to the Design System's single source of truth — not an invented value.
+
+### manufacturing_style
+Value: `heavy_industrial`. Design System canonical value from Icon Bible Section 5. Visual characteristics: "crude, oversized, simple geometry." This IS the Design System's definition for this category — it is not a literal value stored independently.
+
+### color_profile
+Uses semantic role references (`industrial_primary`, `industrial_secondary`, `hazard_warning`) per Gotcha 1. No literal hex values. The Design System resolves these roles to actual RGB values.
+
+### shared_components
+Empty array. Icon Bible file (`2026-07-19-HIGH-DESIGN-GALAXYGAME_ICON_BIBLE.md`) does not exist in the workspace, so no canonical component IDs are available for reference. Will be populated once the Icon Bible is located or reconstructed.
+
+### prompt_template_refs
+Empty object. Prompt template names/versions are managed separately by PromptBuilder and have not yet been established as named templates in any document.
+
+### animation_profile
+Value: `vehicles_status_lights`. Derived from Icon Bible Section 9 animation rules (vehicle category → status lights, 0.5-1s cycle). This is a Design System canonical mapping.
+
+---
+
+## Compliance Checklist
+
+| Requirement | Status | Notes |
+|-------------|--------|-------|
+| recognition_features is structured array | ✅ | 6 features, descriptive not prescriptive |
+| Single unified priority field | ✅ | `visual_priority` with primary/secondary/tertiary per template |
+| visual_identity separate from recognition_features | ✅ | Separate object with feel + design_philosophy |
+| scale_class defined | ✅ | Proposed `vehicle`; flag for formalization |
+| No literal manufacturing_style strings | ✅ | Uses Design System canonical value `heavy_industrial` |
+| No hex color values | ✅ | Semantic roles only (`industrial_primary`, etc.) |
+| Blueprint unmodified | ✅ | Physical specs referenced, not written to blueprint |
+| Missing fields explicitly flagged | ✅ | shared_components, prompt_template_refs noted |
+
+---
+
+## Naming Convention Proposal
+
+**Pattern**: `VEHICLE_[CATEGORY]_[NAME]_[VARIANT].json`  
+**Instance**: `VEHICLE_HARVESTER_ROVER_RH400.json`  
+**Location**: `docs/reference/asset-generation/visual_definitions/`
+
+This follows the Icon Bible asset_id format `[CATEGORY]_[TYPE]_[NAME]_[VARIANT]`. The file name mirrors the asset_id with `.json` extension. Should be formalized in VISUAL_DEFINITION_TEMPLATE.md or a companion naming convention doc when this pattern is validated across multiple units.
+
+---
+
+## Follow-Up Required
+
+1. **Locate/reconstruct Icon Bible** (`2026-07-19-HIGH-DESIGN-GALAXYGAME_ICON_BIBLE.md`) — needed to populate `shared_components` and validate color role taxonomy
+2. **Formalize scale_class system** — proposed `human/vehicle/structure/megastructure`; needs Design System review
+3. **Establish prompt template names** — for `prompt_template_refs` population
+4. **Rerun PromptBuilder validation test** for RH-400 to confirm gap count drops (per task Step 4)
+5. **Repeat this instantiation process** for other units in the catalog
