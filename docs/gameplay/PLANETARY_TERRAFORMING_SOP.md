@@ -270,6 +270,26 @@ $$\text{CO}_2 + 4\text{H}_2 \rightarrow \text{CH}_4 + 2\text{H}_2\text{O}$$
 
 **Strategic Impact**: This loop accelerates Venusian pressure reduction (by converting atmospheric $\text{CO}_2$ into storable/exportable products) while simultaneously decreasing Venus's fuel imports from Sol.
 
+### Martian Sabatier Processing
+
+Mars utilizes imported Saturnian $\text{H}_2$ reacted with **native Martian $\text{CO}_2$** via local Sabatier plants:
+
+$$\text{CO}_2 + 4\text{H}_2 \rightarrow \text{CH}_4 + 2\text{H}_2\text{O}$$
+
+| Output | Use | Terraforming Phase Link |
+|--------|-----|------------------------|
+| Methane ($\text{CH}_4$) | Greenhouse warming for atmospheric thickening; cycler fuel for inner-system transport | **Phase 1** → **Phase 2** (atmospheric pressure boost) |
+| Water ($\text{H}_2\text{O}$) | Direct use in Bio-Nursery Domes; meets Phase 3/4 liquid water trigger | **Phase 3** → **Phase 4 gating** |
+
+**Strategic Impact**: Local Sabatier processing gives Mars **dual chemistry options** depending on operational priority:
+
+| Chemistry Path | Inputs | Output | Use Case |
+|---------------|--------|--------|----------|
+| **Sabatier** ($\text{H}_2 + \text{CO}_2$) | Saturnian $\text{H}_2$ + native Martian $\text{CO}_2$ | $\text{CH}_4$ + $\text{H}_2\text{O}$ | Fuel production, greenhouse warming, water generation |
+| **Combustion** ($\text{H}_2 + \text{O}_2$) | Saturnian $\text{H}_2$ + imported Venusian $\text{O}_2$ | $\text{H}_2\text{O}$ + energy | High-capacity surface power, direct hydration |
+
+This dual-path architecture means Mars can dynamically choose between **fuel/water production** (Sabatier) and **power generation** (combustion) based on which need is most critical at any given phase of terraforming.
+
 ### Mars Power & Hydration Engine
 
 Mars combines imported Saturnian $\text{H}_2$ with imported Venusian $\text{O}_2$ for two critical outputs:
@@ -291,8 +311,13 @@ $$2\text{H}_2 + \text{O}_2 \rightarrow 2\text{H}_2\text{O} + \text{energy}$$
 ```
 [Saturn Harvester] ──(H₂)──► [Venus Sabatier Plant] ──(CH₄, O₂)──► [Mars Power & Hydration Engine]
        │                           │                                      │
-       ▼                           ▼                                      ▼
-  Raw H₂ supply          Local fuel + water export              Liquid water trigger + surface power
+       │                           ▼                                      ▼
+       │                  Local fuel + water export              Liquid water trigger + surface power
+       │
+       └──────────────────────(H₂)─────────────────────────────► [Martian Sabatier Processing]
+                                                                   │
+                                                                   ▼
+                                                            CH₄ (greenhouse/fuel) + H₂O (bio-nursery)
 ```
 
 This loop is the **primary industrial driver** of the pre-wormhole economy — every phase of Mars terraforming depends on its continuous operation. When players enter the game, this loop will already be active and generating ongoing market orders for all three nodes.
