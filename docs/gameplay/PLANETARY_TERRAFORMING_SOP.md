@@ -322,6 +322,67 @@ $$2\text{H}_2 + \text{O}_2 \rightarrow 2\text{H}_2\text{O} + \text{energy}$$
 
 This loop is the **primary industrial driver** of the pre-wormhole economy — every phase of Mars terraforming depends on its continuous operation. When players enter the game, this loop will already be active and generating ongoing market orders for all three nodes.
 
+### Titan Conservation Mandate
+
+Titan's role in the Sol Tri-System Volatile Loop is **not unlimited extraction**. A hard conservation mandate constrains what can be drawn from Saturn's largest moon, ensuring the economic model treats Titan as a finite, regulated resource rather than an infinite well.
+
+#### Capped Extraction
+
+Extraction from Titan is constrained by two simultaneous limits:
+
+| Constraint Type | Mechanic | Purpose |
+|----------------|----------|---------|
+| **Rate Limit** | Maximum throughput per operational cycle | Prevents rapid depletion; forces players/NPCs to plan extraction schedules |
+| **Total Reserve Cap** | Finite methane/nitrogen inventory that depletes over time | Creates long-term scarcity pressure; drives innovation in alternatives (e.g., direct Venusian skimming) |
+
+The dual-cap architecture means Titan is simultaneously a **reliable supplier** (steady, predictable output within the rate limit) and a **dying resource** (total reserves decline with every extraction cycle). This tension is intentional — it creates natural market dynamics that push the economy toward diversification.
+
+#### Deep-Freeze Gas Depot
+
+Titan's surface temperature (~94 K) makes its atmosphere naturally cryogenic, but preserving volatiles during transport requires **cryogenic depot infrastructure**:
+
+- **Upfront CapEx**: Construction of deep-freeze storage modules at Titan orbital depots
+- **Continuous Maintenance**: Refrigeration systems to prevent boil-off losses during cycler transit windows
+- **Capacity Scaling**: Depot capacity scales with player-invested infrastructure; larger depots enable higher effective throughput (but not above the rate limit)
+
+The depot mechanic adds a natural bottleneck — you cannot extract faster than your depot can store, and boil-off losses eat into margins. This creates a gameplay loop: invest in depot infrastructure → increase effective yield → face diminishing returns as reserves dwindle.
+
+Player opportunities include hauling pre-charged depot modules to Titan, upgrading existing cryogenic stations, and arbitraging between Titan's high-cost/high-quality volatiles and cheaper (but less pure) alternatives from other sources.
+
+#### Protected Heritage Site Status
+
+Titan is designated a **protected heritage site** with the following player-facing implications:
+
+| Zone | Restrictions | Player Impact |
+|------|-------------|---------------|
+| **Core Heritage Zone** | No extraction units or settlements within defined radius | Off-limits; purely observational/scenic |
+| **Buffer Zone** | Extraction permitted at reduced rates + extraction permit costs | Viable but economically constrained; permits create ongoing operational cost |
+| **Beyond Buffer** | Standard extraction economics apply | Full market access; no conservation restrictions |
+
+The heritage designation is primarily an **economic constraint** (permits, taxes, reduced rates in the buffer zone) rather than a total ban. Core zones are off-limits to preserve Titan's scientific and cultural significance, but the buffer zone allows regulated economic activity that generates ongoing permit/tax revenue for the player economy.
+
+#### Cross-Reference: Titan Magnetosphere Physics
+
+Titan has no intrinsic magnetic field but inherits ~0.4–0.5 effective protection from Saturn (see Titan magnetosphere-inheritance architecture work). This physics mechanic is **architecturally separate** from the conservation mandate — it governs radiation exposure and atmospheric retention, not resource economics. The two mechanics coexist: Titan is both a physically distinct body (magnetosphere) and an economically constrained one (conservation mandate).
+
+### Volatile Loop Summary
+
+```
+[Saturn Harvester] ──(H₂)──► [Venus Sabatier Plant] ──(CH₄, O₂)──► [Mars Power & Hydration Engine]
+       │                           │                                      │
+       │                           ▼                                      ▼
+       │                  Local fuel + water export              Liquid water trigger + surface power
+       │
+       └──────────────────────(H₂)─────────────────────────────► [Martian Sabatier Processing]
+                                                                   │
+                                                                   ▼
+                                                            CH₄ (greenhouse/fuel) + H₂O (bio-nursery)
+
+⚠️ **Titan Conservation Constraint**: Titan's volatile extraction is subject to capped rates, deep-freeze depot limits, and protected heritage site status. See [Titan Conservation Mandate](#titan-conservation-mandate).
+```
+
+This loop is the **primary industrial driver** of the pre-wormhole economy — every phase of Mars terraforming depends on its continuous operation. When players enter the game, this loop will already be active and generating ongoing market orders for all three nodes.
+
 ---
 
 ## System Archetypes at Player Entry
