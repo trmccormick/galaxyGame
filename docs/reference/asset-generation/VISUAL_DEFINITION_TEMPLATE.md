@@ -22,6 +22,9 @@ Blueprint (manufacturing) + Operational Data (runtime behavior) + Visual Definit
 
 ## Template Structure
 
+### Required Fields (Production Pipeline)
+These fields are **required** for every visual asset that feeds the game pipeline. They define the single top-down production render.
+
 ```json
 {
   "visual_definition": {
@@ -31,7 +34,17 @@ Blueprint (manufacturing) + Operational Data (runtime behavior) + Visual Definit
     "recognition_features": [],
     "material_profiles": [],
     "technology_level": 1,
-    "manufacturing_style": "",
+    "manufacturing_style": ""
+  }
+}
+```
+
+### Optional Fields (Presentation & Metadata)
+These fields are **optional** and not consumed by the production pipeline. They provide metadata for documentation, wiki, marketing, and future tooling.
+
+```json
+{
+  "visual_definition": {
     "silhouette": "",
     "visual_priority": {
       "primary": [],
@@ -42,7 +55,7 @@ Blueprint (manufacturing) + Operational Data (runtime behavior) + Visual Definit
     "color_profile": {},
     "animation_profile": "",
     "render_profiles": [],
-    "camera_profiles": [],
+    "presentation_profiles": [],
     "complexity_levels": [],
     "shared_components": [],
     "design_constraints": {},
@@ -215,22 +228,45 @@ Which animation category applies. Maps to Icon Bible Section 9.
 - Structures: glow, 1-2s cycle
 - Manufacturing: assembly, 2-3s cycle
 
-### render_profiles (array of strings, REQUIRED)
-Which render types are needed for this asset. Maps to Icon Bible Section 11 + Session 2 specs.
+### render_profiles (array of strings, OPTIONAL)
+Which render types are needed for this asset. Split into two conceptual groups:
 
-**Valid values**: `inventory_icon`, `catalog_render`, `engineering_render`, `blueprint`, `exploded_view`, `sprite_sheet`, `animation_reference`
+**Production-relevant** (feeds the game pipeline — single top-down render):
+- `inventory_icon` — L0-L1 silhouette icon for inventory slots
 
-**Render specifications** (from Session 2):
-- **inventory_icon**: L0-L1, silhouette only, no text
-- **catalog_render**: White background, two isometric views, no annotations
-- **engineering_render**: Callouts, dimensions, materials, part numbers
-- **blueprint**: Section cuts, exploded diagrams, internal routing
-- **exploded_view**: Disassembled components with connection lines
-- **sprite_sheet**: All complexity levels (L0-L5) in single sheet
-- **animation_reference**: Keyframes for animation generation
+**Optional Presentation Outputs** (not consumed by production pipeline; used for documentation, wiki, marketing, future tooling):
+- `catalog_render` — White background, two isometric views, no annotations
+- `engineering_render` — Callouts, dimensions, materials, part numbers
+- `blueprint` — Section cuts, exploded diagrams, internal routing
+- `exploded_view` — Disassembled components with connection lines
+- `sprite_sheet` — All complexity levels (L0-L5) in single sheet
+- `animation_reference` — Keyframes for animation generation
 
-### camera_profiles (array of strings, OPTIONAL)
-Which camera angles are required. Maps to Session 8 three-angle pattern + Session 2 catalog standards.
+```yaml
+render_profiles:
+  required: false
+  production_pipeline: ignored
+  consumed_by:
+    - documentation
+    - wiki
+    - marketing
+    - future_tooling
+```
+
+> **Note**: The Production Asset Render Template v1.0 (finalized 2026-08-04) confirms the actual production pipeline consumes only a single top-down render per asset. Multi-view renders (`catalog_render`, `engineering_render`, etc.) are presentation-only metadata and are not read by PromptBuilder or the Production Asset Render Template.
+
+### presentation_profiles (array of strings, OPTIONAL)
+Which camera angles are required for documentation and presentation purposes. **Not read by PromptBuilder or the Production Asset Render Template.**
+
+```yaml
+presentation_profiles:
+  required: false
+  production_pipeline: ignored
+  consumed_by:
+    - documentation
+    - wiki
+    - marketing
+```
 
 **Valid values**: `front_isometric`, `rear_isometric`, `side_profile`, `top_down`, `cross_section`, `detail_view`
 
@@ -386,13 +422,9 @@ Different object classes need different documents. This table shows which docume
     },
     "animation_profile": "glow",
     "render_profiles": [
-      "inventory_icon",
-      "catalog_render",
-      "engineering_render",
-      "blueprint",
-      "exploded_view"
+      "inventory_icon"
     ],
-    "camera_profiles": [
+    "presentation_profiles": [
       "front_isometric",
       "rear_isometric",
       "side_profile",
@@ -457,12 +489,9 @@ Different object classes need different documents. This table shows which docume
     },
     "animation_profile": "none",
     "render_profiles": [
-      "inventory_icon",
-      "catalog_render",
-      "engineering_render",
-      "blueprint"
+      "inventory_icon"
     ],
-    "camera_profiles": [
+    "presentation_profiles": [
       "front_isometric",
       "side_profile",
       "cross_section"
