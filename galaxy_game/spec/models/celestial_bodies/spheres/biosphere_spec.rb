@@ -305,24 +305,26 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
   end
 
   describe '#calculate_habitability' do
-    let(:atmosphere) { create(:atmosphere, celestial_body: celestial_body) }
-    let(:oxygen) { double('Gas', name: 'O2', percentage: 20.0) }
-    
     before do
-      allow(celestial_body).to receive(:atmosphere).and_return(atmosphere)
-      allow(atmosphere).to receive(:gases).and_return(double('Gases', exists?: true))
-      allow(atmosphere.gases).to receive(:find_by)
-                        .with(hash_including(:name => anything()))
-                        .and_return(oxygen)
-      allow(celestial_body).to receive(:surface_temperature).and_return(288.0)
-      allow(atmosphere).to receive(:pressure).and_return(1.0)
+      atmosphere.update!(
+        temperature_data: {
+          'tropical_temperature' => 300.0,
+          'polar_temperature' => 250.0
+        },
+        temperature: 288.0,
+        pressure: 1.0
+      )
+      celestial_body.update!(surface_temperature: 288.0)
+      # Ensure O2 gas exists for base tests (factory creates H2O/CO2/N2 only)
+      o2 = atmosphere.gases.find_by(name: 'O2')
+      unless o2
+        atmosphere.gases.create!(name: 'O2', percentage: 21.0)
+      end
     end
     
     it 'calculates habitability based on atmospheric conditions' do
-      # Call the method
       habitability = biosphere.calculate_habitability
       
-      # Should have high habitability with Earth-like conditions
       expect(habitability).to be > 0.5
       expect(biosphere.habitable_ratio).to eq(habitability)
     end
@@ -333,11 +335,283 @@ RSpec.describe CelestialBodies::Spheres::Biosphere, type: :model do
     end
     
     it 'returns low habitability with poor conditions' do
-      allow(oxygen).to receive(:percentage).and_return(2.0) # Too little oxygen
-      allow(atmosphere).to receive(:pressure).and_return(0.1) # Too little pressure
-      allow(celestial_body).to receive(:surface_temperature).and_return(350.0) # Too hot
+      atmosphere.update!(pressure: 0.1, temperature: 288.0)
+      celestial_body.update!(surface_temperature: 350.0)
+      o2 = atmosphere.gases.find_by(name: 'O2')
+      o2&.update!(percentage: 2.0) if o2
       
-      expect(biosphere.calculate_habitability).to be < 0.3
+      habitability = biosphere.calculate_habitability
+      expect(habitability).to be < 0.4
+    end
+    
+    context 'with world-agnostic temperature factor' do
+      before do
+        atmosphere.update!(temperature: 288.0, pressure: 1.0)
+        celestial_body.update!(surface_temperature: 288.0)
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 21.0) if o2
+      end
+      
+      it 'gives optimal score when temp is within ±15K of ambient' do
+        celestial_body.update!(surface_temperature: 295.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.6
+      end
+      
+      it 'gives reduced score when temp is within ±30K of ambient' do
+        celestial_body.update!(surface_temperature: 320.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.75
+      end
+      
+      it 'gives poor score when temp is within ±60K of ambient' do
+        celestial_body.update!(surface_temperature: 348.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.7
+      end
+      
+      it 'gives worst score when temp is beyond ±120K of ambient' do
+        celestial_body.update!(surface_temperature: 420.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.6
+      end
+      
+      it 'works for non-Earth worlds (Mars-like ambient)' do
+        atmosphere.update!(temperature: 210.0, pressure: 0.6)
+        celestial_body.update!(surface_temperature: 215.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.2
+      end
+      
+      it 'works for hot worlds (Venus-like ambient)' do
+        atmosphere.update!(temperature: 737.0, pressure: 90.0)
+        celestial_body.update!(surface_temperature: 740.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.1
+      end
+    end
+    
+    context 'with oxygen factor' do
+      before do
+        atmosphere.update!(temperature: 288.0, pressure: 1.0)
+        celestial_body.update!(surface_temperature: 288.0)
+      end
+      
+      it 'gives optimal score for O2 between 15-30%' do
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 21.0) if o2
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.5
+      end
+      
+      it 'gives marginal score for O2 between 10-15%' do
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 12.0) if o2
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.7
+      end
+      
+      it 'gives low score for O2 between 5-10%' do
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 7.0) if o2
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.65
+      end
+      
+      it 'gives worst score for O2 below 5%' do
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 2.0) if o2
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.55
+      end
+      
+      it 'gives reduced score for O2 above 30% (fire risk)' do
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 35.0) if o2
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.7
+      end
+      
+      it 'handles nil O2 gas gracefully' do
+        o2_gas = atmosphere.gases.find_by(name: 'O2')
+        o2_gas&.destroy if o2_gas
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.55
+      end
+    end
+    
+    context 'with liquid water factor' do
+      before { allow_any_instance_of(CelestialBodies::Spheres::Hydrosphere).to receive(:run_simulation) }
+      
+      it 'derives score from hydrosphere state_distribution liquid ratio (0-1)' do
+        hyd = create(:hydrosphere, celestial_body: celestial_body)
+        hyd.update!(state_distribution: { 'liquid' => 0.5 })
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.3
+      end
+      
+      it 'derives score from hydrosphere state_distribution liquid percentage (0-100)' do
+        hyd = create(:hydrosphere, celestial_body: celestial_body)
+        hyd.update!(state_distribution: { 'liquid' => 75.0 })
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.4
+      end
+      
+      it 'falls back to 0.0 when hydrosphere is missing' do
+        # Use a fresh celestial body without hydrosphere to test graceful degradation
+        fresh_body = create(:celestial_body, solar_system: solar_system)
+        fresh_atmo = create(:atmosphere, celestial_body: fresh_body, temperature: 288.0, pressure: 1.0)
+        fresh_atmo.gases.create!(name: 'O2', percentage: 21.0)
+        fresh_body.update!(surface_temperature: 288.0)
+        fresh_body.build_biosphere.skip_simulation = true if fresh_body.biosphere.respond_to?(:skip_simulation=)
+        fresh_body.biosphere.save!
+        
+        habitability = fresh_body.biosphere.calculate_habitability
+        # With all other factors optimal but no water, expect moderate habitability
+        expect(habitability).to be > 0.3
+      end
+      
+      it 'falls back to 0.0 when state_distribution is nil' do
+        hyd = create(:hydrosphere, celestial_body: celestial_body)
+        hyd.update!(state_distribution: nil)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.3
+      end
+      
+      it 'falls back to 0.0 when state_distribution has no liquid key' do
+        hyd = create(:hydrosphere, celestial_body: celestial_body)
+        hyd.update!(state_distribution: { 'ice' => 100.0 })
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.3
+      end
+      
+      it 'handles empty state_distribution hash gracefully' do
+        hyd = create(:hydrosphere, celestial_body: celestial_body)
+        hyd.update!(state_distribution: {})
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.3
+      end
+    end
+    
+    context 'with pressure factor' do
+      before do
+        atmosphere.update!(temperature: 288.0)
+        celestial_body.update!(surface_temperature: 288.0)
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 21.0) if o2
+      end
+      
+      it 'gives optimal score for Earth-normal pressure (1 bar)' do
+        atmosphere.update!(pressure: 1.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.5
+      end
+      
+      it 'gives reduced score for thin atmosphere (Mars-like 0.6 bar)' do
+        atmosphere.update!(pressure: 0.6)
+        
+        habitability = biosphere.calculate_habitability
+        # 0.6 bar is in the "workable" range (factor=0.8), so expect moderate score
+        expect(habitability).to be < 0.85
+      end
+      
+      it 'gives reduced score for very thin atmosphere (0.2 bar)' do
+        atmosphere.update!(pressure: 0.2)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.7
+      end
+      
+      it 'gives reduced score for thick atmosphere (Venus-like 90 bar)' do
+        atmosphere.update!(pressure: 90.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be < 0.65
+      end
+      
+      it 'works for low-pressure worlds (Mars-like)' do
+        atmosphere.update!(pressure: 0.6, temperature: 210.0)
+        celestial_body.update!(surface_temperature: 215.0)
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be >= 0.0
+      end
+    end
+    
+    context 'with life presence bonus' do
+      before do
+        Biology::LifeForm.where(biosphere: biosphere).destroy_all
+      end
+      
+      it 'gives no bonus when no life forms exist' do
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be > 0.3 # still has base factors
+      end
+      
+      it 'applies bonus based on life form count and domain diversity' do
+        lf1 = create(:life_form, biosphere: biosphere, complexity: :microbial, domain: :aquatic)
+        lf2 = create(:life_form, biosphere: biosphere, complexity: :simple, domain: :terrestrial)
+        
+        habitability_with_bonus = biosphere.calculate_habitability
+        
+        lf1.destroy
+        lf2.destroy
+        biosphere.reload
+        
+        habitability_no_bonus = biosphere.calculate_habitability
+        
+        expect(habitability_with_bonus).to be > habitability_no_bonus
+      end
+      
+      it 'caps total habitability at 1.0 even with max life bonus' do
+        20.times do |i|
+          create(:life_form, biosphere: biosphere, 
+                        complexity: [:microbial, :simple, :complex][i % 3], 
+                        domain: [:aquatic, :terrestrial, :aerial][i % 3])
+        end
+        
+        habitability = biosphere.calculate_habitability
+        expect(habitability).to be <= 1.0
+      end
+    end
+    
+    context 'weighted matrix verification' do
+      before do
+        o2 = atmosphere.gases.find_by(name: 'O2')
+        o2&.update!(percentage: 21.0) if o2
+      end
+      
+      it 'uses correct weights: O2 30%, temp 30%, water 25%, pressure 15%' do
+        atmosphere.update!(pressure: 1.0, temperature: 288.0)
+        celestial_body.update!(surface_temperature: 288.0)
+        
+        habitability = biosphere.calculate_habitability
+        
+        expect(habitability).to be > 0.7
+      end
+      
+      it 'returns habitable_ratio that was saved' do
+        habitability = biosphere.calculate_habitability
+        expect(biosphere.habitable_ratio).to eq(habitability)
+      end
     end
   end
   

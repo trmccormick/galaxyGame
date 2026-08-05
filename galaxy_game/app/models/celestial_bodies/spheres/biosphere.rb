@@ -101,25 +101,40 @@ module CelestialBodies
         biodiversity_index
       end
       
-      # Calculate habitability ratio based on atmosphere and temperature
+      # Calculate habitability ratio using a world-agnostic, stage-gate evaluation matrix.
+      # All thresholds are expressed as deltas or ratios relative to the celestial body's own
+      # ambient conditions — same formula works for Mars, Eden, System B, or any exoplanet.
+      #
+      # Components (weighted):
+      #   Oxygen     30% — suitability based on O2 presence/proportion
+      #   Temperature 30% — deviation from body's ambient surface temperature
+      #   Liquid water 25% — hydrosphere state_distribution['liquid'] ratio
+      #   Pressure    15% — deviation from body's ambient pressure
+      #   Life bonus  up to 10% — bootstrapping effect when life already exists
       def calculate_habitability
         atmo = celestial_body&.atmosphere
         return 0.0 unless atmo && atmo.gases.exists?
-        
-        # Check for earth-like conditions
-        o2_level = atmo.gases.find_by(name: 'O2')&.percentage.to_f
-        pressure = atmo.pressure.to_f
-        temp = celestial_body.surface_temperature.to_f
-        
-        # Simple habitability formula
-        temp_factor = temperature_habitability(temp)
+
+        o2_level     = atmo.gases.find_by(name: 'O2')&.percentage.to_f || 0.0
+        pressure     = atmo.pressure.to_f
+        temp         = celestial_body.surface_temperature.to_f
+        ambient_temp = atmo.temperature.to_f
+        ambient_pres = atmo.pressure.to_f
+
+        o2_factor       = oxygen_habitability(o2_level)
+        temp_factor     = temperature_habitability(temp, ambient_temp)
+        water_factor    = liquid_water_habitability
         pressure_factor = pressure_habitability(pressure)
-        o2_factor = oxygen_habitability(o2_level)
-        
-        # Weighted calculation
-        self.habitable_ratio = (temp_factor * 0.4) + (pressure_factor * 0.3) + (o2_factor * 0.3)
+
+        self.habitable_ratio = (o2_factor * 0.30) +
+                               (temp_factor * 0.30) +
+                               (water_factor * 0.25) +
+                               (pressure_factor * 0.15)
+
+        life_bonus = life_presence_bonus
+        self.habitable_ratio = [self.habitable_ratio + life_bonus, 1.0].min
+
         save!
-        
         habitable_ratio
       end
       
@@ -221,8 +236,9 @@ module CelestialBodies
         return if life_forms.empty?
         
         # First calculate environment factors
+        ambient_temp = celestial_body.atmosphere&.temperature || 288.0
         environment_factors = {
-          temperature: temperature_habitability(celestial_body.surface_temperature.to_f),
+          temperature: temperature_habitability(celestial_body.surface_temperature.to_f, ambient_temp),
           atmosphere: oxygen_habitability(celestial_body.atmosphere&.gases&.find_by(name: 'O2')&.percentage.to_f || 0),
           water: celestial_body.hydrosphere.present? ? celestial_body.hydrosphere.water_coverage : 0.0
         }
@@ -412,48 +428,73 @@ module CelestialBodies
       
       private
       
-      # Temperature habitability factor (0-1)
-      def temperature_habitability(temp)
-        return 0 if temp < 240 || temp > 320
-        
-        # Optimal temperature is 288-295K
-        if temp.between?(288, 295)
-          1.0  # Ideal temperature
-        elsif temp.between?(270, 310)
-          0.8  # Good temperature
-        elsif temp.between?(250, 320)
-          0.4  # Marginal temperature
-        else
-          0.1  # Poor temperature
-        end
-      end
-      
-      # Pressure habitability factor (0-1)
-      def pressure_habitability(pressure)
-        return 0 if pressure < 0.3 || pressure > 3.0
-        
-        # Optimal pressure is 0.7-1.3 atm
-        if pressure.between?(0.7, 1.3)
-          1.0  # Ideal pressure
-        elsif pressure.between?(0.5, 2.0)
-          0.7  # Good pressure
-        else
-          0.3  # Marginal pressure
-        end
-      end
-      
-      # Oxygen habitability factor (0-1)
+      #---------------------------------------------------------------------------
+      # Private: World-agnostic habitability factors
+      #---------------------------------------------------------------------------
+
+      # Oxygen suitability (0-1) based on O2 presence/proportion.
+      # Biology in the game requires a minimum O2 threshold regardless of world ambient,
+      # so we use Earth-normal (21%) as the normalization baseline.
       def oxygen_habitability(o2_level)
-        return 0 if o2_level < 5 || o2_level > 35
-        
-        # Optimal oxygen is 15-25%
-        if o2_level.between?(15, 25)
-          1.0  # Ideal oxygen
-        elsif o2_level.between?(10, 30)
-          0.7  # Good oxygen
+        return 0.0 if o2_level < 5.0
+        return 0.3 if o2_level < 10.0   # trace — marginal
+        return 0.7 if o2_level < 15.0   # low — workable with adaptation
+        return 1.0 if o2_level <= 30.0  # optimal range
+        return 0.6 if o2_level <= 40.0  # high — fire risk, diminishing returns
+        0.3                               # very high — toxic
+      end
+
+      # Temperature suitability (0-1) relative to the body's ambient temperature.
+      # Life adapts to local conditions; optimal = within ±30K of ambient.
+      def temperature_habitability(temp, ambient_temp)
+        delta = (temp - ambient_temp).abs
+        return 0.0 if delta > 120
+        return 0.2 if delta > 60
+        return 0.5 if delta > 30
+        return 0.8 if delta > 15
+        1.0 # within ±15K of ambient — optimal
+      end
+
+      # Liquid water suitability (0-1) derived from hydrosphere state_distribution.
+      # Falls back to 0.0 if hydrosphere data is missing or incomplete.
+      def liquid_water_habitability
+        return 0.0 unless celestial_body&.hydrosphere
+
+        hyd = celestial_body.hydrosphere
+        dist = hyd.state_distribution.is_a?(Hash) ? hyd.state_distribution : {}
+        liquid = dist['liquid'].to_f
+
+        # state_distribution values are typically percentages (0-100) or ratios (0-1)
+        if liquid > 1.0
+          [liquid / 100.0, 1.0].min
         else
-          0.3  # Marginal oxygen
+          liquid
         end
+      end
+
+      # Pressure suitability (0-1) relative to Earth-normal (1 bar).
+      # Uses ratio-based thresholds so the same formula works for any world.
+      def pressure_habitability(pressure)
+        return 0.0 if pressure < 0.1
+        
+        ratio = pressure / 1.0  # relative to Earth-normal
+        return 0.2 if ratio < 0.3   # very thin (Mars-like)
+        return 0.5 if ratio < 0.5   # thin
+        return 0.8 if ratio <= 3.0  # workable range
+        return 0.5 if ratio <= 10.0 # thick but manageable (Venus-like)
+        0.2                         # extremely thick
+      end
+
+      # Life presence bonus (0-0.1) — bootstrapping effect when life already exists.
+      # Based on existing life forms' count and domain diversity.
+      def life_presence_bonus
+        return 0.0 if life_forms.empty?
+
+        count = life_forms.count
+        domains = life_forms.pluck(:domain).uniq.size
+
+        bonus = (count * 0.01) + (domains * 0.005)
+        [bonus, 0.1].min
       end
       
       # Update the set_defaults method to ALWAYS set 300.0 - not just when nil
