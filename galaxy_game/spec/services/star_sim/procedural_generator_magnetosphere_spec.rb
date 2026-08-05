@@ -34,6 +34,13 @@ RSpec.describe StarSim::ProceduralGenerator do
       expect(mars_strength).to be < earth_strength
     end
 
+    it 'returns near-zero value for Mars-mass planet (dead core gate)' do
+      mars_mass = 6.42e23
+      mars_strength = generator.send(:calculate_magnetosphere_strength, mars_mass, 24.6, 4.5e9)
+      
+      expect(mars_strength).to be <= 0.05
+    end
+
     it 'returns higher value for larger planets (up to clamp)' do
       earth_mass = 5.972e24
       super_earth_mass = 5.0 * earth_mass

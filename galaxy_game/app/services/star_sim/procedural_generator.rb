@@ -1393,6 +1393,17 @@ module StarSim
       # Combine factors into 0.0-1.0 scale
       base_strength = mass_factor * rotation_factor * age_factor
       
+      # Core-state gate: bodies below minimum mass cannot sustain a geodynamo
+      # Small terrestrial bodies lose core heat too quickly for convective dynamo
+      core_threshold = 0.15 # minimum mass ratio (relative to Earth) for dynamo activity
+      if mass_ratio < core_threshold
+        # Sharp decay below threshold — dead/frozen core produces negligible field
+        core_activity = (mass_ratio / core_threshold) ** 7
+      else
+        core_activity = 1.0
+      end
+      base_strength *= core_activity
+      
       # Clamp to [0.0, 1.0]
       [[base_strength, 0.0].max, 1.0].min
     end
