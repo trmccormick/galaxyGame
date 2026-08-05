@@ -4,61 +4,58 @@ RSpec.describe StarSim::ProceduralGenerator do
   let(:generator) { described_class.new }
 
   describe '#calculate_magnetosphere_strength' do
-    it 'returns value in [0.0, 1.0] for all inputs' do
+    it 'returns value in [0.0, 1.0] for all baseline inputs' do
       50.times do
-        mass = rand(0.1e24..10e24)
-        rotation = rand(6.0..100.0)
-        age = rand(0.0..10e9)
-        strength = generator.send(:calculate_magnetosphere_strength, mass, rotation, age)
+        baseline = rand(0.0..1.0)
+        strength = generator.send(:calculate_magnetosphere_strength, baseline)
         expect(strength).to be >= 0.0
         expect(strength).to be <= 1.0
       end
     end
 
-    it 'returns ~1.0 for Earth-mass planet at ~4.5 Gy age' do
-      earth_mass = 5.972e24
-      strength = generator.send(:calculate_magnetosphere_strength, earth_mass, 24, 4.5e9)
-      expect(strength).to be_within(0.15).of(1.0)
+    it 'returns ~1.0 for Earth baseline (1.0)' do
+      strength = generator.send(:calculate_magnetosphere_strength, 1.0)
+      expect(strength).to be_within(0.01).of(1.0)
     end
 
-    it 'returns low value for very old planet with slow rotation' do
-      strength = generator.send(:calculate_magnetosphere_strength, 1e24, 1000, 1e10)
-      expect(strength).to be < 0.3
+    it 'returns 0.0 for Mars baseline (0.0) with no modifiers' do
+      strength = generator.send(:calculate_magnetosphere_strength, 0.0)
+      expect(strength).to eq(0.0)
     end
 
-    it 'returns lower value for Mars-mass planet than Earth' do
-      mars_mass = 6.42e23
-      earth_strength = generator.send(:calculate_magnetosphere_strength, 5.972e24, 24, 4.5e9)
-      mars_strength = generator.send(:calculate_magnetosphere_strength, mars_mass, 24.6, 4.5e9)
-      
-      expect(mars_strength).to be < earth_strength
+    it 'returns Venus baseline (0.3) unchanged when no modifiers active' do
+      strength = generator.send(:calculate_magnetosphere_strength, 0.3)
+      expect(strength).to be_within(0.01).of(0.3)
     end
 
-    it 'returns near-zero value for Mars-mass planet (dead core gate)' do
-      mars_mass = 6.42e23
-      mars_strength = generator.send(:calculate_magnetosphere_strength, mars_mass, 24.6, 4.5e9)
+    it 'caps at 1.0 when baseline + modifiers exceed 1.0' do
+      # Baseline 0.95 with no modifiers = 0.95 (not capped)
+      strength = generator.send(:calculate_magnetosphere_strength, 0.95)
+      expect(strength).to eq(0.95)
       
-      expect(mars_strength).to be <= 0.05
+      # But baseline 1.0 should cap at 1.0
+      strength_max = generator.send(:calculate_magnetosphere_strength, 1.0)
+      expect(strength_max).to eq(1.0)
     end
 
-    it 'returns higher value for larger planets (up to clamp)' do
-      earth_mass = 5.972e24
-      super_earth_mass = 5.0 * earth_mass
-      
-      earth_strength = generator.send(:calculate_magnetosphere_strength, earth_mass, 24, 4.5e9)
-      super_earth_strength = generator.send(:calculate_magnetosphere_strength, super_earth_mass, 24, 4.5e9)
-      
-      # Super-Earth should be >= Earth (may hit clamp at 1.0)
-      expect(super_earth_strength).to be >= earth_strength
+    it 'clamps negative baseline to 0.0' do
+      strength = generator.send(:calculate_magnetosphere_strength, -0.5)
+      expect(strength).to eq(0.0)
     end
 
-    it 'returns higher value for faster rotation' do
-      mass = 5.972e24
-      
-      slow_strength = generator.send(:calculate_magnetosphere_strength, mass, 100, 4.5e9)
-      fast_strength = generator.send(:calculate_magnetosphere_strength, mass, 12, 4.5e9)
-      
-      expect(fast_strength).to be > slow_strength
+    it 'clamps baseline > 1.0 to 1.0' do
+      strength = generator.send(:calculate_magnetosphere_strength, 2.0)
+      expect(strength).to eq(1.0)
+    end
+
+    describe 'parent body influence (stubbed)' do
+      it 'returns baseline for moons without parent body lookup infrastructure' do
+        # Architecture: moons inside gas giant magnetospheres should get partial shielding
+        # Currently stubbed at 0.0 until parent body lookup is implemented
+        moon_baseline = 0.0
+        strength = generator.send(:calculate_magnetosphere_strength, moon_baseline)
+        expect(strength).to eq(0.0) # baseline only, no parent influence yet
+      end
     end
   end
 

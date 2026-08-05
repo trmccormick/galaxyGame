@@ -424,9 +424,11 @@ module StarSim
       # Rotation period: Earth-like planets typically 6-48 hours
       rotation_period = rand(6.0..48.0)
       
-      # Calculate magnetosphere from physical properties
-      magnetosphere_strength = calculate_magnetosphere_strength(mass, rotation_period)
-      magnetosphere_radius = calculate_magnetosphere_radius(mass, magnetosphere_strength)
+      # Procedural default magnetosphere (no JSON baseline for procedurally generated bodies)
+      # Effective strength = baseline + modifiers, capped at 1.0
+      procedural_baseline = 0.5 # neutral default for procedurally generated planets
+      effective_strength = calculate_magnetosphere_strength(procedural_baseline)
+      magnetosphere_radius = calculate_magnetosphere_radius(mass, effective_strength)
       
       {
         "name" => planet_name,
@@ -442,7 +444,7 @@ module StarSim
         "known_pressure" => rand(0.1..2.0),
         "geological_activity" => rand(10..90),
         "rotation_period_hours" => rotation_period,
-        "magnetosphere_strength" => magnetosphere_strength,
+        "magnetosphere_strength" => effective_strength,
         "magnetosphere_radius_km" => magnetosphere_radius, # Omitted if nil
         "geosphere_attributes" => {
           "geological_activity" => rand(10..90),
@@ -1130,11 +1132,7 @@ module StarSim
         
         # Some moons have intrinsic magnetospheres (rare, like Ganymede ~1% chance)
         if rand < 0.01
-          moon_magnetosphere_strength = calculate_magnetosphere_strength(
-            mass,
-            24,  # Moons rotate with parent
-            4.5e9  # Assume solar system age
-          )
+          moon_magnetosphere_strength = calculate_magnetosphere_strength(moon_data['magnetosphere_strength'] || 0.0)
           if moon_magnetosphere_strength > 0.01
             moon_data["magnetosphere_strength"] = moon_magnetosphere_strength
             moon_data["magnetosphere_radius_km"] = calculate_magnetosphere_radius(
@@ -1372,40 +1370,37 @@ module StarSim
 
     # Calculate magnetosphere strength (0.0-1.0) based on physical properties
     # Mass, rotation speed, and age all contribute to dynamo effect
-    def calculate_magnetosphere_strength(mass_kg, rotation_period_hours = 24, age_years = 4.5e9)
-      earth_mass_kg = 5.972e24
-      earth_age_years = 4.5e9
-      earth_rotation_hours = 24.0
+    # Calculate effective magnetosphere strength (0.0-1.0) from baseline + modifiers
+    #
+    # Architecture:
+    #   - baseline: natural magnetosphere from JSON data (geodynamo, induced field, crustal remanence)
+    #   - modifiers: artificial magnetosphere, parent body influence, game-system effects
+    #   - effective = baseline + modifiers, capped at 1.0
+    #
+    # @param baseline [Float] natural magnetosphere_strength from celestial body JSON data (0.0-1.0)
+    # @param mass_kg [Float] body mass for parent-body influence calculation
+    # @param rotation_period_hours [Float] rotation period (unused by default, reserved for future modifiers)
+    # @param age_years [Float] body age (unused by default, reserved for future modifiers)
+    # @return [Float] effective magnetosphere strength capped at 1.0
+    def calculate_magnetosphere_strength(baseline = 0.0, mass_kg = 5.972e24, rotation_period_hours = 24, age_years = 4.5e9)
+      # Clamp baseline to valid range
+      baseline = [[baseline, 0.0].max, 1.0].min
       
-      # Mass factor: normalized to Earth (1.0 for Earth-mass)
-      mass_ratio = mass_kg / earth_mass_kg
-      mass_factor = mass_ratio ** 0.33
+      # Modifiers (all stubbed at 0.0 until implemented):
+      # 1. Artificial magnetosphere from terraforming tech — requires settlement/terraforming data access
+      artificial_modifier = 0.0
       
-      # Rotation factor: normalized to Earth (1.0 for 24h rotation)
-      # Faster rotation amplifies field (up to 3x), slower reduces it
-      rotation_factor = [earth_rotation_hours / [rotation_period_hours, 6.0].max, 3.0].min
+      # 2. Parent body influence (moons inside gas giant magnetospheres)
+      #    Requires parent body lookup infrastructure — stubbed for now
+      parent_influence_modifier = 0.0
       
-      # Age factor: normalized to Earth (1.0 for 4.5Gy age)
-      # Older planets have cooler cores, weaker fields
-      # exp(-(age - earth_age) / (2 * earth_age)) = 1.0 at earth_age
-      age_factor = Math.exp(-(age_years - earth_age_years) / (2.0 * earth_age_years))
+      # 3. Lagrange shield stations and other game-system modifiers — stubbed
+      system_modifiers = 0.0
       
-      # Combine factors into 0.0-1.0 scale
-      base_strength = mass_factor * rotation_factor * age_factor
+      effective = baseline + artificial_modifier + parent_influence_modifier + system_modifiers
       
-      # Core-state gate: bodies below minimum mass cannot sustain a geodynamo
-      # Small terrestrial bodies lose core heat too quickly for convective dynamo
-      core_threshold = 0.15 # minimum mass ratio (relative to Earth) for dynamo activity
-      if mass_ratio < core_threshold
-        # Sharp decay below threshold — dead/frozen core produces negligible field
-        core_activity = (mass_ratio / core_threshold) ** 7
-      else
-        core_activity = 1.0
-      end
-      base_strength *= core_activity
-      
-      # Clamp to [0.0, 1.0]
-      [[base_strength, 0.0].max, 1.0].min
+      # Cap at 1.0
+      [[effective, 0.0].max, 1.0].min
     end
 
     # Calculate magnetosphere radius (km) based on strength and mass
