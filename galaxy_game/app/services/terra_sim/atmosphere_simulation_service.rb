@@ -110,20 +110,66 @@ module TerraSim
       return unless atmosphere.present?
 
       loss_factor = calculate_solar_wind_factor
+      return if loss_factor <= 0.00001 # No meaningful loss with magnetosphere active
 
+      # Apply loss per-gas, adjusted by molecular mass / escape velocity
       atmosphere.gases.each do |gas|
-        next if gas.mass.nil?
-        new_mass = [gas.mass - gas.mass * loss_factor, 0].max
-        gas.update(mass: new_mass)
+        next if gas.mass.nil? || gas.mass <= 0
+
+        gas_mass_factor = molecular_mass_factor(gas.name)
+        adjusted_loss_rate = loss_factor * gas_mass_factor
+
+        new_mass = [gas.mass - gas.mass * adjusted_loss_rate, 0].max
+        # Use mass_frozen to avoid float precision issues with very large numbers
+        gas.update_columns(mass: new_mass)
       end
 
-      atmosphere.recalculate_mass!
-      atmosphere.update_pressure_from_mass!
+      # After updating all gas masses, update total_atmospheric_mass directly (avoids after_save callback chain)
+      new_total = atmosphere.gases.sum(:mass)
+      atmosphere.update_columns(total_atmospheric_mass: new_total)
     end
 
     def calculate_solar_wind_factor
-      # Placeholder for future magnetic field-based formula
-      0.0001
+      # Nearly zero loss with magnetosphere protection
+      return 0.00001 if @celestial_body.has_magnetosphere
+
+      # Calculate base solar wind intensity from stellar distance
+      # StarDistance stores distance in meters; convert to km
+      star_distance_m = @celestial_body.star_distances&.first&.distance
+      return 0.0001 if star_distance_m.nil? || star_distance_m <= 0
+
+      star_distance_km = star_distance_m / 1000.0
+
+      # Reference: Earth distance from Sol ≈ 149.6M km (1 AU)
+      au_to_km = 149_600_000.0
+      earth_distance_km = au_to_km
+
+      # Inverse square law for solar wind intensity
+      # intensity_ratio = (earth_distance / actual_distance)²
+      intensity_ratio = (earth_distance_km / star_distance_km.to_f) ** 2
+
+      # Base loss rate at Earth distance with no magnetosphere: ~0.01% per step
+      base_loss_rate = 0.0001
+
+      intensity_ratio * base_loss_rate
+    end
+
+    def molecular_mass_factor(gas_name)
+      # Relative escape rates based on molecular mass
+      # H₂ escapes fastest, CO₂ escapes slowest
+      # Factors relative to a baseline (CO₂ = 1.0)
+      factors = {
+        'H2' => 5.0,   # Hydrogen: very light, escapes 5x faster than CO₂
+        'He' => 3.5,   # Helium: light noble gas
+        'N2' => 1.2,   # Nitrogen: lighter than CO₂
+        'O2' => 1.1,   # Oxygen: slightly lighter than CO₂
+        'Ar' => 0.9,   # Argon: slightly heavier than CO₂
+        'CO2' => 1.0,  # Carbon dioxide: baseline
+        'H2O' => 0.8,  # Water vapor: heavier, escapes slower
+        'CH4' => 1.15  # Methane: between N₂ and CO₂
+      }
+
+      factors.fetch(gas_name, 1.0) # Default to 1.0 (CO₂-like) if unknown
     end
 
     def decrease_dust(amount)
