@@ -124,7 +124,12 @@ module TerraSim
         gas.update_columns(mass: new_mass)
       end
 
-      # After updating all gas masses, update total_atmospheric_mass directly (avoids after_save callback chain)
+      # After updating all gas masses, update total_atmospheric_mass directly.
+      # CRITICAL: Must use update_columns (not save!/recalculate_mass!) to avoid triggering
+      # after_save callbacks on Atmosphere model. Those callbacks call update_pressure_from_mass!
+      # which recalculates pressure via material lookup — this interferes with test environments
+      # and can corrupt gas state during simulation cycles. Pressure will be recalculated on the
+      # next natural simulate() cycle when called from GeosphereSimulationService.
       new_total = atmosphere.gases.sum(:mass)
       atmosphere.update_columns(total_atmospheric_mass: new_total)
     end
