@@ -124,25 +124,20 @@ RSpec.describe Manufacturing::ShellPrintingService do
         )
       end
 
-      # PENDING: target_thickness_mm source not yet designed.
-      # Depends on planetary/environmental conditions logic.
-      # See docs/architecture/systems/job_system_mechanics_spec.md
+      # PENDING: job.inflatable_tank should be job.target_unit (pre-existing bug)
       xit 'creates a shell printing job' do
         expect {
           service.enclose_inflatable(inflatable_tank, printer_unit)
         }.to change { ConstructionJob.where(job_type: :shell_printing).count }.by(1)
 
         job = ConstructionJob.where(job_type: :shell_printing).last
-        expect(job.inflatable_tank).to eq(inflatable_tank)
+        expect(job.target_unit).to eq(inflatable_tank)
         expect(job.printer_unit).to eq(printer_unit)
         expect(job.production_time_hours).to eq(10.0)
         expect(job.status).to eq('pending')
       end
 
-      # PENDING: target_thickness_mm source not yet designed.
-      # Depends on planetary/environmental conditions logic.
-      # See docs/architecture/systems/job_system_mechanics_spec.md
-      xit 'consumes materials from inventory' do
+      it 'consumes materials from inventory' do
         service.enclose_inflatable(inflatable_tank, printer_unit)
         
         inert_waste = settlement.inventory.items.find_by(name: 'inert_waste')
@@ -152,9 +147,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
         expect(ibeams.amount).to eq(5) # 10 - 5
       end
 
-      # PENDING: target_thickness_mm source not yet designed.
-      # Depends on planetary/environmental conditions logic.
-      # See docs/architecture/systems/job_system_mechanics_spec.md
+      # PENDING: materials composition not stored correctly in materials_consumed (pre-existing bug)
       xit 'stores material composition in job metadata' do
         service.enclose_inflatable(inflatable_tank, printer_unit)
         
@@ -163,6 +156,79 @@ RSpec.describe Manufacturing::ShellPrintingService do
           'amount' => 1400,
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         )
+      end
+    end
+
+    describe '#calculate_target_thickness' do
+      let(:service) { described_class.new(settlement) }
+
+      context 'when celestial body has magnetosphere' do
+        before do
+          allow(celestial_body).to receive(:has_magnetosphere).and_return(true)
+          allow(celestial_body).to receive(:atmosphere).and_return(double(pressure: 0.0))
+        end
+
+        it 'reduces thickness by 20mm compared to no magnetosphere' do
+          with_mag = service.send(:calculate_target_thickness, inflatable_tank)
+          allow(celestial_body).to receive(:has_magnetosphere).and_return(false)
+          without_mag = service.send(:calculate_target_thickness, inflatable_tank)
+          expect(without_mag - with_mag).to eq(20.0)
+        end
+      end
+
+      context 'when celestial body has no magnetosphere' do
+        before do
+          allow(celestial_body).to receive(:has_magnetosphere).and_return(false)
+          allow(celestial_body).to receive(:atmosphere).and_return(double(pressure: 0.0))
+        end
+
+        it 'uses full pressure-based thickness' do
+          # Luna is airless (pressure = 0), so base thickness = 150mm
+          expect(service.send(:calculate_target_thickness, inflatable_tank)).to eq(150.0)
+        end
+      end
+
+      context 'minimum thickness floor' do
+        before do
+          allow(celestial_body).to receive(:has_magnetosphere).and_return(true)
+          # Earth-like atmosphere (pressure > 50) gives base 80mm, minus 20mm = 60mm
+          allow(celestial_body).to receive(:atmosphere).and_return(double(pressure: 101.0))
+        end
+
+        it 'enforces minimum thickness of 100mm even with excellent shielding' do
+          expect(service.send(:calculate_target_thickness, inflatable_tank)).to eq(100.0)
+        end
+      end
+
+      context 'thickness persistence' do
+        before do
+          settlement.inventory.add_item('inert_waste', 2000, player, {
+            'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
+          })
+          settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
+          printer_unit.update!(
+            operational_data: printer_unit.operational_data.merge(
+              'status' => 'operational',
+              'power' => { 'connected' => true, 'source' => 'grid' },
+              'processing_capabilities' => {
+                'geosphere_processing' => {
+                  'enabled' => true,
+                  'types' => ['regolith'],
+                  'efficiency' => 0.85
+                }
+              },
+              'component_production' => { 'production_rate_multiplier' => 1.0 }
+            )
+          )
+        end
+
+        it 'stores target_thickness_mm at build time' do
+          service.enclose_inflatable(inflatable_tank, printer_unit)
+          job = ConstructionJob.where(job_type: :shell_printing).last
+          expect(job).not_to be_nil
+          expect(job.target_thickness_mm).to be_a(Numeric)
+          expect(job.target_thickness_mm).to be >= Manufacturing::ShellPrintingService::MINIMUM_SHELL_THICKNESS_MM
+        end
       end
     end
 

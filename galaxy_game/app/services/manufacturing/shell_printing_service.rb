@@ -1,6 +1,10 @@
 # app/services/manufacturing/shell_printing_service.rb
 module Manufacturing
   class ShellPrintingService
+    # Minimum thickness floor for structural rigidity and puncture resistance.
+    # Shells must always be at least this thick, even on well-shielded worlds.
+    MINIMUM_SHELL_THICKNESS_MM = 100.0
+
     attr_reader :settlement
 
     def initialize(settlement)
@@ -260,36 +264,41 @@ module Manufacturing
     def calculate_target_thickness(inflatable_tank)
       # Get celestial body from settlement location
       celestial_body = @settlement.location&.celestial_body
-      
+
       # Default thickness if no celestial body
       return 120.0 unless celestial_body
-      
+
       # Get atmosphere pressure
       atmosphere = celestial_body.respond_to?(:atmosphere) ? celestial_body.atmosphere : nil
       pressure = atmosphere&.pressure.to_f || 0.0
-      
-      # Calculate thickness based on atmospheric pressure
-      # Airless worlds (pressure = 0) need thicker shells to protect from radiation
-      # Mars-like (pressure ~0.6 kPa) needs less protection
-      # Earth-like (pressure ~101 kPa) needs minimal shell since atmosphere provides protection
-      
-      case pressure
-      when 0
-        # Airless world - thicker shell needed for radiation protection
-        150.0
-      when 0.0..1.0
-        # Very thin atmosphere (Mars-like) - substantial shell needed
-        140.0
-      when 1.0..10.0
-        # Thin atmosphere - moderate shell thickness
-        130.0
-      when 10.0..50.0
-        # Medium atmosphere - reduced shell thickness
-        110.0
-      else
-        # Earth-like or thicker atmosphere - minimal shell thickness
-        80.0
+
+      # Step 1: Base thickness from atmospheric pressure buckets
+      # Airless worlds (pressure = 0) need thicker shells for radiation protection.
+      # Thicker atmospheres provide more shielding, reducing required shell thickness.
+      base_thickness = case pressure
+                       when 0
+                         150.0
+                       when 0.0..1.0
+                         140.0
+                       when 1.0..10.0
+                         130.0
+                       when 10.0..50.0
+                         110.0
+                       else
+                         80.0
+                       end
+
+      # Step 2: Apply magnetosphere shielding bonus (construction-time conditions)
+      # A present magnetosphere reduces radiation exposure, allowing thinner shells.
+      # This is computed once at build time and persisted — not dynamic after construction.
+      shielding_bonus = 0.0
+      if celestial_body.respond_to?(:has_magnetosphere) && celestial_body.has_magnetosphere
+        shielding_bonus = -20.0
       end
+
+      # Step 3: Enforce minimum thickness floor for structural rigidity
+      # Even with excellent shielding, shells must remain structurally useful.
+      [base_thickness + shielding_bonus, MINIMUM_SHELL_THICKNESS_MM].max
     end
 
     def format_materials_for_storage(materials_consumed)
