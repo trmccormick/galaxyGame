@@ -64,10 +64,6 @@ class Inventory < ApplicationRecord
   private
 
   def can_store?(name, amount)
-    # For test environment or when running RSpec, always allow storage
-    return true if Rails.env.test? || defined?(RSpec)
-    
-    # Original logic
     return false unless inventoryable
 
     if specialized_storage_required?(name)
@@ -180,8 +176,8 @@ class Inventory < ApplicationRecord
     # Check surface conditions and store
     item = Item.new(name: name, amount: amount, metadata: metadata)
     if surface_storage.check_item_conditions(item)
-      # ADDED: Record the item in a Material Pile on the surface
-      surface_storage.add_pile(material_name: name, amount: amount, source_unit: nil)
+      # Record the item in a Material Pile on the surface
+      surface_storage.add_pile(material_name: name, amount: amount)
 
       # Original action: Create the item record in the main inventory table
       store_in_inventory(name, amount, owner, metadata) 

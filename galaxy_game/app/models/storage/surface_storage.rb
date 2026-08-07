@@ -30,8 +30,8 @@ module Storage
       apply_surface_conditions(item)
     end
 
-    # Track different material piles on the surface
-    def add_pile(material_name:, amount:, source_unit: nil)
+    # Track material piles on the surface
+    def add_pile(material_name:, amount:)
       pile = material_piles.find_or_initialize_by(
         material_type: material_name
       )

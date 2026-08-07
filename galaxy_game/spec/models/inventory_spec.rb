@@ -36,6 +36,58 @@ RSpec.describe Inventory, type: :model do
     end
   end
 
+  describe '#can_store?' do
+    let(:storage_unit) do
+      create(:base_unit, :storage,
+        owner: settlement,
+        attachable: settlement,
+        operational_data: {
+          'storage' => {
+            'type' => 'general',
+            'capacity' => 1000,
+            'current_level' => 0
+          }
+        }
+      )
+    end
+
+    before do
+      storage_unit
+      settlement.reload
+      allow(settlement).to receive(:surface_storage?).and_return(false)
+      allow(settlement).to receive(:capacity).and_return(1000)
+    end
+
+    context 'when inventoryable is nil' do
+      let(:bare_inventory) { Inventory.new }
+
+      it 'returns false' do
+        expect(bare_inventory.send(:can_store?, 'Battery Pack', 10)).to be false
+      end
+    end
+
+    context 'for general materials' do
+      it 'returns true when storage unit has sufficient capacity' do
+        expect(inventory.send(:can_store?, 'Battery Pack', 500)).to be true
+      end
+
+      it 'returns false when storage unit capacity is insufficient' do
+        expect(inventory.send(:can_store?, 'Battery Pack', 1500)).to be false
+      end
+    end
+
+    context 'for specialized storage materials' do
+      before do
+        allow(inventory).to receive(:specialized_storage_required?).with('O2').and_return(true)
+        allow(inventory).to receive(:find_storage_unit).with('O2').and_return(nil)
+      end
+
+      it 'returns false when no storage unit is found' do
+        expect(inventory.send(:can_store?, 'O2', 10)).to be false
+      end
+    end
+  end
+
   describe '#available_capacity' do
     let(:storage_unit) do
       create(:base_unit, :storage,
