@@ -1072,7 +1072,6 @@
 | File Path | Purpose | Category |
 |-----------|---------|------|
 | `app/services/economics/cost_validator.rb` | Cost validator | Economy |
-| `app/services/economics/infrastructure_cost_calculator.rb` | Infrastructure cost | Economy |
 | `app/services/economics/market_price_service.rb` | Market price service | Economy |
 
 ### Economy Services

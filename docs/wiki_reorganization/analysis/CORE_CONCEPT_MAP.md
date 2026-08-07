@@ -154,7 +154,7 @@
 | **Where defined** | `docs/architecture/manufacturing/MANUFACTURING_SYSTEM_OVERVIEW.md`, `docs/architecture/isru/README.md`, `app/services/manufacturing/` (17 services) |
 | **Files that reference it** | All manufacturing services, `data/json-data/blueprints/`, `data/json-data/templates/`, `app/models/blueprint.rb` |
 | **Current understanding** | Chain: Raw Materials → Processed Materials → Components → Blueprints → Assembly → Units/Craft. ISRU (In-Situ Resource Utilization) enables distributed fabrication. 3D-printed fabricators Mk1-Mk3 are foundational. Regolith processing, component production, material processing, shell printing, byproduct manufacturing. Blueprint cost schema v1.1 is the current standard. |
-| **Likely owner** | `Manufacturing::Service` + `Manufacturing::ProductionService` + `Manufacturing::AssemblyService` |
+| **Owner** | `ManufacturingService` (top-level, no namespace) — called by `MarketStabilizationService.manufacture_item_for_market`. Live entry point for NPC manufacturing. |
 
 ### AI / AI Manager
 
