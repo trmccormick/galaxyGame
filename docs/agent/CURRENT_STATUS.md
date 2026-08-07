@@ -179,7 +179,9 @@
 **Solution**: Boost scouting_score to 101 for abundant opportunities in analyze_resource_vs_scouting_tradeoffs
 **Commit**: "Fix mission_scorer_spec.rb balance logic (16/16 GREEN)"
 **RSPEC Impact**: 257 → 245 failures (12 specs eliminated)
-**Next Priority**: ai_manager cluster progress continues before TerrainForge L4 development
+**Next Priority**: ai_manager cluster progress continues before Surface View gameplay layer work
+
+> **NOTE**: "TerrainForge L4" milestone terminology is deprecated. See `three_layer_views.md` for current architecture: TerrainForge = zoomed Surface View, not a separate layer.
 
 ## ⚠️ CRITICAL: Updated Testing Requirements
 
@@ -463,9 +465,11 @@
 - Remaining: Mission planning integration, priority arbitration tuning
 
 ### Test Suite Status
-- Current failures: 257 (confirmed baseline - TerrainForge L4 UNLOCKED)
+- Current failures: 257 (confirmed baseline)
 - Session reduction: 73 failures eliminated (330 → 257)
-- Next grinder run: Ready for next priority clusters
+- Next grinder run: Ready for next priority cluster
+
+> **NOTE**: "TerrainForge L4 UNLOCKED" milestone terminology is deprecated. See `three_layer_views.md` for current architecture.s
 
 ### Sol Terrain Generation
 - Status: ✅ WORKING (fixed yesterday)
@@ -658,18 +662,20 @@
 
 ---
 
-## 🔧 Test Suite Restoration (Nightly Grinder Active)
-
-### ✅ Session Complete: TerrainForge L4 UNLOCKED (March 5, 2026)
+## 🔧 Test Suite Restoration (Nightly Grinder Active) — *DEPRECATED TERMINOLOGY*
 **Status**: ✅ MAJOR PROGRESS - 330 → 257 failures (73 eliminated)
 **Current Failures**: 257 (confirmed baseline)
+**Target**: <50 failures before Phase 4 (UI Enhancement)
+
+> **NOTE**: "TerrainForge L4" milestone terminology is deprecated. Current architecture: TerrainForge = zoomed Surface View, not a separate layer. See `three_layer_views.md` and task `2026-07-13-HIGH-ARCHITECTURE-THREE-LAYER-VIEWS.md`.
 **Target**: <50 failures before Phase 4 (UI Enhancement)
 **TerrainForge L4**: ✅ UNLOCKED (<300 threshold met)
 
 ### Session Results (March 5, 2026)
 - Previous baseline: 330 failures (corrected from stale 147)
 - Current confirmed: 257 failures
-- Session reduction: 73 failures eliminated
+
+> **NOTE**: "TerrainForge L4 threshold (<300)" milestone terminology is deprecated. See `three_layer_views.md` for current architecture.
 - TerrainForge L4 threshold (<300): ✅ UNLOCKED
 
 **Commits Made This Session**:

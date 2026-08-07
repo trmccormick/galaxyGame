@@ -36,8 +36,8 @@ Features Short-Term Tactical Projections (100-year window) for immediate atmosph
 ### Meso Layer (Surface View)
 Tactical expansion layer (Civ-style). Focuses on heavy-lift craft landing, settlement placement, and resource harvesting (e.g., Nitrogen/Lava Tube access).
 
-### Micro Layer (TerrainForge)
-Granular industrial layer (SimCity-style). Manages ConstructionEvents, I-beam/panel configurations, and internal "worldhouse" logistics.
+### Micro Layer (TerrainForge — zoomed Surface View)
+Granular industrial layer (SimCity-style). Manages ConstructionEvents, I-beam/panel configurations, and internal "worldhouse" logistics. See `three_layer_views.md` for current architecture: TerrainForge shares the same rendering pipeline as Surface View, camera zoomed in on a single tile.
 
 ### Economic Layer (Logistics)
 Player-driven market (EVE-style). Governed by 'Market vs. Build' logic and fixed tax overheads: 0.5% SCC Surcharge, 0.3% Broker Fee, and 3.37% Sales Tax.

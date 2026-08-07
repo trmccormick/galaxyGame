@@ -48,11 +48,12 @@ The Documentation Strategist is responsible for maintaining the integrity, hiera
 ## Recent Context Summary (March 22, 2026)
 
 - **Current State**: Terminated the "Grinder" phase; moved to Phase 4 Expansion.
-- **Active Focus**: Surface Layer MVP (Heavy Lift landings and unit deployment) and TerrainForge (Construction Events).
+- **Active Focus**: Surface Layer MVP (Heavy Lift landings and unit deployment).
+  > **NOTE**: "TerrainForge" terminology is deprecated. See `three_layer_views.md` for current architecture: TerrainForge = zoomed Surface View, not a separate layer.
 - **Key Logic**: Integrated "Market vs. Build" and PLEX tax structures (0.5% SCC, 0.3% Broker, 3.37% Sales Tax).
 
 ---
 
 ## Next Steps
 
-With this role defined, the Documentation Strategist should begin categorizing the backlog tasks into the four-layer hierarchy, enabling prioritization of "Surface" or "TerrainForge" tasks after the next RSpec run.
+With this role defined, the Documentation Strategist should begin categorizing the backlog tasks into the four-layer hierarchy, enabling prioritization of "Surface" tasks after the next RSpec run. (See `three_layer_views.md` for current architecture — TerrainForge is a zoomed Surface View, not a separate layer.)

@@ -24,10 +24,10 @@ This document tracks the implementation of planetary map visualization in Galaxy
     4. Civilisation  - spaceports, bases, roads, worldhouse panels
     5. Units         - probes, scouts, harvesters, transports (always on top)
 
-### TerrainForge View (SimCity construction — future)
-- Zoomed into specific region, construction grid
-- Purpose: Detailed base and worldhouse building placement
-- Status: Not yet built
+### TerrainForge View (zoomed Surface View — see `three_layer_views.md`)
+- Same rendering pipeline as Surface View, camera zoomed 10-100x on a single settlement tile
+- Purpose: Detailed base and worldhouse building placement at readable scale
+- Status: Architecture defined in `three_layer_views.md` (completed task 2026-07-13-HIGH-ARCHITECTURE-THREE-LAYER-VIEWS.md)
 
 **FreeCiv Tileset Constraints (Surface View Only):**
 | Body | Grid Size | @64px tiles |

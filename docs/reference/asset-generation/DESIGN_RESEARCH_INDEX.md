@@ -27,12 +27,12 @@ When creating assets:
 **File**: `2026-07-15-ANALYSIS-chatgpt-design-extraction.md`
 **Applies To**: Overall project architecture, not asset generation
 **Key Outputs**:
-- Multi-view simulation lens (Monitor/Surface/TerrainForge abstraction)
+- Multi-view simulation lens (Monitor/Surface/TerrainForge abstraction) — see `three_layer_views.md` for current architecture: TerrainForge = zoomed Surface View, not a separate layer
 - Zoom hierarchy (persistent objects across levels)
 - Top-down simulation construction
 - Tile engine as implementation detail
 
-**Asset Impact**: Objects must work at multiple abstraction levels (e.g., HRV-400 harvester exists in Monitor as "count", Surface as "tile icon", TerrainForge as "individual sprite")
+**Asset Impact**: Objects must work at multiple abstraction levels (e.g., HRV-400 harvester exists in Monitor as "count", Surface as "tile icon", TerrainForge as "individual sprite" — all rendered via the same surface_view.js pipeline at different zoom levels)
 
 ---
 
