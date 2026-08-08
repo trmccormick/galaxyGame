@@ -32,6 +32,9 @@ tmp/
 !/data/json-data/blueprints/
 !/data/json-data/schemas/
 
+# ⚠️ star_systems JSON files are generated at runtime — do not track in git
+/data/json-data/star_systems/*.json
+
 # ✅ FIX: Include fixture data with correct path
 !/galaxy_game/spec/fixtures/
 
