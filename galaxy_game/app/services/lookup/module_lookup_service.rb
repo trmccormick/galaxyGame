@@ -59,14 +59,66 @@ module Lookup
       }
     }
 
-    def initialize
-      begin
-        @modules = load_modules
-      rescue StandardError => e
-        Rails.logger.error "Fatal error loading modules: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        @modules = []  # ✅ FIX: Initialize empty array instead of failing
+    # Class-level cache: modules loaded once per process lifetime.
+    def self.modules_cache
+      @modules_cache ||= begin
+        raw = load_modules_class
+        raw.each_with_object({}) do |mod, h|
+          next unless mod.is_a?(Hash) && mod['id']
+          key = mod['id'].to_s.downcase.strip
+          h[key] = mod
+          h[mod['name'].to_s.downcase.strip] = mod if mod['name']
+        end
       end
+    end
+
+    # Class-level loading (bypasses instance private methods).
+    def self.load_modules_class
+      modules = []
+      
+      MODULE_PATHS.each do |type, config|
+        next unless config.is_a?(Hash)
+        base_path = config[:path].call
+        
+        if config[:direct_files] && File.directory?(base_path)
+          modules.concat(load_json_files_class(base_path))
+        end
+        
+        if config[:recursive_scan] && File.directory?(base_path)
+          modules.concat(load_json_files_recursively_class(base_path))
+        end
+      end
+      
+      Rails.logger.debug "Loaded #{modules.size} modules in total"
+      modules
+    end
+
+    def self.load_json_files_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.load_json_files_recursively_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "**", "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.reset_cache!
+      @modules_cache = nil
+    end
+
+    def initialize
+      @modules = self.class.modules_cache
     end
 
     def find_module(module_type)
