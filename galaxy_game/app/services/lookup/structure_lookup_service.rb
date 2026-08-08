@@ -1,5 +1,45 @@
 module Lookup
   class StructureLookupService < BaseLookupService
+    # Class-level cache: structures loaded once per process lifetime.
+    def self.structures_cache
+      @structures_cache ||= begin
+        raw = load_structures_class
+        raw.each_with_object({}) do |struct, h|
+          next unless struct.is_a?(Hash) && struct['id']
+          key = struct['id'].to_s.downcase.strip
+          h[key] = struct
+          h[struct['name'].to_s.downcase.strip] = struct if struct['name']
+        end
+      end
+    end
+
+    # Class-level loading (bypasses instance private methods).
+    def self.load_structures_class
+      structures = []
+      
+      self.class.structure_paths.each do |category, path|
+        next unless File.directory?(path)
+        structures.concat(load_json_files_class(path))
+      end
+      
+      Rails.logger.debug "Loaded #{structures.size} structures in total"
+      structures
+    end
+
+    def self.load_json_files_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.reset_cache!
+      @structures_cache = nil
+    end
+
     def self.structure_paths
       {
         'habitation' => GalaxyGame::Paths::STRUCTURES_PATH.join('habitation'),
@@ -18,7 +58,7 @@ module Lookup
 
     def initialize
       super
-      @structures = load_structures unless Rails.env.test?
+      @structures = Rails.env.test? ? {} : self.class.structures_cache
       @cache = {}
     end
 
