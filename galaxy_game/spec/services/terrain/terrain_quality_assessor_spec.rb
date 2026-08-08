@@ -1,5 +1,5 @@
 require 'rails_helper'
-require_relative '../../../../galaxy_game/app/services/terrain/terrain_quality_assessor'
+require_relative '../../../../galaxy_game/app/services/terrain/quality_assessor'
 
 RSpec.describe Terrain::QualityAssessor do
   let(:assessor) { described_class.new }
