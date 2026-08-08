@@ -4,6 +4,64 @@ require 'pathname'
 
 module Lookup
   class UnitLookupService < BaseLookupService
+    # Class-level cache: units loaded once per process lifetime.
+    def self.units_cache
+      @units_cache ||= begin
+        raw = load_units_class
+        raw.each_with_object({}) do |unit, h|
+          next unless unit.is_a?(Hash) && unit['id']
+          key = unit['id'].to_s.downcase.strip
+          h[key] = unit
+          h[unit['name'].to_s.downcase.strip] = unit if unit['name']
+        end
+      end
+    end
+
+    # Class-level loading (bypasses instance private methods).
+    def self.load_units_class
+      units = []
+      
+      UNIT_PATHS.each do |type, config|
+        next unless config.is_a?(Hash)
+        base_path = config[:path].call
+        
+        if config[:direct_files] && File.directory?(base_path)
+          units.concat(load_json_files_class(base_path))
+        end
+        
+        if config[:recursive_scan] && File.directory?(base_path)
+          units.concat(load_json_files_recursively_class(base_path))
+        end
+      end
+      
+      Rails.logger.debug "Loaded #{units.size} units in total"
+      units
+    end
+
+    def self.load_json_files_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.load_json_files_recursively_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "**", "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.reset_cache!
+      @units_cache = nil
+    end
+
     # ✅ REMOVED: base_units_path is no longer needed as UNIT_PATHS will directly reference specific GalaxyGame::Paths.
     # This removes a layer of indirection and makes paths explicit.
     # (Confirm this method is physically removed from your file)
@@ -128,13 +186,7 @@ module Lookup
     }
     
     def initialize
-      begin
-        @units = load_units
-      rescue StandardError => e
-        Rails.logger.error "Fatal error loading units: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        @units = []
-      end
+      @units = self.class.units_cache
     end
 
     def find_units_by_trait(trait_key, trait_value)
