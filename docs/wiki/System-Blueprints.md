@@ -333,7 +333,7 @@ Terraformable planets receive preferential orbital placement via `generate_optim
 - [ ] **`fallback_build` — uniform type sampling:** All 5 current types are sampled with equal probability. Should use weighted distribution reflecting realistic system composition (more terrestrial/rocky, fewer giants).
 - [ ] **`generate_stars` stub vs full implementation:** `ProceduralGenerator#generate_stars` (the simple version, lines 36–45) produces only `name`, `identifier`, `mass`, and `galaxy` — it is a stub compared to the full `generate_stars` private method (lines 440–485) which includes full spectral class generation. The public stub must be removed or consolidated.
 - [ ] **Symbol vs string key inconsistency in seed:** Sphere data (`:atmosphere`, `:hydrosphere`, `:biosphere`) is stored as symbol keys in the terrestrial planet seed but as string keys (`"atmosphere_attributes"`) in `generate_planet_at_orbit`. This inconsistency must be resolved before the seed format is treated as a stable contract.
-- [ ] **`known_pressure` field:** Set as `rand(0.1..2.0)` in procedural generation. Units are not documented in the generator — confirm whether this is atm, kPa, or Pa to align with `EARTH_ATMOSPHERE` and `HUMAN_LIFE_SUPPORT` constants.
+- [x] **`known_pressure` field:** Set as `rand(0.1..2.0)` in procedural generation. **Unit confirmed: atm** — verified via sol-complete.json values (Venus=92, Earth=1.0, Mars=0.006) and consistent with `EARTH_ATMOSPHERE`/`HUMAN_LIFE_SUPPORT` constants.
 
 ---
 
