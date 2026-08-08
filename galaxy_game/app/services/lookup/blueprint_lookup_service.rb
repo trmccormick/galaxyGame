@@ -4,13 +4,68 @@ require 'pathname'
 
 module Lookup
   class BlueprintLookupService < BaseLookupService
-    # Cache the path to avoid repeated calls
-    def self.base_blueprints_path
-      @base_blueprints_path ||= begin
-        path = Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "blueprints")
-        # Remove debug output - it's being called too frequently
-        path
+    # Class-level cache: blueprints loaded once per process lifetime.
+    def self.blueprints_cache
+      @blueprints_cache ||= begin
+        raw = load_blueprints_class
+        raw.each_with_object({}) do |bp, h|
+          next unless bp.is_a?(Hash) && bp['id']
+          key = bp['id'].to_s.downcase.strip
+          h[key] = bp
+          h[bp['name'].to_s.downcase.strip] = bp if bp['name']
+        end
       end
+    end
+
+    # Class-level loading (bypasses instance private methods).
+    def self.load_blueprints_class
+      blueprints = []
+      
+      BLUEPRINT_PATHS.each do |type, config|
+        next unless config.is_a?(Hash)
+        base_path = config[:path].call
+        
+        if config[:direct_files] && File.directory?(base_path)
+          blueprints.concat(load_json_files_class(base_path))
+        end
+        
+        if config[:recursive_scan] && File.directory?(base_path)
+          blueprints.concat(load_json_files_recursively_class(base_path))
+        end
+      end
+      
+      Rails.logger.debug "Loaded #{blueprints.size} blueprints in total"
+      blueprints
+    end
+
+    def self.load_json_files_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.load_json_files_recursively_class(path)
+      return [] unless File.directory?(path)
+      Dir.glob(File.join(path, "**", "*.json")).map do |file|
+        JSON.parse(File.read(file))
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error "Error loading #{file}: #{e.message}"
+        nil
+      end.compact
+    end
+
+    def self.reset_cache!
+      @blueprints_cache = nil
+    end
+
+    # Use the GalaxyGame::Paths module for consistent path handling
+    def self.base_blueprints_path
+      # Return a Pathname object, not a String
+      Pathname.new(Rails.root).join(GalaxyGame::Paths::JSON_DATA, "blueprints")
     end
     
     # Add missing rigs path
@@ -50,13 +105,7 @@ module Lookup
     }
 
     def initialize
-      begin
-        @blueprints = load_blueprints
-      rescue StandardError => e
-        Rails.logger.error "Fatal error loading blueprints: #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        @blueprints = []  # Initialize empty array instead of failing
-      end
+      @blueprints = self.class.blueprints_cache
     end
 
     def find_blueprint(query, category = nil)
