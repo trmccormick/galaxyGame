@@ -6,15 +6,7 @@ module Lookup
   class BlueprintLookupService < BaseLookupService
     # Class-level cache: blueprints loaded once per process lifetime.
     def self.blueprints_cache
-      @blueprints_cache ||= begin
-        raw = load_blueprints_class
-        raw.each_with_object({}) do |bp, h|
-          next unless bp.is_a?(Hash) && bp['id']
-          key = bp['id'].to_s.downcase.strip
-          h[key] = bp
-          h[bp['name'].to_s.downcase.strip] = bp if bp['name']
-        end
-      end
+      @blueprints_cache ||= load_blueprints_class
     end
 
     # Class-level loading (bypasses instance private methods).

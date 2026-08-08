@@ -2,15 +2,7 @@ module Lookup
   class StructureLookupService < BaseLookupService
     # Class-level cache: structures loaded once per process lifetime.
     def self.structures_cache
-      @structures_cache ||= begin
-        raw = load_structures_class
-        raw.each_with_object({}) do |struct, h|
-          next unless struct.is_a?(Hash) && struct['id']
-          key = struct['id'].to_s.downcase.strip
-          h[key] = struct
-          h[struct['name'].to_s.downcase.strip] = struct if struct['name']
-        end
-      end
+      @structures_cache ||= load_structures_class
     end
 
     # Class-level loading (bypasses instance private methods).

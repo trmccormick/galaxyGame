@@ -2,15 +2,7 @@ module Lookup
   class ItemLookupService < BaseLookupService
     # Class-level cache: items loaded once per process lifetime.
     def self.items_cache
-      @items_cache ||= begin
-        raw = load_items_class
-        raw.each_with_object({}) do |item, h|
-          next unless item.is_a?(Hash) && item['id']
-          key = item['id'].to_s.downcase.strip
-          h[key] = item
-          h[item['name'].to_s.downcase.strip] = item if item['name']
-        end
-      end
+      @items_cache ||= load_items_class
     end
 
     # Class-level loading (bypasses instance private methods).

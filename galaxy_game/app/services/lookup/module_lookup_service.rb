@@ -61,15 +61,7 @@ module Lookup
 
     # Class-level cache: modules loaded once per process lifetime.
     def self.modules_cache
-      @modules_cache ||= begin
-        raw = load_modules_class
-        raw.each_with_object({}) do |mod, h|
-          next unless mod.is_a?(Hash) && mod['id']
-          key = mod['id'].to_s.downcase.strip
-          h[key] = mod
-          h[mod['name'].to_s.downcase.strip] = mod if mod['name']
-        end
-      end
+      @modules_cache ||= load_modules_class
     end
 
     # Class-level loading (bypasses instance private methods).

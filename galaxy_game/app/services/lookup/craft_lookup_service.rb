@@ -6,15 +6,7 @@ module Lookup
   class CraftLookupService < BaseLookupService
     # Class-level cache: crafts loaded once per process lifetime.
     def self.crafts_cache
-      @crafts_cache ||= begin
-        raw = load_crafts_class
-        raw.each_with_object({}) do |craft, h|
-          next unless craft.is_a?(Hash) && craft['id']
-          key = craft['id'].to_s.downcase.strip
-          h[key] = craft
-          h[craft['name'].to_s.downcase.strip] = craft if craft['name']
-        end
-      end
+      @crafts_cache ||= load_crafts_class
     end
 
     # Class-level loading (bypasses instance private methods).

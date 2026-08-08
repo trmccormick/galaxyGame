@@ -6,15 +6,7 @@ module Lookup
   class UnitLookupService < BaseLookupService
     # Class-level cache: units loaded once per process lifetime.
     def self.units_cache
-      @units_cache ||= begin
-        raw = load_units_class
-        raw.each_with_object({}) do |unit, h|
-          next unless unit.is_a?(Hash) && unit['id']
-          key = unit['id'].to_s.downcase.strip
-          h[key] = unit
-          h[unit['name'].to_s.downcase.strip] = unit if unit['name']
-        end
-      end
+      @units_cache ||= load_units_class
     end
 
     # Class-level loading (bypasses instance private methods).
