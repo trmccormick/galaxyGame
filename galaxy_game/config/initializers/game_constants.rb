@@ -115,6 +115,33 @@ module GameConstants
     'temperature_optimal' => 294.15 # K (21°C)
   }.freeze
 
+  # ECLSS parameters per docs/design/ECLSS_PARAMETERS.md (NASA Bioastronautics / ISS Brine Processor)
+  CREW_WATER_DAILY_KG = 3.5 # kg/person/day — per-capita daily metabolic requirement
+  BASE_WATER_RECOVERY_EFFICIENCY = 0.98 # ISS Brine Processor top-tier mechanical recycling limit
+  LOW_TIER_WATER_EFFICIENCY = 0.93 # Legacy ISS Assembly un-upgraded/damaged baseline
+
+  # Water consumption formula: (Crew × Daily Consumption) × (1 − Efficiency)
+  # Default unrecoverable loss per person per day at BASE efficiency
+  WATER_UNRECOVERABLE_LOSS_PER_PERSON_DAY = CREW_WATER_DAILY_KG * (1 - BASE_WATER_RECOVERY_EFFICIENCY) # 0.07 kg/person/day
+
+  # ── TEU Mk1 Constants (per thermal_extraction_unit_mk1_data.json + ECLSS) ──
+  # Thermal processing: 300–800°C volatilization of regolith
+  TEU_REGOLITH_PER_CYCLE_KG = 10.0           # raw_regolith consumed per cycle
+  TEU_PROCESSED_REGOLITH_EFFICIENCY = 0.995   # geosphere processing efficiency
+  TEU_PROCESSED_REGOLITH_PER_CYCLE_KG = TEU_REGOLITH_PER_CYCLE_KG * TEU_PROCESSED_REGOLITH_EFFICIENCY # 9.95 kg
+  TEU_MIXED_VOLATILES_FRACTION = 0.005        # 0.5% volatile fraction (Mars regolith literature range: 0.1–1.0%)
+  TEU_MIXED_VOLATILES_PER_CYCLE_KG = TEU_REGOLITH_PER_CYCLE_KG * TEU_MIXED_VOLATILES_FRACTION # 0.05 kg
+  TEU_POWER_KW = 50                            # kWh per cycle
+
+  # ── PVE Mk1 Constants (per planetary_volatiles_extractor_mk1_data.json + ECLSS) ──
+  # Volatile extraction: high-temperature chemical reduction of regolith oxides
+  PVE_REGOLITH_PER_CYCLE_KG = 5.0             # processed_regolith consumed per cycle
+  PVE_O2_RECOVERY_RATIO = 0.315               # 42% O2 in regolith × 0.75 processing efficiency (NASA ECLSS)
+  PVE_O2_PER_CYCLE_KG = PVE_REGOLITH_PER_CYCLE_KG * PVE_O2_RECOVERY_RATIO # 1.575 kg
+  PVE_HE3_PER_CYCLE_KG = 0.000001             # Solar-wind implanted He3, negligible at game scale (~10–50 ppt)
+  PVE_POWER_KW = 120                            # kWh per cycle
+  PVE_H2_FROM_ELECTROLYSIS_PER_KG_H2O = 1.0 / 9.0 # Electrolysis: 2H2O → 2H2 + O2, mass ratio H2:H2O = 2:18 = 1:9
+
   # Storage related constants
   STORAGE_WORKERS_RATIO = 0.1  # 10% of population can work on storage
   STORAGE_CAPACITY_PER_WORKER = 1000  # kg per worker  
