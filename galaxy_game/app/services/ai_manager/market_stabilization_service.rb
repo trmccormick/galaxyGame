@@ -224,6 +224,31 @@ module AIManager
       (base_levels[item] || 5) * multiplier
     end
 
+    def self.calculate_minimum_threshold(settlement, item)
+      # Calculate minimum inventory threshold for an item based on settlement size and essentiality
+      # Returns a numeric threshold; if inventory falls below this, NPC intervenes
+
+      base_thresholds = {
+        'oxygen' => 200,
+        'water' => 150,
+        'basic_structural_panels' => 50,
+        'circuit_boards' => 30,
+        'basic_regolith_panels' => 40,
+        'life_support_filters' => 25,
+        'power_cells' => 35,
+        'computers' => 20,
+        'advanced_electronics' => 15,
+        'rare_earth_metals' => 10
+      }
+
+      base = base_thresholds[item] || 10
+
+      # Scale threshold by settlement population (more people = higher thresholds)
+      population_factor = [1.0, settlement.population.to_f / 100.0].max
+
+      (base * population_factor).to_i
+    end
+
     def self.provide_essential_item(settlement, item, amount)
       # NPC immediately provides essential items to settlement inventory
       # This is a direct provision - no manufacturing delay for critical items
@@ -300,8 +325,8 @@ module AIManager
     end
 
     def self.schedule_cycler_delivery(settlement, item, amount, cycler)
-      # Schedule cycler to deliver item
-      # This would integrate with cycler routing system
+      # TODO: Implement actual cycler routing integration
+      # Currently returns success without scheduling — stub for future cycler fleet system
       { scheduled: true, cycler: cycler.id, item: item, amount: amount }
     end
 
