@@ -305,7 +305,7 @@ class Item < ApplicationRecord
     return true if name.start_with?("Unassembled") # Skip for unassembled items
     return true if name.end_with?(" Scrap") # Skip for scrap materials
     return true if name.start_with?("Processed") # Skip for processed materials (e.g. "Processed Regolith")
-    return true if name.start_with?("Mixed") # Skip for mixed material blends (e.g. "Mixed Volatiles")
+    return true if name == "Mixed Volatiles" # Skip for mixed material blends (exact match only)
     return true if name.start_with?("Used") # Skip for used catalysts/components
     return true if name == "ibeam" # Skip for I-beam production items
     return true if name == "He3" # Skip for helium-3
