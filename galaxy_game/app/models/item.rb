@@ -290,9 +290,6 @@ class Item < ApplicationRecord
     return if properties.present? || material_properties.present?
 
     # Skip validation for special case names
-    if name.present? && (name.start_with?("Processed") || name.start_with?("Mixed") || name == "He3")
-      Rails.logger.info("Item.validate: Skipping validation for '#{name}' (special case match)")
-    end
     return if special_case_name?
 
     # Check if valid using any lookup service
@@ -307,8 +304,11 @@ class Item < ApplicationRecord
     return true if name.nil? # Skip validation for nil names
     return true if name.start_with?("Unassembled") # Skip for unassembled items
     return true if name.end_with?(" Scrap") # Skip for scrap materials
-    return true if name.start_with?("Processed") # Skip for processed materials
+    return true if name.start_with?("Processed") # Skip for processed materials (e.g. "Processed Regolith")
+    return true if name.start_with?("Mixed") # Skip for mixed material blends (e.g. "Mixed Volatiles")
     return true if name.start_with?("Used") # Skip for used catalysts/components
+    return true if name == "ibeam" # Skip for I-beam production items
+    return true if name == "He3" # Skip for helium-3
     return true if metadata.is_a?(Hash) && metadata['unit_type'].present? # Skip for items representing units
     false
   end
