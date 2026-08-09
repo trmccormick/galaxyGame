@@ -290,6 +290,9 @@ class Item < ApplicationRecord
     return if properties.present? || material_properties.present?
 
     # Skip validation for special case names
+    if name.present? && (name.start_with?("Processed") || name.start_with?("Mixed") || name == "He3")
+      Rails.logger.info("Item.validate: Skipping validation for '#{name}' (special case match)")
+    end
     return if special_case_name?
 
     # Check if valid using any lookup service
