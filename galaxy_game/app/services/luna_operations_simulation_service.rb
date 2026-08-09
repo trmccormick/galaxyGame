@@ -12,7 +12,7 @@ class LunaOperationsSimulationService
 
   # Tracked resources for the simulation loop.
   # Resources use capitalized display names for Item validation compatibility (special_case_name? check).
-  TRACKED_RESOURCES = %w[oxygen hydrogen water food regolith Processed\ Regolith Mixed\ Volatiles He3].freeze
+  TRACKED_RESOURCES = ['oxygen', 'hydrogen', 'water', 'food', 'regolith', 'Processed Regolith', 'Mixed Volatiles', 'He3'].freeze
 
   def initialize(settlement, day_count: 30)
     @settlement = settlement
