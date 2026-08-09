@@ -112,10 +112,25 @@
     "default_deployment_time_hours": 240
   },
 
+  "connection_schema": {
+    "mounting_slots": [
+      { "slot_id": "mount_1", "bus_type": "structural", "location": "base_frame" },
+      { "slot_id": "mount_2", "bus_type": "structural", "location": "base_frame" }
+    ],
+    "utility_ports": [
+      { "port_id": "power_in", "type": "power", "capacity_kw": 150, "direction": "in" },
+      { "port_id": "data_bus", "type": "data", "bandwidth_mbps": 100, "direction": "bidirectional" }
+    ],
+    "storage_bays": [
+      { "bay_id": "volatile_out", "capacity_m3": 50, "material_type": "volatiles", "direction": "output" }
+    ]
+  },
+
+  "units": {},
   "metadata": {
-    "version": "1.2",
+    "version": "1.4",
     "type": "blueprint",
     "category": "resource_processing",
-    "template_compliance": "unit_blueprint"
+    "template_compliance": "unit_blueprint_v1.4"
   }
 }
