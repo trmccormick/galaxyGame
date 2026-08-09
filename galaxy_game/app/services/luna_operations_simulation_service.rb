@@ -201,10 +201,15 @@ class LunaOperationsSimulationService
     # O2 recovery: 42% O2 in regolith × 0.75 processing efficiency (NASA ECLSS)
     # NOTE: capability_service.can_produce_locally? checks celestial body data, not deployed hardware.
     # Processed Regolith is a manufactured intermediate — check for deployed PVE units instead.
+    # Include today's TEU production in the available pool (it hasn't been added to inventory yet).
     pve_units = settlement.base_units.where(unit_type: 'planetary_volatiles_extractor_mk1').to_a
     if pve_units.any?
+      teu_today_output = result['Processed Regolith'] || 0
+      inventory_stock = inventory.current_storage_of('Processed Regolith')
+      available_processed_reg = teu_today_output + inventory_stock
+      
       processed_reg_for_pve = [
-        inventory.current_storage_of('Processed Regolith'),
+        available_processed_reg,
         pve_units.size * GameConstants::PVE_REGOLITH_PER_CYCLE_KG
       ].min
 
@@ -228,6 +233,10 @@ class LunaOperationsSimulationService
           result['hydrogen'] = (result['hydrogen'] || 0) + h2_per_cycle
         end
 
+        # Reduce TEU's Processed Regolith output by what PVE consumed (maintain mass balance)
+        consumed_from_teu = [processed_reg_for_pve, teu_today_output].min
+        result['Processed Regolith'] -= consumed_from_teu
+        
         result[:feedstock_consumption]['Processed Regolith'] = (result[:feedstock_consumption]['Processed Regolith'] || 0) + processed_reg_for_pve
       end
     end
