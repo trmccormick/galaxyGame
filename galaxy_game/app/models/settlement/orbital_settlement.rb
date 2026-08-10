@@ -4,6 +4,7 @@ module Settlement
     has_many :orbital_construction_projects, foreign_key: 'station_id'
     self.table_name = 'base_settlements'
     include SettlementCore
+    include SettlementFees
 
     # Returns the primary location based on the first deployed structure.
     # Orbital settlements do not have a 1:1 location; they are a constellation.

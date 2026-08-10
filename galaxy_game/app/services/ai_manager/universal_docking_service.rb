@@ -58,5 +58,42 @@ module AIManager
       return unless equipment_id
       from.transfer_equipment_to(to, equipment_id)
     end
+
+    # Calculate total docking fees for a transaction amount at the destination settlement
+    def calculate_docking_fees(transaction_amount, destination)
+      return { broker_fee: 0.0, transaction_fee: 0.0, total: 0.0 } unless destination.respond_to?(:calculate_broker_fee)
+
+      broker_fee = destination.calculate_broker_fee(transaction_amount)
+      transaction_fee = destination.calculate_transaction_fee(transaction_amount)
+
+      {
+        broker_fee: broker_fee,
+        transaction_fee: transaction_fee,
+        total: (broker_fee + transaction_fee).round(2)
+      }
+    end
+
+    # Process docking fees: deduct from sender, credit to destination settlement
+    def process_docking_fees(transaction_amount, destination, sender)
+      fees = calculate_docking_fees(transaction_amount, destination)
+      return fees if fees[:total].zero?
+
+      # Deduct total fees from sender's account
+      if sender.respond_to?(:account) && sender.account
+        sender.account.balance -= fees[:total]
+        sender.account.save!
+      end
+
+      # Credit broker fee to destination settlement's account
+      if destination.respond_to?(:account) && destination.account
+        destination.account.balance += fees[:broker_fee]
+        destination.account.save!
+      end
+
+      Rails.logger.info "[UniversalDockingService] docking fees processed: " \
+                        "broker=#{fees[:broker_fee]}, tx=#{fees[:transaction_fee]}, total=#{fees[:total]}"
+
+      fees
+    end
   end
 end

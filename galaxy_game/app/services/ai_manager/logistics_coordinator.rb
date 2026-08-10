@@ -83,6 +83,46 @@ module AIManager
       }
     end
 
+    # Set market fees on a managed settlement
+    def set_location_fees(settlement, fee_config)
+      valid_types = %w[percentage fixed]
+      return false unless valid_types.include?(fee_config[:broker_fee_type])
+      return false unless valid_types.include?(fee_config[:transaction_fee_type])
+
+      # Apply fees to settlement
+      settlement.broker_fee_type = fee_config[:broker_fee_type]
+      settlement.broker_fee_value = fee_config[:broker_fee_value]
+      settlement.transaction_fee_type = fee_config[:transaction_fee_type]
+      settlement.transaction_fee_value = fee_config[:transaction_fee_value]
+      settlement.order_duration_min = fee_config[:order_duration_min]
+      settlement.order_duration_max = fee_config[:order_duration_max]
+      settlement.save!
+
+      Rails.logger.info "[LogisticsCoordinator] fees set for #{settlement.name}: " \
+                        "broker=#{fee_config[:broker_fee_type]}(#{fee_config[:broker_fee_value]}), " \
+                        "tx=#{fee_config[:transaction_fee_type]}(#{fee_config[:transaction_fee_value]})"
+      true
+    end
+
+    # Get current fee configuration for a settlement
+    def get_location_fees(settlement)
+      {
+        broker_fee_type: settlement.broker_fee_type,
+        broker_fee_value: settlement.broker_fee_value,
+        transaction_fee_type: settlement.transaction_fee_type,
+        transaction_fee_value: settlement.transaction_fee_value,
+        order_duration_min: settlement.order_duration_min,
+        order_duration_max: settlement.order_duration_max
+      }
+    end
+
+    # Apply default fee configuration to a managed settlement
+    def apply_default_fees(settlement)
+      settlement.apply_default_fees!
+      Rails.logger.info "[LogisticsCoordinator] default fees applied to #{settlement.name}"
+      true
+    end
+
     private
 
     # Initialize transport capacity (ships, routes, etc.)
