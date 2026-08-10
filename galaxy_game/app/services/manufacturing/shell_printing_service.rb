@@ -115,8 +115,8 @@ module Manufacturing
           material_to_use = material_name
         end
         
-        if item && item[:amount] >= needed_amount
-          composition = item[:composition] || {}
+        if item && item.amount >= needed_amount
+          composition = item.metadata&.dig('composition') || {}
           
           materials[material_to_use] = {
             amount: needed_amount,

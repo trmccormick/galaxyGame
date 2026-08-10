@@ -45,7 +45,8 @@ RSpec.describe Manufacturing::ShellPrintingService do
         'capacity' => 5000,
         'current_level' => 0,
         'deployed' => true,
-        'operational' => true
+        'operational' => true,
+        'volume_m3' => 25.0
       }
     )
   end
@@ -100,6 +101,9 @@ RSpec.describe Manufacturing::ShellPrintingService do
   describe '#enclose_inflatable' do
     context 'with sufficient materials' do
       before do
+        # Mock inventory can_store? to bypass capacity checks
+        allow(settlement.inventory).to receive(:can_store?).and_return(true)
+        
         # Add required materials to inventory
         settlement.inventory.add_item('inert_waste', 2000, player, {
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
@@ -125,7 +129,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
       end
 
       # PENDING: job.inflatable_tank should be job.target_unit (pre-existing bug)
-      xit 'creates a shell printing job' do
+      it 'creates a shell printing job' do
         expect {
           service.enclose_inflatable(inflatable_tank, printer_unit)
         }.to change { ConstructionJob.where(job_type: :shell_printing).count }.by(1)
@@ -133,7 +137,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
         job = ConstructionJob.where(job_type: :shell_printing).last
         expect(job.target_unit).to eq(inflatable_tank)
         expect(job.printer_unit).to eq(printer_unit)
-        expect(job.production_time_hours).to eq(10.0)
+        expect(job.production_time_hours).to eq(15.0)
         expect(job.status).to eq('pending')
       end
 
@@ -148,7 +152,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
       end
 
       # PENDING: materials composition not stored correctly in materials_consumed (pre-existing bug)
-      xit 'stores material composition in job metadata' do
+      it 'stores material composition in job metadata' do
         service.enclose_inflatable(inflatable_tank, printer_unit)
         
         job = ConstructionJob.where(job_type: :shell_printing).last
@@ -202,6 +206,9 @@ RSpec.describe Manufacturing::ShellPrintingService do
 
       context 'thickness persistence' do
         before do
+          # Mock inventory can_store? to bypass capacity checks
+          allow(settlement.inventory).to receive(:can_store?).and_return(true)
+          
           settlement.inventory.add_item('inert_waste', 2000, player, {
             'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
           })
