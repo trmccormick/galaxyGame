@@ -33,9 +33,9 @@ module GameConstants
   NEW_SYSTEM_PROBABILITY = 0.4  # 40% chance
   NEW_GALAXY_PROBABILITY = 0.2  # 20% chance
 
-  # Constants for spatial constraints
-  SAFE_DISTANCE_FROM_STAR = 1.496e8 # 1 AU in meters
-  MAX_DISTANCE_FROM_STAR = 1.496e10 # 100 AU in meters  
+  # Constants for spatial constraints (AU to meters: 1 AU = 1.496e11 m)
+  SAFE_DISTANCE_FROM_STAR = 1.496e11 # 1 AU in meters
+  MAX_DISTANCE_FROM_STAR = 1.496e13 # 100 AU in meters  
 
   # Wormhole Generation
   WORMHOLE_GENERATION_INTERVAL = 24.hours
