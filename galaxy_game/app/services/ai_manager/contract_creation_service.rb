@@ -8,10 +8,21 @@ module AIManager
     end
 
     # Creates an external import order (USD-funded)
+    # Writes a LogisticsContract record to the database.
+    # @param settlement [Settlement] destination settlement receiving the import
+    # @param material [String] material being imported
+    # @param amount [Numeric] quantity of material
+    # @param cost_usd [Numeric] total USD cost (stored as shipping_cost)
     def self.create_import_order(settlement, material:, amount:, cost_usd:)
-      # Logic: Create a new instance of ImportOrder
-      # ImportOrder.create!(...)
-      Rails.logger.debug "ImportOrder created for #{amount} #{material} at #{cost_usd} USD."
+      LogisticsContract.create!(
+        from_settlement_id: nil,  # Earth source — not tracked in this call path
+        to_settlement: settlement,
+        material: material,
+        quantity: amount,
+        shipping_cost: cost_usd,
+        status: 0,  # pending
+        operational_data: { import_type: 'earth_import', currency: 'USD' }
+      )
     end
   end
 end
