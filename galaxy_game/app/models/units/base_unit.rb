@@ -235,7 +235,7 @@ module Units
     end
 
     def storage_type
-      operational_data&.dig('storage', 'type')
+      operational_data['subcategory']
     end
 
     def store_resource(resource_name, amount)

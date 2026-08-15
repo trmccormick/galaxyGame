@@ -105,7 +105,7 @@ module HasStorage
     return nil unless respond_to?(:base_units)
 
     base_units.find do |unit|
-      unit.storage_type == material_type_to_storage(material_type) &&
+      (unit.storage_type.nil? || unit.storage_type == material_type_to_storage(material_type)) &&
         unit.operational_data&.dig('storage', 'capacity').to_i > 0
     end
   end
