@@ -137,18 +137,23 @@ module Manufacturing
           when 'H2O'
             h2o = crust_volatiles['H2O'] || crust_volatiles['h2o']
             if h2o
-              produced = input_amount * (h2o.to_f / 100.0) * geosphere_eff
+              variation = 1.0 + (rand * 0.10 - 0.05)
+              produced = input_amount * (h2o.to_f / 100.0) * geosphere_eff * variation
               @settlement.inventory.add_item('H2O', produced, @settlement, {})
             end
           when 'mixed_volatiles'
             crust_volatiles.each do |volatile, percent|
               next if volatile.to_s.downcase == 'h2o'
-              produced = input_amount * (percent.to_f / 100.0) * geosphere_eff
+              variation = 1.0 + (rand * 0.10 - 0.05)
+              produced = input_amount * (percent.to_f / 100.0) * geosphere_eff * variation
               @settlement.inventory.add_item(volatile, produced, @settlement, {})
             end
           when 'depleted_regolith'
             # Depleted regolith = input - all extracted volatiles
-            total_extracted = crust_volatiles.values.map { |percent| input_amount * (percent.to_f / 100.0) * geosphere_eff }.sum
+            total_extracted = crust_volatiles.values.map do |percent|
+              variation = 1.0 + (rand * 0.10 - 0.05)
+              input_amount * (percent.to_f / 100.0) * geosphere_eff * variation
+            end.sum
             produced = input_amount - total_extracted
             @settlement.inventory.add_item('depleted_regolith', produced, @settlement, {})
           end
