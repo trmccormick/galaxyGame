@@ -94,7 +94,7 @@ module Lookup
       
       Rails.logger.debug "Craft lookup for '#{query}': #{found ? 'found' : 'not found'}"
       found
-    rescue JSON::ParserError, IOError => e
+    rescue JSON::ParserError, IOError, Errno::ENOTDIR => e
       Rails.logger.error "Error finding craft: #{e.message}"
       nil
     end
