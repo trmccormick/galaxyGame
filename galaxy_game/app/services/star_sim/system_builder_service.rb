@@ -420,6 +420,9 @@ module StarSim
           # Assume magnetic_field > 30 means Earth-like (1.0)
           attrs[:properties]['magnetosphere_strength'] = body_data[:magnetic_field].to_f > 30 ? 1.0 : 0.0
         end
+        # Derive has_magnetosphere boolean from magnetosphere_strength (unconditional, both directions)
+        strength = attrs[:properties]['magnetosphere_strength'].to_f
+        attrs[:properties]['has_magnetosphere'] = strength > 0.01
         
       when /GasGiant/
         attrs[:properties]['ring_system_probability'] = rand(0.0..1.0)
