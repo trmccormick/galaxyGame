@@ -1377,29 +1377,81 @@ module StarSim
     #   - modifiers: artificial magnetosphere, parent body influence, game-system effects
     #   - effective = baseline + modifiers, capped at 1.0
     #
+    # Calculate effective magnetosphere strength from baseline + physics modifiers.
+    #
+    # Architecture:
+    #   - baseline: natural magnetosphere from JSON data (geodynamo, induced field, crustal remanence)
+    #   - core_state: sigmoid gate based on mass/age — dead cores decay to ~0.0
+    #   - physics_modifier: mass × rotation × age factors applied only when core is alive
+    #   - modifiers: artificial magnetosphere, parent body influence, game-system effects
+    #   - effective = (baseline + physics_modifier) * core_state + modifiers, capped at 1.0
+    #
     # @param baseline [Float] natural magnetosphere_strength from celestial body JSON data (0.0-1.0)
-    # @param mass_kg [Float] body mass for parent-body influence calculation
-    # @param rotation_period_hours [Float] rotation period (unused by default, reserved for future modifiers)
-    # @param age_years [Float] body age (unused by default, reserved for future modifiers)
+    # @param mass_kg [Float] body mass for core-state calculation
+    # @param rotation_period_hours [Float] rotation period for dynamo factor
+    # @param age_years [Float] body age for core decay
     # @return [Float] effective magnetosphere strength capped at 1.0
     def calculate_magnetosphere_strength(baseline = 0.0, mass_kg = 5.972e24, rotation_period_hours = 24, age_years = 4.5e9)
       # Clamp baseline to valid range
       baseline = [[baseline, 0.0].max, 1.0].min
-      
-      # Modifiers (all stubbed at 0.0 until implemented):
-      # 1. Artificial magnetosphere from terraforming tech — requires settlement/terraforming data access
+
+      # ── Core-state / dynamo gate (sigmoid) ──────────────────────────────
+      # Bodies with low mass cool faster; older bodies cool longer.
+      # Critical mass threshold increases with age — older planets need more
+      # mass to keep their cores molten and sustain a geodynamo.
+      earth_mass_kg = 5.972e24
+      mass_ratio = mass_kg / earth_mass_kg
+
+      # Age-dependent critical mass: young bodies can sustain dynamos at lower mass
+      # At 0 Gy → threshold ~0.05 (tiny bodies survive)
+      # At 4.5 Gy → threshold ~0.12 (Mars-class = dead core)
+      # At 10 Gy → threshold ~0.25 (only Earth+ survives)
+      age_factor_threshold = 0.05 + (age_years / 1e10) * 0.20
+      critical_mass_threshold = age_factor_threshold * earth_mass_kg
+
+      # Sigmoid: core_state ≈ 1.0 when mass >> threshold, ≈ 0.0 when mass << threshold
+      k = 20.0  # steepness — sharp transition around critical mass
+      core_state = 1.0 / (1.0 + Math.exp(-k * (mass_ratio - age_factor_threshold)))
+
+      # If core is dead (core_state < 0.5), the dynamo cannot sustain any field
+      # Decay toward zero regardless of baseline — a dead core = no geodynamo
+      if core_state < 0.5
+        # Exponential decay: near-zero when core_state approaches 0, linear-ish near 0.5
+        decay_factor = core_state ** 2.5
+        return [[(baseline * decay_factor), 0.0].max, 1.0].min
+      end
+
+      # ── Physics modifiers (only when core is alive) ──────────────────────
+
+      # Mass factor: larger planets have stronger dynamos
+      mass_factor = mass_ratio**0.33
+
+      # Rotation factor: faster rotation = stronger field
+      # Baseline: Earth ~24 hours; faster rotation amplifies field
+      rotation_period = [rotation_period_hours, 6.0].max  # minimum 6 hours
+      rotation_factor = [24.0 / rotation_period, 3.0].min  # cap at 3x
+
+      # Age factor: older planets have cooler cores, weaker fields
+      # Half-life decay: ~50% strength loss per ~4.5 billion years
+      age_factor = Math.exp(-age_years / 9e9)
+
+      # Combine factors into physics modifier
+      physics_modifier = mass_factor * rotation_factor * age_factor
+
+      # ── Game-system modifiers (stubbed for future features) ──────────────
+      # 1. Artificial magnetosphere from terraforming tech
       artificial_modifier = 0.0
-      
+
       # 2. Parent body influence (moons inside gas giant magnetospheres)
-      #    Requires parent body lookup infrastructure — stubbed for now
       parent_influence_modifier = 0.0
-      
-      # 3. Lagrange shield stations and other game-system modifiers — stubbed
+
+      # 3. Lagrange shield stations and other game-system modifiers
       system_modifiers = 0.0
-      
-      effective = baseline + artificial_modifier + parent_influence_modifier + system_modifiers
-      
-      # Cap at 1.0
+
+      # ── Final calculation ────────────────────────────────────────────────
+      effective = (baseline + physics_modifier) * core_state + artificial_modifier + parent_influence_modifier + system_modifiers
+
+      # Cap at [0.0, 1.0]
       [[effective, 0.0].max, 1.0].min
     end
 

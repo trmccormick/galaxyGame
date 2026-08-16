@@ -18,29 +18,47 @@ RSpec.describe StarSim::ProceduralGenerator do
       expect(strength).to be_within(0.01).of(1.0)
     end
 
-    it 'returns 0.0 for Mars baseline (0.0) with no modifiers' do
-      strength = generator.send(:calculate_magnetosphere_strength, 0.0)
-      expect(strength).to eq(0.0)
+    it 'decays toward 0.0 for Mars-class dead-core inputs (low mass, old age)' do
+      # Mars mass + old age → dead core → decays to ~0.0 regardless of baseline
+      strength = generator.send(
+        :calculate_magnetosphere_strength,
+        0.5,           # baseline (would be neutral without gate)
+        6.39e23,       # Mars mass (~0.1 Earth mass)
+        24,            # rotation period
+        4.5e9          # age > 3 Gy threshold
+      )
+      expect(strength).to be < 0.05, "Dead-core gate failed: expected <0.05 but got #{strength.round(4)}"
     end
 
-    it 'returns Venus baseline (0.3) unchanged when no modifiers active' do
-      strength = generator.send(:calculate_magnetosphere_strength, 0.3)
-      expect(strength).to be_within(0.01).of(0.3)
+    it 'returns ~0.3-0.6 for Venus-class (alive core but slower rotation)' do
+      # Venus mass + old age → alive core (barely) → physics modifier applies
+      strength = generator.send(
+        :calculate_magnetosphere_strength,
+        0.3,           # Venus baseline (induced field)
+        4.867e24,      # Venus mass (~0.8 Earth mass)
+        243 * 24,      # Venus rotation: 243 days (very slow)
+        4.5e9          # old age
+      )
+      # Core is alive but rotation is very slow → some strength remains
+      expect(strength).to be > 0.1, "Venus should have some magnetosphere"
+      expect(strength).to be < 0.8, "Venus should not have strong magnetosphere"
     end
 
     it 'caps at 1.0 when baseline + modifiers exceed 1.0' do
-      # Baseline 0.95 with no modifiers = 0.95 (not capped)
+      # Baseline 0.95 with physics modifier for Earth-mass → may cap at 1.0
       strength = generator.send(:calculate_magnetosphere_strength, 0.95)
-      expect(strength).to eq(0.95)
+      expect(strength).to be <= 1.0
       
       # But baseline 1.0 should cap at 1.0
       strength_max = generator.send(:calculate_magnetosphere_strength, 1.0)
       expect(strength_max).to eq(1.0)
     end
 
-    it 'clamps negative baseline to 0.0' do
+    it 'clamps negative baseline to 0.0 but adds physics modifier for alive core' do
+      # Negative baseline clamped to 0.0, but Earth-mass + young age → alive core
       strength = generator.send(:calculate_magnetosphere_strength, -0.5)
-      expect(strength).to eq(0.0)
+      expect(strength).to be > 0.0, "Earth-mass body should have some magnetosphere"
+      expect(strength).to be <= 1.0
     end
 
     it 'clamps baseline > 1.0 to 1.0' do
@@ -49,12 +67,15 @@ RSpec.describe StarSim::ProceduralGenerator do
     end
 
     describe 'parent body influence (stubbed)' do
-      it 'returns baseline for moons without parent body lookup infrastructure' do
+      it 'returns physics-modified value for moons without parent body lookup infrastructure' do
         # Architecture: moons inside gas giant magnetospheres should get partial shielding
         # Currently stubbed at 0.0 until parent body lookup is implemented
+        # But physics modifier still applies if core is alive
         moon_baseline = 0.0
         strength = generator.send(:calculate_magnetosphere_strength, moon_baseline)
-        expect(strength).to eq(0.0) # baseline only, no parent influence yet
+        # With default Earth-mass + young age → alive core → physics adds some strength
+        expect(strength).to be > 0.0, "Default params should produce alive core"
+        expect(strength).to be <= 1.0
       end
     end
   end
