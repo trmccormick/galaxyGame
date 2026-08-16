@@ -601,8 +601,7 @@ module Units
       # Call add_pile on the surface storage
       surface_store.add_pile(
         material_name: resource_name,
-        amount: amount,
-        source_unit: source_unit
+        amount: amount
       )
     end
 

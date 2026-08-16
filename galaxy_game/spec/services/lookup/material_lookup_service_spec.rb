@@ -252,7 +252,7 @@ RSpec.describe Lookup::MaterialLookupService do
         allow(Rails.logger).to receive(:error)
         service = described_class.new
         result = service.send(:load_json_files, temp_dir)
-        expect(Rails.logger).to have_received(:error).with(/Invalid JSON in file:/)
+        expect(Rails.logger).to have_received(:error).with(/Invalid JSON in file: .* - /)
         expect(result).to be_empty
       end
     end

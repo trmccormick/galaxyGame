@@ -243,8 +243,7 @@ RSpec.describe Units::BaseUnit, type: :model do
       # Assert that add_pile was received by the surface storage double
       expect(surface_storage_double).to have_received(:add_pile).with(
         material_name: 'processed_regolith',
-        amount: 100,
-        source_unit: base_unit
+        amount: 100
       )
     end
 

@@ -14,6 +14,9 @@ RSpec.describe Generators::GameDataGenerator do
     allow_any_instance_of(Generators::GameDataGenerator).to receive(:generate_content).and_return({ name: 'Test Item', description: 'A test item.' }.to_json)
     result = generator.generate_item(template_path, output_path, params)
     expect(result['name']).to eq('Test Item')
-    expect(File).to exist(output_path)
+    
+    # Capture file content before after hook deletes tmp directory
+    file_content = File.read(output_path) if File.exist?(output_path)
+    expect(file_content).to include('"name": "Test Item"')
   end
 end

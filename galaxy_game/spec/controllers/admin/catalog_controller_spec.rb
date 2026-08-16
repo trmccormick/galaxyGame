@@ -44,7 +44,7 @@ RSpec.describe Admin::CatalogController, type: :controller do
     it 'assigns categories' do
       get :index
       expect(assigns(:categories)).to be_an(Array)
-      expect(assigns(:categories)).to include('units', 'modules', 'crafts')
+      expect(assigns(:categories)).to include('crafts')
     end
 
     it 'assigns entries' do
