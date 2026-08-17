@@ -1141,7 +1141,17 @@ module StarSim
             )
           end
         end
-        
+
+        # Parent magnetosphere influence (Option B: static bonus for moons orbiting magnetized parents)
+        parent_mag = planet_data['magnetosphere_strength']
+        if parent_mag && parent_mag.to_f > 0.1
+          moon_data['properties'] ||= {}
+          moon_data['properties']['has_magnetosphere'] = true unless moon_data['properties']['has_magnetosphere']
+          intrinsic = (moon_data['magnetosphere_strength'] || 0.0).to_f
+          bonus = parent_mag.to_f * 0.3
+          moon_data['magnetosphere_strength'] = [intrinsic + bonus, 1.0].min
+        end
+
         # Some moons have thin atmospheres
         if rand < 0.3
           magnetosphere_strength = moon_data["magnetosphere_strength"] || 0.0

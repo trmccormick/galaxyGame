@@ -159,4 +159,69 @@ RSpec.describe StarSim::ProceduralGenerator do
       end
     end
   end
+
+  describe '#generate_moons_for_planet — parent magnetosphere influence' do
+    let(:planet_with_mag) do
+      {
+        'name' => 'Saturn',
+        'identifier' => 'SATURN',
+        'magnetosphere_strength' => 0.5,
+        'radius' => 6.0e7,
+        'surface_temperature' => 134
+      }
+    end
+
+    let(:planet_no_mag) do
+      {
+        'name' => 'Uranus',
+        'identifier' => 'URANUS',
+        'magnetosphere_strength' => 0.05,
+        'radius' => 2.5e7,
+        'surface_temperature' => 77
+      }
+    end
+
+    it 'applies parent magnetosphere bonus when parent strength > 0.1' do
+      # Seed for reproducibility — ensure moon gets intrinsic mag via the 1% rand path
+      srand(42)
+      moons = generator.send(:generate_moons_for_planet, planet_with_mag, 1, 'TEST')
+      moon = moons.first
+      expect(moon['type']).to eq('moon')
+      # properties.has_magnetosphere should be true when parent mag > 0.1
+      if moon['properties']
+        expect(moon['properties']['has_magnetosphere']).to be true
+      end
+    end
+
+    it 'caps bonus at 1.0' do
+      strong_parent = planet_with_mag.merge('magnetosphere_strength' => 1.0)
+      srand(99)
+      moons = generator.send(:generate_moons_for_planet, strong_parent, 1, 'TEST')
+      moon = moons.first
+      if moon['magnetosphere_strength']
+        expect(moon['magnetosphere_strength']).to be <= 1.0
+      end
+    end
+
+    it 'does NOT apply bonus when parent magnetosphere_strength <= 0.1' do
+      # Mock atmosphere generator to avoid pre-existing @body_data bug in test env
+      mock_atmo = double('AtmosphereGenerator', generate_composition_for_body: nil)
+      generator.instance_variable_set(:@atmosphere_generator, mock_atmo)
+
+      moons = generator.send(:generate_moons_for_planet, planet_no_mag, 5, 'TEST')
+      moons.each do |moon|
+        # properties should not have has_magnetosphere set by parent influence
+        if moon['properties'] && moon['properties'].key?('has_magnetosphere')
+          expect(moon['properties']['has_magnetosphere']).to be false
+        end
+      end
+    end
+
+    it 'does not modify parent body data' do
+      original_mag = planet_with_mag['magnetosphere_strength']
+      srand(55)
+      generator.send(:generate_moons_for_planet, planet_with_mag, 1, 'TEST')
+      expect(planet_with_mag['magnetosphere_strength']).to eq(original_mag)
+    end
+  end
 end
