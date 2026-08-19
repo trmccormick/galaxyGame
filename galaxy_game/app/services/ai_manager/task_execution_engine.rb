@@ -348,7 +348,50 @@ def initialize(mission_id)
     end
     
     def perform_survey(task)
-      Rails.logger.info("  → perform_survey not yet implemented")
+      return false unless @settlement
+      
+      # Extract target body identifier from task
+      target_body_id = task['target_body_id'] || task['body_identifier']
+      return false unless target_body_id
+      
+      # Find the celestial body to survey
+      body = CelestialBody.find_by(identifier: target_body_id)
+      return false unless body
+      
+      # Check if body already has orbital elements
+      if body.orbital_elements.present? && body.orbital_elements.values.any? { |v| v.present? }
+        Rails.logger.info("  ✓ Survey of #{body.name}: orbital_elements already known")
+        return true
+      end
+      
+      # Generate plausible orbital elements using generator
+      # First, determine if body is around a star or planet
+      star = body.star || body.parent_celestial_body&.star
+      return false unless star
+      
+      # For simplicity, assign index based on orbital order
+      orbit_index = star.celestial_bodies.order(:semi_major_axis).pluck(:id).index(body.id) || 0
+      
+      generator = OrbitalParametersGenerator.new(star: star, index: orbit_index)
+      generated_params = generator.generate
+      
+      # Convert generated params to database format
+      orbital_data = {
+        semi_major_axis: (generated_params[:semi_major_axis_au] * 149597870700.0).to_f, # Convert AU to meters
+        eccentricity: generated_params[:eccentricity].to_f,
+        inclination: generated_params[:inclination_deg].to_f,
+        mean_anomaly: generated_params[:mean_anomaly].to_f
+      }
+      
+      # Persist orbital elements
+      body.update!(orbital_elements: orbital_data)
+      
+      Rails.logger.info("  ✓ Survey of #{body.name}: discovered orbital_elements")
+      Rails.logger.info("    - semi_major_axis: #{orbital_data[:semi_major_axis].to_s.chars.take(15).join} m")
+      Rails.logger.info("    - eccentricity: #{orbital_data[:eccentricity]}")
+      Rails.logger.info("    - inclination: #{orbital_data[:inclination]}°")
+      Rails.logger.info("    - mean_anomaly: #{orbital_data[:mean_anomaly]}°")
+      
       true
     end
     
