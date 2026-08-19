@@ -252,7 +252,7 @@ module StarSim
         :type, :parent_identifier, :parent_body, :properties, :aliases, # Handled explicitly
         :atmosphere, :hydrosphere, :hydrosphere_attributes, :geosphere_attributes, :star_distances, :materials, # Handled as associations
         :atmosphere_attributes, :hydrosphere_attributes, :biosphere_attributes, # Aliases for associations
-        :geological_features, :magnetosphere, :magnetic_field_strength, :rotation_period, :orbital_elements, # Additional attributes
+        :geological_features, :magnetosphere, :magnetic_field_strength, :rotation_period, # Additional attributes
         :volcanic_activity, # Geosphere attribute
         :magnetic_moment, :tei_score, :known_pressure, :geological_activity, :engineered_atmosphere,
         :terraforming_difficulty, :volatile_reservoir, :material_yield_bias, :from_template,

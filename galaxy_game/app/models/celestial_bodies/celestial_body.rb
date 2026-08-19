@@ -57,6 +57,7 @@ module CelestialBodies
 
     # JSONB field accessors
     store_accessor :properties, :has_magnetosphere, :preservation_mode, :aliases
+    store_accessor :orbital_elements, :semi_major_axis, :eccentricity, :inclination, :mean_anomaly
     
     def name
       self[:name] || identifier
