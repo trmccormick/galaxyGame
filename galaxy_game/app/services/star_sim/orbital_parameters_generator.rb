@@ -11,6 +11,7 @@ module StarSim
           semi_major_axis_au: generate_semi_major_axis,
           eccentricity: generate_eccentricity,
           inclination_deg: generate_inclination,
+          mean_anomaly: generate_mean_anomaly,
           orbital_period_days: calculate_orbital_period
         }
       end
@@ -29,6 +30,10 @@ module StarSim
   
       def generate_inclination
         @randomness ? rand(0.0..3.0).round(2) : 0.0
+      end
+
+      def generate_mean_anomaly
+        @randomness ? rand(0.0..360.0).round(2) : 0.0
       end
   
       def calculate_orbital_period
