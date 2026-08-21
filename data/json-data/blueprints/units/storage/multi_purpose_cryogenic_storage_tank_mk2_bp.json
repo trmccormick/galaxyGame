@@ -1,0 +1,95 @@
+{
+  "template": "unit_blueprint",
+  "id": "multi_purpose_cryogenic_storage_tank_mk2",
+  "name": "Multi-Purpose Cryogenic Storage Tank MK2 Blueprint",
+  "description": "Advanced dual-mode storage system with enhanced insulation and active cooling capability. Reduces boil-off to 0.15% per day, enabling practical long-haul atmospheric harvesting operations.",
+  "category": "storage",
+  "subcategory": "cryo_multi",
+  "tier": "mk2",
+  "capacity": {
+    "storage_kg": 50000
+  },
+  "boil_off_characteristics": {
+    "boil_off_rate_percent_per_day": 0.15,
+    "active_cooling_power_kw": 5,
+    "standby_cooling_power_kw": 2,
+    "cooling_modes": ["active_cooling", "standby", "offline"],
+    "offline_boil_off_rate_percent_per_day": 0.8
+  },
+  "required_materials": {
+    "stainless_steel": {
+      "amount": 1800,
+      "unit": "kilogram",
+      "description": "Primary tank structure with reinforced sections"
+    },
+    "insulation": {
+      "amount": 800,
+      "unit": "kilogram",
+      "description": "Enhanced multi-layer cryogenic insulation system (2x mk1 baseline)"
+    },
+    "thermal_coating": {
+      "amount": 400,
+      "unit": "kilogram",
+      "description": "Improved reflective thermal coating"
+    },
+    "temperature_sensors": {
+      "amount": 12,
+      "unit": "units",
+      "description": "Precision temperature monitoring array"
+    },
+    "pressure_regulators": {
+      "amount": 5,
+      "unit": "units",
+      "description": "Advanced pressure control system"
+    }
+  },
+  "production_data": {
+    "time_hours": 10500,
+    "power_consumption_kw": 35,
+    "required_facility_type": "fabrication_plant",
+    "required_technology": [
+      "cryogenic_storage_technology",
+      "advanced_materials"
+    ],
+    "base_material_efficiency": 0.92,
+    "base_time_efficiency": 1.0
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 1200000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 200,
+      "repair_cost_gcc": 12000,
+      "materials_needed_for_repair": [
+        {
+          "id": "stainless_steel",
+          "amount": 300,
+          "unit": "kilogram"
+        },
+        {
+          "id": "insulation",
+          "amount": 150,
+          "unit": "kilogram"
+        },
+        {
+          "id": "temperature_sensors",
+          "amount": 2,
+          "unit": "units"
+        }
+      ]
+    }
+  },
+  "upgrade_from": {
+    "id": "multi_purpose_cryogenic_storage_tank_mk1",
+    "upgrade_path": "mk2_insulation_maturity"
+  },
+  "metadata": {
+    "version": "1.0",
+    "type": "unit_blueprint",
+    "template_compliance": "unit_blueprint_v1.3",
+    "tier": "mk2",
+    "tier_release": "Phase7-8"
+  }
+}

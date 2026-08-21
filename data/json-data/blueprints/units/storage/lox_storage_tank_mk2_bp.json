@@ -1,0 +1,99 @@
+{
+  "template": "unit_blueprint",
+  "id": "lox_storage_tank_mk2",
+  "name": "Liquid Oxygen Storage Tank MK2 Blueprint",
+  "description": "Advanced LOX storage tank with enhanced insulation and active cooling. Boil-off reduced to 0.18% per day (LOX boils faster than methane). Suitable for long-haul missions and harvesting operations.",
+  "category": "storage",
+  "subcategory": "cryo_lox",
+  "tier": "mk2",
+  "port_type": "fluid_standard",
+  "physical_properties": {
+    "length_m": 6.5,
+    "width_m": 2.6,
+    "height_m": 2.6,
+    "empty_mass_kg": 10500.0,
+    "volume_m3": 30.0
+  },
+  "item_produced": {
+    "id": "lox_storage_tank_mk2",
+    "amount": 1,
+    "unit": "unit"
+  },
+  "boil_off_characteristics": {
+    "boil_off_rate_percent_per_day": 0.18,
+    "active_cooling_power_kw": 5,
+    "standby_cooling_power_kw": 2,
+    "cooling_modes": ["active_cooling", "standby", "offline"],
+    "offline_boil_off_rate_percent_per_day": 1.2
+  },
+  "required_materials": {
+    "aluminum_alloy": {
+      "amount": 8500,
+      "unit": "kilogram"
+    },
+    "insulation": {
+      "amount": 3200,
+      "unit": "kilogram"
+    },
+    "thermal_coating": {
+      "amount": 650,
+      "unit": "kilogram"
+    },
+    "temperature_sensors": {
+      "amount": 12,
+      "unit": "units"
+    }
+  },
+  "production_data": {
+    "time_hours": 10500,
+    "power_consumption_kw": 40,
+    "required_facility_type": "fabrication_plant",
+    "required_technology": [
+      "cryogenic_storage_technology_mk2",
+      "active_cooling_systems",
+      "advanced_materials"
+    ],
+    "base_material_efficiency": 0.92,
+    "base_time_efficiency": 1.0
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 1300000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 200,
+      "repair_cost_gcc": 13000,
+      "materials_needed_for_repair": [
+        {
+          "id": "aluminum_alloy",
+          "amount": 300,
+          "unit": "kilogram"
+        },
+        {
+          "id": "advanced_insulation",
+          "amount": 60,
+          "unit": "kilogram"
+        },
+        {
+          "id": "thermal_coating",
+          "amount": 12,
+          "unit": "kilogram"
+        }
+      ]
+    }
+  },
+  "hazard_level": 4,
+  "special_handling": ["cryogenic_fluid", "oxidizer"],
+  "upgrade_from": {
+    "id": "lox_storage_tank_mk1",
+    "upgrade_path": "mk2_technology_maturity"
+  },
+  "metadata": {
+    "version": "1.0",
+    "type": "unit_blueprint",
+    "template_compliance": "unit_blueprint_v1.3",
+    "tier": "mk2",
+    "tier_release": "Phase7-8"
+  }
+}

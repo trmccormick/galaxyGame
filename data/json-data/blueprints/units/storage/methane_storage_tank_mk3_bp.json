@@ -1,0 +1,104 @@
+{
+  "template": "unit_blueprint",
+  "id": "methane_storage_tank_mk3",
+  "name": "Methane Storage Tank MK3 Blueprint",
+  "description": "Ultra-advanced liquid methane storage tank with proprietary cooling technology and graphene insulation. Boil-off reduced to 0.07% per day, enabling Titan-range operations.",
+  "category": "storage",
+  "subcategory": "cryo_methane",
+  "tier": "mk3",
+  "port_type": "fluid_standard",
+  "physical_properties": {
+    "length_m": 7.5,
+    "width_m": 3.0,
+    "height_m": 3.0,
+    "empty_mass_kg": 13000.0,
+    "volume_m3": 35.0
+  },
+  "item_produced": {
+    "id": "methane_storage_tank_mk3",
+    "amount": 1,
+    "unit": "unit"
+  },
+  "boil_off_characteristics": {
+    "boil_off_rate_percent_per_day": 0.07,
+    "active_cooling_power_kw": 2.5,
+    "standby_cooling_power_kw": 0.8,
+    "cooling_modes": ["active_cooling", "standby", "offline"],
+    "offline_boil_off_rate_percent_per_day": 0.45
+  },
+  "required_materials": {
+    "stainless_steel": {
+      "amount": 20000,
+      "unit": "kilogram"
+    },
+    "graphene_infused_insulation": {
+      "amount": 4000,
+      "unit": "kilogram"
+    },
+    "thermal_coating": {
+      "amount": 1000,
+      "unit": "kilogram"
+    },
+    "copper_thermal_control": {
+      "amount": 500,
+      "unit": "kilogram"
+    },
+    "temperature_sensors": {
+      "amount": 16,
+      "unit": "units"
+    }
+  },
+  "production_data": {
+    "time_hours": 14000,
+    "power_consumption_kw": 48,
+    "required_facility_type": "advanced_fabrication_facility",
+    "required_technology": [
+      "cryogenic_storage_technology_mk3",
+      "graphene_materials_engineering",
+      "quantum_sensors",
+      "advanced_cooling_systems"
+    ],
+    "base_material_efficiency": 0.94,
+    "base_time_efficiency": 1.0
+  },
+  "cost_data": {
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 2050000
+    },
+    "maintenance": {
+      "time_to_repair_hours": 240,
+      "repair_cost_gcc": 20500,
+      "materials_needed_for_repair": [
+        {
+          "id": "stainless_steel",
+          "amount": 400,
+          "unit": "kilogram"
+        },
+        {
+          "id": "graphene_infused_insulation",
+          "amount": 80,
+          "unit": "kilogram"
+        },
+        {
+          "id": "thermal_coating",
+          "amount": 20,
+          "unit": "kilogram"
+        }
+      ]
+    }
+  },
+  "hazard_level": 3,
+  "special_handling": ["cryogenic_fluid", "flammable_gas"],
+  "upgrade_from": {
+    "id": "methane_storage_tank_mk2",
+    "upgrade_path": "mk3_technology_maturity"
+  },
+  "metadata": {
+    "version": "1.0",
+    "type": "unit_blueprint",
+    "template_compliance": "unit_blueprint_v1.3",
+    "tier": "mk3",
+    "tier_release": "Phase12+"
+  }
+}

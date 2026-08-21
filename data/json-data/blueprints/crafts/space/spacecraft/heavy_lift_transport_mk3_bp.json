@@ -1,0 +1,142 @@
+{
+  "template": "base_craft",
+  "id": "heavy_lift_transport_mk3",
+  "name": "Heavy Lift Transport MK3",
+  "description": "Ultra-advanced heavy-lift spacecraft with proprietary cooling technology and graphene-enhanced hull. Supports mk3 cryogenic storage units and enables extended Titan-range operations with minimal resource loss.",
+  "type": "craft",
+  "category": "spaceship",
+  "tier": "mk3",
+
+  "physical_properties": {
+    "length_m": 54.0,
+    "width_m": 10.0,
+    "height_m": 10.0,
+    "empty_mass_kg": 185000.0,
+    "volume_m3": 1800.0,
+    "drag_coefficient": 0.15,
+    "max_payload_kg": 170000.0
+  },
+
+  "mounting_points": [
+    "habitat",
+    "propulsion",
+    "fuel_tanks",
+    "cargo_bays",
+    "landing_gear_mounts",
+    "cooling_radiators",
+    "advanced_sensors"
+  ],
+
+  "compatible_units": [
+    "methane_engine",
+    "lox_tank",
+    "methane_tank",
+    "methane_tank_mk2",
+    "methane_tank_mk3",
+    "lox_tank_mk2",
+    "lox_tank_mk3",
+    "multi_purpose_cryogenic_storage_tank_mk2",
+    "multi_purpose_cryogenic_storage_tank_mk3",
+    "solar_panel",
+    "life_support",
+    "cargo_bay"
+  ],
+
+  "compatible_modules": [
+    "heavy_lift_habitat_module",
+    "retractable_landing_legs"
+  ],
+
+  "crew_capacity": 100,
+  "cargo_capacity_m3": 1100.0,
+
+  "ports": {
+    "internal_module_ports": 12,
+    "external_module_ports": 4,
+    "fuel_storage_ports": 3,
+    "unit_ports": 8,
+    "external_ports": 3,
+    "propulsion_ports": 8,
+    "storage_ports": 6
+  },
+
+  "systems": {
+    "stabilizer_unit": { "status": "offline" },
+    "propulsion": { "status": "offline" },
+    "power": { "status": "offline" },
+    "life_support": { "status": "offline" },
+    "navigation": { "status": "offline" }
+  },
+
+  "blueprint_data": {
+    "base_material_efficiency": 0.97,
+    "base_time_efficiency": 0.93,
+    "purchase_cost": {
+      "currency": "GCC",
+      "amount": 4200000
+    },
+    "materials": [
+      {
+        "id": "stainless_steel",
+        "amount": 175000,
+        "unit": "kilogram"
+      },
+      {
+        "id": "electronics",
+        "amount": 6500,
+        "unit": "kilogram"
+      },
+      {
+        "id": "thermal_protection",
+        "amount": 11000,
+        "unit": "kilogram"
+      },
+      {
+        "id": "titanium_alloy",
+        "amount": 26000,
+        "unit": "kilogram"
+      },
+      {
+        "id": "carbon_fiber",
+        "amount": 13000,
+        "unit": "kilogram"
+      }
+    ],
+    "assembly_time": 32000,
+    "maintenance": {
+      "time_to_repair": 2400,
+      "repair_cost_gcc": 84000,
+      "materials_needed_for_repair": [
+        {
+          "id": "stainless_steel",
+          "amount": 2400,
+          "unit": "kilogram"
+        },
+        {
+          "id": "electronics",
+          "amount": 700,
+          "unit": "kilogram"
+        },
+        {
+          "id": "copper_thermal_control",
+          "amount": 600,
+          "unit": "kilogram"
+        }
+      ]
+    },
+    "research_required": "Advanced Spacecraft Engineering MK3"
+  },
+
+  "upgrade_from": {
+    "id": "heavy_lift_transport_mk2",
+    "upgrade_path": "mk3_advanced_cooling_and_efficiency"
+  },
+
+  "metadata": {
+    "version": "1.0",
+    "type": "base_craft",
+    "template_compliance": "base_craft_v1.4",
+    "tier": "mk3",
+    "tier_release": "Phase12+"
+  }
+}
