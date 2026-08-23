@@ -191,7 +191,7 @@ RSpec.describe MaterialManagementConcern, type: :concern do
 
       # ✅ Fix 2: Use material_id for atmosphere
       it 'updates atmosphere composition' do
-        expect(test_object).to receive(:update_atmosphere_for_gas).with("iron", -100)
+        expect(test_object).to receive(:update_atmosphere_for_gas).with("Fe", -100)
         
         test_object.remove_material('iron', 100)
       end
