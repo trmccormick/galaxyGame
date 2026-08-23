@@ -171,7 +171,7 @@ end
       create(:market_order,
              :buy,
              base_settlement: settlement,
-             resource: 'oxygen',
+             resource: 'raw_regolith',
              quantity: 100)
     end
 
@@ -198,13 +198,14 @@ end
       # Create raw regolith for TEU processing into processed_regolith
       geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
       create(:material, name: 'raw_regolith', location: 'geosphere', celestial_body: celestial_body, materializable: geosphere)
-      # Add storage unit with proper operational setup for gas storage
+      # Add general storage unit for solid materials (raw_regolith, processed_regolith)
       create(:base_unit, :storage, 
         settlement: settlement,
         operational: true,
         operational_data: { 
+          'subcategory' => 'general',
           'storage' => { 
-            'type' => 'gas',
+            'type' => 'general',
             'capacity' => 10000,
             'current_level' => 0
           } 
@@ -213,15 +214,15 @@ end
       settlement.reload
     end
 
-    it 'deploys oxygen harvester with correct configuration' do
+    it 'deploys raw_regolith harvester with correct configuration' do
       AIManager::EscalationService.deploy_automated_harvesters(oxygen_order)
 
       harvester = Units::Robot.last
-      expect(harvester.name).to eq("Automated Oxygen Harvester")
-      expect(harvester.operational_data['task_type']).to eq('atmospheric_harvesting')
-      expect(harvester.operational_data['target_material']).to eq('O2')
-      expect(harvester.operational_data['extraction_rate']).to eq(10)
-      expect(harvester.operational_data['deployment_site']).to eq('atmospheric_processor')
+      expect(harvester.name).to eq("Automated Raw Regolith Miner")
+      expect(harvester.operational_data['task_type']).to eq('regolith_mining')
+      expect(harvester.operational_data['target_material']).to eq('raw_regolith')
+      expect(harvester.operational_data['extraction_rate']).to eq(25)
+      expect(harvester.operational_data['deployment_site']).to eq('regolith_field')
     end
 
     it 'deploys water harvester with correct configuration' do
@@ -270,7 +271,7 @@ end
         expect(oxygen_order).to be_fulfilled
 
         settlement.reload
-        expect(settlement.inventory.current_storage_of('oxygen')).to be > 0
+        expect(settlement.inventory.current_storage_of('raw_regolith')).to be > 0
 
         harvester.reload
         expect(harvester.operational_data['status']).to eq('completed')
