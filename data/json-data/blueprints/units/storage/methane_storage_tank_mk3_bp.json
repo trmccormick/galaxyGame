@@ -31,17 +31,25 @@
       "amount": 20000,
       "unit": "kilogram"
     },
-    "graphene_infused_insulation": {
-      "amount": 4000,
-      "unit": "kilogram"
+    "insulation": {
+      "amount": 2200,
+      "unit": "kilogram",
+      "description": "Premium multi-layer insulation"
+    },
+    "graphene_composite": {
+      "amount": 350,
+      "unit": "kilogram",
+      "description": "Graphene-polymer composite matrix for ultra-low boil-off"
     },
     "thermal_coating": {
       "amount": 1000,
-      "unit": "kilogram"
+      "unit": "kilogram",
+      "description": "Advanced reflective coating"
     },
-    "copper_thermal_control": {
-      "amount": 500,
-      "unit": "kilogram"
+    "electronics": {
+      "amount": 1200,
+      "unit": "kilogram",
+      "description": "Active cooling control electronics"
     },
     "temperature_sensors": {
       "amount": 16,
@@ -49,16 +57,14 @@
     }
   },
   "production_data": {
-    "time_hours": 14000,
-    "power_consumption_kw": 48,
+    "time_hours": 13500,
+    "power_consumption_kw": 44,
     "required_facility_type": "advanced_fabrication_facility",
     "required_technology": [
-      "cryogenic_storage_technology_mk3",
-      "graphene_materials_engineering",
-      "quantum_sensors",
-      "advanced_cooling_systems"
+      "cryogenic_storage_technology_advanced",
+      "active_cooling_systems_advanced"
     ],
-    "base_material_efficiency": 0.94,
+    "base_material_efficiency": 0.93,
     "base_time_efficiency": 1.0
   },
   "cost_data": {

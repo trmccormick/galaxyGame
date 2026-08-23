@@ -198,6 +198,17 @@ end
       # Create raw regolith for TEU processing into processed_regolith
       geosphere = celestial_body.geosphere || create(:geosphere, celestial_body: celestial_body)
       create(:material, name: 'raw_regolith', location: 'geosphere', celestial_body: celestial_body, materializable: geosphere)
+      # Add storage unit with proper operational setup for gas storage
+      create(:base_unit, :storage, 
+        settlement: settlement,
+        operational: true,
+        operational_data: { 
+          'storage' => { 
+            'type' => 'gas',
+            'capacity' => 10000,
+            'current_level' => 0
+          } 
+        })
       celestial_body.reload
       settlement.reload
     end

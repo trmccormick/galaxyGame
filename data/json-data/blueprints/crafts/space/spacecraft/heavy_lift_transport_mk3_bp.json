@@ -2,7 +2,7 @@
   "template": "base_craft",
   "id": "heavy_lift_transport_mk3",
   "name": "Heavy Lift Transport MK3",
-  "description": "Ultra-advanced heavy-lift spacecraft with proprietary cooling technology and graphene-enhanced hull. Supports mk3 cryogenic storage units and enables extended Titan-range operations with minimal resource loss.",
+  "description": "Ultra-advanced heavy-lift spacecraft with advanced cooling systems and optimized hull. Supports mk3 cryogenic storage units and enables extended Titan-range operations with minimal resource loss.",
   "type": "craft",
   "category": "spaceship",
   "tier": "mk3",

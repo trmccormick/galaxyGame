@@ -32,8 +32,14 @@
       "unit": "kilogram"
     },
     "insulation": {
-      "amount": 3200,
-      "unit": "kilogram"
+      "amount": 1600,
+      "unit": "kilogram",
+      "description": "Multi-layer insulation base layer"
+    },
+    "graphene_composite": {
+      "amount": 260,
+      "unit": "kilogram",
+      "description": "Graphene-polymer composite for superior thermal control (LOX boil-off reduction)"
     },
     "thermal_coating": {
       "amount": 650,

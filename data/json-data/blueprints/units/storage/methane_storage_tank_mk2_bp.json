@@ -32,8 +32,14 @@
       "unit": "kilogram"
     },
     "insulation": {
-      "amount": 3500,
-      "unit": "kilogram"
+      "amount": 1750,
+      "unit": "kilogram",
+      "description": "Multi-layer insulation base layer"
+    },
+    "graphene_composite": {
+      "amount": 280,
+      "unit": "kilogram",
+      "description": "Graphene-polymer composite for superior thermal control"
     },
     "thermal_coating": {
       "amount": 700,

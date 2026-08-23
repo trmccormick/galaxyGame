@@ -23,9 +23,14 @@
       "description": "Primary tank structure with reinforced sections"
     },
     "insulation": {
-      "amount": 800,
+      "amount": 400,
       "unit": "kilogram",
-      "description": "Enhanced multi-layer cryogenic insulation system (2x mk1 baseline)"
+      "description": "Multi-layer cryogenic insulation base layer"
+    },
+    "graphene_composite": {
+      "amount": 250,
+      "unit": "kilogram",
+      "description": "Advanced graphene-polymer composite for superior thermal performance"
     },
     "thermal_coating": {
       "amount": 400,

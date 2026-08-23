@@ -116,8 +116,8 @@
           "unit": "kilogram"
         },
         {
-          "id": "copper_thermal_control",
-          "amount": 400,
+          "id": "thermal_protection",
+          "amount": 200,
           "unit": "kilogram"
         }
       ]

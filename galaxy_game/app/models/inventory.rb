@@ -157,7 +157,7 @@ class Inventory < ApplicationRecord
   end
 
   def lookup_material_type(name)
-    Lookup::MaterialLookupService.new.find_material(name)&.dig('type') || 'general'
+    Lookup::MaterialLookupService.new.find_material(name)&.dig('category') || 'general'
   end
 
   def handle_surface_storage(name, amount, owner, metadata)
