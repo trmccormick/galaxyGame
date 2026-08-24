@@ -204,10 +204,7 @@ RSpec.describe StarSim::ProceduralGenerator do
     end
 
     it 'does NOT apply bonus when parent magnetosphere_strength <= 0.1' do
-      # Mock atmosphere generator to avoid pre-existing @body_data bug in test env
-      mock_atmo = double('AtmosphereGenerator', generate_composition_for_body: nil)
-      generator.instance_variable_set(:@atmosphere_generator, mock_atmo)
-
+      # Workaround removed: @body_data swap bug fixed in procedural_generator.rb line 29
       moons = generator.send(:generate_moons_for_planet, planet_no_mag, 5, 'TEST')
       moons.each do |moon|
         # properties should not have has_magnetosphere set by parent influence

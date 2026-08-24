@@ -26,7 +26,7 @@ module StarSim
       @planet_counter = 0
       @output_path = GalaxyGame::Paths::GENERATED_STAR_SYSTEMS_PATH
       FileUtils.mkdir_p(@output_path) unless File.directory?(@output_path)
-      @atmosphere_generator = atmosphere_generator || AtmosphereGeneratorService.new(material_lookup || Lookup::MaterialLookupService.new, {})
+      @atmosphere_generator = atmosphere_generator || AtmosphereGeneratorService.new({}, material_lookup || Lookup::MaterialLookupService.new)
       @hydrosphere_generator = hydrosphere_generator || HydrosphereGeneratorService.new({})
       @biosphere_generator = BiosphereGeneratorService.new
       @material_lookup = material_lookup || Lookup::MaterialLookupService.new
