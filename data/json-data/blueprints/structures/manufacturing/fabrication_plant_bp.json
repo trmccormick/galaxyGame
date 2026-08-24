@@ -1,0 +1,81 @@
+{
+  "template": "structure_blueprint_v1",
+  "id": "fabrication_plant",
+  "name": "Fabrication Plant",
+  "description": "Advanced composite fabrication facility for producing graphene composites from graphite and epoxy resin. Deployed as part of Phase 11+ stationary skimmer infrastructure for long-term resource processing operations.",
+  "category": "manufacturing",
+  "subcategory": "fabrication",
+  "physical_properties": {
+    "footprint_m2": 80,
+    "height_m": 5,
+    "mass_tons": 25
+  },
+  "required_materials": {
+    "3d_printed_regolith_panel_mk1": {
+      "amount": 40,
+      "unit": "unit"
+    },
+    "3d_printed_regolith_ibeam_mk1": {
+      "amount": 24,
+      "unit": "unit"
+    },
+    "titanium_alloy": {
+      "amount": 300,
+      "unit": "kilogram"
+    },
+    "graphene_composite": {
+      "amount": 5,
+      "unit": "kilogram"
+    }
+  },
+  "construction_requirements": {
+    "time_days": 12,
+    "skilled_workers": 8,
+    "specialized_equipment": [
+      "portable_crane",
+      "precision_calibration_rig",
+      "field_assembler"
+    ],
+    "required_technologies": [
+      "advanced_3d_printing",
+      "composite_materials_engineering",
+      "aerospace_assembly"
+    ]
+  },
+  "power_requirements": {
+    "operational_kw": 15,
+    "peak_kw": 25
+  },
+  "production_capabilities": [
+    {
+      "output_material_id": "graphene_composite",
+      "output_amount_kg": 10,
+      "production_time_hours": 8,
+      "input_materials": {
+        "graphite": {
+          "amount": 8.5,
+          "unit": "kilogram"
+        },
+        "epoxy_resin": {
+          "amount": 1.5,
+          "unit": "kilogram"
+        }
+      },
+      "cost_per_cycle_gcc": 45000,
+      "throughput_kg_per_day": 3
+    }
+  ],
+  "hazard_level": 2,
+  "safety_requirements": [
+    "basic_radiation_shielding",
+    "dust_control",
+    "fire_suppression"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "type": "blueprint",
+    "category": "facility",
+    "game_phase_unlocked": "phase_11",
+    "deployment_context": "stationary_skimmer_infrastructure"
+  }
+}
