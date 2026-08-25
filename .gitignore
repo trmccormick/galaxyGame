@@ -28,10 +28,6 @@ tmp/
 # Exclude root-level data directory (production/development data)
 /data/
 
-# ✅ Include blueprint and configuration data (ISRU, units, settlements)
-!/data/json-data/blueprints/
-!/data/json-data/schemas/
-
 # ⚠️ star_systems JSON files are generated at runtime — do not track in git
 /data/json-data/star_systems/*.json
 
