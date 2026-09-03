@@ -295,6 +295,15 @@ module CryptocurrencyMining
       @unit = unit
     end
     
+    # Delegate common unit attributes to the wrapped unit
+    def unit_type
+      @unit.unit_type
+    end
+    
+    def operational_data
+      @unit.operational_data
+    end
+    
     def mine(difficulty, efficiency_multiplier)
       # For Computer units, use their native mining method
       if @unit.respond_to?(:mining_rate_value)

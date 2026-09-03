@@ -89,7 +89,7 @@ describe 'Game Loop Integration Test', type: :integration do
       merged_data['power'] ||= {}
       merged_data['power']['consumption_kw'] = 100.0
       
-      ::Units::BaseUnit.create!(
+      created_unit = ::Units::BaseUnit.create!(
         identifier: "advanced_computer_test_#{SecureRandom.hex(4)}",
         name: "Advanced Computer Test",
         unit_type: 'advanced_computer',
@@ -97,7 +97,9 @@ describe 'Game Loop Integration Test', type: :integration do
         owner: owner,
         operational_data: merged_data
       )
-      log("✓ Mining unit installed in satellite")
+      log("✓ Mining unit installed in satellite (unit_id=#{created_unit.id}, attachable_type=#{created_unit.attachable_type}, attachable_id=#{created_unit.attachable_id})")
+      log("  DEBUG: After create - @satellite.base_units.count = #{@satellite.base_units.count}")
+      log("  DEBUG: Unit in DB - id=#{created_unit.id}, unit_type=#{created_unit.unit_type.inspect}, attachable=#{created_unit.attachable.inspect[0..50]}...")
     end
     
     # Install solar panel for power
@@ -107,7 +109,7 @@ describe 'Game Loop Integration Test', type: :integration do
       merged_data['power'] ||= {}
       merged_data['power']['generation_kw'] = 1000.0
       
-      ::Units::BaseUnit.create!(
+      created_panel = ::Units::BaseUnit.create!(
         identifier: "solar_panel_test_#{SecureRandom.hex(4)}",
         name: "Solar Panel Test",
         unit_type: 'solar_panel',
@@ -115,7 +117,8 @@ describe 'Game Loop Integration Test', type: :integration do
         owner: owner,
         operational_data: merged_data
       )
-      log("✓ Solar panel installed in satellite")
+      log("✓ Solar panel installed in satellite (unit_id=#{created_panel.id})")
+      log("  DEBUG: After panel create - @satellite.base_units.count = #{@satellite.base_units.count}")
     end
     
     # Create account for mining proceeds — associated with OWNER, not satellite
@@ -160,6 +163,21 @@ describe 'Game Loop Integration Test', type: :integration do
     # ========================================================================
     log("--- PHASE 2: GameSimulation Loop + Craft Dispatch (Parallel) ---")
     
+    # Reload satellite to ensure fresh data
+    @satellite.reload
+    
+    # DEBUG: Check satellite mining readiness
+    log("  DEBUG: Satellite.respond_to?(:account) = #{@satellite.respond_to?(:account)}")
+    log("  DEBUG: Satellite.account = #{@satellite.account.inspect}")
+    log("  DEBUG: Satellite.account.present? = #{@satellite.account.present?}")
+    log("  DEBUG: Satellite.respond_to?(:base_units) = #{@satellite.respond_to?(:base_units)}")
+    log("  DEBUG: Satellite.base_units.reload count = #{@satellite.base_units.reload.count}")
+    @satellite.base_units.each_with_index do |unit, idx|
+      log("    Unit #{idx}: class=#{unit.class.name}, unit_type=#{unit.unit_type.inspect}, is_computer?=#{unit.is_a?(Units::Computer)}, includes_computer?=#{unit.respond_to?(:unit_type) && unit.unit_type.to_s.include?('computer')}")
+    end
+    log("  DEBUG: Satellite.mining_units.count = #{@satellite.mining_units.count}")
+    log("  DEBUG: Satellite.can_mine_gcc? = #{@satellite.can_mine_gcc?}")
+    
     # Capture initial state BEFORE loop ticks
     initial_game_state_day = game_state.day
     initial_account_balance = @mining_account.reload.balance
@@ -195,6 +213,15 @@ describe 'Game Loop Integration Test', type: :integration do
           # The important part: the SERVICE is being invoked (not hand-rolled),
           # and it's happening in parallel with the loop tick.
           mined_amount = @satellite.mine_gcc
+          
+          # Log debug info on first tick
+          if current_tick == 1
+            log("  DEBUG: Mining units: #{@satellite.mining_units.map { |u| "#{u.unit_type} (id=#{u.id})" }.join(', ')}")
+            if @satellite.mining_units.first
+              first_unit = @satellite.mining_units.first
+              log("  DEBUG: First unit operational_data: #{first_unit.operational_data.inspect}")
+            end
+          end
           
           if mined_amount && mined_amount > 0
             log("  [CRAFT] Satellite mined #{mined_amount.round(2)} GCC")
