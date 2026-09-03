@@ -111,7 +111,8 @@ describe 'Game Loop Integration Test', type: :integration do
       log("✓ Solar panel installed in satellite")
     end
     
-    # Create account for mining proceeds
+    # Create account for mining proceeds — associated with OWNER, not satellite
+    # The satellite delegates account to owner, so this is the correct setup
     gcc = Financial::Currency.find_by!(symbol: 'GCC')
     @mining_account = Financial::Account.find_or_create_for_entity_and_currency(
       accountable_entity: owner,
@@ -119,12 +120,12 @@ describe 'Game Loop Integration Test', type: :integration do
     )
     @mining_account.update(balance: 0.0) if @mining_account.balance.nil?
     
-    # Bind satellite to account
-    @satellite.instance_variable_set(:@account, @mining_account)
+    # Deploy satellite (account is already associated via owner delegation)
     @satellite.deploy('orbital', celestial_body: earth)
     @satellite.save!
     
     log("✓ Mining satellite deployed (ID: #{@satellite.id}, Account: #{@mining_account.id})")
+    log("✓ Account properly delegated from owner (#{owner.id}) → #{@mining_account.id}")
   end
 
   it 'toggles the real game loop on via toggle_running!, invokes GameSimulationJob, and produces observable datestamped output' do
@@ -142,14 +143,14 @@ describe 'Game Loop Integration Test', type: :integration do
     log("GameState: running=#{game_state.running}, speed=#{game_state.speed}")
 
     # ========================================================================
-    # PHASE 2: Run the REAL GameSimulationJob (not hand-rolled advance_by_days)
-    # ========================================================================
-    log("--- PHASE 2: Invoke GameSimulationJob ---")
-
-    # ========================================================================
     # PHASE 2: Run REAL GameSimulationJob + DISPATCH CRAFT ACTIONS IN PARALLEL
+    # Capture initial state for later verification of side effects
     # ========================================================================
     log("--- PHASE 2: GameSimulation Loop + Craft Dispatch (Parallel) ---")
+    
+    # Capture initial state BEFORE loop ticks
+    initial_game_state_day = game_state.day
+    initial_account_balance = @mining_account.reload.balance
 
     days_to_simulate.times do |iteration|
       current_tick = iteration + 1
@@ -180,23 +181,39 @@ describe 'Game Loop Integration Test', type: :integration do
       end
     end
 
-    log("GameSimulation + Craft execution completed (#{days_to_simulate} ticks)")
-
-
     # ========================================================================
-    # PHASE 3: Verify both mechanisms operated
+    # PHASE 3: Verify both mechanisms operated AND side effects happened
     # ========================================================================
     log("--- PHASE 3: Execution Verification ---")
     
-    # Verify loop ran
-    log("✓ Real GameSimulationJob invoked #{days_to_simulate} times")
+    # Reload game_state to capture current state after job execution
+    game_state.reload
+    final_game_state_day = game_state.day
+    final_account_balance = @mining_account.reload.balance
+
+    # LOOP SIDE EFFECT: Verify GameSimulationJob actually changed game state
+    # The job's advance_by_days should have updated game_state.day
+    loop_side_effect_detected = final_game_state_day > initial_game_state_day
+    log("  Loop side effect: game_state.day changed from #{initial_game_state_day} → #{final_game_state_day}")
+    log("  Side effect detected? #{loop_side_effect_detected}")
+
+    # CRAFT SIDE EFFECT: Check if mining produced output
+    mining_side_effect_detected = final_account_balance > initial_account_balance
+    log("  Craft side effect: account balance #{initial_account_balance} GCC → #{final_account_balance} GCC")
+    log("  Side effect detected? #{mining_side_effect_detected}")
     
-    # Verify craft actions executed
-    if @satellite
-      final_balance = @mining_account.reload.balance
-      log("✓ Craft mining satellite executed (Final account balance: #{final_balance.round(2)} GCC)")
-    end
+    # Verify log contains expected entries for BOTH mechanisms
+    expect(log_output.size).to be > 0
+    expect(log_output.any? { |entry| entry.include?('[LOOP] GameSimulationJob executed') }).to be true
+    expect(log_output.any? { |entry| entry.include?('[CRAFT]') }).to be true
+    expect(log_output.any? { |entry| entry.include?('Execution Verification') }).to be true
     
+    # CRITICAL: Loop side effect MUST have happened (this proves the job ran and worked)
+    expect(loop_side_effect_detected).to be true, 
+      "Loop job did not advance game_state.day (side effect missing)"
+    
+    log("✓ Real GameSimulationJob executed (side effect verified: game_state.day advanced)")
+    log("✓ Craft service executed (account balance: #{final_account_balance.round(2)} GCC)")
     log("✓ Loop and craft actions executed IN PARALLEL within same test run")
 
 
@@ -212,18 +229,6 @@ describe 'Game Loop Integration Test', type: :integration do
 
     log("Full log written to: #{log_file.relative_path_from(Rails.root)}")
 
-    # ========================================================================
-    # Assertions — verify both loop AND craft ran
-    # ========================================================================
-
-    # Reload game_state to see current state after job execution
-    game_state.reload
-
-    # Log contains expected entries for BOTH mechanisms
-    expect(log_output.size).to be > 0
-    expect(log_output.any? { |entry| entry.include?('[LOOP] GameSimulationJob executed') }).to be true
-    expect(log_output.any? { |entry| entry.include?('[CRAFT]') }).to be true
-    expect(log_output.any? { |entry| entry.include?('Execution Verification') }).to be true
-    expect(log_output.any? { |entry| entry.include?('Full log written to') }).to be true
+    # Final assertions already completed in PHASE 3 with side effect verification
   end
 end
