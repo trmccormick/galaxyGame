@@ -97,9 +97,7 @@ describe 'Game Loop Integration Test', type: :integration do
         owner: owner,
         operational_data: merged_data
       )
-      log("✓ Mining unit installed in satellite (unit_id=#{created_unit.id}, attachable_type=#{created_unit.attachable_type}, attachable_id=#{created_unit.attachable_id})")
-      log("  DEBUG: After create - @satellite.base_units.count = #{@satellite.base_units.count}")
-      log("  DEBUG: Unit in DB - id=#{created_unit.id}, unit_type=#{created_unit.unit_type.inspect}, attachable=#{created_unit.attachable.inspect[0..50]}...")
+      log("✓ Mining unit installed in satellite")
     end
     
     # Install solar panel for power
@@ -117,8 +115,7 @@ describe 'Game Loop Integration Test', type: :integration do
         owner: owner,
         operational_data: merged_data
       )
-      log("✓ Solar panel installed in satellite (unit_id=#{created_panel.id})")
-      log("  DEBUG: After panel create - @satellite.base_units.count = #{@satellite.base_units.count}")
+      log("✓ Solar panel installed in satellite")
     end
     
     # Create account for mining proceeds — associated with OWNER, not satellite
@@ -163,20 +160,8 @@ describe 'Game Loop Integration Test', type: :integration do
     # ========================================================================
     log("--- PHASE 2: GameSimulation Loop + Craft Dispatch (Parallel) ---")
     
-    # Reload satellite to ensure fresh data
+    # Reload satellite to ensure fresh data from database
     @satellite.reload
-    
-    # DEBUG: Check satellite mining readiness
-    log("  DEBUG: Satellite.respond_to?(:account) = #{@satellite.respond_to?(:account)}")
-    log("  DEBUG: Satellite.account = #{@satellite.account.inspect}")
-    log("  DEBUG: Satellite.account.present? = #{@satellite.account.present?}")
-    log("  DEBUG: Satellite.respond_to?(:base_units) = #{@satellite.respond_to?(:base_units)}")
-    log("  DEBUG: Satellite.base_units.reload count = #{@satellite.base_units.reload.count}")
-    @satellite.base_units.each_with_index do |unit, idx|
-      log("    Unit #{idx}: class=#{unit.class.name}, unit_type=#{unit.unit_type.inspect}, is_computer?=#{unit.is_a?(Units::Computer)}, includes_computer?=#{unit.respond_to?(:unit_type) && unit.unit_type.to_s.include?('computer')}")
-    end
-    log("  DEBUG: Satellite.mining_units.count = #{@satellite.mining_units.count}")
-    log("  DEBUG: Satellite.can_mine_gcc? = #{@satellite.can_mine_gcc?}")
     
     # Capture initial state BEFORE loop ticks
     initial_game_state_day = game_state.day
@@ -208,20 +193,9 @@ describe 'Game Loop Integration Test', type: :integration do
       # This mimics craft actions happening "at the same time" as loop ticks
       if @satellite
         begin
-          # Note: mine_gcc returns 0 if can_mine_gcc? conditions aren't fully met
-          # (e.g., account delegation, power sufficiency check). 
-          # The important part: the SERVICE is being invoked (not hand-rolled),
-          # and it's happening in parallel with the loop tick.
+          # mine_gcc returns amount mined, or 0 if conditions prevent mining
+          # (e.g., insufficient power, no mining units, account missing)
           mined_amount = @satellite.mine_gcc
-          
-          # Log debug info on first tick
-          if current_tick == 1
-            log("  DEBUG: Mining units: #{@satellite.mining_units.map { |u| "#{u.unit_type} (id=#{u.id})" }.join(', ')}")
-            if @satellite.mining_units.first
-              first_unit = @satellite.mining_units.first
-              log("  DEBUG: First unit operational_data: #{first_unit.operational_data.inspect}")
-            end
-          end
           
           if mined_amount && mined_amount > 0
             log("  [CRAFT] Satellite mined #{mined_amount.round(2)} GCC")
