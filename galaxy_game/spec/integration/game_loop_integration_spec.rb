@@ -144,7 +144,7 @@ describe 'Game Loop Integration Test', type: :integration do
 
     # Use the real toggle mechanism (not raw DB write)
     game_state.toggle_running!
-    expect(game_state.running).to be true
+    expect(game_state.running).to be(true)
 
     log("Game loop toggled ON via GameState#toggle_running!")
     log("GameState: running=#{game_state.running}, speed=#{game_state.speed}")
@@ -237,9 +237,9 @@ describe 'Game Loop Integration Test', type: :integration do
     
     # Verify log contains expected entries for BOTH mechanisms
     expect(log_output.size).to be > 0
-    expect(log_output.any? { |entry| entry.include?('[LOOP] GameSimulationJob') }).to be true
-    expect(log_output.any? { |entry| entry.include?('[CRAFT]') }).to be true
-    expect(log_output.any? { |entry| entry.include?('Execution Verification') }).to be true
+    expect(log_output.any? { |entry| entry.include?('[LOOP] GameSimulationJob') }).to be(true)
+    expect(log_output.any? { |entry| entry.include?('[CRAFT]') }).to be(true)
+    expect(log_output.any? { |entry| entry.include?('Execution Verification') }).to be(true)
     
     # CRITICAL: Verify BOTH mechanisms were INVOKED (not just that code exists)
     loop_invoked = log_output.any? { |entry| entry.include?('[LOOP]') && (entry.include?('executed') || entry.include?('ATTEMPTED')) }
