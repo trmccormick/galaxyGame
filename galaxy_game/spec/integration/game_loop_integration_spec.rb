@@ -148,6 +148,11 @@ describe 'Game Loop Integration Test', type: :integration do
 
     log("Game loop toggled ON via GameState#toggle_running!")
     log("GameState: running=#{game_state.running}, speed=#{game_state.speed}")
+    
+    # NOTE: toggle_running! resets last_updated_at to Time.current when running becomes true
+    # We need to reset it to the past AFTER toggle so the job calculates elapsed time
+    game_state.update!(last_updated_at: 1.hour.ago)
+    log("  Debug: last_updated_at reset to #{game_state.last_updated_at} (#{((Time.current - game_state.last_updated_at) / 3600).round(1)} hours ago)")
 
     # ========================================================================
     # PHASE 2: Run REAL GameSimulationJob + DISPATCH CRAFT ACTIONS IN PARALLEL
@@ -158,6 +163,10 @@ describe 'Game Loop Integration Test', type: :integration do
     # Capture initial state BEFORE loop ticks
     initial_game_state_day = game_state.day
     initial_account_balance = @mining_account.reload.balance
+    
+    log("  Debug: initial_game_state_day = #{initial_game_state_day}")
+    log("  Debug: game_state.last_updated_at = #{game_state.last_updated_at}")
+    log("  Debug: game_state.seconds_per_game_day = #{game_state.seconds_per_game_day}")
 
     days_to_simulate.times do |iteration|
       current_tick = iteration + 1
