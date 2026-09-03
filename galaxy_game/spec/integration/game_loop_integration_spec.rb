@@ -21,8 +21,15 @@ describe 'Game Loop Integration Test', type: :integration do
 
     # Ensure GameState exists and is in a clean state
     game_state.update!(running: false, speed: 3, year: Date.today.year, day: Date.today.yday)
+    
+    # Set last_updated_at to the past so the job has time to simulate
+    # The job calculates: days_to_simulate = (elapsed_seconds / seconds_per_game_day).to_i
+    # We need enough elapsed time to produce at least 1 day of simulation
+    # If speed=3 and seconds_per_game_day = 86400/3 = 28800, we need 28800+ seconds elapsed
+    game_state.update!(last_updated_at: 1.hour.ago)
 
     log("Setup: GameState initialized with running=false, speed=#{game_state.speed}")
+    log("Setup: last_updated_at set to #{game_state.last_updated_at} (#{((Time.current - game_state.last_updated_at) / 3600).round(1)} hours ago)")
     
     # === CRAFT SETUP: Create Mining Satellite ===
     # This mimics what gcc_mining_sat.rake does, using the exact same service classes
@@ -209,8 +216,7 @@ describe 'Game Loop Integration Test', type: :integration do
     expect(log_output.any? { |entry| entry.include?('Execution Verification') }).to be true
     
     # CRITICAL: Loop side effect MUST have happened (this proves the job ran and worked)
-    expect(loop_side_effect_detected).to be true, 
-      "Loop job did not advance game_state.day (side effect missing)"
+    expect(loop_side_effect_detected).to(be(true), "Loop job did not advance game_state.day (side effect missing)")
     
     log("✓ Real GameSimulationJob executed (side effect verified: game_state.day advanced)")
     log("✓ Craft service executed (account balance: #{final_account_balance.round(2)} GCC)")
