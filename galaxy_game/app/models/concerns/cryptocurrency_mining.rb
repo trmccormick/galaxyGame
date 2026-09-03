@@ -300,6 +300,10 @@ module CryptocurrencyMining
       @unit.unit_type
     end
     
+    def id
+      @unit.id
+    end
+    
     def operational_data
       @unit.operational_data
     end
