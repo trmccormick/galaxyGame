@@ -110,3 +110,18 @@ The captured_asteroid pattern explicitly handles bodies with no moons:
 - Task sequence includes hollowing + propellant extraction + depot conversion
 
 This is the design line in action: evaluate what's actually there, don't force a named pattern.
+
+---
+
+## Known Skeleton Limits
+
+These are intentional limitations of the thin skeleton, not bugs. They are documented so future work knows where to go.
+
+1. **Cross-pattern scores are unnormalized**
+   Each pattern uses its own heuristic scale. Sorting by raw score means a body with many local resources can outrank a strategically better `captured_asteroid` option. Acceptable for this skeleton. Future ranking should normalize axes or apply context boosts (e.g. prefer `captured_asteroid` when `system_context[:moons]` is empty) rather than relying on raw score alone.
+
+2. **v2 task sequences are vocabulary references, not registry lookups**
+   Phase/task ids (`site_prep_foundation`, `deploy_lspu`, `power_comms`, etc.) match v2 naming but are hardcoded Ruby arrays, not loaded via `task_ref` from the JSON registry. Correct for a thin skeleton. Future work should resolve sequences from v2 task/phase data so composition stays data-driven.
+
+3. **Reserved system_context keys**
+   `distance_from_sun`, `parent_body`, and `nearby_nodes` are documented in the input contract but not yet read by scoring. Intentional until transport-cost estimation exists; do not treat as bugs.
