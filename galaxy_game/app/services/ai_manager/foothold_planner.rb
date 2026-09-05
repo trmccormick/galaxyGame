@@ -35,8 +35,8 @@ class AIManager::FootholdPlanner
   # @return [Array<FootholdOption>] Ranked list (best first)
   def plan
     raw_options = evaluate_all_patterns
-    raw_options.sort_by { |opt| -opt.score }.map do |opt|
-      FootholdOption.new(opt.to_h.merge(rationale: explain(opt)))
+    raw_options.sort_by { |opt| -opt[:score] }.map do |opt|
+      FootholdOption.new(opt.merge(rationale: explain(opt)))
     end
   end
 
@@ -72,7 +72,7 @@ class AIManager::FootholdPlanner
     patterns << evaluate_captured_asteroid if captured_asteroid_feasible?
     patterns << evaluate_atmospheric if atmospheric_feasible?
     patterns << evaluate_subsurface if subsurface_feasible?
-    patterns << evaluate_hybrid if hybrid_feasible?(patterns)
+    patterns << evaluate_hybrid(patterns) if hybrid_feasible?(patterns)
 
     patterns.compact
   end

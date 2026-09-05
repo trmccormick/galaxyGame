@@ -72,6 +72,22 @@ module AIManager
       end
     end
 
+    # Whether the body has a solid surface (and therefore regolith).
+    # Public: consumed by FootholdPlanner and exposed via production_capabilities.
+    # @return [Boolean]
+    def has_regolith?
+      celestial_body.has_solid_surface?
+    end
+
+    # Whether water can be extracted locally (stored volatiles / surface / subsurface).
+    # Public: consumed by FootholdPlanner (subsurface feasibility).
+    # @return [Boolean]
+    def can_extract_water?
+      water_resources.any? ||
+        subsurface_resources.include?('H2O') ||
+        surface_resources.include?('H2O')
+    end
+
     private
 
     # Helper to get stored_volatiles from geosphere, falling back to crust_composition if needed
@@ -223,12 +239,6 @@ module AIManager
       false
     end
 
-    def can_extract_water?
-      water_resources.any? ||
-        subsurface_resources.include?('H2O') ||
-        surface_resources.include?('H2O')
-    end
-
     def can_extract_fuel?
       # Methane from atmosphere (Titan/Mars Sabatier reaction)
       return true if atmospheric_resources.include?('CH4')
@@ -255,10 +265,6 @@ module AIManager
       # metal extraction potential — anorthosite, norite, troctolite
       # all contain extractable metals via PVE
       geo.crust_composition.values.any? { |v| volatile_amount(v) > 1.0 }
-    end
-
-    def has_regolith?
-      celestial_body.has_solid_surface?
     end
   end
 end
