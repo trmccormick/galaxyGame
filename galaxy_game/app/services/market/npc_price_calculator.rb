@@ -6,6 +6,8 @@
 # - Early game (no market): Cost-based pricing using Earth import costs
 # - Late game (market exists): Market-based pricing using price history
 # - NPCs always maintain minimum profit margin
+require 'ostruct'
+
 module Market
   class NpcPriceCalculator
     class << self
@@ -56,6 +58,15 @@ module Market
           spread_percent: ask && bid ? (((ask - bid) / ask) * 100).round(2) : nil
         }
       end
+
+      # Evaluate pricing strategies for AI Manager acquisition decisions.
+      # @param material [String, Hash] Resource name or material data hash
+      # @param location [String, Settlement, CelestialBody] Location  identifier or settlement object
+      # @param context [Hash] Optional context parameters
+      # @return [OpenStruct] Structured strategy evaluation
+      def evaluate_strategy(material:, location:, context: {})
+        new(material: material, location: location, context: context).evaluate_strategy
+      end
       
       private
       
@@ -79,12 +90,46 @@ module Market
         import_cost = calculate_import_cost(settlement, resource_name)
         return nil unless import_cost && import_cost > 0
         
+        # For deep-space locations, use extraction floor instead of Earth import cost
+        celestial_body = settlement&.location&.celestial_body
+        body_name = celestial_body&.name&.downcase
+        is_deep_space = deep_space_location?(body_name)
+        
+        base_cost = is_deep_space ? (calculate_extraction_floor(settlement, resource_name) || import_cost) : import_cost
+        
         discount = context[:discount] || EconomicConfig.npc_buy_discount(market_exists: false)
         
         # Apply inventory adjustments if settlement context available
         adjusted_discount = apply_inventory_adjustments(settlement, resource_name, discount, context)
         
-        (import_cost * adjusted_discount).round(2)
+        (base_cost * adjusted_discount).round(2)
+      end
+      
+      def calculate_extraction_floor(settlement, resource_name)
+        material_data = load_material_data(resource_name)
+        return nil unless material_data
+        
+        local_cost = material_data.dig('pricing', 'lunar_production', 'cost_per_kg')
+        return local_cost if local_cost
+        
+        if can_produce_locally?(settlement, resource_name)
+          maturity = determine_settlement_maturity(settlement)
+          return EconomicConfig.local_production_cost(resource_name, maturity)
+        end
+        
+        # No local production: use CapEx amortization estimate
+        eap_cost = calculate_earth_import_cost(settlement, resource_name)
+        return nil unless eap_cost && eap_cost > 0
+        
+        amortization_factor = EconomicConfig.npc('capex_amortization.factor') || 0.25
+        (eap_cost * amortization_factor).round(2)
+      end
+      
+      def deep_space_location?(body_name)
+        return false unless body_name
+        
+        eap_viable_bodies = %w[earth luna]
+        !eap_viable_bodies.include?(body_name)
       end
       
       def calculate_import_cost(settlement, resource_name)
@@ -343,6 +388,140 @@ module Market
         Rails.logger.warn "Could not load material #{resource_name}: #{e.message}"
         nil
       end
+    end # close class << self
+    
+    # ========== INSTANCE METHODS FOR STRATEGY EVALUATION ==========
+    
+    # Instance state for strategy evaluation
+    def initialize(material: nil, location: nil, context: {})
+      @material = material
+      @location = location
+      @context = context || {}
+    end
+    
+    # Evaluate all three sourcing strategies for a material at a location
+    def evaluate_strategy
+      material_name = resolve_material_name(@material)
+      celestial_body = resolve_celestial_body(@location)
+      body_name = celestial_body&.name&.downcase
+      
+      eap_cost = calculate_eap_reference(material_name, body_name)
+      local_cost = calculate_local_production_cost_for_eval(material_name, celestial_body)
+      capex_cost = calculate_capex_amortization(material_name, eap_cost)
+      
+      # Evaluate all three strategies even if infeasible
+      eap_strategy = {
+        strategy_type: :eap,
+        reference_cost: eap_cost,
+        feasible?: eap_cost.present? && eap_cost > 0,
+        notes: eap_cost ? "Earth Anchor Price (Earth cost + transport) to #{body_name || 'unknown'}" : "EAP unavailable"
+      }
+      
+      extraction_strategy = {
+        strategy_type: :extraction_floor,
+        reference_cost: local_cost,
+        feasible?: local_cost.present? && local_cost > 0,
+        notes: local_cost ? "Local extraction break-even at #{body_name || 'unknown'}" : "Local production not possible"
+      }
+      
+      capex_strategy = {
+        strategy_type: :capex_amortization,
+        reference_cost: capex_cost,
+        feasible?: capex_cost.present? && capex_cost > 0,
+        notes: capex_cost ? "CapEx amortization estimate" : "CapEx estimate unavailable"
+      }
+      
+      # Select primary strategy by location
+      if deep_space_location?(body_name)
+        primary = local_cost.present? && local_cost > 0 ? extraction_strategy : capex_strategy
+      else
+        primary = eap_cost.present? && eap_cost > 0 ? eap_strategy : extraction_strategy
+      end
+      
+      breakdown = {
+        eap: eap_strategy,
+        extraction_floor: extraction_strategy,
+        capex_amortization: capex_strategy,
+        location: body_name,
+        material: material_name
+      }
+      
+      OpenStruct.new(
+        strategy_type: primary[:strategy_type],
+        reference_cost: primary[:reference_cost],
+        breakdown: breakdown,
+        feasible?: primary[:feasible?],
+        notes: primary[:notes]
+      )
+    end
+    
+    private
+    
+    # Resolve material argument to resource name
+    def resolve_material_name(material)
+      return material if material.is_a?(String)
+      return material['id'] || material['name'] if material.is_a?(Hash)
+      material&.to_s
+    end
+    
+    # Resolve location argument to CelestialBody
+    def resolve_celestial_body(location)
+      return location if location.respond_to?(:name) && location.class.name.to_s.include?('CelestialBody')
+      return location.celestial_body if location.respond_to?(:location) && location.location.respond_to?(:celestial_body)
+      nil
+    end
+    
+    # EAP reference cost
+    def calculate_eap_reference(material_name, body_name)
+      material_data = load_material_data(material_name)
+      return nil unless material_data
+      
+      destination = body_name || 'luna'
+      Tier1PriceModeler.new(material_data, destination: destination, source: 'earth').calculate_eap
+    rescue StandardError => e
+      Rails.logger.error "Error calculating EAP: #{e.message}"
+      nil
+    end
+    
+    # Local production cost for evaluation
+    def calculate_local_production_cost_for_eval(material_name, celestial_body)
+      material_data = load_material_data(material_name)
+      return nil unless material_data
+      
+      local_cost = material_data.dig('pricing', 'lunar_production', 'cost_per_kg')
+      return local_cost if local_cost
+      
+      if celestial_body && AIManager::PrecursorCapabilityService.new(celestial_body).can_produce_locally?(material_name)
+        return EconomicConfig.local_production_cost(material_name, :mature)
+      end
+      
+      nil
+    end
+    
+    # CapEx amortization estimate
+    def calculate_capex_amortization(material_name, eap_cost)
+      return nil unless eap_cost && eap_cost > 0
+      
+      amortization_factor = EconomicConfig.npc('capex_amortization.factor') || 0.25
+      (eap_cost * amortization_factor).round(2)
+    end
+    
+    # Deep space location check
+    def deep_space_location?(body_name)
+      return false unless body_name
+      
+      eap_viable_bodies = %w[earth luna]
+      !eap_viable_bodies.include?(body_name)
+    end
+    
+    # Load material data
+    def load_material_data(resource_name)
+      return nil unless resource_name
+      
+      MaterialGeneratorService.generate_material(resource_name)
+    rescue StandardError => e
+      Rails.logger.warn "Could not load material #{resource_name}: #{e.message}"
+      nil
     end
   end
 end

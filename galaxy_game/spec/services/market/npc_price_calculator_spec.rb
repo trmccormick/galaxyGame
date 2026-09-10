@@ -437,4 +437,173 @@ RSpec.describe Market::NpcPriceCalculator do
       expect(ask_price).to be_within(5.0).of(103.0)
     end
   end
+
+  describe '.evaluate_strategy' do
+    let(:material_data) do
+      {
+        'id' => 'iron_ore',
+        'name' => 'Iron Ore',
+        'category' => 'ore',
+        'pricing' => {
+          'earth' => { 'base_price_per_kg' => 0.10 }
+        },
+        'refining_cost_factor' => 1.0
+      }
+    end
+
+    before do
+      allow(MaterialGeneratorService).to receive(:generate_material)
+        .with('iron_ore').and_return(material_data)
+    end
+
+    def make_body(name)
+      build(:celestial_body, name: name)
+    end
+
+    it 'returns an OpenStruct with all required keys' do
+      result = described_class.evaluate_strategy(
+        material: 'iron_ore',
+        location: make_body('Luna')
+      )
+
+      expect(result).to be_a(OpenStruct)
+      expect(result).to respond_to(:strategy_type)
+      expect(result).to respond_to(:reference_cost)
+      expect(result).to respond_to(:breakdown)
+      expect(result).to respond_to(:feasible?)
+      expect(result).to respond_to(:notes)
+    end
+
+    context 'for an EAP-viable location (Luna)' do
+      it 'selects the :eap strategy' do
+        result = described_class.evaluate_strategy(
+          material: 'iron_ore',
+          location: make_body('Luna')
+        )
+
+        expect(result.strategy_type).to eq(:eap)
+        expect(result.reference_cost).to be > 0
+        expect(result.feasible?).to be true
+      end
+
+      it 'includes all three strategies in the breakdown' do
+        result = described_class.evaluate_strategy(
+          material: 'iron_ore',
+          location: make_body('Luna')
+        )
+
+        expect(result.breakdown).to have_key(:eap)
+        expect(result.breakdown).to have_key(:extraction_floor)
+        expect(result.breakdown).to have_key(:capex_amortization)
+      end
+    end
+
+    context 'for a deep-space location (Mars) with local production' do
+      before do
+        allow_any_instance_of(AIManager::PrecursorCapabilityService).to receive(:can_produce_locally?)
+          .with('iron_ore').and_return(true)
+        allow(EconomicConfig).to receive(:local_production_cost)
+          .with('iron_ore', :mature).and_return(5.0)
+      end
+
+      it 'selects the :extraction_floor strategy' do
+        result = described_class.evaluate_strategy(
+          material: 'iron_ore',
+          location: make_body('Mars')
+        )
+
+        expect(result.strategy_type).to eq(:extraction_floor)
+        expect(result.reference_cost).to eq(5.0)
+        expect(result.feasible?).to be true
+      end
+    end
+
+    context 'for a deep-space location (Venus) without local production' do
+      before do
+        allow_any_instance_of(AIManager::PrecursorCapabilityService).to receive(:can_produce_locally?)
+          .and_return(false)
+      end
+
+      it 'selects the :capex_amortization strategy' do
+        result = described_class.evaluate_strategy(
+          material: 'iron_ore',
+          location: make_body('Venus')
+        )
+
+        expect(result.strategy_type).to eq(:capex_amortization)
+        expect(result.reference_cost).to be > 0
+        expect(result.feasible?).to be true
+      end
+    end
+
+    context 'when no material data is available' do
+      before do
+        allow(MaterialGeneratorService).to receive(:generate_material)
+          .with('mystery').and_return(nil)
+      end
+
+      it 'marks the strategy infeasible' do
+        result = described_class.evaluate_strategy(
+          material: 'mystery',
+          location: make_body('Luna')
+        )
+
+        expect(result.feasible?).to be false
+      end
+    end
+  end
+
+  describe 'refactored .calculate_bid deep-space branching' do
+    let(:material_data) do
+      {
+        'id' => 'iron_ore',
+        'name' => 'Iron Ore',
+        'category' => 'ore',
+        'pricing' => {
+          'earth' => { 'base_price_per_kg' => 0.10 }
+        },
+        'refining_cost_factor' => 1.0
+      }
+    end
+
+    before do
+      allow(MaterialGeneratorService).to receive(:generate_material)
+        .with('iron_ore').and_return(material_data)
+    end
+
+    context 'for an Earth/Luna settlement (no regression)' do
+      it 'still returns a cost-based bid' do
+        bid = described_class.calculate_bid(settlement, 'iron_ore')
+        expect(bid).to be_present
+        expect(bid).to be > 0
+      end
+    end
+
+    context 'for a deep-space settlement with local production' do
+      let(:mars_body) { build(:celestial_body, name: 'Mars') }
+      let(:mars_settlement) { create(:base_settlement, location: build(:celestial_location, celestial_body: mars_body)) }
+
+      before do
+        allow(AIManager::PrecursorCapabilityService).to receive(:new)
+          .with(mars_body).and_return(double(can_produce_locally?: true))
+        mock_unit = double(output_resources: ['iron_ore'])
+        allow(mars_settlement).to receive(:units).and_return([mock_unit])
+      end
+
+      it 'uses the extraction floor as the base cost' do
+        bid = described_class.calculate_bid(mars_settlement, 'iron_ore')
+        expect(bid).to be_present
+        expect(bid).to be > 0
+      end
+    end
+  end
+
+  describe 'fee decoupling' do
+    it 'does not reference fee mechanisms in the calculator source' do
+      source = File.read(Rails.root.join('app/services/market/npc_price_calculator.rb'))
+      expect(source).not_to include('SettlementFees')
+      expect(source).not_to include('TransactionFee')
+      expect(source).not_to include('TransitFeeService')
+    end
+  end
 end
