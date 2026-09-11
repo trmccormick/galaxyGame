@@ -18,7 +18,11 @@ RSpec.describe SpecialMissionService do
       end
 
       before do
-        allow(Market::NpcPriceCalculator).to receive(:send).with(:calculate_eap_ceiling, settlement, material).and_return(200.0)
+        allow(Market::NpcPriceCalculator).to receive(:evaluate_strategy).with(
+          material: material,
+          location: settlement,
+          context: {}
+        ).and_return(OpenStruct.new(strategy_type: 'cost_based', reference_cost: 200.0, feasible: true))
         allow(described_class).to receive(:should_generate_mission?).and_return(true)
       end
 
@@ -53,8 +57,8 @@ RSpec.describe SpecialMissionService do
     end
 
     context 'when mission should not be generated' do
-      it 'returns nil when EAP cannot be calculated' do
-        allow(Market::NpcPriceCalculator).to receive(:send).with(:calculate_eap_ceiling, settlement, material).and_return(nil)
+      it 'returns nil when reference_cost cannot be calculated' do
+        allow(Market::NpcPriceCalculator).to receive(:evaluate_strategy).and_return(OpenStruct.new(reference_cost: nil))
 
         mission = described_class.generate_critical_mission(settlement, material, required_quantity)
         expect(mission).to be_nil
@@ -78,7 +82,7 @@ RSpec.describe SpecialMissionService do
       allow(settlement_with_normal_levels.inventory).to receive(:current_storage_of).and_return(500) # Normal for all
 
       allow(described_class).to receive(:calculate_required_amount).and_return(1000)
-      allow(Market::NpcPriceCalculator).to receive(:send).with(:calculate_eap_ceiling, anything, anything).and_return(200.0)
+      allow(Market::NpcPriceCalculator).to receive(:evaluate_strategy).and_return(OpenStruct.new(reference_cost: 200.0))
     end
 
     it 'generates missions for settlements with critical shortages' do

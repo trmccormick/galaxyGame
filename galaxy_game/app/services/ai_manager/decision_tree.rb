@@ -278,8 +278,15 @@ module AIManager
       critical_shortages = identify_critical_shortages
 
       critical_shortages.each do |resource, needed|
-        # Calculate reward based on EAP
-        eap_price = Market::NpcPriceCalculator.send(:calculate_eap_ceiling, @settlement, resource)
+        # Calculate reward based on evaluate_strategy reference_cost (EAP-style ceiling)
+        result = Market::NpcPriceCalculator.evaluate_strategy(
+          material: resource,
+          location: @settlement,
+          context: {}
+        )
+        next unless result&.reference_cost
+
+        eap_price = result.reference_cost
         base_reward = eap_price * needed * 1.5 # 50% bonus for urgency
         bonus_multiplier = 2.0 # Double reward for special missions
 

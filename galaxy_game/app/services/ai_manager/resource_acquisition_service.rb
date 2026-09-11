@@ -137,12 +137,16 @@ module AIManager
     # --- UTILITY ---
     
     def self.player_sell_orders_exceed_eap?(settlement, material)
-      eap_ceiling = Market::NpcPriceCalculator.send(:calculate_eap_ceiling, settlement, material)
-      return false unless eap_ceiling
+      result = Market::NpcPriceCalculator.evaluate_strategy(
+        material: material,
+        location: settlement,
+        context: {}
+      )
+      return false unless result&.reference_cost
 
-      # Check if any active player sell orders exceed EAP
+      # Check if any active player sell orders exceed EAP (reference_cost as ceiling)
       # This would need to be implemented based on your market order system
-      # For now, return false - this logic would check Market::Order.where(resource: material, order_type: :sell, price: > eap_ceiling)
+      # For now, return false - this logic would check Market::Order.where(resource: material, order_type: :sell, price: > reference_cost)
       false # Placeholder - implement based on your market order model
     end
   end

@@ -5,10 +5,15 @@ class SpecialMissionService
   def self.generate_critical_mission(settlement, material, required_quantity, urgency_level = :high)
     return nil unless should_generate_mission?(settlement, material, required_quantity)
 
-    eap_price = Market::NpcPriceCalculator.send(:calculate_eap_ceiling, settlement, material)
-    return nil unless eap_price
+    result = Market::NpcPriceCalculator.evaluate_strategy(
+      material: material,
+      location: settlement,
+      context: {}
+    )
+    return nil unless result&.reference_cost
 
-    # Calculate reward based on EAP + bonus
+    eap_price = result.reference_cost
+    # Calculate reward based on evaluate_strategy reference_cost + bonus
     base_reward = eap_price * required_quantity
     bonus_multiplier = calculate_bonus_multiplier(urgency_level)
     total_reward = base_reward * bonus_multiplier
