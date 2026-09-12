@@ -1,8 +1,24 @@
-# Player Contract System
+# Contracts & Player Economy
+
+**Status**: Canonical  
+**Last Updated**: 2026-09-11  
+**Supersedes**: `PLAYER_CONTRACT_SYSTEM.md`, `CONTRACTS.md`  
+**Derived from**: `PLAYER_CONTRACT_SYSTEM.md` (primary), `CONTRACTS.md`
+
+---
 
 ## Overview
 
 The Player Contract System implements **player-first task priority** where the AI Manager offers missions and contracts to players before NPCs, ensuring players have primary opportunities to earn GCC and influence game progression. This system bridges player agency with autonomous NPC operations.
+
+**Two Main Mechanisms:**
+
+1. **Missions**: AI-generated tasks assigned to specific players (e.g., "Harvest 100 transparent panels for GCC reward")
+2. **Contracts/Buy Orders**: Market listings where players fulfill AI needs (e.g., "AI offers GCC for 100 transparent panels") or players post their own offers
+
+**Player-Posted Orders**: Players can create their own buy/sell orders with skill-based limits and listing fees.
+
+---
 
 ## Contract Types
 
@@ -60,6 +76,8 @@ The Player Contract System implements **player-first task priority** where the A
 - **Processing Fees**: Variable rates set by facility owners
 - **Blueprint Costs**: Upfront licensing fees for construction rights
 
+---
+
 ## Contract Mechanics
 
 ### Generation Triggers
@@ -86,6 +104,8 @@ The Player Contract System implements **player-first task priority** where the A
 4. **Verification**: System confirms delivery/completion
 5. **Payment**: Full GCC reward transferred to player account
 
+---
+
 ## Collateral and Escrow Systems
 
 ### Escrow Mechanics
@@ -102,6 +122,8 @@ The Player Contract System implements **player-first task priority** where the A
 - **Performance Bonds**: Insurance against contract failure
 - **Asset Liens**: Equipment or inventory pledged as security
 - **Reputation Stakes**: Contract success affects player reputation score
+
+---
 
 ## Reputation Effects
 
@@ -126,25 +148,7 @@ The Player Contract System implements **player-first task priority** where the A
 - **Penalties**: Failed contracts reduce reputation and access
 - **Recovery**: Successful completions gradually restore reputation
 
-## NPC vs Player Contract Priority
-
-### Priority Framework
-**Player-First Principle**:
-- AI Manager prioritizes player opportunities for economic engagement
-- Maintains game progression even without player participation
-- Balances player agency with autonomous NPC operations
-
-### Implementation Rules
-1. **Contract Posting**: All eligible tasks posted as player contracts first
-2. **Acceptance Window**: 24-48 hours for player response
-3. **NPC Fallback**: Automated execution if no player acceptance
-4. **Economic Incentives**: Players receive premium rewards vs NPC rates
-
-### Economic Balance
-- **GCC Distribution**: Players earn primary share of new GCC creation
-- **NPC Reserves**: Automated systems maintain operational reserves
-- **Market Liquidity**: Player activity drives market dynamics
-- **Scalability**: System works with any number of active players
+---
 
 ## Contract Limits and Guardrails
 
@@ -158,5 +162,30 @@ The Player Contract System implements **player-first task priority** where the A
 - **Insurance Requirements**: High-value contracts require bonding
 - **Dispute Resolution**: Arbitration system for contract failures
 - **Economic Transparency**: Real-time market and contract information
-- **Emergency Funds**: 5% of GDP allocated for economic crisis response</content>
-<parameter name="filePath">/Users/tam0013/Documents/git/galaxyGame/docs/economics/CONTRACTS.md
+- **Emergency Funds**: 5% of GDP allocated for economic crisis response
+
+---
+
+## Economic Initialization & Market Development
+
+### GCC=USD Starting Point
+
+**Currency Foundation**: GCC (Galactic Credits) start at 1:1 parity with USD to establish real-world economic grounding.
+
+**Real-World Cost Basis**: Initial lunar market prices based on current space transportation and infrastructure costs:
+- **Transportation Costs**: $10,000-$20,000 per pound to LEO (Low Earth Orbit)
+- **Infrastructure Costs**: ISS construction costs, lunar base concepts, commercial space operations
+- **Resource Production**: Lunar water production, regolith processing, solar power generation
+
+### Automated Market Building Approach
+
+**Initial Phase**: Run automated builds to simulate real costs and establish baseline market data:
+- **Data-Driven Universe**: Use real-world space economics to seed the game universe
+- **Cost Simulation**: Automated systems generate initial market prices and contract values
+- **Infrastructure Evolution**: Costs decrease as player-built infrastructure develops
+
+**Market Development Stages**:
+1. **Bootstrap Phase**: High import costs, basic local production (water, oxygen, basic materials)
+2. **Infrastructure Growth**: Player construction reduces transportation dependency
+3. **Market Maturity**: Local production undercuts imports, diversified economy emerges
+4. **Expansion Phase**: Inter-system trade, specialized production centers
