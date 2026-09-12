@@ -144,21 +144,19 @@
 |-----------|---------|------|----------|
 | `docs/architecture/core/modular_containers.md` | Modular containers design | Current | Structures |
 
-### docs/architecture/economy/ — Economic Engine (13 files)
+### docs/wiki_reorganization/economy/ — Economic Engine (8 files, consolidated 2026-09-11)
 | File Path | Purpose | Date | Category |
 |-----------|---------|------|----------|
-| `docs/architecture/economy/CONTRACTS.md` | Player contract system (courier, manufacturing, exploration, station expansion) | Current | Economy |
-| `docs/architecture/economy/CURRENCY_AND_EXCHANGE.md` | GCC/USD peg phases and exchange mechanics | Current | Economy |
-| `docs/architecture/economy/FISCAL_POLICY_AND_FEES.md` | Fiscal policy and fee structure | Current | Economy |
-| `docs/architecture/economy/ISRU_PRICING_MODEL.md` | ISRU pricing model | Current | Economy |
-| `docs/architecture/economy/LEDGERS.md` | Ledger system documentation | Current | Economy |
-| `docs/architecture/economy/MARKET_OPERATIONS.md` | Market operations guide | Current | Economy |
-| `docs/architecture/economy/PLAYER_CONTRACT_SYSTEM.md` | Player contract system design | Current | Economy |
-| `docs/architecture/economy/PRICE_DISCOVERY_LIFECYCLE.md` | Price discovery lifecycle | Current | Economy |
-| `docs/architecture/economy/VIRTUAL_LEDGER_FLOWS.md` | Virtual ledger flow documentation | Current | Economy |
-| `docs/architecture/economy/economic_baseline.md` | Economic baseline configuration | Current | Economy |
-| `docs/architecture/economy/financial_system.md` | Financial system architecture (accounts, virtual ledger) | Current | Economy |
-| `docs/architecture/economy/gcc_coupling_status.md` | GCC coupling status tracker | Current | Economy |
+| `docs/wiki_reorganization/economy/README.md` | Economy documentation hub and navigation | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/01-overview-and-design.md` | System architecture, key models/services, economic flow | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/02-currencies-and-accounts.md` | Currency model, account model, GCC/USD peg phases, stability measures | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/03-market-and-pricing.md` | Price discovery lifecycle, EAP calculation, ISRU pricing, market operations | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/04-bonds-and-financing.md` | Bond model, launch service bonds, GCC mining bonds, inter-DC bonds, minting | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/05-launch-and-operational-fees.md` | Launch payment flow, mass calculation, fiscal policy and fee structure | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/06-contracts-and-players.md` | Player contract system, courier/manufacturing/exploration/station contracts | 2026-09-11 | Economy |
+| `docs/wiki_reorganization/economy/07-npc-economy-lifecycle.md` | NPC economy lifecycle phases, data model inventory (agent reference) | 2026-09-11 | Economy |
+
+> **Note**: Original 13 files from `docs/architecture/economy/` were consolidated into this structure on 2026-09-11. See `AUDIT-ECONOMY-DOCS.md` for the full audit report and merge mapping.
 
 ### docs/architecture/glossary/
 | File Path | Purpose | Date | Category |

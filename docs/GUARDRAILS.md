@@ -36,11 +36,11 @@ Project-specific rules extracted from this file:
 |---|---|
 | AI Manager §1: Code & Documentation Sync | `docs/architecture/ai_manager/AI_MANAGER_CODE_REVIEW_PROTOCOL.md` (appended) |
 | AI Manager §2: Anchor Law | `docs/architecture/ai_manager/AI_MANAGER_WORMHOLE_EXPANSION.md` (appended) |
-| AI Manager §3: Market & GCC Integrity | `docs/architecture/economy/MARKET_OPERATIONS.md` + `CURRENCY_AND_EXCHANGE.md` (merged) |
+| AI Manager §3: Market & GCC Integrity | `docs/wiki_reorganization/economy/03-market-and-pricing.md` + `02-currencies-and-accounts.md` (consolidated) |
 | AI Manager §5: Operational Boundaries + Namespace | `docs/architecture/ai_manager/AI_MANAGER_ARCHITECTURE.md` (appended) |
 | AI Manager §7: Path Configuration | `docs/architecture/ai_manager/00_architecture_overview.md` (appended) |
 | Section 7.5: Terrain Generation & Rendering | `docs/architecture/terrain/generation_and_rendering.md` (new file) |
-| Section 8: Economic System Guardrails | `docs/architecture/economy/` — merged into FISCAL_POLICY_AND_FEES.md, MARKET_OPERATIONS.md, CURRENCY_AND_EXCHANGE.md |
+| Section 8: Economic System Guardrails | `docs/wiki_reorganization/economy/05-launch-and-operational-fees.md` (fiscal policy) + `03-market-and-pricing.md` (market guardrails) + `02-currencies-and-accounts.md` (stability measures) |
 | Section 9: Sol as AI Training Data | `docs/architecture/ai_manager/AI_MANAGER_ARCHITECTURE.md` (appended) |
 | Section 10: Player Experience Boundaries | `docs/gameplay/player_experience_boundaries.md` (new file) |
 | Section 11: Sci-Fi Easter Eggs | `docs/flavor/sci_fi_easter_eggs.md` (new file) |
@@ -68,6 +68,6 @@ All prior GUARDRAILS task files are superseded by this consolidated plan. See th
 
 ## Notes for Future Maintenance
 
-- **Economic constants** (SCC Surcharge 0.5%, Broker Fee 0.3%, Sales Tax 3.37%) are verified aligned with `docs/architecture/economy/FISCAL_POLICY_AND_FEES.md` as the canonical source.
+- **Economic constants** (SCC Surcharge 0.5%, Broker Fee 0.3%, Sales Tax 3.37%) are verified aligned with `docs/wiki_reorganization/economy/05-launch-and-operational-fees.md` as the canonical source.
 - **Formatting debt**: Original file had duplicate section numbering (Section 13 appeared twice, Section 4 missing). Noted but not fixed during this task.
 - **Historical notes** (e.g., "Sabatier Bug Fix [2026-01-15]") have been preserved in their target architecture docs as historical context.
