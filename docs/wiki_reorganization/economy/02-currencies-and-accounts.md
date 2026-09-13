@@ -284,16 +284,7 @@ GCC (Galactic Construction Credits) are the primary space economy currency, mint
 - **Infrastructure Fees**: Construction and maintenance fees paid in GCC
 - **Resource Royalties**: Percentage of extracted resources converted to GCC
 
-**Minting Process:**
-```ruby
-# LDC mints GCC from mining proceeds
-mining_revenue_usd = 5000000 # From Earth sales
-exchange_rate = ExchangeRate.current_gcc_to_usd
-gcc_minted = mining_revenue_usd / exchange_rate
-
-ldc_gcc_account = Account.find_for_entity(ldc, :gcc)
-ldc_gcc_account.deposit(gcc_minted, "GCC minting from lunar mining")
-```
+GCC is minted directly from mining/hardware output — there is no USD-conversion step in the minting path. GCC's total mining rate is hardware-dependent: a base rate (currently 1000 GCC/hour on the reference mining satellite) plus contributions from fitted computer/GPU components (see `base_craft.rb#recalculate_stats`) — swapping hardware or hardware degradation changes actual output; it is not a fixed number. Separately, GCC's *value* is currently pegged 1:1 to USD as a design anchor during the bootstrap period, expected to decouple once GCC market volume is large enough to support independent floating value.
 
 #### USD Revenue Streams
 

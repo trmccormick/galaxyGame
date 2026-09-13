@@ -196,6 +196,8 @@ ELSE:
 - Local production available: posted at production cost + margin
 - Players can sell to NPCs at any price up to EAP
 
+> **Scope note**: EAP×0.90/0.80 was designed specifically as a Luna-only market-bootstrap mechanism — it remains a valid, intentional NPC price-gouging limiter for early Luna settlement and is not being deprecated. It does not generalize cleanly the further a settlement gets from Earth (Mars/Venus/beyond), where transport cost and local production economics diverge too much from Luna's case. A more realistic cost model for those further-out settlements — grounded in real-world CapEx amortization, delivered-equipment cost, and penetration-pricing economics — is under active design as a complement to EAP for non-Luna bodies, not a replacement of it.
+
 ### Construction Cost Evaluation
 
 Before posting buy orders or importing for construction, the AI Manager evaluates profitability:

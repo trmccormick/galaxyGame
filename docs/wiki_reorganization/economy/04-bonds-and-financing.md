@@ -213,7 +213,7 @@ Bonds create **GCC demand sinks**:
 
 A GCC mining satellite is deployed into a valid orbital location (orbital, planetary orbit, or Lagrange point). Once in position, the satellite begins autonomous GCC mining using onboard computational units. Mining occurs on a fixed interval — every 6 hours per the task list profile (`gcc_satellite_mining_tasks_v1.json`).
 
-Each mining cycle produces GCC at a rate defined by the satellite's operational data: **1000 GCC per hour** (`crypto_mining_satellite_data.json`), yielding **6000 GCC per 6-hour cycle**.
+Each mining cycle produces GCC at a rate defined by the satellite's operational data: **a base rate of 1000 GCC per hour, plus hardware-dependent bonuses from fitted computer/GPU components — actual output varies by loadout, not fixed.** The base-rate-only yield is **6,000 GCC per 6-hour cycle** (1000 × 6), but total output will be higher when hardware bonuses are included.
 
 All newly minted GCC flows exclusively to the **LDC (Luna Development Corporation)**, which acts as the sole mint authority. The LDC uses this GCC supply to:
 
