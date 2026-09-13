@@ -265,3 +265,34 @@ GCC minting creates **GCC supply pressure**:
 2. LDC distributes GCC through: operations funding, bond payments, infrastructure deployment
 3. Halving schedule reduces mining output over time → disincentive for early accumulation
 4. Supply cap prevents infinite inflation
+
+---
+
+## Three-Pillar Audience Guide
+
+### For Players 🎮
+- **Bonds are financing tools** — use them to launch satellites before mining revenue begins
+- **Launch bonds typically**: 180-day maturity, 5% interest, USD face value
+- **GCC mining bonds** create recurring GCC demand (LDC must mine or acquire GCC to service debt)
+- **Inter-DC loans have no interest** — DCs are non-profit entities focused on infrastructure expansion
+- **USD-denominated bonds carry exchange rate risk** — if GCC depreciates, your debt burden increases in GCC terms
+- **Default consequences**: satellite ownership transfers to bond holder (AstroLift)
+
+### For Administrators ⚙️
+- **GCC emission schedule**: 250M pre-seeded + 1M GCC/cycle daily from LDC mining satellites
+- **Mining rate**: 1,000 GCC/hour per satellite = 6,000 GCC per 6-hour cycle = 24,000 GCC/day/satellite
+- **Halving schedule**: TBD (every N months, mining rate halves) — mirrors Bitcoin disincentive model
+- **Supply cap**: TBD — maximum total GCC ever minted
+- **Bond repayment flow**: USD bonds require currency conversion at repayment time (GCC → USD rate matters)
+- **GCC demand sinks**: monthly bond payments remove GCC from LDC circulation; halving reduces mining output
+- **LDC stabilization reserves**: 25% of total GCC supply held for market intervention
+
+### For Developers 🔧
+- **Bond model**: `Financial::Bond` — issuer polymorphic, holder polymorphic, currency (USD/GCC)
+- **Repayment model**: `Financial::BondRepayment` — tracks partial/full payments with cross-currency conversion
+- **Bond statuses**: `issued` → `paid` (via repayments) or `defaulted` (via default)
+- **Key method**: `bond.total_repaid(exchange_rate_service)` sums all repayments with currency conversion
+- **Launch bond example**: amount=1,857,986.22 USD, maturity_days=180, interest_rate=0.05
+- **GCC mining bond structure**: face_amount_gcc=500,000, monthly_payment_gcc=25,000, term_months=24
+- **Exchange rate service**: `Financial::ExchangeRateService.convert(amount, from, to)` handles all conversions
+- **GCC has no material entry** — it's a currency, not a producible good

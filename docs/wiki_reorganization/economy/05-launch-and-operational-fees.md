@@ -247,3 +247,44 @@ LaunchPaymentService.pay_for_launch!(
 - Apply to facilities using in-situ resource utilization (ISRU) with Sabatier reactors
 - Reduces ongoing costs for Sabatier-enabled facilities
 - All fees and taxes are subject to AI Manager enforcement and may be adjusted by governance events
+
+---
+
+## Three-Pillar Audience Guide
+
+### For Players 🎮
+- **Launch costs scale with mass** — every unit/module/rig adds to total mass × cost_per_kg
+- **Mixed currency payments** — typically up to 50% GCC + remainder USD for launch
+- **Bonds available** — finance launch costs with 180-day maturity, 5% interest (typical)
+- **Fees you'll encounter on market transactions**:
+  - SCC Surcharge: 0.5%
+  - Broker Fee: 0.3%
+  - Sales Tax: 3.37%
+  - Transaction Tax: 0.5%
+- **Corporate Income Tax**: 10% on corporate profits
+- **Sabatier facilities** get maintenance discounts — ISRU lowers your operational costs
+
+### For Administrators ⚙️
+- **Launch cost formula**: `total_mass_kg × cost_per_kg` (configurable, typically $544.22/kg USD)
+- **GCC emission schedule**: 250M pre-seeded + 1M GCC/cycle daily from LDC mining satellites
+- **Fee structure** (from economic_parameters.yml):
+  - SCC Surcharge: 0.5% of all Trading PLEX transactions
+  - Broker Fee: 0.3% of all Trading PLEX transactions
+  - Sales Tax: 3.37% of all Trading PLEX transactions
+  - Corporate Income Tax: 10% on corporate profits
+  - Transaction Tax: 0.5% of all market transactions
+- **Reserve requirements**:
+  - LDC stabilization reserves: 25% of total GCC supply
+  - System-wide liquidity: minimum 10% in liquid reserves
+  - Emergency funds: 5% of annual GDP for crisis response
+- **DC structure**: non-profit, profit reinvestment, inter-DC interest exemption
+- **For-profit NPCs**: AstroLift and others handle commercial logistics
+
+### For Developers 🔧
+- **Key service**: `LaunchPaymentService.pay_for_launch!(craft:, customer_accounts:, provider_accounts:, launch_config:)`
+- **Mass calculation**: base_craft + base_units + base_modules + base_rigs
+- **Blueprint lookup fallback**: try without category → try with categories (units/computers/energy/propulsion/storage)
+- **Payment distribution**: respects max_percentage limits per currency, creates bonds if remaining > 0
+- **Bond creation on launch**: issuer=customer, holder=provider, currency=USD, amount=remaining
+- **Marketplace model**: `Market::Marketplace` → `Market::Condition` → orders/prices chain
+- **GCC has no material entry** — it's a currency, not a producible good

@@ -1,9 +1,36 @@
 # Contracts & Player Economy
 
 **Status**: Canonical  
-**Last Updated**: 2026-09-11  
+**Last Updated**: 2026-09-12 (synthesized with three-pillar framework)  
 **Supersedes**: `PLAYER_CONTRACT_SYSTEM.md`, `CONTRACTS.md`  
-**Derived from**: `PLAYER_CONTRACT_SYSTEM.md` (primary), `CONTRACTS.md`
+**Derived from**: `PLAYER_CONTRACT_SYSTEM.md` (primary), `CONTRACTS.md`, `economic_parameters.yml`
+
+---
+
+## Audience Guide
+
+This document serves three audiences:
+
+### 🎮 For Players — "How do I earn GCC?"
+- **Contract Types**: Courier, Manufacturing, Exploration, Station Expansion — each with different requirements and rewards
+- **Player-First Priority**: AI Manager offers contracts to players first (24–48 hour window) before NPCs
+- **Economic Multipliers**: Player rewards are 1.5× GCC value vs. NPC execution
+- **Reputation Tiers**: Bronze → Silver → Gold → Platinum, unlocking better contracts and bonuses
+- **Escrow & Collateral**: Contracts >10,000 GCC require 20% escrow deposit
+
+### ⚙️ For Administrators — "What are the tuning knobs?"
+- **Contract Value Caps**: No single contract exceeds 10% of GCC money supply
+- **Duration Caps**: Maximum 90 Earth days per contract
+- **Reputation Requirements**: Minimum reputation thresholds gate high-value contracts
+- **Market Stability**: EAP prevents price gouging on player contracts
+- **Emergency Funds**: 5% of GDP allocated for economic crisis response
+
+### 💻 For Developers — "What are the technical specs?"
+- **Contract Types**: `Courier`, `Manufacturing`, `Exploration`, `StationExpansion` (model classes)
+- **Generation Triggers**: Resource gaps, construction projects, mission profile tasks, supply chain needs
+- **Player-First Priority Logic**: AI Manager posts → player acceptance window → timeout fallback to NPC queue
+- **Economic Guardrails**: Contract value caps, duration limits, reputation gates enforced at service layer
+- **Escrow System**: Threshold-based (10,000 GCC), 20% deposit, release on verification
 
 ---
 
@@ -17,6 +44,17 @@ The Player Contract System implements **player-first task priority** where the A
 2. **Contracts/Buy Orders**: Market listings where players fulfill AI needs (e.g., "AI offers GCC for 100 transparent panels") or players post their own offers
 
 **Player-Posted Orders**: Players can create their own buy/sell orders with skill-based limits and listing fees.
+
+### Economic Multipliers (from `economic_parameters.yml`)
+
+| Multiplier | Value | Applied To |
+|-----------|-------|------------|
+| Player Reward Bonus | 1.5× GCC vs NPC | All player-fulfilled contracts |
+| NPC Efficiency | 70% of player capability | Fallback NPC execution |
+| Escrow Threshold | 10,000 GCC | Contracts above this value |
+| Escrow Deposit | 20% of contract value | High-value transaction protection |
+| Contract Duration Cap | 90 Earth days | Maximum contract lifetime |
+| Max Contract Value | 10% of GCC money supply | Per-contract ceiling |
 
 ---
 

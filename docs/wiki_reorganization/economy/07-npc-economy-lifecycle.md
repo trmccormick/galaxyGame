@@ -129,3 +129,38 @@ Players can accept NPC contracts within a time window. If no player accepts, the
 ### Phase 5: Fallback Mechanisms
 
 If players don't fill orders within timeout windows, NPCs automatically fulfill them to maintain game progression. This ensures the economy never stalls.
+
+---
+
+## Three-Pillar Audience Guide
+
+### For Players 🎮
+- **NPCs are your market partners** — they buy/sell at EAP ceiling, provide fallback when you can't deliver
+- **Contract opportunities**: NPC buy orders post at EAP; sell to them for guaranteed profit
+- **Contract limits**: max 10% of GCC money supply per contract, 5 contracts/day, 90-day max duration
+- **NPC roles**:
+  - Buyer of last resort: purchases unsold player goods at fair minimum price
+  - Producer of last resort: manufactures essentials when player production lags
+  - Importer of last resort: sources items from various locations during shortages
+  - Market maker: provides continuous bid/ask quotes via NpcPriceCalculator
+- **Price setting**: ISRU mode (95% of import cost if local production exists) or Import mode (baseline + transport)
+- **NPC debt thresholds**: >30% assets in debt = expansion restrictions; corporate debt >30% = refuse player purchases
+
+### For Administrators ⚙️
+- **NPC pricing modes**:
+  - Cost-based: sell_markup=1.05, buy_discount=0.75, minimum_profit_margin=0.03
+  - Market-based: sell_markup=1.03, buy_discount=0.77, market_history_threshold=10, market_history_days=30
+- **AI Manager tick loop**: `advance_time` → orchestrate_services → evaluate_next_action
+- **Marketplace chain**: Settlement → Marketplace → Condition → Orders/Prices
+- **Order matching**: `TradeExecutionService.execute!` handles buy/sell order matching
+- **Synthetic NPC orders**: `create_synthetic_npc_order()` creates counter-orders for matching
+- **GCC emission schedule**: 250M pre-seeded + 1M GCC/cycle daily from LDC mining satellites
+- **NPC overdraft limit**: 50% of asset value (prevents economic collapse from debt spirals)
+
+### For Developers 🔧
+- **Key models**: `Market::Marketplace`, `Market::Condition`, `Market::Order`
+- **Key services**: `Market::NpcPriceCalculator` (pricing), `TradeExecutionService` (matching), `EscalationService` (supply/demand adjustment)
+- **AI Manager**: `AIManager::Manager` → `ServiceCoordinator` → `ColonyManager` delegation chain
+- **Settlement model**: `Settlement::BaseSettlement` with associated organizations
+- **Order matching logic**: `find_matching_orders()` finds NPC buy orders for sell orders only; returns [] for buy orders
+- **GCC has no material entry** — it's a currency, not a producible good

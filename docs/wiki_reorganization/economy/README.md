@@ -41,7 +41,10 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 - **[04-bonds-and-financing.md](./04-bonds-and-financing.md)** — Bond model, launch service bonds, GCC mining bonds, inter-DC bonds, repayment flows, GCC minting architecture
 
 ### Launch & Operational Fees
-- **[05-launch-and-operational-fees.md](./05-launch-and-operational-fees.md)** — Launch payment flow, mass calculation, configuration structure, fiscal policy and fee structure
+- **[05-launch-and-operational-fees.md](./05-launch-and-operational-fees.md)** — Launch payment flow, mass calculation, configuration structure, fiscal policy and fee structure (SCC 0.5%, Broker Fee 0.3%, Sales Tax 3.37%)
+
+### Contracts & Player Economy
+- **[06-contracts-and-players.md](./06-contracts-and-players.md)** — Player contract types (courier, manufacturing, exploration, station expansion), player-first priority, reputation tiers, collateral/escrow systems
 
 ### NPC Economy Reference
 - **[07-npc-economy-lifecycle.md](./07-npc-economy-lifecycle.md)** — Data model inventory, NPC lifecycle phases, agent documentation
@@ -60,6 +63,52 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 | `LaunchPaymentService` | `app/services/launch_payment_service.rb` | Construction + launch cost payment processing |
 | `Market::NpcPriceCalculator` | `app/services/market/npc_price_calculator.rb` | NPC buy/sell order pricing |
 | `EscalationService` | `app/services/escalation_service.rb` | Price adjustment based on supply/demand |
+
+---
+
+## Audience Guide
+
+This wiki is structured for three distinct audiences. Jump to the section most relevant to your role:
+
+### 🎮 For Players — "What do I experience?"
+- **The Gravity Tax**: Why early imports hurt and why local ISRU is mandatory (see [03-market-and-pricing](./03-market-and-pricing.md))
+- **Making a Living**: Contracts, hauling, market spreads (see [06-contracts-and-players](./06-contracts-and-players.md))
+- **Build vs. Buy**: When to build local infrastructure vs. buy from the market (see [03-market-and-pricing](./03-market-and-pricing.md))
+- **GCC Economy**: How your earnings work, reputation tiers, escrow systems (see [06-contracts-and-players](./06-contracts-and-players.md))
+
+### ⚙️ For Administrators — "What are the tuning knobs?"
+- **Global Baselines**: EAP multipliers, gravity scales, USD/GCC parity (see [03-market-and-pricing](./03-market-and-pricing.md), [02-currencies-and-accounts](./02-currencies-and-accounts.md))
+- **Industrial Dials**: Loss rates, PVE yields, harvesting efficiency (see [05-launch-and-operational-fees](./05-launch-and-operational-fees.md))
+- **Financial Controls**: Tax percentages, debt ceilings, money velocity sinks (see [05-launch-and-operational-fees](./05-launch-and-operational-fees.md), [02-currencies-and-accounts](./02-currencies-and-accounts.md))
+
+### 💻 For Developers — "What are the technical specs?"
+- **Ledger & Accounting**: Double-entry constraints, virtual vs. hard currency (see [02-currencies-and-accounts](./02-currencies-and-accounts.md))
+- **Key Models/Services**: `Financial::Currency`, `LaunchPaymentService`, `NpcPriceCalculator` (see above)
+- **Configuration Sources**: `economic_parameters.yml`, game constants, JSON operational data
+- **Model & Code Alignment Gaps**: See [GAPS.md](./GAPS.md)
+
+---
+
+## Audience Guide
+
+This wiki is structured for three distinct audiences. Jump to the section most relevant to your role:
+
+### 🎮 For Players — "What do I experience?"
+- **The Gravity Tax**: Why early imports hurt and why local ISRU is mandatory (see [03-market-and-pricing](./03-market-and-pricing.md))
+- **Making a Living**: Contracts, hauling, market spreads (see [06-contracts-and-players](./06-contracts-and-players.md))
+- **Build vs. Buy**: When to build local infrastructure vs. buy from the market (see [03-market-and-pricing](./03-market-and-pricing.md))
+- **GCC Economy**: How your earnings work, reputation tiers, escrow systems (see [06-contracts-and-players](./06-contracts-and-players.md))
+
+### ⚙️ For Administrators — "What are the tuning knobs?"
+- **Global Baselines**: EAP multipliers, gravity scales, USD/GCC parity (see [03-market-and-pricing](./03-market-and-pricing.md), [02-currencies-and-accounts](./02-currencies-and-accounts.md))
+- **Industrial Dials**: Loss rates, PVE yields, harvesting efficiency (see [05-launch-and-operational-fees](./05-launch-and-operational-fees.md))
+- **Financial Controls**: Tax percentages, debt ceilings, money velocity sinks (see [05-launch-and-operational-fees](./05-launch-and-operational-fees.md), [02-currencies-and-accounts](./02-currencies-and-accounts.md))
+
+### 💻 For Developers — "What are the technical specs?"
+- **Ledger & Accounting**: Double-entry constraints, virtual vs. hard currency (see [02-currencies-and-accounts](./02-currencies-and-accounts.md))
+- **Key Models/Services**: `Financial::Currency`, `LaunchPaymentService`, `NpcPriceCalculator` (see above)
+- **Configuration Sources**: `economic_parameters.yml`, game constants, JSON operational data
+- **Model & Code Alignment Gaps**: See [GAPS.md](./GAPS.md)
 
 ---
 

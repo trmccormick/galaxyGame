@@ -85,6 +85,35 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 | `data/json-data/resources/materials/*.json` | Material definitions (GCC has no entry — it's a currency) |
 | `data/json-data/missions/tasks/gcc_sat_mining_deployment/*.json` | Mining satellite deployment data |
 | `data/json-data/operational_data/crafts/space/satellites/crypto_mining_satellite_data.json` | Satellite operational parameters (mining rate, power, etc.) |
+| `docs/DECISIONS.md` | Economic constants: tax rates, peg progression, emission schedule |
+| `docs/GUARDRAILS.md` §8 | NPC overdraft limits, player debt ceilings, interest floors |
+
+---
+
+## Three-Pillar Audience Guide
+
+### For Players 🎮
+- **GCC is your primary currency** — earn it via mining contracts, material sales, and NPC work orders
+- **EAP is your price ceiling** — if a resource costs more than EAP, NPCs will always import from Earth instead
+- **Infrastructure maturity = lower prices** — as AI Manager builds ISRU pipelines, local production drops below EAP
+- **GCC/USD peg affects your earnings** — early game (1:1), mid game (±10% float), late game (market-driven)
+- **Launch costs scale with mass** — every unit/module/rig adds to total mass × cost_per_kg
+
+### For Administrators ⚙️
+- **GCC emission schedule**: 250M pre-seeded + 1M GCC/cycle daily from LDC mining satellites
+- **LDC stabilization reserves**: 25% of total GCC supply must be held as reserves
+- **System-wide liquidity floor**: minimum 10% of all currencies in liquid reserves
+- **NPC overdraft limit**: 50% of asset value (prevents debt spirals)
+- **Player debt ceiling**: 200% of net worth (prevents insolvency)
+- **Interest rate floor**: 2% annual (discourages excessive borrowing)
+
+### For Developers 🔧
+- **Key models**: `Financial::Currency`, `Financial::Account`, `Financial::Transaction`, `Financial::ExchangeRate`, `Financial::Bond`
+- **Key services**: `LaunchPaymentService`, `Market::NpcPriceCalculator`, `EscalationService`
+- **EAP formula**: `EAP = (Earth spot price × refining factor) + transport cost to destination`
+- **Transport rates** (from economic_parameters.yml): bulk=$100/kg, manufactured=$150/kg, high_tech=$200/kg
+- **NPC pricing**: Cost-based (sell_markup=1.05, buy_discount=0.75) and Market-based (sell_markup=1.03, buy_discount=0.77)
+- **GCC has no material entry** — it enters circulation only through LDC minting and pre-seeding
 
 ---
 

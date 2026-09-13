@@ -155,6 +155,36 @@ From `docs/GUARDRAILS.md` §8:
 
 ---
 
+## Three-Pillar Audience Guide
+
+### For Players 🎮
+- **You have two currencies**: GCC (space-side, primary) and USD (Earth-side, for imports)
+- **Early game peg is 1:1** — your GCC earnings equal USD value at launch
+- **GCC may appreciate over time** — as space economy grows, GCC could become more valuable than USD
+- **Players cannot overdraft** — if you run out of GCC/USD, you must earn more before spending
+- **Exchange rate affects import costs** — when GCC depreciates, Earth imports cost more in GCC terms
+
+### For Administrators ⚙️
+- **GCC monetary base**: 250,000,000 GCC pre-seeded at game start
+- **Daily emission**: 1,000,000 GCC/cycle from LDC mining satellites (ongoing)
+- **LDC is sole mint authority** — no other entity can create GCC
+- **NPC overdraft limit**: 50% of asset value (prevents economic collapse from debt spirals)
+- **Player debt ceiling**: 200% of net worth (prevents player insolvency)
+- **Interest rate floor**: 2% annual (discourages excessive borrowing)
+- **GCC stabilization reserves**: 25% of total GCC supply held by LDC
+
+### For Developers 🔧
+- **Currency model**: `Financial::Currency` — symbol (2-5 uppercase chars), precision (0-8 decimals), issuer polymorphic
+- **Account model**: `Financial::Account` — polymorphic accountable, per-currency, optimistic locking via `lock_version`
+- **Exchange rate service**: `Financial::ExchangeRateService.convert(amount, from, to)` handles all currency conversions
+- **Peg phases**:
+  - Phase 1: Hard peg (1.0) at launch
+  - Phase 2: Soft peg ±10% based on GCC supply/demand
+  - Phase 3: Full float driven by market forces
+- **GCC has no material entry** — it's a currency, not a producible good
+
+---
+
 ## 5. Debt & Overdraft Controls
 
 ### NPC Inter-Debt (Virtual Ledger)

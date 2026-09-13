@@ -247,7 +247,38 @@ If a player posts a sell order above EAP, AI Manager:
 - **NPC Fallback System:** If players don't fill orders within timeout windows, NPCs like AstroLift automatically fill them to maintain game progression
 - **Baseline Price Setting:** NPC order fulfillment establishes market prices and ensures economic activity continues even without player participation
 - **Early Game Critical:** NPC fallbacks are especially important early in the game when player logistics infrastructure is limited
+---
 
+## Three-Pillar Audience Guide
+
+### For Players 🎮
+- **EAP is your price ceiling** — NPCs will never pay more than Earth Anchor Price for your materials
+- **Sell to NPCs at EAP** — that's the maximum they'll pay; negotiate below if you want volume discounts
+- **Local production drops prices** — as AI Manager builds ISRU pipelines, resources cost less than EAP
+- **Infrastructure maturity = opportunity** — each new base/depot creates price arbitrage opportunities
+- **Contract limits**: max 10% of GCC money supply per contract, 5 contracts/day, 90-day max duration
+- **Transport costs matter** — bulk cargo ($100/kg) is cheapest; high-tech ($200/kg) doubles your shipping cost
+
+### For Administrators ⚙️
+- **EAP formula**: `EAP = (Earth spot price × refining factor) + transport cost to destination`
+- **Transport rates** (economic_parameters.yml):
+  - bulk_material: $100/kg (LOX, water, regolith products)
+  - manufactured: $150/kg (components, equipment)
+  - high_tech: $200/kg (electronics, precision instruments)
+- **Route modifiers**: earth_to_leo=0.3, leo_to_luna=0.7, earth_to_luna=1.0, luna_to_mars=1.2, earth_to_mars=1.5, mars_to_belt=1.3, earth_to_belt=1.8
+- **NPC pricing modes**:
+  - Cost-based: sell_markup=1.05, buy_discount=0.75, minimum_profit_margin=0.03
+  - Market-based: sell_markup=1.03, buy_discount=0.77, market_history_threshold=10, market_history_days=30
+- **Price discovery**: prices start at EAP and decrease as infrastructure matures
+- **AI Manager acquisition logic**: local < NPC market < Earth import (always)
+
+### For Developers 🔧
+- **Key service**: `Market::NpcPriceCalculator` — handles ISRU/import pricing modes
+- **EAP calculation**: `Tier1PriceModeler` per material per destination using economic_parameters.yml
+- **Escalation**: `EscalationService` adjusts prices based on supply/demand imbalances
+- **Marketplace model**: `Market::Marketplace` → `Market::Condition` → orders/prices chain
+- **Trade execution**: `TradeExecutionService.execute!` handles order matching
+- **GCC/USD conversion**: `Financial::ExchangeRateService.convert(amount, from, to)` — must be used in NpcPriceCalculator when peg ≠ 1.0
 ---
 
 ## 6. ISRU Pricing Model
