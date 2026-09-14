@@ -140,3 +140,14 @@ After reorganization, these files need their `docs/architecture/economy/` refere
 4. `docs/wiki_reorganization/inventory/DOCUMENT_INVENTORY.md` (13 references — update to new paths)
 5. `docs/wiki_reorganization/inventory/DOCUMENT_AUTHORITY_MAP.md` (13 references — update to new paths)
 6. `docs/wiki_reorganization/proposals/PROPOSED_DOCUMENTATION_STRUCTURE.md` (proposal doc — update for consistency)
+
+## Follow-up Correction — 2026-09-13
+
+Content audit of the 2026-09-09 consolidation found 3 of 4 spot-checked sections needed correction:
+- GCC minting description: no USD-conversion step exists in the actual minting path; mining rate is hardware-dependent (base rate + fitted computer/GPU component bonuses), not a flat number. The 1:1 USD peg is a separate value-anchor fact, not a conversion mechanism, and both facts now appear together in the corrected doc.
+- NPC pricing mechanics description: did not match the live `evaluate_strategy`/`cost_based_bid`/`cost_based_ask` implementation — corrected.
+- EAP×0.90/0.80 scope: was presented as a general formula; corrected to note it's a Luna-only market-bootstrap mechanism, not intended to generalize to Mars/Venus/beyond.
+
+All three corrected in `02-currencies-and-accounts.md`, `03-market-and-pricing.md`, `04-bonds-and-financing.md` — commit `93048e29` (galaxyGame repo).
+
+Remaining open item, deferred: the ledger section in `02-currencies-and-accounts.md` doesn't yet distinguish implemented components (`LedgerEntry`, `VirtualLedgerService` methods, `Account.can_overdraft?`) from skeletal ones (`LedgerManager.reconcile_npc_debts`, `settle_with_usd`, the `npc_to_npc` scope stub) — lower priority, later pass.
