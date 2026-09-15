@@ -1,13 +1,33 @@
 # Currencies & Accounts
 
 **Status**: Canonical  
-**Last Updated**: 2026-09-11  
+**Last Updated**: 2026-09-14  
 **Supersedes**: `CURRENCY_AND_EXCHANGE.md`, `financial_system.md`, `LEDGERS.md`  
 **Derived from**: `CURRENCIES_AND_ACCOUNTS.md` (primary), `CURRENCY_AND_EXCHANGE.md`, `financial_system.md`, `LEDGERS.md`
 
 ---
 
-## 1. Currency Model
+## 1. GCC Identity
+
+### GCC is Fiat-Like Virtual Ledger Currency
+
+- **GCC is technically digital/cryptographic, fiat-like virtual ledger currency during the Luna bootstrap.** It is not physical material, commodity inventory, cargo, or a physical extraction output.
+- **LDC (Luna Development Corporation) is the initial authorized issuer/mint** for the Luna development program under its UN-mandated Development Corporation role.
+- **LDC is an Earth-formed non-profit Development Corporation** operating the Lunar foothold. It does not own Luna or claim territorial sovereignty.
+- GCC has no `production` field in the material system (`data/json-data/resources/materials/`). It enters circulation exclusively through:
+  1. **LDC authorized issuance ("mining")** — processing-hardware-driven GCC credits credited to LDC's account
+  2. **Pre-seeding** — initial balance seeded at game start
+- No other entity can mint GCC. NPC corporations earn GCC through productive activity only.
+
+### Terminology: "GCC Mining"
+
+> **"GCC mining satellite"** remains the established asset/lore name.
+>
+> **"GCC mining"** means LDC-authorized, processing-hardware-driven GCC issuance/settlement activity. It is not physical extraction, commodity production, or a full proof-of-work gameplay system.
+
+---
+
+## 2. Currency Model
 
 ### `Financial::Currency`
 
@@ -42,11 +62,29 @@ end
 | **GCC** | Galactic Construction Credit | LDC (Luna Development Corporation) | Primary space economy currency; numeraire for pricing |
 | **USD** | US Dollar (Earth fiat) | System (no issuer) | Earth-side import/export pricing; bootstrap anchor |
 
-**GCC is a currency, not a material.** It has no `production` field in the material system (`data/json-data/resources/materials/`). GCC enters circulation exclusively through:
-1. **LDC minting** — mining satellite output credited to LDC's GCC account
-2. **Pre-seeding** — initial balance seeded at game start
+---
 
-No other entity can mint GCC. NPC corporations (AstroLift, etc.) earn GCC through productive activity only.
+## 3. USD = GCC Scope
+
+### Current Peg: Bootstrap Anchor Only
+
+- **USD = GCC remains the documented initial Luna/Earth corporate-trade and accounting peg.**
+- **It is not universal or permanently guaranteed.** The peg is a bootstrap design anchor, expected to decouple once GCC market volume supports independent floating value.
+- **Existing three-phase decoupling/multi-currency research remains exploratory/deferred.** Do not represent it as current simulation behavior or add runtime triggers.
+
+### Three-Phase Decoupling (Exploratory/Deferred)
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| **Phase 1: Hard Peg** | Current implementation | 1 GCC = 1 USD fixed; source: `economic_parameters.yml` → `currency.usd_to_gcc_peg: 1.0` |
+| **Phase 2: Soft Peg / Managed Float** | Exploratory/deferred | ±10% fluctuation; rate adjusts based on GCC supply vs. demand |
+| **Phase 3: Full Float** | Exploratory/deferred | Market-driven, no peg constraint; drivers include wormhole activity, infrastructure ROI, GCC mining rate |
+
+> **Status label**: Phase 1 is verified implementation. Phases 2-3 are exploratory design documents with no runtime triggers.
+
+---
+
+## 4. Currency Model
 
 ---
 
@@ -185,7 +223,22 @@ From `docs/GUARDRAILS.md` §8:
 
 ---
 
-## 5. Debt & Overdraft Controls
+## 5. Virtual Ledger Role
+
+### Virtual-Ledger Obligations and Deferred Settlement
+
+DCs and approved aligned corporations can record support, asset use, logistics, docking, refueling, repairs, and other development activity through virtual-ledger obligations/deferred settlement.
+
+**Key principles:**
+- These entries **retain real economic cost** and contribute to deficits, project viability, and AI Manager decisions.
+- They are **not free activity or hidden subsidy.**
+- GCC remains the principal player-facing currency and an AI economic reference, while **not every institutional transaction must settle immediately in GCC.**
+
+> **Status label**: Current implementation supports virtual-ledger entries for NPC entities. Player accounts cannot use virtual ledger (no overdraft). The scope of deferred settlement is bounded by existing `Financial::Account.can_overdraft?` and `LedgerEntry` models.
+
+---
+
+## 6. Debt & Overdraft Controls
 
 ### NPC Inter-Debt (Virtual Ledger)
 
@@ -275,16 +328,23 @@ mining_account.balance += 1000000
 
 ### GCC/USD Exchange Flows
 
-#### GCC Minting and Distribution
+#### GCC Issuance and Distribution
 
-GCC (Galactic Construction Credits) are the primary space economy currency, minted exclusively by the Lunar Development Corporation (LDC):
+GCC (Galactic Construction Credits) is the primary space economy currency, issued exclusively by the Lunar Development Corporation (LDC):
 
 **GCC Sources:**
-- **Lunar Mining**: LDC mines helium-3 and rare earth elements, converting to GCC
-- **Infrastructure Fees**: Construction and maintenance fees paid in GCC
-- **Resource Royalties**: Percentage of extracted resources converted to GCC
+- **LDC authorized issuance ("mining")**: Processing-hardware-driven GCC credits; not physical extraction or commodity production
+- **Pre-seeding**: Initial monetary base seeded at game start
 
-GCC is minted directly from mining/hardware output — there is no USD-conversion step in the minting path. GCC's total mining rate is hardware-dependent: a base rate (currently 1000 GCC/hour on the reference mining satellite) plus contributions from fitted computer/GPU components (see `base_craft.rb#recalculate_stats`) — swapping hardware or hardware degradation changes actual output; it is not a fixed number. Separately, GCC's *value* is currently pegged 1:1 to USD as a design anchor during the bootstrap period, expected to decouple once GCC market volume is large enough to support independent floating value.
+> **Current implementation gap — verified source-trace evidence; runtime differential validation pending**
+>
+> - `recalculate_stats` (base_craft.rb line 372) computes and stores a base-plus-fit rate in `current_mining_rate_gcc_per_hour`.
+> - The current `mine_gcc` path independently aggregates fitted computer units and separate rig-effect data via MiningUnitAdapter.
+> - The mining path does NOT consume the stored recalculated rate. These are two disconnected code paths.
+> - The historical 1000 GCC/hour satellite base-rate field is not part of the shown runtime `mine_gcc` calculation and is inconsistent with the approved hardware-only capacity direction.
+> - Do not claim this is a final resolved architecture or call it "dead code" without a repository-reference audit and runtime validation.
+
+Separately, GCC's *value* is currently pegged 1:1 to USD as a bootstrap design anchor, expected to decouple once GCC market volume supports independent floating value.
 
 #### USD Revenue Streams
 

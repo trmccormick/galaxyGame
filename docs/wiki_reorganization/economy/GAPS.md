@@ -105,17 +105,32 @@
 
 ---
 
-### Gap H: Emission Schedule Enforcement — MISSING
-**Description**: No enforcement of the documented daily emission schedule (1,000,000 GCC/cycle from LDC mining satellites).
+### Gap H: GCC Issuance Schedule — MISSING
+**Description**: No enforcement of the documented daily issuance schedule (1,000,000 GCC/cycle from LDC mining satellites).
 
 **Evidence**:
-- Wiki 02-currencies-and-accounts.md documents: "Daily emission: 1,000,000 GCC/cycle from LDC mining satellites"
+- Wiki 02-currencies-and-accounts.md documents: "Daily issuance: 1,000,000 GCC/cycle from LDC mining satellites"
 - Crypto mining satellite operational data shows 1,000 GCC/hour per satellite (not 1M/day)
-- Discrepancy between documented emission rate and satellite operational parameters
+- Discrepancy between documented issuance rate and satellite operational parameters
 
 **Impact**: Monetary base growth is uncontrolled; documentation and implementation are inconsistent.
 
-**Backlog Coverage**: None — no task file addresses emission schedule enforcement.
+**Backlog Coverage**: None — no task file addresses issuance schedule enforcement.
+
+---
+
+### Gap I: GCC Mining — recalculate_stats / mine_gcc Disconnection
+**Description**: `recalculate_stats` (base_craft.rb line 372) computes and stores a base-plus-fit mining rate in `current_mining_rate_gcc_per_hour`, but the current `mine_gcc` path independently aggregates fitted computer units via MiningUnitAdapter without consuming the stored recalculated rate.
+
+**Evidence**:
+- Source-trace: two independent code paths with no data flow between them
+- `recalculate_stats` stores result in operational_data['operational_properties']['current_mining_rate_gcc_per_hour']
+- `mine_gcc` reads from MiningUnitAdapter which queries each fitted unit's operational_data directly
+- The satellite-level `base_mining_rate_gcc_per_hour: 1000` field is not part of the shown runtime `mine_gcc` calculation
+
+**Impact**: Documentation claiming "mining rate = base rate + fitted components" describes recalculate_stats behavior, not mine_gcc behavior. This is a verified source-trace discrepancy; runtime differential validation pending.
+
+**Backlog Coverage**: None — addressed by P0 task candidate below.
 
 ---
 
@@ -130,9 +145,10 @@
 | E: Settlement Fees Parity Bug | Partial (planning doc only) | Same as Gap A | No task file |
 | F: Manufacturing COGS Integration | None | — | Needs new task |
 | G: GCC/USD Peg Phase Automation | None | — | Needs new task |
-| H: Emission Schedule Enforcement | None | — | Needs new task |
+| H: GCC Issuance Schedule | None | — | Needs new task |
+| I: GCC Mining recalculate_stats/mine_gcc Disconnection | None | — | Addressed by P0 candidate |
 
-**Summary**: 8 gaps identified. 0 have dedicated backlog tasks. 3 have planning docs but no task files. 5 need entirely new tasks.
+**Summary**: 9 gaps identified. 0 have dedicated backlog tasks. 3 have planning docs but no task files. 6 need entirely new tasks.
 
 ---
 
