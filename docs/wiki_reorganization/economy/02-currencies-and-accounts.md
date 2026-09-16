@@ -452,3 +452,68 @@ GCC minting limited to prevent inflation:
 - **Mining Capacity**: Limited by available mining infrastructure
 - **LDC Monopoly**: Only LDC can mint GCC
 - **Burn Mechanisms**: GCC destroyed through Earth exports and losses
+
+---
+
+## 9. Currency Governance Models
+
+Galaxy Game uses a multi-currency economy. Per-currency policy defines governance, issuance authority, issuer eligibility, recipient routing, supply rules, audit rules, and exchange behavior. These are NOT implied by account existence, compute hardware, or craft type.
+
+### Supported Currencies (Initial)
+
+| Currency | Role | Issuer | Governance |
+|---|---|---|---|
+| GCC | Primary space-side numeraire | LDC (Luna Development Corporation) | Centralized, LDC-controlled |
+| USD | Earth-side import/export anchor | System (pre-defined) | Fixed, system-managed |
+
+### Future Currency Categories (Deferred)
+
+Additional currencies may use different governance models:
+- System-managed
+- Corporate
+- Regional
+- Consortium
+- Protocol
+- Permissionless
+- Service/asset-credit
+
+> **Compute capacity alone is not GCC mint authority.** Eligible infrastructure must be explicitly LDC-authorized.
+
+### Settled Design Decisions
+
+The following are recorded as canonical design decisions, not inferred source behavior:
+
+1. Galaxy is a multi-currency economy.
+2. GCC and USD are the initial supported currencies.
+3. Additional Earth currencies may be added when required.
+4. Future off-Earth currencies may use different governance models (listed above).
+5. Governance, issuance authority, issuer eligibility, recipient routing, supply rules, audit rules, and exchange behavior are defined per currency policy; they are not implied by account existence, compute hardware, or craft type.
+6. GCC is centrally managed, crypto-inspired, nonphysical virtual-ledger currency with eight-decimal precision.
+7. During initial launch and Luna bootstrap, 1 GCC = 1 USD.
+8. Future GCC uncoupling is deferred. A narrow LDC-managed parity band is a nonbinding future design reference only.
+9. GCC issuance uses LDC-controlled simulated compute mining.
+10. Compute capacity alone is not GCC mint authority.
+11. Initial GCC issuance infrastructure is LDC-operated crypto-mining satellites.
+12. Later eligible infrastructure may include explicitly LDC-authorized compute facilities.
+13. Newly issued GCC is intended to flow to the existing LDC GCC account.
+14. LDC circulates already-issued GCC through explicit transfers, liquidity, contracts, services, rewards, and other authorized disbursements.
+15. Physical extraction produces material/cargo and never directly creates GCC.
+16. A future permissionless/protocol currency is possible but deferred; do not describe it as current gameplay or enable it through GCC wording.
+
+### GCC Issuance Versus Physical Extraction
+
+| Aspect | GCC Issuance | Physical Extraction |
+|---|---|---|
+| Output type | Virtual ledger credits (GCC) | Physical materials/cargo |
+| Mechanism | LDC-controlled simulated compute mining | Material extraction from celestial bodies |
+| Currency creation | Yes (under currency policy) | No — never directly creates GCC |
+| Governance | Per-currency policy definition | Resource/blueprint definitions |
+
+> **Implementation alignment note**
+> GCC's canonical policy is LDC-controlled simulated-compute issuance, with newly issued GCC intended for the existing LDC GCC account. Source-level review identified generic mining paths with differing recipient routing and no demonstrated LDC authorization guard. This documentation does not claim that the intended policy is currently enforced.
+
+---
+
+## Change History
+
+- **2026-09-15**: Added Section 9 — Currency Governance Models (settled design decisions, multi-currency architecture, GCC issuance vs physical extraction boundary) per Phase 4 wiki construction (Phase 4).
