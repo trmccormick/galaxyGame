@@ -110,6 +110,16 @@ PromptCompiler.compile(
 
 3. **Output**: A frozen image prompt string for image-generation models, composed from profile attributes, visual definition data, blueprint data, and operational data according to the internal composition pipeline.
 
+### Visual Profile Orchestration (Decision — 2026-09-12)
+
+The following decision governs how Visual Profile attributes reach PromptCompiler without changing its public interface:
+
+- **Ownership**: Development-time Asset Registry/orchestration owns the `asset_id → visual_profile_id` association.
+- **Storage boundary**: This association is NOT stored in Blueprint, Visual Definition, Operational Data, or Render Template. It exists exclusively in the Asset Registry/orchestration layer.
+- **Resolution path**: Orchestration resolves the Visual Profile via `ProfileResolutionEngine` and supplies the resulting `profile_attributes` to PromptCompiler through its internal composition boundary (the existing `CompositionRefinery.compose(profile_attributes: ...)` call).
+- **PromptCompiler constraint**: PromptCompiler does NOT discover, infer, or search for profiles by `asset_id`. It receives already-resolved profile attributes from orchestration.
+- **Public interface unchanged**: The five-keyword `PromptCompiler.compile` interface remains as defined above. No public `visual_profile_id:` or `visual_profile_path:` argument is added.
+
 ---
 
 ## 4. Visual Definition Format Contract

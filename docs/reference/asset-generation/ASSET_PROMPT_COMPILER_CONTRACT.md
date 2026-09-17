@@ -1,11 +1,21 @@
 # Asset Prompt Compiler Contract
 
-**Status**: Draft v0.1
+**Status**: Draft v0.1 — **HISTORICAL / SUPERSEDED** (see notice below)
 **Priority**: MEDIUM
 **Type**: Architecture Specification
 **Created**: 2026-08-23
 **Last Updated**: 2026-08-24
 **Owner**: Asset Pipeline Design
+
+---
+
+## ⚠️ Superseded Notice — 2026-09-12
+
+This document is **historical only**. Its architectural content has been superseded by the canonical contract at:
+
+> **`VISUAL_CONTRACT.md`** (`docs/reference/asset-generation/VISUAL_CONTRACT.md`) — authoritative source for all PromptCompiler interface, artifact roles, and visual-architecture decisions.
+
+This file is retained in place with its body intact for historical reference. Do not edit or rewrite its content. All new decisions, corrections, and implementation guidance must reference `VISUAL_CONTRACT.md`.
 
 ---
 
