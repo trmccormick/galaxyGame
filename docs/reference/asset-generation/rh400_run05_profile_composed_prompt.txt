@@ -1,0 +1,175 @@
+# RH-004 Run 05 — Profile-Composed Primary Prompt (Refinement Experiment)
+
+**Run ID**: rh400_run05
+**Date**: 2026-08-27
+**Composition Method**: Profile Composition (PROFILE_COMPOSITION_SPEC.md) + Targeted Refinements
+**Baseline**: Run 04 profile-composed prompt (FROZEN — do not modify)
+**Canonical Inputs**: Identical to Run 04 Control
+| Source | File |
+|--------|------|
+| Blueprint | `data/json-data/blueprints/crafts/ground/regolith_harvester_rover_bp.json` v2.1 |
+| Operational Data | `data/json-data/operational_data/crafts/ground/regolith_harvesting_rover_data.json` v2.1 |
+| Visual Definition | `docs/reference/asset-generation/visual_definitions/VEHICLE_HARVESTER_ROVER_RH400.json` |
+| Visual Profile | `docs/reference/asset-generation/VISUAL_PROFILE_precision_industrial_v1.md` |
+| Render Template | `PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0.md` |
+**Type**: Renderer-neutral top-down production render (profile-composed + targeted refinements)
+**Status**: FROZEN — do not modify after initial generation run
+
+---
+
+## PROMPT
+
+```
+Generate a single RH-400 Regolith Harvester Rover for GalaxyGame, a hard-sci-fi industrial space settlement simulation game.
+
+SUBJECT:
+A Mk2 autonomous regolith harvesting rover — a heavy-duty mobile industrial vehicle designed to skim planetary surfaces and gather regolith for in-situ resource utilization (ISRU) processing. The vehicle has a low-profile rectangular chassis with a forward-mounted regolith skimming scoop, a mid-body cylindrical processing canister, a rear-mounted dust exhaust stack, a top-mounted sensor mast with rotating array, and six visible drive wheels on an independent suspension chassis. Exposed hydraulic actuator arms connect the scoop to the chassis at the joints.
+
+PROPORTIONS (visual anchors — canonical dimensions: length 6.80m, width 3.30m, height 2.65m):
+- Elongated low-slung vehicle — length clearly exceeds width
+- Width remains substantially narrower than overall length
+- Body height remains low relative to footprint
+- Overall shape: elongated rectangular platform with forward scoop protrusion and rear exhaust stack
+
+STYLE (resolved from grounded_industrial_v1 profile):
+- Primary body panels: clean white or light-gray (#E8E6E1 to #D4D0C8 — light industrial off-white, not pure white, not medium gray)
+- Mechanical undercarriage: dark gray to black (#2A2A2E to #1C1C20 — deep charcoal near-black, not mid-gray)
+- Precision-machined surfaces with minimal visible construction seams
+- NASA/ESA-inspired aerospace-industrial aesthetic
+- Slight sheen consistent with factory-assembled aerospace equipment
+
+MANUFACTURING (resolved from earth_factory_v1 profile):
+- Precision industrial factory assembly — not frontier, bootstrap, or improvised
+- Materials: high-strength aerospace steel structural members, aluminum structural panels, sealed hydraulic systems, reinforced rubber tracks
+- Excluded: no 3D-printed rough texture, no visible layer lines, no exposed reinforcement ribs, no regolith-composite appearance
+
+TECHNOLOGY LEVEL (resolved from tl2_v1 profile):
+- Mk2 characteristics: cleaner than early-generation equipment, fewer visible fasteners, welded joints, slight sheen
+- Excluded: no visible layer lines, no 3D-printed rough texture, no improvised or bootstrap appearance
+
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim, hydraulic cylinder bodies)
+  * Yellow stripes: #E8C800 to #D4B500 (high-visibility industrial yellow — not orange-yellow, not pale lemon)
+  * Black stripes: #1A1A1A to #0D0D0D (near-black, high contrast against yellow and against body panels)
+- Unit identification stenciled on the hull (simple alphanumeric marking)
+
+RECOGNITION FEATURES (ordered by priority tier from Visual Definition visual_priority):
+
+PRIMARY (must be dominant in the render):
+1. Six-wheel independent suspension chassis — six drive wheels visible along the vehicle's sides, creating a distinctive segmented undercarriage outline
+2. Forward regolith skimming scoop assembly — prominent protrusion at the front of the chassis, clearly visible as the primary harvesting mechanism
+
+SECONDARY (must be clearly visible):
+3. Mid-body cylindrical processing canister — a distinctly ROUND cross-section cylinder (NOT rectangular, NOT box-shaped, NOT flat-panel). A vertical tank-like form with smooth curved sides visible from above as an oval/circular outline. The top surface shows a curved dome or flat circular cap. This is the most prominent mid-body feature and must read as a pressure vessel / processing tank, not a structural panel.
+4. Top-mounted sensor mast with rotating array — tall thin mast rising from the top center, topped with a disc or ring-shaped sensor array
+
+TERTIARY (should be present and visible upon closer inspection):
+5. Rear-mounted dust exhaust stack — vertical stack at the rear of the vehicle
+6. Exposed hydraulic actuator arms — visible cylindrical pistons connecting the scoop to the chassis
+
+RENDER REQUIREMENTS:
+- Single vehicle only, fully visible, no cropping
+- Top-down orthographic camera view (directly above, looking straight down, no perspective distortion)
+- Vehicle centered within the canvas, occupying approximately 75% of the frame
+- Soft neutral studio lighting — cool, even, diffused illumination that highlights surface details without harsh shadows or specular highlights
+- Physically accurate materials — steel, aluminum, rubber, and composite surfaces should look correct for each material
+- High-contrast hazard striping (yellow/black) must be clearly visible on at least two features (scoop edges and hydraulic cylinders minimum) — this is a Visual Profile locked attribute
+- Strong, immediately recognizable silhouette — the six-wheel chassis with forward scoop and rear stack must be clear even at small scale
+
+BACKGROUND:
+- Transparent background (alpha channel)
+- No ground plane, no terrain, no shadows beyond a subtle contact shadow beneath the object
+- No sky, no stars, no environment, no props, no dust effects
+- No text, no labels, no annotations, no logos, no borders, no watermark
+
+OUTPUT:
+- Transparent PNG
+- 1024×1024 pixels
+- High resolution suitable for production game assets
+```
+
+---
+
+## HOW THIS PROMPT DIFFERS FROM RUN 04 (Baseline)
+
+### Change 1: Hex Color Ranges Added to Three Critical Color Zones
+
+**Run 04 (baseline)** — STYLE section only, semantic colors:
+```
+STYLE (resolved from grounded_industrial_v1 profile):
+- Clean white or light-gray primary paneling over dark gray to black mechanical undercarriage
+```
+
+**Run 05 (refinement)** — STYLE section with hex ranges + visual anchors:
+```
+STYLE (resolved from grounded_industrial_v1 profile):
+- Primary body panels: clean white or light-gray (#E8E6E1 to #D4D0C8 — light industrial off-white, not pure white, not medium gray)
+- Mechanical undercarriage: dark gray to black (#2A2A2E to #1C1C20 — deep charcoal near-black, not mid-gray)
+```
+
+**MARKINGS section** — hex ranges added for hazard colors:
+```
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim, hydraulic cylinder bodies)
+  * Yellow stripes: #E8C800 to #D4B500 (high-visibility industrial yellow — not orange-yellow, not pale lemon)
+  * Black stripes: #1A1A1A to #0D0D0D (near-black, high contrast against yellow and against body panels)
+```
+
+**Rationale**: Adapted from I-beam Run 02 Variant A methodology. Hex ranges eliminate lightness/saturation ambiguity for the three critical color zones. Visual anchor phrases ("light industrial off-white," "deep charcoal near-black") preserve semantic reinforcement. Negative qualifiers ("not pure white, not medium gray") prevent common generator over-corrections.
+
+### Change 2: Strengthened Cylindrical Canister Description
+
+**Run 04 (baseline)** — Secondary feature, single-line description:
+```
+3. Mid-body cylindrical processing canister — rounded tank-like structure centered on the chassis
+```
+
+**Run 05 (refinement)** — Secondary feature, expanded with negative constraints + top-down observable geometry:
+```
+3. Mid-body cylindrical processing canister — a distinctly ROUND cross-section cylinder (NOT rectangular, NOT box-shaped, NOT flat-panel). A vertical tank-like form with smooth curved sides visible from above as an oval/circular outline. The top surface shows a curved dome or flat circular cap. This is the most prominent mid-body feature and must read as a pressure vessel / processing tank, not a structural panel.
+```
+
+**Rationale**: Gemini's persistent rectangular panel invention across Run 03 AND Run 04 indicates that "rounded tank-like structure" was insufficient to override the generator's default tendency to render mid-body volumes as panels/boxes. Explicit negative constraints ("NOT rectangular, NOT box-shaped, NOT flat-panel") combined with top-down observable geometry ("oval/circular outline from above") address both the shape ambiguity and the camera-view visibility gap.
+
+### Change 3: Hazard Marking Reinforcement in RENDER REQUIREMENTS
+
+**Run 04 (baseline)** — MARKINGS section only:
+```
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim)
+```
+
+**Run 05 (refinement)** — MARKINGS expanded + new RENDER REQUIREMENTS bullet:
+```
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim, hydraulic cylinder bodies)
+  * Yellow stripes: #E8C800 to #D4B500 ...
+  * Black stripes: #1A1A1A to #0D0D0D ...
+
+RENDER REQUIREMENTS:
+...
+- High-contrast hazard striping (yellow/black) must be clearly visible on at least two features (scoop edges and hydraulic cylinders minimum) — this is a Visual Profile locked attribute
+```
+
+**Rationale**: ChatGPT got hazard markings right in Run 04; Gemini did not. The MARKINGS section already has hex colors (from Change 1). This change adds positional reinforcement via the RENDER REQUIREMENTS section to counteract positional bias (features at the end of long prompts receive less attention). The "at least two features" constraint gives generators a concrete, achievable target rather than an open-ended "apply to moving parts."
+
+---
+
+## PROMPT SIZE COMPARISON
+
+| Metric | Run 03 (Control) | Run 04 (Baseline) | Run 05 (Refinement) | Delta from Run 04 |
+|--------|-----------------|-------------------|---------------------|-------------------|
+| Total lines | ~103 | ~95 | ~108 | +13 (+14%) |
+| Prompt body lines | ~72 | ~68 | ~81 | +13 |
+| Recognition features | 6 items, flat list | 6 items, tiered | 6 items, tiered | Same structure |
+| Color constraints | Semantic only | Semantic only | **4 hex ranges** | New variable |
+| Canister description | 1 line | 1 line | **~5 lines** | +4 lines |
+| Hazard reinforcement | MARKINGS section only | MARKINGS section only | **MARKINGS + RENDER** | +1 bullet |
+
+**Finding**: The Run 05 refinement adds 13 lines to the Run 04 baseline (14% increase). These are all targeted refinements: 4 hex color ranges (~6 lines), expanded canister description (~4 lines), and hazard reinforcement in RENDER REQUIREMENTS (~3 lines). No content bloat — every added line addresses a specific Run 04 divergence.
+
+---
+
+## FROZEN STATUS
+
+This prompt is FROZEN as of 2026-08-27. Do not modify after the initial ChatGPT vs Gemini generation run. If results diverge, record where they diverge — do not rewrite the prompt to make them agree. The experiment tests whether targeted refinements (hex color anchors + strengthened canister description + hazard reinforcement) improve cross-generator consistency on top of the validated Profile Composition architecture.

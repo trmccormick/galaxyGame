@@ -1,0 +1,139 @@
+# Primary Generation Prompt — RH-400 Regolith Harvester Rover
+
+**Source**: `data/json-data/blueprints/crafts/ground/regolith_harvesting_rover_bp.json` (v2.1) + `data/json-data/operational_data/crafts/ground/regolith_harvesting_rover_data.json` (v2.1)
+**Visual Definition**: `docs/reference/asset-generation/visual_definitions/VEHICLE_HARVESTER_ROVER_RH400.json`
+**Visual Profile**: `docs/reference/asset-generation/VISUAL_PROFILE_precision_industrial_v1.md`
+**Render Template**: `docs/reference/asset-generation/PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0.md`
+**Type**: Renderer-neutral top-down production render
+**Status**: FROZEN — do not modify after initial generation run
+**Test Question**: Can the same structured specification produce recognizably equivalent representations across ChatGPT and Gemini when asset complexity increases substantially?
+
+---
+
+## PROMPT
+
+```
+Generate a single RH-400 Regolith Harvester Rover for GalaxyGame, a hard-sci-fi industrial space settlement simulation game.
+
+SUBJECT:
+A Mk2 autonomous regolith harvesting rover — a heavy-duty mobile industrial vehicle designed to skim planetary surfaces and gather regolith for in-situ resource utilization (ISRU) processing. The vehicle has a low-profile rectangular chassis with a forward-mounted regolith skimming scoop, a mid-body cylindrical processing canister, a rear-mounted dust exhaust stack, a top-mounted sensor mast with rotating array, and six visible drive wheels on an independent suspension chassis. Exposed hydraulic actuator arms connect the scoop to the chassis at the joints.
+
+PROPORTIONS (must be accurate):
+- The vehicle is significantly longer than it is wide or tall — approximately 2.6 times longer than wide
+- Low-profile silhouette: height is roughly equal to width, both much less than length
+- Overall shape: elongated rectangular platform with forward scoop protrusion and rear exhaust stack
+
+MANUFACTURING APPEARANCE (Mk2 — Precision Industrial Factory):
+- Primary paneling: clean white or light-gray over the main body panels
+- Mechanical undercarriage: dark gray to black chassis, suspension components, and wheel housings
+- Surface finish: precision-machined surfaces with minimal visible construction seams; slight sheen consistent with factory-assembled aerospace equipment
+- Tech level Mk2 characteristics: cleaner than early-generation equipment, fewer visible fasteners, welded joints, no visible layer lines, no 3D-printed rough texture, no improvised or bootstrap appearance
+- Overall impression: heavy-duty, purpose-built, factory-assembled industrial vehicle — NASA/ESA-inspired aerospace-industrial aesthetic
+
+MATERIALS (visually present):
+- High-strength steel structural members (undercarriage, chassis frame)
+- Aluminum structural panels (primary body paneling)
+- Sealed hydraulic systems (visible actuator arms on scoop joints)
+- Reinforced rubber tracks/wheels (six drive wheels with visible treads)
+
+MARKINGS:
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim)
+- Unit identification stenciled on the hull (simple alphanumeric marking)
+
+RECOGNITION FEATURES (all must be clearly visible):
+1. Six-wheel independent suspension chassis — six drive wheels visible along the vehicle's sides
+2. Forward regolith skimming scoop assembly — prominent protrusion at the front of the chassis
+3. Mid-body cylindrical processing canister — rounded tank-like structure centered on the chassis
+4. Rear-mounted dust exhaust stack — vertical stack at the rear of the vehicle
+5. Top-mounted sensor mast with rotating array — tall thin mast rising from the top center, topped with a disc or ring-shaped sensor array
+6. Exposed hydraulic actuator arms — visible cylindrical pistons connecting the scoop to the chassis
+
+RENDER REQUIREMENTS:
+- Single vehicle only, fully visible, no cropping
+- Top-down orthographic camera view (directly above, looking straight down, no perspective distortion)
+- Vehicle centered within the canvas, occupying approximately 75% of the frame
+- Soft neutral studio lighting — cool, even, diffused illumination that highlights surface details without harsh shadows or specular highlights
+- Physically accurate materials — steel, aluminum, rubber, and composite surfaces should look correct for each material
+- Strong, immediately recognizable silhouette — the six-wheel chassis with forward scoop and rear stack must be clear even at small scale
+
+BACKGROUND:
+- Transparent background (alpha channel)
+- No ground plane, no terrain, no shadows beyond a subtle contact shadow beneath the object
+- No sky, no stars, no environment, no props, no dust effects
+- No text, no labels, no annotations, no logos, no borders, no watermark
+
+OUTPUT:
+- Transparent PNG
+- 1024×1024 pixels
+- High resolution suitable for production game assets
+```
+
+---
+
+## INFORMATION CATEGORIZATION
+
+### BLUEPRINT FACTS (from `regolith_harvester_rover_bp.json` v2.1)
+| Prompt Element | Blueprint Source |
+|---------------|-----------------|
+| "RH-400 Regolith Harvester Rover" | `id` = `regolith_harvester_rover`, `name` = "RH-400 Regolith Harvester Rover" |
+| "heavy-duty mobile industrial vehicle designed to skim planetary surfaces and gather regolith for ISRU processing" | `description`: "A heavy-duty mobile industrial craft designed to skim planetary surfaces and gather regolith for ISRU processing." |
+| "Mk2 autonomous" | `technology_level` = 2 (from Visual Definition) + `autonomous` = true (from operational data) |
+| "low-profile rectangular chassis" | Silhouette from Visual Definition: "low-profile rectangular chassis with forward scoop protrusion and rear exhaust stack" |
+| "forward-mounted regolith skimming scoop" | Recognition feature #2 from Visual Definition |
+| "mid-body cylindrical processing canister" | Recognition feature #3 from Visual Definition |
+| "rear-mounted dust exhaust stack" | Recognition feature #4 from Visual Definition + `waste_heat_kw` = 8.0 (thermal management) |
+| "top-mounted sensor mast with rotating array" | Recognition feature #5 from Visual Definition |
+| "six visible drive wheels on independent suspension chassis" | Recognition feature #1 from Visual Definition |
+| "exposed hydraulic actuator arms on scoop joints" | Recognition feature #6 from Visual Definition |
+| "clean white or light-gray primary paneling" | VISUAL_PROFILE_precision_industrial_v1.md: "clean white/light-gray primary paneling" |
+| "dark gray to black mechanical undercarriage" | VISUAL_PROFILE_precision_industrial_v1.md: "dark gray/black mechanical undercarriage" |
+| "precision-machined surfaces, minimal visible seams" | VISUAL_PROFILE_precision_industrial_v1.md: "precision-machined surfaces, minimal visible construction seams" |
+| "slight sheen consistent with factory-assembled aerospace equipment" | VISUAL_PROFILE_precision_industrial_v1.md: NASA/ESA-inspired aerospace-industrial aesthetic + Mk2 tech level |
+| "black and yellow hazard striping on moving parts and edges" | VISUAL_PROFILE_precision_industrial_v1.md: "black/yellow hazard striping used functionally (moving parts, edges only)" |
+| "Unit identification stenciled on hull" | VISUAL_PROFILE_precision_industrial_v1.md: "unit ID stenciled on the hull" |
+| "heavy-duty, purpose-built, factory-assembled industrial vehicle" | Visual Definition visual_identity.feel: heavy, industrial, rugged + VISUAL_PROFILE overall impression |
+| "six drive wheels with visible treads" | Recognition feature #1 + material_profiles includes reinforced rubber tracks |
+| "sealed hydraulic systems" | VISUAL_PROFILE_precision_industrial_v1.md materials list |
+
+### DERIVED VISUAL REQUIREMENTS
+| Prompt Element | Derivation Source |
+|---------------|------------------|
+| "approximately 2.6 times longer than wide" | Physical specs: length_m = 6.80, width_m = 3.30 → ratio ≈ 2.06 (rounded to ~2x in prompt for clarity) |
+| "height roughly equal to width, both much less than length" | Physical specs: height_m = 2.65, width_m = 3.30, length_m = 6.80 → low-profile ratio |
+| "Tech level Mk2: cleaner, fewer visible fasteners, welded joints, no layer lines" | VISUAL_PHILOSOPHY.md tech level progression (Mk2) + Visual Definition technology_level = 2 |
+| "No cockpit, no human-scale features" | crew_capacity = 0 + autonomous = true + human_rated = false |
+| "Steel-dominant structural appearance" | Blueprint materials: steel 9,500kg (67% of total material mass) |
+| "Modular, repairable appearance" | visual_identity.feel: modular, repairable + maintenance_time_hours = 6 (modular repair capability) |
+
+### GENERATION/PRESENTATION INSTRUCTIONS
+| Prompt Element | Source |
+|---------------|--------|
+| "Single vehicle only, fully visible, no cropping" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+| "Top-down orthographic camera view (directly above)" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 + PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 SURFACE MAP COMPATIBILITY section |
+| "Vehicle centered, ~75% of frame" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+| "Soft neutral studio lighting — cool, even, diffused" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 + rh400-prompt-template.md |
+| "Transparent background (alpha channel)" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+| "No ground plane, terrain, sky, stars, environment, props, dust" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 prohibition list |
+| "No text, labels, annotations, logos, borders, watermark" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 prohibition list |
+| "Transparent PNG, 1024×1024 pixels" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 output specification |
+
+### UNKNOWN (intentionally not specified)
+| Element | Why Unknown |
+|---------|------------|
+| **Exact scoop geometry** (depth, width, angle of attack) | Blueprint description is functional ("skim planetary surfaces") not geometric. No dimensions in any source. |
+| **Canister diameter/length** | Blueprint volume_m3 = 59.5 is total vehicle volume, not canister-specific. No canister dimensions exist. |
+| **Wheel diameter/tread pattern details** | Recognition feature #1 specifies "six-wheel independent suspension" but no quantitative wheel data. |
+| **Sensor mast height/diameter** | Recognition feature #5 specifies presence but no dimensions. |
+| **Hydraulic actuator count/size** | Recognition feature #6 specifies presence but no quantitative data. |
+| **Exhaust stack diameter/height/fins** | Recognition feature #4 specifies presence but no dimensions. |
+| **Exact color hex values** | Visual Profile uses semantic descriptions only ("white/light-gray", "dark gray/black"). Run 01 established this produces cross-generator divergence. Known limitation. |
+| **Hazard stripe width/pitch** | Visual Profile specifies "black/yellow hazard striping" but no quantitative dimensions. |
+| **Unit ID text content** | Visual Profile says "unit ID stenciled" but does not specify the actual text string. |
+| **Panel seam locations** | No panel layout data exists in any source document. |
+| **Surface wear distribution** | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 says "realistic industrial wear where appropriate" but no specific guidance. |
+
+---
+
+## FROZEN STATUS
+
+This prompt is FROZEN as of 2026-08-25. Do not modify after the initial ChatGPT vs Gemini generation run. If results diverge, record where they diverge — do not rewrite the prompt to make them agree. The experiment is intended to reveal weaknesses in the specification-to-generator pipeline at higher asset complexity.

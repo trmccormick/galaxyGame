@@ -1,0 +1,102 @@
+# Primary Generation Prompt — 3D-Printed I-Beam Mk1
+
+**Source**: `data/json-data/blueprints/components/structural/3d_printed_ibeam_mk1_bp.json` (v1.3) + `3d_printed_ibeam_mk1_bp_v1.4.json` (v1.4)
+**Type**: Renderer-neutral primary production render
+**Status**: FROZEN — do not modify after initial generation run
+**Test Question**: Can the same structured specification produce recognizably equivalent representations across ChatGPT and Gemini?
+
+---
+
+## PROMPT
+
+```
+Generate a single structural I-beam component for GalaxyGame, a hard-sci-fi industrial space settlement simulation game.
+
+SUBJECT:
+A Mk1 3D-printed regolith structural I-beam — the primary load-bearing support member for early-stage construction. Standard I-shaped cross-section with wide flanged top and bottom edges connected by a vertical web plate. The beam is long and rectangular in profile, with the characteristic I-beam silhouette recognizable from any angle.
+
+MANUFACTURING APPEARANCE (Mk1 — Heat-Sintered Regolith, No Binder):
+- Surface: Dark gray-brown granular matte finish, clearly showing the rough porous texture of heat-sintered regolith composite
+- Layer lines: Prominent, deep horizontal layer lines running the full length of the beam — this is a first-generation Mk1 print, so the additive manufacturing process should be very visible
+- Edges: Slightly irregular at the flange edges, consistent with early-stage 3D printing tolerances and 8% material loss (waste)
+- Overall impression: Heavy, functional, field-fabricated infrastructure material — not precision-machined aerospace hardware. The object weighs 69 kg and is built from sintered planetary regolith with no external binder.
+
+RECOGNITION FEATURES (must be visible):
+- I-shaped cross-section profile (flanged top and bottom edges with connecting web plate)
+- Prominent horizontal layer lines across all surfaces
+- Dark granular matte surface texture consistent with sintered regolith
+- Slightly irregular flange edges (early manufacturing tolerance)
+
+RENDER REQUIREMENTS:
+- Single object only, fully visible, no cropping
+- Isometric perspective view (approximately 30-degree angle showing top and side faces)
+- Object centered within the canvas, occupying approximately 75% of the frame
+- Soft neutral studio lighting — cool, even, diffused illumination that highlights the granular surface texture without harsh shadows or specular highlights
+- Physically accurate materials — the regolith composite should look like sintered planetary regolith, not metal or plastic
+
+BACKGROUND:
+- Completely transparent background (alpha channel)
+- No ground plane, no terrain, no shadows beyond a subtle contact shadow beneath the object
+- No sky, no stars, no environment, no props
+- No text, no labels, no annotations, no logos, no borders, no watermark
+
+OUTPUT:
+- Transparent PNG
+- High resolution suitable for production game assets
+- Moderate detail level appropriate for Mk1 technology (rough, visible layer lines)
+```
+
+---
+
+## INFORMATION CATEGORIZATION
+
+### BLUEPRINT FACTS (from `3d_printed_ibeam_mk1_bp.json`)
+| Prompt Element | Blueprint Source |
+|---------------|-----------------|
+| "Mk1 3D-printed regolith structural I-beam" | `id` = `3d_printed_ibeam_mk1`, `name` = "3D-Printed I-Beam Mk1", `category` = structural |
+| "primary load-bearing support member for early-stage construction" | `description`: "Basic structural beams printed using molten lunar regolith..." |
+| "Standard I-shaped cross-section with wide flanged top and bottom edges connected by a vertical web plate" | Inferred from name "I-Beam" + category "structural" — standard structural engineering definition |
+| "Heat-sintered regolith, no binder" | `description`: "No external binder required, relying on heat sintering and melting of regolith" |
+| "Dark gray-brown granular matte finish" | Derived from material = regolith + process = heat sintering (sintered regolith appearance) |
+| "Prominent, deep horizontal layer lines" | Derived from `required_technology` = regolith_3d_printing + VISUAL_PHILOSOPHY.md Mk1 = "visible layer lines" |
+| "Slightly irregular edges" | Derived from `material_efficiency` = 0.92 (8% waste) + Mk1 tech level = early/rough |
+| "Heavy, functional, field-fabricated infrastructure material" | Derived from `weight_kg` = 69 + category = structural |
+| "Weighs 69 kg" | `weight_kg` = 69, `mass_kg` = 69 |
+| "Built from sintered planetary regolith with no external binder" | `description`: "No external binder required, relying on heat sintering and melting of regolith" |
+| "8% material loss (waste)" | `material_efficiency` = 0.92 → 1 - 0.92 = 0.08 = 8% |
+
+### DERIVED VISUAL REQUIREMENTS
+| Prompt Element | Derivation Source |
+|---------------|------------------|
+| "I-beam silhouette recognizable from any angle" | Name + category → standard structural shape |
+| "Rough porous texture of heat-sintered regolith composite" | Process = heat sintering of regolith (no binder) → unbound grain structure |
+| "First-generation Mk1 print" | Mk1 is first in progression; VISUAL_PHILOSOPHY.md Mk1 = "Improvised, thick members, visible layer lines" |
+| "Not precision-machined aerospace hardware" | No binder + regolith sintering → infrastructure-grade, not aerospace |
+
+### GENERATION/PRESENTATION INSTRUCTIONS
+| Prompt Element | Source |
+|---------------|--------|
+| "Single object only, fully visible, no cropping" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+| "Isometric perspective view (~30-degree angle)" | ibeam-prompt.md + rh400-prompt-template.md Pass 1 |
+| "Object centered, ~75% of frame" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+| "Soft neutral studio lighting — cool, even, diffused" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 + ibeam-prompt.md |
+| "Transparent background (alpha channel)" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+| "No ground plane, terrain, sky, stars, environment, props" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 prohibition list |
+| "No text, labels, annotations, logos, borders, watermark" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 prohibition list |
+| "High resolution PNG" | PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 |
+
+### UNKNOWN (intentionally not specified)
+| Element | Why Unknown |
+|---------|------------|
+| **Exact dimensions** (length, width, height, flange thickness) | Mk1 blueprint has `dimensions` all set to 0 — unpopulated data field. Only Mk4+ have dimensions (5.0×0.3×0.3m). The generator will infer scale from context. |
+| **Exact color values** | Architecture prohibits literal hex values; uses semantic roles only. Generator produces its own interpretation of "dark gray-brown." |
+| **Layer line pitch/frequency** | Not quantified anywhere. VISUAL_PHILOSOPHY.md says "visible layer lines" but gives no quantitative spec. |
+| **Surface roughness Ra value** | Blueprint describes process (heat sintering) not surface metrology. |
+| **Connection hole spacing / bolt pattern** | Not specified in blueprint. Mk1 has no `variants` array. |
+| **Manufacturing origin** (Earth vs Luna) | Blueprint says `origin_body: "any"` — location-agnostic by design. Prompt does NOT specify planetary context. |
+
+---
+
+## FROZEN STATUS
+
+This prompt is FROZEN as of 2026-08-25. Do not modify after the initial ChatGPT vs Gemini generation run. If results diverge, record where they diverge — do not rewrite the prompt to make them agree. The experiment is intended to reveal weaknesses in the specification-to-generator pipeline.

@@ -1,0 +1,85 @@
+# Four-Quadrant Engineering Reference Prompt — 3D-Printed I-Beam Mk1
+
+**Source**: `docs/reference/asset-generation/ibeam-prompt.md` (existing four-quadrant format) + `data/json-data/blueprints/components/structural/3d_printed_ibeam_mk1_bp.json` (Mk1 blueprint data)
+**Type**: Optional secondary test — structured multi-view presentation for evaluation purposes
+**Status**: FROZEN — do not modify after initial generation run
+**Purpose**: Determine whether a structured multi-view presentation improves ability to evaluate geometry, consistency, surface treatment, manufacturing progression, and reproducibility.
+
+---
+
+## PROMPT
+
+```
+Generate a professional technical catalog sheet showing a Mk1 3D-printed regolith structural I-beam for GalaxyGame.
+
+COMPOSITION:
+Present as a strict, symmetrical 2x2 grid layout against a seamless neutral light-gray studio background. The sheet is organized as two distinct vertical columns divided by thin dark gray lines. Text-free. No annotations. No labels. No logos.
+
+TOP-LEFT PANEL — Orthographic end view (flange face):
+A dead-on orthographic view of the I-beam's flange face, showing the wide top/bottom flanges and connecting web plate in cross-section. The object is fully centered within the panel with consistent padding.
+
+BOTTOM-LEFT PANEL — Side profile view:
+A straight side orthographic profile of the full beam length, showing the rectangular web and protruding flanges in true side elevation. Fully centered with consistent padding.
+
+TOP-RIGHT PANEL — Isometric perspective view:
+A clean three-quarter isometric view of the full-length I-beam, showing its complete geometry without cropping. The perspective reveals the I-shaped cross-section and full beam length. Fully centered.
+
+BOTTOM-RIGHT PANEL — Opposite end view:
+A dead-on orthographic view of the opposite flange face (mirrored from top-left), showing the same I-beam cross-section from the other end. Fully centered.
+
+MATERIAL APPEARANCE (Mk1 heat-sintered regolith):
+- Dark gray-brown granular matte surface
+- Prominent horizontal layer lines running the full length (first-generation additive construction)
+- Rough, porous texture consistent with heat-sintered regolith composite (no external binder)
+- Slightly irregular flange edges (early manufacturing tolerance)
+- Cool, even, diffused lighting designed to highlight the raw material texture
+
+STYLE:
+High-resolution industrial product photography. Extreme detail. Consistent padding around the object in every panel. The entire sheet should read as a professional engineering reference document.
+```
+
+---
+
+## INFORMATION CATEGORIZATION
+
+### BLUEPRINT FACTS
+| Prompt Element | Blueprint Source |
+|---------------|-----------------|
+| "Mk1 3D-printed regolith structural I-beam" | `id` = `3d_printed_ibeam_mk1`, `name` = "3D-Printed I-Beam Mk1" |
+| "Heat-sintered regolith, no external binder" | `description`: "No external binder required, relying on heat sintering and melting of regolith" |
+| "Dark gray-brown granular matte surface" | Derived from material = regolith + process = heat sintering |
+| "Prominent horizontal layer lines" | `required_technology` = regolith_3d_printing + VISUAL_PHILOSOPHY.md Mk1 |
+| "Rough, porous texture" | Process = heat sintering of regolith (unbound grain structure) |
+| "Slightly irregular flange edges" | Derived from `material_efficiency` = 0.92 (8% waste) + Mk1 early tech level |
+
+### DERIVED VISUAL REQUIREMENTS
+| Prompt Element | Derivation Source |
+|---------------|------------------|
+| "First-generation additive construction" | Mk1 is first in progression; VISUAL_PHILOSOPHY.md Mk1 = "visible layer lines" |
+| "Professional engineering reference document" | ibeam-prompt.md established format precedent |
+
+### GENERATION/PRESENTATION INSTRUCTIONS
+| Prompt Element | Source |
+|---------------|--------|
+| "Strict, symmetrical 2x2 grid layout" | ibeam-prompt.md (existing four-quadrant format) |
+| "Seamless neutral light-gray studio background" | ibeam-prompt.md |
+| "Two distinct vertical columns divided by thin dark gray lines" | ibeam-prompt.md |
+| "Text-free. No annotations. No labels. No logos." | ibeam-prompt.md + PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0 prohibition list |
+| "Dead-on orthographic view" (end panels) | ibeam-prompt.md |
+| "Straight side orthographic profile" (side panel) | ibeam-prompt.md |
+| "Three-quarter isometric view" (isometric panel) | ibeam-prompt.md |
+| "High-resolution industrial product photography" | ibeam-prompt.md |
+
+### UNKNOWN (intentionally not specified)
+| Element | Why Unknown |
+|---------|------------|
+| **Exact dimensions** (length, width, height, flange thickness) | Mk1 blueprint has `dimensions` all set to 0 — unpopulated. Generator infers scale from context. |
+| **Exact color values** | Architecture prohibits literal hex values. |
+| **Layer line pitch/frequency** | Not quantified in any source. |
+| **Connection hole spacing / bolt pattern** | Not specified in blueprint. |
+
+---
+
+## FROZEN STATUS
+
+This prompt is FROZEN as of 2026-08-25. Do not modify after the initial ChatGPT vs Gemini generation run. Previous four-quadrant images are visual references only, NOT canonical geometry. The blueprints define the canonical data; images are experimental outputs to be evaluated against that data.

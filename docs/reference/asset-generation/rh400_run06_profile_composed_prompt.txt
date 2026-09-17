@@ -1,0 +1,186 @@
+# RH-400 Run 06 — Profile-Composed Primary Prompt (Safeguard Experiment)
+
+**Run ID**: rh400_run06
+**Date**: 2026-08-27
+**Composition Method**: Profile Composition (PROFILE_COMPOSITION_SPEC.md) + Targeted Refinements + Safeguard Layer
+**Baseline**: Run 05 profile-composed prompt (FROZEN — do not modify)
+**Canonical Inputs**: Identical to Run 05 Control
+| Source | File |
+|--------|------|
+| Blueprint | `data/json-data/blueprints/crafts/ground/regolith_harvester_rover_bp.json` v2.1 |
+| Operational Data | `data/json-data/operational_data/crafts/ground/regolith_harvesting_rover_data.json` v2.1 |
+| Visual Definition | `docs/reference/asset-generation/visual_definitions/VEHICLE_HARVESTER_ROVER_RH400.json` |
+| Visual Profile | `docs/reference/asset-generation/VISUAL_PROFILE_precision_industrial_v1.md` |
+| Render Template | `PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0.md` |
+**Type**: Renderer-neutral top-down production render (profile-composed + targeted refinements + safeguard layer)
+**Status**: FROZEN — do not modify after initial generation run
+
+---
+
+## PROMPT
+
+```
+Generate a single RH-400 Regolith Harvester Rover for GalaxyGame, a hard-sci-fi industrial space settlement simulation game.
+
+SUBJECT:
+A Mk2 autonomous regolith harvesting rover — a heavy-duty mobile industrial vehicle designed to skim planetary surfaces and gather regolith for in-situ resource utilization (ISRU) processing. The vehicle has a low-profile rectangular chassis with a forward-mounted regolith skimming scoop, a mid-body cylindrical processing canister, a rear-mounted dust exhaust stack, a top-mounted sensor mast with rotating array, and six visible drive wheels on an independent suspension chassis. Exposed hydraulic actuator arms connect the scoop to the chassis at the joints.
+
+CAMERA (high-priority rendering constraint — overrides all default camera conventions):
+- Top-down orthographic view ONLY — directly above, looking straight down, no perspective distortion
+- NO side views, NO three-quarter angles, NO isometric perspectives
+- This camera angle is mandatory for this asset
+
+PROPORTIONS (visual anchors — canonical dimensions: length 6.80m, width 3.30m, height 2.65m):
+- Elongated low-slung vehicle — length clearly exceeds width
+- Width remains substantially narrower than overall length
+- Body height remains low relative to footprint
+- Overall shape: elongated rectangular platform with forward scoop protrusion and rear exhaust stack
+
+STYLE (resolved from grounded_industrial_v1 profile):
+- Primary body panels: clean white or light-gray (#E8E6E1 to #D4D0C8 — light industrial off-white, not pure white, not medium gray)
+- Mechanical undercarriage: dark gray to black (#2A2A2E to #1C1C20 — deep charcoal near-black, not mid-gray)
+- Precision-machined surfaces with minimal visible construction seams
+- NASA/ESA-inspired aerospace-industrial aesthetic
+- Slight sheen consistent with factory-assembled aerospace equipment
+
+MANUFACTURING (resolved from earth_factory_v1 profile):
+- Precision industrial factory assembly — not frontier, bootstrap, or improvised
+- Materials: high-strength aerospace steel structural members, aluminum structural panels, sealed hydraulic systems, reinforced rubber tracks
+- Excluded: no 3D-printed rough texture, no visible layer lines, no exposed reinforcement ribs, no regolith-composite appearance
+
+TECHNOLOGY LEVEL (resolved from tl2_v1 profile):
+- Mk2 characteristics: cleaner than early-generation equipment, fewer visible fasteners, welded joints, slight sheen
+- Excluded: no visible layer lines, no 3D-printed rough texture, no improvised or bootstrap appearance
+
+DESIGN CONSTRAINTS (non-negotiable):
+- Fully autonomous industrial machine — NO cockpit, NO crew elements, NO steering controls
+
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim, hydraulic cylinder bodies)
+  * Yellow stripes: #E8C800 to #D4B500 (high-visibility industrial yellow — not orange-yellow, not pale lemon)
+  * Black stripes: #1A1A1A to #0D0D0D (near-black, high contrast against yellow and against body panels)
+- Unit identification stenciled on the hull (simple alphanumeric marking)
+
+RECOGNITION FEATURES (ordered by priority tier from Visual Definition visual_priority):
+
+PRIMARY (must be dominant in the render):
+1. Six-wheel independent suspension chassis — six drive wheels visible along the vehicle's sides, creating a distinctive segmented undercarriage outline
+2. Forward regolith skimming scoop assembly — prominent protrusion at the front of the chassis, clearly visible as the primary harvesting mechanism
+
+SECONDARY (must be clearly visible):
+3. Mid-body cylindrical processing canister — a distinctly ROUND cross-section cylinder (NOT rectangular, NOT box-shaped, NOT flat-panel). A vertical tank-like form with smooth curved sides visible from above as an oval/circular outline. The top surface shows a curved dome or flat circular cap. This is the most prominent mid-body feature and must read as a pressure vessel / processing tank, not a structural panel.
+4. Top-mounted sensor mast with rotating array — tall thin mast rising from the top center, topped with a disc or ring-shaped sensor array
+
+TERTIARY (should be present and visible upon closer inspection):
+5. Rear-mounted dust exhaust stack — vertical stack at the rear of the vehicle
+6. Exposed hydraulic actuator arms — visible cylindrical pistons connecting the scoop to the chassis
+
+RENDER REQUIREMENTS:
+- Single vehicle only, fully visible, no cropping
+- Top-down orthographic camera view (directly above, looking straight down, no perspective distortion)
+- Vehicle centered within the canvas, occupying approximately 75% of the frame
+- Soft neutral studio lighting — cool, even, diffused illumination that highlights surface details without harsh shadows or specular highlights
+- Physically accurate materials — steel, aluminum, rubber, and composite surfaces should look correct for each material
+- High-contrast hazard striping (yellow/black) must be clearly visible on at least two features (scoop edges and hydraulic cylinders minimum) — this is a Visual Profile locked attribute
+- Strong, immediately recognizable silhouette — the six-wheel chassis with forward scoop and rear stack must be clear even at small scale
+
+BACKGROUND:
+- Transparent background (alpha channel)
+- No ground plane, no terrain, no shadows beyond a subtle contact shadow beneath the object
+- No sky, no stars, no environment, no props, no dust effects
+- No text, no labels, no annotations, no logos, no borders, no watermark
+
+OUTPUT:
+- Transparent PNG
+- 1024×1024 pixels
+- High resolution suitable for production game assets
+```
+
+---
+
+## HOW THIS PROMPT DIFFERS FROM RUN 05 (Baseline)
+
+### Safeguard 1: Camera Precedence Section
+
+**Run 05 (baseline)** — Camera in RENDER REQUIREMENTS only (buried among other render requirements):
+```
+RENDER REQUIREMENTS:
+...
+- Top-down orthographic camera view (directly above, looking straight down, no perspective distortion)
+```
+
+**Run 06 (safeguard)** — Dedicated CAMERA section before STYLE (higher structural precedence):
+```
+CAMERA (high-priority rendering constraint — overrides all default camera conventions):
+- Top-down orthographic view ONLY — directly above, looking straight down, no perspective distortion
+- NO side views, NO three-quarter angles, NO isometric perspectives
+- This camera angle is mandatory for this asset
+```
+
+**Rationale**: Run 05 showed Gemini drifted from top-down to side-profile despite the camera instruction in RENDER REQUIREMENTS. Placing camera specification in a dedicated section before STYLE ensures it is processed early (before aesthetic/visual processing begins) and with explicit precedence language that overrides default camera conventions. The "NO side views, NO three-quarter angles" clause directly addresses Gemini's specific drift pattern.
+
+### Safeguard 2: Autonomous Vehicle Protection
+
+**Run 05 (baseline)** — "Autonomous" only in SUBJECT section (processed early but not reinforced):
+```
+SUBJECT:
+A Mk2 autonomous regolith harvesting rover ...
+```
+
+**Run 06 (safeguard)** — Dedicated DESIGN CONSTRAINTS section before recognition features:
+```
+DESIGN CONSTRAINTS (non-negotiable):
+- Fully autonomous industrial machine — NO cockpit, NO crew elements, NO steering controls
+```
+
+**Rationale**: Run 05 showed Gemini invented a steering wheel despite "autonomous" appearing in the SUBJECT. The DESIGN CONSTRAINTS section places an explicit prohibition before recognition features (where attention shifts during feature rendering). The concise one-line format avoids unnecessary complexity while providing unambiguous crew element prohibition specific to RH-400's crew_capacity = 0.
+
+### Safeguard 3: Sensor Mast Elevation
+
+**Run 05 (baseline)** — Sensor mast at secondary tier (but Visual Definition lists it as secondary, creating an ordering inconsistency):
+```
+SECONDARY (must be clearly visible):
+3. Mid-body cylindrical processing canister ...
+4. Top-mounted sensor mast with rotating array ...
+
+TERTIARY (should be present and visible upon closer inspection):
+5. Rear-mounted dust exhaust stack ...
+6. Exposed hydraulic actuator arms ...
+```
+
+**Run 06 (safeguard)** — Sensor mast confirmed at secondary tier, consistent with Visual Definition's `visual_priority` field:
+```
+SECONDARY (must be clearly visible):
+3. Mid-body cylindrical processing canister ...
+4. Top-mounted sensor mast with rotating array ...
+
+TERTIARY (should be present and visible upon closer inspection):
+5. Rear-mounted dust exhaust stack ...
+6. Exposed hydraulic actuator arms ...
+```
+
+**Rationale**: The Visual Definition's `visual_priority` field lists "sensor mast with rotating array" as secondary priority. Run 04/05 placed it at secondary but generators still deprioritized it (Gemini lost it in Run 05). Elevating it to secondary tier (consistent with the Visual Definition) provides stronger structural protection against feature-priority collapse. This is not a new feature — it corrects an ordering inconsistency between the prompt and the canonical Visual Definition.
+
+---
+
+## PROMPT SIZE COMPARISON
+
+| Metric | Run 03 (Control) | Run 04 (Baseline) | Run 05 (Refinement) | Run 06 (Safeguards) | Delta from Run 05 |
+|--------|-----------------|-------------------|---------------------|---------------------|-------------------|
+| Total lines | ~103 | ~95 | ~108 | **~117** | **+9 (+8%)** |
+| Prompt body lines | ~72 | ~68 | ~81 | **~90** | **+9** |
+| Recognition features | 6 items, flat list | 6 items, tiered | 6 items, tiered | 6 items, tiered (sensor mast confirmed secondary) | Same structure |
+| Color constraints | Semantic only | Semantic only | **4 hex ranges** | **4 hex ranges** | Unchanged |
+| Canister description | 1 line | 1 line | **~5 lines** | **~5 lines** | Unchanged |
+| Hazard reinforcement | MARKINGS section only | MARKINGS section only | **MARKINGS + RENDER** | **MARKINGS + RENDER** | Unchanged |
+| Camera safeguard | In RENDER REQ only | In RENDER REQ only | In RENDER REQ only | **Dedicated CAMERA section** | New variable |
+| Autonomous safeguard | SUBJECT only | SUBJECT only | SUBJECT only | **Dedicated DESIGN CONSTRAINTS** | New variable |
+| Sensor mast tier | Secondary (inconsistent) | Secondary (inconsistent) | Secondary (inconsistent) | **Secondary (consistent with Visual Def)** | Correction only |
+
+**Finding**: The Run 06 safeguard layer adds ~9 lines to the Run 05 baseline (8% increase). These are three targeted safeguards: CAMERA section (~4 lines), DESIGN CONSTRAINTS (~2 lines), and sensor mast tier correction (structural, not additive). No content bloat — every added line addresses a specific Run 05 failure identified in the diagnostic analysis.
+
+---
+
+## FROZEN STATUS
+
+This prompt is FROZEN as of 2026-08-27. Do not modify after the initial ChatGPT vs Gemini generation run. If results diverge, record where they diverge — do not rewrite the prompt to make them agree. The experiment tests whether a small renderer-neutral safeguard layer can correct Gemini's Run 05 failures while preserving ChatGPT's successful Run 05 behavior.

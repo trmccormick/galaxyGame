@@ -1,0 +1,202 @@
+# RH-400 Run 04 — Profile-Composed Primary Prompt
+
+**Run ID**: rh400_run04
+**Date**: 2026-08-26
+**Composition Method**: Profile Composition (PROFILE_COMPOSITION_SPEC.md)
+**Canonical Inputs**: Identical to Run 03 Control
+| Source | File |
+|--------|------|
+| Blueprint | `data/json-data/blueprints/crafts/ground/regolith_harvesting_rover_bp.json` v2.1 |
+| Operational Data | `data/json-data/operational_data/crafts/ground/regolith_harvesting_rover_data.json` v2.1 |
+| Visual Definition | `docs/reference/asset-generation/visual_definitions/VEHICLE_HARVESTER_ROVER_RH400.json` |
+| Visual Profile | `docs/reference/asset-generation/VISUAL_PROFILE_precision_industrial_v1.md` |
+| Render Template | `docs/reference/asset-generation/PRODUCTION_ASSET_RENDER_TEMPLATE_V1.0.md` |
+**Type**: Renderer-neutral top-down production render (profile-composed)
+**Status**: FROZEN — do not modify after initial generation run
+
+---
+
+## PROMPT
+
+```
+Generate a single RH-400 Regolith Harvester Rover for GalaxyGame, a hard-sci-fi industrial space settlement simulation game.
+
+SUBJECT:
+A Mk2 autonomous regolith harvesting rover — a heavy-duty mobile industrial vehicle designed to skim planetary surfaces and gather regolith for in-situ resource utilization (ISRU) processing. The vehicle has a low-profile rectangular chassis with a forward-mounted regolith skimming scoop, a mid-body cylindrical processing canister, a rear-mounted dust exhaust stack, a top-mounted sensor mast with rotating array, and six visible drive wheels on an independent suspension chassis. Exposed hydraulic actuator arms connect the scoop to the chassis at the joints.
+
+PROPORTIONS (visual anchors — canonical dimensions: length 6.80m, width 3.30m, height 2.65m):
+- Elongated low-slung vehicle — length clearly exceeds width
+- Width remains substantially narrower than overall length
+- Body height remains low relative to footprint
+- Overall shape: elongated rectangular platform with forward scoop protrusion and rear exhaust stack
+
+STYLE (resolved from grounded_industrial_v1 profile):
+- Clean white or light-gray primary paneling over dark gray to black mechanical undercarriage
+- Precision-machined surfaces with minimal visible construction seams
+- NASA/ESA-inspired aerospace-industrial aesthetic
+- Slight sheen consistent with factory-assembled aerospace equipment
+
+MANUFACTURING (resolved from earth_factory_v1 profile):
+- Precision industrial factory assembly — not frontier, bootstrap, or improvised
+- Materials: high-strength aerospace steel structural members, aluminum structural panels, sealed hydraulic systems, reinforced rubber tracks
+- Excluded: no 3D-printed rough texture, no visible layer lines, no exposed reinforcement ribs, no regolith-composite appearance
+
+TECHNOLOGY LEVEL (resolved from tl2_v1 profile):
+- Mk2 characteristics: cleaner than early-generation equipment, fewer visible fasteners, welded joints, slight sheen
+- Excluded: no visible layer lines, no 3D-printed rough texture, no improvised or bootstrap appearance
+
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim)
+- Unit identification stenciled on the hull (simple alphanumeric marking)
+
+RECOGNITION FEATURES (ordered by priority tier from Visual Definition visual_priority):
+
+PRIMARY (must be dominant in the render):
+1. Six-wheel independent suspension chassis — six drive wheels visible along the vehicle's sides, creating a distinctive segmented undercarriage outline
+2. Forward regolith skimming scoop assembly — prominent protrusion at the front of the chassis, clearly visible as the primary harvesting mechanism
+
+SECONDARY (must be clearly visible):
+3. Mid-body cylindrical processing canister — rounded tank-like structure centered on the chassis
+4. Top-mounted sensor mast with rotating array — tall thin mast rising from the top center, topped with a disc or ring-shaped sensor array
+
+TERTIARY (should be present and visible upon closer inspection):
+5. Rear-mounted dust exhaust stack — vertical stack at the rear of the vehicle
+6. Exposed hydraulic actuator arms — visible cylindrical pistons connecting the scoop to the chassis
+
+RENDER REQUIREMENTS:
+- Single vehicle only, fully visible, no cropping
+- Top-down orthographic camera view (directly above, looking straight down, no perspective distortion)
+- Vehicle centered within the canvas, occupying approximately 75% of the frame
+- Soft neutral studio lighting — cool, even, diffused illumination that highlights surface details without harsh shadows or specular highlights
+- Physically accurate materials — steel, aluminum, rubber, and composite surfaces should look correct for each material
+- Strong, immediately recognizable silhouette — the six-wheel chassis with forward scoop and rear stack must be clear even at small scale
+
+BACKGROUND:
+- Transparent background (alpha channel)
+- No ground plane, no terrain, no shadows beyond a subtle contact shadow beneath the object
+- No sky, no stars, no environment, no props, no dust effects
+- No text, no labels, no annotations, no logos, no borders, no watermark
+
+OUTPUT:
+- Transparent PNG
+- 1024×1024 pixels
+- High resolution suitable for production game assets
+```
+
+---
+
+## HOW THIS PROMPT DIFFERS FROM RUN 03 (Control)
+
+### Change 1: Feature Ordering (Primary → Secondary → Tertiary)
+
+**Run 03**: Flat numbered list with equal weight ("all must be clearly visible")
+```
+RECOGNITION FEATURES (all must be clearly visible):
+1. Six-wheel independent suspension chassis
+2. Forward regolith skimming scoop assembly
+3. Mid-body cylindrical processing canister
+4. Rear-mounted dust exhaust stack
+5. Top-mounted sensor mast with rotating array
+6. Exposed hydraulic actuator arms
+```
+
+**Run 04**: Priority-tier ordered from Visual Definition's `visual_priority` field
+```
+RECOGNITION FEATURES (ordered by priority tier from Visual Definition visual_priority):
+
+PRIMARY (must be dominant in the render):
+1. Six-wheel independent suspension chassis
+2. Forward regolith skimming scoop assembly
+
+SECONDARY (must be clearly visible):
+3. Mid-body cylindrical processing canister
+4. Top-mounted sensor mast with rotating array
+
+TERTIARY (should be present and visible upon closer inspection):
+5. Rear-mounted dust exhaust stack
+6. Exposed hydraulic actuator arms
+```
+
+**Rationale**: Run 03 evaluation showed both generators dropped features 3-6 while retaining features 1-2. This suggests positional bias — early-listed features receive more attention. Priority tiers explicitly signal importance to the generator.
+
+### Change 2: Proportion Instruction (Visual Anchors)
+
+**Run 03**: Numeric ratio
+```
+PROPORTIONS (must be accurate):
+- The vehicle is significantly longer than it is wide or tall — approximately 2.6 times longer than wide
+```
+
+**Run 04**: Visual anchors + canonical dimensions preserved as authoritative data
+```
+PROPORTIONS (visual anchors — canonical dimensions: length 6.80m, width 3.30m, height 2.65m):
+- Elongated low-slung vehicle — length clearly exceeds width
+- Width remains substantially narrower than overall length
+- Body height remains low relative to footprint
+```
+
+**Rationale**: Run 03 evaluation showed both generators ignored the numeric ratio (produced ~1.7-2.0:1 instead of specified ~2.6:1). Visual anchors use comparative language that image generators can process more effectively than abstract numbers. Canonical dimensions are preserved as authoritative data, not replaced.
+
+### Change 3: Style/Manufacturing from Resolved Profiles
+
+**Run 03**: Inlined prose from multiple documents
+```
+MANUFACTURING APPEARANCE (Mk2 — Precision Industrial Factory):
+- Primary paneling: clean white or light-gray over the main body panels
+- Mechanical undercarriage: dark gray to black chassis...
+- Surface finish: precision-machined surfaces...
+- Tech level Mk2 characteristics: cleaner than early-generation equipment...
+```
+
+**Run 04**: Resolved from structured profiles with explicit source attribution
+```
+STYLE (resolved from grounded_industrial_v1 profile):
+- Clean white or light-gray primary paneling over dark gray to black mechanical undercarriage
+- Precision-machined surfaces with minimal visible construction seams
+- NASA/ESA-inspired aerospace-industrial aesthetic
+
+MANUFACTURING (resolved from earth_factory_v1 profile):
+- Precision industrial factory assembly — not frontier, bootstrap, or improvised
+- Materials: high-strength aerospace steel structural members...
+
+TECHNOLOGY LEVEL (resolved from tl2_v1 profile):
+- Mk2 characteristics: cleaner than early-generation equipment, fewer visible fasteners, welded joints...
+```
+
+**Rationale**: Separating style, manufacturing, and technology level into independent sections prevents them from competing for attention within a single "manufacturing appearance" block. Each section is self-contained with clear source attribution.
+
+### Change 4: Hazard Markings Elevated to Its Own Section
+
+**Run 03**: Buried within the MANUFACTURING APPEARANCE block
+```
+MANUFACTURING APPEARANCE (Mk2 — Precision Industrial Factory):
+...
+- Black and yellow hazard striping applied functionally to moving parts and edges only
+```
+
+**Run 04**: Separate section between Technology Level and Recognition Features
+```
+MARKINGS (from grounded_industrial_v1 profile):
+- Black and yellow hazard striping applied functionally to moving parts and edges only (scoop edges, exhaust stack rim)
+- Unit identification stenciled on the hull (simple alphanumeric marking)
+```
+
+**Rationale**: Run 03 evaluation showed hazard markings were completely absent from both generators. This was likely because they were buried within the manufacturing block and deprioritized against other features. A separate section elevates their visibility in the prompt structure.
+
+---
+
+## PROMPT SIZE COMPARISON
+
+| Metric | Run 03 (Control) | Run 04 (Test) | Delta |
+|--------|-----------------|---------------|-------|
+| Total lines | ~103 | ~95 | -8 lines |
+| Prompt body lines | ~72 | ~68 | -4 lines |
+| Recognition features | 6 items, flat list | 6 items, tiered | Same count, different structure |
+
+**Finding**: The profile-composed prompt is actually SHORTER than the Run 03 control while providing MORE structured guidance. This supports the hypothesis that Profile Composition improves specification fidelity without requiring a larger monolithic prompt.
+
+---
+
+## FROZEN STATUS
+
+This prompt is FROZEN as of 2026-08-26. Do not modify after the initial ChatGPT vs Gemini generation run. If results diverge, record where they diverge — do not rewrite the prompt to make them agree. The experiment tests whether Profile Composition improves specification-to-render fidelity for complex vehicle assets.
