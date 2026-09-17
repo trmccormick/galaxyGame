@@ -1,0 +1,72 @@
+{
+  "profile_id": "precursor_mission_profile_v1",
+  "version": "1.0",
+  "name": "Luna Precursor Mission Profile",
+  "description": "Initial precursor mission to establish Luna infrastructure: landing pads, comms, power grid, and inflatable tank farm. Concurrent Venus skimmer launch for supplemental N₂ delivery.",
+  "phases": [
+    {
+      "phase_id": "precursor_launch",
+      "name": "Precursor Launch from Earth",
+      "description": "Launch precursor HLT with landing pad components, comms array, and RTG power grid.",
+      "prerequisites": [],
+      "duration_days": 7,
+      "launch_window": {
+        "departure_body": "EARTH-01",
+        "arrival_body": "LUNA-01",
+        "transit_days": 7
+      },
+      "outputs": ["precursor_arrival_at_luna"]
+    },
+    {
+      "phase_id": "venus_harvest_concurrent",
+      "name": "Venus Skimmer Launch (Concurrent)",
+      "description": "Launch Venus atmospheric harvester concurrently with precursor. Harvests CO₂ + N₂ from Venus atmosphere.",
+      "prerequisites": ["precursor_launch"],
+      "duration_days": 400,
+      "task_ref": "tasks/task_venus_harvest_arrival_v2.json",
+      "launch_window": {
+        "departure_body": "EARTH-01",
+        "arrival_body": "VENUS-01",
+        "transit_days": 146,
+        "concurrent_with": "precursor_launch"
+      },
+      "outputs": ["venus_atmospheric_harvest"]
+    },
+    {
+      "phase_id": "pad_construction",
+      "name": "Landing Pad Construction",
+      "description": "Deploy 2 landing pads, comms array, and RTG power grid at Luna.",
+      "prerequisites": ["precursor_arrival_at_luna"],
+      "duration_days": 30,
+      "outputs": ["landing_pads_complete"]
+    },
+    {
+      "phase_id": "initial_hlt_landings",
+      "name": "Initial HLT Landings",
+      "description": "HLT #1 lands with inflatable tanks. Tank farm setup begins.",
+      "prerequisites": ["landing_pads_complete"],
+      "duration_days": 15,
+      "outputs": ["tank_farm_ready"]
+    },
+    {
+      "phase_id": "venus_harvest_arrival",
+      "name": "Venus Atmospheric Harvester Arrival",
+      "description": "Venus skimmer arrives at Luna with harvested N₂ + CO₂ payload. Gates habitat pressurization.",
+      "prerequisites": ["initial_hlt_landings"],
+      "duration_days": 400,
+      "task_ref": "tasks/task_venus_harvest_arrival_v2.json",
+      "launch_window": {
+        "departure_body": "EARTH-01",
+        "arrival_body": "LUNA-01",
+        "transit_days": 400,
+        "concurrent_with": "precursor_launch"
+      },
+      "outputs": ["n2_delivery", "co2_delivery", "habitat_pressurization_gate"]
+    }
+  ],
+  "metadata": {
+    "template": "mission_profile_v1",
+    "type": "precursor",
+    "created": "2026-09-17"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "task_id": "venus_harvest_arrival_v2",
+  "version": "2.0",
+  "name": "Venus Atmospheric Harvester Arrival at Luna",
+  "description": "Venus skimmer arrives at Luna with harvested N₂ + CO₂ payload. Offload requires tank farm infrastructure to be ready.",
+  "prerequisites": [
+    "task_site_prep_foundation_v2",
+    "task_print_inflatable_tank_shells_v2"
+  ],
+  "launch_window": {
+    "departure_body": "EARTH-01",
+    "arrival_body": "LUNA-01",
+    "transit_days": 400,
+    "synodic_period_days": 584,
+    "note": "Venus skimmer departs Earth around same time as precursor launch. Harvests Venus atmosphere en route."
+  },
+  "payload": {
+    "source_gases": ["CO2", "N2"],
+    "co2_kg": 75000,
+    "n2_kg": 30000,
+    "lox_for_return_kg": 10000,
+    "methane_remaining_kg": 5000
+  },
+  "offload_requirements": {
+    "tank_farm_ready": true,
+    "inflatable_tanks_deployed": true,
+    "minimum_tank_count": 3,
+    "cryo_tanks_required": true
+  },
+  "effects": [
+    {
+      "action": "add_to_inventory",
+      "target": "luna_settlement",
+      "items": [
+        { "name": "N2", "amount": 30000, "unit": "kg" },
+        { "name": "CO2", "amount": 75000, "unit": "kg" }
+      ]
+    },
+    {
+      "action": "set_status_flag",
+      "flag": "venus_n2_delivery_completed",
+      "value": true
+    },
+    {
+      "action": "gate_open",
+      "target": "habitat_pressurization",
+      "description": "N₂ available for habitat pressurization"
+    }
+  ],
+  "metadata": {
+    "template": "task_v2",
+    "type": "arrival_offload",
+    "craft_type": "venus_harvester_skimmer",
+    "adapted_from": "venus_harvest_01_phases_v1.json"
+  }
+}
