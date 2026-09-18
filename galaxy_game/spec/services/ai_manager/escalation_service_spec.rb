@@ -436,6 +436,12 @@ RSpec.describe AIManager::EscalationService, type: :service do
   end
 
   describe '.handle_resource_shortage' do
+    # Stub pre-player tree for all existing handle_resource_shortage tests so they
+    # fall through to the original emergency-mission / resupply-manifest behavior.
+    before do
+      allow(described_class).to receive(:pre_player_acquisition_tree).and_return(:unresolved)
+    end
+
     let(:gcc_currency) { Financial::Currency.find_or_create_by(symbol: 'GCC') { |c| c.name = 'Galactic Credit Currency' } }
     let(:account) { Financial::Account.find_or_create_by(accountable_type: settlement.class.name, accountable_id: settlement.id, currency_id: gcc_currency.id) { |a| a.balance = 100_000 } }
 
@@ -546,6 +552,45 @@ RSpec.describe AIManager::EscalationService, type: :service do
         result = described_class.handle_resource_shortage(action_hash, settlement)
 
         expect(result).to be_nil
+      end
+    end
+
+    describe '.handle_resource_shortage with pre-player tree' do
+      let(:gcc_currency) { Financial::Currency.find_or_create_by(symbol: 'GCC') { |c| c.name = 'Galactic Credit Currency' } }
+      let(:account) { Financial::Account.find_or_create_by(accountable_type: settlement.class.name, accountable_id: settlement.id, currency_id: gcc_currency.id) { |a| a.balance = 100_000 } }
+
+      before do
+        allow(Financial::Currency).to receive(:find_by).with(symbol: 'GCC').and_return(gcc_currency)
+        allow(Financial::Account).to receive(:find_or_create_for_entity_and_currency)
+          .with(accountable_entity: settlement, currency: gcc_currency).and_return(account)
+      end
+
+      context 'tree unresolved (falls through to existing behavior)' do
+        before do
+          inv = instance_double('ActiveRecord::Relation')
+          allow(inv).to receive(:where).and_return(inv)
+          allow(inv).to receive(:sum).with(:quantity).and_return(10)
+          allow(settlement).to receive(:inventory).and_return(inv)
+
+          allow(described_class).to receive(:can_harvest_locally?).with(settlement, 'O2').and_return(false)
+          allow(described_class).to receive(:can_manufacture_locally?).with(settlement, 'O2').and_return(false)
+          allow(described_class).to receive(:emergency_required?).with(settlement, 'O2').and_return(true)
+          allow(described_class).to receive(:can_stand_up_locally_in_time?).with(settlement, 'O2').and_return(false)
+
+          strategy = OpenStruct.new(feasible?: false, strategy_type: nil, reference_cost: nil, breakdown: {}, notes: '')
+          allow(Market::NpcPriceCalculator).to receive(:evaluate_strategy).and_return(strategy)
+
+          allow(Market::NpcPriceCalculator).to receive(:calculate_bid).with(settlement, 'O2').and_return(500.0)
+        end
+
+        it 'falls through to emergency mission when tree returns :unresolved' do
+          allow(AIManager::EmergencyMissionService).to receive(:create_emergency_mission).with(settlement, :oxygen).and_return(id: 'emergency_1')
+
+          action_hash = { type: 'shortage', material: 'oxygen', deficit: 10 }
+          result = described_class.handle_resource_shortage(action_hash, settlement)
+
+          expect(result).to eq(id: 'emergency_1')
+        end
       end
     end
   end

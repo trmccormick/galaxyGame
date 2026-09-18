@@ -29,6 +29,22 @@ module AIManager
       is_local_resource?(material) ? :local_trade : :external_import
     end
 
+    # Thin adapter for EscalationService pre-player tree step 5.
+    # Accepts an explicit cost from evaluate_strategy so the spine doesn't double-calculate.
+    def self.process_external_import_with_cost(settlement, material, amount, reference_cost)
+      return :import_blocked_by_debt unless settlement.financials.can_afford_fiat_import?(reference_cost * amount, 'USD')
+
+      ContractCreationService.create_import_order(
+        settlement,
+        material: material,
+        amount: amount,
+        cost_usd: reference_cost * amount
+      )
+
+      Rails.logger.info "[Acquisition] Pre-player import via evaluate_strategy: #{amount} #{material} at #{reference_cost}/unit"
+      :import_ordered_via_evaluate_strategy
+    end
+
     # Determine if a material can be sourced locally (mined/harvested) vs. imported from Earth
     def self.is_local_resource?(material)
       local_resources = [

@@ -5,6 +5,11 @@ module AIManager
     # Accepts a structured action hash (not an Order object) so the AI Manager
     # can short-circuit when inventory falls below a critical threshold.
     #
+    # For pre-player phase, this method runs the 5-step acquisition tree:
+    #   stockpile → local production → cycler wait → emergency → import
+    # The existing emergency-mission / resupply-manifest behavior is preserved
+    # as the fallback when no tree step resolves the shortage.
+    #
     # @param action_hash [Hash] Shaped like { type:, material:, deficit:, settlement: }
     # @param settlement  [Settlement::BaseSettlement] The affected settlement context
     def self.handle_resource_shortage(action_hash, settlement)
@@ -17,11 +22,19 @@ module AIManager
       # Normalize material to chemical formula (codebase convention)
       material = normalize_material(material)
 
-      # Price-threshold check using confirmed-real data source
+      # Pre-player acquisition tree (ordered 5-step decision path).
+      # Returns :resolved when a step handles the shortage, or :unresolved
+      # so the caller falls through to existing emergency-mission / resupply-manifest logic.
+      tree_result = pre_player_acquisition_tree(material, deficit, settlement)
+
+      # Return early only for resolved / deferred outcomes or a deployed Robot unit.
+      # :unresolved falls through to existing emergency-mission / resupply-manifest logic.
+      return tree_result if [:resolved, :deferred].include?(tree_result) || tree_result.is_a?(Units::Robot)
+
+      # --- Fallback: existing emergency-mission / resupply-manifest behavior ---
       bid_price = Market::NpcPriceCalculator.calculate_bid(settlement, material)
       cost_estimate = bid_price * deficit
 
-      # Check if settlement can fund the emergency purchase
       if settlement_can_fund_shortage?(settlement, cost_estimate)
         Rails.logger.info "[EscalationService] Resource shortage: #{material} x#{deficit} " \
                           "(type: #{shortage_type}) — funding approved, escalating to emergency mission"
@@ -70,6 +83,108 @@ module AIManager
       when 'hydrocarbons', 'hc' then 'HC'
       else material.to_s
       end
+    end
+
+    # Pre-player acquisition decision tree (5-step ordered path).
+    # Returns :resolved, :deferred, or a Robot unit when local capability is deployed.
+    # Falls through to existing emergency-mission / resupply-manifest on :unresolved.
+    def self.pre_player_acquisition_tree(material, deficit, settlement)
+      # Step 1: Inventory + intentional stockpile sufficient?
+      if inventory_sufficient?(settlement, material, deficit)
+        Rails.logger.info "[EscalationService] Pre-player tree: stockpile sufficient for #{material} x#{deficit}"
+        return :resolved
+      end
+
+      # Step 2: Local production / harvest capability exists?
+      if can_produce_or_harvest_locally?(settlement, material)
+        Rails.logger.info "[EscalationService] Pre-player tree: local capability for #{material} — deploying"
+        robot = deploy_local_production_unit(settlement, material, deficit)
+        return robot if robot.is_a?(Units::Robot)
+      end
+
+      # Step 3: Normal shortage? → prefer wait / defer over import
+      unless emergency_required?(settlement, material)
+        Rails.logger.info "[EscalationService] Pre-player tree: normal shortage for #{material} — deferring (emergency_required? = false)"
+        return :deferred
+      end
+
+      # Step 4: Emergency — can local stand up in time?
+      if can_stand_up_locally_in_time?(settlement, material)
+        Rails.logger.info "[EscalationService] Pre-player tree: emergency + fast local standup for #{material}"
+        robot = deploy_local_production_unit(settlement, material, deficit)
+        return robot if robot.is_a?(Units::Robot)
+      end
+
+      # Step 5: Last resort → import via evaluate_strategy
+      Rails.logger.info "[EscalationService] Pre-player tree: last-resort import for #{material} x#{deficit}"
+      import_result = execute_import_via_evaluate_strategy(settlement, material, deficit)
+      return import_result
+    end
+
+    # Step 1 helper: check if settlement inventory covers the need.
+    def self.inventory_sufficient?(settlement, material, deficit)
+      inv = settlement.inventory
+      return false unless inv
+
+      available = inv.where(material: material).sum(:quantity) || 0
+      # Also consider intentional stockpile (materials marked as reserved/stockpiled)
+      stockpiled = inv.where(material: material, status: 'stockpiled').sum(:quantity) || 0
+      (available + stockpiled) >= deficit
+    end
+
+    # Step 2 helper: detect local production capability using existing helpers.
+    def self.can_produce_or_harvest_locally?(settlement, material)
+      can_harvest_locally?(settlement, material) || can_manufacture_locally?(settlement, material)
+    end
+
+    # Step 2/4 helper: deploy a local production unit (harvester or smelter).
+    def self.deploy_local_production_unit(settlement, material, deficit)
+      if can_harvest_locally?(settlement, material)
+        create_automated_harvester(settlement, material, deficit)
+      elsif can_manufacture_locally?(settlement, material)
+        create_manufacturing_unit(settlement, material, deficit)
+      else
+        nil
+      end
+    rescue => e
+      Rails.logger.error "[EscalationService] Failed to deploy local production for #{material}: #{e.message}"
+      nil
+    end
+
+    # Step 3/4 helper: emergency_required? uses stub ETAs (72h / 7d).
+    # For pre-player, we reuse this as-is — it returns false when no humans present.
+    # This naturally defers import during world-building phase.
+
+    # Step 4 helper: can local stand up in time given stub ETAs?
+    def self.can_stand_up_locally_in_time?(settlement, material)
+      return false unless humans_present?(settlement)
+
+      ttc = time_to_critical(settlement, material)
+      # Conservative: if local deployment takes > 72h, it cannot save the emergency.
+      # This is a placeholder — real deployment-time tracking would be needed for accuracy.
+      # For MVP, assume local standup can complete within the critical window.
+      ttc >= 48.hours
+    end
+
+    # Step 5 helper: obtain strategy cost via evaluate_strategy and execute import.
+    def self.execute_import_via_evaluate_strategy(settlement, material, deficit)
+      strategy = Market::NpcPriceCalculator.evaluate_strategy(
+        material: material,
+        location: settlement,
+        context: { phase: :pre_player }
+      )
+
+      return :unresolved unless strategy&.feasible? && strategy.reference_cost
+
+      # Use ResourceAcquisitionService for the actual import execution (execution owner).
+      # Pass evaluate_strategy cost as context so it doesn't double-calculate.
+      result = ResourceAcquisitionService.process_external_import_with_cost(
+        settlement, material, deficit, strategy.reference_cost
+      )
+
+      Rails.logger.info "[EscalationService] Pre-player tree: import via evaluate_strategy — " \
+                        "strategy=#{strategy.strategy_type}, cost=#{strategy.reference_cost}, result=#{result}"
+      result
     end
 
     private
