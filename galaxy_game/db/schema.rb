@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_08_19_120107) do
+ActiveRecord::Schema[7.0].define(version: 2026_09_20_193334) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -367,6 +367,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_19_120107) do
     t.integer "origin_body_id"
     t.string "composition_type"
     t.jsonb "orbital_elements", default: {}, null: false
+    t.decimal "magnetosphere_radius_km", precision: 15, scale: 2, default: "0.0"
+    t.decimal "orbital_distance_km", precision: 15, scale: 2, default: "0.0"
     t.index ["identifier"], name: "index_celestial_bodies_on_identifier", unique: true
     t.index ["origin_body_id"], name: "index_celestial_bodies_on_origin_body_id"
     t.index ["parent_celestial_body_id"], name: "index_celestial_bodies_on_parent_celestial_body_id"
