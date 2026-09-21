@@ -443,7 +443,7 @@ module AIManager
     def default_params
       # NOTE: All atmospheric composition targets are world-specific and should come from
       # world templates/data, not hardcoded here. Only universal simulation parameters belong here.
-      {}
+      { liquid_water_threshold: 1.0 }
     end
 
     def calculate_warming_phase_needs(world)
@@ -597,6 +597,11 @@ module AIManager
 
       reduction_pct = ((original_mass - current_mass) / original_mass) * 100
       reduction_pct >= 5.0
+    end
+
+    def initialize_depots
+      # No-op: orbital depots are managed dynamically via @orbital_depots hash
+      @orbital_depots ||= {}
     end
   end
 end

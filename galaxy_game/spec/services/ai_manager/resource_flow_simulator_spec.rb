@@ -188,8 +188,9 @@ RSpec.describe AIManager::ResourceFlowSimulator do
   describe 'private methods' do
     describe '#build_current_inventory' do
       before do
-        settlement.inventory.add_item('titanium', 500)
-        settlement.inventory.add_item('raw_regolith', 10000)
+        player = settlement.owner || create(:user)
+        settlement.inventory.items.create!(name: 'titanium', amount: 500, owner: player, storage_method: 'bulk_storage')
+        settlement.inventory.items.create!(name: 'raw_regolith', amount: 10000, owner: player, storage_method: 'bulk_storage')
       end
 
       it 'builds inventory from settlement data' do
