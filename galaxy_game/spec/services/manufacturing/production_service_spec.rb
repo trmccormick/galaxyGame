@@ -38,6 +38,20 @@ RSpec.describe Manufacturing::ProductionService do
     unless settlement.inventory.surface_storage
       create(:surface_storage, inventory: settlement.inventory)
     end
+    
+    # Add a general storage unit so can_store? has capacity to check
+    unless settlement.base_units.any? { |u| u.storage_type == "general" }
+      create(:base_unit, :storage,
+        settlement: settlement,
+        operational_data: {
+          "storage" => {
+            "type" => "general",
+            "capacity" => 10000,
+            "current_level" => 0
+          }
+        }
+      )
+    end
   end
 
   describe '#manufacture_component' do
