@@ -76,7 +76,7 @@ class AIManager::ResourceFlowSimulator
     },
     'water_production' => {
       inputs: { 'processed_regolith' => 5 },
-      outputs: { 'water' => 0.1, 'gases' => 0.05, 'inert_waste' => 4.85 },
+      outputs: { 'water' => 0.1, 'gases' => 0.05, 'depleted_regolith' => 4.85 },
       build_time_days: 0, # Continuous production
       power_requirement_kw: 25.0,
       requires: ['pve_unit']

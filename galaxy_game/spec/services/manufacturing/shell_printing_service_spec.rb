@@ -64,7 +64,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
         'shell_requirements' => {
           'material_requirements' => [
             {
-              'material' => 'inert_waste',
+              'material' => 'depleted_regolith',
               'quantity' => 1400,
               'unit' => 'kg'
             },
@@ -81,10 +81,10 @@ RSpec.describe Manufacturing::ShellPrintingService do
     # Stub item lookups
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
-      .with('inert_waste')
+      .with('depleted_regolith')
       .and_return({
-        'id' => 'inert_waste',
-        'name' => 'Inert Waste',
+        'id' => 'depleted_regolith',
+        'name' => 'Depleted Regolith',
         'type' => 'processed_material'
       })
 
@@ -105,7 +105,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
         allow(settlement.inventory).to receive(:can_store?).and_return(true)
         
         # Add required materials to inventory
-        settlement.inventory.add_item('inert_waste', 2000, player, {
+        settlement.inventory.add_item('depleted_regolith', 2000, player, {
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         })
         settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
@@ -144,10 +144,10 @@ RSpec.describe Manufacturing::ShellPrintingService do
       it 'consumes materials from inventory' do
         service.enclose_inflatable(inflatable_tank, printer_unit)
         
-        inert_waste = settlement.inventory.items.find_by(name: 'inert_waste')
+        depleted_regolith = settlement.inventory.items.find_by(name: 'depleted_regolith')
         ibeams = settlement.inventory.items.find_by(name: '3D-Printed I-Beam Mk1')
         
-        expect(inert_waste.amount).to eq(600) # 2000 - 1400
+        expect(depleted_regolith.amount).to eq(600) # 2000 - 1400
         expect(ibeams.amount).to eq(5) # 10 - 5
       end
 
@@ -156,7 +156,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
         service.enclose_inflatable(inflatable_tank, printer_unit)
         
         job = ConstructionJob.where(job_type: :shell_printing).last
-        expect(job.materials_consumed['inert_waste']).to include(
+        expect(job.materials_consumed['depleted_regolith']).to include(
           'amount' => 1400,
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         )
@@ -209,7 +209,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
           # Mock inventory can_store? to bypass capacity checks
           allow(settlement.inventory).to receive(:can_store?).and_return(true)
           
-          settlement.inventory.add_item('inert_waste', 2000, player, {
+          settlement.inventory.add_item('depleted_regolith', 2000, player, {
             'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
           })
           settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
@@ -241,7 +241,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
 
     context 'with insufficient materials' do
       before do
-        settlement.inventory.add_item('inert_waste', 500, player) # Not enough
+        settlement.inventory.add_item('depleted_regolith', 500, player) # Not enough
       end
 
       it 'raises an error' do
@@ -287,7 +287,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
       end
 
       before do
-        settlement.inventory.add_item('inert_waste', 2000, player)
+        settlement.inventory.add_item('depleted_regolith', 2000, player)
         settlement.inventory.add_item('3D-Printed I-Beam Mk1', 10, player)
         # Make wrong_printer operational (but with no regolith capability)
         wrong_printer.update!(
@@ -328,7 +328,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
           printer_unit_id: printer_unit.id,
           inflatable_tank_id: inflatable_tank.id,
           materials_consumed: {
-            'inert_waste' => {
+            'depleted_regolith' => {
               'amount' => 1400,
               'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
             },
@@ -354,7 +354,7 @@ RSpec.describe Manufacturing::ShellPrintingService do
       
       inflatable_tank.reload
       expect(inflatable_tank.operational_data['shell_materials']).to be_present
-      expect(inflatable_tank.operational_data['shell_materials']['inert_waste']).to include(
+      expect(inflatable_tank.operational_data['shell_materials']['depleted_regolith']).to include(
         'amount' => 1400
       )
     end

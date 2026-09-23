@@ -33,6 +33,20 @@ RSpec.describe Manufacturing::ComponentProductionService do
   let(:service) { described_class.new(settlement) }
 
   before do
+    # Add a general storage unit so can_store? has capacity to check
+    unless settlement.base_units.any? { |u| u.storage_type == "general" }
+      create(:base_unit, :storage,
+        settlement: settlement,
+        operational_data: {
+          "storage" => {
+            "type" => "general",
+            "capacity" => 10000,
+            "current_level" => 0
+          }
+        }
+      )
+    end
+
     # Stub blueprint lookup
     allow_any_instance_of(Lookup::BlueprintLookupService)
       .to receive(:find_blueprint)
@@ -44,7 +58,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
         'blueprint_data' => {
           'material_requirements' => [
             {
-              'material' => 'inert_waste',
+              'material' => 'depleted_regolith',
               'amount' => 90,
               'unit' => 'kg'
             },
@@ -68,10 +82,10 @@ RSpec.describe Manufacturing::ComponentProductionService do
     # Stub item lookup for materials
     allow_any_instance_of(Lookup::ItemLookupService)
       .to receive(:find_item)
-      .with('inert_waste')
+      .with('depleted_regolith')
       .and_return({
-        'id' => 'inert_waste',
-        'name' => 'Inert Waste',
+        'id' => 'depleted_regolith',
+        'name' => 'Depleted Regolith',
         'type' => 'processed_material'
       })
 
@@ -107,7 +121,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
     context 'with sufficient materials' do
       before do
         # Add materials to inventory
-        settlement.inventory.add_item('inert_waste', 200, player, {
+        settlement.inventory.add_item('depleted_regolith', 200, player, {
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         })
         settlement.inventory.add_item('binding_agent', 50, player)
@@ -129,10 +143,10 @@ RSpec.describe Manufacturing::ComponentProductionService do
       it 'consumes materials from inventory' do
         service.produce_component('3d_printed_ibeam', 2, printer_unit)
         
-        inert_waste = settlement.inventory.items.find_by(name: 'inert_waste')
+        depleted_regolith = settlement.inventory.items.find_by(name: 'depleted_regolith')
         binding_agent = settlement.inventory.items.find_by(name: 'binding_agent')
         
-        expect(inert_waste.amount).to eq(20) # 200 - (90 * 2)
+        expect(depleted_regolith.amount).to eq(20) # 200 - (90 * 2)
         expect(binding_agent.amount).to eq(30) # 50 - (10 * 2)
       end
 
@@ -140,7 +154,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
         service.produce_component('3d_printed_ibeam', 1, printer_unit)
         
         job = Job.where(job_type: :component_production).last
-        expect(job.operational_data['materials_consumed']['inert_waste']).to include(
+        expect(job.operational_data['materials_consumed']['depleted_regolith']).to include(
           'amount' => 90,
           'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
         )
@@ -149,7 +163,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
 
     context 'with insufficient materials' do
       before do
-        settlement.inventory.add_item('inert_waste', 50, player) # Not enough
+        settlement.inventory.add_item('depleted_regolith', 50, player) # Not enough
       end
 
       it 'raises an error' do
@@ -162,8 +176,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
     context 'with incompatible printer' do
       let(:wrong_printer) do
         create(:base_unit,
-          owner: settlement,
-          attachable: settlement,
+          settlement: settlement,
           operational_data: {
             'component_production' => {
               'categories' => ['electronics'], # Can't make structural
@@ -174,7 +187,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
       end
 
       before do
-        settlement.inventory.add_item('inert_waste', 200, player)
+        settlement.inventory.add_item('depleted_regolith', 200, player)
         settlement.inventory.add_item('binding_agent', 50, player)
       end
 
@@ -199,7 +212,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
           'component_blueprint_id' => '3d_printed_ibeam',
           'component_name' => '3D-Printed I-Beam',
           'materials_consumed' => {
-            'inert_waste' => {
+            'depleted_regolith' => {
               'amount' => 180,
               'composition' => { 'SiO2' => 43.0, 'Al2O3' => 24.0 }
             },
@@ -227,7 +240,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
       component = settlement.inventory.items.find_by(name: '3D-Printed I-Beam')
       expect(component.metadata['source_materials']).to be_present
       expect(component.metadata['source_materials'].first).to include(
-        'material' => 'inert_waste',
+        'material' => 'depleted_regolith',
         'amount' => 180
       )
     end

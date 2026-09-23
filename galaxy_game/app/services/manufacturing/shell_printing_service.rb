@@ -110,13 +110,16 @@ module Manufacturing
         if material_name.downcase.include?('regolith')
           item = find_regolith_material(needed_amount)
           material_to_use = item[:name] if item
+          item_amount = item[:amount] if item
         else
           item = @settlement.inventory.items.find_by(name: material_name)
           material_to_use = material_name
+          item_amount = item&.amount
         end
         
-        if item && item.amount >= needed_amount
-          composition = item.metadata&.dig('composition') || {}
+        if item && item_amount >= needed_amount
+          # Handle both Hash (from regolith lookup) and Item object
+          composition = item.is_a?(Hash) ? item[:composition] : (item.metadata&.dig('composition') || {})
           
           materials[material_to_use] = {
             amount: needed_amount,

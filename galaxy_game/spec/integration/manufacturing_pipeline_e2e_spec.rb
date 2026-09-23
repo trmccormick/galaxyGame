@@ -370,10 +370,10 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       puts "✓ PVE job completed"
 
       # Verify outputs
-      inert_waste = settlement.inventory.items.find_by(name: ' depleted_regolith')
-      expect(inert_waste).to be_present
-      expect(inert_waste.amount).to be >= 900.0 # ~97% yield
-      puts "✓ Produced #{inert_waste.amount}kg inert waste"
+      depleted_regolith = settlement.inventory.items.find_by(name: ' depleted_regolith')
+      expect(depleted_regolith).to be_present
+      expect(depleted_regolith.amount).to be >= 900.0 # ~97% yield
+      puts "✓ Produced #{depleted_regolith.amount}kg depleted regolith"
 
       water = settlement.inventory.items.find_by(name: 'water')
       expect(water).to be_present
@@ -396,18 +396,18 @@ RSpec.describe 'Manufacturing Pipeline End-to-End', type: :integration do
       
       # Need to add depleted_regolith for component production
       # (The component service expects 'depleted_regolith' as input material)
-      # settlement.inventory.add_item('depleted_regolith', inert_waste.amount, player, {
+      # settlement.inventory.add_item('depleted_regolith', depleted_regolith.amount, player, {
       #   'source_process' => 'volatiles_extraction',
-      #   'composition' => inert_waste.metadata['composition']
+      #   'composition' => depleted_regolith.metadata['composition']
       # })
       settlement.inventory.items.create!(
         name: 'depleted_regolith',
-        amount: inert_waste.amount,
+        amount: depleted_regolith.amount,
         owner: player,
         storage_method: 'bulk_storage',
         metadata: {
           'source_process' => 'volatiles_extraction',
-          'composition' => inert_waste.metadata['composition']
+          'composition' => depleted_regolith.metadata['composition']
         }
       )
       
