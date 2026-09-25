@@ -42,6 +42,7 @@ RSpec.describe Inventory, type: :model do
         owner: settlement,
         attachable: settlement,
         operational_data: {
+          'subcategory' => 'general',
           'storage' => {
             'type' => 'general',
             'capacity' => 1000,

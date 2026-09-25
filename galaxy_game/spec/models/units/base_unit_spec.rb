@@ -132,6 +132,7 @@ RSpec.describe Units::BaseUnit, type: :model do
           attachable: base_settlement,
           identifier: "STORE#{SecureRandom.hex(4)}",
           operational_data: {
+            'subcategory' => 'general',
             'storage' => { 'type' => 'general', 'capacity' => 1000, 'current_level' => 0 },
             'resources' => { 'stored' => {} }
           }
@@ -166,7 +167,7 @@ RSpec.describe Units::BaseUnit, type: :model do
   end
 
   describe 'general storage operations' do
-    let(:storage_tank) { create(:base_unit, name: "Storage Tank", unit_type: "storage_tank", owner: base_settlement, attachable: base_settlement, identifier: "TANK#{SecureRandom.hex(4)}", operational_data: { 'storage' => { 'capacity' => 1000, 'type' => 'general', 'current_level' => 0 }, 'resources' => { 'stored' => {} } }) }
+    let(:storage_tank) { create(:base_unit, name: "Storage Tank", unit_type: "storage_tank", owner: base_settlement, attachable: base_settlement, identifier: "TANK#{SecureRandom.hex(4)}", operational_data: { 'subcategory' => 'general', 'storage' => { 'capacity' => 1000, 'type' => 'general', 'current_level' => 0 }, 'resources' => { 'stored' => {} } }) }
 
     describe '#store_resource' do
       before { allow_any_instance_of(Lookup::MaterialLookupService).to receive(:find_material).and_call_original }
@@ -184,7 +185,7 @@ RSpec.describe Units::BaseUnit, type: :model do
   end
 
   describe 'inventory integration' do
-    let(:storage_unit) { create(:base_unit, name: "Storage Unit", unit_type: "storage", owner: base_settlement, identifier: "STORE#{SecureRandom.hex(4)}", operational_data: { 'storage' => { 'capacity' => 1000, 'type' => 'general', 'current_level' => 0 }, 'resources' => { 'stored' => {} } }) }
+    let(:storage_unit) { create(:base_unit, name: "Storage Unit", unit_type: "storage", owner: base_settlement, identifier: "STORE#{SecureRandom.hex(4)}", operational_data: { 'subcategory' => 'general', 'storage' => { 'capacity' => 1000, 'type' => 'general', 'current_level' => 0 }, 'resources' => { 'stored' => {} } }) }
 
     describe '#store_resource' do
       before { allow_any_instance_of(Lookup::MaterialLookupService).to receive(:find_material).and_call_original }

@@ -44,8 +44,8 @@ RSpec.describe Manufacturing::ProductionService do
       create(:base_unit, :storage,
         settlement: settlement,
         operational_data: {
+          "subcategory" => "general",
           "storage" => {
-            "type" => "general",
             "capacity" => 10000,
             "current_level" => 0
           }
