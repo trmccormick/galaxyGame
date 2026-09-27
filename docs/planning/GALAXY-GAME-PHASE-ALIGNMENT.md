@@ -50,7 +50,7 @@ These phases describe the game’s expansion arc:
 - 14+: AI Manager operational independence test: Sol day-to-day management and initial Eden system expansion attempt using learned Sol patterns
 - 15+: Unplanned Eden expansion driven by AI Manager discovering better terraforming targets; AI Manager learns natural wormhole mass limits through operations, leading to crisis discovery
 
-**Crisis Trigger (Post-Phase 15)**: The natural wormhole reaches mass-instability limits as Eden infrastructure accumulates. The Snap event occurs, shifting the exit point and orphaning the Eden colony. This forces the formation of the Wormhole Transit Consortium (WTC) and initiates Act 2 crisis gameplay.
+**Crisis Trigger (Post-Phase 16)**: The natural wormhole reaches mass-instability limits as Eden infrastructure accumulates. The Snap event occurs, shifting the exit point and orphaning the Eden colony. This forces the formation of the Wormhole Transit Consortium (WTC) and initiates Act 2 crisis gameplay.
 Use System B to answer: **“When in the story should this feature exist?”**
 
 ---
