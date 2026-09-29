@@ -85,6 +85,10 @@ module Settlement
       (operational_data || {}).dig('manufacturing', 'check_equipment') != false
     end
 
+    # ── Per-Location Market Fee Configuration ──────────────────────────
+    include SettlementFees
+    # ── End Per-Location Market Fee Configuration ──────────────────────
+
     # FIXED: Consistent namespace and removed duplicate method
     def npc_market_bid(resource_name)
       Market::NpcPriceCalculator.calculate_bid(self, resource_name.to_s)

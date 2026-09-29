@@ -52,6 +52,7 @@ RSpec.describe Manufacturing::ProductionService do
         }
       )
     end
+    settlement.base_units.reset
   end
 
   describe '#manufacture_component' do

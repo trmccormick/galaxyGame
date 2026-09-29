@@ -46,6 +46,7 @@ RSpec.describe Manufacturing::ComponentProductionService do
         }
       )
     end
+    settlement.base_units.reset
 
     # Stub blueprint lookup
     allow_any_instance_of(Lookup::BlueprintLookupService)
