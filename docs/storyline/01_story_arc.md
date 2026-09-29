@@ -15,8 +15,8 @@ This ensures robust, tested expansion patterns before AI autonomy.
 
 **Phase Structure**: 
 - Act 1 = Phases 1–14: NPC-only Sol system expansion and early terraforming (AI Manager training)
-- Act 2 = Phase 15+: Eden system expansion test (AI Manager operational independence)
-- Act 3 = Phase 16+: Snap crisis event (wormhole mass-limit discovery)
+- Act 2 = Phase 16+: Eden system expansion test (AI Manager operational independence)
+- Act 3 = Phase 17+: Snap crisis event (wormhole mass-limit discovery)
 - Act 4 = Not yet planned: Post-Snap narrative content (deferred until Act 3 framework established)
 
 ---
@@ -49,10 +49,10 @@ Each settlement location follows this workflow to ensure robust, tested expansio
 - ⏭️ Phase 8 (8a-8c): Shipyard/craft validation + AI training
 - ⏭️ Phase 9 (9a-9e): Mars multi-option validation (orbital + surface + terraforming) + AI training
 - ⏭️ Phase 10 (10a-10d): Venus moon-free adaptation + AI training
-- ⏭️ Phase 11 (11a-11d): Multi-world logistics validation + AI training
-- ⏭️ Phase 12 (12a-12c): Optional branch expansion testing
-- ⏭️ Phase 13 (13a-13c): Psyche mining + terraforming validation + AI training
-- ⏭️ Phase 14 (14a-14e): Coordinated Mars-Venus terraforming (shared tech: solar shades, atmospheric transfer) + AI training
+- ⏭️ Phase 11 (11a-11f): Earth-Mars-Venus cycler logistics validation + AI training
+- ⏭️ Phase 12 (12a-12d): Belt operations — Ceres + 16 Psyche (parallel sub-phases)
+- ⏭️ Phase 13 (13a-13d): Outer worlds — Titan/Saturn operations
+- ⏭️ Phase 14 (14a-14d): Coordinated Mars-Venus terraforming (shared tech: solar shades, atmospheric transfer) + AI training
 
 **Key Principle: NPC-Only Expansion During Act 1**
 
@@ -78,7 +78,7 @@ The resulting world-state becomes the backstory players inherit when they arrive
 
 **Narrative Focus**: The AI Manager takes full operational control of Sol and discovers/begins expanding into the Eden system using learned patterns. This is the first test of whether the AI can successfully apply Sol-system training to a new environment.
 
-**Technical Implementation Mapping**: This corresponds to **Phase 15+**, requiring:
+**Technical Implementation Mapping**: This corresponds to **Phase 16+**, requiring:
 - ✅ All Phases 1–14 complete (Sol system mastery including terraforming coordination)
 - ✅ Luna simulation calibrated and validated
 - ✅ Inner-system footholds operational (Mars, Venus, etc.)
@@ -90,7 +90,7 @@ The resulting world-state becomes the backstory players inherit when they arrive
 - Whether pattern-based decision-making generalizes across different celestial bodies
 - Whether the AI can handle novel conditions not encountered during training
 
-**Gate**: AI Manager demonstrates sustained independent Sol management. Eden expansion underway — proceeds to Phase 16+ where this independence gets stress-tested.
+**Gate**: AI Manager demonstrates sustained independent Sol management. Eden expansion underway — proceeds to Phase 17+ where this independence gets stress-tested.
 
 ---
 
@@ -98,8 +98,8 @@ The resulting world-state becomes the backstory players inherit when they arrive
 
 **Narrative Focus**: Unplanned Eden expansion pushes past natural wormhole mass-limit stability, triggering the Snap crisis. This is where the test reveals its result — the AI Manager's confidence from successful Sol patterns leads it to overbuild Eden infrastructure.
 
-**Technical Implementation Mapping**: This corresponds to **Phase 16+**, requiring:
-- ✅ Phase 15 complete (Eden expansion underway)
+**Technical Implementation Mapping**: This corresponds to **Phase 17+**, requiring:
+- ✅ Phase 16 complete (Eden expansion underway)
 - ✅ Wormhole stability monitoring operational
 - ✅ Mass-limit threshold detection implemented
 
@@ -108,7 +108,7 @@ The resulting world-state becomes the backstory players inherit when they arrive
 - Wormhole reaches instability and shifts exit point
 - Eden becomes orphaned from Sol system
 
-**Post-Snap State**: This is where player-facing gameplay (Act 2) begins. Everything in Phases 5–16 has been building the world-state players inherit at this moment.
+**Post-Snap State**: This is where player-facing gameplay (Act 2) begins. Everything in Phases 5–17 has been building the world-state players inherit at this moment.
 
 ---
 
@@ -122,18 +122,22 @@ The resulting world-state becomes the backstory players inherit when they arrive
 
 ## Cross-Reference: Narrative Acts vs Technical Implementation Phases
 
-**Strategic Note on Phases 5–16**: 
-- **Phases 5–13**: AI Manager training and infrastructure code testing (Sol system mastery)
-- **Phase 14**: Coordinated early terraforming; Mars + Venus shared technologies tested together (solar shades, atmospheric transfer)
-- **Phase 15**: Operational independence test; AI Manager controls Sol operations and discovers/begins Eden expansion 
-- **Phase 16**: Unplanned Eden expansion; AI Manager discovers natural wormhole mass limits through operational stress
-- **Post-Phase 16**: The Snap crisis event occurs (wormhole reaches instability and shifts exit point), orphaning Eden and triggering Act 2 gameplay
+**Strategic Note on Phases 5–17**: 
+- **Phases 5–11**: AI Manager training and infrastructure code testing (Sol system mastery)
+- **Phase 12**: Belt operations — Ceres + 16 Psyche mining (parallel sub-phases)
+- **Phase 13**: Outer worlds — Titan/Saturn atmospheric/surface operations
+- **Phase 14**: Coordinated Mars-Venus terraforming; shared technologies tested together (solar shades, atmospheric transfer)
+- **Phases 12–14 run in parallel** once Phase 11 cycler loop is established
+- **Phase 15**: Optional outer-system expansion (Jupiter moons, Saturn moons, Uranus/Neptune moons, Kuiper Belt, Oort Cloud, Mercury) — AI evaluates ROI, may skip lower-value targets
+- **Phase 16**: Operational independence test; AI Manager controls Sol operations and discovers/begins Eden expansion
+- **Phase 17**: Unplanned Eden expansion; AI Manager discovers natural wormhole mass limits through operational stress
+- **Post-Phase 17**: The Snap crisis event occurs (wormhole reaches instability and shifts exit point), orphaning Eden and triggering Act 2 gameplay
 
 The AI Manager learns repeatable patterns across Luna settlement, multi-world logistics, asteroid terraforming, and atmospheric engineering. After Phase 13, it takes full operational control of Sol, discovers Eden, and attempts expansion. This overconfidence in Sol patterns leads to unplanned Eden infrastructure buildup that exceeds natural wormhole stability, causing the Snap crisis.
 
 ---
 
-**Override for backlog triage**: If any table entry below conflicts with the current planning map, use this sequence: `phase5` (Luna mission validation + AI training), `phase6` (Luna infrastructure validation + AI training), `phase7` (orbital depot validation + AI training), `phase8` (shipyard/craft validation + AI training), `phase9` (Mars multi-option testing: orbital infrastructure integration, Phobos/Deimos repositioning, surface outpost establishment, resource infrastructure, advanced mining, worldhouse construction, atmospheric enrichment, human settlement, and gateway shielding — then Mars option comparison and AI training), `phase10` (Venus moon-free adaptation + AI training), `phase11` (Earth-Mars-Venus logistics validation + AI training), `phase12` (optional Ceres/Titan-Saturn branch testing), `phase13` (Psyche mining + terraforming validation + AI training), `phase14` (Coordinated Mars-Venus terraforming: atmospheric transfer, solar shades/reflectors shared tech + AI training), `phase15+` (AI Manager operational test and Eden expansion), and `phase16+` (unplanned Eden expansion and wormhole mass-limit discovery). The Snap crisis event occurs post-Phase 16, beginning true Act 2 gameplay.
+**Override for backlog triage**: If any table entry below conflicts with the current planning map, use this sequence: `phase5` (Luna mission validation + AI training), `phase6` (Luna infrastructure validation + AI training), `phase7` (orbital depot validation + AI training), `phase8` (shipyard/craft validation + AI training), `phase9` (Mars multi-option testing: orbital infrastructure integration, Phobos/Deimos repositioning, surface outpost establishment, resource infrastructure, advanced mining, worldhouse construction, atmospheric enrichment, human settlement, and gateway shielding — then Mars option comparison and AI training), `phase10` (Venus moon-free adaptation + AI training), `phase11` (Earth-Mars-Venus logistics validation + AI training), `phase12` (Belt operations: Ceres + 16 Psyche mining, parallel sub-phases), `phase13` (Outer worlds: Titan/Saturn atmospheric/surface operations), `phase14` (Coordinated Mars-Venus terraforming: atmospheric transfer, solar shades/reflectors shared tech + AI training — runs in parallel with phases 12-13), `phase15` (Optional outer-system expansion: Jupiter moons, Saturn moons, Uranus/Neptune moons, Kuiper Belt, Oort Cloud, Mercury — all optional, AI evaluates ROI), `phase16+` (AI Manager operational test and Eden expansion), and `phase17+` (unplanned Eden expansion and wormhole mass-limit discovery). The Snap crisis event occurs post-Phase 17, beginning true Act 2 gameplay.
 
 | Narrative Act | Player Experience Focus | Technical Phase Mapping | Backlog Task Classification | Status/Requirements |
 |---|---|---|---|---|
