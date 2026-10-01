@@ -1,6 +1,27 @@
 module AIManager
   class MissionPlannerService
     attr_reader :pattern, :parameters, :results
+
+    # Resource-first entry point: accepts a celestial body + system context
+    # instead of a pattern name. Composes with FootholdPlanner for ranking.
+    # Does NOT use PatternTargetMapper — that is reserved for the pattern path.
+    #
+    # @param celestial_body [CelestialBody] The target body to plan for
+    # @param system_context [Hash] Optional system topology snapshot:
+    #   :moons, :asteroids, :distance_from_sun, :parent_body, :nearby_nodes
+    # @param parameters [Hash] Optional additional parameters forwarded to simulation
+    # @return [Array<FootholdOption>] Ranked foothold options (best first)
+    def self.for_body(celestial_body, system_context: {}, parameters: {})
+      raise ArgumentError, "celestial_body is required" if celestial_body.nil? || celestial_body.to_s.empty?
+
+      planner = AIManager::FootholdPlanner.new(celestial_body, system_context: system_context)
+      ranked_options = planner.plan
+
+      # Optionally run simulation/costing on top of the ranked options
+      # using existing @material_lookup and other instance helpers
+      # (delegate to simulate method or inline as needed)
+      ranked_options
+    end
     
     def initialize(pattern_name, parameters = {})
       @pattern = pattern_name

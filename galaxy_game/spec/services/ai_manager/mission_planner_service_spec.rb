@@ -211,4 +211,63 @@ RSpec.describe AIManager::MissionPlannerService do
       expect(results[:costs]).to be_present
     end
   end
+
+  describe '.for_body (resource-first entry)' do
+    let(:solar_system) { create(:solar_system) }
+    let!(:mars) { create(:celestial_body, name: 'Mars', solar_system: solar_system) }
+
+    it 'returns foothold options without using PatternTargetMapper' do
+      allow(AIManager::PatternTargetMapper).to receive(:target_location)
+      allow(AIManager::PatternTargetMapper).to receive(:target_identifier)
+
+      result = described_class.for_body(mars, system_context: { distance_from_sun: 1.52 })
+
+      expect(result).to be_an(Array)
+      expect(result.size).to be > 0
+      expect(result.first).to be_a(AIManager::FootholdPlanner::FootholdOption)
+      expect(AIManager::PatternTargetMapper).not_to have_received(:target_location)
+    end
+
+    it 'raises ArgumentError when celestial_body is nil' do
+      expect {
+        described_class.for_body(nil, system_context: {})
+      }.to raise_error(ArgumentError, 'celestial_body is required')
+    end
+
+    it 'raises ArgumentError when celestial_body is empty string' do
+      expect {
+        described_class.for_body('', system_context: {})
+      }.to raise_error(ArgumentError, 'celestial_body is required')
+    end
+
+    it 'composes with FootholdPlanner#plan and returns ranked options' do
+      result = described_class.for_body(mars, system_context: { distance_from_sun: 1.52 })
+
+      expect(result).to all(be_a(AIManager::FootholdPlanner::FootholdOption))
+      expect(result.first).to respond_to(:to_h)
+    end
+  end
+
+  describe '.new pattern path (regression — must not break)' do
+    let(:solar_system) { create(:solar_system) }
+    let!(:mars) { create(:celestial_body, name: 'Mars', solar_system: solar_system) }
+
+    it 'still accepts positional pattern_name and parameters hash' do
+      allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)
+
+      planner = described_class.new('mars-terraforming', { timeline_years: 5 })
+
+      expect(planner.pattern).to eq('mars-terraforming')
+      expect(planner.parameters[:timeline_years]).to eq(5)
+    end
+
+    it 'works with no parameters (default arity)' do
+      allow(AIManager::PatternTargetMapper).to receive(:target_location).and_return(mars)
+
+      planner = described_class.new('mars-terraforming')
+
+      expect(planner.pattern).to eq('mars-terraforming')
+      expect(planner.parameters[:tech_level]).to eq('standard')
+    end
+  end
 end
