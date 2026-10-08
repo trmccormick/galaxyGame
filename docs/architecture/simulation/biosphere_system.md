@@ -4,6 +4,9 @@
 
 The biosphere system models planetary biological ecosystems and their dynamic interactions with other planetary spheres. Galaxy Game's biosphere is **fully generic and data-driven**, supporting diverse planetary biomes from terrestrial Earth-like worlds to exotic alien ecosystems.
 
+**Developmental direction (2026-10-08):**  
+See [`docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`](../biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md) for the current narrow-scope intent covering Terraforming Seeds, Worldhouses, Digital Twin projections, residual life-detection risk, and lightweight unknown-life events. Most of that work is background for the AI Manager; this document remains the technical reference for the biosphere models and simulation.
+
 ## Worldhouse — Regional Biosphere [2026-03-03]
 
 BIOMES ARE NOT A PLANET-LEVEL BOOLEAN. They are regional.
@@ -29,6 +32,10 @@ Through the worldhouse panels (Civ4 view) you see:
   - Strategic unit/tile layer on top
   - Biome tiles visible inside enclosure boundary
   - SimCity (TerrainForge) layer below for construction detail
+
+**Clarification (2026-10-08):**  
+A Worldhouse is a high-control engineered habitat. Its purpose is safe, reliable support of desired life (and industry) under local gravity. It does **not** primarily change the global planetary baseline.  
+Terraforming Seeds are a separate facility type that share much of the same construction technology (shell, power, basic life support) but serve a different goal: adapting basic life and gradually contributing to planetary change. Seeds are intentionally smaller and cheaper than even a minimal Worldhouse. See the direction document for the full distinction.
 
 ## Desert = Dry Not Hot [2026-03-03]
 
@@ -77,6 +84,9 @@ Biological species inhabiting the biosphere:
 - **methane_production_rate**: CH4 production per individual per day
 - **nitrogen_fixation_rate**: N2 fixation rate
 - **soil_improvement_rate**: Soil fertility improvement rate
+
+**Scope note (2026-10-08):**  
+Current developmental direction keeps life at the basic / primitive level. Detailed multi-species ecosystems, deep genetics, or gravity-adaptation research trees are out of scope for now. Life forms can still produce both planned atmospheric/soil effects and unplanned biosphere effects (the intentional random factor in terraforming projections).
 
 ## Simulation Engine (BiosphereSimulationService)
 
@@ -414,6 +424,8 @@ Biosphere simulation supports terraforming operations:
 - **Life Form Introduction**: Adding species to modify atmospheric composition
 - **Biome Modification**: Changing biome properties through terraforming
 - **Climate Engineering**: Temperature and moisture manipulation
+
+Life (whether introduced via Seeds or arising through other means) can produce both planned effects and unplanned biosphere changes. Residual detection uncertainty and contamination risk are acknowledged at the planetary-planning level (see the direction document); they do not require deep simulation inside the biosphere service itself.
 
 ### Economic Integration
 

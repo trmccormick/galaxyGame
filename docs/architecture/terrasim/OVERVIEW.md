@@ -27,3 +27,11 @@ TerraSim is responsible for simulating planetary surface and climate evolution. 
 
 - **Civ4 Shoreline Flooding:** The current NASA/Civ4 fusion process can cause excessive shoreline flooding and unrealistic water/land boundaries. This is a known issue with Civ4 tile mapping and procedural noise.
 - **Mitigation:** A dedicated Regression Filter is required to post-process all generated terrain, correcting shorelines and enforcing realistic transitions. This filter is a critical dependency for all Biome and DigitalTwin work.
+
+## Forward Terraforming & Digital Twin (2026-10-08)
+
+In addition to regression/weathering logic, TerraSim supports forward terraforming projections through the Digital Twin sandbox. The Digital Twin is used by the AI Manager to evaluate candidate projects (Terraforming Seeds, Worldhouses, atmospheric interventions, etc.) on a specific world, returning cost, timeline, planetary benefit, and residual risk estimates.
+
+Terraforming Seeds are staged construction projects that adapt basic life and gradually contribute to planetary change. They share construction technology with Worldhouses but are smaller, cheaper, and purpose-built for adaptation and biosphere contribution rather than long-term high-control habitation.
+
+Full developmental direction: `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
