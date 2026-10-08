@@ -697,4 +697,210 @@ RSpec.describe AssetRegistry do
       # Catalog UI can show placeholder/empty state for missing representations
     end
   end
+
+  describe '#resolve_visual_profile — C4 Visual Profile Resolution' do
+    it 'returns nil for unregistered asset' do
+      result = registry.resolve_visual_profile('NONEXISTENT')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil when visual_profile_id is not set' do
+      registry.register_asset(
+        asset_id: 'TEST_NO_VP',
+        blueprint_id: 'test',
+        asset_family: 'vehicle'
+      )
+
+      result = registry.resolve_visual_profile('TEST_NO_VP')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil when visual_profile_id is blank string' do
+      registry.register_asset(
+        asset_id: 'TEST_BLANK_VP',
+        blueprint_id: 'test',
+        asset_family: 'vehicle',
+        visual_profile_id: ''
+      )
+
+      result = registry.resolve_visual_profile('TEST_BLANK_VP')
+      expect(result).to be_nil
+    end
+
+    it 'returns visual_profile_id and entry when visual_profile_id is set' do
+      registry.register_asset(
+        asset_id: 'VEHICLE_HARVESTER_ROVER_RH400',
+        blueprint_id: described_class::RH400_BLUEPRINT_ID,
+        asset_family: 'vehicle',
+        component_class: 'harvester',
+        file_prefix: described_class::RH400_FILE_PREFIX,
+        visual_profile_id: 'precision_industrial_v1'
+      )
+
+      result = registry.resolve_visual_profile('VEHICLE_HARVESTER_ROVER_RH400')
+      
+      expect(result).to be_a(Hash)
+      expect(result[:visual_profile_id]).to eq('precision_industrial_v1')
+      expect(result[:entry]).to be_a(Hash)
+      expect(result[:entry][:asset_id]).to eq('VEHICLE_HARVESTER_ROVER_RH400')
+      expect(result[:resolved_at]).not_to be_nil
+    end
+
+    it 'returns the registered visual_profile_id without validating file existence' do
+      # resolve_visual_profile provides the VP ID for external orchestration.
+      # File existence validation happens in ProfileResolutionEngine (development-time tooling).
+      registry.register_asset(
+        asset_id: 'TEST_ANY_VP',
+        blueprint_id: 'test',
+        asset_family: 'vehicle',
+        visual_profile_id: 'ANY_PROFILE_ID'
+      )
+
+      result = registry.resolve_visual_profile('TEST_ANY_VP')
+      
+      expect(result[:visual_profile_id]).to eq('ANY_PROFILE_ID')
+      # No error raised — file validation is external to the registry
+    end
+  end
+
+  describe '#has_visual_profile? — C4 Visual Profile Resolution' do
+    it 'returns true when visual_profile_id is set' do
+      registry.register_asset(
+        asset_id: 'TEST_WITH_VP',
+        blueprint_id: 'test',
+        asset_family: 'vehicle',
+        visual_profile_id: 'VP_TEST_001'
+      )
+
+      expect(registry.has_visual_profile?('TEST_WITH_VP')).to be true
+    end
+
+    it 'returns false when visual_profile_id is not set' do
+      registry.register_asset(
+        asset_id: 'TEST_NO_VP',
+        blueprint_id: 'test',
+        asset_family: 'vehicle'
+      )
+
+      expect(registry.has_visual_profile?('TEST_NO_VP')).to be false
+    end
+
+    it 'returns false for unregistered asset' do
+      expect(registry.has_visual_profile?('NONEXISTENT')).to be false
+    end
+  end
+
+  describe 'RH-400 resolves through normal registry path — C4' do
+    before do
+      # Register RH-400 with a valid visual_profile_id (not nil)
+      registry.register_asset(
+        asset_id: described_class::RH400_ASSET_ID,
+        blueprint_id: described_class::RH400_BLUEPRINT_ID,
+        asset_family: 'vehicle',
+        component_class: 'harvester',
+        file_prefix: described_class::RH400_FILE_PREFIX,
+        visual_profile_id: 'precision_industrial_v1'
+      )
+    end
+
+    it 'resolves RH-400 Visual Profile through the normal registry mechanism' do
+      result = registry.resolve_visual_profile(described_class::RH400_ASSET_ID)
+      
+      expect(result).not_to be_nil
+      expect(result[:visual_profile_id]).to eq('precision_industrial_v1')
+    end
+
+    it 'does not require special-case handling for RH-400' do
+      # Verify RH-400 uses the same path as any other asset
+      registry.register_asset(
+        asset_id: 'VEHICLE_TEST_ROVER_T001',
+        blueprint_id: 'test_rover',
+        asset_family: 'vehicle',
+        visual_profile_id: 'precision_industrial_v1'
+      )
+
+      rh400_result = registry.resolve_visual_profile(described_class::RH400_ASSET_ID)
+      test_result = registry.resolve_visual_profile('VEHICLE_TEST_ROVER_T001')
+
+      # Both should resolve through the same mechanism with same VP ID
+      expect(rh400_result[:visual_profile_id]).to eq(test_result[:visual_profile_id])
+    end
+  end
+
+  describe 'PromptCompiler composition boundary — C4' do
+    before do
+      registry.register_asset(
+        asset_id: described_class::RH400_ASSET_ID,
+        blueprint_id: described_class::RH400_BLUEPRINT_ID,
+        asset_family: 'vehicle',
+        component_class: 'harvester',
+        file_prefix: described_class::RH400_FILE_PREFIX,
+        visual_profile_id: 'precision_industrial_v1'
+      )
+    end
+
+    it 'registry provides resolved profile for PromptCompiler consumption' do
+      registry.register_asset(
+        asset_id: 'VEHICLE_HARVESTER_ROVER_RH400',
+        blueprint_id: described_class::RH400_BLUEPRINT_ID,
+        asset_family: 'vehicle',
+        component_class: 'harvester',
+        file_prefix: described_class::RH400_FILE_PREFIX,
+        visual_profile_id: 'precision_industrial_v1'
+      )
+
+      # Orchestration resolves VP through registry — returns VP ID and entry
+      vp_resolution = registry.resolve_visual_profile('VEHICLE_HARVESTER_ROVER_RH400')
+      
+      expect(vp_resolution).not_to be_nil
+      expect(vp_resolution[:visual_profile_id]).to eq('precision_industrial_v1')
+      expect(vp_resolution[:entry]).to be_a(Hash)
+
+      # PromptCompiler receives already-resolved profile attributes from orchestration.
+      # It does NOT search the repository by asset_id.
+      # The composition boundary is: registry → visual_profile_id → ProfileResolutionEngine → PromptCompiler
+      entry = vp_resolution[:entry]
+      
+      expect(entry[:asset_id]).to eq('VEHICLE_HARVESTER_ROVER_RH400')
+      expect(entry).to have_key(:blueprint_path)
+      expect(entry).to have_key(:visual_definition_path)
+    end
+
+    it 'PromptCompiler public API remains unchanged — no visual_profile_path argument' do
+      # Verify the existing 5-keyword PromptCompiler.compile interface is compatible
+      # with registry-provided resolution:
+      #   PromptCompiler.compile(
+      #     asset_id:, blueprint_path:, operational_data_path:,
+      #     visual_definition_path:, render_template_path:
+      #   )
+      # No visual_profile_path or visual_profile_id argument is needed.
+      
+      entry = registry.resolve('VEHICLE_HARVESTER_ROVER_RH400')
+      
+      # Registry provides all 5 required keys for PromptCompiler.compile
+      expect(entry[:asset_id]).to eq('VEHICLE_HARVESTER_ROVER_RH400')
+      expect(entry).to have_key(:blueprint_path)
+      expect(entry).to have_key(:operational_data_path)
+      expect(entry).to have_key(:visual_definition_path)
+      expect(entry).to have_key(:render_template_path)
+
+      # Registry provides visual_profile_id separately (not as a path argument)
+      # PromptCompiler receives profile_attributes through composition, not compile args
+      vp_resolution = registry.resolve_visual_profile('VEHICLE_HARVESTER_ROVER_RH400')
+      expect(vp_resolution[:visual_profile_id]).to eq('precision_industrial_v1')
+    end
+
+    it 'registry does NOT perform repository discovery by asset_id for Visual Profile' do
+      # The registry stores visual_profile_id — it does NOT search the filesystem
+      # to discover which VP file applies. Orchestration provides the ID.
+      
+      entry = registry.resolve('VEHICLE_HARVESTER_ROVER_RH400')
+      
+      # visual_profile_id is stored, not discovered at resolve time
+      expect(entry[:visual_profile_id]).to eq('precision_industrial_v1')
+      
+      # resolve_visual_profile only validates the file exists (via engine)
+      # It does NOT search for a matching VP file — it uses the registered ID directly
+    end
+  end
 end

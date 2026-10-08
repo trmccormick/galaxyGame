@@ -142,6 +142,42 @@ class AssetRegistry
     @registry_cache.key?(asset_id)
   end
 
+  # Resolve Visual Profile for a given asset_id.
+  # 
+  # This is the development-time orchestration boundary: AssetRegistry owns
+  # asset_id → visual_profile_id association and provides resolution via
+  # ProfileResolutionEngine. PromptCompiler receives already-resolved profile
+  # attributes — it does NOT discover or search for profiles by asset_id.
+  #
+  # Note: ProfileResolutionEngine lives in tools/asset_generation/ (outside Rails).
+  # This method returns the raw VP ID for orchestration to resolve externally.
+  # The actual file loading happens in development-time tooling, not at runtime.
+  #
+  # @param asset_id [String] The canonical asset identifier
+  # @return [Hash, nil] Hash with :visual_profile_id and :entry keys, or nil if no VP registered
+  def resolve_visual_profile(asset_id)
+    entry = resolve(asset_id)
+    return nil unless entry
+
+    vp_id = entry[:visual_profile_id]
+    return nil if vp_id.nil? || vp_id.to_s.empty?
+
+    {
+      visual_profile_id: vp_id.to_s,
+      entry: entry,
+      resolved_at: Time.current
+    }
+  end
+
+  # Check if an asset has a registered Visual Profile (regardless of file existence)
+  def has_visual_profile?(asset_id)
+    entry = resolve(asset_id)
+    return false unless entry
+
+    vp_id = entry[:visual_profile_id]
+    !vp_id.nil? && !vp_id.to_s.empty?
+  end
+
   # Get RH-400 entry (concrete example for testing)
   def rh400_entry
     resolve(RH400_ASSET_ID)
@@ -430,5 +466,15 @@ class AssetRegistry
   def validate_asset_family(asset_family)
     return if VALID_ASSET_FAMILIES.include?(asset_family.to_s)
     raise ArgumentError, "Invalid asset_family: #{asset_family}. Must be one of: #{VALID_ASSET_FAMILIES.join(', ')}"
+  end
+
+  # Custom error for Visual Profile resolution failures
+  class ProfileResolutionError < StandardError; end
+
+  private
+
+  # Find entry in registry cache by asset_id
+  def find_in_registry(asset_id)
+    @registry_cache[asset_id]
   end
 end
