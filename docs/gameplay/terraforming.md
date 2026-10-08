@@ -1,5 +1,12 @@
 # Planetary Terraforming
 
+**Architecture note (2026-10-08):**  
+For current design intent on Terraforming Seeds vs Worldhouses, Digital Twin projections used by the AI Manager, residual life-detection risk, contamination, and the deliberately narrow life-system scope, see the authoritative document:
+
+`docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+
+This gameplay document remains a player-facing / high-level overview and may contain older assumptions. Prefer the architecture direction document when resolving conflicts about background simulation behavior.
+
 ## Overview
 
 Terraforming in Galaxy Game serves dual purposes: industrial resource extraction and long-term planetary modification. While Mars remains the primary target for habitation terraforming, Venus plays a crucial early-game role as an industrial hub supporting Mars terraforming efforts.
