@@ -1,5 +1,10 @@
 # Galaxy Game
 
+> **Status note (2026-10-09):** The numbers and phase language below are stale.  
+> Authoritative current status lives in the agent-tasks repo:  
+> `projects/galaxy_game/status.md`  
+> Current baseline is ~4764 examples / 143 failures. Always run specs with `unset DATABASE_URL && RAILS_ENV=test`.
+
 **A SimEarth-inspired space colonization game featuring realistic manufacturing chains, AI-driven mission planning, and player-driven economics.**
 
 Build settlements across the solar system and beyond. Process raw regolith into manufactured goods. Manage complex supply chains. Make critical decisions about terraforming alien worlds. Guide humanity's expansion through wormhole networks into the unknown.
@@ -28,9 +33,8 @@ Grounded in real physics, chemistry, and orbital mechanics while maintaining eng
 
 ## 🚀 Current Development Status
 
-**Phase 3**: Integration & Restoration (Active)  
-**Test Failures**: ~393 (down from 420) - Target: <50  
-**Next Phase**: UI Enhancement (SimEarth admin panel + Eve mission builder)
+**Status**: See agent-tasks `projects/galaxy_game/status.md` for current numbers (2026-10 baseline: ~143 failures).  
+The Phase-3 / ~393 language below is historical and no longer accurate.
 
 **Recent Progress**:
 - ✅ Shell construction system - 66/66 specs passing
