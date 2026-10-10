@@ -52,6 +52,29 @@ class Mission::TransitEngine
   def self.calculate_transfer_window(from_body, to_body, launch_date = nil)
     launch_date ||= Time.current.to_date
 
+    # Phase 1 topology containment guard. Runs before any orbital-data lookup,
+    # dynamic calculation, fallback, or route-table logic, and outside any rescue.
+    # The proxy is necessary containment only; it makes no claim of physical
+    # correctness, governing primary, reference frame, or Hohmann feasibility.
+    from_record = CelestialBodies::CelestialBody.find_by(identifier: from_body.to_s.upcase)
+    to_record   = CelestialBodies::CelestialBody.find_by(identifier: to_body.to_s.upcase)
+
+    [from_record, to_record].compact.each do |body|
+      next if body.is_a?(CelestialBodies::Planets::Planet) &&
+              body.parent_celestial_body_id.nil? &&
+              body.solar_system_id.present? &&
+              body.solar_system.present?
+
+      raise Mission::UnsupportedTransferError,
+            "unsupported topology for legacy transfer calculation: #{body.identifier} fails the Phase 1 topology proxy"
+    end
+
+    # Pair condition: when both endpoints resolve, they must share a solar system.
+    if from_record && to_record && from_record.solar_system_id != to_record.solar_system_id
+      raise Mission::UnsupportedTransferError,
+            "unsupported topology for legacy transfer calculation: #{from_record.identifier} and #{to_record.identifier} are in different solar systems"
+    end
+
     from_orbitals = orbital_data(from_body)
     to_orbitals   = orbital_data(to_body)
 

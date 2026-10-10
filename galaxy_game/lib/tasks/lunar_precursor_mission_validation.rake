@@ -756,10 +756,13 @@ namespace :luna_mission do
 
     # Phase 0: Precursor launch (Day 0)
     puts "\n--- Day 0: Precursor Launch from Earth ---"
-    precursor_departure = Mission::TransitEngine.schedule_departure(
-      "precursor_hlt_1", "EARTH-01", "LUNA-01", Time.current.to_date
-    )
-    puts "  ✓ Precursor departed Earth → Luna (#{precursor_departure[:transit_days]}d transit)"
+    # Static labeled scenario: Earth→Luna precursor transit = 7 game days.
+    # Mission::TransitEngine rejects moon/parent-centric routes (Phase 1 topology
+    # containment), so this scenario does not call the engine. Only :transit_days
+    # is consumed downstream. Earth→Venus below stays on the dynamic engine.
+    precursor_transit_days = 7
+    precursor_departure = { transit_days: precursor_transit_days }
+    puts "  ✓ Precursor departed Earth → Luna (#{precursor_departure[:transit_days]}d transit, static scenario)"
 
     # Phase 0b: Venus skimmer launch (concurrent, Day 0)
     puts "\n--- Day 0: Venus Skimmer Launch from Earth ---"

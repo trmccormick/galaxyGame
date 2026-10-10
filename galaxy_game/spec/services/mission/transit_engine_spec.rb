@@ -54,11 +54,10 @@ RSpec.describe Mission::TransitEngine, type: :service do
   describe '.calculate_transfer_window' do
     let(:launch_date) { Date.new(2030, 1, 15) }
 
-    it 'returns correct window for Earth→Luna' do
-      result = described_class.calculate_transfer_window('EARTH-01', 'LUNA-01', launch_date)
-      expect(result[:departure_date]).to eq(launch_date)
-      expect(result[:arrival_date]).to eq(launch_date + 7)
-      expect(result[:transit_days]).to eq(7)
+    it 'raises for Earth→Luna (moon route rejected by Phase 1 topology containment)' do
+      expect {
+        described_class.calculate_transfer_window('EARTH-01', 'LUNA-01', launch_date)
+      }.to raise_error(Mission::UnsupportedTransferError, /unsupported topology for legacy transfer calculation.*LUNA-01/)
     end
 
     it 'returns correct window for Earth→Venus' do
@@ -68,15 +67,16 @@ RSpec.describe Mission::TransitEngine, type: :service do
       expect(result[:transit_days]).to eq(146)
     end
 
-    it 'returns correct window for Luna→Venus' do
-      result = described_class.calculate_transfer_window('LUNA-01', 'VENUS-01', launch_date)
-      expect(result[:transit_days]).to eq(146)
+    it 'raises for Luna→Venus (moon route rejected by Phase 1 topology containment)' do
+      expect {
+        described_class.calculate_transfer_window('LUNA-01', 'VENUS-01', launch_date)
+      }.to raise_error(Mission::UnsupportedTransferError, /unsupported topology for legacy transfer calculation.*LUNA-01/)
     end
 
-    it 'returns correct window for Earth→Titan' do
-      result = described_class.calculate_transfer_window('EARTH-01', 'TITAN-01', launch_date)
-      expect(result[:transit_days]).to eq(1388)
-      expect(result[:arrival_date]).to eq(launch_date + 1388)
+    it 'raises for Earth→Titan (moon route rejected by Phase 1 topology containment)' do
+      expect {
+        described_class.calculate_transfer_window('EARTH-01', 'TITAN-01', launch_date)
+      }.to raise_error(Mission::UnsupportedTransferError, /unsupported topology for legacy transfer calculation.*TITAN-01/)
     end
 
     it 'returns correct window for Earth→Mars' do
@@ -84,9 +84,10 @@ RSpec.describe Mission::TransitEngine, type: :service do
       expect(result[:transit_days]).to eq(259)
     end
 
-    it 'defaults to 365 days for unknown routes' do
-      result = described_class.calculate_transfer_window('EARTH-01', 'PLUTO-01', launch_date)
-      expect(result[:transit_days]).to eq(365)
+    it 'raises for Earth→PLUTO (resolved non-planet-lineage body rejected by Phase 1 topology containment)' do
+      expect {
+        described_class.calculate_transfer_window('EARTH-01', 'PLUTO-01', launch_date)
+      }.to raise_error(Mission::UnsupportedTransferError, /unsupported topology for legacy transfer calculation.*PLUTO-01/)
     end
 
     it 'uses today when no launch_date is provided' do
@@ -125,10 +126,10 @@ RSpec.describe Mission::TransitEngine, type: :service do
       expect(record[:payload]).to be_nil
     end
 
-    it 'handles Titan transit' do
-      record = described_class.schedule_departure('titan_harvester_01', 'EARTH-01', 'TITAN-01', launch_date)
-      expect(record[:transit_days]).to eq(1388)
-      expect(record[:status]).to eq(:in_transit)
+    it 'raises for Titan transit (moon route rejected by Phase 1 topology containment)' do
+      expect {
+        described_class.schedule_departure('titan_harvester_01', 'EARTH-01', 'TITAN-01', launch_date)
+      }.to raise_error(Mission::UnsupportedTransferError, /unsupported topology for legacy transfer calculation.*TITAN-01/)
     end
   end
 
@@ -215,4 +216,166 @@ RSpec.describe Mission::TransitEngine, type: :service do
       expect(result).to eq(365)
     end
   end
+
+  describe 'Phase 1 topology containment' do
+    include ActiveSupport::Testing::TimeHelpers
+
+    let(:launch_date) { Date.new(2030, 1, 15) }
+    let(:fragment)    { 'unsupported topology for legacy transfer calculation' }
+
+    def calc(from, to)
+      described_class.calculate_transfer_window(from, to, launch_date)
+    end
+
+    # Spec-local planet-lineage fixture. Identifiers must be UPPERCASE because the
+    # engine resolves identifiers with .upcase. Each call gets its own solar system
+    # unless one is passed.
+    def planet(identifier, solar_system: create(:solar_system), **attrs)
+      create(:terrestrial_planet, identifier: identifier, solar_system: solar_system, **attrs)
+    end
+
+    # 1
+    it 'keeps an eligible parentless same-system planet pair on the existing dynamic path (characterization)' do
+      expect(described_class).not_to receive(:fallback_transfer_window)
+      result = calc('EARTH-01', 'VENUS-01')
+      expect(result).to be_a(Hash)
+      expect(result[:departure_date]).to eq(launch_date)
+      # No numeric transit_days assertion: it depends on seeded orbital data.
+    end
+
+    # 2, 3
+    it 'raises for planet → moon' do
+      expect { calc('EARTH-01', 'LUNA-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*LUNA-01/)
+    end
+
+    it 'raises for moon → planet' do
+      expect { calc('LUNA-01', 'EARTH-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*LUNA-01/)
+    end
+
+    # 4
+    it 'raises for a resolved generic non-planet-lineage CelestialBody' do
+      create(:celestial_body, identifier: 'TEST-GENERIC-01', solar_system: create(:solar_system))
+      expect { calc('EARTH-01', 'TEST-GENERIC-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*TEST-GENERIC-01/)
+    end
+
+    # 5
+    it 'raises for a planet-lineage body that has a parent' do
+      parent = planet('TEST-PARENT-01')
+      planet('TEST-CHILD-01', solar_system: parent.solar_system, parent_celestial_body_id: parent.id)
+      expect { calc('EARTH-01', 'TEST-CHILD-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*TEST-CHILD-01/)
+    end
+
+    # 6
+    it 'raises for a planet-lineage body with nil solar_system_id' do
+      orphan = planet('TEST-NOSYS-01')
+      orphan.update_column(:solar_system_id, nil)
+      expect { calc('EARTH-01', 'TEST-NOSYS-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*TEST-NOSYS-01/)
+    end
+
+    it 'raises when the solar_system association does not resolve' do
+      # Stubbed for all CelestialBody instances in this example, so the first
+      # resolved endpoint fails; the assertion is on the error and the fragment.
+      allow_any_instance_of(CelestialBodies::CelestialBody).to receive(:solar_system).and_return(nil)
+      expect { calc('EARTH-01', 'VENUS-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}/)
+    end
+
+    # 7
+    it 'raises for a resolved dwarf planet' do
+      create(:dwarf_planet, identifier: 'TEST-DWARF-01')
+      expect { calc('EARTH-01', 'TEST-DWARF-01') }
+        .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*TEST-DWARF-01/)
+    end
+
+    # 8
+    it 'raises for a parentless planet pair in different solar systems and names both identifiers' do
+      planet('TEST-SYSA-01')
+      planet('TEST-SYSB-01')
+      expect { calc('TEST-SYSA-01', 'TEST-SYSB-01') }
+        .to raise_error(Mission::UnsupportedTransferError) { |e|
+          expect(e.message).to include(fragment)
+          expect(e.message).to include('TEST-SYSA-01')
+          expect(e.message).to include('TEST-SYSB-01')
+        }
+    end
+
+    # 9 (unknown identifier in either position)
+    [%w[LUNA-01 TEST-UNKNOWN-01], %w[TEST-UNKNOWN-01 LUNA-01]].each do |from, to|
+      it "raises for moon with unknown identifier (#{from} → #{to})" do
+        expect { calc(from, to) }
+          .to raise_error(Mission::UnsupportedTransferError, /#{Regexp.escape(fragment)}.*LUNA-01/)
+      end
+    end
+
+    # 10 (unknown identifier in either position)
+    [%w[EARTH-01 TEST-UNKNOWN-01], %w[TEST-UNKNOWN-01 EARTH-01]].each do |from, to|
+      it "preserves the existing fallback for eligible planet with unknown identifier (#{from} → #{to})" do
+        expect(described_class).to receive(:fallback_transfer_window).and_call_original
+        result = calc(from, to)
+        expect(result[:transit_days]).to be_a(Integer)
+      end
+    end
+
+    # 11
+    it 'preserves the existing fallback for unknown → unknown' do
+      expect(described_class).to receive(:fallback_transfer_window).and_call_original
+      result = calc('TEST-UNKNOWN-A', 'TEST-UNKNOWN-B')
+      expect(result[:transit_days]).to be_a(Integer)
+    end
+
+    # 12
+    it 'preserves the existing fallback values for an eligible pair with missing orbital data' do
+      allow(described_class).to receive(:orbital_data).and_return(nil)
+
+      venus = calc('EARTH-01', 'VENUS-01')
+      expect(venus[:transit_days]).to eq(146)
+      expect(venus[:arrival_date]).to eq(launch_date + 146)
+
+      mars = calc('EARTH-01', 'MARS-01')
+      expect(mars[:transit_days]).to eq(259)
+    end
+
+    # 13
+    it 'raises Mission::UnsupportedTransferError with the stable fragment and offending identifier, returning no result' do
+      result = nil
+      expect { result = calc('EARTH-01', 'LUNA-01') }
+        .to raise_error(Mission::UnsupportedTransferError) { |e|
+          expect(e).to be_a(StandardError)
+          expect(e.message).to include(fragment)
+          expect(e.message).to include('LUNA-01')
+        }
+      expect(result).to be_nil
+    end
+
+    # 14
+    it 'raises before any orbital-data, dynamic, fallback, or route-table method is reached' do
+      %i[orbital_data fallback_transfer_window compute_transit_days_dynamic fallback_transit_days compute_transit_days].each do |m|
+        expect(described_class).not_to receive(m)
+      end
+
+      expect { calc('EARTH-01', 'LUNA-01') }.to raise_error(Mission::UnsupportedTransferError)
+      expect { calc('LUNA-01', 'TEST-UNKNOWN-01') }.to raise_error(Mission::UnsupportedTransferError)
+    end
+
+    # 15
+    it 'leaves the direct legacy helpers unchanged and unguarded' do
+      expect(described_class.earth_to_luna_transit_days).to eq(7)
+      expect { described_class.luna_to_venus_transit_days }.not_to raise_error
+      expect(described_class.luna_to_venus_transit_days).to eq(described_class.earth_to_venus_transit_days)
+    end
+
+    # 17
+    it 'honors an explicit launch date independent of the host clock' do
+      travel_to(Time.zone.local(2001, 2, 3)) do
+        expect(calc('EARTH-01', 'VENUS-01')[:departure_date]).to eq(launch_date)
+        expect { calc('EARTH-01', 'LUNA-01') }.to raise_error(Mission::UnsupportedTransferError)
+      end
+    end
+  end
+
 end
