@@ -142,14 +142,14 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 
 ### Run Tests
 ```bash
-# Full suite (in container)
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
+# Full suite (in container) — REQUIRED: env prefix + log redirect
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
 
-# Specific file
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec spec/models/shell_spec.rb
+# Specific file (same rules)
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec spec/models/shell_spec.rb > /home/galaxy_game/log/rspec_$(date +%s).log 2>&1'
 
-# Check failures
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec --format documentation --dry-run 2>&1 | grep "failed"
+# After the run, inspect the log (do not paste the full log into chat)
+docker exec web bash -c 'tail -50 /home/galaxy_game/log/rspec_full_*.log | tail -50'
 ```
 
 ### Git Workflow (Host Only - NEVER in container)
