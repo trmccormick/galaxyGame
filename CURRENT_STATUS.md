@@ -1,3 +1,13 @@
+> **⚠️ Status note (2026-10-09):** This file is a historical log only (last entry June 2026).
+> 
+> **Authoritative current status** lives in the agent-tasks repo:
+> 
+> projects/galaxy_game/status.md
+> 
+> Current baseline: ~4764 examples / ~143 failures.
+> 
+> Always run specs with `unset DATABASE_URL && RAILS_ENV=test`.
+
 ---
 
 # June 15, 2026 — Luna AI Manager Training Refresh ✅ COMPLETE
