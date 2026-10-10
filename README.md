@@ -90,8 +90,8 @@ cd galaxyGame
 # Start development environment
 docker-compose -f docker-compose.dev.yml up
 
-# Run tests (in container)
-docker-compose -f docker-compose.dev.yml exec web bundle exec rspec
+# Run tests (in container) — REQUIRED env prefix
+docker-compose -f docker-compose.dev.yml exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec'
 
 # Access application
 open http://localhost:3000
@@ -190,9 +190,9 @@ result = Logistics::PlayerContractService.create_logistics_contract(contract_dat
 We welcome contributions! Current focus areas:
 
 ### Active Development (Phase 3)
-- **Test Restoration**: Surgical fixes for ~393 failing specs
+- **Test health**: See agent-tasks `projects/galaxy_game/status.md` for current failure counts and in-flight work
 - **Code Quality**: Improving test coverage and documentation
-- **Bug Fixes**: Addressing issues in manufacturing, financial, and settlement systems
+- **Bug Fixes**: Addressing issues in manufacturing, financial, settlement, and rendering systems
 
 ### Upcoming (Phase 4)
 - **UI Enhancement**: SimEarth-style admin panels and D3.js visualizations
@@ -234,10 +234,10 @@ Humanity has discovered a network of wormholes enabling FTL travel. Your role: g
 ## 📊 Project Metrics
 
 ### Test Suite Health
-- **Total Examples**: ~2,600
-- **Current Failures**: ~393 (Phase 3 restoration in progress)
-- **Target**: <50 failures before Phase 4
-- **Coverage**: SimpleCov tracking (manufacturing pipeline fully tested)
+- **Total Examples**: ~4764
+- **Current Failures**: ~143 (see agent-tasks `projects/galaxy_game/status.md`)
+- **Coverage**: SimpleCov tracking
+- **Note**: Always run specs with `unset DATABASE_URL && RAILS_ENV=test`
 
 ### Development Activity
 - **Active Branch**: `main`
