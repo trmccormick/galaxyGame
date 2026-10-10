@@ -16,24 +16,140 @@
   </div>
 
   <div class="detail-body">
-    <!-- Image Preview -->
-    <div class="detail-image-section">
-      <% if @entry[:has_image] %>
-        <%= image_tag "/images/#{@entry[:thumbnail_path]}", alt: @entry[:name], class: 'detail-image' %>
-      <% else %>
-        <div class="image-placeholder-large">
-          <i class="<%= thumbnail_icon(@entry) %>"></i>
-          <p>No image generated yet</p>
-        </div>
-      <% end %>
-    </div>
+    <!-- C3: B2 Catalog Presentation Contract Section -->
+    <% if @catalog_contract %>
+      <div class="catalog-contract-section">
+        <h2>Catalog Presentation</h2>
 
-    <!-- JSON Data Panel -->
+        <!-- Catalog Render Image (B2 contract field) -->
+        <% if @catalog_contract[:catalog_render_path] %>
+          <div class="catalog-render">
+            <h3>Catalog Render</h3>
+            <%= image_tag @catalog_contract[:catalog_render_path], alt: "#{@entry[:name]} catalog render", class: 'catalog-render-image' %>
+          </div>
+        <% else %>
+          <div class="catalog-render-missing">
+            <p>No catalog render available</p>
+          </div>
+        <% end %>
+
+        <!-- Inventory Icon (B2 contract field) -->
+        <% if @catalog_contract[:inventory_icon_path] %>
+          <div class="inventory-icon">
+            <h3>Inventory Icon</h3>
+            <%= image_tag @catalog_contract[:inventory_icon_path], alt: "#{@entry[:name]} inventory icon", class: 'inventory-icon-image' %>
+          </div>
+        <% end %>
+
+        <!-- Representation Status (B2 contract field) -->
+        <% if @catalog_contract[:representation_status] %>
+          <div class="representation-status">
+            <span class="status-badge status-<%= @catalog_contract[:representation_status] %>">
+              <%= @catalog_contract[:representation_status].titleize %>
+            </span>
+          </div>
+        <% end %>
+
+        <!-- Asset Identity (B2 contract fields) -->
+        <div class="asset-identity">
+          <h3>Asset Identity</h3>
+          <table class="info-table">
+            <tr>
+              <th>Asset ID</th>
+              <td><code><%= @catalog_contract[:asset_id] %></code></td>
+            </tr>
+            <tr>
+              <th>Blueprint ID</th>
+              <td><code><%= @catalog_contract[:blueprint_id] %></code></td>
+            </tr>
+            <tr>
+              <th>Asset Family</th>
+              <td><%= @catalog_contract[:asset_family]&.capitalize %></td>
+            </tr>
+            <tr>
+              <th>Component Class</th>
+              <td><%= @catalog_contract[:component_class]&.capitalize %></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Blueprint Data (B2 contract field) -->
+        <% if @catalog_contract[:blueprint_data] %>
+          <div class="blueprint-data-section">
+            <h3>Blueprint Data</h3>
+            <div class="collapsible-panel">
+              <button class="panel-toggle" onclick="togglePanel(this)">
+                <i class="fas fa-code"></i> Show Blueprint JSON
+              </button>
+              <pre class="panel-content"><%= highlight_json(@catalog_contract[:blueprint_data]) %></pre>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Operational Data (B2 contract field — Units only, not Components) -->
+        <% if @catalog_contract.key?(:operational_data) && @catalog_contract[:operational_data] %>
+          <div class="operational-data-section">
+            <h3>Operational Data</h3>
+            <div class="collapsible-panel">
+              <button class="panel-toggle" onclick="togglePanel(this)">
+                <i class="fas fa-code"></i> Show Operational JSON
+              </button>
+              <pre class="panel-content"><%= highlight_json(@catalog_contract[:operational_data]) %></pre>
+            </div>
+          </div>
+        <% elsif @catalog_contract.key?(:operational_data) %>
+          <div class="operational-data-section">
+            <h3>Operational Data</h3>
+            <p class="no-data">No operational data available for this asset.</p>
+          </div>
+        <% end %>
+
+        <!-- Visual Definition (B2 contract field) -->
+        <% if @catalog_contract[:visual_definition] %>
+          <div class="visual-definition-section">
+            <h3>Visual Definition</h3>
+            <div class="collapsible-panel">
+              <button class="panel-toggle" onclick="togglePanel(this)">
+                <i class="fas fa-eye"></i> Show Visual Definition JSON
+              </button>
+              <pre class="panel-content"><%= highlight_json(@catalog_contract[:visual_definition]) %></pre>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Representations (B2 contract field) -->
+        <% if @catalog_contract[:representations] %>
+          <div class="representations-section">
+            <h3>Representations</h3>
+            <table class="info-table">
+              <thead>
+                <tr>
+                  <th>Profile</th>
+                  <th>Status</th>
+                  <th>Path</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @catalog_contract[:representations].each do |profile, status| %>
+                  <tr>
+                    <td><%= profile %></td>
+                    <td><span class="status-badge status-<%= status %>"><%= status.titleize %></span></td>
+                    <td><code><%= @catalog_contract[:representations][profile][:path] || '—' %></code></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Legacy Entry Data (preserved for non-contract entries) -->
     <div class="detail-data-section">
-      <h2>Blueprint Data</h2>
+      <h2>Entry Details</h2>
       <div class="collapsible-panel">
         <button class="panel-toggle" onclick="togglePanel(this)">
-          <i class="fas fa-code"></i> Show JSON Data
+          <i class="fas fa-code"></i> Show Entry JSON Data
         </button>
         <pre class="panel-content"><%= highlight_json(@entry[:data]) %></pre>
       </div>

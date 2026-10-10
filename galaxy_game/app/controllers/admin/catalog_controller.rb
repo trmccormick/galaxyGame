@@ -30,12 +30,46 @@ class Admin::CatalogController < ApplicationController
 
     # Find cross-reference (blueprint ↔ operational_data)
     @cross_ref = find_cross_reference(@entry)
+
+    # C3: Wire B2 catalog presentation contract for RH-400 vertical slice
+    @catalog_contract = catalog_data_for_entry(@entry)
   end
 
   private
 
   def catalog_service
     @catalog_service ||= CatalogService.new
+  end
+
+  # C3 — Resolve asset_id from entry and assemble B2 catalog presentation contract
+  def catalog_data_for_entry(entry)
+    return nil unless entry
+
+    # Map blueprint_id → asset_id via AssetRegistry lookup
+    asset_id = resolve_asset_id_for_blueprint(entry[:data])
+    return nil unless asset_id
+
+    catalog_service.catalog_data(asset_id)
+  end
+
+  # Resolve asset_id from blueprint data (C2 wiring)
+  def resolve_asset_id_for_blueprint(blueprint_data)
+    return nil unless blueprint_data.is_a?(Hash)
+
+    blueprint_id = blueprint_data['id'] || blueprint_data['blueprint_id']
+    return nil unless blueprint_id
+
+    # Check AssetRegistry for known mappings
+    registry = AssetRegistry.new
+    # Try direct asset_id lookup by blueprint_id match
+    if registry.respond_to?(:find_asset_by_blueprint_id)
+      registry.find_asset_by_blueprint_id(blueprint_id)&.dig(:entry, :asset_id)
+    else
+      # Fallback: check known RH-400 mapping
+      if blueprint_id == AssetRegistry::RH400_BLUEPRINT_ID
+        AssetRegistry::RH400_ASSET_ID
+      end
+    end
   end
 
   def find_cross_reference(entry)
