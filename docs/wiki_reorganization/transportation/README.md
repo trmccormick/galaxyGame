@@ -60,3 +60,14 @@ This hub organizes all craft, satellite, and logistics documentation for Galaxy 
 
 - **2026-09-15**: Created hub page; linked craft taxonomy and GCC mining satellite entries (Phase 4).
 - **2026-09-15**: Normalized to Economy hub pattern: architecture overview, doc map grouped by purpose, Key Models & Services table, cross-domain references (Transportation normalization).
+
+---
+
+## TransitEngine Topology Containment — Phase 1 Notes
+
+**Gap tracking**: see [GAPS.md — Gap D](./GAPS.md#gap-d-transitengine-topology-containment--phase-1-verified-gaps-unresolved).
+
+- The retained legacy dynamic path in `Mission::TransitEngine.calculate_transfer_window` is reachable only for the same-system, parentless planet-lineage topology proxy; passing the proxy is not a claim of support or physical correctness.
+- Moon/satellite, parented, non-planet, dwarf/minor-body, and otherwise nonconforming resolved bodies raise `Mission::UnsupportedTransferError` in this path. Unresolvable identifiers keep the legacy fallback when every resolved endpoint passes.
+- The precursor Earth→Luna scenario in `luna_mission:phase_timing` uses an explicitly labeled static 7-game-day duration. Earth→Venus remains on the engine path.
+- The proxy is temporary containment, not a route-planning system. Future work (reference-frame metadata, central-body association, per-body `mu`, parent/SOI transitions, multi-leg routing) is human-filed follow-up work, not something the implementer creates or dispatches.
