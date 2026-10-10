@@ -127,38 +127,14 @@ A SimEarth-inspired Rails game featuring realistic space colonization, manufactu
 
 ---
 
-## 🎯 Development Phases
+## 🎯 Development Status
 
-### Current: Phase 3 - Integration & Restoration
-**Goal**: Reduce test failures from 401 → <50  
-**Status**: ~393 failures remaining  
-**Approach**: Surgical fixes preserving post-Jan-8 improvements
+**Authoritative status** lives in the agent-tasks repo:  
+`projects/galaxy_game/status.md`
 
-**Recent Progress**:
-- ✅ shell_spec.rb - 66/66 passing
-- ✅ consortium_membership_spec.rb - 5/5 passing
-- ✅ covering_service_spec.rb - 23/24 passing
-- ✅ protoplanet_spec.rb - 10/10 passing (new protoplanet model)
-- ✅ terrain generation - Titan GeoTIFF support, protoplanet terrain
-- 🔄 financial/account_spec.rb - in progress
-
-### Next: Phase 4 - UI Enhancement
-**Prerequisite**: <50 test failures  
-**Vision**: SimEarth admin panel + Eve Online mission builder
-
-**Planned Features**:
-- System economic projection dashboard
-- D3.js resource flow visualization
-- Mission profile builder interface
-- AI pattern library viewer
-
-### Future: Phase 5 - AI Pattern Learning
-**Goal**: Autonomous wormhole expansion  
-**Components**:
-- Pattern extraction from missions
-- Success metric calculation
-- Autonomous deployment decisions
-- Local resource adaptation
+- Current baseline: ~4764 examples / ~143 failures (Oct 2026)
+- Always run specs with `unset DATABASE_URL && RAILS_ENV=test`
+- The old Phase 3 / ~393 language that previously lived here is historical and no longer accurate.
 
 ---
 
