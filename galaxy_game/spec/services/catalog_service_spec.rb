@@ -133,4 +133,98 @@ RSpec.describe CatalogService do
       expect(result.empty?).to be true
     end
   end
+
+  # C2 — Catalog Data Wiring tests
+  describe '#catalog_data' do
+    it 'returns nil for unknown asset_id' do
+      result = service.catalog_data('UNKNOWN_ASSET_ID')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil for blank asset_id' do
+      result = service.catalog_data('')
+      expect(result).to be_nil
+    end
+
+    it 'returns a hash with B2 contract fields for registered RH-400 Unit' do
+      # Register RH-400 in the registry (C1/C4 already does this, but test isolation)
+      registry = AssetRegistry.new
+      entry = registry.register_asset(
+        asset_id: AssetRegistry::RH400_ASSET_ID,
+        blueprint_id: AssetRegistry::RH400_BLUEPRINT_ID,
+        asset_family: 'vehicle',
+        component_class: 'harvester'
+      )
+
+      result = service.catalog_data(AssetRegistry::RH400_ASSET_ID, registry: registry)
+      
+      expect(result).to be_a(Hash)
+      expect(result[:asset_id]).to eq(AssetRegistry::RH400_ASSET_ID)
+      expect(result[:blueprint_id]).to eq(AssetRegistry::RH400_BLUEPRINT_ID)
+      expect(result[:asset_family]).to eq('vehicle')
+      expect(result[:component_class]).to eq('harvester')
+      expect(result).to have_key(:blueprint_data)
+      expect(result).to have_key(:operational_data)
+      expect(result).to have_key(:visual_definition)
+      expect(result).to have_key(:catalog_render_path)
+      expect(result).to have_key(:inventory_icon_path)
+      expect(result).to have_key(:representation_status)
+    end
+
+    it 'includes operational_data key for Units/Structures/Vehicles (may be nil if no file)' do
+      registry = AssetRegistry.new
+      registry.register_asset(
+        asset_id: 'VEHICLE_TEST_ROVER_T001',
+        blueprint_id: 'test_rover',
+        asset_family: 'vehicle',
+        component_class: 'rover'
+      )
+
+      result = service.catalog_data('VEHICLE_TEST_ROVER_T001', registry: registry)
+      
+      # The key must exist in the contract for Units/Structures/Vehicles
+      expect(result).to have_key(:operational_data)
+      # Value may be nil if no operational data file exists on disk — that is correct
+    end
+
+    it 'excludes operational_data for Components (I-beam case)' do
+      registry = AssetRegistry.new
+      registry.register_asset(
+        asset_id: 'COMPONENT_I_BEAM_MK1',
+        blueprint_id: 'i_beam_mk1',
+        asset_family: 'component',
+        component_class: 'structural'
+      )
+
+      result = service.catalog_data('COMPONENT_I_BEAM_MK1', registry: registry)
+      
+      expect(result).to be_a(Hash)
+      expect(result[:asset_family]).to eq('component')
+      # Components must NOT have operational_data — no fake/empty sections
+      expect(result[:operational_data]).to be_nil
+    end
+
+    it 'does not generate fake Operational Data for Components' do
+      registry = AssetRegistry.new
+      registry.register_asset(
+        asset_id: 'COMPONENT_PANEL_MK1',
+        blueprint_id: 'panel_mk1',
+        asset_family: 'component',
+        component_class: 'structural'
+      )
+
+      result = service.catalog_data('COMPONENT_PANEL_MK1', registry: registry)
+      
+      expect(result[:operational_data]).to be_nil
+      # Verify the contract still has all required fields minus operational_data
+      expect(result[:asset_id]).to eq('COMPONENT_PANEL_MK1')
+      expect(result[:blueprint_id]).to eq('panel_mk1')
+    end
+
+    it 'preserves existing catalog behavior — entries_for unchanged' do
+      # Verify the new wiring does not break existing CatalogService functionality
+      entries = service.entries_for(category: nil)
+      expect(entries).to be_an(Array)
+    end
+  end
 end
