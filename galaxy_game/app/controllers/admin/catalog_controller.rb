@@ -35,6 +35,20 @@ class Admin::CatalogController < ApplicationController
     @catalog_contract = catalog_data_for_entry(@entry)
   end
 
+  # C3: Serve catalog images from app/data
+  def catalog_image
+    # Receive path like: images/catalog/crafts/ground/rh400_concept.png
+    file_path = GalaxyGame::Paths::JSON_DATA.join(params[:path])
+    catalog_dir = GalaxyGame::Paths::JSON_DATA.join('images', 'catalog')
+    
+    # Security: ensure path doesn't escape catalog directory
+    if file_path.to_s.start_with?(catalog_dir.to_s) && File.exist?(file_path)
+      send_file file_path, disposition: 'inline'
+    else
+      head :not_found
+    end
+  end
+
   private
 
   def catalog_service
@@ -49,7 +63,22 @@ class Admin::CatalogController < ApplicationController
     asset_id = resolve_asset_id_for_blueprint(entry[:data])
     return nil unless asset_id
 
-    catalog_service.catalog_data(asset_id)
+    contract = catalog_service.catalog_data(asset_id)
+    
+    # C3: Convert file paths to servable URLs
+    if contract && contract[:catalog_render_path]
+      # Remove /app/data/ prefix to get relative path for serving
+      rel_path = contract[:catalog_render_path].sub(%r{^/app/data/}, '')
+      contract[:catalog_render_path] = admin_catalog_image_path(path: rel_path)
+    end
+    
+    if contract && contract[:inventory_icon_path]
+      # Remove /app/data/ prefix to get relative path for serving
+      rel_path = contract[:inventory_icon_path].sub(%r{^/app/data/}, '')
+      contract[:inventory_icon_path] = admin_catalog_image_path(path: rel_path)
+    end
+    
+    contract
   end
 
   # Resolve asset_id from blueprint data (C2 wiring)

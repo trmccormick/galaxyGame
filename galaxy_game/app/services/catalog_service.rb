@@ -88,9 +88,82 @@ class CatalogService
   def catalog_data(asset_id, registry: nil)
     reg = registry || @registry ||= AssetRegistry.new
     entry = reg.resolve(asset_id)
+    
+    # C3 Fallback: If registry can't find RH-400 (due to visual definitions not mounted),
+    # assemble a minimal contract from known blueprint + catalog images
+    if entry.nil? && asset_id == AssetRegistry::RH400_ASSET_ID
+      entry = assemble_rh400_entry
+    end
+    
     return nil unless entry
 
     assemble_catalog_contract(entry)
+  end
+
+  # Minimal RH-400 entry for C3 catalog display when AssetRegistry discovery fails
+  def assemble_rh400_entry
+    {
+      asset_id: AssetRegistry::RH400_ASSET_ID,
+      blueprint_id: AssetRegistry::RH400_BLUEPRINT_ID,
+      asset_family: 'unit',
+      component_class: 'rover',
+      file_prefix: AssetRegistry::RH400_FILE_PREFIX,
+      blueprint_path: find_blueprint_path(AssetRegistry::RH400_BLUEPRINT_ID),
+      operational_data_path: find_operational_data_path(AssetRegistry::RH400_BLUEPRINT_ID),
+      visual_definition_path: nil,
+      render_template_path: nil,
+      visual_profile_id: nil,
+      representations: {
+        'catalog_render' => {
+          status: 'exists',
+          files: find_rh400_catalog_renders,
+          complexity_levels: [],
+          notes: nil
+        },
+        'inventory_icon' => {
+          status: 'missing',
+          files: [],
+          complexity_levels: [],
+          notes: nil
+        }
+      },
+      catalog_manifest_path: nil,
+      surface_manifest_path: nil,
+      created_at: Time.current,
+      updated_at: Time.current
+    }
+  end
+
+  # Find RH-400 catalog render images (for C3 fallback)
+  def find_rh400_catalog_renders
+    catalog_images_dir = base_path.join('images', 'catalog')
+    files = []
+    files.concat(Dir.glob(catalog_images_dir.join("**/rh400_*concept*.png")).to_a)
+    files.concat(Dir.glob(catalog_images_dir.join("**/rh400_*regolith*.png")).to_a)
+    # Return relative paths from Rails root for asset serving
+    files.map { |f| "/app/data/" + Pathname.new(f).relative_path_from(base_path).to_s }
+  end
+
+  # Helper to find blueprint path for a blueprint_id
+  def find_blueprint_path(blueprint_id)
+    return nil unless blueprint_id.present?
+    catalog_entries = entries
+    blueprint_entry = catalog_entries.find { |e| e[:source_type] == 'blueprint' && e[:id] == blueprint_id }
+    return nil unless blueprint_entry
+    blueprint_entry[:file_path]
+  end
+
+  # Helper to find operational_data path for a blueprint_id
+  def find_operational_data_path(blueprint_id)
+    return nil unless blueprint_id.present?
+    catalog_entries = entries
+    op_entry = catalog_entries.find do |e|
+      e[:source_type] == 'operational_data' &&
+        (File.basename(e[:id], '.json') == blueprint_id ||
+         File.basename(e[:id], '.json').start_with?(blueprint_id))
+    end
+    return nil unless op_entry
+    op_entry[:file_path]
   end
 
   private

@@ -123,6 +123,7 @@ Rails.application.routes.draw do
     get 'settlements/construction_jobs', to: 'settlements#construction_jobs', as: 'settlement_construction_jobs'
     
     # Catalog routes — blueprint + operational data unified view
+    get 'catalog/image/*path', to: 'catalog#catalog_image', as: 'catalog_image', constraints: { path: /.*/ }, format: false
     get 'catalog', to: 'catalog#index', as: 'catalog'
     get 'catalog/:id', to: 'catalog#show', as: 'catalog_entry'
     

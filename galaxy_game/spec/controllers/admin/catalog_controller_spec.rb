@@ -129,7 +129,7 @@ RSpec.describe Admin::CatalogController, type: :controller do
         blueprint_id: 'regolith_harvester_rover',
         asset_family: 'vehicle',
         component_class: 'harvester',
-        catalog_render_path: '/assets/catalog/vehicles/rh400_concept.png',
+        catalog_render_path: '/app/data/images/catalog/crafts/ground/rh400_concept.png',
         inventory_icon_path: nil,
         representation_status: 'partial',
         blueprint_data: { 'id' => 'regolith_harvester_rover', 'name' => 'Regolith Harvester Rover' },
@@ -160,9 +160,11 @@ RSpec.describe Admin::CatalogController, type: :controller do
       expect(response).to render_template(:show)
     end
 
-    it 'includes catalog_render_path in contract' do
+    it 'includes catalog_render_path in contract as serving URL' do
       get :show, params: { id: 'crafts/ground/harvesters/regolith_harvester_rover' }
-      expect(assigns(:catalog_contract)[:catalog_render_path]).to eq('/assets/catalog/vehicles/rh400_concept.png')
+      # The controller converts file paths to URLs for serving through the catalog_image action
+      expect(assigns(:catalog_contract)[:catalog_render_path]).to include('/admin/catalog/image/')
+      expect(assigns(:catalog_contract)[:catalog_render_path]).to include('rh400_concept.png')
     end
 
     it 'includes representation_status in contract' do
@@ -180,6 +182,44 @@ RSpec.describe Admin::CatalogController, type: :controller do
       get :show, params: { id: 'crafts/ground/harvesters/regolith_harvester_rover' }
       expect(assigns(:entry)).to eq(rh400_entry)
       expect(assigns(:cross_ref)).to be_nil
+    end
+  end
+
+  # C3 — RH-400 Catalog Image Serving (fallback when AssetRegistry fails)
+  describe 'GET #catalog_image' do
+    let(:catalog_image_dir) { Pathname.new("/home/galaxy_game/app/data/images/catalog") }
+    let(:rh400_concept_image) { "crafts/ground/rh400_concept.png" }
+
+    before do
+      # Create a temporary test image file if it doesn't exist
+      unless File.exist?(catalog_image_dir.join(rh400_concept_image))
+        FileUtils.mkdir_p(catalog_image_dir.join("crafts/ground"))
+        FileUtils.touch(catalog_image_dir.join(rh400_concept_image))
+      end
+    end
+
+    it 'serves a valid catalog image' do
+      image_path = "images/catalog/crafts/ground/rh400_concept.png"
+      get :catalog_image, params: { path: image_path }
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to start_with('image')
+    end
+
+    it 'rejects path traversal attempts' do
+      get :catalog_image, params: { path: '../../etc/passwd' }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'returns 404 for non-existent files' do
+      get :catalog_image, params: { path: 'images/catalog/nonexistent.png' }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'accepts nested paths within catalog directory' do
+      image_path = "images/catalog/crafts/ground/rh400_concept.png"
+      get :catalog_image, params: { path: image_path }
+      # Should not return 404 for valid paths
+      expect(response.status).not_to eq(404)
     end
   end
 end
