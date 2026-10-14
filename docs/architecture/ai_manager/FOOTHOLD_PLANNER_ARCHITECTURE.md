@@ -125,3 +125,27 @@ These are intentional limitations of the thin skeleton, not bugs. They are docum
 
 3. **Reserved system_context keys**
    `distance_from_sun`, `parent_body`, and `nearby_nodes` are documented in the input contract but not yet read by scoring. Intentional until transport-cost estimation exists; do not treat as bugs.
+
+---
+
+## Cross-link: Development Corps, LDC, and terraforming (2026-10-14)
+
+Footholds are how the AI Manager **opens a world for players** via Development Corporation bases. Early sponsorship is generally **LDC** (Lunar Development Corporation): expansion-focused, non-profit, and the **GCC mint**. Foothold budgets are in **GCC**.
+
+Foothold planning (this document) ranks *where and how* to establish presence from local resources and logistics context. It does not by itself run full planetary terraforming. Terraforming is a later background program:
+
+- Ranked via Digital Twin / curated option sets under planetary conditions, residual risk, and GCC
+- Real programs wait on **cycler capacity** and preferred **in-system feedstock** (see Sol Venus–Mars corridor and outer methane/H₂ paths)
+- Demand appears as **market buy orders**; players fill first; automated/cycler logistics cover gaps
+
+Operational detail:
+
+→ `docs/gameplay/terraforming.md`
+
+Life/Seed vs brute-force:
+
+→ `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+
+Market player-first / EAP / cycler fallback:
+
+→ `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`
