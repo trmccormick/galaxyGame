@@ -1,5 +1,19 @@
 # Physics & Topology: The Brown Dwarf Hub
 
+## Documentation status (2026-10-14)
+
+This file records **physics/topology intent**, not finished simulation constants. The mass-limit relationship, stability index, EM surplus, and AWS “mass-damper” effects are directional design. Exact numbers and live overload/reset behavior are **still in flux**.
+
+AWS artificially manages links for more stability; it does **not** remove mass limits, counterbalance/topology rules, or EM as the energy required to open and hold a wormhole. Prefer in-system bulk for terraforming-scale feedstock; cross-wormhole bulk remains possible but impractical at planetary scale.
+
+Snap backstory and maturity intent (thresholds not locked):
+
+→ `docs/storyline/02_crisis_mechanics.md`
+
+Terraforming logistics preference:
+
+→ `docs/gameplay/terraforming.md`
+
 ## Brown Dwarfs as Logistics Batteries
 
 Brown Dwarfs act as unique "Logistics Batteries" due to their immense mass but lack of stellar radiation.
