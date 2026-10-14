@@ -30,8 +30,9 @@ TerraSim is responsible for simulating planetary surface and climate evolution. 
 
 ## Forward Terraforming & Digital Twin (2026-10-08)
 
-In addition to regression/weathering logic, TerraSim supports forward terraforming projections through the Digital Twin sandbox. The Digital Twin is used by the AI Manager to evaluate candidate projects (Terraforming Seeds, Worldhouses, atmospheric interventions, etc.) on a specific world, returning cost, timeline, planetary benefit, and residual risk estimates.
+In addition to regression/weathering logic, TerraSim supports forward terraforming projections through the Digital Twin sandbox. The Digital Twin is used by the AI Manager to evaluate candidate projects on a specific world — including Terraforming Seeds, Worldhouses, atmospheric/orbital engineering, and **brute-force** packages — returning cost, timeline, planetary benefit, residual risk, and confidence estimates under **GCC** and system feedstock constraints.
 
-Terraforming Seeds are staged construction projects that adapt basic life and gradually contribute to planetary change. They share construction technology with Worldhouses but are smaller, cheaper, and purpose-built for adaptation and biosphere contribution rather than long-term high-control habitation.
+Biology is optional. Brute-force paths (imported volatiles, reflectors, artificial magnetosphere, mass-driver delivery, etc.) may rank above Seeds when resources and budget favor pure engineering. Real Sol programs also depend on **cycler capacity** and preferred in-system feedstock (see gameplay terraforming doc).
 
-Full developmental direction: `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+- Seeds vs Worldhouses, life scope, residual risk: `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+- Ownership, Venus–Mars corridor, option sets, logistics: `docs/gameplay/terraforming.md`
