@@ -354,3 +354,15 @@ AI Manager: `if lava_tube.stability > 0.9 && resource_accessible? then primary_t
 
 ## AI MANAGER CORE CAPABILITY (Planet-Agnostic):
 DATA-DRIVEN = Planet-Adaptive
+
+## Cross-link: Terraforming, footholds, and Snap status (2026-10-14)
+
+This file focuses on inter-DC logistics, player-first markets, EAP, cyclers, and crisis/Snap logistics implications. It remains valid for that scope. Complementary intent:
+
+- **Terraforming** is background AI Manager work via Development Corp footholds (LDC early, GCC budgets), ranked options, and market buy orders — not a player planetary project UI. Sol corridor, cycler/feedstock gates, brute-force vs Seed: `docs/gameplay/terraforming.md`
+- **Life/Seed scope** (narrow, optional vs brute-force): `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+- **Foothold site ranking** (where to open a world): `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`
+- **Market role** (player-first, AI fill gaps): `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`
+- **Snap / mass limits**: pre-player backstory and directional physics; thresholds and timing still in flux — `docs/storyline/02_crisis_mechanics.md`, `docs/storyline/05_physics_topology.md`
+
+Prefer in-system bulk for planetary-scale feedstock. AWS manages links; mass limits, counterbalance, and EM cost still apply. Example tonnage, capacity, and phase numbers elsewhere in this file or storyline docs are not locked game facts until explicitly finalized.
