@@ -1,5 +1,23 @@
 # AI Manager Architecture Overview
 
+## Terraforming and planetary development (intent cross-link)
+
+Terraforming is **background AI Manager work**, not a player-controlled project. The Manager acts through **Development Corporation footholds** (LDC early; non-profit expansion; LDC is also the GCC mint). Decisions use **GCC** budgets, **Digital Twin** projections where available, and **market buy orders**. Players participate by extracting, hauling, and filling orders; unfilled demand falls back to automated harvesting and cycler logistics.
+
+Operational Sol detail (Venus–Mars corridor, cycler/feedstock gates, curated option sets, brute-force vs Seed paths, population as conditions/automation efficiency):
+
+→ `docs/gameplay/terraforming.md`
+
+Life / Seed / Worldhouse / residual biological risk (narrow scope):
+
+→ `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+
+Wormhole Snap and mass-limit **intent** (pre-player backstory; thresholds in flux):
+
+→ `docs/storyline/02_crisis_mechanics.md` and `docs/storyline/05_physics_topology.md`
+
+Prefer in-system bulk resources for planetary programs. AWS manages links; it does not remove mass limits, counterbalance rules, or EM cost. Portals are low-mass (people/small cargo); cyclers and docking carry bulk.
+
 ## Module Structure
 
 The AI Manager is a comprehensive autonomous system responsible for Galaxy Game's interplanetary expansion, settlement planning, and resource management. It consists of 30+ specialized services organized into a modular architecture.
