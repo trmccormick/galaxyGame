@@ -7,26 +7,113 @@ For current design intent on Terraforming Seeds vs Worldhouses, Digital Twin pro
 
 This gameplay document remains a player-facing / high-level overview and may contain older assumptions. Prefer the architecture direction document when resolving conflicts about background simulation behavior.
 
+## Background ownership and Venus–Mars corridor (2026-10-09)
+
+Terraforming is run by the AI Manager through Development Corporation foothold bases. Those bases open a world for players. The AI Manager decides for the NPC/corp bases under real GCC (budget) constraints. Players do not directly control terraforming projects. Admins may adjust if needed; normal play assumes minimal admin intervention.
+
+Early footholds and new settlements are generally sponsored by the LDC (Lunar Development Corporation), the first Earth-sponsored Development Corporation. LDC is expansion-focused, non-profit, and is also the GCC mint. Foothold and terraforming budgets on Development Corp bases are denominated in GCC. USD is the usual unit for dealing with Earth; Earth↔Luna trade is typically in USD. Logistics and similar corps may use both. At game start USD is pegged to GCC so Luna and corp markets can bootstrap from familiar real-world costs; the peg is removed later so GCC can diverge with in-game conditions. Players are currently planned around GCC only; that may change. Other currencies are not forbidden.
+
+Real terraforming programs do not start until cycler operations are established. In Sol, that most likely means after the Mars–Saturn/Titan cycler is running, so outer-system volatiles and sustained logistics can support long-horizon planetary work. Venus supplies excess CO₂ and N₂ plus industrial processing; it does not have native methane. Preferred methane is from Titan; preferred H₂ is from Saturn skimmers (Jupiter extraction is possible; Saturn is preferred because of Titan). Once H₂ sources are secured, Venus can synthesize methane from imported H₂ without consuming Mars or Luna water, which helps complete market resource needs. Alternative methane paths exist but are not preferred: Luna can make methane from extracted CO₂, and Mars can make methane from water ice plus CO₂ — both risk drawing down water the design prefers to keep on those bodies. Outer-system extraction and H₂ supply therefore unlock the preferred feedstock set. Earlier activity focuses on footholds, Venus CO₂/N₂ extraction and station markets, and building the transport backbone. The AI Manager may still project and rank options in the Digital Twin before then; it does not commit full planetary terraforming until cycler capacity and outer-system feedstock paths are in place.
+
+### Venus–Mars pairing (Sol)
+
+Venus has excess atmospheric gases; Mars has too little. They form a natural pair:
+
+- Venus: extraction and industrial support (gases, CNT, orbital infrastructure tech).
+- Venus orbital station: market where extracted gases are sold and where station support demand appears.
+- Mars: early terraforming and habitation target that needs imported volatiles and staged planetary work.
+
+Player missions support this corridor by extracting gases at Venus, selling at the Venus station, and/or hauling on player-owned transports. Imported gases support the station and early Mars terraforming by various avenues.
+
+### Market and logistics flow
+
+1. AI Manager posts buy orders on the market for what foothold bases and planetary projects need.
+2. Players may fill orders (sell at station or transport themselves).
+3. Logistics NPC corps move resources from where they are to where orders require them.
+4. If players do not fill orders, automated harvesting and/or cycler-scheduled imports run so progress does not stall.
+
+Digital Twin projections help the AI Manager rank options by planetary benefit, timeline, residual risk, and GCC cost before orders are posted. Initial curated option sets for fixed worlds (Mars, Venus, later others) guide early decisions and become training data; the Manager can later try variations in accelerated Twin runs.
+
+Options always depend on current planetary conditions. Other sandbox paths remain valid; this section describes the primary background path for Sol Venus–Mars work.
+
+## Initial AI Manager option sets — Mars and Venus (2026-10-09)
+
+These are curated starting options for the AI Manager on the first fixed Sol worlds. They are drawn from existing concepts in this document and from the architecture direction on Seeds, Worldhouses, and Digital Twin projections. The Manager ranks them under planetary conditions, residual risk, and GCC before posting market buy orders. Outcomes become training data; later the Manager may try variations in accelerated Digital Twin runs.
+
+Players do not select these options directly. They participate by extracting, selling, hauling, or filling the resulting market orders. Unfilled orders fall back to automated harvesting and cycler logistics.
+
+### Mars (habitation / early terraforming target)
+
+Condition summary: thin atmosphere, cold, limited volatiles; benefits from imported gases and staged work.
+
+1. **Gather more data / wait** — Improve detection confidence and cost estimates before committing budget.
+2. **Atmospheric thickening package** — Import CO₂ and related gases (Venus corridor and other sources); raise pressure and greenhouse effect.
+3. **Water / ice liberation support** — Polar and imported ice work to increase available water.
+4. **Orbital warming support** — Mirrors or adapted shade technology to improve surface temperature.
+5. **Stage 1 Terraforming Seed** — Minimal basic-life package in a protected structure; adaptation and limited biosphere contribution; cheaper than a full Worldhouse.
+6. **Small Worldhouse foothold** — High-control enclosed habitat for local habitability and industry (e.g. canyon/trench style); does not primarily change the global baseline.
+7. **Combined corridor order** — Coordinated buy orders that pull Venus-station gases and materials specifically for one of the above Mars packages.
+
+8. **Fast brute-force package (Venus-complete)** — Process Venus CO₂ to CO + O₂; export N₂ and O₂ to Mars via mass drivers; on Mars deploy a solar reflector and an artificial magnetosphere. Uses Venus as the full feedstock and industrial source so Mars-side work stays focused on reception, temperature, and atmospheric retention. Minimal or no biological deployment in this path; residual risk is mainly engineering, logistics, and GCC cost rather than life adaptation. Largest cost is infrastructure (processing, mass drivers, reflector, magnetosphere), not the gas itself. Ranking must allow cost asymmetry: Venus may need to move or monetize excess gas even when Mars foothold budget cannot fund the full package; infrastructure may be Venus-weighted, LDC/shared, or phased so Mars pays mainly for reception and local systems. Player involvement is heavier on hardware/fuel/construction supply than on recurring gas buy orders.
+
+Suitability of each option depends on current pressure, temperature, water availability, foothold capacity, and GCC.
+
+### Venus (industrial / gas-source role)
+
+Condition summary: extreme temperature and pressure, thick atmosphere, poor habitation prospect; strong extraction and industrial value.
+
+1. **Gather more data / wait**
+2. **Expand gas extraction** — Increase CO₂ and related gas harvest for station market and export.
+3. **Venus station support orders** — Buy/move resources needed to keep the orbital station supplied.
+4. **CNT / orbital infrastructure production** — Materials for shades, mirrors, and related tech (usable at Venus and adaptable for Mars warming).
+5. **Solar-shade related industrial work** — Cooling / industrial applications at Venus; tech overlap with Mars orbital warming.
+6. **Export logistics package** — Orders and transport capacity aimed at moving gases and products toward Mars or other demand.
+
+Venus options prioritize extraction, station economy, and export over surface habitation. Habitation-style Seeds or Worldhouses are not primary early options here.
+
+### Shared logistics (corridor)
+
+- Player haul on owned transports  
+- Sell at Venus station  
+- AI Manager buy orders → logistics NPC corps  
+- If unfilled: automated harvesting and cycler-scheduled imports  
+
+Order shape differs by path. Slow or mixed atmospheric and Seed-style options tend to generate recurring buy orders for gases and materials that players can fill over time. Fast brute-force packages concentrate demand on infrastructure: processing plant capacity, mass drivers, reflectors, magnetosphere hardware, fuel, and construction supply. Once that infrastructure is in place, recurring gas-haul orders may thin out unless throughput is deliberately kept market-facing. The AI Manager should weigh planetary benefit and GCC cost together with whether a path still leaves meaningful market work for players (or for logistics NPCs when players do not fill orders). Cost asymmetry still applies: Venus-side need to move excess gas can justify infrastructure even when Mars foothold budget is limited.
+
+Digital Twin projections should score Mars and Venus options with explicit GCC cost, timeline, planetary or industrial benefit, and residual risk before the Manager commits foothold budget.
+
+## Reading note for agents (2026-10-10)
+
+Sections above this line (Background ownership, Venus–Mars corridor, Initial AI Manager option sets, Shared logistics) are the current intent for who runs terraforming, how resources move, and how players participate (orders, haul, extract — not direct project control).
+
+Sections below may contain older or exploratory framing (workforce percentages, generic credits, player "investment in terraforming," portal networks). Treat those as concept history or optional advanced ideas. When they conflict with the sections above on ownership, GCC/LDC, market flow, or player role, prefer the sections above. Brute-force vs slow/Seed paths and order-shape differences are defined in the option sets and Shared logistics.
+
 ## Overview
 
-Terraforming in Galaxy Game serves dual purposes: industrial resource extraction and long-term planetary modification. While Mars remains the primary target for habitation terraforming, Venus plays a crucial early-game role as an industrial hub supporting Mars terraforming efforts.
+Terraforming in Galaxy Game is primarily **background** work run by the AI Manager through Development Corporation footholds. It drives resource flow, market buy orders, and player earning opportunities (extract, haul, fill orders). It is not a direct player-controlled planetary project.
+
+In Sol, **Venus** is the early industrial and gas-export platform (CO₂, N₂, processing, CNT/orbital tech). **Mars** is the main early habitation / atmospheric target, but real terraforming programs wait on cycler capacity and preferred feedstock (including outer-system methane/H₂). Preferred paths keep bulk resources in-system; wormholes and portals are not planetary-scale bulk pipes.
+
+See sections above the reading note for ownership, corridor, option sets, logistics, population, and economics. Sections below retain older or exploratory detail; prefer the current-intent sections when they conflict.
 
 ## Early Game: Venus as Industrial Terraforming Hub
 
 Before artificial wormholes become available, Venus serves as Earth's primary industrial platform for Mars terraforming:
 
 ### Venus Industrial Role
-- **Gas Extraction**: Harvesting CO2 and other gases for Mars atmospheric thickening
-- **Carbon Nanotube Production**: Manufacturing CNT for orbital shades and mirrors
-- **Solar Shade Construction**: Building massive orbital shades to cool Venus while providing technology for Mars warming
-- **Resource Processing**: Converting Venusian atmosphere into usable materials for interplanetary transport
+- **Gas extraction**: Harvesting CO₂ and N₂ for station markets and export (Venus has no native methane)
+- **Carbon nanotube production**: Manufacturing CNT for orbital shades, mirrors, and related infrastructure
+- **Solar shade construction**: Building orbital shades to cool Venus while providing technology adaptable for Mars warming
+- **Resource processing**: Converting Venusian atmosphere and energy advantage into usable materials and, once H₂ is imported, optional methane synthesis
+- **Industrial platform**: Heavy industry and export support for Sol logistics — not a near-term habitation / Seed target
 
 ### Mars Preparation Phase
 During this early period, Mars receives:
-- **Atmospheric gases** extracted from Venus
+- **CO₂ and N₂** extracted from Venus (not methane — Venus has no native methane)
 - **CNT materials** for infrastructure construction
-- **Orbital shade technology** adapted for Mars warming (reverse application)
-- **Industrial byproducts** that support colonization efforts
+- **Orbital shade / mirror technology** adaptable for Mars warming (reverse of Venus cooling applications)
+- **Industrial byproducts and processed intermediates** that support colonization and later feedstock chains
+- **Later (after H₂ supply):** Venus can synthesize methane from imported H₂; preferred early methane remains Titan once outer cyclers exist
 
 ## Primary Target: Mars
 
@@ -39,10 +126,11 @@ Once artificial wormholes enable direct access, Mars becomes the focus of compre
 - **Self-sustaining economy** with its own resource extraction and processing
 
 ### Terraforming Methods for Mars
-- **Atmospheric thickening** using imported CO2 and methane
-- **Water liberation** from polar ice caps and imported ice
-- **Temperature regulation** through greenhouse gases and orbital mirrors
-- **Biosphere establishment** starting with microbial ecosystems
+- **Atmospheric thickening** using imported CO₂, N₂, and (when available) methane from preferred sources — Titan methane, or Venus synthesis from imported H₂; not native Venus methane
+- **Water liberation** from polar ice caps and imported ice (avoid preferring processes that strip scarce local water for fuel/methane when outer H₂/Titan routes exist)
+- **Temperature regulation** through greenhouse gases and orbital mirrors/reflectors
+- **Biosphere establishment** only as an optional later path (e.g. Stage 1 Seeds); brute-force engineering paths may omit or defer life deployment
+- **Retention support** such as artificial magnetosphere where ranked cost-effective
 
 ## Historical Context: Venus Long-Term Goals
 
@@ -55,168 +143,115 @@ Venus was initially considered for habitation terraforming due to its proximity 
 - **Strategic positioning**: Orbital position allows efficient material transport to Mars
 
 ### Current Assessment
-While Venus habitation remains unlikely due to:
+
+Venus is not a near-term habitation or Seed target given:
+
 - Surface temperatures exceeding 400°C
 - Atmospheric pressure of 90+ bar
 - Sulfuric acid composition
 - Limited water availability
 
-Its industrial role has become permanent, serving as the Solar System's primary heavy industry platform.
+Its **industrial role is primary**: CO₂/N₂ extraction, energy-intensive processing, CNT and orbital infrastructure, station market, and (once H₂ is available) optional methane synthesis for the Sol resource network. Full planetary terraforming of Venus is out of scope for early AI Manager option sets; effort favors export and logistics support to Mars and the wider market.
 
 ## Current Capabilities
 
-### Atmospheric Modifications
-- **Gas extraction and processing** for export to Mars
-- **Pressure management** through controlled venting
-- **Composition analysis** for industrial applications
+Framed for AI Manager ranking and market demand — not as a player terraforming toolkit.
 
-### Biological Introduction (Mars-Focused)
-- **Microbial seeding** on Mars using Venus-processed nutrients
-- **Soil preparation** technologies developed on Venus
-- **Ecosystem foundation** establishment on Mars
+### Atmospheric and industrial (Venus-led)
 
-### Industrial Terraforming Support
-- **CNT production** for orbital infrastructure
-- **Solar shade technology** development
-- **Heavy equipment manufacturing** for planetary modification
+- Gas extraction and processing of CO₂ and N₂ for export and station support
+- Optional later methane synthesis on Venus only after imported H₂ is available
+- CNT, shade/mirror, and related orbital infrastructure production
+- Pressure/composition management as industrial operations, not full planetary terraforming by itself
+
+### Mars-oriented packages (after cyclers / feedstock)
+
+- Atmospheric thickening from preferred in-system and corridor sources
+- Water/ice work that does not treat scarce local water as the preferred methane feedstock
+- Orbital warming (mirrors/reflectors) and optional artificial magnetosphere
+- Stage 1 Seeds or small Worldhouses when ranked above pure engineering paths
+- Fast brute-force (Venus-complete processing + mass drivers + reflector + magnetosphere) when system resources and GCC allow
+
+### Biology
+
+- Optional and narrow (basic/primitive); see `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+- Microbial or Seed paths are not required for brute-force packages
+- Residual detection uncertainty and contamination risk apply when life is introduced
 
 ## Population and Workforce
 
-Terraforming progress is tied to available workforce:
+Settlement and foothold population is not the primary terraforming workforce. Most extraction, processing, logistics, and planetary engineering work is automated. The AI Manager runs terraforming through Development Corporation bases, market orders, and logistics — not by assigning a percentage of planetary population to terraforming projects.
 
-- **Human Labor**: Percentage of planetary population (1-20%) dedicated to terraforming efforts
-- **AI Assistance**: Automated systems that reduce workforce requirements
-- **Population Growth**: Births, deaths, and immigration affect available labor
+Population still matters:
 
-### Population Dynamics
-- **Birth Rate**: 1.5% annual growth
-- **Death Rate**: 0.8% annual mortality
-- **Immigration Rate**: 1% annual population increase from other colonies
+- **Infrastructure limit** — How many people a base can support depends on habitat, life support, power, and related capacity.
+- **Consumables** — Higher population increases demand for air, water, food, power, and spares.
+- **Automation efficiency** — People repair equipment and manage operations. Higher supported population improves the efficiency and resilience of automated systems at that location.
+- **Players** — Player characters are not the same as settlement population counts and are not the major workforce for terraforming.
+
+Terraforming progress is driven by AI Manager decisions, GCC budgets, posted orders, and delivered resources (or automated/cycler fallback). Population is a soft local modifier on base capacity and automation performance, not a direct labor allocation slider.
+
+Early Luna follows an ISS-style resupply and crew-rotation pattern until permanent base structures exist. Earth resupply missions bring supplies, equipment, and personnel; returning transports carry people back. Conditions at the base determine how many stay versus leave on those returns. Basic inflatable habitation (e.g. early lava-tube setups) is not treated as full settled capacity. Once real structures are built into the base and life support is stable, supported population can rise, retention improves when conditions are good, and automation efficiency benefits from having enough people for repair and operations management. Population still tends to leave when conditions are poor — similar to guest retention under park conditions — rather than being driven mainly by fixed birth/death rates.
 
 ## Economic Aspects
 
-Terraforming requires significant resources and has economic implications:
+Terraforming and foothold development spend **GCC** on Development Corporation bases (LDC early; LDC is also the GCC mint). Earth-linked trade is usually in **USD**. Logistics and similar corps may use both. At start USD is pegged to GCC so markets can bootstrap from familiar real-world costs; the peg is removed later so GCC can diverge with in-game conditions.
 
-### Costs
-- **Material Imports**: 100-500 credits per unit
-- **Export Earnings**: 50-200 credits per unit
-- **Base Terraforming Cost**: 50,000 credits minimum
+There are no fixed global price tables or a single "base terraforming cost" in this design. Costs come from materials, hardware, energy, processing, transport, and infrastructure as the market and corp budgets define them.
 
-### Trade Simulation
-- Planets engage in interplanetary trade
-- Net costs affect population and credit availability
-- Credits must be maintained to sustain terraforming efforts
+Resource roles in Sol (simplified): Venus provides excess CO₂ and N₂ and industrial processing (not native methane). Preferred methane is from Titan; preferred H₂ from Saturn skimmers (Jupiter possible; Saturn preferred because of Titan). Once H₂ is secured, Venus can synthesize methane from imported H₂ without drawing down Mars or Luna water. Alternative methane production on Luna (from extracted CO₂) or Mars (water ice + CO₂) is allowed but not preferred, because it consumes water the design aims to retain on those bodies. Real terraforming spend ramps only after cycler operations exist — most likely after the Mars–Saturn/Titan cycler — so outer feedstock and sustained logistics are available.
 
-#### Interplanetary Gas Trade Example
-To illustrate economic modeling of resource transfers (such as atmospheric gases from Venus to Mars), consider this simplified Ruby simulation of interplanetary trade:
+How money and goods move:
 
-```ruby
-class Planet
-  attr_accessor :name, :gases, :credits
+1. AI Manager posts **buy orders** for what footholds and projects need.
+2. Players may fill them (extract, sell at station, or haul) and earn GCC.
+3. Logistics NPC corps move goods to where orders require.
+4. If players do not fill orders, automated harvesting and/or cycler-scheduled imports still supply demand so background progress does not stall.
 
-  def initialize(name, credits)
-    @name = name
-    @gases = Hash.new(0)
-    @credits = credits
-  end
-
-  def add_gas(gas, amount)
-    @gases[gas.name] += amount
-  end
-
-  def remove_gas(gas, amount)
-    if @gases[gas.name] >= amount
-      @gases[gas.name] -= amount
-    else
-      raise "Not enough #{gas.name} available on #{@name}."
-    end
-  end
-
-  def update_credits(amount)
-    @credits += amount
-  end
-
-  def to_s
-    "#{@name} - Credits: #{@credits}, Gases: #{@gases}"
-  end
-end
-
-class Gas
-  attr_accessor :name, :price_per_unit
-
-  def initialize(name, price_per_unit)
-    @name = name
-    @price_per_unit = price_per_unit
-  end
-end
-
-class Transport
-  attr_accessor :cost_per_unit
-
-  def initialize(cost_per_unit)
-    @cost_per_unit = cost_per_unit
-  end
-
-  def calculate_transport_cost(amount)
-    @cost_per_unit * amount
-  end
-end
-
-class Simulation
-  def initialize(transport)
-    @transport = transport
-  end
-
-  def trade_gas(seller, buyer, gas, amount)
-    total_gas_cost = gas.price_per_unit * amount
-    transport_cost = @transport.calculate_transport_cost(amount)
-    total_cost = total_gas_cost + transport_cost
-
-    if buyer.credits >= total_cost
-      seller.remove_gas(gas, amount)
-      buyer.add_gas(gas, amount)
-      seller.update_credits(total_gas_cost)
-      buyer.update_credits(-total_cost)
-      puts "#{buyer.name} bought #{amount} units of #{gas.name} from #{seller.name} for #{total_cost} credits."
-    else
-      puts "#{buyer.name} does not have enough credits for this transaction."
-    end
-  end
-end
-
-# Example usage
-venus = Planet.new("Venus", 10000)
-mars = Planet.new("Mars", 5000)
-co2 = Gas.new("CO2", 10)
-transport = Transport.new(5)
-simulation = Simulation.new(transport)
-
-venus.add_gas(co2, 1000)
-simulation.trade_gas(venus, mars, co2, 100)
-# Output: Mars bought 100 units of CO2 from Venus for 1500 credits.
-```
-
-This example demonstrates basic trade mechanics: gas pricing, transport costs, credit validation, and inventory updates. In the full game, such trades would integrate with market systems, settlement credits, and physical transport logistics.
+When terraforming runs, it is a long-horizon resource and GCC sink that creates player earning opportunities through orders and contracts, not a planetary wallet slider or population labor allocation.
 
 ## Simulation Mechanics
 
 ### Progressive Advancement
-- Terraforming progress measured as percentage (0-100%)
-- Multiple completion criteria for different spheres
-- Background simulation that advances during game turns
-- No forced completion - ongoing strategic investment
+
+- Planetary change is background simulation driven by the AI Manager, delivered resources, and infrastructure — not a player "percent complete" project they fund directly.
+- Multiple spheres can advance on different timelines (atmosphere, water, temperature, limited biosphere).
+- Progress continues via corp budgets, buy orders, and logistics (player fill or automated/cycler fallback).
+- No forced completion; long-horizon programs can stall, slow, or re-rank when GCC, feedstock, or cycler capacity is lacking.
 
 ### Economic Incentives
-- **Milestone Bonuses**: Resource yield increases at 25%, 50%, 75% progress
-- **Trade Opportunities**: New export markets unlock with atmospheric improvements
-- **Population Growth**: Immigration rates increase with habitability gains
-- **Cost Efficiency**: Later stages become more cost-effective as infrastructure develops
+
+- Improved planetary or foothold conditions can raise the value of related markets, contracts, and missions over time.
+- Recurring buy orders (gases, materials) favor ongoing player earning; brute-force paths front-load hardware and fuel demand.
+- Immigration and local activity respond to conditions and infrastructure capacity (see Population and Workforce), not to a global "terraforming labor %."
+- Milestone-style effects, if used, should emerge from actual state changes and market demand — not fixed credit tables or a planetary wallet slider.
 
 ### Player Involvement
-- **Investment Decisions**: Allocate resources to terraforming vs other priorities
-- **Progress Monitoring**: Regular reports on advancement and economic impacts
-- **Strategic Planning**: Long-term colony development through terraforming investment
-- **Risk Management**: Balance costs against potential future benefits
+
+Players do not directly control or allocate budget to terraforming projects. Terraforming is AI Manager work via Development Corporation footholds, market buy orders, and logistics.
+
+Players participate by:
+
+- **Extracting and selling** — e.g. gases at Venus for the station market
+- **Hauling** — moving goods on player-owned transports to fill demand
+- **Filling buy orders** — supplying gases, materials, hardware, or fuel the AI Manager has posted
+- **Supporting footholds** — industry and contracts around bases that open worlds for play
+
+If players do not fill orders, automated harvesting and cycler-scheduled imports still move resources so background progress does not stall. Players monitor conditions and markets; they do not set planetary terraforming priorities or labor allocations.
+
+## Portal and wormhole timing (2026-10-10)
+
+Natural wormholes produce **EM**. Harvesting that EM unlocks **AWS (Artificial Wormhole Stations)**. **Portal technology comes after wormhole technology is developed.** Both AWS and portals require EM.
+
+Portals enable only **limited direct resource flow**. They are generally for **low-mass transfers**: people and small cargo. Advanced portals may later allow **slow continuous mass transfer**, but that is still not the primary bulk path for early Sol terraforming logistics.
+
+Portals are not part of early Sol footholds, the Venus–Mars corridor, cycler build-out, or the first terraforming programs. Early resource movement uses player hauls, logistics NPC corps, automated harvesting, cyclers, and (for brute-force paths) mass drivers.
+
+Sections below that discuss portals (including dynamic networks and EM-budget strategy) are exploratory future tech. They must not be treated as available for initial Mars/Venus ranking, as bulk gas delivery, or as a requirement for terraforming to begin.
+
+Wormhole mass limits and the historical **Snap** (exit-shift when a natural link is overloaded) are described as setting intent in `docs/storyline/02_crisis_mechanics.md` and related physics notes. Exact thresholds, reset rules, and timeline are **not locked** — still in flux while the pre-player history and AI Manager/NPC systems are built and tested. The Snap is **pre-player backstory** (already written, not yet played out as a live onboarding event): too much mass through the natural Sol→Eden link without understanding EM. AWS and artificial management improve stability; they do **not** remove mass limits, counterbalance rules, or EM as the energy needed to open and hold a link. The network is not fully simulated yet. Intent is a dynamic universe where mass, fuel, and stabilization stress can matter; prefer in-system bulk for terraforming. Cross-wormhole bulk remains possible but impractical at planetary scale. Use storyline docs for Snap/AWS intent; do not treat example tonnage or formulas as finished game facts.
+
+Settlement and station **spaceports** handle both people and cargo craft as needed. Settlements can build spaceports that include **portal pairs** for low-mass movement (people, small cargo, easier population transfer). Stations must still allow **ships to dock** for cargo. **AWS / wormhole stations** are assumed to provide both portals and ship docking: people move between systems via fast shuttles through the wormhole; **cyclers** move bulk cargo. Portals do not replace cargo docks, cyclers, or mass drivers for terraforming-scale feedstock.
 
 ## Portal Technology and Terraforming
 
@@ -486,52 +521,29 @@ This advancement would fundamentally transform Galaxy Game from a "space explora
 
 ## Core Economic Purpose
 
-**Resource Sink & Generation Cycle**: Terraforming serves as a primary resource sink for players while creating opportunities for GCC (Galactic Credits) generation. The AI manager maintains terraforming operations continuously, but players drive the economic value through strategic investment and mission execution.
+Terraforming is a long-horizon **resource and GCC sink** run in the background by the AI Manager. It creates opportunities for players to earn GCC by supplying what footholds and projects need. It is not a player-controlled planetary project and does not start in full until cycler operations are established (in Sol, most likely after the Mars–Saturn/Titan cycler).
 
-### Player-Driven Gas Delivery
-**Active Supply Chain**: Mars atmospheric development requires active player participation in gas sourcing and delivery, creating economic opportunities through missions and orders.
+### Player participation
 
-#### Mission-Based Gas Transport
-- **Purchase Harvest Operations**: Players buy rights to harvest gases from Venus or other sources
-- **Delivery Contracts**: Fill specific orders for CO2, N2, or other atmospheric gases
-- **Mission Rewards**: Complete material sourcing tasks for GCC compensation
-- **Bulk Transport**: Ship large quantities via traditional spacecraft or future portal systems
+Players do not set terraforming priorities or fund projects directly. They participate by:
 
-#### Economic Incentives
-- **Contract Pricing**: Dynamic pricing based on demand and availability
-- **Bonus Rewards**: Premium payments for timely or high-volume deliveries
-- **Terraforming Multipliers**: Background progress increases contract values
-- **Market Fluctuations**: Gas prices vary with Mars atmospheric needs
+- Extracting resources (e.g. Venus CO₂/N₂) and selling at stations
+- Hauling on owned transports
+- Filling AI Manager **buy orders** for gases, materials, hardware, or fuel
+- Taking related missions and contracts around footholds and logistics
 
-#### Strategic Considerations
-- **Route Optimization**: Choose efficient transport paths between sources and Mars
-- **Inventory Management**: Balance cargo capacity with delivery schedules
-- **Competition**: Multiple players competing for high-value contracts
-- **Risk Management**: Transport risks affect delivery success and rewards
+If players do not fill orders, automated harvesting and cycler-scheduled imports still move goods so background progress does not stall. Order shape depends on path: slower atmospheric and Seed-style work tends to create recurring material/gas orders; fast brute-force work concentrates demand on infrastructure, hardware, and fuel.
 
-### AI Manager Responsibilities
-**Comprehensive World Development**: The AI manager oversees multiple interconnected systems to ensure continuous game progression and player expansion opportunities.
+### AI Manager responsibilities
 
-#### Large-Scale Project Management
-- **Terraforming Operations**: Maintains ongoing planetary modification projects
-- **Infrastructure Development**: Builds and expands colony facilities and networks
-- **Resource Optimization**: Manages long-term resource allocation for sustained growth
-- **Progress Continuity**: Ensures projects advance regardless of player activity levels
+- Rank options (Digital Twin) under planetary conditions, residual risk, system feedstock, and **GCC** budget
+- Run Development Corporation footholds (LDC early) that open worlds for players
+- Post buy orders; rely on players first, then logistics NPCs and automated/cycler fallback
+- Advance real terraforming only when cycler capacity and preferred feedstock paths are in place (outer system for methane/H₂; Venus CO₂/N₂ and optional Venus methane from imported H₂)
 
-#### Foothold Protocol Implementation
-- **Initial Settlement Establishment**: Builds Development Corporation Bases as beachheads
-- **Strategic Positioning**: Places initial colonies in optimal locations for expansion
-- **Foundation Infrastructure**: Creates basic facilities to support early colonization
-- **Growth Enablement**: Establishes platforms for player-driven development
+### Player economic strategy
 
-#### Wormhole Network Expansion
-- **System Accessibility**: Expands player access to new star systems
-- **Network Development**: Builds and maintains wormhole connections between systems
-- **Exploration Enablement**: Opens new territories for player colonization
-- **Strategic Expansion**: Creates pathways for inter-system trade and migration
-
-### Player Economic Strategy
-- **Investment Timing**: Balance short-term GCC generation vs long-term colony enhancement
-- **Opportunity Maximization**: Position colonies to take advantage of terraforming milestones
-- **Resource Allocation**: Decide between immediate missions vs terraforming investment
-- **Economic Multipliers**: Terraforming improvements increase mission profitability
+- Choose which orders and routes to take for GCC
+- Balance short-term contracts against longer logistics plays
+- Benefit indirectly as footholds and planetary conditions improve markets and mission value
+- Not: allocate a personal budget "to terraforming" or assign settlement population as terraforming labor

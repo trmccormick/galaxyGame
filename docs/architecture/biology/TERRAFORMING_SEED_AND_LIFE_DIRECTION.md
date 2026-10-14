@@ -52,3 +52,15 @@
 - Extend Digital Twin outputs with the cost/benefit/risk fields above.
 - Implement the lightweight unknown-life event and residual-risk factor.
 - Keep all of the above background-facing; player visibility stays at market orders, settlement options, and occasional event notifications.
+
+## Cross-link: Sol corridor and AI Manager options (2026-10-09)
+
+Operational ownership, the Venus–Mars resource corridor, market/logistics flow, LDC/GCC context, and the initial curated option sets for Mars and Venus are documented in:
+
+`docs/gameplay/terraforming.md`
+
+(sections: Background ownership and Venus–Mars corridor; Initial AI Manager option sets — Mars and Venus)
+
+Biology is one possible contributor to terraforming (e.g. Stage 1 Seeds, microbial packages, later hybrid paths). It is not required. The AI Manager may choose **brute-force** methods instead: atmospheric thickening with imported gases, orbital mirrors/shades, water/ice liberation, and related engineering without deploying life. Brute-force avoids adaptation timelines and much of the residual biological risk, at the cost of ongoing industrial and import dependence.
+
+When life is used, planned and unplanned biosphere effects remain in scope as described in this document. Ranking in the Digital Twin should compare biological and brute-force options under the same GCC, timeline, benefit, and residual-risk criteria.
