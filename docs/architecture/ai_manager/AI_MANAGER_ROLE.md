@@ -157,3 +157,21 @@ Iron (Player gouging detected)
 **89→8 refactor trajectory 100% clear.** **No value lost.** **Surgical cleanup ready when authorized.**
 
 **All ambiguities eliminated.** Foundation bulletproof. **Documentation complete.** Ready for execution phase.
+
+## Terraforming demand (cross-link)
+
+Terraforming and foothold supply create another class of **AI Manager buy orders** (gases, materials, hardware, fuel) under Development Corp **GCC** budgets. Same market rules apply:
+
+- Player-first: players may fill those orders and earn GCC
+- If no player fill: AI/logistics/cyclers cover demand so background progress does not stall
+- EAP and player-first logic still govern pricing and gouging cases where those systems apply
+
+Planetary program ranking, Sol corridor, cycler/feedstock gates, and option sets:
+
+→ `docs/gameplay/terraforming.md`
+
+Life/Seed vs brute-force and residual biological risk:
+
+→ `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
+
+This does not replace the EVE-style market structure above; it is an additional source of demand the market maker and cycler layer serve.
