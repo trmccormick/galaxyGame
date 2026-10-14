@@ -1,5 +1,19 @@
 # The Crisis: The "Snap" & Exit-Shift
 
+## Documentation status (2026-10-14)
+
+This file records **setting intent and backstory**, not finished live rules. Exact mass limits, maturity thresholds, and Snap timing are **still in flux** while the pre-player timeline and AI Manager/NPC systems are built and tested. Example tonnage figures and stage checklists below are directional, not locked game facts.
+
+The Snap is **pre-player history** (already written, not an onboarding event players cause on day one): overload of the natural Sol→Eden link without understanding EM. It drives Consortium, EM physics, and the path to artificial stabilization (AWS). AWS **manages** links; it does not remove mass limits, counterbalance rules, or EM cost.
+
+For operational terraforming and logistics preference (in-system bulk, cyclers, buy orders):
+
+→ `docs/gameplay/terraforming.md`
+
+Related physics topology intent:
+
+→ `docs/storyline/05_physics_topology.md`
+
 ## The Trigger: The "Snap"
 
 A natural wormhole snaps when its mass-limit is exceeded, but this occurs only after a two-stage maturity process: first the core system must develop sufficient expansion pressure, then the destination system must accumulate infrastructure mass to trigger instability.
