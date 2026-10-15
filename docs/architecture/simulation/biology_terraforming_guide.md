@@ -2,6 +2,8 @@
 **Scope note (2026-10-08):**  
 Current developmental direction keeps life at the basic / primitive level. Detailed multi-species ecosystems, deep genetics, or gravity-adaptation research trees are out of scope for now. See `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md` for the full narrow-scope intent. The organism examples and atmospheric-effect rates in this document remain useful reference material but should not drive expansion beyond basic life at this stage.
 
+**Operational cross-link (2026-10-15):** Biology is optional for terraforming. The AI Manager may rank pure engineering (brute-force atmospheric/orbital packages) above Seeds when system feedstock and GCC favor it. Sol ownership, Venus–Mars corridor, cycler/feedstock gates, and curated option sets: `docs/gameplay/terraforming.md`. Seeds vs Worldhouses and residual life risk: `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`. Prefer in-system bulk resources; portals/wormholes are not planetary-scale bulk pipes.
+
 # ------------------------------------------------------------------------------
 # STEP 1: Pass time_skipped through the simulation chain
 # ------------------------------------------------------------------------------
