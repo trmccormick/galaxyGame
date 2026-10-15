@@ -112,6 +112,7 @@ Terraforming programs are **later** than initial footholds:
 - Real planetary programs wait on **cycler capacity** and preferred **in-system feedstock**
 - Demand is **buy orders** posted by the AI Manager under corp GCC budgets
 - **Pre-player:** only NPCs and automated/cycler logistics fill those orders (no player market participation until players enter)
+- **Tuning goal:** exercise real market paths so AI Manager/NPC behavior builds observable history (prices, routes, infrastructure, shortages/surplus) and can be adjusted before players enter
 
 → `docs/gameplay/terraforming.md`  
 → `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`  
