@@ -97,3 +97,22 @@ Before L1 construction can begin, Luna must have ALL of the following operationa
 - Luna resource hierarchy and ISRU details: `docs/mission_profiles/LUNA_BASE_ESTABLISHMENT.md`
 - Mission profile JSON: `data/json-data/missions/luna_base_establishment/` (Task 3 — pending)
 - Data conventions: `docs/reference/CELESTIAL_BODY_DATA_CONVENTIONS.md`
+
+## Cross-link: Pre-player buildup and terraforming gates (2026-10-15)
+
+Pre-player simulation should develop a living economy in stages:
+
+1. **Sol before the natural wormhole** — markets, trade routes, infrastructure, and resource flow (Luna footholds, Venus extraction/station, logistics, cyclers toward outer volatiles) so expansion is possible when a link appears.
+2. **After the natural wormhole opens** — continue NPC/AI Manager buildup **including Eden**: settlement, mass/resource flow into Eden, and the industrial/logistics commitments that later make the Snap and reconnection drive feel earned.
+3. **Snap** remains **pre-player backstory** (already written, not yet played out as a live onboarding event); mass/timing thresholds stay in flux.
+
+Terraforming programs are **later** than initial footholds:
+
+- Footholds open worlds under Development Corps (LDC early, GCC)
+- Real planetary programs wait on **cycler capacity** and preferred **in-system feedstock**
+- Demand is **buy orders** posted by the AI Manager under corp GCC budgets
+- **Pre-player:** only NPCs and automated/cycler logistics fill those orders (no player market participation until players enter)
+
+→ `docs/gameplay/terraforming.md`  
+→ `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`  
+→ `docs/storyline/02_crisis_mechanics.md` (Snap intent only)
