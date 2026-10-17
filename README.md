@@ -90,8 +90,10 @@ cd galaxyGame
 # Start development environment
 docker-compose -f docker-compose.dev.yml up
 
-# Run tests (in container) — REQUIRED env prefix
-docker-compose -f docker-compose.dev.yml exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec'
+# Run tests (in container) — REQUIRED: env prefix + log redirect
+docker exec web bash -c 'unset DATABASE_URL && RAILS_ENV=test bundle exec rspec > /home/galaxy_game/log/rspec_full_$(date +%s).log 2>&1'
+# Inspect result (do not paste full log into chat):
+# docker exec web bash -c 'tail -50 /home/galaxy_game/log/rspec_full_*.log | tail -50'
 
 # Access application
 open http://localhost:3000
