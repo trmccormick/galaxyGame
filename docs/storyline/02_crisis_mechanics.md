@@ -14,6 +14,8 @@ Related physics topology intent:
 
 → `docs/storyline/05_physics_topology.md`
 
+Candidate **player entry** is after Sol core buildout when **Eden reconnection is underway** (Sol-side AWS, Eden stabilization sats, scouts, tug moving the original WS to the new artificial opening). Post-survey Eden condition bands (Ghost / Remnant / Expanding) depend on how far Eden was settled before the Snap; thresholds remain in flux. Operational spine, Mars hub, test modes, and DB snapshot intent: `docs/gameplay/sol_core_buildup.md`.
+
 ## The Trigger: The "Snap"
 
 A natural wormhole snaps when its mass-limit is exceeded, but this occurs only after a two-stage maturity process: first the core system must develop sufficient expansion pressure, then the destination system must accumulate infrastructure mass to trigger instability.
