@@ -88,6 +88,8 @@ Sections above this line (Background ownership, Venus–Mars corridor, Initial A
 
 Sections below may contain older or exploratory framing (workforce percentages, generic credits, player "investment in terraforming," portal networks). Treat those as concept history or optional advanced ideas. When they conflict with the sections above on ownership, GCC/LDC, market flow, or player role, prefer the sections above. Brute-force vs slow/Seed paths and order-shape differences are defined in the option sets and Shared logistics.
 
+Early Sol industrial order (Luna → shipyard → tugs/cyclers → core stations → Mars surface / Venus extraction → Mars as trade hub) and candidate player entry at Eden reconnection are documented in `docs/gameplay/sol_core_buildup.md`. Terraforming programs sit **downstream** of that spine. Prefer that document over early terraforming buy spam or early EM-farm expansion when ranking AI Manager priorities.
+
 ## Overview
 
 Terraforming in Galaxy Game is primarily **background** work run by the AI Manager through Development Corporation footholds. It drives resource flow, market buy orders, and player earning opportunities (extract, haul, fill orders). It is not a direct player-controlled planetary project.
