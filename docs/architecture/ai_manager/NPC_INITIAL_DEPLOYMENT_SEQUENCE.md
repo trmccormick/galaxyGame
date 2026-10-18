@@ -117,3 +117,4 @@ Terraforming programs are **later** than initial footholds:
 → `docs/gameplay/terraforming.md`  
 → `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`  
 → `docs/storyline/02_crisis_mechanics.md` (Snap intent only)
+→ `docs/gameplay/sol_core_buildup.md` (Luna–shipyard–core loop gates, Mars hub, snapshots, player-entry window)
