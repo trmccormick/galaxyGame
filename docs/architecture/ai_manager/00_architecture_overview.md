@@ -8,6 +8,10 @@ Operational Sol detail (Venus–Mars corridor, cycler/feedstock gates, curated o
 
 → `docs/gameplay/terraforming.md`
 
+Early Sol industrial spine (Luna → shipyard → core loop → Mars hub) and player-entry / snapshot intent:
+
+→ `docs/gameplay/sol_core_buildup.md`
+
 Life / Seed / Worldhouse / residual biological risk (narrow scope):
 
 → `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
