@@ -159,3 +159,16 @@ Long automated buildouts are expensive to re-run after every AI Manager change. 
 4. Promote useful dumps as named seeds for regression or play
 
 Exact dump format, storage path, and tooling are implementation details. Intent: **snapshots are first-class** for AI Manager tuning and for optional player-start states.
+
+## EM harvesting and network economy (later, not early Sol)
+
+Exotic Matter (EM) from natural wormholes (and related AWS/stabilization infrastructure) is important for **interstellar links, portals, and high-end network ops**. It is **not** an early Sol priority.
+
+- Preferred early ordering remains Luna → shipyard → core cyclers → Mars hub (see Core dependency chain above).
+- EM harvest, containment, and stabilizing a natural throat with artificial counterbalance are **mid/late** systems after the core industrial spine exists.
+- Natural links remain subject to mass limits, counterbalance, and Snap risk (storyline docs; thresholds in flux).
+- Artificial management (AWS) improves stability; it does not remove EM cost or mass limits.
+- Detailed harvest corona/surge rules and pricing are **open**; do not treat speculative frameworks as locked game facts.
+
+Operational physics/topology intent: `docs/storyline/05_physics_topology.md`  
+Snap / reconnection: `docs/storyline/02_crisis_mechanics.md`
