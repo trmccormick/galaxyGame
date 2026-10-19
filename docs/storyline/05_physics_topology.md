@@ -14,6 +14,8 @@ Terraforming logistics preference:
 
 → `docs/gameplay/terraforming.md`
 
+EM harvesting, AWS, and interstellar network expansion are **not** early Sol priorities. Preferred early AI Manager ordering is the industrial spine in `docs/gameplay/sol_core_buildup.md` (Luna → shipyard → core cyclers → Mars hub). Network/EM systems matter for reconnection and later expansion; they must not displace depot, shipyard, or hub buildout in early ranking.
+
 ## Brown Dwarfs as Logistics Batteries
 
 Brown Dwarfs act as unique "Logistics Batteries" due to their immense mass but lack of stellar radiation.
