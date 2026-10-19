@@ -55,6 +55,18 @@ Early solvent demand before the hub matures comes mainly from **Earth → LDC (U
 
 **Rule of thumb:** no solvent buyer → Venus does not export at scale. Ledger shows feasibility; **GCC/USD** makes commitments real.
 
+### Logistics corps (AstroLift and others)
+
+**AstroLift** is the primary early logistics corporation for **Earth ↔ Luna / Sol core freight** (and related depot traffic). Other logistics NPC corps may operate on the same rules.
+
+- Earth-linked purchase/sell legs and shipping are generally **USD**; shipping cost is real.
+- Core-world and later branch freight may be **GCC** or mixed once Sol markets mature.
+- AI Manager posts demand and routes cargo via logistics corps and cyclers when players do not fill hauls.
+- Players may compete on the same lanes (contracts, owned transports) without replacing the NPC backbone.
+- Large cyclers and tugs still depend on the **shipyard gate**; AstroLift does not bypass "no shipyard → no Mars/Venus expansion."
+
+Detailed corp charters and fleet lists are out of scope here; intent is a named logistics layer so agents do not invent anonymous free shipping.
+
 ---
 
 ## 4. Pre-player and AI Manager test modes
