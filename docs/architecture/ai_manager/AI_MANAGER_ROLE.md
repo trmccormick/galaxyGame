@@ -175,3 +175,5 @@ Life/Seed vs brute-force and residual biological risk:
 → `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`
 
 This does not replace the EVE-style market structure above; it is an additional source of demand the market maker and cycler layer serve.
+
+Early solvent demand and AI Manager priorities follow the Sol industrial spine before planetary programs: Luna industry, LEO/L1 depots, L1 shipyard, tugs/cyclers, core stations, then Mars hub economics. See `docs/gameplay/sol_core_buildup.md`. Terraforming buy orders remain a later demand source under corp GCC, not the early market driver.
