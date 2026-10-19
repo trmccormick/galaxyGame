@@ -98,6 +98,19 @@ Post-survey state depends on **how far Eden was settled and how closed its loops
 
 Reconnection **reveals** that history; it does not auto-repair it.
 
+### 5.3 Tutorial mode and first player loop (intent)
+
+There is no locked onboarding script, but the working first steps are:
+
+1. **Spawn** at a player-chosen open **Development Corporation foothold** base (tutorial mode teaches basics at that location).
+2. Receive **basic harvest equipment** appropriate to what that body/base supports.
+3. **Harvest** local resources.
+4. **Process** those resources.
+5. **Build basic items** — upgrade personal equipment and/or **sell** on the local market.
+6. After that ladder, normal play opens: haul, contracts, wider Sol routes, and (if the snapshot is reconnection-underway) optional Eden/System B support work.
+
+The AI Manager and NPCs already run the economy. The tutorial teaches the player how to **plug in** (extract → process → craft/sell), not how to found Sol or control terraforming. Starter kit and available recipes depend on the foothold's local resources and what that snapshot has unlocked.
+
 ---
 
 ## 6. What this document is not
