@@ -149,3 +149,5 @@ Life/Seed vs brute-force:
 Market player-first / EAP / cycler fallback:
 
 → `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`
+
+→ `docs/gameplay/sol_core_buildup.md` (when footholds sit in the Luna–shipyard–core loop vs later planetary programs)
