@@ -10,6 +10,15 @@
 > — it just has cycler ownership as a unique capability.
 > Do not hardcode AstroLift behavior. Model it as data and AI Manager rules.
 
+## Cross-link: Sol spine and money (2026-10-19)
+
+Operational ordering and early demand: `docs/gameplay/sol_core_buildup.md`.
+
+- **Phase 1 (Luna / Earth–Luna)** fits the spine: Luna industry and Earth imports before shipyard-scale expansion.
+- **Large cyclers and tugs** still require the **L1 shipyard** gate — AstroLift does not bypass "no shipyard → no Mars/Venus expansion."
+- Earth-linked freight and purchase/sell legs are generally **USD**; Sol foothold/corp ops lean **GCC** (peg at start). EAP and market-maker behavior in this doc remain valid where those systems apply.
+- AstroLift remains a seeded logistics NPC with an AI Manager instance — dominant backbone, not a monopoly enforcer or hardcoded special case.
+
 ---
 
 ## Who AstroLift Is

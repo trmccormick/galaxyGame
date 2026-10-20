@@ -1,5 +1,16 @@
 # AI Manager → Player Handoff Protocol
 
+## Documentation status (2026-10-19)
+
+This file describes an **exploratory** "AI becomes advisory when a player arrives in a system" protocol. It is **not** current default player-entry intent.
+
+Current intent (`docs/gameplay/sol_core_buildup.md`):
+- Players spawn at a chosen **Development Corp foothold** and learn basics (harvest → process → craft/sell).
+- The AI Manager **continues** to run NPC corps, markets, logistics, and background programs; players plug into that economy.
+- Candidate universe phase for entry is **reconnection-underway** (or other DB snapshots), not "player takes strategic control of AWS/consortium on arrival."
+
+Treat sections below as optional advanced/cooperative modes unless explicitly adopted later. Prefer sol_core_buildup and AI_MANAGER_ROLE for default player vs AI Manager split.
+
 ## TRANSITION TRIGGER
 - **Event:** Player arrives in system
 - **Action:** `AI_MANAGER.autonomy = :advisory`
