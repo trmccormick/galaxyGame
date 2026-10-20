@@ -1,5 +1,16 @@
 # AI_MANAGER_MASTER_PLAN.md
 
+## Documentation status (2026-10-19)
+
+This file is a **historical surgical/orchestrator sketch** (89→8 era). Several examples conflict with current early Sol intent.
+
+Prefer:
+- `docs/gameplay/sol_core_buildup.md` — Luna → L1 shipyard → tugs/cyclers → Phobos/Deimos → Venus belt-bodies → three stations → **then** core cycler rotation → Mars surface / Venus extraction → Mars hub
+- `docs/gameplay/terraforming.md` — terraforming is later background demand, not an early `priority: 10` fleet override
+- `docs/storyline/02_crisis_mechanics.md` — Snap is pre-player backstory; reconnection is AWS/sats/scouts/tug/WS, not "Eden terraform absorbs the fleet"
+
+Useful ideas that can remain as *later* options: multi-loop cyclers (Mars–Ceres, Titan–Mars), depot/skimmer hybrids, JSON mission profiles. Do **not** treat Earth↔Venus cyclers as immediate or Eden terraforming as the default post-WH top priority without the industrial spine and solvent hub economics first.
+
 ## Final Strategic Architecture (Solar System Complete)
 
 ### CORE CAPABILITIES (89→8 Surgical Target)
