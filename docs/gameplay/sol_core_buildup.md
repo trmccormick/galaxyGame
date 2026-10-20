@@ -131,6 +131,8 @@ Do not require every dump to offer every base. Tutorial gear and recipes are **l
 
 The AI Manager and NPCs already run the economy. The tutorial teaches the player how to **plug in** (extract → process → craft/sell), not how to found Sol or control terraforming. Starter kit and available recipes depend on the foothold's local resources and what that snapshot has unlocked.
 
+**Starter kit (intent):** minimal **basic harvest equipment** suited to the spawn body, plus access to **local processing** needed for the tutorial ladder. Not a free ship, shipyard, or full industrial suite. Haul capacity and owned transports are earned or bought after the basics, not granted at spawn.
+
 ---
 
 ## 6. What this document is not
