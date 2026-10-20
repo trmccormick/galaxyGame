@@ -219,6 +219,8 @@ retaliate.
 | 4 — Expansion | Route proposals for new worlds, wormhole network integration |
 | Future | Player-owned competing cycler routes |
 
+**Spine alignment:** Phase 1 (Earth→Luna imports) does not need the L1 shipyard. Phase 3 (full cycler network across core worlds) assumes shipyard-built large cyclers and the core station set from `docs/gameplay/sol_core_buildup.md`. Do not schedule Mars/Venus cycler backbone as if Phase 3 could run before the shipyard gate.
+
 ---
 
 ## Dependencies
