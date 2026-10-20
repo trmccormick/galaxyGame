@@ -121,6 +121,14 @@ There is no locked onboarding script, but the working first steps are:
 5. **Build basic items** — upgrade personal equipment and/or **sell** on the local market.
 6. After that ladder, normal play opens: haul, contracts, wider Sol routes, and (if the snapshot is reconnection-underway) optional Eden/System B support work.
 
+**Valid tutorial spawn bases (intent):** Any **open Development Corporation foothold** present in the snapshot. For reconnection-underway class dumps, expect at least:
+
+- **Luna** DC foothold(s) — default-safe tutorial; bulk industry and Earth-linked market legs
+- **Mars** orbital and/or surface footholds once the core loop has opened them — denser trade-hub jobs
+- **Venus** station / high-altitude footholds once extraction-era presence exists — gas/industrial flavor
+
+Do not require every dump to offer every base. Tutorial gear and recipes are **local** to the chosen foothold. If only Luna is open, that is enough for first-player testing. Players are not offered a spawn at undeveloped bodies or at pure NPC logistics hubs with no foothold services.
+
 The AI Manager and NPCs already run the economy. The tutorial teaches the player how to **plug in** (extract → process → craft/sell), not how to found Sol or control terraforming. Starter kit and available recipes depend on the foothold's local resources and what that snapshot has unlocked.
 
 ---
