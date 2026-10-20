@@ -1,5 +1,16 @@
 # AI Manager Wormhole Network Expansion (Refinement)
 
+## Documentation status (2026-10-19)
+
+Useful as a **later interstellar expansion sketch**. It is not early Sol ordering and must not override the industrial spine.
+
+Prefer:
+- `docs/gameplay/sol_core_buildup.md` — complete Luna→shipyard→core hub before prioritizing new-system harvest/AWS/terraform actions
+- `docs/storyline/02_crisis_mechanics.md` and `docs/storyline/05_physics_topology.md` — Snap/AWS/mass limits are intent; example masses and "stable for heavy traffic" thresholds remain in flux
+- `docs/gameplay/terraforming.md` — high terraform_score does not auto-mean full fleet AWS/terraform buildout
+
+Eden "aws_buildout" in examples below should be read as **reconnection / station recovery** context (sats, scouts, tug, WS→AWS), not automatic planetary terraforming. Natural wormholes as scouting prizes still fit; bulk terraforming feedstock stays preferred in-system when possible.
+
 ## Strategic Objective
 Enable the AI Manager to autonomously expand into new star systems via wormhole (WH) events, dynamically deciding between resource harvesting ("hammer"), infrastructure buildout (AWS/depots), and network expansion based on system conditions and economic priorities.
 
