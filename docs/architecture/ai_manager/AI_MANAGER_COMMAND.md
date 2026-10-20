@@ -1,6 +1,17 @@
 
 AI_MANAGER_COMMAND.md — Final Authority
 
+## Documentation status (2026-10-19)
+
+Examples below (manifest priorities, `terraforming_enabler`, Luna `terraforming_phase2`) are **historical/surgical-refactor notes**, not current early-game ordering.
+
+Prefer for priority ranking:
+- `docs/gameplay/sol_core_buildup.md` — Luna → shipyard → core loop → Mars hub before planetary terraforming
+- `docs/gameplay/terraforming.md` — terraforming as later background demand under corp GCC
+- `docs/architecture/ai_manager/AI_MANAGER_ROLE.md` — player-first markets; AI Manager keeps running NPC logistics
+
+Manifest generation, GCC/USD economics, and EAP delegation patterns in this file can remain useful; do not read example `priority: terraforming_*` labels as the default early spine.
+
 ## MANDATORY DELEGATION (Existing Services)
 
 ✅ Market::NpcPriceCalculator.calculate_spread() → Strategic pricing
