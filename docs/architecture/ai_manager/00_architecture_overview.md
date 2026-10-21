@@ -1,5 +1,9 @@
 # AI Manager Architecture Overview
 
+**Agent navigation:** When older "locked" or surgical AI Manager notes conflict with current intent, follow:
+
+→ `docs/architecture/ai_manager/AGENT_READING_ORDER.md`
+
 ## Terraforming and planetary development (intent cross-link)
 
 Terraforming is **background AI Manager work**, not a player-controlled project. The Manager acts through **Development Corporation footholds** (LDC early; non-profit expansion; LDC is also the GCC mint). Decisions use **GCC** budgets, **Digital Twin** projections where available, and **market buy orders**. Players participate by extracting, hauling, and filling orders; unfilled demand falls back to automated harvesting and cycler logistics.
