@@ -4,6 +4,7 @@
 This document records the **preferred early Sol dependency chain**, how **Mars becomes solvent as a trade hub**, and a **candidate player-entry window** after reconnection toward Eden. Test modes may use prescripted Sol, free AI build, or hybrid; the goal is an AI Manager that can run the game. Thresholds and exact timing remain in flux.
 
 Related:
+- Agent doc priority when older plans conflict: `docs/architecture/ai_manager/AGENT_READING_ORDER.md`
 - Terraforming (downstream of this spine): `docs/gameplay/terraforming.md`
 - Footholds / LDC: `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`
 - Pre-player NPC markets: `docs/architecture/ai_manager/NPC_INITIAL_DEPLOYMENT_SEQUENCE.md`
