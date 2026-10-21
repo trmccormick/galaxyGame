@@ -1,3 +1,17 @@
+# AI Manager Intent (logistics / markets)
+
+## Documentation status (2026-10-21)
+
+This file is a **composite logistics and crisis sketch** (virtual ledger, player-first fill, cycler fallback, emergency overrides). Useful ideas remain; several examples are **not** early Sol ordering.
+
+Prefer for priority and sequencing:
+- `docs/gameplay/sol_core_buildup.md` — Luna → shipyard → core stations → **then** core cycler rotation → Mars hub; AstroLift Phase 1 is Earth–Luna before shipyard-scale Mars/Venus cyclers
+- `docs/architecture/ai_manager/AGENT_READING_ORDER.md` — which docs win on conflict
+- `docs/architecture/ai_manager/AI_MANAGER_ROLE.md` — market role
+- `docs/storyline/02_crisis_mechanics.md` — Snap/reconnection intent (thresholds in flux)
+
+Treat "Full logistics network spec locked," fixed cycler capacities, asset-seizure matrices, and post-Snap terminal mockups below as **exploratory** unless reconfirmed. Virtual ledger + player-first + cycler gap-fill still align with current intent when they do not skip the industrial spine.
+
 ## INTER-DC LOGISTICS NETWORK (Full Scope)
 ECONOMICS-DRIVEN CARGO ROUTING (Virtual Ledger)
 
