@@ -1,4 +1,17 @@
 # AI Manager — Orchestrator Only
+
+## Documentation status (2026-10-21)
+
+This file is a **surgical orchestration / delegation note** (rake as source of truth, thin AI Manager, delete duplicated constants). That pattern can remain useful.
+
+It is **not** the authority for early Sol build order, terraforming priority, or player entry. Prefer:
+
+- `docs/gameplay/sol_core_buildup.md`
+- `docs/architecture/ai_manager/AGENT_READING_ORDER.md`
+- `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`
+
+Example pipelines below (market → manifest → cycler → Eden Snap override) are illustrative. Do not read them as "skip Luna/shipyard and jump to interplanetary cyclers or crisis seizure."
+
 **89 Files Wrong** | **Rake Tasks = Source of Truth** | **Delegate Don't Duplicate**
 
 ## WORKING RAKE TOOLS (AI Manager Calls These)
