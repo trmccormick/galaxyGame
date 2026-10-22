@@ -1,5 +1,17 @@
 # AI Manager Pricing: Earth USD → Dynamic Market
 
+## Documentation status (2026-10-21)
+
+Core idea remains valid: **Earth USD as early anchor**, **EAP bootstrap** for Luna-landed costs, then **dynamic market** as local production matures.
+
+Example GCC figures and phase prices below are **illustrative**, not locked balance. Prefer:
+
+- `docs/gameplay/sol_core_buildup.md` — USD for Earth trade legs; GCC on footholds; peg at start
+- `docs/architecture/ai_manager/astrolift_corporation.md` — EAP as market ceiling behavior
+- `docs/architecture/ai_manager/AGENT_READING_ORDER.md`
+
+"Economic Progression Locked" and specific I-beam/harvester numbers are tuning targets, not final game facts.
+
 ## CORE INTENT (GPT-4.1 + Tracy Confirmed)
 1. **Earth USD** = Economic truth anchor ($20M harvester = 20M GCC)
 2. **EAP Bootstrap** = Lunar transport reality (70M GCC landed cost)  
