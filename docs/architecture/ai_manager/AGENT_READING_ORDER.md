@@ -24,7 +24,7 @@
 
 ## Historical / surgical (do not override the list above)
 
-Examples: `AI_MANAGER_MASTER_PLAN.md`, `AI_MANAGER_COMMAND.md`, `AI_MANAGER_WORMHOLE_EXPANSION.md`, `PLAYER_HANDOFF.md`, many `89→8_*` and "FINAL/LOCKED" notes. Use for refactor archaeology; prefer the Read-first list for behavior.
+Examples: `AI_MANAGER_MASTER_PLAN.md`, `AI_MANAGER_COMMAND.md`, `AI_MANAGER_WORMHOLE_EXPANSION.md`, `PLAYER_HANDOFF.md`, `AI_MANAGER_PRICING_INTENT.md`, `AI_MANAGER_ORCHESTRATOR_SPEC.md`, many `89→8_*` and "FINAL/LOCKED" notes. Use for refactor archaeology; prefer the Read-first list for behavior.
 
 ## Rule of thumb
 
