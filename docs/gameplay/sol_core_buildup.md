@@ -134,6 +134,18 @@ The AI Manager and NPCs already run the economy. The tutorial teaches the player
 
 **Starter kit (intent):** minimal **basic harvest equipment** suited to the spawn body, plus access to **local processing** needed for the tutorial ladder. Not a free ship, shipyard, or full industrial suite. Haul capacity and owned transports are earned or bought after the basics, not granted at spawn.
 
+### 5.4 UI / prototype views (intent for mock UIs)
+
+Prototype and mock UIs should still reflect **current game intent**, even when data is fake:
+
+- **Default player experience** to design for: spawn at an open **DC foothold**, tutorial **harvest → process → craft/sell**, markets and logistics already running under the AI Manager. Do not imply the player founds Sol, owns the shipyard, or drives planetary terraforming from the HUD.
+- **Snapshot class**: views may target a specific dump (e.g. Luna-only, core-loop, **reconnection-underway**, or post-survey Eden). Label the mock state; do not present post-Snap / wormhole-admin screens as the only or default first login unless that snapshot is the chosen seed.
+- **AI Manager**: remains background authority for NPC corps, orders, and gap-fill logistics. Player UI plugs into markets and contracts; it does not replace the Manager on arrival (see exploratory `PLAYER_HANDOFF` only if explicitly building a co-op/advisory mode).
+- **Wormhole / EM / admin (Hammer, AWS, mass limits)**: valid for **network / admin / mid-late** prototypes. Keep them out of the default tutorial shell unless the mock is explicitly a reconnection or admin snapshot.
+- **Money**: show **GCC** on foothold/corp contexts; **USD** on Earth-trade legs where relevant; do not invent unpaid mega terraforming budgets as the early market driver.
+
+Canonical sequencing and money rules: this file. Doc priority when older AI Manager notes conflict: `docs/architecture/ai_manager/AGENT_READING_ORDER.md`.
+
 ---
 
 ## 6. What this document is not
