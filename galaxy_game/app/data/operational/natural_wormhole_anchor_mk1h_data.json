@@ -1,0 +1,173 @@
+{
+  "template": "orbital_structure_operational_data_v1",
+  "id": "natural_wormhole_anchor_mk1h",
+  "name": "Natural Wormhole Anchor MK1-H Operational Profile",
+  "description": "Operational and resource management profile for the Natural Wormhole Anchor MK1-H. Specialized for EM harvesting, gravitational stabilization, and wormhole anchoring with energy-neutral operation. Constructed via Mars-Pattern Rule B hollowing techniques.",
+  "structure_type": "wormhole_stabilizer",
+  "category": "wormhole_management",
+  "subcategory": "stabilization",
+
+  "construction_methodology": {
+    "pattern": "Mars-Pattern Rule B",
+    "hollowing_metrics": {
+      "mass_to_hull_conversion_efficiency": 0.30,
+      "waste_secondary_output_fraction": 0.70,
+      "repurposed_waste_materials": [
+        "slag",
+        "radiation_shielding",
+        "propellant_precursor"
+      ],
+      "source_body_class": "Phobos-class",
+      "estimated_source_mass_kg": 1.0e16,
+      "resulting_hull_mass_kg": 3.0e15
+    }
+  },
+
+  "operational_properties": {
+    "power_consumption_kw": 10000,
+    "maintenance_interval_hours": 168,
+    "efficiency": 0.95
+  },
+
+  "operational_flags": {
+    "autonomous": true,
+    "human_rated": true,
+    "fixed_location": false,
+    "mars_pattern_constructed": true
+  },
+
+  "container_capacity": {
+    "unit_slots": [
+      { "type": "power_generator", "count": 5 },
+      { "type": "em_processing", "count": 10 },
+      { "type": "gravitational_control", "count": 5 },
+      { "type": "control", "count": 3 }
+    ],
+    "module_slots": [
+      { "type": "em_storage", "count": 10 },
+      { "type": "stabilization_core", "count": 1 },
+      { "type": "asteroid_propulsion_module", "count": 4 }
+    ]
+  },
+
+  "recommended_fit": {
+    "modules": [
+      { "id": "em_storage_module", "count": 10, "category": "storage" },
+      { "id": "stabilization_core_module", "count": 1, "category": "stabilization" }
+    ],
+    "units": [
+      { "id": "nuclear_reactor_fusion", "count": 5, "category": "energy" },
+      { "id": "em_inductor_unit", "count": 30, "category": "em_processing" },
+      { "id": "em_harvesting_rig_v1", "count": 20, "category": "em_processing" },
+      { "id": "gravitational_inductor_unit", "count": 20, "category": "gravitational_control" },
+      { "id": "facility_controller_mk1", "count": 3, "category": "control" }
+    ],
+    "rigs": [
+      { "id": "wormhole_anchor_rig", "count": 4, "category": "utility" },
+      { "id": "em_harvesting_rig_v1", "count": 8, "category": "em_processing" }
+    ]
+  },
+
+  "connection_systems": {
+    "power_distribution": { "status": "offline", "type": "high_capacity_grid" },
+    "em_field_generation": { "status": "offline", "type": "inductive_array" },
+    "gravitational_stabilization": { "status": "offline", "type": "synthetic_field_generator" }
+  },
+
+  "resource_management": {
+    "inputs": {
+      "natural_em_flux": {
+        "required": true,
+        "unit": "EM_flux",
+        "description": "Electromagnetic flux harvested from natural wormhole spatial distortions"
+      }
+    },
+    "consumables": {
+      "energy_kwh": { "rate": 10000, "unit": "kW" },
+      "exotic_matter": { "rate": 2, "unit": "kg/hr" }
+    },
+    "generated": {
+      "energy_kwh": {
+        "rate": 12000,
+        "unit": "kW",
+        "description": "Net energy output from natural EM flux harvesting (energy-positive operation)"
+      },
+      "gravitational_stability": {
+        "rate": 1.0,
+        "unit": "stability_units/hr",
+        "description": "Gravitational stabilization units produced via stabilization core synthesis"
+      },
+      "operational_stability_units": {
+        "rate": 0.5,
+        "unit": "units/hr",
+        "description": "Secondary stability units for wormhole counterbalance support"
+      }
+    }
+  },
+
+  "waste": {
+    "waste_heat_kw": 5000,
+    "waste_materials": [
+      { "id": "processed_slag", "rate": 15, "unit": "kg/hr" }
+    ]
+  },
+
+  "deployment": {
+    "deployment_locations": ["wormhole_proximity"],
+    "deployment_time_hours": 48,
+    "site_preparation_requirements": [
+      "Natural wormhole anchor point identification",
+      "Gravitational field stabilization survey",
+      "Exotic matter supply line establishment"
+    ]
+  },
+
+  "gas_handling_policy": {
+    "store": [],
+    "process": [],
+    "vent": ["waste_heat"]
+  },
+
+  "fuel_management": {
+    "lox_reserve_threshold_percent": 0,
+    "methane_reserve_threshold_percent": 0,
+    "preflight_fuel_strategy": "none",
+    "inflight_transfer_rules": {}
+  },
+
+  "stabilization_core_specification": {
+    "core_type": "natural_anchor_primary",
+    "synthesis_rate": 1.0,
+    "flux_conversion_efficiency": 0.92,
+    "resonance_frequency_hz": 7.3e-2,
+    "field_coherence_maintenance": true
+  },
+
+  "em_harvesting_configuration": {
+    "total_harvesting_units": 28,
+    "rig_model": "em_harvesting_rig_v1",
+    "harvest_efficiency": 0.88,
+    "peak_flux_capacity": 450,
+    "average_flux_processing": 320,
+    "backup_capacity": 100
+  },
+
+  "propulsion_module_configuration": {
+    "total_modules": 4,
+    "module_type": "asteroid_propulsion_module",
+    "installation_type": "surface_mounted",
+    "thrust_range_kn": [100, 1000],
+    "reaction_mass_source": "processed_slag",
+    "repositioning_capability": true
+  },
+
+  "research_required": "artificial_wormhole_tech",
+
+  "metadata": {
+    "version": "2.0",
+    "type": "orbital_structure_operational_data",
+    "template_compliance": "orbital_structure_operational_data_v1.5",
+    "last_updated": "2026-10-16",
+    "construction_pattern": "Mars-Pattern Rule B"
+  }
+}
