@@ -1,4 +1,4 @@
-> **Wiki section:** Development · **Status:** needs review against current game (StarSim / system generation — not unit manufacturing blueprints)
+> **Wiki section:** Development · **Status:** needs review against current game — documents StarSim (system generation and JSON system loading), not manufacturing unit blueprints
 
 # System Blueprints & Procedural Generation Spec
 
