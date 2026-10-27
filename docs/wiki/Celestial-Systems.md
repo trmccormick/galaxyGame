@@ -1,3 +1,5 @@
+> **Wiki section:** Development · **Status:** needs review against current game (this file is a per-system template)
+
 # Celestial Systems — Technical Specification Template
 
 > **How to use this template:** Copy this file and rename it to match the system being documented (e.g., `Celestial-Systems-Sol.md`, `Celestial-Systems-Kepler-Reach.md`). Fill in every section. Do not leave template placeholder text in a committed wiki page. Sections that are genuinely not applicable to a system should be marked `N/A — [reason]`, not deleted.

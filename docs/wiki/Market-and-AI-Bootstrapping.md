@@ -1,3 +1,5 @@
+> **Wiki section:** Player (markets) / Technical (class map) · **Status:** implementation-oriented; re-verify paths and PENDING items against current tree
+
 # Market Architecture & AI Manager Bootstrapping
 
 > **Scope:** Verified specification for Galaxy Game's market layer and autonomous pre-player construction system. All class names, method signatures, field names, and associations are sourced directly from `marketplace.rb`, `condition.rb`, `order.rb`, and `autonomous_construction_manager.rb`. Fields or models not confirmed in source are explicitly marked `[PENDING]`.

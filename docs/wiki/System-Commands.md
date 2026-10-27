@@ -1,3 +1,5 @@
+> **Wiki section:** Technical · **Status:** needs review against current game (failure counts in body may be stale — use agent-tasks status.md)
+
 # System Commands
 
 > **Scope:** Technical reference for the four core Rails console commands that orchestrate Galaxy Game's primary simulation loops. Each command must be invoked deliberately — never chained blindly or automated without explicit test coverage confirming the current spec baseline.
@@ -10,7 +12,7 @@ All simulation-driving commands are subject to the project's contribution guardr
 
 - **No blind `git add .`** before or after running simulation commands that alter seed/state data.
 - Console outputs that reveal new constant drift or unexpected state transitions **must be documented** before committing.
-- If a command exposes a regression in the ~393 failing specs, open a tracking issue immediately — do not paper over it with a seed reset.
+- If a command exposes a regression against the current failure baseline, note it in agent-tasks status / NEEDS_REVIEW — do not paper over it with a seed reset only.
 
 ---
 

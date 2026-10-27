@@ -1,3 +1,5 @@
+> **Wiki section:** Player · **Status:** strong draft with built-in VERIFY flags — prefer this page for market pricing rules
+
 # Resource & Market Logistics — Technical Specification
 
 > **How to use this template:** This page defines the canonical rules for how resources are priced, traded, and managed across Galaxy Game's market layer. It serves two audiences simultaneously: player-facing documentation explaining how market mechanics work, and developer-facing specification governing how `Market::NpcPriceCalculator`, `Market::TradeExecutionService`, and related services must behave.

@@ -1,3 +1,5 @@
+> **Wiki section:** Player · **Status:** design + constants-oriented — confirm constants and processors against current code
+
 # Atmospheric Harvesting
 
 > **Scope:** Extraction and transport economics for harvesting atmospheric gases from off-world sources (Venusian/Titan-analog nitrogen, noble gases, volatiles) and integrating them into colony atmospheric engineering pipelines. All figures derived from `EARTH_ATMOSPHERE` baseline composition and `GREENHOUSE_FACTORS` scaling indices.

@@ -1,3 +1,5 @@
+> **Wiki section:** Player · **Status:** scenario / test-bench reference — useful stress narrative; not a substitute for agent-tasks status
+
 # Scenario: Super-Mars
 
 > **Type:** Test Bench Exploration Scenario

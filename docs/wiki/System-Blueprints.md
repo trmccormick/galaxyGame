@@ -1,3 +1,5 @@
+> **Wiki section:** Development · **Status:** needs review against current game (StarSim / system generation — not unit manufacturing blueprints)
+
 # System Blueprints & Procedural Generation Spec
 
 > **Scope:** Master design-by-contract specification for Galaxy Game's procedural star system generation engine. Grounded in `star_sim/system_generator_service.rb` and `star_sim/procedural_generator.rb` as reviewed during Phase 3. All field names, structures, and constants reflect actual source code — no invented fields.

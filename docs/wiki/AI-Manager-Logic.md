@@ -1,3 +1,5 @@
+> **Wiki section:** Technical · **Status:** short priority matrix — good seed; expand from architecture/ai_manager only when continuing AI work
+
 # 🤖 AI Manager Core Logic & Behavioral Matrices
 
 ## 1. Component/System Mapping

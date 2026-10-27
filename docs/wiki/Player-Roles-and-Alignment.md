@@ -1,3 +1,5 @@
+> **Wiki section:** Player · **Status:** design intent / detailed spec — verify classes and UI against current code before treating as implemented
+
 # Player Roles and Alignment
 
 > **Scope:** Player-facing manual and frontend UI development guide. Documents how human actions alter standing within the game's faction ecosystem, how the Rails backend passes alignment state to the JavaScript frontend, and how the UI renders status indicators, faction badges, and reputation sliders.
