@@ -120,14 +120,25 @@ Player travel pattern:
 
 ## Strategic Implications of Level 4b (If Approved — Speculative)
 
-The following implications are noted from the `em_technology_tree.md` section on Level 4b but should be read as part of the established Level 4 description, not as additional proof that Level 4b is approved:
+The following implications are noted from the `em_technology_tree.md` section on Level 4 but should be read as part of the established Level 4 description, not as additional proof that Level 4b is approved:
 
 | Strategic Effect | Detail | Source |
 |-----------------|--------|--------|
-| **First-mover advantage** | First player to place a portal gate at a new outpost controls instant access to that location | `em_technology_tree.md` § Level 4 (Established context) |
-| **AWS doubly valuable** | AWS stations become both wormhole anchors AND portal hubs | `em_technology_tree.md` § Level 4 (Established context) |
+| **First-mover advantage** | First player to place a portal gate at a new outpost controls instant access to that location | `docs/architecture/systems/em_technology_tree.md` § Level 4 (Established context) |
+| **AWS doubly valuable** | AWS stations become both wormhole anchors AND portal hubs | `docs/architecture/systems/em_technology_tree.md` § Level 4 (Established context) |
 
 > **Note:** These implications are documented in the tech tree's Level 4 section, which describes the potential strategic landscape if portals expand to inter-system use. They do not constitute approval of the expansion itself.
+
+### Source Discrepancy: Tech Tree vs. Consolidation Draft
+
+There is a tension between two sources on the status of Level 4b inter-system portal gates:
+
+| Source | Treatment of Level 4b | Authority Implication |
+|--------|----------------------|----------------------|
+| `docs/architecture/systems/em_technology_tree.md` § Level 4 | Presents Level 4b implications affirmatively as part of the strategic landscape (first-mover advantage, AWS dual-role value) | Suggests Level 4b may be closer to approved design than the consolidation draft indicates |
+| `portal-technology-wiki-draft.md` §2.2 + §10 | Treats Level 4b as a Gemini brainstorming proposal; explicitly states "not treated here as an approved rule" | Conservative treatment — defers to developer decision before promoting to established design |
+
+**Resolution:** Until a developer decision is documented, Level 4b remains **proposed, not approved**. The tech tree's affirmative framing of strategic implications does not override the consolidation draft's explicit proposal notation. If the tech tree represents an approved design update, it should be reconciled with the consolidation draft and the status of Level 4b updated accordingly. This reconciliation is outside the scope of this documentation task.
 
 ---
 
