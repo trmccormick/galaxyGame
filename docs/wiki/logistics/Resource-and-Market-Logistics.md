@@ -67,7 +67,7 @@ Both methods take the settlement as context because pricing is settlement-relati
 
 Example: A settlement with an active `water_mining` facility will have water priced based on local extraction costs, not Earth import rates. The calculator detects the presence of `water_mining` (or equivalent facility type) and routes to local pricing. `[VERIFY AGAINST SOURCE — confirm `water_mining` as the facility key used in the check]`
 
-**Rule 3 — Scarcity Premium.** When local supply is critically low, the NPC ask price scales upward from the base cost. Conversely, the NPC bid price scales downward when supply is abundant. The scarcity/abundance scaling is applied by the calculator before the warehouse cap check. `[VERIFY AGAINST SOURCE — confirm scarcity scaling exists and document the formula]`
+**Rule 3 — Scarcity Premium.** When local supply is critically low, the NPC ask price scales upward from the base cost. Conversely, the NPC bid price scales downward when supply is abundant. The scarcity/abundance scaling is applied by the calculator before the warehouse cap check. `[VERIFY AGAINST SOURCE — confirm scarcity scaling exists and document the formula]` **TARGET DESIGN INTENT**: Formula variables (e.g., `scarcity_multiplier`, `demand_elasticity`) described in this section are design intent only — they represent the target dynamic pricing model, not verified runtime calculations.
 
 ### Pricing Formula Structure
 
@@ -175,7 +175,7 @@ During the Sol system bootstrap (Luna Pattern), the L1 orbital depot and moon-ba
 | `sell` | 1 | Player or AI selling resource to NPC |
 
 **Current matching status:**
-- Sell orders: NPC synthetic buy order generated via `calculate_bid`. Active and working after Phase 3 enum bug fix.
+- Sell orders: NPC synthetic buy order generated via `calculate_bid`. Active and working (enum mismatch bug is known — see Bootstrapping page gap #1). 
 - Buy orders: NPC sell matching not yet implemented. Returns empty array. `[PENDING]`
 
 ### Order Expiry

@@ -1,12 +1,12 @@
 # Planetary Protection and Environmental Governance Specification
 
-> **STATUS: DESIGN INTENT ONLY**
-> This document specifies target gameplay mechanics, regulatory rules, and architectural integration hooks for StarSim, `NpcPriceCalculator`, and `AutonomousConstructionManager`. These features represent intended simulation law and are NOT currently implemented in the codebase.
+> **STATUS: DESIGN INTENT ONLY — TARGET DESIGN INTENT**
+> This document specifies target gameplay mechanics, regulatory rules, and architectural integration hooks for StarSim, `NpcPriceCalculator`, and `AutonomousConstructionManager`. Governance caps (extraction rate limits, sanctuary blocks, quarantine requirements), policy toggles, and contamination frameworks described herein are **TARGET DESIGN INTENT ONLY** — they represent the intended simulation law and are NOT currently implemented in the codebase.
 
 ## 1. Overview & Policy Directives
 The **Planetary Protection and Environmental Governance Framework** establishes physically grounded rules governing resource extraction, contamination management, and terraforming across Sol and procedural star systems within StarSim.
 
-Rather than enforcing arbitrary background limitations, environmental governance in `galaxyGame` operates as an active, state-driven simulation layer. It directly influences market pricing (`NpcPriceCalculator`), AI construction behavior (`AutonomousConstructionManager`), cargo logistics, and research trees.
+Rather than enforcing arbitrary background limitations, environmental governance in `galaxyGame` operates as an active, state-driven simulation layer. It directly influences market pricing (`NpcPriceCalculator`), AI construction behavior (`AutonomousConstructionManager`), cargo logistics, and research trees. These rules are **TARGET DESIGN INTENT ONLY** — no runtime enforcement code currently exists.
 
 ```
                          ASTROBIOLOGICAL LIFE DETECTION
@@ -29,16 +29,16 @@ Planetary bodies are categorized into distinct Protection Classes (Class-0 throu
 
 ### Class-0: Macro/Complex Biosphere (Sanctuary World)
 * **Trigger Criteria:** Detection of multicellular flora, fauna, or complex macroscopic ecosystems (`entity.has_complex_life == true`).
-* **Governance Enforcement:** Stellar Development Council (SDC) Orbital Interdiction.
-* **Extraction & Settlement Rules:**
+* **Governance Enforcement** *(TARGET DESIGN INTENT — not currently enforced in code):* Stellar Development Council (SDC) Orbital Interdiction.
+* **Extraction & Settlement Rules** *(design intent only; no runtime block exists):*
   * **100% Extraction Freeze:** Commercial resource harvesting is strictly prohibited.
   * **Total Settlement Ban:** Human colonization is illegal.
   * **Science-Only Exclusion Zone:** Surface operations are limited to non-invasive orbital telemetry and authorized research probes.
 
 ### Class-1: Microbial, Prebiotic & Ice-Shell Oceans (Regulated World)
 * **Trigger Criteria:** Unconfirmed/confirmed single-celled organisms, extremophiles, subsurface oceans under ice shells (e.g., Europa, Enceladus), or prebiotic organic hydrologies like Titan (`entity.has_microbial_life == true` or `entity.subsurface_ocean == true`).
-* **Governance Enforcement:** Regional Authorities (e.g., Titan Development Commission / TDC, SDC Local Directorate).
-* **Extraction & Settlement Rules:**
+* **Governance Enforcement** *(design intent — not currently enforced in code):* Regional Authorities (e.g., Titan Development Commission / TDC, SDC Local Directorate).
+* **Extraction & Settlement Rules** *(TARGET DESIGN INTENT; governed by caps described in §4 below, no runtime enforcement exists):*
   * **Human Settlement Permitted:** Microbe-bearing bodies do not block colonization or habitability modules.
   * **Regulated / Capped Extraction:** Extraction is subject to body-specific caps (e.g., Titan’s 5% volatile cap) or closed-loop replacement requirements.
   * **Bio-Harvesting & Hybridization Unlocked:** Native extremophiles can be harvested and sequenced in settlement **Astrobiology Labs** to splice hyper-adaptive traits into Earth-origin flora, fauna, and bio-mining strains.
@@ -50,11 +50,11 @@ Planetary bodies are categorized into distinct Protection Classes (Class-0 throu
 
 ### Class-3: Post-Terraforming Transition
 * **Trigger Criteria:** Actively being terraformed but not yet self-sustaining.
-* **Rules:** Limited extraction to support ongoing operations; no commercial exploitation permitted.
+* **Governance Enforcement** *(design intent only — no runtime enforcement):* Limited extraction to support ongoing operations; no commercial exploitation permitted.
 
 ### Class-4: Fully Industrialized / Abiotic Worlds
 * **Trigger Criteria:** Completed terraforming or heavily modified/sterile environments, airless rocky bodies, metallic asteroids, or inorganic atmospheric layers.
-* **Governance Enforcement:** Local Mining Guilds / Open Free Market.
+* **Governance Enforcement** *(design intent only — no runtime enforcement):* Local Mining Guilds / Open Free Market.
 * **Rules:** No planetary protection restrictions apply. Operations are bounded strictly by physical mass conservation, energy budgets, and delta-v constraints.
 
 ---
@@ -134,6 +134,6 @@ Planetary protection parameters serialize directly into the entity JSON definiti
 }
 ```
 
-### Market & AI Hooks
-1. **`NpcPriceCalculator`:** Reads `planetary_protection_class` and `governance_policy` to dynamically scale export tariffs, apply HIC discounts, or restrict contraband trades from interdicted Class-0/Class-1 worlds.
-2. **`AutonomousConstructionManager`:** Evaluates world states when routing AI builder fleets—directing cloud skimmers to Venus under Option B, or prioritizing hydrogen processing depots and sunshades if Option A is active.
+### Market & AI Hooks *(design intent only — no runtime hooks currently exist)*
+1. **`NpcPriceCalculator`:** Reads `planetary_protection_class` and `governance_policy` to dynamically scale export tariffs, apply HIC discounts, or restrict contraband trades from interdicted Class-0/Class-1 worlds. *(TARGET DESIGN INTENT — no code currently implements this hook.)*
+2. **`AutonomousConstructionManager`:** Evaluates world states when routing AI builder fleets—directing cloud skimmers to Venus under Option B, or prioritizing hydrogen processing depots and sunshades if Option A is active. *(TARGET DESIGN INTENT — no integration currently exists.)*

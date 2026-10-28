@@ -38,7 +38,7 @@ The Sol system bootstrap phase enforces a strict financial boundary between Eart
 1 USD = 1 GCC  (bootstrap phase only)
 ```
 
-This fixed rate holds until lunar and off-world market infrastructure scales to a target volume threshold, at which point GCC decouples from USD and floats on open market exchanges. The decoupling mechanism and volume threshold are `[PENDING — not yet implemented in source]`.
+This fixed rate holds until lunar and off-world market infrastructure scales to a target volume threshold, at which point GCC decouples from USD and floats on open market exchanges. The decoupling mechanism and volume threshold are `[PENDING — not yet implemented in source]` **TARGET DESIGN INTENT**: The decoupling volume trigger and floating exchange rate mechanics described here represent the target design state; no runtime code currently enforces or computes this behavior.
 
 ---
 
@@ -342,7 +342,54 @@ Data is currently only printed to log. **There is no persistence of learning dat
 
 ---
 
-## 6. AI Manager ↔ Market Integration Status
+## 6. Market Lifecycle Phases & Pricing Engine Mapping
+
+The bootstrapping economy progresses through distinct phases. Each phase changes which `Resource-and-Market-Logistics.md` pricing rules are active and which price boundaries the AI manager must respect.
+
+### Phase A — Earth Import Dependent (Bootstrap)
+
+**State:** No local production facilities online. All settlement resources are sourced from Earth at `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg`.
+
+**Pricing engine behavior:**
+- `NpcPriceCalculator.calculate_ask` returns the Earth import ceiling (converted via GCC peg) for all resources.
+- Warehouse cap (`0.80` threshold) applies from day one but is irrelevant — there is nothing to sell back because no local production exists yet.
+- **GCC ↔ USD peg**: Fixed at `1.0`. Decoupling has not been implemented. `[PENDING — TARGET DESIGN INTENT]`
+
+**Bootstrapping mechanic:** The 1,320 GCC/kg ceiling is the economic incentive that makes Luna Pattern facility construction profitable — once local production drops below this cost, the market becomes viable for off-world sourcing.
+
+### Phase B — First Local Production Online (Luna Pattern)
+
+**State:** At least one `water_mining`, `atmospheric_processor`, or equivalent facility is operational at a settlement.
+
+**Pricing engine behavior (per `Resource-and-Market-Logistics.md` §4):**
+- **Local Production Override activates**: `NpcPriceCalculator` detects the facility and switches from Earth import ceiling to local cost model (`facility.operational_cost_per_unit + facility.energy_cost_per_unit`).
+- NPC ask price drops below 1,320 GCC/kg — players can undercut or match local production costs.
+- NPC bid price becomes available for excess output (limited by `npc_capacity = 1000` hardcoded cap).
+
+**Bootstrapping mechanic:** AI Manager's first buy orders enter the market through this pricing regime. Until AI Market ↔ Integration (gap #7 on bootstrapping page) is built, only player traders experience these prices.
+
+### Phase C — Full Sol Market Liquidity (Late Bootstrap / Pre-Player Transition)
+
+**State:** Multiple settlements with local production; Mars cycler hub delivering inter-settlement supply curves; `NpcPriceCalculator` scarcity/abundance scaling fully operational.
+
+**Pricing engine behavior:**
+- **Scarcity premium**: Ask price scales upward when local supply is critically low — a dynamic multiplier whose formula is `[VERIFY AGAINST SOURCE — TARGET DESIGN INTENT]`.
+- **Abundance discount**: Bid price scales downward when settlement supply is high.
+- **GCC decoupling**: If market volume exceeds the target threshold, the fixed peg dissolves and GCC floats on open exchanges. Implementation pending (`[PENDING]`).
+
+**Bootstrapping mechanic:** AI Manager now responds to real price signals via `AutonomousConstructionManager` → `Market::Marketplace` integration (gap #7). The AI posts buy orders that trigger NPC sell matching (also `[PENDING]`) — the bootstrapping flywheel is complete when the market can self-balance without player intervention.
+
+### Phase-to-Rules Cross-Reference
+
+| Bootstrap Phase | Active Pricing Rule(s) | Source in Resource-and-Market-Logistics.md |
+|----------------|----------------------|-------------------------------------------|
+| A — Earth Import Dependent | Rule 1: Earth import ceiling (1320 GCC/kg), GCC peg = 1.0 fixed | §1, §2 Rule 1 |
+| B — First Local Production | Rule 2: Local production override activates; NPC bid becomes available | §2 Rule 2, §4 |
+| C — Full Sol Market Liquidity | Rule 3: Scarcity premium + abundance discount; GCC decoupling (target only) | §2 Rule 3, §7 off-world economics |
+
+---
+
+## 7. AI Manager ↔ Market Integration Status
 
 The `Market::Condition` model contains an explicit TODO: `Integrate with AIManager for automated buy/sell order listing and placement`. As of Phase 3, **this integration does not exist**. The `AutonomousConstructionManager` has no calls into `Market::Marketplace`, `Market::Condition`, or `Market::Order`. The two systems are currently independent.
 
@@ -350,7 +397,7 @@ The intended integration path — where the AI manager posts buy orders for cons
 
 ---
 
-## 7. Gap Tracking & Known Issues
+## 8. Gap Tracking & Known Issues
 
 - [ ] **`find_matching_orders` order_type string comparison bug:** `new_order.order_type == 'Sell'` will not correctly match against the `{ buy: 0, sell: 1 }` enum. Should be `new_order.sell?`. Needs a fix and a covering spec before any sell-side matching logic is relied upon.
 - [ ] **Buy-side order matching not implemented:** `find_matching_orders` returns `[]` for all non-Sell orders. NPC sell-to-player matching does not exist yet.

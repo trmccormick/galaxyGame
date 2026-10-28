@@ -1,8 +1,8 @@
 # 🤖 AI Manager Logic & High-Level Execution Rules
 
-## STATUS: DESIGN INTENT & CANONICAL FRONT DOOR
+## STATUS: TARGET DESIGN INTENT & CANONICAL FRONT DOOR
 
-This document is the single canonical wiki entry for AI Manager intent, priority loops, and system boundaries. Detailed architectural specs live in `docs/architecture/ai_manager/`.
+This document is the single canonical wiki entry for AI Manager intent, priority loops, and system boundaries. **All content — including priority scoring, decision loops, ACM boundaries, and safety gates — represents TARGET DESIGN INTENT ONLY.** These rules describe the target architecture rather than active runtime code calculations. Verify against live code in `galaxy_game/app/services/ai_manager/` before treating any detail as implemented behavior. Detailed architectural specs live in `docs/architecture/ai_manager/`.
 
 ---
 
@@ -30,14 +30,23 @@ The ACM handles **physical construction** tasks that flow from AI Manager priori
 | Module assembly sequencing (`unit_module_assembly_service.rb`) | Market liquidity, EAP enforcement, cycler routing |
 | Construction-phase gating (dependency chains, safety caps) | Economic policy decisions and budget allocation |
 
-**Pre-task safety policies** that ACM must enforce before starting any build:
-- **Class-0 sanctuaries** — no construction, ISRU extraction, or infrastructure within protected zones. Respects hard planetary caps on environmental modification.
-- **Atmospheric caps** — automated harvesting cannot exceed regulated atmospheric density thresholds.
-- **Structural dependency chains** — every station construction must pass sequential phases (Luna industrial bootstrapping → L1 shipyards → deep-space deployment) before AWS/WS deployment.
+> **TARGET DESIGN INTENT ONLY** — All entries above describe target architecture. No entry claims verified runtime behavior; confirm against source code before treating as implemented.
+
+**Pre-task safety policies — absolute pre-conditions (short-circuit all priority evaluation):**
+
+The following safety checks execute as **hard pre-conditions BEFORE any Tier 1/2/3 priority scoring or task allocation occurs**. If any check fails, the task is blocked regardless of its priority rank:
+
+1. **Class-0 sanctuary hard blocks** — No construction, ISRU extraction, or infrastructure within protected zones. Absolute prohibition; no priority tier can override.
+2. **Class-1/2 environmental caps** — Automated harvesting cannot exceed regulated atmospheric density thresholds or body-specific extraction limits (e.g., Titan's 5% volatile cap). These caps are enforced by planetary protection governance rules as design intent; runtime enforcement is tracked separately.
+3. **Structural dependency chains** — Every station construction must pass sequential phases (Luna industrial bootstrapping → L1 shipyards → deep-space deployment) before AWS/WS deployment. Earlier phases not yet complete → task blocked.
+
+These safety gates **short-circuit** the Tier 1 (Survival), Tier 2 (Liquidity), and Tier 3 (Expansion) evaluation loops entirely. A task that fails any pre-condition never reaches priority scoring.
 
 ---
 
 ## 3. Priority Hierarchy
+
+**Important:** The pre-task safety gates defined in Section 2 (Class-0 sanctuary hard blocks, Class-1/2 environmental caps, and structural dependency chains) act as **absolute pre-conditions that short-circuit all priority evaluation tiers**. No Tier 1, Tier 2, or Tier 3 scoring or task allocation occurs until a task has passed all safety checks. A task failing any safety gate is blocked regardless of its priority rank — the safety gates execute *before* these loops begin.
 
 The AI Manager evaluates all pending tasks through a three-tier priority loop:
 
@@ -90,9 +99,11 @@ This page holds **intent and boundaries**. For implementation specifics, read th
 
 ---
 
-## 6. Preserved Priority Seed (Legacy Reference)
+## 6. Legacy Priority Seed (Archival Reference — Not Live)
 
-The original static urgency weights remain as a baseline seed (see below). These are **not** the active runtime weights — dynamic scaling supersedes them.
+The static urgency weights below are **archived reference material only**. They represent the original seed weights from `GameConstants::AI_PRIORITIES` that were used in earlier development phases. These values are **NOT the current target design hierarchy** and do NOT reflect the 3-tier structure described in Section 3 above.
+
+> **Do not use this table for design decisions.** The 3-tier priority hierarchy (Section 3) is the active target architecture. This section exists solely to document historical baseline weights for contributors who encounter them in older code or commit messages.
 
 | Category | System Vector | Base Score | Engine Response |
 |----------|--------------|-----------|-----------------|
@@ -102,6 +113,8 @@ The original static urgency weights remain as a baseline seed (see below). These
 | **Operational** | `resource_procurement` | 500 | Orchestrates standard industrial extraction pipelines (e.g., raw regolith processing). |
 | **Operational** | `construction` | 300 | Triggers infrastructure building loops (crater dome covers, shell assembly). |
 | **Operational** | `expansion` | 100 | Deploys automated deep space scout craft or initializes wormhole stabilization scans. |
+
+**These are legacy weights only.** The current target hierarchy uses the 3-tier model in Section 3 with dynamic scaling via `AI_PRIORITY_MULTIPLIERS`. Static base weights may shift as priority logic matures.
 
 ---
 

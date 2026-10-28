@@ -4,7 +4,7 @@
 
 > **Cross-link:** For the pre-player-era infrastructure routing that governs *how* harvested volatiles reach settlements, see **[Station Construction & Logistics Pipeline (Pre-Player Era)](./infrastructure/pre_player_era_logistics_pipeline.md)**. All transport routes are gated behind the Mars cycler hub network; Titan-analog atmospheric delivery to Luna/Earth is not supported.
 
-> **Cross-link:** All atmospheric extraction yields and rates are bounded by Class-1 and Class-2 environmental caps defined in **[Planetary Protection & Environmental Governance](./planetary_protection_environmental_governance.md)** as design intent. Extraction operations must respect these ecological compliance rules before any harvesting pipeline is deployed.
+> **Cross-link:** All atmospheric extraction yields and rates are bounded by planetary protection classes defined in **[Planetary Protection & Environmental Governance](./planetary_protection_environmental_governance.md)**. Specifically: Class-1 bodies (e.g., Titan) enforce a 5% total volatile extraction cap relative to initial atmospheric/surface mass; Class-2 bodies (e.g., Venus Option B) are uncapped but subject to standard market limits and physical Δv constraints. These caps are **TARGET DESIGN INTENT ONLY** — no runtime enforcement currently exists in the codebase.
 
 > **Scope:** Extraction and transport economics for harvesting atmospheric gases from off-world sources (Venusian nitrogen, CO₂ splitting, O₂/CNT synthesis, noble gases, volatiles) and integrating them into colony atmospheric engineering pipelines. All figures derived from `EARTH_ATMOSPHERE` baseline composition and `GREENHOUSE_FACTORS` scaling indices.
 
