@@ -34,7 +34,13 @@ GCC_TO_USD_INITIAL = 1.0
 
 The peg is a **calibration mechanism**: it anchors GCC to present-day real-world pricing during bootstrap so that blueprints, material costs, and Earth-sourced data remain grounded without requiring fantasy economic scaling. No service may hardcode a numeric conversion rate — all references must use this constant or its designated successor.
 
-> **Earth Anchor Price (EAP):** Canonical definition at `docs/wiki_reorganization/economy/03-market-and-pricing.md §2`. Formula: `EAP = Earth_spot_price × refining_factor + transport_cost_to_destination`. While the peg holds, EAP is quoted 1:1 in GCC per settlement.
+**Earth Anchor Price (EAP) — Canonical Definition:** EAP is the single source of truth for resource price ceilings across the market pair. Formula:
+
+```
+EAP = Earth USD reference cost (+ refining factor where applicable) + transport cost to destination settlement
+```
+
+While the bootstrap peg holds, EAP is quoted 1:1 in GCC per settlement. For historical context and prior derivation, see `docs/wiki_reorganization/economy/03-market-and-pricing.md §2` (legacy source reference).
 
 **Decoupling:** `[TARGET DESIGN INTENT ONLY]` The fixed peg is dropped when the off-world economy matures — specifically when GCC-side volume and trade value rival the USD/Earth channel. After unpeg, USD and GCC floating rates diverge and seeded blueprint prices drift with play rather than remaining frozen to the Earth catalog. Until that threshold is met: `[PENDING]` do not treat GCC as a floating currency in any current service logic.
 

@@ -351,7 +351,7 @@ The bootstrapping economy progresses through distinct phases. Each phase changes
 **State:** No local production facilities online. All settlement resources are sourced from Earth at `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg`.
 
 **Pricing engine behavior:**
-- `NpcPriceCalculator.calculate_ask` returns the **Earth Anchor Price (EAP)** as the ceiling for all resources, converted via the GCC peg. See `docs/wiki_reorganization/economy/03-market-and-pricing.md §2` for the canonical EAP formula: `EAP = Earth_spot_price × refining_factor + transport_cost_to_destination`.
+- `NpcPriceCalculator.calculate_ask` returns the **Earth Anchor Price (EAP)** as the ceiling for all resources, converted via the GCC peg. Canonical EAP definition: see `docs/wiki/logistics/Resource-and-Market-Logistics.md` (single source of truth).
 - Warehouse cap (`0.80` threshold) applies from day one but is irrelevant — there is nothing to sell back because no local production exists yet.
 - **GCC ↔ USD peg**: Fixed at `1.0`, quoted 1:1 in GCC. `[PENDING — TARGET DESIGN INTENT]`
 
