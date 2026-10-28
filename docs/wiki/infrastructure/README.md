@@ -21,7 +21,7 @@ This directory serves as the ground-truth repository for all physical engineerin
     * Four-Phase Industrial Progression Tree (Sol Core $\rightarrow$ L1 Shipyards $\rightarrow$ Mars Moon Conversion $\rightarrow$ Belt Expansion).
     * Heavy Tug Operations & Mass-Driver Slag Propulsion Economy.
 
-* **[`planetary_protection_and_environmental_governance.md`](./planetary_protection_and_environmental_governance.md)**
+* **[`planetary_protection_environmental_governance.md`](./planetary_protection_environmental_governance.md)**
   * **Scope:** Planetary protection protocols, environmental governance frameworks, and ecological compliance rules for colonization activities across celestial bodies.
 
 ---

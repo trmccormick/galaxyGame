@@ -13,8 +13,8 @@ Rather than enforcing arbitrary background limitations, environmental governance
                                        │
         ┌──────────────────────────────┼──────────────────────────────┐
         ▼                              ▼                              ▼
-  TIER 0: COMPLEX                TIER 1: MICROBIAL             TIER 2: ABIOTIC
-(Multicellular/Ecosystems)     (Extremophiles/Prebiotic)      (Sterile Volatiles/Regolith)
+  CLASS 0: COMPLEX              CLASS 1: MICROBIAL             CLASS 2-4: ABIOTIC
+(Multicellular/Ecosystems)    (Extremophiles/Prebiotic)      (Sterile Volatiles/Regolith)
         │                              │                              │
   100% Extraction Freeze         5% Extraction Cap /            Uncapped Industrial
   Total Settlement Ban           Bio-Harvesting & Labs          Mass & Δv Governed
@@ -25,9 +25,9 @@ Rather than enforcing arbitrary background limitations, environmental governance
 
 ## 2. Protection Hierarchy & Classification System
 
-Planetary bodies are categorized into distinct Protection Tiers and Classes based on astrobiological complexity and economic designation:
+Planetary bodies are categorized into distinct Protection Classes (Class-0 through Class-4) based on astrobiological complexity and economic designation:
 
-### Class-0 / Tier 0: Macro/Complex Biosphere (Sanctuary World)
+### Class-0: Macro/Complex Biosphere (Sanctuary World)
 * **Trigger Criteria:** Detection of multicellular flora, fauna, or complex macroscopic ecosystems (`entity.has_complex_life == true`).
 * **Governance Enforcement:** Stellar Development Council (SDC) Orbital Interdiction.
 * **Extraction & Settlement Rules:**
@@ -35,14 +35,14 @@ Planetary bodies are categorized into distinct Protection Tiers and Classes base
   * **Total Settlement Ban:** Human colonization is illegal.
   * **Science-Only Exclusion Zone:** Surface operations are limited to non-invasive orbital telemetry and authorized research probes.
 
-### Class-1 / Tier 1: Microbial, Prebiotic & Ice-Shell Oceans (Regulated World)
+### Class-1: Microbial, Prebiotic & Ice-Shell Oceans (Regulated World)
 * **Trigger Criteria:** Unconfirmed/confirmed single-celled organisms, extremophiles, subsurface oceans under ice shells (e.g., Europa, Enceladus), or prebiotic organic hydrologies like Titan (`entity.has_microbial_life == true` or `entity.subsurface_ocean == true`).
 * **Governance Enforcement:** Regional Authorities (e.g., Titan Development Commission / TDC, SDC Local Directorate).
 * **Extraction & Settlement Rules:**
   * **Human Settlement Permitted:** Microbe-bearing bodies do not block colonization or habitability modules.
   * **Regulated / Capped Extraction:** Extraction is subject to body-specific caps (e.g., Titan’s 5% volatile cap) or closed-loop replacement requirements.
   * **Bio-Harvesting & Hybridization Unlocked:** Native extremophiles can be harvested and sequenced in settlement **Astrobiology Labs** to splice hyper-adaptive traits into Earth-origin flora, fauna, and bio-mining strains.
-  * **Ice-Shell Precautionary Rule:** Absence of confirmed life does *not* imply sterility. Unsurveyed ice-shell oceans default to Tier 1 protection pending long-term scientific survey campaigns.
+  * **Ice-Shell Precautionary Rule:** Absence of confirmed life does *not* imply sterility. Unsurveyed ice-shell oceans default to Class-1 protection pending long-term scientific survey campaigns.
 
 ### Class-2: Resource-Rich Industrial Zone
 * **Trigger Criteria:** High commodity yield potential without significant ecological risk (`entity.is_abiotic == true`).
@@ -52,7 +52,7 @@ Planetary bodies are categorized into distinct Protection Tiers and Classes base
 * **Trigger Criteria:** Actively being terraformed but not yet self-sustaining.
 * **Rules:** Limited extraction to support ongoing operations; no commercial exploitation permitted.
 
-### Class-4 / Tier 2: Fully Industrialized / Abiotic Worlds
+### Class-4: Fully Industrialized / Abiotic Worlds
 * **Trigger Criteria:** Completed terraforming or heavily modified/sterile environments, airless rocky bodies, metallic asteroids, or inorganic atmospheric layers.
 * **Governance Enforcement:** Local Mining Guilds / Open Free Market.
 * **Rules:** No planetary protection restrictions apply. Operations are bounded strictly by physical mass conservation, energy budgets, and delta-v constraints.
@@ -70,14 +70,14 @@ Absolute sterility during deep-space operations is physically impossible. Govern
 
 1. **Phase 1 – Pre-Deployment Screening:** Assess incoming material and equipment for biological contamination risk, enforce quarantine protocols, and set sterilization requirements.
 2. **Phase 2 – Deployment Monitoring:** Track biological material introduction during active operations. Operators can allocate operational funds (**Sterilization Budgets**) for thermal sweeps, radiation baths, and sealed bio-barriers to maintain low BCI ratings.
-3. **Phase 3 – Post-Contact Contamination Assessment:** Evaluate ecosystem impact. Raw volatile shipments sourced from high-risk Tier 1 environments must transit through designated quarantine nodes on cycler hubs (e.g., Mars Cyclers) before clearing for open-market trade distribution.
+3. **Phase 3 – Post-Contact Contamination Assessment:** Evaluate ecosystem impact. Raw volatile shipments sourced from high-risk Class-1 environments must transit through designated quarantine nodes on cycler hubs (e.g., Mars Cyclers) before clearing for open-market trade distribution.
 
 ---
 
 ## 4. Sol System Specific Governance & World Policies
 
 ### Titan (Titan Development Commission — TDC / Titan Defense Council)
-* **Status:** Tier 1 Prebiotic Hydrocarbon Reservoir.
+* **Status:** Class-1 Prebiotic Hydrocarbon Reservoir.
 * **Cap Mechanism:** Hard **5% total volatile extraction cap** relative to initial atmospheric and liquid surface mass, with a $\pm 0.1\%$ pressure tolerance threshold.
 * **Closed-Loop Balance:** Managed as a closed-loop volatile reservoir. Extraction beyond baseline thresholds requires offset injections (e.g., overproduction methane or imported neutral buffers) monitored by the TDC.
 
@@ -135,5 +135,5 @@ Planetary protection parameters serialize directly into the entity JSON definiti
 ```
 
 ### Market & AI Hooks
-1. **`NpcPriceCalculator`:** Reads `planetary_protection_class` and `governance_policy` to dynamically scale export tariffs, apply HIC discounts, or restrict contraband trades from interdicted Tier 0/Class-1 worlds.
+1. **`NpcPriceCalculator`:** Reads `planetary_protection_class` and `governance_policy` to dynamically scale export tariffs, apply HIC discounts, or restrict contraband trades from interdicted Class-0/Class-1 worlds.
 2. **`AutonomousConstructionManager`:** Evaluates world states when routing AI builder fleets—directing cloud skimmers to Venus under Option B, or prioritizing hydrogen processing depots and sunshades if Option A is active.
