@@ -21,28 +21,22 @@
 
 Galaxy Game operates with two currency systems during the bootstrap phase:
 
-**USD (United States Dollars):** Used exclusively by Earth-side corporations and for Earth-origin imports. Terrestrial entities do not hold or trade in GCC. Earth-side corporate contracts, import invoices, and transportation costs are denominated in USD.
+**USD (United States Dollars):** Used exclusively by Earth-side corporations and for Earth-origin imports at the Earth interface — exchange/settlement via Luna and L1 for imports/exports. Beyond that interface, USD does not circulate. Terrestrial entities do not hold or trade in GCC. Earth-side corporate contracts, import invoices, and transportation costs are denominated in USD.
 
-**GCC (Galactic Coin Credit):** The off-world transaction currency. All player accounts, colony budgets, courier contracts, and market orders are denominated in GCC.
+**GCC (Galactic Crypto Currency):** The off-world ledger-native digital settlement currency. USDC-like at birth — 1:1 USD-referenced for bootstrap calibration so common material and blueprint data can embed present-day real-world values without fantasy pricing scales. All player accounts, colony budgets, courier contracts, and market orders are denominated in GCC.
 
-**The Bootstrap Peg:**
+**The Bootstrap Peg (Calibration Mechanism):**
 
 ```
 GCC_TO_USD_INITIAL = 1.0
 1 USD = 1 GCC  (bootstrap phase)
 ```
 
-This 1:1 parity is enforced by `GameConstants::GCC_TO_USD_INITIAL`. No service may hardcode a numeric conversion rate — all references must use this constant or its designated successor.
+The peg is a **calibration mechanism**: it anchors GCC to present-day real-world pricing during bootstrap so that blueprints, material costs, and Earth-sourced data remain grounded without requiring fantasy economic scaling. No service may hardcode a numeric conversion rate — all references must use this constant or its designated successor.
 
-**Earth Import Cost Anchor:**
+> **Earth Anchor Price (EAP):** Canonical definition at `docs/wiki_reorganization/economy/03-market-and-pricing.md §2`. Formula: `EAP = Earth_spot_price × refining_factor + transport_cost_to_destination`. While the peg holds, EAP is quoted 1:1 in GCC per settlement.
 
-```
-INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg
-```
-
-This is the baseline cost ceiling for any resource that must be sourced from Earth. Local production and off-world harvesting are economically justified when their effective cost per kg falls below this ceiling. The `NpcPriceCalculator` uses this as the reference ceiling for Earth-import-dependent resources.
-
-**Decoupling:** The fixed peg remains active until off-world market volume reaches a design-specified threshold. The decoupling mechanism and volume trigger are `[PENDING IMPLEMENTATION]` — do not treat GCC as a floating currency in any current service logic.
+**Decoupling:** `[TARGET DESIGN INTENT ONLY]` The fixed peg is dropped when the off-world economy matures — specifically when GCC-side volume and trade value rival the USD/Earth channel. After unpeg, USD and GCC floating rates diverge and seeded blueprint prices drift with play rather than remaining frozen to the Earth catalog. Until that threshold is met: `[PENDING]` do not treat GCC as a floating currency in any current service logic.
 
 ---
 
@@ -67,7 +61,7 @@ Both methods take the settlement as context because pricing is settlement-relati
 
 Example: A settlement with an active `water_mining` facility will have water priced based on local extraction costs, not Earth import rates. The calculator detects the presence of `water_mining` (or equivalent facility type) and routes to local pricing. `[VERIFY AGAINST SOURCE — confirm `water_mining` as the facility key used in the check]`
 
-**Rule 3 — Scarcity Premium.** When local supply is critically low, the NPC ask price scales upward from the base cost. Conversely, the NPC bid price scales downward when supply is abundant. The scarcity/abundance scaling is applied by the calculator before the warehouse cap check. `[VERIFY AGAINST SOURCE — confirm scarcity scaling exists and document the formula]` **TARGET DESIGN INTENT**: Formula variables (e.g., `scarcity_multiplier`, `demand_elasticity`) described in this section are design intent only — they represent the target dynamic pricing model, not verified runtime calculations.
+**Rule 3 — Scarcity Premium.** `[TARGET DESIGN INTENT ONLY]` When local supply is critically low, the NPC ask price scales upward from the base cost. Conversely, the NPC bid price scales downward when supply is abundant. The scarcity/abundance scaling is applied by the calculator before the warehouse cap check. `[VERIFY AGAINST SOURCE — confirm scarcity scaling exists and document the formula]` Formula variables (e.g., `scarcity_multiplier`, `demand_elasticity`) described in this section are design intent only — they represent the target dynamic pricing model, not verified runtime calculations.
 
 ### Pricing Formula Structure
 

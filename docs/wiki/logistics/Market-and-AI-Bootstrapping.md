@@ -351,11 +351,11 @@ The bootstrapping economy progresses through distinct phases. Each phase changes
 **State:** No local production facilities online. All settlement resources are sourced from Earth at `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg`.
 
 **Pricing engine behavior:**
-- `NpcPriceCalculator.calculate_ask` returns the Earth import ceiling (converted via GCC peg) for all resources.
+- `NpcPriceCalculator.calculate_ask` returns the **Earth Anchor Price (EAP)** as the ceiling for all resources, converted via the GCC peg. See `docs/wiki_reorganization/economy/03-market-and-pricing.md §2` for the canonical EAP formula: `EAP = Earth_spot_price × refining_factor + transport_cost_to_destination`.
 - Warehouse cap (`0.80` threshold) applies from day one but is irrelevant — there is nothing to sell back because no local production exists yet.
-- **GCC ↔ USD peg**: Fixed at `1.0`. Decoupling has not been implemented. `[PENDING — TARGET DESIGN INTENT]`
+- **GCC ↔ USD peg**: Fixed at `1.0`, quoted 1:1 in GCC. `[PENDING — TARGET DESIGN INTENT]`
 
-**Bootstrapping mechanic:** The 1,320 GCC/kg ceiling is the economic incentive that makes Luna Pattern facility construction profitable — once local production drops below this cost, the market becomes viable for off-world sourcing.
+**Bootstrapping mechanic:** The EAP ceiling is the economic incentive that makes Luna Pattern facility construction profitable — once local production drops below this cost, the market becomes viable for off-world sourcing.
 
 ### Phase B — First Local Production Online (Luna Pattern)
 
@@ -375,7 +375,10 @@ The bootstrapping economy progresses through distinct phases. Each phase changes
 **Pricing engine behavior:**
 - **Scarcity premium**: Ask price scales upward when local supply is critically low — a dynamic multiplier whose formula is `[VERIFY AGAINST SOURCE — TARGET DESIGN INTENT]`.
 - **Abundance discount**: Bid price scales downward when settlement supply is high.
-- **GCC decoupling**: If market volume exceeds the target threshold, the fixed peg dissolves and GCC floats on open exchanges. Implementation pending (`[PENDING]`).
+- **[TARGET DESIGN INTENT ONLY]** **GCC decoupling**: If market volume and trade value on the GCC side rival the USD/Earth channel, the fixed peg is dropped. After unpeg, USD and GCC floating rates diverge and seeded blueprint prices drift with play — not frozen to the Earth catalog.
+- **Post-float interface roles:**
+  - *Luna / L1*: Remain the Earth interface for USD↔GCC exchange and import/export settlement. These are the chokepoints where any residual USD linkage persists.
+  - *Off-world settlements*: Trade exclusively in GCC; USD is irrelevant beyond the Luna/L1 interface.
 
 **Bootstrapping mechanic:** AI Manager now responds to real price signals via `AutonomousConstructionManager` → `Market::Marketplace` integration (gap #7). The AI posts buy orders that trigger NPC sell matching (also `[PENDING]`) — the bootstrapping flywheel is complete when the market can self-balance without player intervention.
 

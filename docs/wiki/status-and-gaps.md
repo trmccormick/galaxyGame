@@ -49,7 +49,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 |-------------|-------------------|
 | Unit / manufacturing blueprints | [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) — DESIGN INTENT ONLY, covers crafted equipment JSON schemas and build pipelines |
 | AI Manager intent / priority logic | [AI Manager Logic](logistics/AI-Manager-Logic.md) — canonical front door (ACM boundaries, 3-tier priority loops, safety policies) |
-| Market pricing & bootstrapping pair | [Resource and Market Logistics](logistics/Resource-and-Market-Logistics.md) + [Market and AI Bootstrapping](logistics/Market-and-AI-Bootstrapping.md) — designated canonical wiki pair with cross-banners |
+| Market pricing & bootstrapping pair | [Resource and Market Logistics](logistics/Resource-and-Market-Logistics.md) + [Market and AI Bootstrapping](logistics/Market-and-AI-Bootstrapping.md) — designated canonical wiki pair with cross-banners; EAP + peg/unpeg design intent added 2026-10-28 |
 | Infrastructure TOC coherence | [Infrastructure/README.md](infrastructure/README.md) — restructured as master table of contents, pre_player_era_logistics_pipeline.md designated primary narrative |
 | System commands verification posture | [System Commands](technical/System-Commands.md) — banner updated to VERIFY AGAINST CODE with app/services/ runtime pointers |
 
