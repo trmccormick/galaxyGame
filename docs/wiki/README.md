@@ -90,7 +90,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 
 **Still useful later (same repo):**
 
-- Data conventions → JSON / blueprint / operational-data norms (page TBD)
+- Operational-data conventions → general JSON / blueprint norms still TBD (equipment schemas covered by [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md))
 - Guardrails → link to environment / agent boundary docs under `docs/` when you want them on the front door
 
 ---

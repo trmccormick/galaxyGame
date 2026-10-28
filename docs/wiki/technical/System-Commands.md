@@ -14,8 +14,8 @@
 All simulation-driving commands are subject to the project's contribution guardrails:
 
 - **No blind `git add .`** before or after running simulation commands that alter seed/state data.
-- Console outputs that reveal new constant drift or unexpected state transitions **must be documented** before committing.
-- If a command exposes a regression against the current failure baseline, note it in agent-tasks status / NEEDS_REVIEW — do not paper over it with a seed reset only.
+- Console outputs that reveal new constant drift or unexpected state transitions **must be documented** in this wiki before committing.
+- If a command exposes a regression against the current failure baseline, note it on [Status and gaps](../status-and-gaps.md) — do not paper over it with a seed reset only.
 
 ---
 

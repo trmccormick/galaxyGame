@@ -12,7 +12,9 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 
 | Area | Posture |
 |------|---------|
-| [Wiki Home](README.md) | Live front door (Player / Development / Technical) |
+| [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) | DESIGN INTENT ONLY — canonical entry for crafted equipment JSON schemas, build pipelines, and operational data roles |
+| [AI Manager Logic](logistics/AI-Manager-Logic.md) | CANONICAL FRONT DOOR — single entry for AI priority loops, ACM boundaries, and system behavior; deep specs linked out to `docs/architecture/ai_manager/` |
+| [Wiki Home](README.md) | Live front door (Player / Development / Technical); navigation by category table added 2026-10-28 |
 | Topic pages under `docs/wiki/` | Intent and options; many still need verify-against-code |
 | `docs/architecture/`, `docs/developer/`, `docs/gameplay/` | Deep reference — quality varies by age |
 | `docs/wiki_reorganization/` | Planning / archaeology only — not day-to-day navigation |
@@ -35,12 +37,21 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 
 | Gap | Notes |
 |-----|--------|
-| Unit / manufacturing blueprints | No dedicated wiki page yet for craftable unit JSON + operational-data intent. [System blueprints](astronomy/System-Blueprints.md) is StarSim (systems), not that topic |
 | Celestial systems | [Celestial systems](astronomy/Celestial-Systems.md) is a **template**, not a filled Sol (or other) system page |
 | Player roles / factions | [Player roles and alignment](player/Player-Roles-and-Alignment.md) is detailed; treat as intent until matched to current models/UI |
 | Portal / late-game FTL transport | Intentionally out of the front door until design is ready to land under logistics/transport |
 | Command reference drift | [System commands](technical/System-Commands.md) may name services or baselines that have moved — re-check before scripting around them |
 | Architecture sprawl | Large trees under `docs/architecture/` and legacy `docs/agent/` are uneven; prefer wiki entry pages first |
+
+## Resolved gaps (2026-10-28 consolidation pass)
+
+| Gap resolved | New canonical page |
+|-------------|-------------------|
+| Unit / manufacturing blueprints | [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) — DESIGN INTENT ONLY, covers crafted equipment JSON schemas and build pipelines |
+| AI Manager intent / priority logic | [AI Manager Logic](logistics/AI-Manager-Logic.md) — canonical front door (ACM boundaries, 3-tier priority loops, safety policies) |
+| Market pricing & bootstrapping pair | [Resource and Market Logistics](logistics/Resource-and-Market-Logistics.md) + [Market and AI Bootstrapping](logistics/Market-and-AI-Bootstrapping.md) — designated canonical wiki pair with cross-banners |
+| Infrastructure TOC coherence | [Infrastructure/README.md](infrastructure/README.md) — restructured as master table of contents, pre_player_era_logistics_pipeline.md designated primary narrative |
+| System commands verification posture | [System Commands](technical/System-Commands.md) — banner updated to VERIFY AGAINST CODE with app/services/ runtime pointers |
 
 ---
 
@@ -75,3 +86,4 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 
 - **2026-10-27** — Wiki Home + three sections; logistics/finance split fixed; topic banners; this status page added (no external-repo status links).
 - **2026-10-28** — Categorical directory reorganization (`astronomy/`, `logistics/`, `player/`, `infrastructure/`, `engineering/`, `technical/`); all Home-page link repairs; new "Navigation by Category" IA table on the Home page; `planetary_protection_environmental_governance.md` design-only spec added to infrastructure.
+- **2026-10-28** — P0/P1 wiki consolidation pass: created [Unit & Manufacturing Blueprints](engineering/unit-and-manufacturing-blueprints.md) as canonical entry (separate from StarSim); updated [AI Manager Logic](logistics/AI-Manager-Logic.md) as single front door for AI priorities/ACM boundaries; designated [Resource-and-Market-Logistics.md](logistics/Resource-and-Market-Logistics.md) + [Market-and-AI-Bootstrapping.md](logistics/Market-and-AI-Bootstrapping.md) as canonical market pair with cross-banners; restructured [Infrastructure TOC](infrastructure/README.md); added System Commands VERIFY AGAINST CODE banner and archival supersede note to wiki_reorganization/README.md.
