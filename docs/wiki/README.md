@@ -56,7 +56,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | Page | Notes |
 |------|--------|
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
-| [AI Manager logic](technical/AI-Manager-Logic.md) | Priority matrix seed (expand from `docs/architecture/ai_manager/` when doing AI work) |
+| [AI Manager logic](logistics/AI-Manager-Logic.md) | Priority matrix seed (expand from `docs/architecture/ai_manager/` when doing AI work) |
 | [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
 
 **Still useful later (same repo):**

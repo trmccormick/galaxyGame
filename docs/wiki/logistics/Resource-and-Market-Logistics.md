@@ -2,7 +2,7 @@
 
 # Resource & Market Logistics — Technical Specification
 
-> **Cross-link:** For pre-player-era infrastructure routing (Luna/L1/Venus bootstrapping, Mars cycler hub network, MK1/MK2/MK3 HLT class restrictions), see **[Station Construction & Logistics Pipeline (Pre-Player Era)](./infrastructure/pre_player_era_logistics_pipeline.md)**. This page covers the player-facing market pricing layer only.
+> **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md)**. This page covers player-facing market pricing only.
 
 > **How to use this template:** This page defines the canonical rules for how resources are priced, traded, and managed across Galaxy Game's market layer. It serves two audiences simultaneously: player-facing documentation explaining how market mechanics work, and developer-facing specification governing how `Market::NpcPriceCalculator`, `Market::TradeExecutionService`, and related services must behave.
 >
@@ -230,7 +230,7 @@ This figure represents the break-even point above which local or off-world sourc
 
 | Source | Effective Cost Range | Notes |
 |---|---|---|
-| Mars-cycler-hub N2 (established pipeline) | ~400–800 GCC/kg | Distance-dependent; amortises over transit cycles |
+| Mars-cycler-hub N2 (established pipeline) | ~400–800 GCC/kg | Distance-dependent; amortises over transit cycles through the hub network |
 | Asteroid volatile haul | ~200–600 GCC/kg | High variance; dependent on delta-v and belt proximity |
 | Local electrolytic O2 (from water ice) | ~50–150 GCC/kg equivalent | Best long-term O2 source; power-limited |
 | Venusian-analog processed N2 | ~2,640–3,960 GCC/kg | Only viable as CO2 harvest; N2 is byproduct |
@@ -253,7 +253,7 @@ Until step 4 is implemented, AI Manager procurement operates outside the market 
 
 ---
 
-## 9. Gap Tracking & Known Issues
+## 10. StarSim Zero-Cheat Enforcement
 
 - [ ] **`NpcPriceCalculator` source not yet reviewed:** The pricing formula structure, local facility detection logic, scarcity scaling, and 0.80 warehouse cap implementation are documented from design intent only. All `[VERIFY AGAINST SOURCE]` flags in this page must be resolved once the source file is available.
 - [ ] **Buy-side NPC matching not implemented:** `Market::Marketplace#find_matching_orders` returns `[]` for all buy orders. NPC sell-to-player matching is a confirmed open gap.
@@ -266,7 +266,53 @@ Until step 4 is implemented, AI Manager procurement operates outside the market 
 
 ---
 
-## 10. Revision History
+## 10. StarSim Zero-Cheat Enforcement
+
+Market supply curves **cannot be fabricated, spawned, or abstracted** — every NPC bid/ask and every player sellable quantity must be traceable to a physical production or extraction source within the simulation. This rule prevents economy-breaking exploits where materials appear without corresponding mass flow through the game's logistics systems.
+
+**Enforcement rules:**
+
+1. **No market supply from nothing:** NPC buy offers, player sell orders, and wholesale trades are backed only by physically extractable resources — mining output, atmospheric processors, electrolytic plants, refineries, or verified transit arrivals at a settlement warehouse. Refined metals, fuels, and station modules must always pass through physical production pipelines before entering the market layer.
+
+2. **Mass conversion ratios are binding:** All material conversions between resource types use immutable mass-to-slag (or mass-to-mass) ratios defined in `config/initializers/game_constants.rb` or equivalent source. No service may shortcut these ratios to produce more output than the input physically allows.
+
+3. **Transit vectors carry supply:** Market stockpiles at any settlement increase only when a physical haul vector delivers cargo to that location — via player courier, NPC freight run, or automated logistics chain confirmed against delta-v constraints and fuel availability from the relevant HLT class routing table (inner-system MK1 loops vs outer-system MK2/MK3 cycler transit through the Mars hub).
+
+4. **Station stockpiles are physical:** Station/module inventories cannot be "spawned" into existence or inflated beyond their construction mass budget. Every unit on a station's shelves represents either raw material extracted during that session, refined input from an upstream facility, or transit-arrived cargo from another body via the established logistics pipeline.
+
+> **Cross-link:** Infrastructure routing and HLT class restrictions for supply delivery are defined in **[Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md)**. All off-world commodity flow transits through the Mars cycler hub network — no direct Titan-to-Luna or Titan-to-Earth transport exists.
+
+---
+
+## 11. StarSim Cold-Storage Alignment
+
+All cargo status and active haul vectors conform to the **StarSim Instantiation Protocol** so that unmonitored logistics do not consume simulation memory while remaining deterministically computable.
+
+### Active Transit (In-Horizon)
+
+When a transport vehicle, cycler, or freight vessel is within an active player sensor horizon:
+
+- The entity receives full physics ticks each cycle — delta-v consumption, fuel burn, transit progress, and cargo state are updated in real time.
+- Its position, velocity, and manifest are held in RAM as live simulation objects.
+- Any market delivery completion triggers immediate inventory updates at the destination settlement.
+
+### Cold Storage (Out-of-Horizon)
+
+When a transport vehicle or active haul vector leaves all active sensor horizons — for example, a cycler on a long-range outer-system route past the Mars hub relay:
+
+1. **Serialize to JSON:** The entity's full state (position, velocity, heading, cargo manifest, remaining transit distance, fuel reserves, HLT class configuration) is serialized into a lightweight JSON file written to disk cold storage.
+2. **Invalidate from RAM:** The live simulation object is removed from memory; it no longer ticks each cycle.
+3. **Deterministic delta update on re-entry:** When the transport enters any sensor horizon again (triggered by proximity sweep, cycler approach vector, or manual waypoint check), the engine:
+   - Loads the JSON state from disk cold storage
+   - Computes transit progress deterministically using `timestamp_delta × configured_velocity` with fuel depletion proportional to elapsed time and HLT class specifications
+   - Re-instantiates the entity as a live physics object in the simulation
+4. **Cargo delivery:** If transit was complete during cold storage (i.e., the timestamp delta exceeds remaining transit distance), cargo is delivered immediately upon re-instantiation — settlement inventory is updated without requiring the vehicle to re-travel the route.
+
+**No shortcut bypasses cold storage:** There is no mechanism for market supply or stockpiles to appear at a destination "as if" transit completed without first serializing the haul vector, computing deterministic delta progress, and committing cargo on verified arrival. Every unit delivered corresponds to a physical extraction event upstream combined with a deterministically computed transit vector through the logistics pipeline.
+
+---
+
+## 12. Revision History
 
 | Date | Author | Change Summary |
 |---|---|---|

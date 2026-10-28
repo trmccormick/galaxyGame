@@ -2,6 +2,8 @@
 
 # Logistics and Hauling
 
+> **Cross-link:** For the authoritative pre-player-era logistics routing that gates all long-haul transit, see **[Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md)**. This page covers player-facing haul design; infrastructure routing is authority.
+
 How material and cargo move between settlements, stations, and markets — and how that interacts with player and AI contracts.
 
 **Related wiki pages**
@@ -48,6 +50,39 @@ Update this table when harvest or compare passes settle a choice; mark the curre
 - **Not** the financial tax/fee schedule (that content was incorrectly stored under this filename; fee/peg material belongs under [Financial engine](Financial-Engine.md) and [Resource and market logistics](Resource-and-Market-Logistics.md)).  
 - **Not** a full API or class listing — link to architecture when a service is confirmed canonical.  
 - **Not** portal design — later-game transport gets its own subsection or child page when ready.
+
+---
+
+## StarSim Zero-Cheat Enforcement
+
+All material and cargo described in this page is subject to the same physical constraints as every other Galaxy Game system. Nothing appears without a supply chain.
+
+**Zero-cheat rules for logistics:**
+
+1. **No spawned market supply.** NPC buy/sell orders, player haul capacity, and AI resupply deliveries are backed only by physically extractable resources — mining output, atmospheric processors, refineries, or confirmed transit arrivals at settlement warehouses. Refined metals, fuels, station modules, and all other commodities must pass through production pipelines before entering any market layer.
+
+2. **Mass conversion ratios are binding.** All material conversions between resource types use immutable mass-to-mass (or mass-to-slag) ratios defined in game constants. No service may shortcut these to produce more output than the input physically allows.
+
+3. **Transit vectors carry supply.** Market stockpiles at any settlement increase only when a physical haul vector delivers cargo — via player courier, NPC freight run, or automated logistics chain confirmed against delta-v constraints and fuel availability from the relevant HLT class routing table (inner-system MK1 loops vs outer-system MK2/MK3 cycler transit through the Mars hub).
+
+4. **Station stockpiles are physical.** Station/module inventories cannot be "spawned" into existence or inflated beyond their construction mass budget. Every unit on a station's shelves represents extracted material, refined input from upstream facilities, or transit-arrived cargo from another body via the logistics pipeline.
+
+---
+
+## StarSim Cold-Storage Alignment for Transit Vectors
+
+All cargo status and active haul vectors conform to the StarSim Instantiation Protocol:
+
+**In-horizon (active):** When a transport vehicle is within an active player sensor horizon it receives full physics ticks — delta-v consumption, fuel burn, transit progress, and cargo state update in real time. Market delivery on arrival triggers immediate inventory updates at the destination settlement.
+
+**Out-of-horizon (cold storage):** When a transport or haul vector leaves all active sensor horizons its full state (position, velocity, heading, cargo manifest, remaining distance, fuel reserves, HLT class) serializes into lightweight JSON on disk cold storage and is invalidated from RAM. When the entity re-enters any sensor horizon:
+
+1. The engine loads the JSON state from disk.
+2. Transit progress is computed deterministically using `timestamp_delta × configured_velocity` with fuel depletion proportional to elapsed time and HLT class specifications.
+3. The entity is re-instantiated as a live physics object in the simulation.
+4. If transit was complete during cold storage, cargo is delivered immediately upon re-instantiation without requiring the vehicle to re-travel the route.
+
+**No shortcut bypasses cold storage:** No mechanism exists for market supply or stockpiles to appear at a destination "as if" transit completed without first serializing the haul vector, computing deterministic delta progress, and committing cargo on verified arrival. Every unit delivered corresponds to a physical extraction event upstream combined with a deterministically computed transit vector through the logistics pipeline.
 
 ---
 
