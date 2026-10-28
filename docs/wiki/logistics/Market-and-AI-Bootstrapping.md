@@ -2,6 +2,9 @@
 
 # Market Architecture & AI Manager Bootstrapping
 
+> **STATUS: CANONICAL MARKET BOOTSTRAPPING INTENT**
+> This page, alongside `Resource-and-Market-Logistics.md`, forms the canonical wiki pair for AI seed liquidity, market lifecycle phases, and initial economy setup. Verify runtime flags against implementation before code changes.
+
 > **Scope:** Verified specification for Galaxy Game's market layer and autonomous pre-player construction system. All class names, method signatures, field names, and associations are sourced directly from `marketplace.rb`, `condition.rb`, `order.rb`, and `autonomous_construction_manager.rb`. Fields or models not confirmed in source are explicitly marked `[PENDING]`.
 
 ---

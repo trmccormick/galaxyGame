@@ -70,6 +70,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 |------|--------|
 | [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
+| [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 
 *Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
 
@@ -82,10 +83,10 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | Page | Notes |
 |------|--------|
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
-| [AI Manager logic](logistics/AI-Manager-Logic.md) | Priority matrix seed (expand from `docs/architecture/ai_manager/` when doing AI work) |
+| [AI Manager logic](logistics/AI-Manager-Logic.md) | Canonical front door for AI priority loops, ACM boundaries, and system behavior |
 | [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
 
-*Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. A dedicated wiki page for **unit / manufacturing blueprints** (craftable equipment JSON, etc.) is still a gap — see [Status and gaps](status-and-gaps.md).*
+*Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. Crafted equipment schemas are documented in [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md).*
 
 **Still useful later (same repo):**
 

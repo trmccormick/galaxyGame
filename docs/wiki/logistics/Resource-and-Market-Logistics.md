@@ -2,6 +2,9 @@
 
 # Resource & Market Logistics — Technical Specification
 
+> **STATUS: CANONICAL MARKET INTENT**
+> This page, alongside `Market-and-AI-Bootstrapping.md`, forms the canonical wiki pair for market logistics, pricing engines, and supply lines. Verify runtime flags against implementation before code changes.
+
 > **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md)**. This page covers player-facing market pricing only.
 
 > **How to use this template:** This page defines the canonical rules for how resources are priced, traded, and managed across Galaxy Game's market layer. It serves two audiences simultaneously: player-facing documentation explaining how market mechanics work, and developer-facing specification governing how `Market::NpcPriceCalculator`, `Market::TradeExecutionService`, and related services must behave.

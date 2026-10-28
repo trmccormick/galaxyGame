@@ -2,7 +2,10 @@
 
 # System Commands
 
-> **Scope:** Technical reference for the four core Rails console commands that orchestrate Galaxy Game's primary simulation loops. Each command must be invoked deliberately — never chained blindly or automated without explicit test coverage confirming the current spec baseline.
+> **STATUS: VERIFY AGAINST CODE**
+> System commands listed here reflect CLI/admin design intent. Always cross-reference against `app/services/` for actual runtime execution entry points.
+
+> **Scope:** Technical reference for the four core Rails console commands that orchestrate Galaxy Game's primary simulation loops. Each command focuses on verified app/service entry points rather than unverified legacy tools. Commands must be invoked deliberately — never chained blindly or automated without explicit test coverage confirming the current spec baseline.
 
 ---
 
