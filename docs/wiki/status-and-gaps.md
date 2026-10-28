@@ -74,3 +74,4 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 ### Recent doc updates
 
 - **2026-10-27** — Wiki Home + three sections; logistics/finance split fixed; topic banners; this status page added (no external-repo status links).
+- **2026-10-28** — Categorical directory reorganization (`astronomy/`, `logistics/`, `player/`, `infrastructure/`, `engineering/`, `technical/`); all Home-page link repairs; new "Navigation by Category" IA table on the Home page; `planetary_protection_environmental_governance.md` design-only spec added to infrastructure.

@@ -26,7 +26,7 @@ This folder is the **live wiki** — the front door for players, contributors, a
 | [**astronomy/**](astronomy/) | Celestial systems, star maps, and procedural system generation (StarSim) |
 | [**logistics/**](logistics/) | Hauling, markets, financial engines, AI manager, and market bootstrapping |
 | [**player/**](player/) | Orientation, getting started, and player roles / alignment |
-| [**infrastructure/**](infrastructure/) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
+| [**infrastructure/**](infrastructure/README.md) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
 | [**engineering/**](engineering/) | Station construction, expansion protocols, and post-snap reconnection |
 | [**technical/**](technical/) | System commands and agent/developer reference |
 
