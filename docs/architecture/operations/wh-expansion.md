@@ -3,6 +3,8 @@
 > **Status:** Data-driven, pattern-based, dual-link expansion logic with Brown Dwarf Hub integration and Consortium governance  
 > **Philosophy:** Player engagement first, NPC self-sufficiency second, Earth imports last resort
 
+> **Authority:** For the Pre-Player Era dependency chain and anchor construction patterns required before any wormhole station can be deployed, see [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and [Station Construction Options](../wiki/engineering/station_construction_options.md).
+
 ---
 
 ## Hammer Protocol: Lessons of System A & Advanced Logistics

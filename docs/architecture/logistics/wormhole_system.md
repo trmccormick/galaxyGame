@@ -1,5 +1,7 @@
 # Wormhole Contract v1.2: Intergalactic Aperture & Stability Protocols
 
+> **Authority:** This document governs operational standards for wormhole expansion logic. For the deterministic construction pipeline, dependency chain, and anchor requirements that precede all WS/AWS deployment, see [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and [Station Construction & Retrofitting Options](../wiki/engineering/station_construction_options.md).
+
 This document establishes the official operational standards for the Galaxy Game's expansion logic, governing the physical and economic requirements for maintaining stable links between Sol and external systems.
 
 ## 1. Natural Wormhole (NWH) Mechanics

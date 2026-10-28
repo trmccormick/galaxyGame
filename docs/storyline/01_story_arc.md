@@ -4,6 +4,8 @@
 - System A AI Manager Service Integration Phases (`status.md`) — what's been implemented
 - Phase folder structure (`LUNA-MVP-SIMULATION-DESIGN.md`) — where tasks belong in backlog
 
+> **Engineering Ground Truth:** All construction, anchoring, and cycler routing described across the storyline phases must conform to the deterministic dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted. All AWS/WS placement requires verified planetary-mass counterbalance per Section 7 of that specification.
+
 ---
 
 **Updated Framework (2026-06-28)**: Each phase now includes explicit sub-phases for:

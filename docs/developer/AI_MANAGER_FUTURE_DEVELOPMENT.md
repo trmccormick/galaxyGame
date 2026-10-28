@@ -93,7 +93,7 @@ end
 **Mission Profile Analysis**:
 - **Titan Harvester**: Returns ~10,000 kg CH₄ + 180k-200k kg N₂, requires LOX import
 - **Venus Harvester**: Returns ~10,000 kg LOX + 180k-200k kg N₂, requires CH₄ import
-- **Resource Loop**: Venus operations need Titan methane to avoid Earth dependency
+- **Resource Loop**: Venus-Luna Sabatier synthesis is self-sufficient for Methalox; Titan operations augment (do not substitute) this loop for outer-system deep-space missions.
 
 **AI Planning Requirements**:
 ```ruby

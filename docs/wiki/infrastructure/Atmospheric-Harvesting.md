@@ -2,13 +2,15 @@
 
 # Atmospheric Harvesting
 
-> **Scope:** Extraction and transport economics for harvesting atmospheric gases from off-world sources (Venusian/Titan-analog nitrogen, noble gases, volatiles) and integrating them into colony atmospheric engineering pipelines. All figures derived from `EARTH_ATMOSPHERE` baseline composition and `GREENHOUSE_FACTORS` scaling indices.
+> **Cross-link:** For the pre-player-era infrastructure routing that governs *how* harvested volatiles reach settlements, see **[Station Construction & Logistics Pipeline (Pre-Player Era)](./infrastructure/pre_player_era_logistics_pipeline.md)**. All transport routes are gated behind the Mars cycler hub network; Titan-analog atmospheric delivery to Luna/Earth is not supported.
+
+> **Scope:** Extraction and transport economics for harvesting atmospheric gases from off-world sources (Venusian nitrogen, CO₂ splitting, O₂/CNT synthesis, noble gases, volatiles) and integrating them into colony atmospheric engineering pipelines. All figures derived from `EARTH_ATMOSPHERE` baseline composition and `GREENHOUSE_FACTORS` scaling indices.
 
 ---
 
 ## Design Philosophy
 
-Atmospheric harvesting is the long-game supply chain — the alternative to perpetual Earth imports at `INITIAL_TRANSPORTATION_COST_PER_KG = 1,320.00 USD/kg`. For nitrogen-poor colonies (Super-Mars, deep-belt outposts), establishing a Titan-analog or Venusian-analog harvesting pipeline is the primary path to economic independence and terraforming viability.
+Atmospheric harvesting is the long-game supply chain — the alternative to perpetual Earth imports at `INITIAL_TRANSPORTATION_COST_PER_KG = 1,320.00 USD/kg`. For nitrogen-poor colonies (Super-Mars, deep-belt outposts), establishing a **Venusian-analog** or **Mars-cycler-hub-terminated** harvesting pipeline is the primary path to economic independence and terraforming viability.
 
 The goal is always to drive the effective cost-per-kg of atmospheric gas below the Earth import ceiling while maintaining breathability targets relative to `EARTH_ATMOSPHERE` baselines.
 
@@ -69,35 +71,41 @@ Harvested gas injections must be managed to maintain colony atmosphere within sa
 
 ## Gas Source Profiles
 
-### Titan-Analog Source (Primary N₂ Supply)
+### Mars-Cycler-Hub Volatile Source (Primary N₂ Supply)
 
-Titan-analog bodies (dense N₂ atmosphere, surface pressure ~150 kPa) are the richest accessible nitrogen source outside Earth. Harvesting profile:
+Volatile deliveries to the Mars cycler hub (Phobos/Deimos relay stations) from outer-system sources provide the richest accessible nitrogen and methane feeds for deep-space colonies. Harvesting profile:
 
 | Parameter | Value |
 |---|---|
-| Primary yield | N₂ (≥ 95% purity pre-processing) |
+| Primary yield | N₂ (~95% purity pre-processing, post-cycler separation) |
 | Secondary yield | CH₄ (processed out or used as greenhouse agent) |
-| Surface pressure | ~1.5× `EARTH_PRESSURE` = ~150,000 Pa |
-| Gravity (Titan-scale) | ~1.35 m/s² (vs. `Earth::GRAVITY = 9.8 m/s²`) |
-| Extraction method | Cryogenic liquefaction → tanker transport |
+| Delivery method | Mars cycler hub routing only — no direct Titan-to-Luna/Earth transport |
+| Hub separation point | Outer-world volatiles enter the hub; N₂ and CH₄ fractions split at Phobos relay |
+| Gravity (cycler-interface) | Phobos: ~0.003 m/s²; Deimos: ~0.002 m/s² (negligible) |
 
-**Economic profile:** Low extraction delta-v (dense, cold atmosphere; low escape velocity). High transport cost per kg due to distance. Establishes a **long-haul but reliable** N₂ pipeline once infrastructure is in place. Break-even against Earth import (`1,320.00 USD/kg`) typically achieved after 3–5 transit cycles amortize the tanker construction cost.
+**Economic profile:** Low extraction delta-v from outer-system sources, but significant transport cost per kg due to distance. Mars cycler hub transit cycles amortize tanker construction costs over 3–5 runs before reaching break-even against Earth import (`1,320.00 USD/kg`). Once the cycler network locks (Phase 4), marginal transport cost declines.
 
-**Greenhouse risk:** CH₄ fraction in raw Titan-analog harvest has `GREENHOUSE_FACTORS` weight of `25.0`. Scrub before injection or account for warming contribution explicitly. Uncontrolled CH₄ injection during cold-start terraforming can be intentional; during breathable-atmosphere maintenance it is a liability.
+**Greenhouse risk:** CH₄ fraction in raw outer-world harvest has `GREENHOUSE_FACTORS` weight of `25.0`. Scrub before injection or account for warming contribution explicitly. Uncontrolled CH₄ injection during cold-start terraforming can be intentional; during breathable-atmosphere maintenance it is a liability.
 
 ---
 
-### Venusian-Analog Source (N₂ + CO₂ Mix)
+### Venusian-Analog Source (N₂ + CO₂ Mix — Self-Sufficiency Baseline)
 
-Venusian-analog bodies have dense, hot atmospheres with high CO₂ fractions. Harvesting is more complex but provides simultaneous access to N₂ and controlled CO₂ for greenhouse warming programs.
+Venusian-analog bodies have dense, hot atmospheres with high CO₂ fractions. Harvesting is more complex but provides the **critical carbon and nitrogen** feeds that Luna cannot produce on its own. Under the self-sufficiency baseline, Venus operations serve three integrated pathways:
+
+1. **CO₂ splitting (electrolytic or thermochemical):** Releases O₂ for life support and leaves elemental carbon for CNT/slag composite structures.
+2. **Sabatier methanation with Lunar H₂:** Venusian CO₂ is shipped to Lunar PSR refineries where it combines with hydrogen extracted from water ice via the Sabatier reaction: `CO₂ + 4H₂ → CH₄ + 2H₂O`. The resulting **Methalox (CH₄/LOX) propellant** fuels the early HLT fleet and fills LEO/L1 depot networks.
+3. **N₂ extraction for life support:** Atmospheric skimming captures trace N₂ (~3.5% of Venusian atmosphere); combined with O₂ from CO₂ splitting it provides breathable gas mixes for Lunar and orbital habitats.
+
+Saturn-derived H₂ import may supplement or replace Lunar PSR hydrogen in later phases, but **all Carbon feedstock must originate from Venusian atmospheric skimming** — no Titan-analog carbon delivery is permitted under the self-sufficiency baseline.
 
 | Parameter | Value |
 |---|---|
-| Primary yield | CO₂ (~96%) + N₂ (~3.5%) raw mix |
+| Primary yield | CO₂ (~96%) + N₂ (~3.5%) raw mix; O₂ via post-harvest splitting |
 | Surface pressure | ~90× `EARTH_PRESSURE` = ~9,000,000 Pa |
 | Surface temperature | ~735 K (far above `temperature_max = 303.15 K`) |
 | Extraction method | High-altitude aerostatic platforms; atmospheric skimming |
-| Processing requirement | CO₂/N₂ separation before colony injection |
+| Processing requirement | CO₂/N₂ separation → O₂ release → Sabatier methanation with Lunar H₂ |
 
 **Economic profile:** Extreme extraction complexity. Suitable only for colonies with established orbital infrastructure and aerostatic platform technology. The CO₂ yield, however, has a `GREENHOUSE_FACTORS` multiplier of `20.0` — making Venusian-analog CO₂ the most cost-effective planetary warming agent when injected deliberately into a cold target world.
 
@@ -129,7 +137,7 @@ Carbonaceous chondrites and cometary bodies provide the broadest volatile mix. B
 | Supply Source | Effective Cost vs. Earth Import | Notes |
 |---|---|---|
 | Earth Import | `1,320.00 USD/kg` (baseline ceiling) | `INITIAL_TRANSPORTATION_COST_PER_KG` |
-| Titan-analog N₂ | ~400–800 USD/kg (established pipeline) | Distance-dependent; amortizes over time |
+| Mars-cycler-hub N₂ (processed at relay) | ~400–800 USD/kg (established pipeline) | Distance-dependent; amortizes over transit cycles through hub |
 | Venusian-analog N₂ (processed) | ~2,640–3,960 USD/kg | Only viable for CO₂ harvest; N₂ is byproduct |
 | Asteroid volatile haul | ~200–600 USD/kg | Highly variable by delta-v and belt proximity |
 | Local electrolytic O₂ (from H₂O ice) | ~50–150 USD/kg equivalent | Best long-term O₂ source; power-limited |

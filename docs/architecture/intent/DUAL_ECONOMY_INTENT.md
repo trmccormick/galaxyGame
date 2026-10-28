@@ -174,7 +174,7 @@ The game implements a **three-currency economic model** with Earth as the stabil
 ## Economic Flow Examples
 
 ### Example 1: Virtual Ledger Trade (GCC Scarce)
-**Scenario**: AstroLift automated harvester delivers Titan gases to Luna
+**Scenario**: AstroLift automated harvester delivers Titan gases to Luna via Mars cycler relay (outer-system cargo cannot transit directly)
 
 1. **Delivery**: AstroLift harvester arrives at Luna with raw gases
 2. **Payment for Goods**: 

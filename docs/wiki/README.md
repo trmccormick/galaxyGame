@@ -26,13 +26,13 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|--------|
 | [Getting started](getting_started.md) | Run the game, first session |
-| [Player roles and alignment](Player-Roles-and-Alignment.md) | Roles and alignment (verify against code) |
+| [Player roles and alignment](player/Player-Roles-and-Alignment.md) | Roles and alignment (verify against code) |
 | [Logistics and hauling](Logistics-and-Hauling.md) | Transport and hauling intent |
 | [Resource and market logistics](Resource-and-Market-Logistics.md) | Resources ↔ markets (strongest market page) |
-| [Market and AI bootstrapping](Market-and-AI-Bootstrapping.md) | Market models + AI construction bootstrap |
-| [Financial engine](Financial-Engine.md) | GCC/USD, peg, market friction |
+| [Market and AI bootstrapping](logistics/Market-and-AI-Bootstrapping.md) | Market models + AI construction bootstrap |
+| [Financial engine](logistics/Financial-Engine.md) | GCC/USD, peg, market friction |
 | [Atmospheric harvesting](Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
-| [Scenario: Super Mars](Scenario-Super-Mars.md) | Super-Mars test-bench scenario |
+| [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) | Super-Mars test-bench scenario |
 
 ---
 
@@ -42,7 +42,7 @@ How major systems are meant to work for contributors (intent and options; link o
 
 | Page | Notes |
 |------|--------|
-| [System blueprints](System-Blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
+| [System blueprints](astronomy/System-Blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
 | [Celestial systems](Celestial-Systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
 
 *Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. A dedicated wiki page for **unit / manufacturing blueprints** (craftable equipment JSON, etc.) is still a gap — see [Status and gaps](status-and-gaps.md). StarSim is covered by System blueprints.*
@@ -56,8 +56,8 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | Page | Notes |
 |------|--------|
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
-| [AI Manager logic](AI-Manager-Logic.md) | Priority matrix seed (expand from `docs/architecture/ai_manager/` when doing AI work) |
-| [System commands](System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
+| [AI Manager logic](technical/AI-Manager-Logic.md) | Priority matrix seed (expand from `docs/architecture/ai_manager/` when doing AI work) |
+| [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
 
 **Still useful later (same repo):**
 

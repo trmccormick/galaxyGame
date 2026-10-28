@@ -2,6 +2,8 @@
 
 **Date:** 2026-01-15
 
+> **Engineering Ground Truth:** All settlement patterns — including the Super-Mars/L1-Depot Hybrid Strategy, asteroid relocation for moonless anchors, and slag propulsion economy — must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No settlement may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
+
 ## Super-Mars/L1-Depot Hybrid Strategy
 
 ### Overview

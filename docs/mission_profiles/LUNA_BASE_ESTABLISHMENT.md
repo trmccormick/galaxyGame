@@ -93,8 +93,8 @@ What Luna cannot produce locally in early game and must import:
 
 | Resource | Source | Delivery | Priority |
 |---|---|---|---|
-| CH4 | Titan skimmer or Earth tanker | HLT or Cycler | HIGH — needed for skimmer refueling |
-| N2 | Titan skimmer | HLT skimmer | HIGH — habitat atmosphere mix |
+| CH4 | Titan skimmer (via Mars cycler relay) or Earth tanker | Cycler (Titan cargo); HLT (inner-system fuel) | HIGH — needed for skimmer refueling |
+| N2 | Titan skimmer (via Mars cycler relay) | Cycler (outer-system cargo) | HIGH — habitat atmosphere mix |
 | CO2 | Venus skimmer | HLT skimmer | MEDIUM — Sabatier feedstock |
 | Advanced electronics | Earth | HLT→Cycler | HIGH — cannot manufacture locally |
 | Solar panels | Earth | HLT→Cycler | HIGH — power infrastructure |

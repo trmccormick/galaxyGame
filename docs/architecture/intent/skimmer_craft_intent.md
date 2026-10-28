@@ -21,7 +21,7 @@ Skimmers have **limited processing capacity** — only enough to refill their ow
 | **Venus Skimmer** | Raw Venusian Atmosphere | Sabatier Reactor / CO2 Scrubbing | LOX for skimmer's own fuel tanks only |
 | **Titan Skimmer** | Raw Titan Atmosphere | Methane Fractionation / H2 Separation | CH4 for skimmer's own fuel tanks only |
 
-**Key constraint**: Onboard processing is NOT sufficient to process the full cargo load. The majority of harvested gas (CO2/N2 from Venus, CH4/N2 from Titan) is delivered raw to Luna's LDC for downstream processing.
+**Key constraint**: Onboard processing is NOT sufficient to process the full cargo load. Raw Titan gas (CH₄/N₂) must transit via Mars cycler relay before reaching Luna's LDC for downstream processing (outer-system cargo never routes direct). Venusian raw gas (CO₂/N₂) may route through inner-system depots but requires active reliquefaction handling during transfer.
 
 ## 3. Modular Integration (Docking Logic)
 

@@ -2,6 +2,8 @@
 
 # Resource & Market Logistics — Technical Specification
 
+> **Cross-link:** For pre-player-era infrastructure routing (Luna/L1/Venus bootstrapping, Mars cycler hub network, MK1/MK2/MK3 HLT class restrictions), see **[Station Construction & Logistics Pipeline (Pre-Player Era)](./infrastructure/pre_player_era_logistics_pipeline.md)**. This page covers the player-facing market pricing layer only.
+
 > **How to use this template:** This page defines the canonical rules for how resources are priced, traded, and managed across Galaxy Game's market layer. It serves two audiences simultaneously: player-facing documentation explaining how market mechanics work, and developer-facing specification governing how `Market::NpcPriceCalculator`, `Market::TradeExecutionService`, and related services must behave.
 >
 > **Verify-against-source flags:** Sections marked `[VERIFY AGAINST SOURCE]` contain mechanics specified from design intent but not yet confirmed against the `NpcPriceCalculator` source file. These must be validated during next week's testing phase before this page is treated as fully authoritative.
@@ -199,7 +201,7 @@ All orders expire 24 hours after creation (`Market::Order#expires_at = created_a
 |---|---|---|---|---|
 | LOX (Liquid Oxygen) | Life support | Atmospheric electrolysis / Earth import | Yes | `atmospheric_processor` |
 | Water | Life support | Water mining / Earth import | Yes | `water_mining` |
-| Nitrogen (N2) | Atmospheric | Titan-analog harvesting / Earth import | Yes | `atmospheric_processor` |
+| Nitrogen (N2) | Atmospheric | Mars cycler hub routing / Earth import | Yes | `atmospheric_processor` |
 | Venusian Nitrogen | Atmospheric (premium) | Venusian-analog harvesting | No | N/A |
 | Lunar Titanium | Construction | Lunar regolith processing | No | `regolith_processor` |
 | Energy | Utilities | Solar / Reactor | No | `solar_array` / `reactor` |
@@ -207,6 +209,14 @@ All orders expire 24 hours after creation (`Market::Order#expires_at = created_a
 ---
 
 ## 7. Logistics & Transport Economics
+
+### HLT Class Routing Restrictions
+
+Heavy Lift Transport (HLT) classes are **gated by operational range** to prevent inner-system craft from undertaking deep-space runs they cannot support:
+
+* **MK1 HLT — Inner-System Only:** Restricted to Earth ↔ Luna ↔ Venus loops (LEO, L1 depots, PSR ice routes). MK1 vessels lack the shielding, life-support endurance, and structural rating for long-range transit.
+* **MK2 / MK3 Cyclers — Outer-System Gated:** All runs beyond the inner-system triangle (Mars moons, Belt anchor positions, no-moon asteroid repositioning) require MK2 or MK3 class cyclers built at L1 shipyards per the pre-player pipeline. These long-range transports carry redundant power and dedicated slag-engine propulsion derived from hollowed moon/asteroid material processing.
+* **No direct Titan-to-Luna or Titan-to-Earth transport:** All off-world logistics routes transit through the **Mars cycler hub network** (Phobos/Deimos relay stations). Direct deep-space hauls bypassing the Mars hub are not permitted under current infrastructure rules. `[VERIFY — confirm Mars-hub routing enforcement in market service logic]`
 
 ### Earth Import Cost Model
 
@@ -220,7 +230,7 @@ This figure represents the break-even point above which local or off-world sourc
 
 | Source | Effective Cost Range | Notes |
 |---|---|---|
-| Titan-analog N2 (established pipeline) | ~400–800 GCC/kg | Distance-dependent; amortises over transit cycles |
+| Mars-cycler-hub N2 (established pipeline) | ~400–800 GCC/kg | Distance-dependent; amortises over transit cycles |
 | Asteroid volatile haul | ~200–600 GCC/kg | High variance; dependent on delta-v and belt proximity |
 | Local electrolytic O2 (from water ice) | ~50–150 GCC/kg equivalent | Best long-term O2 source; power-limited |
 | Venusian-analog processed N2 | ~2,640–3,960 GCC/kg | Only viable as CO2 harvest; N2 is byproduct |

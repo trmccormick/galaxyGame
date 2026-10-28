@@ -2,6 +2,8 @@
 
 This document outlines the four primary orbital settlement protocols implemented by the AI Manager. Each protocol is designed for a specific planetary or system context, optimizing for resource availability, industrial capacity, and strategic expansion.
 
+> **Engineering Ground Truth:** All orbital settlement construction must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and anchor/verification rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No settlement may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
+
 ## 1. Mars-Style Protocol
 - **Applicability:** Small moons, asteroids
 - **Method:**

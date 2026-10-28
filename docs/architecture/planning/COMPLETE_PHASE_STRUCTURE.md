@@ -38,7 +38,7 @@ intent: Map narrative progression to technical implementation phases and AI Mana
 **mk2 Cryogenic Cooling Systems Unlocked**
 - **Timing**: Available immediately at game start (before Phase 0 harvester launches)
 - **Why**: Venus/Titan harvesters launch from Earth in Phase 0 with mk2 storage tanks equipped
-- **Function**: mk2 cooling reduces boil-off from 0.3% to 0.15% daily, enabling viable long-haul return transits (8-10 months) from Venus/Titan back to Luna without unacceptable resource loss
+- **Function**: mk2 cooling reduces boil-off from 0.3% to 0.15% daily, but inner-system return transits require cycler routing through the Mars hub (no direct Titan→Luna runs). Only MK2 or higher-rated hulls may carry volatile cargo; early Hulls without active reliquefaction cannot sustain transit viability for outer-system routes.
 - **Technology Chain**: 
   - Graphite extraction (Phase 10+) + Epoxy resin (importable) → Graphene composite (produced Phase 11+)
   - BUT mk2 storage blueprints producible with standard materials (stainless_steel, insulation, thermal_coating, electronics, sensors) for Phase 0-8 operations
@@ -50,7 +50,7 @@ intent: Map narrative progression to technical implementation phases and AI Mana
 - Sets up for Phase 0 HLT harvester equipping
 
 **Connection to Phase 0 Launch**
-Phase 0 HLT harvesters (Venus Month 5, Titan Month 18) launch from Earth with mk2 cooling already equipped. This reduces boil-off losses during 8-10 month transit to destination. Without mk2 cooling equipped during Earth construction, harvesters cannot maintain cargo viability for Phase 10 return.
+Phase 0 HLT harvesters (Venus Month 5, Titan Month 18) launch from Earth with mk2 cooling already equipped. This reduces boil-off losses during transit to destination. Outer-system harvesters cannot return via direct inner-system routes; all volatile cargo must be relayed through the Mars cycler hub before reaching Luna or Earth, enforcing MK2+ hull requirements for any long-range transfer.
 
 **Note on Stationary Skimmers (Phase 11+)**
 Phase 11+ introduces **stationary skimmers** (permanently deployed at Venus/Titan). This is a different operational model from mobile HLT harvesters. Stationary skimmers receive resupply via cycler transits and use Luna/L1-produced advanced storage (mk3 cooling). Boil-off enforcement activates on cycler transits at Phase 11+.

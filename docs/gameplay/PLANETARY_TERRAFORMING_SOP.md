@@ -1,5 +1,7 @@
 # Planetary Terraforming SOP — Universal Framework
 
+> **Engineering Ground Truth:** All planetary infrastructure deployment — including wormhole station placement, lunar ISRU operations, and asteroid anchoring — must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No settlement or anchor may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
+
 ## Overview
 
 This document defines the **standard operating procedure (SOP)** for planetary settlement and terraforming across all star systems in Galaxy Game. The SOP was developed and perfected in the Sol System by AI Managers before the wormhole era, then deployed universally to every world encountered through the artificial wormhole network.

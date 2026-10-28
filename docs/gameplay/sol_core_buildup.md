@@ -1,6 +1,8 @@
 **Status:** Intent / tuning guide (not locked campaign script)  
 **Last updated:** 2026-10-16  
 
+> **Engineering Ground Truth:** All Sol core buildup, L1/Luna logistics, and Mars foothold operations must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted. All outer-system routes require Mars cycler hub relay.
+
 This document records the **preferred early Sol dependency chain**, how **Mars becomes solvent as a trade hub**, and a **candidate player-entry window** after reconnection toward Eden. Test modes may use prescripted Sol, free AI build, or hybrid; the goal is an AI Manager that can run the game. Thresholds and exact timing remain in flux.
 
 Related:

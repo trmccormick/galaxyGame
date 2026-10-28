@@ -1,5 +1,7 @@
 # Synthetic Mega-Stations (Manufactured Facilities)
 
+> **Authority:** All synthetic mega-station construction at L1 and other orbital locations must follow the Pre-Player Era Phase 2 dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md). Pure orbital builds are only permissible at Earth-L1 where planetary gravity provides inherent stability (see [Station Construction Options](../wiki/engineering/station_construction_options.md)).
+
 ## Overview
 Synthetic Mega-Stations are large-scale, manufactured structures built at key orbital locations (e.g., Earth-Moon L1, Mars L1) to serve as logistics, manufacturing, or research hubs. These stations are constructed from imported or ISRU materials and feature advanced automation and crew support.
 
