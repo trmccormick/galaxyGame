@@ -1,4 +1,4 @@
-> **Wiki section:** Technical · **Status:** needs review against current game (failure counts in body may be stale — use agent-tasks status.md)
+> **Wiki section:** Technical · **Status:** needs review against current game (failure counts in body may be stale — see status-and-gaps.md)
 
 # System Commands
 
