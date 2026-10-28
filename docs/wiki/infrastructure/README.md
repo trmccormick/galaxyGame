@@ -2,7 +2,7 @@
 title: Infrastructure & Logistics Architecture Index
 category: Infrastructure & Engineering
 status: Active Index
-last_updated: 2026-10-27
+last_updated: 2026-10-28
 ---
 
 # Infrastructure & Logistics Architecture
@@ -20,6 +20,9 @@ This directory serves as the ground-truth repository for all physical engineerin
     * Venus-Luna Volatile Feedback Loop ($\text{CO}_2 / \text{N}_2$ skimming + Lunar PSR $\text{H}_2\text{O}$ ice $\rightarrow$ Methalox propellant).
     * Four-Phase Industrial Progression Tree (Sol Core $\rightarrow$ L1 Shipyards $\rightarrow$ Mars Moon Conversion $\rightarrow$ Belt Expansion).
     * Heavy Tug Operations & Mass-Driver Slag Propulsion Economy.
+
+* **[`planetary_protection_and_environmental_governance.md`](./planetary_protection_and_environmental_governance.md)**
+  * **Scope:** Planetary protection protocols, environmental governance frameworks, and ecological compliance rules for colonization activities across celestial bodies.
 
 ---
 

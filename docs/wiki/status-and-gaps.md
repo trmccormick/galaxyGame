@@ -24,10 +24,10 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 ## What is in better shape (documentation)
 
 - **Markets (docs):** [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) and [Market and AI bootstrapping](logistics/Market-and-AI-Bootstrapping.md) are the strongest market writeups; both still carry VERIFY / PENDING markers — trust the flags.
-- **Getting started:** [Getting started](getting_started.md) matches the Docker-oriented run path in the project README.
+- **Getting started:** [Getting started](player/getting_started.md) matches the Docker-oriented run path in the project README.
 - **Logistics vs finance split:** [Logistics and hauling](logistics/Logistics-and-Hauling.md) is transport intent; [Financial engine](logistics/Financial-Engine.md) is currency/peg/friction. Do not mix them.
 - **StarSim (docs):** [System blueprints](astronomy/System-Blueprints.md) covers StarSim — system generation and loading JSON systems to initialize that part of the game. It is **not** about manufacturing unit/structure blueprints.
-- **Scenarios / atmosphere:** [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) and [Atmospheric harvesting](Atmospheric-Harvesting.md) are useful design/test-bench material; confirm constants against `config/initializers` when implementing.
+- **Scenarios / atmosphere:** [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) and [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) are useful design/test-bench material; confirm constants against `config/initializers` when implementing.
 
 ---
 
@@ -36,7 +36,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 | Gap | Notes |
 |-----|--------|
 | Unit / manufacturing blueprints | No dedicated wiki page yet for craftable unit JSON + operational-data intent. [System blueprints](astronomy/System-Blueprints.md) is StarSim (systems), not that topic |
-| Celestial systems | [Celestial systems](Celestial-Systems.md) is a **template**, not a filled Sol (or other) system page |
+| Celestial systems | [Celestial systems](astronomy/Celestial-Systems.md) is a **template**, not a filled Sol (or other) system page |
 | Player roles / factions | [Player roles and alignment](player/Player-Roles-and-Alignment.md) is detailed; treat as intent until matched to current models/UI |
 | Portal / late-game FTL transport | Intentionally out of the front door until design is ready to land under logistics/transport |
 | Command reference drift | [System commands](technical/System-Commands.md) may name services or baselines that have moved — re-check before scripting around them |
@@ -58,11 +58,11 @@ Exact failure counts and branch tips change often. For this wiki:
 
 | Topic | Start here |
 |-------|------------|
-| Run / setup | [Getting started](getting_started.md), [docs/developer/setup.md](../developer/setup.md), root `README.md` |
+| Run / setup | [Getting started](player/getting_started.md), [docs/developer/setup.md](../developer/setup.md), root `README.md` |
 | Docs map | [docs/README.md](../README.md) |
 | Architecture overview | [docs/architecture/overview.md](../architecture/overview.md) (and subfolders as needed) |
 | Markets / economy | Wiki market pages above; `docs/architecture/` financial / organizations material |
-| AI Manager | [AI Manager logic](technical/AI-Manager-Logic.md); `docs/architecture/ai_manager/` |
+| AI Manager | [AI Manager logic](logistics/AI-Manager-Logic.md); `docs/architecture/ai_manager/` |
 | Testing habits | `docs/testing/`, practical testing notes under `docs/` |
 
 ---

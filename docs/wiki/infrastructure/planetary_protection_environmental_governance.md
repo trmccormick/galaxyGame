@@ -1,5 +1,8 @@
 # Planetary Protection and Environmental Governance Specification
 
+> **STATUS: DESIGN INTENT ONLY**
+> This document specifies target gameplay mechanics, regulatory rules, and architectural integration hooks for StarSim, `NpcPriceCalculator`, and `AutonomousConstructionManager`. These features represent intended simulation law and are NOT currently implemented in the codebase.
+
 ## 1. Overview & Policy Directives
 The **Planetary Protection and Environmental Governance Framework** establishes physically grounded rules governing resource extraction, contamination management, and terraforming across Sol and procedural star systems within StarSim.
 

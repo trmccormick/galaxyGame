@@ -19,33 +19,59 @@ This folder is the **live wiki** — the front door for players, contributors, a
 
 ---
 
+## Navigation by category
+
+| Directory | Description |
+|-----------|-------------|
+| [**astronomy/**](astronomy/) | Celestial systems, star maps, and procedural system generation (StarSim) |
+| [**logistics/**](logistics/) | Hauling, markets, financial engines, AI manager, and market bootstrapping |
+| [**player/**](player/) | Orientation, getting started, and player roles / alignment |
+| [**infrastructure/**](infrastructure/) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
+| [**engineering/**](engineering/) | Station construction, expansion protocols, and post-snap reconnection |
+| [**technical/**](technical/) | System commands and agent/developer reference |
+
+---
+
 ## Player
 
 Orientation and game-facing systems (what the game is trying to be, and how it plays).
 
 | Page | Notes |
 |------|--------|
-| [Getting started](getting_started.md) | Run the game, first session |
+| [Getting started](player/getting_started.md) | Run the game, first session |
 | [Player roles and alignment](player/Player-Roles-and-Alignment.md) | Roles and alignment (verify against code) |
-| [Logistics and hauling](Logistics-and-Hauling.md) | Transport and hauling intent |
-| [Resource and market logistics](Resource-and-Market-Logistics.md) | Resources ↔ markets (strongest market page) |
-| [Market and AI bootstrapping](logistics/Market-and-AI-Bootstrapping.md) | Market models + AI construction bootstrap |
-| [Financial engine](logistics/Financial-Engine.md) | GCC/USD, peg, market friction |
-| [Atmospheric harvesting](Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
-| [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) | Super-Mars test-bench scenario |
 
 ---
 
-## Development
-
-How major systems are meant to work for contributors (intent and options; link out to architecture for depth).
+## Logistics & Markets
 
 | Page | Notes |
 |------|--------|
-| [System blueprints](astronomy/System-Blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
-| [Celestial systems](Celestial-Systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
+| [Logistics and hauling](logistics/Logistics-and-Hauling.md) | Transport and hauling intent |
+| [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) | Resources ↔ markets (strongest market page) |
+| [Market and AI bootstrapping](logistics/Market-and-AI-Bootstrapping.md) | Market models + AI construction bootstrap |
+| [Financial engine](logistics/Financial-Engine.md) | GCC/USD, peg, market friction |
 
-*Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. A dedicated wiki page for **unit / manufacturing blueprints** (craftable equipment JSON, etc.) is still a gap — see [Status and gaps](status-and-gaps.md). StarSim is covered by System blueprints.*
+---
+
+## Astronomy & Celestial Systems
+
+| Page | Notes |
+|------|--------|
+| [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) | Super-Mars test-bench scenario |
+| [System blueprints](astronomy/System-Blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
+| [Celestial systems](astronomy/Celestial-Systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
+
+---
+
+## Infrastructure & Engineering
+
+| Page | Notes |
+|------|--------|
+| [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
+| [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
+
+*Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
 
 ---
 
@@ -58,6 +84,8 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
 | [AI Manager logic](logistics/AI-Manager-Logic.md) | Priority matrix seed (expand from `docs/architecture/ai_manager/` when doing AI work) |
 | [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
+
+*Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. A dedicated wiki page for **unit / manufacturing blueprints** (craftable equipment JSON, etc.) is still a gap — see [Status and gaps](status-and-gaps.md).*
 
 **Still useful later (same repo):**
 
