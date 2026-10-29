@@ -2,7 +2,7 @@
 
 # Post-Snap Reconnection Protocol (Sol–Eden)
 
-> **Ground Truth Authority:** All AWS construction, anchor verification, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). The AI Manager's four-phase reconnection pipeline must respect all anchor mass thresholds defined therein.
+> **Ground Truth Authority:** All AWS construction, anchor verification, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](../engineering/station_construction_options.md). The AI Manager's four-phase reconnection pipeline must respect all anchor mass thresholds defined therein.
 
 Backend operational sequence by which the AI Manager restores the interstellar corridor after a Natural Wormhole Stochastic Exit ("the Snap") severs the Sol–Eden link. This document defines the deterministic four-phase pipeline executed autonomously by Sol-side infrastructure — no Eden local stockpiles, no external aid, no pre-existing exit-side infrastructure.
 
@@ -193,6 +193,5 @@ The AI Manager does not restart the world for the player. It restores what it ca
 
 - Wormhole Mechanics: [`docs/architecture/logistics/wormhole_system.md`](../../architecture/logistics/wormhole_system.md)
 - Cycler Mission Timelines: [`docs/architecture/services/ai_manager/CYCLER_MISSION_TIMELINES.md`](../../architecture/services/ai_manager/cycler_mission_timelines.md)
-- Wormhole Scouting Integration: [`docs/developer/WORMHOLE_SCOUTING_INTEGRATION.md`](../developer/WORMHOLE_SCOUTING_INTEGRATION.md)
 - Act 3 Snap Crisis / Story Arc: [`docs/storyline/01_story_arc.md`](../../storyline/01_story_arc.md)
 - Wormhole Network Architecture: [`docs/architecture/logistics/navigation/WORMHOLE_NETWORK.md`](../../architecture/logistics/navigation/WORMHOLE_NETWORK.md)

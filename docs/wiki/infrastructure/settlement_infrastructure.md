@@ -105,8 +105,8 @@ Settlement::OrbitalSettlement (L1 Gateway)
 | [Source architecture](https://github.com/trmccormick/galaxyGame/blob/main/docs/architecture/settlement/README.md) | `docs/architecture/settlement/README.md` — original intent document (archived reference) |
 | [SETTLEMENT-PATTERNS](https://github.com/trmccormick/galaxyGame/blob/main/docs/architecture/patterns/settlement_patterns.md) | Deterministic settlement evolution patterns (`docs/architecture/patterns/`) |
 | [Worldhouse Intent](https://github.com/trmccormick/galaxyGame/blob/main/docs/architecture/intent/worldhouse_intent.md) | Worldhouse pattern detail (`docs/architecture/intent/`) |
-| [ISRU Fabrication Chain](./technical/isru_fabrication_chain.md) | In-situ resource utilization pipelines (infra foundation for settlements) |
-| [Station Construction Options](./engineering/station_construction_options.md) | Pre-player station/build pipelines relevant to settlement growth |
+| [ISRU Fabrication Chain](../technical/isru_fabrication_chain.md) | In-situ resource utilization pipelines (infra foundation for settlements) |
+| [Station Construction Options](../engineering/station_construction_options.md) | Pre-player station/build pipelines relevant to settlement growth |
 
 ---
 

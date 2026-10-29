@@ -229,7 +229,7 @@ This figure represents the break-even point above which local or off-world sourc
 
 ### Off-World Harvesting Economics
 
-*(See `docs/wiki/Atmospheric-Harvesting.md` for full detail on harvesting economics by source type.)*
+*(See [docs/wiki/infrastructure/Atmospheric-Harvesting.md](../infrastructure/Atmospheric-Harvesting.md) for full detail on harvesting economics by source type.)*
 
 | Source | Effective Cost Range | Notes |
 |---|---|---|

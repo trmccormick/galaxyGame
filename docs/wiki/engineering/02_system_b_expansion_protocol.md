@@ -2,7 +2,7 @@
 
 # System B Expansion Protocol (Eden Secondary Node)
 
-> **Ground Truth Authority:** All AWS construction, asteroid anchoring, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No AWS may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
+> **Ground Truth Authority:** All AWS construction, asteroid anchoring, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](../engineering/station_construction_options.md). No AWS may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
 
 Backend operational sequence by which the AI Manager constructs a second Artificial Wormhole Station (AWS) opposite Gas Giant 17 in the Eden system, establishing a secondary interstellar corridor bridging outward toward System B. This document defines the deterministic construction, ignition, and multi-node routing pipeline — executed from Eden-side infrastructure with Sol supply-chain support during post-reconnection Act 2 handover.
 
