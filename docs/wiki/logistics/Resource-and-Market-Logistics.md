@@ -3,7 +3,7 @@
 # Resource & Market Logistics — Technical Specification
 
 > **STATUS: CANONICAL MARKET INTENT**
-> This page, alongside `Market-and-AI-Bootstrapping.md`, forms the canonical wiki pair for market logistics, pricing engines, and supply lines. Verify runtime flags against implementation before code changes.
+> This page, alongside `market_and_ai_bootstrapping.md`, forms the canonical wiki pair for market logistics, pricing engines, and supply lines. Verify runtime flags against implementation before code changes.
 
 > **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**. This page covers player-facing market pricing only.
 
@@ -165,7 +165,7 @@ During the Sol system bootstrap (Luna Pattern), the L1 orbital depot and moon-ba
 
 ## 5. Order Lifecycle Reference
 
-*For full detail see `logistics/Market-and-AI-Bootstrapping.md`. This section summarises the lifecycle rules relevant to resource logistics planning.*
+*For full detail see `logistics/market_and_ai_bootstrapping.md`. This section summarises the lifecycle rules relevant to resource logistics planning.*
 
 ### Order Types
 

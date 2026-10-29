@@ -261,5 +261,5 @@ Stabilization maturation and routing matrix finalization: **3–7 days** post-ig
 
 - [Post-Snap Reconnection Protocol](01_post_snap_reconnection_protocol.md) — Sol–Eden primary corridor establishment
 - [AOL-732356: Eden Planetary Anchor Model] — Multi-node anchor designation and gas giant mapping
-- [AI Manager Logic](../logistics/AI-Manager-Logic.md) — AI Manager simulation loop, macroeconomic modeling, and player handover protocols
+- [AI Manager Logic](../logistics/ai_manager_logic.md) — AI Manager simulation loop, macroeconomic modeling, and player handover protocols
 - [Galactic Mass Standard Theory (GMST)] — Gravitational counterbalance derivation and passive stabilization models

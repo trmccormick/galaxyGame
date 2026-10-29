@@ -200,4 +200,4 @@ LDC mints GCC → Mars foothold holds budget → AI Manager ranks options (Digit
 
 ---
 
-*Last verified against: `docs/gameplay/terraforming.md`, `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`, `docs/wiki/logistics/AI-Manager-Logic.md` — target design intent. No runtime enforcement currently exists.*
+*Last verified against: `docs/gameplay/terraforming.md`, `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md`, `docs/wiki/logistics/ai_manager_logic.md` — target design intent. No runtime enforcement currently exists.*

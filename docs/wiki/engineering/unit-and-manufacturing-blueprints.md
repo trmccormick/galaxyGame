@@ -119,7 +119,7 @@ The following code paths contain the deepest current implementation detail. Use 
 |------|-------------|
 | [Station construction options](./station_construction_options.md) | Station-level assembly pipeline; consumes blueprints as input modules. |
 | [System blueprints (astronomy)](../astronomy/System-Blueprints.md) | StarSim initialization — distinct from constructible-unit schemas documented here. |
-| [AI Manager logic](../logistics/AI-Manager-Logic.md) | AI scheduling consumes blueprint yields and dependency DAGs to drive production decisions. |
+| [AI Manager logic](../logistics/ai_manager_logic.md) | AI scheduling consumes blueprint yields and dependency DAGs to drive production decisions. |
 | [Status and gaps](../status-and-gaps.md) | Tracks wiki coverage posture; this page fills the unit/blueprint gap. |
 
 ---

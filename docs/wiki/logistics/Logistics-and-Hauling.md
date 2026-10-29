@@ -9,7 +9,7 @@ How material and cargo move between settlements, stations, and markets — and h
 **Related wiki pages**
 
 - [Resource and market logistics](Resource-and-Market-Logistics.md) — pricing, NPC bids/asks, warehouse caps  
-- [Market and AI bootstrapping](Market-and-AI-Bootstrapping.md) — market bootstrap and AI use of markets  
+- [Market and AI bootstrapping](market_and_ai_bootstrapping.md) — market bootstrap and AI use of markets  
 - [Financial engine](Financial-Engine.md) — GCC/USD, fees, ledgers  
 - [Atmospheric harvesting](Atmospheric-Harvesting.md) — off-world gas/volatile sourcing costs  
 

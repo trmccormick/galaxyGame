@@ -79,7 +79,7 @@ For market pricing, liquidity models, and bootstrapping logic that the AI Manage
 | Page | Why it matters |
 |------|---------------|
 | [Resource & Market Logistics](Resource-and-Market-Logistics.md) | Supply chains between Sol bodies; material costs the AI uses for routing decisions. |
-| [Market & AI Bootstrapping](Market-and-AI-Bootstrapping.md) | Early market formation models; how initial liquidity seeds feed into AI market maker behavior. |
+| [Market & AI Bootstrapping](market_and_ai_bootstrapping.md) | Early market formation models; how initial liquidity seeds feed into AI market maker behavior. |
 
 ---
 
