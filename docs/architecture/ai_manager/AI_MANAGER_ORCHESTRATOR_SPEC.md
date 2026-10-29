@@ -22,13 +22,13 @@ Example pipelines below (market → manifest → cycler → Eden Snap override) 
 
 ## CORE ORCHESTRATION PATTERN (8 Files)
 manager.rb (State Machine)
-└── market_monitor.tick() # Check Market::Order queue
+└── market_stabilization_service.tick() # Check Market::Order queue
 ↓
 task_execution_engine.generate_manifest(order) # JSON output
 ↓
-cycler_optimizer.submit(order, manifest) # AstroLift routing
+logistics_coordinator.submit(order, manifest) # AstroLift routing
 ↓
-emergency_dispatch.check_crisis(order) # Eden Snap override
+emergency_mission_service.check_crisis(order) # Eden Snap override
 
 ## WRONG vs RIGHT (89 Files vs 8 Files)
 WRONG (Delete These):
