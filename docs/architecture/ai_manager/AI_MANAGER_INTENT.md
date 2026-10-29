@@ -201,15 +201,15 @@ task_execution_engine.rb → Manifests (normal + emergency)
 
 manager.rb → Crisis detection + override trigger
 
-services/tier1_price_modeler.rb (EAP via calculate_eap()) → Normal + suspended pricing
+eap_calculator.rb → Normal + suspended pricing
 
-services/market/npc_price_calculator.rb → Gouging detection
+market_monitor.rb → Gouging detection
 
-services/ai_manager/logistics_coordinator.rb (emergency routes) → Emergency routing
+cycler_optimizer.rb → Emergency routing
 
-services/ai_manager/emergency_mission_service.rb → Seizure + redistribution
+emergency_dispatch.rb → Seizure + redistribution
 
-(Design gap — no asset_seizure_service.rb exists → Player inventory scan/take)
+asset_seizure_service.rb → Player inventory scan/take
 
 crisis_compensation.rb → Post-crisis GCC payouts
 
@@ -278,15 +278,15 @@ task_execution_engine.rb → Local Bubble + PROC-X47B manifests
 
 manager.rb → Local Bubble autarky + crisis detection
 
-services/tier1_price_modeler.rb (EAP via calculate_eap()) → Local Bubble pricing (Eden suspended)
+eap_calculator.rb → Local Bubble pricing (Eden suspended)
 
 market_monitor.rb → Local Bubble market stability
 
-services/ai_manager/logistics_coordinator.rb → Local Bubble cyclers only
+cycler_optimizer.rb → Local Bubble cyclers only
 
-services/ai_manager/emergency_mission_service.rb → Eden crisis (one-way)
+emergency_dispatch.rb → Eden crisis (one-way)
 
-(Design gap — no equivalent exists → Local Bubble enforcement)
+asset_seizure_service.rb → Local Bubble enforcement
 
 local_bubble_controller.rb → Autarky enforcement
 
