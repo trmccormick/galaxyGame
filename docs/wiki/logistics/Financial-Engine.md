@@ -1,25 +1,23 @@
-> **Wiki section:** Player · **Status:** needs review against current game — short intent page; detail and VERIFY flags live on Resource and market logistics
+> **Wiki section:** Player · **Status:** short intent page; detail and VERIFY flags live on the canonical market pair below
 
 # Financial Engine
 
 Currency, ledgers, and market friction for off-world play.
 
-**Related wiki pages**
+**Canonical authority:** For pricing logic, GCC/USD peg unpeg model, EAP enforcement, and all bootstrapping mechanics, refer to:
+- **[Resource & Market Logistics](Resource-and-Market-Logistics.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
+- **[Market and AI Bootstrapping](market_and_ai_bootstrapping.md)** — ECC canonical spec (bootstrap peg, market models, AutonomousConstructionManager)
 
-- [Resource and market logistics](Resource-and-Market-Logistics.md) — NPC pricing, warehouse caps, order lifecycle  
-- [Market and AI bootstrapping](Market-and-AI-Bootstrapping.md) — market models + AutonomousConstructionManager  
-- [Logistics and hauling](Logistics-and-Hauling.md) — transport intent (not fees)
-
-**Deep reference:** `docs/architecture/financial_system.md` and related economy docs.
+> **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**.
 
 ---
 
 ## Design intent
 
-1. **Two-currency bootstrap** — Earth-side activity can stay in USD; off-world player/colony activity is denominated in **GCC**.  
-2. **Peg, then float** — During bootstrap, GCC is treated as **1:1 with USD** (`GCC_TO_USD_INITIAL = 1.0` in game constants when present). After off-world volume is self-sustaining, design intent is to **uncouple** GCC and let it float. Uncoupling trigger and implementation are often still open or pending.  
-3. **Import ceiling** — Earth-sourced mass is anchored by a high transport cost per kg (commonly cited as `INITIAL_TRANSPORTATION_COST_PER_KG = 1320` in constants). Local production and off-world harvest should undercut that ceiling.  
-4. **Friction on markets** — Fees/taxes exist so automated or high-volume order spam is not free. Exact schedules should be confirmed against code, not copied from old notes alone.
+1. **Two-currency bootstrap** — Earth-side activity uses USD; off-world player/colony activity is denominated in **GCC**. Bootstrap peg starts at **1:1** (`GCC_TO_USD_INITIAL = 1.0`) so blueprints and material data can embed present-day real-world values without fantasy pricing scales.
+2. **GCC/USD peg, then unpeg** — During bootstrap GCC trades 1:1 to USD; off-world volume and trade value eventually rival the Earth channel at which point GCC is allowed to float freely. Peg/unpeg trigger remains a `[TARGET DESIGN INTENT]` — no runtime enforcement yet.
+3. **EAP ceiling** — Every resource price is capped by the **Earth Anchor Price**: `EAP = Earth USD reference cost (+ refining where applicable) + transport cost`. At bootstrap peg 1:1, EAP maps directly to GCC per kg. Local production facilities override EAP with a locally-derived cost model instead of Earth import pricing.
+4. **Friction on markets** — Fees/taxes keep automated or high-volume order spam from being free. Exact schedules should be confirmed against code, not copied from old notes alone.
 
 ---
 
