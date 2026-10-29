@@ -77,7 +77,7 @@ place_order(params)
 
 **Important:** The `:volume` key is renamed to `:quantity` internally. Callers may pass either key; the model normalises to `:quantity`.
 
-`find_matching_orders(new_order)` — Only matches orders where `order_type == 'Sell'`. For sell orders, queries `Market::NpcPriceCalculator.calculate_bid` to get the NPC buy price, caps trade volume at `min(order.quantity, 1000)` (NPC buy capacity is currently hardcoded at 1000 — flagged as a TODO to make dynamic), and returns a synthetic NPC buy order as an `OpenStruct` if both volume and price are positive. Returns an empty array for buy orders — **buy-side matching is not yet implemented**.
+`find_matching_orders(new_order)` — For sell orders (detected via the enum predicate `sell?`), queries `Market::NpcPriceCalculator.calculate_bid` to get the NPC buy price, caps trade volume at `min(order.quantity, 1000)` (NPC buy capacity is currently hardcoded at 1000 — flagged as a TODO to make dynamic), and returns a synthetic NPC buy order as an `OpenStruct` if both volume and price are positive. Returns an empty array for buy orders — **buy-side matching is not yet implemented**.
 
 `execute_trades(sell_order, matching_orders)` — Delegates all execution to `Market::TradeExecutionService.execute!(sell_order, trade_volume, trade_price, settlement)`. Trade volume is `min(sell_order.quantity, npc_order.quantity)`. Trade price is the NPC order's price. After service execution, `finalize_order` updates the sell order's remaining quantity.
 
@@ -171,26 +171,26 @@ Referenced by `Market::Condition#price_histories` and `Market::Condition#current
 
 ### 3.5 `Market::NpcPriceCalculator`
 
-Referenced throughout `Marketplace` and `Order` but source not uploaded. Confirmed interface:
+Source at `app/services/market/npc_price_calculator.rb`. Confirmed interface:
 
 | Method | Signature | Used by |
 |---|---|---|
 | `.calculate_ask` | `(settlement, resource_name, supply:)` | `Marketplace.get_price`, `Order#price_per_unit` (sell) |
 | `.calculate_bid` | `(settlement, resource, demand:)` | `Marketplace#find_matching_orders`, `Order#price_per_unit` (buy) |
 
-Full implementation `[PENDING — source file not uploaded]`.
+Source reviewed and confirmed in current tree.
 
 ---
 
 ### 3.6 `Market::TradeExecutionService`
 
-Referenced in `Marketplace#execute_trades`. Confirmed interface:
+Source at `app/services/market/trade_execution_service.rb`. Confirmed interface:
 
 | Method | Signature | Notes |
 |---|---|---|
 | `.execute!` | `(sell_order, trade_volume, trade_price, settlement)` | `settlement` is passed as the buyer entity |
 
-Full implementation `[PENDING — source file not uploaded]`.
+Source reviewed and confirmed in current tree.
 
 ---
 
@@ -408,7 +408,6 @@ The intended integration path — where the AI manager posts buy orders for cons
 - [ ] **`AutonomousConstructionManager` uses `StubAIService`:** All task success rates are simulated with `rand`. No real construction logic, resource checks, or settlement state queries are performed. Full implementation required before production use.
 - [ ] **`learn_from_phase_execution` has no persistence:** Learning data is logged only. No database writes or knowledge base updates occur. AI learning is scaffolded but not functional.
 - [ ] **AI Manager ↔ Market integration missing:** `AutonomousConstructionManager` does not interact with `Market::Marketplace` or `Market::Condition`. The TODO in `Market::Condition` must be actioned before pre-player bootstrapping can use live market price signals.
-- [ ] **`Market::NpcPriceCalculator` and `Market::TradeExecutionService` source not reviewed:** Both services are central to price determination and trade execution but their source files have not been uploaded for review. Wiki documentation of their behaviour is based on call signatures only.
 - [ ] **GCC decoupling mechanism not implemented:** `GCC_TO_USD_INITIAL = 1.0` enforces the bootstrap peg but no decoupling trigger or volume threshold logic has been found in source. This must be designed and documented before the peg is expected to float.
 
 ---
