@@ -4,6 +4,8 @@
 
 This document is the single canonical wiki entry for AI Manager intent, priority loops, and system boundaries. **All content — including priority scoring, decision loops, ACM boundaries, and safety gates — represents TARGET DESIGN INTENT ONLY.** These rules describe the target architecture rather than active runtime code calculations. Verify against live code in `galaxy_game/app/services/ai_manager/` before treating any detail as implemented behavior. Detailed architectural specs live in `docs/architecture/ai_manager/`.
 
+> **Cross-link:** For how terraforming demand is financed and contracted through the AI Manager (GCC budgets, Seed vs. Brute-Force contracts, Mars-Buyer/Venus-Supplier loop), see **[Terraforming Economic Integration](./terraforming_economic_integration.md)**.
+
 ---
 
 ## 1. Canonical Role & Scope

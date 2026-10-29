@@ -6,6 +6,8 @@
 
 > **Cross-link:** All atmospheric extraction yields and rates are bounded by planetary protection classes defined in **[Planetary Protection & Environmental Governance](./planetary_protection_environmental_governance.md)**. Specifically: Class-1 bodies (e.g., Titan) enforce a 5% total volatile extraction cap relative to initial atmospheric/surface mass; Class-2 bodies (e.g., Venus Option B) are uncapped but subject to standard market limits and physical Δv constraints. These caps are **TARGET DESIGN INTENT ONLY** — no runtime enforcement currently exists in the codebase.
 
+> **Cross-link:** For the hard physical mechanics of Venusian CO₂ cracking, CNT pod manufacturing, mass driver ballistics, and engineered Martian reentry dispersion, see **[Venus–Mars Ballistic Corridor (Brute-Force Loop)](../technical/venus_mars_ballistic_corridor.md)**.
+
 > **Scope:** Extraction and transport economics for harvesting atmospheric gases from off-world sources (Venusian nitrogen, CO₂ splitting, O₂/CNT synthesis, noble gases, volatiles) and integrating them into colony atmospheric engineering pipelines. All figures derived from `EARTH_ATMOSPHERE` baseline composition and `GREENHOUSE_FACTORS` scaling indices.
 
 ---
@@ -224,6 +226,10 @@ Atmospheric harvesting supply chain expenditure falls under:
 - **`expansion: 100`** — new harvesting platform construction (lowest priority; always deferred during critical states)
 
 The AI will not authorize new harvesting platform construction (`expansion: 100`) while any life support metric (`life_support: 1000`) or atmospheric maintenance metric (`atmospheric_maintenance: 900`) is in a degraded state. Players should pre-fund platform construction before triggering any resource shortage that elevates the critical priority stack.
+
+---
+
+> **Cross-link:** For the ISRU fabrication chains (3D-printed fabricator Mk1–Mk3 upgrade trees, regolith feedstock qualification with SiO₂/FeO analysis, and CNT production throughput specs), see **[ISRU Fabrication Chain](../technical/isru_fabrication_chain.md)**.
 
 ---
 
