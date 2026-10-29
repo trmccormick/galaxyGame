@@ -87,7 +87,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | Page | Notes |
 |------|--------|
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
-| [AI Manager logic](logistics/AI-Manager-Logic.md) | Canonical front door for AI priority loops, ACM boundaries, and system behavior |
+| [AI Manager logic](logistics/ai_manager_logic.md) | Canonical front door for AI priority loops, ACM boundaries, and system behavior |
 | [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
 | [Ballistic corridor](technical/venus_mars_ballistic_corridor.md) | Ballistic transit corridors between Venus and Mars |
 | [Precursor mission deployment](technical/precursor_mission_deployment.md) | Initial precursor missions and deployment |

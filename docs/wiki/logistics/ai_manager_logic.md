@@ -14,9 +14,9 @@ The **AI Manager** is the game's automated economy and logistics governor. Its r
 
 | Domain | What it does | Where to verify intent |
 |--------|-------------|----------------------|
-| **Logistics orchestration** | Routes freight, schedules cyclers, dispatches harvesters & construction tugs across Sol bodies. | `galaxy_game/app/services/ai_manager/task_execution_engine.rb`, `cycler_optimizer.rb` |
-| **Market balancing** | Acts as an active market maker — places counter-orders to guarantee liquidity, enforces EAP (Earth Anchor Price) ceilings, fills gaps when no player order exists. | `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`, `market_monitor.rb`, `npc_price_engine.rb` |
-| **Automated fleet / construction actions** | Assigns and prioritizes AI-managed fleets for early Sol buildout, terraforming demand fulfillment, and emergency backstops (critical shortages, Eden Snap events). | `docs/architecture/ai_manager/AI_MANAGER_ORCHESTRATOR_SPEC.md`, `emergency_dispatch.rb`, `construction/access_point_installation_service.rb` |
+| **Logistics orchestration** | Routes freight, schedules cyclers, dispatches harvesters & construction tugs across Sol bodies. | `galaxy_game/app/services/ai_manager/task_execution_engine.rb`, `services/ai_manager/logistics_coordinator.rb` |
+| **Market balancing** | Acts as an active market maker — places counter-orders to guarantee liquidity, enforces EAP (Earth Anchor Price) ceilings, fills gaps when no player order exists. | `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`, `services/market/npc_price_calculator.rb`, `services/ai_manager/market_stabilization_service.rb` |
+| **Automated fleet / construction actions** | Assigns and prioritizes AI-managed fleets for early Sol buildout, terraforming demand fulfillment, and emergency backstops (critical shortages, Eden Snap events). | `docs/architecture/ai_manager/AI_MANAGER_ORCHESTRATOR_SPEC.md`, `services/ai_manager/emergency_mission_service.rb`, `galaxy_game/app/services/manufacturing/construction/access_point_installation_service.rb` |
 
 **Boundary note:** The AI Manager does **not** generate celestial or terrain data — that is StarSim's role. It reads game state (settlement inventories, market order queues, colony populations) and issues high-level work orders to existing services.
 
