@@ -39,6 +39,14 @@ Planetary protection protocols, environmental governance frameworks, and ecologi
 
 ---
 
+## Settlement Infrastructure
+
+→ [`settlement_infrastructure.md`](./settlement_infrastructure.md)
+
+Settlement tiers (base → outpost → settlement → city/station), life support requirements, growth-stage gates, and orbital multi-structure patterns (design intent).
+
+---
+
 ## Core Industrial Rules
 
 1. **No Magic Spawns:** Station construction is an active, physical engineering process requiring localized or imported mass, equipment, and structural assembly time.

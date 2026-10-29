@@ -72,6 +72,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|--------|
 | [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
+| [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement tiers, life support & growth stages (design intent) |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
 | [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
