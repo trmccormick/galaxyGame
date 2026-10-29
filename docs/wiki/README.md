@@ -28,7 +28,7 @@ This folder is the **live wiki** — the front door for players, contributors, a
 | [**player/**](player/) | Orientation, getting started, and player roles / alignment |
 | [**infrastructure/**](infrastructure/README.md) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
 | [**engineering/**](engineering/) | Station construction, expansion protocols, and post-snap reconnection |
-| [**technical/**](technical/) | System commands and agent/developer reference |
+| [**technical/**](technical/) | System commands, ISRU fabrication, precursor missions, biology & terraforming, and ballistic corridors |
 
 ---
 
@@ -51,6 +51,9 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) | Resources ↔ markets (strongest market page) |
 | [Market and AI bootstrapping](logistics/Market-and-AI-Bootstrapping.md) | Market models + AI construction bootstrap |
 | [Financial engine](logistics/Financial-Engine.md) | GCC/USD, peg, market friction |
+| [EAP & AI Manager escalation](logistics/eap_and_ai_manager_escalation.md) | Earth Anchor Price escalation paths |
+| [Import order & cycler models](logistics/import_order_and_cycler_models.md) | Import orders and cycler transit models |
+| [Terraforming economic integration](logistics/terraforming_economic_integration.md) | Seed path vs brute-force economics |
 
 ---
 
@@ -71,6 +74,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
 | [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
+| [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
 
 *Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
 
@@ -85,13 +89,14 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
 | [AI Manager logic](logistics/AI-Manager-Logic.md) | Canonical front door for AI priority loops, ACM boundaries, and system behavior |
 | [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
+| [Ballistic corridor](technical/venus_mars_ballistic_corridor.md) | Ballistic transit corridors between Venus and Mars |
+| [Precursor mission deployment](technical/precursor_mission_deployment.md) | Initial precursor missions and deployment |
+| [ISRU fabrication chain](technical/isru_fabrication_chain.md) | In-situ resource utilization fabrication pipelines |
+| [Biology — overview](technical/biology/README.md) | Biology subfolder: biosphere simulation, terraforming seeds |
+| [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
+| [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 
 *Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. Crafted equipment schemas are documented in [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md).*
-
-**Still useful later (same repo):**
-
-- Operational-data conventions → general JSON / blueprint norms still TBD (equipment schemas covered by [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md))
-- Guardrails → link to environment / agent boundary docs under `docs/` when you want them on the front door
 
 ---
 
