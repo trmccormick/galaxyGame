@@ -1,6 +1,6 @@
 ## Cycler Mission Timelines
 
-> **Engineering Ground Truth:** All cycler mission timelines must conform to the Pre-Player Era Phase 3 dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No direct Titan→Luna or Titan→Earth HLT runs are permitted; all outer-system cargo routes through the Mars cycler hub. MK2+ hulls with active reliquefaction are mandatory for any long-range volatile transfer.
+> **Engineering Ground Truth:** All cycler mission timelines must conform to the Pre-Player Era Phase 3 dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No direct Titan→Luna or Titan→Earth HLT runs are permitted; all outer-system cargo routes through the Mars cycler hub. MK2+ hulls with active reliquefaction are mandatory for any long-range volatile transfer.
 
 AI Manager uses operational data to predict mission duration:
 

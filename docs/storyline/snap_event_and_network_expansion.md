@@ -4,7 +4,7 @@
 **Written**: 2026-04-24
 **Authority**: Developer design decisions 2026-04-24
 
-> **Engineering Ground Truth:** The physical construction and anchoring mechanics governing all AWS/WS stations — including the structural failure that caused the Eden Snap Event — are defined in [Station Construction Options](../wiki/engineering/station_construction_options.md) (Section 7). All pre-player infrastructure must follow the dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md).
+> **Engineering Ground Truth:** The physical construction and anchoring mechanics governing all AWS/WS stations — including the structural failure that caused the Eden Snap Event — are defined in [Station Construction Options](../wiki/engineering/station_construction_options.md) (Section 7). All pre-player infrastructure is governed by that document.
 
 > This document is the narrative foundation for the game's central storyline.
 > The Snap Event is the inciting incident that drives all early game progression.

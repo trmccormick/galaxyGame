@@ -25,7 +25,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 
 ## What is in better shape (documentation)
 
-- **Markets (docs):** [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) and [Market and AI bootstrapping](logistics/Market-and-AI-Bootstrapping.md) are the strongest market writeups; both still carry VERIFY / PENDING markers — trust the flags.
+- **Markets (docs):** [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) and [Market and AI bootstrapping](logistics/market_and_ai_bootstrapping.md) are the strongest market writeups; both still carry VERIFY / PENDING markers — trust the flags.
 - **Getting started:** [Getting started](player/getting_started.md) matches the Docker-oriented run path in the project README.
 - **Logistics vs finance split:** [Logistics and hauling](logistics/Logistics-and-Hauling.md) is transport intent; [Financial engine](logistics/Financial-Engine.md) is currency/peg/friction. Do not mix them.
 - **StarSim (docs):** [System blueprints](astronomy/System-Blueprints.md) covers StarSim — system generation and loading JSON systems to initialize that part of the game. It is **not** about manufacturing unit/structure blueprints.
@@ -49,8 +49,8 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 |-------------|-------------------|
 | Unit / manufacturing blueprints | [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) — DESIGN INTENT ONLY, covers crafted equipment JSON schemas and build pipelines |
 | AI Manager intent / priority logic | [AI Manager Logic](logistics/AI-Manager-Logic.md) — canonical front door (ACM boundaries, 3-tier priority loops, safety policies) |
-| Market pricing & bootstrapping pair | [Resource and Market Logistics](logistics/Resource-and-Market-Logistics.md) + [Market and AI Bootstrapping](logistics/Market-and-AI-Bootstrapping.md) — designated canonical wiki pair with cross-banners; EAP + peg/unpeg design intent added 2026-10-28 |
-| Infrastructure TOC coherence | [Infrastructure/README.md](infrastructure/README.md) — restructured as master table of contents, pre_player_era_logistics_pipeline.md designated primary narrative |
+| Market pricing & bootstrapping pair | [Resource and Market Logistics](logistics/Resource-and-Market-Logistics.md) + [Market and AI Bootstrapping](logistics/market_and_ai_bootstrapping.md) — designated canonical wiki pair with cross-banners; EAP + peg/unpeg design intent added 2026-10-28 |
+| Infrastructure TOC coherence | [Infrastructure/README.md](infrastructure/README.md) — restructured as master table of contents, pre_player_era content consolidated into [Station Construction Options](engineering/station_construction_options.md) |
 | System commands verification posture | [System Commands](technical/System-Commands.md) — banner updated to VERIFY AGAINST CODE with app/services/ runtime pointers |
 
 ---
@@ -86,5 +86,5 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 
 - **2026-10-27** — Wiki Home + three sections; logistics/finance split fixed; topic banners; this status page added (no external-repo status links).
 - **2026-10-28** — Categorical directory reorganization (`astronomy/`, `logistics/`, `player/`, `infrastructure/`, `engineering/`, `technical/`); all Home-page link repairs; new "Navigation by Category" IA table on the Home page; `planetary_protection_environmental_governance.md` design-only spec added to infrastructure.
-- **2026-10-28** — P0/P1 wiki consolidation pass: created [Unit & Manufacturing Blueprints](engineering/unit-and-manufacturing-blueprints.md) as canonical entry (separate from StarSim); updated [AI Manager Logic](logistics/AI-Manager-Logic.md) as single front door for AI priorities/ACM boundaries; designated [Resource-and-Market-Logistics.md](logistics/Resource-and-Market-Logistics.md) + [Market-and-AI-Bootstrapping.md](logistics/Market-and-AI-Bootstrapping.md) as canonical market pair with cross-banners; restructured [Infrastructure TOC](infrastructure/README.md); added System Commands VERIFY AGAINST CODE banner and archival supersede note to wiki_reorganization/README.md.
+- **2026-10-28** — P0/P1 wiki consolidation pass: created [Unit & Manufacturing Blueprints](engineering/unit-and-manufacturing-blueprints.md) as canonical entry (separate from StarSim); updated [AI Manager Logic](logistics/AI-Manager-Logic.md) as single front door for AI priorities/ACM boundaries; designated [Resource-and-Market-Logistics.md](logistics/Resource-and-Market-Logistics.md) + [Market-and-AI-Bootstrapping.md](logistics/market_and_ai_bootstrapping.md) as canonical market pair with cross-banners; restructured [Infrastructure TOC](infrastructure/README.md); added System Commands VERIFY AGAINST CODE banner and archival supersede note to wiki_reorganization/README.md.
 - **2026-10-28**: Synchronized market pair with EAP, USD/GCC calibration peg, post-unpeg interface roles, and target design intent status.

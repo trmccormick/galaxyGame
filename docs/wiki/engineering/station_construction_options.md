@@ -5,7 +5,7 @@
 **Document Version:** 2.0 (Ground Truth Aligned)
 **Effective Phase:** Sol–Eden Reconnection Protocol — All Phases
 **Authority:** AI Manager Directive / Pre-Player Era Logistics Pipeline
-**Cross-References:** [pre_player_era_logistics_pipeline.md](../infrastructure/pre_player_era_logistics_pipeline.md), [SYNTHETIC_MEGA_STATIONS.md](../../architecture/stations/SYNTHETIC_MEGA_STATIONS.md), [CONVERTED_ROCK_STATIONS.md](../../architecture/stations/CONVERTED_ROCK_STATIONS.md), [SPECIALIZED_WH_STATIONS.md](../../architecture/stations/SPECIALIZED_WH_STATIONS.md), [asteroid_conversion_logic.md](../../architecture/asteroid_conversion_logic.md), [asteroid_conversion_physics.md](../../architecture/systems/asteroid_conversion_physics.md), [settlement_patterns.md](../../architecture/patterns/settlement_patterns.md)
+**Cross-References:** [Station Construction Options](./station_construction_options.md) (canonical), [SYNTHETIC_MEGA_STATIONS.md](../../architecture/stations/SYNTHETIC_MEGA_STATIONS.md), [CONVERTED_ROCK_STATIONS.md](../../architecture/stations/CONVERTED_ROCK_STATIONS.md), [SPECIALIZED_WH_STATIONS.md](../../architecture/stations/SPECIALIZED_WH_STATIONS.md), [asteroid_conversion_logic.md](../../architecture/asteroid_conversion_logic.md), [asteroid_conversion_physics.md](../../architecture/systems/asteroid_conversion_physics.md), [settlement_patterns.md](../../architecture/patterns/settlement_patterns.md)
 
 ---
 

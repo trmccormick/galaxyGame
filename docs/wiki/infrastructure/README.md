@@ -13,22 +13,13 @@ This directory is the home for infrastructure wiki pages. It covers pre-player l
 
 ## Master Pipeline
 
-### Pre-Player Era Logistics
+### Pre-Player Era Logistics — Consolidated
 
-The **primary pre-player pipeline narrative** is:
+All pre-player station-construction content (Sol/Luna → L1 Shipyards → Mars Moons → Belt expansion tree, Venus-Luna Sabatier loop, hard gates $\ge 50\text{ t}$ payload / $\ge 120\text{ t/day}$) is now in one canonical reference:
 
-[`pre_player_era_logistics_pipeline.md`](./pre_player_era_logistics_pipeline.md)
+→ **[Station Construction Options](../engineering/station_construction_options.md)**
 
-This page walks the full expansion tree: Sol Core → L1 Shipyards → Mars Moon Conversion → Belt Expansion, including the Venus-Luna Sabatier volatile loop and Heavy Tug propulsion economy. Read this first to understand how off-world industry bootstraps.
-
-### Supporting Pre-Player Docs (Linked References)
-
-| Document | Summary |
-|----------|---------|
-| [`pre_player_era_logistics_architecture.md`](./pre_player_era_logistics_architecture.md) | Architecture overview — system-level view of pre-player logistics flows and service boundaries. |
-| [`pre_player_era_logistics_station_construction_pipeline.md`](./pre_player_era_logistics_station_construction_pipeline.md) | Station-specific construction pipeline details (phases, gates, dependency chains). |
-
-These files expand on the primary pipeline narrative with focused detail. They link into each other; see [Core Industrial Rules](#core-industrial-rules) for cross-cutting constraints.
+The former three files — `pre_player_era_logistics_pipeline.md`, `pre_player_era_logistics_architecture.md`, and `pre_player_era_logistics_station_construction_pipeline.md` — have been replaced with pointer stubs that redirect here.
 
 ---
 

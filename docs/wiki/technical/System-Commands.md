@@ -101,7 +101,7 @@ EconomyEngine.settle_cycle
 ```
 
 **What it orchestrates:**
-- Settles all open courier contracts (see `docs/wiki/Logistics-and-Hauling.md` for contract lifecycle detail)
+- Settles all open courier contracts (see `logistics/Logistics-and-Hauling.md` for contract lifecycle detail)
 - Posts Earth import transactions at `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg`
 - Applies current GCC/USD exchange rate (bootstrapped at `GCC_TO_USD_INITIAL = 1.0`)
 - Runs the negative-margin verification hook — any AI trading routine that would produce a negative-margin outcome is blocked and logged before settlement

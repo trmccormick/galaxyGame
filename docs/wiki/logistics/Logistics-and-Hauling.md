@@ -2,7 +2,7 @@
 
 # Logistics and Hauling
 
-> **Cross-link:** For the authoritative pre-player-era logistics routing that gates all long-haul transit, see **[Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md)**. This page covers player-facing haul design; infrastructure routing is authority.
+> **Cross-link:** For the authoritative pre-player-era logistics routing that gates all long-haul transit, see **[Station Construction Options](../engineering/station_construction_options.md)**. This page covers player-facing haul design; infrastructure routing is authority.
 
 How material and cargo move between settlements, stations, and markets — and how that interacts with player and AI contracts.
 

@@ -105,7 +105,7 @@ To reach breathable pressure (`EARTH_PRESSURE = 101325 Pa`) from ~800 Pa, total 
 
 ### Interception Mechanics
 
-Asteroid interception is a logistics operation governed by the courier contract system (see `docs/wiki/Logistics-and-Hauling.md`). Key parameters:
+Asteroid interception is a logistics operation governed by the courier contract system (see `logistics/Logistics-and-Hauling.md`). Key parameters:
 
 - Intercept contracts are posted to the NPC board with risk underwriting based on delta-v cost and transit time.
 - Resource haul cost is computed against `INITIAL_TRANSPORTATION_COST_PER_KG` as a ceiling; local interception should undercut this significantly to justify the orbital infrastructure investment.

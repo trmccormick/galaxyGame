@@ -1,6 +1,6 @@
 # LUNA_SETTLEMENT_LIFECYCLE.md
 
-> **Engineering Ground Truth:** All lunar construction and ISRU operations must conform to the Pre-Player Era Phase 1 dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md), including the non-negotiable Venus-Luna Sabatier feedback loop. No station or anchor may be placed without verifying planetary-mass counterbalance per [Station Construction Options](../wiki/engineering/station_construction_options.md).
+> **Engineering Ground Truth:** All lunar construction and ISRU operations must conform to the Pre-Player Era Phase 1 dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md), including the non-negotiable Venus-Luna Sabatier feedback loop. No station or anchor may be placed without verifying planetary-mass counterbalance.
 
 ## Overview
 This document outlines the three-phase industrial lifecycle of a lunar settlement in Galaxy Game. It details the evolution from an Earth-dependent outpost to a self-sufficient In-Situ Resource Utilization (ISRU) hub and ultimate primary mass exporter for orbital Lagrange depots (EML-1). Reference this document when designing surface tech trees, lunar module catalogs, mass driver logistics, and early-game progression mechanics.

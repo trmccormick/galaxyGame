@@ -1,6 +1,6 @@
 # Galaxy Game Architecture Overview
 
-> **Engineering Ground Truth:** All construction, anchoring, and deployment across the game architecture must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted.
+> **Engineering Ground Truth:** All construction, anchoring, and deployment across the game architecture must conform to the Pre-Player Era dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted.
 
 ## System Architecture
 

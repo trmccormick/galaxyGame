@@ -17,12 +17,11 @@
 | Per-resource market state | `Market::Condition` | `app/models/market/condition.rb` |
 | Individual trade orders | `Market::Order` | `app/models/market/order.rb` |
 | Price history records | `Market::PriceHistory` | `app/models/market/price_history.rb` |
-| NPC price calculation | `Market::NpcPriceCalculator` | `[PENDING — path not confirmed]` |
-| Trade execution | `Market::TradeExecutionService` | `[PENDING — path not confirmed]` |
+| NPC price calculation | `Market::NpcPriceCalculator` | `app/services/market/npc_price_calculator.rb` |
+| Trade execution | `Market::TradeExecutionService` | `app/services/market/trade_execution_service.rb` |
+| Supply chain | `Market::SupplyChain` | `app/models/market/supply_chain.rb` |
 | Pre-player construction | `AutonomousConstructionManager` | `lib/ai_manager/autonomous_construction_manager.rb` |
 | Settlement anchor | `Settlement::BaseSettlement` | `app/models/settlement/base_settlement.rb` |
-
-> **Not confirmed in source:** `Market::SupplyChain` appears in Gemini's brief but is not referenced in any of the uploaded source files. Do not treat it as an existing model until verified.
 
 ---
 
@@ -138,7 +137,7 @@ Represents the market state for a single resource within a marketplace. Acts as 
 enum order_type: { buy: 0, sell: 1 }
 ```
 
-> **Bug flag:** `Marketplace#find_matching_orders` checks `new_order.order_type == 'Sell'` (string comparison), but the enum stores integer values and returns symbol predicates (`buy?`, `sell?`). This string comparison will not behave as expected against the enum. Correct check should be `new_order.sell?` or `new_order.order_type == 'sell'`. This needs a fix and a spec covering the matching path.
+> **Status: FIXED.** `Marketplace#find_matching_orders` now uses `new_order.sell?` (enum predicate) instead of the previous string comparison `== 'Sell'`. A regression spec is still recommended before relying on sell-side matching in production.
 
 **Validations:** `quantity`, `order_type`, `resource` — all required.
 
@@ -402,11 +401,10 @@ The intended integration path — where the AI manager posts buy orders for cons
 
 ## 8. Gap Tracking & Known Issues
 
-- [ ] **`find_matching_orders` order_type string comparison bug:** `new_order.order_type == 'Sell'` will not correctly match against the `{ buy: 0, sell: 1 }` enum. Should be `new_order.sell?`. Needs a fix and a covering spec before any sell-side matching logic is relied upon.
+- [x] ~~**`find_matching_orders` order_type string comparison bug:** `new_order.order_type == 'Sell'` will not correctly match against the `{ buy: 0, sell: 1 }` enum.~~ **FIXED in source** — now uses `new_order.sell?`.
 - [ ] **Buy-side order matching not implemented:** `find_matching_orders` returns `[]` for all non-Sell orders. NPC sell-to-player matching does not exist yet.
 - [ ] **NPC buy capacity hardcoded at 1000:** `npc_capacity = 1000` in `find_matching_orders` is noted as a TODO. Should be driven by settlement state or a configurable market parameter.
 - [ ] **`supply` and `demand` on `Market::Condition` not confirmed:** These fields are referenced in a comment as `"etc."` but are not confirmed as actual database columns. Schema migration must be checked before any code queries these fields.
-- [ ] **`Market::SupplyChain` not found in source:** Referenced in Gemini's brief but not present in any uploaded source file. Confirm whether this model exists before documenting it.
 - [ ] **`AutonomousConstructionManager` uses `StubAIService`:** All task success rates are simulated with `rand`. No real construction logic, resource checks, or settlement state queries are performed. Full implementation required before production use.
 - [ ] **`learn_from_phase_execution` has no persistence:** Learning data is logged only. No database writes or knowledge base updates occur. AI learning is scaffolded but not functional.
 - [ ] **AI Manager ↔ Market integration missing:** `AutonomousConstructionManager` does not interact with `Market::Marketplace` or `Market::Condition`. The TODO in `Market::Condition` must be actioned before pre-player bootstrapping can use live market price signals.

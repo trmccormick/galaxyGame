@@ -1,6 +1,6 @@
 # Summary of Changes — Narrative vs Technical Phase Clarification (June 18, 2026)
 
-> **Engineering Ground Truth:** All narrative phase mapping must respect the deterministic construction dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted across any phase.
+> **Engineering Ground Truth:** All narrative phase mapping must respect the deterministic construction dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted across any phase.
 
 ## What Changed
 

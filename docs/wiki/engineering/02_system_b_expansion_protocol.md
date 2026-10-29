@@ -2,7 +2,7 @@
 
 # System B Expansion Protocol (Eden Secondary Node)
 
-> **Ground Truth Authority:** All AWS construction, asteroid anchoring, and cycler routing must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and the station construction options, conversion pipeline mechanics, and anchor verification rules in [Station Construction Options](./station_construction_options.md). No AWS may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
+> **Ground Truth Authority:** All AWS construction, asteroid anchoring, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No AWS may be placed without verified planetary-mass counterbalance per Section 7 of that specification.
 
 Backend operational sequence by which the AI Manager constructs a second Artificial Wormhole Station (AWS) opposite Gas Giant 17 in the Eden system, establishing a secondary interstellar corridor bridging outward toward System B. This document defines the deterministic construction, ignition, and multi-node routing pipeline — executed from Eden-side infrastructure with Sol supply-chain support during post-reconnection Act 2 handover.
 
@@ -261,5 +261,5 @@ Stabilization maturation and routing matrix finalization: **3–7 days** post-ig
 
 - [Post-Snap Reconnection Protocol](01_post_snap_reconnection_protocol.md) — Sol–Eden primary corridor establishment
 - [AOL-732356: Eden Planetary Anchor Model] — Multi-node anchor designation and gas giant mapping
-- [AI Manager Logic](../AI-Manager-Logic.md) — AI Manager simulation loop, macroeconomic modeling, and player handover protocols
+- [AI Manager Logic](../logistics/AI-Manager-Logic.md) — AI Manager simulation loop, macroeconomic modeling, and player handover protocols
 - [Galactic Mass Standard Theory (GMST)] — Gravitational counterbalance derivation and passive stabilization models

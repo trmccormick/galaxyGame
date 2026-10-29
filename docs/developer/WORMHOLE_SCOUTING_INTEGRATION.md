@@ -1,6 +1,6 @@
 # Wormhole Scouting Integration
 
-> **Engineering Ground Truth:** All scouting missions must respect the Pre-Player Era construction dependency chain and anchor requirements. No wormhole station may be deployed without verified planetary-mass counterbalance per [Station Construction Options](../wiki/engineering/station_construction_options.md) Section 7. All deployment logistics follow [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md).
+> **Engineering Ground Truth:** All scouting missions must respect the Pre-Player Era construction dependency chain and anchor requirements. No wormhole station may be deployed without verified planetary-mass counterbalance per [Station Construction Options](../wiki/engineering/station_construction_options.md) Section 7. All deployment logistics are governed by that document.
 
 ## Overview
 Integration between WormholeScoutingService and ProceduralGenerator for on-demand system completion during scouting missions.

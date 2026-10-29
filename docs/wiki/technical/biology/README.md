@@ -14,7 +14,7 @@
 
 | Wiki Page | Relation |
 |-----------|----------|
-| [Terraforming Economic Integration](../terraforming_economic_integration.md) | Seed path vs brute-force economics; GCC budget constraints. |
+| [Terraforming Economic Integration](../../logistics/terraforming_economic_integration.md) | Seed path vs brute-force economics; GCC budget constraints. |
 | [AI Manager Logic](../../logistics/AI-Manager-Logic.md) | Digital Twin projections feed market orders for Seed construction. |
 | [Station Construction Options](../../engineering/station_construction_options.md) | Shared shell/power tech between Seeds and Worldhouses. |
 | [Planetary Protection & Environmental Governance](../../infrastructure/planetary_protection_environmental_governance.md) | Contamination classes, biosafety requirements per Seed stage. |

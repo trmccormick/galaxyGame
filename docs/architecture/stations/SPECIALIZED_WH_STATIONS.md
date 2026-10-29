@@ -1,6 +1,6 @@
 # Specialized Wormhole Stations (WS & AWS)
 
-> **Authority:** All WS/AWS construction, anchoring, and deployment must follow the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No WS or AWS may be deployed without verifying anchor counterbalance mass per the ground-truth pipeline.
+> **Authority:** All WS/AWS construction, anchoring, and deployment must follow the Pre-Player Era dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No WS or AWS may be deployed without verifying anchor counterbalance mass per the ground-truth pipeline.
 
 ## Overview
 Specialized Wormhole Stations include both natural (WS) and artificial (AWS) facilities designed for wormhole stabilization, EM harvesting, and knowledge transfer. These stations are critical for network expansion and interstellar logistics.

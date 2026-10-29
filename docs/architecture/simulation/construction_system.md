@@ -1,6 +1,6 @@
 # Construction System Refactoring & Development Plan
 
-> **Authority:** All construction mechanics described herein must conform to the Pre-Player Era dependency chain in [Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md) and station/anchor rules in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted.
+> **Authority:** All construction mechanics described herein must conform to the Pre-Player Era dependency chain in [Station Construction Options](../wiki/engineering/station_construction_options.md). No spawning, instant toggle, or non-physics-based construction is permitted.
 
 ## Current Architecture Overview
 
