@@ -1,13 +1,13 @@
 ---
 title: Settlement Infrastructure
 category: Infrastructure
-status: LIVE (design intent + code-verified note + open items)
+status: LIVE (design intent + code-verified note + draft direction + open items)
 last_updated: 2026-10-29
 ---
 
 # Settlement Infrastructure
 
-> **How to read this page.** *Design Intent* is the agreed design. *Verified against code* records what the codebase does today (checked at commit `c5f0d9e`, 2026-10-29); where the two differ, the code section is current behavior and the intent stands until the owner changes it. *OPEN* lists items with no source in the docs or the code; they are not decisions.
+> **How to read this page.** *Design Intent* is the agreed design. *Verified against code* records what the codebase does today (checked at commit `c5f0d9e`, 2026-10-29); where the two differ, the code section is current behavior and the intent stands until the owner changes it. **Terminology:** *Settlement* (capital S) is the unit that exists at every tier (the game model); *settlement tier* is one of its tiers. *Direction under discussion* is the owner's working thinking on tiers, not yet final. *OPEN* lists items with no source in the docs or the code; they are not decisions.
 
 ---
 
@@ -53,13 +53,79 @@ Related design: [Station Construction Options](../engineering/station_constructi
 
 ---
 
+## Direction under discussion (owner, 2026-10-29) — DRAFT, not final
+
+This is the owner's working direction for what makes a settlement a base, outpost, settlement, or city. **None of it is implemented**; the code (see above) still decides the tier by population alone. Items are marked **DIRECTION** (the owner's stated thinking) or **OPEN** (not decided).
+
+### Why population alone is not enough (real-world reasoning)
+
+These examples come from the owner's own region. They show how the ideas work in one place; other places define the same words differently.
+
+- A community of roughly 700 to 1,000 people (a census count and a later survey estimate of the same place differ) with one elementary school, a few churches, one post office, a couple of clubs, and a volunteer fire department is a small community, not a city.
+- An unincorporated community of about 5,700 people, with its own fire department, school, and churches, is still not a town. It is taxed by its county only, not by a city, and its mail goes to the nearby city.
+- A city of about 30,000 has several providers of the same service (two hospitals, two malls), a wide variety of services (specialist care, shopping, entertainment, a university), and the services that smaller places around it depend on. It grew partly by absorbing smaller areas nearby.
+- A fort or trading post can grow into a small town as people settle around it and services arrive. Many towns and cities began this way.
+- What counts as a town or a city differs by jurisdiction; headcount does not settle it.
+
+Under the current code rule, the first community would be a *settlement* by the census count (about 700) but a *city* by the survey estimate (about 1,066), because the two figures fall on either side of the 1,000 cutoff. The second (about 5,700) would be a city. Two official counts of one place give different tiers, which shows how fragile a population-only rule is.
+
+### DIRECTION — three separate ideas
+
+| Idea | Meaning |
+|------|---------|
+| **Development** | How developed a settlement is, driven by its services: *breadth* (how many kinds), *depth* (how many providers of each, so choice and backup), and *specialization* (services only a few places have). Size supports it but does not define it. |
+| **Governance** | Who governs and taxes the settlement. It is independent of development: a settlement can be well developed yet not self-governing, or small yet self-governing. |
+| **Sphere of influence** | Which hub a settlement is tied to for supply, trade, schools, health care, and mail, whoever governs it. Smaller settlements rely on services in a larger one nearby. |
+
+Interdependence applies at every tier: almost no place is self-sufficient. Each makes some things and trades for the rest, and a city in particular relies on the region around it while serving that region. A tier therefore says what a place makes and provides, not how little it needs from others.
+
+### DIRECTION — draft tier picture (for correction)
+
+| Tier | Real-world anchor | What defines it |
+|------|-------------------|-----------------|
+| Base | Precursor site or remote research station | Built for a purpose; often automated with few or no residents. If crewed, it must produce oxygen. |
+| Outpost | Small remote presence | Narrow purpose, small crew, relies on supply from elsewhere. |
+| Settlement | Small community of several hundred to about 1,000 | People live there permanently; produces oxygen; everyday services; shares regional services with neighbors in its colony. |
+| City | Regional hub | Many services with competing providers, specialized services, and it serves the settlements around it; depends on its surrounding region for materials. |
+
+### DIRECTION — life support and crewing
+
+- **A Settlement with human residents must be able to produce oxygen.** It is the first basic life support: a place where people cannot breathe cannot be settled. By body: on Luna, oxygen from regolith; on Mars and Venus, oxygen from processing CO₂.
+- **Automated, uncrewed Settlements need no life support.** A Settlement can have zero residents.
+- Beyond oxygen, requirements per tier are not defined (see OPEN).
+
+### DIRECTION — lifecycle
+
+Precursor missions prepare a place for human settlement. Robots go first; people come after. The Luna precursor sequence in [Precursor Mission Deployment](../technical/precursor_mission_deployment.md) is the reference pattern. As technology improves the steps may change, but the intent stays the same. An automated Settlement is therefore often an early **phase** of the same Settlement, which becomes crewed once it can support people. A location that is **not human-rated** can stay robotic permanently; being automated is not always a stage on the way to being crewed.
+
+### DIRECTION — growth
+
+A larger settlement can grow by **absorbing** smaller settlements nearby, bringing them under its jurisdiction and services. The more a settlement depends on a hub, the more natural the absorption.
+
+### Relationship to the code
+
+The code already groups settlements into a `Colony` (at least two settlements; it totals their population and resource needs). It has no notion of governance status, sphere of influence, or one settlement absorbing another. All of those would be new.
+
+---
+
 ## OPEN — needs owner confirmation
 
 No source for these was found in the documentation or the code. They are not part of the design until confirmed.
 
 | Item | Note |
 |------|------|
-| Life-support requirements per tier | Nothing defines what must be online for each tier. Code only validates per-person food, water, and energy rates. |
+| Game services behind the tiers | Which services count (e.g., supply link, storage, production, market, shipyard, research, medical, emergency response, governance) and what each tier needs. |
+| Services per settlement or per colony | Does a settlement count services it has itself, or those available through its colony or hub? |
+| Governance statuses | Which statuses exist (sponsor-run, dependent, self-governing, chartered) and what each changes (taxes, fees, jurisdiction, contracts). |
+| Absorption rule | Automatic past a threshold, a player or AI decision (contract or takeover), or both. What happens to the absorbed settlement's identity and structures. |
+| Base and outpost: stage or kind | Are base and outpost early stages on the path to settlement and city, or purpose-built installations that are a different kind of place from a community? Real-world forts have grown into towns, so a base or outpost *can* become a community when people settle and services arrive; not all do (see also *human-rated*). Owner to confirm. |
+| Permanence | Should temporary versus permanent residency be its own attribute alongside development, governance, and sphere of influence? |
+| Where oxygen fits in the precursor sequence | The precursor page stops at the solar farm and never mentions oxygen or when people may arrive. What must be true before humans are allowed in? |
+| Oxygen from imports at the start | The Super-Mars scenario imports oxygen from Earth until local extraction is online. Is an import-only start allowed temporarily, or is local oxygen production required first? |
+| Precursor sequence: all worlds or Luna pattern | The precursor page calls the sequence "world-invariant". The owner's direction is that it is the Luna reference pattern and only the intent is constant. The page may need rewording. |
+| What makes a location human-rated | Which conditions (environment, radiation, temperature, pressure, available oxygen source) decide it, and whether it is a property of the body, the specific location, or the facility. The code has `habitable?` for atmospheres and says gas and ice giants are "not habitable", but nothing marks a site as human-rated. |
+| Sphere of influence | Is it the existing colony, the marketplace, or a new relationship? |
+| Life support beyond oxygen | Water, food, and energy requirements for crewed Settlements, and any per-tier requirements. Code only validates per-person food, water, and energy rates; `Settlement::LifeSupport` is a stub that always reports `operational`. |
 | Structure-count ranges per tier | Values such as 1–2 / 3–5 / 6–10+ structures were proposed in an earlier draft of this page with no source. The code tiers by **population**, not structure count. |
 | Stage-gate rule ("each tier needs the prior life-support loop online") | No source found; nothing in the code enforces it. |
 | Per-tier descriptions | Earlier wording ("minimal life support", "integrated ISRU loops", etc.) has no source. |
