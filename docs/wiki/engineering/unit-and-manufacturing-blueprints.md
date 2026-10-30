@@ -189,7 +189,7 @@ total_thrust = container.units.sum { |u| u.operational_data['performance']['nomi
 | `ion_thruster_engine` | Ion Thruster | 0.25 | Xenon Gas | 3000 | High-efficiency, low-thrust |
 | `electromagnetic_capture_thruster_engine` | Electromagnetic Capture Thruster | 0.1 | Interplanetary Plasma | 10000 | Propellantless, long-duration |
 
-> **Naming note:** Epstein Drive is not present in this project - all references removed for clarity. Raptor and Methane refer to the same engine; use `methane_engine` only.
+> **Naming standard:** The term "Epstein Drive" has been purged from all active documentation for IP compliance. Fusion Torch Drive (`fusion_torch_engine`) is the canonical reference for fusion-class propulsion. All future documentation should use **Fusion Torch Drive** (`fusion_torch_engine`). In code, `methane_engine` remains the active reaction-propulsion baseline.
 
 ---
 
