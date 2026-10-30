@@ -1,151 +1,67 @@
 ---
 title: Settlement Infrastructure
 category: Infrastructure
-status: LIVE (wiki entry)
+status: LIVE (design intent + code-verified note + open items)
 last_updated: 2026-10-29
 ---
 
 # Settlement Infrastructure
 
-Settlement infrastructure covers the administrative, economic, and population systems that model how human presence expands across the Galaxy Game.
+> **How to read this page.** *Design Intent* is the agreed design. *Verified against code* records what the codebase does today (checked at commit `c5f0d9e`, 2026-10-29); where the two differ, the code section is current behavior and the intent stands until the owner changes it. *OPEN* lists items with no source in the docs or the code; they are not decisions.
 
 ---
 
 ## Design Intent
 
-A **Settlement** is the core administrative, economic, and population unit in Galaxy Game. It manages population, economy, contracts, and jurisdiction — and can span multiple physical structures (natural or artificial). Settlements may be placed on planetary surfaces, inside natural features (lava tubes, craters), or in orbit (e.g., L1 Gateway).
+A **Settlement** is the core administrative, economic, and population unit in Galaxy Game. It manages population, economy, contracts, and jurisdiction, and can encompass multiple physical structures, both natural and artificial. Settlements can exist on planetary surfaces, within natural features (lava tubes, craters), or in orbit (e.g., the L1 Gateway).
 
 ### Key Principles
 
-| Principle | Target Behavior |
-|-----------|-----------------|
-| Separation of Concerns | Settlements are *administrative*, not physical structures. They host within structures but are not themselves structures. |
-| Blueprint-Driven Expansion | Artificial structures are built from blueprints; settlements grow by adding structures. |
-| Natural Feature Hosting | Settlements can be placed in natural features (lava tubes, craters) or artificial structures (worldhouses, stations, depots). |
-| Multi-Structure Orbital Sets | Orbital settlements contain peer structures (e.g., shipyard + depot at L1 Gateway). Use `Settlement::OrbitalSettlement` for this pattern; `Settlement::SpaceStation` is deprecated. |
+| Principle | Intent |
+|-----------|--------|
+| Separation of concerns | Settlements are administrative entities, not structures. They contain, or are hosted within, one or more structures. |
+| Structures as assets | Structures (natural or artificial) are physical assets that provide shelter, storage, or operational capacity to a settlement. |
+| Blueprint-driven expansion | Artificial structures are built from blueprints and added to a settlement as it grows. |
+| Natural features | A settlement can be hosted in a natural feature (lava tube, crater) or an artificial structure (worldhouse, station, depot). |
+
+### Natural vs. Artificial Structures
+
+- **Natural:** lava tubes, craters, canyons (worldhouse pattern).
+- **Artificial:** space stations, depots, worldhouses.
+- Both attach to a settlement through its structures.
+
+### Orbital Settlements
+
+An orbital settlement (e.g., the L1 Gateway) is **one settlement containing several peer structures**, for example a shipyard/repair structure and a cargo/refueling structure. It is not a single station object.
+
+Related design: [Station Construction Options](../engineering/station_construction_options.md) (how stations are built), [ISRU Fabrication Chain](../technical/isru_fabrication_chain.md) (in-situ production), [Atmospheric Harvesting](Atmospheric-Harvesting.md).
 
 ---
 
-## CONFIRMED — Code State
+## Verified against code (commit `c5f0d9e`, 2026-10-29)
 
-### Habitat Tiers Enum
+| Topic | What the code does |
+|-------|--------------------|
+| Settlement types | `settlement_type` enum: `base`, `outpost`, `settlement`, `city`, `station`. |
+| How the type is set | On every change to `current_population` the type is reassigned from population: **0–9 → base, 10–99 → outpost, 100–999 → settlement, 1000+ → city**. A `population_requirements` method defines the same minimums (base ≥ 1, outpost ≥ 10, settlement ≥ 100, city ≥ 1000) but is not registered as a validation in the settlement model files. This rule never assigns `station`. |
+| What a settlement has | Owner (optional), colony (optional), accounts, inventory, missions, marketplace, location, docked crafts, base units, orbital construction projects, jobs, construction jobs, and `structures` (all `Structures::BaseStructure`, linked by `settlement_id`). |
+| Orbital settlement | `Settlement::OrbitalSettlement` exists and is active. It shares the settlements table; its location comes from its first structure, and its population capacity and storage are summed over its structures. |
+| `SpaceStation`, `OrbitalDepot` | Both `Settlement::` classes are marked **RETIRED 2026-04-10** in code ("kept for git history only. Do not use this class."). Replacement: `Settlement::OrbitalSettlement` with `Structures::OrbitalStructure`. |
+| Structure types | Under `Structures::BaseStructure`: `CraterDome`, `HabitationFacility`, `Hangar`, `ManufacturingFacility`, `OrbitalStructure`, `PowerStation`, `SolarArray`, `StorageFacility`, `Worldhouse` (`ConvertedBase` extends `Worldhouse`). There is no `Structures::SpaceStation` or `Structures::OrbitalDepot`. |
 
-Source: `galaxy_game/app/models/settlement/base_settlement.rb` (line 48)
-
-```ruby
-enum settlement_type: { base: 0, outpost: 1, settlement: 2, city: 3, station: 4 }
-```
-
-| Tier | Design Intent |
-|------|---------------|
-| `base` | Earliest viable presence; minimal life support, few structures. |
-| `outpost` | Expanded operations; secondary life-support systems added. |
-| `settlement` | Self-sustaining habitat tier; integrated infrastructure loops (ISRU, power grid). |
-| `city` | Dense urban scale; external trade, multi-layer logistics. |
-| `station` | Orbital / microgravity habitat variant of equivalent scale. |
-
-### OrbitalSettlement Model
-
-Source: `galaxy_game/app/models/settlement/orbital_settlement.rb` (line 3)
-
-```ruby
-class Settlement::OrbitalSettlement < ApplicationRecord
-```
-
-- **Confirmed**: Model exists and is active.
-- Replaces deprecated `SpaceStation` / `OrbitalDepot` for multi-structure orbital cases.
-
-### SpaceStation / OrbitalDepot Namespace Split — OPEN
-
-**Status: Confirmed retired; file-level record split is unconfirmed.**
-
-| File | Status | Notes |
-|------|--------|-------|
-| `galaxy_game/app/models/settlement/space_station.rb` | RETIRED 2026-04-10 | "Do not use this class. Kept for git history only." |
-| `galaxy_game/app/models/settlement/orbital_depot.rb` | RETIRED 2026-04-10 | "Do not use this class. Kept for git history only." |
-
-**OPEN**: Do these two files remain in the repo, or have they been removed from `git ls-files`? Confirmation needed from owner.
-
-### Deprecation — Legacy Only
-
-Confirmed: Both `SpaceStation` and `OrbitalDepot` are **retired (legacy only)** as of 2026-04-10. No active migration is in progress; new code should use `Settlement::OrbitalSettlement` with `Structures::OrbitalStructure`.
-
-### BaseSettlement Associations
-
-Source: `galaxy_game/app/models/settlement/base_settlement.rb` (lines 14–35)
-
-```ruby
-has_one :marketplace, ...
-has_one :location, ...
-has_many :docked_crafts, ...
-has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable
-has_many :orbital_construction_projects, class_name: 'OrbitalConstructionProject', foreign_key: 'station_id'
-has_many :jobs, foreign_key: 'settlement_id', dependent: :destroy
-has_many :construction_jobs, foreign_key: 'settlement_id', dependent: :destroy
-```
-
-### SettlementCore Concern — Associations & Record Path
-
-Source: `galaxy_game/app/models/concerns/settlement/settlement_core.rb`
-
-| Association | Type | Source (line) |
-|-------------|------|---------------|
-| `owner` | `belongs_to :owner, polymorphic: true, optional: true` | line 9 |
-| `colony` | `belongs_to :colony, ...` | line 10 |
-| `marketplace_account` | `has_one :account, ...` | line 15 |
-| `accounts` | `has_many :accounts, ...` | line 19 |
-| `structures` | `has_many :structures, class_name: 'Structures::BaseStructure', as: :attachable` | line 22 |
-| `missions` | `has_many :missions, dependent: :destroy` | line 25 |
-| `inventory` | `has_one :inventory, as: :inventoryable, dependent: :destroy` | line 29 |
+**Effect on the intent above:** an orbital settlement's peer structures are `OrbitalStructure` instances. The earlier intent text named a space-station structure and a depot structure for the L1 Gateway; those names are superseded by the retirement above.
 
 ---
 
-## OPEN — Needs Owner Confirmation
+## OPEN — needs owner confirmation
 
-### Per-Tier Descriptions & Requirements
+No source for these was found in the documentation or the code. They are not part of the design until confirmed.
 
-The habitat tier enum values (`base`, `outpost`, `settlement`, `city`, `station`) are confirmed in code (line 48 of `base_settlement.rb`). However, the following items are **unconfirmed** and require owner input:
-
-| Item | Current Status | Source Citation |
-|------|----------------|-----------------|
-| Per-tier life-support requirements (what must be online before each tier) | Unconfirmed in code or docs | None found |
-| Per-tier structure-count ranges (e.g., "base = 1–2 structures") | Design-intent only; not in code | [LUNA_SETTLEMENT_LIFECYCLE.md](../design/LUNA_SETTLEMENT_LIFECYCLE.md) — design document, not implementation spec |
-| Per-tier construction durations & costs | Unconfirmed | No database migrations or config files found |
-
-### Habitat Tiers Growth-Stage Definitions
-
-| Growth Stage | Design Intent (Unconfirmed) | Source Citation |
-|--------------|-----------------------------|-----------------|
-| `base` → `outpost` | 1–2 structures, minimal life support | [LUNA_SETTLEMENT_LIFECYCLE.md](../design/LUNA_SETTLEMENT_LIFECYCLE.md) |
-| `outpost` → `settlement` | 3–5 structures, expanded ISP, full ISRU | [LUNA_SETTLEMENT_LIFECYCLE.md](../design/LUNA_SETTLEMENT_LIFECYCLE.md) |
-| `settlement` → `city` | 6–10+ structures, multi-system integration | [LUNA_SETTLEMENT_LIFECYCLE.md](../design/LUNA_SETTLEMENT_LIFECYCLE.md) |
-
-**OPEN**: Owner confirmation needed to promote these design-intent values to implementation specs or archive them.
-
-### Stage-Gate Rules
-
-- **Target Pattern (Unconfirmed)**: Each tier requires its prior life-support loop to be online.
-- **Source**: [LUNA_SETTLEMENT_LIFECYCLE.md](../design/LUNA_SETTLEMENT_LIFECYCLE.md) — design document only; no code enforcement found.
-- **OPEN**: Is there a `adjust_settlement_type_based_on_population` method that gates tiers? Code at `base_settlement.rb` line 281 confirms the method exists and adjusts type by population, but exact thresholds are not documented.
-
-### Namespace Split Confirmation (SpaceStation / OrbitalDepot)
-
-See [CONFIRMED — Code State](#spacespacestation-oraldepot-namespace-split--open) above. **OPEN**: Confirm these files still exist in `git ls-files`.
-
----
-
-## Model Relationships Summary
-
-| Model | Responsibility | Confirmed Status |
-|-------|---------------|-----------------|
-| `Settlement::BaseSettlement` | Core admin unit; population-driven tier gating via `adjust_settlement_type_based_on_population` (line 281) | ✅ Code confirmed |
-| `Structures::BaseStructure` | Physical asset (natural or artificial); subclassed for worldhouses, space stations, depots. | ✅ Standard Rails pattern; subclasses confirmed in codebase |
-| `Settlement::OrbitalSettlement` | Orbital-specific behavior; replaces deprecated SpaceStation for multi-structure cases. | ✅ Code confirmed (`galaxy_game/app/models/settlement/orbital_settlement.rb`) |
-
----
-
-## Harvest Log
-
-| Date | Action | Author |
-|------|--------|--------|
-| 2026-10-29 | Rewritten per workflow: stripped outward GitHub links and canonical front-matter; grounded code state to live model; separated OPEN items with source citations. | Automated |
+| Item | Note |
+|------|------|
+| Life-support requirements per tier | Nothing defines what must be online for each tier. Code only validates per-person food, water, and energy rates. |
+| Structure-count ranges per tier | Values such as 1–2 / 3–5 / 6–10+ structures were proposed in an earlier draft of this page with no source. The code tiers by **population**, not structure count. |
+| Stage-gate rule ("each tier needs the prior life-support loop online") | No source found; nothing in the code enforces it. |
+| Per-tier descriptions | Earlier wording ("minimal life support", "integrated ISRU loops", etc.) has no source. |
+| Per-tier construction costs and durations | Not defined anywhere found. |
+| Role of the `station` type | Population-based reassignment never produces `station` and would overwrite it on the next population change. Is `station` meant to be exempt? |
