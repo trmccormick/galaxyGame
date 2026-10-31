@@ -218,7 +218,7 @@ All orders expire 24 hours after creation (`Market::Order#expires_at = created_a
 Heavy Lift Transport (HLT) classes are **gated by operational range** to prevent inner-system craft from undertaking deep-space runs they cannot support:
 
 * **MK1 HLT — Inner-System Only:** Restricted to Earth ↔ Luna ↔ Venus loops (LEO, L1 depots, PSR ice routes). MK1 vessels lack the shielding, life-support endurance, and structural rating for long-range transit.
-* **MK2 / MK3 Cyclers — Outer-System Gated:** All runs beyond the inner-system triangle (Mars moons, Belt anchor positions, no-moon asteroid repositioning) require MK2 or MK3 class cyclers built at L1 shipyards per the pre-player pipeline. These long-range transports carry redundant power and dedicated slag-engine propulsion derived from hollowed moon/asteroid material processing.
+* **MK2 / MK3 Cyclers — Outer-System Gated:** All runs beyond the inner-system triangle (Mars moons, Belt anchor positions, no-moon asteroid repositioning) require MK2 or MK3 class cyclers built at L1 shipyards per the pre-player pipeline. These long-range transports carry redundant power and dedicated **Fusion Torch Drive** propulsion derived from hollowed moon/asteroid material processing, with primary thrust via **methane_engine / Raptor**-class engines for rendezvous operations.
 * **No direct Titan-to-Luna or Titan-to-Earth transport:** All off-world logistics routes transit through the **Mars cycler hub network** (Phobos/Deimos relay stations). Direct deep-space hauls bypassing the Mars hub are not permitted under current infrastructure rules. `[VERIFY — confirm Mars-hub routing enforcement in market service logic]`
 
 ### Earth Import Cost Model
