@@ -48,7 +48,7 @@ INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00  # USD/kg for Earth import baseline
 
 ```ruby
 # cryptocurrency.gcc_mining section (economic_parameters.yml)
-gcc_max_supply              => 21_000_000,000   # capped deflationary total supply
+gcc_max_supply              => 21_000_000_000   # capped deflationary total supply
 gcc_halving_interval_days    => 730               # ~2 years per halving event
 gcc_issuance_model           => 'capped_deflationary'
 gcc_difficulty_scaling_enabled => true
@@ -72,8 +72,8 @@ gcc_minimum_block_reward     => 1
 - `+ transport cost to destination settlement` (via route modifiers and technology multiplier from config)
 
 ```ruby
-# Simplified verified flow:
-EAP = earth_spot_price + refining_factor * transport_cost(destination, source)
+# Simplified verified flow (matching Tier1PriceModeler.calculate_eap):
+EAP = (earth_anchor_price * refining_factor) * usd_to_gcc_peg + transport_cost_GCC
 ```
 
 ### Verified Properties
