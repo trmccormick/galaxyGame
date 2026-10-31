@@ -20,7 +20,7 @@ This page is the canonical wiki entry for unit composition, facility manufacturi
 
 | Boundary | What it owns | Owner in this wiki |
 |----------|-------------|--------------------|
-| **StarSim (astronomy/)** | Celestial body generation, orbital mechanics, star-system initialization | [System blueprints](../astronomy/System-Blueprints.md) - documents StarSim: procedural system generation and loading JSON systems to initialize that part of the game |
+| **StarSim (astronomy/)** | Celestial body generation, orbital mechanics, star-system initialization | [System blueprints](../astronomy/system_blueprints.md) - documents StarSim: procedural system generation and loading JSON systems to initialize that part of the game |
 | **Unit & Manufacturing Blueprints** | Constructed units (craft, satellites, harvesters), structural modules, stations built from components, jobs, build queues, and production-pipeline schemas | **This page** |
 
 **Rule:** Anything that produces matter, energy flow, or build state - *not* celestial/planetary initialization - lives under this engineering scope. If it describes an item that appears in the crafting catalog (materials, intermediate parts, finished units), it is a blueprint data role and belongs here.
@@ -442,7 +442,7 @@ The `mission_manifest` defines initial deployment state:
 | Page | Relationship |
 |------|--------------|
 | [Station construction options](./station_construction_options.md) | Station-level assembly pipeline; consumes blueprints as input modules |
-| [System blueprints (astronomy)](../astronomy/System-Blueprints.md) | StarSim initialization - distinct from constructible-unit schemas documented here |
+| [System blueprints (astronomy)](../astronomy/system_blueprints.md) | StarSim initialization - distinct from constructible-unit schemas documented here |
 | [AI Manager logic](../logistics/ai_manager_logic.md) | AI scheduling consumes blueprint yields and dependency DAGs to drive production decisions |
 | [Status and gaps](../status-and-gaps.md) | Tracks wiki coverage posture; this page fills the unit/blueprint gap |
 | [ISRU fabrication chain](../technical/isru_fabrication_chain.md) | Downstream ISRU material processing feeds into manufacturing pipelines |

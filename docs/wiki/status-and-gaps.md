@@ -28,8 +28,8 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 - **Markets (docs):** [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) and [Market and AI bootstrapping](logistics/market_and_ai_bootstrapping.md) are the strongest market writeups; both still carry VERIFY / PENDING markers — trust the flags.
 - **Getting started:** [Getting started](player/getting_started.md) matches the Docker-oriented run path in the project README.
 - **Logistics vs finance split:** [Logistics and hauling](logistics/Logistics-and-Hauling.md) is transport intent; [Financial engine](logistics/Financial-Engine.md) is currency/peg/friction. Do not mix them.
-- **StarSim (docs):** [System blueprints](astronomy/System-Blueprints.md) covers StarSim — system generation and loading JSON systems to initialize that part of the game. It is **not** about manufacturing unit/structure blueprints.
-- **Scenarios / atmosphere:** [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) and [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) are useful design/test-bench material; confirm constants against `config/initializers` when implementing.
+- **StarSim (docs):** [System blueprints](astronomy/system_blueprints.md) covers StarSim — system generation and loading JSON systems to initialize that part of the game. It is **not** about manufacturing unit/structure blueprints.
+- **Scenarios / atmosphere:** [Scenario: Super Mars](astronomy/scenario_super_mars.md) and [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) are useful design/test-bench material; confirm constants against `config/initializers` when implementing.
 
 ---
 
@@ -37,7 +37,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 
 | Gap | Notes |
 |-----|--------|
-| Celestial systems | [Celestial systems](astronomy/Celestial-Systems.md) is a **template**, not a filled Sol (or other) system page |
+| Celestial systems | [Celestial systems](astronomy/celestial_systems.md) is a **template**, not a filled Sol (or other) system page |
 | Player roles / factions | [Player roles and alignment](player/Player-Roles-and-Alignment.md) is detailed; treat as intent until matched to current models/UI |
 | Portal / late-game FTL transport | Intentionally out of the front door until design is ready to land under logistics/transport |
 | Command reference drift | [System commands](technical/System-Commands.md) may name services or baselines that have moved — re-check before scripting around them |

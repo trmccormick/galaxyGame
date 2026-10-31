@@ -61,9 +61,9 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 
 | Page | Notes |
 |------|--------|
-| [Scenario: Super Mars](astronomy/Scenario-Super-Mars.md) | Super-Mars test-bench scenario |
-| [System blueprints](astronomy/System-Blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
-| [Celestial systems](astronomy/Celestial-Systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
+| [Scenario: Super Mars](astronomy/scenario_super_mars.md) | Super-Mars test-bench scenario |
+| [System blueprints](astronomy/system_blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
+| [Celestial systems](astronomy/celestial_systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
 
 ---
 
