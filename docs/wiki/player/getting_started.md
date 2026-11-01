@@ -104,6 +104,6 @@ Because the project is in active development, keep the following discrepancies i
 ## Where To Go Next
 
 * **[Wiki Index Page](../README.md):** Main entry point for `player/`, `development/`, and `technical/` documentation.
-* **[Player Roles & Alignment](Player-Roles-and-Alignment.md):** Faction alignment, player scopes, and operational roles.
+* **[Player Roles & Alignment](player_roles_and_alignment.md):** Faction alignment, player scopes, and operational roles.
 * **[Developer Setup](../../developer/setup.md):** Deep-dive into local Ruby, PostgreSQL, RuboCop, and testing environments.
 * **Active Project Status:** Check `agent-tasks: projects/galaxy_game/status.md`.

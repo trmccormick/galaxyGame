@@ -39,7 +39,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|--------|
 | [Getting started](player/getting_started.md) | Run the game, first session |
-| [Player roles and alignment](player/Player-Roles-and-Alignment.md) | Roles and alignment (verify against code) |
+| [Player roles and alignment](player/player_roles_and_alignment.md) | Roles and alignment (verify against code) |
 
 ---
 
@@ -72,7 +72,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 
 | Page | Notes |
 |------|--------|
-| [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
+| [Atmospheric harvesting](infrastructure/atmospheric_harvesting.md) | Gas / atmosphere harvesting |
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
@@ -91,7 +91,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Status and gaps](status-and-gaps.md) | In-repo documentation posture, known gaps, where to dig (no external status repo) |
 | [Migration log](migration-log.md) | Which legacy documents have been absorbed into the wiki |
 | [AI Manager logic](logistics/ai_manager_logic.md) | Canonical front door for AI priority loops, ACM boundaries, and system behavior |
-| [System commands](technical/System-Commands.md) | Console / simulation command reference (re-verify names before relying on them) |
+| [System commands](technical/system_commands.md) | Console / simulation command reference (re-verify names before relying on them) |
 | [Ballistic corridor](technical/venus_mars_ballistic_corridor.md) | Ballistic transit corridors between Venus and Mars |
 | [Precursor mission deployment](technical/precursor_mission_deployment.md) | Initial precursor missions and deployment |
 | [ISRU fabrication chain](technical/isru_fabrication_chain.md) | In-situ resource utilization fabrication pipelines |

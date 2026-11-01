@@ -34,7 +34,7 @@ These files expand on the primary pipeline narrative with focused detail. They l
 
 ## Atmospheric Harvesting
 
-→ [`Atmospheric-Harvesting.md`](./Atmospheric-Harvesting.md)
+→ [`atmospheric_harvesting.md`](./atmospheric_harvesting.md)
 
 Extraction economics, Earth atmosphere baseline, and Venusian-analog harvesting targets. See [Planetary Protection](#planetary-protection) for environmental caps that bound extraction yields and rates.
 

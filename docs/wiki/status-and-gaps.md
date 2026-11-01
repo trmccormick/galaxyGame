@@ -29,7 +29,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 - **Getting started:** [Getting started](player/getting_started.md) matches the Docker-oriented run path in the project README.
 - **Logistics vs finance split:** [Logistics and hauling](logistics/logistics_and_hauling.md) is transport intent; [Financial engine](logistics/financial_engine.md) is currency/peg/friction. Do not mix them.
 - **StarSim (docs):** [System blueprints](astronomy/system_blueprints.md) covers StarSim — system generation and loading JSON systems to initialize that part of the game. It is **not** about manufacturing unit/structure blueprints.
-- **Scenarios / atmosphere:** [Scenario: Super Mars](astronomy/scenario_super_mars.md) and [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) are useful design/test-bench material; confirm constants against `config/initializers` when implementing.
+- **Scenarios / atmosphere:** [Scenario: Super Mars](astronomy/scenario_super_mars.md) and [Atmospheric harvesting](infrastructure/atmospheric_harvesting.md) are useful design/test-bench material; confirm constants against `config/initializers` when implementing.
 
 ---
 
@@ -38,9 +38,9 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 | Gap | Notes |
 |-----|--------|
 | Celestial systems | [Celestial systems](astronomy/celestial_systems.md) is a **template**, not a filled Sol (or other) system page |
-| Player roles / factions | [Player roles and alignment](player/Player-Roles-and-Alignment.md) is detailed; treat as intent until matched to current models/UI |
+| Player roles / factions | [Player roles and alignment](player/player_roles_and_alignment.md) is detailed; treat as intent until matched to current models/UI |
 | Portal / late-game FTL transport | Intentionally out of the front door until design is ready to land under logistics/transport |
-| Command reference drift | [System commands](technical/System-Commands.md) may name services or baselines that have moved — re-check before scripting around them |
+| Command reference drift | [System commands](technical/system_commands.md) may name services or baselines that have moved — re-check before scripting around them |
 | Architecture sprawl | Large trees under `docs/architecture/` and legacy `docs/agent/` are uneven; prefer wiki entry pages first |
 
 ## Resolved gaps (2026-10-28 consolidation pass)
@@ -51,7 +51,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 | AI Manager intent / priority logic | [AI Manager Logic](logistics/ai_manager_logic.md) — canonical front door (ACM boundaries, 3-tier priority loops, safety policies) |
 | Market pricing & bootstrapping pair | [Resource and Market Logistics](logistics/resource_and_market_logistics.md) + [Market and AI Bootstrapping](logistics/market_and_ai_bootstrapping.md) — designated canonical wiki pair with cross-banners; EAP + peg/unpeg design intent added 2026-10-28 |
 | Infrastructure TOC coherence | [Infrastructure/README.md](infrastructure/README.md) — restructured as master table of contents, pre_player_era content consolidated into [Station Construction Options](engineering/station_construction_options.md) |
-| System commands verification posture | [System Commands](technical/System-Commands.md) — banner updated to VERIFY AGAINST CODE with app/services/ runtime pointers |
+| System commands verification posture | [System Commands](technical/system_commands.md) — banner updated to VERIFY AGAINST CODE with app/services/ runtime pointers |
 
 ---
 

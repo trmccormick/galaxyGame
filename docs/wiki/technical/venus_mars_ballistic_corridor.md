@@ -4,7 +4,7 @@
 
 > **Cross-link:** For high-level governance context, planetary protection classes, and policy toggles governing these operations, see **[Planetary Protection & Environmental Governance](../infrastructure/planetary_protection_environmental_governance.md)**.
 
-> **Cross-link:** For the Sol Tri-System Volatile Loop (outer-system $H_2$/methane supply chain), see **[Terraforming Economic Integration](../logistics/terraforming_economic_integration.md#sol-tri-system-volatile-loop)** and **[Atmospheric Harvesting](../infrastructure/Atmospheric-Harvesting.md)**.
+> **Cross-link:** For the Sol Tri-System Volatile Loop (outer-system $H_2$/methane supply chain), see **[Terraforming Economic Integration](../logistics/terraforming_economic_integration.md#sol-tri-system-volatile-loop)** and **[Atmospheric Harvesting](../infrastructure/atmospheric_harvesting.md)**.
 
 ---
 

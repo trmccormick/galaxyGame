@@ -34,7 +34,7 @@ A **Settlement** is the core administrative, economic, and population unit in Ga
 
 An orbital settlement (e.g., the L1 Gateway) is **one settlement containing several peer structures**, for example a shipyard/repair structure and a cargo/refueling structure. It is not a single station object.
 
-Related design: [Station Construction Options](../engineering/station_construction_options.md) (how stations are built), [ISRU Fabrication Chain](../technical/isru_fabrication_chain.md) (in-situ production), [Atmospheric Harvesting](Atmospheric-Harvesting.md).
+Related design: [Station Construction Options](../engineering/station_construction_options.md) (how stations are built), [ISRU Fabrication Chain](../technical/isru_fabrication_chain.md) (in-situ production), [Atmospheric Harvesting](atmospheric_harvesting.md)
 
 ---
 

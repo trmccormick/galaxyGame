@@ -4,7 +4,7 @@
 
 > **Cross-link:** For the Venus–Mars ballistic corridor that uses CNT shell containment pods, see **[Venus–Mars Ballistic Corridor (Brute-Force Loop)](./venus_mars_ballistic_corridor.md)**.
 
-> **Cross-link:** For atmospheric harvesting of CO₂ and N₂ from Venus/Titan, see **[Atmospheric Harvesting](../infrastructure/Atmospheric-Harvesting.md)**.
+> **Cross-link:** For atmospheric harvesting of CO₂ and N₂ from Venus/Titan, see **[Atmospheric Harvesting](../infrastructure/atmospheric_harvesting.md)**.
 
 ---
 
