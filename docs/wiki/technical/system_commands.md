@@ -2,8 +2,9 @@
 
 # System Commands
 
-> **STATUS: VERIFY AGAINST CODE**
-> System commands listed here reflect CLI/admin design intent. Always cross-reference against `app/services/` for actual runtime execution entry points.
+> **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Three of four claimed service classes (`SimulationRunner`, `AtmosphereProcessor`, `EconomyEngine`) do not exist in the codebase. Only wormhole logic has a partial implementation under `GalaxyGame::AiManager::WormholeManager` (model: `wormhole.rb`; jobs: `wormhole_generation_job.rb`, `wormhole_maintenance_job.rb`). Ledger settlement is stubbed (`Financial::LedgerManager.settle_with_usd` body is empty). No simulation runner or economy engine service exists.
 
 > **Scope:** Technical reference for the four core Rails console commands that orchestrate Galaxy Game's primary simulation loops. Each command focuses on verified app/service entry points rather than unverified legacy tools. Commands must be invoked deliberately — never chained blindly or automated without explicit test coverage confirming the current spec baseline.
 

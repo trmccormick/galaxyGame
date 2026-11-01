@@ -4,6 +4,10 @@
 
 Currency, ledgers, and market friction for off-world play.
 
+> **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Ledger structure exists: `Financial::Account` and `Financial::LedgerManager` are present. However, `LedgerManager.settle_with_usd` body is empty (stubbed). GCC/USD peg value (`GCC_TO_USD_INITIAL = 1.0`) and EAP concept are documented constants but unpeg mechanics and fee schedules remain design intent only.
+
 **Canonical authority:** For pricing logic, GCC/USD peg unpeg model, EAP enforcement, and all bootstrapping mechanics, refer to:
 - **[Resource & Market Logistics](resource_and_market_logistics.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
 - **[Market and AI Bootstrapping](market_and_ai_bootstrapping.md)** — ECC canonical spec (bootstrap peg, market models, AutonomousConstructionManager)

@@ -7,6 +7,10 @@ last_updated: 2026-10-29
 
 # Settlement Infrastructure
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Component mapping accurately matches settlement models in code: `Settlement::BaseSettlement`, `LifeSupport`, `Docking`, `ModuleRequirements`, `OrbitalSettlement`, `SpaceStation`, `OrbitalDepot` — all present and structurally consistent with wiki descriptions.
+
 > **How to read this page.** *Design Intent* is the agreed design. *Verified against code* records what the codebase does today (checked at commit `c5f0d9e`, 2026-10-29); where the two differ, the code section is current behavior and the intent stands until the owner changes it. **Terminology:** *Settlement* (capital S) is the unit that exists at every tier (the game model); *settlement tier* is one of its tiers. *Direction under discussion* is the owner's working thinking on tiers, not yet final. *OPEN* lists items with no source in the docs or the code; they are not decisions.
 
 ---

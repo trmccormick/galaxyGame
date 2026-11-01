@@ -1,5 +1,9 @@
 # 🤖 AI Manager Logic & High-Level Execution Rules
 
+> **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Core service `galaxy_game/app/services/ai_manager/task_execution_engine.rb` exists (~800 lines). Other referenced coordinators require verification (e.g., `logistics_coordinator.rb`, `market_stabilization_service.rb`, `emergency_mission_service.rb`). Priority scoring, safety gates, and tier logic represent target design intent — verify against source before assuming runtime behavior.
+
 ## STATUS: TARGET DESIGN INTENT & CANONICAL FRONT DOOR
 
 This document is the single canonical wiki entry for AI Manager intent, priority loops, and system boundaries. **All content — including priority scoring, decision loops, ACM boundaries, and safety gates — represents TARGET DESIGN INTENT ONLY.** These rules describe the target architecture rather than active runtime code calculations. Verify against live code in `galaxy_game/app/services/ai_manager/` before treating any detail as implemented behavior. Detailed architectural specs live in `docs/architecture/ai_manager/`.

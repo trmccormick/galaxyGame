@@ -1,5 +1,9 @@
 # Markets, EAP, and GCC/USD Peg — Canonical Specification
 
+> **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Core marketplace logic is implemented: `Market::Marketplace.get_price`, `place_order`, `execute_trades`, `find_matching_orders`, and `Market::NpcPriceCalculator` for EAP enforcement. GCC/USD peg value (`GCC_TO_USD_INITIAL = 1.0`) and `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00` are documented constants. Unpeg mechanics, fee schedules, and EAP ceiling overrides remain design intent only.
+
 > **Wiki section:** Logistics · **Status:** CANONICAL CONSOLIDATION — this page merges the market pair from `resource_and_market_logistics.md`, `market_and_ai_bootstrapping.md`, `financial_engine.md`, and `eap_and_ai_manager_escalation.md`. Each topic below grounds intent in verified code where present; TARGET DESIGN INTENT and OPEN markers are used explicitly.
 
 > **Authoritative sources:**

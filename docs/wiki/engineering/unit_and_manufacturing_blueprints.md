@@ -1,5 +1,9 @@
 # Unit & Manufacturing Blueprints
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Confirmed active: `blueprints.rb` (Blueprint ORM backbone with `can_manufacture?`, `consume_runs`, `calculate_efficiencies`), `base_unit.rb` (Units::BaseUnit with full method signatures matching wiki descriptions — `job_types`, `process_materials`, `operate`, `processing_type`), `fabricator.rb` (Mk1-Mk3 stub pattern), and `base_craft.rb` (vessel registry with `HasUnits` association) all match signatures described in this page.
+
 ## Status: VERIFIED ACTIVE (code-grounded)
 
 This page is the canonical wiki entry for unit composition, facility manufacturing schemas, and operational data roles. All content is grounded in live code inspection (`galaxy_game/app/`). Legacy docs are cited as harvest sources but carry no authority.

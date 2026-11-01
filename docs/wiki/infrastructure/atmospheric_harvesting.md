@@ -2,6 +2,10 @@
 
 # Atmospheric Harvesting
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* All values (constants like `INITIAL_TRANSPORTATION_COST_PER_KG`, `EARTH_ATMOSPHERE`, `GREENHOUSE_FACTORS`) are design-baseline figures. No dedicated atmosphere processing service class (`AtmosphereProcessor`) exists in the codebase. Only a concern mixin (`atmospheric_processing.rb`) is present, providing infrastructure-level helpers rather than harvesting orchestration.
+
 > **Cross-link:** For the pre-player-era infrastructure routing that governs *how* harvested volatiles reach settlements, see **[Station Construction Options](../engineering/station_construction_options.md)**. All transport routes are gated behind the Mars cycler hub network; Titan-analog atmospheric delivery to Luna/Earth is not supported.
 
 > **Cross-link:** All atmospheric extraction yields and rates are bounded by planetary protection classes defined in **[Planetary Protection & Environmental Governance](planetary_protection_environmental_governance.md)**. Specifically: Class-1 bodies (e.g., Titan) enforce a 5% total volatile extraction cap relative to initial atmospheric/surface mass; Class-2 bodies (e.g., Venus Option B) are uncapped but subject to standard market limits and physical Δv constraints. These caps are **TARGET DESIGN INTENT ONLY** — no runtime enforcement currently exists in the codebase.
