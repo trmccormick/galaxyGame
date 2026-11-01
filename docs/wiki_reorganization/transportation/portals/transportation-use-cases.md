@@ -50,7 +50,7 @@ The primary source clearly supports these use cases:
 | Strategic Benefit | Detail | Source |
 |-------------------|--------|--------|
 | **Instant player movement** across known space within a system | Replaces shuttle runs for personnel and small cargo. First placement at a new outpost requires physical delivery mission, but subsequent transit is instant. | `em_technology_tree.md` § Level 4 (Established) |
-| **Personnel rapid deployment for AI Manager** | AI Manager can leverage portal networks for NPC behavior coordination and multi-system operations. | `em_technology_tree.md` § Level 4 Gameplay Unlocks (Established) |
+| **Personnel rapid deployment for AI Manager** | AI Manager can leverage portal networks for NPC behavior coordination within a system. (Note: the source describes intra-system portal scope; any inter-system implications are speculative.) | `em_technology_tree.md` § Level 4 Gameplay Unlocks (Established) |
 | **High-value low-mass cargo instant delivery** | Medicine, electronics, and other high-value small items delivered instantly via portal. | `em_technology_tree.md` § Level 4 Gameplay Unlocks (Established) |
 
 ---

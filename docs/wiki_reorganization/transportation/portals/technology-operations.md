@@ -22,12 +22,14 @@ Portal connections use matching quantum-entangled endpoints.
 
 ### Core Rules (Established)
 
+These rules come from `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md`. **Authority note:** The consolidation draft warns that this older document's authority needs confirmation before merging with current design; treat these constraints as established pending that verification.
+
 | Rule | Detail | Source |
 |------|--------|--------|
-| **Paired deployment** | Portals must be deployed in pairs. Each portal has a `partner_id` or `destination_portal_id` linking it to its fixed exit. | `INTRA_SYSTEM_PORTALS.md` § Paired Constraint (Established) |
-| **Unpaired portals are non-functional** | Single, unpaired portals cannot be used for transit. | `INTRA_SYSTEM_PORTALS.md` § Paired Constraint (Established) |
-| **Mass limit enforcement** | Each portal has a strict maximum mass limit (`PORTAL_MAX_MASS`). Any ship or cargo exceeding this limit cannot transit. | `INTRA_SYSTEM_PORTALS.md` § Mass Limit (Established) |
-| **EM operating cost > Cycler cost** | The EM cost to operate a portal pair for a given mass must always **exceed** the cost of running a Cycler for bulk goods transport. This ensures portals are reserved for high-priority, low-mass, or time-sensitive cargo and personnel. | `INTRA_SYSTEM_PORTALS.md` § EM Maintenance Cost (Established) |
+| **Paired deployment** | Portals must be deployed in pairs. Each portal has a `partner_id` or `destination_portal_id` linking it to its fixed exit. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § Paired Constraint (Established) |
+| **Unpaired portals are non-functional** | Single, unpaired portals cannot be used for transit. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § Paired Constraint (Established) |
+| **Mass limit enforcement** | Each portal has a strict maximum mass limit (`PORTAL_MAX_MASS`). Any ship or cargo exceeding this limit cannot transit. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § Mass Limit (Established) |
+| **EM operating cost > Cycler cost** | The EM cost to operate a portal pair for a given mass must always **exceed** the cost of running a Cycler for bulk goods transport. This ensures portals are reserved for high-priority, low-mass, or time-sensitive cargo and personnel. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § EM Maintenance Cost (Established) |
 
 ### Deployment Model (Established)
 

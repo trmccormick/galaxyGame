@@ -66,13 +66,13 @@ The following are explicitly outside portal scope:
 
 ## Key Constraints (Established Rules)
 
-These constraints come from the older intra-system portal architecture document, which has been verified as existing:
+These constraints come from the older intra-system portal architecture document (`docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md`), which has been verified as existing. **Authority note:** The consolidation draft warns that this older document's authority needs confirmation before merging with current design; treat these constraints as established pending that verification.
 
 | Constraint | Detail | Source |
 |------------|--------|--------|
-| **EM operating cost rule** | The EM cost to operate a portal pair must always **exceed** the cost of running a Cycler for bulk goods transport. This ensures portals are reserved for high-priority, low-mass, or time-sensitive cargo and personnel. | `INTRA_SYSTEM_PORTALS.md` § EM Maintenance Cost (Established) |
-| **Paired constraint** | Portals must be deployed in pairs. Each portal has a `partner_id` or `destination_portal_id` linking it to its fixed exit. Single, unpaired portals are non-functional and cannot be used for transit. | `INTRA_SYSTEM_PORTALS.md` § Paired Constraint (Established) |
-| **Mass limit** | Each portal has a strict maximum mass limit (`PORTAL_MAX_MASS`). Any ship or cargo exceeding this limit cannot transit. | `INTRA_SYSTEM_PORTALS.md` § Mass Limit (Established) |
+| **EM operating cost rule** | The EM cost to operate a portal pair must always **exceed** the cost of running a Cycler for bulk goods transport. This ensures portals are reserved for high-priority, low-mass, or time-sensitive cargo and personnel. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § EM Maintenance Cost (Established) |
+| **Paired constraint** | Portals must be deployed in pairs. Each portal has a `partner_id` or `destination_portal_id` linking it to its fixed exit. Single, unpaired portals are non-functional and cannot be used for transit. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § Paired Constraint (Established) |
+| **Mass limit** | Each portal has a strict maximum mass limit (`PORTAL_MAX_MASS`). Any ship or cargo exceeding this limit cannot transit. | `docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md` § Mass Limit (Established) |
 
 ---
 
