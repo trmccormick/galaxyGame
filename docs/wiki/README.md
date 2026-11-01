@@ -51,6 +51,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) | Resources ↔ markets (strongest market page) |
 | [Market and AI bootstrapping](logistics/market_and_ai_bootstrapping.md) | Market models + AI construction bootstrap |
 | [Financial engine](logistics/Financial-Engine.md) | GCC/USD, peg, market friction |
+| [Markets, EAP & GCC/USD peg](markets/markets_eap_and_peg.md) | Canonical consolidation: markets pair + EAP ceilings + GCC/USD calibration peg |
 | [EAP & AI Manager escalation](logistics/eap_and_ai_manager_escalation.md) | Earth Anchor Price escalation paths |
 | [Import order & cycler models](logistics/import_order_and_cycler_models.md) | Import orders and cycler transit models |
 | [Terraforming economic integration](logistics/terraforming_economic_integration.md) | Seed path vs brute-force economics |
