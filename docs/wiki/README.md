@@ -47,10 +47,10 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 
 | Page | Notes |
 |------|--------|
-| [Logistics and hauling](logistics/Logistics-and-Hauling.md) | Transport and hauling intent |
-| [Resource and market logistics](logistics/Resource-and-Market-Logistics.md) | Resources ↔ markets (strongest market page) |
+| [Logistics and hauling](logistics/logistics_and_hauling.md) | Transport and hauling intent |
+| [Resource and market logistics](logistics/resource_and_market_logistics.md) | Resources ↔ markets (strongest market page) |
 | [Market and AI bootstrapping](logistics/market_and_ai_bootstrapping.md) | Market models + AI construction bootstrap |
-| [Financial engine](logistics/Financial-Engine.md) | GCC/USD, peg, market friction |
+| [Financial engine](logistics/financial_engine.md) | GCC/USD, peg, market friction |
 | [Markets, EAP & GCC/USD peg](markets/markets_eap_and_peg.md) | Canonical consolidation: markets pair + EAP ceilings + GCC/USD calibration peg |
 | [EAP & AI Manager escalation](logistics/eap_and_ai_manager_escalation.md) | Earth Anchor Price escalation paths |
 | [Import order & cycler models](logistics/import_order_and_cycler_models.md) | Import orders and cycler transit models |
@@ -75,7 +75,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Atmospheric harvesting](infrastructure/Atmospheric-Harvesting.md) | Gas / atmosphere harvesting |
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
-| [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
+| [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
 
 *Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
@@ -99,7 +99,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 
-*Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. Crafted equipment schemas are documented in [Unit & Manufacturing blueprints](engineering/unit-and-manufacturing-blueprints.md).*
+*Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. Crafted equipment schemas are documented in [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md).*
 
 ---
 

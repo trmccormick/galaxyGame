@@ -8,9 +8,9 @@ How material and cargo move between settlements, stations, and markets — and h
 
 **Related wiki pages**
 
-- [Resource and market logistics](Resource-and-Market-Logistics.md) — pricing, NPC bids/asks, warehouse caps  
+- [Resource and market logistics](resource_and_market_logistics.md) — pricing, NPC bids/asks, warehouse caps  
 - [Market and AI bootstrapping](market_and_ai_bootstrapping.md) — market bootstrap and AI use of markets  
-- [Financial engine](Financial-Engine.md) — GCC/USD, fees, ledgers  
+- [Financial engine](financial_engine.md) — GCC/USD, fees, ledgers  
 - [Atmospheric harvesting](../infrastructure/Atmospheric-Harvesting.md) — off-world gas/volatile sourcing costs  
 
 **Deep reference (not this page):** `docs/architecture/` logistics / organizations / financial system docs; agent-tasks status for what is implemented *now*.
@@ -47,7 +47,7 @@ Update this table when harvest or compare passes settle a choice; mark the curre
 
 ## What this page is not
 
-- **Not** the financial tax/fee schedule (that content was incorrectly stored under this filename; fee/peg material belongs under [Financial engine](Financial-Engine.md) and [Resource and market logistics](Resource-and-Market-Logistics.md)).  
+- **Not** the financial tax/fee schedule (that content was incorrectly stored under this filename; fee/peg material belongs under [Financial engine](financial_engine.md) and [Resource and market logistics](resource_and_market_logistics.md)).  
 - **Not** a full API or class listing — link to architecture when a service is confirmed canonical.  
 - **Not** portal design — later-game transport gets its own subsection or child page when ready.
 

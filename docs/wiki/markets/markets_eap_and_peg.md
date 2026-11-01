@@ -1,12 +1,12 @@
 # Markets, EAP, and GCC/USD Peg — Canonical Specification
 
-> **Wiki section:** Logistics · **Status:** CANONICAL CONSOLIDATION — this page merges the market pair from `Resource-and-Market-Logistics.md`, `market_and_ai_bootstrapping.md`, `Financial-Engine.md`, and `eap_and_ai_manager_escalation.md`. Each topic below grounds intent in verified code where present; TARGET DESIGN INTENT and OPEN markers are used explicitly.
+> **Wiki section:** Logistics · **Status:** CANONICAL CONSOLIDATION — this page merges the market pair from `resource_and_market_logistics.md`, `market_and_ai_bootstrapping.md`, `financial_engine.md`, and `eap_and_ai_manager_escalation.md`. Each topic below grounds intent in verified code where present; TARGET DESIGN INTENT and OPEN markers are used explicitly.
 
 > **Authoritative sources:**
 > - Code: `galaxy_game/app/models/market/`, `galaxy_game/app/services/market/`, `galaxy_game/app/services/economic_config.rb`
 > - Constants: `config/initializers/game_constants.rb` (GCC_TO_USD_INITIAL = 1.0, INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00)
 > - Config: `config/economic_parameters.yml` (via EconomicConfig)
-> - Legacy harvest source: [Resource-and-Market-Logistics](../logistics/Resource-and-Market-Logistics.md), [Market and AI Bootstrapping](../logistics/market_and_ai_bootstrapping.md), [Financial Engine](../logistics/Financial-Engine.md), [EAP & AI Manager Escalation](../logistics/eap_and_ai_manager_escalation.md)
+> - Legacy harvest source: [Resource and Market Logistics](../logistics/resource_and_market_logistics.md), [Market and AI Bootstrapping](../logistics/market_and_ai_bootstrapping.md), [Financial Engine](../logistics/financial_engine.md), [EAP & AI Manager Escalation](../logistics/eap_and_ai_manager_escalation.md)
 
 ---
 
@@ -151,7 +151,7 @@ bid_price = (market_avg * adjusted_discount).round(2)
 | Inventory normal | base discount (no adjustment) | — | 1.0 |
 
 **CONFIRMED in code:** inventory excess threshold is `EconomicConfig.npc('inventory_high_threshold') || 0.70`.
-> **⚠ CONFLICT with legacy wiki (`Resource-and-Market-Logistics.md`):** The legacy wiki page states the NPC refuses to buy at **0.80** (80%) warehouse capacity. Code verifies the threshold at **0.70** (70%). Code is authoritative — update `Resource-and-Market-Logistics.md` accordingly.
+> **⚠ CONFLICT with legacy wiki (`resource_and_market_logistics.md`):** The legacy wiki page states the NPC refuses to buy at **0.80** (80%) warehouse capacity. Code verifies the threshold at **0.70** (70%). Code is authoritative — update `resource_and_market_logistics.md` accordingly.
 
 ### VERIFIED — Settlement Capability Detection
 
@@ -363,12 +363,12 @@ execute_adapted_mission(adapted_mission) → {
 
 ### Open Item 1: GCC Decoupling Trigger Mechanism
 - **Question:** What specific volume threshold or scenario event triggers the peg-to-float transition?
-- **Legacy source:** Harvested from [Resource-and-Market-Logistics.md §1](../logistics/Resource-and-Market-Logistics.md) and [market_and_ai_bootstrapping.md §2/§6](../logistics/market_and_ai_bootstrapping.md). Both confirm: "PEGGED — TARGET DESIGN INTENT ONLY."
+- **Legacy source:** Harvested from [resource_and_market_logistics.md §1](../logistics/resource_and_market_logistics.md) and [market_and_ai_bootstrapping.md §2/§6](../logistics/market_and_ai_bootstrapping.md). Both confirm: "PEGGED — TARGET DESIGN INTENT ONLY."
 - **Code status:** No decoupling trigger found in any source file. `GCC_TO_USD_INITIAL = 1.0` is permanent in the current codebase.
 
 ### Open Item 2: Fee Schedule (Broker/Sales/Surcharge Tiers)
 - **Question:** What are the exact fee/tax tiers for NPC buy/sell friction?
-- **Legacy source:** Harvested from [Financial Engine §4](../logistics/Financial-Engine.md). Older notes mention broker/sales/surcharge style tiers.
+- **Legacy source:** Harvested from [Financial Engine §4](../logistics/financial_engine.md). Older notes mention broker/sales/surcharge style tiers.
 - **Code status:** `Market::TransactionFee` model exists but specific schedule values are in `economic_parameters.yml` — needs confirmation of which fees apply at which phase.
 
 ### Open Item 3: NPC Buy Capacity (Hardcoded 1000)
@@ -378,7 +378,7 @@ execute_adapted_mission(adapted_mission) → {
 
 ### Open Item 4: Buy-Side NPC Matching
 - **Question:** When will NPC sell-to-player matching be implemented? What is the scope?
-- **Legacy source:** Harvested from [Resource-and-Market-Logistics.md §5](../logistics/Resource-and-Market-Logistics.md) and [market_and_ai_bootstrapping.md §4](../logistics/market_and_ai_bootstrapping.md). Both confirm: "BUY-SIDE MATCHING NOT IMPLEMENTED."
+- **Legacy source:** Harvested from [resource_and_market_logistics.md §5](../logistics/resource_and_market_logistics.md) and [market_and_ai_bootstrapping.md §4](../logistics/market_and_ai_bootstrapping.md). Both confirm: "BUY-SIDE MATCHING NOT IMPLEMENTED."
 - **Code status:** `Marketplace#find_matching_orders` returns `[]` for all non-Sell orders by design. No implementation planned in current code.
 
 ### Open Item 5: `supply` and `demand` on `Market::Condition`
@@ -388,7 +388,7 @@ execute_adapted_mission(adapted_mission) → {
 
 ### Open Item 6: Order Expiry Sweep Job
 - **Question:** Is there an automated job that cleans up expired `Market::Order` records, or do they accumulate in `market_orders`?
-- **Legacy source:** Harvested from [Resource-and-Market-Logistics.md §5](../logistics/Resource-and-Market-Logistics.md). "Order expiry sweep job not confirmed."
+- **Legacy source:** Harvested from [resource_and_market_logistics.md §5](../logistics/resource_and_market_logistics.md). "Order expiry sweep job not confirmed."
 - **Code status:** Orders have `expires_at = created_at + 24.hours` but no cleanup job found in source.
 
 ### Open Item 7: AI Manager ↔ Market Integration
@@ -398,7 +398,7 @@ execute_adapted_mission(adapted_mission) → {
 
 ### Open Item 8: Resource Category List Completeness
 - **Question:** What is the authoritative resource registry for pricing?
-- **Legacy source:** Harvested from [Resource-and-Market-Logistics.md §6](../logistics/Resource-and-Market-Logistics.md). Table was based on game design intent, not extracted registry.
+- **Legacy source:** Harvested from [resource_and_market_logistics.md §6](../logistics/resource_and_market_logistics.md). Table was based on game design intent, not extracted registry.
 - **Code status:** `NpcPriceCalculator.resource_base_price()` has hardcoded base prices for: ibeam (100), aluminum_alloy (50), steel (30), titanium (200), carbon_fiber (150), solar_panel (500), battery (300), fuel_cell (400). All others default to 10.
 
 ---
@@ -407,7 +407,7 @@ execute_adapted_mission(adapted_mission) → {
 
 | Date | Action | Legacy pages consolidated |
 |------|--------|--------------------------|
-| 2026-10-29 | Created canonical markets page, merging all market/peg/EAP wiki material into one authoritative reference | [Resource-and-Market-Logistics.md](../logistics/Resource-and-Market-Logistics.md), [market_and_ai_bootstrapping.md](../logistics/market_and_ai_bootstrapping.md), [Financial-Engine.md](../logistics/Financial-Engine.md), [eap_and_ai_manager_escalation.md](../logistics/eap_and_ai_manager_escalation.md) |
+| 2026-10-29 | Created canonical markets page, merging all market/peg/EAP wiki material into one authoritative reference | [resource_and_market_logistics.md](../logistics/resource_and_market_logistics.md), [market_and_ai_bootstrapping.md](../logistics/market_and_ai_bootstrapping.md), [financial_engine.md](../logistics/financial_engine.md), [eap_and_ai_manager_escalation.md](../logistics/eap_and_ai_manager_escalation.md) |
 
 All legacy pages remain for backward-link compatibility. This page is the new canonical authority for market, EAP, and peg mechanics.
 

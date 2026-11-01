@@ -3,7 +3,7 @@
 # Market Architecture & AI Manager Bootstrapping
 
 > **STATUS: CANONICAL MARKET BOOTSTRAPPING INTENT**
-> This page, alongside `Resource-and-Market-Logistics.md`, forms the canonical wiki pair for AI seed liquidity, market lifecycle phases, and initial economy setup. Verify runtime flags against implementation before code changes.
+> This page, alongside `resource_and_market_logistics.md`, forms the canonical wiki pair for AI seed liquidity, market lifecycle phases, and initial economy setup. Verify runtime flags against implementation before code changes.
 
 > **Scope:** Verified specification for Galaxy Game's market layer and autonomous pre-player construction system. All class names, method signatures, field names, and associations are sourced directly from `marketplace.rb`, `condition.rb`, `order.rb`, and `autonomous_construction_manager.rb`. Fields or models not confirmed in source are explicitly marked `[PENDING]`.
 
@@ -343,14 +343,14 @@ Data is currently only printed to log. **There is no persistence of learning dat
 
 ## 6. Market Lifecycle Phases & Pricing Engine Mapping
 
-The bootstrapping economy progresses through distinct phases. Each phase changes which `Resource-and-Market-Logistics.md` pricing rules are active and which price boundaries the AI manager must respect.
+The bootstrapping economy progresses through distinct phases. Each phase changes which `resource_and_market_logistics.md` pricing rules are active and which price boundaries the AI manager must respect.
 
 ### Phase A — Earth Import Dependent (Bootstrap)
 
 **State:** No local production facilities online. All settlement resources are sourced from Earth at `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg`.
 
 **Pricing engine behavior:**
-- `NpcPriceCalculator.calculate_ask` returns the **Earth Anchor Price (EAP)** as the ceiling for all resources, converted via the GCC peg. Canonical EAP definition: see `docs/wiki/logistics/Resource-and-Market-Logistics.md` (single source of truth).
+- `NpcPriceCalculator.calculate_ask` returns the **Earth Anchor Price (EAP)** as the ceiling for all resources, converted via the GCC peg. Canonical EAP definition: see `docs/wiki/logistics/resource_and_market_logistics.md` (single source of truth).
 - Warehouse cap (`0.80` threshold) applies from day one but is irrelevant — there is nothing to sell back because no local production exists yet.
 - **GCC ↔ USD peg**: Fixed at `1.0`, quoted 1:1 in GCC. `[PENDING — TARGET DESIGN INTENT]`
 
@@ -360,7 +360,7 @@ The bootstrapping economy progresses through distinct phases. Each phase changes
 
 **State:** At least one `water_mining`, `atmospheric_processor`, or equivalent facility is operational at a settlement.
 
-**Pricing engine behavior (per `Resource-and-Market-Logistics.md` §4):**
+**Pricing engine behavior (per `resource_and_market_logistics.md` §4):**
 - **Local Production Override activates**: `NpcPriceCalculator` detects the facility and switches from Earth import ceiling to local cost model (`facility.operational_cost_per_unit + facility.energy_cost_per_unit`).
 - NPC ask price drops below 1,320 GCC/kg — players can undercut or match local production costs.
 - NPC bid price becomes available for excess output (limited by `npc_capacity = 1000` hardcoded cap).
@@ -383,7 +383,7 @@ The bootstrapping economy progresses through distinct phases. Each phase changes
 
 ### Phase-to-Rules Cross-Reference
 
-| Bootstrap Phase | Active Pricing Rule(s) | Source in Resource-and-Market-Logistics.md |
+| Bootstrap Phase | Active Pricing Rule(s) | Source in resource_and_market_logistics.md |
 |----------------|----------------------|-------------------------------------------|
 | A — Earth Import Dependent | Rule 1: Earth import ceiling (1320 GCC/kg), GCC peg = 1.0 fixed | §1, §2 Rule 1 |
 | B — First Local Production | Rule 2: Local production override activates; NPC bid becomes available | §2 Rule 2, §4 |

@@ -5,7 +5,7 @@
 Currency, ledgers, and market friction for off-world play.
 
 **Canonical authority:** For pricing logic, GCC/USD peg unpeg model, EAP enforcement, and all bootstrapping mechanics, refer to:
-- **[Resource & Market Logistics](Resource-and-Market-Logistics.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
+- **[Resource & Market Logistics](resource_and_market_logistics.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
 - **[Market and AI Bootstrapping](market_and_ai_bootstrapping.md)** — ECC canonical spec (bootstrap peg, market models, AutonomousConstructionManager)
 
 > **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**.
@@ -43,4 +43,4 @@ Names seen in design notes and related wiki pages (confirm before treating as AP
 
 ## What was wrong before
 
-A previous copy of fee/tax tables was stored under `Logistics-and-Hauling.md` by mistake. Logistics is transport intent; **fees and peg belong here and on the Resource/Market pages.**
+A previous copy of fee/tax tables was stored under `logistics_and_hauling.md` by mistake. Logistics is transport intent; **fees and peg belong here and on the Resource/Market pages.**
