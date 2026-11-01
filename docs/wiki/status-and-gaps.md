@@ -89,3 +89,10 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 - **2026-10-29** — Aligned Financial Engine (logistics/financial_engine.md) with canonical market pair: added explicit GCC/USD peg, EAP ceiling terminology and `resource_and_market_logistics.md` + `market_and_ai_bootstrapping.md` as canonical authority pointers; updated wiki/README.md link.
 - **2026-10-28** — P0/P1 wiki consolidation pass: created [Unit & Manufacturing Blueprints](engineering/unit_and_manufacturing_blueprints.md) as canonical entry (separate from StarSim); updated [AI Manager Logic](logistics/ai_manager_logic.md) as single front door for AI priorities/ACM boundaries; designated [resource_and_market_logistics.md](logistics/resource_and_market_logistics.md) + [market_and_ai_bootstrapping.md](logistics/market_and_ai_bootstrapping.md) as canonical market pair with cross-banners; restructured [Infrastructure TOC](infrastructure/README.md); added System Commands VERIFY AGAINST CODE banner and archival supersede note to wiki_reorganization/README.md.
 - **2026-10-28**: Synchronized market pair with EAP, USD/GCC calibration peg, post-unpeg interface roles, and target design intent status.
+
+### Phase B hygiene sweep (2026-11-01)
+
+- **Global naming standardization** — All wiki files across `logistics/`, `engineering/`, `player/`, `technical/`, `infrastructure/` renamed to strict `lower_snake_case`. Legacy Title-Case / kebab-case filenames removed.
+  - Items B.1 (Logistics & Engineering): committed, pushed (`origin/main`) ✅
+  - Item B.2 (Player, Technical, Infrastructure): committed, pushed (`origin/main`) ✅
+- **Global link integrity verification** — All 194 internal wiki relative links and all 30 cross-wiki links verified against tracked files; zero broken paths found. ✅

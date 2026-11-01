@@ -108,3 +108,15 @@ Agent and implementer reference for **continuing work** — status, conventions,
 Front door and section map are in place. Topic pages carry status banners; many details still need verify-against-code. Prefer [Status and gaps](status-and-gaps.md) and the topic pages over archaeology under `wiki_reorganization/`.
 
 Portal and other later-game topics stay out of this front door until their design is ready to land under the appropriate section (likely Player or Development → logistics/transport).
+
+## Wiki Standards & Conventions
+
+All files in `docs/wiki/` follow these rules. New pages must comply:
+
+1. **File names:** strict `lower_snake_case` — `file_name.md`. No Title-Case, no kebab-case.
+2. **Links use explicit relative paths** with accurate `../` depth matching the source file's subdirectory level (e.g., a file two directories deep under `docs/wiki/` uses `../../` to reach `docs/wiki/`).
+3. **All incoming links must resolve against tracked files** (`git ls-files`). Before merging, verify every new relative path exists in `git ls-files docs/wiki/`.
+4. **Anchor links:** use lowercase with hyphens (`#section-title`) matching the first `#` heading exactly.
+5. **Cross-wiki references** (e.g., to `docs/architecture/`, `docs/developer/`) are allowed but must point to existing files on disk; do not link to directories without an `index.md`.
+
+These standards were standardized during Phase B of the repository hygiene sweep (2026-11-01). See [Status and gaps](status-and-gaps.md) for details.
