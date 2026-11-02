@@ -90,6 +90,22 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 - **2026-10-28** — P0/P1 wiki consolidation pass: created [Unit & Manufacturing Blueprints](engineering/unit_and_manufacturing_blueprints.md) as canonical entry (separate from StarSim); updated [AI Manager Logic](logistics/ai_manager_logic.md) as single front door for AI priorities/ACM boundaries; designated [resource_and_market_logistics.md](logistics/resource_and_market_logistics.md) + [market_and_ai_bootstrapping.md](logistics/market_and_ai_bootstrapping.md) as canonical market pair with cross-banners; restructured [Infrastructure TOC](infrastructure/README.md); added System Commands VERIFY AGAINST CODE banner and archival supersede note to wiki_reorganization/README.md.
 - **2026-10-28**: Synchronized market pair with EAP, USD/GCC calibration peg, post-unpeg interface roles, and target design intent status.
 
+### Phase C code alignment & cross-linkage (2026-11-01)
+
+- **Item C.1 — Code Alignment Banners**: Standardized 3-line blockquote banners (`DESIGN INTENT` / `PARTIALLY IMPLEMENTED` / `VERIFIED AGAINST CODE`) across all 7 target wiki specs plus player roles page — committed, pushed (`origin/main`) ✅
+  - `technical/system_commands.md`: PARTIALLY IMPLEMENTED (3 of 4 claimed services don't exist)
+  - `markets/markets_eap_and_peg.md`: PARTIALLY IMPLEMENTED (marketplace/NPC pricing verified; unpeg mechanics design intent)
+  - `logistics/financial_engine.md`: PARTIALLY IMPLEMENTED (ledger structure exists; settle_with_usd stubbed) — **glitch fixed: stray table-row `|` removed from canonical authority block** ✅
+  - `logistics/ai_manager_logic.md`: PARTIALLY IMPLEMENTED (task_execution_engine.rb verified; coordinators pending)
+  - `infrastructure/atmospheric_harvesting.md`: DESIGN INTENT (constants defined, no AtmosphereProcessor service)
+  - `infrastructure/settlement_infrastructure.md`: VERIFIED AGAINST CODE (settlement/* models match codebase) ✅
+  - `engineering/unit_and_manufacturing_blueprints.md`: VERIFIED AGAINST CODE (blueprints, base_unit, fabricator match) ✅
+- **Item C.2 — Code Verification Audit**: Verified each page's design claims against live code; reported missing services and stubbed implementations ✅
+- **Item C.3 — Celestial Systems Template**: Fleshed out `astronomy/celestial_systems.md` with code-grounded generation specs (StarSim::ProceduralGenerator seed fields, spectral type weights, wormhole compliance rules), 5 architecture cross-links, and Generation Paths Reference table — committed, pushed (`origin/main`) ✅
+- **Item C.4 — Architecture Cross-Linkage**: Added Architecture Cross-References sections to 4 pages; fixed absolute paths → relative links in 2 files; all 16 new relative links verified against `git ls-files` with zero broken refs — committed, pushed (`origin/main`) ✅
+- **Item C.5 — Player Roles & Alignment Refresh**: Added DESIGN INTENT banner to `player_roles_and_alignment.md`; documented that FactionStandingEngine, AccountabilityService, and PlayerDashboardController do not exist; Player model confirmed minimal (name, active_location, basic associations) — committed, pushed (`origin/main`) ✅
+- **Cross-link maintenance**: Updated `status-and-gaps.md` architecture/developer directory references to clickable wiki links (was bare text); fixed `financial_engine.md` markdown glitch (stray table-row `|` in prose block) ✅
+
 ### Phase B hygiene sweep (2026-11-01)
 
 - **Global naming standardization** — All wiki files across `logistics/`, `engineering/`, `player/`, `technical/`, `infrastructure/` renamed to strict `lower_snake_case`. Legacy Title-Case / kebab-case filenames removed.
