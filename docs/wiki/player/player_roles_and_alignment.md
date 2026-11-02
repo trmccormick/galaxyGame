@@ -1,5 +1,9 @@
 > **Wiki section:** Player · **Status:** design intent / detailed spec — verify classes and UI against current code before treating as implemented
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* All core mechanics described on this page are unimplemented. The three primary classes (`FactionStandingEngine`, `AccountabilityService`, `PlayerDashboardController`) do not exist in the codebase. The Player model contains only `name` and `active_location` fields plus basic associations (colonies, blueprints, inventory) — no faction standing, alignment vector, reputation caching, or tier logic is present. Five Organization types exist (`BaseOrganization`, `Corporation`, `DevelopmentCorporation`, `InsuranceCorporation`, `TaxAuthority`) but have no standing/reputation infrastructure. This page serves as an advance design spec for future implementation.
+
 # Player Roles and Alignment
 
 > **Scope:** Player-facing manual and frontend UI development guide. Documents how human actions alter standing within the game's faction ecosystem, how the Rails backend passes alignment state to the JavaScript frontend, and how the UI renders status indicators, faction badges, and reputation sliders.
