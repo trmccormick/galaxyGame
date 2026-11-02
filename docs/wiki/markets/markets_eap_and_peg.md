@@ -418,3 +418,16 @@ All legacy pages remain for backward-link compatibility. This page is the new ca
 ---
 
 *Last verified against: `galaxy_game/app/models/market/`, `galaxy_game/app/services/market/`, `galaxy_game/app/services/economic_config.rb`, `config/initializers/game_constants.rb`, `config/economic_parameters.yml` — 2026-10-29 consolidation pass.*
+
+---
+
+## Architecture Cross-References
+
+> *For deep architectural specs that govern market behavior:*
+
+| Topic | Deep Spec |
+|-------|-----------|
+| NPC pricing internals & EAP enforcement | [AI Manager Role Spec](../../architecture/ai_manager/AI_MANAGER_ROLE.md) — player-first economy layer, EAP ceiling rules |
+| Economic config loading pattern | [Data-Driven Systems](../../developer/DATA_DRIVEN_SYSTEMS.md) — YAML/Rails config patterns for economic parameters |
+| Blueprint cost schema | [Blueprint Cost Schema Guide](../../developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) — material → price mapping contract |
+| Market condition persistence | [Financial Engine Component Hints](../logistics/financial_engine.md) — ledger/account model details |

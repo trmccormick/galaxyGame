@@ -9,14 +9,14 @@
 This page is the canonical wiki entry for unit composition, facility manufacturing schemas, and operational data roles. All content is grounded in live code inspection (`galaxy_game/app/`). Legacy docs are cited as harvest sources but carry no authority.
 
 **Harvested from legacy sources:**
-- `docs/architecture/units/base_unit.md` — Unit persistence contract & lifecycle
-- `docs/architecture/units/3d_printed_fabricators.md` — Mk1-Mk3 fabricator registry
-- `docs/architecture/units/initial_3d_printer.md` — Luna ISRU starter printer intent
-- `docs/architecture/units/robots.md` — Robot two-state (Item <-> Unit) lifecycle
-- `docs/architecture/units/manifest_integration.md` — Mission manifest unit seeding
-- `docs/architecture/units/propulsion.md` — Propulsion unit registry & naming standards
-- `docs/architecture/manufacturing/MANUFACTURING_SYSTEM_OVERVIEW.md` — Manufacturing chain intent
-- `docs/gameplay/mechanics.md` — Player-first task priority system overview
+- [`base_unit.md`](../../architecture/units/base_unit.md) — Unit persistence contract & lifecycle
+- [`3d_printed_fabricators.md`](../../architecture/units/3d_printed_fabricators.md) — Mk1-Mk3 fabricator registry
+- [`initial_3d_printer.md`](../../architecture/units/initial_3d_printer.md) — Luna ISRU starter printer intent
+- [`robots.md`](../../architecture/units/robots.md) — Robot two-state (Item <-> Unit) lifecycle
+- [`manifest_integration.md`](../../architecture/units/manifest_integration.md) — Mission manifest unit seeding
+- [`propulsion.md`](../../architecture/units/propulsion.md) — Propulsion unit registry & naming standards
+- [`MANUFACTURING_SYSTEM_OVERVIEW.md`](../../architecture/manufacturing/MANUFACTURING_SYSTEM_OVERVIEW.md) — Manufacturing chain intent
+- `docs/gameplay/mechanics.md` — Player-first task priority overview
 
 ---
 
@@ -121,7 +121,7 @@ has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable, dependent:
 
 ### 2.4 `Units::Fabricator` - 3D Printing Units
 
-Mk1-Mk3 fabricators from legacy docs (`docs/architecture/units/3d_printed_fabricators.md`). The code implements a stub pattern - Fabricator extends BaseUnit with scaffolding for future extension:
+Mk1-Mk3 fabricators from legacy docs [`3d_printed_fabricators.md`](../../architecture/units/3d_printed_fabricators.md). The code implements a stub pattern — Fabricator extends BaseUnit with scaffolding for future extension:
 
 | Method / Field | Status | Notes |
 |----------------|--------|-------|
@@ -388,7 +388,7 @@ has_many :base_units, class_name: 'Units::BaseUnit', as: :attachable, dependent:
 
 ## 8. Mission Manifest & Unit Seeding
 
-**Harvested from:** `docs/architecture/units/manifest_integration.md`
+**Harvested from:** [`manifest_integration.md`](../../architecture/units/manifest_integration.md)
 
 The `mission_manifest` defines initial deployment state:
 - **Active units** in `craft.installed_units` - have immediate operational requirements (fuel, power, port connections)

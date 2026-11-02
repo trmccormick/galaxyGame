@@ -13,7 +13,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 | Area | Posture |
 |------|---------|
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | DESIGN INTENT ONLY — canonical entry for crafted equipment JSON schemas, build pipelines, and operational data roles |
-| [AI Manager Logic](logistics/ai_manager_logic.md) | CANONICAL FRONT DOOR — single entry for AI priority loops, ACM boundaries, and system behavior; deep specs linked out to `docs/architecture/ai_manager/` |
+| [AI Manager Logic](logistics/ai_manager_logic.md) | CANONICAL FRONT DOOR — single entry for AI priority loops, ACM boundaries, and system behavior; deep specs linked out to [`docs/architecture/ai_manager/`](../architecture/ai_manager/) |
 | [Wiki Home](README.md) | Live front door (Player / Development / Technical); navigation by category table added 2026-10-28 |
 | Topic pages under `docs/wiki/` | Intent and options; many still need verify-against-code |
 | `docs/architecture/`, `docs/developer/`, `docs/gameplay/` | Deep reference — quality varies by age |
@@ -71,9 +71,9 @@ Exact failure counts and branch tips change often. For this wiki:
 |-------|------------|
 | Run / setup | [Getting started](player/getting_started.md), [docs/developer/setup.md](../developer/setup.md), root `README.md` |
 | Docs map | [docs/README.md](../README.md) |
-| Architecture overview | [docs/architecture/overview.md](../architecture/overview.md) (and subfolders as needed) |
-| Markets / economy | Wiki market pages above; `docs/architecture/` financial / organizations material |
-| AI Manager | [AI Manager logic](logistics/ai_manager_logic.md); `docs/architecture/ai_manager/` |
+| Architecture overview | [docs/architecture/overview.md](../architecture/overview.md) (and subfolders as needed) — system-wide architecture intent; deep specs live in architecture subdirectories |
+| Markets / economy | Wiki market pages above; [financial engine specs](../logistics/financial_engine.md#Architecture-Cross-References); [AI Manager economic alignment](../logistics/market_and_ai_bootstrapping.md#Architecture-Cross-References) |
+| AI Manager | [AI Manager logic](logistics/ai_manager_logic.md); deep specs at [docs/architecture/ai_manager/](../architecture/ai_manager/) |
 | Testing habits | `docs/testing/`, practical testing notes under `docs/` |
 
 ---

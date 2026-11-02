@@ -53,11 +53,18 @@ Related design: [Station Construction Options](../engineering/station_constructi
 | `SpaceStation`, `OrbitalDepot` | Both `Settlement::` classes are marked **RETIRED 2026-04-10** in code ("kept for git history only. Do not use this class."). Replacement: `Settlement::OrbitalSettlement` with `Structures::OrbitalStructure`. |
 | Structure types | Under `Structures::BaseStructure`: `CraterDome`, `HabitationFacility`, `Hangar`, `ManufacturingFacility`, `OrbitalStructure`, `PowerStation`, `SolarArray`, `StorageFacility`, `Worldhouse` (`ConvertedBase` extends `Worldhouse`). There is no `Structures::SpaceStation` or `Structures::OrbitalDepot`. |
 
-**Effect on the intent above:** an orbital settlement's peer structures are `OrbitalStructure` instances. The earlier intent text named a space-station structure and a depot structure for the L1 Gateway; those names are superseded by the retirement above.
-
 ---
 
-## Direction under discussion (owner, 2026-10-29) — DRAFT, not final
+## Architecture Cross-References
+
+> *For deep architectural specs that govern settlement mechanics:*
+
+| Topic | Deep Spec |
+|-------|-----------|
+| Settlement patterns & evolution | [Settlement Patterns](../../architecture/patterns/settlement_patterns.md) — deterministic settlement tiers, growth rules, planetary pattern matching |
+| Orbital structure contract | [Orbital Structures](../../architecture/structures/README.md) — peer structure contract for orbital settlements |
+| Core container model | [Modular Containers](../../architecture/core/modular_containers.md) — inventory and unit management architecture |
+| Unit/habitat patterns | [Settlement Patterns Index](../../architecture/patterns/) — habitat, station, and deployment pattern reference |
 
 This is the owner's working direction for what makes a settlement a base, outpost, settlement, or city. **None of it is implemented**; the code (see above) still decides the tier by population alone. Items are marked **DIRECTION** (the owner's stated thinking) or **OPEN** (not decided).
 

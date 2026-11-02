@@ -413,3 +413,17 @@ The intended integration path — where the AI manager posts buy orders for cons
 ---
 
 *Last verified against: `app/models/market/marketplace.rb`, `app/models/market/condition.rb`, `app/models/market/order.rb`, `lib/ai_manager/autonomous_construction_manager.rb`, `config/initializers/game_constants.rb` — Phase 3 (Integration & Restoration)*
+
+---
+
+## Architecture Cross-References
+
+> *For deep architectural specs that govern market bootstrapping and AI economic behavior:*
+
+| Topic | Deep Spec |
+|-------|-----------|
+| Market model architecture | [Market Model Architecture](../../architecture/ai_manager/AI_MANAGER_ARCHITECTURE.md) — EVE-style market structure, order matching engine, spread mechanics |
+| Economic alignment review | [AI Manager Economic Alignment Review](../../developer/AI_MANAGER_ECONOMIC_ALIGNMENT_REVIEW.md) — pricing intent, spread tuning, EAP anchoring |
+| Resource decisions logic | [Resource Decisions](../../architecture/ai_manager/03_resource_decisions.md) — procurement priorities, inventory thresholds, AI bidding rules |
+| Event flow & escalation | [Event Flow](../../architecture/ai_manager/AI_MANAGER_EVENT_FLOW.md) / [Escalation Architecture](../../architecture/ai_manager/RESUPPLY_AND_ESCALATION_ARCHITECTURE.md) — task lifecycle, crisis routing |
+| Data-driven config | [Data-Driven Systems](../../developer/DATA_DRIVEN_SYSTEMS.md) — config loading, migration patterns for economic parameters |

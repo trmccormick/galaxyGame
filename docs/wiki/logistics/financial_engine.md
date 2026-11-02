@@ -8,9 +8,22 @@ Currency, ledgers, and market friction for off-world play.
 > *Last Audited:* 2026-11-01  
 > *Audit Summary:* Ledger structure exists: `Financial::Account` and `Financial::LedgerManager` are present. However, `LedgerManager.settle_with_usd` body is empty (stubbed). GCC/USD peg value (`GCC_TO_USD_INITIAL = 1.0`) and EAP concept are documented constants but unpeg mechanics and fee schedules remain design intent only.
 
-**Canonical authority:** For pricing logic, GCC/USD peg unpeg model, EAP enforcement, and all bootstrapping mechanics, refer to:
-- **[Resource & Market Logistics](resource_and_market_logistics.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
-- **[Market and AI Bootstrapping](market_and_ai_bootstrapping.md)** — ECC canonical spec (bootstrap peg, market models, AutonomousConstructionManager)
+| **Canonical authority:** For pricing logic, GCC/USD peg unpeg model, EAP enforcement, and all bootstrapping mechanics, refer to:
+- **[Resource & Market Logistics](../markets/markets_eap_and_peg.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
+- **[Market and AI Bootstrapping](./market_and_ai_bootstrapping.md)** — ECC canonical spec (bootstrap peg, market models, AutonomousConstructionManager)
+
+---
+
+## Architecture Cross-References
+
+> *For deep architectural specs that govern financial engine behavior:*
+
+| Topic | Deep Spec |
+|-------|-----------|
+| Ledger/account model internals | [Modular Containers](../../architecture/core/modular_containers.md) — core persistence contracts for inventory and containers |
+| Cost schema consumption | [Cost Schema Consumption Guide](../../developer/COST_SCHEMA_CONSUMPTION_GUIDE.md) — price computation from blueprint data |
+| Data-driven config loading | [Data-Driven Systems](../../developer/DATA_DRIVEN_SYSTEMS.md) — YAML/Rails config patterns for financial parameters |
+| NPC pricing logic | [AI Manager Role Spec](../../architecture/ai_manager/AI_MANAGER_ROLE.md) — EAP anchor mechanics, player-first order layer |
 
 > **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**.
 
