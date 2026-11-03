@@ -17,13 +17,13 @@ last_updated: 2026-11-02
 
 ### Light-Speed Electromagnetic Communication
 
-All interstellar communication propagates at the speed of light via electromagnetic transmission. **There is no faster-than-light (FTL) communication in Galaxy Game.**
+All electromagnetic communication propagates at the speed of light. **There is no faster-than-light (FTL) communication channel in Galaxy Game.**
 
-**Core principle:** Information between star systems experiences distance-dependent propagation delays. A message sent from Earth to a settlement 4.37 light-years away (Alpha Centauri) takes 4.37 years to arrive, regardless of the sender's or receiver's technology level.
+**Core principle:** Electromagnetic messages between star systems experience distance-dependent propagation delays. A message sent from Earth to a settlement 4.37 light-years away (Alpha Centauri) takes 4.37 years to arrive, regardless of the sender's or receiver's technology level.
 
-### Store-and-Forward Relay Network
+### Physical Transport of Information
 
-Stations and ships act as store-and-forward relays in the communication network:
+Information may also be physically transported by ships or data couriers, subject to transit time:
 
 | Mechanism | Description | Latency | Bandwidth |
 |-----------|-------------|---------|-----------|
@@ -36,7 +36,7 @@ Stations and ships act as store-and-forward relays in the communication network:
 - Distance creates natural information latency — intelligence from another system is old by the time it arrives.
 - Communication relays (stations, ships) are critical infrastructure that players and AI can build, defend, or disrupt.
 - Data courier missions become valuable player contracts for high-bandwidth transfers where EM delay is prohibitive.
-- Wormhole transit does not bypass communication physics: a wormhole shortcut for physical travel still has light-speed communication delay on the non-wormhole portions of the path.
+- **Wormhole transit does not bypass communication physics:** wormholes accelerate physical transportation, not electromagnetic messaging. A ship traveling through a wormhole from Sol to Alpha Centauri arrives nearly instantly (by ship transit time), but a light-speed message sent along the same route takes 4.37 years.
 
 ### Wormholes Do Not Provide Instant Messaging
 
@@ -46,7 +46,7 @@ Wormholes and portals are **physical transportation shortcuts only**. They do no
 - A light-speed message sent along the same route takes 4.37 years.
 - A message forwarded via a wormhole station at each endpoint still experiences the light-speed delay between the station and its target system.
 
-This distinction is important for game design: physical travel can be fast via wormholes, but information always propagates at light speed. This preserves interstellar tension and makes communication infrastructure meaningful.
+This distinction is important for game design: physical travel can be fast via wormholes, but electromagnetic messages always propagate at light speed. This preserves interstellar tension and makes communication infrastructure meaningful.
 
 ---
 
@@ -66,4 +66,4 @@ This distinction is important for game design: physical travel can be fast via w
 |------|--------------|
 | [Station Construction Options](station_construction_options.md) | Wormhole station infrastructure that could carry data couriers |
 | [AI Manager Logic](../services/ai_manager.md) | AI coordination scope across wormholes |
-| [Wormhole Network Intent](../architecture/intent/WORMHOLE_NETWORK_INTENT.md) | Frozen file; contains historical entry claiming instant FTL comms that was never owner intent. Corrected intent documented here in the wiki. |
+| [Wormhole Network Intent](../../architecture/intent/WORMHOLE_NETWORK_INTENT.md) | Frozen file; contains historical entry claiming instant FTL comms that was never owner intent. Corrected intent documented here in the wiki. |
