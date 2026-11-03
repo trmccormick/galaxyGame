@@ -1,4 +1,7 @@
 # Terraforming Economic Integration
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Logistics · **Status:** target design intent — document how terraforming drives the AI Manager economic engine; no runtime enforcement currently exists.
 

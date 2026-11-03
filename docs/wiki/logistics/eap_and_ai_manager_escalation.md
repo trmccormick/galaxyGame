@@ -1,4 +1,7 @@
 # Earth Anchor Price (EAP) & AI Manager Escalation
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Logistics · **Status:** target design intent — canonical architecture spec for pricing ceilings, import models, and AI decision escalation; no runtime enforcement currently exists.
 

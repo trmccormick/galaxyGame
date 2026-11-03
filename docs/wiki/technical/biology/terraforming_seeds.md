@@ -1,4 +1,7 @@
 # Terraforming Seeds — Technical Reference
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Technical · Biology · **Status:** target design — Seed mechanics, stages, and Bio-Nursery Dome categories.  
 > **Architectural source:** [`TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`](../../../architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md) (authoritative intent), `biology_models.md` (data model).

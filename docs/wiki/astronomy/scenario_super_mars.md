@@ -1,6 +1,9 @@
 > **Wiki section:** Player · **Status:** scenario / test-bench reference — useful stress narrative; not a substitute for agent-tasks status
 
 # Scenario: Super-Mars
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Type:** Test Bench Exploration Scenario
 > **Purpose:** Exercises moonless planetary colonization, asteroid interception mechanics, and orbital base staging constraints under validated spatial and physics constants.

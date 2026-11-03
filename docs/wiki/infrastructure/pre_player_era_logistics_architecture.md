@@ -1,4 +1,8 @@
 # Infrastructure & Logistics Architecture Index
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
+
 ## Pre-Player Era Logistics Pipeline & Interplanetary Architecture Specification
 
 ---

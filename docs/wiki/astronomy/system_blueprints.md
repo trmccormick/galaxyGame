@@ -1,6 +1,9 @@
 > **Wiki section:** Development · **Status:** needs review against current game — documents StarSim (system generation and JSON system loading), not manufacturing unit blueprints
 
 # System Blueprints & Procedural Generation Spec
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Scope:** Master design-by-contract specification for Galaxy Game's procedural star system generation engine. Grounded in `star_sim/system_generator_service.rb` and `star_sim/procedural_generator.rb` as reviewed during Phase 3. All field names, structures, and constants reflect actual source code — no invented fields.
 

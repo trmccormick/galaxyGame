@@ -1,6 +1,9 @@
 > **Wiki section:** Player · **Status:** strong draft with built-in VERIFY flags — prefer this page for market pricing rules
 
 # Resource & Market Logistics — Technical Specification
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **STATUS: CANONICAL MARKET INTENT**
 > This page, alongside `market_and_ai_bootstrapping.md`, forms the canonical wiki pair for market logistics, pricing engines, and supply lines. Verify runtime flags against implementation before code changes.

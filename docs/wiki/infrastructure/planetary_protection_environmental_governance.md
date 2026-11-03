@@ -1,4 +1,7 @@
 # Planetary Protection and Environmental Governance Specification
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **STATUS: DESIGN INTENT ONLY — TARGET DESIGN INTENT**
 > This document specifies target gameplay mechanics, regulatory rules, and architectural integration hooks for StarSim, `NpcPriceCalculator`, and `AutonomousConstructionManager`. Governance caps (extraction rate limits, sanctuary blocks, quarantine requirements), policy toggles, and contamination frameworks described herein are **TARGET DESIGN INTENT ONLY** — they represent the intended simulation law and are NOT currently implemented in the codebase.

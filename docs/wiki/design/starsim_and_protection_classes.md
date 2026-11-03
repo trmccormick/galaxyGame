@@ -1,4 +1,7 @@
 # StarSim, Unit Simulation Boundaries & Protection Classes
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 ## Status: CODE-GROUNDED (verified against live code)
 

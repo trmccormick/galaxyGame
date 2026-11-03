@@ -1,4 +1,7 @@
 # Station Construction & Logistics Pipeline (Pre-Player Era)
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 Station construction is a distinct physical engineering process that must be completed prior to operational use. In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy tugs. All expansion must bootstrap organically from Earth, Luna, and Venus through a strict, deterministic dependency chain.
 

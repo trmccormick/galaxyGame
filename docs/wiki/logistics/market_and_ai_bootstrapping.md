@@ -1,6 +1,9 @@
 > **Wiki section:** Player (markets) / Technical (class map) · **Status:** implementation-oriented; re-verify paths and PENDING items against current tree
 
 # Market Architecture & AI Manager Bootstrapping
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **STATUS: CANONICAL MARKET BOOTSTRAPPING INTENT**
 > This page, alongside `resource_and_market_logistics.md`, forms the canonical wiki pair for AI seed liquidity, market lifecycle phases, and initial economy setup. Verify runtime flags against implementation before code changes.

@@ -1,4 +1,7 @@
 # ISRU Fabrication Chain (3D-Printed + CNT Fabricators)
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Technical · **Status:** target design intent — canonical ISRU production mechanics, feedstock qualification, and fabricator upgrade trees; no runtime enforcement currently exists.
 

@@ -1,6 +1,9 @@
 > **Wiki section:** Player · **Status:** structure fix — previous body was mis-filed financial/tax content (see Financial Engine); this page is a thin logistics stub pending compare-to-game and harvest
 
 # Logistics and Hauling
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Cross-link:** For the authoritative pre-player-era logistics routing that gates all long-haul transit, see **[Station Construction Options](../engineering/station_construction_options.md)**. This page covers player-facing haul design; infrastructure routing is authority.
 

@@ -6,6 +6,9 @@ last_updated: 2026-11-03
 ---
 
 # Interstellar Communications
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Page status:** `DESIGN INTENT` — owner-confirmed, not implemented in code. The concept is still being refined; the details marked `DIRECTION` and `OPEN` below are not decided.
 >

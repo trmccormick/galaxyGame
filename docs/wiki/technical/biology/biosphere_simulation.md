@@ -1,4 +1,7 @@
 # Biosphere Simulation Technical Reference
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Technical · Biology · **Status:** target design — simulation interface, state gates, and scoring formulas.  
 > **Architectural source:** [`docs/architecture/biology/terrasim_service.md`](../../../architecture/biology/terrasim_service.md), [`biology_models.md`](../../../architecture/biology/biology_models.md).

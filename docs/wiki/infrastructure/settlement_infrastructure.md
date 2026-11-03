@@ -8,8 +8,8 @@ last_updated: 2026-11-03
 # Settlement Infrastructure
 
 > **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
-> *Code facts checked at:* commit `c5f0d9e` (2026-10-29), see the table below.  
-> *Summary:* The settlement models, `Settlement::OrbitalSettlement` and the structure types listed under *Verified against code* exist. The `Settlement::SpaceStation` and `Settlement::OrbitalDepot` classes are retired in code; stations and depots remain part of the game as `Structures::OrbitalStructure`. A structure can be part of an orbital settlement, but a depot with no residents is not necessarily a settlement. The tier rules, governance, sphere of influence, absorption and life support requirements under *Direction* are not implemented.
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* The settlement models, `Settlement::OrbitalSettlement` and the structure types listed under *Verified against code* exist. The `Settlement::SpaceStation` and `Settlement::OrbitalDepot` classes are retired in code; stations and depots remain part of the game as `Structures::OrbitalStructure`. A structure can be part of an orbital settlement, but a depot with no residents is not necessarily a settlement. The tier rules, governance, sphere of influence, absorption and life support requirements under *Direction* are not implemented.
 
 > **How to read this page.** *Design Intent* is the agreed design. *Verified against code* records what the codebase does today (checked at commit `c5f0d9e`, 2026-10-29); where the two differ, the code section is current behavior and the intent stands until the owner changes it. **Terminology:** *Settlement* (capital S) is the unit that exists at every tier (the game model); *settlement tier* is one of its tiers. *Direction under discussion* is the owner's working thinking on tiers, not yet final. *OPEN* lists items with no source in the docs or the code; they are not decisions.
 

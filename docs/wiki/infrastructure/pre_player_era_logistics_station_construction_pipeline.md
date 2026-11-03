@@ -11,6 +11,9 @@ related_docs:
 ---
 
 # Pre-Player Era Logistics & Station Construction Pipeline
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 This article documents the deterministic, sequential logistics tree required for space station construction during the Pre-Player Era.
 

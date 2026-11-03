@@ -1,4 +1,7 @@
 # Precursor Mission Deployment Sequence
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Technical · **Status:** target design intent — canonical precursor deployment sequence, power bridge mechanics, and tether transition; no runtime enforcement currently exists.
 

@@ -1,6 +1,9 @@
 > **Wiki Section:** Engineering · **Status:** Draft — AI Manager backend protocol for Sol–Eden reconnection
 
 # Post-Snap Reconnection Protocol (Sol–Eden)
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-01  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
 > **Ground Truth Authority:** All AWS construction, anchor verification, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](./station_construction_options.md). The AI Manager's four-phase reconnection pipeline must respect all anchor mass thresholds defined therein.
 
