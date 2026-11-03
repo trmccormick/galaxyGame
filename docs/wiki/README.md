@@ -118,6 +118,13 @@ All files in `docs/wiki/` follow these rules. New pages must comply:
 2. **Links use explicit relative paths** with accurate `../` depth matching the source file's subdirectory level (e.g., a file two directories deep under `docs/wiki/` uses `../../` to reach `docs/wiki/`).
 3. **All incoming links must resolve against tracked files** (`git ls-files`). Before merging, verify every new relative path exists in `git ls-files docs/wiki/`.
 4. **Anchor links:** use lowercase with hyphens (`#section-title`) matching the first `#` heading exactly.
-5. **Cross-wiki references** (e.g., to `docs/architecture/`, `docs/developer/`) are allowed but must point to existing files on disk; do not link to directories without an `index.md`.
+5. **No links out of the wiki.** `docs/wiki/` is the source of truth. Older documentation (`docs/architecture/`, `docs/developer/`, `docs/agent/`, `docs/design/`, `docs/wiki_reorganization/`, etc.) is frozen reference: read it, harvest what is still valid into the wiki, and cite it as plain text in the [Migration log](migration-log.md). Never link to it and never edit it.
+6. **Labels.** The page banner describes the whole page: `VERIFIED AGAINST CODE`, `PARTIALLY IMPLEMENTED`, or `DESIGN INTENT`. A page that contains design the code does not implement cannot be `VERIFIED AGAINST CODE`. Section labels: `ESTABLISHED INTENT` (owner-confirmed; add the date), `DIRECTION` (under discussion, not final), `OPEN` (undecided), `RETIRED / DO NOT USE`.
+7. **Code notes are dated.** A "verified against code" section names the commit it was checked at. Keep it short: design intent first, code facts second.
+8. **Wiki vs. code conflicts.** If the wiki is only stale on a detail of current behavior, update it from the code. If the difference could be a design change, ask the owner. If the owner's intent needs a code change, write a thin task (rule 9). Do not change the wiki to match code that is wrong.
+9. **Thin tasks.** A task states what to build, links to the one wiki page that holds the design, and lists acceptance criteria. Design text belongs in the wiki, not in the task.
+10. **Intent that affects gameplay or UI.** Record it in the wiki as `ESTABLISHED INTENT` before work starts, with a list of its undecided implementation details. Then compare it with the code and open one thin task per gap.
+11. **Moving content.** Move content into the wiki before removing or merging any page. Delete duplicates instead of leaving pointer stubs, update every inbound link in the same commit, and add a row to the [Migration log](migration-log.md). Add no new information unless the owner states it; mark the rest `OPEN`. Do not edit files outside `docs/wiki/`.
+12. **Checks.** Verify links and anchors case-sensitively against `git ls-files`, on Linux or CI (macOS ignores case).
 
 These standards were standardized during Phase B of the repository hygiene sweep (2026-11-01). See [Status and gaps](status-and-gaps.md) for details.
