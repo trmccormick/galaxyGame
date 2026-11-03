@@ -376,7 +376,7 @@ The following content was harvested from frozen legacy architecture docs in `doc
 
 ### GAP 1: EAP Enforcement (CORRECTED)
 - **Intent:** AI Manager never pays above Earth Anchor Price; structural market ceiling enforcement
-- **Code:** `Tier1PriceModeler.calculate_eap` computes EAP via `earth_spot_price + refining_factor * transport_cost(destination, source)` (verified in `docs/wiki/markets/Markets-EAP-and-Peg.md`). The MarketStabilizationService and broader AI Manager still lack an explicit **price-ceiling check** that rejects purchases above EAP — the EAP is computed but may not be enforced as a rejection threshold.
+- **Code:** `Tier1PriceModeler.calculate_eap` computes EAP as `(earth_spot_price_usd * refining_factor) * usd_to_gcc_peg + transport_cost_GCC` in GCC/kg (see `markets/markets_eap_and_peg.md`). The MarketStabilizationService and broader AI Manager still lack an explicit **price-ceiling check** that rejects purchases above EAP — the EAP is computed but may not be enforced as a rejection threshold.
 - **Status:** 🟡 Partial (EAP exists; enforcement gate TBD)
 
 ### GAP 2: Strict Escalation Ladder

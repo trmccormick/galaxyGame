@@ -77,7 +77,7 @@ gcc_minimum_block_reward     => 1
 
 ```ruby
 # Simplified verified flow (matching Tier1PriceModeler.calculate_eap):
-EAP = (earth_anchor_price * refining_factor) * usd_to_gcc_peg + transport_cost_GCC
+EAP = (earth_spot_price_usd * refining_factor) * usd_to_gcc_peg + transport_cost_GCC
 ```
 
 ### Verified Properties
