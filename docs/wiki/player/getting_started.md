@@ -99,6 +99,69 @@ Because the project is in active development, keep the following discrepancies i
 | **Database Connection Refused** | Verify the `db` service healthcheck completed or check `.env.dev.local.app` for host binding. |
 | **Stale Phase/Task references** | Ignore old phase numbers or task count summaries in legacy docs; refer strictly to `agent-tasks/projects/galaxy_game/status.md`. |
 
+### ESTABLISHED INTENT — Player Independence: Staying Put Is Valid Play
+
+**There is no requirement to expand beyond your initial settlement.** Building a private settlement is optional, not a requirement for participation or continued progression.
+
+**Confirmed points:**
+
+- Players may remain at NPC/AI Manager-developed footholds indefinitely and operate meaningful businesses there.
+- Building a private settlement is optional, not a requirement for participation or continued progression.
+- Players may stay where they are, relocate, or expand their operations elsewhere.
+- Expansion is an opportunity, not an obligation.
+
+**Why this matters:** The current UI and documentation frame progression as expansion-driven (new colonies, new systems). This section records the design principle that **staying put is a valid long-term play style**. Expansion should be optional, not mandatory, for players who prefer depth over breadth.
+
+> **Note:** Not every foothold type or settlement offers identical services or access rules. Eligibility and available services depend on the specific foothold's infrastructure and the AI Manager's operational state.
+
+### Undecided Implementation Details
+
+- Does the current economy support a single-location player indefinitely? (e.g., can one settlement produce enough to sustain itself and trade?)
+- Are there gameplay incentives that penalize non-expansion (e.g., resource depletion at one location)? If so, should they exist?
+- Should the UI reflect this option more clearly — e.g., "I want to stay here" as a valid strategic choice?
+
+### Player Mobility
+
+#### Local-System Travel: Portal Network
+
+Within a solar system, players can use the portal network to travel between connected locations (planets, moons, orbital stations). Portals provide intra-system transportation shortcuts.
+
+#### Interstellar Travel: Wormhole Transit
+
+For interstellar travel, a player can:
+1. Travel to a wormhole station in their current system.
+2. Take transport through the wormhole to another connected system.
+3. Travel onward from the destination wormhole station to a settlement or other destination.
+
+**Wormholes provide physical transportation only.** They do not bypass communication physics — interstellar messages still propagate at light speed with distance-dependent delays. See [Interstellar Communications](../engineering/interstellar_communications.md) for established intent on communication constraints.
+
+#### Player Location vs. Asset Location
+
+A player's physical location is independent of the location of their ships, assets, and business operations:
+- Ships and assets remain where they were left unless actively moved.
+- Business operations (harvesting, manufacturing, trading) continue at their established locations regardless of the player's current position.
+- Players can relocate their personal base of operations without necessarily abandoning existing operations elsewhere.
+
+### Asset Relocation Choices
+
+When a player relocates, they have multiple options for handling their assets. These are alternative choices — the player is not required to move every asset.
+
+| Option | Description |
+|--------|-------------|
+| **1. Own ships** | The player can use their own ships to transport equipment, inventory, supplies, and other assets to the new location. |
+| **2. NPC logistics companies** | The player can hire NPC logistics providers to transport assets using normal cyclers. |
+| **3. Sell and repurchase** | The player can sell assets on the local market for GCC and purchase replacements at the destination. |
+
+**Additional choices:**
+- Players may retain existing operations at their previous location without moving any assets.
+- Players may transport selected assets while leaving others behind.
+- Players may sell some assets and transport others, mixing approaches as needed.
+
+**Undecided implementation details:**
+- Relative cost, speed, and availability of each option.
+- Contract structure for NPC logistics services.
+- Detailed operating rules (e.g., transit time, risk of loss, market liquidity at destination).
+
 ---
 
 ## Where To Go Next

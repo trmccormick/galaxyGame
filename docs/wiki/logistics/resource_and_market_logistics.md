@@ -61,6 +61,8 @@ Both methods take the settlement as context because pricing is settlement-relati
 
 ### Base Pricing Rules
 
+**Rule 0 — Markets Are Regional.** Price and inventory information is local to each settlement's marketplace. Information about prices, demand, or inventory in other systems becomes stale while traveling — there is no real-time cross-system price feed. Persistent demand (such as nitrogen on a world without local production) does not guarantee a particular price or purchasing capacity when a shipment arrives; the destination market may have absorbed that demand by the time cargo gets there, or may lack the warehouse capacity or GCC liquidity to buy at the expected rate.
+
 **Rule 1 — Earth Import Ceiling.** For any resource that has no local production source at the settlement, the NPC ask price anchors to `INITIAL_TRANSPORTATION_COST_PER_KG = 1320.00 USD/kg` converted at the current GCC peg. At `GCC_TO_USD_INITIAL = 1.0`, this means 1320.00 GCC/kg is the ceiling for Earth-import-dependent resources. `[VERIFY AGAINST SOURCE — confirm calculator uses this constant as ceiling]`
 
 **Rule 2 — Local Production Override.** When a settlement has active local production facilities for a resource, the calculator switches from Earth import pricing to a locally-derived cost model. The local cost is computed from facility operational costs, energy consumption, and throughput capacity — not from the Earth import baseline. `[VERIFY AGAINST SOURCE — confirm local facility detection logic and cost model]`
@@ -197,6 +199,30 @@ All orders expire 24 hours after creation (`Market::Order#expires_at = created_a
 ## 6. Resource Categories
 
 *Document each resource category active in the current simulation. Add rows as new resource types are introduced.*
+
+---
+
+## ESTABLISHED INTENT — Player economic roles
+
+Players can operate businesses that support other settlements, not just their own. The four primary economic roles are:
+
+| Role | Description | Example |
+|------|-------------|---------|
+| **Harvesting** | Extract raw materials from celestial bodies (mining, atmospheric skimming, ice drilling) | Luna regolith mining; Venus CO₂ skimming |
+| **Manufacturing** | Process raw materials into usable products (refining, ISRU, fabrication) | Methalox production from lunar H₂ + Venusian CO₂ |
+| **Trading** | Buy low, sell high across settlements; exploit price arbitrage between bodies | Buy LOX at Luna, sell at Mars during shortage |
+| **Logistics** | Operate transport routes between settlements; courier contracts, cycler operations | Run regular Luna→L1 fuel delivery route |
+
+**Design implications:**
+- A player can specialize in one role or operate multiple businesses simultaneously.
+- Player businesses can support other settlements (e.g., a harvesting business that supplies LOX to Mars without owning a Mars settlement).
+- This creates natural interdependence between settlements and players who don't own them.
+- NPC AI Manager fills gaps when no player operates in a given role or location.
+
+**Undecided implementation details:**
+- Are there licensing or certification requirements for each role?
+- Can players subcontract to other players, or is it always direct settlement-to-settlement?
+- Does the UI present these as distinct "business types" or just as market activities?
 
 `[FILL IN FROM GAME DATA — resource list not confirmed from source files reviewed to date]`
 

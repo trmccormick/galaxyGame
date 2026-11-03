@@ -112,3 +112,13 @@ When you close a major gap or lock an option on a topic page, add a short dated 
   - Items B.1 (Logistics & Engineering): committed, pushed (`origin/main`) ✅
   - Item B.2 (Player, Technical, Infrastructure): committed, pushed (`origin/main`) ✅
 - **Global link integrity verification** — All 194 internal wiki relative links and all 30 cross-wiki links verified against tracked files; zero broken paths found. ✅
+
+### Documentation updates (2026-11-02)
+
+- **Player independence** — Added "Staying Put Is Valid Play" section to [`player/getting_started.md`](player/getting_started.md): documents that remaining at one location is a valid long-term play style; expansion is optional. Classified as POSSIBLE DESIGN.
+- **NPC footholds for player businesses** — Added POSSIBLE DESIGN section to [`infrastructure/settlement_infrastructure.md`](infrastructure/settlement_infrastructure.md): players may establish and operate businesses at NPC footholds without building private settlements.
+- **Player economic roles** — Added POSSIBLE DESIGN section to [`logistics/resource_and_market_logistics.md`](logistics/resource_and_market_logistics.md): harvesting, manufacturing, trading, and logistics as distinct player business types that can support other settlements.
+- **Autonomous cargo ships** — Added POSSIBLE DESIGN section to [`logistics/logistics_and_hauling.md`](logistics/logistics_and_hauling.md): distinguishes autonomous navigation (baseline) from configurable commercial activity (optional layer).
+- **Interstellar communications (NEW PAGE)** — Created [`engineering/interstellar_communications.md`](engineering/interstellar_communications.md): establishes light-speed electromagnetic communication with distance-dependent delays; store-and-forward relay network via stations and ships; dedicated data couriers for high-bandwidth transfers. Wormholes provide physical transit only, not instant messaging. **Resolved:** the historical discrepancy with `WORMHOLE_NETWORK_INTENT.md` (which contained an entry never reflecting owner intent) is documented in the wiki page itself; the external file was not modified (frozen documentation).
+- **AI Manager expansion scouting** — Added GAP 6 and POSSIBLE DESIGN section to [`services/ai_manager.md`](services/ai_manager.md): AI Manager should scout and evaluate unconnected systems before committing permanent network connections.
+- **Wiki README navigation** — Added interstellar communications entry to Engineering section of wiki Home page with conflict flag.

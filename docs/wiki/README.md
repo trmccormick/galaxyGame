@@ -75,6 +75,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Atmospheric harvesting](infrastructure/atmospheric_harvesting.md) | Gas / atmosphere harvesting |
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
+| [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM communication with distance-dependent delays; store-and-forward relays; wormholes do not bypass comms physics. **Resolved:** historical discrepancy with WORMHOLE_NETWORK_INTENT.md documented.
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
 

@@ -41,6 +41,23 @@ Capture competing ideas here as the design flexes; do not bury them only in old 
 | Portal / late-game FTL | Out of scope on this page until portal design lands | — | ChatGPT lane; link here when a canonical portal page exists |
 | Coupling to AI Manager | AI posts market/logistics demand | AI uses internal allocation only | Resource-and-Market page notes market integration gaps |
 
+### ESTABLISHED INTENT — Autonomous cargo ships: navigation vs. commercial activity
+
+There is a meaningful distinction between:
+- **Autonomous navigation** — a ship's ability to travel between points without player input (pathfinding, fuel management, transit timing). This is a baseline capability all cargo ships have.
+- **Configurable commercial activity** — whether that autonomous ship engages in commerce (buying/selling at waypoints, posting logistics contracts, seeking market opportunities) while en route. This is an optional behavior layer on top of navigation.
+
+**Design implications:**
+- A ship can be autonomous but commercially passive (deliver cargo only to its destination).
+- A ship can be autonomous and commercially active (seek best prices at intermediate stops, post buy/sell orders along its route).
+- The AI Manager could configure commercial activity levels per fleet: "deliver only" vs. "maximize revenue en route."
+- Players might charter autonomous ships with configurable commercial settings.
+
+**Undecided implementation details:**
+- Should commercial activity be a ship property or a mission/contract property?
+- Can a player override an autonomous ship's commercial decisions mid-transit?
+- Does commercially active navigation create balance issues (e.g., AI out-trading players)?
+
 Update this table when harvest or compare passes settle a choice; mark the current leaning in one sentence under the table.
 
 ---

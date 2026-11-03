@@ -105,6 +105,24 @@ Interdependence applies at every tier: almost no place is self-sufficient. Each 
 - **Automated, uncrewed Settlements need no life support.** A Settlement can have zero residents.
 - Beyond oxygen, requirements per tier are not defined (see OPEN).
 
+### ESTABLISHED INTENT — NPC footholds and player businesses without private settlements
+
+**Intent:** Players may establish and operate businesses (harvesting, manufacturing, trading, logistics) at existing NPC foothold locations — such as Development Corporation bases or AI Manager-established depots — without first constructing their own private settlement infrastructure. A player could remain at an NPC foothold indefinitely, running a business that supports other settlements.
+
+**Design implications:**
+- Reduces early-game friction: players don't need to bootstrap full settlement infrastructure before participating economically.
+- Creates natural entry points for new or casual players who want to contribute without the commitment of building a colony.
+- NPC footholds become economic hubs where player businesses can coexist with AI Manager operations.
+- Players remain at an NPC foothold indefinitely — no requirement to expand or build private infrastructure.
+
+**Undecided implementation details:**
+- Which NPC foothold types are eligible? (All Development Corporation bases? Only operational depots?)
+- Does the player "lease" space, pay a fee, or operate freely?
+- Can multiple players operate businesses at the same foothold, or is it exclusive?
+- What happens if the AI Manager abandons or relocates the foothold?
+
+> **Cross-reference:** See also [Player Agency: Independence vs. Expansion](../player/getting_started.md#player-agency-independence-vs-expansion) in the getting-started page for the broader principle that staying at one location is valid play.
+
 ### DIRECTION — lifecycle
 
 Precursor missions prepare a place for human settlement. Robots go first; people come after. The Luna precursor sequence in [Precursor Mission Deployment](../technical/precursor_mission_deployment.md) is the reference pattern. As technology improves the steps may change, but the intent stays the same. An automated Settlement is therefore often an early **phase** of the same Settlement, which becomes crewed once it can support people. A location that is **not human-rated** can stay robotic permanently; being automated is not always a stage on the way to being crewed.

@@ -399,6 +399,32 @@ The following content was harvested from frozen legacy architecture docs in `doc
 - **Code:** Fallback to temperature/liquid-water thresholds; TODO for pattern-based detection
 - **Status:** 🟡 Partial implementation
 
+### GAP 6: Pre-Commit Expansion Scouting (NEW)
+- **Intent:** AI Manager should scout and evaluate unconnected systems before deciding whether to establish permanent network connections.
+- **Code:** `ScoutLogic` and `WorldKnowledgeService` exist but pre-commit evaluation is not implemented as a formal gate.
+- **Status:** 🔵 Target design intent only
+
+---
+
+## ESTABLISHED INTENT — AI Manager expansion: scout before commit
+
+Before committing resources to establish permanent network connections (AWS stations, stabilized wormholes) in unconnected systems, the AI Manager should:
+
+1. **Scout** — Deploy probes to evaluate the target system's resources, stability, and strategic value.
+2. **Evaluate** — Score the system against expansion criteria (resource richness, colonization potential, strategic value, exploration cost).
+3. **Decide** — Only commit permanent infrastructure if the evaluation meets a threshold. Otherwise, maintain a temporary presence or abandon the system.
+
+**Design implications:**
+- Prevents wasteful investment in low-value systems.
+- Creates natural expansion pacing — the AI Manager doesn't instantly connect every discovered wormhole.
+- Players can observe and influence which systems get developed (e.g., by providing scout data or investment).
+- Aligns with the "graduated investment" exploration strategy already noted in WORMHOLE_NETWORK_INTENT.md.
+
+**Undecided implementation details:**
+- What is the minimum scout data required before a commit decision?
+- Can players override or accelerate the AI Manager's expansion decisions?
+- Does the AI Manager revisit systems it previously rejected, or is that decision permanent?
+
 ---
 
 ## 12. Files Not Yet Classified by Code Review Protocol
