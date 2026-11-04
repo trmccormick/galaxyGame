@@ -28,7 +28,7 @@ This folder is the **live wiki** — the front door for players, contributors, a
 | [**player/**](player/) | Orientation, getting started, and player roles / alignment |
 | [**infrastructure/**](infrastructure/README.md) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
 | [**engineering/**](engineering/) | Station construction, expansion protocols, and post-snap reconnection |
-| [**technical/**](technical/) | System commands, ISRU fabrication, precursor missions, biology & terraforming, and ballistic corridors |
+| [**technical/**](technical/) | System commands, ISRU fabrication, precursor missions, biology & terraforming, and ballistic corridors |\n| [**ui/**](ui/) | Interface design intent, visual identity, and reviewed user experiences |
 
 ---
 
