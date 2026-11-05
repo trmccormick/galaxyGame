@@ -5,6 +5,8 @@
 
 > **Wiki section:** Logistics · **Status:** target design intent — canonical architecture spec for pricing ceilings, import models, and AI decision escalation; no runtime enforcement currently exists.
 
+> **Related:** For the full AI Manager economic behavior (debt/austerity modes, Virtual Ledger clearing, stockpile targets, NPC buy/sell bands) see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
+>
 > **Cross-link:** For how terraforming demand is financed through GCC budgets, Seed vs. Brute-Force contracts, and player economic participation, see **[Terraforming Economic Integration](./terraforming_economic_integration.md)**.
 
 > **Cross-link:** For the hard physical mechanics of Venusian CO₂ cracking, CNT pod manufacturing, and mass driver ballistics, see **[Venus–Mars Ballistic Corridor (Brute-Force Loop)](../technical/venus_mars_ballistic_corridor.md)**.

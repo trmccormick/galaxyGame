@@ -41,7 +41,7 @@ Capture competing ideas here as the design flexes; do not bury them only in old 
 |-------|--------------------|--------------------|--------|
 | Who flies the route | Player courier contracts first; NPC fallback | Mostly automated fleet with player overrides | Align with organizations / contract docs when refreshed |
 | Failure handling | Insurance + collateral (EVE-like) | Simpler loss + reputation only | Financial Engine / org docs may describe one leaning |
-| Portal / late-game FTL | Out of scope on this page until portal design lands | — | ChatGPT lane; link here when a canonical portal page exists |
+| Portal / late-game FTL | See **[Portals & AWS](../technical/portals_and_aws.md)** for portal rules (mass limits, EM consumption, pairing constraints) and AWS inter-system networking. | — |
 | Coupling to AI Manager | AI posts market/logistics demand | AI uses internal allocation only | Resource-and-Market page notes market integration gaps |
 
 ### ESTABLISHED INTENT — Autonomous cargo ships: navigation vs. commercial activity

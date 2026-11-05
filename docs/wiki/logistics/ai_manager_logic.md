@@ -10,6 +10,8 @@ This document is the single canonical wiki entry for AI Manager intent, priority
 
 > **Cross-link:** For how terraforming demand is financed and contracted through the AI Manager (GCC budgets, Seed vs. Brute-Force contracts, Mars-Buyer/Venus-Supplier loop), see **[Terraforming Economic Integration](./terraforming_economic_integration.md)**.
 
+**Related:** For the AI Manager's economic behavior — debt-driven austerity modes, Virtual Ledger clearing between Development Corps, NPC buy/sell bands (80/90%), and stockpile buffer targets — see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
+
 ---
 
 ## 1. Canonical Role & Scope

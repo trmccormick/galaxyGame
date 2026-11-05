@@ -48,6 +48,16 @@ Planetary protection protocols, environmental governance frameworks, and ecologi
 
 ---
 
+## Surface Habitats & Power
+
+→ [`surface_habitat_options.md`](./surface_habitat_options.md)  
+Design options for surface (or near-surface) habitats that become available once power, logistics, and industrial base are mature: aerogel domes, regolith berms, suburban-scale living on Mars/Luna.
+
+→ [`power_options.md`](./power_options.md)  
+Power generation and distribution strategies across phases (surface, orbital, deep-space). Covers solar arrays, nuclear thermal reactors, RTGs, and hybrid grids.
+
+---
+
 ## Core Industrial Rules
 
 1. **No Magic Spawns:** Station construction is an active, physical engineering process requiring localized or imported mass, equipment, and structural assembly time.

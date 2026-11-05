@@ -12,6 +12,8 @@ Currency, ledgers, and market friction for off-world play.
 - **[Resource & Market Logistics](../markets/markets_eap_and_peg.md)** — ECC canonical spec (NPC pricing, EAP ceilings, warehouse caps, order lifecycle)
 - **[Market and AI Bootstrapping](./market_and_ai_bootstrapping.md)** — ECC canonical spec (bootstrap peg, market models, AutonomousConstructionManager)
 
+**Related:** For how the AI Manager actually lives with these numbers (debt-driven austerity, Virtual Ledger clearing, NPC 80/90 bands, stockpile buffer targets), see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
+
 ---
 
 ## Architecture Cross-References

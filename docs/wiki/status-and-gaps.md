@@ -39,11 +39,34 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 |-----|--------|
 | Celestial systems | [Celestial systems](astronomy/celestial_systems.md) is a **template**, not a filled Sol (or other) system page |
 | Player roles / factions | [Player roles and alignment](player/player_roles_and_alignment.md) is detailed; treat as intent until matched to current models/UI |
-| Portal / late-game FTL transport | Player-facing travel intent (intra-system portal networks, interstellar wormhole transit) is documented in [`player/getting_started.md`](player/getting_started.md). Detailed portal technology and implementation documentation remains under development. |
 | Command reference drift | [System commands](technical/system_commands.md) may name services or baselines that have moved — re-check before scripting around them |
 | Architecture sprawl | Large trees under `docs/architecture/` and legacy `docs/agent/` are uneven; prefer wiki entry pages first |
 
-## Resolved gaps (2026-10-28 consolidation pass)
+## New pages now exist (2026-11-04 Gemini brainstorm + archaeology)
+
+These topics that were previously scattered or undocumented now have dedicated wiki homes:
+
+| Topic | Canonical page | Status |
+|-------|---------------|--------|
+| AI Manager economic behavior (debt/austerity, NPC bands, Virtual Ledger, stockpile targets) | [AI Manager Economic Loops](logistics/ai_manager_economic_loops.md) | DIRECTION — some ESTABLISHED anchors |
+| Surface / near-surface habitats (aerogel domes, regolith berms, suburban-scale living) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) | DIRECTION |
+| Power generation and distribution across phases | [Power Options](infrastructure/power_options.md) | DIRECTION |
+| Settlement evolution stages, first foothold requirements, expansion gates | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) | Strong draft with VERIFY flags |
+| Eden disconnect: snap event mechanics, emergent post-isolation states, recovery protocols | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) | DIRECTION — core narrative solid; details open |
+| Portal rules (mass limits, EM consumption, pairing constraints) + AWS inter-system networking | [Portals & AWS](technical/portals_and_aws.md) | ESTABLISHED INTENT — gaps noted below |
+
+## Resolved gaps (2026-11-04 additions)
+
+These were previously listed as open or missing; the pages above now own them:
+
+| Gap resolved | New canonical page |
+|-------------|-------------------|
+| AI Manager market behavior, debt-driven austerity, inter-NPC clearing, NPC buy/sell bands | [AI Manager Economic Loops](logistics/ai_manager_economic_loops.md) — consolidates intent from brainstorm; adds missing austerity/80-90 band/ledger rules |
+| Surface habitat design options (aerogel, regolith berms, suburban-scale living on Mars/Luna) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) — covers types, unlock conditions, cost structures |
+| Power generation and distribution strategies across phases (surface, orbital, deep-space) | [Power Options](infrastructure/power_options.md) — power infrastructure evolution |
+| Settlement tier progression, early foothold requirements, expansion gates between tiers | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) — tiered evolution from early foothold through suburban-scale living |
+| Post-snap behavior of disconnected systems, emergence rules, reconnection mechanics | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) — snap event + emergent states + recovery protocols |
+| Portal technology and AWS networking (already referenced in gaps; now fully canonical below) | [Portals & AWS](technical/portals_and_aws.md) — established portal constraints, AWS network topology; remaining gap: inter-system portal-gate (Level 4b) flagged as Gemini proposal only, not approved design |
 
 | Gap resolved | New canonical page |
 |-------------|-------------------|

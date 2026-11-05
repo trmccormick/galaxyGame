@@ -23,15 +23,17 @@ Galaxy Game assigns each generated star one of the Morgan-Keenan spectral classe
 
 ### 1.1 Stellar Classification Constants
 
-| Class | Surface Temp (K) | Luminosity (L⊙) | Mass (M⊙) | UV Photon Flux at 1 AU (W/m²) | Typical Lifespan (Myr) |
-|-------|------------------|--------------------|-------------|-------------------------------|----------------------|
-| O5    | ~42,000          | ~90,000            | ~40         | 2,850                         | ~3.1                 |
-| B0    | ~30,000          | ~20,000            | ~17.5       | 980                           | ~10                  |
-| A0    | ~9,600           | ~80                | ~2.9        | 48                            | ~400                 |
-| F5    | ~6,500           | ~3.2               | ~1.3        | 11                            | ~15,000              |
-| G2    | ~5,772           | 1.0                | 1.0         | 4.6                           | ~10,000              |
-| K5    | ~4,400           | 0.15               | 0.68        | 1.2                           | ~57,000              |
-| M5    | ~3,200           | 0.008              | 0.21        | 0.15                          | ~2,000               |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from standard stellar astrophysics references (Morgan-Keenan classification, Kopparapu HZ model). They have not been validated against `config/initializers/game_constants.rb` or StarSim operational data. Validate against architecture specs before treating as authoritative.
+
+| Class | Surface Temp (K) | Luminosity (L⊙) | Mass (M⊙) | UV Photon Flux at 1 AU (W/m²) | Typical Lifespan (Myr) | Grounding |
+|-------|------------------|--------------------|-------------|-------------------------------|----------------------|-----------|
+| O5    | ~42,000          | ~90,000            | ~40         | 2,850                         | ~3.1                 | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
+| B0    | ~30,000          | ~20,000            | ~17.5       | 980                           | ~10                  | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
+| A0    | ~9,600           | ~80                | ~2.9        | 48                            | ~400                 | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
+| F5    | ~6,500           | ~3.2               | ~1.3        | 11                            | ~15,000              | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
+| G2    | ~5,772           | 1.0                | 1.0         | 4.6                           | ~10,000              | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
+| K5    | ~4,400           | 0.15               | 0.68        | 1.2                           | ~57,000              | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
+| M5    | ~3,200           | 0.008              | 0.21        | 0.15                          | ~2,000               | **[PROPOSED / PLACEHOLDER]** — standard MK classification data, not from game constants |
 
 **Effective Habitable Zone (HZ) Bounds:**
 
@@ -76,17 +78,19 @@ Radiation pressure on hull: P_rad = I(a, star_class) / c
 
 **Flux Decay with Stellar Evolution:**
 
-Stellar luminosity increases over the main-sequence lifetime at a class-dependent rate:
+Stellar luminosity increases over the main-sequence lifetime at a class-dependent rate.
 
-| Class | Luminosity Growth Rate (per Gyr) | ΔL/L₀ at Tₘₐₓ |
-|-------|----------------------------------|-----------------|
-| O     | ~+180% / Gyr                     | +540%           |
-| B     | ~+95% / Gyr                      | +285%           |
-| A     | ~+35% / Gyr                      | +70%            |
-| F     | ~+18% / Gyr                      | +36%            |
-| G     | ~+6.5% / Gyr                     | +13%            |
-| K     | ~+2.1% / Gyr                     | +4.2%           |
-| M     | ~+0.08% / Gyr                    | +0.16%          |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from standard stellar evolution models (e.g., Pinsonneault et al.). They have not been validated against game constants or StarSim operational data.
+
+| Class | Luminosity Growth Rate (per Gyr) | ΔL/L₀ at Tₘₐₓ | Grounding |
+|-------|----------------------------------|-----------------|-----------|
+| O     | ~+180% / Gyr                     | +540%           | **[PROPOSED / PLACEHOLDER]** — stellar evolution model estimate; not from game constants |
+| B     | ~+95% / Gyr                      | +285%           | **[PROPOSED / PLACEHOLDER]** — stellar evolution model estimate; not from game constants |
+| A     | ~+35% / Gyr                      | +70%            | **[PROPOSED / PLACEHOLDER]** — stellar evolution model estimate; not from game constants |
+| F     | ~+18% / Gyr                      | +36%            | **[PROPOSED / PLACEHOLDER]** — stellar evolution model estimate; not from game constants |
+| G     | ~+6.5% / Gyr                     | +13%            | **[PROPOSED / PLACEHOLDER]** — solar analog extrapolation; not from game constants |
+| K     | ~+2.1% / Gyr                     | +4.2%           | **[PROPOSED / PLACEHOLDER]** — stellar evolution model estimate; not from game constants |
+| M     | ~+0.08% / Gyr                    | +0.16%          | **[PROPOSED / PLACEHOLDER]** — M-dwarf models are less constrained; not from game constants |
 
 ### 1.3 Stellar Flare Flux Dynamics
 
@@ -105,19 +109,24 @@ where:
 
 **Per-Class Flare Parameters:**
 
-| Class | Flare Rate (per day, E > 10²⁴ J) | Peak X-ray Flux at 1 AU (W/m²) | Characteristic Duration (min) | Reoccurrence Interval (Gyr) |
-|-------|-----------------------------------|-------------------------------|------------------------------|----------------------------|
-| O     | ~0.001                            | < 0.01                        | 2–5                          | > stellar lifetime         |
-| B     | ~0.01                             | ~0.1                          | 5–15                         | > stellar lifetime         |
-| A     | ~0.1                              | ~1                            | 10–30                        | 500+                       |
-| F5    | ~1                                | ~10                           | 20–60                        | 100+                       |
-| G2    | ~3 (Carrington-level >10²⁵ J)     | ~45 (X-class event)           | 30–120                       | 50–100                     |
-| K5    | ~15 (superflares common)          | ~200                          | 60–300                       | 5–20                       |
-| M5    | ~800 (continuous microflare activity) | ~1,500                   | 10–600                       | 1–5                        |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from solar physics extrapolation models. They have not been validated against game constants or StarSim operational data.
+
+| Class | Flare Rate (per day, E > 10²⁴ J) | Peak X-ray Flux at 1 AU (W/m²) | Characteristic Duration (min) | Reoccurrence Interval (Gyr) | Grounding |
+|-------|-----------------------------------|-------------------------------|------------------------------|----------------------------|-----------|
+| O     | ~0.001                            | < 0.01                        | 2–5                          | > stellar lifetime         | **[PROPOSED / PLACEHOLDER]** — massive star flare data is extremely limited; extrapolated from solar data |
+| B     | ~0.01                             | ~0.1                          | 5–15                         | > stellar lifetime         | **[PROPOSED / PLACEHOLDER]** — massive star flare data is extremely limited; extrapolated from solar data |
+| A     | ~0.1                              | ~1                            | 10–30                        | 500+                       | **[PROPOSED / PLACEHOLDER]** — A-star flare rates are not well-constrained observationally |
+| F5    | ~1                                | ~10                           | 20–60                        | 100+                       | **[PROPOSED / PLACEHOLDER]** — F-star flare data extrapolated from solar and T-Tauri stars |
+| G2    | ~3 (Carrington-level >10²⁵ J)     | ~45 (X-class event)           | 30–120                       | 50–100                     | **[PROPOSED / PLACEHOLDER]** — solar data extrapolated; not from game constants |
+| K5    | ~15 (superflares common)          | ~200                          | 60–300                       | 5–20                       | **[PROPOSED / PLACEHOLDER]** — K-dwarf superflare rates from Kepler/TESS surveys; not game-validated |
+| M5    | ~800 (continuous microflare activity) | ~1,500                   | 10–600                       | 1–5                        | **[PROPOSED / PLACEHOLDER]** — M-dwarf flare rates from TESS survey data; not game-validated |
 
 **Flare Impact on Unshielded Hulls:**
 
-A flare event delivers an instantaneous radiation dose to exposed surfaces:
+A flare event delivers an instantaneous radiation dose to exposed surfaces. Dose calculations are **[PROPOSED / PLACEHOLDER]** estimates for modeling purposes only.
+
+> **Note:** The formulas below represent a model framework. Actual parameter values (e.g., `ρ_material`, `(dE/dx)_interaction`) require validation against game hull material definitions.
+
 ```
 Dose_rate (Gy/hr) = X_ray_flux / ρ_material * (dE/dx)_interaction
 
@@ -152,27 +161,21 @@ where:
 
 **Per-Class Wind Parameters:**
 
-| Class | Mass-Loss Rate (× 10⁻¹⁴ M⊙/yr) | Wind Velocity (km/s) | Dynamic Pressure at 1 AU (pPa) |
-|-------|---------------------------------|----------------------|-------------------------------|
-| O     | ~50                             | 2,500                | ~800                          |
-| B     | ~30                             | 2,000                | ~400                          |
-| A     | ~5                              | 1,500                | ~25                           |
-| F     | ~3                              | 700                  | ~8                            |
-| G2    | 2.0 (baseline)                  | 400–800              | ~2                            |
-| K     | ~1                              | 450                  | ~1                            |
-| M     | ~50+ (intense low-mass wind)   | 300–500              | ~60                           |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from stellar wind models (e.g., Wood et al. mass-loss relations). They have not been validated against game constants or StarSim operational data.
+
+| Class | Mass-Loss Rate (× 10⁻¹⁴ M⊙/yr) | Wind Velocity (km/s) | Dynamic Pressure at 1 AU (pPa) | Grounding |
+|-------|---------------------------------|----------------------|-------------------------------|-----------|
+| O     | ~50                             | 2,500                | ~800                          | **[PROPOSED / PLACEHOLDER]** — O-star wind parameters are high-uncertainty; not game-validated |
+| B     | ~30                             | 2,000                | ~400                          | **[PROPOSED / PLACEHOLDER]** — B-star wind parameters extrapolated from O-star models |
+| A     | ~5                              | 1,500                | ~25                           | **[PROPOSED / PLACEHOLDER]** — A-star winds are weak and poorly constrained; not game-validated |
+| F     | ~3                              | 700                  | ~8                            | **[PROPOSED / PLACEHOLDER]** — F-star wind data extrapolated from solar analogs |
+| G2    | 2.0 (baseline)                  | 400–800              | ~2                            | **[PROPOSED / PLACEHOLDER]** — solar baseline scaled; not game-validated |
+| K     | ~1                              | 450                  | ~1                            | **[PROPOSED / PLACEHOLDER]** — K-dwarf wind parameters from model extrapolation |
+| M     | ~50+ (intense low-mass wind)   | 300–500              | ~60                           | **[PROPOSED / PLACEHOLDER]** — M-dwarf wind is poorly understood; highly uncertain estimates |
 
 **Atmospheric Escape Flux:**
 
-The atmospheric mass loss rate from a planet at orbital distance `a`:
-```
-Φ_escape = ε * Φ_wind * (R_planet / a)²
-
-where:
-  Φ_escape   = escape flux (kg/m²/s)
-  ε          = erosion efficiency factor (0.01–0.3 depending on magnetic field strength)
-  Φ_wind     = incident stellar wind flux at orbital distance
-```
+The atmospheric mass loss rate from a planet at orbital distance `a`. Parameters below are **[PROPOSED / PLACEHOLDER]** model framework values, not game constants.
 
 **Magnetic Shielding Attenuation:**
 
@@ -262,13 +265,15 @@ Where dynamic pressure P_dyn includes both stellar wind ram pressure and thermal
 
 **Shielding effectiveness by class:**
 
-| B-surface (Gauss) | R_mp / R_p Ratio | Atmospheric Retention Efficiency | Protection Rating |
-|-------------------|-------------------|---------------------------------|-------------------|
-| 0 (none)          | 1.0               | 0%                              | none              |
-| < 1               | 1.5–2.0           | ~20%                            | weak              |
-| 1–3               | 2.5–4.0           | ~55%                            | moderate          |
-| 3–6 (Earth-like)  | 5.0–8.5           | ~85%                            | strong            |
-| > 6 (super-Earth) | > 9.0             | ~98%                            | extreme           |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from magnetospheric physics models. They have not been validated against game constants or StarSim operational data.
+
+| B-surface (Gauss) | R_mp / R_p Ratio | Atmospheric Retention Efficiency | Protection Rating | Grounding |
+|-------------------|-------------------|---------------------------------|-------------------|-----------|
+| 0 (none)          | 1.0               | 0%                              | none              | **[PROPOSED / PLACEHOLDER]** — no shielding; baseline case |
+| < 1               | 1.5–2.0           | ~20%                            | weak              | **[PROPOSED / PLACEHOLDER]** — low-field magnetosphere model; not game-validated |
+| 1–3               | 2.5–4.0           | ~55%                            | moderate          | **[PROPOSED / PLACEHOLDER]** — derived from Mars-analog magnetosphere models |
+| 3–6 (Earth-like)  | 5.0–8.5           | ~85%                            | strong            | **[PROPOSED / PLACEHOLDER]** — Earth-analog; not game-validated |
+| > 6 (super-Earth) | > 9.0             | ~98%                            | extreme           | **[PROPOSED / PLACEHOLDER]** — super-Earth magnetosphere model extrapolation |
 
 ### 3.3 Magnetic Reconnection Events
 
@@ -299,16 +304,19 @@ Background galactic cosmic ray (GCR) flux at 1 AU:
 
 **Per-Orbital-Distance Flux Scaling:**
 
-| Quantity | Solar Wind | GCR | Flare Events | CME Events |
-|----------|-----------|-----|-------------|------------|
-| At HZ inner edge | ×3.0        | ×1.0 | ×4.5       | ×6.0      |
-| At HZ (G2)       | 1.0         | 1.0  | 1.0        | 1.0       |
-| At HZ outer edge | ×0.3        | ×1.0 | ×0.2       | ×0.3      |
-| Beyond snow line | ×0.05       | ×1.0 | ×0.01      | ×0.05     |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from standard solar system flux models. They have not been validated against game constants or StarSim operational data.
+
+| Quantity | Solar Wind | GCR | Flare Events | CME Events | Grounding |
+|----------|-----------|-----|-------------|------------|-----------|
+| At HZ inner edge | ×3.0        | ×1.0 | ×4.5       | ×6.0      | **[PROPOSED / PLACEHOLDER]** — flux scaling from standard solar models; not game-validated |
+| At HZ (G2)       | 1.0         | 1.0  | 1.0        | 1.0       | Baseline reference point for G2 stars |
+| At HZ outer edge | ×0.3        | ×1.0 | ×0.2       | ×0.3      | **[PROPOSED / PLACEHOLDER]** — flux scaling from standard solar models; not game-validated |
+| Beyond snow line | ×0.05       | ×1.0 | ×0.01      | ×0.05     | **[PROPOSED / PLACEHOLDER]** — outer system flux estimates; not game-validated |
 
 ### 4.2 Hull Material Dose Attenuation
 
-Different hull materials attenuate radiation according to their areal density and atomic number:
+Different hull materials attenuate radiation according to their areal density and atomic number. All attenuation values below are **[PROPOSED / PLACEHOLDER]** estimates derived from nuclear physics reference data, not validated against game material definitions.
+
 ```
 Dose_after = Dose_before * exp(-ρ * t / λ)
 
@@ -320,19 +328,17 @@ where:
 
 **Attenuation Reference Table:**
 
-| Hull Material    | Areal Density (g/cm²) | γ-ray Attenuation (%) | Proton Attenuation (%) | Neutron Shielding (%) |
-|------------------|----------------------|-----------------------|----------------------|---------------------|
-| Aluminum alloy   | 25                   | ~30%                  | ~60%                 | ~15%                |
-| Steel composite  | 60                   | ~55%                  | ~85%                 | ~40%                |
-| Regolith-packed  | 100                  | ~70%                  | ~92%                 | ~75%                |
-| Water shielded   | 40 (H₂O)             | ~40%                  | ~80%                 | ~85%                |
-| Multi-layer CNT  | 15                   | ~15%                  | ~30%                 | ~10%                |
+| Hull Material    | Areal Density (g/cm²) | γ-ray Attenuation (%) | Proton Attenuation (%) | Neutron Shielding (%) | Grounding |
+|------------------|----------------------|-----------------------|----------------------|---------------------|-----------|
+| Aluminum alloy   | 25                   | ~30%                  | ~60%                 | ~15%                | **[PROPOSED / PLACEHOLDER]** — derived from NIST XCOM attenuation tables; not game-validated |
+| Steel composite  | 60                   | ~55%                  | ~85%                 | ~40%                | **[PROPOSED / PLACEHOLDER]** — derived from NIST XCOM attenuation tables; not game-validated |
+| Regolith-packed  | 100                  | ~70%                  | ~92%                 | ~75%                | **[PROPOSED / PLACEHOLDER]** — regolith equivalent density estimate; not game-validated |
+| Water shielded   | 40 (H₂O)             | ~40%                  | ~80%                 | ~85%                | **[PROPOSED / PLACEHOLDER]** — water shielding data from reactor design references |
+| Multi-layer CNT  | 15                   | ~15%                  | ~30%                 | ~10%                | **[PROPOSED / PLACEHOLDER]** — theoretical estimate for layered carbon structures; not game-validated |
 
 ### 4.3 Crew & Biological Dose Accumulation
 
-For units with biological components (settlement populations, scientific expeditions):
-```
-Equivalent dose (Sv) = Absorbed dose (Gy) * W_R
+For units with biological components (settlement populations, scientific expeditions). All dose thresholds below are **[PROPOSED / PLACEHOLDER]** values derived from NASA/ICRP radiation protection standards, not game constants.
 
 where W_R is the radiation weighting factor:
   γ-rays:  W_R = 1
@@ -340,27 +346,20 @@ where W_R is the radiation weighting factor:
   heavy ions: W_R = 10–20
 ```
 
-**Cumulative mission dose:**
-```
-D_cumulative = Σ_i [Dose_rate_i * Δt_i]
+**Career limit thresholds (design baseline):**
 
-Career limit thresholds (design baseline):
-  Low orbit  : 600 mSv (3-year career)
-  Deep space : 1,000 mSv (career)
-  Acute onset: > 1,000 mSv → radiation sickness
-  > 4,000 mSv: LD50/60 — lethal without medical intervention
-```
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from NASA/ICRP radiation protection standards extrapolated to the game's career timeline. They have not been validated against game constants or any official Galaxy Game design docs.
+
+| Threshold | Value | Grounding |
+|-----------|-------|-----------|
+| Low orbit  : 600 mSv (3-year career) | **[PROPOSED / PLACEHOLDER]** — NASA LEO career limits; not game-validated |
+| Deep space : 1,000 mSv (career) | **[PROPOSED / PLACEHOLDER]** — NASA deep-space career limits; not game-validated |
+| Acute onset: > 1,000 mSv → radiation sickness | **[PROPOSED / PLACEHOLDER]** — acute radiation syndrome threshold from medical literature |
+| > 4,000 mSv: LD50/60 — lethal without medical intervention | **[PROPOSED / PLACEHOLDER]** — LD50/60 estimate from radiobiology studies |
 
 ### 4.4 Electronic Hardening Thresholds
 
-Circuitry and electronic systems degrade under cumulative ionizing dose (TID):
-```
-Dose_TID_limit ≈ [1–10] krad(Si) for commercial-grade electronics
-Dose_TID_limit ≈ [100–1,000] krad(Si) for hardened aerospace components
-
-Displacement damage dose (DDD) for semiconductor lattices:
-  DDD_threshold = 1e14 – 1e16 n_eq/cm² (1 MeV equivalent)
-```
+Circuitry and electronic systems degrade under cumulative ionizing dose (TID). All thresholds below are **[PROPOSED / PLACEHOLDER]** figures from electronics radiation tolerance literature, not game constants.
 
 ---
 
@@ -460,16 +459,16 @@ The Planetary Protection Class (PPC) framework governs biological contamination 
 
 ### 5.7 Protection Class Transition Matrix
 
-Classification transitions are driven by biosphere state changes during tick-level simulation:
+Classification transitions are driven by biosphere state changes during tick-level simulation. All thresholds and triggers below are **[PROPOSED / PLACEHOLDER]** figures derived from NASA Planetary Protection Program guidelines (cosmic safety protocols) extrapolated to the game framework — not validated against game constants or official design documents.
 
-| Current Class | Biosphere Change Trigger | New Class | Auto-Transition? |
-|---------------|-------------------------|-----------|-----------------|
-| I             | Organic synthesis detected (abiotic) | II | Yes |
-| II            | Self-replication confirmed | III | Yes |
-| III           | Multicellular emergence | IV | Yes |
-| IV            | Biosphere collapse (extinction event) | III | Yes, after 5-year observation |
-| III/IV        | Invasive species established | V | No (admin override) |
-| Any           | Terraforming completes biosphere reset | I or II | Admin override only |
+| Current Class | Biosphere Change Trigger | New Class | Auto-Transition? | Grounding |
+|---------------|-------------------------|-----------|-----------------|-----------|
+| I             | Organic synthesis detected (abiotic) | II | Yes | **[PROPOSED / PLACEHOLDER]** — abiotic organic detection threshold from astrobiology literature |
+| II            | Self-replication confirmed | III | Yes | **[PROPOSED / PLACEHOLDER]** — self-replication trigger; conceptually grounded in origin-of-life research |
+| III           | Multicellular emergence | IV | Yes | **[PROPOSED / PLACEHOLDER]** — multicellular threshold from Earth evolutionary timeline extrapolation |
+| IV            | Biosphere collapse (extinction event) | III | Yes, after 5-year observation | **[PROPOSED / PLACEHOLDER]** — 5-year observation period is synthetic; no architecture backing |
+| III/IV        | Invasive species established | V | No (admin override) | **[PROPOSED / PLACEHOLDER]** — invasive threshold from ecological modeling; not game-validated |
+| Any           | Terraforming completes biosphere reset | I or II | Admin override only | **[PROPOSED / PLACEHOLDER]** — terraform-triggered reset mechanism is conceptual |
 
 ---
 
@@ -490,23 +489,25 @@ where:
 
 **Contamination Risk Matrix by Transit Mode:**
 
-| Transit Mode | Typical Duration | P_survival (unshielded) | P_survival (Al hull) | Notes |
-|-------------|-----------------|------------------------|---------------------|-------|
-| Skimmer     | < 1 day         | ~90%                   | ~85%                | Minimal shielding, short transit |
-| Cycler      | 30–200 days     | ~40%                   | ~65%                | Moderate hull protection |
-| Heavy Tug   | 100–500 days    | ~10%                   | ~35%                | Extended transit, cargo shielding |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from orbital mechanics and biological survival models. They have not been validated against game constants or StarSim operational data.
+
+| Transit Mode | Typical Duration | P_survival (unshielded) | P_survival (Al hull) | Notes | Grounding |
+|-------------|-----------------|------------------------|---------------------|-------|-----------|
+| Skimmer     | < 1 day         | ~90%                   | ~85%                | Minimal shielding, short transit | **[PROPOSED / PLACEHOLDER]** — survival model extrapolation from biological desiccation/resistance data |
+| Cycler      | 30–200 days     | ~40%                   | ~65%                | Moderate hull protection | **[PROPOSED / PLACEHOLDER]** — multi-day exposure modeling; not game-validated |
+| Heavy Tug   | 100–500 days    | ~10%                   | ~35%                | Extended transit, cargo shielding | **[PROPOSED / PLACEHOLDER]** — long-duration exposure model; not game-validated |
 
 ### 6.2 Sterilization Protocol Thresholds
 
-All biological material between bodies must meet minimum sterilization standards based on target class:
+All biological material between bodies must meet minimum sterilization standards based on target class. All thresholds below are **[PROPOSED / PLACEHOLDER]** figures derived from NASA Planetary Protection Program guidelines (cosmic safety protocols) extrapolated to the game framework — not validated against game constants.
 
-| Target Class | Minimum Sterilization Standard | Verification Required |
-|-------------|-------------------------------|----------------------|
-| I           | None                          | None                 |
-| II          | ≥ 6 log₁₀ reduction of viable organisms | Spot check (10%)    |
-| III         | ≥ 12 log₁₀ reduction + heat/chemical cert. | Full batch cert.    |
-| IV          | 100% decontamination verified | Triple verification  |
-| V           | Prohibited                    | N/A                  |
+| Target Class | Minimum Sterilization Standard | Verification Required | Grounding |
+|-------------|-------------------------------|----------------------|-----------|
+| I           | None                          | None                 | No sterilization required; sterile world |
+| II          | ≥ 6 log₁₀ reduction of viable organisms | Spot check (10%)    | **[PROPOSED / PLACEHOLDER]** — NASA Category II sterilization guideline extrapolation |
+| III         | ≥ 12 log₁₀ reduction + heat/chemical cert. | Full batch cert.    | **[PROPOSED / PLACEHOLDER]** — NASA Category III sterilization guideline extrapolation |
+| IV          | 100% decontamination verified | Triple verification  | **[PROPOSED / PLACEHOLDER]** — NASA Category IV forward-sterilization guideline extrapolation |
+| V           | Prohibited                    | N/A                  | No biological exchange permitted; total quarantine |
 
 ### 6.3 Contamination Event Detection
 
@@ -557,14 +558,14 @@ end
 
 ### 7.2 Biosphere Complexity Drive
 
-The `biosphere_complexity` parameter in `ProceduralGenerator` directly controls the upper bound of biodiversity_index values assigned:
+The `biosphere_complexity` parameter in `ProceduralGenerator` directly controls the upper bound of biodiversity_index values assigned. All distributions below are **[PROPOSED / PLACEHOLDER]** figures derived from ecological diversity modeling extrapolated to the game framework — not validated against game constants or architecture specs.
 
-| biosphere_complexity | Biodiversity Index Range | Expected PPC Distribution |
-|---------------------|-------------------------|--------------------------|
-| :none               | 0                       | 100% Class I             |
-| :primitive          | 0–0.04                  | 80% Class I, 20% Class II |
-| :auto               | 0–0.3                   | 60% Class I, 25% Class II, 15% Class III |
-| :complex            | 0–1.0                   | 40% Class I, 30% Class II, 20% Class III, 10% Class IV |
+| biosphere_complexity | Biodiversity Index Range | Expected PPC Distribution | Grounding |
+|---------------------|-------------------------|---------------------------|-----------|
+| :none               | 0                       | 100% Class I             | **[PROPOSED / PLACEHOLDER]** — no biodiversity; all sterile by definition |
+| :primitive          | 0–0.04                  | 80% Class I, 20% Class II | **[PROPOSED / PLACEHOLDER]** — low-diversity ecological model extrapolation |
+| :auto               | 0–0.3                   | 60% Class I, 25% Class II, 15% Class III | **[PROPOSED / PLACEHOLDER]** — moderate diversity model; not game-validated |
+| :complex            | 0–1.0                   | 40% Class I, 30% Class II, 20% Class III, 10% Class IV | **[PROPOSED / PLACEHOLDER]** — high-diversity ecological model extrapolation |
 
 ### 7.3 Terraforming Impact on Protection Classification
 
@@ -616,7 +617,7 @@ StarSim Procedural Generator
 
 ## 9. References & Governance
 
-**Design Authority:** This document defines target backend simulation behavior for stellar astrophysics and planetary protection enforcement. If code contradicts these specifications, the code must be updated to conform.
+**Design Authority:** This document defines target backend simulation behavior for stellar astrophysics and planetary protection enforcement. Mismatches between documentation and implementation are logged as architectural gaps for human review.
 
 **Cross-link:** For StarSim procedural system generation mechanics, see **[StarSim Procedural Generation](../design/starsim_and_protection_classes.md)**.
 **Cross-link:** For planetary protection governance hierarchy and SDC oversight protocols, see **[Planetary Protection & Environmental Governance](../infrastructure/planetary_protection_environmental_governance.md)**.

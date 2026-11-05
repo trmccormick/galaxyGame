@@ -7,6 +7,8 @@
 
 > **Ground Truth Authority:** All AWS construction, anchor verification, and cycler routing must conform to the Pre-Player Era dependency chain in [Station Construction Options](./station_construction_options.md). The AI Manager's four-phase reconnection pipeline must respect all anchor mass thresholds defined therein.
 
+**Related:** For the broader Eden disconnect context — the snap event itself, emergent post-isolation states, and system recovery protocols — see **[Eden Disconnect & Emergent History](../player/eden_disconnect_and_emergent_history.md)**.
+
 Backend operational sequence by which the AI Manager restores the interstellar corridor after a Natural Wormhole Stochastic Exit ("the Snap") severs the Sol–Eden link. This document defines the deterministic four-phase pipeline executed autonomously by Sol-side infrastructure — no Eden local stockpiles, no external aid, no pre-existing exit-side infrastructure.
 
 ---

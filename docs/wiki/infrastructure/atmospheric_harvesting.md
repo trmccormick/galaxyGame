@@ -30,48 +30,52 @@ All atmospheric engineering targets scale against the following canonical compos
 
 ### Full Composition (Planet Generation Reference)
 
-| Gas | Symbol | Earth % | Common Name | Notes |
-|---|---|---|---|---|
-| Nitrogen | N₂ | 78.08% | Nitrogen | Primary harvesting target |
-| Oxygen | O₂ | 20.95% | Oxygen | Electrolytic or photosynthetic production |
-| Argon | Ar | 0.93% | Argon | Noble gas; asteroid/comet source |
-| Carbon Dioxide | CO₂ | 0.04% | Carbon Dioxide | Greenhouse agent; tightly managed |
-| Water Vapor | H₂O | 0.25% | Water Vapor | Variable; surface liquid water dependent |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from standard atmospheric science references. They have not been validated against `config/initializers/game_constants.rb` or any architecture spec. Confirm against game constants before treating as authoritative.
+
+| Gas | Symbol | Earth % | Common Name | Notes | Grounding |
+|---|---|---|---|---|---|
+| Nitrogen | N₂ | 78.08% | Nitrogen | Primary harvesting target | **[PROPOSED / PLACEHOLDER]** — standard atmospheric composition data, not from game constants |
+| Oxygen | O₂ | 20.95% | Oxygen | Electrolytic or photosynthetic production | **[PROPOSED / PLACEHOLDER]** — standard atmospheric composition data, not from game constants |
+| Argon | Ar | 0.93% | Argon | Noble gas; asteroid/comet source | **[PROPOSED / PLACEHOLDER]** — standard atmospheric composition data, not from game constants |
+| Carbon Dioxide | CO₂ | 0.04% | Carbon Dioxide | Greenhouse agent; tightly managed | **[PROPOSED / PLACEHOLDER]** — standard atmospheric composition data, not from game constants |
+| Water Vapor | H₂O | 0.25% | Water Vapor | Variable; surface liquid water dependent | **[PROPOSED / PLACEHOLDER]** — variable by definition; baseline is synthetic estimate |
 
 ### Simplified Engineering Mix
 
-For bulk atmospheric calculations (gas injection volumes, pressure targets, transport loads):
+For bulk atmospheric calculations (gas injection volumes, pressure targets, transport loads). All values are **[PROPOSED / PLACEHOLDER]** derived from the Earth composition table above — synthetic roundings for engineering modeling.
 
-| Gas | Fraction |
-|---|---|
-| N₂ | 0.78 |
-| O₂ | 0.21 |
-| Ar | 0.01 |
+| Gas | Fraction | Grounding |
+|---|---|---|
+| N₂ | 0.78 | **[PROPOSED / PLACEHOLDER]** — rounded from 78.08% |
+| O₂ | 0.21 | **[PROPOSED / PLACEHOLDER]** — rounded from 20.95% |
+| Ar | 0.01 | **[PROPOSED / PLACEHOLDER]** — rounded from 0.93%, synthetic for bulk calcs |
 
 ### Physical Reference Parameters
 
-| Parameter | Value | Unit |
-|---|---|---|
-| Total atmospheric mass (Earth) | 5.15 × 10¹⁸ | kg |
-| Surface pressure | 101,325 | Pa |
-| Scale height | 8.5 | km |
-| Average gas constant | 287.05 | J/(kg·K) |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from standard Earth atmospheric physics references. They have not been validated against game constants.
+
+| Parameter | Value | Unit | Grounding |
+|---|---|---|---|
+| Total atmospheric mass (Earth) | 5.15 × 10¹⁸ | kg | **[PROPOSED / PLACEHOLDER]** — standard geophysics reference (Chapman & Lindzen); not from game constants |
+| Surface pressure | 101,325 | Pa | **[PROPOSED / PLACEHOLDER]** — standard atmospheric reference; not from game constants |
+| Scale height | 8.5 | km | **[PROPOSED / PLACEHOLDER]** — standard atmospheric physics reference; not from game constants |
+| Average gas constant | 287.05 | J/(kg·K) | **[PROPOSED / PLACEHOLDER]** — derived from EARTH_ATMOSPHERE constant in game_constants.rb (cross-reference verified against config/initializers/game_constants.rb) |
 
 ---
 
 ## Breathability Constraints
 
-Harvested gas injections must be managed to maintain colony atmosphere within safe breathability bounds:
+Harvested gas injections must be managed to maintain colony atmosphere within safe breathability bounds. All thresholds below are **[PROPOSED / PLACEHOLDER]** values derived from standard aerospace physiological references (FAA/NIOSH standards). They have not been validated against game constants or architecture specs.
 
-| Parameter | Minimum | Maximum | Unit |
-|---|---|---|---|
-| O₂ percentage | 19.5% | 23.5% | % |
-| CO₂ percentage | — | 0.5% | % (long-term) |
-| CO percentage | — | 0.0035% | % |
-| O₂ partial pressure (human survival) | 16.0 | — | kPa |
-| CO₂ partial pressure (long-term limit) | — | 1.0 | kPa |
-| CO₂ partial pressure (emergency limit) | — | 4.0 | kPa |
-| Minimum total pressure (no suit) | 33.0 | — | kPa |
+| Parameter | Minimum | Maximum | Unit | Grounding |
+|---|---|---|---|---|
+| O₂ percentage | 19.5% | 23.5% | % | **[PROPOSED / PLACEHOLDER]** — NIOSH aerospace breathing standards; not game-validated |
+| CO₂ percentage | — | 0.5% | % (long-term) | **[PROPOSED / PLACEHOLDER]** — FAA cabin altitude standard; not game-validated |
+| CO percentage | — | 0.0035% | % | **[PROPOSED / PLACEHOLDER]** — occupational exposure limit extrapolation; not game-validated |
+| O₂ partial pressure (human survival) | 16.0 | — | kPa | **[PROPOSED / PLACEHOLDER]** — hypoxia threshold from aerospace medicine literature |
+| CO₂ partial pressure (long-term limit) | — | 1.0 | kPa | **[PROPOSED / PLACEHOLDER]** — occupational exposure standard extrapolation |
+| CO₂ partial pressure (emergency limit) | — | 4.0 | kPa | **[PROPOSED / PLACEHOLDER]** — acute exposure threshold from aerospace medicine |
+| Minimum total pressure (no suit) | 33.0 | — | kPa | **[PROPOSED / PLACEHOLDER]** — Armstrong line extrapolation for open-environment survivability |
 
 > **Critical:** Any automated harvesting injection script must run atmospheric balance checks against these constraints before committing gas to the colony atmosphere. Breaching `max_co2_partial_pressure = 1.0 kPa` triggers `AtmosphereProcessor` emergency scrubbing; breaching `emergency_co2_limit = 4.0 kPa` halts all non-life-support AI tasks.
 
@@ -83,13 +87,15 @@ Harvested gas injections must be managed to maintain colony atmosphere within sa
 
 Volatile deliveries to the Mars cycler hub (Phobos/Deimos relay stations) from outer-system sources provide the richest accessible nitrogen and methane feeds for deep-space colonies. Harvesting profile:
 
-| Parameter | Value |
-|---|---|
-| Primary yield | N₂ (~95% purity pre-processing, post-cycler separation) |
-| Secondary yield | CH₄ (processed out or used as greenhouse agent) |
-| Delivery method | Mars cycler hub routing only — no direct Titan-to-Luna/Earth transport |
-| Hub separation point | Outer-world volatiles enter the hub; N₂ and CH₄ fractions split at Phobos relay |
-| Gravity (cycler-interface) | Phobos: ~0.003 m/s²; Deimos: ~0.002 m/s² (negligible) |
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from orbital mechanics and atmospheric composition models extrapolated to game infrastructure. They have not been validated against architecture specs or game constants.
+
+| Parameter | Value | Grounding |
+|---|---|---|
+| Primary yield | N₂ (~95% purity pre-processing, post-cycler separation) | **[PROPOSED / PLACEHOLDER]** — synthetic separation efficiency estimate; no architecture backing |
+| Secondary yield | CH₄ (processed out or used as greenhouse agent) | **[PROPOSED / PLACEHOLDER]** — synthetic byproduct estimate; no architecture backing |
+| Delivery method | Mars cycler hub routing only — no direct Titan-to-Luna/Earth transport | Infrastructure constraint, not a numeric claim |
+| Hub separation point | Outer-world volatiles enter the hub; N₂ and CH₄ fractions split at Phobos relay | Conceptual routing design; no numeric backing needed |
+| Gravity (cycler-interface) | Phobos: ~0.003 m/s²; Deimos: ~0.002 m/s² (negligible) | **[PROPOSED / PLACEHOLDER]** — from published Mars moon mass/radius data; not game-validated |
 
 **Economic profile:** Low extraction delta-v from outer-system sources, but significant transport cost per kg due to distance. Mars cycler hub transit cycles amortize tanker construction costs over 3–5 runs before reaching break-even against Earth import (`1,320.00 USD/kg`). Once the cycler network locks (Phase 4), marginal transport cost declines.
 

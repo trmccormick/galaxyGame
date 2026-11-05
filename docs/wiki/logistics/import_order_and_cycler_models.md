@@ -9,6 +9,8 @@
 
 > **Cross-link:** For how terraforming demand is financed through GCC budgets, Seed vs. Brute-Force contracts, and player earning multipliers, see **[Terraforming Economic Integration](./terraforming_economic_integration.md)**.
 
+**Related:** For the AI Manager economic behavior that shapes transport demand — debt-driven austerity modes, Virtual Ledger clearing, NPC buy/sell bands, stockpile buffer targets, and market stabilization — see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
+
 ---
 
 ## Scope

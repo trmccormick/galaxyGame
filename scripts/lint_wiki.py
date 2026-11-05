@@ -1,339 +1,367 @@
 #!/usr/bin/env python3
-"""scripts/lint_wiki.py
+"""Wiki governance linter for docs/wiki/ (zero dependencies, Python 3.8+).
 
-Lightweight, zero-dependency Python 3 script that enforces wiki governance rules.
-Run from repo root:  python3 scripts/lint_wiki.py
-Exit codes: 0 = clean, 1 = errors detected.
+Enforces the "Wiki Standards & Conventions" in docs/wiki/README.md:
 
-Checks:
-  1. Filename hygiene (lower_snake_case for files and directories)
-  2. Relative link integrity (resolve against git ls-files or filesystem)
-  3. Code Alignment Status banner presence on primary spec pages
+  1. naming   - lower_snake_case file and folder names (no uppercase, spaces
+                or hyphens). Every file named README.md is exempt.
+  2. links    - every relative link must resolve to a file that is tracked by
+                git (exact, case-sensitive match against `git ls-files`).
+                A link that resolves outside docs/wiki/ is an error (rule 5).
+                A link to a folder passes only if that folder has a tracked
+                README.md. The filesystem is never consulted, so the result is
+                the same on macOS (case-insensitive) and Linux.
+  3. anchors  - a #fragment must be lowercase (rule 4) and must match a heading
+                slug in the target page.
+  4. orphans  - every page except README.md needs an inbound link from another
+                wiki page.
+  5. banners  - pages in the primary spec folders need the three-line
+                "Code Alignment Status" banner with an allowed status value.
+
+Usage:
+  python3 scripts/lint_wiki.py             # lint the repository containing this script
+  python3 scripts/lint_wiki.py --self-test # check the linter's own helpers
+
+Exit status: 0 = clean, 1 = errors found (or git unavailable).
+The linter only reports. It never edits a page.
 """
-
 import os
+import posixpath
 import re
 import subprocess
-from pathlib import Path
+import sys
+from collections import defaultdict
+from urllib.parse import unquote
 
-
-# ── Configuration ────────────────────────────────────────────────────
-ROOT = Path(__file__).resolve().parent.parent
-WIKI_DIR = ROOT / "docs" / "wiki"
-
-SKIP_FILES = {"README.md", "migration-log.md", "status-and-gaps.md"}
+WIKI = "docs/wiki"
+ALLOWED_STATUS = ("DESIGN INTENT", "PARTIALLY IMPLEMENTED", "VERIFIED AGAINST CODE")
 BANNER_DOMAIN_DIRS = {
-    "logistics",
-    "engineering",
-    "markets",
-    "infrastructure",
-    "technical",
-    "astronomy",
-    "design",
+    "astronomy", "design", "engineering", "infrastructure",
+    "logistics", "markets", "technical",
 }
+BANNER_WINDOW = 40          # banner must start within the first N lines
+SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.\-]*:")
+LINK_RE = re.compile(
+    r"!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+(?:\"[^\"]*\"|'[^']*'))?\s*\)"
+)
+HEADING_RE = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
+FENCE_RE = re.compile(r"^ {0,3}(```|~~~)")
+STATUS_RE = re.compile(r"^>\s*\*\*Code Alignment Status:\*\*\s*`([^`]*)`")
+AUDITED_RE = re.compile(r"^>\s*\*Last Audited:\*\s*(\d{4}-\d{2}-\d{2})\b")
+SUMMARY_RE = re.compile(r"^>\s*\*Audit Summary:\*\s*(\S.*)$")
 
 
-# ── Helpers ───────────────────────────────────────────────────────────
-class Issue:
-    """A linting issue attached to a file."""
-    def __init__(self, filepath: str, check_type: str, message: str):
-        self.filepath = Path(filepath) if isinstance(filepath, str) else filepath
-        self.check_type = check_type
-        self.message = message
-
-    @property
-    def rel_path(self) -> str:
-        return self.filepath.relative_to(WIKI_DIR).as_posix()
-
-
-class Collector:
-    """Accumulates errors and warnings."""
+class Report:
     def __init__(self):
-        self.errors: list[Issue] = []
-        self.warnings: list[Issue] = []
+        self.items = []  # (file, check, line, message)
 
-    def add_error(self, file_path: str, check_type: str, message: str) -> None:
-        self.errors.append(Issue(file_path, check_type, message))
-
-    def add_warning(self, file_path: str, check_type: str, message: str) -> None:
-        self.warnings.append(Issue(file_path, check_type, message))
+    def error(self, file, check, line, message):
+        self.items.append((file, check, line, message))
 
 
-def collect_markdown_files() -> list[Path]:
-    """Return all .md files under docs/wiki/ sorted by path."""
-    # Use git ls-files to get wiki md files, or fallback to glob
+# ── Helpers ──────────────────────────────────────────────────────────
+def repo_root():
+    here = os.path.dirname(os.path.abspath(__file__))
     try:
-        raw = subprocess.check_output(
-            ["git", "-C", str(ROOT), "ls-files", "--", "docs/wiki/**/*.md"],
-            stderr=subprocess.DEVNULL
-        ).decode().splitlines()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        pattern = os.path.join(str(WIKI_DIR), "**", "*.md")
-        raw = glob.glob(pattern)
-
-    files = []
-    for p in raw:
-        # Strip quotes that git may add for special characters
-        p_stripped = p.strip('"').strip("'").strip()
-        if p_stripped and os.path.isfile(os.path.join(str(ROOT), p_stripped)):
-            files.append(Path(os.path.join(str(ROOT), p_stripped)).resolve())
-    return sorted(files)
+        out = subprocess.check_output(
+            ["git", "-C", here, "rev-parse", "--show-toplevel"],
+            stderr=subprocess.DEVNULL)
+    except (OSError, subprocess.CalledProcessError):
+        sys.stderr.write("lint_wiki: not inside a git repository (git rev-parse failed)\n")
+        sys.exit(1)
+    return out.decode("utf-8").strip()
 
 
-def is_git_tracked(filepath: Path) -> bool:
-    """Check if a path is tracked by git."""
+def tracked_paths(root):
+    """Exact set of tracked paths, repo-relative, forward slashes."""
     try:
-        subprocess.run(
-            ["git", "-C", str(ROOT), "ls-files", "--quiet", "--", str(filepath)],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True
-        )
-        return True
-    except subprocess.CalledProcessError:
-        return False
+        raw = subprocess.check_output(["git", "-C", root, "ls-files", "-z"],
+                                      stderr=subprocess.DEVNULL)
+    except (OSError, subprocess.CalledProcessError):
+        sys.stderr.write("lint_wiki: `git ls-files` failed\n")
+        sys.exit(1)
+    return {p.decode("utf-8") for p in raw.split(b"\x00") if p}
 
 
-def is_local_file(path: Path) -> bool:
-    """Check if a path exists on the local filesystem."""
-    return path.exists()
+def read_text(root, rel):
+    try:
+        with open(os.path.join(root, rel), encoding="utf-8", errors="replace") as f:
+            return f.read()
+    except OSError:
+        return None
 
 
-# ── Check 1: Filename hygiene ────────────────────────────────────────
-def check_filename_hygiene(collector: Collector, all_files: list[Path]) -> None:
-    print("=== Check 1: Filename hygiene (lower_snake_case) ===")
-
-    for file_path in all_files:
-        bname = file_path.name
-        if bname in SKIP_FILES:
+def prose_lines(text):
+    """Yield (line_number, line) outside fenced code blocks, inline code removed."""
+    in_fence = False
+    for n, line in enumerate(text.splitlines(), 1):
+        if FENCE_RE.match(line):
+            in_fence = not in_fence
             continue
+        if in_fence:
+            continue
+        yield n, re.sub(r"`[^`]*`", "", line)
 
-        # Directory path components — check each for uppercase
-        rel_parts = file_path.relative_to(WIKI_DIR).parts
-        for part in rel_parts:
-            if part == ".":
+
+def slug(heading_text):
+    """Approximation of GitHub heading anchors: strip formatting, lowercase,
+    drop punctuation (including em/en dashes), turn each space into a hyphen
+    without collapsing hyphens."""
+    t = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", heading_text)
+    t = re.sub(r"<[^>]+>", "", t)
+    t = re.sub(r"[`*~]", "", t)
+    t = t.strip().lower()
+    t = re.sub(r"[^\w\- ]", "", t)
+    return t.replace(" ", "-")
+
+
+def heading_slugs(text):
+    seen = defaultdict(int)
+    slugs = set()
+    for _, line in prose_lines_raw(text):
+        m = HEADING_RE.match(line)
+        if not m:
+            continue
+        base = slug(m.group(2))
+        n = seen[base]
+        slugs.add(base if n == 0 else "%s-%d" % (base, n))
+        seen[base] += 1
+    return slugs
+
+
+def prose_lines_raw(text):
+    """Like prose_lines but keeps inline code (headings may contain backticks)."""
+    in_fence = False
+    for n, line in enumerate(text.splitlines(), 1):
+        if FENCE_RE.match(line):
+            in_fence = not in_fence
+            continue
+        if not in_fence:
+            yield n, line
+
+
+# ── Check 1: naming ──────────────────────────────────────────────────
+def check_naming(tracked, report):
+    flagged = set()
+    for p in sorted(tracked):
+        if not p.startswith(WIKI + "/"):
+            continue
+        parts = p[len(WIKI) + 1:].split("/")
+        for i, part in enumerate(parts):
+            if part == "README.md":
                 continue
+            problems = []
             if re.search(r"[A-Z]", part):
-                collector.add_error(str(file_path), "hygiene",
-                                    f"dir: {part} contains uppercase characters")
-
-        # Filename patterns
-        violations = []
-        if re.search(r"[A-Z]", bname):
-            violations.append(f"{bname}: contains uppercase letters")
-        if " " in bname:
-            violations.append(f"{bname}: contains spaces")
-        if bname.count("-") > 1:
-            collector.add_warning(str(file_path), "hygiene",
-                                  f"{bname}: multiple hyphens — consider underscores")
-
-        for v in violations:
-            collector.add_error(str(file_path), "hygiene", v)
-
-    hygiene_errors = [i for i in collector.errors if i.check_type == "hygiene"]
-    hygiene_warnings = [i for i in collector.warnings if i.check_type == "hygiene"]
-
-    if not hygiene_errors and not hygiene_warnings:
-        print("  ✓ All files and directories use lower_snake_case.")
-    else:
-        if hygiene_errors:
-            print("\n  Errors:")
-            for i in hygiene_errors:
-                print(f"    ✗ {i.rel_path}: {i.message}")
-        if hygiene_warnings:
-            print("\n  Warnings:")
-            for i in hygiene_warnings:
-                print(f"    ~ {i.rel_path}: {i.message}")
-    print()
-
-
-# ── Check 2: Relative link integrity ──────────────────────────────────
-def check_relative_links(collector: Collector, all_files: list[Path]) -> None:
-    print("=== Check 2: Relative link integrity ===")
-
-    # Markdown relative link pattern: [text](path)
-    md_link_re = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
-
-    for file_path in all_files:
-        bname = file_path.name
-        if bname in SKIP_FILES:
-            continue
-
-        content = file_path.read_text(encoding="utf-8", errors="replace")
-
-        for label, target in md_link_re.findall(content):
-            # Skip external URLs, mailto
-            if target.startswith(("http://", "https://", "mailto:")):
-                continue
-
-            # Split path from anchor
-            parts = target.split("#", 1)
-            raw_target = parts[0]
-            
-            # If there's no path component (pure anchor like "#section"), skip
-            if not raw_target or raw_target.startswith("#"):
-                continue
-            
-            # Resolve relative to the source file's directory, stripping anchors
-            resolved = (file_path.parent / raw_target).resolve()
-
-            # Only check paths within wiki root or git-tracked docs
-            try:
-                str_resolved = str(resolved)
-                if not (str_resolved.startswith(str(WIKI_DIR)) or
-                        "docs/architecture" in str_resolved or
-                        "docs/developer" in str_resolved):
+                problems.append("uppercase")
+            if " " in part:
+                problems.append("space")
+            if "-" in part:
+                problems.append("hyphen")
+            if problems:
+                where = "/".join([WIKI] + parts[:i + 1])
+                if where in flagged:
                     continue
-            except Exception:
-                collector.add_error(str(file_path), "link",
-                                    f"{target!r}: could not resolve path")
-                continue
-
-            # Verify target exists (git-tracked or local file)
-            if is_git_tracked(resolved) or is_local_file(resolved):
-                pass  # OK
-            else:
-                collector.add_error(str(file_path), "link",
-                                    f"{target!r} → target not found (git or disk)")
-
-    link_errors = [i for i in collector.errors if i.check_type == "link"]
-
-    if not link_errors:
-        print("  ✓ All relative links resolve successfully.")
-    else:
-        for i in link_errors:
-            print(f"  ✗ {i.rel_path}: {i.message}")
-    print()
+                flagged.add(where)
+                kind = "folder" if i < len(parts) - 1 else "file"
+                report.error(where, "naming", 0,
+                             "%s name has %s (README rule 1: lower_snake_case)"
+                             % (kind, " and ".join(problems)))
 
 
-# ── Check 3: Code Alignment Status banners ───────────────────────────
-def check_code_alignment_banners(collector: Collector, all_files: list[Path]) -> None:
-    """Check that primary spec pages have the standard 3-line banner."""
-    print("=== Check 3: Code Alignment Status banners (primary specs) ===")
+# ── Checks 2-4: links, anchors, orphans ──────────────────────────────
+def check_links(root, tracked, report):
+    md_files = sorted(p for p in tracked if p.startswith(WIKI + "/") and p.endswith(".md"))
+    dirs = set()
+    for p in tracked:
+        d = posixpath.dirname(p)
+        while d:
+            dirs.add(d)
+            d = posixpath.dirname(d)
 
-    checked_count = 0
-    banner_re = re.compile(r"^> \*\*Code Alignment Status:\*\*")
-    audited_re = re.compile(r"^> \*Last Audited:\*")
-    summary_re = re.compile(r"^> \*Audit Summary:\*")
-
-    for file_path in all_files:
-        rel = file_path.relative_to(WIKI_DIR)
-        # Only enforce banners on core domain directories
-        if rel.parts[0] not in BANNER_DOMAIN_DIRS:
+    texts = {}
+    slug_cache = {}
+    for f in md_files:
+        t = read_text(root, f)
+        if t is None:
+            report.error(f, "links", 0, "tracked file could not be read from disk")
             continue
-        bname = file_path.name
-        if bname in SKIP_FILES:
+        texts[f] = t
+
+    def slugs_for(rel):
+        if rel not in slug_cache:
+            slug_cache[rel] = heading_slugs(texts[rel]) if rel in texts else set()
+        return slug_cache[rel]
+
+    inbound = defaultdict(int)
+    for src, text in texts.items():
+        for lineno, line in prose_lines(text):
+            for m in LINK_RE.finditer(line):
+                target = m.group(1)
+                if SCHEME_RE.match(target):
+                    continue  # http:, https:, mailto: ...
+                path_part, _, frag = target.partition("#")
+                path_part = unquote(path_part)
+                if path_part:
+                    resolved = posixpath.normpath(
+                        posixpath.join(posixpath.dirname(src), path_part))
+                else:
+                    resolved = src  # fragment-only link: same page
+                shown = target
+
+                if resolved == ".." or resolved.startswith("../") or \
+                        not (resolved == WIKI or resolved.startswith(WIKI + "/")):
+                    report.error(src, "links", lineno,
+                                 "outward link '%s' -> %s (README rule 5: wiki links only to wiki pages)"
+                                 % (shown, resolved))
+                    continue
+
+                # folder link
+                if resolved in dirs and resolved not in tracked:
+                    if (resolved + "/README.md") in tracked:
+                        target_file = resolved + "/README.md"
+                    else:
+                        report.error(src, "links", lineno,
+                                     "folder link '%s' has no README.md in that folder" % shown)
+                        continue
+                elif resolved in tracked:
+                    target_file = resolved
+                else:
+                    report.error(src, "links", lineno,
+                                 "target not found: '%s' -> %s (case-sensitive match against git ls-files)"
+                                 % (shown, resolved))
+                    continue
+
+                if target_file != src and target_file.endswith(".md"):
+                    inbound[target_file] += 1
+
+                if frag and target_file.endswith(".md") and target_file in texts:
+                    if frag != frag.lower():
+                        report.error(src, "anchors", lineno,
+                                     "anchor '#%s' has uppercase letters (README rule 4)" % frag)
+                    elif frag not in slugs_for(target_file):
+                        report.error(src, "anchors", lineno,
+                                     "anchor '#%s' not found in %s" % (frag, target_file))
+
+    for f in md_files:
+        if os.path.basename(f) == "README.md":
             continue
+        if inbound[f] == 0:
+            report.error(f, "orphans", 0,
+                         "no inbound link from any other wiki page")
 
-        checked_count += 1
-        content = file_path.read_text(encoding="utf-8", errors="replace")
-        lines = content.splitlines()
 
-        # Search within first 30 lines for the banner
-        banner_found = False
-        max_line = min(len(lines) - 1, 29)
-
-        for i in range(max_line + 1):
-            line = lines[i]
-            if banner_re.match(line):
-                banner_found = True
-                # Check that Last Audited and Audit Summary follow within next few lines
-                has_audited = False
-                has_summary = False
-                for j in [i + 1, i + 2]:
-                    if j >= len(lines):
-                        break
-                    txt = lines[j].strip()
-                    if audited_re.match(txt):
-                        has_audited = True
-                    if summary_re.match(txt):
-                        has_summary = True
-
-                if not (has_audited and has_summary):
-                    collector.add_error(str(file_path), "banner",
-                                        "incomplete banner — missing Last Audited or Audit Summary")
+# ── Check 5: banners ─────────────────────────────────────────────────
+def check_banners(root, tracked, report):
+    for f in sorted(tracked):
+        if not (f.startswith(WIKI + "/") and f.endswith(".md")):
+            continue
+        parts = f[len(WIKI) + 1:].split("/")
+        if len(parts) < 2 or parts[0] not in BANNER_DOMAIN_DIRS:
+            continue
+        if parts[-1] == "README.md":
+            continue
+        text = read_text(root, f)
+        if text is None:
+            continue
+        lines = text.splitlines()[:BANNER_WINDOW + 3]
+        idx = None
+        value = None
+        for i, line in enumerate(lines[:BANNER_WINDOW]):
+            m = STATUS_RE.match(line)
+            if m:
+                idx, value = i, m.group(1).strip()
                 break
+        if idx is None:
+            report.error(f, "banners", 0,
+                         "missing Code Alignment Status banner in the first %d lines" % BANNER_WINDOW)
+            continue
+        if value not in ALLOWED_STATUS:
+            report.error(f, "banners", idx + 1,
+                         "status '%s' is not one of: %s" % (value, ", ".join(ALLOWED_STATUS)))
+        follow = lines[idx + 1: idx + 4]
+        if not any(AUDITED_RE.match(l) for l in follow):
+            report.error(f, "banners", idx + 1, "banner missing '> *Last Audited:* YYYY-MM-DD'")
+        if not any(SUMMARY_RE.match(l) for l in follow):
+            report.error(f, "banners", idx + 1, "banner missing '> *Audit Summary:*' text")
 
-        if not banner_found:
-            collector.add_error(str(file_path), "banner",
-                                "missing Code Alignment Status banner")
 
-    banner_errors = [i for i in collector.errors if i.check_type == "banner"]
-
-    if not banner_errors:
-        print(f"  ✓ All {checked_count} primary spec pages have valid banners.")
+# ── Output ───────────────────────────────────────────────────────────
+def print_report(report, tracked):
+    items = report.items
+    if not items:
+        print("lint_wiki: OK - no errors.")
     else:
-        for i in banner_errors:
-            print(f"  ✗ {i.rel_path}: {i.message}")
-    print()
+        by_file = defaultdict(list)
+        for it in items:
+            by_file[it[0]].append(it)
+        for f in sorted(by_file):
+            print(f)
+            for _, check, line, msg in sorted(by_file[f], key=lambda x: (x[1], x[2])):
+                loc = (":%d" % line) if line else ""
+                print("  [%s]%s %s" % (check.upper(), loc, msg))
+        print()
+    counts = defaultdict(int)
+    for it in items:
+        counts[it[1]] += 1
+    order = ["naming", "links", "anchors", "orphans", "banners"]
+    print("Summary: %d error(s)  (%s)" % (
+        len(items), ", ".join("%s %d" % (c, counts[c]) for c in order)))
+    covered = BANNER_DOMAIN_DIRS
+    wiki_dirs = {p[len(WIKI) + 1:].split("/")[0] for p in tracked
+                 if p.startswith(WIKI + "/") and "/" in p[len(WIKI) + 1:]}
+    uncovered = sorted(wiki_dirs - covered)
+    if uncovered:
+        print("Note: banner check does not cover folders: %s" % ", ".join(uncovered))
 
 
-# ── Report formatting ────────────────────────────────────────────────
-def print_report(collector: Collector, checked_count: int) -> None:
-    total_errors = len(collector.errors)
-    total_warnings = len(collector.warnings)
+# ── Self-test ────────────────────────────────────────────────────────
+def self_test():
+    ok = True
 
-    print("=" * 70)
-    print("Wiki Governance Lint Report")
-    print(f"Repository root: {ROOT}")
-    print(f"Checked files (with banners): {checked_count} (+ others checked)")
-    print("=" * 70)
+    def expect(label, got, want):
+        nonlocal ok
+        good = got == want
+        ok = ok and good
+        print("  %s %s" % ("PASS" if good else "FAIL", label))
+        if not good:
+            print("      got:  %r\n      want: %r" % (got, want))
 
-    if not collector.errors and not collector.warnings:
-        print("\n✓ All checks passed — no issues detected.")
-        return
-
-    if collector.errors:
-        print(f"\n--- ERRORS ({total_errors}) ---")
-        by_file: dict[str, list] = {}
-        for i in collector.errors:
-            key = i.rel_path
-            by_file.setdefault(key, []).append(i)
-        for fpath, issues in sorted(by_file.items()):
-            print(f"\n  {fpath}:")
-            for i in issues:
-                print(f"    [{i.check_type.upper()}] {i.message}")
-
-    if collector.warnings:
-        print(f"\n--- WARNINGS ({total_warnings}) ---")
-        by_file: dict[str, list] = {}
-        for i in collector.warnings:
-            key = i.rel_path
-            by_file.setdefault(key, []).append(i)
-        for fpath, issues in sorted(by_file.items()):
-            print(f"\n  {fpath}:")
-            for i in issues:
-                print(f"    [{i.check_type.upper()}] {i.message}")
-
-    total = total_errors + total_warnings
-    print(f"\nTotal: {total_errors} error(s), {total_warnings} warning(s)")
+    print("slug():")
+    expect("em dash leaves a double hyphen",
+           slug("ESTABLISHED INTENT — Player Independence: Staying Put Is Valid Play"),
+           "established-intent--player-independence-staying-put-is-valid-play")
+    expect("en dash without spaces is dropped", slug("Venus–Mars"), "venusmars")
+    expect("backticks and parentheses", slug("`Foo` bar (real-world)"), "foo-bar-real-world")
+    expect("duplicate headings",
+           sorted(heading_slugs("# Setup\n\n## Setup\n\n```\n# not a heading\n```\n")),
+           ["setup", "setup-1"])
+    print("case sensitivity (against this repository's git index):")
+    root = repo_root()
+    tracked = tracked_paths(root)
+    expect("docs/wiki/README.md is tracked", (WIKI + "/README.md") in tracked, True)
+    expect("docs/wiki/readme.md (wrong case) is NOT found", (WIKI + "/readme.md") in tracked, False)
+    print("naming:")
+    r = Report()
+    check_naming({"docs/wiki/a-b.md", "docs/wiki/Ok.md", "docs/wiki/x/README.md",
+                  "docs/wiki/fine_name.md"}, r)
+    expect("hyphen and uppercase flagged, README and snake_case pass",
+           sorted(i[0] for i in r.items), ["docs/wiki/Ok.md", "docs/wiki/a-b.md"])
+    print("self-test: %s" % ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
 
 
-# ── Entry point ───────────────────────────────────────────────────────
-def main() -> None:
-    all_md = collect_markdown_files()
-
-    if not all_md:
-        print("No .md files found under docs/wiki/. Nothing to lint.")
-        return
-
-    collector = Collector()
-
-    # Run all three checks
-    check_filename_hygiene(collector, all_md)
-    check_relative_links(collector, all_md)
-    check_code_alignment_banners(collector, all_md)
-
-    # Count checked files (for banner report)
-    checked_count = 0
-    for file_path in all_md:
-        bname = file_path.name
-        if bname not in SKIP_FILES:
-            checked_count += 1
-
-    print_report(collector, checked_count)
-
-    # Exit code
-    exit(1 if collector.errors else 0)
+def main(argv):
+    if "--self-test" in argv:
+        sys.exit(self_test())
+    root = repo_root()
+    tracked = tracked_paths(root)
+    report = Report()
+    check_naming(tracked, report)
+    check_links(root, tracked, report)
+    check_banners(root, tracked, report)
+    print_report(report, tracked)
+    sys.exit(1 if report.items else 0)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

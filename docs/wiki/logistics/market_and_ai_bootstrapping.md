@@ -8,7 +8,11 @@
 > **STATUS: CANONICAL MARKET BOOTSTRAPPING INTENT**
 > This page, alongside `resource_and_market_logistics.md`, forms the canonical wiki pair for AI seed liquidity, market lifecycle phases, and initial economy setup. Verify runtime flags against implementation before code changes.
 
-> **Scope:** Verified specification for Galaxy Game's market layer and autonomous pre-player construction system. All class names, method signatures, field names, and associations are sourced directly from `marketplace.rb`, `condition.rb`, `order.rb`, and `autonomous_construction_manager.rb`. Fields or models not confirmed in source are explicitly marked `[PENDING]`.
+> **SCOPE:** Verified specification for Galaxy Game's market layer and autonomous pre-player construction system. All class names, method signatures, field names, and associations are sourced directly from `marketplace.rb`, `condition.rb`, `order.rb`, and `autonomous_construction_manager.rb`. Fields or models not confirmed in source are explicitly marked `[PENDING]`.
+
+**Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**. This page covers market bootstrapping and player-facing pricing only.
+
+**Related:** For how the AI Manager actually lives with these numbers (debt-driven austerity, Virtual Ledger clearing, NPC buy/sell bands, stockpile buffer targets), see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
 
 ---
 

@@ -23,6 +23,14 @@ A **Settlement** is the core administrative, economic, and population unit in Ga
 
 | Principle | Intent |
 |-----------|--------|
+| **Separation of Concerns** | Settlements are not structures. They are administrative entities that can contain or be hosted within one or more structures. |
+| **Structures as Assets** | Structures (natural or artificial) are physical assets that provide shelter, storage, or operational capacity to a settlement. |
+| **Blueprint-Driven Expansion** | Artificial structures are constructed from blueprints and can be added to a settlement as it grows. |
+| **Natural Features** | Settlements can be hosted in natural features (lava tubes, craters) or artificial structures (worldhouses, space stations, depots). |
+
+> **Related:** For how settlements evolve across game phases — first foothold requirements, expansion gates, and tier progression — see **[Settlement Progression & Footholds](../player/settlement_progression_and_footholds.md)**.
+>
+> **Related:** For surface / near-surface habitat options that complement ground-plan settlement infrastructure (aerogel domes, regolith berms, suburban-scale habitats) — see **[Surface Habitat Options](./surface_habitat_options.md)**.
 | Separation of concerns | Settlements are administrative entities, not structures. They contain, or are hosted within, one or more structures. |
 | Structures as assets | Structures (natural or artificial) are physical assets that provide shelter, storage, or operational capacity to a settlement. |
 | Blueprint-driven expansion | Artificial structures are built from blueprints and added to a settlement as it grows. |

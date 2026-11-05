@@ -19,7 +19,7 @@
 
 This document defines the In-Situ Resource Utilization (ISRU) production chain that converts raw planetary resources into manufactured components. Two parallel fabrication trees operate: **3D-printed fabricators** for structural components (panels, I-beams) and **CNT fabricators** for advanced composites and infrastructure materials. Both follow a Mk1 → Mk2 → Mk3 upgrade path with strict component dependencies and blueprint canonicalization.
 
-**Authority:** This document promulgates requirements from `docs/architecture/isru/README.md`, `docs/architecture/isru/cnt_production.md`, and `docs/architecture/logistics/SYSTEM_INDUSTRIAL_CHAINS.md`. If code contradicts these specs, the code is wrong.
+**Authority:** This document promulgates requirements from `docs/architecture/isru/README.md`, `docs/architecture/isru/cnt_production.md`, and `docs/architecture/logistics/SYSTEM_INDUSTRIAL_CHAINS.md`. Mismatches between documentation and implementation are logged as architectural gaps for human review.
 
 ---
 
@@ -60,13 +60,13 @@ Raw regolith harvested → Composition analysis → Qualified vs. Unqualified fe
 
 Raw regolith is excavated by surface extractors (mechanical scoops or vacuum harvesters depending on surface gravity and dust cohesivity). The extraction system delivers bulk feedstock to the ISRU processing hopper.
 
-| Parameter | Design-Baseline Value |
-|-----------|-----------------------|
-| Extraction yield (Mk1 extractor) | 500 kg/hr per unit |
-| Extraction yield (Mk2 extractor) | 800 kg/hr per unit |
-| Extraction yield (Mk3 extractor) | 1,200 kg/hr per unit |
-| Bulk density of regolith feedstock | ~1,600 kg/m³ |
-| Moisture content (raw, pre-sieve) | 0–5% w/w (variable by site) |
+| Parameter | Design-Baseline Value | Grounding |
+|-----------|-----------------------|-----------|
+| Extraction yield (Mk1 extractor) | 500 kg/hr per unit | **[PROPOSED / PLACEHOLDER]** — no direct architecture spec backing; requires confirmation from operational data JSON |
+| Extraction yield (Mk2 extractor) | 800 kg/hr per unit | **[PROPOSED / PLACEHOLDER]** — no direct architecture spec backing; requires confirmation from operational data JSON |
+| Extraction yield (Mk3 extractor) | 1,200 kg/hr per unit | **[PROPOSED / PLACEHOLDER]** — no direct architecture spec backing; requires confirmation from operational data JSON |
+| Bulk density of regolith feedstock | ~1,600 kg/m³ | **[PROPOSED / PLACEHOLDER]** — derived from Mars regolith literature estimates (3.0–3.5 g/cm³ bulk); not from game constants |
+| Moisture content (raw, pre-sieve) | 0–5% w/w (variable by site) | **[PROPOSED / PLACEHOLDER]** — no direct architecture spec backing |
 
 ### Stage 2 — Sieving and Pre-Processing
 
@@ -107,6 +107,8 @@ Where:
 
 **Typical additive inventory per fabrication tier:**
 
+> **Note:** Delivery rates below are **[PROPOSED / PLACEHOLDER]** estimates with no direct architecture spec backing. Validate against blueprint `required_materials` tables before treating as authoritative.
+
 | Additive | Source | Purpose | Delivery Rate (per Mk1 fabricator) |
 |----------|--------|---------|-------------------------------------|
 | Calcium sulfate (CaSO₄) | Deposited on Mars/Earth | Binder agent for regolith sintering | 8 kg/hr |
@@ -145,6 +147,8 @@ Print output:
 
 Each fabrication tier has a cumulative power draw that includes both the fabricator's core operation and its auxiliary systems (vacuum pumps, analyzers, feedstock conveyors).
 
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from thermal engineering estimates. They have not been validated against `operational_data/units/production/fabricators/*.json` files. See the audit summary above for code alignment status.
+
 | Tier | Core Load (kW) | Auxiliary Systems (kW) | Total Draw (kW) | Thermal Rejection (kW) | Duty Cycle |
 |------|----------------|------------------------|-----------------|------------------------|------------|
 | Mk1 | 250 | 80 | 330 | 264 | Continuous |
@@ -156,6 +160,8 @@ Each fabrication tier has a cumulative power draw that includes both the fabrica
 ### CNT Fabricator — Per-Tier Power and Thermal Profile
 
 CNT fabricators consume more power due to plasma arc CO₂ splitting and catalyst activation chemistry.
+
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures derived from thermal engineering estimates for plasma-based synthesis systems. They have not been validated against `operational_data/units/production/fabricators/cnt_fabricator_unit_mk*_data.json` files.
 
 | Tier | Core Load (kW) | Catalyst Prep (kW) | Auxiliary Systems (kW) | Total Draw (kW) | Thermal Rejection (kW) |
 |------|----------------|--------------------|------------------------|-----------------|------------------------|
@@ -198,14 +204,14 @@ Where:
   μ     = quality yield degradation rate (tier-specific)
 ```
 
-| Tier | Degradation Rate λ | Quality Rate μ | Maintenance Interval (hours) | Maintenance Duration (hours) | Maintenance Effect |
-|------|-------------------|----------------|------------------------------|-----------------------------|---------------------|
-| Mk1 3D-printed | 0.0008 | 0.0012 | 500 | 8 | Reset throughput to 95% of nominal |
-| Mk2 3D-printed | 0.0010 | 0.0015 | 400 | 12 | Reset throughput to 92% of nominal |
-| Mk3 3D-printed | 0.0014 | 0.0020 | 300 | 16 | Reset throughput to 90% of nominal |
-| Mk1 CNT | 0.0009 | 0.0013 | 450 | 10 | Reset throughput to 94% of nominal |
-| Mk2 CNT | 0.0012 | 0.0017 | 350 | 14 | Reset throughput to 90% of nominal |
-| Mk3 CNT | 0.0016 | 0.0024 | 250 | 18 | Reset throughput to 88% of nominal |
+| Tier | Degradation Rate λ | Quality Rate μ | Maintenance Interval (hours) | Maintenance Duration (hours) | Maintenance Effect | Grounding |
+|------|-------------------|----------------|------------------------------|-----------------------------|---------------------|-----------|
+| Mk1 3D-printed | 0.0008 | 0.0012 | 500 | 8 | Reset throughput to 95% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
+| Mk2 3D-printed | 0.0010 | 0.0015 | 400 | 12 | Reset throughput to 92% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
+| Mk3 3D-printed | 0.0014 | 0.0020 | 300 | 16 | Reset throughput to 90% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
+| Mk1 CNT | 0.0009 | 0.0013 | 450 | 10 | Reset throughput to 94% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
+| Mk2 CNT | 0.0012 | 0.0017 | 350 | 14 | Reset throughput to 90% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
+| Mk3 CNT | 0.0016 | 0.0024 | 250 | 18 | Reset throughput to 88% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
 
 **Maintenance actions per cycle:**
 - **Mechanical cleaning:** Clear nozzle blockages, reclean sieve mesh, purge feedstock conveyors
@@ -219,28 +225,28 @@ Each fabrication system has defined failure modes with detectable signatures, re
 
 #### 3D-Printed Fabricator — Failure Mode Taxonomy
 
-| Failure Mode | Trigger | Symptom | Recovery | Downtime (hrs) | Cascading Impact |
-|-------------|---------|---------|----------|----------------|------------------|
-| **Nozzle clog** | Particulate buildup in print head | Print quality drops to 0; no output | Auto-flush cycle; manual purge if auto-fail | 2–4 (auto) / 8–16 (manual) | Downstream structural component shortage for construction queue |
-| **Sintering array failure** | Thermal element burnout or power supply fault | Output drops to <50%; excess heat warning | Redistribute sinter across remaining elements; schedule replacement | 24–48 | Full fabricator offline until spare part arrives |
-| **Composition analyzer drift** | XRF detector degradation (expected lifetime ~1,500 hrs) | Unrecognized compositional variance; feedstock rejection spikes | Automated calibration routine; hardware replacement if out of range | 4 (cal) / 48 (replace) | Feedstock storage depletes from rejected batches; fabricator starves for input |
-| **Feedstock hopper breach** | Seal degradation or impact damage | Pressure drop; dust cloud alert in surrounding environment | Isolate affected hopper; switch to reserve hopper; replace seal | 8–12 | Partial throughput reduction until spare seals available |
+| Failure Mode | Trigger | Symptom | Recovery | Downtime (hrs) | Cascading Impact | Grounding |
+|-------------|---------|---------|----------|----------------|------------------|-----------|
+| **Nozzle clog** | Particulate buildup in print head | Print quality drops to 0; no output | Auto-flush cycle; manual purge if auto-fail | 2–4 (auto) / 8–16 (manual) | Downstream structural component shortage for construction queue | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
+| **Sintering array failure** | Thermal element burnout or power supply fault | Output drops to <50%; excess heat warning | Redistribute sinter across remaining elements; schedule replacement | 24–48 | Full fabricator offline until spare part arrives | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
+| **Composition analyzer drift** | XRF detector degradation (expected lifetime ~1,500 hrs) | Unrecognized compositional variance; feedstock rejection spikes | Automated calibration routine; hardware replacement if out of range | 4 (cal) / 48 (replace) | Feedstock storage depletes from rejected batches; fabricator starves for input | **[PROPOSED / PLACEHOLDER]** — lifetime derived from commercial XRF specs, not game constants |
+| **Feedstock hopper breach** | Seal degradation or impact damage | Pressure drop; dust cloud alert in surrounding environment | Isolate affected hopper; switch to reserve hopper; replace seal | 8–12 | Partial throughput reduction until spare seals available | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
 
 #### CNT Fabricator — Failure Mode Taxonomy
 
-| Failure Mode | Trigger | Symptom | Recovery | Downtime (hrs) | Cascading Impact |
-|-------------|---------|---------|----------|----------------|------------------|
-| **Plasma arc instability** | CO₂ flow rate fluctuation or electrode erosion | Arc voltage oscillation; CNT quality drops | Stabilize flow controller; replace electrodes on next maintenance cycle | 4–8 (flow stabilize) / 16 (electrode replacement) | Reduced CNT quality forces re-sorting and recycling of batch |
-| **Catalyst bed saturation** | Cumulative carbon deposition beyond adsorption capacity | CO₂ conversion efficiency drops below threshold; excess CO₂ exhaust | Thermal regeneration or catalyst replacement per maintenance schedule | 10–24 | Complete loss of CNT production until regenerated or replaced |
-| **Carbon nanotube deposition chamber seal leak** | Repeated thermal cycling fatigue | Chamber pressure drift; atmosphere contamination alert | Isolate and vent chamber; replace O-ring seals | 8–16 | Production halted during seal replacement; residual feedstock purged to waste |
-| **Catalyst supply depletion** | External import delay or inventory miscalculation | Fabricator cannot initiate deposition cycle | Divert catalyst from reserve stockpile or prioritize delivery via cycler network | Variable (depends on logistics) | Entire CNT chain stalls if no reserve; cascading failure to orbital structures requiring CNT components |
+| Failure Mode | Trigger | Symptom | Recovery | Downtime (hrs) | Cascading Impact | Grounding |
+|-------------|---------|---------|----------|----------------|------------------|-----------|
+| **Plasma arc instability** | CO₂ flow rate fluctuation or electrode erosion | Arc voltage oscillation; CNT quality drops | Stabilize flow controller; replace electrodes on next maintenance cycle | 4–8 (flow stabilize) / 16 (electrode replacement) | Reduced CNT quality forces re-sorting and recycling of batch | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
+| **Catalyst bed saturation** | Cumulative carbon deposition beyond adsorption capacity | CO₂ conversion efficiency drops below threshold; excess CO₂ exhaust | Thermal regeneration or catalyst replacement per maintenance schedule | 10–24 | Complete loss of CNT production until regenerated or replaced | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
+| **Carbon nanotube deposition chamber seal leak** | Repeated thermal cycling fatigue | Chamber pressure drift; atmosphere contamination alert | Isolate and vent chamber; replace O-ring seals | 8–16 | Production halted during seal replacement; residual feedstock purged to waste | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
+| **Catalyst supply depletion** | External import delay or inventory miscalculation | Fabricator cannot initiate deposition cycle | Divert catalyst from reserve stockpile or prioritize delivery via cycler network | Variable (depends on logistics) | Entire CNT chain stalls if no reserve; cascading failure to orbital structures requiring CNT components | **[PROPOSED / PLACEHOLDER]** — variable downtime is by-design; actual values TBD from cycler logistics specs |
 
 #### Cross-Chain Systemic Failure Mode
 
-| Failure Mode | Scope | Symptom | Recovery | Cascading Impact |
-|-------------|-------|---------|----------|------------------|
-| **Primary power bus overload** | All ISRU units | Automated load shedding; non-critical systems dropped to reserve power | Rebalance generation or shed terraforming loads temporarily | Entire settlement production halts; construction and manufacturing queues stall |
-| **Feedstock logistics bottleneck** | Both 3D-printed and CNT chains (if sharing transport) | Hopper levels drop below critical threshold simultaneously | Prioritize critical path components; reroute from adjacent settlement stockpile | Multi-fabricator idle time; market price spikes for structural materials |
+| Failure Mode | Scope | Symptom | Recovery | Cascading Impact | Grounding |
+|-------------|-------|---------|----------|------------------|-----------|
+| **Primary power bus overload** | All ISRU units | Automated load shedding; non-critical systems dropped to reserve power | Rebalance generation or shed terraforming loads temporarily | Entire settlement production halts; construction and manufacturing queues stall | **[PROPOSED / PLACEHOLDER]** — no architecture backing; conceptual failure mode |
+| **Feedstock logistics bottleneck** | Both 3D-printed and CNT chains (if sharing transport) | Hopper levels drop below critical threshold simultaneously | Prioritize critical path components; reroute from adjacent settlement stockpile | Multi-fabricator idle time; market price spikes for structural materials | **[PROPOSED / PLACEHOLDER]** — no architecture backing; conceptual failure mode |
 
 ### 4.3 Degradation State Tracking Requirements
 

@@ -16,6 +16,8 @@
 
 > **Construction ≠ Operation:** Building a station requires localized or imported mass, heavy equipment, and dedicated staging phases. Stations cannot be "spawned" or instantly toggled into existence. Every AWS (Artificial Wormhole Station) and WS (Wormhole Station) must follow the deterministic dependency chain defined below. Failure to respect this chain — particularly in moonless or deep-space environments where planetary anchoring is mandatory — produced the catastrophic Eden Snap Event: a structural collapse caused by installing a wormhole anchor without an asteroid-mass counterbalance, leading to tether snap and colony orphaning.
 
+**See also:** For portal rules (low-mass vs bulk transit, EM consumption, pairing constraints) and AWS inter-system networking — see **[Portals & AWS](../technical/portals_and_aws.md)**.
+
 ---
 
 ## 1. Pre-Player Era Sequential Expansion Tree (Dependency Chain)

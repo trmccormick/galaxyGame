@@ -10,6 +10,8 @@
 
 > **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**. This page covers player-facing market pricing only.
 
+**Related:** For the AI Manager economic behavior that consumes these markets (debt/austerity modes, Virtual Ledger clearing, stockpile targets, NPC buy/sell bands), see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
+
 > **How to use this template:** This page defines the canonical rules for how resources are priced, traded, and managed across Galaxy Game's market layer. It serves two audiences simultaneously: player-facing documentation explaining how market mechanics work, and developer-facing specification governing how `Market::NpcPriceCalculator`, `Market::TradeExecutionService`, and related services must behave.
 >
 > **Verify-against-source flags:** Sections marked `[VERIFY AGAINST SOURCE]` contain mechanics specified from design intent but not yet confirmed against the `NpcPriceCalculator` source file. These must be validated during next week's testing phase before this page is treated as fully authoritative.

@@ -12,6 +12,8 @@
 > - Config: `config/economic_parameters.yml` (via EconomicConfig)
 > - Legacy harvest source: [Resource and Market Logistics](../logistics/resource_and_market_logistics.md), [Market and AI Bootstrapping](../logistics/market_and_ai_bootstrapping.md), [Financial Engine](../logistics/financial_engine.md), [EAP & AI Manager Escalation](../logistics/eap_and_ai_manager_escalation.md)
 
+**Related:** For how the AI Manager actually lives with these numbers (debt-driven austerity, Virtual Ledger clearing, NPC buy/sell bands, stockpile buffer targets), see **[AI Manager Economic Loops](../logistics/ai_manager_economic_loops.md)**.
+
 ---
 
 ## 1. Currency System — GCC / USD Bootstrap Peg
