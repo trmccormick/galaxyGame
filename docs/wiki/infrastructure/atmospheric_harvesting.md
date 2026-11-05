@@ -113,13 +113,15 @@ Venusian-analog bodies have dense, hot atmospheres with high CO₂ fractions. Ha
 
 Saturn-derived H₂ import may supplement or replace Lunar PSR hydrogen in later phases, but **all Carbon feedstock must originate from Venusian atmospheric skimming** — no Titan-analog carbon delivery is permitted under the self-sufficiency baseline.
 
-| Parameter | Value |
-|---|---|
-| Primary yield | CO₂ (~96%) + N₂ (~3.5%) raw mix; O₂ via post-harvest splitting |
-| Surface pressure | ~90× `EARTH_PRESSURE` = ~9,000,000 Pa |
-| Surface temperature | ~735 K (far above `temperature_max = 303.15 K`) |
-| Extraction method | High-altitude aerostatic platforms; atmospheric skimming |
-| Processing requirement | CO₂/N₂ separation → O₂ release → Sabatier methanation with Lunar H₂ |
+> **Note:** All numeric values below are **[PROPOSED / PLACEHOLDER]** figures derived from Venus atmospheric science references (e.g., Pioneer/Venus Express data) extrapolated to game infrastructure. They have not been validated against `config/initializers/game_constants.rb` or architecture specs.
+
+| Parameter | Value | Grounding |
+|---|---|---|
+| Primary yield | CO₂ (~96%) + N₂ (~3.5%) raw mix; O₂ via post-harvest splitting | **[PROPOSED / PLACEHOLDER]** — Venus atmosphere composition from published data; not game-validated |
+| Surface pressure | ~90× `EARTH_PRESSURE` = ~9,000,000 Pa | **[PROPOSED / PLACEHOLDER]** — Venus surface pressure (~92 bar) extrapolation; not game-validated |
+| Surface temperature | ~735 K (far above `temperature_max = 303.15 K`) | **[PROPOSED / PLACEHOLDER]** — Venus mean surface temp from NASA data; not game-validated |
+| Extraction method | High-altitude aerostatic platforms; atmospheric skimming | Conceptual infrastructure design; no numeric backing needed |
+| Processing requirement | CO₂/N₂ separation → O₂ release → Sabatier methanation with Lunar H₂ | Chemical engineering process flow; conceptual only |
 
 **Economic profile:** Extreme extraction complexity. Suitable only for colonies with established orbital infrastructure and aerostatic platform technology. The CO₂ yield, however, has a `GREENHOUSE_FACTORS` multiplier of `20.0` — making Venusian-analog CO₂ the most cost-effective planetary warming agent when injected deliberately into a cold target world.
 
@@ -170,11 +172,11 @@ For **Venusian-analog bodies** (CO₂-dominated, 90 bar surface pressure), atmos
 
 The scoop throat experiences three simultaneous stress regimes during active intake:
 
-| Stress Type | Source | Maximum (Design) | Mitigation |
-|---|---|---|---|
-| **Thermal fatigue** | Aerodynamic heating at transonic entry; Venusian surface ~735 K baseline | ΔT cycle ≤ 200 K per transit window | Ceramic-matrix composite (CMC) thermal barrier coating; phased cooldown between cycles |
-| **Static hoop stress** | Internal scoop pressure during high-density intake | σ_hoop = P_int × r_wall / t_wall ≤ 350 MPa (titanium alloy Ti-6Al-4V limit) | Wall thickness ≥ 12 mm at throat; carbon-carbon reinforcement weave in high-stress zones |
-| **Cyclic vibration fatigue** | Turbulent boundary layer shedding; super-rotation wind gusts | N_f ≥ 10⁶ cycles before inspection interval | Helical inlet guide vanes to stabilize flow; resonant frequency damped by tuned mass dampers |
+| Stress Type | Source | Maximum (Design) | Mitigation | Grounding |
+|---|---|---|---|---|
+| **Thermal fatigue** | Aerodynamic heating at transonic entry; Venusian surface ~735 K baseline | ΔT cycle ≤ 200 K per transit window | Ceramic-matrix composite (CMC) thermal barrier coating; phased cooldown between cycles | **[PROPOSED / PLACEHOLDER]** — thermal stress limit from spacecraft material science references |
+| **Static hoop stress** | Internal scoop pressure during high-density intake | σ_hoop = P_int × r_wall / t_wall ≤ 350 MPa (titanium alloy Ti-6Al-4V limit) | Wall thickness ≥ 12 mm at throat; carbon-carbon reinforcement weave in high-stress zones | **[PROPOSED / PLACEHOLDER]** — Ti-6Al-4V yield strength from aerospace materials handbook; not game-validated |
+| **Cyclic vibration fatigue** | Turbulent boundary layer shedding; super-rotation wind gusts | N_f ≥ 10⁶ cycles before inspection interval | Helical inlet guide vanes to stabilize flow; resonant frequency damped by tuned mass dampers | **[PROPOSED / PLACEHOLDER]** — fatigue cycle estimate from mechanical engineering references |
 
 For Titan-class atmospheric scooping:
 - **Peak hoop stress occurs at full-throttle intake** during approach velocity window, where v_scoop reaches Δv_rel and dynamic pressure q = ½ρv² peaks.
@@ -190,35 +192,35 @@ Atmospheric density profile follows exponential decay from the nominal surface:
 ρ(h) = ρ_0 × exp(−h / H)
 ```
 
-| Altitude (km) | Density (kg/m³) | Temperature (K) | Scoop Suitability |
-|---|---|---|---|
-| 0 (surface) | ~5.3 | 94 | Over-pressured; requires deep-well intake geometry |
-| 8 | ~3.2 | 96 | **Optimal intake band** — high density, manageable stagnation pressure |
-| 12 | ~1.8 | 98 | Secondary capture altitude for cycler approach window |
-| 20 | ~0.5 | 101 | Reduced throughput; viable as backup or staging altitude |
-| 35 | ~0.04 | 110 | Transition zone; scooping efficiency drops below 15% of surface value |
-| 50+ | <0.001 | >160 | Atmosphere too thin for meaningful intake throughput |
+| Altitude (km) | Density (kg/m³) | Temperature (K) | Scoop Suitability | Grounding |
+|---|---|---|---|---|
+| 0 (surface) | ~5.3 | 94 | Over-pressured; requires deep-well intake geometry | **[PROPOSED / PLACEHOLDER]** — atmospheric profile for Titan-class body; derived from cryogenic atmospheric physics models, not game constants |
+| 8 | ~3.2 | 96 | **Optimal intake band** — high density, manageable stagnation pressure | **[PROPOSED / PLACEHOLDER]** — optimal density for aerostatic scoop intake; derived from aerospace engineering references |
+| 12 | ~1.8 | 98 | Secondary capture altitude for cycler approach window | **[PROPOSED / PLACEHOLDER]** — secondary intake band density estimate |
+| 20 | ~0.5 | 101 | Reduced throughput; viable as backup or staging altitude | **[PROPOSED / PLACEHOLDER]** — reduced-throughput altitude estimate |
+| 35 | ~0.04 | 110 | Transition zone; scooping efficiency drops below 15% of surface value | **[PROPOSED / PLACEHOLDER]** — efficiency loss extrapolation from atmospheric models |
+| 50+ | <0.001 | >160 | Atmosphere too thin for meaningful intake throughput | **[PROPOSED / PLACEHOLDER]** — thin-atmosphere limit from atmospheric physics |
 
 #### Venusian-Analog Atmospheres
 
-| Altitude (km) | Density (kg/m³) | Pressure (bar) | Operational Notes |
-|---|---|---|---|
-| 0 (surface) | ~65 | 90 | Unreachable by direct scoop; supercritical fluid dynamics |
-| 20 | ~12 | 20 | Still too dense for standard scoops; requires pressurized intake manifold |
-| **40** | **~3** | **3** | **Threshold altitude** — first viable for aerostatic platform deployment |
-| **50–60** | **0.1–0.5** | **0.2–0.5** | **Primary operational band** — buoyant lift + adequate gas density |
-| 75 | ~0.01 | 0.025 | Thin enough for conventional atmospheric scoops; low throughput |
-| 100+ | <0.001 | <0.001 | Effectively vacuum; no atmospheric harvesting benefit |
+| Altitude (km) | Density (kg/m³) | Pressure (bar) | Operational Notes | Grounding |
+|---|---|---|---|---|
+| 0 (surface) | ~65 | 90 | Unreachable by direct scoop; supercritical fluid dynamics | **[PROPOSED / PLACEHOLDER]** — Venus surface atmospheric profile; derived from atmospheric physics models |
+| 20 | ~12 | 20 | Still too dense for standard scoops; requires pressurized intake manifold | **[PROPOSED / PLACEHOLDER]** — high-density altitude estimate |
+| **40** | **~3** | **3** | **Threshold altitude** — first viable for aerostatic platform deployment | **[PROPOSED / PLACEHOLDER]** — optimal Venusian platform altitude from aerospace engineering analysis |
+| **50–60** | **0.1–0.5** | **0.2–0.5** | **Primary operational band** — buoyant lift + adequate gas density | **[PROPOSED / PLACEHOLDER]** — primary operating envelope for aerostatic platforms |
+| 75 | ~0.01 | 0.025 | Thin enough for conventional atmospheric scoops; low throughput | **[PROPOSED / PLACEHOLDER]** — high-altitude thin-atmosphere estimate |
+| 100+ | <0.001 | <0.001 | Effectively vacuum; no atmospheric harvesting benefit | **[PROPOSED / PLACEHOLDER]** — vacuum limit for Venusian-analog atmosphere |
 
 #### Mars-Cycler-Source Bodies (Low-Atmosphere Worlds)
 
 Thin-atmosphere bodies require **orbital skimming** rather than aerostatic or ground-based scooping. The scoop must operate at periapsis of an elliptical cycler-intercept orbit:
 
-| Periapsis Altitude (km) | Density (kg/m³) | Scoop Viability |
-|---|---|---|
-| 80 | ~1×10⁻⁶ | Marginal; requires A_c ≥ 50 m² for meaningful throughput |
-| 100 | ~3×10⁻⁷ | Viable for bulk volatile capture via cycler-relay tanker |
-| 120 | ~7×10⁻⁸ | Negligible per pass; requires multiple orbital cycles |
+| Periapsis Altitude (km) | Density (kg/m³) | Scoop Viability | Grounding |
+|---|---|---|---|
+| 80 | ~1×10⁻⁶ | Marginal; requires A_c ≥ 50 m² for meaningful throughput | **[PROPOSED / PLACEHOLDER]** — high-altitude thin-atmosphere density estimate; not game-validated |
+| 100 | ~3×10⁻⁷ | Viable for bulk volatile capture via cycler-relay tanker | **[PROPOSED / PLACEHOLDER]** — optimal cycler orbital skimming altitude; not game-validated |
+| 120 | ~7×10⁻⁸ | Negligible per pass; requires multiple orbital cycles | **[PROPOSED / PLACEHOLDER]** — very-thin-atmosphere density extrapolation; not game-validated |
 
 > **Note:** Thin-atmosphere worlds are economically viable only when the target gas has high `GREENHOUSE_FACTORS` weight (CO₂, CH₄), making low-yield-per-pass acceptable against bulk terraforming demand.
 
@@ -244,42 +246,35 @@ Where:
 
 **Optimal stage count** scales with the required pressure ratio:
 
-| Target Pressure Ratio | Minimum Stages | Optimal Stages (with intercooling) | Typical Inter-stage Ratio |
-|---|---|---|---|
-| 10× (Titan-class gas to storage tank) | 2 | 3–4 | ~2.2 per stage |
-| 90× (Venusian intake to transport pressure) | 5 | 6–8 | ~2.0 per stage |
-| 1,000× (bulk terraforming injection at 100+ bar) | 7 | 8–10 | ~1.8 per stage |
+| Target Pressure Ratio | Minimum Stages | Optimal Stages (with intercooling) | Typical Inter-stage Ratio | Grounding |
+|---|---|---|---|---|
+| 10× (Titan-class gas to storage tank) | 2 | 3–4 | ~2.2 per stage | **[PROPOSED / PLACEHOLDER]** — thermodynamic staging estimate from compressor design reference; not game-validated |
+| 90× (Venusian intake to transport pressure) | 5 | 6–8 | ~2.0 per stage | **[PROPOSED / PLACEHOLDER]** — high-ratio staging model; not game-validated |
+| 1,000× (bulk terraforming injection at 100+ bar) | 7 | 8–10 | ~1.8 per stage | **[PROPOSED / PLACEHOLDER]** — ultra-high-ratio staging estimate from industrial gas processing references; not game-validated |
 
-**Practical work multiplier:** Real compressors achieve 75–85% isentropic efficiency. Apply a **work penalty factor** of 1.18–1.33 to the ideal W_min:
+**Practical work multiplier:** Real compressors achieve 75–85% isentropic efficiency. All numerical values below are **[PROPOSED / PLACEHOLDER]** figures from compressor thermodynamic models, not game constants:
 
-```
-W_real ≈ W_min × (1 + (1 − η_isentropic) / η_isentropic)
-```
-
-For a typical 3-stage Venusian gas compressor at η = 0.80:
-- Ideal work per kmol CO₂: ~45 MJ
-- Real work required: **~59 MJ/kmol** → **~1,340 kJ/kg of CO₂ processed**
-- At `GREENHOUSE_FACTORS_CO2 = 20.0`, this means **67 kJ/kg-CO₂-equivalent energy cost** for the compression alone — a significant fraction of the greenhouse return on investment.
+> **Note:** The formula above represents a model framework. The specific values (~45 MJ/kmol ideal work, ~59 MJ/kmol real work, ~1,340 kJ/kg CO₂ processed, 67 kJ/kg-CO₂-equivalent energy cost) are engineering estimates derived from standard compressor design references for Venusian-analog conditions — they have not been validated against game constants or architecture specs.
 
 ### Thermal Rejection Budgets
 
-Each compression stage dumps heat equal to the work input minus the enthalpy change of the gas. For multi-stage Venusian gas processing:
+Each compression stage dumps heat equal to the work input minus the enthalpy change of the gas. For multi-stage Venusian gas processing: all values below are **[PROPOSED / PLACEHOLDER]** thermal engineering estimates from aerospace heat-rejection modeling, not game-validated:
 
-| Stage | Inlet Pressure | Outlet Pressure | Heat Rejected (kJ/kg) | Rejection Method |
-|---|---|---|---|---|
-| 1 (roughing) | 0.2–0.5 bar | 1–2 bar | ~800 | Aerostatic radiative fins; active coolant loop |
-| 2 (boost) | 1–2 bar | 3–5 bar | ~650 | Phase-change heat pipe array to orbital radiator |
-| 3 (intermediate) | 3–5 bar | 10–15 bar | ~480 | Liquid-cooled shell-and-tube exchanger |
-| 4+ (final) | 10–15 bar | 50–100 bar | ~300/each stage | Cryogenic pre-cooler + radiative dissipation |
+| Stage | Inlet Pressure | Outlet Pressure | Heat Rejected (kJ/kg) | Rejection Method | Grounding |
+|---|---|---|---|---|---|
+| 1 (roughing) | 0.2–0.5 bar | 1–2 bar | ~800 | Aerostatic radiative fins; active coolant loop | **[PROPOSED / PLACEHOLDER]** — compressor stage enthalpy estimate; not game-validated |
+| 2 (boost) | 1–2 bar | 3–5 bar | ~650 | Phase-change heat pipe array to orbital radiator | **[PROPOSED / PLACEHOLDER]** — compressor stage enthalpy estimate; not game-validated |
+| 3 (intermediate) | 3–5 bar | 10–15 bar | ~480 | Liquid-cooled shell-and-tube exchanger | **[PROPOSED / PLACEHOLDER]** — compressor stage enthalpy estimate; not game-validated |
+| 4+ (final) | 10–15 bar | 50–100 bar | ~300/each stage | Cryogenic pre-cooler + radiative dissipation | **[PROPOSED / PLACEHOLDER]** — compressor stage enthalpy estimate; not game-validated |
 
 **Total thermal rejection budget for Venusian gas:**  
-~2,500 kJ/kg of CO₂ must be dissipated into the ambient environment. On Venusian-analog bodies with 735 K surface temperature, **thermal sink is severely constrained** — all heat rejection relies on radiative dissipation via high-area-to-mass ratio radiator panels (estimated 200–400 m² per metric ton of CO₂ processed).
+~2,500 kJ/kg of CO₂ must be dissipated into the ambient environment. On Venusian-analog bodies with 735 K surface temperature, **thermal sink is severely constrained** — all heat rejection relies on radiative dissipation via high-area-to-mass ratio radiator panels (estimated 200–400 m² per metric ton of CO₂ processed). These values are **[PROPOSED / PLACEHOLDER]** engineering estimates for radiative heat transfer, not game-validated.
 
 For Titan-class gas processing at cryogenic temperatures (~94 K surface), thermal rejection is trivially easy — the ambient acts as a heat sink. Rejection can be passive radiative; no active cooling required.
 
 ### Pressure-Dependent Power Consumption Models
 
-Power draw for the full compression train scales non-linearly with throughput:
+Power draw for the full compression train scales non-linearly with throughput. All numerical values below are **[PROPOSED / PLACEHOLDER]** engineering estimates from compressor power modeling, not game constants:
 
 ```
 P_draw(kW) = (ṁ_kg/s) × W_real_per_kg / η_motor / η_transmission
@@ -289,9 +284,9 @@ For a typical Venusian-analog harvesting operation:
 - Throughput: 50 kg/s of raw CO₂ gas
 - W_real ≈ 1,340 kJ/kg
 - Motor efficiency η_motor ≈ 0.92; transmission η_transmission ≈ 0.88
-- **Peak power draw: ~870 kW** from platform electrical bus
+- **Peak power draw: ~870 kW** from platform electrical bus — **[PROPOSED / PLACEHOLDER]** compressor power estimate; not game-validated
 
-This power demand is typically met by the platform's nuclear fission unit or a network of orbital solar arrays (which must survive Venusian-analog cloud-layer UV attenuation — solar irradiance at 55 km altitude drops to <15% of surface-of-Sun values).
+This power demand is typically met by the platform's nuclear fission unit or a network of orbital solar arrays (which must survive Venusian-analog cloud-layer UV attenuation — solar irradiance at 55 km altitude drops to <15% of surface-of-Sun values). These operational profiles are **[PROPOSED / PLACEHOLDER]** infrastructure design concepts, not game-validated.
 
 ---
 
@@ -306,15 +301,15 @@ The pipeline architecture follows a cascade design: each separation stage feeds 
 ### Hydrogen and Helium-3 Stream
 
 **Source bodies:** Gas giants (Saturn-class), outer-system icy moons  
-**Feedstock concentration:** H₂ ~75–90% by mole in gas-giant atmospheres; He-3 at trace ppb to ppm levels depending on solar wind implantation.
+**Feedstock concentration:** H₂ ~75–90% by mole in gas-giant atmospheres; He-3 at trace ppb to ppm levels depending on solar wind implantation. All values below are **[PROPOSED / PLACEHOLDER]** figures from gas processing engineering references, not game-validated:
 
-| Stage | Process | Output Purity | Throughput Fraction |
-|---|---|---|---|
-| 1 (cryogenic condensation) | Cool to ~20 K; CO₂ and heavier components solidify out | H₂ stream: >95% H₂ by mole | ~60% of raw feed mass condensed/solidified away |
-| 2 (membrane separation) | Pd-Ag hydrogen permeation membrane at 400°C | H₂: 99.97%; He-3 enriched to 0.1–0.5 mol% in permeate side | 85% of remaining H₂ recovered as product |
-| 3 (cryogenic distillation of helium fraction) | Fractional distillation at <30 K separates He-4 from He-3 | He-3: 50–70% purity in bottom fraction; must recycle for higher | ~10 ppm He-3 recovered from raw feed per pass |
+| Stage | Process | Output Purity | Throughput Fraction | Grounding |
+|---|---|---|---|---|
+| 1 (cryogenic condensation) | Cool to ~20 K; CO₂ and heavier components solidify out | H₂ stream: >95% H₂ by mole | ~60% of raw feed mass condensed/solidified away | **[PROPOSED / PLACEHOLDER]** — cryogenic separation efficiency estimate; not game-validated |
+| 2 (membrane separation) | Pd-Ag hydrogen permeation membrane at 400°C | H₂: 99.97%; He-3 enriched to 0.1–0.5 mol% in permeate side | 85% of remaining H₂ recovered as product | **[PROPOSED / PLACEHOLDER]** — membrane permeation data from hydrogen processing literature; not game-validated |
+| 3 (cryogenic distillation of helium fraction) | Fractional distillation at <30 K separates He-4 from He-3 | He-3: 50–70% purity in bottom fraction; must recycle for higher | ~10 ppm He-3 recovered from raw feed per pass | **[PROPOSED / PLACEHOLDER]** — helium separation efficiency from cryogenic distillation references |
 
-**Key bottleneck:** He-3 recovery is inherently low-yield due to trace abundance. Expected yield is **~0.5 g He-3 per metric ton of raw gas-harvested feedstock**. At typical market prices for fusion-grade He-3, this makes gas-giant He-3 harvesting economically viable only at massive scale (>10,000 metric tons/hour feed rate).
+**Key bottleneck:** He-3 recovery is inherently low-yield due to trace abundance. Expected yield of **~0.5 g He-3 per metric ton of raw gas-harvested feedstock** is **[PROPOSED / PLACEHOLDER]** — derived from solar wind implantation models extrapolated to game conditions. Market price data for fusion-grade He-3 referenced in this section are external market estimates, not game constants.
 
 **Secondary use:** Recovered H₂ feeds ISRU Sabatier methanation lines (`CO₂ + 4H₂ → CH₄ + 2H₂O`) and Methalox propellant production for the cycler fleet. Per **ISRU Fabrication Chain** specifications, H₂ purity must exceed 99.9% before entering any fabricator catalyst bed to prevent catalyst poisoning.
 
@@ -328,9 +323,9 @@ The pipeline architecture follows a cascade design: each separation stage feeds 
 | 1 (dehydration and Ar separation) | Molecular sieve desiccant + cryogenic Ar knockout at 87 K | Dry CO₂ stream: 94–96% CO₂; Ar fraction collected separately | ~4% by mass lost as water vapor, ~2% as Argon fraction |
 | 2 (PSA nitrogen removal) | Zeolite PSA removes residual N₂ and O₂ | CO₂: >99.5% purity for greenhouse injection or CNT synthesis feed | ~0.5% losses to purge stream (recycled to atmospheric buffer tank) |
 | 3a (greenhouse route) | Bulk liquid CO₂ storage → direct atmospheric injection for terraforming warming | Commodity-grade CO₂, <100 ppm contaminants | Direct yield: 96–98% of raw feed becomes marketable greenhouse gas |
-| 3b (electrolytic splitting route) | Molten salt electrolysis or solid-oxide electrolysis (SOEC) at 800–900°C → O₂ + elemental C | High-purity O₂ (~99.5%) for life support; amorphous carbon for CNT feedstock | O₂ yield: ~27% of raw CO₂ mass; Carbon residue: ~27.3%; net throughput loss: 45.4% (energy-intensive) |
+| 3b (electrolytic splitting route) | Molten salt electrolysis or solid-oxide electrolysis (SOEC) at 800–900°C → O₂ + elemental C | High-purity O₂ (~99.5%) for life support; amorphous carbon for CNT feedstock | O₂ yield: ~27% of raw CO₂ mass; Carbon residue: ~27.3%; net throughput loss: 45.4% (energy-intensive) | **[PROPOSED / PLACEHOLDER]** — solid-oxide electrolysis efficiency from industrial chemical engineering references; not game-validated |
 
-**Oxygen byproduct value:** The electrolytic splitting route converts Venusian CO₂ into both a greenhouse agent (elemental carbon, high `GREENHOUSE_FACTORS` at 20.0) and life-support oxygen. This dual-product economics is the primary driver for Venusian-analog operations — O₂ credit against Earth-import costs of **~1,320.00 USD/kg** makes processing even marginally viable at moderate scale.
+**Oxygen byproduct value:** The electrolytic splitting route converts Venusian CO₂ into both a greenhouse agent (elemental carbon, high `GREENHOUSE_FACTORS` at 20.0) and life-support oxygen. This dual-product economics is the primary driver for Venusian-analog operations — O₂ credit against Earth-import costs of **~1,320.00 USD/kg** makes processing even marginally viable at moderate scale. All yield values are **[PROPOSED / PLACEHOLDER]** figures from CO₂ electrolysis engineering references, not game-validated.
 
 ### Nitrogen Separation and Purification
 
@@ -339,11 +334,11 @@ The pipeline architecture follows a cascade design: each separation stage feeds 
 
 | Stage | Process | Output Purity | Throughput Fraction |
 |---|---|---|---|
-| 1 (CO₂ cryogenic removal) | Cool to ~195 K; CO₂ solidifies out as dry ice snow | N₂-rich stream: ~90–95% N₂ by mole | ~70–80% of feed mass separated into product; remainder lost in CO₂ solid |
-| 2 (methane scrub) | Pressure swing adsorption or catalytic methanation to remove CH₄ | N₂: >99.9% purity for life support injection | CH₄ can be diverted to greenhouse agent or fuel processing line |
-| 3 (argon capture) | Cryogenic fractional distillation of tail-gas extracts residual Ar | N₂: 99.99+%; Ar fraction collected at 0.93% Earth-baseline concentration | ~1–2% by mass recovered as Argon commodity product |
+| 1 (CO₂ cryogenic removal) | Cool to ~195 K; CO₂ solidifies out as dry ice snow | N₂-rich stream: ~90–95% N₂ by mole | ~70–80% of feed mass separated into product; remainder lost in CO₂ solid | **[PROPOSED / PLACEHOLDER]** — cryogenic separation efficiency from industrial gas processing references; not game-validated |
+| 2 (methane scrub) | Pressure swing adsorption or catalytic methanation to remove CH₄ | N₂: >99.9% purity for life support injection | CH₄ can be diverted to greenhouse agent or fuel processing line | **[PROPOSED / PLACEHOLDER]** — PSA separation data from nitrogen purification literature; not game-validated |
+| 3 (argon capture) | Cryogenic fractional distillation of tail-gas extracts residual Ar | N₂: 99.99+%; Ar fraction collected at 0.93% Earth-baseline concentration | ~1–2% by mass recovered as Argon commodity product | **[PROPOSED / PLACEHOLDER]** — argon recovery efficiency estimate from cryogenic distillation references; not game-validated |
 
-**Nitrogen compression for delivery:** Processed N₂ is compressed to 200 bar for transport in cycler tanker fleets. Compressing N₂ from atmospheric pressure to 200 bar at η = 0.80 requires approximately **450 kJ/kg of compression work** — a lower-energy cost than CO₂ processing because the gas behaves more ideally and no cryogenic condensation is required.
+**Nitrogen compression for delivery:** Processed N₂ is compressed to 200 bar for transport in cycler tanker fleets. Compressing N₂ from atmospheric pressure to 200 bar at η = 0.80 requires approximately **450 kJ/kg of compression work** — **[PROPOSED / PLACEHOLDER]** derived from nitrogen compressor thermodynamic calculations; not game-validated.
 
 ### Mass-Flow Yield Accounting
 

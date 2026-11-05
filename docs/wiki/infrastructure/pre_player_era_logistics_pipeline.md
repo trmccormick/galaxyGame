@@ -51,17 +51,19 @@ In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy t
 
 Prior to player intervention, autonomous trade corridors execute continuous mass transfers between source nodes (Luna, Venusian skimmers, Belt asteroids) and destination depots (LEO, L1, Mars-orbit hubs) on fixed orbital schedules. The simulation resolves these routes through an internal **CyclerRouteScheduler** backend that computes departure windows, transit durations, and cargo manifests at each simulation tick.
 
+> **Grounding Note:** All corridor repeat periods, transfer efficiencies, and orbital parameters in this section are **[PROPOSED / PLACEHOLDER]** estimates derived from standard orbital mechanics (Hohmann transfers, delta-v budgets, synodic periods). They have not been validated against game constants or architecture specs. The section describes the intended design framework rather than game-canonical values.
+
 ### 3.1 Orbital Cycler Topology
 
 Each corridor links two bodies via a Hohmann or patched-conic transfer orbit with a configurable repeat period $T_{\text{cycle}}$. Corridor class defines the tug class assigned:
 
-| Corridor Class | Source | Destination | Tug Class | Repeat Period (typical) |
-|---|---|---|---|---|
-| Core-Sol-1 | Earth LEO | Luna | HLT-Mk-I | 73 h |
-| Core-Sol-2 | LEO | Venus Skim Depot | HLT-Mk-II | 584 h |
-| Deep-Luna-1 | Lunar Surface | L1 Fuel Depot | Heavy-Tug Mk-I | 14 d |
-| Mars-Shot-1 | L1 Fuel Depot | Phobos Transfer Orbit | Heavy-Tug Mk-III | 26 mo |
-| Belt-Raid-1 | Main Belt Capture Point | Eden System Anchor | Heavy-Tug Mk-V | ~3.2 yr |
+| Corridor Class | Source | Destination | Tug Class | Repeat Period (typical) | Grounding |
+|---|---|---|---|---|---|
+| Core-Sol-1 | Earth LEO | Luna | HLT-Mk-I | 73 h | **[PROPOSED / PLACEHOLDER]** — Hohmann transfer period from LEO to Luna; derived from orbital mechanics, not game constants |
+| Core-Sol-2 | LEO | Venus Skim Depot | HLT-Mk-II | 584 h | **[PROPOSED / PLACEHOLDER]** — Earth-Venus Hohmann transfer period; derived from orbital mechanics |
+| Deep-Luna-1 | Lunar Surface | L1 Fuel Depot | Heavy-Tug Mk-I | 14 d | **[PROPOSED / PLACEHOLDER]** — Luna-L1 transfer period estimate; not game-validated |
+| Mars-Shot-1 | L1 Fuel Depot | Phobos Transfer Orbit | Heavy-Tug Mk-III | 26 mo | **[PROPOSED / PLACEHOLDER]** — Earth-Mars synodic period Hohmann transfer; derived from orbital mechanics |
+| Belt-Raid-1 | Main Belt Capture Point | Eden System Anchor | Heavy-Tug Mk-V | ~3.2 yr | **[PROPOSED / PLACEHOLDER]** — inner-belt to outer-system transfer period estimate; not game-validated |
 
 ### 3.2 Departure Window Resolution
 
@@ -71,7 +73,7 @@ $$
 \Delta\theta(t) = \left| \lambda_{\text{dep}}(t) - \lambda_{\text{arr}}(t) - \Delta\theta_{\text{Hohmann}} \right| < \epsilon_{\text{window}}
 $$
 
-where $\lambda$ is the body's ephemeris longitude, $\Delta\theta_{\text{Hohmann}} = n \cdot \Delta t_{\text{transit}} / 2$ (with $n$ revolutions), and $\epsilon_{\text{window}}$ is the phasing tolerance (design-baseline: 0.5°).
+where $\lambda$ is the body's ephemeris longitude, $\Delta\theta_{\text{Hohmann}} = n \cdot \Delta t_{\text{transit}} / 2$ (with $n$ revolutions), and $\epsilon_{\text{window}}$ is the phasing tolerance (design-baseline: 0.5°) — **[PROPOSED / PLACEHOLDER]** phasing tolerance derived from orbital mechanics; not game-validated.
 
 ### 3.3 Autonomous Manifest Scheduling
 
@@ -90,6 +92,8 @@ No player-facing interface governs these assignments; manifests resolve via a gr
 ## 4. Bootstrapping Mechanics
 
 Unstaffed resource nodes deploy autonomously during the pre-player era, scaling extraction capacity from zero toward an asymptotic design throughput defined by infrastructure availability.
+
+> **Grounding Note:** All numerical coefficients, thresholds, and rate equations in this section (deployment efficiency $\alpha_k$, attrition rate $\lambda_k$, scaling exponent $\beta_k$, fill thresholds) are **[PROPOSED / PLACEHOLDER]** values derived from economic bootstrap modeling and logistics simulation frameworks. They have not been validated against game constants or architecture specs.
 
 ### 4.1 Unstaffed Resource Node Deployment
 
@@ -127,12 +131,12 @@ $$
 
 Depots trigger autonomous restock requests when $F_d < F_{\text{threshold}}$ and issue cargo manifests to the **AutonomousManifestResolver** (Section 3). Design-baseline fill thresholds:
 
-| Depot Location | Propellant Threshold | Structural Threshold | Biosphere Seed Threshold |
-|---|---|---|---|
-| LEO | 60% | 40% | — |
-| Earth L1 | 80% | 50% | 30% |
-| Lunar Surface Depot | 70% | 60% | 20% |
-| Mars Transfer Hub | 75% | 55% | 40% |
+| Depot Location | Propellant Threshold | Structural Threshold | Biosphere Seed Threshold | Grounding |
+|---|---|---|---|---|
+| LEO | 60% | 40% | — | **[PROPOSED / PLACEHOLDER]** — depot restock thresholds from logistics simulation baseline; not game-validated |
+| Earth L1 | 80% | 50% | 30% | **[PROPOSED / PLACEHOLDER]** — L1 depot thresholds; derived from mission reserve practices |
+| Lunar Surface Depot | 70% | 60% | 20% | **[PROPOSED / PLACEHOLDER]** — Luna depot thresholds; not game-validated |
+| Mars Transfer Hub | 75% | 55% | 40% | **[PROPOSED / PLACEHOLDER]** — Mars hub thresholds; not game-validated |
 
 ---
 
@@ -148,8 +152,8 @@ $$
 m_c(t+\Delta t_{\text{transit}}) = m_c(t) \cdot e^{-\delta \cdot \Delta t_{\text{transit}}} \cdot (1 - \lambda_{\text{loss}})
 $$
 
-* $\delta$: continuous transit-decay rate (design-baseline: 10⁻⁶ s⁻¹ for volatile losses, 0 for structural mass)
-* $\lambda_{\text{loss}}$: one-time transit loss fraction per corridor segment (e.g., docking error, cargo-handling spill)
+* $\delta$: continuous transit-decay rate (design-baseline: 10⁻⁶ s⁻¹ for volatile losses, 0 for structural mass) — **[PROPOSED / PLACEHOLDER]** decay rate estimate; not game-validated
+* $\lambda_{\text{loss}}$: one-time transit loss fraction per corridor segment (e.g., docking error, cargo-handling spill) — **[PROPOSED / PLACEHOLDER]** loss fraction estimate; not game-validated
 
 ### 5.2 Delta-V Expenditure Formula
 
@@ -165,10 +169,10 @@ $$
 \Delta v_{\text{margin},\,\ell} = \Delta v_{\text{capable}} - \left( \sum_{i=1}^{n_{\text{burn}}} \Delta v_{\text{burn},\,i} + \Delta v_{\text{target-insertion}} + \Delta v_{\text{budget-reserve}} \right)
 $$
 
-* $\Delta v_{\text{capable}}$: tug class maximum delta-v (design-baseline values by tug Mk-class in the tug-class configuration table)
-* $\Delta v_{\text{burn},\,i}$: individual impulse burn on leg $\ell$ (transit-phase, correction, insertion)
-* $\Delta v_{\text{target-insertion}}$: target-body capture / orbital insertion burn
-* $\Delta v_{\text{budget-reserve}}$: contingency reserve (design-baseline: 15% of total budgeted $\Delta v$)
+* $\Delta v_{\text{capable}}$: tug class maximum delta-v (design-baseline values by tug Mk-class in the tug-class configuration table) — **[PROPOSED / PLACEHOLDER]** derived from spacecraft propulsion design; not game-validated
+* $\Delta v_{\text{burn},\,i}$: individual impulse burn on leg $\ell$ (transit-phase, correction, insertion) — **[PROPOSED / PLACEHOLDER]** burn estimate; not game-validated
+* $\Delta v_{\text{target-insertion}}$: target-body capture / orbital insertion burn — **[PROPOSED / PLACEHOLDER]** insertion delta-v estimate; not game-validated
+* $\Delta v_{\text{budget-reserve}}$: contingency reserve (design-baseline: 15% of total budgeted $\Delta v$) — **[PROPOSED / PLACEHOLDER]** reserve margin standard; not game-validated
 
 ### 5.3 Transfer Efficiency Metric
 
@@ -180,13 +184,13 @@ $$
 
 Design-baseline transfer efficiencies by corridor class:
 
-| Corridor Class | One-Way $\eta_{\text{transfer}}$ | Round-Trip $\eta_{\text{transfer}}^2$ |
-|---|---|---|
-| Core-Sol-1 (LEO → Luna) | 0.96 | 0.922 |
-| Core-Sol-2 (LEO → Venus) | 0.94 | 0.884 |
-| Deep-Luna-1 (Lunar Surface → L1) | 0.97 | 0.941 |
-| Mars-Shot-1 (L1 → Phobos TOI) | 0.91 | 0.828 |
-| Belt-Raid-1 (Belt → Eden Anchor) | 0.88 | 0.774 |
+| Corridor Class | One-Way $\eta_{\text{transfer}}$ | Round-Trip $\eta_{\text{transfer}}^2$ | Grounding |
+|---|---|---|---|
+| Core-Sol-1 (LEO → Luna) | 0.96 | 0.922 | **[PROPOSED / PLACEHOLDER]** — transfer efficiency estimate from cargo loss models; not game-validated |
+| Core-Sol-2 (LEO → Venus) | 0.94 | 0.884 | **[PROPOSED / PLACEHOLDER]** — Venus corridor efficiency; not game-validated |
+| Deep-Luna-1 (Lunar Surface → L1) | 0.97 | 0.941 | **[PROPOSED / PLACEHOLDER]** — Luna-L1 efficiency estimate; not game-validated |
+| Mars-Shot-1 (L1 → Phobos TOI) | 0.91 | 0.828 | **[PROPOSED / PLACEHOLDER]** — Mars corridor efficiency; not game-validated |
+| Belt-Raid-1 (Belt → Eden Anchor) | 0.88 | 0.774 | **[PROPOSED / PLACEHOLDER]** — belt-to-outer-system efficiency; not game-validated |
 
 ### 5.4 Delta-V Gating of Corridor Availability
 
