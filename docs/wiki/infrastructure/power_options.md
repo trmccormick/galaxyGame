@@ -1,10 +1,14 @@
 # Power Options for Settlements and Homesteads
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-04  
+> *Audit Summary:* DRAFT from an owner and Gemini brainstorm (2026-11-04), written up by Grok and Qwen. Not yet verified against code or frozen docs. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-04  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [settlement_progression_and_footholds.md](../player/settlement_progression_and_footholds.md)
 
-This page is the wiki home for near-term and longer-term power options that unlock different scales of settlement and surface habitat. High continuous power density is the primary gate for suburban-scale aerogel-dome living.
+This page is the wiki home for near-term and longer-term power options that unlock different scales of settlement and surface habitat. High continuous power density is the primary gate for comfortable, large-volume habitats (see the thought exercise in [Surface Habitat Options](surface_habitat_options.md)).
 
 No major conflicting prior power architecture was found; this page consolidates the preferred near-term direction (orbital beaming) and the fallback options.
 
@@ -41,7 +45,7 @@ No major conflicting prior power architecture was found; this page consolidates 
   - Dust accumulation and global dust storms.
   - Long nights and seasonal variation.
 - Suitable for low-power outposts, sensors, or early temporary modules.
-- Insufficient by itself for the full high-power suburban habitat package without very large array + storage mass.
+- Insufficient by itself for a large high-power habitat without very large array + storage mass.
 
 ---
 
@@ -53,7 +57,7 @@ No major conflicting prior power architecture was found; this page consolidates 
 - Radioisotope thermoelectric generators (RTGs) — useful for low continuous power (rovers, remote stations) but inadequate for habitat-scale loads.
 - Fusion — longer-term aspirational option; not required for the near-term design direction.
 
-Nuclear sources remain valuable for baseload or for locations where orbital beaming is impractical, but they are not the preferred first solution for unlocking surface suburban living.
+Nuclear sources remain valuable for baseload or for locations where orbital beaming is impractical, but they are not the preferred first solution for unlocking large surface habitats.
 
 ---
 
@@ -62,10 +66,10 @@ Nuclear sources remain valuable for baseload or for locations where orbital beam
 **DIRECTION**
 
 - Early AI footholds can operate on modest power (surface solar + storage, small reactors, or limited beamed power).
-- The transition to high-power surface habitats (aerogel domes, open pools, large lawns/gardens, full atmospheric plants) is gated by the availability of continuous high-density power.
+- The transition to high-power surface habitats (large domes with full atmospheric plants and gardens; see the thought exercise in the surface habitat page) is gated by the availability of continuous high-density power.
 - Once orbital beaming or equivalent is online, the energy constraint relaxes and civil-engineering-scale surface construction becomes practical.
 
-This keeps the early game focused on survival and industrial bootstrap while making the later suburban layer feel earned.
+This keeps the early game focused on survival and industrial bootstrap while making the later large-habitat layer feel earned.
 
 ---
 

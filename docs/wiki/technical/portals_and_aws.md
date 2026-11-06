@@ -1,5 +1,9 @@
 # Portals and Artificial Wormhole Stations (AWS)
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-04  
+> *Audit Summary:* DRAFT from an owner and Gemini brainstorm (2026-11-04), written up by Grok and Qwen. Not yet verified against code or frozen docs. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-04  
 **Related**: [settlement_progression_and_footholds.md](../player/settlement_progression_and_footholds.md), logistics and engineering pages

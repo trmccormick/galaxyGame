@@ -105,7 +105,7 @@ The same character can move between these roles over time. Starting location doe
 
 ## Surface Expansion Gate
 
-Surface suburban-scale habitats (see [surface_habitat_options.md](../infrastructure/surface_habitat_options.md)) become available only after the industrial and power conditions listed on that page are met. Until then surface activity remains limited.
+Larger surface habitats (see [surface_habitat_options.md](../infrastructure/surface_habitat_options.md), a thought exercise, not a decided structure type) would need power and industry first; the conditions are OPEN. They become available only after the industrial and power conditions listed on that page are met. Until then surface activity remains limited.
 
 ---
 

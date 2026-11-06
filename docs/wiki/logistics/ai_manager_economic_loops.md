@@ -1,5 +1,9 @@
 # AI Manager Economic Loops
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-04  
+> *Audit Summary:* DRAFT from an owner and Gemini brainstorm (2026-11-04), written up by Grok and Qwen. Not yet verified against code or frozen docs. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 **Status**: DIRECTION (with some ESTABLISHED anchors)  
 **Last Updated**: 2026-11-04  
 **Related**: [markets_eap_and_peg.md](../markets/markets_eap_and_peg.md), [eap_and_ai_manager_escalation.md](eap_and_ai_manager_escalation.md), [resource_and_market_logistics.md](resource_and_market_logistics.md), [financial_engine.md](financial_engine.md)
@@ -91,18 +95,17 @@ Every settlement maintains target stockpile levels for critical resources (O₂,
 - Expansion and civic upgrades proceed according to the settlement’s planned blueprint.
 
 ### Austerity / High-Debt or Zero-Capital Mode
-**DIRECTION** (this package is the main additive material)
+**DIRECTION** (owner, 2026-11-04: with high debt the AI Manager runs its harvesters, does not buy, does not offer missions, and may raise taxes or take other steps to get out of debt; it can still export. Everything beyond that is a Gemini suggestion, not confirmed.)
 
 Triggered when Virtual Ledger balance falls below a warning threshold or liquid GCC reaches zero.
 
 Actions (in priority order):
 
-1. Cancel all player buy orders and discretionary missions.
+1. Stop placing buy orders and stop offering discretionary missions (the base has no capital to pay for either).
 2. Activate (or keep running) internal harvesters (PVEs, TEUs, skimmers, etc.).
 3. Redirect production to **export**. Physical goods are shipped to solvent hubs; value is credited to the Virtual Ledger (or converted to GCC) to pay down debt.
-4. Raise docking fees, warehouse rents, portal tolls, and other civic tariffs to generate liquid GCC.
+4. Raise taxes and fees (docking, warehouse, tolls) to generate liquid GCC. Which fees, and how much, is OPEN.
 5. Freeze non-essential expansion and cosmetic upgrades.
-6. Restrict portal power windows to high-efficiency scheduled slots.
 
 Goal remains survival and return to solvency, not liquidation of the base. Physical plant is preserved.
 
@@ -154,7 +157,7 @@ This ensures the universe is already alive and has economic history when the fir
 |------------------------------------|----------------------------------------------------------|---------------------------------------------|
 | Solvent + player supply ≤ 80 % EAP | Buys from players, suppresses own harvest                | Reliable local sales, standing gains        |
 | Player price > EAP                 | Rejects local offers, imports or harvests itself         | Must undercut or find other markets         |
-| High debt / austerity              | No buy orders, no missions, exports product, raises fees | Distressed assets, bailout contracts, low-price monopoly |
+| High debt / austerity              | No buy orders, no missions, exports product, raises fees | OPEN: what players can do for a broke base (owner has not confirmed) |
 | Zero players                       | Full autonomous harvest + export loop                    | Arrive into an already-functioning economy  |
 
 ---

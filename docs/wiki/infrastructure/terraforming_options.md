@@ -1,5 +1,9 @@
 # Terraforming Options
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-05  
+> *Audit Summary:* DRAFT extracted from a Gemini terraforming chat. Not yet reviewed by the owner or verified against code or frozen docs.
+
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-05  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), settlement and logistics pages

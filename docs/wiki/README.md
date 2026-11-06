@@ -40,6 +40,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 |------|--------|
 | [Getting started](player/getting_started.md) | Run the game, first session |
 | [Player roles and alignment](player/player_roles_and_alignment.md) | Roles and alignment (verify against code) |
+| [First hour & entry state](player/first_hour_and_entry_state.md) | What players meet at entry: active starts, AWS timing, dashboard |
 | [Settlement progression & footholds](player/settlement_progression_and_footholds.md) | Settlement evolution stages, first foothold requirements, expansion gates |
 | [Eden disconnect & emergent history](player/eden_disconnect_and_emergent_history.md) | Snap event, post-isolation emergent states, system recovery protocols |
 
@@ -57,7 +58,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Markets, EAP & GCC/USD peg](markets/markets_eap_and_peg.md) | Canonical consolidation: markets pair + EAP ceilings + GCC/USD calibration peg |
 | [EAP & AI Manager escalation](logistics/eap_and_ai_manager_escalation.md) | Earth Anchor Price escalation paths |
 | [Import order & cycler models](logistics/import_order_and_cycler_models.md) | Import orders and cycler transit models |
-| [Terraforming economic integration](logistics/terraforming_economic_integration.md) | Seed path vs brute-force economics |
+| [Terraforming economic integration](logistics/terraforming_economic_integration.md) | Seed path vs brute-force economics — see also [Terraforming options](infrastructure/terraforming_options.md) for the mechanical pathways |
 
 ---
 
@@ -79,11 +80,12 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Atmospheric harvesting](infrastructure/atmospheric_harvesting.md) | Gas / atmosphere harvesting |
 | [Power options](infrastructure/power_options.md) | Power generation and distribution across phases (surface, orbital, and deep-space) |
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
-| [Surface habitat options](infrastructure/surface_habitat_options.md) | Surface/near-surface habitats: aerogel domes, regolith berms, suburban-scale living |
+| [Surface habitat options](infrastructure/surface_habitat_options.md) | Surface habitat thought exercise: dome pressurization, oxygen setup, power gate |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
 | [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM communication with distance-dependent delays; store-and-forward relays; wormholes do not bypass comms physics. **Resolved:** historical discrepancy with WORMHOLE_NETWORK_INTENT.md documented.
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
+| [Terraforming options](infrastructure/terraforming_options.md) | Pressure-first protection path, refined Venus→Mars mass-driver pipeline, softer longer-horizon options |
 
 *Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
 
@@ -114,7 +116,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 
 Front door and section map are in place. Topic pages carry status banners; many details still need verify-against-code. Prefer [Status and gaps](status-and-gaps.md) and the topic pages over archaeology under `wiki_reorganization/`.
 
-Portal and other later-game topics stay out of this front door until their design is ready to land under the appropriate section (likely Player or Development → logistics/transport).
+Portal and AWS design now lives under [Portals & AWS](technical/portals_and_aws.md). Terraforming pathways live under [Terraforming options](infrastructure/terraforming_options.md).
 
 ## Wiki Standards & Conventions
 
@@ -125,7 +127,7 @@ All files in `docs/wiki/` follow these rules. New pages must comply:
 3. **All incoming links must resolve against tracked files** (`git ls-files`). Before merging, verify every new relative path exists in `git ls-files docs/wiki/`.
 4. **Anchor links:** use lowercase with hyphens (`#section-title`) matching the first `#` heading exactly.
 5. **No links out of the wiki.** `docs/wiki/` is the source of truth. Older documentation (`docs/architecture/`, `docs/developer/`, `docs/agent/`, `docs/design/`, `docs/wiki_reorganization/`, etc.) is frozen reference: read it, harvest what is still valid into the wiki, and cite it as plain text in the [Migration log](migration-log.md). Never link to it and never edit it.
-6. **Labels.** The page banner describes the whole page: `VERIFIED AGAINST CODE`, `PARTIALLY IMPLEMENTED`, or `DESIGN INTENT`. A page that contains design the code does not implement cannot be `VERIFIED AGAINST CODE`. Section labels: `ESTABLISHED INTENT` (owner-confirmed; add the date), `DIRECTION` (under discussion, not final), `OPEN` (undecided), `RETIRED / DO NOT USE`.
+6. **Labels.** The page banner describes the whole page: `VERIFIED AGAINST CODE`, `PARTIALLY IMPLEMENTED`, or `DESIGN INTENT`. A page that contains design the code does not implement cannot be `VERIFIED AGAINST CODE`. Section labels: `ESTABLISHED INTENT` (owner-confirmed; add the date), `DIRECTION` (under discussion, not final), `OPEN` (undecided), `RETIRED / DO NOT USE`. A number with no source is tagged `[PROPOSED / PLACEHOLDER]`; such numbers are design notes only and are never a data source for the runtime UI (see ui/README.md).
 7. **Code notes are dated.** A "verified against code" section names the commit it was checked at. Keep it short: design intent first, code facts second.
 8. **Wiki vs. code conflicts.** If the wiki is only stale on a detail of current behavior, update it from the code. If the difference could be a design change, ask the owner. If the owner's intent needs a code change, write a thin task (rule 9). Do not change the wiki to match code that is wrong.
 9. **Thin tasks.** A task states what to build, links to the one wiki page that holds the design, and lists acceptance criteria. Design text belongs in the wiki, not in the task.

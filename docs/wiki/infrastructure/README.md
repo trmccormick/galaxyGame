@@ -7,7 +7,7 @@ last_updated: 2026-10-28
 
 # Infrastructure
 
-This directory is the home for infrastructure wiki pages. It covers pre-player logistics pipelines, atmospheric harvesting, planetary protection, and related architectural references.
+This directory is the home for infrastructure wiki pages. It covers pre-player logistics pipelines, atmospheric harvesting, surface habitats, power options, terraforming pathways, planetary protection, and related architectural references.
 
 ---
 
@@ -51,10 +51,17 @@ Planetary protection protocols, environmental governance frameworks, and ecologi
 ## Surface Habitats & Power
 
 → [`surface_habitat_options.md`](./surface_habitat_options.md)  
-Design options for surface (or near-surface) habitats that become available once power, logistics, and industrial base are mature: aerogel domes, regolith berms, suburban-scale living on Mars/Luna.
+Design options for surface (or near-surface) habitats that become available once power, logistics, and industrial base are mature: a thought exercise on dome pressurization, oxygen setup and power.
 
 → [`power_options.md`](./power_options.md)  
 Power generation and distribution strategies across phases (surface, orbital, deep-space). Covers solar arrays, nuclear thermal reactors, RTGs, and hybrid grids.
+
+---
+
+## Terraforming & Atmospheric Pressure
+
+→ [`terraforming_options.md`](./terraforming_options.md)  
+Planetary-scale atmosphere modification options: raw-gas pressure-first path (protection of population and infrastructure), refined Venus→Mars mass-driver pipeline (O₂/N₂ + CNT shells), and softer longer-horizon approaches (gradual Venus siphon, Titan, KBOs). Magnetosphere prerequisite applies to high-throughput injection methods.
 
 ---
 
