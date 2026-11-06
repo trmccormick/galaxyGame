@@ -42,31 +42,34 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 | Command reference drift | [System commands](technical/system_commands.md) may name services or baselines that have moved — re-check before scripting around them |
 | Architecture sprawl | Large trees under `docs/architecture/` and legacy `docs/agent/` are uneven; prefer wiki entry pages first |
 
-## New pages now exist (2026-11-04 Gemini brainstorm + archaeology)
+## Draft pages added (2026-11-04 owner and Gemini brainstorm; unverified)
 
-These topics that were previously scattered or undocumented now have dedicated wiki homes:
+These topics now have a draft wiki home. The pages are first drafts from a brainstorm and are not yet verified:
 
-| Topic | Canonical page | Status |
+| Topic | Draft page | Status |
 |-------|---------------|--------|
 | AI Manager economic behavior (debt/austerity, NPC bands, Virtual Ledger, stockpile targets) | [AI Manager Economic Loops](logistics/ai_manager_economic_loops.md) | DIRECTION — some ESTABLISHED anchors |
-| Surface / near-surface habitats (aerogel domes, regolith berms, suburban-scale living) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) | DIRECTION |
+| Surface / near-surface habitats (thought exercise on dome pressurization and power) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) | DESIGN INTENT (thought exercise) |
 | Power generation and distribution across phases | [Power Options](infrastructure/power_options.md) | DIRECTION |
-| Settlement evolution stages, first foothold requirements, expansion gates | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) | Strong draft with VERIFY flags |
-| Eden disconnect: snap event mechanics, emergent post-isolation states, recovery protocols | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) | DIRECTION — core narrative solid; details open |
-| Portal rules (mass limits, EM consumption, pairing constraints) + AWS inter-system networking | [Portals & AWS](technical/portals_and_aws.md) | ESTABLISHED INTENT — gaps noted below |
+| Settlement evolution stages, first foothold requirements, expansion gates | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) | DIRECTION (draft) |
+| Eden disconnect: snap physics, residual EM field, reconnection sequence, emergent post-isolation states | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) | DIRECTION — snap physics and reconnection sequence (tug + EM harvesters + sats only → conversion → full AWS) stated by the owner, page still marks it DIRECTION; emergent archetypes OPEN |
+| Portal rules (mass limits, EM consumption, pairing) + AWS inter-system networking | [Portals & AWS](technical/portals_and_aws.md) | DIRECTION / OPEN — intra-system low-mass + pairing are established direction; inter-system Level 4b details remain more open |
+| Atmosphere modification / terraforming pathways (pressure-first protection, refined mass-driver, softer options) | [Terraforming options](infrastructure/terraforming_options.md) | DIRECTION / OPEN (unreviewed Gemini draft) |
 
-## Resolved gaps (2026-11-04 additions)
+## Gaps with a draft home (2026-11-04; not yet resolved)
 
-These were previously listed as open or missing; the pages above now own them:
+These were listed as open or missing. The draft pages above now cover them, pending verification:
 
-| Gap resolved | New canonical page |
-|-------------|-------------------|
+| Gap | Draft page |
+|-----|-----------|
 | AI Manager market behavior, debt-driven austerity, inter-NPC clearing, NPC buy/sell bands | [AI Manager Economic Loops](logistics/ai_manager_economic_loops.md) — consolidates intent from brainstorm; adds missing austerity/80-90 band/ledger rules |
-| Surface habitat design options (aerogel, regolith berms, suburban-scale living on Mars/Luna) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) — covers types, unlock conditions, cost structures |
+| Surface habitat design options (thought exercise only, not a planned structure type) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) |
 | Power generation and distribution strategies across phases (surface, orbital, deep-space) | [Power Options](infrastructure/power_options.md) — power infrastructure evolution |
-| Settlement tier progression, early foothold requirements, expansion gates between tiers | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) — tiered evolution from early foothold through suburban-scale living |
+| Settlement tier progression, early foothold requirements, expansion gates between tiers | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) — tiered evolution from early foothold |
 | Post-snap behavior of disconnected systems, emergence rules, reconnection mechanics | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) — snap event + emergent states + recovery protocols |
-| Portal technology and AWS networking (already referenced in gaps; now fully canonical below) | [Portals & AWS](technical/portals_and_aws.md) — established portal constraints, AWS network topology; remaining gap: inter-system portal-gate (Level 4b) flagged as Gemini proposal only, not approved design |
+| Atmosphere modification / pressure-first protection / Venus→Mars mass-driver pathways | [Terraforming options](infrastructure/terraforming_options.md) |
+| Portal technology and AWS networking | [Portals & AWS](technical/portals_and_aws.md) — intra-system low-mass + pairing as live design; inter-system details still open |
+| What a new player meets at entry (active starts, AWS timing, dashboard) | [First Hour and Entry State](player/first_hour_and_entry_state.md) |
 
 | Gap resolved | New canonical page |
 |-------------|-------------------|
