@@ -1,7 +1,7 @@
 # Eden Disconnect and Emergent History
 
 **Status**: OPEN  
-**Last Updated**: 2026-11-04  
+**Last Updated**: 2026-11-05  
 **Related**: [settlement_progression_and_footholds.md](settlement_progression_and_footholds.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md), existing snap-event and post-snap reconnection material
 
 This page is the wiki home for the state of the Eden system after the Snap / disconnect event. Prior documentation covers the Snap itself and reconnection protocols. This page records the emergent post-isolation outcome space and ties it to the actual wormhole physics that caused the Snap.
@@ -92,24 +92,32 @@ Mixed outcomes within a single system are expected and desirable.
 
 ## Reconnection Sequence
 
-**DIRECTION**
+**ESTABLISHED INTENT (owner, 2026-11-05)** — this corrects an earlier draft of this page.
 
-When Sol first opens an Artificial Wormhole Station (AWS) link toward Eden coordinates:
+The natural wormhole snapped and is gone, which is why Eden can only be reconnected through an Artificial Wormhole Station (AWS) link. When Sol first opens that link toward Eden:
 
-1. The Sol-side station initiates the rift. It is under significant strain supporting the open rift alone.
-2. Only a tightly limited set of assets can come through during this strain phase:
-   - The **tug** (to move the Eden-side station into position)
-   - **EM harvesters**
-   - **Stabilization sats**
-3. The stabilization sats help stabilize the rift while the tug repositions the Wormhole Station (WS).
-4. Once the WS is in position and the EM harvesters are full, a **cycler arrives** carrying the conversion equipment.
-5. Conversion of the WS into a full AWS begins.
-6. When the station is operational, the EM harvesters dock and remain at the new AWS. From that permanent berth they continue harvesting the residual pre-Snap EM field.
-7. The pair is now a true AWS link; strain on the Sol station is relieved and general traffic can begin.
+1. The Sol-side station opens the rift. It is under significant strain supporting the open rift alone.
+2. The **tug** and the **EM harvesters** cross over.
+3. The tug deploys the **stabilization sats**. The sats capture EM and focus it back into the rift to help stabilize it.
+4. While that happens, the tug and the EM harvesters move to the location where the natural wormhole used to be. The wormhole is gone. All that remains there is the abandoned Wormhole Station (WS) and an EM field. They retrieve the WS and harvest EM.
+5. Once they are in position, a **cycler** should have arrived carrying the upgrade package. The WS is converted into a full AWS.
+6. The EM harvesters dock and stay with the WS, now an AWS. The EM they hold fuels the large-scale stabilization technology.
+7. The pair is now a true AWS link, and the strain on the Sol station is relieved.
 
-**No other traffic is permitted during this phase.** General cargo, colonists, and unrestricted player traffic become possible only after the Eden-side station is converted and operational.
+**DIRECTION** (not confirmed since the 2026-11-05 correction):
 
-Exact power, EM, and structural requirements for the temporary strain phase and the final conversion remain OPEN.
+- No other traffic is allowed during the strain and conversion phase. Only the tug, the EM harvesters, the stabilization sats and the cycler carrying the upgrade package transit.
+- General cargo, colonists and unrestricted player traffic become possible only after the Eden-side station is converted and operational.
+
+**OPEN**:
+
+| Question | Notes |
+|----------|-------|
+| What does retrieving the abandoned WS involve (its condition, repairs, how the tug moves it)? | The WS sits at the old wormhole location. |
+| Do the EM harvesters keep harvesting the residual pre-Snap EM field after they dock? | An earlier draft said so. The owner said only that the EM they hold fuels the stabilization technology. |
+| How does the cycler cross during the strain phase? | |
+| How do the sats capture and focus EM, and what does stabilization need? | No numbers. |
+| Exact power, EM and structural requirements for the strain phase and the conversion | |
 
 ---
 
@@ -134,7 +142,7 @@ These levers let the same code produce autarkic, ghost, feral, or tomb results d
 
 - First-wave players are expected to start in **active, solvent systems** (Sol core, established LDC hubs, or System B extraction frontiers). Dropping directly into an unknown Eden state is high-risk.
 - Once logistics and capital are established, player corporations can mount expeditions through the new AWS gate.
-- **No other traffic is allowed** until the Eden-side WS is converted and operational. Only the tug, EM harvesters, and stabilization sats may transit during the strain and conversion phase.
+- **No other traffic is allowed** until the Eden-side WS is converted and operational. Only the tug, EM harvesters, stabilization sats and the cycler carrying the upgrade package may transit during the strain and conversion phase (DIRECTION).
 - Reclamation, salvage, diplomacy with survivor pockets, or pure archaeological recovery become distinct play styles depending on the archetype encountered.
 - Ghost shells and tombs leave physical assets intact; the economic and narrative value is in recovery and restart.
 - The residual pre-Snap EM field becomes a high-value objective once the harvesters are docked and operating from the new AWS.
