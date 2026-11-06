@@ -99,10 +99,15 @@ The natural wormhole snapped and is gone, which is why Eden can only be reconnec
 1. The Sol-side station opens the rift. It is under significant strain supporting the open rift alone.
 2. The **tug** and the **EM harvesters** cross over.
 3. The tug deploys the **stabilization sats**. The sats capture EM and focus it back into the rift to help stabilize it.
-4. While that happens, the tug and the EM harvesters move to the location where the natural wormhole used to be. The wormhole is gone. All that remains there is the abandoned Wormhole Station (WS) and an EM field. They retrieve the WS and harvest EM.
-5. Once they are in position, a **cycler** should have arrived carrying the upgrade package. The WS is converted into a full AWS.
-6. The EM harvesters dock and stay with the WS, now an AWS. The EM they hold fuels the large-scale stabilization technology.
-7. The pair is now a true AWS link, and the strain on the Sol station is relieved.
+4. The tug and the EM harvesters go to the location where the natural wormhole used to be. The wormhole is gone. All that remains there is the abandoned Wormhole Station (WS) and an EM field.
+5. The tug connects to the WS and starts moving it into position.
+6. While the WS is being moved, the tug's crew starts early conversion work on it. They convert its storage so the EM harvesters can dock and dump EM into it.
+7. The EM harvesters continue to harvest EM in the area.
+8. Once the WS is in position, a **cycler** should have arrived carrying the upgrade package. The WS is converted into a full AWS.
+9. The EM harvesters dock and stay with the WS, now an AWS. The EM they hold fuels the large-scale stabilization technology.
+10. The pair is now a true AWS link, and the strain on the Sol station is relieved.
+
+The owner has deliberately not defined where the natural wormhole appeared in Eden or exactly where the new rift opens. Travel times, such as the tug's trip to the abandoned WS, are calculated in game from the actual positions, so no fixed durations are defined. Durations in other pages (for example `engineering/01_post_snap_reconnection_protocol.md`) were written by agents and are unconfirmed placeholders.
 
 **DIRECTION** (not confirmed since the 2026-11-05 correction):
 
@@ -113,11 +118,12 @@ The natural wormhole snapped and is gone, which is why Eden can only be reconnec
 
 | Question | Notes |
 |----------|-------|
-| What does retrieving the abandoned WS involve (its condition, repairs, how the tug moves it)? | The WS sits at the old wormhole location. |
-| Do the EM harvesters keep harvesting the residual pre-Snap EM field after they dock? | An earlier draft said so. The owner said only that the EM they hold fuels the stabilization technology. |
+| Where does the tug move the WS to? | The owner said "into position" and has left exact positions undefined on purpose (see above). `engineering/01_post_snap_reconnection_protocol.md` describes pre-calculated exit coordinates opposite a large planetary body; not confirmed. |
+| What condition is the abandoned WS in, and what does the tug crew's early conversion work involve? | |
 | How does the cycler cross during the strain phase? | |
 | How do the sats capture and focus EM, and what does stabilization need? | No numbers. |
 | Exact power, EM and structural requirements for the strain phase and the conversion | |
+| Do stabilization sats stay deployed or get stored after the link is stable? | `01_post_snap_reconnection_protocol.md` stores them; the owner has not said. |
 
 ---
 

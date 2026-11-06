@@ -39,6 +39,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 |-----|--------|
 | Celestial systems | [Celestial systems](astronomy/celestial_systems.md) is a **template**, not a filled Sol (or other) system page |
 | Player roles / factions | [Player roles and alignment](player/player_roles_and_alignment.md) is detailed; treat as intent until matched to current models/UI |
+| Eden system data (`AOL-732356`) | Early procedurally generated working file (owner, 2026-11-05); the data needs adjusting, and most likely the generator does too. Seen on review: orbital periods match a 1-solar-mass star, but the star's mass is 0.147 solar; the star type label (M0V) does not match its mass, radius and temperature; Eden IV and all the asteroids have physically impossible densities (asteroid masses or radii are wrong); rocky-planet insolation and surface temperatures come from templates, not from the star's luminosity. Not a design decision. Backend work is paused, so no task yet. |
 | Command reference drift | [System commands](technical/system_commands.md) may name services or baselines that have moved — re-check before scripting around them |
 | Architecture sprawl | Large trees under `docs/architecture/` and legacy `docs/agent/` are uneven; prefer wiki entry pages first |
 
@@ -52,7 +53,7 @@ These topics now have a draft wiki home. The pages are first drafts from a brain
 | Surface / near-surface habitats (thought exercise on dome pressurization and power) | [Surface Habitat Options](infrastructure/surface_habitat_options.md) | DESIGN INTENT (thought exercise) |
 | Power generation and distribution across phases | [Power Options](infrastructure/power_options.md) | DIRECTION |
 | Settlement evolution stages, first foothold requirements, expansion gates | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) | DIRECTION (draft) |
-| Eden disconnect: snap physics, residual EM field, reconnection sequence, emergent post-isolation states | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) | DIRECTION — snap physics and reconnection sequence (tug and EM harvesters cross, sats stabilize, cycler brings the upgrade, harvesters dock at the AWS) confirmed by the owner 2026-11-05; Eden's state and emergent archetypes OPEN |
+| Eden disconnect: snap physics, residual EM field, reconnection sequence, emergent post-isolation states | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) | DIRECTION — snap physics and reconnection sequence (tug and EM harvesters cross, sats stabilize, tug moves the WS, cycler brings the upgrade, harvesters dock at the AWS) confirmed by the owner 2026-11-05; Eden's state and emergent archetypes OPEN |
 | Portal rules (mass limits, EM consumption, pairing) + AWS inter-system networking | [Portals & AWS](technical/portals_and_aws.md) | DIRECTION / OPEN — intra-system low-mass + pairing are established direction; inter-system Level 4b details remain more open |
 | Atmosphere modification / terraforming pathways (pressure-first protection, refined mass-driver, softer options) | [Terraforming options](infrastructure/terraforming_options.md) | DIRECTION / OPEN (unreviewed Gemini draft) |
 
