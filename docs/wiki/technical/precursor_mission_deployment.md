@@ -15,7 +15,7 @@
 
 This document defines the **mandatory deployment sequence** for all precursor missions — any world where human settlement begins. The sequence is strictly ordered, world-invariant, and gate-locked: each step must complete before the next can begin. It governs the transition from landed robotic deployment to powered surface operations to first 3D-printed structure.
 
-**Authority:** This document promulgates requirements from `docs/architecture/isru/README.md`. The sequence is canonical for all worlds, regardless of equipment naming updates. If code contradicts this sequence, the code is wrong.
+**Authority:** This document promulgates requirements from `docs/architecture/isru/README.md`. The sequence is canonical for all worlds, regardless of equipment naming updates. Mismatches between this design and implementation are logged as architectural gaps for human review.
 
 ---
 

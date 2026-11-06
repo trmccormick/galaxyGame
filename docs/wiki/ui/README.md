@@ -22,6 +22,14 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 
 A proposed mockup or prototype screenshot is not automatically an approved design. Keep the distinction between **ESTABLISHED INTENT**, **DIRECTION**, and **OPEN** visible.
 
+## UI Data Sourcing Rule
+
+**All numeric values displayed in the runtime UI/HUD must be sourced from either:**
+- Live code (`app/` models, services, controllers)
+- The `operational_data` JSON configuration system
+
+**Placeholder tables and estimates in this wiki are NOT valid data sources for live UI display.** Wiki tables, mass balances, and power budgets serve as design documentation and architectural reference only. Any wiki table marked `[PROPOSED / PLACEHOLDER]` must be replaced with code-grounded or `operational_data`-sourced values before being rendered to players.
+
 ## Change History
 
 - **2026-11-04** — Created the UI & Experience section as the home for Galaxy Game interface design intent.

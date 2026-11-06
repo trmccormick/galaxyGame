@@ -3,9 +3,7 @@
 > *Last Audited:* 2026-11-01  
 > *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
-## Status: CODE-GROUNDED (verified against live code)
-
-This page is the canonical wiki entry for StarSim system generation, unit-level simulation execution boundaries, and planetary protection class frameworks. All content is grounded in live code inspection (`galaxy_game/app/`). Legacy docs are cited as harvest sources but carry no authority.
+This page is the canonical wiki entry for StarSim system generation, unit-level simulation execution boundaries, and planetary protection class frameworks. The architecture and design intent are described below. Code implementation coverage is detailed in the relevant sections.
 
 **Harvested from legacy sources:**
 - `docs/architecture/starsim/OVERVIEW.md` — StarSim architecture overview, weathering engine intent, fidelity tiers

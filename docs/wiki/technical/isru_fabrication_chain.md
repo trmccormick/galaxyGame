@@ -80,6 +80,9 @@ Extracted regolith passes through a multi-stage sieving system:
 | Vacuum drying | Remove adsorbed moisture | Residual moisture <0.1% w/w |
 
 **Mass balance at Stage 2:**
+
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures. They have not been validated against `operational_data/units/processing/sieve_unit_mk*_data.json` files. See the audit summary above for code alignment status.
+
 ```
 Input:  500 kg/hr raw regolith (Mk1 baseline)
 Output:
@@ -130,6 +133,9 @@ Processed and blended feedstock is stored in sealed hopper silos before dispatch
 The qualified feedstock enters the 3D-printed fabricator. For Mk1:
 
 **Mass balance at fabrication (Mk1):**
+
+> **Note:** The following values are **[PROPOSED / PLACEHOLDER]** figures. They have not been validated against `operational_data/units/production/fabricators/printer_fabricator_unit_mk*_data.json` files. See the audit summary above for code alignment status.
+
 ```
 Feedstock input:    200 kg/hr qualified regolith + additives
 Print output:
@@ -182,6 +188,8 @@ CNT fabricators consume more power due to plasma arc CO₂ splitting and catalys
 | Mk2 CNT fabricator | 1,080 kW |
 | Mk3 CNT fabricator | 1,490 kW |
 | **Total (all six units)** | **5,070 kW** |
+
+> **Note:** This combined power budget figure is **[PROPOSED / PLACEHOLDER]** and represents the sum of placeholder values in the tables above. It has not been validated against actual `operational_data` configurations or complete settlement operational profiles.
 
 A settlement running all six fabrication tiers simultaneously requires a base power generation capacity of approximately **5.1 MW continuous**. This figure does not include extractor loads, habitat systems, or terraforming infrastructure, which compound on the same generation bus.
 

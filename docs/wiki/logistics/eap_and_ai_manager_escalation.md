@@ -17,7 +17,7 @@
 
 This document defines two foundational logistics mechanisms: the **Earth Anchor Price** (EAP), which is the AI Manager's hard price ceiling for all market purchases, and the **AI Manager Escalation Ladder**, which is the strict 6-step sequence the AI follows to acquire any needed resource. Together they form the economic backbone of every terraforming contract, buy order, and cycler shipment in the game.
 
-**Authority:** This document promulgates requirements from `docs/architecture/logistics/logistics_architecture.md`. If code contradicts these rules, the code is wrong.
+**Authority:** This document promulgates requirements from `docs/architecture/logistics/logistics_architecture.md`. Mismatches between this design and implementation are logged as architectural gaps for human review.
 
 ---
 
