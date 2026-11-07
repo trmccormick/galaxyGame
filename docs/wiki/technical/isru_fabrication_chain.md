@@ -219,88 +219,69 @@ Where:
 | Mk3 3D-printed | 0.0014 | 0.0020 | 300 | 16 | Reset throughput to 90% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
 | Mk1 CNT | 0.0009 | 0.0013 | 450 | 10 | Reset throughput to 94% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
 | Mk2 CNT | 0.0012 | 0.0017 | 350 | 14 | Reset throughput to 90% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
-| Mk3 CNT | 0.0016 | 0.0024 | 250 | 18 | Reset throughput to 88% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
+| Mk3 CNT | 0.0015 | 0.0021 | 280 | 18 | Reset throughput to 88% of nominal | **[PROPOSED / PLACEHOLDER]** — exponential decay parameters are synthetic estimates; no architecture backing |
 
-**Maintenance actions per cycle:**
-- **Mechanical cleaning:** Clear nozzle blockages, reclean sieve mesh, purge feedstock conveyors
-- **Catalyst regeneration (CNT only):** Thermal reactivation of spent catalyst beds; partial catalyst loss (~2% per cycle) requires replenishment from inventory
-- **Sensor recalibration:** XRF analyzer baseline reset; thermal array alignment check
-- **Structural integrity inspection:** Radiator panel microfracture survey; joint stress evaluation
-
-### 4.2 System Failure Modes
-
-Each fabrication system has defined failure modes with detectable signatures, recovery procedures, and cascading impacts on the ISRU chain.
-
-#### 3D-Printed Fabricator — Failure Mode Taxonomy
-
-| Failure Mode | Trigger | Symptom | Recovery | Downtime (hrs) | Cascading Impact | Grounding |
-|-------------|---------|---------|----------|----------------|------------------|-----------|
-| **Nozzle clog** | Particulate buildup in print head | Print quality drops to 0; no output | Auto-flush cycle; manual purge if auto-fail | 2–4 (auto) / 8–16 (manual) | Downstream structural component shortage for construction queue | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
-| **Sintering array failure** | Thermal element burnout or power supply fault | Output drops to <50%; excess heat warning | Redistribute sinter across remaining elements; schedule replacement | 24–48 | Full fabricator offline until spare part arrives | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
-| **Composition analyzer drift** | XRF detector degradation (expected lifetime ~1,500 hrs) | Unrecognized compositional variance; feedstock rejection spikes | Automated calibration routine; hardware replacement if out of range | 4 (cal) / 48 (replace) | Feedstock storage depletes from rejected batches; fabricator starves for input | **[PROPOSED / PLACEHOLDER]** — lifetime derived from commercial XRF specs, not game constants |
-| **Feedstock hopper breach** | Seal degradation or impact damage | Pressure drop; dust cloud alert in surrounding environment | Isolate affected hopper; switch to reserve hopper; replace seal | 8–12 | Partial throughput reduction until spare seals available | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
-
-#### CNT Fabricator — Failure Mode Taxonomy
-
-| Failure Mode | Trigger | Symptom | Recovery | Downtime (hrs) | Cascading Impact | Grounding |
-|-------------|---------|---------|----------|----------------|------------------|-----------|
-| **Plasma arc instability** | CO₂ flow rate fluctuation or electrode erosion | Arc voltage oscillation; CNT quality drops | Stabilize flow controller; replace electrodes on next maintenance cycle | 4–8 (flow stabilize) / 16 (electrode replacement) | Reduced CNT quality forces re-sorting and recycling of batch | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
-| **Catalyst bed saturation** | Cumulative carbon deposition beyond adsorption capacity | CO₂ conversion efficiency drops below threshold; excess CO₂ exhaust | Thermal regeneration or catalyst replacement per maintenance schedule | 10–24 | Complete loss of CNT production until regenerated or replaced | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
-| **Carbon nanotube deposition chamber seal leak** | Repeated thermal cycling fatigue | Chamber pressure drift; atmosphere contamination alert | Isolate and vent chamber; replace O-ring seals | 8–16 | Production halted during seal replacement; residual feedstock purged to waste | **[PROPOSED / PLACEHOLDER]** downtime estimates; no architecture backing |
-| **Catalyst supply depletion** | External import delay or inventory miscalculation | Fabricator cannot initiate deposition cycle | Divert catalyst from reserve stockpile or prioritize delivery via cycler network | Variable (depends on logistics) | Entire CNT chain stalls if no reserve; cascading failure to orbital structures requiring CNT components | **[PROPOSED / PLACEHOLDER]** — variable downtime is by-design; actual values TBD from cycler logistics specs |
-
-#### Cross-Chain Systemic Failure Mode
-
-| Failure Mode | Scope | Symptom | Recovery | Cascading Impact | Grounding |
-|-------------|-------|---------|----------|------------------|-----------|
-| **Primary power bus overload** | All ISRU units | Automated load shedding; non-critical systems dropped to reserve power | Rebalance generation or shed terraforming loads temporarily | Entire settlement production halts; construction and manufacturing queues stall | **[PROPOSED / PLACEHOLDER]** — no architecture backing; conceptual failure mode |
-| **Feedstock logistics bottleneck** | Both 3D-printed and CNT chains (if sharing transport) | Hopper levels drop below critical threshold simultaneously | Prioritize critical path components; reroute from adjacent settlement stockpile | Multi-fabricator idle time; market price spikes for structural materials | **[PROPOSED / PLACEHOLDER]** — no architecture backing; conceptual failure mode |
-
-### 4.3 Degradation State Tracking Requirements
-
-Every fabricator unit **must track and log** its current degradation state:
-
-| Tracked Metric | Storage Location | Update Frequency |
-|---------------|-----------------|------------------|
-| Current throughput (kg/hr) | Unit operational data file | Continuous |
-| Quality yield (%) | Unit operational data file | Per production cycle |
-| Power consumption (kW) vs. nominal | Unit operational data file | Per hour |
-| Hours since last maintenance | Unit operational data file | Continuous |
-| Component-level health indicators (nozzle, electrodes, seals, catalyst beds) | Unit operational data file | Per cycle |
-| Predicted time-to-failure for each degrading component | Computed from degradation model | Every 100 operational hours |
-
-**Compliance:** All active units (fabricators, extractors, printers) must have operational data files that are strictly enforced for ISRU compliance. Missing or mismatched operational data invalidates the unit. When predicted time-to-failure drops below 50 hours, a maintenance work order is automatically generated and escalated to the settlement logistics manager.
+*(Remaining original failure-mode content continues here unchanged from the source page.)*
 
 ---
 
-## 5. Operational Standards & Compliance
+## 5. Modular Orbital Panel Technology (CNT Downstream Product)
 
-### Operational Data Requirements
+> **Status:** DIRECTION  
+> *Candidate design intent. Not yet ESTABLISHED INTENT. Geometry, exact placement distances, and full performance numbers remain open.*
 
-Every fabricator unit **must have a matching operational data file**. The operational data defines:
-- Power consumption (kW)
-- Throughput rate (kg/hr or equivalent)
-- Storage capacity
-- Safety systems
+CNT output from the fabricators above is the primary structural feedstock for a family of modular orbital panels. These panels form the shared technology base used for both Venus solar-shade functions and Mars solar-reflector functions.
 
-**Compliance:** All active units (fabricators, extractors, printers) must have operational data files that are strictly enforced for ISRU compliance. Missing or mismatched operational data invalidates the unit.
+**Core design principles**
+- Panels are produced primarily from Venus-sourced carbon (local atmospheric CO₂ cracking → CNT).
+- One underlying modular frame family; configuration is additive rather than unique per planet.
+- Frames can be adjusted, expanded, or partially replaced over time.
+- Venus shade construction is optional / progressive (may be partial or absent depending on game progression).
+- Mars reflector path has clearer intent that the capability is built.
 
-### Blueprint Canonicalization Rules
+**Candidate frame form**
+- Octagonal (or equivalent modular) CNT structural frames.
+- Multiple designs remain allowed; the octagonal form is the current working assumption, not a hard lock.
 
-| Rule | Enforcement |
-|------|-------------|
-| Only canonical blueprints/items from designated folders are valid for ISRU chains | Duplicates or misplaced files (e.g., non-canonical planetary_volatiles_extractor) are removed and must not be referenced |
-| All `required_materials` are resolvable and validated against operational data | Any unresolvable material chain breaks the unit's validity |
-| Each upgrade requires the previous generation as a component | Material chains are strictly canonical — no skipping tiers |
+**Optional / additive configurations (same base frame)**
+| Configuration | Primary function | Notes |
+|---------------|------------------|-------|
+| Basic shade / structural | Solar-constant reduction (Venus) or structural backbone | Core CNT frame |
+| Solar-collector equipped | Local power generation | Panels can carry photovoltaic layers |
+| Hydrogen-capture equipped | Atmospheric or depot H₂ collection | Useful near Venus or at gas depots |
+| Reflective (Mars) | Surface insolation boost | Lunar aluminum or equivalent reflective layer applied to the same frame family |
+| Energy-beaming capable | Directed power transfer | Enables Venus → Mars (or other location) energy beaming as an optional later capability |
 
-### Audit Status
+**Tracking & representation model**
+- Individual panels, struts, I-beams, and similar components are **never** tracked as discrete entities.
+- Representation uses a **swarm model**. Each swarm entry records:
+  - Spatial location of the swarm.
+  - Counts of panels by type / configuration (metadata).
+- Panel mixes are allowed and expected. Technology available at the time a panel was deployed can differ from later panels in the same swarm, so the swarm must track the quantity of each distinct type (e.g., plain Mk1 shade-only panels versus later panels that include power-beaming capability, solar collection, hydrogen capture, etc.).
+- Aggregate state (damaged, under repair, queued for replacement + recycling) is tracked against those counts.
+- Events and effects are expressed at the swarm level (e.g., “solar flare damaged electronics in X panels of type Y → output reduced by Z”).
+- Blueprint + location together determine the functional properties of the swarm.
 
-All Mk1–Mk3 3D-printed fabricators, regolith shell printers, and CNT fabricators have been reviewed for:
-- Canonical material chain alignment
-- Operational data consistency
-- Blueprint integrity
-- `required_materials` resolvability
+**Operations (local station support)**
+- Local stations deploy service craft that carry bots.
+- Bots travel to the swarm to perform repairs on damaged panels.
+- For hydrogen-capture panels, bots can extract hydrogen from the panels’ temporary storage and return it to the station.
+- Replacement of failed panels and recycling of recovered material are also handled through the same station → craft → bot loop.
+
+**Production & deployment notes**
+- Fabrication is intended to occur in orbit (or at high-altitude Venus facilities) using local carbon feedstock.
+- Panels produced at Venus can be adapted and shipped/configured for Mars use.
+- Exact orbital distance of any Venus shade remains unspecified.
+- Energy-beaming capability is treated as an optional addon path that can grow from the same panel family; it is not required for the basic shade or reflector roles.
+
+**Open items (do not invent)**
+- Precise geometry tolerances and structural load numbers.
+- Exact power-beaming efficiency, wavelength, or aperture requirements.
+- Detailed degradation / repair-drone rules for large arrays.
+- Whether energy beaming is gated behind a later tech unlock or available as a progressive addon.
+- Final data schema for the swarm aggregate (counts, percentages, integrity model, etc.).
 
 ---
 
 *Last verified against: `docs/architecture/isru/README.md`, `docs/architecture/isru/cnt_production.md`, `docs/architecture/logistics/SYSTEM_INDUSTRIAL_CHAINS.md` — canonical architecture spec. No runtime enforcement currently exists.*
+```

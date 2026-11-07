@@ -2,12 +2,12 @@
 title: Infrastructure — Master Table of Contents
 category: Infrastructure
 status: Active Index
-last_updated: 2026-10-28
+last_updated: 2026-11-06
 ---
 
 # Infrastructure
 
-This directory is the home for infrastructure wiki pages. It covers pre-player logistics pipelines, atmospheric harvesting, surface habitats, power options, terraforming pathways, planetary protection, and related architectural references.
+This directory is the home for infrastructure wiki pages. It covers pre-player logistics pipelines, atmospheric harvesting, surface habitats, power options, terraforming pathways, planetary protection, modular orbital panel swarms, and related architectural references.
 
 ---
 
@@ -36,7 +36,7 @@ These files expand on the primary pipeline narrative with focused detail. They l
 
 → [`atmospheric_harvesting.md`](./atmospheric_harvesting.md)
 
-Extraction economics, Earth atmosphere baseline, and Venusian-analog harvesting targets. See [Planetary Protection](#planetary-protection) for environmental caps that bound extraction yields and rates.
+Extraction economics, Earth atmosphere baseline, and Venusian-analog harvesting targets. See [Planetary Protection](#planetary-protection--environmental-governance) for environmental caps that bound extraction yields and rates.
 
 ---
 
@@ -58,7 +58,13 @@ Power generation and distribution strategies across phases (surface, orbital, de
 
 ---
 
-## Terraforming & Atmospheric Pressure
+## Modular Orbital Panel Swarms
+
+→ [`modular_orbital_panel_swarms.md`](./modular_orbital_panel_swarms.md)
+
+Shared technology family for Venus solar-shade functions (optional / progressive) and Mars solar-reflector functions. Covers the swarm tracking model (spatial location + counts by panel type/configuration), optional additive capabilities (solar collection, hydrogen capture, energy beaming), and the local-station → service-craft → bot operations loop. Production side lives in the technical ISRU Fabrication Chain page.
+
+---
 
 → [`terraforming_options.md`](./terraforming_options.md)  
 Planetary-scale atmosphere modification options: raw-gas pressure-first path (protection of population and infrastructure), refined Venus→Mars mass-driver pipeline (O₂/N₂ + CNT shells), and softer longer-horizon approaches (gradual Venus siphon, Titan, KBOs). Magnetosphere prerequisite applies to high-throughput injection methods.
@@ -82,3 +88,4 @@ Planetary-scale atmosphere modification options: raw-gas pressure-first path (pr
 | `docs/architecture/patterns/settlement_patterns.md` | Deterministic settlement evolution patterns. |
 | `docs/architecture/asteroid_conversion_logic.md` | Hollowing rules, density thresholds, structural transformation parameters. |
 | `docs/architecture/systems/asteroid_conversion_physics.md` | Physical mechanics and conversion efficiency functions. |
+```
