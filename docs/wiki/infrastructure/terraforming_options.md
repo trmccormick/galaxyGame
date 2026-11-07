@@ -127,6 +127,9 @@ Steady, low-intensity upper-atmosphere extraction without immediate mass-driver 
 ### Local / Hybrid
 Continued reliance on Martian polar CO₂, subsurface ice, and industrial greenhouse-gas production, possibly combined with modest imports. Lower throughput, lower external dependency.
 
+### Modular orbital panel swarms
+Venus solar-shade (optional, progressive) and Mars solar-reflector share one modular CNT panel-swarm technology family. See [Modular Orbital Panel Swarms](modular_orbital_panel_swarms.md). Shade is not required for the pressure-first or mass-driver paths; it is a separate planetary-modification option.
+
 ---
 
 ## AI Manager Decision Framing
