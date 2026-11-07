@@ -56,7 +56,7 @@ Prior documentation already covers multi-step lava-tube processes (survey → pr
 
 - Intra-system portals (miniaturized AWS technology) move **low-mass** payloads only: personnel, high-value components, emergency supplies.
 - Bulk materials (ores, structural steel, large machinery, volatiles in quantity) travel by physical freighters, cyclers, and skimmers.
-- Portals are built in pairs and require physical infrastructure + ongoing power/EM cost at both ends.
+- Portals are built in pairs and require physical infrastructure and power at both ends. EM is spent mainly by the firing side at the opening, with some used for stabilization; if EM is unavailable the link shuts down.
 - Travel between settlements (even via portal) takes real time; hub-and-spoke routing with layovers is the normal pattern.
 - A player based on a station can portal to a surface foothold and vice-versa; starting location does not lock career path.
 
