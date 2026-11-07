@@ -1,13 +1,15 @@
 # Venus–Mars Ballistic Corridor (Brute-Force Terraforming Loop)
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-01  
-> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
+> *Last Audited:* 2026-11-07  
+> *Audit Summary:* Design intent specification. Softened portal/wormhole language to match session clarifications (low-mass portals, cycler transit, local production preferred). Code implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Technical · **Status:** target design intent — document hard physical mechanics; no runtime enforcement currently exists.
 
 > **Cross-link:** For high-level governance context, planetary protection classes, and policy toggles governing these operations, see **[Planetary Protection & Environmental Governance](../infrastructure/planetary_protection_environmental_governance.md)**.
 
 > **Cross-link:** For the Sol Tri-System Volatile Loop (outer-system $H_2$/methane supply chain), see **[Terraforming Economic Integration](../logistics/terraforming_economic_integration.md#sol-tri-system-volatile-loop)** and **[Atmospheric Harvesting](../infrastructure/atmospheric_harvesting.md)**.
+
+> **Cross-link:** For modular orbital panel swarms (Venus shade / Mars reflector / energy beaming), see **[Modular Orbital Panel Swarms](../infrastructure/modular_orbital_panel_swarms.md)**.
 
 ---
 
@@ -153,13 +155,32 @@ Titan's total volatile extraction is capped at **5% of initial mass** (dual-cap 
 - Mass driver launch cadence determines maximum injection rate into Mars atmosphere
 - Reentry dispersion efficiency depends on pod design and target altitude band
 
-### Non-Mechanisms (Explicitly Excluded)
+### Logistics Hierarchy & Portal / Wormhole Limits
 
-| Exclusion | Reason |
-|-----------|--------|
+**Bulk goods** move primarily by cyclers (and future craft not yet designed).  
+**High-throughput gas** for the brute-force loop uses mass drivers.  
+**Local production is preferred** whenever feasible.
+
+**Portals** (DIRECTION)
+- Primary use: move players and human populations between connected points **inside the same solar system**.
+- Initial / Mk1 scale is roughly airport-gate / Stargate SG-1 size (passenger + luggage).
+- Atmosphere flows freely between open portals; placement must account for pressure differentials.
+- Small personal / consumer items (fresh fruit, personal effects, light packages) can pass through portals connecting habitable areas.
+- Large freight does **not** arrive by portal.
+- An external-deck or vacuum-side portal that faces a pressure difference will experience uncontrolled atmospheric flow. That flow still moves mass and therefore has a real but small atmospheric effect (“firehose trying to fill a pond”).
+- Portals are not a bulk logistics solution and are not a substitute for mass drivers or cyclers.
+
+**Wormholes**
+- Inter-system travel still requires transit through a wormhole on a shuttle (or equivalent craft).
+- Once inside a destination system, local portals (or other methods) can be used for point-to-point movement.
+- Cyclers may transit wormholes; fuel costs still apply.
+
+### Other Explicit Boundaries
+
+| Item | Rule |
+|------|------|
 | Player-controlled terraforming budgets | Terraforming is AI Manager background simulation |
 | Population/labor sliders | Population is a soft local modifier, not direct allocation mechanism |
-| Wormholes/portals for bulk transport | In-system cyclers and mass drivers handle all bulk logistics |
 | Early-game brute-force deployment | Requires cycler operations and outer-system feedstock first |
 
 ---
@@ -179,4 +200,5 @@ This brute-force ballistic corridor operates alongside (and after) the **Seed pa
 
 ---
 
-*Last verified against: `docs/gameplay/terraforming.md`, `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md` — target design intent. No runtime enforcement currently exists.*
+*Last verified against: `docs/gameplay/terraforming.md`, `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md` — target design intent. Portal/wormhole language updated 2026-11-07 per session clarifications. No runtime enforcement currently exists.*
+```
