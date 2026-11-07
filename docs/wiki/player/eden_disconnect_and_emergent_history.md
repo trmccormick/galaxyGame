@@ -2,7 +2,7 @@
 
 **Status**: OPEN  
 **Last Updated**: 2026-11-05  
-**Related**: [settlement_progression_and_footholds.md](settlement_progression_and_footholds.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md), existing snap-event and post-snap reconnection material
+**Related**: [settlement_progression_and_footholds.md](settlement_progression_and_footholds.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md), [natural_wormholes_and_em.md](../technical/natural_wormholes_and_em.md), existing snap-event and post-snap reconnection material
 
 This page is the wiki home for the state of the Eden system after the Snap / disconnect event. Prior documentation covers the Snap itself and reconnection protocols. This page records the emergent post-isolation outcome space and ties it to the actual wormhole physics that caused the Snap.
 

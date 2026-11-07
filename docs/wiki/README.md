@@ -59,6 +59,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [EAP & AI Manager escalation](logistics/eap_and_ai_manager_escalation.md) | Earth Anchor Price escalation paths |
 | [Import order & cycler models](logistics/import_order_and_cycler_models.md) | Import orders and cycler transit models |
 | [Terraforming economic integration](logistics/terraforming_economic_integration.md) | Seed path vs brute-force economics — see also [Terraforming options](infrastructure/terraforming_options.md) for the mechanical pathways |
+| [Skimmers & mixed volatiles](logistics/skimmer_and_mixed_volatiles.md) | Venus skimmer as in-flight processor; mixed-volatiles inventory; tanks = capacity, inventory = ledger |
 
 ---
 
@@ -107,6 +108,8 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Biology — overview](technical/biology/README.md) | Biology subfolder: biosphere simulation, terraforming seeds |
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
+| [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
+| [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | Mass threshold, counterbalance, EM ejection/harvest/reset; natural vs AWS pairing |
 
 *Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. Crafted equipment schemas are documented in [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md).*
 
@@ -116,7 +119,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 
 Front door and section map are in place. Topic pages carry status banners; many details still need verify-against-code. Prefer [Status and gaps](status-and-gaps.md) and the topic pages over archaeology under `wiki_reorganization/`.
 
-Portal and AWS design now lives under [Portals & AWS](technical/portals_and_aws.md). Terraforming pathways live under [Terraforming options](infrastructure/terraforming_options.md).
+Portal and AWS design lives under [Portals & AWS](technical/portals_and_aws.md). Natural wormhole physics and EM harvesting live under [Natural wormholes & EM](technical/natural_wormholes_and_em.md).
 
 ## Wiki Standards & Conventions
 

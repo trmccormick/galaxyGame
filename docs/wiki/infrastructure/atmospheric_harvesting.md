@@ -491,6 +491,8 @@ The AI will not authorize new harvesting platform construction (`expansion: 100`
 
 > **Cross-link:** For the ISRU fabrication chains (3D-printed fabricator Mk1–Mk3 upgrade trees, regolith feedstock qualification with SiO₂/FeO analysis, and CNT production throughput specs), see **[ISRU Fabrication Chain](../technical/isru_fabrication_chain.md)**.
 
+> **See also:** [Skimmers & mixed volatiles](../logistics/skimmer_and_mixed_volatiles.md) — Venus skimmer processing loop and mixed-volatiles inventory model.
+
 ---
 
 *Last verified against: `config/initializers/game_constants.rb` — Phase 3 (Integration & Restoration)*

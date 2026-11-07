@@ -54,7 +54,9 @@ These topics now have a draft wiki home. The pages are first drafts from a brain
 | Power generation and distribution across phases | [Power Options](infrastructure/power_options.md) | DIRECTION |
 | Settlement evolution stages, first foothold requirements, expansion gates | [Settlement Progression & Footholds](player/settlement_progression_and_footholds.md) | DIRECTION (draft) |
 | Eden disconnect: snap physics, residual EM field, reconnection sequence, emergent post-isolation states | [Eden Disconnect & Emergent History](player/eden_disconnect_and_emergent_history.md) | DIRECTION — snap physics and reconnection sequence (tug and EM harvesters cross, sats stabilize, tug moves the WS, cycler brings the upgrade, harvesters dock at the AWS) confirmed by the owner 2026-11-05; Eden's state and emergent archetypes OPEN |
-| Portal rules (mass limits, EM consumption, pairing) + AWS inter-system networking | [Portals & AWS](technical/portals_and_aws.md) | DIRECTION / OPEN — intra-system low-mass + pairing are established direction; inter-system Level 4b details remain more open |
+| Portal rules (mass limits, EM consumption, pairing) + AWS inter-system networking | [Portals & AWS](technical/portals_and_aws.md) | DIRECTION — EM ignition / fusion maintain; environmental variants; institutional network; Level 4b still OPEN |
+| Natural wormhole physics, mass limits, EM harvest/reset | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | DIRECTION / OPEN |
+| Venus skimmer processing + mixed volatiles inventory model | [Skimmers & mixed volatiles](logistics/skimmer_and_mixed_volatiles.md) | DIRECTION |
 | Atmosphere modification / terraforming pathways (pressure-first protection, refined mass-driver, softer options) | [Terraforming options](infrastructure/terraforming_options.md) | DIRECTION / OPEN (unreviewed Gemini draft) |
 
 ## Gaps with a draft home (2026-11-04; not yet resolved)
@@ -111,6 +113,7 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 
 ### Recent doc updates
 
+- **2026-11-07** — Committed harvest `d7ce08fb`: portals/AWS energy model and variants; new [Natural wormholes & EM](technical/natural_wormholes_and_em.md); new [Skimmers & mixed volatiles](logistics/skimmer_and_mixed_volatiles.md); accepted 80/90 EAP NPC band; LEO vs L1 depot roles on resource/market logistics.
 - **2026-10-29** — Promoted settlement infrastructure intent (unsourced tier and growth-stage details moved to its OPEN block; see Migration log) into `infrastructure/settlement_infrastructure.md`; linked from wiki Home and Infrastructure TOC. Active task tracking and sprint status reside in the external `agent-tasks` repository; `docs/wiki/` is reserved for enduring design intent and architecture specs.
 - **2026-10-28** — Categorical directory reorganization (`astronomy/`, `logistics/`, `player/`, `infrastructure/`, `engineering/`, `technical/`); all Home-page link repairs; new "Navigation by Category" IA table on the Home page; `planetary_protection_environmental_governance.md` design-only spec added to infrastructure.
 - **2026-10-29** — Aligned Financial Engine (logistics/financial_engine.md) with canonical market pair: added explicit GCC/USD peg, EAP ceiling terminology and `resource_and_market_logistics.md` + `market_and_ai_bootstrapping.md` as canonical authority pointers; updated wiki/README.md link.
