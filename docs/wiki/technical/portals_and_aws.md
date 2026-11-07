@@ -1,7 +1,7 @@
 # Portals & Artificial Wormhole Stations (AWS)
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-05  
+**Last Updated**: 2026-11-07  
 **Related**: [natural_wormholes_and_em.md](natural_wormholes_and_em.md), [eden_disconnect_and_emergent_history.md](../player/eden_disconnect_and_emergent_history.md), [terraforming_options.md](../infrastructure/terraforming_options.md), logistics pages
 
 This page is the wiki home for **intra-system portals** and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, and Exotic Matter (EM) harvesting live on [Natural Wormholes & EM](natural_wormholes_and_em.md).
@@ -23,11 +23,18 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
   - **Fusion / normal power + magnetic containment** keep the aperture open.
   - While held open, EM use is minimal. Day-to-day upkeep is fusion reliability, not continuous industrial EM bleed.
 - **Emergency shutdown:** fusion brownout → capacitor-backed controlled pinch → dormant. No designed explosive blowout.
+- **Operation** (owner, 2026-11-07):
+  - **If the EM supply is unavailable, the link shuts down.** Nothing further is defined. The design task is to set how much EM a portal consumes.
+  - Both halves are in the same system and linked by the data network, which confirms both are online before a transit opens. Signal lag across the network is expected.
+  - One endpoint fires and opens the rift; the other locks on and stabilizes it, as in an AWS pair. Either half can fire; only one does for a given opening.
+  - The firing side uses the most EM, at the opening. Portals also spend EM to reinforce the rift and reset mass limits, as wormhole stabilization does, because the stabilization technology is built into the portal. Fusion or electrical power runs the magnetic fields.
+  - Counterbalance rules do not apply: the technology is miniaturized and needs no anchor mass.
 - **Environmental variants:**
   - **Habitat-rated** — pressurized human spaces; pressure handshake before open; gas only as containerized freight.
   - **Industrial / surface-rated** — ruggedized; may run with intentional atmospheric bleed (“garden hose”) for pressure-first protection; not a bulk terraforming pipeline.
   - **Vacuum-rated** — station exterior / near-vacuum pairs.
 - Structural mount must be serious (primary structure / keel-class). Not a light-hull bolt-on.
+- **Tech tree placement** (from the legacy EM technology tree; owner to confirm): Level 4. Follows Level 3 AWS plus miniaturization research and unlocks through peacetime research after the Snap crisis is resolved. Relies on quantum entanglement, not planetary-scale mass anchors.
 
 ### Artificial Wormhole Stations (AWS)
 **DIRECTION / OPEN**
@@ -41,6 +48,16 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 - Eden reconnection is an example: early traffic limited to tug, EM harvesters, and stabilization sats until the Eden-side station is converted and operational ([Eden page](../player/eden_disconnect_and_emergent_history.md)).
 
 **Caution:** Inter-system “portal-gate at AWS” concepts (sometimes called Level 4b) remain more open than intra-system portal pairs and should not be treated as established.
+
+---
+
+## Networks and Hubs
+
+**DIRECTION**
+
+- Each portal pair is one specific connection. A hub holds several pairs, and travelers transfer between them. Any major settlement can become a hub.
+- No fixed hub list or hard link cap is set. Earth/L1 → Mercury → Mars → Ceres → Jupiter → Saturn → Pluto is an example of one possible network, not required topology.
+- Other star systems can develop their own independent system-local portal networks.
 
 ---
 
@@ -65,11 +82,17 @@ Players operate as contractors, specialists, private logistics firms, or later p
 ## Open Questions
 
 - Exact Mark capacity tiers and numeric mass filters.
-- Numeric EM ignition costs and any residual maintenance EM rate (must stay “minimal”).
+- Amount of EM a portal consumes: opening burst, stabilization and mass-limit reset, and any residual rate while open (must stay minimal). This is the main portal number to design.
 - Fusion power draw by variant.
 - Manufacturing recipes and facility requirements.
 - Industrial bleed rate tunability.
 - Inter-system portal-gate (Level 4b) scope, if any.
 - Player ownership / toll limits relative to the institutional network.
+- Portal mass limits and how the reset works. Never defined; the aperture is small, but no numbers are set.
+- Whether both halves ship on one mission or two, and whether one half can be installed at an existing station while the other goes to a new settlement.
+- Whether placing both halves activates the link or needs a separate commissioning step.
+- How destroyed endpoints are repaired, replaced or re-paired. Today, losing one half ends the pair.
+- What happens if the data network cannot confirm both ends, and how much signal lag matters.
+- What happens to anything in transit when a link shuts down for lack of EM.
 
 All numerical values remain **OPEN**.
