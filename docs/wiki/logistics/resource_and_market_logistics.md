@@ -269,6 +269,28 @@ This figure represents the break-even point above which local or off-world sourc
 | Local electrolytic O2 (from water ice) | ~50–150 GCC/kg equivalent | Best long-term O2 source; power-limited |
 | Venusian-analog processed N2 | ~2,640–3,960 GCC/kg | Only viable as CO2 harvest; N2 is byproduct |
 
+## Cislunar depot roles (DIRECTION)
+
+Early Sol uses distinct depot roles so fuel and cargo prices follow gravity, not a single global ticker.
+
+### LEO depots
+- Earth launch staging and crew/high-tech cargo interface.
+- Outbound craft top up propellant here instead of lifting full loads from the surface.
+- Returning craft can sell **excess fuel already in LEO** into the depot rather than hauling it down the well.
+- LEO fuel price is capped by Earth surface fuel cost + surface-to-LEO launch cost. Space-sourced fuel (Luna, L1, skimmers) undercuts that ceiling.
+
+### Earth–Moon L1 depot
+- Cislunar gateway and deep-space staging.
+- Primary interchange for Lunar volatiles/fuel into the wider network.
+- Preferred top-up point for long-haul craft that should not drop deep into Earth's well.
+- Fueled mainly from Luna / near-Earth sources; departure toward Mars/Belt from L1 is much cheaper in delta-v than from LEO or surface.
+
+### Pricing implication
+- **Earth-dependent goods** (high-tech, machinery): EAP rises with distance from Earth (surface → LEO → L1 → outer).
+- **Space-native goods** (fuel, bulk volatiles, local metals): priced from local extraction + short-haul freight; Earth launch parity is a ceiling at LEO, not a floor on Luna/L1.
+
+NPC seed orders at early hubs still use the **80 % buy / 90 % sell of local EAP** band documented on the AI Manager economic loops page. Pre-player NPC haulers between Luna, L1, and LEO exist to mature order books and price history before players arrive.
+
 ---
 
 ## 8. AI Manager Market Integration — Current Status

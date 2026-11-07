@@ -38,17 +38,19 @@ EAP = (earth_spot_price × refining_factor) × usd_to_gcc_peg + transport_cost
 - The AI Manager will not pay more than EAP under normal conditions.
 - If local player offers exceed EAP, the AI Manager falls back to internal harvest or import rather than accepting the gouge.
 
-**DIRECTION — Local NPC trading band**
+### Local NPC trading band (DIRECTION — accepted seed)
 
 When the settlement has excess inventory it is willing to sell, and when it has a deficit it is willing to buy from players:
 
-| Action                        | Price relative to EAP | Notes                                      |
-|-------------------------------|-----------------------|--------------------------------------------|
-| NPC **buys** from players     | **80 % of EAP**       | Guaranteed floor for early player sales    |
-| NPC **sells** excess to players | **90 % of EAP**     | Discount vs full import cost               |
-| Hard ceiling                  | **100 % of EAP**      | Above this the AI imports or self-supplies |
+| Action                          | Price relative to EAP | Notes |
+|---------------------------------|------------------------|--------|
+| NPC **buys** from players       | **80 % of EAP**        | Guaranteed floor for early player sales |
+| NPC **sells** excess to players | **90 % of EAP**        | Discount vs full import cost |
+| Hard ceiling                    | **100 % of EAP**       | Above this the AI imports or self-supplies under normal conditions |
 
-**Discussion point**: Older notes documented the 90 % sell side more clearly than an explicit 80 % buy floor. The 80/90 band is proposed here as the clean, player-friendly spread. Confirm whether 80 % is the accepted floor or whether a different band is preferred.
+This 80/90 band is the accepted bootstrap seed (Luna and similar early hubs). It creates a 10% spread for player/NPC arbitrage while keeping the AI Manager's hard ceiling at full EAP.
+
+The AI Manager will **not** pay above EAP under normal conditions. Emergency override remains the only exception (see markets EAP page and escalation ladder).
 
 Buy orders remain **demand-driven**. The AI Manager only posts a buy order for the quantity needed to reach its target stockpile buffer. Once the buffer is met the order is removed or reduced to daily consumption.
 

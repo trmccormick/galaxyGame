@@ -1,86 +1,75 @@
-# Portals and Artificial Wormhole Stations (AWS)
-
-> **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-04  
-> *Audit Summary:* DRAFT from an owner and Gemini brainstorm (2026-11-04), written up by Grok and Qwen. Not yet verified against code or frozen docs. Only points marked ESTABLISHED INTENT were stated by the owner.
+# Portals & Artificial Wormhole Stations (AWS)
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-04  
-**Related**: [settlement_progression_and_footholds.md](../player/settlement_progression_and_footholds.md), logistics and engineering pages
+**Last Updated**: 2026-11-05  
+**Related**: [natural_wormholes_and_em.md](natural_wormholes_and_em.md), [eden_disconnect_and_emergent_history.md](../player/eden_disconnect_and_emergent_history.md), [terraforming_options.md](../infrastructure/terraforming_options.md), logistics pages
 
-This page is the wiki home for intra-system portals and inter-system Artificial Wormhole Stations. Prior transportation and portal notes already established the core constraints (pairing, mass limits, EM cost). Those constraints are restated here as the live source of truth; numerical values and ownership rules that were never finalized remain OPEN.
+This page is the wiki home for **intra-system portals** and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, and Exotic Matter (EM) harvesting live on [Natural Wormholes & EM](natural_wormholes_and_em.md).
+
+Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipelines.
 
 ---
 
 ## Two Distinct Technologies
 
 ### Intra-System Portals
-**DIRECTION** (aligns with existing established constraints)
+**DIRECTION**
 
-- Miniaturized AWS-derived technology.
-- Built and operated **in pairs**. An unpaired portal is non-functional.
-- Restricted to **low-mass** payloads only: personnel, high-value components, emergency medical/repair kits, small critical parts.
-- Do **not** move bulk ores, structural steel, large machinery, or significant quantities of volatiles. This is an intentional economic constraint that protects the freight layer.
-- Require physical infrastructure and ongoing power / Exotic Matter (EM) cost at both ends. EM cost is higher than equivalent cycler transport (existing constraint).
-- Operate on schedules or power windows rather than continuous open doors; missing a window means waiting for the next cycle.
-- Create natural hub-and-spoke routing. A small foothold portal usually links only to a regional hub; further travel requires transfers.
+- Standalone manufactured infrastructure. They do **not** require natural or artificial wormhole anchoring.
+- Built as **quantum-entangled pairs**. Both halves are manufactured together, then shipped and deployed. Unpaired units are non-functional. Loss of one half ends the pair.
+- Restricted to **low-mass** payloads for the arterial role: personnel, high-value components, emergency kits, small critical parts. Bulk ores, structural steel, and planetary-scale volatiles stay on freighters / cyclers / mass drivers.
+- **Energy model:**
+  - **EM** is used primarily as an **ignition burst** to open the aperture.
+  - **Fusion / normal power + magnetic containment** keep the aperture open.
+  - While held open, EM use is minimal. Day-to-day upkeep is fusion reliability, not continuous industrial EM bleed.
+- **Emergency shutdown:** fusion brownout → capacitor-backed controlled pinch → dormant. No designed explosive blowout.
+- **Environmental variants:**
+  - **Habitat-rated** — pressurized human spaces; pressure handshake before open; gas only as containerized freight.
+  - **Industrial / surface-rated** — ruggedized; may run with intentional atmospheric bleed (“garden hose”) for pressure-first protection; not a bulk terraforming pipeline.
+  - **Vacuum-rated** — station exterior / near-vacuum pairs.
+- Structural mount must be serious (primary structure / keel-class). Not a light-hull bolt-on.
 
 ### Artificial Wormhole Stations (AWS)
 **DIRECTION / OPEN**
 
-- Full-scale inter-system infrastructure.
-- Also built in pairs.
-- One station initiates the rift; the paired station locks on and helps stabilize it.
-- Capable of moving both personnel and heavier cargo (exact mass limits still OPEN).
+- Full-scale inter-system (and large-scale) infrastructure.
+- Built in pairs. One station initiates the rift; the paired station locks on and stabilizes it.
+- Can move personnel and heavier cargo (exact mass envelope still OPEN).
 - High capital, power, and EM cost to establish and maintain.
-- Opening a new inter-system AWS pair is a major late-game or corporate milestone.
-- The Eden reconnection is an example of a newly activated AWS pair.
+- **Counterbalance role:** Where a system lacks a natural mass anchor (gas giant class), AWS pairs can provide artificial counterbalance. An AWS can also be paired to a natural wormhole mouth to stabilize it and make EM management safer (see natural wormholes page).
+- Opening a new inter-system AWS pair is a major corporate / late-game milestone.
+- Eden reconnection is an example: early traffic limited to tug, EM harvesters, and stabilization sats until the Eden-side station is converted and operational ([Eden page](../player/eden_disconnect_and_emergent_history.md)).
 
-**Caution from prior notes**: Some older material flagged inter-system portal gates as proposal-only. The distinction maintained here is that intra-system low-mass portals are treated as established direction, while full inter-system AWS capability and its exact cargo envelope remain more open and should be confirmed before heavy implementation.
-
-**OPEN**
-- Precise mass thresholds that separate “portal” from “AWS-capable” cargo.
-- EM consumption rates, power draw, and maintenance requirements for both scales.
-- Whether player corporations can eventually own and toll private portal or AWS pairs.
+**Caution:** Inter-system “portal-gate at AWS” concepts (sometimes called Level 4b) remain more open than intra-system portal pairs and should not be treated as established.
 
 ---
 
-## Design Intent Behind the Split
-
-- Protects the physical freight and logistics layer of the game. If everything could portal, bulk shipping, cyclers, and skimmers would lose purpose.
-- Allows rapid personnel and crisis response without collapsing travel times for industrial quantities of material.
-- Creates meaningful infrastructure decisions: a remote outpost without a portal pair remains dependent on slow physical transit until someone hauls and installs the second frame.
-
----
-
-## Operational Realities
+## Institutional Control of the Network
 
 **DIRECTION**
 
-- Travel, even via portal, takes real time. Instantaneous god-mode movement across a solar system is not intended.
-- Hub-and-spoke is the normal pattern (local foothold → regional hub → major system hub → destination).
-- Layovers at transfer hubs are expected and create natural market and social interaction points.
-- Portal access can be scheduled, tolled, or restricted by the owning entity (AI Manager, Development Corp, or later player corp).
-- In austerity mode an AI Manager may reduce portal power windows to conserve energy (see economic loops page).
+The primary arterial wormhole / AWS network is not left entirely to individual player monopolies. Development corporations and logistics entities form an institutional backbone (Wormhole Transit Union / equivalent consortium) that builds, maintains, and regulates core lanes, mass-limit policy, and stabilization standards.
 
-**OPEN**
-- Exact transit times, scheduling UI, and booking mechanics.
-- Fee structures and standing-based discounts or priority access.
-- Failure modes (power loss, EM shortage, misalignment) and recovery procedures.
+Players operate as contractors, specialists, private logistics firms, or later private pair operators within that framework — not as sole owners of the entire network. Exact ownership and toll rules remain OPEN.
 
 ---
 
-## Relationship to Population and Evacuation
+## What Portals / AWS Are Not
 
-Because portals move people efficiently, they also serve as the primary mechanism for immigration and emergency evacuation (see settlement progression page). A base that loses life-support reliability can see its population leave through the portal network, leaving a ghost shell behind.
+- Not a substitute for cyclers or heavy freighters for bulk mass.
+- Not the primary Venus→Mars (or equivalent) atmospheric injection system — that remains mass-driver work under [Terraforming options](../infrastructure/terraforming_options.md).
+- Not free of logistics: remote halves must be shipped; fusion reliability matters; habitat-rated links enforce pressure rules.
 
 ---
 
-## Implementation Notes (future thin tasks)
+## Open Questions
 
-- Portal pairs should be first-class entities with location, power state, schedule, and ownership.
-- Mass filtering must be enforced at the point of transfer so bulk cargo cannot exploit the fast path.
-- AWS pair activation should be a visible, high-cost event that can be observed system-wide.
-- Numeric values for PORTAL_MAX_MASS and EM consumption need to be decided and recorded here once chosen.
+- Exact Mark capacity tiers and numeric mass filters.
+- Numeric EM ignition costs and any residual maintenance EM rate (must stay “minimal”).
+- Fusion power draw by variant.
+- Manufacturing recipes and facility requirements.
+- Industrial bleed rate tunability.
+- Inter-system portal-gate (Level 4b) scope, if any.
+- Player ownership / toll limits relative to the institutional network.
 
-All numerical values and exact ownership rules remain **OPEN**.
+All numerical values remain **OPEN**.
