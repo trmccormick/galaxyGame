@@ -28,6 +28,7 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
   - Both halves are in the same system and linked by the data network, which confirms both are online before a transit opens. Signal lag across the network is expected.
   - One endpoint fires and opens the rift; the other locks on and stabilizes it, as in an AWS pair. Either half can fire; only one does for a given opening.
   - The firing side uses the most EM, at the opening. Portals also spend EM to reinforce the rift and reset mass limits, as wormhole stabilization does, because the stabilization technology is built into the portal. Fusion or electrical power runs the magnetic fields.
+  - Once open, the rift stays open until either side closes it. This applies to portals and artificial wormholes. Natural wormholes are closed differently, by a controlled Snap ([Hammer Protocol](natural_wormholes_and_em.md)).
   - Counterbalance rules do not apply: the technology is miniaturized and needs no anchor mass.
 - **Environmental variants:**
   - **Habitat-rated** — pressurized human spaces; pressure handshake before open; gas only as containerized freight.
@@ -41,6 +42,7 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 
 - Full-scale inter-system (and large-scale) infrastructure.
 - Built in pairs. One station initiates the rift; the paired station locks on and stabilizes it.
+- Once open, the rift stays open until either station closes it. Natural wormholes are closed differently, by a controlled Snap ([Hammer Protocol](natural_wormholes_and_em.md)).
 - Can move personnel and heavier cargo (exact mass envelope still OPEN).
 - High capital, power, and EM cost to establish and maintain.
 - **Counterbalance role:** Where a system lacks a natural mass anchor (gas giant class), AWS pairs can provide artificial counterbalance. An AWS can also be paired to a natural wormhole mouth to stabilize it and make EM management safer (see natural wormholes page).
@@ -94,5 +96,7 @@ Players operate as contractors, specialists, private logistics firms, or later p
 - How destroyed endpoints are repaired, replaced or re-paired. Today, losing one half ends the pair.
 - What happens if the data network cannot confirm both ends, and how much signal lag matters.
 - What happens to anything in transit when a link shuts down for lack of EM.
+- What closes a portal or artificial rift: which side may close it, whether closing has a cost or a delay, and whether a link left idle is closed automatically.
+- How many portal pairs a settlement or hub can host. No hard cap is set; numeric limits are OPEN.
 
 All numerical values remain **OPEN**.
