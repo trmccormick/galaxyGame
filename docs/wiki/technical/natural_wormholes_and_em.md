@@ -41,6 +41,10 @@ EM harvesting and feed-back technology mature through AWS-era research. At the h
 - A natural wormhole can be closed on purpose by sending enough mass through it to cause a controlled Snap. This is the **Hammer Protocol**.
 - It is the last resort when the reset loop cannot keep up. Stabilization stations and satellites hold a finite buffer of captured EM; once those buffers are full, no more EM can be recaptured and a controlled Snap is the only way to reset the system.
 - The AI Manager can also use it to leave a depleted system, sending a final heavy shipment as the triggering mass and then looking for a new connection.
+- A planned Snap is announced system-wide. The AI Manager also announces when the stabilization satellites and any NPC-deployed equipment or ships are due to return to Sol (owner, 2026-11-07).
+- A degrading aperture ejects more EM the worse it gets, so the period before a Snap is an EM harvest window. Players can send harvesters, including automated ships, to collect it. A harvester that has not returned through before the Snap is lost.
+- The AI Manager can let the wormhole degrade naturally, or let player ships harvest and return. Player transits add mass and could themselves cause the Snap, so a Snap does not have to be an AI Manager planned closure.
+- Sol is EM-poor while stable, so its EM arrives in bursts around these events. Consumers such as portal pairs and AWS stabilization draw on a stockpile refilled by harvest windows, not on a steady flow. The Saturation Limit on station and satellite buffers caps how much of a harvest can be kept.
 - What a controlled Snap leaves behind (terminus shift or lost link, and the effect on stations and traffic) is **OPEN**.
 
 ---
@@ -101,5 +105,9 @@ State snapshotting at major economic milestones is the preferred way to stress-t
 - Buffer size (Saturation Limit) per station and satellite.
 - What a controlled Snap leaves behind at the terminus, and what happens to stations and traffic.
 - Who may order a controlled Snap: the AI Manager only, players, or the institutional network.
+- How long the notice before a planned Snap is, and how the AI Manager chooses between letting the wormhole degrade, allowing player harvests and forcing the closure.
+- How much EM a degrading aperture ejects, and how much a Snap releases.
+- Who bears the loss of a harvester caught by a Snap.
+- EM budget: how many portal pairs and other consumers a given stockpile can sustain.
 
 All numerical values remain **OPEN**.
