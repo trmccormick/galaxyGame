@@ -1,7 +1,7 @@
 # Natural Wormholes & Exotic Matter (EM)
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-05  
+**Last Updated**: 2026-11-07  
 **Related**: [portals_and_aws.md](portals_and_aws.md), [eden_disconnect_and_emergent_history.md](../player/eden_disconnect_and_emergent_history.md), [terraforming_options.md](../infrastructure/terraforming_options.md)
 
 This page is the wiki home for **natural wormhole physics**, mass-limit behavior, Exotic Matter ejection, harvesting, and the reset / stabilization loop. Artificial Wormhole Stations and intra-system portals live on [Portals & AWS](portals_and_aws.md).
@@ -31,6 +31,17 @@ This page is the wiki home for **natural wormhole physics**, mass-limit behavior
 
 **Timeline constraint (aligned with Eden page):**  
 EM harvesting and feed-back technology mature through AWS-era research. At the historical Snap, Eden-side operators did **not** yet have operational EM harvest / reset capability. Residual pre-Snap EM in Eden space is whatever was ejected before the aperture shifted away; it is not continuously produced after the mouth is gone.
+
+---
+
+## Controlled Snap (Hammer Protocol)
+
+**DIRECTION**
+
+- A natural wormhole can be closed on purpose by sending enough mass through it to cause a controlled Snap. This is the **Hammer Protocol**.
+- It is the last resort when the reset loop cannot keep up. Stabilization stations and satellites hold a finite buffer of captured EM; once those buffers are full, no more EM can be recaptured and a controlled Snap is the only way to reset the system.
+- The AI Manager can also use it to leave a depleted system, sending a final heavy shipment as the triggering mass and then looking for a new connection.
+- What a controlled Snap leaves behind (terminus shift or lost link, and the effect on stations and traffic) is **OPEN**.
 
 ---
 
@@ -86,5 +97,9 @@ State snapshotting at major economic milestones is the preferred way to stress-t
 - Ownership and licensing of EM taps on regulated mouths.
 - How much residual pre-Snap EM remains harvestable in Eden after reconnection.
 - Formal AI Manager expansion scoring function and snapshot schema (implementation docs).
+- Triggering mass for a controlled Snap, and how it relates to the mass threshold.
+- Buffer size (Saturation Limit) per station and satellite.
+- What a controlled Snap leaves behind at the terminus, and what happens to stations and traffic.
+- Who may order a controlled Snap: the AI Manager only, players, or the institutional network.
 
 All numerical values remain **OPEN**.
