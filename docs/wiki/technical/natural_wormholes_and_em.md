@@ -74,6 +74,17 @@ Numeric yields, loss rates, containment failure curves, and market elasticity re
 
 ---
 
+## EM Yield and the EM Budget
+
+**DIRECTION / OPEN**
+
+- **EM Yield** is how much EM a natural wormhole releases over time. It depends on the size of the mouth, how stable it is, and residual EM from past activity. The AI Manager can use it to rank harvest sites and work out network fuel needs. This comes from early design notes; treat it as possible early design (owner, 2026-11-07).
+- A degrading wormhole releases more EM than a stable one, and the worse the aperture gets, the higher the yield. A stable Sol is therefore EM-poor, and planned Snaps and harvest windows are where its EM comes from (see Controlled Snap above).
+- Consumers such as AWS stabilization and portal pairs ([Portals & AWS](portals_and_aws.md)) draw on the stockpile that harvest windows refill.
+- The numbers are all **OPEN**: yield as a function of instability, the units for EM, the stockpile cap, and how much AWS and portal pairs draw.
+
+---
+
 ## Institutional Layer
 
 **DIRECTION**
@@ -109,5 +120,7 @@ State snapshotting at major economic milestones is the preferred way to stress-t
 - How much EM a degrading aperture ejects, and how much a Snap releases.
 - Who bears the loss of a harvester caught by a Snap.
 - EM budget: how many portal pairs and other consumers a given stockpile can sustain.
+- The yield curve: how EM release rises as an aperture degrades, and what units EM is measured in.
+- How AWS and portal pairs draw EM: per opening, per hour held open, per mass transited, or a mix.
 
 All numerical values remain **OPEN**.
