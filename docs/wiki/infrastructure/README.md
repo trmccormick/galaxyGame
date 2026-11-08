@@ -2,7 +2,7 @@
 title: Infrastructure — Master Table of Contents
 category: Infrastructure
 status: Active Index
-last_updated: 2026-11-06
+last_updated: 2026-11-07
 ---
 
 # Infrastructure
@@ -63,6 +63,14 @@ Power generation and distribution strategies across phases (surface, orbital, de
 → [`modular_orbital_panel_swarms.md`](./modular_orbital_panel_swarms.md)
 
 Shared technology family for Venus solar-shade functions (optional / progressive) and Mars solar-reflector functions. Covers the swarm tracking model (spatial location + counts by panel type/configuration), optional additive capabilities (solar collection, hydrogen capture, energy beaming), and the local-station → service-craft → bot operations loop. Production side lives in the technical ISRU Fabrication Chain page.
+
+---
+
+## Artificial Magnetosphere
+
+→ [`artificial_magnetosphere.md`](./artificial_magnetosphere.md)
+
+L1 magnetic dipole shield design intent for Mars atmospheric retention. Consolidates recovered L1 dipole concept, 3-tier power evolution (Fusion → EM-Core → Wormhole-Stabilized), construction materials, staging, and open quantitative gaps. Prerequisite for high-throughput Venus→Mars mass-driver injection.
 
 ---
 
