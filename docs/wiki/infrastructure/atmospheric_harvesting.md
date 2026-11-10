@@ -2,6 +2,8 @@
 
 # Atmospheric Harvesting
 
+> **Related pathway:** Natural atmospheric escape, retention technology, and optional upper-atmosphere/orbital recovery are also resource-management and harvesting opportunities. See **[Atmospheric Escape, Retention & Recovery](atmospheric_escape_and_recovery.md)**. This complements conventional lower-atmosphere harvesting; it does not replace it or impose a required progression.
+
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-01  
 > *Audit Summary:* All values (constants like `INITIAL_TRANSPORTATION_COST_PER_KG`, `EARTH_ATMOSPHERE`, `GREENHOUSE_FACTORS`) are design-baseline figures. No dedicated atmosphere processing service class (`AtmosphereProcessor`) exists in the codebase. Only a concern mixin (`atmospheric_processing.rb`) is present, providing infrastructure-level helpers rather than harvesting orchestration.

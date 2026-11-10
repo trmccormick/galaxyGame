@@ -1,8 +1,8 @@
 # Terraforming Options
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-05  
-**Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), settlement and logistics pages
+**Last Updated**: 2026-11-10 (station-construction cross-reference restored)  
+**Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [modular_orbital_panel_swarms.md](modular_orbital_panel_swarms.md), settlement and logistics pages
 
 This page is the wiki home for planetary-scale atmosphere modification options. Multiple pathways exist. A fast raw-gas pressure rise is primarily a **protection** measure for population and infrastructure. Traditional terraforming (climate and biosphere goals) and refined composition control are separate, later choices. Softer longer-horizon approaches remain available.
 
@@ -18,6 +18,7 @@ All content is **DIRECTION** or **OPEN** unless marked otherwise.
 4. Venus pressure relief and Mars volatile deficit form a natural pairing, but other sources (Titan, KBOs, local extraction) remain available.
 5. Realistic logistics apply: boil-off, transit loss, alignment windows, fuel for skimmers, and infrastructure bootstrapping all matter.
 6. Trade remains bidirectional even when mass flow is heavily one-way.
+7. Natural atmospheric escape is an ongoing resource loss; retention and optional recovery technologies can complement replenishment and harvesting. This is an available path, not a mandatory terraforming prerequisite (see [Atmospheric Escape, Retention & Recovery](atmospheric_escape_and_recovery.md)).
 
 ---
 
