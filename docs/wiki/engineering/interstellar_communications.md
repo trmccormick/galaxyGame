@@ -151,3 +151,4 @@ The prototype may use mock or harvested JSON data until live routing and deliver
 | [Natural Wormholes & EM](../technical/natural_wormholes_and_em.md) | Natural wormhole physics, stabilization, and physical inter-system connections |
 | [AI Manager](../services/ai_manager.md) | Autonomous operation while commands and information are delayed |
 | [Logistics and hauling](../logistics/logistics_and_hauling.md) | Physical carriers and transport availability |
+| [Game Time & Simulation Loop](game_time_and_simulation_loop.md) | Shared game-time basis for command and response ETAs |
