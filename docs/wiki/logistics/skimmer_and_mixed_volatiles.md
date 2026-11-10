@@ -4,7 +4,7 @@
 > *Audit Summary:* Design intent specification (page status DIRECTION). Not audited against code; implementation pending or unverified as of audit baseline.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-05  
+**Last Updated**: 2026-11-10  
 **Related**: [atmospheric_harvesting.md](../infrastructure/atmospheric_harvesting.md), [terraforming_options.md](../infrastructure/terraforming_options.md), [isru_fabrication_chain.md](../technical/isru_fabrication_chain.md), Luna operations / TEU material
 
 This page records how atmospheric skimmers (especially Venus) process and deliver volatiles, and how **mixed volatiles** are tracked in inventory. It aligns with existing code patterns (TEU → `mixed_volatiles` → gas separator; tanks as capacity units; Item inventory as ledger).
@@ -19,24 +19,36 @@ Luna already produces lumped `mixed_volatiles` from TEU (thermal extraction of r
 
 ---
 
-## Venus Skimmer Loop (DIRECTION)
+## Venus HLT Harvesting and Mission Cycle (DIRECTION)
 
-1. **Intake** — Scoop raw Venusian atmosphere (primarily CO₂ + N₂ and minor constituents) from the upper, operable layers.
-2. **In-flight processing** — Crack a portion of CO₂ into **LOX (O₂)** and **CO**.
-3. **LOX routing** — LOX fills dedicated header / propellant-style tanks (Starship-analog layout: dedicated LOX and methane-capable tanks alongside main bays).
-4. **CO handling (decision node)**  
-   - **Vent** — return CO to Venus atmosphere if no market and no spare capacity (saves mass/volume).  
-   - **Dedicated tank** — if a CO-capable tank unit is fitted, store pure CO.  
-   - **Remix** — blend CO back into the main mixed-volatile payload.  
-   Default preference when capacity exists: **store**, do not vent.
-5. **Arrival state (e.g. at Luna)**  
-   - Dedicated LOX tank(s) full (or at process yield).  
-   - Main tanks hold **modified mixed volatiles** (depleted in some CO₂ relative to raw Venus air; may contain retained CO).  
-   - Inventory receives the exact tracked masses; tanks only enforce capacity/mode limits.
+The Venus HLT takes in **bulk Venusian atmosphere**. It does not selectively scoop only CO₂ and N₂, nor does it assume that every intake batch has one permanent, exact composition. The intake contains the atmospheric mixture present at the craft's operating location and altitude, including major constituents and trace gases. Separation and processing happen after capture.
 
-Methane tanks on the craft follow the same dual-tank idea when the craft is configured for methalox loops (Luna PSR H₂ + Venus CO₂ Sabatier pathways remain documented under atmospheric harvesting / propellant logistics).
+Atmospheric composition values are estimates, not a fixed recipe. The mix encountered can vary with altitude, operating location, atmospheric conditions, and the changing local composition as harvesting continues. The simulation should be able to represent gradual changes rather than forcing every batch to match one constant Venus profile. Early estimates can use a representative Venusian composition with uncertainty; actual batch measurements and accumulated harvesting results can refine subsequent estimates.
 
----
+### Bulk intake and onboard handling
+
+1. **Intake** — Capture the complete atmospheric mixture entering the harvester. Do not model the intake as a target-gas-only filter.
+2. **Separation and inventory** — Track the captured mixture by constituent mass, including trace gases where estimated or detected. Recoverable gases can be separated and stored; handling depends on processing capability, tank fit, and mission priorities.
+3. **Limited CO₂ processing** — The HLT's CO₂ splitter converts only the amount of captured CO₂ needed to support the craft's LOX requirements. This is not a full-time conversion of all captured CO₂.
+4. **Conversion products** — CO₂ splitting produces O₂ and CO. The O₂ is liquefied/stored as LOX. The craft does **not** have methane-production capability; CO₂ processing must not be described as producing methane.
+5. **CO handling** — During outbound harvesting/operations, CO may initially be vented. On the return leg, additional CO₂ is processed and the resulting CO is retained in the mixed-volatiles tank unless a dedicated CO tank is fitted.
+6. **Return-leg LOX replenishment** — Continue processing captured CO₂ during the return leg so the HLT targets landing on Luna with a full LOX tank. Actual processing is bounded by available CO₂, equipment/energy, LOX capacity, and mission requirements.
+
+### Methane is provisioned for the whole mission
+
+The HLT must carry enough methane for the **entire mission**, including outbound travel, Venus operations, and the return to Luna. The Venus HLT configuration does not manufacture methane. If the main methane tank does not hold the full mission requirement, additional methane may be carried in mixed-volatiles storage and transferred into the main methane tank before the relevant harvesting/departure operation. The AI Manager must calculate methane and LOX requirements separately.
+
+### Return to Luna and turnaround
+
+The expected return state is a full LOX tank, subject to actual mission and equipment conditions, plus the recovered atmospheric mixture and processing byproducts that fit within available storage and payload capacity. The return manifest is the actual mass of each constituent remaining aboard after separation, processing, venting, fuel use, and storage allocation—not a fixed assumed delivery percentage or a per-day production figure.
+
+At Luna, the owner may transfer LOX into base storage, unload recovered mixed volatiles, and use the base as a shared storage and servicing facility. The craft can be inspected, repaired, maintained, and prepared for its next launch window. Fuel transfers between craft and base are inventory transfers, not forced market sales and repurchases. If the HLT lands with a full LOX tank and retains or reloads the required methane, it can depart the next mission with a full LOX tank; only a genuine shortfall needs topping off.
+
+### AI Manager estimates and choices
+
+The AI Manager should estimate the expected intake mixture and returned manifest from the best available atmospheric composition data, sampling history, harvesting location/altitude, capture mass, processing efficiency, tank capacities, venting choices, mission fuel consumption, and payload limits. It should track uncertainty and revise estimates as batches are collected; trace-gas estimates may be especially uncertain.
+
+It then compares the projected or actual return inventory with Luna's needs: habitat inflation and life support, industrial feedstock, base reserves, and the next mission's fuel and storage requirements. If returned nitrogen or other required gases are insufficient, the AI Manager can consider another harvesting run, Earth imports, or other available supply options. The required outcome is adequate supply; no single supply route or fixed mission script is mandatory.
 
 ## Capacity vs Inventory (ESTABLISHED DIRECTION from architecture)
 
@@ -84,9 +96,11 @@ metadata: {
 
 Percentages, if needed, are computed: `mass_i / total_mass_kg`.
 
-### Advanced selective extraction
+### Bulk intake, changing composition, and later processing options
 
-Because planetary atmospheres are stored as individual gas mass rows, later specialized skimmers can target a single species without changing the core model. Early skimmers take proportional bulk mix; advanced units may filter.
+The Venus HLT's intake is bulk atmospheric capture: it takes in the mixture present at its operating location rather than targeting selected gases at the scoop. The captured batch is then separated, processed, stored, or vented according to the craft's installed equipment and mission plan. A later craft may add selective separation or recovery capabilities, but that is a processing/configuration option and does not redefine the initial bulk-intake behavior.
+
+Composition is not assumed to remain constant. The simulation may begin with estimated major-gas and trace-gas profiles, then allow the sampled mixture to change gradually with altitude, operating location, atmospheric conditions, and harvesting activity. Each batch should retain its own measured or estimated composition and uncertainty so the AI Manager can update forecasts from accumulated results.
 
 ---
 
@@ -102,6 +116,10 @@ TEU heating of regolith releases a small mixed-volatile fraction into the same l
 - Whether venting is ever automatic under full tanks or always a market/AI decision.
 - Formal JSON schema for `metadata['composition']` and validation helpers (`can_store?`, merge rules for identical composition).
 - When mixed-volatiles batches with different compositions may be blended at a depot vs kept separate.
-- Methane tank fill path on the same craft when Sabatier products are involved.
+- Exact atmospheric composition by operating altitude/location and how sampling updates the estimated profile.
+- Detailed trace-gas recovery priorities, separation efficiency, and storage suitability for the Venus HLT.
+- Exact CO₂ splitter conversion efficiency, energy demand, and LOX fill calculation for a mission.
+- Formal schema for representing composition estimates, uncertainty, observations, and batch-to-batch changes.
+- Exact methane/LOX tank capacities, mixed-volatiles storage allocation, and turnaround transfer rules.
 
 Implementation detail belongs in services and specs; this page owns the **design intent** so skimmer behavior is not re-simplified to “unload N₂/CO₂ bags.”
