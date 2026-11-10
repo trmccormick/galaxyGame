@@ -11,7 +11,7 @@ last_updated: 2026-11-09
 
 The game clock is a shared foundation for simulation systems. Construction, production, resource consumption, craft travel, AI Manager activity, communications, and other time-dependent behavior need to agree on the same game-time progression.
 
-The older design and UI documentation describes a **continuous, speed-controlled simulation while running**, rather than a turn-based game. However, its listed pause and explicit time-jump controls belong to the **pre-player buildout phase**, not normal player pacing. During buildout, the operator can pause, inspect and correct the AI-managed world, and deliberately jump the simulation forward. Once player gameplay begins, the player controls pacing through the available speed settings; manual calendar jumps and the buildout pause controls are not part of the normal player experience. This should not be confused with an always-on world that necessarily advances while the player is away. Whether offline wall-clock time should count remains OPEN. Real elapsed time is an input to the active simulation, while the game clock remains the shared timeline. The game-time rate and processing cadence must be tunable independently so the experience remains responsive without making delays feel arbitrary.
+The older design and UI documentation describes a **continuous, speed-controlled simulation while running**, rather than a turn-based game. However, its listed pause and explicit time-jump controls belong to the **pre-player buildout phase**, not normal player pacing. During buildout, the operator can pause, inspect and correct the AI-managed world, and deliberately jump the simulation forward. Once player gameplay begins, the universe continues at one shared, centrally determined simulation rate. **Players do not control simulation speed, pause the universe, or manually jump the calendar.** Manual calendar jumps and buildout pause controls are not part of the player experience. This should not be confused with an always-on world that necessarily advances while the player is away. Whether offline wall-clock time should count remains OPEN. Real elapsed time is an input to the active simulation, while the game clock remains the shared timeline. The game-time rate and processing cadence must be tunable independently so the experience remains responsive without making delays feel arbitrary.
 
 ---
 
@@ -23,7 +23,7 @@ The older design and UI documentation describes a **continuous, speed-controlled
 - Wall-clock elapsed time may be used to calculate how much game time has passed while the game is running. Wall-clock time is not itself the game timeline.
 - Fractional game time must be retained. The clock must not discard elapsed time simply because a complete game day has not passed.
 - In the pre-player buildout phase, pausing stops game-time advancement; resuming establishes a fresh timing baseline so paused wall-clock time is not counted. This pause behavior is an operator/buildout control, not a normal player-pacing control.
-- A speed change first accounts for elapsed time at the previous speed, then applies the new speed from that point forward. Player-facing pacing is controlled by the available speed settings.
+- Any change to the universe-wide simulation rate must first account for elapsed time at the previous rate, then apply the new rate from that point forward. The rate is shared across the universe; individual players cannot change it. The authority and operational policy for changing that global rate remain to be confirmed.
 - Explicit manual time jumps are pre-player buildout tools only. A jump must advance the coordinated simulation, not merely change the displayed calendar or stored clock.
 - Reading the current game time must be read-only. A page load, API poll, or UI refresh must not advance the clock or trigger simulation side effects.
 
@@ -52,7 +52,7 @@ These are related but not interchangeable:
 
 All time-dependent systems should use the same authoritative game-time basis.
 
-For communications, for example, the game calculates command-arrival and response-arrival ETAs in game time. During player gameplay, the selected simulation speed determines how quickly the remaining game-time interval elapses in real time; the player sees the route and expected arrival times, not the internal clock or scheduling machinery. Do not assume a player-facing pause control from the pre-player buildout pause behavior.
+For communications, for example, the game calculates command-arrival and response-arrival ETAs in game time. During player gameplay, the shared universe-wide simulation rate determines how quickly the remaining game-time interval elapses in real time. Players see the route and expected arrival times, not the internal clock or scheduling machinery, and have no speed or pause control.
 
 The same principle applies to construction completion, craft transit, resource production/consumption, scheduled events, and AI Manager activity.
 
@@ -60,7 +60,7 @@ The same principle applies to construction completion, craft transit, resource p
 
 ## OPEN — decisions and tuning
 
-- What game-time speed choices and rates provide the right balance of meaningful delay and player responsiveness?
+- What universe-wide game-time rate provides the right balance of meaningful delay and player responsiveness, and who/what is authorized to change it?
 - Should the simulation advance while the application/server is offline, or should offline time be excluded? This must be explicit rather than an accidental consequence of timestamp handling.
 - What is the minimum useful processing interval for each subsystem, and which systems need event-boundary processing rather than periodic ticks?
 - How should a delayed or failed worker recover unprocessed elapsed time without duplicate side effects?
@@ -80,29 +80,29 @@ The older documentation was reviewed alongside the current code. These documents
 ### Durable design direction found
 
 - `docs/agent/tasks/TASK_OVERVIEW.md` describes a planning-complete discussion of time acceleration and game pacing for a real-time strategy game. Its stated questions include the real-time meaning of a game day, balancing progress speed with player agency, and time scales for contracts, construction, and events. The tracker also characterizes the game as continuous rather than turn-based, with concurrent AI behavior, information management, attention management, and notifications as implications.
-- `docs/developer/ui_enhancements.md` describes five speed levels (1x–5x), pause controls, explicit time jumps (+1 day through +1 year), and a 30fps animation loop. It also describes data polling while the simulation is running. These older notes document controls but do not reliably assign them to the correct lifecycle phase; owner clarification establishes pause and time jumps as pre-player buildout tools, while player pacing uses speed settings. The animation/polling details support separating display/render cadence from simulation/game-time advancement.
+- `docs/developer/ui_enhancements.md` describes five speed levels (1x–5x), pause controls, explicit time jumps (+1 day through +1 year), and a 30fps animation loop. It also describes data polling while the simulation is running. These older notes document prototype controls but do not reliably assign them to the correct lifecycle phase; owner clarification establishes pause and time jumps as pre-player buildout tools, while player gameplay occurs in a shared universe with no player-controlled speed. The animation/polling details support separating display/render cadence from simulation/game-time advancement.
 - `docs/developer/TERRAFORMING_SIMULATION.md` describes terraforming as gradual, time-based progression over months and years, requiring sustained resource investment. This reinforces that subsystems must receive coherent elapsed game-time intervals rather than merely updating a display clock.
 - `docs/developer/UI_IMPLEMENTATION.md` contains an earlier browser-side `requestAnimationFrame` controller and example speed choices of 1x/10x/100x/1000x. Those are historical prototype examples, not a confirmed current balance specification or backend architecture.
 - The referenced `time_speed_mechanics_discussion.md` and `realtime_vs_turnbased_differences.md` are named in the old task tracker as planning references, and the time-mechanics task is marked `PLANNING COMPLETE`. The referenced source documents were not present at the paths checked in the current repository tree, so their detailed conclusions could not be verified. Do not infer that their open questions were resolved merely from the tracker label.
 
 ### Synthesis and boundaries
 
-The durable direction is a continuously advancing simulation when active, with selectable acceleration. The pre-player buildout phase additionally has operator pause and explicit time-jump controls for preparing and validating the AI-managed world. Those controls are not normal player-pacing mechanics. This is not the same as requiring offline progression. The old documentation does not settle whether elapsed wall-clock time while the game/server is offline should be applied on return.
+The durable direction is a continuously advancing shared universe at one universe-wide rate during player gameplay. The pre-player buildout phase additionally has operator pause and explicit time-jump controls for preparing and validating the AI-managed world. Players do not control the shared rate or pause/jump the universe. This is not the same as requiring offline progression. The old documentation does not settle whether elapsed wall-clock time while the game/server is offline should be applied on return.
 
 The old UI examples also mix client-side clock advancement, rendering cadence, server polling, and persistence. They are useful evidence of historical intent and prototype evolution, but they must not be treated as a current design contract. The current code needs to establish one authoritative game-time progression and ensure visual polling cannot independently consume elapsed time that simulation systems have not processed.
 
-The exact speed curve, player-facing pacing of delays, and offline progression remain OPEN. The current five backend speed values are code facts only, not approved balance targets. The phase distinction for pause and manual time jumps is owner-confirmed intent (2026-11-09), not an open design question.
+The exact universe-wide rate, its tuning, who may change it during operation, player-facing pacing of delays, and offline progression remain OPEN. The current five backend speed values are code facts only, not approved balance targets. The phase distinction for pause and manual time jumps, and the absence of player speed controls in a shared universe, are owner-confirmed intent (2026-11-09), not open design questions.
 
 ---
 
 ## ESTABLISHED INTENT — pre-player buildout vs player gameplay (owner, 2026-11-09)
 
 - **Pre-player buildout:** pause and manual time jumps are operator tools used while the AI Manager prepares the world. They allow inspection, correction, and deliberate advancement before player entry.
-- **Player gameplay:** pacing is controlled through the available speed settings. Do not expose or assume manual calendar jumps or the buildout pause controls as normal player controls.
+- **Player gameplay:** all players share one universe-wide simulation rate. Individual players have no speed control, cannot pause the universe, and cannot manually jump the calendar.
 - **Shared simulation:** both phases use the same authoritative game-time basis and coordinated subsystem processing. A buildout time jump must process the world consistently; it must not simply alter the displayed date or stored clock.
-- **Communications and other ETAs:** remain expressed in game time. During player gameplay, selected speed determines how quickly those intervals elapse in real time.
+- **Communications and other ETAs:** remain expressed in game time. During player gameplay, the shared universe-wide rate determines how quickly those intervals elapse in real time.
 
-This clarification supersedes any older UI/task wording that appears to make pause or manual time jumps normal player controls. It does not settle offline progression, final speed multipliers, or processing cadence.
+This clarification supersedes any older UI/task wording that appears to give individual players speed, pause, or manual time-jump controls. It does not settle offline progression, final speed multipliers, or processing cadence.
 
 ---
 
