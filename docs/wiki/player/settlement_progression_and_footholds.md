@@ -8,6 +8,50 @@ This page is the wiki home for the intended progression from early AI-built foot
 
 ---
 
+## ESTABLISHED INTENT — AI-led access, then player-led expansion (2026-11-09)
+
+The AI Manager's initial settlement work exists to **open locations for people and players** and establish the footholds, stations, and supporting infrastructure that make further expansion practical. Equipment and industrial activity are means to that outcome, not the end goal.
+
+### AI Manager establishes the footholds
+
+The operator gives the AI Manager mission objectives, starting conditions, available resources, and constraints. The AI Manager is expected to inspect the location, assess its needs and opportunities, determine priorities, and choose a suitable development path. The mission defines the desired outcome; it must not prescribe a fixed, developer-authored sequence of every harvest, processing, manufacturing, and construction action.
+
+The AI Manager should establish the capabilities needed to open the location: for example, resource extraction and processing, power, life support, fabrication, logistics, maintenance, and an initial foothold or station. The exact combination and order should depend on the location and its conditions.
+
+### Simulation supervision and learning
+
+Pre-player buildout is also an operator-supervised test and validation environment:
+
+- Operators can assign missions to the AI Manager and observe its decisions and execution.
+- The simulation must execute all intervening activity and consequences. Accelerated time or a manual buildout jump changes how quickly the simulation runs in wall-clock time; it does not skip harvesting, processing, production, construction, logistics, equipment operation, failures, or generated events.
+- Operators can pause at inspection points or when a problem appears, review inventories and volatile stores, completed work, equipment condition, failures, unexpected events, and the AI Manager's responses, then intervene and resume.
+- Mission outcomes and decision/execution histories can be evaluated and retained as training and validation data. The purpose is to assess whether the AI Manager selected a sound path, not merely whether it completed a scripted checklist.
+
+Pause and manual time-jump controls belong to pre-player buildout supervision. Player gameplay uses the shared universe clock and centrally determined rate; individual players do not control the simulation rate, pause the universe, or jump the calendar. See [Game Time and Simulation Loop](../engineering/game_time_and_simulation_loop.md).
+
+### Player and corporation expansion after access
+
+Once a world is accessible, players and player corporations can establish their own bases and settlements. NPC footholds and stations are enabling infrastructure, not exclusive settlement ownership and not a requirement that every later development remain NPC-operated.
+
+Players and corporations may also lease suitable space at NPC settlements to install portal endpoints / pairs, creating convenient connections for moving eligible payloads and supporting imports and exports. Portal use remains subject to the established portal technology and payload constraints: portals are not a blanket replacement for bulk freight, which continues to use appropriate physical transport.
+
+The AI Manager continues operating and maintaining NPC infrastructure after player access. It may expand NPC capacity or services as conditions and demand justify it, while player organizations develop their own operations alongside it.
+
+### Development after the initial access foothold
+
+After essential access and station infrastructure are established, the AI Manager can prioritize secondary development according to local conditions and needs:
+
+- Expand NPC settlement capacity to support additional population and activity.
+- Improve production, logistics, maintenance, and other services.
+- Pursue suitable terraforming programs as a long-horizon development objective.
+- Respond to player and market demand without treating every opportunity as an automatic build requirement.
+
+Terraforming is also an intentional long-term resource and GCC sink. Players can earn GCC by harvesting, processing, hauling, and selling resources needed by terraforming programs; see [Terraforming Economic Integration](../logistics/terraforming_economic_integration.md). Terraforming priorities and spending remain AI Manager / NPC development decisions rather than direct player control.
+
+**Undecided implementation details:** how missions express objectives and constraints; how decision rationale and training records are stored; what constitutes sufficient access for player entry; lease terms, endpoint ownership, capacity, fees, and permissions; and how the AI Manager weighs population growth, player demand, and terraforming against other priorities.
+
+---
+
 ## Core Progression Arc
 
 1. **Subterranean / Bermed Bootstrap** (AI Manager primary)
