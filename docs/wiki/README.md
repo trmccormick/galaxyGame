@@ -83,7 +83,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
 | [Surface habitat options](infrastructure/surface_habitat_options.md) | Surface habitat thought exercise: dome pressurization, oxygen setup, power gate |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
-| [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM communication with distance-dependent delays; store-and-forward relays; wormholes do not bypass comms physics. **Resolved:** historical discrepancy with WORMHOLE_NETWORK_INTENT.md documented.
+| [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM plus store-and-forward relays and physical carriers; portals and wormholes shorten carrier routes, not signal travel time. **Resolved:** historical FTL-communications discrepancy documented.
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
 | [Terraforming options](infrastructure/terraforming_options.md) | Pressure-first protection path, refined Venus→Mars mass-driver pipeline, softer longer-horizon options |
