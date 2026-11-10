@@ -37,7 +37,7 @@ The AI Manager's purpose is to establish and manage the footholds, settlements, 
 
 An operator-defined mission supplies the desired outcome, starting conditions, available resources, and constraints. The AI Manager is responsible for evaluating the location and choosing how to achieve that outcome. It should decide what to prioritize, what to build first, which resources and equipment to allocate, when to expand, and how to respond when conditions change.
 
-For example, a Luna foothold mission may require a usable lava-tube settlement. The AI Manager may decide that regolith harvesting, processing, 3D printing structural I-beams and panels, sealing, power, life support, and storage are necessary. The mission should not hardcode the exact order and quantity of every task in advance. Those are decisions and execution details to be evaluated.
+For example, a Luna foothold mission may require a usable lava-tube settlement. The AI Manager may decide that regolith harvesting, processing, 3D printing structural I-beams and panels, sealing, power, life support, and storage are necessary. The mission should not hardcode the exact order and quantity of every task in advance. Those are decisions and execution details to be evaluated. Existing settlement patterns, prior missions, and tested buildouts may inform the plan, but they are reusable knowledge and references—not a fixed sequence to replay. The AI Manager must assess current conditions and adapt its priorities and path.
 
 ### Pre-player simulation as an AI validation environment
 
