@@ -94,5 +94,5 @@ These observations indicate a mismatch between clock updates and simulation proc
 | Page | Relationship |
 |------|--------------|
 | [Interstellar Communications](interstellar_communications.md) | Command and response ETAs use the shared game-time basis |
-| [AI Manager](../logistics/ai_manager.md) | Autonomous operations and scheduled decisions depend on simulation advancement |
+| [AI Manager](../services/ai_manager.md) | Autonomous operations and scheduled decisions depend on simulation advancement |
 | [Logistics and hauling](../logistics/logistics_and_hauling.md) | Transport and delivery progress depend on game time |
