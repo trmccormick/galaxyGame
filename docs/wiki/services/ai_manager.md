@@ -33,9 +33,15 @@ The **AI Manager** (`AIManager::Manager`) is Galaxy Game's automated economy-and
 
 The AI Manager's purpose is to establish and manage the footholds, settlements, and stations that open locations for people and enable player expansion. It should make strategic decisions from the state of the world rather than merely replay a fixed construction script.
 
-### Mission definition versus execution
+### Strategic selection versus mission/task execution
 
-An operator-defined mission supplies the desired outcome, starting conditions, available resources, and constraints. The AI Manager is responsible for evaluating the location and choosing how to achieve that outcome. It should decide what to prioritize, what to build first, which resources and equipment to allocate, when to expand, and how to respond when conditions change.
+An operator-defined mission supplies the desired outcome, target context, starting conditions, available resources, and constraints. It does not prescribe the sequence of work. The AI Manager is responsible for evaluating the world and deciding **whether** an activity is needed, **where** it should occur, **when** it should occur, and **why** it should take priority over alternatives.
+
+The `missions_v2` / `tasks` layer describes **how an activity is carried out once the AI Manager has selected it**. It provides executable deployment or activity procedures, requirements, and steps. It is not the strategic authority that decides whether a task is appropriate, which location needs it, when to invoke it, or whether another objective is more important. For example, a task may define how to harvest and process regolith or manufacture 3D-printed I-beams and panels; the AI Manager must independently determine whether those outputs are needed, where and when to produce them, in what quantity, and how that work fits the settlement's priorities.
+
+Existing missions, tasks, settlement patterns, and tested buildouts may provide reusable capabilities, examples, and knowledge. Reusing an execution procedure is not the same as replaying a predetermined settlement script. Strategic selection must remain responsive to the actual location, available resources, equipment condition, dependencies, changing conditions, and mission objectives.
+
+For example, a Luna foothold mission may require a usable lava-tube settlement. The AI Manager may determine that regolith harvesting, processing, 3D printing structural I-beams and panels, sealing, power, life support, and storage are necessary. It must select and prioritize the appropriate activities; the execution layer then carries out the selected work.
 
 For example, a Luna foothold mission may require a usable lava-tube settlement. The AI Manager may decide that regolith harvesting, processing, 3D printing structural I-beams and panels, sealing, power, life support, and storage are necessary. The mission should not hardcode the exact order and quantity of every task in advance. Those are decisions and execution details to be evaluated. Existing settlement patterns, prior missions, and tested buildouts may inform the plan, but they are reusable knowledge and references—not a fixed sequence to replay. The AI Manager must assess current conditions and adapt its priorities and path.
 
