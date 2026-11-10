@@ -13,6 +13,7 @@ This page distills the 2026-11-04 owner and Gemini brainstorm into what a new pl
 ### When players arrive
 - Players enter once **AWS technology is online**. Eden is reconnected through the new AWS. System B, reached through the natural wormhole, is unsettled. Eden's state is unknown, including whether its first settlements survived.
 - The first players pick a location that is **active**. They do not start at the unknown old Eden stations.
+- At entry, **Sol is active, Eden is unknown, and System B is empty** (owner, 2026-11-05).
 - Eden's condition at the disconnect is **emergent**, not pre-scripted. See [Eden Disconnect and Emergent History](eden_disconnect_and_emergent_history.md).
 
 ### Where a player starts
@@ -40,6 +41,7 @@ This page distills the 2026-11-04 owner and Gemini brainstorm into what a new pl
 
 ## DIRECTION (not decided)
 
+- **Sol is not expected to settle System B until it has a handle on the wormholes** (owner's assumption, 2026-11-05). Apart from a few scouts, Sol studies them. Whether the AI Manager sends scouts, and what the study produces, is OPEN.
 - A basic dashboard-first UI (tables, status cards) before richer visual views of base building. Gemini suggested this phasing. The owner said the UI is still being worked out with ChatGPT.
 
 ---

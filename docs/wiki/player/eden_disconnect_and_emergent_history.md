@@ -146,7 +146,7 @@ These levers let the same code produce autarkic, ghost, feral, or tomb results d
 
 **OPEN**
 
-- First-wave players are expected to start in **active, solvent systems** (Sol core, established LDC hubs, or System B extraction frontiers). Dropping directly into an unknown Eden state is high-risk.
+- First-wave players are expected to start in **active, solvent systems** (Sol core and established LDC hubs). Eden's state is unknown and System B is empty (owner, 2026-11-05). Dropping directly into an unknown Eden state is high-risk.
 - Once logistics and capital are established, player corporations can mount expeditions through the new AWS gate.
 - **No other traffic is allowed** until the Eden-side WS is converted and operational. Only the tug, EM harvesters, stabilization sats and the cycler carrying the upgrade package may transit during the strain and conversion phase (DIRECTION).
 - Reclamation, salvage, diplomacy with survivor pockets, or pure archaeological recovery become distinct play styles depending on the archetype encountered.
