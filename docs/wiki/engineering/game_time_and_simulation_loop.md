@@ -7,6 +7,10 @@ last_updated: 2026-11-09
 
 # Game Time and Simulation Loop
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-10  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 > **Page status:** `DIRECTION` — this page records a proposed intended flow for review. It is not an implementation specification and does not declare the current loop correct.
 
 The game clock is a shared foundation for simulation systems. Construction, production, resource consumption, craft travel, AI Manager activity, communications, and other time-dependent behavior need to agree on the same game-time progression.

@@ -1,5 +1,9 @@
 # Station Construction Options
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-10  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-10 (orbital-first + Earth/L1 exception; implementation boundary clarified)  
 **Related**: [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md), [terraforming_options.md](../infrastructure/terraforming_options.md), surface habitat and power pages, AI Manager economic loops

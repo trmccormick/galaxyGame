@@ -1,5 +1,9 @@
 # Atmospheric Escape, Retention & Recovery
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-10  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 > **Wiki section:** Player / Infrastructure · **Status:** design intent — planetary rates and technology effects require game-specific calibration
 
 ## ESTABLISHED INTENT (2026-11-10)

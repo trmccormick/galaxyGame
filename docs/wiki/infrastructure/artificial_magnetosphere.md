@@ -1,5 +1,9 @@
 # Artificial Magnetosphere
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-10  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 > **Wiki section:** Infrastructure  
 > **Status:** DIRECTION  
 > *Candidate design intent consolidated from prior lore, SOP, atmospheric-maintenance, and Gemini session material. Not yet ESTABLISHED INTENT. Quantitative specs (field strength, mass, power, cost) remain OPEN.*

@@ -1,5 +1,9 @@
 # Terraforming Options
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-10  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-10 (station-construction cross-reference restored)  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [modular_orbital_panel_swarms.md](modular_orbital_panel_swarms.md), settlement and logistics pages

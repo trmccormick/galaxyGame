@@ -1,4 +1,9 @@
 # Skimmers & Mixed Volatiles
+
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-10  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 > **Code Alignment Status:** `PARTIAL — CONSOLIDATION REVIEW NEEDED`  
 > *Last Audited:* 2026-11-10  
 > *Audit Summary:* Reusable atmosphere extraction, proportional raw transfer, CO₂ processing, and craft exhaust code exists. The current skimmer path does not yet connect those pieces into a consistent craft-cargo-to-Luna return calculation. A boiloff implementation was not located in the code search; verify tank and transit processing before concluding it is absent.
