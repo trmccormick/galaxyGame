@@ -51,6 +51,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|--------|
 | [AI Manager economic loops](logistics/ai_manager_economic_loops.md) | AI Manager market interaction, debt/austerity, Virtual Ledger, stockpile buffers |
+| [AI Manager & autonomous coordinators](services/ai_manager.md) | AI Manager responsibilities, decision-making, mission execution, and settlement development intent |
 | [Logistics and hauling](logistics/logistics_and_hauling.md) | Transport and hauling intent |
 | [Resource and market logistics](logistics/resource_and_market_logistics.md) | Resources ↔ markets (strongest market page) |
 | [Market and AI bootstrapping](logistics/market_and_ai_bootstrapping.md) | Market models + AI construction bootstrap |
