@@ -1,4 +1,7 @@
 # Skimmers & Mixed Volatiles
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-07  
+> *Audit Summary:* Design intent specification (page status DIRECTION). Not audited against code; implementation pending or unverified as of audit baseline.
 
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-05  

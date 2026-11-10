@@ -1,4 +1,7 @@
 # Modular Orbital Panel Swarms
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-07  
+> *Audit Summary:* Design intent specification (page status DIRECTION). Not audited against code; implementation pending or unverified as of audit baseline.
 
 > **Wiki section:** Infrastructure  
 > **Status:** DIRECTION  
