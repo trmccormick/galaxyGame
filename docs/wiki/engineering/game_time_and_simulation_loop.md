@@ -46,7 +46,7 @@ These are related but not interchangeable:
 - A frequent lightweight check can keep the simulation responsive without forcing large game-time jumps.
 - A slower or batched subsystem can still process the correct accumulated interval.
 - The game should not need to wait for a whole simulated day before the clock or every subsystem can make progress.
-- Speed settings and their labels/rates should be tuned through gameplay testing, not inferred from the current code values.
+- The universe-wide rate should be tuned through gameplay testing, not inferred from the current code values.
 
 ### Shared timing for gameplay and communications
 
