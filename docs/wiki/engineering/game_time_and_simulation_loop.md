@@ -11,7 +11,7 @@ last_updated: 2026-11-09
 
 The game clock is a shared foundation for simulation systems. Construction, production, resource consumption, craft travel, AI Manager activity, communications, and other time-dependent behavior need to agree on the same game-time progression.
 
-The game is **not intended to run as a real-time simulation tied to wall-clock time**. Real elapsed time is an input used to advance the game clock while the simulation is running. The game-time rate and simulation processing cadence must be tunable independently so the experience remains responsive without making delays feel arbitrary.
+The older design and UI documentation describes a **continuous, speed-controlled simulation while running**, rather than a turn-based game: the player can run, pause, change speed, and make explicit time jumps. This should not be confused with an always-on world that necessarily advances while the player is away. The simulation's running state controls whether game time advances; whether offline wall-clock time should count remains OPEN. Real elapsed time is an input to the active simulation, while the game clock remains the shared timeline. The game-time rate and processing cadence must be tunable independently so the experience remains responsive without making delays feel arbitrary.
 
 ---
 
@@ -69,6 +69,28 @@ The same principle applies to construction completion, craft transit, resource p
 - Are there multiple independent game sessions in scope, or is the current single global GameState a temporary prototype assumption?
 
 No numeric speed curve or processing interval is established by this page.
+
+---
+
+## Historical documentation and extracted intent
+
+The older documentation was reviewed alongside the current code. These documents are frozen references, not competing implementation specifications; where they conflict with current owner direction or code, the conflict is recorded for review rather than silently adopted.
+
+### Durable design direction found
+
+- `docs/agent/tasks/TASK_OVERVIEW.md` describes a planning-complete discussion of time acceleration and game pacing for a real-time strategy game. Its stated questions include the real-time meaning of a game day, balancing progress speed with player agency, and time scales for contracts, construction, and events. The tracker also characterizes the game as continuous rather than turn-based, with concurrent AI behavior, information management, attention management, and notifications as implications.
+- `docs/developer/ui_enhancements.md` describes five speed levels (1x–5x), run/pause controls, explicit time jumps (+1 day through +1 year), and a 30fps animation loop. It also describes data polling while the simulation is running. This supports separating display/render cadence from simulation/game-time advancement.
+- `docs/developer/TERRAFORMING_SIMULATION.md` describes terraforming as gradual, time-based progression over months and years, requiring sustained resource investment. This reinforces that subsystems must receive coherent elapsed game-time intervals rather than merely updating a display clock.
+- `docs/developer/UI_IMPLEMENTATION.md` contains an earlier browser-side `requestAnimationFrame` controller and example speed choices of 1x/10x/100x/1000x. Those are historical prototype examples, not a confirmed current balance specification or backend architecture.
+- The referenced `time_speed_mechanics_discussion.md` and `realtime_vs_turnbased_differences.md` are named in the old task tracker as planning references, and the time-mechanics task is marked `PLANNING COMPLETE`. The referenced source documents were not present at the paths checked in the current repository tree, so their detailed conclusions could not be verified. Do not infer that their open questions were resolved merely from the tracker label.
+
+### Synthesis and boundaries
+
+The durable direction is a continuously advancing simulation when running, with player-controlled pause, selectable acceleration, and explicit time jumps. This is not the same as requiring offline progression. The old documentation does not settle whether elapsed wall-clock time while the game/server is offline should be applied on return.
+
+The old UI examples also mix client-side clock advancement, rendering cadence, server polling, and persistence. They are useful evidence of historical intent and prototype evolution, but they must not be treated as a current design contract. The current code needs to establish one authoritative game-time progression and ensure visual polling cannot independently consume elapsed time that simulation systems have not processed.
+
+The exact speed curve, the player-facing pacing of delays, and offline progression remain OPEN. The current five backend speed values are code facts only, not approved balance targets.
 
 ---
 
