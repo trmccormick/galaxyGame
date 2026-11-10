@@ -71,11 +71,11 @@ The AI Manager does not own all future development. After access is established,
 
 The original extractor and performance-tracking work was a first implementation of the idea: mission data and decision examples could be made available to the AI Manager, and decisions could be recorded and evaluated. It demonstrated a possible direction, but it was not a complete learning system or a sufficiently mature representation of settlement work.
 
-The V2 mission/task work is an evolution of that foundation. The repository now has a distinct `missions_v2` data area, including phase/task organization, and a `TaskExecutionEngineV2` that loads a task library and interprets task definitions and effects. The V2 work is intended to improve how activities are described and executed: with reusable task definitions, clearer requirements and effects, and mission/profile data that can express deployment options and their supporting tasks more precisely.
+The V2 mission/task work is a separate, newer evolution of how settlement activities are described and executed. The repository has a distinct `missions_v2` data area, including phase/task organization, and a `TaskExecutionEngineV2` that loads a task library and interprets task definitions and effects. V2 is intended to improve the descriptions and reusable execution building blocks available for settlement work.
 
-This work should be understood as improving the **examples and execution building blocks available to the AI Manager**, not as replacing strategic planning with a more elaborate fixed script. The Rake mission profiles remain development-time options used to exercise different settlement approaches. V2 should make those options and the work they describe more useful to simulation and learning; it does not mean the AI Manager must reproduce a V2 profile literally.
+**V2 has not yet been used for AI training.** The existing learning prototype and its mission-profile extraction are earlier work. Do not describe V2 mission profiles or tasks as already ingested into the AI Manager's training data, evaluated as training examples, or connected to the existing learning pipeline.
 
-The intended relationship remains:
+A future integration may use V2 profiles and tasks as better-described examples and execution building blocks for settlement experiments and AI learning. That is a prospective direction, not current behavior. The intended relationship, once deliberately developed, is:
 
 - **Mission profiles:** candidate settlement approaches and contextual examples.
 - **V2 tasks:** reusable descriptions of activities and their execution requirements/effects.
@@ -83,20 +83,7 @@ The intended relationship remains:
 - **Learning/experience records:** preserve examples, conditions, decisions, outcomes, and lessons with their evaluation status.
 - **AI Manager:** assess the actual target and objective, then select, adapt, combine, or devise an approach and draft the cargo manifest/deployment plan.
 
-The current extractor inspected above still scans the legacy `MISSIONS_PATH` directory and looks for profile/manifest pairs there; it does not yet demonstrate a complete ingestion pipeline for the `missions_v2` structure. The V2 task engine is a separate execution foundation. The connection between V2 mission/task definitions, Rake settlement experiments, learning records, and independent AI-generated manifests remains work to mature. This is an implementation gap to track, not a reason to characterize V2 as unnecessary or the original experiment as unsuccessful.
-
-
-The repository already contains several pieces of an early learning workflow. They are useful foundations and evidence of the intended direction, but they should not be read as a complete or authoritative implementation of autonomous settlement planning.
-
-| Existing component | Verified behavior in the current code |
-|---|---|
-| `TestScenarioExtractor.extract_training_scenarios` | Defines three example settlement conditions (critical life support, operational resource shortage, and stable expansion) with expected decisions and success criteria. These are currently hardcoded scenario records; the method does not dynamically parse RSpec files. |
-| `TestScenarioExtractor.extract_patterns_from_missions` | Reads mission directories containing a profile and manifest, extracts manifest-derived equipment/economic information, and maps profile phases into a deployment sequence. |
-| `convert_to_training_format` | Converts the predefined scenarios into input-state / expected-decision / success-criteria records. Its current confidence value is a fixed 0.9, not a confidence measured from observed performance. |
-| `ai_manager:extract_test_scenarios` | Combines the test-derived scenarios and mission-derived patterns in `AI_MISSION_PATTERNS_PATH` (`mission_profile_patterns.json`). |
-| `PerformanceTracker` | Records a decision, its context, a later outcome and score, and generated lessons. It also keeps simple pattern-use statistics and can recommend an action based on similar recorded contexts. |
-| `OperationalManager` | Creates a `PerformanceTracker`, asks it for an adaptation recommendation, and applies some recommendations in operational/expansion decision paths. It separately loads settlement patterns from `AI_SETTLEMENT_PATTERNS_PATH`. |
-| AI Manager Rake tasks | Include performance analysis, behavior tuning, and a simulated adaptation exercise that records example decisions and outcomes. |
+The current extractor inspected above still scans the legacy `MISSIONS_PATH` directory and looks for profile/manifest pairs there; it does not demonstrate ingestion of the `missions_v2` structure. The V2 task engine is a separate execution foundation. Connecting V2 mission/task definitions to Rake settlement experiments, learning records, and independent AI-generated manifests remains future work. This is an implementation boundary, not evidence that V2 has already contributed training data.
 
 #### How to interpret the training material
 
