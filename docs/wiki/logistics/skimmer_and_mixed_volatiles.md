@@ -59,9 +59,11 @@ Boiloff should be calculated from the applicable stored substance, tank/cooling 
 
 ### 5. Luna delivery and turnaround
 
-On arrival, transfer returned gases and retained propellant into Luna/base inventory, subject to storage compatibility and capacity. Transfers between the craft and base are inventory movements, not forced market sales and repurchases.
+On arrival, transfer returned gases and retained propellant into Luna/base inventory or compatible storage, subject to storage compatibility and capacity. Transfers between the craft and base are inventory movements, not forced market sales and repurchases.
 
-The returned atmospheric mixture should enter the same downstream mixed-volatiles / gas-separation and inventory pipeline used by other raw volatile sources where compatible. Do not add the delivered cargo directly to Luna's planetary atmosphere as a substitute for craft cargo storage or settlement inventory.
+**Unloading useful cargo is not an atmospheric transfer.** Returned atmospheric constituents belong in craft/base inventories and storage, then in the downstream mixed-volatiles / gas-separation pipeline where compatible. Do not routinely add delivered cargo to Luna's planetary atmosphere. Existing raw/processed transfer code that writes to a target body's atmosphere may be an early test or prototype path; its provenance and actual callers must be checked rather than treating that behavior as accepted cargo-delivery design.
+
+This does not imply a perfectly sealed vehicle or zero emissions. Account for ordinary operational losses and emissions wherever they apply: seal and connection leaks, cryogenic boiloff, pressure management, and venting associated with launch, landing, docking, servicing, or other operations. Model these as losses/emissions from the relevant tank or inventory at the relevant time, with the receiving environment determined by where the operation occurs. They reduce the mass available for delivery; they are not a deliberate bulk dump of useful cargo into Luna's atmosphere. Venting CO from onboard CO₂ processing and propellant exhaust are separate, expected emissions and must not be confused with cargo unloading.
 
 The craft can unload, transfer fuel, be inspected and serviced, and prepare for its next launch window. A full LOX tank that remains available for the next mission does not need to be sold and repurchased; only an actual shortfall needs replenishing.
 
