@@ -11,6 +11,7 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 | Page | Purpose |
 |------|---------|
 | [Branding and entry experience](01_branding_and_entry_experience.md) | Shared branding, landing page, and sign-in experience |
+| [Player view architecture](02_player_view_architecture.md) | Five player-facing views (Planetary, Surface, Settlement, Space, Galaxy), navigation model, and scope boundaries |
 
 ## Working lifecycle
 
