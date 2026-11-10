@@ -1,7 +1,7 @@
 # Settlement Progression and Footholds
 
 **Status**: DIRECTION  
-**Last Updated**: 2026-11-04  
+**Last Updated**: 2026-11-09  
 **Related**: [getting_started.md](getting_started.md), [player_roles_and_alignment.md](player_roles_and_alignment.md), [surface_habitat_options.md](../infrastructure/surface_habitat_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md)
 
 This page is the wiki home for the intended progression from early AI-built footholds to mature player-managed settlements and surface expansion. It consolidates prior lava-tube and early-settlement intent while adding the player-spawn, portal, population, and archetype material from the 2026-11-04 brainstorm.
