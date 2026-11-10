@@ -18,6 +18,7 @@ All content is **DIRECTION** or **OPEN** unless marked otherwise.
 4. Venus pressure relief and Mars volatile deficit form a natural pairing, but other sources (Titan, KBOs, local extraction) remain available.
 5. Realistic logistics apply: boil-off, transit loss, alignment windows, fuel for skimmers, and infrastructure bootstrapping all matter.
 6. Trade remains bidirectional even when mass flow is heavily one-way.
+7. Natural atmospheric escape is an ongoing resource loss; retention and optional recovery technologies can complement replenishment and harvesting. This is an available path, not a mandatory terraforming prerequisite (see [Atmospheric Escape, Retention & Recovery](atmospheric_escape_and_recovery.md)).
 
 ---
 
