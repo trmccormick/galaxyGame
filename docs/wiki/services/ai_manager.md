@@ -105,6 +105,15 @@ The original extractor and performance-tracking work was a first implementation 
 
 The V2 mission/task work is a separate, newer evolution of how settlement activities are described and executed. The repository has a distinct `missions_v2` data area, including phase/task organization, and a `TaskExecutionEngineV2` that loads a task library and interprets task definitions and effects. V2 is intended to improve the descriptions and reusable execution building blocks available for settlement work.
 
+
+**V2 task-library maturity — defined does not mean validated.** The task library contains a substantial amount of authored work, but only a limited subset has been exercised so far, primarily some initial deployment tasks. The current status must therefore be distinguished carefully:
+
+- **Defined:** Many V2 task definitions and mission profiles exist as candidate capabilities and approaches.
+- **Initially tested:** Only selected tasks—mainly parts of initial deployment—have received execution testing.
+- **Not yet validated:** Most of the V2 library has not yet been exercised sufficiently to establish that its procedures, requirements, dependencies, effects, and outputs work as intended.
+
+The library is still being developed and tested. Its purpose is to give the AI Manager a growing set of executable capabilities and options, not to impose a closed or exhaustive menu of everything it may ever need to do. Tasks describe activities and their execution requirements; mission profiles illustrate possible combinations and approaches; Rake experiments exercise selected combinations and reveal what works, what is missing, and what needs correction. The AI Manager remains responsible for deciding which capabilities are needed and how to compose them for the objective and current conditions. If the required capability is not yet represented or implemented, that should be identified as a development gap—not treated as a permanent limit on the AI Manager's strategic reasoning or as proof that an unimplemented activity can already be executed.
+
 **V2 has not yet been used for AI training.** The existing learning prototype and its mission-profile extraction are earlier work. Do not describe V2 mission profiles or tasks as already ingested into the AI Manager's training data, evaluated as training examples, or connected to the existing learning pipeline.
 
 A future integration may use V2 profiles and tasks as better-described examples and execution building blocks for settlement experiments and AI learning. That is a prospective direction, not current behavior. The intended relationship, once deliberately developed, is:
