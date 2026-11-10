@@ -74,7 +74,7 @@ Mars follows the intended default **orbital-first** pattern (unlike the Earth bo
 5. **Later optional repositioning of converted bodies**  
    If the required propulsion, fuel, and control capabilities exist, an already-converted body may be repositioned. Slag station-keeping capability alone does not establish this ability.
 
-The owner-harvested distinctions above are intentional: **in-place conversion is not relocation**, and station-keeping thrust is not a body-moving tug. The phase labels recorded in the migration log are retained there pending clarification of how they map to the broader game progression phases.
+The owner-harvested distinctions above are intentional: **in-place conversion is not relocation**, and station-keeping thrust is not a body-moving tug. These are capability and construction distinctions, not numbered game-progression phases. Do not impose a universal phase sequence on post-Earth expansion.
 
 Magnetosphere / L1 shield construction remains independent of moon relocation (see [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md)).
 
