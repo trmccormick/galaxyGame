@@ -8,6 +8,16 @@ This page is the wiki home for the intended progression from early AI-built foot
 
 ---
 
+## ESTABLISHED INTENT — Required Sol bootstrap, flexible expansion
+
+The initial Sol progression has two required milestones: establish the **Luna foothold**, then establish the **Earth–Moon L1 station and fuel depot**. These are foundational requirements for opening the wider system; they are not optional examples among interchangeable starting strategies.
+
+Beyond Earth, expansion is deliberately more flexible. The AI Manager should assess each destination and choose a viable development path based on local bodies and resources, available technology, fuel, logistics, and existing infrastructure. Do not impose a universal numbered phase sequence or require every system to reproduce the exact Sol construction recipe.
+
+The game still needs the relevant **station and depot functions** as infrastructure expands. Their physical arrangement, scale, combination, and construction style are open to the chosen approach and local conditions. A station and a depot need not imply one fixed blueprint or a single prescribed configuration.
+
+---
+
 ## ESTABLISHED INTENT — AI-led access, then player-led expansion (2026-11-09)
 
 The AI Manager's initial settlement work exists to **open locations for people and players** and establish the footholds, stations, and supporting infrastructure that make further expansion practical. Equipment and industrial activity are means to that outcome, not the end goal.
