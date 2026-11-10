@@ -1,8 +1,8 @@
 # Terraforming Options
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-05  
-**Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), settlement and logistics pages
+**Last Updated**: 2026-11-10 (station-construction cross-reference restored)  
+**Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [modular_orbital_panel_swarms.md](modular_orbital_panel_swarms.md), settlement and logistics pages
 
 This page is the wiki home for planetary-scale atmosphere modification options. Multiple pathways exist. A fast raw-gas pressure rise is primarily a **protection** measure for population and infrastructure. Traditional terraforming (climate and biosphere goals) and refined composition control are separate, later choices. Softer longer-horizon approaches remain available.
 
