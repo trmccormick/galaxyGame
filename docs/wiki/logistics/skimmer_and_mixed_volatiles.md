@@ -5,7 +5,7 @@
 
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-10  
-**Related**: [atmospheric_harvesting.md](../infrastructure/atmospheric_harvesting.md), [terraforming_options.md](../infrastructure/terraforming_options.md), [isru_fabrication_chain.md](../technical/isru_fabrication_chain.md), Luna operations / TEU material
+**Related**: [atmospheric_harvesting.md](../infrastructure/atmospheric_harvesting.md), [atmospheric_escape_and_recovery.md](../infrastructure/atmospheric_escape_and_recovery.md) (natural loss, retention, and optional recovery as resource paths), [terraforming_options.md](../infrastructure/terraforming_options.md), [isru_fabrication_chain.md](../technical/isru_fabrication_chain.md), Luna operations / TEU material
 
 This page records the intended Venus HLT harvesting and return setup, plus the shared mixed-volatiles inventory concept. It is a statement of intended behavior, not a claim that the current implementation is complete.
 
