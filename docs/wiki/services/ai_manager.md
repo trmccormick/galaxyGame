@@ -65,6 +65,53 @@ The AI Manager does not own all future development. After access is established,
 
 **Implementation boundary:** these are owner-confirmed gameplay goals. Existing mission/task execution and strategic-planning code must be evaluated against them; the presence of planners, scorers, patterns, or sequential task engines does not by itself prove that the AI independently selects an effective settlement strategy. Implementation gaps and the appropriate decision-record/training-data model remain to be reviewed.
 
+### Existing mission-profile and learning foundation (verified code; developmental)
+
+The repository already contains several pieces of an early learning workflow. They are useful foundations and evidence of the intended direction, but they should not be read as a complete or authoritative implementation of autonomous settlement planning.
+
+| Existing component | Verified behavior in the current code |
+|---|---|
+| `TestScenarioExtractor.extract_training_scenarios` | Defines three example settlement conditions (critical life support, operational resource shortage, and stable expansion) with expected decisions and success criteria. These are currently hardcoded scenario records; the method does not dynamically parse RSpec files. |
+| `TestScenarioExtractor.extract_patterns_from_missions` | Reads mission directories containing a profile and manifest, extracts manifest-derived equipment/economic information, and maps profile phases into a deployment sequence. |
+| `convert_to_training_format` | Converts the predefined scenarios into input-state / expected-decision / success-criteria records. Its current confidence value is a fixed 0.9, not a confidence measured from observed performance. |
+| `ai_manager:extract_test_scenarios` | Combines the test-derived scenarios and mission-derived patterns in `AI_MISSION_PATTERNS_PATH` (`mission_profile_patterns.json`). |
+| `PerformanceTracker` | Records a decision, its context, a later outcome and score, and generated lessons. It also keeps simple pattern-use statistics and can recommend an action based on similar recorded contexts. |
+| `OperationalManager` | Creates a `PerformanceTracker`, asks it for an adaptation recommendation, and applies some recommendations in operational/expansion decision paths. It separately loads settlement patterns from `AI_SETTLEMENT_PATTERNS_PATH`. |
+| AI Manager Rake tasks | Include performance analysis, behavior tuning, and a simulated adaptation exercise that records example decisions and outcomes. |
+
+#### How to interpret the training material
+
+Mission profiles are **options and examples**, not approved recipes. They can be supplied to the AI Manager as early training material before their effectiveness is known. A profile can illustrate a possible deployment approach, equipment combination, sequence, or set of assumptions. It remains useful as an example even if it has not been run, proves only partially effective, or fails under the conditions tested.
+
+Simulation adds a different kind of evidence. It can record the conditions in which an option was attempted and what resulted: successful, partially successful, unsuccessful, or not yet evaluated. Outcomes should inform later assessment, but a high score does not turn a profile into a mandatory recipe, and a failed attempt does not make the example useless. The AI should be able to consider why an option did or did not suit the circumstances.
+
+The intended progression is:
+
+1. Provide early mission profiles and other examples as candidate approaches.
+2. Run selected profiles through Rake-driven settlement experiments and record the conditions, decisions, resource/cargo requirements, execution results, and consequences.
+3. Make both the examples and the observed results available as experience for AI evaluation.
+4. Give the AI Manager a settlement objective and the actual target location's properties and constraints.
+5. Have the AI Manager independently determine a suitable approach and draft its own cargo manifest and deployment plan. It may adapt, combine, or reject prior examples, or devise another approach.
+6. Execute and evaluate that AI-generated plan, then add the new experience to the body of examples and outcomes.
+
+The goal is not to train the AI to select whichever historical profile has the highest score. It is to help it understand the available approaches, their assumptions, their trade-offs, and the conditions under which they may be useful.
+
+#### Current implementation gaps and cautions
+
+The following are observations about the inspected code, not changes to the intended design:
+
+- The current test-scenario extractor supplies expected decisions and success criteria as predefined examples. That is useful for early scenario coverage, but it is not evidence that the AI has learned those decisions from execution.
+- Mission extraction currently represents profile phases as a deployment sequence and extracts manifest information. This is an example/pattern extraction path; it does not establish that the AI independently derives the best manifest for a new target.
+- The extraction task writes mission/test patterns to `AI_MISSION_PATTERNS_PATH`, while `OperationalManager#load_trained_patterns` reads JSON files from `AI_SETTLEMENT_PATTERNS_PATH`. The inspected paths therefore do not show a direct connection from that extraction output to the pattern set used by this manager.
+- `PerformanceTracker` currently compares a small fixed set of settlement metrics and ranks actions from similar decision records. Its similarity and recommendation logic is a basic prototype, not a complete model of location properties, mission objectives, logistics, equipment capability, or strategic trade-offs.
+- The tracker can record decisions before an outcome is available. Its current recommendation calculation does not explicitly exclude records with missing outcomes/scores, so unevaluated records must not be treated as measured successes or failures.
+- The tracker writes per-settlement performance files under the AI Manager performance subdirectory, while the current `analyze_performance` Rake task searches for `performance_*.json` files directly under the AI Manager data directory. The inspected paths appear inconsistent and need implementation review.
+- The current `SettlementPlanGenerator` selects a named mission-profile filename from broad system characteristics and creates a high-level plan. The inspected implementation does not yet produce the location-specific, itemized cargo manifest described in the established intent.
+- The uploaded `performance_simulation_001.json` is an example of the existing decision-history shape: repeated decisions, recorded context, outcomes and scores where available, and lesson strings. Its mixture of evaluated and unevaluated records illustrates why provenance and evaluation status need to remain distinguishable.
+
+These gaps should be reviewed against the owner-confirmed intent before implementation work is specified. Do not treat current hardcoded scenarios, profile selection, scoring, or file paths as design constraints. The codebase is the evidence of current behavior; this section records the intended direction and identifies where the two do not yet align.
+
+
 ---
 
 ## 2. Core Service Architecture (Verified Code)
