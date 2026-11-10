@@ -1,9 +1,5 @@
 # Terraforming Options
 
-> **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-05  
-> *Audit Summary:* DRAFT extracted from a Gemini terraforming chat. Not yet reviewed by the owner or verified against code or frozen docs.
-
 **Status**: DIRECTION / OPEN  
 **Last Updated**: 2026-11-05  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), settlement and logistics pages
@@ -37,7 +33,7 @@ Raising ambient surface pressure reduces a set of environmental hazards (thermal
 1. Skimmers harvest raw Venusian atmosphere (primarily CO₂ + N₂ mix) in the upper benign layers.
 2. Gas is processed only as far as needed for mass-driver launch (compression / liquefaction or dense packaging).
 3. Mass drivers fire the raw or minimally processed gas payloads toward Mars on alignment windows.
-4. Artificial magnetosphere (or L1 shield) must already be active so the injected gas is not stripped by solar wind.
+4. Artificial magnetosphere (or L1 shield) must already be active so the injected gas is not stripped by solar wind. The magnetosphere is independent progressive infrastructure and does not require relocating Phobos or Deimos (see [artificial_magnetosphere.md](artificial_magnetosphere.md)).
 5. Gas is captured into the Martian atmosphere, raising total pressure.
 
 ### Characteristics
@@ -74,7 +70,7 @@ This option lets a settlement reach useful protective pressure thresholds withou
    When Venus and Mars are in proper orbital alignment, mass drivers fire the payloads onto ballistic trajectories toward Mars.
 
 6. **Magnetic shield prerequisite**  
-   An artificial magnetosphere (or L1 solar shield) must already be active at Mars.
+   An artificial magnetosphere (or L1 solar shield) must already be active at Mars. This is independent of any moon-relocation option; see [artificial_magnetosphere.md](artificial_magnetosphere.md).
 
 7. **Reentry and release**  
    CNT shells ablate and burn up in the Martian atmosphere, releasing the O₂ and N₂ directly into the building atmosphere.
@@ -127,9 +123,6 @@ Steady, low-intensity upper-atmosphere extraction without immediate mass-driver 
 ### Local / Hybrid
 Continued reliance on Martian polar CO₂, subsurface ice, and industrial greenhouse-gas production, possibly combined with modest imports. Lower throughput, lower external dependency.
 
-### Modular orbital panel swarms
-Venus solar-shade (optional, progressive) and Mars solar-reflector share one modular CNT panel-swarm technology family. See [Modular Orbital Panel Swarms](modular_orbital_panel_swarms.md). Shade is not required for the pressure-first or mass-driver paths; it is a separate planetary-modification option.
-
 ---
 
 ## AI Manager Decision Framing
@@ -153,7 +146,7 @@ Sol is the training ground. Once the AI Manager can balance these loops inside S
 - Processing and packaging requirements for the raw-gas transfer path.
 - Feedstock ratios for the refined CNT path (CO₂ mass per unit shell vs. frozen O₂/N₂ payload).
 - Mass-driver launch cadence and alignment-window scheduling for both methods.
-- Artificial magnetosphere / L1 shield power and construction requirements.
+- Artificial magnetosphere / L1 shield power and construction requirements (placement and construction options live on [artificial_magnetosphere.md](artificial_magnetosphere.md); station/depot construction options on [station_construction_options.md](../engineering/station_construction_options.md)).
 - Transit and boil-off loss models for any non-mass-driver legs.
 - How the AI Manager scores time-versus-cost trade-offs and when it switches strategies.
 - Data structures for multi-body capital investment and payback tracking.
