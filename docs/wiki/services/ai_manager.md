@@ -29,6 +29,36 @@ The **AI Manager** (`AIManager::Manager`) is Galaxy Game's automated economy-and
 
 ---
 
+## ESTABLISHED INTENT — objective-led autonomous settlement development (2026-11-09)
+
+The AI Manager's purpose is to establish and manage the footholds, settlements, and stations that open locations for people and enable player expansion. It should make strategic decisions from the state of the world rather than merely replay a fixed construction script.
+
+### Mission definition versus execution
+
+An operator-defined mission supplies the desired outcome, starting conditions, available resources, and constraints. The AI Manager is responsible for evaluating the location and choosing how to achieve that outcome. It should decide what to prioritize, what to build first, which resources and equipment to allocate, when to expand, and how to respond when conditions change.
+
+For example, a Luna foothold mission may require a usable lava-tube settlement. The AI Manager may decide that regolith harvesting, processing, 3D printing structural I-beams and panels, sealing, power, life support, and storage are necessary. The mission should not hardcode the exact order and quantity of every task in advance. Those are decisions and execution details to be evaluated.
+
+### Pre-player simulation as an AI validation environment
+
+Operators should be able to run assigned missions at a chosen observation speed, accelerate through routine work, pause, inspect the resulting state, intervene when needed, and resume. Time acceleration must still execute the complete simulation and all consequences of elapsed game time. It must not skip subsystem processing or simply change the calendar.
+
+Inspection should make it possible to evaluate completed and remaining work, resource and volatile inventories, production and construction results, equipment condition, maintenance, failures, unexpected events, and the AI Manager's decisions and responses. Mission decisions and outcomes should provide training and validation data so the AI Manager can be assessed across different worlds and circumstances.
+
+This is pre-player operator supervision, not a player-facing universe-speed control. The shared-universe clock and lifecycle distinction are defined in [Game Time and Simulation Loop](../engineering/game_time_and_simulation_loop.md).
+
+### Development priorities
+
+The initial objective is to establish access: footholds, stations, and the essential equipment and infrastructure that make a location usable by people and players. Once access is established, the AI Manager can continue NPC settlement management and consider secondary development such as population capacity, additional services, industrial capacity, and suitable terraforming.
+
+Terraforming is a long-horizon development activity and an intentional resource / GCC sink. Players participate economically by supplying resources through harvesting, processing, hauling, and market sales; the AI Manager / NPC development program determines its own priorities and demand. See [Settlement Progression and Footholds](../player/settlement_progression_and_footholds.md) and [Terraforming Economic Integration](../logistics/terraforming_economic_integration.md).
+
+The AI Manager does not own all future development. After access is established, players and player corporations can build their own bases and settlements. They may also lease suitable space at NPC settlements for portal infrastructure, subject to portal technology and payload constraints. NPC infrastructure remains in operation alongside player-owned development.
+
+**Implementation boundary:** these are owner-confirmed gameplay goals. Existing mission/task execution and strategic-planning code must be evaluated against them; the presence of planners, scorers, patterns, or sequential task engines does not by itself prove that the AI independently selects an effective settlement strategy. Implementation gaps and the appropriate decision-record/training-data model remain to be reviewed.
+
+---
+
 ## 2. Core Service Architecture (Verified Code)
 
 The active codebase has **92 service files** in `galaxy_game/app/services/ai_manager/`. Below are the authoritative classes organized by responsibility.
