@@ -31,6 +31,38 @@ The **AI Manager** (`AIManager::Manager`) is Galaxy Game's automated economy-and
 
 ## ESTABLISHED INTENT — objective-led autonomous settlement development (2026-11-09)
 
+### Immediate development focus: the core settlement simulation
+
+The first major development and validation target is the **core settlement simulation and the AI Manager that operates it**. This is not a claim that the first milestone will validate the entire GalaxyGame simulation or every future subsystem. The wider galaxy, additional worlds, and broader simulation capabilities build on this core; they are not the scope of the initial integrated benchmark.
+
+**Luna is the first complete operational benchmark for this core.** The objective is not merely to construct a lunar base. The Rake-driven Luna build must demonstrate that the settlement can be established, supplied, operated, and sustained as a connected system. Its initial scope includes:
+
+- **Lunar base construction and management:** coordinate deployment, infrastructure, power, life support, production, storage, maintenance, and ongoing operations.
+- **Earth-side resupply:** forecast needs, manage procurement and shipment timing, and account for transport capacity, delivery delays, and available funds.
+- **Venus atmospheric gas harvesting:** operate the remote harvesting and processing supply chain and make its outputs available to the wider operation.
+- **Fuel loops:** coordinate the resources, processing, storage, and transport needed to keep fuel production and consumption operating.
+- **Human population survival:** keep the crew alive through reliable life support and the supplies, equipment, and maintenance on which it depends.
+- **Financial sustainability:** balance the base's operational and development needs against USD income, cash on hand, expenses, and purchasing commitments. The AI Manager cannot assume unlimited funds or buy supplies it cannot afford. It must weigh immediate survival and continuity against revenue-generating activity, resupply, maintenance, and expansion.
+
+These responsibilities are interdependent. A harvesting shortfall can constrain fuel production; a fuel or transport shortfall can delay resupply; a resupply delay can threaten crew survival; and an unaffordable purchase cannot solve a shortage. The AI Manager must manage those trade-offs across the operation rather than optimize construction, production, logistics, survival, or income in isolation.
+
+### Luna Rake as the reference baseline and AI validation milestone
+
+The Rake is first used to build and manage a working Luna operation. It is a development and testing instrument that demonstrates a viable operational approach and exposes the dependencies, resource flows, timing, costs, and failure modes. It is **not** intended to become the AI Manager's permanent operating script.
+
+Once the Rake-driven operation is sufficiently correct, it becomes a reference baseline for the AI Manager:
+
+1. Establish a working scripted baseline that builds and manages the Luna operation, including Earth resupply, Venus gas harvesting, fuel loops, crew survival, and USD financial constraints.
+2. Provide the AI Manager with the relevant mission/profile and task definitions, operating context, constraints, Rake implementation, and observed results as knowledge to assess. This does not mean V2 has already been used for training; V2 training integration remains future work.
+3. Test whether the AI Manager can independently develop and execute a plan that achieves the demonstrated operational result **without invoking or relying on the Rake scripts**.
+4. Test whether it can handle changed conditions, shortages, failures, and competing priorities, rather than only reproduce the original baseline.
+5. Use the results to judge whether the existing training/learning prototype can be salvaged, partially replaced, or needs a complete rewrite.
+
+The key distinction is between **replicating an outcome** and **replaying the script that produced it**. The Rake supplies a benchmark and evidence; the AI Manager must make its own strategic decisions, generate its own deployment plan and cargo requirements, and manage the resulting operation. Sustained operation and recovery from disruption are part of the test, not optional follow-up polish.
+
+This milestone validates the core settlement simulation and its AI management. It does not imply that the entire galaxy simulation, all world types, or every later gameplay system must be complete before this work is considered successful.
+
+
 The AI Manager's purpose is to establish and manage the footholds, settlements, and stations that open locations for people and enable player expansion. It should make strategic decisions from the state of the world rather than merely replay a fixed construction script.
 
 ### Strategic selection versus mission/task execution
@@ -51,7 +83,7 @@ For example, a Luna foothold mission may require a usable lava-tube settlement. 
 
 Operators should be able to run assigned missions at a chosen observation speed, accelerate through routine work, pause, inspect the resulting state, intervene when needed, and resume. Time acceleration must still execute the complete simulation and all consequences of elapsed game time. It must not skip subsystem processing or simply change the calendar.
 
-Inspection should make it possible to evaluate completed and remaining work, resource and volatile inventories, production and construction results, equipment condition, maintenance, failures, unexpected events, and the AI Manager's decisions and responses. Mission decisions and outcomes should provide training and validation data so the AI Manager can be assessed across different worlds and circumstances.
+Inspection should make it possible to evaluate completed and remaining work, resource and volatile inventories, production and construction results, equipment condition, maintenance, failures, unexpected events, and the AI Manager's decisions and responses. Mission decisions and outcomes should provide training and validation data. The first major validation target is the integrated Luna settlement operation described above; broader world and scenario coverage follows after the core settlement simulation has been demonstrated.
 
 This is pre-player operator supervision, not a player-facing universe-speed control. The shared-universe clock and lifecycle distinction are defined in [Game Time and Simulation Loop](../engineering/game_time_and_simulation_loop.md).
 
