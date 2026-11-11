@@ -94,10 +94,6 @@ Static source inspection can reveal architecture and dependencies, but it does n
 - Convert prioritized issues into focused implementation tasks that link back to this page.
 - Do not let a defect become a permanent design constraint. The approved direction remains in the other UI wiki pages.
 
-## 6. Change history
-
-- **2026-11-11** — Recorded the current main-app visual inconsistencies, demonstrated Earth Planetary functionality, and observed Earth/Mars Surface tileset issues from the owner-provided screenshots captured 2026-11-10.
-
 ## 6. Existing views: preserve and bring forward
 
 **ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
@@ -132,4 +128,5 @@ The review record should therefore document both the useful existing capability 
 
 ## 8. Change history
 
+- **2026-11-11** — Recorded the current main-app visual inconsistencies, demonstrated Earth Planetary functionality, and observed Earth/Mars Surface tileset issues from the owner-provided screenshots captured 2026-11-10.
 - **2026-11-11** — Added the explicit preserve/complete/standardize principle and documented existing view families as candidates for prototype porting and later backport/API integration.
