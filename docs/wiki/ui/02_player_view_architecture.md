@@ -53,6 +53,29 @@ This page adds context about how these three fit into the broader player-view ar
 
 ---
 
+## System and Celestial-Body Browsing
+
+**ESTABLISHED INTENT — 2026-11-11**
+
+The five player views above describe distinct ways of interacting with the game. They should not be confused with the navigation hierarchy used to find and inspect a location. In particular, the three celestial-body views (Planetary, Surface, Settlement) are not a replacement for system-level browsing.
+
+The interface should support a contextual progression such as:
+
+1. **Galaxy / system catalog** — browse and search star systems using compact, comparable rows or list entries. Useful summaries may include system-level assessments, counts, and relevant status.
+2. **System workspace / assessment** — inspect a selected system as a whole, including its celestial bodies, activity, infrastructure, and assessment information.
+3. **Celestial-body analysis** — select a planet, moon, or other body to inspect its characteristics, resources, terrain, and relevant operational or development information.
+4. **Body-specific views** — enter the appropriate Planetary, Surface, or Settlement view for the task.
+
+A system workspace may use secondary navigation such as Overview, Celestial Bodies, Resources, Operations, Missions, or Digital Twin where those sections are useful and supported by the data. These are examples of workspace organization, not a frozen tab list.
+
+**Interaction direction:** Prefer compact catalogs and information-dense tables for large collections. Use selection and drill-down to reveal deeper analysis, detail panes, contextual actions, comparisons, and assumptions. Do not make large repeated cards the default browsing pattern when they consume space without improving comparison or selection.
+
+**Reference boundary:** EVE PI Planner is a useful reference for the pattern of system list → system assessment → detailed planet analysis, including configurable assumptions and comparisons. Its terminology, colony model, mechanics, and visual design must not be copied. Galaxy Game's own celestial bodies, settlements, resources, and simulation rules remain authoritative.
+
+The current UI may use a map, table, list, or combined workspace depending on the task. This is a navigation and information-architecture direction, not a mandate that every system page use the same layout.
+
+---
+
 ## View Details
 
 ### Planetary View
@@ -172,6 +195,20 @@ These principles describe how players should be able to reach things. They are n
 **OPEN:** Transition methods for Space and Galaxy views are unresolved.
 
 ---
+
+## Three Application Interfaces
+
+**ESTABLISHED INTENT — 2026-11-11**
+
+Galaxy Game has three distinct application interfaces:
+
+- **Main Game / Player interface** — supports players acting within the shared game universe and using the five player views defined above.
+- **Admin interface** — supports operators administering, inspecting, configuring, and validating the simulation and its supporting systems.
+- **AI Manager interface** — supports observing and supervising the AI Manager's missions, decisions, plans, deployments, execution, and learning evidence.
+
+These are separate audiences and workflows, not three permission levels or skins of one dashboard. They should share the overall design system and relevant context, but their navigation, page composition, and actions should fit their responsibilities. Admin and AI Manager are the current prototype priorities; the Player interface follows later.
+
+See [Admin and AI Manager interfaces](03_admin_and_ai_manager.md).
 
 ## Relationship to Existing Documentation
 
