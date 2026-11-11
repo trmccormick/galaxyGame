@@ -135,13 +135,25 @@ The prototype review should identify and carry forward useful existing views, vi
 
 The objective is consolidation and completion, not wholesale replacement.
 
-## 9. Integration direction: presentation first, service boundary informed by existing capabilities
+## 9. Integration direction: the main application API serves the prototype
 
-The prototype may initially use mock or JSON-backed data to establish the view design and interaction model. Once the UI and workflows are clear, integration can proceed by either backporting the refined views into the main application or exposing suitable main-application capabilities through an API consumed by the prototype.
+**ESTABLISHED ARCHITECTURE DIRECTION — 2026-11-11**
 
-This is an implementation choice to evaluate against the actual code and service boundaries; it is not yet a decision to build a particular API or to duplicate simulation logic in the prototype. The main application remains authoritative for game state, domain rules, calculations, permissions, and operations. Prefer reusing existing services and data access over reimplementing behavior in the UI.
+The intended integration direction is for the **main GalaxyGame application to expose its existing game capabilities through an application API, and for the separate UI prototype to consume that API**. The prototype is the presentation/client layer; the main application remains the authoritative game backend.
 
+The UI should be developed and reviewed first where that helps establish the visual language, layouts, navigation, and interactions. Mock or JSON-backed data may be used during this design work, but it must be clearly identified as mock data and must not become an assumed API contract.
 
-## Change history
+When integrating a view:
+- identify the data, existing services, calculations, and operations the main application already provides;
+- expose the required capability through a deliberate, documented API contract in the main application;
+- have the prototype request and present that API data;
+- keep game rules, simulation state, calculations, validation, authorization, and state-changing operations in the main application;
+- reuse existing domain services and data access rather than duplicating them in the prototype;
+- distinguish live API data, cached/delayed data, and mock data in the UI.
 
-- **2026-11-11** — Recorded the three-interface model, Admin and AI Manager responsibilities, Map Studio's role in the known-world/extrasolar pipeline, the shared planetary Digital Twin direction, and the preserve/complete/standardize review principle.
+This approach lets the prototype improve the interface without requiring a wholesale backport of its views into the main app. Backporting remains a possible fallback for a specific capability if a separate client/API boundary proves unsuitable, but it is not the primary integration direction.
+
+The API does not need to be designed all at once. Define endpoints and response contracts incrementally around reviewed UI workflows, beginning with read paths where appropriate and adding authorized operations only when their backend behavior is ready. Do not expose raw internal objects or arbitrary JSON files as an unstructured pass-through.
+
+The API surface and its implementation status remain to be inspected and developed; this direction does not claim that the required endpoints already exist.
+
