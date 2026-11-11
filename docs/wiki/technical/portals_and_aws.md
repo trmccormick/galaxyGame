@@ -11,11 +11,17 @@ This page is the wiki home for **intra-system portals** and **Artificial Wormhol
 
 Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipelines.
 
+> **Correction note:** An older frozen architecture document (`docs/architecture/logistics/navigation/INTRA_SYSTEM_PORTALS.md`, cited as plain text) says a portal pair needs a continuous supply of EM, and that its EM cost for a given mass must always exceed the cost of running a cycler. That is not the owner's model and is not carried here. The energy model below is the intent.
 ---
 
 ## Two Distinct Technologies
 
 ### Intra-System Portals
+**ESTABLISHED INTENT (owner, 2026-11-11)**
+
+- A portal uses some EM to open the rift. Fusion power and magnetic containment keep it open.
+- A portal is low-mass. It cannot transfer ships or large materials, and it cannot replace cyclers or mass drivers for delivering most bulk.
+
 **DIRECTION**
 
 - Standalone manufactured infrastructure. They do **not** require natural or artificial wormhole anchoring.
