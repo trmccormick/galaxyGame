@@ -121,3 +121,27 @@ Do not silently turn these open details into approved requirements.
 ## Change history
 
 - **2026-11-11** — Recorded the three-interface model, Admin and AI Manager responsibilities, Map Studio's role in the known-world/extrasolar pipeline, and the shared planetary Digital Twin direction.
+
+## 8. Preserve, complete, and standardize existing views
+
+**ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
+
+The existing main application contains substantial and useful interface work. It is incomplete and inconsistent in places; that is not a reason to discard it or treat the prototype as a replacement built from scratch.
+
+The prototype review should identify and carry forward useful existing views, visualizations, controls, data relationships, and workflows, then complete and standardize their presentation. In particular, review the existing Planetary/Orbital, Surface, Map Studio, Monitor, resource, infrastructure, and other useful operational/world-inspection views. The exact inventory and functional status must be verified against current code and runtime evidence rather than inferred from names or screenshots alone.
+
+- Preserve working behavior and useful information architecture before refactoring.
+- Record what is working, incomplete, broken, or not yet assessed.
+- Complete missing pieces and investigate regressions as focused work.
+- Standardize navigation, terminology, layout conventions, controls, typography, spacing, and status presentation without forcing every view into one dashboard template.
+- Keep each workspace appropriate to its task: planetary/orbital inspection, surface exploration, map authoring, operations, and so on.
+- Use the prototype's stronger visual direction and interaction patterns where they improve the experience, while retaining the main application's useful domain-specific capabilities.
+
+The objective is consolidation and completion, not wholesale replacement.
+
+## 9. Integration direction: presentation first, service boundary informed by existing capabilities
+
+The prototype may initially use mock or JSON-backed data to establish the view design and interaction model. Once the UI and workflows are clear, integration can proceed by either backporting the refined views into the main application or exposing suitable main-application capabilities through an API consumed by the prototype.
+
+This is an implementation choice to evaluate against the actual code and service boundaries; it is not yet a decision to build a particular API or to duplicate simulation logic in the prototype. The main application remains authoritative for game state, domain rules, calculations, permissions, and operations. Prefer reusing existing services and data access over reimplementing behavior in the UI.
+
