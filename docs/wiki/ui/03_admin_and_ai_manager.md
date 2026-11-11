@@ -1,4 +1,4 @@
-> **Wiki section:** UI & Experience · **Status:** ESTABLISHED INTENT and DIRECTION, with unresolved implementation details marked OPEN
+> **Wiki section:** UI & Experience · **Status:** Established interface intent; integration architecture proposal remains OPEN
 > **Last Updated:** 2026-11-11
 
 # Admin and AI Manager Interfaces
@@ -135,13 +135,13 @@ The prototype review should identify and carry forward useful existing views, vi
 
 The objective is consolidation and completion, not wholesale replacement.
 
-## 9. Integration direction: the main application API serves the prototype
+## 9. Proposed integration architecture: main application API and separate UI prototype
 
-**ESTABLISHED ARCHITECTURE DIRECTION — 2026-11-11**
+**PROPOSAL — 2026-11-11; NOT YET ADOPTED OR IMPLEMENTED**
 
-The intended integration direction is for the **main GalaxyGame application to expose its existing game capabilities through an application API, and for the separate UI prototype to consume that API**. The prototype is the presentation/client layer; the main application remains the authoritative game backend.
+A proposed direction is for the **main GalaxyGame application to expose its existing game capabilities through an application API, and for the separate UI prototype to consume that API**. The prototype would be the presentation/client layer; the main application would remain the authoritative game backend.
 
-The UI should be developed and reviewed first where that helps establish the visual language, layouts, navigation, and interactions. Mock or JSON-backed data may be used during this design work, but it must be clearly identified as mock data and must not become an assumed API contract.
+Under this proposal, the UI could be developed and reviewed first where that helps establish the visual language, layouts, navigation, and interactions. Mock or JSON-backed data may be used during this design work, but it must be clearly identified as mock data and must not become an assumed API contract.
 
 When integrating a view:
 - identify the data, existing services, calculations, and operations the main application already provides;
@@ -151,9 +151,9 @@ When integrating a view:
 - reuse existing domain services and data access rather than duplicating them in the prototype;
 - distinguish live API data, cached/delayed data, and mock data in the UI.
 
-This approach lets the prototype improve the interface without requiring a wholesale backport of its views into the main app. Backporting remains a possible fallback for a specific capability if a separate client/API boundary proves unsuitable, but it is not the primary integration direction.
+If adopted, this approach would let the prototype improve the interface without requiring a wholesale backport of its views into the main app. Backporting remains a possible fallback for a specific capability if a separate client/API boundary proves unsuitable, but it is not the primary integration direction.
 
 The API does not need to be designed all at once. Define endpoints and response contracts incrementally around reviewed UI workflows, beginning with read paths where appropriate and adding authorized operations only when their backend behavior is ready. Do not expose raw internal objects or arbitrary JSON files as an unstructured pass-through.
 
-The API surface and its implementation status remain to be inspected and developed; this direction does not claim that the required endpoints already exist.
+The API surface, local development arrangement, and implementation status remain to be inspected and developed. This proposal does not claim that the required endpoints already exist or that the architecture has been approved.
 
