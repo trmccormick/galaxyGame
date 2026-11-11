@@ -29,6 +29,25 @@ This page records the initial shared branding and entry-page decisions for the G
 - The supplied Command Center dashboard screenshot is a visual reference for the cyan-on-dark appearance and square galaxy-icon treatment. It is a reference, not an instruction to redesign the dashboard as part of this task.
 - Verify that the existing cyan design tokens are consistent and that the selected logo/favicon render cleanly. Make targeted corrections only where an actual issue is found.
 
+## Shared application visual direction
+
+**ESTABLISHED INTENT — 2026-11-11**
+
+The shared visual direction across Main Game, Admin, and AI Manager is a dark desktop operations interface built around charcoal/navy surfaces and cyan as the primary accent.
+
+- Continue the dark charcoal/navy + cyan direction already established in the UI prototype. This is a continuation and refinement of useful existing work, not a restart or a wholesale redesign.
+- Use a consistent design language across all three interfaces while allowing their layouts, information density, and workflows to differ.
+- Use green primarily for success, healthy/operational state, and positive outcomes; it should not dominate the overall interface.
+- Use amber for warnings and red for errors or critical conditions. Status must also be communicated through labels, icons, or text rather than color alone.
+- Keep typography readable and appropriately compact for information-dense operational screens. Avoid oversized text, crowded paragraphs, and controls that overwhelm the data.
+- Reuse and refine the prototype's existing tokens, components, and stronger layouts. Do not introduce a competing palette or copy the legacy green-on-black terminal styling as the general application theme.
+- The main application remains a source of existing functionality and useful visualizations, not the automatic visual standard. The prototype's stronger presentation and layouts should be retained where they work.
+- EVE is a reference for information organization and interaction patterns only; its visual styling and game concepts are not requirements.
+
+**Landing-page image direction — ESTABLISHED INTENT — 2026-11-11**
+
+The earlier space-background treatment on the landing page was part of the visual identity and should be restored/reintroduced using the existing approved imagery where available. This is selective: a prominent space image belongs on the landing page, but operational screens should not be decorated with large imagery where it reduces readability. Do not invent or substitute a new logo or unapproved brand asset.
+
 ## Entry experience sequence
 
 **ESTABLISHED INTENT — 2026-11-04**
@@ -58,3 +77,4 @@ Do not invent or infer a final design from an implementation that has not been r
 ## Change History
 
 - **2026-11-04** — Recorded initial shared-branding and entry-experience intent while landing-page implementation is in progress. Final rendered views remain pending owner review.
+- **2026-11-11** — Confirmed the shared dark charcoal/navy + cyan direction, status-color roles, typography/readability expectations, and selective restoration of the landing-page space background.
