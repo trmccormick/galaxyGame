@@ -118,10 +118,6 @@ The following are not settled by this page:
 
 Do not silently turn these open details into approved requirements.
 
-## Change history
-
-- **2026-11-11** — Recorded the three-interface model, Admin and AI Manager responsibilities, Map Studio's role in the known-world/extrasolar pipeline, and the shared planetary Digital Twin direction.
-
 ## 8. Preserve, complete, and standardize existing views
 
 **ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
@@ -145,3 +141,7 @@ The prototype may initially use mock or JSON-backed data to establish the view d
 
 This is an implementation choice to evaluate against the actual code and service boundaries; it is not yet a decision to build a particular API or to duplicate simulation logic in the prototype. The main application remains authoritative for game state, domain rules, calculations, permissions, and operations. Prefer reusing existing services and data access over reimplementing behavior in the UI.
 
+
+## Change history
+
+- **2026-11-11** — Recorded the three-interface model, Admin and AI Manager responsibilities, Map Studio's role in the known-world/extrasolar pipeline, the shared planetary Digital Twin direction, and the preserve/complete/standardize review principle.
