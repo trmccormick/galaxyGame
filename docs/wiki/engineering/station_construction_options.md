@@ -1,5 +1,9 @@
 # Station Construction Options
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-11  
+> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+
 **Status**: DIRECTION / OPEN (Sol bootstrap ESTABLISHED)  
 **Last Updated**: 2026-11-11  
 **Related**: [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md), [terraforming_options.md](../infrastructure/terraforming_options.md), [settlement_progression_and_footholds.md](../player/settlement_progression_and_footholds.md), [settlement_ownership_and_governance.md](../player/settlement_ownership_and_governance.md), surface habitat and power pages, AI Manager economic loops
