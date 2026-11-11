@@ -2,7 +2,7 @@
 
 **Status**: DIRECTION  
 **Last Updated**: 2026-11-09  
-**Related**: [getting_started.md](getting_started.md), [player_roles_and_alignment.md](player_roles_and_alignment.md), [surface_habitat_options.md](../infrastructure/surface_habitat_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md)
+**Related**: [Settlement Ownership and Governance](settlement_ownership_and_governance.md), [getting_started.md](getting_started.md), [player_roles_and_alignment.md](player_roles_and_alignment.md), [surface_habitat_options.md](../infrastructure/surface_habitat_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md)
 
 This page is the wiki home for the intended progression from early AI-built footholds to mature player-managed settlements and surface expansion. It consolidates prior lava-tube and early-settlement intent while adding the player-spawn, portal, population, and archetype material from the 2026-11-04 brainstorm.
 
@@ -59,6 +59,12 @@ After essential access and station infrastructure are established, the AI Manage
 Terraforming is also an intentional long-term resource and GCC sink. Players can earn GCC by harvesting, processing, hauling, and selling resources needed by terraforming programs; see [Terraforming Economic Integration](../logistics/terraforming_economic_integration.md). Terraforming priorities and spending remain AI Manager / NPC development decisions rather than direct player control.
 
 **Undecided implementation details:** how missions express objectives and constraints; how decision rationale and training records are stored; what constitutes sufficient access for player entry; lease terms, endpoint ownership, capacity, fees, and permissions; and how the AI Manager weighs population growth, player demand, and terraforming against other priorities.
+
+---
+
+## Settlement ownership and political governance
+
+The physical Settlement, its owner/operator, and the Colony governing it are distinct. A player or corporation may own a Settlement that is governed by a Colony; corporate ownership does not exempt the Settlement from Colony laws. Colonies and Settlements may support one another, and corporate withdrawal requires control of the Settlement to pass to its governing Colony. See [Settlement Ownership and Governance](settlement_ownership_and_governance.md) for the current intent and unresolved transfer mechanics.
 
 ---
 
