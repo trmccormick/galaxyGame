@@ -97,3 +97,39 @@ Static source inspection can reveal architecture and dependencies, but it does n
 ## 6. Change history
 
 - **2026-11-11** — Recorded the current main-app visual inconsistencies, demonstrated Earth Planetary functionality, and observed Earth/Mars Surface tileset issues from the owner-provided screenshots captured 2026-11-10.
+
+## 6. Existing views: preserve and bring forward
+
+**ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
+
+The screenshots and existing application demonstrate that meaningful interface work already exists beyond the early AI Manager screens. The application is unfinished and inconsistent; it is not an empty or disposable legacy UI.
+
+The prototype review should assess and preserve useful existing view setups, including (where confirmed in the current code/runtime):
+
+- **Planetary / Orbital:** planetary and orbital context, map/layer presentation, environmental data, and supporting inspection panels. Determine whether the current implementations are distinct views or related perspectives; do not collapse them without review.
+- **Surface:** tile-based surface presentation, terrain and geographic context, and associated inspection/selection interactions.
+- **Map Studio:** existing map generation/reconstruction and inspection workflows, considered as part of the Admin-to-Digital-Twin pipeline.
+- **Monitor and other world-inspection views:** useful overview, navigation, selection, and contextual-action patterns.
+- **Resource and infrastructure views:** operational data and controls that already express meaningful game concepts.
+- **Other useful visualizations:** preserve any view that communicates real game state or supports a distinct workflow better than a generic replacement screen.
+
+This is a review inventory, not a claim that every listed view is currently complete or working. The Planetary Earth and Surface Earth/Mars observations above remain the dated screenshot evidence; other view status must be verified separately.
+
+For each view, record its useful behavior and data, what is incomplete or broken, what should be carried into the prototype, and what needs visual or interaction refinement. A view should not be discarded merely because its styling is old or its implementation is unfinished.
+
+## 7. Prototype and integration strategy
+
+The prototype is an opportunity to establish a consistent visual language, layout system, navigation, and usable workflows before committing to the final integration shape.
+
+After the UI is sufficiently reviewed, there are two viable implementation paths to evaluate:
+
+1. Backport the refined presentation and interaction patterns into the main application, reusing its existing behavior and services.
+2. Keep the prototype as the UI application and expose suitable main-application capabilities through an API for it to consume.
+
+These are alternatives to evaluate, not a settled architecture decision. In either case, preserve the main application's authority over simulation state, domain behavior, calculations, authorization, and operations. Avoid duplicating those rules in client-side code or a separate prototype backend.
+
+The review record should therefore document both the useful existing capability and the intended improved presentation. This makes it possible to choose a backport or API integration later without losing the knowledge of what already exists.
+
+## 8. Change history
+
+- **2026-11-11** — Added the explicit preserve/complete/standardize principle and documented existing view families as candidates for prototype porting and later backport/API integration.
