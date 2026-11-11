@@ -11,7 +11,10 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 | Page | Purpose |
 |------|---------|
 | [Branding and entry experience](01_branding_and_entry_experience.md) | Shared branding, landing page, and sign-in experience |
-| [Player view architecture](02_player_view_architecture.md) | Five player-facing views (Planetary, Surface, Settlement, Space, Galaxy), navigation model, and scope boundaries |
+| [Player view architecture](02_player_view_architecture.md) | Five player-facing views, system/body navigation, and scope boundaries |
+| [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Three-interface model, Admin responsibilities, AI Manager oversight, Map Studio, and Digital Twin workflows |
+
+The UI architecture has three distinct interfaces: **Main Game / Player**, **Admin**, and **AI Manager**. They share a visual language and domain context but serve different audiences and workflows. The five player views described in page 02 are a separate distinction within the player interface.
 
 ## Working lifecycle
 
@@ -34,3 +37,4 @@ A proposed mockup or prototype screenshot is not automatically an approved desig
 ## Change History
 
 - **2026-11-04** — Created the UI & Experience section as the home for Galaxy Game interface design intent.
+- **2026-11-11** — Expanded the architecture to distinguish the three interfaces, document system/body workspaces, and link the Admin/AI Manager design direction.
