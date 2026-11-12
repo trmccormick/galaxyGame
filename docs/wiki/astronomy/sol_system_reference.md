@@ -130,7 +130,7 @@ The artificial magnetosphere is the primary long-term solution for retaining a r
 - **Position:** Mars–Sun L1 (approximately 1 million miles ahead of Mars)
 - **Core hardware:** Superconducting magnet coils, nuclear/fusion power cores, heavy structural alloys
 - **Material sourcing:** Superconducting material mined from Ceres/Belt, delivered to Mars L1 depot for assembly
-- **Tier evolution:** Tier 1 (fusion-powered, 60–80% retention) → Tier 2 (EM-core retrofit, 95%+) → Tier 3 (wormhole-stabilized, ~100%)
+- **Tier evolution:** Tier 1 (fusion-powered, 60–80% retention) → Tier 2 (Electromagnetic-core (EM-core) retrofit, 95%+) → Tier 3 (wormhole-stabilized, ~100%)
 - **Prerequisite relationship:** High-throughput atmospheric injection requires the magnetosphere to be active before gas injection begins
 
 > **Cross-link:** For full magnetosphere architecture, power tiers, and alternative designs, see **[Artificial Magnetosphere](../infrastructure/artificial_magnetosphere.md)**.
