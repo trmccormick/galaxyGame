@@ -95,15 +95,15 @@ This page holds **intent and boundaries**. For implementation specifics, read th
 
 | Spec file | Covers |
 |-----------|--------|
-| [AI Manager Role](../../architecture/ai_manager/AI_MANAGER_ROLE.md) | EVE-style market structure, player-first economy, EAP enforcement. |
-| [Orchestrator Spec](../../architecture/ai_manager/AI_MANAGER_ORCHESTRATOR_SPEC.md) | Rake task delegation, core 8-file orchestration pattern, deletion criteria. |
-| [Intent](../../architecture/ai_manager/AI_MANAGER_INTENT.md) | High-level design intent and behavioral constraints. |
-| [Economic Logic Update](../../architecture/ai_manager/AI_MANAGER_ECONOMIC_LOGIC_UPDATE.md) | Market pricing and dynamic spread adjustments. |
-| [Event Flow](../../architecture/ai_manager/AI_MANAGER_EVENT_FLOW.md) | Task lifecycle from detection to completion. |
-| [Escalation Architecture](../../architecture/ai_manager/RESUPPLY_AND_ESCALATION_ARCHITECTURE.md) | Crisis escalation paths (survival gaps, critical shortages). |
-| [Wormhole Expansion](../../architecture/ai_manager/AI_MANAGER_WORMHOLE_EXPANSION.md) | Wormhole station construction, safety dependency chains. |
-| [Pricing Intent](../../architecture/ai_manager/AI_MANAGER_PRICING_INTENT.md) | NPC pricing, dynamic spread tuning, EAP anchor logic. |
-| [Agent Reading Order](../../architecture/ai_manager/AGENT_READING_ORDER.md) | Recommended reading sequence for new contributors. |
+| AI Manager Role (`docs/architecture/ai_manager/AI_MANAGER_ROLE.md`, frozen doc) | EVE-style market structure, player-first economy, EAP enforcement. |
+| Orchestrator Spec (`docs/architecture/ai_manager/AI_MANAGER_ORCHESTRATOR_SPEC.md`, frozen doc) | Rake task delegation, core 8-file orchestration pattern, deletion criteria. |
+| Intent (`docs/architecture/ai_manager/AI_MANAGER_INTENT.md`, frozen doc) | High-level design intent and behavioral constraints. |
+| Economic Logic Update (`docs/architecture/ai_manager/AI_MANAGER_ECONOMIC_LOGIC_UPDATE.md`, frozen doc) | Market pricing and dynamic spread adjustments. |
+| Event Flow (`docs/architecture/ai_manager/AI_MANAGER_EVENT_FLOW.md`, frozen doc) | Task lifecycle from detection to completion. |
+| Escalation Architecture (`docs/architecture/ai_manager/RESUPPLY_AND_ESCALATION_ARCHITECTURE.md`, frozen doc) | Crisis escalation paths (survival gaps, critical shortages). |
+| Wormhole Expansion (`docs/architecture/ai_manager/AI_MANAGER_WORMHOLE_EXPANSION.md`, frozen doc) | Wormhole station construction, safety dependency chains. |
+| Pricing Intent (`docs/architecture/ai_manager/AI_MANAGER_PRICING_INTENT.md`, frozen doc) | NPC pricing, dynamic spread tuning, EAP anchor logic. |
+| Agent Reading Order (`docs/architecture/ai_manager/AGENT_READING_ORDER.md`, frozen doc) | Recommended reading sequence for new contributors. |
 
 ---
 
