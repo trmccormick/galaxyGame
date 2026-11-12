@@ -115,6 +115,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
 | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | Mass threshold, counterbalance, EM ejection/harvest/reset; natural vs AWS pairing |
+| [EM numeric design questions](technical/em_numeric_design_questions.md) | Collected numeric OPEN questions (yield curves, stockpile caps, portal ignition cost, AWS draw, Snap yields); no values invented |
 
 *Setup, testing, and full architecture overviews live under `docs/developer/` and `docs/architecture/`. Crafted equipment schemas are documented in [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md).*
 
