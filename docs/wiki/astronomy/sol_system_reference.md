@@ -5,13 +5,12 @@
 > *Related:* [Celestial Systems Template](celestial_systems.md), [Natural Wormholes & EM](../technical/natural_wormholes_and_em.md), [Artificial Magnetosphere](../infrastructure/artificial_magnetosphere.md), [Venus–Mars Ballistic Corridor](../technical/venus_mars_ballistic_corridor.md)
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Audit Summary:* Design intent specification. Not yet audited against code; implementation pending or unverified as of audit baseline.
+> *Last Audited:* 2026-11-11  
+> *Audit Summary:* Corrected Venus methane production claim (Venus provides CO₂ feedstock; CH₄ synthesized on Luna via Sabatier). Corrected Mk1 tug Phobos/Deimos repositioning claim: Mk1 can convert in place using the Mk1 slag-engine approach with station-keeping only; cannot physically reposition either moon. Fixed three broken wiki links to resolve to docs/ paths. Preserved all other content as consistent with established design intent.
 
 This page is a concrete reference for the **Sol system** as it exists in Galaxy Game — bodies, roles, infrastructure milestones, and wormhole context. It is **not** the procedural template (that lives on [Celestial Systems Template](celestial_systems.md)); use that page to create per-system docs for procedurally generated systems.
 
 All content is **DIRECTION** or **OPEN** unless marked otherwise. No quantitative orbital elements, masses, resource quantities, or station counts are invented here.
-
----
 
 ## System Identity
 
@@ -66,7 +65,7 @@ Luna is the first foothold location. The Venus-Luna chemical feedback loop is fo
 | Attribute | Value |
 |---|---|
 | **Type** | Terrestrial planet |
-| **Role in logistics loop** | Volatile and energy powerhouse: atmospheric volatile harvester, carbon-structure factory; primary source of O₂, N₂, CNTs, and synthesized CH₄ for the system |
+| **Role in logistics loop** | Volatile and energy powerhouse: atmospheric volatile harvester, carbon-structure factory; primary source of O₂, N₂, CNTs, and CO₂ feedstock for Luna-based Sabatier methane synthesis |
 | **Key infrastructure** | High-altitude aerostat skimming stations; thermal/chemical cracking arrays; CNT shell manufacturing; orbital mass driver arrays |
 | **Terraforming options** | Option A (Terraforming Reserve): managed N₂ exports against 1-bar buffer; Option B (Pure Industrial Powerhouse): uncapped N₂ and CO₂ skimming |
 
@@ -91,7 +90,7 @@ Mars becomes solvent through hub economics: branch and core volume pass through 
 | **Role in logistics loop** | Raw material extraction: Ceres for water-ice and hydration-salts; 16 Psyche for nickel-iron ore; broader belt for structural materials |
 | **Key infrastructure** | Belt capture barges; heavy tug operations (Phase 4); asteroid relocation tugs |
 
-The Main Belt is the system's raw material source. Heavy tugs manufactured at L1 deploy to the belt in Phase 3, capturing and routing raw asteroids. The same tug class can reposition Phobos/Deimos-class bodies to moonless planets as structural anchors.
+The Main Belt is the system's raw material source. Heavy tugs manufactured at L1 deploy to the belt in Phase 3, capturing and routing raw asteroids. Phobos/Deimos can be converted in place using the Mk1 slag-engine approach, with the drives providing station-keeping capability only. The Mk1 cannot physically reposition either moon; larger-body relocation requires a later tug class or an alternative capture-to-anchor approach.
 
 ### Jupiter
 
@@ -217,9 +216,9 @@ The exact timing is not locked — it is a working intent, not a fixed campaign 
 | [Station Construction Pipeline](../infrastructure/pre_player_era_logistics_station_construction_pipeline.md) | Station construction vs. operational use |
 | [Atmospheric Harvesting](../infrastructure/atmospheric_harvesting.md) | Venusian skimming and atmospheric engineering |
 | [Terraforming Options](../infrastructure/terraforming_options.md) | Planetary-scale atmosphere modification options |
-| [Luna Settlement Lifecycle](../design/luna_settlement_lifecycle.md) | Three-phase industrial lifecycle of lunar settlement |
-| [Sol Core Buildup](../gameplay/sol_core_buildup.md) | Preferred early Sol dependency chain and player-entry window |
-| [Lore Canon](../storyline/11_lore_canon.md) | Canonical lore for Sol-era narrative elements |
+| [Luna Settlement Lifecycle](../../../docs/design/LUNA_SETTLEMENT_LIFECYCLE.md) | Three-phase industrial lifecycle of lunar settlement |
+| [Sol Core Buildup](../../../docs/gameplay/sol_core_buildup.md) | Preferred early Sol dependency chain and player-entry window |
+| [Lore Canon](../../../docs/storyline/11_lore_canon.md) | Canonical lore for Sol-era narrative elements |
 
 ---
 
