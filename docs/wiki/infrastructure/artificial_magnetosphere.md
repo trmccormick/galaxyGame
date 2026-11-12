@@ -16,7 +16,9 @@
 
 ## Purpose
 
-An artificial magnetosphere (magnetic dipole shield) is the primary long-term solution for retaining a rebuilt Martian atmosphere against solar-wind stripping. Without it, continuous bulk injection of volatiles remains a permanent utility cost (“leaky bucket”). With it, atmospheric retention approaches permanence and emergency imports can be terminated.
+An artificial magnetosphere (magnetic dipole shield) is a planetary-scale atmospheric-retention system. It protects a planet's atmosphere against solar-wind stripping using a planetary-scale magnetic field, with the current proposed architecture located at the planet–star L1 point. Without it, continuous bulk injection of volatiles remains a permanent utility cost ("leaky bucket"). With it, atmospheric retention approaches permanence and emergency imports can be terminated.
+
+Mars is the current example on this page; the concept applies to any atmosphere-retention scenario where solar-wind stripping threatens long-term atmospheric viability.
 
 This page records the recovered design intent, the open alternatives, and the quantitative gaps that still need resolution before promotion to ESTABLISHED INTENT.
 
@@ -121,6 +123,35 @@ Session discussion has left open the possibility that both Mars and Venus may ev
 - **Modular orbital panel swarms** — complementary (insolation, optional energy beaming); not a replacement.  
 - **Cycler logistics** — outer-system hydrogen and feedstock still required for early terraforming chemistry; the shield does not remove that need.  
 - **Local production preference** — once the atmosphere is retained, continuous emergency imports can stop; local chemical loops become sustainable.
+
+---
+
+## Relation to Protection Classes & Local Shielding
+
+These three concepts operate at different scales and serve different purposes. They are **not** substitutes for one another.
+
+| Concept | Scale | Purpose | What it covers |
+|---------|-------|---------|----------------|
+| **Planetary Protection Classes (PPC)** | Planetary / governance | Biological contamination risk management and extraction rights | Whether a body has life (complex or microbial), what extraction limits apply, which authority governs |
+| **Local habitat shielding** | Habitat / personal safety | Radiation and decompression protection for individual structures | Regolith berms, lava tubes, pressurized domes, structural integrity — protects inhabitants from local environment |
+| **Artificial magnetosphere** | Planetary / atmospheric retention | Retaining a rebuilt atmosphere against solar-wind stripping at L1 | Superconducting dipole shield; enables long-term atmospheric permanence; prerequisite for high-throughput gas injection |
+
+### Key distinctions
+
+- **PPC does not provide radiation protection.** Protection classes govern biological contamination and extraction governance. They say nothing about how inhabitants are shielded from stellar or cosmic radiation.
+- **The artificial magnetosphere does not replace habitat shielding.** The L1 dipole retains the planet's atmosphere; it does not protect individual habitats from radiation, micrometeorites, or explosive decompression. Local shielding remains required regardless of magnetosphere status.
+- **Habitat shielding requirements are determined by the local physical environment and occupancy requirements, not by PPC classification alone.** PPC governs biological contamination and permitted activities; it does not specify radiation shielding for inhabitants.
+
+### Cross-links
+
+- Protection class hierarchy and governance: **[Planetary Protection & Environmental Governance](../infrastructure/planetary_protection_environmental_governance.md)**
+- StarSim procedural generation and CelestialBody model contracts: **[StarSim Procedural Generation](../design/starsim_and_protection_classes.md)**
+- Local habitat construction options (lava tubes, regolith berms, pressurized domes): **[Surface Habitat Options](./surface_habitat_options.md)**
+
+### OPEN
+
+- Whether PPC status influences additional biological containment or barrier requirements (for example, on Class-1 bodies near biospheres) is undecided. This concerns biological protection, not radiation shielding for inhabitants.
+- Whether the artificial magnetosphere's Tier 2 (EM-core) retrofit provides any secondary radiation attenuation for surface habitats is undecided. Do not assume it does.
 
 ---
 
