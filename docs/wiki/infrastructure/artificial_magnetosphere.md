@@ -53,10 +53,13 @@ Recovered material describes a three-tier evolution of the shield itself (not th
 | Tier | Power basis | Retention (recovered) | Notes |
 |------|-------------|------------------------|-------|
 | Tier 1 | Fusion-powered | 60–80 % | High maintenance, heat-limited |
-| Tier 2 | EM-core retrofit | 95 %+ | Near-zero maintenance; requires EM-core synthesis tech |
+| Tier 2 | Electromagnetic-core (EM-core) retrofit | 95 %+ | Near-zero maintenance; requires electromagnetic-core synthesis tech |
 | Tier 3 | Wormhole-stabilized | ~100 % | Self-sustaining; requires advanced wormhole tech |
 
-Complementary framing recovered from EM-power documents: fusion supplies local power; EM systems handle “big science” loads (shields, portals, tugs).
+Complementary framing recovered from electromagnetic-power documents: fusion supplies local power; electromagnetic systems handle "big science" loads (shields, portals, tugs).
+
+> **Terminology note:** On this page "EM-core" and "electromagnetic systems" refer to electromagnetic power and field generation for the magnetosphere.  
+> Exotic Matter (also abbreviated EM on the wormhole/portal pages) is a separate concept and is documented only under Natural Wormholes & Exotic Matter and Portals & AWS.
 
 Exact power draw in MW/GW was never recorded and remains OPEN.
 
@@ -121,5 +124,5 @@ Session discussion has left open the possibility that both Mars and Venus may ev
 
 ---
 
-*This page consolidates recovered design intent from lore, SOP, atmospheric-maintenance, EM-power tier, and prior Gemini session material. Quantitative gaps remain OPEN. Cross-check against frozen documentation and any still-local JSON or task files before promoting any part to ESTABLISHED INTENT.*
+*This page consolidates recovered design intent from lore, SOP, atmospheric-maintenance, electromagnetic-power tier, and prior Gemini session material. Quantitative gaps remain OPEN. Cross-check against frozen documentation and any still-local JSON or task files before promoting any part to ESTABLISHED INTENT.*
 ```
