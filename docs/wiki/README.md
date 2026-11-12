@@ -92,6 +92,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
 | [Terraforming options](infrastructure/terraforming_options.md) | Pressure-first protection path, refined Venus→Mars mass-driver pipeline, softer longer-horizon options |
+| [Propulsion classes & heavy-tug economy](infrastructure/propulsion_and_heavy_tug_economy.md) | HLT Mk tiers, tug propulsion progression (nuclear → fusion → continuous fusion), slag propellant economy, L1 staging, tug ↔ cycler/mass-driver relationships; OPEN gap list |
 
 *Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
 

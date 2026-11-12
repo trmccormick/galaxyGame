@@ -77,6 +77,9 @@ L1 magnetic dipole shield design intent for Mars atmospheric retention. Consolid
 → [`terraforming_options.md`](./terraforming_options.md)  
 Planetary-scale atmosphere modification options: raw-gas pressure-first path (protection of population and infrastructure), refined Venus→Mars mass-driver pipeline (O₂/N₂ + CNT shells), and softer longer-horizon approaches (gradual Venus siphon, Titan, KBOs). Magnetosphere prerequisite applies to high-throughput injection methods.
 
+→ [`propulsion_and_heavy_tug_economy.md`](./propulsion_and_heavy_tug_economy.md)  
+Propulsion classes (HLT Mk tiers), tug propulsion progression (nuclear → fusion → continuous fusion), slag propellant economy, L1 build/staging pipeline, and tug ↔ cycler/mass-driver relationships.
+
 ---
 
 ## Core Industrial Rules
