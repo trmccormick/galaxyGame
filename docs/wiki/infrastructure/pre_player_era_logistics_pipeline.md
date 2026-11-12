@@ -38,7 +38,7 @@ In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy t
 
 ### Phase 3: Mars Moon Conversion
 * **Tug Operations:** Heavy tugs manufactured at L1 deploy to the Martian system.
-* **Moon Hollowing:** Tugs capture, reposition, and progressively hollow out Phobos and Deimos, establishing the template for planetary-anchored stations and deep-space logistics hubs.
+* **Moon Hollowing:** A later heavy tug class captures, repositions, and progressively hollows out Phobos and Deimos, establishing the template for planetary-anchored stations and deep-space logistics hubs. (Mk-I tugs support in-place conversion with station-keeping capability only.)
 
 ### Phase 4: Belt Expansion & Asteroid Repositioning
 * **Belt Operations:** Heavy tugs move into the Asteroid Belt to capture and route raw asteroids.

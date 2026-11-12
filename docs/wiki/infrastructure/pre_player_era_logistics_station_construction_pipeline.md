@@ -55,7 +55,7 @@ Ships departing Earth's gravity well face extreme mass penalties. To eliminate t
 
 ### Phase 3: Mars Moon Conversion & Slag Economy
 * **Tug Deployment:** Heavy tugs built at L1 transition to the Martian system.
-* **Moon Hollowing & Slag Mechanics:** Tugs capture, reposition, and progressively hollow out Phobos and Deimos.
+* **Moon Hollowing & Slag Mechanics:** A later heavy tug class captures, repositions, and progressively hollows out Phobos and Deimos. (Mk-I tugs support only in-place conversion with station-keeping capability.)
 * **Slag Propulsion Economy:** The hollowing process converts roughly 30% of the body into structural hulls and reinforcements, leaving 70% as raw waste slag. This waste slag is directly processed into reaction mass propellant (`slag_fuel_id`) via onboard slag engines, powering the heavy tugs during transit and repositioning without requiring Earth/Luna fuel imports.
 
 ### Phase 4: Belt Expansion & Asteroid Repositioning

@@ -1,8 +1,8 @@
 # Propulsion Classes & Heavy-Tug Economy
 
-> **Status:** `DIRECTION`  
-> *Created:* 2026-11-11  
-> *Last Audited:* —  
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-12  
+> *Audit Summary:* Propulsion class tiers and heavy-tug economy consolidated from live wiki sources. Mk-I in-place conversion vs. later tug class relocation capability clarified: Mk-I supports in-place conversion and station-keeping only; a later heavy tug class enables capture and repositioning. Code implementation pending or unverified as of audit baseline.
 
 This page consolidates all still-valid material about propulsion classes (HLT tiers, tug technology progression) and the heavy-tug economy that operates across the pre-player pipeline, station construction pipeline, Sol system reference, and related pages. It covers what is stated in live wiki sources; gaps are marked **OPEN**.
 
@@ -46,7 +46,7 @@ Heavy tugs (specifically the **Asteroid Relocation Tug** class) are manufactured
 
 | Mission | Description | Phase |
 |---------|-------------|-------|
-| **Phobos/Deimos Conversion** | Capture, reposition, and progressively hollow out Mars' moons for depot/station conversion | Phase 3 |
+| **Phobos/Deimos Relocation** | Capture and reposition Mars' moons (requires a later heavy tug class); Mk-I tugs support only in-place conversion for depot/station construction without relocation | Phase 3 |
 | **Belt Capture** | Move into the Asteroid Belt to capture raw asteroids (Ceres, 16 Psyche-class bodies) | Phase 4 |
 | **No-Moon Anchoring** | Reposition asteroids into orbit around moonless bodies (Venus, Eden, System B) as physical structural anchors for AWS/WS stations | Phase 4 |
 | **Post-Snap Recovery** | Transit through stabilized portals to Eden's legacy anchor site; haul EM-loaded legacy WS to exit coordinates | Post-Snap |
