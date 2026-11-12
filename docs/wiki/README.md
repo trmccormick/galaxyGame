@@ -77,6 +77,14 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 
 ---
 
+## Design & Architecture
+
+| Page | Notes |
+|------|-------|
+| [StarSim architecture](design/starsim_and_protection_classes.md) | StarSim system generation, unit simulation boundaries, CelestialBody contracts, code reality, and implementation gaps |
+
+---
+
 ## Infrastructure & Engineering
 
 | Page | Notes |
