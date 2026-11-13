@@ -26,6 +26,49 @@ The **AI Manager** is the game's automated economy and logistics governor. Its r
 
 **Boundary note:** The AI Manager does **not** generate celestial or terrain data — that is StarSim's role. It reads game state (settlement inventories, market order queues, colony populations) and issues high-level work orders to existing services.
 
+## 1.1 Wormhole network, EM economy, and strategic expansion
+
+**TARGET DESIGN INTENT — OWNER-CLARIFIED 2026-11-13; NOT A CLAIM OF IMPLEMENTED BEHAVIOR**
+
+The AI Manager is responsible for strategic exploration and expansion through the natural-wormhole network and AWS connections, in addition to logistics, markets, and construction coordination. It must evaluate whether to scout, harvest, stabilize, connect, settle, or move on.
+
+### Wormhole and EM monitoring
+
+The AI Manager monitors the authoritative wormhole state and keeps these quantities distinct:
+- natural EM ejection / locally available EM;
+- EM actually captured or harvested;
+- stored EM reserves;
+- EM directed back into a natural wormhole for stabilization;
+- EM consumed by AWS, portals, and other supported systems.
+
+It also monitors relative wormhole stability, mass throughput, remaining mass-limit capacity, and stabilization effectiveness. Greater mass pushed through a natural wormhole produces greater EM ejection. A comparatively more stable natural wormhole still produces some excess EM; an unstable wormhole ejects substantially more. Mature EM stabilization captures ejected EM and returns it to the wormhole to restore mass-limit capacity and improve relative stability.
+
+No natural wormhole is permanently or absolutely stable. Sol's natural wormhole is comparatively more stable because of its placement opposite Jupiter. For the current human-expansion scenario it remains present and does not shift or snap; this is a scenario-level rule, not a permanent restriction on future simulation scenarios. The Eden-side snap occurred before EM stabilization technology was developed.
+
+### Hammer Protocol and discovery
+
+Hammer Protocol is a strategic scouting, harvesting, and expansion workflow, not merely a controlled-snap command.
+
+Sol is the current human-expansion staging/scouting system. A natural wormhole opening to a candidate system allows it to be surveyed. Systems discovered and surveyed through this process have a harvestable EM field under the current design. Other resources and settlement potential are learned through survey. Unvisited systems in the local bubble remain unknown; the AI Manager must not assume their EM fields or resources are known or harvestable before discovery.
+
+After survey, the AI Manager can continue harvesting through the natural connection without immediately constructing an AWS pair. It evaluates whether to keep harvesting, invest in stabilization, build an AWS connection, plan settlement, or finish the harvesting opportunity and hammer the natural exit to force a shift and scout another system. Discovery alone does not mandate an AWS pair or settlement.
+
+For a system selected for settlement or continuing network integration, the likely approach is to build an AWS pair while the natural wormhole remains open. The resulting Sol connection provides a logistics corridor for personnel, equipment, construction materials, and supplies, using a stabilized natural connection or an artificial connection as appropriate. Whether the connection is retained, reconfigured, or moved later is a strategic decision.
+
+### Expansion evaluation
+
+The AI Manager should weigh:
+- system EM ejection, harvestable quantity, capture capacity, and stored reserves;
+- EM required for stabilization, AWS construction/operation, and other commitments;
+- system resources, celestial bodies, and settlement potential;
+- network value and available natural/AWS routes;
+- mass capacity, relative stability, and risk of shift or snap;
+- ship travel time, orbital/transfer windows, fuel, construction, resupply, and maintenance costs.
+
+The objective is to maximize sustainable long-term expansion capability, not simply the number of systems occupied or connected. Candidate decisions and outcomes should be recorded for operator oversight and training/evaluation. Numerical scoring and policy weights remain OPEN until formalized.
+
+The natural-wormhole mechanics and current scenario rules are authoritative in [Natural Wormholes & EM](../technical/natural_wormholes_and_em.md); AWS behavior and pairing are documented in [Portals & AWS](../technical/portals_and_aws.md).
+
 ---
 
 ## 2. ACM Boundaries (Autonomous Construction Manager)
