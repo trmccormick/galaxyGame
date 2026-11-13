@@ -119,7 +119,7 @@ This is a review inventory, not a claim that every listed view is currently comp
 
 For each view, record its useful behavior and data, what is incomplete or broken, what should be carried into the prototype, and what needs visual or interaction refinement. A view should not be discarded merely because its styling is old or its implementation is unfinished.
 
-## 7. Prototype and integration strategy
+## 8. Prototype and integration strategy
 
 The prototype is an opportunity to establish a consistent visual language, layout system, navigation, and usable workflows before committing to the final integration shape.
 
@@ -132,7 +132,7 @@ These are alternatives to evaluate, not a settled architecture decision. In eith
 
 The review record should therefore document both the useful existing capability and the intended improved presentation. This makes it possible to choose a backport or API integration later without losing the knowledge of what already exists.
 
-## 8. Change history
+## 9. Change history
 
 - **2026-11-11** — Recorded the current main-app visual inconsistencies, demonstrated Earth Planetary functionality, and observed Earth/Mars Surface tileset issues from the owner-provided screenshots captured 2026-11-10.
 - **2026-11-11** — Added the explicit preserve/complete/standardize principle and documented existing view families as candidates for prototype porting and later backport/API integration.
