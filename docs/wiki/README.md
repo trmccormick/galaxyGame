@@ -44,6 +44,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [First hour & entry state](player/first_hour_and_entry_state.md) | What players meet at entry: active starts, AWS timing, dashboard |
 | [Settlement progression & footholds](player/settlement_progression_and_footholds.md) | Settlement evolution stages, first foothold requirements, expansion gates |
 | [Eden disconnect & emergent history](player/eden_disconnect_and_emergent_history.md) | Snap event, post-isolation emergent states, system recovery protocols |
+| [Settlement ownership and governance](player/settlement_ownership_and_governance.md) | Distinction among Settlement, Colony, corporation, and player; ownership vs governance relationships |
 
 ---
 
@@ -101,6 +102,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
 | [Terraforming options](infrastructure/terraforming_options.md) | Pressure-first protection path, refined Venus→Mars mass-driver pipeline, softer longer-horizon options |
 | [Propulsion classes & heavy-tug economy](infrastructure/propulsion_and_heavy_tug_economy.md) | HLT Mk tiers, tug propulsion progression (nuclear → fusion → continuous fusion), slag propellant economy, L1 staging, tug ↔ cycler/mass-driver relationships; OPEN gap list |
+| [Modular orbital panel swarms](infrastructure/modular_orbital_panel_swarms.md) | Deployment, operation, and planetary roles of modular orbital panel swarms (Venus solar-shade, Mars solar-reflector); candidate design intent |
 
 *Full pre-player logistics architecture, pipeline details, and planetary protection live under [Infrastructure](infrastructure/) — see that index for the complete table of contents.*
 
