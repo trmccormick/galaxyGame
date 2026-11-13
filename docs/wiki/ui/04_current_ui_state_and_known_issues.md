@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Current-state observations from owner-provided screenshots; implementation causes not yet diagnosed
-> **Last reviewed:** 2026-11-11
+> **Last reviewed:** 2026-11-13
 > **Evidence:** Screenshots of the running main GalaxyGame application supplied during the UI review on 2026-11-10. These are observations of that captured state, not a guarantee that every issue remains unchanged.
 
 # Current UI State and Known Issues

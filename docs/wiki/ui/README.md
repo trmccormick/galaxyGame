@@ -12,12 +12,12 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 |------|---------|
 | [Branding and entry experience](01_branding_and_entry_experience.md) | Shared branding, landing page, and sign-in experience |
 | [Player view architecture](02_player_view_architecture.md) | Four player contexts, system/body navigation, and scope boundaries |
-| [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Three-interface model, Admin responsibilities, AI Manager oversight, Map Studio, and Digital Twin workflows |
+| [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Player/Admin dashboard separation, Admin workspaces, AI Manager responsibilities, Map Studio, and Digital Twin workflows |
 | [Current UI state and known issues](04_current_ui_state_and_known_issues.md) | Dated observations of the running main UI, visual inconsistencies, working views, and known rendering issues |
 
 The [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) page records observed behavior and defects separately from design intent. The review principle is to preserve, complete, and standardize useful existing application views—not discard unfinished work and start over. Planetary/Orbital, Surface, Map Studio, Monitor, resource, and infrastructure views are candidates for prototype review and porting.
 
-The UI architecture has three distinct interfaces: **Player Dashboard** and **Admin Dashboard**. They share a visual language and domain context but serve different audiences and workflows. The Player interface has four contexts described in page 02: Space, Planetary, Surface, and Settlement. Galaxy/system catalogs and system workspaces are navigation and selection workspaces, not additional Player views.
+The product has two primary dashboards: **Player Dashboard** and **Admin Dashboard**. They share a visual language and domain context but serve different audiences and workflows. AI Manager is a dedicated workspace within Admin. The Player interface has four contexts described in page 02: Space, Planetary, Surface, and Settlement. Galaxy/system catalogs and system workspaces are navigation and selection workspaces, not additional Player views.
 
 ## Working lifecycle
 

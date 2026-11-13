@@ -1,7 +1,7 @@
 # Sol System Reference
 
 > **Wiki section:** Astronomy · **Status:** DIRECTION  
-> *Last Updated:* 2026-11-11  
+> *Last Updated:* 2026-11-13  
 > *Related:* [Celestial Systems Template](celestial_systems.md), [Natural Wormholes & EM](../technical/natural_wormholes_and_em.md), [Artificial Magnetosphere](../infrastructure/artificial_magnetosphere.md), [Venus–Mars Ballistic Corridor](../technical/venus_mars_ballistic_corridor.md)
 
 > **Code Alignment Status:** `DESIGN INTENT`  
