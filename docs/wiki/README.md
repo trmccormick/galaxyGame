@@ -25,10 +25,10 @@ This folder is the **live wiki** — the front door for players, contributors, a
 |-----------|-------------|
 | [**astronomy/**](astronomy/) | Celestial systems, star maps, and procedural system generation (StarSim) |
 | [**logistics/**](logistics/) | Hauling, markets, financial engines, AI manager, and market bootstrapping |
-| [**player/**](player/) | Orientation, getting started, and player roles / alignment |
+| [**player/**](player/) | Orientation, getting started, player roles, discoveries, and optional world flavor |
 | [**infrastructure/**](infrastructure/README.md) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
 | [**engineering/**](engineering/) | Station construction, expansion protocols, and post-snap reconnection |
-| [**technical/**](technical/) | System commands, ISRU fabrication, precursor missions, biology & terraforming, and ballistic corridors |
+| [**technical/**](technical/) | System commands, ISRU fabrication, precursor missions and research possibilities, biology & terraforming, and ballistic corridors |
 | [**ui/**](ui/) | Interface design intent, visual identity, and reviewed user experiences |
 
 ---
@@ -45,6 +45,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Settlement progression & footholds](player/settlement_progression_and_footholds.md) | Settlement evolution stages, first foothold requirements, expansion gates |
 | [Eden disconnect & emergent history](player/eden_disconnect_and_emergent_history.md) | Snap event, post-isolation emergent states, system recovery protocols |
 | [Settlement ownership and governance](player/settlement_ownership_and_governance.md) | Distinction among Settlement, Colony, corporation, and player; ownership vs governance relationships |
+| [Optional discoveries & Easter eggs](player/easter_eggs_and_discoveries.md) | Optional mysteries, scientific milestones, historical artifacts, humorous events, and science-fiction-inspired discoveries |
 
 ---
 
@@ -96,7 +97,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
 | [Surface habitat options](infrastructure/surface_habitat_options.md) | Surface habitat thought exercise: dome pressurization, oxygen setup, power gate |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
-| [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM plus store-and-forward relays and physical carriers; portals and wormholes shorten carrier routes, not signal travel time. **Resolved:** historical FTL-communications discrepancy documented.
+| [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM plus store-and-forward relays and physical carriers; portals and wormholes shorten carrier routes, not signal travel time. **Resolved:** historical FTL-communications discrepancy documented. |
 | [Game time and simulation loop](engineering/game_time_and_simulation_loop.md) | Proposed shared game clock, simulation advancement flow, pause/speed behavior, and code gaps |
 | [Unit & Manufacturing blueprints](engineering/unit_and_manufacturing_blueprints.md) | Canonical wiki entry for crafted equipment JSON schemas, build pipelines, and operational data roles (design intent only) |
 | [System B expansion protocol](engineering/02_system_b_expansion_protocol.md) | System B expansion protocol design |
@@ -120,6 +121,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [System commands](technical/system_commands.md) | Console / simulation command reference (re-verify names before relying on them) |
 | [Ballistic corridor](technical/venus_mars_ballistic_corridor.md) | Ballistic transit corridors between Venus and Mars |
 | [Precursor mission deployment](technical/precursor_mission_deployment.md) | Initial precursor missions and deployment |
+| [Precursor discoveries & research opportunities](technical/precursor_discoveries_and_research_opportunities.md) | Possible research value of unusual discoveries; technology-tree audit required before any new research paths are considered |
 | [ISRU fabrication chain](technical/isru_fabrication_chain.md) | In-situ resource utilization fabrication pipelines |
 | [Biology — overview](technical/biology/README.md) | Biology subfolder: biosphere simulation, terraforming seeds |
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
