@@ -1,159 +1,212 @@
-> **Wiki section:** UI & Experience · **Status:** Established interface intent; integration architecture proposal remains OPEN
-> **Last Updated:** 2026-11-11
+> **Wiki section:** UI & Experience · **Status:** Established dashboard separation; individual workspaces and layouts remain DIRECTION / OPEN  
+> **Last Updated:** 2026-11-13
 
-# Admin and AI Manager Interfaces
+# Admin Dashboard and AI Manager
 
-This page records the intended responsibilities and interface boundaries for the Admin and AI Manager areas of Galaxy Game. It complements [Player View Architecture](02_player_view_architecture.md): the three application interfaces are separate from the five views available within the Player interface.
+This page records the responsibilities of the Admin Dashboard and its dedicated workspaces. It complements [Player View Architecture](02_player_view_architecture.md). Player and Admin dashboards are different products for different audiences; their screens, navigation, information density, permissions, and actions must not be conflated.
 
-## 1. Three distinct interfaces
+## 1. Player Dashboard versus Admin Dashboard
 
-**ESTABLISHED INTENT — 2026-11-11**
+**ESTABLISHED INTENT — 2026-11-13**
 
-Galaxy Game has three distinct interfaces for different audiences and workflows:
+- **Player Dashboard:** supports people and organizations participating in the shared universe. It provides the four Player contexts: Space, Planetary, Surface, and Settlement.
+- **Admin Dashboard:** supports administrators operating the web application and managing the simulation, world generation, data, configuration, users, and operational systems.
 
-| Interface | Audience / purpose | Primary concern |
-|---|---|---|
-| Main Game / Player | People and organizations participating in the shared universe | Player context, assets, decisions, permitted actions, and gameplay |
-| Admin | Game operators and administrators | Simulation, infrastructure, world data, system health, configuration, and operational oversight |
-| AI Manager | Operators supervising autonomous game management | Missions, decisions, plans, resource priorities, deployments, execution, and learning evidence |
+The Admin Dashboard is not a player dashboard with extra permissions. It has its own home/overview, navigation, workspaces, monitoring, and administrative workflows.
 
-They share a coherent visual language and may share reusable components, data visualizations, and domain context. They are not one dashboard with different permission levels. Their navigation, density, workspaces, and actions should fit their distinct responsibilities.
+AI Manager is a major dedicated workspace within the Admin Dashboard. It has a distinct operational purpose and may have its own navigation and page layouts; it is not a Player view or a separate player-facing dashboard.
 
-**Current development direction:** Admin and AI Manager interfaces are being developed before the Player interface. Mock data and JSON-backed examples are acceptable while the workflows and presentation are being established. A prototype screen must not imply that its mocked action is connected to live simulation behavior.
+Use the shared dark charcoal/navy and cyan design language across the product. Cyan is the primary interaction accent; green is for success/healthy/operational state; amber for warnings; red for errors or critical conditions. Keep typography compact and readable, with clear hierarchy and adequate spacing. Do not force every Admin tool into one generic card dashboard.
 
-## 2. Shared visual language
+## 2. Admin Dashboard work areas
 
-**ESTABLISHED INTENT — 2026-11-11**
+**ESTABLISHED SCOPE DIRECTION — 2026-11-13; individual screens OPEN**
 
-Use the shared dark charcoal/navy and cyan visual direction recorded in [Branding and Entry Experience](01_branding_and_entry_experience.md). Keep the three interfaces visually related while allowing different workspace layouts.
+The following is an administrative capability inventory, not a finalized navigation tree or a one-screen-per-bullet commitment. We will decide the exact screens and grouping one workspace at a time.
 
-- Cyan is the primary interaction/accent color.
-- Green communicates success, healthy state, or operational status; it is not the dominant application theme.
-- Amber communicates warnings; red communicates errors or critical conditions.
-- Maintain readable, compact typography and clear separation between labels, values, descriptions, and actions.
-- Use tables, lists, maps, charts, detail panes, and contextual actions where they suit the work. Do not force every page into large cards or a fixed dashboard grid.
+### Admin overview and system panels
 
-## 3. Admin interface
+The Admin landing dashboard should summarize application and simulation health and provide access to major workspaces. Candidate panels include service status, active simulation processes, background jobs, data-processing/import/export activity, alerts, recent administrative events, and items requiring attention.
 
-**DIRECTION — 2026-11-11**
+### AI Manager
 
-Admin is the operator's workspace for understanding and managing the simulation and the infrastructure that supports it. It should make it possible to inspect the state of the world, investigate conditions, configure or validate systems, and access appropriate administrative operations.
+AI Manager supervision and strategic operations are described in Section 3.
 
-Relevant areas include:
+### Map Studio and planetary Digital Twin
 
-- simulation and world-state oversight;
-- celestial-body data and planetary Digital Twin inspection;
-- terrain, hydrosphere, atmosphere, resource, and map-generation tools;
-- infrastructure, depots, stations, logistics, and operational status;
-- system health, data integrity, and administrative controls;
-- AI Manager oversight and access to its evidence and decisions.
+Map Studio is an Admin tool in the connected planetary-data pipeline. It supports known-world reconstruction from observational data and generation of plausible extrasolar geography, feeding the shared planetary Digital Twin. Preserve existing generation work as evidence; its output quality and pipeline need review. The Admin UI should expose source data, coverage, assumptions, quality, processing status, and appropriate generation/inspection controls as supported by actual services.
 
-This is not a requirement for one universal Admin dashboard. Use focused workspaces with summaries and drill-down where appropriate. Exact navigation labels and page layouts remain subject to review.
+### StarSim Generator
 
-## 4. Map Studio and the planetary Digital Twin
+StarSim owns procedural solar-system generation. Admin capabilities should include generator configuration and controls, generation runs, parameter inspection, generated-system review, and management of generated or prepared systems. The UI must invoke authoritative backend behavior rather than duplicate generator logic.
 
-**ESTABLISHED INTENT — 2026-11-11**
+### TerraSim
 
-Map Studio belongs in the Admin toolset as part of a connected planetary-data pipeline. It is not merely a map viewer or an isolated map-painting application.
+TerraSim is a distinct planetary/environmental simulation capability. Admin controls should expose its relevant configuration, run state, inspection, and supported operational options. Its exact screen breakdown remains OPEN.
 
-There are two complementary paths into the shared planetary Digital Twin:
+### Spawning System
 
-### Known-world reconstruction
+The Spawning System is distinct from StarSim and TerraSim. It is planned, not yet built. It will manage the generation/spawning of populations and objects such as asteroids, comets, Kuiper Belt objects, Oort Cloud objects, and other small bodies.
 
-Use observational data and available planetary/geological evidence to reconstruct or refine a known world's geography and related layers. Source data may include elevation/terrain products and other relevant observations. The UI should make source, coverage, assumptions, and uncertainty inspectable where the data supports it.
+Its future Admin controls need to cover:
+- object categories and population definitions;
+- population density/distribution and regional/environmental variation;
+- object size, mass, shape, orbital characteristics, and composition;
+- composition rules and material/volatile distributions;
+- generation constraints, spawn timing/location, and duplicate/consistency controls;
+- review and testing of spawning results.
 
-### Extrasolar-world generation
+The game backend owns spawning behavior and authoritative world state. The Admin UI configures, inspects, and invokes supported operations.
 
-Use geographic patterns extracted from source maps (including playable FreeCiv/Civ4 maps and real-world geographic examples) as training/source material. Extract useful structures such as continent and coastline forms, mountain ranges, basins, and drainage patterns; do not copy a source map wholesale. Generate a plausible initial geography constrained by the target world's properties.
+### Solar System Management and prepared systems
 
-The existing generator did produce maps and established a working baseline. Output quality was poor and needs review; do not describe the pipeline as having produced no output or discard the existing generated map as evidence. The cause of quality problems (source material, extraction, generation, constraints, or their combination) remains to be established through review.
+Administrators need a way to export/unload a solar system to a JSON file and import/load a prepared or pre-tuned system. The spawning/creation path must be able to use the prepared system instead of invoking the StarSim procedural generator when that is the selected source.
 
-### Shared Digital Twin
+This requires clear workflows for:
+- exporting an existing system and its relevant data;
+- importing and validating a prepared system;
+- maintaining a library/catalog of prepared systems;
+- selecting procedural generation versus a prepared system for system creation/spawning;
+- previewing and validating the selected system before it enters the game.
 
-Both paths feed the same authoritative planetary Digital Twin. The Digital Twin represents the evolving state of a celestial body and is used by simulation, Admin, and relevant player interfaces. Map Studio creates, reconstructs, inspects, or applies initial geographic data; simulation processes such as hydrosphere change and terraforming evolve that shared state.
+The export/import workflow and the decision about which source the spawning path uses are related but distinct administrative operations.
 
-For example, elevation data can support estimates of the water volume needed to reach a target shoreline or inundation level. Such calculations should use the actual terrain data and clearly distinguish a modeled requirement from water that is available or accessible. This is an example of a connected Digital Twin capability, not a claim that a particular calculation is already implemented.
+### Blueprint Management
 
-**Boundary:** Map Studio and the generator are not a current UI-prototype repair task by themselves. Preserve the existing baseline and document the intended pipeline; generator quality work can be planned separately when requested.
+Blueprints define what game objects are and how they are built. Units and assets belong here as blueprint-defined objects, not as a separate top-level content category solely because they are mobile or operational.
 
-## 5. AI Manager interface
+Admin capabilities may include browsing, inspecting, validating, comparing, importing/exporting, and managing versions/dependencies for spacecraft, rovers, vehicles, structures, habitats, stations, equipment, machinery, components, and other blueprint-defined objects. The UI should expose the actual blueprint format and dependency rules found in the game repository.
 
-**ESTABLISHED INTENT — 2026-11-11**
+### Material Management
 
-The AI Manager interface is an operator-supervision and evidence workspace. It should help an operator understand what the AI Manager is trying to accomplish, what it has decided, what it is doing, and whether intervention or review is warranted.
+Material definitions are distinct from blueprints. Admin capabilities should support inspection and controlled editing of material JSON definitions, classifications, physical/chemical properties, resource characteristics, and relevant relationships to processing, refining, manufacturing, and blueprints. Validation should identify malformed, missing, duplicated, or inconsistent definitions.
 
-Useful areas include:
+### Configuration and Operational Data Management
 
-- mission selection, objectives, starting conditions, and constraints;
-- current plans and priorities;
-- decisions and the rationale/evidence behind them;
-- resource needs, shortages, inventories, and dependencies;
-- asset, craft, fleet, and infrastructure deployments;
-- execution progress, completed work, failures, and unexpected events;
-- warnings, blocked work, and opportunities for operator intervention;
-- performance review and retained training/validation evidence.
+JSON is a storage format, not a reason to require manual file editing. Administrators need UI access to tune operational data files that configure how game systems behave.
 
-The early AI Manager views in the main application are reference material and starting points, not a mature or complete interface. Review and adapt their useful content and workflows; do not assume they should be copied wholesale. Mock data is acceptable in the prototype while the presentation and navigation are developed.
+Examples include StarSim parameters, TerraSim settings, spawning distributions and composition rules, resource/processing configuration, economy and balance settings, and other system-specific operational options. Some data needs a purpose-built editor; other data may use a structured JSON editor with schema-aware validation, diff/preview, and safe apply/rollback behavior.
 
-The AI Manager interface must not imply that a displayed decision, mission action, pause, reset, or deployment is live unless it is actually connected to the relevant service and authorization path.
+Do not collapse all JSON into one generic editor. Distinguish:
+- blueprint definitions;
+- material definitions;
+- operational configuration;
+- generated/prepared world data;
+- live world state and player data.
 
-See [AI Manager Logic & High-Level Execution Rules](../logistics/ai_manager_logic.md) for game-domain intent and implementation caveats. That page remains the domain authority; this page defines interface responsibilities.
+### Template and Version Management
 
-## 6. Relationship to the Player interface
+The project already has some template-version-control files and mechanisms. The Admin UI must make the existing capability accessible rather than inventing a parallel versioning system.
 
-The Player interface is a separate experience for people acting within the game. Admin and AI Manager may display the same underlying celestial body, settlement, craft, or resource information, but the purpose and available actions differ by audience.
+Potential UI capabilities include template catalog and version history, current/deprecated/supported version status, schema/compatibility inspection, validation of files against template versions, version comparisons, migration readiness and results, and links to affected blueprints/data files. First audit the existing files and behavior; do not assume every capability is implemented.
 
-For example, an operator may inspect a planetary dataset or supervise an AI construction mission; a player may inspect a world and issue permitted gameplay orders. Shared rendering or data does not merge the interfaces. Access and permitted operations remain enforced by the application/backend.
+### User and Account Management
 
-## 7. Open details
+The Admin Dashboard must include ordinary web-application account administration:
+- search and inspect player accounts;
+- view account status and relevant account details;
+- initiate password-reset workflows or reset links (never display or retrieve passwords);
+- enable, disable, suspend, or restore accounts where authorized;
+- review last login and relevant activity;
+- manage roles and permissions;
+- inspect account-related reports/issues and administrative history.
 
-The following are not settled by this page:
+Sensitive account data must be minimized and access-controlled. All actions require backend authorization, validation, and auditability.
 
-- final Admin and AI Manager navigation labels and exact page layouts;
-- which existing Admin/AI Manager views or scripts are safe and useful to reuse;
-- exact Map Studio source-data catalog, quality metrics, and generation controls;
-- detailed Digital Twin data contracts and the boundary between source observations and simulated state;
-- exact AI Manager decision-explanation and training-evidence presentation;
-- which prototype actions are mock-only versus connected to live services.
+### Other application administration
 
-Do not silently turn these open details into approved requirements.
+Additional areas to consider include resource/content catalogs, economy configuration, world-state inspection, background jobs, application/service health, data integrity and validation, logs/audit history, backup/recovery, and administrative roles/permissions. Their exact scope and screens remain open.
 
-## 8. Preserve, complete, and standardize existing views
+## 3. AI Manager workspace
 
-**ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
+**ESTABLISHED SCOPE DIRECTION — 2026-11-13; screen breakdown OPEN**
 
-The existing main application contains substantial and useful interface work. It is incomplete and inconsistent in places; that is not a reason to discard it or treat the prototype as a replacement built from scratch.
+AI Manager is not limited to mission selection and asset deployment. It is the autonomous operations, logistics, network-expansion, and strategic resource-management system supervised through the Admin Dashboard.
 
-The prototype review should identify and carry forward useful existing views, visualizations, controls, data relationships, and workflows, then complete and standardize their presentation. In particular, review the existing Planetary/Orbital, Surface, Map Studio, Monitor, resource, infrastructure, and other useful operational/world-inspection views. The exact inventory and functional status must be verified against current code and runtime evidence rather than inferred from names or screenshots alone.
+### Mission and operations management
 
-- Preserve working behavior and useful information architecture before refactoring.
-- Record what is working, incomplete, broken, or not yet assessed.
-- Complete missing pieces and investigate regressions as focused work.
-- Standardize navigation, terminology, layout conventions, controls, typography, spacing, and status presentation without forcing every view into one dashboard template.
-- Keep each workspace appropriate to its task: planetary/orbital inspection, surface exploration, map authoring, operations, and so on.
-- Use the prototype's stronger visual direction and interaction patterns where they improve the experience, while retaining the main application's useful domain-specific capabilities.
+- mission objectives, selection, planning, constraints, and priorities;
+- asset, craft, fleet, rover, settlement, and infrastructure deployment;
+- logistics, resupply, construction, and execution progress;
+- blockers, failures, recovery, and outcomes;
+- decision records, rationale/evidence, operator review, and training/validation evidence.
 
-The objective is consolidation and completion, not wholesale replacement.
+The UI should expose actual decision and execution records. It must not fabricate AI reasoning or imply that mock controls are connected to live services.
 
-## 9. Proposed integration architecture: main application API and separate UI prototype
+### Wormhole network management
 
-**PROPOSAL — 2026-11-11; NOT YET ADOPTED OR IMPLEMENTED**
+AI Manager monitors and coordinates the evolving natural-wormhole and AWS network:
+- discovered/open natural connections and their current state;
+- relative stability, mass throughput, remaining mass capacity, and risk;
+- EM ejection, captured EM, EM returned for stabilization, and available reserves;
+- AWS pair construction, commissioning, operation, and network connectivity;
+- candidate routes, system access, logistics constraints, and network changes.
 
-A proposed direction is for the **main GalaxyGame application to expose its existing game capabilities through an application API, and for the separate UI prototype to consume that API**. The prototype would be the presentation/client layer; the main application would remain the authoritative game backend.
+The wormhole simulation remains authoritative for physical state and behavior. AI Manager observes that state and decides what operations to request.
 
-Under this proposal, the UI could be developed and reviewed first where that helps establish the visual language, layouts, navigation, and interactions. Mock or JSON-backed data may be used during this design work, but it must be clearly identified as mock data and must not become an assumed API contract.
+### Expansion, exploration, and Hammer Protocol
 
-When integrating a view:
-- identify the data, existing services, calculations, and operations the main application already provides;
-- expose the required capability through a deliberate, documented API contract in the main application;
-- have the prototype request and present that API data;
-- keep game rules, simulation state, calculations, validation, authorization, and state-changing operations in the main application;
-- reuse existing domain services and data access rather than duplicating them in the prototype;
-- distinguish live API data, cached/delayed data, and mock data in the UI.
+Hammer Protocol is a strategic system-scouting, harvesting, and expansion workflow—not merely an instruction to snap every natural wormhole.
 
-If adopted, this approach would let the prototype improve the interface without requiring a wholesale backport of its views into the main app. Backporting remains a possible fallback for a specific capability if a separate client/API boundary proves unsuitable, but it is not the primary integration direction.
+Sol is the current human-expansion staging/scouting system. When a natural wormhole opens to an otherwise unknown system, the system can be surveyed. A system discovered through this route has a harvestable EM field and can be assessed for other resources, celestial bodies, and settlement potential. This does **not** imply that unvisited systems in the local bubble have known or harvestable EM fields; those systems remain unknown until discovered and surveyed.
 
-The API does not need to be designed all at once. Define endpoints and response contracts incrementally around reviewed UI workflows, beginning with read paths where appropriate and adding authorized operations only when their backend behavior is ready. Do not expose raw internal objects or arbitrary JSON files as an unstructured pass-through.
+After survey, AI Manager may:
+- harvest EM and other available resources while the natural connection remains open;
+- continue using the natural connection without immediately building an AWS pair;
+- decide whether the system merits a permanent/continuing AWS connection;
+- identify it as a settlement candidate and plan the infrastructure and logistics needed;
+- or complete the harvesting opportunity and use the Hammer Protocol to force the natural exit to shift, then begin scouting another system.
 
-The API surface, local development arrangement, and implementation status remain to be inspected and developed. This proposal does not claim that the required endpoints already exist or that the architecture has been approved.
+Discovery does not automatically require an AWS pair or settlement. AWS construction is a strategic investment decision based on system value, settlement plans, resource availability, EM/stabilization capacity, transport cost, and network priorities.
 
+For a planned settlement, the likely approach is to build an AWS pair while the natural wormhole is still open, connecting the new system to Sol and providing a dependable logistics corridor. Settlement equipment, people, construction materials, and supplies can then be moved through a stabilized natural connection or an artificial connection. The connection can be reconsidered or moved later as the network develops. Exact sequencing and connection mechanics remain subject to the authoritative wormhole/AWS design.
+
+### EM economy and resource strategy
+
+AI Manager must distinguish:
+- **natural EM ejection/production:** EM released locally by natural wormhole behavior;
+- **harvesting/capture:** EM actually collected by available equipment;
+- **stored reserves:** captured EM available for use;
+- **stabilization return:** captured EM directed back into a wormhole;
+- **consumption:** EM spent by stabilization, AWS, portals, and other systems.
+
+It must monitor production/ejection trends, harvesting capacity, captured quantities, returned quantities, reserves, throughput, and projected expenditure. It uses this information to decide how much exploration, stabilization, network construction, settlement, and expansion can be supported.
+
+The objective is not simply to occupy the greatest number of systems. AI Manager should balance long-term expansion capability, system value, harvesting opportunities, infrastructure investment, logistics, and the risk of losing a natural connection.
+
+### Strategic choices
+
+For a discovered system, AI Manager may choose to:
+- exploit/harvest while the natural connection remains available;
+- invest in stabilization and preserve the natural connection;
+- build an AWS pair and incorporate the system into the network;
+- establish a settlement and maintain a supply corridor;
+- or complete the harvest and trigger a shift to move on.
+
+These are strategic alternatives, not automatic stages every system must pass through.
+
+### Learning and oversight
+
+The Admin workspace should make objectives, candidate systems, resource forecasts, network assessments, selected strategies, decisions, alternatives where actually recorded, actions, outcomes, and training evidence inspectable. Operators need appropriate review and intervention controls, subject to actual authorization and service support.
+
+## 4. Existing implementation and integration boundaries
+
+The main application contains existing Planetary, Surface, Monitor, resource, infrastructure, and early AI Manager work. Preserve and assess useful behavior; repair broken paths; adapt incomplete work; reuse reference patterns where appropriate; build new capabilities where they do not exist. Do not assume everything must be ported unchanged, and do not assume the prototype should be a wholesale rewrite.
+
+**Proposed integration direction, not yet implemented:** the main Rails 7 GalaxyGame application remains authoritative for game state, simulation, calculations, validation, persistence, and authorization. The separate Rails 8.1 UI prototype is the presentation/client layer and would consume deliberate game-oriented API contracts. The API boundary may change how data is loaded and presented; it does not justify duplicating game logic in the UI. Mock data may be used during design, but must be clearly labeled.
+
+## 5. Screen planning and task granularity
+
+Each intended screen/page should receive its own small draft task when planning is ready. Each page task must state:
+1. its Admin workspace and user purpose;
+2. expected layout, information hierarchy, behavior, and interactions;
+3. candidate source code in the main app, UI prototype, or reusable reference projects;
+4. what is working, broken, incomplete, reusable, or new;
+5. data/API dependencies and authority boundaries;
+6. acceptance criteria, dependencies, and open decisions.
+
+Shared components may have separate tasks where useful, but do not replace page-specific tasks with a broad “build Admin” task. Main GalaxyGame wiki design intent must be updated before tasks are drafted. Draft tasks remain non-actionable until independently reviewed and explicitly approved.
+
+## 6. Open details
+
+The exact dashboard navigation, grouping, page count, layouts, permission matrix, and implementation order remain OPEN. The detailed behavior of some StarSim, TerraSim, Spawning System, template-versioning, and account-administration operations must be audited against existing code before screens are specified. Do not silently convert this capability inventory into a finalized screen list.

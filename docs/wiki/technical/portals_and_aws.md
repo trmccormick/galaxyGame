@@ -51,12 +51,20 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 
 - Full-scale inter-system (and large-scale) infrastructure.
 - Built in pairs. One station initiates the rift; the paired station locks on and stabilizes it.
-- Once open, the rift stays open until either station closes it. Natural wormholes are closed differently, by a controlled Snap ([Hammer Protocol](natural_wormholes_and_em.md)).
+- Once open, the artificial rift remains open until either station closes it. Natural wormholes follow their own lifecycle and may shift or snap; see [Natural Wormholes & EM](natural_wormholes_and_em.md).
 - Can move personnel and heavier cargo (exact mass envelope still OPEN).
 - High capital, power, and EM cost to establish and maintain.
-- **Counterbalance role:** Where a system lacks a natural mass anchor (gas giant class), AWS pairs can provide artificial counterbalance. An AWS can also be paired to a natural wormhole mouth to stabilize it and make EM management safer (see natural wormholes page).
-- Opening a new inter-system AWS pair is a major corporate / late-game milestone.
-- Eden reconnection is an example: early traffic limited to tug, EM harvesters, and stabilization sats until the Eden-side station is converted and operational ([Eden page](../player/eden_disconnect_and_emergent_history.md)).
+- **Counterbalance/stabilization role:** AWS infrastructure may provide artificial counterbalance where a suitable natural mass anchor is absent, and an AWS paired to a natural mouth may support stabilization and EM management. Exact placement and performance rules remain OPEN.
+- Opening an inter-system AWS pair is a major infrastructure and network-expansion investment.
+- Eden reconnection is an example: early traffic is limited to the initial equipment and operations required to establish the connection and stabilize the Eden side ([Eden page](../player/eden_disconnect_and_emergent_history.md)).
+
+**Hammer Protocol and optional network integration — DIRECTION, 2026-11-13**
+
+A system discovered and surveyed through a natural wormhole does not automatically require an AWS pair. Operators/AI Manager may continue using the natural connection while it remains open, harvest resources, and evaluate the system before committing to artificial infrastructure.
+
+If the system is selected for settlement or continuing network integration, a likely strategy is to construct and commission an AWS pair while the natural wormhole is still open. The artificial connection to Sol can then provide a dependable corridor for settlement personnel, equipment, construction materials, and supplies. A planned settlement may use a stabilized natural connection or an artificial connection for its initial logistics; later network strategy may retain, reconfigure, or move the connection.
+
+AWS placement and pairing must consider gravitational/counterbalance geometry, EM stabilization requirements, orbital movement, ship travel times, and construction/resupply logistics. No fixed one-AWS-per-giant-planet layout is established.
 
 **Caution:** Inter-system “portal-gate at AWS” concepts (sometimes called Level 4b) remain more open than intra-system portal pairs and should not be treated as established.
 

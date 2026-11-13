@@ -104,19 +104,41 @@ Jupiter's massive gravity well provides a critical stabilizing function for the 
 
 ---
 
-## Natural Wormhole Mouths in Sol
+## Natural Wormhole Mouth in Sol
 
-Sol has a **natural wormhole mouth** that connected it to another system (Eden) before the historical Snap event. Key notes:
+**ESTABLISHED SCENARIO INTENT — 2026-11-13**
 
-- The natural mouth was anchored by sufficient mass in the Sol system, with Jupiter providing counterbalance that dampened volatility on the Sol side.
-- Eden-side volatility was higher due to lack of adequate planetary-mass counterbalance — this disparity drove research that later became EM capture and AWS technology.
-- The **Snap** (Eden isolation, shift to System B) occurred when mass capacity threshold was breached and not reset. The terminus shifted; the natural connection moved to System B.
-- Sol is **EM-poor while stable**. EM arrives in bursts around Snap events and harvest windows.
-- Post-Snap, an **Artificial Wormhole Station (AWS)** paired to the original mouth location opened an artificial link toward Eden. Stabilization satellites were deployed on the Eden side as first presence.
-- The AWS acts as a synthetic counterbalance, making the node safer and EM management more predictable.
+Sol has a natural wormhole mouth associated with the historical Eden connection. Jupiter's placement opposite the Sol-side mouth provides a substantial counterbalance, making the Sol mouth comparatively more stable than the historical Eden-side mouth. This is relative stability, not permanent or absolute stability: natural EM ejection and mass-throughput behavior still apply.
 
-> **Cross-link:** For full natural wormhole physics, mass-limit behavior, EM harvesting, Hammer Protocol, and controlled Snap mechanics, see **[Natural Wormholes & EM](../technical/natural_wormholes_and_em.md)**.  
-> **Cross-link:** For AWS network topology and artificial-artificial pairing, see **[Portals & AWS](../technical/portals_and_aws.md)**.
+The Eden-side mouth was less stable and snapped before EM stabilization technology was developed. The later capture-and-return stabilization technology grew from the lessons of that event.
+
+For the current human-expansion gameplay scenario, Sol's natural wormhole remains present and does not shift or snap. The narrative is also currently planned around its continued existence. This is a current scenario treatment, not a hard-coded permanent rule for all future scenarios.
+
+Sol's natural wormhole produces some excess EM in local space even while comparatively more stable. Greater mass pushed through a natural wormhole contributes to greater EM ejection. Mature EM stabilization captures ejected EM and directs it back toward the wormhole to restore mass-limit capacity and improve relative stability.
+
+> **Cross-link:** For natural wormhole behavior, relative stability, mass limits, EM harvesting/stabilization, shifting/snapping, and Hammer Protocol, see [Natural Wormholes & EM](../technical/natural_wormholes_and_em.md).
+> **Cross-link:** For AWS network topology and artificial pairing, see [Portals & AWS](../technical/portals_and_aws.md).
+
+## Sol AWS placement study
+
+**DIRECTION / OPEN — 2026-11-13**
+
+Jupiter is already associated with the natural Sol wormhole and is not counted as an available AWS placement candidate in the current planning discussion. Saturn, Uranus, and Neptune are the three major outer-planet candidates currently under consideration. The planned Sol–Eden AWS connection is most likely associated with a location opposite Saturn, but this is not a finalized placement.
+
+Other possible configurations include an outer-system AWS pair whose members balance one another. Do not assume one AWS per giant planet or lock a placement before evaluating the system.
+
+Placement must consider several competing constraints:
+- gravitational influence and counterbalance geometry;
+- wormhole/EM stabilization requirements;
+- orbital motion and whether a configuration remains useful over time;
+- ship travel time, transfer opportunities, fuel, construction and maintenance logistics;
+- the desire to keep AWS infrastructure outside the inner system/habitable zone rather than placing it among inner terrestrial planets.
+
+Farther-out placement can increase ship travel and resupply times; actual travel depends on orbital positions, trajectories, propulsion, and launch windows, not distance alone. The mass of the AWS stations themselves should not be assumed to provide planetary-scale gravitational counterbalance; any such effect must be supported by the game's established fictional wormhole/EM mechanics.
+
+Planet Nine is hypothetical and is not part of the current Sol placement baseline. Other moons or small bodies may be evaluated later, but no additional anchor is established here.
+
+No exact orbital position, AWS count, pairing, gravity calculation, or final Sol network topology is approved. StarSim and AI Manager should eventually be able to evaluate candidate configurations rather than rely on a hard-coded one-station-per-planet rule.
 
 ---
 

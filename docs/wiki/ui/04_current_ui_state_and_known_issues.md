@@ -45,9 +45,9 @@ The Earth Admin Planetary view was demonstrated running with a GeoTIFF data load
 - map controls and supporting information/mission panels;
 - a lower console area.
 
-This is useful evidence that the Earth Planetary view and at least the demonstrated layer-loading/rendering path are operational in the captured environment. It does not establish that every body, dataset, layer, or interaction is working.
+This is useful evidence that the Earth Planetary view and at least the demonstrated layer-loading/rendering path are operational in the captured environment. However, the rendered global map appeared coarse/blurry. It does not establish that every body, dataset, layer, or interaction is working.
 
-**Preserve:** This is a useful existing capability and functional reference. Future UI work should improve presentation and integration without casually replacing working map/data behavior.
+**Preserve:** This is a useful existing capability and functional reference. Future UI work should improve presentation and integration without casually replacing working map/data behavior. Investigate the displayed resolution and rendering path before concluding that the original GeoTIFF source data is inadequate; inspect source data, generated derivatives, processing, and map delivery separately.
 
 ## 3. Surface view and tileset loading
 
@@ -57,17 +57,17 @@ This is useful evidence that the Earth Planetary view and at least the demonstra
 
 - The Earth Surface view displayed part of its tile map.
 - The visible tileset status reported `0/12`.
-- The screenshot therefore does not demonstrate a fully loaded or healthy Earth Surface tileset.
+- The screenshot therefore does not demonstrate a fully loaded or healthy Earth Surface tileset. A separate Earth screenshot showed a coarse terrain/biome grid and cursor inspection with tile, biome, and elevation information, but the Trident tileset status still reported `0/12` tiles loaded and displayed a warning. Treat this as partially functional rather than healthy or wholly blank.
 
 ### Mars
 
 **OBSERVED BROKEN — 2026-11-10**
 
-- The Mars Surface view displayed a blank map.
+- The Mars Surface view displayed a blank map. The visible status showed `Ready` / `Initializing`, and the console reported that the terrain grid was ready but was waiting for JavaScript initialization; no surface tiles were visibly loaded.
 - The tileset status alternated between `Ready` and `Initializing`.
 - No surface tiles were visibly loaded in the captured view.
 
-The user noted that Surface views for Mars, Luna, and other bodies had worked previously, but the path subsequently broke. This historical report is useful context; it does not identify when the regression occurred or its cause.
+The user noted that Surface views for Mars, Luna, and other bodies had worked previously, but the path subsequently broke. Other worlds must be tested individually; do not assume the Earth and Mars symptoms are identical. This historical report is useful context; it does not identify when the regression occurred or its cause.
 
 **Investigation needed:** Determine whether the problem is in tileset discovery/configuration, asset availability, data shape, loading lifecycle/state, rendering, or an interaction among those parts. Do not assume a root cause from the screenshots alone. The Earth and Mars symptoms may or may not share the same cause.
 
@@ -84,7 +84,13 @@ The existing main application contains useful functional work that should be eva
 
 Static source inspection can reveal architecture and dependencies, but it does not prove that a view currently works in the running application. Prefer current runtime evidence when recording functional status.
 
-## 5. How to use this issue record
+## 5. Additional prototype presentation observations
+
+**REVIEW NEEDED — 2026-11-13**
+
+The newer prototype contains useful layouts and screens, but some pages need visual refinement. In particular, typography can be too large, text can run together, and spacing/information hierarchy need tuning. Review screens individually; do not assume one global CSS adjustment will solve every page. Player Dashboard and Admin Dashboard are different products and must not inherit each other's page structure merely for visual consistency.
+
+## 6. How to use this issue record
 
 - Keep observations dated and tied to screenshots, runtime checks, or code evidence.
 - Separate **OBSERVED WORKING**, **OBSERVED INCOMPLETE**, **OBSERVED BROKEN**, and **REVIEW NEEDED**.
@@ -94,7 +100,7 @@ Static source inspection can reveal architecture and dependencies, but it does n
 - Convert prioritized issues into focused implementation tasks that link back to this page.
 - Do not let a defect become a permanent design constraint. The approved direction remains in the other UI wiki pages.
 
-## 6. Existing views: preserve and bring forward
+## 7. Existing views: preserve and bring forward
 
 **ESTABLISHED REVIEW PRINCIPLE — 2026-11-11**
 

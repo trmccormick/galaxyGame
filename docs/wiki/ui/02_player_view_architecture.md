@@ -1,243 +1,127 @@
-> **Wiki section:** UI & Experience · **Status:** ESTABLISHED INTENT for the view split and navigation principles; remaining details DIRECTION or OPEN, clearly marked  
-> **Last Updated:** 2026-11-09
+> **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
+> **Last Updated:** 2026-11-13
 
 # Player View Architecture
 
-This page records the clarified player-view design intent for Galaxy Game. It defines five distinct player-facing views, their purposes, interaction models, and boundaries. It is not an implementation specification; it is design intent that guides future implementation tasks.
+This page defines the Player Dashboard's four distinct contexts and how players navigate between systems and locations. It is not an implementation specification. The Player Dashboard is separate from the Admin Dashboard; administrative screens and operational tools are not player views.
 
-Labels on this page follow the [UI & Experience](README.md) convention: **ESTABLISHED INTENT** (owner-confirmed, dated), **DIRECTION** (current working direction, not yet confirmed), and **OPEN** (unresolved).
+## Design authority
 
----
+The main `galaxyGame` repository is authoritative for product design intent and game-domain rules. The separate `galaxy-game-ui` repository is the presentation prototype and implementation workspace. Prototype appearance does not independently establish approved product design.
 
-## Design Authority
+## Four Player contexts
 
-**ESTABLISHED INTENT — 2026-11-04**
+**ESTABLISHED INTENT — 2026-11-13**
 
-UI design intent lives in the main `galaxyGame` repository under `docs/wiki/ui/`. The `galaxy-game-ui` prototype repository is an implementation workspace; its appearance does not independently establish approved product design. Implementation tasks should reference this page and focus on specific work and acceptance criteria. See [UI & Experience](README.md) and [Branding and entry experience](01_branding_and_entry_experience.md).
+The Player Dashboard has exactly four primary contexts:
 
----
+| Context | Purpose | Scope |
+|---|---|---|
+| **Space** | System-wide space operations and spatial awareness | Ships, trajectories, destinations, missions, orbital infrastructure, stations, depots, shipyards, wormholes, EM fields and space phenomena |
+| **Planetary** | Whole-celestial-body conditions and change | Atmosphere, climate, hydrosphere, biosphere, geology, planetary-scale resources and environmental change |
+| **Surface** | Civilization-level activity across a celestial body's surface | Territories, settlements, resource development, infrastructure, transportation, moving units and surface operations |
+| **Settlement** | Management of one inhabited/developed settlement | Buildings and structures, population, services, utilities, production, inventory, logistics and development |
 
-## Five Player Views
+These are distinct interaction contexts, not nested menus or merely camera zoom levels. Navigation may move between related contexts, but each has its own purpose and information hierarchy.
 
-**ESTABLISHED INTENT — 2026-11-09** (owner decision made a few days earlier; recorded on this date)
+**Space is separate from the three celestial-body contexts.** The three celestial-body contexts are exactly Planetary, Surface, and Settlement. Do not replace Settlement with Space or add Galaxy as a fifth Player view.
 
-Galaxy Game has **five distinct player views**, each with a different purpose and interaction model. These are not nested menus or zoom levels — they are separate interfaces for different scopes of play.
+## Navigation and selection workspaces
 
-| View | Design Reference | Purpose | Interaction Model |
-|------|-----------------|---------|-------------------|
-| [Planetary](#planetary-view) | SimEarth | Global planetary conditions overview | Globe/2D map rotation and pan; click to drill down |
-| [Surface](#surface-view) | Civilization IV / FreeCiv | Operational map: terrain, resources, settlements, mines, mobile units, movement, exploration, surface activity | Tile-based tactical map with layer toggles, unit orders, improvement placement |
-| [Settlement](#settlement-view) | SimCity | Management of an individual settlement: infrastructure, construction, production, logistics | Building-placement interface with operational parameters, pipeline/road connections, yield management |
-| [Space](#space-view) | EVE Dashboard (initial reference only) | Orbital and interplanetary operations | TBD — separate from Surface; different interaction model |
-| [Galaxy](#galaxy-view) | TBD | Interstellar navigation and wormhole-network view | TBD — separate from Space |
+Galaxy/system catalogs and system workspaces are navigation and selection tools, not additional Player views.
 
-**Important:** Names are working names. They may change as design matures. The distinction between these five views is established; the details within each view are DIRECTION or OPEN where marked.
+A player should be able to:
+1. Browse and search galaxies or star systems through compact catalogs.
+2. Select a system and inspect it as a whole.
+3. Select a celestial body or orbital location.
+4. Open the appropriate Player context: Space, Planetary, Surface, or Settlement.
 
-### Celestial-Body Views (carried forward)
+Selection must not imply physical travel. The UI must distinguish the player's actual location from an object or system being inspected. Do not translate database hierarchy into deeply nested global menus. Players should have direct access to major workflows and use contextual selectors, breadcrumbs, maps, tables, and feature-specific secondary navigation as appropriate.
 
-**DIRECTION — details carried forward from prior architecture work** (their place in the five-view split is established, above)
+Large collections should favor compact, comparable tables and lists over repeated oversized cards. Detail panes, contextual actions, and comparisons should appear when an item is selected.
 
-The three celestial-body views (Planetary, Surface, Settlement) come from the earlier architecture specification in [`docs/architecture/three_layer_views.md`](../../architecture/three_layer_views.md), written by an implementation agent in July 2026. That document calls the Settlement view *TerrainForge*; this page uses "Settlement View" as the working name for the same view. They cover the zoom hierarchy for exploring and operating on individual celestial bodies:
+## Space context
 
-```
-Planetary View (global overview)
-  └─ Click region / drill down
-       ↓
-Surface View (tactical map of a region)
-   └─ Double-click settlement tile / enter button
-        ↓
-    Settlement View (detail of one settlement tile)
-```
+**DIRECTION**
 
-This page adds context about how these three fit into the broader player-view architecture and introduces the two additional views (Space, Galaxy).
+Space is the system-wide operational view. It should represent the selected solar system and the physical relationships among bodies, ships, stations, and other orbital infrastructure.
 
----
+Candidate content includes:
+- ships at current locations, in transit, or assigned to destinations and missions;
+- orbital settlements and infrastructure, including L1 depots, orbital stations, shipyards, wormhole stations, and industrial platforms;
+- trajectories, travel distances, launch windows, and estimated travel times where supported by simulation data;
+- natural wormholes, AWS connections, portals, EM fields, and relevant space phenomena.
 
-## System and Celestial-Body Browsing
+The view must distinguish inter-system wormhole network connections from in-system spatial relationships. EVE Dashboard's map interactions may inform pan/zoom, selection, routes, markers, and topology presentation, but its EVE-specific mechanics and inter-system map are not a substitute for a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
 
-**ESTABLISHED INTENT — 2026-11-11**
+## Planetary context
 
-The five player views above describe distinct ways of interacting with the game. They should not be confused with the navigation hierarchy used to find and inspect a location. In particular, the three celestial-body views (Planetary, Surface, Settlement) are not a replacement for system-level browsing.
+**DIRECTION grounded in existing capability**
 
-The interface should support a contextual progression such as:
+Planetary is the whole-body view, inspired by SimEarth. It presents planetary conditions and change at global scale: atmosphere, climate, hydrosphere, biosphere, geology, biomes, terrain, and terraforming/environmental progress where supported.
 
-1. **Galaxy / system catalog** — browse and search star systems using compact, comparable rows or list entries. Useful summaries may include system-level assessments, counts, and relevant status.
-2. **System workspace / assessment** — inspect a selected system as a whole, including its celestial bodies, activity, infrastructure, and assessment information.
-3. **Celestial-body analysis** — select a planet, moon, or other body to inspect its characteristics, resources, terrain, and relevant operational or development information.
-4. **Body-specific views** — enter the appropriate Planetary, Surface, or Settlement view for the task.
+Existing main-app Monitor/Planetary functionality is substantial and must be inspected, repaired, and evaluated for reuse or adaptation. Do not assume it is specification-only or rebuild it from scratch. The current screenshots show working Earth map/layer behavior, but also a coarse/blurry display; the cause and best data/rendering path remain to be investigated.
 
-A system workspace may use secondary navigation such as Overview, Celestial Bodies, Resources, Operations, Missions, or Digital Twin where those sections are useful and supported by the data. These are examples of workspace organization, not a frozen tab list.
+Candidate interactions include globe or projected-map pan/zoom, layer selection, selected-region inspection, and environmental data panels. Exact layer availability depends on the authoritative data and services.
 
-**Interaction direction:** Prefer compact catalogs and information-dense tables for large collections. Use selection and drill-down to reveal deeper analysis, detail panes, contextual actions, comparisons, and assumptions. Do not make large repeated cards the default browsing pattern when they consume space without improving comparison or selection.
+## Surface context
 
-**Reference boundary:** EVE PI Planner is a useful reference for the pattern of system list → system assessment → detailed planet analysis, including configurable assumptions and comparisons. Its terminology, colony model, mechanics, and visual design must not be copied. Galaxy Game's own celestial bodies, settlements, resources, and simulation rules remain authoritative.
+**DIRECTION grounded in existing partial implementation**
 
-The current UI may use a map, table, list, or combined workspace depending on the task. This is a navigation and information-architecture direction, not a mandate that every system page use the same layout.
+Surface is the civilization-level view across a celestial body's surface, not merely a terrain viewer or tactical unit-control screen.
 
----
+It should support:
+- terrain, elevation, liquid, biome, climate and resource layers;
+- territories and settlements;
+- mines, extraction and industrial development;
+- infrastructure and transportation networks;
+- moving units, exploration, and surface operations;
+- inspection of locations and settlement markers.
 
-## View Details
+Existing Surface implementation is partial. Earth has shown a coarse terrain/biome grid and cursor inspection of tile, biome, and elevation, but tile loading/status problems were visible. Mars showed a blank map and JavaScript initialization/tile-loading symptoms. Other worlds have reportedly worked previously and require individual checks. Do not assume all bodies share one failure cause.
 
-### Planetary View
+## Settlement context
 
-**Working name.** SimEarth-inspired global planetary conditions overview.
+**DIRECTION**
 
-**Purpose:** See an entire celestial body at macro scale — atmospheric layers, cloud formations, weather systems, biome distribution, terraforming progress monitoring.
+Settlement is the detailed management view for an individual inhabited or developed place. It is SimCity-inspired, but GalaxyGame's settlement model and rules are authoritative.
 
-**Interaction model:** Globe rotation and pan (3D) or 2D flattened projection with pan/zoom. Click a region to drill down to Surface View.
+A Settlement is a physical place where people live or work. It may be a mining outpost, research outpost, industrial settlement, town, city, or another form. A Colony is a government-like entity overseeing multiple settlements; ownership and governance are separate. A player or corporation may own a settlement while it is governed by a Colony.
 
-**Scope boundaries:**
-- **IN SCOPE:** Atmospheric data visualization, biome heatmap, elevation projection, cloud formations, weather systems, terraforming progress overlay.
-- **OUT OF SCOPE:** Settlement-level detail (tiles, improvements, units, settlement markers). No terrain_data fields specific to Planetary View beyond shared data.
+Settlement management includes structures/facilities, population, services, utilities, construction, production, inventories, logistics, and development. Structures are individual buildings, stations, modules, or facilities within a settlement.
 
-**Data source:** `celestial_body.atmosphere_layers`, `terrain_data.biomes`, `planet_data.weather_grid`, `planet_data.clouds`, `terrain_data.elevation` (full grid). See `docs/architecture/three_layer_views.md` for the full data contract.
+The same broad management concepts should support:
+- **Planetary settlements**, located on a planet or moon surface.
+- **Orbital settlements**, located in orbit and potentially starting with one station or habitat structure, then expanding with modules, docking, depots, warehouses, shipyards, and other facilities.
 
-**Implementation state:** Specification only, per `docs/architecture/three_layer_views.md`.
+Orbital Settlement is the current working term; future taxonomy for free-flying habitats or asteroid settlements remains open. A wormhole station, depot, or space station may be a founding structure, but it does not define the entire settlement.
 
-### Surface View
+## Three application responsibilities
 
-**Working name.** Civilization IV / FreeCiv-inspired operational map.
+The product has two primary dashboards:
+- **Player Dashboard** — gameplay and player operations, using the four contexts above.
+- **Admin Dashboard** — application, simulation, world, data, and operational administration.
 
-**Purpose:** Tactical-level surface operations — terrain display, resource/improvement overlay, unit movement and orders, city/yield management, layer toggles for clarity.
+The Admin Dashboard contains dedicated workspaces, including AI Manager, Map Studio, StarSim, TerraSim, Spawning System, and other administrative tools. AI Manager has a distinct operational workflow and may use a dedicated workspace layout, but it belongs within the Admin Dashboard. It is not a fifth Player context or a separate Player dashboard.
 
-**Interaction model:** Tile-based tactical map with pan/zoom, layer toggles (terrain, liquid, biomes, resources, civilization, units), unit order commands, improvement placement.
+See [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md).
 
-**Operator and player contexts:** The same map rendering can serve operator (AI planning) and player (unit orders) contexts, with different overlays. This does not merge the interfaces: access is enforced server-side, and the Admin Console remains a separate interface from the player views.
-
-**Scope boundaries:**
-- **IN SCOPE:** Terrain rendering (elevation, liquid, biomes, resources), civilization overlay (spaceports, bases, roads, worldhouse panels), mobile unit movement and orders, settlement tile markers, yield management per tile.
-- **OUT OF SCOPE:** Individual building configuration (that is Settlement View). Global atmospheric data (that is Planetary View).
-
-**Implementation state:** Partially implemented in `galaxy_game/app/assets/javascripts/surface_view.js`. See `docs/architecture/three_layer_views.md` for the full architecture spec, rendering pipeline, and layer system.
-
-### Settlement View
-
-**Working name.** SimCity-inspired individual settlement management. Called *TerrainForge* in `docs/architecture/three_layer_views.md`.
-
-**Purpose:** Detailed management of a single settlement — infrastructure planning, building placement and configuration, production scheduling, logistics routing, population/morale tracking.
-
-**Interaction model:** Building-placement interface at readable scale. Click a building to configure operational parameters (production rate, staffing, inventory). Drag-place new structures. Connect pipelines/roads between buildings. View yield management per building.
-
-**Scope boundaries:**
-- **IN SCOPE:** Individual building configuration, production scheduling, logistics routing within the settlement, population/morale metrics, infrastructure planning (power, life support, water).
-- **OUT OF SCOPE:** Multi-settlement operations (that is Surface View). Global planetary data (that is Planetary View). Interstellar navigation (that is Galaxy View).
-
-**Architecture note:** Per the architecture spec, Settlement View shares the same rendering pipeline as Surface View. It is `surface_view.js` with the camera zoomed 10-100x on a single settlement tile. Same sprites, same layer system, different camera state. See `docs/architecture/three_layer_views.md`.
-
-**Implementation state:** Specification only — not yet implemented, per `docs/architecture/three_layer_views.md`.
-
-### Space View
-
-**Working name.** Separate view with a different interaction model from Surface.
-
-**Purpose:** Orbital and interplanetary operations — station management, orbital logistics, atmospheric harvesting, fleet coordination, space-based construction.
-
-**Interaction model:** **TBD** — separate from Surface; different interaction model. EVE Dashboard is an initial interface reference only, not an EVE Online game or mechanics specification.
-
-**Scope boundaries:**
-- **IN SCOPE:** Orbital station management, interplanetary fleet operations, atmospheric harvesting coordination, space-based construction planning.
-- **OUT OF SCOPE:** Surface operations (that is Surface View). Interstellar navigation (that is Galaxy View). Individual settlement management (that is Settlement View).
-
-**OPEN:**
-- Detailed interaction model and scope boundaries require further design work.
-- Relationship to Surface View (how players transition between them) is unresolved.
-- Whether Space View is a single unified interface or multiple sub-views is unresolved.
-
-### Galaxy View
-
-**Working name.** Interstellar navigation and wormhole-network view.
-
-**Purpose:** Interstellar travel planning, wormhole network management, galaxy-scale overview of settled systems, inter-system logistics coordination.
-
-**Interaction model:** **TBD** — separate from Space. Wormhole-based navigation between star systems.
-
-**Scope boundaries:**
-- **IN SCOPE:** Wormhole network visualization and management, inter-system travel planning, galaxy-scale settlement distribution overview, inter-system logistics coordination.
-- **OUT OF SCOPE:** Intra-system navigation (that is Surface/Space View). Individual planetary data (that is Planetary View). Settlement-level detail (that is Settlement View).
-
-**OPEN:**
-- Detailed interaction model and scope boundaries require further design work.
-- Whether wormholes are the sole interstellar travel method or one of several is unresolved.
-- Relationship to Space View (how players transition between them) is unresolved.
-- Whether Galaxy View includes galaxy-scale resource/market data is unresolved.
-
----
-
-## Navigation Between Views
-
-### Navigation Principles
-
-**ESTABLISHED INTENT — 2026-11-09** (owner decision made a few days earlier; recorded on this date)
-
-These principles describe how players should be able to reach things. They are not a fixed layout: the arrangement of primary navigation, secondary navigation, and detail areas is **OPEN**, and the terms below are illustrative.
-
-1. **Primary navigation gives direct access to major features.** Players should reach Systems, Settlements, and Trade directly, without navigating through Galaxies first. Galaxies are metadata, not a navigation requirement.
-
-2. **Secondary navigation organizes workflows within a feature.** It changes contextually based on the active primary section.
-
-3. **Contextual content presents details and actions for the selected object.** A detail area shows object-specific data with relevant actions.
-
-4. **Do not translate database hierarchy into menus.** A Star System belonging to a Galaxy does not mean players must navigate through Galaxies to reach Star Systems.
-
-### View Transition Matrix
-
-**DIRECTION — 2026-11-09**
-
-| From | To | Transition Method |
-|------|-----|-------------------|
-| Planetary | Surface | Click region / drill-down button |
-| Surface | Settlement | Double-click settlement tile / enter button |
-| Settlement | Surface | Close / ESC / zoom out / back button |
-| Surface | Planetary | Zoom out to full globe / back button |
-| Any | Space | Global nav link (scope TBD) |
-| Any | Galaxy | Global nav link (scope TBD) |
-
-**OPEN:** Transition methods for Space and Galaxy views are unresolved.
-
----
-
-## Three Application Interfaces
-
-**ESTABLISHED INTENT — 2026-11-11**
-
-Galaxy Game has three distinct application interfaces:
-
-- **Main Game / Player interface** — supports players acting within the shared game universe and using the five player views defined above.
-- **Admin interface** — supports operators administering, inspecting, configuring, and validating the simulation and its supporting systems.
-- **AI Manager interface** — supports observing and supervising the AI Manager's missions, decisions, plans, deployments, execution, and learning evidence.
-
-These are separate audiences and workflows, not three permission levels or skins of one dashboard. They should share the overall design system and relevant context, but their navigation, page composition, and actions should fit their responsibilities. Admin and AI Manager are the current prototype priorities; the Player interface follows later.
-
-See [Admin and AI Manager interfaces](03_admin_and_ai_manager.md).
-
-## Relationship to Existing Documentation
+## Existing architecture references
 
 | Document | Relationship |
-|----------|-------------|
-| [`docs/architecture/three_layer_views.md`](../../architecture/three_layer_views.md) | Architecture spec for the Planetary → Surface → Settlement (TerrainForge) zoom hierarchy. This page supersedes it as the **player-view design authority**; the architecture doc remains valid for implementation details (rendering pipeline, data flow, layer system). |
-| [`docs/wiki/ui/01_branding_and_entry_experience.md`](01_branding_and_entry_experience.md) | Branding and entry experience. Complementary — this page covers view structure and navigation; the branding page covers visual identity. |
-| [`docs/wiki/player/first_hour_and_entry_state.md`](../player/first_hour_and_entry_state.md) | Player entry state. Complementary — describes what players see at entry (dashboard, active starts); this page defines the broader view architecture they navigate between. |
-| [`docs/wiki/player/settlement_progression_and_footholds.md`](../player/settlement_progression_and_footholds.md) | Settlement mechanics. Complementary — describes settlement evolution stages; this page defines the UI view for managing settlements. |
-| [`docs/wiki/player/player_roles_and_alignment.md`](../player/player_roles_and_alignment.md) | Faction standing model. Deferred — unimplemented, overly complex for MVP. Not addressed by this page. |
+|---|---|
+| `docs/architecture/three_layer_views.md` | Existing Planetary/Surface/Settlement implementation architecture and rendering details; this page is the current Player-context design authority where they conflict. |
+| [Branding and Entry Experience](01_branding_and_entry_experience.md) | Shared visual identity and entry experience. |
+| [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md) | Admin responsibilities and AI Manager workspace. |
+| [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) | Dated screenshot observations and implementation status. |
 
----
+## Open details
 
-## Open Questions
+- Final layouts and navigation placement for each context.
+- Exact Space map scales and relationship between in-system and inter-system maps.
+- Planetary layer availability by body and data source.
+- Surface tileset/rendering repair and the best source-resolution pipeline.
+- Detailed Settlement workflows and the distinction between planetary and orbital settlement variants.
+- Which existing JavaScript and services should be adapted, replaced, or exposed through an API.
 
-| Question | Notes | Priority |
-|----------|-------|----------|
-| Space View interaction model | TBD — separate from Surface; different interaction model | HIGH |
-| Galaxy View interaction model | TBD — separate from Space | HIGH |
-| Space ↔ Surface transition | How players move between these views is unresolved | MEDIUM |
-| Space ↔ Galaxy transition | How players move between these views is unresolved | MEDIUM |
-| Whether Space and Galaxy are unified or split | Single interface vs. multiple sub-views is unresolved | MEDIUM |
-| Wormhole travel mechanics in Galaxy View | Whether wormholes are the sole interstellar method is unresolved | LOW |
-| Galaxy View resource/market data scope | Whether it includes galaxy-scale economic data is unresolved | LOW |
-| Working names may change | All five view names are working names and may be revised | N/A |
-
----
-
-## Change History
-
-- **2026-11-09** — Created this page to clarify the five-player-view architecture. Introduced Space and Galaxy as separate views with TBD interaction models. Marked all unresolved questions explicitly.
-- **2026-11-09** — Revised after review: fixed the `three_layer_views.md` link path; dated the five-view split and navigation principles as ESTABLISHED INTENT (owner decision made a few days earlier, recorded 2026-11-09) and kept layout, view-internal details, and transitions as DIRECTION or OPEN; clarified that Surface View's shared rendering does not merge operator and player interfaces; added implementation-state lines for Planetary and Settlement; noted that Settlement View is TerrainForge in the architecture spec.
+Do not convert these open details into implementation assumptions without review.
