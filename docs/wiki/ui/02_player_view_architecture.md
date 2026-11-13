@@ -90,6 +90,17 @@ A Settlement is a physical place where people live or work. It may be a mining o
 
 Settlement management includes structures/facilities, population, services, utilities, construction, production, inventories, logistics, and development. Structures are individual buildings, stations, modules, or facilities within a settlement.
 
+**EARLY EXPLORATION — NPC settlement connections and outside development (2026-11-13; not finalized gameplay)**
+
+The following ideas were discussed as possibilities for how players and corporations might establish an operating presence alongside an autonomous NPC settlement. They are recorded to preserve the discussion, not as approved mechanics or implementation requirements:
+
+- A player or player-owned corporation might lease a connection to an NPC settlement and build its own units connected to the settlement, potentially including warehouses, habitats, industrial units, and other structures.
+- The key consideration is whether the settlement's base infrastructure can provide the connection and the services a proposed unit requires, such as power and other necessary utilities. Capacity may need to exist already or be expanded to support the request.
+- A possible future alternative is independently supplied infrastructure owned by the player or corporation—for example, a solar farm or fusion plant—which could support its own units and perhaps supply surplus power to others.
+- These ideas do not imply ownership of the NPC settlement, control of its population or operations, or authority over the settlement's own infrastructure.
+
+Lease terms, connection and service models, capacity, expansion decisions, NPC approval, costs, utility distribution, and any energy market are all OPEN. Do not treat the examples above as confirmed game rules.
+
 The same broad management concepts should support:
 - **Planetary settlements**, located on a planet or moon surface.
 - **Orbital settlements**, located in orbit and potentially starting with one station or habitat structure, then expanding with modules, docking, depots, warehouses, shipyards, and other facilities.
