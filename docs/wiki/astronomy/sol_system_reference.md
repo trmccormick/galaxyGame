@@ -240,9 +240,6 @@ The exact calendar date and detailed readiness criteria remain OPEN; the infrast
 | [Station Construction Pipeline](../infrastructure/pre_player_era_logistics_station_construction_pipeline.md) | Station construction vs. operational use |
 | [Atmospheric Harvesting](../infrastructure/atmospheric_harvesting.md) | Venusian skimming and atmospheric engineering |
 | [Terraforming Options](../infrastructure/terraforming_options.md) | Planetary-scale atmosphere modification options |
-| [Luna Settlement Lifecycle](../../../docs/design/LUNA_SETTLEMENT_LIFECYCLE.md) | Three-phase industrial lifecycle of lunar settlement |
-| [Sol Core Buildup](../../../docs/gameplay/sol_core_buildup.md) | Preferred early Sol dependency chain and player-entry window |
-| [Lore Canon](../../../docs/storyline/11_lore_canon.md) | Canonical lore for Sol-era narrative elements |
 
 ---
 
