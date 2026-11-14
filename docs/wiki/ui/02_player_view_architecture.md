@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-13
+> **Last Updated:** 2026-11-14
 
 # Player View Architecture
 
@@ -106,13 +106,13 @@ The same broad management concepts should support:
 
 Orbital Settlement is the current working term; future taxonomy for free-flying habitats or asteroid settlements remains open. A wormhole station, depot, or space station may be a founding structure, but it does not define the entire settlement.
 
-## Three application responsibilities
+## Two dashboards and separate operational contexts
 
 The product has two primary dashboards:
-- **Player Dashboard** — gameplay and player operations, using the four contexts above.
+- **Player Dashboard** — gameplay and player operations, using the three primary views above plus the separate Space context.
 - **Admin Dashboard** — application, simulation, world, data, and operational administration.
 
-The Admin Dashboard contains dedicated workspaces, including AI Manager, Map Studio, StarSim, TerraSim, Spawning System, and other administrative tools. AI Manager has a distinct operational workflow and may use a dedicated workspace layout, but it belongs within the Admin Dashboard. It is not a fifth Player context or a separate Player dashboard.
+The Admin Dashboard contains dedicated workspaces, including AI Manager, Map Studio, StarSim, TerraSim, Digital Twin, and other administrative tools. The responsibility boundaries and unresolved ownership questions for these systems are documented in [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md). AI Manager is an Admin workspace, not a Player view or a separate Player dashboard.
 
 See [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md).
 
