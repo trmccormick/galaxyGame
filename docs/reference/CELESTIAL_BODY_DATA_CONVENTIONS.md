@@ -1,6 +1,6 @@
 # Celestial Body Data Conventions
 **Created**: 2026-05-01
-**Last Updated**: 2026-11-14
+**Last Updated**: 2026-05-02
 **Location**: /docs/reference/asset-generation/CELESTIAL_BODY_DATA_CONVENTIONS.md
 
 ---
@@ -31,8 +31,8 @@ that future agents do not introduce data errors.
   these progressively
 - Service logic must never hardcode physical state assumptions
 - New world types must work without service code changes
-- Generated worlds have no confirmed deposit-location JSON data by default —
-  the owner and trigger for procedural deposit generation are OPEN
+- Generated worlds have no JSON data — AI Manager spawns
+  resource deposits procedurally on survey
 
 ---
 
@@ -102,8 +102,8 @@ amounts based on confirmed scientific data where available.
 **This is a scientific reference layer** — it records what exists
 and in what quantity. It does not define where specific deposits
 are located. Deposit locations are either in geological feature
-files (confirmed) or generated/discovered procedurally for
-unconfirmed deposits. The responsible system and trigger remain OPEN.
+files (confirmed) or spawned by the AI Manager on survey
+(unconfirmed/generated).
 
 ### Storage Mechanism Keys
 
@@ -242,11 +242,9 @@ See backlog task: AI Manager Resource Spawning System.
 ### Known Bodies (Sol System)
 - Only confirmed scientific data goes in JSON
 - Estimated amounts acceptable where science provides ranges
-- Speculative deposits NOT hardcoded — procedural placement is intended,
-  but the responsible system is OPEN
+- Speculative deposits NOT hardcoded — AI Manager spawns them
 - Confirmed deposit locations in geological feature files
-- Unconfirmed deposit locations generated/discovered procedurally
-  (system ownership and trigger OPEN)
+- Unconfirmed deposit locations spawned by AI Manager on survey
 
 ### Generated Bodies
 - JSON files are produced by StarSim and follow the same sphere
@@ -254,10 +252,10 @@ See backlog task: AI Manager Resource Spawning System.
 - Fields like `volatile_reservoir` and `material_yield_bias` are
   StarSim-specific hints for the AI Manager — they do not replace
   `stored_volatiles` and should be treated as generation metadata
-- `stored_volatiles` may be absent on first generation. The system
-  responsible for initial resource distribution and/or survey-time
-  deposit creation is OPEN; do not assume AI Manager or StarSim owns
-  the full lifecycle
+- `stored_volatiles` will be absent on first generation — the AI
+  Manager resource spawning system handles deposit creation on
+  first survey, the same role `stored_volatiles` plays for known
+  worlds
 - Same storage mechanism keys apply when `stored_volatiles` is
   populated
 - Generated files may require manual tweaking before use in game —
@@ -316,9 +314,8 @@ flag it as a gap — do not embed inline as a workaround.
 8. Never edit large JSON files with search/replace tools —
    use targeted manual edits in VSCode only
 9. Both sol.json and sol-complete.json must always be kept in sync
-10. Deposit locations are never hardcoded for unconfirmed deposits.
-    Procedural generation/discovery is intended, but ownership and
-    triggering system remain OPEN.
+10. Deposit locations are never hardcoded for unconfirmed deposits —
+    AI Manager spawns them on survey
 
 ---
 
@@ -329,4 +326,3 @@ flag it as a gap — do not embed inline as a workaround.
 | 2026-05-01 | Established psr_deposits standard, sphere separation rules | Claude (Session Strategist) |
 | 2026-05-01 | Removed cross-sphere contamination from Luna stored_volatiles | Manual edit |
 | 2026-05-02 | Full document written incorporating geological gas pocket model, TerraSim integration notes, atmosphere model reuse pattern | Claude (Session Strategist) |
-| 2026-11-14 | Clarified that procedural resource-deposit generation ownership and triggering system remain open; retained prior AI Manager assignment as historical direction only | ChatGPT |
