@@ -26,7 +26,9 @@ Consequences:
 
 The Snap is the moment the aperture destabilizes catastrophically and **shifts**. It is no longer present in Eden. The natural connection becomes Sol ↔ System B. Eden is left with no wormhole mouth at all.
 
-The Snap is therefore a physical consequence of the unbalanced aperture + traffic load, not an arbitrary story beat. The exact moment it occurs can vary with traffic history and local conditions; the underlying cause does not.
+The Snap is therefore a physical consequence of the unbalanced aperture + accumulated traffic load, not an arbitrary story beat or a planned milestone. Too much mass is sent through over time without the required stabilization technology. The exact timing and resulting state of Eden depend on the AI Manager's activities and decisions as it develops the system, together with the physical conditions represented by the wormhole model. The model and simulation code must determine when the instability threshold is reached; do not substitute a fixed narrative timer or hand-authored Snap date.
+
+The Snap drives Sol corporations and the AI Manager to research wormholes more aggressively. That work develops artificial wormhole technology and ultimately reconnects Sol to Eden through an artificial wormhole, reaching the settlements that were already established before the Snap. This later reconnection is distinct from the Snap itself.
 
 ---
 
@@ -89,6 +91,14 @@ Eden is **not uniform**. Local volatile richness, starting infrastructure qualit
 Mixed outcomes within a single system are expected and desirable.
 
 ---
+
+## Post-Snap research, reconnection, and player arrival
+
+**ESTABLISHED DESIGN INTENT — owner, 2026-11-14**
+
+The Snap is the catalyst for more aggressive wormhole research by Sol corporations and the AI Manager. The research develops artificial wormhole technology, which opens an artificial connection from Sol to Eden and reconnects the already-established settlements. The Wormhole Consortium develops this technology and manages the inter-system wormhole network. Miniaturization of the artificial wormhole technology produces intra-system portals as an offshoot; portals provide rapid movement between equipped bases within a solar system. See [Portals & AWS](../technical/portals_and_aws.md).
+
+Players enter only after the artificial wormhole connection to Eden has been opened and the required network and portal technology are established. Player arrival is therefore later than both the Snap and the beginning of post-Snap research. The exact research duration and operational readiness criteria remain OPEN.
 
 ## Reconnection Sequence
 
@@ -158,7 +168,9 @@ These levers let the same code produce autarkic, ghost, feral, or tomb results d
 ## Relationship to Broader Systems
 
 - The AI Manager loops described in the economic loops page continue to run during isolation. There is no special “Eden mode” code path required beyond removing external import options and letting the existing state machine operate.
-- Portal technology and EM harvesting both appear only after AWS research matures; neither is available during the isolation period itself.
+- Portal technology and EM harvesting both appear only after artificial-wormhole/AWS research matures; neither is available during the isolation period itself. Portal technology is a miniaturized offshoot of the artificial wormhole technology.
+- The Wormhole Consortium develops the technology and manages the inter-system artificial-wormhole network.
+- Player entry occurs only after the artificial Sol–Eden connection and the required wormhole/portal infrastructure are established.
 - Any residual Virtual Ledger balances from the pre-Snap era become relevant again the moment the link is restored.
 
 Existing orphaned-system economics and survey/handshake protocol material can be referenced for discovery and re-contact procedures; this page focuses on the internal state that those procedures discover.
@@ -167,7 +179,9 @@ Existing orphaned-system economics and survey/handshake protocol material can be
 
 ## Open Questions
 
-- Precise relationship between pre-Snap traffic history and the exact moment of the Snap.
+- Precise relationship between pre-Snap traffic history, AI Manager decisions, the modeled stabilization deficit, and the exact moment/outcome of the Snap.
+- Research and construction timeline from the Snap to artificial Sol–Eden reconnection, portal miniaturization, and player arrival.
+- Exact readiness conditions for player arrival and which network/portal infrastructure must be operational at that point.
 - Spatial extent and intensity of the residual pre-Snap EM field left in Eden.
 - Power, EM, and structural requirements for the temporary Sol-side strain phase and the Eden-side WS conversion.
 - First-contact protocols, standing modifiers, and possible hostility mechanics for feral pockets.
