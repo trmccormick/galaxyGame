@@ -7,7 +7,19 @@
 **Last Updated**: 2026-11-07  
 **Related**: [natural_wormholes_and_em.md](natural_wormholes_and_em.md), [eden_disconnect_and_emergent_history.md](../player/eden_disconnect_and_emergent_history.md), [terraforming_options.md](../infrastructure/terraforming_options.md), logistics pages
 
-This page is the wiki home for **intra-system portals** and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, and Exotic Matter (EM) harvesting live on [Natural Wormholes & EM](natural_wormholes_and_em.md).
+This page is the wiki home for **intra-system portals** and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, the Snap, and Exotic Matter (EM) harvesting live on [Natural Wormholes & EM](natural_wormholes_and_em.md).
+
+## Technology lineage and player-arrival prerequisite
+
+**ESTABLISHED DESIGN INTENT — owner, 2026-11-14**
+
+The historical Snap is caused by accumulated mass transfer through a natural wormhole without the required stabilization technology. It is an emergent event shaped by the AI Manager's system-development decisions and the wormhole model, not a planned research milestone. The Snap drives Sol corporations and the AI Manager to pursue wormhole research more aggressively.
+
+That post-Snap research develops full-scale artificial wormhole technology. It is used to open an artificial wormhole connection from Sol to the Eden system, reconnecting Sol with Eden's already-established settlements. The technology is then miniaturized into intra-system portal technology. Portals are therefore an offshoot of artificial wormhole research, not an unrelated invention or a technology that predates the Snap.
+
+The **Wormhole Consortium** develops the artificial wormhole technology and manages the inter-system wormhole network. Intra-system portals are a derived technology for rapid movement within a solar system between bases equipped with portal endpoints; they do not replace the inter-system network's role. The Consortium's precise legal structure, ownership, and operating rules remain OPEN unless separately established.
+
+**Player arrival is gated on this infrastructure being in place.** Players enter after the artificial wormhole connection to Eden has been opened and the wormhole network and portal technology have been established for use. This does not mean every individual base necessarily has a portal; rapid portal travel is available between bases equipped with the technology.
 
 Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipelines.
 
@@ -84,7 +96,7 @@ AWS placement and pairing must consider gravitational/counterbalance geometry, E
 
 **DIRECTION**
 
-The primary arterial wormhole / AWS network is not left entirely to individual player monopolies. Development corporations and logistics entities form an institutional backbone (Wormhole Transit Union / equivalent consortium) that builds, maintains, and regulates core lanes, mass-limit policy, and stabilization standards.
+The primary arterial wormhole / AWS network is managed by the **Wormhole Consortium**, the organization that developed the artificial wormhole technology. It builds, maintains, and manages the inter-system network and its core connections. The consortium's exact governance, regulatory powers, ownership model, and commercial rules remain OPEN.
 
 Players operate as contractors, specialists, private logistics firms, or later private pair operators within that framework — not as sole owners of the entire network. Exact ownership and toll rules remain OPEN.
 
@@ -106,7 +118,8 @@ Players operate as contractors, specialists, private logistics firms, or later p
 - Manufacturing recipes and facility requirements.
 - Industrial bleed rate tunability.
 - Inter-system portal-gate (Level 4b) scope, if any.
-- Player ownership / toll limits relative to the institutional network.
+- Player ownership / toll limits relative to the Wormhole Consortium-managed network.
+- Exact commissioning and operational criteria that must be satisfied before player arrival is enabled.
 - Portal mass limits and how the reset works. Never defined; the aperture is small, but no numbers are set.
 - Whether both halves ship on one mission or two, and whether one half can be installed at an existing station while the other goes to a new settlement.
 - Whether placing both halves activates the link or needs a separate commissioning step.
