@@ -13,7 +13,7 @@ This folder is the **live wiki** — the front door for players, contributors, a
 | **This folder (`docs/wiki/`)** | Live entry: orientation, design intent, open options, and in-repo status/gaps |
 | **Task / work-order files** | Disposable work orders and a **harvest source** for intent — not design truth. When updated, they should link **here** |
 | **`docs/wiki_reorganization/`** | Planning / archaeology archive — not day-to-day navigation |
-| **`docs/architecture/`, `docs/developer/`, etc.** | Deep reference; wiki pages link out when detail is needed |
+| **`docs/architecture/`, `docs/developer/`, etc.** | Retired reference and harvest sources; extract useful, verified intent into the wiki, but do not maintain or synchronize these documents |
 
 **Rule:** Design intent and open options live in these wiki pages. Work orders reference the wiki. Older task piles are ore to harvest, not a second documentation tree.
 
