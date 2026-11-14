@@ -2,7 +2,7 @@
 
 > **Status:** PARTIALLY IMPLEMENTED — established model structure with TerraSim interactions requiring continued evaluation  
 > **Last Audited:** 2026-11-14  
-> **Code baseline:** `main` at `d4297134f4477d7fc9021a69f140d81c64d2b026`
+> **Code inspection:** `main`, 2026-11-14 (service and spec files listed in the implementation snapshot)
 
 ## Purpose
 
@@ -107,25 +107,29 @@ This is a focused source inspection, not a complete scientific validation or tes
 
 ### Orchestration
 
-`TerraSim::Simulator#calc_current` updates a basic stellar-equilibrium temperature and gravity, then invokes available sphere services in a fixed sequence:
+`TerraSim::Simulator#calc_current` updates a basic stellar-equilibrium temperature and gravity, then invokes available sphere services in this order:
 
 1. Atmosphere
-2. Geosphere
+2. Geosphere (including a call to `VolatilePhaseTransitionService` inside the geosphere service)
 3. Hydrosphere
 4. Biosphere
 5. Biosphere–Geosphere interface, when both spheres exist
 6. Exotic-world simulation when the body reports exotic properties
 
-The current calls do not pass a shared elapsed-time value through this orchestration. The ordering and coupling should be evaluated as TerraSim's time model and process dependencies are refined.
+The current `calc_current` method accepts no elapsed-time argument and calls the sphere services without passing one. Some individual services accept time-like arguments, but not all use them. In particular, the atmosphere service's `days` argument and hydrosphere/geosphere `time_delta` arguments are not used in their current calculations; the biosphere service does use its `time_skipped` value in selected calculations.
+
+There is also a caller/interface mismatch to investigate: `GameSimulation#simulate_body` calls `calc_current(days_elapsed)`, while the current `TerraSim::Simulator#calc_current` definition accepts no argument. Other paths, such as `TerraSimJob`, call it without an argument. This is a source-level integration concern, not a change made as part of this documentation work.
+
+The fixed order and the degree to which later services see earlier services' updates should be evaluated as TerraSim's time model and process dependencies are refined.
 
 ### Existing process coverage and limitations
 
-- **Atmosphere:** Updates pressure from atmospheric mass, estimates greenhouse-adjusted temperature from selected gas masses, and applies a simplified stellar-distance/magnetosphere-based atmospheric-loss calculation. This is a starting implementation, not a validated climate or atmospheric-escape model.
-- **Hydrosphere:** Contains basic regional temperature, evaporation, precipitation, phase-distribution, and ice-melting routines. The inspected service requires both a hydrosphere and an atmosphere, uses simplified coefficients and a 273 K phase threshold, and primarily processes surface water bodies and ice caps. The model's broader composition and subsurface fields are not evidence of complete generalized-liquid or subsurface-ocean simulation.
-- **Geosphere:** Includes weathering-rate calculation using atmospheric and hydrosphere properties, regolith and erosion updates, tectonic behavior, volatile phase-transition hooks, and geological-event paths. Some exotic-world routines, including portions of cryovolcanism and other specialized processes, are explicitly stubs or placeholders.
+- **Atmosphere:** Updates pressure from atmospheric mass, estimates greenhouse-adjusted temperature using selected gas masses (CO2, CH4, and water vapor), applies a simplified stellar-distance/magnetosphere-based atmospheric-loss calculation, and decreases dust. The current greenhouse calculation uses heuristic exponents and caps the result at twice the base temperature; the atmospheric-loss calculation applies fixed per-step rates adjusted by stellar distance and gas molecular-mass factors. The service accepts a `days` argument but does not currently scale these operations by it. This is a working simplified implementation, not a validated climate, radiative-transfer, or atmospheric-escape model.
+- **Hydrosphere:** Contains basic regional temperature, evaporation, precipitation, phase-distribution, and ice-melting routines. The inspected service requires both a hydrosphere and an atmosphere, primarily processes surface water bodies (oceans, lakes, rivers, and ice), and uses simplified coefficients. Its phase-distribution routine moves fixed increments between solid and liquid based on a 273 K threshold; although it reads pressure into a local variable, that value does not currently affect the phase decision. The ice-melting routine uses a simple above-freezing rule and fixed melt/vapor fractions. The service accepts `time_delta` but does not currently use it to scale these processes. The model's broader composition and subsurface fields are not evidence of complete generalized-liquid, pressure-dependent phase, or subsurface-ocean simulation.
+- **Geosphere:** Includes heuristic weathering-rate calculation using atmospheric pressure/temperature and hydrosphere coverage, regolith updates, erosion calls, tectonic activity, probabilistic geological events, volcanic gas release, and a call to `VolatilePhaseTransitionService` for stored volatile release/freezing. Some event paths are incomplete: the geosphere service contains explicit stubs for carbide volcanism, methane cycling, metallic-hydrogen dynamics, silicate-cloud formation, substellar volcanism, terminator storms, and parts of cryovolcanic material transfer. Its `time_delta` argument is not currently used to scale the service's processes. The presence of these branches does not establish physically complete exotic-world simulation.
 - **Geosphere initialization:** `TerraSim::GeosphereInitializer` selects material configurations for terrestrial planets, carbon planets, ice giants, and gas giants. Unrecognized body classes fall back to a terrestrial-style composition, and geological-activity defaults include random values. The current initializer therefore does not establish a dedicated icy-moon composition simply because the body is a moon; this is a concrete area to review when that body type becomes a simulation target.
-- **Biosphere:** Includes biome, vegetation, life-form, population, food-web, and atmospheric-effect routines. The inspected service also contains fallback atmospheric changes when no life forms are present; these simplified defaults require review before being relied upon for natural-world projections.
-- **Tests:** TerraSim orchestration and individual sphere services have RSpec coverage. The inspected simulator spec mocks the individual sphere services, so its orchestration tests do not validate the physical accuracy of coupled planetary evolution.
+- **Biosphere:** Includes biome suitability and vegetation updates, life-form population and food-web routines, biodiversity calculations, and atmospheric gas exchange. When no life forms with atmospheric effects are present, the service applies small hardcoded O2/CO2/CH4 changes rather than leaving the atmosphere unchanged. It also adjusts atmospheric tropical/polar temperature data toward biome optima during biome balancing. These are simplified gameplay-oriented behaviors that require review and calibration before being relied upon for natural-world projections. The service uses its time argument in selected population and atmospheric calculations, but not every biosphere operation is demonstrably time-scaled.
+- **Tests:** TerraSim orchestration and individual sphere services have RSpec coverage, but coverage depth varies. The simulator spec replaces the sphere services with test doubles, so it verifies dispatch/order-related behavior rather than coupled physical evolution. The geosphere service spec stubs some geosphere update methods. In the biosphere service spec, examples for population tracking and food-web behavior have empty bodies, as does the basic animal-activity example. The initializer spec includes conditional skipped regolith tests when the schema or methods are absent. These tests are useful evidence of exercised interfaces, not proof of complete behavior or scientific validity.
 
 The existence of services, fields, or specs must not be mistaken for a complete, scientifically calibrated model. Conversely, simplified or incomplete routines do not mean the overall architecture needs to be replaced.
 
@@ -142,6 +146,9 @@ When the relevant simulation work is prioritized, evaluate:
 7. Which body-specific behaviors can be expressed as configuration or process selection, and which genuinely require new model structure?
 8. What is the authoritative meaning and unit of hydrosphere `state_distribution` (surface coverage, phase fraction, or another measure), and how should it represent vapor versus gas?
 9. How should geosphere initialization handle moons and other body classes that do not match the current terrestrial/carbon/ice-giant/gas-giant cases?
+10. Resolve the `GameSimulation` / `TerraSim::Simulator#calc_current` elapsed-time argument mismatch and define one consistent time-step contract across orchestration and sphere services.
+11. Which current heuristic updates should be parameterized, replaced, or calibrated against reference-world observations, rather than treated as validated physical laws?
+12. Which service tests exercise real coupled state changes, and which only verify method calls, mocks, or placeholder behavior?
 
 These are evaluation questions, not immediate implementation tasks.
 
