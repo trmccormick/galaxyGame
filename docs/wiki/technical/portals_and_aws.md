@@ -49,7 +49,7 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
   - Both halves are in the same system and linked by the data network, which confirms both are online before a transit opens. Signal lag across the network is expected.
   - One endpoint fires and opens the rift; the other locks on and stabilizes it, as in an AWS pair. Either half can fire; only one does for a given opening.
   - The firing side uses the most EM, at the opening. Portals also spend EM to reinforce the rift and reset mass limits, as wormhole stabilization does, because the stabilization technology is built into the portal. Fusion or electrical power runs the magnetic fields.
-  - Once open, the rift stays open until either side closes it. This applies to portals and artificial wormholes. Natural wormholes are closed differently, by a controlled Snap ([Hammer Protocol](natural_wormholes_and_em.md)).
+  - Once open, the rift stays open until either side closes it. This applies to portals and artificial wormholes. Natural wormholes follow their own lifecycle: the historical Eden Snap is an uncontrolled failure caused by accumulated mass throughput without stabilization; the Hammer Protocol may separately use a deliberate final transit to force an exit shift. Do not call the historical Snap a planned or controlled closure ([Hammer Protocol](natural_wormholes_and_em.md)).
   - Counterbalance rules do not apply: the technology is miniaturized and needs no anchor mass.
 - **Environmental variants:**
   - **Habitat-rated** — pressurized human spaces; pressure handshake before open; gas only as containerized freight.
