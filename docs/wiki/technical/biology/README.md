@@ -1,7 +1,7 @@
 # Biology & Terraforming — Wiki Hub
 
 > **Status:** Canonical wiki documentation for all biology, biosphere, and terraforming mechanics.  
-> **Authoritative intent:** [`docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`](../../../architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md) — all changes should begin in the architecture dir and be reflected here.
+> **Wiki authority:** Design intent lives in the active wiki. This section covers biology and terraforming-specific biosphere behavior; broader environmental simulation and sphere interactions are defined in the TerraSim and sphere-model pages.
 
 ## Pages
 
