@@ -57,7 +57,7 @@ The view must distinguish inter-system wormhole network connections from in-syst
 
 **DIRECTION grounded in existing capability**
 
-Planetary is the whole-body view, inspired by SimEarth. It presents planetary conditions and change at global scale: atmosphere, climate, hydrosphere, biosphere, geology, biomes, terrain, and terraforming/environmental progress where supported.
+Planetary is the whole-body view, inspired by SimEarth. It presents the selected body's conditions and change at global scale: atmosphere, climate, hydrosphere, biosphere, geology, biomes, terrain, and terraforming/environmental progress where supported. Available data and layers depend on the celestial body's type and the sphere data actually modeled for it; the view must not assume that every body has an Earth-like set of active spheres or identical environmental processes.
 
 Existing main-app Monitor/Planetary functionality is substantial and must be inspected, repaired, and evaluated for reuse or adaptation. Do not assume it is specification-only or rebuild it from scratch. The current screenshots show working Earth map/layer behavior, but also a coarse/blurry display; the cause and best data/rendering path remain to be investigated.
 
