@@ -194,15 +194,17 @@ The deterministic expansion sequence that bootstraps all Sol infrastructure:
 
 ---
 
-## Player Entry Window (Working Intent)
+## Player Entry Prerequisites
 
-Players enter only after the artificial Sol–Eden wormhole connection has been opened to the already-established Eden settlements and the required wormhole network and portal technology are established for use. The universe already has markets, routes, and a frontier.
+**ESTABLISHED DESIGN INTENT — owner, 2026-11-14**
 
-- **Spawn:** At a player-chosen open Development Corporation foothold base
+Players enter only after the artificial Sol–Eden wormhole connection has been opened to the already-established Eden settlements and the required inter-system wormhole network and miniaturized intra-system portal technology are established for use. The universe already has markets, routes, and a frontier. Player entry is later than the Snap and the post-Snap research that develops this technology.
+
+- **Spawn:** At an active player-accessible foothold base; exact selection rules remain OPEN
 - **First loop:** Tutorial mode teaches basics at that location
-- **Available systems:** Markets, cycler routes, Eden frontier for survey/salvage/logistics/claims
+- **Available systems:** Markets, cycler routes, and the Eden frontier for survey, salvage, logistics, and claims
 
-The exact timing is not locked — it is a working intent, not a fixed campaign script.
+The exact calendar date and detailed readiness criteria remain OPEN; the infrastructure prerequisites above are established.
 
 ---
 
