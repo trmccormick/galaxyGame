@@ -54,6 +54,21 @@ This records confirmed identities and roles without assuming that every organiza
 
 Earth-based representatives are also likely to be part of the broader WTC coalition, given the sponsorship and technology-support roles expected from Earth-side organizations. Their specific organizations, contributions, and formal membership status have not yet been identified, so this remains a likely participation context rather than a confirmed founding roster.
 
+**Development Corporation sponsorship and Earth-side logistics context — OWNER-CONFIRMED, 2026-11-14**
+
+Development Corporations are **non-profit corporations sponsored by Earth-side governments and their partners** to pursue strategic development objectives, such as establishing a lunar settlement or base. For example, the United States and partner governments may sponsor a lunar development effort because they want a sustained settlement or operational base on the Moon. LDC is the founding Development Corporation and sponsors the other Development Corporations.
+
+Keep this sponsorship model distinct from the logistics companies' role. **AstroLift, Zenith Orbital, and Vector Hauling are established Earth-based logistics companies** that provide initial equipment and logistical support for the LDC lunar base. The older consortium framework describes logistics firms more broadly as contributing transportation, ship operations, and network-management expertise, while Development Corporations contribute construction capabilities. These are complementary roles, not interchangeable organization types.
+
+Earth-based governmental participation, potentially including coordination through the United Nations, is a likely oversight context for some WTC activities, but the exact authority and institutional arrangement have not been defined. Do not treat UN governance or a specific government roster as settled.
+
+**Legacy source harvest — role details and unresolved conflicts, 2026-11-14**
+
+The reviewed legacy consortium framework adds the following useful role-level context: logistics corporations bring transportation, ship-operation, and network-management expertise; Development Corporations bring construction capabilities; and LDC was described as having mature large-scale space-construction experience relevant to network infrastructure. The broad division of capabilities is retained here, while specific WTC asset ownership, voting rights, dividends, transit-fee economics, and formal member privileges are not adopted as established design.
+
+The legacy storyline documents conflict on institutional chronology and membership. They variously describe the WTC as founded by AstroLift, Zenith Orbital, Vector Hauling, MDC, and Eden Development Corporations; as a post-Snap Sol-side rescue coalition led by MDC and Eden DC parent companies; or as a body formed by stranded Eden residents after the Snap. They also describe TerraGen as a post-Snap joint venture between MDC and Eden DCs, despite the owner-confirmed context above that Terragen is an established pre-existing organization whose expertise comes from the Mars and Venus experiments. These accounts are retained as historical source material only; they do not override the owner-confirmed organizational context or establish the WTC's exact founding roster or formation sequence.
+
+
 The Snap and the resulting Sol-side research response are covered in [Eden Disconnect and Emergent History](../player/eden_disconnect_and_emergent_history.md). The WTC's artificial-wormhole technology, inter-system network role, and derived intra-system portal technology are covered in [Portals & AWS](portals_and_aws.md). The Snap is the catalyst for the later research and network development; it does not create the participating organizations or Terragen's pre-existing capabilities.
 
 ## 3. EM ejection and harvesting
