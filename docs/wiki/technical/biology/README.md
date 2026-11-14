@@ -7,7 +7,9 @@
 
 | Page | Purpose |
 |------|---------|
-| [Biosphere Simulation](./biosphere_simulation.md) | Liquid water trigger logic, BiosphereSimulationService interface, soil quality formulas, biodiversity scoring, ecosystem interaction rules. |
+| [Biosphere Simulation](./biosphere_simulation.md) | Biosphere state, biological feedback, biome and life-form behavior, and terraforming-specific gates (not universal rules for every world). |
+| [TerraSim — Environmental Simulation](../terrasim.md) | Natural-world simulation, historical calibration, environmental events, terraforming, and future tuning direction. |
+| [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md) | Sphere data ownership and interactions across different celestial-body types. |
 | [Terraforming Seeds](./terraforming_seeds.md) | Core distinctions vs Worldhouses, staged progression (Stages 1–5+), Bio-Nursery Dome categories, Top-Down and Bottom-Up adaptation pipelines. |
 
 ## Cross-Links
