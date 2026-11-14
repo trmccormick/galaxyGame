@@ -47,6 +47,23 @@ TerraSim is responsible for calculating environmental conditions and their evolu
 
 Unit-level simulation operates within the generated and evolving world via tick-driven entities. Units read relevant celestial/environmental properties for their operations, but do not directly rewrite the StarSim seed or independently take ownership of planetary environmental evolution. The exact service/model interfaces between StarSim, TerraSim, and other systems require code-level validation.
 
+### Generated-world plausibility, survey calibration, and ongoing spawning
+
+**DESIGN DIRECTION:** A generated system should make reasonable physical and astronomical sense when it is created. If its initial state is implausible enough that the world does not make sense, the generator or the generated data may need adjustment before the system is used. This is a plausibility threshold, not a requirement that every generated value be complete, precise, or mutually consistent.
+
+Early generator output and systems produced by early test runs remain useful starting data. Imperfect values do not automatically make a generated system bad, and the project does not need to correct every discrepancy up front while the generator is still being tuned. Preserve the original generation output as historical source data; do not silently rewrite it to make later observations agree.
+
+**SURVEY GAMEPLAY DIRECTION:** Survey missions are part of how a system becomes better characterized during exploration and buildout. Survey work may flag values or relationships as inconsistent, gather additional observations, and recalibrate affected estimates toward more realistic values when the evidence supports doing so. A survey is not guaranteed to resolve every discrepancy: measurements may remain uncertain or conflicting. The exact confidence model, data records, and recalibration implementation remain open for design and code review.
+
+Keep these concepts distinct:
+- the original generated seed/output, retained as the historical generation baseline;
+- the evolving modeled world state, which may be refined as evidence and simulation advance;
+- surveyed observations and the level of confidence or consistency associated with them.
+
+The game should not treat every mismatch in early generated data as a defect that must be repaired before play. It should support an initially plausible world whose details can be improved through surveys as the system is explored.
+
+**ONGOING POPULATION DIRECTION:** The world need not remain limited to the objects present in the initial system-generation output or map. A spawning/population process may add new celestial objects later that were not represented on the initial map. These are additions to the evolving world, not automatically errors in the original generation data or objects that a survey merely uncovered. Keep initial system generation distinct from later spawning/population; ownership and detailed lifecycle behavior remain OPEN as described above.
+
 ---
 
 ## 2. StarSim Code Reality (Verified Active)
