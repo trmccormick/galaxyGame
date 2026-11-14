@@ -48,7 +48,7 @@ Admin capabilities should include appropriate generator configuration and contro
 
 TerraSim is the general-purpose planetary/environmental simulation engine. It models a world's existing natural state and evolution, environmental events and disturbances, and the consequences of intentional environmental modification. **Terraforming is one application of TerraSim, not its defining purpose.**
 
-The foundational design intent, including historical calibration against Earth, Mars, and Venus; generalization to procedural and poorly characterized worlds; uncertainty handling; and the distinction between sphere data and cross-sphere processes, is recorded in [TerraSim — Environmental Simulation, Calibration & Evolution](../technical/terrasim.md).
+The foundational design intent, including historical calibration against Earth, Mars, and Venus; generalization to procedural and poorly characterized worlds; uncertainty handling; and the distinction between sphere data and cross-sphere processes, is recorded in [TerraSim — Environmental Simulation, Calibration & Evolution](../technical/terrasim.md) and [Celestial-Body Sphere Models & Environmental Interactions](../technical/sphere_models_and_interactions.md).
 
 The sphere models organize detailed physical and environmental data for different kinds of celestial bodies. TerraSim models the processes and interactions among those systems. The architecture should remain extensible; body-specific processes and interactions can be added when their use cases are prioritized. Broader ice-moon modeling is a future consideration, not a reason to expand current implementation scope prematurely.
 
