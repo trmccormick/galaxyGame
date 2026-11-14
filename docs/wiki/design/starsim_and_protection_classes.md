@@ -118,6 +118,8 @@ Active parameters (verified via constructor):
 
 **Spheres (one-to-one associations):** Atmosphere, Biosphere, Geosphere, Hydrosphere — all in `CelestialBodies::Spheres::` namespace.
 
+The sphere models provide the data organization for a celestial body's environmental and physical systems; they are not a requirement that every body type use identical Earth-like properties or simulation behavior. The models can be adjusted or extended for different kinds of bodies. TerraSim's initial scope is narrower: it focuses on environmental processes and sphere interactions needed for planetary terraforming. Broader natural-environment modeling for non-terraforming bodies (for example, ice moons) may require different interactions among spheres in a future expansion, but is not an initial TerraSim requirement.
+
 ### 2.4 Star Naming Architecture (Active Code)
 
 Verified from `star_naming_architecture.md` + CelestialBody code:
