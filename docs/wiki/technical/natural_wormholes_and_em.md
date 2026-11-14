@@ -1,7 +1,8 @@
 # Natural Wormholes & Exotic Matter (EM)
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> **Last Audited:** 2026-11-13 — owner design decisions reconciled; runtime implementation not verified by this update.
+> *Last Audited:* 2026-11-13  
+> *Audit Summary:* Design intent specification. Owner design decisions reconciled 2026-11-13; runtime implementation not verified by this update.
 
 **Status:** DIRECTION / OPEN  
 **Last Updated:** 2026-11-13  
