@@ -1,7 +1,7 @@
 # Sol System Reference
 
 > **Wiki section:** Astronomy · **Status:** DIRECTION  
-> *Last Updated:* 2026-11-13  
+> *Last Updated:* 2026-11-14  
 > *Related:* [Celestial Systems Template](celestial_systems.md), [Natural Wormholes & EM](../technical/natural_wormholes_and_em.md), [Artificial Magnetosphere](../infrastructure/artificial_magnetosphere.md), [Venus–Mars Ballistic Corridor](../technical/venus_mars_ballistic_corridor.md)
 
 > **Code Alignment Status:** `DESIGN INTENT`  
@@ -186,17 +186,17 @@ The deterministic expansion sequence that bootstraps all Sol infrastructure:
 
 | Entity | Role |
 |---|---|
-| **Lunar Development Corporation (LDC)** | Manages initial lunar settlements; construction partner in Wormhole Transit Consortium |
-| **AstroLift** | Primary early logistics corporation; operates orbital logistics including LEO depots, cyclers, and tugs; combines with LDC to form the Wormhole Transit Consortium |
+| **Lunar Development Corporation (LDC)** | Manages initial lunar settlements |
+| **AstroLift** | Primary early logistics corporation; operates orbital logistics including LEO depots, cyclers, and tugs |
 | **Venus Development Corporation (VDC)** | Cloud cities, Venus atmospheric harvesting operations |
-| **Wormhole Transit Consortium** | Emerges from crisis; regulates core arterial natural mouths and primary AWS lanes |
+| **Wormhole Consortium** | Develops artificial wormhole technology and manages the inter-system artificial-wormhole network; detailed governance, ownership, and operating rules remain OPEN |
 | **Saturn/Titan Administration (SDC/TDC)** | Saturn system administration, Titan mining colony operations |
 
 ---
 
 ## Player Entry Window (Working Intent)
 
-Players enter after Sol core buildout and the reconnection effort toward Eden is underway (AWS path). The universe already has markets, routes, and a frontier.
+Players enter only after the artificial Sol–Eden wormhole connection has been opened to the already-established Eden settlements and the required wormhole network and portal technology are established for use. The universe already has markets, routes, and a frontier.
 
 - **Spawn:** At a player-chosen open Development Corporation foothold base
 - **First loop:** Tutorial mode teaches basics at that location
@@ -218,7 +218,7 @@ The exact timing is not locked — it is a working intent, not a fixed campaign 
 - Whether brinkmanship farming (pushing a mouth toward instability to farm ejection spikes) is encouraged, neutral, or discouraged by institutional policy
 - Ownership and licensing of EM taps on regulated mouths
 - How much residual pre-Snap EM remains harvestable in Eden after reconnection
-- Exact trigger mass for controlled Snap and relation to mass threshold
+- The modeled mass-throughput/stabilization conditions that produce the emergent Eden-side Snap; it is not a controlled or scheduled player-era event
 - Buffer size (Saturation Limit) per station and satellite
 
 ---
