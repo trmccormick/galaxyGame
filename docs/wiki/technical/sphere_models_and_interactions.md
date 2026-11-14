@@ -111,6 +111,7 @@ The current calls do not pass a shared elapsed-time value through this orchestra
 - **Atmosphere:** Updates pressure from atmospheric mass, estimates greenhouse-adjusted temperature from selected gas masses, and applies a simplified stellar-distance/magnetosphere-based atmospheric-loss calculation. This is a starting implementation, not a validated climate or atmospheric-escape model.
 - **Hydrosphere:** Contains basic regional temperature, evaporation, precipitation, phase-distribution, and ice-melting routines. The inspected service requires both a hydrosphere and an atmosphere, uses simplified coefficients and a 273 K phase threshold, and primarily processes surface water bodies and ice caps. The model's broader composition and subsurface fields are not evidence of complete generalized-liquid or subsurface-ocean simulation.
 - **Geosphere:** Includes weathering-rate calculation using atmospheric and hydrosphere properties, regolith and erosion updates, tectonic behavior, volatile phase-transition hooks, and geological-event paths. Some exotic-world routines, including portions of cryovolcanism and other specialized processes, are explicitly stubs or placeholders.
+- **Geosphere initialization:** `TerraSim::GeosphereInitializer` selects material configurations for terrestrial planets, carbon planets, ice giants, and gas giants. Unrecognized body classes fall back to a terrestrial-style composition, and geological-activity defaults include random values. The current initializer therefore does not establish a dedicated icy-moon composition simply because the body is a moon; this is a concrete area to review when that body type becomes a simulation target.
 - **Biosphere:** Includes biome, vegetation, life-form, population, food-web, and atmospheric-effect routines. The inspected service also contains fallback atmospheric changes when no life forms are present; these simplified defaults require review before being relied upon for natural-world projections.
 - **Tests:** TerraSim orchestration and individual sphere services have RSpec coverage. The inspected simulator spec mocks the individual sphere services, so its orchestration tests do not validate the physical accuracy of coupled planetary evolution.
 
@@ -127,6 +128,8 @@ When the relevant simulation work is prioritized, evaluate:
 5. Can the same engine represent natural evolution, historical forcing, external events, and intentional interventions distinctly?
 6. Which gaps are missing processes, inaccurate parameters, data-quality limitations, or uncertainty in planetary science?
 7. Which body-specific behaviors can be expressed as configuration or process selection, and which genuinely require new model structure?
+8. What is the authoritative meaning and unit of hydrosphere `state_distribution` (surface coverage, phase fraction, or another measure), and how should it represent vapor versus gas?
+9. How should geosphere initialization handle moons and other body classes that do not match the current terrestrial/carbon/ice-giant/gas-giant cases?
 
 These are evaluation questions, not immediate implementation tasks.
 
