@@ -15,7 +15,12 @@ last_updated: 2026-11-09
 
 The game clock is a shared foundation for simulation systems. Construction, production, resource consumption, craft travel, AI Manager activity, communications, and other time-dependent behavior need to agree on the same game-time progression.
 
-The older design and UI documentation describes a **continuous, speed-controlled simulation while running**, rather than a turn-based game. However, its listed pause and explicit time-jump controls belong to the **pre-player buildout phase**, not normal player pacing. During buildout, the operator can pause, inspect and correct the AI-managed world, and deliberately jump the simulation forward. Once player gameplay begins, the universe continues at one shared, centrally determined simulation rate. **Players do not control simulation speed, pause the universe, or manually jump the calendar.** Manual calendar jumps and buildout pause controls are not part of the player experience. This should not be confused with an always-on world that necessarily advances while the player is away. Whether offline wall-clock time should count remains OPEN. Real elapsed time is an input to the active simulation, while the game clock remains the shared timeline. The game-time rate and processing cadence must be tunable independently so the experience remains responsive without making delays feel arbitrary.
+GalaxyGame has two distinct time-progression regimes separated by the **Snap** event:
+
+- **Pre-Snap universe buildout:** Before the Snap, the simulation can be accelerated, paused, and deliberately advanced to test systems and build out the early-game universe. This is an operator/development regime for preparing and validating the AI-managed universe; it is not the player-facing pacing model.
+- **Post-Snap shared universe:** After the Snap, the universe runs on one shared, centrally determined simulation rate, including when players enter and begin playing. Players do not control simulation speed, pause the universe, or manually jump the calendar. Player entry does not switch the universe into a different per-player clock or grant individual time controls.
+
+Both regimes must preserve a coherent authoritative game-time timeline and coordinated subsystem processing. The pre-Snap acceleration controls are for preparing the universe before the post-Snap shared simulation regime; they must not be confused with player-facing speed controls. This distinction does not by itself settle whether offline wall-clock time counts. Whether offline progression should be applied remains OPEN. Real elapsed time is an input to active simulation, while the game clock remains the shared timeline. Game-time rate and processing cadence must be tunable independently.
 
 ---
 
@@ -64,7 +69,8 @@ The same principle applies to construction completion, craft transit, resource p
 
 ## OPEN — decisions and tuning
 
-- What universe-wide game-time rate provides the right balance of meaningful delay and player responsiveness, and who/what is authorized to change it?
+- What post-Snap universe-wide game-time rate provides the right balance of meaningful delay and player responsiveness, and who/what is authorized to change it?
+- What pre-Snap acceleration settings and operator controls are appropriate for testing and building out the early-game universe?
 - Should the simulation advance while the application/server is offline, or should offline time be excluded? This must be explicit rather than an accidental consequence of timestamp handling.
 - What is the minimum useful processing interval for each subsystem, and which systems need event-boundary processing rather than periodic ticks?
 - How should a delayed or failed worker recover unprocessed elapsed time without duplicate side effects?
@@ -91,7 +97,7 @@ The older documentation was reviewed alongside the current code. These documents
 
 ### Synthesis and boundaries
 
-The durable direction is a continuously advancing shared universe at one universe-wide rate during player gameplay. The pre-player buildout phase additionally has operator pause and explicit time-jump controls for preparing and validating the AI-managed world. Players do not control the shared rate or pause/jump the universe. This is not the same as requiring offline progression. The old documentation does not settle whether elapsed wall-clock time while the game/server is offline should be applied on return.
+The durable direction is two lifecycle regimes separated by the Snap: pre-Snap acceleration/pause/time-jump controls for testing and building out the early universe, followed by a post-Snap shared simulation rate that remains in effect when players enter. Players do not control the shared post-Snap rate or pause/jump the universe. This is not the same as requiring offline progression. The old documentation does not settle whether elapsed wall-clock time while the game/server is offline should be applied on return.
 
 The old UI examples also mix client-side clock advancement, rendering cadence, server polling, and persistence. They are useful evidence of historical intent and prototype evolution, but they must not be treated as a current design contract. The current code needs to establish one authoritative game-time progression and ensure visual polling cannot independently consume elapsed time that simulation systems have not processed.
 
@@ -101,12 +107,14 @@ The exact universe-wide rate, its tuning, who may change it during operation, pl
 
 ## ESTABLISHED INTENT — pre-player buildout vs player gameplay (owner, 2026-11-09)
 
-- **Pre-player buildout:** pause and manual time jumps are operator tools used while the AI Manager prepares the world. They allow inspection, correction, and deliberate advancement before player entry.
-- **Player gameplay:** all players share one universe-wide simulation rate. Individual players have no speed control, cannot pause the universe, and cannot manually jump the calendar.
-- **Shared simulation:** both phases use the same authoritative game-time basis and coordinated subsystem processing. A buildout time jump must process the world consistently; it must not simply alter the displayed date or stored clock.
-- **Communications and other ETAs:** remain expressed in game time. During player gameplay, the shared universe-wide rate determines how quickly those intervals elapse in real time.
+## ESTABLISHED INTENT — Pre-Snap buildout vs post-Snap shared universe (owner, 2026-11-14)
 
-This clarification supersedes any older UI/task wording that appears to give individual players speed, pause, or manual time-jump controls. It does not settle offline progression, final speed multipliers, or processing cadence.
+- **Pre-Snap buildout:** The universe can be accelerated, paused, and deliberately advanced to test systems and build out the early-game universe before the Snap. These controls support development, simulation testing, and preparation of the AI-managed starting universe.
+- **Post-Snap shared universe:** After the Snap, the simulation proceeds at one shared, centrally determined rate. This remains true when players enter; player entry does not create a new time regime or grant players individual speed, pause, or calendar-jump controls.
+- **Shared simulation:** Both regimes use a coherent authoritative game-time basis and coordinated subsystem processing. A pre-Snap acceleration or time jump must process the world consistently; it must not simply alter the displayed date or stored clock.
+- **Communications and other ETAs:** Remain expressed in game time. In the post-Snap shared universe, the common simulation rate determines how quickly those intervals elapse in real time.
+
+This clarification supersedes older UI/task wording that appears to give individual players speed, pause, or manual time-jump controls. It does not settle offline progression, final pre-Snap acceleration settings, post-Snap rate tuning, or processing cadence.
 
 ---
 
