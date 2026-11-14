@@ -118,7 +118,11 @@ Active parameters (verified via constructor):
 
 **Spheres (one-to-one associations):** Atmosphere, Biosphere, Geosphere, Hydrosphere — all in `CelestialBodies::Spheres::` namespace.
 
-The sphere models provide the data organization for a celestial body's environmental and physical systems; they are not a requirement that every body type use identical Earth-like properties or simulation behavior. The models can be adjusted or extended for different kinds of bodies. TerraSim's initial scope is narrower: it focuses on environmental processes and sphere interactions needed for planetary terraforming. Broader natural-environment modeling for non-terraforming bodies (for example, ice moons) may require different interactions among spheres in a future expansion, but is not an initial TerraSim requirement.
+The sphere models provide the data organization for a celestial body's detailed environmental and physical systems; they do not require every body type to have identical Earth-like properties or simulation behavior. The architecture is intended to accommodate different kinds of bodies and can be adjusted or extended as needed.
+
+TerraSim models how these systems interact and evolve. Its purpose is broader than terraforming: natural-state simulation, historical calibration, environmental events, forward projection, and intentional modification are all within its intended role. The initial gameplay emphasis on terraforming does not make terraforming a prerequisite for simulation. See [TerraSim — Environmental Simulation, Calibration & Evolution](../technical/terrasim.md) for the canonical intent. Detailed sphere data ownership and interaction boundaries are documented in [Celestial-Body Sphere Models & Environmental Interactions](../technical/sphere_models_and_interactions.md).
+
+Different body types may require different processes and sphere interactions. Ice-moon processes, for example, may involve an ice shell, subsurface ocean, rocky interior, tidal heating, and cryovolcanism. These are future modeling considerations to evaluate when relevant; they do not require immediate expansion or a separate simulation engine.
 
 ### 2.4 Star Naming Architecture (Active Code)
 

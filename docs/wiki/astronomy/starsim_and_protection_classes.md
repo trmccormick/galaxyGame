@@ -9,6 +9,8 @@
 This document defines the backend astrophysics subsystems governing stellar environment effects, orbital dynamics under prolonged radiation pressure, magnetic shielding physics, and the Planetary Protection Class (PPC) framework for biological contamination risk management across all procedurally generated solar systems. All content is target design intent; no runtime enforcement currently exists in code.
 
 **Cross-link:** For StarSim procedural system generation and CelestialBody model contracts, see **[StarSim Procedural Generation](../design/starsim_and_protection_classes.md)**.
+
+**Sphere and simulation relationship:** StarSim supplies generated celestial bodies and their initial data; sphere data ownership and TerraSim's environmental interactions are defined in [Celestial-Body Sphere Models & Environmental Interactions](../technical/sphere_models_and_interactions.md) and [TerraSim — Environmental Simulation](../technical/terrasim.md).
 **Cross-link:** For ISRU fabrication chain feedstock qualification and CNT composite production, see **[ISRU Fabrication Chain](../technical/isru_fabrication_chain.md)**.
 **Cross-link:** For atmospheric harvesting of CO₂ and N₂ from Venus/Titan analog bodies, see **[Atmospheric Harvesting](../infrastructure/atmospheric_harvesting.md)**.
 **Cross-link:** For pre-player-era logistics pipeline governing transit decay, delta-v expenditure equations, and depot warehousing, see **[Pre-Player Era Logistics Pipeline](../infrastructure/pre_player_era_logistics_pipeline.md)**.

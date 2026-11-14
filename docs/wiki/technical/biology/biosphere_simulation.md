@@ -1,12 +1,11 @@
 # Biosphere Simulation Technical Reference
 
-> **Scope clarification — TerraSim:** This page describes biosphere behavior and sphere interactions in the context of the game's initial terraforming-focused simulation. It is not a specification for comprehensive environmental simulation of every celestial-body type. The sphere models are adaptable to different kinds of worlds; TerraSim's interaction rules may need to differ or expand for non-terraforming bodies such as ice moons if broader natural-world simulation becomes a future goal. Do not treat the terraforming-specific gates, assumptions, or update sequence below as universal rules for every body type.
+> **Scope clarification — TerraSim (2026-11-14):** TerraSim's foundational purpose includes natural-world simulation and projection, historical calibration, environmental events, and intentional modification such as terraforming. This page covers a narrower set of biosphere and terraforming-oriented behaviors; its gates, assumptions, and proposed update sequence are not universal rules for every celestial-body type. The sphere models are intended to accommodate different kinds of worlds, while TerraSim's physical interaction rules must be appropriate to each modeled body. Broader ice-moon process modeling is a future use case, not a requirement to expand the initial terraforming-focused work.
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-01  
-> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
+> *Audit Summary:* This page is a design-intent specification; individual implementation details require separate verification.
 
-> **Wiki section:** Technical · Biology · **Status:** target design — simulation interface, state gates, and scoring formulas.  
-> **Architectural source:** [`docs/architecture/biology/terrasim_service.md`](../../../architecture/biology/terrasim_service.md), [`biology_models.md`](../../../architecture/biology/biology_models.md).
+> **Related wiki pages:** [TerraSim — Environmental Simulation](../terrasim.md), [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md).
 
 ---
 
