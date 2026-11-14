@@ -30,6 +30,8 @@ The Snap is therefore a physical consequence of the unbalanced aperture + accumu
 
 The Snap drives Sol corporations and the AI Manager to research wormholes more aggressively. That work develops artificial wormhole technology and ultimately reconnects Sol to Eden through an artificial wormhole, reaching the settlements that were already established before the Snap. This later reconnection is distinct from the Snap itself.
 
+The Sol-side organizations involved in the broader institutional response are pre-existing actors, not entities invented by the Snap. **Terragen** already has terraforming expertise from the Mars and Venus experiments by the time the natural wormhole opens. **LDC (Lunar Development Corporation)** is the founding Development Corporation: it sponsors the other Development Corporations and also serves as the GCC mint. Established logistics corporations, including **AstroLift, Zenith Orbital, and Vector Hauling**, bring relevant transportation and network capabilities. These roles inform the origins of the Wormhole Transit Consortium (WTC); the exact formal founding roster and governance remain OPEN.
+
 ---
 
 ## Isolation Conditions
