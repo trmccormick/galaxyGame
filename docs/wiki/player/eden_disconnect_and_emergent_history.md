@@ -1,7 +1,7 @@
 # Eden Disconnect and Emergent History
 
 **Status**: OPEN  
-**Last Updated**: 2026-11-05  
+**Last Updated**: 2026-11-14  
 **Related**: [settlement_progression_and_footholds.md](settlement_progression_and_footholds.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [portals_and_aws.md](../technical/portals_and_aws.md), [natural_wormholes_and_em.md](../technical/natural_wormholes_and_em.md), existing snap-event and post-snap reconnection material
 
 This page is the wiki home for the state of the Eden system after the Snap / disconnect event. Prior documentation covers the Snap itself and reconnection protocols. This page records the emergent post-isolation outcome space and ties it to the actual wormhole physics that caused the Snap.
@@ -16,7 +16,7 @@ The state of Eden when players first reach it is **not pre-scripted**. It emerge
 
 ## Why the Snap Occurs (Physics Ground Truth)
 
-Eden’s natural wormhole (NWH) aperture was never properly mass-anchored. Unlike the Sol side (stabilized by Jupiter-scale mass), Eden lacked an equivalent large mass body at the aperture.
+Eden’s natural wormhole (NWH) aperture was never properly mass-anchored. Unlike the Sol side, whose comparatively greater stability is already established by Jupiter's mass and placement providing a significant counterbalance, Eden lacked an equivalent large mass body at the aperture. The Sol-side counterbalance explanation is established design context, not an unresolved question.
 
 Consequences:
 - Chronic instability.
