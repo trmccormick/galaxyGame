@@ -22,10 +22,10 @@ Currency, ledgers, and market friction for off-world play.
 
 | Topic | Deep Spec |
 |-------|-----------|
-| Ledger/account model internals | [Modular Containers](../../architecture/core/modular_containers.md) — core persistence contracts for inventory and containers |
-| Cost schema consumption | [Cost Schema Consumption Guide](../../developer/COST_SCHEMA_CONSUMPTION_GUIDE.md) — price computation from blueprint data |
-| Data-driven config loading | [Data-Driven Systems](../../developer/DATA_DRIVEN_SYSTEMS.md) — YAML/Rails config patterns for financial parameters |
-| NPC pricing logic | [AI Manager Role Spec](../../architecture/ai_manager/AI_MANAGER_ROLE.md) — EAP anchor mechanics, player-first order layer |
+| Ledger/account model internals | Modular Containers (`docs/architecture/core/modular_containers.md`, frozen doc) — core persistence contracts for inventory and containers |
+| Cost schema consumption | Cost Schema Consumption Guide (`docs/developer/COST_SCHEMA_CONSUMPTION_GUIDE.md`, frozen doc) — price computation from blueprint data |
+| Data-driven config loading | Data-Driven Systems (`docs/developer/DATA_DRIVEN_SYSTEMS.md`, frozen doc) — YAML/Rails config patterns for financial parameters |
+| NPC pricing logic | AI Manager Role Spec (`docs/architecture/ai_manager/AI_MANAGER_ROLE.md`, frozen doc) — EAP anchor mechanics, player-first order layer |
 
 > **Cross-link:** For the authoritative pre-player-era logistics routing (Mars cycler hub network, MK1/MK2/MK3 HLT gating, Venus-Luna chemical loop), see **[Station Construction Options](../engineering/station_construction_options.md)**.
 
