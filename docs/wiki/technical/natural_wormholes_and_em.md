@@ -37,6 +37,21 @@ The Eden-side wormhole was less stable and snapped before EM stabilization techn
 
 The Snap becomes the catalyst for Sol corporations and the AI Manager to pursue wormhole research more aggressively. That research ultimately develops artificial wormhole technology, enabling a new artificial connection from Sol to the already-established settlements in Eden. The later opening of that artificial connection is separate from the Snap itself and is the point after which player access can begin. See [Eden Disconnect and Emergent History](../player/eden_disconnect_and_emergent_history.md) and [Portals & AWS](portals_and_aws.md).
 
+### Sol organizations and the origins of the WTC
+
+**OWNER-CONFIRMED ORGANIZATIONAL CONTEXT — 2026-11-14**
+
+The Wormhole Transit Consortium (WTC) grows out of cooperation among established Sol organizations; it should not be described as an institution created from nothing after the Eden Snap. Its participants include established logistics/infrastructure corporations and the pre-existing Terragen terraforming organization. Terragen's expertise comes from the Mars and Venus terraforming experiments and is already established by the time the natural Sol–Eden wormhole opens.
+
+The organizational roles already confirmed are:
+
+- **LDC — Lunar Development Corporation:** the founding Development Corporation. LDC sponsors the other Development Corporations and also serves as the GCC mint.
+- **Terragen:** an established terraforming organization, not to be relabeled as a corporation or treated as a post-Snap creation. It brings the experience and technology developed through the Mars and Venus terraforming experiments.
+- **AstroLift, Zenith Orbital, and Vector Hauling:** established logistics corporations whose transportation and network expertise are relevant to the WTC's inter-system infrastructure.
+- **Other Development Corporations:** participate in the broader development/corporate collaboration; LDC's role as their founding sponsor must be preserved.
+
+This records confirmed identities and roles without assuming that every organization listed in older source material was a formally named WTC founding member at the same moment. The exact legal founding roster, governance arrangements, and formation sequence remain OPEN.
+
 ## 3. EM ejection and harvesting
 
 Natural wormholes produce excess EM in local space through their behavior:
