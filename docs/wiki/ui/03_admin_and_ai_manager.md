@@ -46,11 +46,13 @@ Admin capabilities should include appropriate generator configuration and contro
 
 ### TerraSim
 
-TerraSim is the planetary/environmental simulation engine. Its **initial modeling focus is environmental simulation in support of planetary terraforming**: calculating relevant environmental conditions and their evolution, including modeled atmospheric composition, temperature, climate, hydrology, and interactions among the spheres needed for those objectives. It is responsible for environmental simulation results, not autonomous terraforming decisions.
+TerraSim is the general-purpose planetary/environmental simulation engine. It models a world's existing natural state and evolution, environmental events and disturbances, and the consequences of intentional environmental modification. **Terraforming is one application of TerraSim, not its defining purpose.**
 
-The sphere models are intended to represent different kinds of celestial bodies and can be extended or adjusted as needed. TerraSim's initial terraforming focus does not imply that every celestial body must be modeled as an Earth-like terrestrial planet, nor that the initial engine must comprehensively simulate every natural process on every kind of world. In particular, ice moons and other bodies that are not current terraforming targets may require different environmental processes and different interactions among spheres if/when broader natural-world simulation becomes a goal. That broader capability is future scope, not a current requirement.
+The foundational design intent, including historical calibration against Earth, Mars, and Venus; generalization to procedural and poorly characterized worlds; uncertainty handling; and the distinction between sphere data and cross-sphere processes, is recorded in [TerraSim — Environmental Simulation, Calibration & Evolution](../technical/terrasim.md).
 
-When TerraSim's scope expands, review the relevant sphere interactions and dependencies together; do not assume that changing an individual sphere model alone is sufficient. Conversely, do not add comprehensive non-terraforming-world simulation to the initial TerraSim scope without an explicit requirement.
+The sphere models organize detailed physical and environmental data for different kinds of celestial bodies. TerraSim models the processes and interactions among those systems. The architecture should remain extensible; body-specific processes and interactions can be added when their use cases are prioritized. Broader ice-moon modeling is a future consideration, not a reason to expand current implementation scope prematurely.
+
+TerraSim calculates environmental results and consequences; it does not choose terraforming objectives or autonomously operate terraforming programs. AI Manager owns autonomous operational decisions. Digital Twin provides an Admin/developer workspace for inspecting, comparing, evaluating, and tuning simulations.
 
 Admin controls should expose supported model configuration, parameter/preset tuning, run state, inspection, and operational options. The exact screen breakdown and supported editable parameters remain OPEN.
 
