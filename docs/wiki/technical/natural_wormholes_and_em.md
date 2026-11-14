@@ -25,6 +25,14 @@ No natural wormhole should be described as simply “stable” or permanently sa
 
 Exact physical equations, mass thresholds, stability curves, yields, and time windows remain OPEN.
 
+**WORKING DESIGN DIRECTION — OWNER EXPECTATION, 2026-11-14**
+
+The physical scale of a natural wormhole may be related to both the power required to sustain it and the amount/rate of mass it can pass. Treat aperture size, available transit power, instantaneous or rate-based throughput, and cumulative per-aperture mass endurance as related but distinct quantities. Do not collapse them into one unexplained mass-limit number or assume a linear relationship before the model is worked out.
+
+The initial Sol–Eden natural connection must have enough practical capacity and endurance to remain usable through the establishment of several Eden settlements and construction of the wormhole station. This is a scenario-level calibration requirement for the emergent history: the connection must support the necessary people, equipment, construction materials, and repeated logistics traffic before the historical Eden Snap occurs. The Snap should still emerge from modeled traffic, stabilization, and wormhole conditions rather than from a fixed narrative timer or a deliberately scheduled event.
+
+The exact aperture dimensions, power requirements, throughput rates, cumulative mass limits, settlement count, construction tonnage, and elapsed time are not yet specified. The initial scenario should be tested against a plausible logistics/buildout load once those requirements and the relevant cargo/structure masses are available.
+
 ## 2. Sol's natural wormhole and the Eden historical event
 
 **ESTABLISHED SCENARIO INTENT — 2026-11-13**
@@ -187,7 +195,9 @@ This is a focused source snapshot, not a complete audit of every wormhole-relate
 
 ## 9. Open questions
 
-- The numerical mass-limit value for each aperture, its units, and the quantitative accumulation/EM-restoration rules. The conceptual rule is established: EM pushback resets the accumulated usage for the aperture receiving it, independently of the paired aperture.
+- Numerical aperture size, sustaining-power requirements, and the relationship between aperture scale/power and mass throughput.
+- The numerical cumulative mass-limit value for each aperture, its units, and the quantitative accumulation/EM-restoration rules. The conceptual rule is established: EM pushback resets the accumulated usage for the aperture receiving it, independently of the paired aperture.
+- The initial Sol–Eden connection's required logistics endurance: enough aggregate throughput for several Eden settlements and construction of the wormhole station before the emergent historical Snap. Exact settlement count, cargo/build tonnage, and time window are not yet specified.
 - Quantitative relation between mass throughput and EM ejection.
 - Relative stability calculation and the influence of mass placement/orbital geometry.
 - EM capture efficiency, storage/buffer limits, return efficiency, and stabilization power demand.
