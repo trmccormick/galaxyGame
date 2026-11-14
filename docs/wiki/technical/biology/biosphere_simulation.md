@@ -1,4 +1,6 @@
 # Biosphere Simulation Technical Reference
+
+> **Scope clarification — TerraSim:** This page describes biosphere behavior and sphere interactions in the context of the game's initial terraforming-focused simulation. It is not a specification for comprehensive environmental simulation of every celestial-body type. The sphere models are adaptable to different kinds of worlds; TerraSim's interaction rules may need to differ or expand for non-terraforming bodies such as ice moons if broader natural-world simulation becomes a future goal. Do not treat the terraforming-specific gates, assumptions, or update sequence below as universal rules for every body type.
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-01  
 > *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
