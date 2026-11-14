@@ -213,7 +213,6 @@ The exact calendar date and detailed readiness criteria remain OPEN; the infrast
 - Exact orbital elements (semi-major axes, eccentricities, inclinations) for all bodies
 - Star mass, radius, luminosity, temperature values
 - Habitable zone boundaries in AU
-- Natural wormhole mouth location within Sol system
 - Precise post-reconnection state of Eden (Ghost / Remnant / Expanding bands are possible outcomes)
 - Exact EM yield curve and units
 - Stabilization-satellite and feed-back rates
