@@ -60,6 +60,28 @@ StarSim generates and populates the cosmic canvas (stars, planets, orbital eleme
 | **Path C — Prize Target System** | Special generation mode | Ensures first 3 wormhole shift events produce a system containing at least one prize template planet (`TPL-A01` or `TPL-A05`) from `alien_world_templates_v1.1.json`. |
 | **Path D — Accretion Mode** | `use_accretion: true` | `AccretionSimulationService` per star using dust disk model (inner 0.1 AU, outer 40 AU, band width 0.5 AU). Asteroids not produced by accretion mode. |
 
+## StarSim Scope: System Generation and Additional Space Objects
+
+**ESTABLISHED / CURRENT CODE:** StarSim procedurally generates stars and planetary systems. The current generation path includes several celestial-body categories; the active seed format and generation behavior are documented in [System Blueprints & Procedural Generation Spec](../astronomy/system_blueprints.md).
+
+**DIRECTION:** StarSim may also be responsible for generating or populating additional objects in space that are not part of the major star-system generation pass. Examples include asteroids, comets, Kuiper Belt objects, Oort Cloud objects, and other small bodies. Preserve the distinction between initial system generation and any additional population process rather than assuming they must be one operation.
+
+**OPEN:** The exact boundary between StarSim and a possible separate Spawning System is not settled. Nor is it settled whether additional object population is a one-time initial-generation operation or includes ongoing spawning, replenishment, migration, and lifecycle management. Do not treat those responsibilities as implemented or finalized merely because related object models or partial generation code exist.
+
+### Resource generation ownership — OPEN
+
+It is possible that StarSim should generate initial resource locations or distributions as part of world generation. Candidate examples include geological deposits on planets and moons, lunar permanently shadowed region (PSR) ice, and resources associated with asteroids or other small bodies. This is a design possibility requiring further planning, not a locked StarSim responsibility.
+
+Keep the following concerns separate:
+- initial generation of resource distributions and plausible deposit locations;
+- survey-triggered discovery or placement of deposits not represented as confirmed data;
+- total resource quantities, geological plausibility, and accessibility;
+- extraction, depletion, replenishment, and economic use after generation.
+
+Existing design material has assigned survey-triggered deposit placement to AI Manager. That is prior design direction and must be reconciled with the possible StarSim role; it does not settle the ownership question. Which system owns each concern—and whether responsibilities are shared across StarSim, TerraSim, AI Manager, or a separate resource/spawning service—remains OPEN.
+
+---
+
 ### 2.2 ProceduralGenerator Configuration
 
 Active parameters (verified via constructor):
