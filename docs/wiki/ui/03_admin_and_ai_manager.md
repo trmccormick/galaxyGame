@@ -46,7 +46,13 @@ Admin capabilities should include appropriate generator configuration and contro
 
 ### TerraSim
 
-TerraSim is the planetary/environmental simulation engine. It calculates environmental conditions and their evolution, including modeled atmospheric composition, temperature, climate, hydrology, and other environmental processes. It is responsible for environmental simulation results, not autonomous terraforming decisions. Admin controls should expose supported model configuration, parameter/preset tuning, run state, inspection, and operational options. The exact screen breakdown and supported editable parameters remain OPEN.
+TerraSim is the planetary/environmental simulation engine. Its **initial modeling focus is environmental simulation in support of planetary terraforming**: calculating relevant environmental conditions and their evolution, including modeled atmospheric composition, temperature, climate, hydrology, and interactions among the spheres needed for those objectives. It is responsible for environmental simulation results, not autonomous terraforming decisions.
+
+The sphere models are intended to represent different kinds of celestial bodies and can be extended or adjusted as needed. TerraSim's initial terraforming focus does not imply that every celestial body must be modeled as an Earth-like terrestrial planet, nor that the initial engine must comprehensively simulate every natural process on every kind of world. In particular, ice moons and other bodies that are not current terraforming targets may require different environmental processes and different interactions among spheres if/when broader natural-world simulation becomes a goal. That broader capability is future scope, not a current requirement.
+
+When TerraSim's scope expands, review the relevant sphere interactions and dependencies together; do not assume that changing an individual sphere model alone is sufficient. Conversely, do not add comprehensive non-terraforming-world simulation to the initial TerraSim scope without an explicit requirement.
+
+Admin controls should expose supported model configuration, parameter/preset tuning, run state, inspection, and operational options. The exact screen breakdown and supported editable parameters remain OPEN.
 
 ### AI Manager
 
