@@ -189,7 +189,7 @@ The deterministic expansion sequence that bootstraps all Sol infrastructure:
 | **Lunar Development Corporation (LDC)** | Manages initial lunar settlements |
 | **AstroLift** | Primary early logistics corporation; operates orbital logistics including LEO depots, cyclers, and tugs |
 | **Venus Development Corporation (VDC)** | Cloud cities, Venus atmospheric harvesting operations |
-| **Wormhole Consortium** | Develops artificial wormhole technology and manages the inter-system artificial-wormhole network; detailed governance, ownership, and operating rules remain OPEN |
+| **Wormhole Transit Consortium (WTC)** | Develops artificial wormhole technology and manages the inter-system artificial-wormhole network; detailed governance, ownership, and operating rules remain OPEN |
 | **Saturn/Titan Administration (SDC/TDC)** | Saturn system administration, Titan mining colony operations |
 
 ---
