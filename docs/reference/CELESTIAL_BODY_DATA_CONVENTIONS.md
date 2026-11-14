@@ -1,6 +1,6 @@
 # Celestial Body Data Conventions
 **Created**: 2026-05-01
-**Last Updated**: 2026-05-02
+**Last Updated**: 2026-11-14
 **Location**: /docs/reference/asset-generation/CELESTIAL_BODY_DATA_CONVENTIONS.md
 
 ---
@@ -328,4 +328,4 @@ flag it as a gap — do not embed inline as a workaround.
 |---|---|---|
 | 2026-05-01 | Established psr_deposits standard, sphere separation rules | Claude (Session Strategist) |
 | 2026-05-01 | Removed cross-sphere contamination from Luna stored_volatiles | Manual edit |
-| 2026-05-02 | Full document written incorporating geological gas pocket model, TerraSim integration notes, atmosphere model reuse pattern | Claude (Session Strategist) |
+| 2026-05-02 | Full document written incorporating geological gas pocket model, TerraSim integration notes, atmosphere model reuse pattern | Claude (Session Strategist) |\n| 2026-11-14 | Clarified that procedural resource-deposit generation ownership and triggering system remain open; retained prior AI Manager assignment as historical direction only | ChatGPT |
