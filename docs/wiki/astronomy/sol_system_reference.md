@@ -108,7 +108,7 @@ Jupiter's massive gravity well provides a critical stabilizing function for the 
 
 **ESTABLISHED SCENARIO INTENT — 2026-11-13**
 
-Sol has a natural wormhole mouth associated with the historical Eden connection. Jupiter's placement opposite the Sol-side mouth provides a substantial counterbalance, making the Sol mouth comparatively more stable than the historical Eden-side mouth. This is relative stability, not permanent or absolute stability: natural EM ejection and mass-throughput behavior still apply.
+Sol has a natural wormhole mouth associated with the historical Eden connection at the Jupiter–Sun L3 point, 180° opposite Jupiter. Jupiter's mass provides a substantial gravitational counterbalance, making the Sol mouth comparatively more stable than the historical Eden-side mouth. This is relative stability, not permanent or absolute stability: natural EM ejection and mass-throughput behavior still apply.
 
 The Eden-side mouth was less stable and snapped before EM stabilization technology was developed. The later capture-and-return stabilization technology grew from the lessons of that event.
 
