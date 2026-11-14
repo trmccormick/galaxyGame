@@ -39,11 +39,13 @@ Galaxy Game operates across two distinct simulation scales with a hard boundary 
 | **Job model** | Production tasks with status transitions (in_progress → ready_to_claim → claimed) | `app/models/job.rb` | Active |
 | **ManufacturingService** | Player-facing unit assembly pipeline | `app/services/manufacturing_service.rb` | Active |
 
-### The Boundary Between Scales
+### The Boundary Between Generation and Simulation
 
-StarSim generates and populates the cosmic canvas (stars, planets, orbital elements, atmosphere composition, biosphere state). Unit-level simulation operates within that canvas via tick-driven entities that read celestial properties (gravity, surface temperature, atmospheric pressure) but never modify the StarSim seed or system generator output.
+StarSim generates the initial cosmic canvas and system-generation data, including stars, planets, orbital elements, and initial body properties. Its generated seed/output is the baseline for a system; downstream simulation must not rewrite that original generation record.
 
-**There is no cross-scale mutation:** CelestialBody attributes are immutable after StarSim generation completes. Unit entities consume those values; they do not change them.
+TerraSim is responsible for calculating environmental conditions and their evolution over time, including modeled atmospheric composition, temperature, climate, hydrology, and other environmental processes. The live/persisted planetary state may therefore evolve under TerraSim; it must not be confused with the immutable historical StarSim generation seed.
+
+Unit-level simulation operates within the generated and evolving world via tick-driven entities. Units read relevant celestial/environmental properties for their operations, but do not directly rewrite the StarSim seed or independently take ownership of planetary environmental evolution. The exact service/model interfaces between StarSim, TerraSim, and other systems require code-level validation.
 
 ---
 
