@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established dashboard separation; individual workspaces and layouts remain DIRECTION / OPEN  
-> **Last Updated:** 2026-11-13
+> **Last Updated:** 2026-11-14
 
 # Admin Dashboard and AI Manager
 
