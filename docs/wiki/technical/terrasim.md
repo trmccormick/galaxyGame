@@ -123,7 +123,11 @@ Use the following questions to guide that evaluation:
 
 Existing capabilities may already satisfy some or much of this direction. This is a framework for future evaluation and tuning, not an instruction to rebuild working systems or expand every model immediately.
 
-## 7. Scope boundary
+## 7. Sphere-model reference
+
+Detailed sphere data ownership and the relationship between sphere state and TerraSim's cross-sphere processes are documented in [Celestial-Body Sphere Models & Environmental Interactions](sphere_models_and_interactions.md). That page also records a focused implementation snapshot and identifies where current service behavior is simplified or incomplete.
+
+## 8. Scope boundary
 
 The initial implementation and gameplay emphasis has been planetary terraforming, especially worlds such as Mars and Venus. That priority does not narrow TerraSim's underlying purpose to intentional world modification. Natural-state simulation, historical calibration, and event modeling are foundational capabilities and validation goals for the engine.
 
