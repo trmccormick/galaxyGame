@@ -29,7 +29,7 @@ Exact physical equations, mass thresholds, stability curves, yields, and time wi
 
 **ESTABLISHED SCENARIO INTENT — 2026-11-13**
 
-Sol's natural wormhole is comparatively more stable because of its placement opposite Jupiter, whose mass provides a significant counterbalance. This does not make the wormhole intrinsically or permanently stable, and it still has natural EM ejection and mass-throughput behavior.
+Sol's natural wormhole is located at the Jupiter–Sun L3 point, 180° opposite Jupiter. Jupiter's mass provides the significant gravitational counterbalance that makes the Sol-side mouth comparatively more stable. This does not make the wormhole intrinsically or permanently stable, and it still has natural EM ejection and mass-throughput behavior.
 
 For the current human-expansion gameplay scenario, Sol's natural wormhole remains present and does not shift or snap. The narrative is also currently planned around Sol's wormhole continuing to exist. This is a scenario/narrative treatment, not a permanent limitation on the underlying simulation: future scenarios or design changes may allow different outcomes. Keep the special treatment configurable or otherwise separable from general natural-wormhole mechanics.
 
