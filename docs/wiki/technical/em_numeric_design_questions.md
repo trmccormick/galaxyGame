@@ -1,11 +1,11 @@
 # EM Numeric Design Questions
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-11  
-> *Audit Summary:* Design intent specification (page status OPEN). Collects numeric design questions from related pages; no values invented.
+> *Last Audited:* 2026-11-14  
+> *Audit Summary:* Numeric design questions updated to distinguish the emergent historical Eden Snap from a separate deliberate Hammer-induced exit shift; no values invented.
 
 **Status**: OPEN  
-**Last Updated**: 2026-11-11  
+**Last Updated**: 2026-11-14  
 **Related**: [Natural wormholes & EM](natural_wormholes_and_em.md), [Portals & AWS](portals_and_aws.md)
 
 ---
@@ -28,7 +28,7 @@ Non-numeric design (physics, lore, institutional context) stays on those pages. 
 | 1.1 | What units is EM measured in? (e.g., mass-equivalent, energy-equivalent, abstract "units") | natural_wormholes_and_em.md |
 | 1.2 | What is the EM yield curve: how does EM release rate change as a function of aperture instability / degradation state? | natural_wormholes_and_em.md |
 | 1.3 | Does a stable wormhole produce any baseline EM, or only during ejection events? | natural_wormholes_and_em.md |
-| 1.4 | How much total EM does a controlled Snap release? | natural_wormholes_and_em.md |
+| 1.4 | How much total EM does an uncontrolled Snap release? | natural_wormholes_and_em.md |
 
 ---
 
@@ -64,13 +64,13 @@ Non-numeric design (physics, lore, institutional context) stays on those pages. 
 
 ---
 
-## 5. Controlled-Snap / Harvest-Window Yields
+## 5. Snap / Deliberate Exit-Shift and Harvest-Window Yields
 
 | # | Question | Source |
 |---|----------|--------|
 | 5.1 | How much EM does a **degrading aperture** eject per time unit as instability increases? | natural_wormholes_and_em.md |
-| 5.2 | What is the total EM yield of a **controlled Snap** event? | natural_wormholes_and_em.md |
-| 5.3 | What is the duration of the harvest window before a Snap (how long can players harvest before closure)? | natural_wormholes_and_em.md |
+| 5.2 | What is the total EM yield, if any, of a **deliberate Hammer-induced exit shift**? (Distinct from the uncontrolled Eden Snap.) | natural_wormholes_and_em.md |
+| 5.3 | How long does a useful EM-harvesting opportunity persist before an uncontrolled Snap? | natural_wormholes_and_em.md |
 | 5.4 | Is there a maximum EM yield cap per wormhole mouth, or does it scale indefinitely with degradation? | natural_wormholes_and_em.md |
 
 ---
@@ -80,7 +80,7 @@ Non-numeric design (physics, lore, institutional context) stays on those pages. 
 | # | Question | Source |
 |---|----------|--------|
 | 6.1 | What are the **mass-threshold units** and time windows for a natural wormhole mouth? | natural_wormholes_and_em.md |
-| 6.2 | What is the **triggering mass** required for a controlled Snap, and how does it relate to the mass threshold? | natural_wormholes_and_em.md |
+| 6.2 | What mass/throughput conditions are required for a deliberate Hammer-induced exit shift, and how do they differ from the modeled conditions that produce an uncontrolled Snap? | natural_wormholes_and_em.md |
 | 6.3 | What are the **stabilization-satellite feed-back rates** (EM per unit time fed back into the throat)? | natural_wormholes_and_em.md |
 |6.4 | How many portal pairs can a settlement or hub host? (No hard cap is set.) | portals_and_aws.md |
 | 6.5 | What are the **Mark capacity tiers** and numeric mass filters for portal payloads? | portals_and_aws.md |
@@ -97,7 +97,7 @@ Non-numeric design (physics, lore, institutional context) stays on those pages. 
 | Stockpile & Saturation Limit | 4 | High — needed for all consumers to function |
 | Portal ignition & residual cost | 4 | High — main portal number to design |
 | AWS draw mechanics | 3 | High — inter-system logistics backbone |
-| Controlled-Snap / harvest yields | 4 | Medium — event-driven, not continuous |
+| Snap / deliberate exit-shift and harvest yields | 4 | Medium — event-driven, not continuous |
 | Other numeric gaps | 7 | Medium — fills remaining implementation gaps |
 
 **Total: 26 open numeric questions.** All values remain **OPEN**. No numbers are invented or proposed on this page.
