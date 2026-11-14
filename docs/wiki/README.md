@@ -125,6 +125,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [ISRU fabrication chain](technical/isru_fabrication_chain.md) | In-situ resource utilization fabrication pipelines |
 | [Biology — overview](technical/biology/README.md) | Biology subfolder: biosphere simulation, terraforming seeds |
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
+| [TerraSim — Environmental Simulation, Calibration & Evolution](technical/terrasim.md) | Natural-world simulation, historical calibration, sphere interactions, environmental events, terraforming, and future tuning direction |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
 | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | Mass threshold, counterbalance, EM ejection/harvest/reset; natural vs AWS pairing |
