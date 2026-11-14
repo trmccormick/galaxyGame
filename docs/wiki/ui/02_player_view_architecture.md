@@ -17,14 +17,13 @@ The Player Dashboard has exactly three primary views: Planetary, Surface, and Se
 
 | Context | Purpose | Scope |
 |---|---|---|
-| **Space** | System-wide space operations and spatial awareness | Ships, trajectories, destinations, missions, orbital infrastructure, stations, depots, shipyards, wormholes, EM fields and space phenomena |
 | **Planetary** | Whole-celestial-body conditions and change | Atmosphere, climate, hydrosphere, biosphere, geology, planetary-scale resources and environmental change |
 | **Surface** | Civilization-level activity across a celestial body's surface | Territories, settlements, resource development, infrastructure, transportation, moving units and surface operations |
 | **Settlement** | Management of one inhabited/developed settlement | Buildings and structures, population, services, utilities, production, inventory, logistics and development |
 
-These are distinct interaction contexts, not nested menus or merely camera zoom levels. Navigation may move between related contexts, but each has its own purpose and information hierarchy.
+These three primary views are distinct interaction contexts, not nested menus or merely camera zoom levels. Navigation may move between related views, but each has its own purpose and information hierarchy.
 
-**Space is separate from the three celestial-body contexts.** The three celestial-body contexts are exactly Planetary, Surface, and Settlement. Do not replace Settlement with Space or add Galaxy as a fifth Player view.
+**Space is separate from the three primary views.** It remains a Player context for system-wide spatial awareness and operations, but is not counted among Planetary, Surface, and Settlement. Do not replace Settlement with Space or add Galaxy as another Player view.
 
 ## Navigation and selection workspaces
 
