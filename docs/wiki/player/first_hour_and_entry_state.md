@@ -14,7 +14,6 @@ This page distills the 2026-11-04 owner and Gemini brainstorm into what a new pl
 - Players enter only after post-Snap research has produced full-scale artificial wormhole technology, the artificial Sol–Eden connection has opened to Eden's already-established settlements, and the required inter-system wormhole network and miniaturized intra-system portal technology are established for use. This is later than the Snap and the beginning of post-Snap research.
 - The first players pick a location that is **active**. They do not start at the unknown old Eden stations.
 - At entry, Sol is active, Eden's post-isolation condition is not yet known to incoming players, and System B is empty (owner, 2026-11-05).
-- At entry, **Sol is active, Eden is unknown, and System B is empty** (owner, 2026-11-05).
 - Eden's condition at the disconnect is **emergent**, not pre-scripted. See [Eden Disconnect and Emergent History](eden_disconnect_and_emergent_history.md).
 
 ### Where a player starts
