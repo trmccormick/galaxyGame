@@ -96,7 +96,7 @@ Mixed outcomes within a single system are expected and desirable.
 
 **ESTABLISHED DESIGN INTENT — owner, 2026-11-14**
 
-The Snap is the catalyst for more aggressive wormhole research by Sol corporations and the AI Manager. The research develops artificial wormhole technology, which opens an artificial connection from Sol to Eden and reconnects the already-established settlements. The Wormhole Consortium develops this technology and manages the inter-system wormhole network. Miniaturization of the artificial wormhole technology produces intra-system portals as an offshoot; portals provide rapid movement between equipped bases within a solar system. See [Portals & AWS](../technical/portals_and_aws.md).
+The Snap is the catalyst for more aggressive wormhole research by Sol corporations and the AI Manager. The research develops artificial wormhole technology, which opens an artificial connection from Sol to Eden and reconnects the already-established settlements. The Wormhole Transit Consortium (WTC) develops this technology and manages the inter-system wormhole network. Miniaturization of the artificial wormhole technology produces intra-system portals as an offshoot; portals provide rapid movement between equipped bases within a solar system. See [Portals & AWS](../technical/portals_and_aws.md).
 
 Players enter only after the artificial wormhole connection to Eden has been opened and the required network and portal technology are established. Player arrival is therefore later than both the Snap and the beginning of post-Snap research. The exact research duration and operational readiness criteria remain OPEN.
 
@@ -169,7 +169,7 @@ These levers let the same code produce autarkic, ghost, feral, or tomb results d
 
 - The AI Manager loops described in the economic loops page continue to run during isolation. There is no special “Eden mode” code path required beyond removing external import options and letting the existing state machine operate.
 - Portal technology and EM harvesting both appear only after artificial-wormhole/AWS research matures; neither is available during the isolation period itself. Portal technology is a miniaturized offshoot of the artificial wormhole technology.
-- The Wormhole Consortium develops the technology and manages the inter-system artificial-wormhole network.
+- The Wormhole Transit Consortium (WTC) develops the technology and manages the inter-system artificial-wormhole network.
 - Player entry occurs only after the artificial Sol–Eden connection and the required wormhole/portal infrastructure are established.
 - Any residual Virtual Ledger balances from the pre-Snap era become relevant again the moment the link is restored.
 
