@@ -89,9 +89,21 @@ The existing model fields and code include some ice-related concepts, such as su
 
 Do not introduce a separate Cryosphere model or another simulation engine solely by assumption. First determine whether the existing sphere data can represent the required state and which TerraSim processes are actually missing. Whether a distinct cryosphere data model is ever warranted remains OPEN.
 
-## 5. Current implementation snapshot
+## 5. Evidence and status conventions
 
-This is a focused source inspection, not a complete scientific validation or test-suite result. It records observable code structure so that future tuning starts from what exists.
+Keep three categories separate throughout the TerraSim wiki:
+
+1. **Implemented:** Behavior directly confirmed in current source code, with tests noted separately. Describe actual inputs, outputs, dependencies, simplifications, fallbacks, and stubs. A test that mocks a service proves orchestration or interface behavior, not physical accuracy.
+2. **Established design intent:** Required behavior and architectural responsibilities that the project intends to support, whether or not the current code fully implements them.
+3. **Future / aspirational:** Possible extensions, research directions, or capabilities not yet established as requirements. Keep these explicitly open and do not turn them into implementation commitments without approval.
+
+Also distinguish **implemented** from **validated**. Existing calculations may run and have test coverage while still requiring parameter tuning, calibration, or scientific validation. Do not describe a capability as validated merely because a service, model field, or spec exists.
+
+When documenting any TerraSim feature, identify its category and evidence. If implementation status is uncertain, say so rather than inferring it from names, model fields, old design documents, or test doubles.
+
+## 6. Current implementation snapshot
+
+This is a focused source inspection, not a complete scientific validation or test-suite result. It records observable code structure so that future tuning starts from what exists. The following entries describe **implemented behavior**, not a claim of scientific validation. The broader natural-world, historical-calibration, and generalization goals are **established design intent**; specialized ice-moon process coverage remains a **future evaluation area**, not an immediate implementation commitment.
 
 ### Orchestration
 
@@ -117,7 +129,7 @@ The current calls do not pass a shared elapsed-time value through this orchestra
 
 The existence of services, fields, or specs must not be mistaken for a complete, scientifically calibrated model. Conversely, simplified or incomplete routines do not mean the overall architecture needs to be replaced.
 
-## 6. Future evaluation questions
+## 7. Future evaluation questions
 
 When the relevant simulation work is prioritized, evaluate:
 
@@ -133,7 +145,7 @@ When the relevant simulation work is prioritized, evaluate:
 
 These are evaluation questions, not immediate implementation tasks.
 
-## 7. Scope boundary
+## 8. Scope boundary
 
 The initial TerraSim development and gameplay emphasis has been planetary terraforming. The sphere models and their broader physical data are not limited to that use case.
 
