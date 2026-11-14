@@ -1,11 +1,11 @@
 # Natural Wormholes & Exotic Matter (EM)
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-13  
-> *Audit Summary:* Design intent specification. Owner design decisions reconciled 2026-11-13; runtime implementation not verified by this update.
+> *Last Audited:* 2026-11-14  
+> *Audit Summary:* Owner design intent reviewed against the current `Wormhole` model, related discovery/expansion/consortium services, migration, and model specs. Existing code contains basic per-endpoint mass-limit, stability, traversal, and endpoint-shift mechanics, but does not implement the full natural-wormhole/EM/Snap model described here.
 
 **Status:** DIRECTION / OPEN  
-**Last Updated:** 2026-11-13  
+**Last Updated:** 2026-11-14  
 **Related:** [Portals & AWS](portals_and_aws.md), [Sol System Reference](../astronomy/sol_system_reference.md), [Eden disconnect and emergent history](../player/eden_disconnect_and_emergent_history.md)
 
 This page is the wiki home for natural wormhole behavior, relative stability, mass throughput and limits, EM ejection and harvesting, EM stabilization, shifting/snapping, and the Hammer Protocol.
@@ -114,7 +114,34 @@ AI Manager must monitor:
 
 Its objective is to balance sustainable expansion, resource access, network value, and the risk/cost of losing a natural connection. It should not simply maximize the number of connected or occupied systems.
 
-## 8. Open questions
+## 8. Current implementation snapshot
+
+**SOURCE INSPECTION — 2026-11-14; NOT PHYSICAL VALIDATION**
+
+The following observations are from the current application source. They describe existing code, not confirmation that the model matches the established design intent.
+
+- `Wormhole` stores two connected solar systems, a `natural` flag, a stability enum, a mass limit, separate `mass_transferred_a` / `mass_transferred_b` counters, and per-endpoint stabilized flags.
+- Traversal is allowed only when the wormhole is marked stable, is traversable, has the configured minimum number of operational stabilizers, and the requested transit mass fits within the remaining counter for that endpoint.
+- When an endpoint is not marked stabilized and its transferred-mass counter reaches the mass limit, the model randomizes that endpoint's coordinates and resets that endpoint's counter. A stabilized endpoint does not shift or reset through this path.
+- The model can find deployed craft named `Wormhole Stabilization Satellite` near either endpoint and combines these with directly assigned stabilizers when checking operational stabilizer count.
+- The model specs exercise associations, validation, endpoint creation, stabilizer lookup, travel gating, and endpoint shifting/reset. Some tests stub travel-safety or satellite behavior; these tests do not validate wormhole physics.
+
+**Important gaps against established intent**
+
+The inspected `Wormhole` model does not currently calculate a time-dependent or historical cumulative mass-throughput/stabilization-deficit process. It does not calculate EM ejection, local EM fields, capture/harvesting, storage, EM return, or mass-limit restoration from returned EM. It does not calculate gravitational counterbalance from Jupiter or other bodies, and it does not connect AI Manager decisions to the Eden Snap's physical timing/outcome. The current endpoint-shift implementation is not, by itself, the full historical Eden Snap.
+
+Related source paths inspected:
+- `galaxy_game/app/models/wormhole.rb`
+- `galaxy_game/app/services/ai_manager/wormhole_coordinator.rb`
+- `galaxy_game/app/services/ai_manager/wormhole_scouting_service.rb`
+- `galaxy_game/app/services/wormhole_expansion_service.rb`
+- `galaxy_game/app/services/star_sim/wormholes/discovery_service.rb`
+- `galaxy_game/spec/models/wormhole_spec.rb`
+- `galaxy_game/db/migrate/20250127144534_create_wormholes.rb`
+
+This is a focused source snapshot, not a complete audit of every wormhole-related class, job, seed, or integration. The broader physical model and AI Manager integration still require a dedicated implementation review and tuning. Do not treat the current endpoint-shift behavior or passing model specs as evidence that the historical Snap model is implemented or scientifically validated.
+
+## 9. Open questions
 
 - Exact mass-threshold units, accumulation window, and reset behavior.
 - Quantitative relation between mass throughput and EM ejection.
