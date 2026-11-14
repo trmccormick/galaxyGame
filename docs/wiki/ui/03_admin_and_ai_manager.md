@@ -9,7 +9,7 @@ This page records the responsibilities of the Admin Dashboard and its dedicated 
 
 **ESTABLISHED INTENT — 2026-11-13**
 
-- **Player Dashboard:** supports people and organizations participating in the shared universe. It provides the four Player contexts: Space, Planetary, Surface, and Settlement.
+- **Player Dashboard:** supports people and organizations participating in the shared universe. It provides three primary Player views—Planetary, Surface, and Settlement—plus the separate Space context.
 - **Admin Dashboard:** supports administrators operating the web application and managing the simulation, world generation, data, configuration, users, and operational systems.
 
 The Admin Dashboard is not a player dashboard with extra permissions. It has its own home/overview, navigation, workspaces, monitoring, and administrative workflows.
