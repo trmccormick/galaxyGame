@@ -52,6 +52,8 @@ The organizational roles already confirmed are:
 
 This records confirmed identities and roles without assuming that every organization listed in older source material was a formally named WTC founding member at the same moment. The exact legal founding roster, governance arrangements, and formation sequence remain OPEN.
 
+Earth-based representatives are also likely to be part of the broader WTC coalition, given the sponsorship and technology-support roles expected from Earth-side organizations. Their specific organizations, contributions, and formal membership status have not yet been identified, so this remains a likely participation context rather than a confirmed founding roster.
+
 The Snap and the resulting Sol-side research response are covered in [Eden Disconnect and Emergent History](../player/eden_disconnect_and_emergent_history.md). The WTC's artificial-wormhole technology, inter-system network role, and derived intra-system portal technology are covered in [Portals & AWS](portals_and_aws.md). The Snap is the catalyst for the later research and network development; it does not create the participating organizations or Terragen's pre-existing capabilities.
 
 ## 3. EM ejection and harvesting
