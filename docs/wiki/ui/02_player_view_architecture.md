@@ -3,17 +3,17 @@
 
 # Player View Architecture
 
-This page defines the Player Dashboard's four distinct contexts and how players navigate between systems and locations. It is not an implementation specification. The Player Dashboard is separate from the Admin Dashboard; administrative screens and operational tools are not player views.
+This page defines the Player Dashboard's three primary views, the separate Space context, and how players navigate between systems and locations. It is not an implementation specification. The Player Dashboard is separate from the Admin Dashboard; administrative screens and operational tools are not player views.
 
 ## Design authority
 
 The main `galaxyGame` repository is authoritative for product design intent and game-domain rules. The separate `galaxy-game-ui` repository is the presentation prototype and implementation workspace. Prototype appearance does not independently establish approved product design.
 
-## Four Player contexts
+## Three primary Player views and the separate Space context
 
 **ESTABLISHED INTENT — 2026-11-13**
 
-The Player Dashboard has exactly four primary contexts:
+The Player Dashboard has exactly three primary views: Planetary, Surface, and Settlement. Space is a separate Player context for system-wide space operations; it is not a fourth primary view.
 
 | Context | Purpose | Scope |
 |---|---|---|
@@ -34,7 +34,7 @@ A player should be able to:
 1. Browse and search galaxies or star systems through compact catalogs.
 2. Select a system and inspect it as a whole.
 3. Select a celestial body or orbital location.
-4. Open the appropriate Player context: Space, Planetary, Surface, or Settlement.
+4. Open the appropriate Player view or context: Planetary, Surface, Settlement, or the separate Space context.
 
 Selection must not imply physical travel. The UI must distinguish the player's actual location from an object or system being inspected. Do not translate database hierarchy into deeply nested global menus. Players should have direct access to major workflows and use contextual selectors, breadcrumbs, maps, tables, and feature-specific secondary navigation as appropriate.
 
