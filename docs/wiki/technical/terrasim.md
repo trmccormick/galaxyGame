@@ -11,6 +11,8 @@ TerraSim is **not defined solely by terraforming**. It must be able to simulate 
 
 This page records design intent for future development and tuning. It does not assert that existing TerraSim functionality is missing or needs to be rebuilt. Existing models and services must be inspected and evaluated before proposing replacement or expansion.
 
+**Legacy terminology clarification:** Some older architecture notes describe TerraSim primarily as a regression/weathering filter that starts from a StarSim-generated lush or terraformed heightmap and moves the world toward a barren baseline. That description is not the current canonical definition of TerraSim. Weathering and regression-related processes may be part of environmental evolution, but TerraSim's purpose is broader: simulate a world's natural state and evolution, model events and historical scenarios, and calculate the consequences of intentional interventions. Do not treat a proposed full regression filter as an existing capability or an immediate requirement.
+
 ## 1. Three distinct simulation uses
 
 TerraSim should support three related but distinct kinds of work:

@@ -6,12 +6,16 @@
 > *Audit Summary:* This page is a design-intent specification; individual implementation details require separate verification.
 
 > **Related wiki pages:** [TerraSim — Environmental Simulation](../terrasim.md), [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md).
+>
+> **Evidence/status caution:** This page contains a mixture of design intent, proposed gameplay rules, and aspirational formulas. It is not a verified description of current code behavior. The current `BiosphereSimulationService` implementation and its observed limitations are summarized in the sphere-model reference. Until each item is confirmed against current code and owner-approved design, treat the detailed thresholds, phase gates, deployment lifecycle, soil/biodiversity scoring formulas, contamination rules, and Digital Twin state-vector proposal below as **unverified design proposals**, not implemented capabilities or binding requirements. The general intent that biological processes can affect and be affected by environmental spheres remains valid; the specific mechanics require review.
+>
+> **Status convention:** See the evidence categories in [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md#5-evidence-and-status-conventions): implemented, established design intent, and future/aspirational. Implemented behavior is not automatically scientifically validated.
 
 ---
 
-## 1. Liquid Water Trigger — Phase 3 → Phase 4 State Gate
+## 1. Proposed liquid-water gate — status requires owner confirmation
 
-Before Terraforming Seeds or Worldhouses can operate on a planet's surface (Phase 4), liquid water must be present in the global hydrosphere model. This is the **hard biological/physical state gate** between Bio-Nursery Dome establishment (Phase 3) and active terraforming deployment (Phase 4).
+This section records a previously documented proposed gate for Terraforming Seeds or Worldhouses. Its exact thresholds, phase terminology, and operational consequences are **not confirmed here as current approved mechanics**. Do not use this as an implementation contract without owner confirmation.
 
 ### Required Conditions
 
