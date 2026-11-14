@@ -1,10 +1,10 @@
 # Portals & Artificial Wormhole Stations (AWS)
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-07  
-> *Audit Summary:* Design intent specification (page status DIRECTION). Not audited against code; implementation pending or unverified as of audit baseline.
+> *Last Audited:* 2026-11-14  
+> *Audit Summary:* Owner-confirmed technology lineage and player-arrival prerequisite reviewed. Related wormhole and consortium source paths inspected; existing code is only partially aligned and does not establish the post-Snap research, reconnection, portal-miniaturization, or player-entry sequence.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-07  
+**Last Updated**: 2026-11-14  
 **Related**: [natural_wormholes_and_em.md](natural_wormholes_and_em.md), [eden_disconnect_and_emergent_history.md](../player/eden_disconnect_and_emergent_history.md), [terraforming_options.md](../infrastructure/terraforming_options.md), logistics pages
 
 This page is the wiki home for **intra-system portals** and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, the Snap, and Exotic Matter (EM) harvesting live on [Natural Wormholes & EM](natural_wormholes_and_em.md).
@@ -56,7 +56,7 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
   - **Industrial / surface-rated** — ruggedized; may run with intentional atmospheric bleed (“garden hose”) for pressure-first protection; not a bulk terraforming pipeline.
   - **Vacuum-rated** — station exterior / near-vacuum pairs.
 - Structural mount must be serious (primary structure / keel-class). Not a light-hull bolt-on.
-- **Tech tree placement** (from the legacy EM technology tree; owner to confirm): Level 4. Follows Level 3 AWS plus miniaturization research and unlocks through peacetime research after the Snap crisis is resolved. Relies on quantum entanglement, not planetary-scale mass anchors.
+- **Research lineage — ESTABLISHED INTENT:** Full-scale artificial wormhole technology is developed through aggressive post-Snap research and is used to open the artificial Sol–Eden connection. Miniaturization of that technology produces intra-system portals as an offshoot. Exact research stages, technology levels, prerequisites, and timing remain OPEN. Older technology-tree level labels are not authoritative until reconciled with this sequence.
 
 ### Artificial Wormhole Stations (AWS)
 **DIRECTION / OPEN**
@@ -101,6 +101,28 @@ The primary arterial wormhole / AWS network is managed by the **Wormhole Consort
 Players operate as contractors, specialists, private logistics firms, or later private pair operators within that framework — not as sole owners of the entire network. Exact ownership and toll rules remain OPEN.
 
 ---
+
+## Current implementation comparison
+
+**SOURCE INSPECTION — 2026-11-14; PARTIAL, NOT A COMPLETE AUDIT**
+
+The current `Wormhole` model distinguishes natural and artificial connections with a boolean field and provides basic endpoint, mass-limit, stability, and stabilizer behavior. That is not evidence that the artificial technology-development and network lifecycle described above is implemented.
+
+The inspected consortium/discovery path is also inconsistent with the current design intent:
+- `StarSim::Wormholes::DiscoveryService` attempts consortium formation after a wormhole discovery, rather than as a demonstrated post-Snap research and technology-development outcome.
+- Its formation check requires organizations `ASTROLIFT`, `ZENITH`, and `VECTOR`.
+- `WormholeConsortiumFormationService` instead records `ASTROLIFT` and `LDC` as founding members and applies fixed equal investments.
+- These paths do not establish the confirmed institutional history or prove that the Consortium develops artificial wormhole technology and operates the inter-system network.
+- The inspected files do not demonstrate the full-scale artificial Sol–Eden research/reconnection sequence, portal miniaturization as a derived technology, or a player-arrival gate based on network/portal readiness.
+
+Relevant source paths inspected:
+- `galaxy_game/app/models/wormhole.rb`
+- `galaxy_game/app/services/star_sim/wormholes/discovery_service.rb`
+- `galaxy_game/app/services/wormhole_consortium_formation_service.rb`
+- `galaxy_game/app/services/wormhole_expansion_service.rb`
+- `galaxy_game/app/services/ai_manager/wormhole_scouting_service.rb`
+
+This is a focused source comparison, not a complete audit of all AWS, portal, organization, research, and player-entry code. Do not infer implementation from class names or comments. The owner-confirmed sequence above remains the design authority; unresolved implementation gaps should be reviewed before tasks are created.
 
 ## What Portals / AWS Are Not
 
