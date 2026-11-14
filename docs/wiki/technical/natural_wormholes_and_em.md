@@ -33,7 +33,9 @@ Sol's natural wormhole is comparatively more stable because of its placement opp
 
 For the current human-expansion gameplay scenario, Sol's natural wormhole remains present and does not shift or snap. The narrative is also currently planned around Sol's wormhole continuing to exist. This is a scenario/narrative treatment, not a permanent limitation on the underlying simulation: future scenarios or design changes may allow different outcomes. Keep the special treatment configurable or otherwise separable from general natural-wormhole mechanics.
 
-The Eden-side wormhole was less stable and snapped before EM stabilization technology was developed. That event is a key historical catalyst for the later technology. Do not imply that operators had the mature EM capture-and-return stabilization loop before the Eden snap.
+The Eden-side wormhole was less stable and snapped before EM stabilization technology was developed. The Snap occurs because too much mass is sent through the natural connection over time without the required stabilization technology. It is an emergent physical consequence of accumulated traffic and the wormhole's modeled state, not a scheduled or deliberately triggered milestone. The exact timing and resulting Eden state depend on the AI Manager's activity and decisions as it develops the system. The underlying mechanism, thresholds, and outcome must be produced by the wormhole model and the relevant simulation code, not by a fixed narrative timer.
+
+The Snap becomes the catalyst for Sol corporations and the AI Manager to pursue wormhole research more aggressively. That research ultimately develops artificial wormhole technology, enabling a new artificial connection from Sol to the already-established settlements in Eden. The later opening of that artificial connection is separate from the Snap itself and is the point after which player access can begin. See [Eden Disconnect and Emergent History](../player/eden_disconnect_and_emergent_history.md) and [Portals & AWS](portals_and_aws.md).
 
 ## 3. EM ejection and harvesting
 
@@ -71,7 +73,7 @@ An AWS pair or other counterbalance infrastructure may support stabilization and
 
 ## 5. Shifting, snapping, and the Hammer Protocol
 
-A natural exit can shift as part of the natural wormhole lifecycle. A snap is a failure event when the mass limit is reached without adequate counterbalance/stabilization. The historical Eden-side snap happened before the later EM stabilization technology existed.
+A natural exit can shift as part of the natural wormhole lifecycle. A snap is a failure event when accumulated mass throughput reaches the wormhole's modeled limit without adequate counterbalance/stabilization. The historical Eden-side Snap happened before the later EM stabilization technology existed. Its timing is driven by traffic history and modeled conditions, including AI Manager decisions that affect system development; it is not an operator-scheduled event.
 
 **Hammer Protocol — ESTABLISHED STRATEGIC INTENT, 2026-11-13**
 
@@ -124,5 +126,7 @@ Its objective is to balance sustainable expansion, resource access, network valu
 - Ownership, licensing, and player access to EM harvesting.
 - Exact AWS construction, commissioning, and relocation sequence.
 - How AI Manager scores survey, harvesting, stabilization, AWS investment, and settlement opportunities.
+- How the wormhole simulation represents cumulative mass throughput, stabilization deficit, and the conditions that cause the historical Eden Snap; exact equations and thresholds remain OPEN.
+- Which AI Manager actions and Sol corporate research/operations influence the timing and modeled consequences of the Snap.
 
 All numerical values and unverified implementation details remain OPEN.
