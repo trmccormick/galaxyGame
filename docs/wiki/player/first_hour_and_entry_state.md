@@ -1,17 +1,17 @@
 # First Hour and Entry State
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-04  
-> *Audit Summary:* Short player-facing summary of what the owner stated on 2026-11-04 about when players enter and what they first see. Not implemented as described. Not yet verified against code.
+> *Last Audited:* 2026-11-14  
+> *Audit Summary:* Player-arrival prerequisites updated from owner-confirmed wormhole technology lineage. This remains design intent and has not been verified against runtime player-entry code.
 
 This page distills the 2026-11-04 owner and Gemini brainstorm into what a new player meets at the start. The goal is to improve the setup for players entering the game.
 
 ---
 
-## ESTABLISHED INTENT (owner, 2026-11-04)
+## ESTABLISHED INTENT (owner, 2026-11-14; earlier entry-state details retained where consistent)
 
 ### When players arrive
-- Players enter once **AWS technology is online**. Eden is reconnected through the new AWS. System B, reached through the natural wormhole, is unsettled. Eden's state is unknown, including whether its first settlements survived.
+- Players enter only after post-Snap research has produced full-scale artificial wormhole technology, the artificial Sol–Eden connection has opened to Eden's already-established settlements, and the required inter-system wormhole network and miniaturized intra-system portal technology are established for use. This is later than the Snap and the beginning of post-Snap research.
 - The first players pick a location that is **active**. They do not start at the unknown old Eden stations.
 - At entry, **Sol is active, Eden is unknown, and System B is empty** (owner, 2026-11-05).
 - Eden's condition at the disconnect is **emergent**, not pre-scripted. See [Eden Disconnect and Emergent History](eden_disconnect_and_emergent_history.md).
@@ -19,7 +19,7 @@ This page distills the 2026-11-04 owner and Gemini brainstorm into what a new pl
 ### Where a player starts
 - The AI Manager, working through NPC corporations, runs the foothold bases and stations that let players travel the universe. A new player starts at one of them and gets basic equipment that depends on where they land: Luna, Mars or a space station.
 - Starting on a station gives access to space-based work such as harvesting atmospherics, logistics runs and exploration. Starting on the surface gives surface work.
-- The starts aren't exclusive. A player on a station can portal to a surface settlement, and doesn't need to stay where they began.
+- The starts aren't exclusive. A player can use portals for rapid movement between bases equipped with portal endpoints; not every base is assumed to have a portal.
 
 ### What the game is about
 - Surface play includes exploring, mining, and building and managing a settlement (like SimCity). Station play is a different level of the same game. Neither is about combat. It is closer to managing automated harvesters and logistics ships.
