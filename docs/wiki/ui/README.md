@@ -42,3 +42,4 @@ A proposed mockup or prototype screenshot is not automatically an approved desig
 - **2026-11-04** — Created the UI & Experience section as the home for Galaxy Game interface design intent.
 - **2026-11-11** — Expanded the architecture to document dashboard responsibilities, system/body workspaces, Admin/AI Manager direction, dated current-state issues, and preservation/completion of existing views.
 - **2026-11-13** — Corrected the Player architecture to three primary views plus a separate Space context and clarified Admin workspace boundaries.
+- **2026-11-14** — Clarified StarSim, TerraSim, AI Manager, and Digital Twin responsibilities; left small-body spawning and resource-generation ownership open.
