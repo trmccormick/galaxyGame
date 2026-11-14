@@ -32,31 +32,45 @@ The Admin landing dashboard should summarize application and simulation health a
 
 AI Manager supervision and strategic operations are described in Section 3.
 
-### Map Studio and planetary Digital Twin
+### Map Studio
 
-Map Studio is an Admin tool in the connected planetary-data pipeline. It supports known-world reconstruction from observational data and generation of plausible extrasolar geography, feeding the shared planetary Digital Twin. Preserve existing generation work as evidence; its output quality and pipeline need review. The Admin UI should expose source data, coverage, assumptions, quality, processing status, and appropriate generation/inspection controls as supported by actual services.
+Map Studio is an Admin tool in the connected planetary-data pipeline. It supports known-world reconstruction from observational data and generation of plausible extrasolar geography. Preserve existing generation work as evidence; its output quality and pipeline need review. The Admin UI should expose source data, coverage, assumptions, quality, processing status, and appropriate generation/inspection controls as supported by actual services.
+
+Map Studio and Digital Twin have different responsibilities: Map Studio concerns planetary data and geography preparation; Digital Twin concerns environmental projection, evaluation, and simulation-system tuning (see below).
 
 ### StarSim Generator
 
-StarSim owns procedural solar-system generation. Admin capabilities should include generator configuration and controls, generation runs, parameter inspection, generated-system review, and management of generated or prepared systems. The UI must invoke authoritative backend behavior rather than duplicate generator logic.
+StarSim is responsible for procedural generation of stars and planetary systems. Its scope may also include generating/populating additional celestial objects in space that are not part of the major system-generation pass, such as asteroids, comets, Kuiper Belt objects, Oort Cloud objects, and other small bodies. Keep the distinction between initial system generation and any additional population process visible.
+
+Admin capabilities should include appropriate generator configuration and controls, generation runs, parameter inspection, generated-system review, and management of generated or prepared systems. The UI must invoke authoritative backend behavior rather than duplicate generator logic.
 
 ### TerraSim
 
-TerraSim is a distinct planetary/environmental simulation capability. Admin controls should expose its relevant configuration, run state, inspection, and supported operational options. Its exact screen breakdown remains OPEN.
+TerraSim is the planetary/environmental simulation engine. It calculates environmental conditions and their evolution, including modeled atmospheric composition, temperature, climate, hydrology, and other environmental processes. It is responsible for environmental simulation results, not autonomous terraforming decisions. Admin controls should expose supported model configuration, parameter/preset tuning, run state, inspection, and operational options. The exact screen breakdown and supported editable parameters remain OPEN.
 
-### Spawning System
+### AI Manager
 
-The Spawning System is distinct from StarSim and TerraSim. It is planned, not yet built. It will manage the generation/spawning of populations and objects such as asteroids, comets, Kuiper Belt objects, Oort Cloud objects, and other small bodies.
+AI Manager is the autonomous terraforming operator. It uses environmental information and projections from TerraSim, pursues the approved long-term terraforming plan and objectives, and adapts its actions based on observed results. It should be capable of autonomous execution within its authority rather than requiring constant Admin direction. Admins may adjust long-term objectives, plans, and appropriate constraints; Players do not directly control terraforming. AI Manager is not the environmental calculation engine—that is TerraSim.
 
-Its future Admin controls need to cover:
-- object categories and population definitions;
-- population density/distribution and regional/environmental variation;
-- object size, mass, shape, orbital characteristics, and composition;
-- composition rules and material/volatile distributions;
-- generation constraints, spawn timing/location, and duplicate/consistency controls;
-- review and testing of spawning results.
+### Digital Twin
 
-The game backend owns spawning behavior and authoritative world state. The Admin UI configures, inspects, and invokes supported operations.
+Digital Twin is an Admin/developer workspace for projecting, inspecting, evaluating, and tuning the environmental simulation and terraforming systems. It uses TerraSim for environmental projections; it is not itself the environmental calculation engine and is not the autonomous terraforming actor. It should support scenario projections and comparisons, examination of consequences over time, evaluation of AI Manager strategies/plans, and validation/tuning of TerraSim configuration and AI Manager capabilities. Where supported, Admins may adjust TerraSim model parameters and presets through an appropriate TerraSim configuration interface.
+
+Digital Twin is not Map Studio or a world-generation system. It must not provide arbitrary “god mode” control or permit unrestricted rewriting of environmental outcomes; projections and interventions remain bounded by physical constraints, simulation rules, available resources, authorization, and consequences.
+
+### Spawning and resource generation — ownership OPEN
+
+StarSim may also be involved in generating/populating additional celestial objects beyond the primary star-system generation pass. Whether there should be a separate Spawning System, or whether some of these responsibilities belong within StarSim, remains OPEN. Do not assume a finalized division of ownership.
+
+Resource generation ownership is also OPEN. StarSim may generate initial resource locations/distributions as part of world generation—for example, geological deposits on planets and moons, lunar permanently shadowed region (PSR) ice, and resources associated with asteroids or other small bodies—but this requires further architectural planning. Existing design material has described AI Manager-triggered deposit placement when a region is surveyed. That prior direction must be reconciled rather than silently treated as final ownership.
+
+Keep these responsibilities distinct when evaluating the architecture:
+- generation of initial resource distributions or plausible deposit locations;
+- survey-triggered discovery/placement of deposits not already represented as confirmed data;
+- resource quantities, accessibility, and geological/environmental plausibility;
+- extraction, depletion, replenishment, and economic use after generation.
+
+Which system owns each responsibility—and how StarSim, TerraSim, AI Manager, and any separate spawning/resource service coordinate—remains OPEN. Do not convert the examples above into approved mechanics or implementation commitments.
 
 ### Solar System Management and prepared systems
 
