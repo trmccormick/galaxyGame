@@ -1,4 +1,8 @@
 # Precursor Discoveries & Research Opportunities
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-13  
+> *Audit Summary:* Design direction only; this page approves no precursor research system, technology unlock, or technology-tree change.
+
 > **Wiki section:** Technical · **Status:** DIRECTION — future possibility only; no precursor research system, technology unlock, or technology-tree change is approved by this page.
 
 ## Purpose
