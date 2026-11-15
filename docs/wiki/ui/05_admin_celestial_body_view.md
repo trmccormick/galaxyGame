@@ -30,6 +30,19 @@ The view should make useful existing map, layer, sphere-data, geological, and in
 
 See [Admin Dashboard and AI Manager](03_admin_and_ai_manager.md) for the wider Admin workspace boundaries and [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) for dated observations of existing screens.
 
+
+### Map Studio and external map examples
+
+**ESTABLISHED OWNER INTENT — 2026-11-15**
+
+Map Studio remains the Admin capability for preparing, generating, reconstructing, and inspecting initial terrain/geographic data for a celestial body. External maps and scenarios from other games or fictional settings may inform GalaxyGame's existing AI-assisted learning and world-generation capabilities, but they are **examples and references—not playable maps to import directly into GalaxyGame**.
+
+Their useful content may include terrain and biome patterns, resource distributions, candidate settlement locations, environmental arrangements, and designer explanations of hypothetical worlds or terraforming outcomes. These are not authoritative facts about the represented body. Real planetary observations should be used where available; simulation should evaluate proposed configurations and produce separate outcome evidence.
+
+A map depicting a terraformed world does not establish that the corresponding GalaxyGame body should be terraformed. In particular, Titan's external game-map example must not be treated as a terraforming target or as a desired future state. Generation and administrative workflows must preserve the distinction between a body's natural/current representation and an explicitly requested hypothetical intervention.
+
+The existing ingestion, training, and generator implementation is incomplete and must be audited before prescribing changes. This clarification records the intended use of examples; it does not assert that the current pipeline already preserves provenance, understands scenario descriptions, or passes learned options through to generation.
+
 ## 2. Naming and legacy navigation
 
 **ESTABLISHED INTENT — 2026-11-15**
