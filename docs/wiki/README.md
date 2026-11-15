@@ -33,6 +33,12 @@ This folder is the **live wiki** — the front door for players, contributors, a
 
 ---
 
+## UI & Experience
+
+The [UI & Experience wiki](ui/README.md) is the design authority for Player, Admin, and AI Manager interfaces. The [Admin Celestial Body View](ui/05_admin_celestial_body_view.md) page distinguishes intended future experience from the current legacy Rails 7 implementation and records the direction for porting views into the separate UI prototype.
+
+---
+
 ## Player
 
 Orientation and game-facing systems (what the game is trying to be, and how it plays).
@@ -84,7 +90,6 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|-------|
 | [StarSim architecture](design/starsim_and_protection_classes.md) | StarSim system generation, unit simulation boundaries, CelestialBody contracts, code reality, and implementation gaps |
-| [Admin planetary monitor](ui/05_admin_planetary_monitor.md) | Admin planetary monitor responsibilities, data flow, endpoints, current lifecycle implementation, and regression context |
 
 ---
 
