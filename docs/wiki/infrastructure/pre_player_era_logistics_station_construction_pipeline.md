@@ -53,10 +53,16 @@ Ships departing Earth's gravity well face extreme mass penalties. To eliminate t
 * **L1 Industrial Hubs:** Pure orbital builds constructed using Luna-sourced materials and fueled by L1 depots.
 * **Capital Craft Fabrication:** L1 shipyards manufacture the first generation of **Heavy Tugs** (such as the Asteroid Relocation Tug variants) and deep-space **Cyclers**.
 
-### Phase 3: Mars Moon Conversion & Slag Economy
-* **Tug Deployment:** Heavy tugs built at L1 transition to the Martian system.
-* **Moon Hollowing & Slag Mechanics:** A later heavy tug class captures, repositions, and progressively hollows out Phobos and Deimos. (Mk-I tugs support only in-place conversion with station-keeping capability.)
-* **Slag Propulsion Economy:** The hollowing process converts roughly 30% of the body into structural hulls and reinforcements, leaving 70% as raw waste slag. This waste slag is directly processed into reaction mass propellant (`slag_fuel_id`) via onboard slag engines, powering the heavy tugs during transit and repositioning without requiring Earth/Luna fuel imports.
+### Phase 3: Mars System Access & Industrial Options
+
+Station construction at Mars is option-driven. See **[Station Construction Options](../engineering/station_construction_options.md)**. Preferred early path does not require tugs or moon relocation; other paths remain valid when technology and survey support them.
+
+* **Preferred early path:** Cycler + HLT from L1 → lean mining outpost on one moon (in place, Mk-I compatible, hollowing not required) → separate Mars orbital depot (seed fuel for cycler refueling) → station as capacity allows. Surface later.
+* **Heavier in-place moon work:** Hollow/fit a moon as station or depot in natural orbit without relocating it.
+* **Tug deployment & slag economy (when tug class exists):** Heavy tugs built at L1 can deploy to the Martian system. A later heavy tug class may capture, hollow, and optionally reposition bodies. Hollowing can convert on the order of ~30% of a body to structure and ~70% to waste slag processed to `slag_fuel_id` for tug propulsion — a self-sustaining loop for that craft class, not a requirement for the preferred early path. (Mk-I supports in-place conversion only, not repositioning.)
+* **Import / pure orbital:** L1-built modules or complete stations assembled in Martian orbit remain valid bootstrap or parallel options.
+
+Technology available at the time (cycler-only vs tug class, fusion, etc.) changes which path scores best. Do not treat tug + dual-moon hollow + slag as the only Phase 3 outcome.
 
 ### Phase 4: Belt Expansion & Asteroid Repositioning
 * **Belt Operations:** Heavy tugs move into the Asteroid Belt to capture raw asteroids.
