@@ -34,11 +34,11 @@ The prototype review has also identified presentation concerns in some newer scr
 
 **Direction:** Continue the shared dark charcoal/navy + cyan design language. Retain green for success and operational status rather than using it as the dominant theme. Refine typography, spacing, controls, and reusable components consistently across Main Game, Admin, and AI Manager. Do not treat a global recoloring exercise as a substitute for improving each screen's layout and workflow.
 
-## 2. Planetary view
+## 2. Admin Celestial Body View (legacy label: Planetary View)
 
 **OBSERVED WORKING — Earth, 2026-11-10**
 
-The Earth Admin Planetary view was demonstrated running with a GeoTIFF data loader. The screenshot showed:
+The Earth Admin Celestial Body View (currently labeled **Planetary View** in the legacy UI) was demonstrated running with a GeoTIFF data loader. The screenshot showed:
 
 - the planetary map rendering;
 - terrain, biome, and hydrosphere/temperature layer selections changing the displayed map;
@@ -77,9 +77,9 @@ The user noted that Surface views for Mars, Luna, and other bodies had worked pr
 
 The existing main application contains useful functional work that should be evaluated before porting or replacing screens:
 
-- **Planetary:** demonstrated Earth GeoTIFF/layer rendering and operational panels.
+- **Celestial Body View (legacy Planetary View):** demonstrated Earth GeoTIFF/layer rendering and operational panels. The intended workspace name is Celestial Body View; see [Admin Celestial Body View](05_admin_celestial_body_view.md).
 - **Surface:** separate tile-based rendering and tileset-loading path; current Earth/Mars symptoms are recorded above.
-- **Monitor:** body overview and navigation/quick-action concepts.
+- **Monitor:** the current legacy route/page is a compact body navigation/status hub that links to Planetary View, Surface View, and Edit Properties. It is not the rich map-and-sphere-data workspace; that is the current Planetary View route.
 - **AI Manager:** early views and workflow stubs that can inform the prototype, but should not be treated as a mature or complete interface.
 
 Static source inspection can reveal architecture and dependencies, but it does not prove that a view currently works in the running application. Prefer current runtime evidence when recording functional status.
@@ -136,3 +136,4 @@ The review record should therefore document both the useful existing capability 
 
 - **2026-11-11** — Recorded the current main-app visual inconsistencies, demonstrated Earth Planetary functionality, and observed Earth/Mars Surface tileset issues from the owner-provided screenshots captured 2026-11-10.
 - **2026-11-11** — Added the explicit preserve/complete/standardize principle and documented existing view families as candidates for prototype porting and later backport/API integration.
+- **2026-11-15** — Corrected the legacy Monitor versus Planetary View distinction and recorded Celestial Body View as the intended Admin workspace name; current implementation labels remain historical facts, not future UI requirements.
