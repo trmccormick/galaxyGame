@@ -1489,15 +1489,8 @@ window.AdminMonitor = (function() {
       logConsole('System initialized', 'info');
     }
 
-    // For Turbo: wait for page:render then page:after-render for full DOM stability
-    if (typeof Turbo !== 'undefined') {
-      document.addEventListener('turbo:load', function onFirstLoad() {
-        document.removeEventListener('turbo:load', onFirstLoad);
-        setTimeout(scheduleRender, 200);
-      });
-    } else {
-      setTimeout(scheduleRender, 100);
-    }
+    // init() already runs after the DOM is ready; just schedule render.
+    setTimeout(scheduleRender, 100);
 
     window.addEventListener('beforeunload', function() {
       if (updateInterval) clearInterval(updateInterval);
