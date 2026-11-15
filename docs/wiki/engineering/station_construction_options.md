@@ -1,16 +1,18 @@
 # Station Construction Options
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-11  
+> *Last Audited:* 2026-11-14  
 > *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
 
 **Status**: DIRECTION / OPEN (Sol bootstrap ESTABLISHED)  
-**Last Updated**: 2026-11-11  
-**Related**: [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md), [terraforming_options.md](../infrastructure/terraforming_options.md), [settlement_progression_and_footholds.md](../player/settlement_progression_and_footholds.md), [settlement_ownership_and_governance.md](../player/settlement_ownership_and_governance.md), surface habitat and power pages, AI Manager economic loops
+**Last Updated**: 2026-11-14  
+**Related**: [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md), [terraforming_options.md](../infrastructure/terraforming_options.md), [propulsion_and_heavy_tug_economy.md](../infrastructure/propulsion_and_heavy_tug_economy.md), [settlement_progression_and_footholds.md](../player/settlement_progression_and_footholds.md), [settlement_ownership_and_governance.md](../player/settlement_ownership_and_governance.md), surface habitat and power pages, AI Manager economic loops
 
-This page is the wiki home for orbital station and depot construction options. The governing rule is that these are **options** the AI Manager evaluates against local mass, fuel, tug class, existing infrastructure, and timeline. Nothing is hard-scripted as the single required path beyond the required Sol bootstrap.
+This page is the wiki home for orbital station and depot construction options. The governing rule is that these are **options** the AI Manager evaluates against local mass, fuel, craft class, existing infrastructure, and timeline. Nothing is hard-scripted as the single required path beyond the required Sol bootstrap.
 
 **Purpose of the work:** The AI Manager establishes footholds, stations, and supporting infrastructure to **open locations for people and players**. Equipment and industry are means to that outcome, not the end goal.
+
+Generated systems will not match Sol. Different moons, no moons, dry rock, ice, different asteroid populations, and different fuel availability mean a single scripted sequence fails outside the origin system. Sol is the training ground where the option set is exercised; the same options travel outward and are re-ranked by local inventory.
 
 ---
 
@@ -22,12 +24,13 @@ This page is the wiki home for orbital station and depot construction options. T
    - Relocate a small body, then hollow and fit-out
    - Surface-sourced local materials (then launch to orbit)
    - Imports from outside the system
-3. **Fuel is always a cost.** Any mass that must change orbit or leave a gravity well consumes propellant. Fuel availability and production rate are first-class inputs into every option. ISRU-first remains the default pressure.
+3. **Fuel is always a cost.** Any mass that must change orbit or leave a gravity well consumes propellant. Fuel availability and production rate are first-class inputs into every option. ISRU-first remains the default pressure. Do not assume ice or volatiles on a body until survey supports it.
 4. **Orbital presence first (default outside origin system).** Prefer establishing an orbital industrial node before heavy surface commitment when local conditions allow. Surface footholds are then fed from the orbital layer.
 5. **Required Sol bootstrap (ESTABLISHED).** Luna foothold, then Earth–Moon L1 station and fuel depot, are required milestones. They are not optional examples among interchangeable starting strategies.
-6. **Reproduce the proven pattern where possible.** Luna → Earth–Moon L1 is the reference template. Other systems adapt the same logic to whatever low-gravity sources they actually have.
+6. **Reproduce the proven pattern where possible.** Luna → Earth–Moon L1 is the reference template at a given intensity (e.g. enough industry for a small ISS-scale crew and material to build the orbital station/depot). Other systems adapt the same logic to whatever low-gravity sources they actually have.
 7. **New foothold → NPC Development Corporation.** When the AI Manager establishes a new foothold settlement, it generally forms a new NPC Development Corporation on that world or celestial body to own and oversee the settlement’s development. Ownership is explicit from day one and remains distinct from any later Colony governance (see settlement ownership and governance).
-8. Early controlled-Sol runs and missions_v2 training data exercise the option set; they do not lock a single sequence beyond the required Sol bootstrap.
+8. **Craft roles stay distinct.** Cyclers use various drives and can act as mobile construction bases. Asteroid relocation tugs carry the slag-engine / hollow-and-relocate loop. Mk-I supports in-place work only; it does not reposition Phobos, Deimos, or similar bodies.
+9. Early controlled-Sol runs and missions_v2 / profile rake testing exercise the option set; they do not lock a single sequence beyond the required Sol bootstrap.
 
 ---
 
@@ -47,21 +50,54 @@ Outside the origin system the preferred pattern flips: start with orbital presen
 
 ## Mars Option Set
 
-Mars follows the default **orbital-first** pattern (unlike Earth). Phobos and Deimos are available low-gravity orbital sources. Typical options the AI Manager can score:
+Mars follows the default **orbital-first** pattern (unlike Earth). Phobos and Deimos are available low-gravity orbital sources. **No single path is correct.** The AI Manager scores local mass, fuel, craft class, survey results, and timeline, then chooses (or mixes) options.
 
-1. **In-place conversion as mining outposts (early preferred)**  
-   Hollow / process Phobos and Deimos in their natural orbits. Add slag-expulsion drives for station-keeping only. Primary early role is local resource production and the seed of an orbital industrial presence.
+### Early lean path (Luna-parallel brainstorm — one preferred early option)
 
-2. **Mine the moons and feed local station construction**  
-   Use material and industrial capacity on the moons (or in Mars orbit) to fabricate modules, then assemble stations the same way Luna feeds Earth L1. Reproduces the known pattern with local mass; surface activity is fed from this orbital layer.
+One coherent early path mirrors early Luna at similar intensity: enough industry for a small ISS-scale crew and enough material to stand up an orbital depot (and later station), without committing to hollowed moon-stations or relocation.
 
-3. **Relocate smaller asteroids**  
-   Capture bodies that fit current tug class, move them into useful Mars orbit or L1, hollow, and fit-out as depots or structural platforms.
+1. **L1 shipyard** builds **one cycler** with **attached HLT support craft** (cyclers use various drives; not slag-dependent).
+2. Cycler acts as the **construction base** in the Mars system and may make **multiple trips** back to Earth/L1. **No tug required.**
+3. HLT moves equipment to **one moon** (Phobos *or* Deimos).
+4. **Lean mining outpost** only (in place, Mk-I compatible):
+   - Survey / site setup (**do not assume ice or volatiles**)
+   - Deploy extraction gear, minimal power/comms, small stockpile
+   - Support a small ISS-scale crew
+   - Extract **structural / industrial feedstock** as survey allows
+   - **Hollowing not required** early
+5. Stand up a **Mars orbital depot** as a **separate** setup (not on the moon). Seed the depot with **imported propellant** on early cycler trips so cyclers can refuel. Local propellant only if survey and industry support it later.
+6. **Station** (crew/industrial) can follow the depot; depot is on the critical path because it sustains the cycler loop.
+7. **Mars surface** comes later, after orbital/moon presence and material feed are underway.
+8. Second moon, second cycler, heavier industry = optional expansions once the refuel loop works.
 
-4. **Later optional repositioning**  
-   If fuel and capability exist, already-hollowed bodies may be slowly adjusted with slag or mass-driver propulsion. This is a higher-tier option, not part of the first controlled-Sol rake.
+**Out of scope for this early path:** embedded slag drives on the moons, fusion inside the moons, moon-as-station/depot, and any relocation. Those are later options.
 
-Magnetosphere / L1 shield construction remains independent of moon relocation (see [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md)).
+**Dry moon:** structural feedstock may still be valid early; propellant stays imported (or from another known source) until a deliberate later path (e.g. fusion-tier industry + slag on a tug-class hollow program, or Mars surface volatiles) is chosen. Fusion itself has material needs; do not collapse “dry ⇒ slag drives” into one step.
+
+### Other options the AI Manager may score
+
+1. **Pure orbital assemble**  
+   Deliver modules to Mars orbit and assemble station/depot with little or no moon work. Faster structure possible; weaker local-mass story.
+
+2. **Import complete (or major) stations from L1 → assemble in Martian orbit**  
+   Use existing L1 industry to build station units, ship them, final assembly at Mars. High import mass and fuel/time cost; useful bootstrap or parallel top-up when local feed is slow.
+
+3. **Heavier in-place work on a moon**  
+   Hollow and fit out a moon as station/depot in natural orbit (still no relocation under Mk-I). Different intent from lean mining outpost; more mass and time.
+
+4. **Small-asteroid capture → hollow → station**  
+   Requires an asteroid relocation tug (slag-engine loop is native to that craft when hollowing). Capture, move into useful orbit/L1, hollow, fit-out. Strong when tug class and a suitable body exist; not the opening move under Mk-I-only constraints.
+
+5. **Later repositioning of worked moons**  
+   With Mk2+ (or later tug/cycler capability), already-worked bodies may be moved if that scores better. Early path does not depend on this.
+
+6. **Two-moon / multi-cycler expansion**  
+   After one outpost + depot loop is healthy, open the second moon and/or add cyclers as capacity allows.
+
+7. **Surface-first**  
+   Usually scores poorly against orbital-first default; only when orbital options are blocked or clearly worse.
+
+Magnetosphere / L1 shield construction remains **independent** of moon relocation or moon-as-station choices (see [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md)). High-throughput atmospheric injection cares that a shield is active; it does not require Phobos or Deimos to be moved.
 
 ---
 
@@ -70,15 +106,26 @@ Magnetosphere / L1 shield construction remains independent of moon relocation (s
 Venus also follows the default **orbital-first** pattern. It has no useful native large moons in the Phobos/Deimos class, so options collapse to:
 
 1. **Local orbital / small-body relocation + hollow + fit-out**  
-   Bring a suitable small body, convert it, and use it as the structural core or platform for depot and station. Preferred route to an early orbital industrial presence.
+   Bring a suitable small body (tug class required for relocation), convert it, and use it as structural core or platform for depot and station.
 
-2. **Surface-to-orbit once local industry exists**  
-   Higher energy cost (gravity well), still preferred over interplanetary imports when local capacity is mature. Used after (or in support of) the orbital layer, not as the primary bootstrap.
+2. **Pure orbital assemble / module import**  
+   Build from delivered modules when no suitable body is available or tug capacity is lacking.
 
-3. **Module import + assemble in place**  
-   Lowest preference; mainly bootstrap or specialized components.
+3. **Surface-to-orbit once local industry exists**  
+   Higher energy cost (gravity well); used after (or in support of) the orbital layer, not as the primary bootstrap.
 
 **Targets at Venus** are ordinary industrial infrastructure (orbital propellant/volatile depot, staging / manufacturing station, mass-driver support, etc.). These are **not** Artificial Wormhole Stations (AWS). AWS is a separate, later-gated system.
+
+---
+
+## Craft role summary
+
+| Craft | Role in construction options |
+|-------|------------------------------|
+| **Cycler** | Interplanetary delivery; mobile construction base; various drives (not slag-only). Configs (e.g. Mars Constructor) carry mining/construction gear and can transfer units to depot/station. |
+| **HLT / Mk-I support craft** | Move equipment from cycler to surface or small body; **in-place work only** — does not reposition Phobos/Deimos-class bodies. |
+| **Asteroid relocation tug** | Capture, relocate, hollow; **slag engines** use hollowing waste as reaction mass; hybrid propulsion possible. Later/heavier option when that class exists. |
+| **Depot / station** | Permanent nodes; receive transferred gear; depot especially important for cycler refueling once seeded. |
 
 ---
 
@@ -86,9 +133,10 @@ Venus also follows the default **orbital-first** pattern. It has no useful nativ
 
 When choosing among options the AI Manager weighs at least:
 
-- Available local orbital mass vs. surface mass
-- Fuel production rate and storage
-- Current tug class and capacity
+- Survey results (ice/volatiles vs dry rock; structural feedstock)
+- Available local orbital mass vs surface mass
+- Fuel production rate, storage, and whether the depot is seeded
+- Current craft class (cycler only vs tug available)
 - Existing industrial nodes (can they feed an L1-style assembly pattern?)
 - Timeline pressure and CapEx
 - Whether a magnetosphere or other progressive infrastructure is also being scored in the same window
@@ -99,9 +147,10 @@ The same first-principles scoring travels outside Sol. Different systems will pr
 
 ## Open Questions / Future Work
 
-- Exact data structures for scoring material source + fuel cost + tug class together.
-- How slag station-keeping performance is modeled for hollowed Phobos/Deimos-class bodies.
-- Thresholds at which the AI Manager prefers small-body relocation over pure local-module construction.
-- Parameterization of the same options for moonless vs. moon-rich targets beyond Sol.
+- Exact data structures for scoring material source + fuel cost + craft class together.
+- How non-slag station-keeping is modeled for early lean outposts on natural moon orbits.
+- Thresholds at which the AI Manager prefers small-body relocation (tug) over lean cycler + outpost or pure orbital assemble.
+- Parameterization of the same options for moonless vs moon-rich targets beyond Sol.
+- Numeric propellant seed sizes and cycler multi-trip cadence for the lean Mars path (remain OPEN; do not invent).
 
-All numerical values and ownership models remain **OPEN**.
+All numerical values remain **OPEN** unless marked ESTABLISHED INTENT elsewhere.
