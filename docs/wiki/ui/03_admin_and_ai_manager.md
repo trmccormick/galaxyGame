@@ -217,6 +217,18 @@ The main application contains existing Planetary, Surface, Monitor, resource, in
 
 **Proposed integration direction, not yet implemented:** the main Rails 7 GalaxyGame application remains authoritative for game state, simulation, calculations, validation, persistence, and authorization. The separate Rails 8.1 UI prototype is the presentation/client layer and would consume deliberate game-oriented API contracts. The API boundary may change how data is loaded and presented; it does not justify duplicating game logic in the UI. Mock data may be used during design, but must be clearly labeled.
 
+### Admin Celestial Body View
+
+**ESTABLISHED INTENT — 2026-11-15**
+
+The Admin Dashboard includes a **Celestial Body View** for inspecting a selected celestial body's terrain, geology, environmental spheres, and related data. The name is deliberate: the workspace must cover planets, moons, asteroids, and other supported celestial bodies. It is distinct from the Player's Planetary view, AI Manager, Map Studio, TerraSim, and Digital Twin.
+
+The main Rails 7 application contains legacy implementation work that should be assessed and reused where valuable. Its current **Monitor** route/page is a small navigation/status hub; its **Planetary View** route/page is the richer map-and-sphere-data workspace. Those are legacy implementation names, not the intended product terminology. The future UI should call the workspace **Celestial Body View**.
+
+As views are ported into the separate Rails 8 UI prototype, adapt the useful behavior and data to the intended Admin experience rather than copying legacy layouts, labels, or interactions unchanged. Preserve the main application's authority over game state, simulation, calculations, validation, persistence, and authorization. The exact panel layout, detailed layer inventory, and authorized administrative actions remain OPEN and must be settled through view design and owner review.
+
+See [Admin Celestial Body View](05_admin_celestial_body_view.md) for the separation of design intent, current Rails 7 route/page facts, porting direction, historical conflicts, and open questions.
+
 ## 5. Screen planning and task granularity
 
 Each intended screen/page should receive its own small draft task when planning is ready. Each page task must state:
