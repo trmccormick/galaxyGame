@@ -841,7 +841,6 @@ window.AdminMonitor = (function() {
       // No biosphere: disable biomes button and skip rendering
       const biomesBtn = document.querySelector('[data-layer="biomes"]');
       if (biomesBtn) biomesBtn.disabled = true;
-      return; // early exit from biome render
     }
 
     for (let y = 0; y < height; y++) {
