@@ -45,7 +45,7 @@ The Earth Admin Celestial Body View (currently labeled **Planetary View** in the
 - map controls and supporting information/mission panels;
 - a lower console area.
 
-This is useful evidence that the Earth Planetary view and at least the demonstrated layer-loading/rendering path are operational in the captured environment. However, the rendered global map appeared coarse/blurry. It does not establish that every body, dataset, layer, or interaction is working.
+This is useful evidence that the Earth Celestial Body View and at least the demonstrated layer-loading/rendering path are operational in the captured environment. However, the rendered global map appeared coarse/blurry. It does not establish that every body, dataset, layer, or interaction is working.
 
 **Preserve:** This is a useful existing capability and functional reference. Future UI work should improve presentation and integration without casually replacing working map/data behavior. Investigate the displayed resolution and rendering path before concluding that the original GeoTIFF source data is inadequate; inspect source data, generated derivatives, processing, and map delivery separately.
 
