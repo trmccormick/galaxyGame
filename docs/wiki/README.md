@@ -84,6 +84,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|-------|
 | [StarSim architecture](design/starsim_and_protection_classes.md) | StarSim system generation, unit simulation boundaries, CelestialBody contracts, code reality, and implementation gaps |
+| [Admin planetary monitor](ui/05_admin_planetary_monitor.md) | Admin planetary monitor responsibilities, data flow, endpoints, current lifecycle implementation, and regression context |
 
 ---
 
