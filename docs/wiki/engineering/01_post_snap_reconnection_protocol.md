@@ -196,7 +196,7 @@ The AI Manager does not restart the world for the player. It restores what it ca
 
 ## References
 
-- Wormhole Mechanics: [`docs/architecture/logistics/wormhole_system.md`](../../architecture/logistics/wormhole_system.md)
-- Cycler Mission Timelines: [`docs/architecture/services/ai_manager/CYCLER_MISSION_TIMELINES.md`](../../architecture/services/ai_manager/CYCLER_MISSION_TIMELINES.md)
-- Act 3 Snap Crisis / Story Arc: [`docs/storyline/01_story_arc.md`](../../storyline/01_story_arc.md)
-- Wormhole Network Architecture: [`docs/architecture/logistics/navigation/WORMHOLE_NETWORK.md`](../../architecture/logistics/navigation/WORMHOLE_NETWORK.md)
+- Wormhole Mechanics: `docs/architecture/logistics/wormhole_system.md` (frozen doc)
+- Cycler Mission Timelines: `docs/architecture/services/ai_manager/CYCLER_MISSION_TIMELINES.md` (frozen doc)
+- Act 3 Snap Crisis / Story Arc: `docs/storyline/01_story_arc.md` (frozen doc)
+- Wormhole Network Architecture: `docs/architecture/logistics/navigation/WORMHOLE_NETWORK.md` (frozen doc)
