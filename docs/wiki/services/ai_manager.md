@@ -143,6 +143,40 @@ The intended progression is:
 
 The goal is not to train the AI to select whichever historical profile has the highest score. It is to help it understand the available approaches, their assumptions, their trade-offs, and the conditions under which they may be useful.
 
+
+#### External world examples and world-generation learning
+
+**ESTABLISHED OWNER INTENT — 2026-11-15**
+
+GalaxyGame may use maps and scenarios from other games and creative projects—including Civ4, FreeCiv, SimEarth, and fictional-world examples—as **learning and reference material** to improve its own world-generation capabilities. These materials are not intended to be imported as playable GalaxyGame maps, copied directly into celestial-body terrain, or treated as authoritative planetary datasets.
+
+The owner reports that some external examples have already been ingested into the existing generator/training work and that an initial AI-training effort has already been attempted. That work is incomplete: the current generator does not yet provide the expected results. This is therefore a direction for reviewing and improving existing ingestion, training, and generation capabilities—not a proposal to create a parallel training library or start the feature from scratch. The current implementation, data flow, and remaining gaps must be established by code inspection.
+
+Examples may help the AI Manager and world-generation workflow recognize and propose options involving:
+
+- Terrain, elevation, biome, and geographic arrangements or distributions.
+- Resource types, density, and spatial distribution.
+- Candidate settlement locations and settlement patterns.
+- Environmental organization and relationships among terrain, resources, and habitability.
+- Human-designed hypothetical worlds, including imagined terraforming outcomes.
+- Designer descriptions, scenario notes, and stated reasoning where that context is available.
+
+The intent is to learn **patterns, possibilities, and design approaches**, not to reproduce source maps, inherit their game mechanics, or treat their hand-authored placements as facts. Game-balanced resource placements and settlement starts are examples of human choices, not verified geology, resource surveys, or proof of settlement viability.
+
+Interpretation must keep three evidence types distinct:
+
+1. **Examples:** what a map author or scenario designer created, assumed, or considered desirable/plausible.
+2. **Observations:** what real planetary, geological, elevation, atmospheric, and other source data establishes about the actual body.
+3. **Simulation outcomes:** what GalaxyGame's Digital Twin/TerraSim produces when a proposed configuration or intervention is tested under modeled conditions.
+
+These evidence types can inform one another but must not be conflated. Where real planetary data exists, it should constrain and contextualize learned examples. Where data is incomplete or unavailable, examples may broaden the options considered, but their uncertainty and provenance must remain visible. Simulation can then test proposed configurations and provide outcome evidence; a designer's scenario description remains evidence of design intent, not scientific validation.
+
+A terraformed-world map can therefore be useful as an example of one possible future configuration and of the creator's assumptions. It is not an instruction that the target body should be terraformed. For example, a terraformed Mars scenario may help the AI Manager propose possible biome or water distributions for a hypothetical Mars intervention. The Digital Twin can evaluate such a proposal and report its consequences. By contrast, a Titan map may be useful for studying how a designer represented an unusual environment, terrain/resource patterns, or settlement ideas; it must not be interpreted as a recommendation to terraform Titan. The body's natural state and the actual objective must govern whether terraforming is appropriate at all.
+
+The desired result is for the AI Manager to offer context-sensitive generation options that can be evaluated and selected for GalaxyGame's own worlds. It should be able to adapt, combine, or reject learned patterns in light of the target body's observed properties, intended natural or hypothetical state, and simulation evidence. It must not assume that every world is an Earth-like terraforming project.
+
+**Implementation status:** The existence of prior ingestion and training attempts is owner-reported context, not a verified description of the current code path. The audit must identify which example formats and files are currently ingested, how their content and metadata are represented, whether designer/scenario descriptions are retained, where training or pattern extraction occurs, how the generator consumes the resulting knowledge, and what remains disconnected or incomplete. Do not claim a functioning end-to-end learning pipeline until the code demonstrates it.
+
 #### Current implementation gaps and cautions
 
 The following are observations about the inspected code, not changes to the intended design:
