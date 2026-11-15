@@ -14,9 +14,9 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 | [Player view architecture](02_player_view_architecture.md) | Three primary Player views, the separate Space context, and navigation boundaries |
 | [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Player/Admin dashboard separation, Admin workspaces, AI Manager responsibilities, Map Studio, and Digital Twin workflows |
 | [Current UI state and known issues](04_current_ui_state_and_known_issues.md) | Dated observations of the running main UI, visual inconsistencies, working views, and known rendering issues |
-| [Admin planetary monitor](05_admin_planetary_monitor.md) | Admin planetary-monitor responsibilities, data flow, endpoints, current lifecycle implementation, and known regression under investigation |
+| [Admin Celestial Body View](05_admin_celestial_body_view.md) | Intended Admin body-inspection workspace, legacy Rails 7 route/page facts, porting direction, and lifecycle issue under investigation |
 
-The [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) page records observed behavior and defects separately from design intent. The review principle is to preserve, complete, and standardize useful existing application views—not discard unfinished work and start over. Planetary/Orbital, Surface, Map Studio, Monitor, resource, and infrastructure views are candidates for prototype review and porting.
+The [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) page records observed behavior and defects separately from design intent. The review principle is to preserve, complete, and standardize useful existing application views—not discard unfinished work and start over. Celestial Body View (currently labeled Planetary View in the legacy app), Surface, Map Studio, Monitor entry/navigation, resource, and infrastructure views are candidates for prototype review and porting. Port them toward the approved experience rather than copying legacy layouts and labels unchanged.
 
 The product has two primary dashboards: **Player Dashboard** and **Admin Dashboard**. They share a visual language and domain context but serve different audiences and workflows. AI Manager is a dedicated workspace within Admin. The Player interface has exactly three primary views described in page 02: Planetary, Surface, and Settlement. Space is a separate Player context, not a fourth primary view. Galaxy/system catalogs and system workspaces are navigation and selection workspaces, not additional Player views.
 
@@ -44,3 +44,4 @@ A proposed mockup or prototype screenshot is not automatically an approved desig
 - **2026-11-11** — Expanded the architecture to document dashboard responsibilities, system/body workspaces, Admin/AI Manager direction, dated current-state issues, and preservation/completion of existing views.
 - **2026-11-13** — Corrected the Player architecture to three primary views plus a separate Space context and clarified Admin workspace boundaries.
 - **2026-11-14** — Clarified StarSim, TerraSim, AI Manager, and Digital Twin responsibilities; left small-body spawning and resource-generation ownership open.
+- **2026-11-15** — Established Admin Celestial Body View terminology and documented the distinction between legacy Rails 7 implementation and future UI porting intent.
