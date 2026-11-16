@@ -38,6 +38,8 @@ Map Studio is an Admin tool in the connected planetary-data pipeline. It support
 
 Map Studio and Digital Twin have different responsibilities: Map Studio concerns planetary data and geography preparation; Digital Twin concerns environmental projection, evaluation, and simulation-system tuning (see below).
 
+Map Studio is retained as an Admin capability. Exact Admin navigation, routes, and entry points are **not fully verified** in this wiki and remain part of the map/world-generation pipeline audit (see [Status and gaps](../status-and-gaps.md)).
+
 ### StarSim Generator
 
 StarSim is responsible for procedural generation of stars and planetary systems. Its scope may also include generating/populating additional celestial objects in space that are not part of the major system-generation pass, such as asteroids, comets, Kuiper Belt objects, Oort Cloud objects, and other small bodies. Keep the distinction between initial system generation and any additional population process visible.
