@@ -20,6 +20,7 @@ Where older material is still valid it is brought forward. Where the new brainst
 2. Its primary mandate is to **keep the base alive** (life support, structural integrity, basic services).
 3. Player capital (taxes, docking fees, portal tolls) is the preferred fuel for discretionary activity. In the absence of player activity the AI Manager falls back to self-reliance.
 4. The same loops run in the pre-player phase and during isolation (e.g. Eden disconnect). There is no special “player-present” code path required for basic survival.
+5. **Local production preferred over importing finished bulk.** Prefer importing equipment/tech and producing locally over long-transit import of consumables and feedstock when local production is viable. EAP still caps what is paid for imports; it does not override the preference to onshore production.
 
 ---
 
@@ -29,13 +30,17 @@ Where older material is still valid it is brought forward. Where the new brainst
 
 EAP is the price ceiling the AI Manager will pay for a resource at a given location.
 
-High-level formula (from existing markets work):
+**ESTABLISHED INTENT:** the AI Manager owner confirmed that EAP is:
 
 ```
-EAP = (earth_spot_price × refining_factor) × usd_to_gcc_peg + transport_cost
+EAP = Earth reference price + transport cost to this location
 ```
 
-- The AI Manager will not pay more than EAP under normal conditions.
+- **Refining:** include only where applicable (e.g. Earth price is for a raw grade and the local need is refined).
+- **Peg:** at bootstrap, GCC/USD is 1:1 — peg is unit conversion from USD reference into GCC, not an extra economic multiplier in the EAP formula.
+- Aligns with `financial_engine.md` / markets canonical language: Earth USD reference cost (+ refining where applicable) + transport cost.
+
+The AI Manager will not pay more than EAP under normal conditions.
 - If local player offers exceed EAP, the AI Manager falls back to internal harvest or import rather than accepting the gouge.
 
 ### Local NPC trading band (DIRECTION — accepted seed)
@@ -44,7 +49,7 @@ When the settlement has excess inventory it is willing to sell, and when it has 
 
 | Action                          | Price relative to EAP | Notes |
 |---------------------------------|------------------------|--------|
-| NPC **buys** from players       | **80 % of EAP**        | Guaranteed floor for early player sales |
+| NPC **buys** from players       | **80 % of EAP**        | Guaranteed floor for early player sales. NPC buy at 80% EAP is intended to put GCC in players' hands while not paying full import-equivalent and risking settlement bankruptcy. |
 | NPC **sells** excess to players | **90 % of EAP**        | Discount vs full import cost |
 | Hard ceiling                    | **100 % of EAP**       | Above this the AI imports or self-supplies under normal conditions |
 
