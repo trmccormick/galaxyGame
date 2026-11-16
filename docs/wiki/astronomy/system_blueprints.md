@@ -9,6 +9,8 @@
 
 ---
 
+> **Boundary:** This page documents **StarSim** system and celestial-body generation (seeds, JSON systems, procedural and predefined paths). It does **not** document **Map Studio** body-terrain or geographic map generation. For Admin terrain preparation and external map examples as learning references, see [Admin Dashboard and AI Manager](../ui/03_admin_and_ai_manager.md) and [Admin Celestial Body View](../ui/05_admin_celestial_body_view.md).
+
 ## 1. Component Map
 
 | Role | Class / Path |
