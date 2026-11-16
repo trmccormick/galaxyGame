@@ -40,6 +40,10 @@ In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy t
 
 Mars access is scored as a set of options. Ranking depends on craft class and technology available at the time. Full option set: **[Station Construction Options](../engineering/station_construction_options.md)**.
 
+**L1 infrastructure sub-options (also in Station Construction Options):**
+* **Compact L1 magnetic shield station** (~1–2 MW class) — early / pre-settlement option; deploy before high-throughput atmospheric work.
+* **Modular octagonal CNT panel array at L1** (later, mid-to-late phase) — dual-role concept: local power generation for station systems + light reflection / concentration toward the surface; modular frame with interchangeable infill is DIRECTION / design candidate.
+
 * **Preferred early path (Luna-parallel, no tug required):** L1 builds cycler(s) with HLT support craft; lean mining outpost on one moon in place (survey first; hollowing not required); stand up a separate Mars orbital depot (seed propellant on early trips); station and surface follow. Mk-I / HLT work is in-place only.
 * **Heavier in-place options:** Hollow and fit a moon as station/depot in natural orbit when that intent scores better (still no relocation under Mk-I).
 * **Tug-class path (when that technology exists):** A later heavy tug class may capture, hollow, and optionally reposition small bodies or (at higher tier) work Phobos/Deimos more aggressively, including slag-engine use of hollowing waste. Valid option — not required for first access.

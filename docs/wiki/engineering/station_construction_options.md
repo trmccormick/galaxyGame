@@ -99,6 +99,13 @@ One coherent early path mirrors early Luna at similar intensity: enough industry
 
 Magnetosphere / L1 shield construction remains **independent** of moon relocation or moon-as-station choices (see [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md)). High-throughput atmospheric injection cares that a shield is active; it does not require Phobos or Deimos to be moved.
 
+### Mars L1 infrastructure sub-options (DIRECTION / OPEN)
+
+**One valid path among others.** The preferred early Mars path remains: cycler + HLT → lean mining outpost on one moon (survey first, hollowing not required) → separate orbital depot → station later → surface later. Ranking depends on technology available at the time. This L1 sub-path is simply one coherent way to add progressive infrastructure into the option set.
+
+* **Compact L1 magnetic shield station (~1–2 MW class).** Early / pre-settlement option: deploy a magnetic dipole station at Mars–Sun L1 before high-throughput atmospheric modification. Primary effect — deflects solar wind, creates protective magnetosheath over the planet, halts atmospheric stripping.
+* **Modular octagonal CNT panel array at the same L1 location** (mid-to-late phase). Later option that can serve dual roles: local power generation for station systems + light reflection / concentration toward the surface. The frame is a standard 100 m class octagonal CNT structure with interchangeable PV or reflector infill and optional embedded solar-wind H₂ capture mesh. Panel geometry, ratios, and specific design parameters are **DIRECTION / design candidate**, not locked.
+
 ---
 
 ## Venus Option Set

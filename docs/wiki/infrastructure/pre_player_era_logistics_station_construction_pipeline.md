@@ -55,7 +55,7 @@ Ships departing Earth's gravity well face extreme mass penalties. To eliminate t
 
 ### Phase 3: Mars System Access & Industrial Options
 
-Station construction at Mars is option-driven. See **[Station Construction Options](../engineering/station_construction_options.md)**. Preferred early path does not require tugs or moon relocation; other paths remain valid when technology and survey support them.
+Station construction at Mars is option-driven. See **[Station Construction Options](../engineering/station_construction_options.md)** for the full option set including L1 infrastructure sub-options (compact magnetic shield station early, modular CNT panel array later). Preferred early path does not require tugs or moon relocation; other paths remain valid when technology and survey support them.
 
 * **Preferred early path:** Cycler + HLT from L1 → lean mining outpost on one moon (in place, Mk-I compatible, hollowing not required) → separate Mars orbital depot (seed fuel for cycler refueling) → station as capacity allows. Surface later.
 * **Heavier in-place moon work:** Hollow/fit a moon as station or depot in natural orbit without relocating it.
