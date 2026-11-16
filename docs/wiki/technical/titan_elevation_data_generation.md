@@ -1,6 +1,6 @@
 # Titan Elevation Data Generation
 
-**Status: PARTIALLY VERIFIED**  
+**Status: PARTIALLY IMPLEMENTED**  
 **Scope:** Historical construction and current availability of Titan's elevation data. This page records the known pipeline and evidence without treating retained intermediate files as disposable or declaring an untraced variant canonical.
 
 ## Summary
