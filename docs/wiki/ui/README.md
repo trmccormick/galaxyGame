@@ -30,6 +30,59 @@ The product has two primary dashboards: **Player Dashboard** and **Admin Dashboa
 
 A proposed mockup or prototype screenshot is not automatically an approved design. Keep the distinction between **ESTABLISHED INTENT**, **DIRECTION**, and **OPEN** visible.
 
+## Organizing and presenting simulation information
+
+**CROSS-CUTTING DESIGN DIRECTION — 2026-11-15**
+
+GalaxyGame has substantial and interconnected simulation data. The interface should make that information understandable and useful without requiring users to understand every underlying data structure or displaying every available value at once. Information should be organized around the audience's context, responsibilities, questions, and decisions.
+
+### Audience and purpose
+
+The same authoritative simulation data may need different presentations for different users and workspaces:
+
+- **Player:** Understand current conditions, activity, available actions, and relevant consequences in the player's context.
+- **AI Manager:** Understand conditions requiring attention, objectives, available options, priorities, constraints, and evidence relevant to operational decisions.
+- **Admin:** Inspect application and simulation health, data quality, system behavior, configuration, and operational problems.
+- **Map Studio:** Understand source data, geographic coverage, classifications, assumptions, derived information, processing, and generated results.
+
+These are different workflows and information needs, not merely different permission levels. Respect the established boundaries among Player views, Admin workspaces, and the simulation and operational systems behind them.
+
+### Reusable presentation techniques to consider
+
+The following are useful design techniques to evaluate as individual views and workflows are developed. They are principles and options, not mandatory controls or finalized layouts:
+
+- **Progressive disclosure:** Present the most useful information first and make deeper detail available when requested.
+- **Layered visualization:** Allow relevant environmental, geographic, resource, infrastructure, and activity information to be examined independently or in combination.
+- **Contextual inspection:** Let users select a body, location, resource, structure, unit, or other object to inspect its relevant properties and relationships.
+- **Historical and comparative views:** Where data permits, compare current conditions with previous states, alternative configurations, and projections.
+- **Provenance and confidence:** Distinguish observations, imported information, derived values, estimates, assumptions, and hypothetical configurations. Preserve source and transformation context where it matters.
+- **Alerts and exceptions:** Bring important changes, unusual conditions, failures, and items requiring attention to the appropriate audience rather than making users discover every issue manually.
+- **Appropriate aggregation and detail:** Use summaries, maps, lists, tables, trends, and object-level inspection according to the task and scale. Avoid overwhelming users with undifferentiated data or hiding important detail behind excessive navigation.
+
+### One authoritative source, multiple useful presentations
+
+A data value or simulation result should not be tied to one particular screen. For example, temperature might appear as a planetary visualization layer, a local settlement reading, a historical trend, an AI Manager threshold condition, or an administrative diagnostic. Each presentation should serve its audience while relying on authoritative data and calculations rather than duplicating domain logic or creating competing versions of the underlying information.
+
+The UI should make the meaning, units, time context, and relevant uncertainty of displayed information clear. Numeric runtime values must follow the UI Data Sourcing Rule below.
+
+## Learning from other projects
+
+**CROSS-PROJECT RESEARCH PRINCIPLE — 2026-11-15**
+
+GalaxyGame has its own goals, domain model, architecture, and intended experience. Other games, simulations, visualization tools, and software projects should not be treated as blueprints to copy or as authorities over GalaxyGame's design. However, many engineering, simulation, data-organization, and user-interface problems are shared across projects. Reviewing how other projects approach those problems can help GalaxyGame identify options, ask better questions, and develop its own solutions and implementations.
+
+When reviewing another project:
+
+1. Understand what that project is trying to accomplish and the context in which its approach makes sense.
+2. Identify the particular problem or technique worth studying—for example, data organization, terrain representation, environmental layers, visualization, interaction, procedural generation, or system modularity.
+3. Distinguish generalizable concepts and techniques from choices that depend on the other project's goals, constraints, or domain.
+4. Compare the idea with GalaxyGame's established architecture, existing code, unfinished capabilities, and open design questions.
+5. Record useful possibilities, trade-offs, and questions as research or design options. Adopt, adapt, or reject them only after considering GalaxyGame's needs.
+
+The objective is **inspiration and informed independent design, not imitation or automatic code reuse**. A project may offer a useful approach to one problem while being unsuitable as a whole. Studying its implementation does not make it a dependency, authorize copying its code, or imply that GalaxyGame should acquire its architecture or mechanics. Any direct code reuse requires its own technical and license review.
+
+This research is especially useful while GalaxyGame still has substantial capabilities to build and unresolved design questions to answer. Reviews should help inform those decisions without prematurely turning every interesting discovery into an implementation task or redesign.
+
 ## UI Data Sourcing Rule
 
 **All numeric values displayed in the runtime UI/HUD must be sourced from either:**
@@ -45,3 +98,4 @@ A proposed mockup or prototype screenshot is not automatically an approved desig
 - **2026-11-13** — Corrected the Player architecture to three primary views plus a separate Space context and clarified Admin workspace boundaries.
 - **2026-11-14** — Clarified StarSim, TerraSim, AI Manager, and Digital Twin responsibilities; left small-body spawning and resource-generation ownership open.
 - **2026-11-15** — Established Admin Celestial Body View terminology and documented the distinction between legacy Rails 7 implementation and future UI porting intent.
+- **2026-11-15** — Added cross-cutting principles for organizing simulation information and using external project reviews as inspiration for GalaxyGame's independent design and implementation.
