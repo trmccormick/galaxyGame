@@ -207,6 +207,34 @@ For a discovered system, AI Manager may choose to:
 
 These are strategic alternatives, not automatic stages every system must pass through.
 
+### Biological discovery and scientific network value
+
+**OPEN STRATEGIC DIRECTION — 2026-11-15; existing biology models present in code**
+
+System value should not be assessed only through extractable resources, industrial potential, logistics, or settlement capacity. A world may also be worth surveying, connecting, or keeping accessible because of its biological and scientific significance.
+
+A survey may identify evidence of:
+- present life, from microbial organisms through more complex ecosystems;
+- past life, including possible fossil or other preserved evidence;
+- unusual biological diversity, biochemistry, or adaptations;
+- organisms or traits that could support further biological research and, where appropriate, genetic engineering.
+
+A system with important biological discoveries may justify continued wormhole-network access even when its immediate economic or industrial return is limited. The AI Manager could weigh the scientific value, research opportunities, access costs, available resources, network capacity, and competing expansion needs when deciding whether to preserve or establish a connection. This is an option for strategic evaluation, not an automatic rule that every life-bearing world must be permanently connected or protected.
+
+#### Existing implementation evidence and limits
+
+The main Rails 7 application contains biological model support:
+- `Biology::LifeForm` represents natural life forms and includes population, environmental adaptation, ecological, and biosphere-interaction behavior.
+- `Biology::HybridLifeForm` represents engineered life forms and exposes `engineered_traits` and `creator_species`.
+- `Biology::LifeFormParent` records parent/child relationships, and `Biology::LifeFormDeployment` tracks a life form's deployment on a world.
+- The biosphere model associates life forms with a celestial body's biosphere.
+
+These code structures establish that natural and engineered/hybrid life forms are represented in the application. They do not, by themselves, establish that all biological processes, genetic-engineering workflows, life-detection surveys, or AI Manager research decisions are fully implemented or validated.
+
+The existing [Biosphere Simulation](../technical/biology/biosphere_simulation.md) page describes possible native-life interactions and rare useful-trait discovery, but explicitly marks detailed event behavior as unverified design proposals. [Planetary Protection and Environmental Governance](../infrastructure/planetary_protection_environmental_governance.md) describes biological protection classes and native-organism hybridization, but its governance and AI hooks are explicitly target design intent, not current runtime enforcement.
+
+A focused review of the current code and active wiki pages did not establish a dedicated implementation for detecting or cataloguing past life/fossils, nor a complete survey-to-research-to-AI-network-retention workflow. Those remain OPEN and should be investigated before being described as implemented.
+
 ### Learning and oversight
 
 The Admin workspace should make objectives, candidate systems, resource forecasts, network assessments, selected strategies, decisions, alternatives where actually recorded, actions, outcomes, and training evidence inspectable. Operators need appropriate review and intervention controls, subject to actual authorization and service support.
