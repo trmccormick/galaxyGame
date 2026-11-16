@@ -69,17 +69,19 @@ Candidate interactions include globe or projected-map pan/zoom, layer selection,
 
 The Planetary View should not be treated as the universal whole-body visualization. It is suited to spherical bodies; irregular bodies such as asteroids may need a different representation. More importantly, an irregular body's intended use can change what needs to be visualized.
 
-One established design intent for the asteroid tug concept is to hollow out an asteroid while using the excavated slag as propellant to move the body. The resulting structure is not simply an empty rock or an exposed-surface settlement:
+The asteroid tug's job is to prepare and relocate the asteroid shell, not to complete the station. The intended sequence is:
 
-- The hollowed void is usable interior volume for installed units, modules, equipment, and other facilities.
-- Remaining asteroid material forms an exterior shell and structural mass.
-- Finished material from the excavation process may be used to reinforce the interior and provide mounting/support points for units and modules.
-- The interior may be large enough for smaller spacecraft to enter and dock, including for maintenance or repair.
-- The exterior surface may have limited activity and may not be the most important operational area.
+1. **Hollow and relocate:** The tug excavates the asteroid and uses the excavated slag as propellant to move the body to its destination.
+2. **Prepare the shell:** The hollowed void provides usable interior volume. Remaining asteroid material forms the exterior shell and structural mass; processed material may be used to reinforce the interior and provide mounting/support points.
+3. **Initial outfitting by the tug:** Once the asteroid is in position, the tug transfers some of its own modules to the shell. This is initial outfitting, not completion of the station.
+4. **Cycler arrival and docking:** Cyclers subsequently arrive and dock with the positioned asteroid.
+5. **Main station deployment:** The cyclers begin deploying the main station parts and modules. This is the primary station-construction stage, distinct from the tug's shell preparation and initial module transfer.
 
-This is a possible conversion into a protected, hollowed station or habitat, not a requirement that every asteroid be converted this way. The precise excavation, reinforcement, interior layout, docking capacity, and ship-size limits remain matters for the relevant game-domain design.
+The hollowed interior is intended to become useful station volume for units, modules, equipment, and facilities. It may also be large enough for smaller spacecraft to enter and dock, including for maintenance or repair. The exterior surface may have limited activity and may not be the most important operational area.
 
-The UI may ultimately need to distinguish an exterior view, an interior or cutaway view, and views of installed facilities and docking spaces. Whether these are separate views, layers, or modes remains OPEN. Do not assume that a conventional surface view adequately represents a hollowed asteroid.
+This is a possible conversion into a protected, hollowed station or habitat, not a requirement that every asteroid be converted this way. The exact tug-carried modules, shell preparation and reinforcement details, cycler payloads and deployment process, interior layout, docking capacity, and ship-size limits remain matters for the relevant game-domain design.
+
+The UI may ultimately need to distinguish the exterior shell, interior or cutaway, tug-installed initial modules, and the main station components deployed by cyclers. Whether these are separate views, layers, or modes remains OPEN. Do not assume that a conventional surface view adequately represents a hollowed asteroid.
 
 ## Surface context
 
