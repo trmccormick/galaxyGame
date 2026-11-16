@@ -10,12 +10,14 @@
 > **Evidence/status caution:** This page contains a mixture of design intent, proposed gameplay rules, and aspirational formulas. It is not a verified description of current code behavior. The current `BiosphereSimulationService` implementation and its observed limitations are summarized in the sphere-model reference. Until each item is confirmed against current code and owner-approved design, treat the detailed thresholds, phase gates, deployment lifecycle, soil/biodiversity scoring formulas, contamination rules, and Digital Twin state-vector proposal below as **unverified design proposals**, not implemented capabilities or binding requirements. The general intent that biological processes can affect and be affected by environmental spheres remains valid; the specific mechanics require review.
 >
 > **Status convention:** See the evidence categories in [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md#5-evidence-and-status-conventions): implemented, established design intent, and future/aspirational. Implemented behavior is not automatically scientifically validated.
+>
+> **Page role:** This page records intended behavior and proposed simulation architecture. [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md) is the source-verified implementation reference. [Terraforming Seeds](./terraforming_seeds.md) covers candidate Seed concepts, while the [Biology & Terraforming wiki hub](./README.md) records owner-confirmed direction.
 
 ---
 
-## 1. Proposed liquid-water gate — status requires owner confirmation
+## 1. Liquid-water gate — unresolved design proposal
 
-This section records a previously documented proposed gate for Terraforming Seeds or Worldhouses. Its exact thresholds, phase terminology, and operational consequences are **not confirmed here as current approved mechanics**. Do not use this as an implementation contract without owner confirmation.
+This section records a previously documented proposed gate for Terraforming Seeds or Worldhouses. Its exact thresholds, phase terminology, and operational consequences are **not confirmed here as current approved mechanics**. Do not use this as an implementation contract without owner confirmation. Passing or failing this proposed gate does not itself mandate Seed deployment. Liquid water is not a universal prerequisite for all simple-life applications, and a gate result does not rule out other biological approaches. Brute-force atmospheric and orbital options remain available to the AI Manager; see [Terraforming options](../../infrastructure/terraforming_options.md).
 
 ### Required Conditions
 
@@ -45,13 +47,15 @@ end
 
 ---
 
-## 2. BiosphereSimulationService Interface
+## 2. BiosphereSimulationService — proposed interface sketch (not a code contract)
 
 ### Purpose
 
-`BiosphereSimulationService` simulates biosphere conditions, ecosystem interactions, food webs, and atmospheric influence from life forms at each simulation timestep (typically one game year).
+The method names and tick order below are design sketches, not a verified inventory of current Ruby APIs. Whether the listed methods exist with these signatures is unverified here. Prefer [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md) when making claims about what the application code currently does.
 
-### Primary Methods
+`BiosphereSimulationService` is described in this proposed architecture as simulating biosphere conditions, ecosystem interactions, food webs, and atmospheric influence from life forms at each simulation timestep (typically one game year).
+
+### Primary Methods — proposed sketch
 
 ```ruby
 # Apply terraforming effects over a time delta (in game years)
@@ -281,7 +285,7 @@ Per the Terraforming Seeds direction document, undetected native life introduces
 
 - Contamination risk is **permanent and can never reach zero**.
 - Can be reduced (but not eliminated) through higher-cost biosafety protocols.
-- Protocol tiers are documented in `contamination_and_biosafety.md`.
+- Protocol tiers and broader biosafety governance should be considered alongside [Planetary Protection & Environmental Governance](../../infrastructure/planetary_protection_environmental_governance.md). A dedicated biology contamination-cost page is **OPEN**; the previously referenced `contamination_and_biosafety.md` is not present in the active wiki.
 - This residual factor directly reduces Digital Twin projection confidence scores.
 
 ---
