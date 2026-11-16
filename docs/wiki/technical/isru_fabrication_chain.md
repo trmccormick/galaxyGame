@@ -23,6 +23,43 @@ This document defines the In-Situ Resource Utilization (ISRU) production chain t
 
 ---
 
+## Early Planetary Volatiles Extraction Equipment (DIRECTION)
+
+These are the first-pass surface units that sit between raw regolith harvesting and ISRU fabrication. The AI Manager can combine them modularly according to mission needs — no single sequence is hard-scripted.
+
+### TEU — Thermal Extraction Unit
+
+- First-pass oven on **raw regolith**.
+- Heats raw regolith (operational data: 300–800 °C) to drive off volatile compounds as mixed gas and conditions the solid fraction; produces **"processed regolith"**. Volatile yield depends on the regolith's volatile content from geosphere survey data, not a fixed figure.
+- Its processed regolith is the usual PVE input; the Modularity list below covers sites that skip it.
+
+### PVE — Planetary Volatiles Extractor
+
+- Takes **processed** (or raw) regolith and cracks oxides to extract locked oxygen and possibly secondary volatiles.
+- Outputs **depleted regolith**.
+
+> **Note:** The roles above are the design intent; unit details may be adjusted. Current data differs for the PVE: its operational data models heating and sublimation up to 600 °C with outputs of mixed volatiles, H₂O and depleted regolith, while its blueprint describes oxygen extraction by high-temperature chemical reduction. [Unit & Manufacturing Blueprints](../engineering/unit_and_manufacturing_blueprints.md) §5.3 describes ProductionService with PVE before TEU, and the AI Manager ISRU optimizer has PVE separating gases from TEU output. These are not yet reconciled.
+
+### Modularity (DIRECTION)
+
+Modularity is intentional — these are building blocks, not a fixed script:
+
+- **Standalone PVE:** can operate with just a harvester for remote / precursor O₂ (LOX) production without requiring a full TEU line.
+- **Precursor sites (low-capture mode):** non-target gases may be vented to keep mass and energy low. The hardware runs, but only the target gas is retained.
+- **Gas separator:** a standalone PVE still needs a gas separator; at a precursor site, the gases it separates out that are not the target are the ones vented.
+- **Full-base mode:** the same PVE hardware switches to full capture; every useful gas is retained for downstream use.
+
+### Depleted Regolith
+
+Depleted regolith from the PVE is **feedstock**, not waste:
+
+- Construction fill and 3-D printing substrate (see Section 2 below)
+- Later heavy-metal extraction source
+
+No single combination is mandatory — the AI Manager selects TEU/PVE counts, placement, and capture mode based on survey results, power budget, and mission phase.
+
+---
+
 ## 1. Regolith Feedstock Qualification
 
 ### Composition Analysis Requirements
