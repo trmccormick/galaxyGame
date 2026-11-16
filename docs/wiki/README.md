@@ -132,6 +132,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Biology — overview](technical/biology/README.md) | Biology subfolder: biosphere simulation, terraforming seeds |
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
 | [TerraSim — Environmental Simulation, Calibration & Evolution](technical/terrasim.md) | Natural-world simulation, historical calibration, environmental events, terraforming, and future tuning direction |
+| [Titan elevation data generation](technical/titan_elevation_data_generation.md) | Historical Titan topography-to-elevation processing, retained source/intermediate products, runtime rendering evidence, and unresolved provenance questions |
 | [Celestial-Body Sphere Models & Environmental Interactions](technical/sphere_models_and_interactions.md) | Sphere data ownership, cross-sphere processes, different world types, and a code-inspection snapshot of current TerraSim behavior |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
