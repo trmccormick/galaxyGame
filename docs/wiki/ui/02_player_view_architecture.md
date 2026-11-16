@@ -67,22 +67,29 @@ Candidate interactions include globe or projected-map pan/zoom, layer selection,
 
 **OPEN DESIGN CONSIDERATION — 2026-11-15**
 
-The Planetary View should not be treated as the universal whole-body visualization. It is suited to spherical bodies; irregular bodies such as asteroids may need a different representation. More importantly, an irregular body's intended use can change what needs to be visualized.
+The Planetary View should not be treated as the universal whole-body visualization. It is suited to spherical bodies; irregular bodies such as asteroids and small moons may need a different representation. More importantly, an irregular body's intended use can change what needs to be visualized.
 
-The asteroid tug's job is to prepare and relocate the asteroid shell, not to complete the station. The intended sequence is:
+### Asteroid relocation and station construction option
+
+One established deployment concept uses an Asteroid Relocation Tug to prepare and relocate an asteroid shell. The tug's job is not to complete the station:
 
 1. **Hollow and relocate:** The tug excavates the asteroid and uses the excavated slag as propellant to move the body to its destination.
 2. **Prepare the shell:** The hollowed void provides usable interior volume. Remaining asteroid material forms the exterior shell and structural mass; processed material may be used to reinforce the interior and provide mounting/support points.
 3. **Initial outfitting by the tug:** Once the asteroid is in position, the tug transfers some of its own modules to the shell. This is initial outfitting, not completion of the station.
 4. **Cycler arrival and docking:** A cycler subsequently arrives and docks with the positioned asteroid. The cycler can be parked there and used as a temporary station while the asteroid station is built out.
-5. **Main station deployment and buildout:** Modules and units are transferred and deployed from the cycler to construct and equip the main station. The cycler provides a temporary operational base and support during this work; its role is distinct from the tug's shell preparation and initial module transfer. The cycler is not itself the completed asteroid station.
+5. **Main station deployment and buildout:** Modules and units are transferred and deployed from the cycler to construct and equip the main station. The cycler provides a temporary operational base and support during this work; it is distinct from the tug and from the completed asteroid station.
 
 The hollowed interior is intended to become useful station volume for units, modules, equipment, and facilities. It may also be large enough for smaller spacecraft to enter and dock, including for maintenance or repair. The exterior surface may have limited activity and may not be the most important operational area.
 
-This is a possible conversion into a protected, hollowed station or habitat, not a requirement that every asteroid be converted this way. The exact tug-carried modules, shell preparation and reinforcement details, cycler payloads and deployment process, interior layout, docking capacity, and ship-size limits remain matters for the relevant game-domain design.
+### Phobos and Deimos deployment alternatives
 
-The UI may ultimately need to distinguish the exterior shell, interior or cutaway, tug-installed initial modules, and the main station components deployed by cyclers. Whether these are separate views, layers, or modes remains OPEN. Do not assume that a conventional surface view adequately represents a hollowed asteroid.
+The original concept for Phobos and Deimos was to convert the moons themselves into station and depot infrastructure. After it became clear that the Mk1 cycler could not relocate either moon, the Mars deployment concept was tuned to provide another option: use Phobos and/or Deimos as mining outposts, then construct separate orbital stations using an approach similar to the Earth–L1 deployment.
 
+These are alternative deployment options, not a single mandatory sequence or a replacement of the original concept. The choice depends on the available relocation capability and the intended use of the moon and surrounding infrastructure. Do not assume that every asteroid or small moon must be hollowed, relocated, or converted into a station; nor that every deployment must use a mining outpost followed by a separate station.
+
+The exact tug-carried modules, shell preparation and reinforcement details, cycler payloads and deployment process, interior layout, docking capacity, ship-size limits, and selection criteria between these options remain matters for the relevant game-domain design.
+
+The UI may ultimately need to distinguish an exterior body, an interior or cutaway, installed modules, mining activity, docking arrangements, and station construction progress. Whether these are separate views, layers, or modes remains OPEN. Do not assume that a conventional surface view adequately represents a hollowed or repurposed irregular body.
 ## Surface context
 
 **DIRECTION grounded in existing partial implementation**
