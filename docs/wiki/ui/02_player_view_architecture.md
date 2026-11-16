@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-14
+> **Last Updated:** 2026-11-15
 
 # Player View Architecture
 
@@ -62,6 +62,24 @@ Planetary is the whole-body view, inspired by SimEarth. It presents the selected
 Existing main-app Monitor/Planetary functionality is substantial and must be inspected, repaired, and evaluated for reuse or adaptation. Do not assume it is specification-only or rebuild it from scratch. The current screenshots show working Earth map/layer behavior, but also a coarse/blurry display; the cause and best data/rendering path remain to be investigated.
 
 Candidate interactions include globe or projected-map pan/zoom, layer selection, selected-region inspection, and environmental data panels. Exact layer availability depends on the authoritative data and services.
+
+## Irregular and repurposed body visualization
+
+**OPEN DESIGN CONSIDERATION — 2026-11-15**
+
+The Planetary View should not be treated as the universal whole-body visualization. It is suited to spherical bodies; irregular bodies such as asteroids may need a different representation. More importantly, an irregular body's intended use can change what needs to be visualized.
+
+One established design intent for the asteroid tug concept is to hollow out an asteroid while using the excavated slag as propellant to move the body. The resulting structure is not simply an empty rock or an exposed-surface settlement:
+
+- The hollowed void is usable interior volume for installed units, modules, equipment, and other facilities.
+- Remaining asteroid material forms an exterior shell and structural mass.
+- Finished material from the excavation process may be used to reinforce the interior and provide mounting/support points for units and modules.
+- The interior may be large enough for smaller spacecraft to enter and dock, including for maintenance or repair.
+- The exterior surface may have limited activity and may not be the most important operational area.
+
+This is a possible conversion into a protected, hollowed station or habitat, not a requirement that every asteroid be converted this way. The precise excavation, reinforcement, interior layout, docking capacity, and ship-size limits remain matters for the relevant game-domain design.
+
+The UI may ultimately need to distinguish an exterior view, an interior or cutaway view, and views of installed facilities and docking spaces. Whether these are separate views, layers, or modes remains OPEN. Do not assume that a conventional surface view adequately represents a hollowed asteroid.
 
 ## Surface context
 
