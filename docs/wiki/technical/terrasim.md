@@ -104,11 +104,12 @@ When a new body type or environmental use case is addressed, evaluate the releva
 
 - **CelestialBody and sphere models:** represent the body and store detailed physical/environmental state.
 - **StarSim:** generates stars, systems, and celestial bodies and supplies their initial generation data.
+- **Map Studio:** prepares or generates **initial** terrain/geographic data for a body. That initial state can feed later environmental simulation; Map Studio is not TerraSim and does not perform ongoing environmental evolution.
 - **TerraSim:** calculates environmental states, coupled processes, natural evolution, projections, and consequences of modeled events or interventions.
 - **AI Manager:** selects and executes approved operational and terraforming strategies using available world state and projections.
 - **Digital Twin:** provides an Admin/developer workspace for inspecting, comparing, evaluating, and tuning simulations and strategies; it is not the simulation engine itself.
 
-TerraSim calculates environmental consequences; it does not autonomously choose terraforming objectives or perform operational actions.
+TerraSim calculates environmental states, evolution, and consequences from the world state it is given; it does not autonomously choose terraforming objectives or perform operational actions.
 
 ## 6. Future evaluation and tuning direction
 
