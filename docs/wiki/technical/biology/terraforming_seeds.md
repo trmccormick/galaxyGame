@@ -8,6 +8,18 @@
 
 ---
 
+## Owner-Confirmed Direction — Initial Simple-Life Use on Mars
+
+The current planning assumption is that simple life will be found and that simple life will be used as part of Mars's initial terraforming. Treat this as an established working direction for scenario and strategic planning, not as proof that the discovery, selection, deployment, or resulting environmental effects are already implemented or validated.
+
+The initial use of simple life has value independently of any eventual full terraforming outcome. Full planetary terraforming may never be pursued to completion, so the initial biological work must not be framed as merely the first step of an inevitable Stage 1–5 progression toward a fully transformed world. Keep the early scope practical and focused on simple organisms and their useful initial contribution.
+
+More advanced ecosystem development, genetic engineering, hybrid organisms, and later-stage biosphere integration remain available directions. They are not prerequisites for the initial Mars use case and can be resumed when needed. Existing code, experiments, and tests should be preserved so that later work continues from the current foundation rather than being discarded or restarted.
+
+This owner-confirmed direction does not validate the detailed stage thresholds, adaptation rates, liquid-water gates, or quantitative effects elsewhere on this page. Those remain subject to implementation review and further design confirmation.
+
+---
+
 ## 1. Core Distinctions — Seed vs Worldhouse
 
 Both Terraforming Seeds and Worldhouses share **construction technology** (shell structure, power generation, life-support systems) but serve fundamentally different purposes and cost tiers.
