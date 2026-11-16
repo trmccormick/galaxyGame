@@ -78,6 +78,46 @@ These numbers are treated as existing design intent, not newly invented values.
 
 ---
 
+## Preferred Approach (Current Direction)
+
+**DIRECTION — strong match to recent owner preference**
+
+### Architecture choice
+
+A dedicated **electromagnetic dipole station at Sun–Mars L1** is the preferred approach.
+
+This is *not*:
+- a relocated moon
+- a planetary superconducting ring
+- a Phobos plasma torus as baseline
+
+### Specs (current direction)
+
+| Parameter | Target (DIRECTION) |
+|-----------|-------------------|
+| Field strength at station | ~1–2 T (dipole) |
+| Power requirement | ~1–2 MW (compact nuclear or equivalent) |
+| Primary effect | Deflects solar wind; creates a protective magnetosheath over the planet; halts atmospheric stripping |
+
+### Sequencing rule (locked)
+
+1. **Orbital / moon industry first** — lean outposts, local feedstock capacity.
+2. **Magnetosphere at L1** — deploy the dipole station.
+3. **High-throughput atmospheric modification** only after the shield is active.
+
+First-access footholds do **not** require the shield; the sequence gate applies to high-throughput gas injection.
+
+### Post-shield pressure (native CO₂ outgassing)
+
+After the shield goes up, native Mars CO₂ outgassing raises surface pressure passively — no additional injection required:
+
+- **Practical ceiling:** roughly **3–6 kPa**
+- **Absolute native ceiling estimate:** roughly **7–12 kPa**
+
+This is a passive benefit of atmospheric retention, not an immediate terraforming win. Surface conditions remain thin atmosphere; further pressure increase requires deliberate atmospheric processing.
+
+---
+
 ## Power / Technology Tiers (Recovered)
 
 Recovered material describes a three-tier evolution of the shield itself (not three competing locations):
@@ -113,9 +153,9 @@ These were mentioned in prior brainstorming and are recorded here so they are no
 
 | Architecture | Notes |
 |--------------|-------|
-| **Plasma torus** | Generated from Phobos/Deimos material (analogous to Io–Jupiter torus). Mentioned once as an alternative to the solid L1 dipole. No further design. Does not by itself require relocating either moon. |
-| **Surface or near-surface superconducting loop** | Studied in real literature; not developed in recovered game material. |
-| **Orbital ring / distributed coils** | Not developed beyond the primary L1 concept. |
+| **Plasma torus** (Phobos/Deimos) | **OPEN** — higher complexity and mass compared with the L1 dipole. No further design. Does not by itself require relocating either moon. |
+| **Equatorial superconducting loops** (surface / near-surface) | **OPEN** — studied in real literature; not developed in recovered game material. Higher complexity, mass, and power requirements than the L1 dipole approach. |
+| **Orbital ring / distributed coils** | **OPEN** — not developed beyond the primary L1 concept. |
 | **Later moon relocation as L1 anchor** | Optional higher-tier path only; not preferred baseline (see Preferred form). |
 
 Solar louvers / orbital panel swarms and surface ion towers appear in earlier retention-tier discussions. They improve retention but are **not** magnetosphere substitutes; they remain complementary tools documented elsewhere.
