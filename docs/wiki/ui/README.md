@@ -67,21 +67,52 @@ The UI should make the meaning, units, time context, and relevant uncertainty of
 
 ## Learning from other projects
 
-**CROSS-PROJECT RESEARCH PRINCIPLE — 2026-11-15**
+**CROSS-PROJECT RESEARCH AND REUSE PRINCIPLE — 2026-11-15**
 
-GalaxyGame has its own goals, domain model, architecture, and intended experience. Other games, simulations, visualization tools, and software projects should not be treated as blueprints to copy or as authorities over GalaxyGame's design. However, many engineering, simulation, data-organization, and user-interface problems are shared across projects. Reviewing how other projects approach those problems can help GalaxyGame identify options, ask better questions, and develop its own solutions and implementations.
+GalaxyGame has its own goals, domain model, architecture, and intended experience. Other games, simulations, visualization tools, libraries, papers, and software projects are valuable sources of knowledge and potential reusable work. They should not be treated as unquestionable blueprints or authorities over GalaxyGame's design. Many engineering, simulation, data-organization, and user-interface problems are shared across projects. Studying how others address those problems can help GalaxyGame identify options, evaluate existing implementations, and develop solutions suited to its own requirements.
 
-When reviewing another project:
+Reviewing another project does not imply that GalaxyGame should copy its overall architecture, mechanics, or product direction. However, **reuse of someone else's code is a legitimate option, not something to avoid simply because it was written by someone else.** A suitable open-source library, gem, component, algorithm, or implementation may be used as-is, adapted, combined with other solutions, or used as a reference for an independent implementation. Reuse should be evaluated on technical suitability, compatibility, maintenance, security, performance, license terms, and the needs of GalaxyGame. Do not reinvent useful, well-supported work without a reason.
 
-1. Understand what that project is trying to accomplish and the context in which its approach makes sense.
-2. Identify the particular problem or technique worth studying—for example, data organization, terrain representation, environmental layers, visualization, interaction, procedural generation, or system modularity.
-3. Distinguish generalizable concepts and techniques from choices that depend on the other project's goals, constraints, or domain.
-4. Compare the idea with GalaxyGame's established architecture, existing code, unfinished capabilities, and open design questions.
-5. Record useful possibilities, trade-offs, and questions as research or design options. Adopt, adapt, or reject them only after considering GalaxyGame's needs.
+When reviewing external work or research:
 
-The objective is **inspiration and informed independent design, not imitation or automatic code reuse**. A project may offer a useful approach to one problem while being unsuitable as a whole. Studying its implementation does not make it a dependency, authorize copying its code, or imply that GalaxyGame should acquire its architecture or mechanics. Any direct code reuse requires its own technical and license review.
+1. Understand the source project's goals and the context in which its approach makes sense.
+2. Identify the specific problem, idea, technique, data, library, or code worth examining.
+3. Verify the source and inspect the relevant material; do not rely on a generated description or an unverified citation as proof.
+4. Distinguish what the source actually demonstrates from the agent's interpretation, recommendation, or proposed GalaxyGame application.
+5. Compare the finding with GalaxyGame's established architecture, existing code, unfinished capabilities, and open design questions.
+6. Record useful findings, alternatives, trade-offs, and unresolved questions. Adopt, adapt, reuse, or reject them based on GalaxyGame's needs.
 
-This research is especially useful while GalaxyGame still has substantial capabilities to build and unresolved design questions to answer. Reviews should help inform those decisions without prematurely turning every interesting discovery into an implementation task or redesign.
+### Source citation and evidence integrity
+
+Agents must cite the sources of external information used to support research, recommendations, design proposals, and technical conclusions. This applies to papers, documentation, repositories, source files, standards, datasets, and other material—not only to code that is ultimately adopted.
+
+Citations must be real, traceable, and relevant to the claim they support. Agents must not invent papers, authors, titles, publication details, repository URLs, links, quotations, or other references. A source that has merely been mentioned or discovered but not checked must not be presented as verified. If a source cannot be located or inspected, state that limitation clearly.
+
+Keep these things distinct:
+
+- **Source:** The identifiable work, author or organization, version/date where relevant, and a stable URL or other locator.
+- **Evidence:** The specific content, code, data, or behavior inspected, with a page, section, file path, line range, commit, or other locator when available.
+- **Interpretation:** What the agent believes the evidence means, including uncertainty and limitations.
+- **GalaxyGame implication:** How the finding might inform a design, implementation, or decision here.
+- **Verification status:** Whether the source and the relevant supporting material were actually checked, or remain unverified.
+
+A citation must support the claim attached to it. Do not cite a source merely because it is topically related. Distinguish source-verified facts from agent inference, proposals, and unresolved questions. When evidence is unavailable or inconclusive, say so rather than filling the gap with a plausible-sounding reference.
+
+### Code reuse, attribution, and provenance
+
+When incorporating an external library or identifiable third-party code:
+
+- Record the original project, author or copyright holder where identified, source location, version or commit when practical, and applicable license.
+- Follow the actual license terms. Preserve copyright, license, and attribution notices and meet any other obligations that apply; do not assume all open-source licenses have identical requirements.
+- Document what GalaxyGame uses, where and why it is used, and whether it is used unchanged, configured, wrapped, modified, or adapted.
+- Describe significant GalaxyGame changes and maintain a clear distinction between upstream work and our own contributions.
+- Record the upstream relationship and how updates or local modifications will be handled when relevant.
+
+Do not invent or infer authorship from names or headers encountered in unrelated examples or generated output. New GalaxyGame work must not be attributed to an unrelated author. Conversely, do not remove or misrepresent legitimate third-party notices from reused code.
+
+Agents should not present generated code as independently authored merely because it was generated by a model. If output contains substantial or distinctive material that appears to reproduce an identifiable external work, flag it for provenance and license review before treating it as original GalaxyGame code. Similarity in a conventional pattern or common solution is not, by itself, proof of copying; assess the actual evidence.
+
+This research and reuse practice is intended to help GalaxyGame make informed choices while it still has substantial capabilities to build and many open questions. It is not a requirement to cite every commonplace programming pattern or to maintain an exhaustive list of everything a model may have encountered during training. Focus on sources that materially inform a claim, decision, or incorporated work.
 
 ## UI Data Sourcing Rule
 
@@ -98,4 +129,4 @@ This research is especially useful while GalaxyGame still has substantial capabi
 - **2026-11-13** — Corrected the Player architecture to three primary views plus a separate Space context and clarified Admin workspace boundaries.
 - **2026-11-14** — Clarified StarSim, TerraSim, AI Manager, and Digital Twin responsibilities; left small-body spawning and resource-generation ownership open.
 - **2026-11-15** — Established Admin Celestial Body View terminology and documented the distinction between legacy Rails 7 implementation and future UI porting intent.
-- **2026-11-15** — Added cross-cutting principles for organizing simulation information and using external project reviews as inspiration for GalaxyGame's independent design and implementation.
+- **2026-11-15** — Added cross-cutting principles for organizing simulation information, learning from and responsibly reusing external work, and requiring traceable sources and evidence for agent research and conclusions.
