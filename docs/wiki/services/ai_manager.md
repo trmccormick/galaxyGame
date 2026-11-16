@@ -12,7 +12,7 @@
 
 ## 1. Role & Scope
 
-The **AI Manager** (`AIManager::Manager`) is Galaxy Game's automated economy-and-logistics governor. It does not generate celestial or terrain data — that is StarSim's role. Instead it reads game state (settlement inventories, market order queues, colony populations) and issues high-level work orders to existing services.
+The **AI Manager** (`AIManager::Manager`) is Galaxy Game's automated economy-and-logistics governor. It does **not** generate star systems, celestial bodies, or initial terrain maps. **StarSim** generates systems and celestial bodies; **Map Studio** (and related generation services) prepare or generate **initial body terrain / geographic data**. The AI Manager reads game state (including world state produced elsewhere) and issues high-level work orders to existing services. As a **design capability**, it may use learned patterns or generated options when ranking strategies or requesting work. This describes intended capability, not verified current runtime behavior; whether AI Manager consumes map-learned patterns remains OPEN pending source inspection. The AI Manager does not own the world-generation pipeline.
 
 | Domain | What it does | Code reality |
 |--------|-------------|--------------|
@@ -152,7 +152,7 @@ GalaxyGame may use maps and scenarios from other games and creative projects—i
 
 The owner reports that some external examples have already been ingested into the existing generator/training work and that an initial AI-training effort has already been attempted. That work is incomplete: the current generator does not yet provide the expected results. This is therefore a direction for reviewing and improving existing ingestion, training, and generation capabilities—not a proposal to create a parallel training library or start the feature from scratch. The current implementation, data flow, and remaining gaps must be established by code inspection.
 
-Examples may help the AI Manager and world-generation workflow recognize and propose options involving:
+Examples may help **world-generation and planning workflows** recognize and propose options involving:
 
 - Terrain, elevation, biome, and geographic arrangements or distributions.
 - Resource types, density, and spatial distribution.
@@ -173,7 +173,7 @@ These evidence types can inform one another but must not be conflated. Where rea
 
 A terraformed-world map can therefore be useful as an example of one possible future configuration and of the creator's assumptions. It is not an instruction that the target body should be terraformed. For example, a terraformed Mars scenario may help the AI Manager propose possible biome or water distributions for a hypothetical Mars intervention. The Digital Twin can evaluate such a proposal and report its consequences. By contrast, a Titan map may be useful for studying how a designer represented an unusual environment, terrain/resource patterns, or settlement ideas; it must not be interpreted as a recommendation to terraform Titan. The body's natural state and the actual objective must govern whether terraforming is appropriate at all.
 
-The desired result is for the AI Manager to offer context-sensitive generation options that can be evaluated and selected for GalaxyGame's own worlds. It should be able to adapt, combine, or reject learned patterns in light of the target body's observed properties, intended natural or hypothetical state, and simulation evidence. It must not assume that every world is an Earth-like terraforming project.
+The desired result is that learned patterns can inform **context-sensitive options** for GalaxyGame's own worlds—options that can be evaluated and selected in light of the target body's observed properties, intended natural or hypothetical state, and simulation evidence. **Map Studio and generation services** remain responsible for producing initial terrain. The **AI Manager**, as a design capability, may use such options when ranking or requesting work. This describes intended capability, not verified current runtime behavior; whether AI Manager consumes map-learned patterns remains OPEN pending source inspection. The system must not assume that every world is an Earth-like terraforming project.
 
 **Implementation status:** The existence of prior ingestion and training attempts is owner-reported context, not a verified description of the current code path. The audit must identify which example formats and files are currently ingested, how their content and metadata are represented, whether designer/scenario descriptions are retained, where training or pattern extraction occurs, how the generator consumes the resulting knowledge, and what remains disconnected or incomplete. Do not claim a functioning end-to-end learning pipeline until the code demonstrates it.
 
