@@ -1,11 +1,11 @@
 # AI Manager Economic Loops
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-04  
+> *Last Audited:* 2026-11-16 
 > *Audit Summary:* DRAFT from an owner and Gemini brainstorm (2026-11-04), written up by Grok and Qwen. Not yet verified against code or frozen docs. Only points marked ESTABLISHED INTENT were stated by the owner.
 
 **Status**: DIRECTION (with some ESTABLISHED anchors)  
-**Last Updated**: 2026-11-04  
+**Last Updated**: 2026-11-16 
 **Related**: [markets_eap_and_peg.md](../markets/markets_eap_and_peg.md), [eap_and_ai_manager_escalation.md](eap_and_ai_manager_escalation.md), [resource_and_market_logistics.md](resource_and_market_logistics.md), [financial_engine.md](financial_engine.md)
 
 This page is the wiki home for how the AI Manager interacts with markets, players, debt, inter-entity transfers, and survival priorities. It harvests and consolidates intent from older design notes while adding the missing austerity and 80/90 band behavior.
