@@ -35,7 +35,7 @@ This folder is the **live wiki** — the front door for players, contributors, a
 
 ## UI & Experience
 
-The [UI & Experience wiki](ui/README.md) is the design authority for Player, Admin, and AI Manager interfaces. The [Admin Celestial Body View](ui/05_admin_celestial_body_view.md) page distinguishes intended future experience from the current legacy Rails 7 implementation and records the direction for porting views into the separate UI prototype.
+The [UI & Experience wiki](ui/README.md) is the design authority for Player, Admin, and AI Manager interfaces. The [Admin Celestial Body View](ui/05_admin_celestial_body_view.md) page distinguishes intended future experience from the current legacy Rails 7 implementation and records the direction for porting views into the separate UI prototype. Admin tool boundaries—including **Map Studio** (initial terrain / geographic data), Digital Twin, and separation from TerraSim and AI Manager—are summarized in [Admin Dashboard and AI Manager](ui/03_admin_and_ai_manager.md).
 
 ---
 
@@ -60,7 +60,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|--------|
 | [AI Manager economic loops](logistics/ai_manager_economic_loops.md) | AI Manager market interaction, debt/austerity, Virtual Ledger, stockpile buffers |
-| [AI Manager & autonomous coordinators](services/ai_manager.md) | AI Manager responsibilities, decision-making, mission execution, and settlement development intent |
+| [AI Manager & autonomous coordinators](services/ai_manager.md) | AI Manager responsibilities, decision-making, mission execution, and settlement development intent; external world-map examples as learning references (not playable imports); does not generate terrain (StarSim / Map Studio) |
 | [Logistics and hauling](logistics/logistics_and_hauling.md) | Transport and hauling intent |
 | [Resource and market logistics](logistics/resource_and_market_logistics.md) | Resources ↔ markets (strongest market page) |
 | [Market and AI bootstrapping](logistics/market_and_ai_bootstrapping.md) | Market models + AI construction bootstrap |
