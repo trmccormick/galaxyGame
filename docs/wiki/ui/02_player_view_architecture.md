@@ -74,8 +74,8 @@ The asteroid tug's job is to prepare and relocate the asteroid shell, not to com
 1. **Hollow and relocate:** The tug excavates the asteroid and uses the excavated slag as propellant to move the body to its destination.
 2. **Prepare the shell:** The hollowed void provides usable interior volume. Remaining asteroid material forms the exterior shell and structural mass; processed material may be used to reinforce the interior and provide mounting/support points.
 3. **Initial outfitting by the tug:** Once the asteroid is in position, the tug transfers some of its own modules to the shell. This is initial outfitting, not completion of the station.
-4. **Cycler arrival and docking:** Cyclers subsequently arrive and dock with the positioned asteroid.
-5. **Main station deployment:** The cyclers begin deploying the main station parts and modules. This is the primary station-construction stage, distinct from the tug's shell preparation and initial module transfer.
+4. **Cycler arrival and docking:** A cycler subsequently arrives and docks with the positioned asteroid. The cycler can be parked there and used as a temporary station while the asteroid station is built out.
+5. **Main station deployment and buildout:** Modules and units are transferred and deployed from the cycler to construct and equip the main station. The cycler provides a temporary operational base and support during this work; its role is distinct from the tug's shell preparation and initial module transfer. The cycler is not itself the completed asteroid station.
 
 The hollowed interior is intended to become useful station volume for units, modules, equipment, and facilities. It may also be large enough for smaller spacecraft to enter and dock, including for maintenance or repair. The exterior surface may have limited activity and may not be the most important operational area.
 
