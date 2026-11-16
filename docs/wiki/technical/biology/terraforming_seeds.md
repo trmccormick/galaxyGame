@@ -3,8 +3,9 @@
 > *Last Audited:* 2026-11-01  
 > *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
-> **Wiki section:** Technical · Biology · **Status:** target design — Seed mechanics, stages, and Bio-Nursery Dome categories.  
-> **Architectural source:** [`TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`](../../../architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md) (authoritative intent), `biology_models.md` (data model).
+> **Status:** DESIGN INTENT — Seed mechanics, stages, and Bio-Nursery concepts; detailed thresholds remain unverified against code.  
+> **Page role:** Possible biological deployment and development concepts. For source-verified behavior, see [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md); for proposed simulation architecture, see [Biosphere Simulation](./biosphere_simulation.md).  
+> **Harvest sources (frozen, non-authoritative):** `docs/architecture/biology/TERRAFORMING_SEED_AND_LIFE_DIRECTION.md`, `biology_models.md`. Owner-confirmed direction on this page and [Biology & Terraforming — Wiki Hub](./README.md) takes precedence over frozen documents.
 
 ---
 
@@ -17,6 +18,10 @@ The initial use of simple life has value independently of any eventual full terr
 More advanced ecosystem development, genetic engineering, hybrid organisms, and later-stage biosphere integration remain available directions. They are not prerequisites for the initial Mars use case and can be resumed when needed. Existing code, experiments, and tests should be preserved so that later work continues from the current foundation rather than being discarded or restarted.
 
 This owner-confirmed direction does not validate the detailed stage thresholds, adaptation rates, liquid-water gates, or quantitative effects elsewhere on this page. Those remain subject to implementation review and further design confirmation.
+
+## Framing note — stages vs initial simple-life use
+
+The Stage 1–5 table below is historical/candidate design, not a required progression or campaign track. The initial simple-life contribution has value without completing all stages, and full planetary terraforming is not guaranteed or required. **OPEN:** whether the current Stage 1 definition, or any single stage, fully captures the intended initial simple-life use; do not assume Stage 1 is sufficient. Detailed rates, gates, and costs remain unverified design proposals unless separately confirmed against code and owner direction.
 
 ---
 
@@ -51,14 +56,18 @@ Both structures use overlapping infrastructure:
 
 ### When to Use Each
 
-- **Choose a Terraforming Seed** when: the planet has liquid water (Phase 4 gate passed), the goal is gradual atmospheric/soil improvement, or budget constraints require the lowest terraforming cost entry point.
+- **Choose a Terraforming Seed** when gradual biological contribution to atmospheric or soil change is appropriate, or budget constraints favor a lower-cost entry point. The proposed liquid-water/Phase 4 gate is unresolved and is not a universal prerequisite for all simple-life applications; see [Biosphere Simulation §1](./biosphere_simulation.md#1-proposed-liquid-water-gate--unresolved-design-proposal).
 - **Choose a Worldhouse** when: human-rated containment habitat is needed, complex life must be protected from harsh local conditions, or planetary baseline cannot yet support open biosphere deployment.
 
 ---
 
 ## 2. Staged Progression — Seed Payload Lifecycle
 
-Terraforming Seeds operate through **staged progression**, where each stage deploys specialized payloads that adapt organisms and contribute increasingly to the biosphere.
+The stages below are a historical/candidate design for a possible Seed payload lifecycle, not a required progression. Early stages may be used without proceeding to later stages; completing Stages 1–5 is not required to obtain initial simple-life value.
+
+> **Proposal status:** Quantitative effects, rates, and gates in the table are unverified design proposals. Stage 5 is optional late design, not a prerequisite for initial simple-life contribution.
+
+Terraforming Seeds are described here through a staged payload concept, where stages deploy specialized payloads that may adapt organisms and contribute to the biosphere.
 
 ### Stage Overview
 
@@ -68,7 +77,7 @@ Terraforming Seeds operate through **staged progression**, where each stage depl
 | **Stage 2 — Expansion** | Adapt pioneer organisms to local conditions; expand coverage. | Environmentally-adapted pioneers (simple 0→1 adaptation progress). | Increased terraforming rates; biosphere effect scales with adaptive gain. Soil quality delta: +1–2/year. |
 | **Stage 3 — Diversification** | Introduce specialized functional groups (decomposers, consumers). | Decomposers, herbivores adapted to Stage 2 conditions. | Food web establishes; soil quality improves faster via organic matter cycling. Biodiversity score begins rising. |
 | **Stage 4 — Stabilization** | Multi-trophic ecosystem achieves stable coverage (>30% of viable cells). | Carnivores, full decomposer networks, moisture-retaining organisms. | Biosphere reaches moderate diversity (H' ≥ 1.0); self-sustaining cycles begin. AI Manager benefit score increases significantly. |
-| **Stage 5 — Integration** | Seed releases adapted organisms into the open biosphere; transitions from contained to active terraforming. | Hybrid packages (native/hybrid trait extraction available later). | Full terraforming effect on planetary baseline; atmospheric changes accelerate; biome transition triggers fire across cells. |
+| **Stage 5 — Integration** | Seed releases adapted organisms into the open biosphere; transitions from contained to active terraforming. | Hybrid packages (native/hybrid trait extraction available later). | Candidate late design: stronger coupling to the planetary baseline only if that path is chosen. It is not required for the initial simple-life contribution, and a full planetary outcome is not assumed. |
 
 ### Per-Stage Adaptation Tracking
 
@@ -104,7 +113,7 @@ The Digital Twin evaluates which dome type to construct based on:
 
 1. **Available regions** matching the dome's environmental criteria (liquid water presence, elevation/terrain class, regolith composition).
 2. **Cost efficiency** — each dome type has a different GCC cost; the AI Manager compares cost-per-tile-of-terraforming-effect.
-3. **Stage gating** — Lowland Aquifer Domes can only be placed after the liquid water trigger fires (Phase 4 gate). Regolith Scrubbing Domes can be deployed before liquid water exists.
+3. **Stage gating (proposed/unresolved)** — The historical design proposed placing Lowland Aquifer Domes after a liquid-water trigger (Phase 4 gate), while Regolith Scrubbing Domes could be deployed before liquid water exists. This gate is not confirmed; do not treat it as blocking all simple-life applications without further review.
 4. **Synergy with brute-force projects** — Volcanic Slope Domes benefit from atmospherically thickened regions near their launch points; Regolith Scrubbing Domes pair well with orbital mirror warming.
 
 ---
@@ -217,6 +226,8 @@ Sterility of a planet can **never be proven**, only assessed with confidence:
 
 Contamination risk is permanent and can only be **reduced** (not eliminated):
 
+> **Unverified design proposal:** The historical percentage cost impacts below are retained for reference; they are not verified costs or implemented mechanics. A dedicated `contamination_and_biosafety.md` page is **OPEN** (the referenced file is not present in the active wiki). See [Planetary Protection & Environmental Governance](../../infrastructure/planetary_protection_environmental_governance.md) for the related broader governance context.
+
 | Protocol Tier | Cost Impact | Risk Reduction | Description |
 |--------------|-------------|----------------|-------------|
 | Class-0 (minimal) | None | Baseline — no reduction. | Default; no containment beyond standard operational protocols. |
@@ -241,4 +252,4 @@ The AI Manager must compare biological (Seed) and brute-force options under the 
 | **Adaptation timeline** | Required (0→1 adaptation inside Seeds) | Not applicable |
 | **Residual biological risk** | Present — contamination, undetected life, adaptation uncertainty | Absent (no biological agents deployed) |
 | **Planning flexibility** | Stage gates provide checkpoint visibility | Binary: not built / operational |
-| **Long-term sustainability** | Self-sustaining biosphere eventually reduces dependency | Ongoing industrial and import dependence |
+| **Long-term sustainability** | Possible if the biological path is continued and succeeds; not guaranteed. Initial simple-life use does not require a self-sustaining global biosphere. | Ongoing industrial and import dependence |
