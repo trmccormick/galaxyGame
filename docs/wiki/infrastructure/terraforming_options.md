@@ -105,6 +105,18 @@ Venus cannot easily produce the heavy metals and structural materials needed for
 
 ---
 
+### Venus Industrial Processing — CO₂ Cracking & Greenhouse Gas Handling (DIRECTION)
+
+**Core process:** native Venusian CO₂ cracked to solid carbon (feedstock for CNT structural material) + O₂. This is the industrial backbone of the refined O₂/N₂ → Mars pipeline; it happens on Venus before any payload launch.
+
+**Greenhouse-gas handling:** Water produced by any H₂ + CO₂ reaction is a potent greenhouse gas. It must be removed from the Venusian atmosphere and stored in cold-shadow CNT tanks behind the L1 shade until surface temperature and pressure conditions later allow safe re-injection. This is a staging step, not an abandonment — greenhouse agents are retained for later Mars atmospheric use.
+
+**Structural standard:** standardized modular octagonal CNT panels are the preferred structural unit for both Venus L1 shade arrays and later Mars L1 concentrator arrays. Geometry, ratios, and exact panel dimensions remain **DIRECTION / design candidate**, not locked.
+
+**Solar-wind proton capture:** can be embedded in the panel mesh as a secondary, low-volume H₂ yield. It does not replace bulk H₂ logistics; it is a supplemental harvest only.
+
+---
+
 ## Softer / Longer-Horizon Options
 
 **DIRECTION / OPEN**

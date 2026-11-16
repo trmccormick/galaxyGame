@@ -59,6 +59,8 @@ Blueprint + location together determine the functional properties of the swarm (
 - Construction can be gradual; the swarm may be partial or absent depending on how the game progresses.
 - Primary function is reduction of solar constant at Venus.
 - Same modular frame family is used; configuration starts as basic shade / structural and can later receive additive modules.
+- **Industrial processing role:** native CO₂ cracking yields solid carbon (CNT feedstock) + O₂ on Venus; H₂O from any H₂+CO₂ reaction is removed from the atmosphere and stored in cold-shadow CNT tanks behind the L1 shade until later safe re-injection. See [terraforming_options.md](terraforming_options.md) for processing details.
+- **Solar-wind proton capture:** panel mesh can embed secondary, low-volume H₂ harvest; this does not replace bulk H₂ logistics.
 
 ### Mars — Solar Reflector
 
@@ -66,7 +68,7 @@ Blueprint + location together determine the functional properties of the swarm (
 - Uses the same modular CNT frame family, adapted with a reflective layer (lunar aluminum or equivalent).
 - Primary function is to increase surface insolation / temperature on Mars.
 
-Exact orbital distance of any Venus shade remains unspecified. Multiple designs remain allowed; the octagonal CNT frame form is the current working assumption, not a hard lock.
+Standardized modular octagonal CNT panels are the preferred structural unit for both Venus L1 shade and later Mars L1 concentrator arrays. Geometry, ratios, and exact panel dimensions remain **DIRECTION / design candidate**, not locked.
 
 ---
 
