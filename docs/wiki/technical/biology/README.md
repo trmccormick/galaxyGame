@@ -21,8 +21,12 @@
 | [Station Construction Options](../../engineering/station_construction_options.md) | Shared shell/power tech between Seeds and Worldhouses. |
 | [Planetary Protection & Environmental Governance](../../infrastructure/planetary_protection_environmental_governance.md) | Contamination classes, biosafety requirements per Seed stage. |
 
-## Notes
+## Established Direction — Simple Life and Initial Mars Terraforming
 
+- For current strategic planning, assume that simple life will be found and that simple life can be used in Mars's initial terraforming. This is a working premise for planning, not a claim that a discovery or deployment workflow is already implemented or scientifically validated.
+- The initial biological contribution is worthwhile on its own. It must not depend on completing full planetary terraforming; full terraforming may never be undertaken or completed.
+- Keep the initial use focused on simple organisms and practical early effects. More complex ecosystems, engineered or hybrid organisms, and later biosphere development remain possible extensions, not prerequisites for the initial Mars use case.
+- Preserve existing biology models, services, experiments, and RSpec coverage. Further development is deferred until gameplay or operational needs make it relevant; this is continuation later, not abandonment.
 - Biology systems are **background-facing**; player visibility is through market orders, settlement options, and event notifications.
-- Life-system scope is narrow (`:primitive` / basic life-form support) unless the direction document is updated.
-- The AI Manager may choose brute-force terraforming (imported gases, orbital mirrors/shades) instead of biological methods.
+- The AI Manager may choose brute-force terraforming (imported gases, orbital mirrors/shades) alongside or instead of biological methods. Simple-life use does not make full biological or planetary terraforming mandatory.
+
