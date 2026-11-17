@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-15
+> **Last Updated:** 2026-11-16
 
 # Player View Architecture
 
@@ -62,6 +62,48 @@ Planetary is the whole-body view, inspired by SimEarth. It presents the selected
 Existing main-app Monitor/Planetary functionality is substantial and must be inspected, repaired, and evaluated for reuse or adaptation. Do not assume it is specification-only or rebuild it from scratch. The current screenshots show working Earth map/layer behavior, but also a coarse/blurry display; the cause and best data/rendering path remain to be investigated.
 
 Candidate interactions include globe or projected-map pan/zoom, layer selection, selected-region inspection, and environmental data panels. Exact layer availability depends on the authoritative data and services.
+
+### Orbital-scale map layers and geographic identification
+
+**ESTABLISHED UI DIRECTION — 2026-11-16**
+
+The Planetary view is an orbital, whole-body observation interface. Its map layers should communicate large-scale natural conditions and the geographic footprint of civilization, rather than reproduce surface-level management or tactical detail.
+
+Retain the established natural-world layer controls:
+- Terrain
+- Hydrosphere
+- Biomes
+- Features
+- Temperature
+- Rainfall
+- Resources
+
+Biomes remains an important planetary layer. No separate Life, Biodiversity, Vegetation, or Habitat overlay family is currently required for this view; detailed life and surface activity do not need to become additional orbital controls merely because SimEarth exposed them.
+
+The Planetary interface should also provide a visible place for civilization and technology overlays, including:
+- Cities / Settlements
+- Population
+- Infrastructure
+- Industry
+- Energy
+- Transportation
+- Communications
+
+These controls establish the intended scope of the interface. Their presence does not assert that the corresponding data, map rendering, or simulation capability is implemented. Where functionality is not yet available, the prototype may show the controls as disabled or clearly marked as coming later. Do not invent data or imply that an unavailable overlay works.
+
+The existing **Features** layer should support geographic identification when selected. This means rendering names directly on the planetary map, positioned at their corresponding geographic locations, as map-anchored labels—not merely listing feature names in a side panel or presenting a separate catalogue. The SimEarth reference shows labels such as Terra Ishtar, Tethys, Niobe Planitia, Aphrodite Terra, and Lavinia Planitia placed over the terrain. For Earth, examples include major regions such as North America and landmarks such as the Grand Canyon. Comparable labels should be appropriate to the selected celestial body. These labels are geographic map annotations, distinct from civilization/technology overlays.
+
+### Civilization asset markers
+
+Civilization visualization is not limited to broad-area overlays such as population, industry, or infrastructure. The Planetary view should also be able to show the geographic positions of individual constructed assets as map markers. The SimEarth Civilization screenshot supplied on 2026-11-16 illustrates this with a biome factory represented by a small green pixel on the planetary map.
+
+For GalaxyGame, this establishes the visual distinction between:
+- **Area overlays**, which communicate broad distributions or networks (such as population, industry, infrastructure, energy, transportation, and communications).
+- **Asset markers**, which identify the locations of individual installations or facilities (for example, a biome factory).
+
+The prototype need not implement asset data, marker semantics, or interaction now. This is a future-facing visualization requirement, not a request to add a detailed surface-management view or invent operational data.
+
+These are orbital visualizations for observing the body as a whole. Detailed buildings, individual units, local operations, and settlement management belong in the Surface or Settlement contexts, not the Planetary view.
 
 ## Irregular and repurposed body visualization
 
