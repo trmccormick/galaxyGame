@@ -93,6 +93,16 @@ These controls establish the intended scope of the interface. Their presence doe
 
 The existing **Features** layer should support geographic identification when selected. This means rendering names directly on the planetary map, positioned at their corresponding geographic locations, as map-anchored labels—not merely listing feature names in a side panel or presenting a separate catalogue. The SimEarth reference shows labels such as Terra Ishtar, Tethys, Niobe Planitia, Aphrodite Terra, and Lavinia Planitia placed over the terrain. For Earth, examples include major regions such as North America and landmarks such as the Grand Canyon. Comparable labels should be appropriate to the selected celestial body. These labels are geographic map annotations, distinct from civilization/technology overlays.
 
+### Civilization asset markers
+
+Civilization visualization is not limited to broad-area overlays such as population, industry, or infrastructure. The Planetary view should also be able to show the geographic positions of individual constructed assets as map markers. The SimEarth Civilization screenshot supplied on 2026-11-16 illustrates this with a biome factory represented by a small green pixel on the planetary map.
+
+For GalaxyGame, this establishes the visual distinction between:
+- **Area overlays**, which communicate broad distributions or networks (such as population, industry, infrastructure, energy, transportation, and communications).
+- **Asset markers**, which identify the locations of individual installations or facilities (for example, a biome factory).
+
+The prototype need not implement asset data, marker semantics, or interaction now. This is a future-facing visualization requirement, not a request to add a detailed surface-management view or invent operational data.
+
 These are orbital visualizations for observing the body as a whole. Detailed buildings, individual units, local operations, and settlement management belong in the Surface or Settlement contexts, not the Planetary view.
 
 ## Irregular and repurposed body visualization
