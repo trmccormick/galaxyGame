@@ -5,7 +5,7 @@
 
 > **Wiki section:** Infrastructure  
 > **Status:** DIRECTION  
-> *Candidate design intent. Not yet ESTABLISHED INTENT. Geometry, exact placement distances, and full performance numbers remain open.*
+> *Candidate design intent, except the section marked ESTABLISHED INTENT (octagonal panel design and swarm concept). Geometry, exact placement distances, and full performance numbers remain open.*
 
 > **Cross-link:** Production side (CNT fabricators and downstream feedstock) lives in **[ISRU Fabrication Chain](../technical/isru_fabrication_chain.md)**.
 
@@ -68,7 +68,24 @@ Blueprint + location together determine the functional properties of the swarm (
 - Uses the same modular CNT frame family, adapted with a reflective layer (lunar aluminum or equivalent).
 - Primary function is to increase surface insolation / temperature on Mars.
 
-Standardized modular octagonal CNT panels are the preferred structural unit for both Venus L1 shade and later Mars L1 concentrator arrays. Geometry, ratios, and exact panel dimensions remain **DIRECTION / design candidate**, not locked.
+Standardized modular octagonal CNT panels are the structural unit for both Venus L1 shade and later Mars L1 concentrator arrays (see the ESTABLISHED INTENT section below). Exact dimensions, PV-to-reflector ratios and the proton-capture mesh remain **OPEN**.
+
+---
+
+## Standardized Modular Octagonal CNT Panels and Swarm Concept — ESTABLISHED INTENT (owner, 2026-11-16)
+
+For large L1 shade, concentrator, and swarm-style arrays, the owner confirmed the panel design and the swarm concept below. The spatial-field placement model further down is not part of this confirmation.
+
+- Regular octagonal high-tensile CNT frame.
+- Interchangeable infill (photovoltaic or high-reflectivity mirror).
+- Designed to tessellate into a flexible, repairable swarm/web.
+- Compatible with the existing swarm-type model already documented on this page.
+
+### Still OPEN
+
+- Exact physical dimensions.
+- Exact mix ratios of PV vs reflector panels.
+- Whether solar-wind proton capture mesh is baseline or optional.
 
 ---
 
@@ -106,6 +123,36 @@ This keeps maintenance, resource recovery, and panel replacement inside the exis
 - Panels produced at Venus can be adapted and shipped/configured for Mars use.
 - Exact orbital distance of any Venus shade remains unspecified.
 - Size of a swarm matters (total panel count), but tracking stays at the aggregate level described above.
+
+---
+
+## Placement Model for Spatial Fields and Structural Swarms (DIRECTION)
+
+Open design idea, not a decision. The panel design and swarm concept above are ESTABLISHED INTENT; this placement model is not. The owner wants structural swarms, EM-harvestable clouds and easter-egg style fields to be placeable in the system (owner, 2026-11-16). A shared placement approach is being considered so each does not need its own spatial handling. The simulation does not yet implement fields or swarms.
+
+### Candidate shared placement data (DIRECTION, under discussion)
+
+- **Origin:** where the field is anchored: on or above a celestial body, or at a free point in space.
+- **Extent / field size:** the volume the field covers.
+- **Type:** determines behaviour.
+
+Whether these are the right fields, and whether a shared base model is the right approach, is undecided. The octagonal CNT panel swarm already records its spatial location and panel counts (see above) and could be the first user of the approach. EM-harvestable clouds and easter-egg fields could use it too.
+
+### Existing location models (verified against code at galaxyGame `67dfa40`, 2026-11-16)
+
+- `Location::CelestialLocation` places an object on or above a celestial body: surface coordinates plus an optional altitude (not negative).
+- `Location::SpatialLocation` places an object at x, y, z coordinates within a spatial context.
+- Neither table has an extent or field-size column. Whether a Lagrange point is placed with one of these two models is not established.
+
+### Open (do not invent)
+
+- Whether a shared base model is wanted at all, and what it would be called.
+- Where field extent is stored, and whether it belongs on the location models or on the field or swarm itself.
+- How a Lagrange-point origin is represented.
+- Other data raised in discussion and not evaluated: intensity or density profile, tags, lifecycle, ownership or control.
+- Exact data schemas, fall-off curves, yields and interaction rules for any field or swarm.
+- Interaction rules between co-located fields (overlap, stacking, conflict).
+- Blueprint schemas for defining new field types or swarm configurations.
 
 ---
 

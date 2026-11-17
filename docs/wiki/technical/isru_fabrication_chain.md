@@ -265,7 +265,7 @@ Where:
 ## 5. Modular Orbital Panel Technology (CNT Downstream Product)
 
 > **Status:** DIRECTION  
-> *Candidate design intent. Not yet ESTABLISHED INTENT. Geometry, exact placement distances, and full performance numbers remain open.*
+> *Candidate design intent, except the octagonal frame (ESTABLISHED INTENT, owner, 2026-11-16; see [Modular Orbital Panel Swarms](../infrastructure/modular_orbital_panel_swarms.md)). Geometry, exact placement distances, and full performance numbers remain open.*
 
 CNT output from the fabricators above is the primary structural feedstock for a family of modular orbital panels. These panels form the shared technology base used for both Venus solar-shade functions and Mars solar-reflector functions.
 
@@ -276,9 +276,10 @@ CNT output from the fabricators above is the primary structural feedstock for a 
 - Venus shade construction is optional / progressive (may be partial or absent depending on game progression).
 - Mars reflector path has clearer intent that the capability is built.
 
-**Candidate frame form**
-- Octagonal (or equivalent modular) CNT structural frames.
-- Multiple designs remain allowed; the octagonal form is the current working assumption, not a hard lock.
+**Frame form**
+
+- Regular octagonal high-tensile CNT frame (ESTABLISHED INTENT, owner, 2026-11-16).
+- Exact dimensions and the PV-to-reflector mix remain open.
 
 **Optional / additive configurations (same base frame)**
 | Configuration | Primary function | Notes |
