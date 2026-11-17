@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-15
+> **Last Updated:** 2026-11-16
 
 # Player View Architecture
 
@@ -62,6 +62,38 @@ Planetary is the whole-body view, inspired by SimEarth. It presents the selected
 Existing main-app Monitor/Planetary functionality is substantial and must be inspected, repaired, and evaluated for reuse or adaptation. Do not assume it is specification-only or rebuild it from scratch. The current screenshots show working Earth map/layer behavior, but also a coarse/blurry display; the cause and best data/rendering path remain to be investigated.
 
 Candidate interactions include globe or projected-map pan/zoom, layer selection, selected-region inspection, and environmental data panels. Exact layer availability depends on the authoritative data and services.
+
+### Orbital-scale map layers and geographic identification
+
+**ESTABLISHED UI DIRECTION — 2026-11-16**
+
+The Planetary view is an orbital, whole-body observation interface. Its map layers should communicate large-scale natural conditions and the geographic footprint of civilization, rather than reproduce surface-level management or tactical detail.
+
+Retain the established natural-world layer controls:
+- Terrain
+- Hydrosphere
+- Biomes
+- Features
+- Temperature
+- Rainfall
+- Resources
+
+Biomes remains an important planetary layer. No separate Life, Biodiversity, Vegetation, or Habitat overlay family is currently required for this view; detailed life and surface activity do not need to become additional orbital controls merely because SimEarth exposed them.
+
+The Planetary interface should also provide a visible place for civilization and technology overlays, including:
+- Cities / Settlements
+- Population
+- Infrastructure
+- Industry
+- Energy
+- Transportation
+- Communications
+
+These controls establish the intended scope of the interface. Their presence does not assert that the corresponding data, map rendering, or simulation capability is implemented. Where functionality is not yet available, the prototype may show the controls as disabled or clearly marked as coming later. Do not invent data or imply that an unavailable overlay works.
+
+The existing **Features** layer should support geographic identification when selected. This includes labels for major regions (for example, North America) and notable geographic landmarks (for example, the Grand Canyon). Comparable labels should be appropriate to the selected celestial body. Geographic labels are contextual map annotations, distinct from civilization/technology overlays.
+
+These are orbital visualizations for observing the body as a whole. Detailed buildings, individual units, local operations, and settlement management belong in the Surface or Settlement contexts, not the Planetary view.
 
 ## Irregular and repurposed body visualization
 
