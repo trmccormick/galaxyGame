@@ -22,16 +22,23 @@ Use the current gas masses / proportions represented by the source atmosphere. D
 
 The amount captured is bounded by the craft's extraction throughput, time spent harvesting, available source gas, and available craft storage. Track the captured constituents by mass.
 
-### 2. Onboard CO₂ processing
+### 2. Onboard CO₂ processing (Mk1)
+
+**Mk1 harvesters have limited onboard processing.** They can perform bulk atmospheric scoop plus the basic reaction `2CO₂ → 2CO + O₂` (LOX). They **cannot selectively filter or separate most individual gases**. Full separation of the mixed inventory is deferred to Luna (or later Mk versions).
 
 The HLT processes captured CO₂ using its installed processing capability:
 
 `2CO₂ → 2CO + O₂`
 
 - O₂ is liquefied and retained as LOX for the craft's mission fuel requirements.
-- CO is dumped/vented; it is not part of the returned cargo.
+- **During harvesting at Venus, venting the CO byproduct (and any unwanted gas) back into the Venus atmosphere is the normal / preferred option for Mk1.** This slightly modifies the source atmosphere composition over time (mass-ledger effect).
+- If the craft has **no dedicated CO tank**, further CO₂ processing during the return leg to Luna pushes the CO byproduct into the mixed-volatiles inventory tank.
 - This is CO₂ splitting, **not methane production**.
 - The HLT must carry sufficient methane for its mission; methane production from Venusian CO₂ is a separate Luna industrial process using lunar-derived hydrogen.
+
+Tanks track capacity only. Actual gas identity, masses, and composition live in the inventory system (already established).
+
+Goal arrival state at Luna for a successful Mk1 run: full LOX tank + mixed gas cargo (composition tracked in inventory). Selling the mix against standing buy orders and buying return methane is a valid commercial loop; pure inventory transfer remains allowed.
 
 The quantity processed is determined by available captured CO₂, processing throughput, energy, and the LOX required for the mission. Do not assume all captured CO₂ is processed.
 
