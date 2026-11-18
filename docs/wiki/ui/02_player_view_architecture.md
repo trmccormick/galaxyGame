@@ -111,6 +111,28 @@ These are orbital visualizations for observing the body as a whole. Detailed bui
 
 The Planetary View should not be treated as the universal whole-body visualization. It is suited to spherical bodies; irregular bodies such as asteroids and small moons may need a different representation. More importantly, an irregular body's intended use can change what needs to be visualized.
 
+### Multiple visualization types — long-term requirement
+
+**OPEN ARCHITECTURE REQUIREMENT — 2026-11-17**
+
+The current Planetary view is suitable for the present prototype and its initial terrestrial-planet-oriented use. It is not a complete, universal visualization solution for every celestial-body type, and the prototype's current renderer must not be treated as the final long-term architecture.
+
+A one-size-fits-all map or globe presentation is unlikely to represent GalaxyGame's full range of celestial bodies accurately. A terrestrial planet, a small spherical moon, and an irregular asteroid do not have interchangeable geometry or necessarily the same useful ways of being inspected. In particular, an asteroid must not be assumed to be round or represented as a scaled-down terrestrial planet when its actual shape is irregular.
+
+The long-term UI may therefore require multiple visualization types or modes, selected according to relevant characteristics such as:
+- the body's actual shape and geometry (spherical, approximately spherical, irregular, elongated, or otherwise);
+- its scale and physical characteristics;
+- the available shape, elevation, terrain, imagery, and other source data;
+- the purpose of the inspection, including natural-world observation, surface activity, mining, interior/cutaway inspection, or conversion into infrastructure.
+
+Examples of possible visualization families include a global planetary projection or globe for suitable spherical bodies, and shape-aware 3D or other specialized representations for irregular asteroids and small bodies. These are examples for future investigation, not finalized renderer choices or a requirement to implement them now. Some bodies may need more than one view or mode, especially when their use changes—for example, an asteroid being mined, hollowed, or repurposed as a station.
+
+Keep the distinction between a consistent application workspace and a universal visualization. Shared navigation, contextual information panels, and common interaction conventions may be reused, while the central visualization adapts to the body and task. Do not force all bodies into one fixed canvas geometry, aspect ratio, projection, or renderer merely to make their layouts consistent.
+
+The current prototype may continue using its existing Planetary renderer for its intended scope. This open requirement does not expand the immediate prototype layout task into asteroid rendering, 3D model support, or a redesign of the Digital Twin. It ensures those future needs remain visible in the architecture and are not accidentally ruled out by prototype implementation decisions.
+
+The visualization taxonomy, selection rules, data contracts, renderer boundaries, and relationship to the authoritative Digital Twin remain OPEN. Do not infer that body classification alone determines every view; intended use and available data also matter.
+
 ### Asteroid relocation and station construction option
 
 One established deployment concept uses an Asteroid Relocation Tug to prepare and relocate an asteroid shell. The tug's job is not to complete the station:
