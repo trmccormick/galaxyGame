@@ -107,7 +107,9 @@ Venus cannot easily produce the heavy metals and structural materials needed for
 
 ### Venus Industrial Processing — CO₂ Cracking & Greenhouse Gas Handling (DIRECTION)
 
-**Core process:** native Venusian CO₂ cracked to solid carbon (feedstock for CNT structural material) + O₂. This is the industrial backbone of the refined O₂/N₂ → Mars pipeline; it happens on Venus before any payload launch.
+**Industrial framing:** the Venus route is primarily industrial (CNT / structural carbon production + O₂ and N₂ export), not a pure terraforming project. Pure carbon (or CNT feedstock) export is allowed and useful; nothing restricts it.
+
+**Core process:** native Venusian CO₂ is cracked to solid carbon (feedstock for CNT structural material) + O₂. This is primarily an **industrial** route (structural carbon / CNT production and O₂ + N₂ export). Pure carbon or CNT feedstock export is allowed and useful; nothing restricts it. The same process also supplies the refined O₂/N₂ → Mars pipeline.
 
 **Greenhouse-gas handling:** Water produced by any H₂ + CO₂ reaction is a potent greenhouse gas. It must be removed from the Venusian atmosphere and stored in cold-shadow CNT tanks behind the L1 shade until surface temperature and pressure conditions later allow safe re-injection. This is a staging step, not an abandonment — greenhouse agents are retained for later Mars atmospheric use.
 

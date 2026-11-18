@@ -103,6 +103,8 @@ All configurations share the same underlying modular frame family. Capabilities 
 
 Energy-beaming is treated as an optional addon path that can grow from the same panel family; it is not required for the basic shade or reflector roles.
 
+Interplanetary power beaming (for example Venus → Mars or other targets) has **not been decided**. It remains a future option the AI Manager may score later and is not required for the basic shade or reflector roles.
+
 ---
 
 ## Operations (Local Station Support)
@@ -119,9 +121,10 @@ This keeps maintenance, resource recovery, and panel replacement inside the exis
 
 ## Production & Deployment Notes
 
-- Fabrication is intended to occur in orbit (or at high-altitude Venus facilities) using local carbon feedstock.
+- Fabrication is intended to occur in orbit (or at high-altitude Venus facilities) using local carbon feedstock. **Preferred early source:** Venus-sourced CNT from atmospheric CO₂ cracking is the preferred and currently best-understood feedstock for the standardized modular panels because of abundant CO₂ availability. The structural material concept itself is flexible, however — other locations may later produce analogous high-tensile structural panels from local feedstocks.
 - Panels produced at Venus can be adapted and shipped/configured for Mars use.
 - Exact orbital distance of any Venus shade remains unspecified.
+- While Venus-sourced CNT is the preferred and currently best-understood feedstock for the standardized modular panels (abundant CO₂ makes it the strong early choice), the structural material concept itself is flexible. Other locations may later produce analogous high-tensile structural panels from local feedstocks. Venus is preferred, not a hard restriction.
 - Size of a swarm matters (total panel count), but tracking stays at the aggregate level described above.
 
 ---
@@ -142,6 +145,14 @@ Whether these are the right fields, and whether a shared base model is the right
 
 - `Location::CelestialLocation` places an object on or above a celestial body: surface coordinates plus an optional altitude (not negative).
 - `Location::SpatialLocation` places an object at x, y, z coordinates within a spatial context.
+
+These location primitives (origin + extent) are the placement foundation for the following type-specific behaviours:
+
+- **Modular octagonal CNT structural swarms / L1 arrays** (ESTABLISHED panel architecture) — use `Location::SpatialLocation` where applicable; exact placement rules per swarm type are listed below under "Open Items."
+- **EM-harvestable clouds** — designed to use the existing spatial location system for origin and extent; interaction rules, yields, and harvesting mechanics remain **OPEN**.
+- **Easter-egg style fields / phenomena** — designed to use either location primitive depending on scope (celestial or free-space); visual details, triggers, and exact effects remain **OPEN**.
+
+These are type-specific behaviours sitting on top of the existing location primitives. No new abstract `SpatialField` model is invented; each type defines its own behavioural rules within the established placement framework.
 - Neither table has an extent or field-size column. Whether a Lagrange point is placed with one of these two models is not established.
 
 ### Open (do not invent)
