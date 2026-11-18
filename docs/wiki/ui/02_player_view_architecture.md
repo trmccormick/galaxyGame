@@ -182,7 +182,61 @@ The product has two primary dashboards:
 - **Admin Dashboard** — application, simulation, world, data, and operational administration.
 
 The Admin Dashboard contains dedicated workspaces, including AI Manager, Map Studio, StarSim, TerraSim, Digital Twin, and other administrative tools. The responsibility boundaries and unresolved ownership questions for these systems are documented in [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md). AI Manager is an Admin workspace, not a Player view or a separate Player dashboard.
+## Shared workspace layout pattern
 
+**ESTABLISHED INTENT — 2026-11-17**
+
+The following describes the agreed two-pane workspace structure for Planetary views (both Admin and Player). It establishes a reusable layout pattern that other GalaxyGame views may adopt where appropriate.
+
+### Persistent navigation
+
+The application has persistent main-game navigation on the far left. This navigation is separate from the individual workspace and persists across all views. It provides global access to major workflows (system catalog, assets, economy, research, etc.) and is not part of any single workspace's internal layout.
+
+### Two-pane workspace structure
+
+Each Planetary workspace uses two primary panes within its content area:
+
+**Left / main pane — Visualization and working canvas**
+
+- Primary visualization or map canvas occupies the upper portion.
+- Controls belonging to that visualization are positioned **directly beneath the canvas**, not in the persistent navigation or in the right data panel.
+- This lower area accommodates map layers, visualization layer toggles, zoom controls, identification tools, and other context-specific actions for the left-pane visualization.
+- All visualization controls remain within this left pane.
+
+**Right pane — Contextual data and supporting information**
+
+- Extends the full height of the workspace alongside the left pane.
+- Displays contextual data, body facts, environmental metrics, composition breakdowns, and supporting information relevant to the selected object or active layer.
+- Does **not** contain controls belonging to the left-hand visualization.
+- Uses a compact, readable information layout (section titles, data rows, progress bars) rather than large interactive elements.
+
+### Planetary application
+
+This structure applies to both **Admin Planetary** and **Player Planetary**. The two interfaces share the structural layout and appropriate visualization capabilities while allowing differences in:
+
+- Available actions and permissions (admin controls vs. player observation).
+- Operational versus observational information density.
+- Admin-only functionality (terrain regeneration, property editing) — these must not appear in Player views.
+- Data presentation depth appropriate to each audience.
+
+### Reuse as a workspace pattern
+
+This two-pane structure is documented as a **potential reusable workspace pattern** for other GalaxyGame views. It is not mandated for every view; different views may need different arrangements (tables, dashboards, multi-panel layouts). However, any view that combines a primary visualization with supporting data should consider this pattern:
+
+1. Persistent global navigation on the far left (separate from workspace).
+2. Left pane: visualization canvas + its controls beneath the canvas.
+3. Right pane: full-height contextual data panel (no visualization controls).
+
+### Important boundaries
+
+Do not confuse these distinct areas:
+
+- **Persistent main-game navigation** — global, persistent, separate from any workspace.
+- **Workspace visualization controls** — belong beneath the canvas in the left pane.
+- **Contextual data panels** — right pane only; informational, not interactive for visualization.
+- **Admin-only actions** — must be clearly separated from Player controls and never appear in Player views.
+
+A known deviation: the existing Admin Planetary implementation currently places some map controls in the left navigation area. That is **not** the intended final arrangement. Map controls belong underneath the canvas in the left pane, within the workspace content area.
 See [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md).
 
 ## Existing architecture references

@@ -257,6 +257,8 @@ The main Rails 7 application contains legacy implementation work that should be 
 
 As views are ported into the separate Rails 8 UI prototype, adapt the useful behavior and data to the intended Admin experience rather than copying legacy layouts, labels, or interactions unchanged. Preserve the main application's authority over game state, simulation, calculations, validation, persistence, and authorization. The exact panel layout, detailed layer inventory, and authorized administrative actions remain OPEN and must be settled through view design and owner review.
 
+**Layout direction — two-pane workspace pattern (2026-11-17):** Admin Celestial Body View follows the shared Planetary workspace layout documented in [Player View Architecture](02_player_view_architecture.md): persistent global navigation on the far left, left pane with map canvas and visualization controls beneath it, right pane with full-height contextual data panel. Map controls belong underneath the canvas, not in the persistent navigation area.
+
 See [Admin Celestial Body View](05_admin_celestial_body_view.md) for the separation of design intent, current Rails 7 route/page facts, porting direction, historical conflicts, and open questions.
 
 ## 5. Screen planning and task granularity
