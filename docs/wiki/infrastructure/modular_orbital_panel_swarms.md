@@ -121,10 +121,9 @@ This keeps maintenance, resource recovery, and panel replacement inside the exis
 
 ## Production & Deployment Notes
 
-- Fabrication is intended to occur in orbit (or at high-altitude Venus facilities) using local carbon feedstock. **Preferred early source:** Venus-sourced CNT from atmospheric CO₂ cracking is the preferred and currently best-understood feedstock for the standardized modular panels because of abundant CO₂ availability. The structural material concept itself is flexible, however — other locations may later produce analogous high-tensile structural panels from local feedstocks.
+- Fabrication is intended to occur in orbit (or at high-altitude Venus facilities) using local carbon feedstock. **Preferred early source:** Venus-sourced CNT from atmospheric CO₂ cracking is the preferred and currently best-understood feedstock for the standardized modular panels because of abundant CO₂ availability. The structural material concept itself is flexible, however — other locations may later produce analogous high-tensile structural panels from local feedstocks. Venus is preferred, not a hard restriction.
 - Panels produced at Venus can be adapted and shipped/configured for Mars use.
 - Exact orbital distance of any Venus shade remains unspecified.
-- While Venus-sourced CNT is the preferred and currently best-understood feedstock for the standardized modular panels (abundant CO₂ makes it the strong early choice), the structural material concept itself is flexible. Other locations may later produce analogous high-tensile structural panels from local feedstocks. Venus is preferred, not a hard restriction.
 - Size of a swarm matters (total panel count), but tracking stays at the aggregate level described above.
 
 ---
