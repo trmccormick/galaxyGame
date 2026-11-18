@@ -43,6 +43,7 @@ This page is not a complete bug list. Prefer code, specs, and the topic pages li
 | Map / world-generation learning pipeline (existing work) | **Audit**, not greenfield build. Owner reports prior example ingestion and training; results incomplete. Intent: [AI Manager](services/ai_manager.md) (external examples), [Admin Celestial Body View](ui/05_admin_celestial_body_view.md), [Admin Dashboard & AI Manager](ui/03_admin_and_ai_manager.md) (Map Studio). **Inspect:** ingestion formats/files; provenance and scenario retention; map-pattern extraction/training; path into the generator; runtime load/consume; Map Studio Admin routes/entry points. |
 | Command reference drift | [System commands](technical/system_commands.md) may name services or baselines that have moved — re-check before scripting around them |
 | Architecture sprawl | Large trees under `docs/architecture/` and legacy `docs/agent/` are uneven; prefer wiki entry pages first |
+| Cryptomining satellite under-performance | First deployed orbital asset produces far lower GCC in the live loop (~100 GCC) than expected. Suspected false-positive low-power mode despite oversized panels + battery. Possible causes: instantaneous solar check instead of buffered (solar + battery SoC), discharge-rate limits, tick-order problems, or initial-state differences between rake tests and live loop. Code / configuration / power-state investigation needed; not a design-intent change. |
 
 ## Draft pages added (2026-11-04 owner and Gemini brainstorm; unverified)
 
@@ -114,6 +115,7 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 
 ### Recent doc updates
 
+- **2026-11-18** — Recorded cryptomining satellite live-loop under-performance (power/battery state) as a known configuration issue needing review.
 - **2026-11-07** — Committed harvest `d7ce08fb`: portals/AWS energy model and variants; new [Natural wormholes & EM](technical/natural_wormholes_and_em.md); new [Skimmers & mixed volatiles](logistics/skimmer_and_mixed_volatiles.md); accepted 80/90 EAP NPC band; LEO vs L1 depot roles on resource/market logistics.
 - **2026-10-29** — Promoted settlement infrastructure intent (unsourced tier and growth-stage details moved to its OPEN block; see Migration log) into `infrastructure/settlement_infrastructure.md`; linked from wiki Home and Infrastructure TOC. Active task tracking and sprint status reside in the external `agent-tasks` repository; `docs/wiki/` is reserved for enduring design intent and architecture specs.
 - **2026-10-28** — Categorical directory reorganization (`astronomy/`, `logistics/`, `player/`, `infrastructure/`, `engineering/`, `technical/`); all Home-page link repairs; new "Navigation by Category" IA table on the Home page; `planetary_protection_environmental_governance.md` design-only spec added to infrastructure.
