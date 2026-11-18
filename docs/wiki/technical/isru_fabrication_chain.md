@@ -44,14 +44,14 @@ These are the first-pass surface units that sit between raw regolith harvesting 
 
 Modularity is intentional — these are building blocks, not a fixed script:
 
-- **Standalone PVE:** can operate with just a harvester for remote / precursor O₂ (LOX) production without requiring a full TEU line.
-- **Precursor sites (low-capture mode):** non-target gases may be vented to keep mass and energy low. The hardware runs, but only the target gas is retained.
+- **Standalone PVE + harvester:** a valid precursor configuration for O₂ / LOX production. No TEU line is required in this mode.
+- **Precursor sites (low-capture mode):** non-target gases may be vented to keep mass and energy low. The hardware runs, but only the target gas is retained. On a full base the aim is to retain every useful gas; venting is mainly a precursor-site compromise.
 - **Gas separator:** a standalone PVE still needs a gas separator; at a precursor site, the gases it separates out that are not the target are the ones vented.
-- **Full-base mode:** the same PVE hardware switches to full capture; every useful gas is retained for downstream use.
+- **Full-base mode:** the same hardware switches to full capture; every useful gas is retained for downstream use.
 
-### Depleted Regolith
+### Depleted Regolith (feedstock in all modes)
 
-Depleted regolith from the PVE is **feedstock**, not waste:
+Depleted regolith from the PVE is **feedstock**, not waste — this holds in all operating modes:
 
 - Construction fill and 3-D printing substrate (see Section 2 below)
 - Later heavy-metal extraction source
