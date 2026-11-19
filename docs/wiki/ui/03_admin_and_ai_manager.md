@@ -157,6 +157,8 @@ AI Manager is not limited to mission selection and asset deployment. It is the a
 
 The UI should expose actual decision and execution records. It must not fabricate AI reasoning or imply that mock controls are connected to live services.
 
+**Craft operations — established intent (2026-11-19):** Craft are autonomous assets, not pilot/character avatars. Players may issue remote commands or assign objectives when communications permit; onboard automation and the AI Manager continue authorized operations when the player is unavailable or out of communication range. Admin/AI Manager screens supervise deployments, assignments, decisions, and execution rather than presenting direct piloting controls. Craft are identified by ship/craft names. They may operate independently or be grouped for a specific task/operation; do not assume every craft belongs to a permanent fleet. Keep requested objectives, current craft state, and confirmed execution outcomes distinct.
+
 ### Wormhole network management
 
 AI Manager monitors and coordinates the evolving natural-wormhole and AWS network:
