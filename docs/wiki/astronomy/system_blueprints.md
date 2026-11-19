@@ -105,6 +105,14 @@ The hybrid generic path also includes `"moons"` as a key inside `"celestial_bodi
 
 **Naming lifecycle:** Systems are generated with scientific catalog identifiers. When a player or AI initiates settlement, `rename_system_for_settlement` replaces the identifier with a proper settlement name via `NameGeneratorService#generate_star_proper_name` and updates `naming_status` to `"settlement_named"`.
 
+### Story-system naming exception: `AOL-732356`
+
+**OWNER-CONFIRMED:** The generated system with identifier `AOL-732356` currently has the working display name **Eden**. Eden is not a locked or final star-system name. The identifier `AOL-732356` is stable and must not be changed when the system's display name is revised; update names and display labels without changing this identifier or breaking references to it.
+
+The working name is under review because the procedural generator also uses **Eden** as a planet name, creating possible system/body-name ambiguity, and **New Eden** is strongly associated with EVE Online. A replacement system name has not been selected. **Gaia** and **Aki Gaia** have been mentioned during discussion, but neither is confirmed as the final star-system name. Do not infer that either is the system name, and do not rename the JSON yet.
+
+This is a specific owner-confirmed naming constraint for `AOL-732356`; it does not by itself establish a general change to the generator's naming lifecycle above.
+
 ### `stars` array
 
 Each entry is produced by `ProceduralGenerator#generate_stars`. Spectral type is selected by weighted probability (M: 76%, K: 12%, G: 7.6%, F: 3%, A: 0.6%, B: 0.1%, O: 0.01%).
