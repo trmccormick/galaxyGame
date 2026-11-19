@@ -125,6 +125,22 @@ When the naming model is tuned, preserve enough context to distinguish a body's 
 
 This section records intended behavior; it does **not** claim that the current generator, JSON format, or persisted model fully supports multilingual names and contextual aliases today. Verify the implementation and data model before treating those capabilities as complete.
 
+#### Current persisted model — verified 2026-11-19
+
+The current Rails implementation already separates a celestial body's stable identity from its names, but supports only a simple alias list:
+
+- `celestial_bodies.identifier` is a required, unique string column and is the stable internal identity used to refer to the body.
+- `celestial_bodies.name` is a separate string column for the body's primary stored name. The `CelestialBody#name` method falls back to `identifier` when the name column is blank.
+- `celestial_bodies.properties` is a non-null JSONB column. `CelestialBody` exposes `aliases` through `store_accessor :properties`; aliases are currently stored as an array of plain strings.
+- The shared `CelestialBody` model provides `all_names`, `has_alias?`, `add_alias`, `remove_alias`, and `find_by_name_or_alias`. Planet subclasses inherit this behavior; it is not planet-only.
+- `all_names` combines the primary name and aliases. Name/alias lookup also checks the stable identifier.
+
+**Current limitation:** Alias entries have no structured attributes. The implementation does not currently record a name's designation type, language, cultural or naming tradition, source/authority, historical period, or validity. The existing alias array therefore cannot fully represent the richer naming intent above. The current model also does not establish a separate canonical/preferred-name policy beyond the `name` column.
+
+**Design direction, not implemented:** Keep the stable identifier and existing primary-name field. Evolve the names/aliases stored in the celestial body's `properties` metadata into structured name records when this capability is implemented. Each record should retain the name and relevant context (such as name type, language, cultural tradition, source, and historical/validity information). Do not imply that this richer structure or its resolution rules already exist in the Rails model or current JSON import path.
+
+The code review confirmed the shared implementation in `app/models/celestial_bodies/celestial_body.rb`, the inherited planet model in `app/models/celestial_bodies/planets/planet.rb`, and the `celestial_bodies` table migration. The current database stores `identifier` and `name` as separate columns and `properties` as JSONB.
+
 
 **Scientific grounding:** Prefer naming practices recognizable from real astronomy over arbitrary fictional rules. In particular, keep scientific designations distinct from proper/common names. A designation may be catalog- or survey-based and may combine letters and numbers; exoplanet designations commonly build on the host star's designation with a lowercase letter. That letter convention is generally tied to discovery order, not necessarily orbital order. A proper name can coexist with the scientific designation; it does not have to replace it. Real astronomy does not have one universal exoplanet naming convention, so GalaxyGame should not impose one rigid pattern on every generated system.
 
