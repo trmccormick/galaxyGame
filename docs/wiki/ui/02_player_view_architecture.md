@@ -63,6 +63,34 @@ Existing main-app Monitor/Planetary functionality is substantial and must be ins
 
 Candidate interactions include globe or projected-map pan/zoom, layer selection, selected-region inspection, and environmental data panels. Exact layer availability depends on the authoritative data and services.
 
+### Planetary data source and frontend boundary
+
+**ESTABLISHED PROTOTYPE ARCHITECTURE INTENT — 2026-11-19**
+
+The Planetary frontend must consume body data through a stable, source-independent interface. It must not read local JSON files directly, know where data is stored, or depend on which backend supplies the data.
+
+The initial prototype data path is:
+
+```text
+Local copy of the main game's minimal sol.json
+  → prototype JSON lookup/data provider
+  → existing Rails controller
+  → Planetary view data payload
+  → frontend JavaScript and UI
+```
+
+For the first Planetary data slice:
+
+- Use the main game's **minimal `sol.json` test system**, not `sol-complete.json` and not a newly invented Earth fixture. Copy that source file into the corresponding `app/data/star_systems/sol.json` location in the prototype, preserving the source JSON structure.
+- Adapt the existing main-app lookup behavior only as far as needed to load Sol and resolve an individual body such as Earth. The main-app reference is `Lookup::StarSystemLookupService`, which uses `GalaxyGame::Paths::STAR_SYSTEMS_PATH` and explicitly prefers `sol.json` for the Sol test system.
+- The Rails controller obtains the selected body's data and supplies it to the view through a stable, source-neutral payload. The view/JavaScript renders that payload; frontend code does not open files or implement JSON lookup.
+- Keep the data-provider boundary replaceable. The local JSON provider is temporary. A future provider may obtain the same logical body data from the main GalaxyGame application's API. Replacing the provider must not require rewriting the Planetary renderer, JavaScript presentation logic, or UI components.
+- Use actual fields present in the source data. Missing or unavailable values remain absent/unavailable; do not fill gaps with invented planetary or simulation values.
+
+**Data-source distinction:** `sol.json` initializes the Solar System and supplies system/body definition data. It is not the source of generated or persisted terrain maps, nor is it a live simulation-state feed. Terrain is a separate data concern; in the main game the authoritative terrain state is associated with the celestial body's Geosphere. Dynamic environmental and simulation values must come from an appropriate simulation/API source when available, not be inferred from the static system definition.
+
+This architecture establishes the prototype's local-data-to-future-API transition boundary. It does not establish that a production API or its endpoint contracts already exist.
+
 ### Orbital-scale map layers and geographic identification
 
 **ESTABLISHED UI DIRECTION — 2026-11-16**
