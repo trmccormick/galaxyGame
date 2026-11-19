@@ -100,7 +100,7 @@ The Main Belt is the system's raw material source. Heavy tugs manufactured at L1
 | **System status** | Established Sol-system celestial object |
 | **Additional role and physical details** | Refer to the relevant Saturn/Titan operational and source data; do not infer unrecorded orbital or physical values here |
 
-Titan is part of the Sol system's established celestial-object set. Its inclusion in the system reference is independent of whether a particular compact Sol JSON fixture includes every Sol object. The current prototype's smaller `sol.json` fixture includes Titan and is suitable for UI testing; `sol-complete.json` provides the fuller celestial-object collection. These filenames and fixture-selection details are prototype data-loading concerns and are documented in the UI prototype wiki, not game mechanics.
+Titan is part of the Sol system's established celestial-object set. Its inclusion here records the game-world fact; the breadth and selection of JSON fixtures used by the separate UI prototype are documented in that project's wiki.
 
 ### Jupiter
 
