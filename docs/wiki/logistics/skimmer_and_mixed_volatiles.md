@@ -31,12 +31,15 @@ The HLT processes captured CO₂ using its installed processing capability:
 `2CO₂ → 2CO + O₂`
 
 - O₂ is liquefied and retained as LOX for the craft's mission fuel requirements.
-- **During harvesting at Venus, venting the CO byproduct (and any unwanted gas) back into the Venus atmosphere is the normal / preferred option for Mk1.** This slightly modifies the source atmosphere composition over time (mass-ledger effect).
-- If the craft has **no dedicated CO tank**, further CO₂ processing during the return leg to Luna pushes the CO byproduct into the mixed-volatiles inventory tank.
+- **During harvesting at Venus, CO handling is a configurable policy (DIRECTION, owner, 2026-11-18).** The Venus harvester data sets `gas_handling_policy` to store O₂ and N₂, store CO if its value is positive, and process CO₂. With no CO storage fitted, the CO byproduct is vented back into the Venus atmosphere. This slightly modifies the source atmosphere composition over time (mass-ledger effect).
+- If the craft has **no dedicated CO tank**, further CO₂ processing during the return leg to Luna pushes the CO byproduct into the mixed-volatiles inventory item (a tank only provides capacity).
 - This is CO₂ splitting, **not methane production**.
 - The HLT must carry sufficient methane for its mission; methane production from Venusian CO₂ is a separate Luna industrial process using lunar-derived hydrogen.
 
 Tanks track capacity only. Actual gas identity, masses, and composition live in the inventory system (already established).
+
+- **Optional CO capacity (OPEN, owner, 2026-11-18):** a Mk1 Venus craft may fit an optional storage item to hold CO for the return leg, filled during operations or on the return leg. It could be an adjusted multi-purpose cryogenic tank or a new design. Per the current Venus harvester data, the recommended fit's four storage ports are all used by Mk2 multi-purpose cryogenic tanks, so a CO item would replace one of them or need another port.
+- **Code alignment (verified against galaxyGame `8fd62da`, 2026-11-18):** the CO₂ split and the return of CO to the source atmosphere match `TerraSim::AtmosphericTransferService` (`remove_gas` on CO₂, then `add_gas('CO', …)` on the source). The `gas_handling_policy` block in the harvester data is not read by any Ruby code, and its `vent` list is currently empty (OPEN). Per-tank gas logic in `Units::Storage` is stubbed; capacity is checked through `Inventory`.
 
 Goal arrival state at Luna for a successful Mk1 run: full LOX tank + mixed gas cargo (composition tracked in inventory). Selling the mix against standing buy orders and buying return methane is a valid commercial loop; pure inventory transfer remains allowed.
 
