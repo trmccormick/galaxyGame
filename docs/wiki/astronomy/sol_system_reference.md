@@ -92,6 +92,16 @@ Mars becomes solvent through hub economics: branch and core volume pass through 
 
 The Main Belt is the system's raw material source. Heavy tugs manufactured at L1 deploy to the belt in Phase 3, capturing and routing raw asteroids. Phobos/Deimos can be converted in place using the Mk1 slag-engine approach, with the drives providing station-keeping capability only. The Mk1 cannot physically reposition either moon; larger-body relocation requires a later tug class or an alternative capture-to-anchor approach.
 
+### Titan (moon of Saturn)
+
+| Attribute | Value |
+|---|---|
+| **Type** | Natural satellite of Saturn |
+| **System status** | Established Sol-system celestial object |
+| **Additional role and physical details** | Refer to the relevant Saturn/Titan operational and source data; do not infer unrecorded orbital or physical values here |
+
+Titan is part of the Sol system's established celestial-object set. Its inclusion in the system reference is independent of whether a particular compact Sol JSON fixture includes every Sol object. The current prototype's smaller `sol.json` fixture includes Titan and is suitable for UI testing; `sol-complete.json` provides the fuller celestial-object collection. These filenames and fixture-selection details are prototype data-loading concerns and are documented in the UI prototype wiki, not game mechanics.
+
 ### Jupiter
 
 | Attribute | Value |
