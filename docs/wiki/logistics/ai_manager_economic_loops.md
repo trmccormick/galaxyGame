@@ -87,6 +87,10 @@ Every settlement maintains target stockpile levels for critical resources (O₂,
 - The AI Manager calculates deficits against these targets before deciding whether to post a player buy order, run internal harvesters, or request a ledger transfer.
 - Deep stockpiles are the primary shock absorber so the base does not live hand-to-mouth.
 
+**DIRECTION**
+
+The AI Manager prioritizes stockpiles and spare parts for items that cannot yet be produced at the settlement. Local self-sufficiency is the long-term goal, but infrastructure is slow and costly to build, so early bases must carry buffers of non-local critical goods against import delays, orbital windows, player inactivity, and isolation events. Deep buffers prevent the base from living hand-to-mouth while local production capacity is still being established.
+
 **OPEN**
 - Default buffer durations (example starting point: 30-day survival, longer expansion reserve).
 - Which resources are treated as critical vs discretionary.
