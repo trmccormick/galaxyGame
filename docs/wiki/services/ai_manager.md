@@ -14,6 +14,14 @@
 
 The **AI Manager** (`AIManager::Manager`) is Galaxy Game's automated economy-and-logistics governor. It does **not** generate star systems, celestial bodies, or initial terrain maps. **StarSim** generates systems and celestial bodies; **Map Studio** (and related generation services) prepare or generate **initial body terrain / geographic data**. The AI Manager reads game state (including world state produced elsewhere) and issues high-level work orders to existing services. As a **design capability**, it may use learned patterns or generated options when ranking strategies or requesting work. This describes intended capability, not verified current runtime behavior; whether AI Manager consumes map-learned patterns remains OPEN pending source inspection. The AI Manager does not own the world-generation pipeline.
 
+### Survey missions and system-data refinement — remaining work (DIRECTION; implementation/ownership OPEN)
+
+Survey missions are one way players improve the characterization of systems as they explore them. The game needs a complete path for observations to be returned, assessed, calibrated where appropriate, and incorporated into the active system maps and celestial-body properties. The AI Manager may prioritize and coordinate survey work and assess the resulting evidence; the actual calibration/reconciliation may belong in an existing domain service or a dedicated supporting service. Do not assume that the AI Manager itself must perform every scientific calculation, and do not move StarSim generation or Map Studio terrain generation into the AI Manager.
+
+The implementation review must establish which properties can be recalculated from known stellar/orbital/body inputs during StarSim loading, which require survey observations, and which remain uncertain. Preserve raw observations, source/provenance, and uncertainty separately from accepted active values. The responsible workflow should update accepted values and system maps only when the evidence supports doing so, without rewriting the historical StarSim seed. Existing survey, mission, AI Manager, lookup/loading, and celestial-body model code must be inspected before assigning service ownership or claiming this workflow exists.
+
+Incomplete early generated data is not a reason to block a system from being available to players. It is acceptable starting data when the system is sufficiently plausible to use; survey and model refinement are follow-on gameplay and simulation capabilities, not prerequisites for the landing page or initial system availability.
+
 | Domain | What it does | Code reality |
 |--------|-------------|--------------|
 | **Logistics orchestration** | Routes freight, schedules transfers between settlements via `LogisticsCoordinator`. Dispatches harvesters & construction tugs through `TaskExecutionEngine`. | 🟢 Active — `logistics_coordinator.rb`, `task_execution_engine.rb` (92-line service directory) |
