@@ -113,6 +113,20 @@ The working name is under review because the procedural generator also uses **Ed
 
 This is a specific owner-confirmed naming constraint for `AOL-732356`; it does not by itself establish a general change to the generator's naming lifecycle above.
 
+### General naming intent: stable identity, flexible names, and aliases
+
+**OWNER-CONFIRMED DESIGN INTENT — use this as the guide when reviewing or tuning name generation.** A celestial body's identity must be independent of the names used for it. Its stable identifier establishes which world it is; names describe how that world is referred to. Changing, adding, translating, or selecting a different name must not create a new body or change its identifier.
+
+A single celestial body may have multiple valid names or aliases at the same time. These may come from different languages, cultures, naming traditions, scientific or astronomical conventions, historical periods, local usage, or informal nicknames. Names that look like different naming systems or styles are not necessarily names for different worlds. For example, **Earth**, **Sol III**, **Sol Prime**, and **Topaz** could be alternative names or designations for the same world in a particular setting; they are illustrative possibilities, not a fixed mapping.
+
+Name generation should remain flexible and may select names from different traditions or patterns. **Prime**, Roman-numeral designations, and distinctive thematic names are naming possibilities, not universal rules that determine a body's physical role, orbital order, or uniqueness. A generated name such as Sol Prime does not imply that the world must be the primary habitable planet, and Sol III does not necessarily identify a different world. The same world may be known by different names in different languages or contexts.
+
+When the naming model is tuned, preserve enough context to distinguish a body's names and their usage where useful (for example, language, culture or naming tradition, designation type, and historical or local context). Do not assume one universally preferred name, a one-name-per-body relationship, or a one-to-one relationship between a naming pattern and a distinct celestial body. Alias/name resolution must resolve all recognized names to the same stable body identity.
+
+This section records intended behavior; it does **not** claim that the current generator, JSON format, or persisted model fully supports multilingual names and contextual aliases today. Verify the implementation and data model before treating those capabilities as complete.
+
+---
+
 ### `stars` array
 
 Each entry is produced by `ProceduralGenerator#generate_stars`. Spectral type is selected by weighted probability (M: 76%, K: 12%, G: 7.6%, F: 3%, A: 0.6%, B: 0.1%, O: 0.01%).
