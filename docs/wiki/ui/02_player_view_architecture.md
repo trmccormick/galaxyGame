@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-16
+> **Last Updated:** 2026-11-19
 
 # Player View Architecture
 
@@ -65,31 +65,29 @@ Candidate interactions include globe or projected-map pan/zoom, layer selection,
 
 ### Planetary data source and frontend boundary
 
-**ESTABLISHED PROTOTYPE ARCHITECTURE INTENT — 2026-11-19**
+**ESTABLISHED PROTOTYPE ARCHITECTURE INTENT — 2026-11-19; clarified 2026-11-19**
 
-The Planetary frontend must consume body data through a stable, source-independent interface. It must not read local JSON files directly, know where data is stored, or depend on which backend supplies the data.
+The Rails controller is the boundary between the Planetary UI and the source of celestial-body data. The controller requests the selected body (Earth for the initial prototype), obtains its source data, selects the values the UI needs to display, and returns a focused display payload. The frontend consumes that payload; it does not read files, locate bodies in a system definition, or know which source supplied the data.
 
 The initial prototype data path is:
 
 ```text
-Local copy of the main game's minimal sol.json
-  → prototype JSON lookup/data provider
-  → existing Rails controller
-  → Planetary view data payload
+Local copy of StarSim's minimal sol.json
+  → lookup the requested body (Earth)
+  → Rails controller selects the UI display values
+  → focused Planetary data payload
   → frontend JavaScript and UI
 ```
 
-For the first Planetary data slice:
+- Use the uploaded/main-app **minimal `sol.json` sample** as the initial source, not `sol-complete.json` and not a hand-authored Earth fixture. It is a sample of the data StarSim uses to build the Sol system, not the complete Sol dataset. Copy the actual source file into the prototype's corresponding `app/data/star_systems/sol.json` location.
+- The lookup only needs to load the Sol sample and find the requested body entry (initially Earth). The source entry is nested under `celestial_bodies` and its relevant body collection. Do not build or load the entire system into the Planetary UI.
+- The controller returns only the body values required by the Planetary UI. The UI's display requirements determine that selection; do not pass the entire Sol dataset or make the frontend responsible for filtering the source JSON.
+- Keep the controller-to-frontend payload stable and independent of the source. Today the controller obtains the values from local JSON. In the future, that source lookup is replaced by an API request for the requested body; the controller still returns the same display payload, so the Planetary frontend does not need to be rewritten.
+- Use only values actually present in the source. Missing values remain unavailable; do not invent or derive replacement values.
 
-- Use the main game's **minimal `sol.json` test system**, not `sol-complete.json` and not a newly invented Earth fixture. Copy that source file into the corresponding `app/data/star_systems/sol.json` location in the prototype, preserving the source JSON structure.
-- Adapt the existing main-app lookup behavior only as far as needed to load Sol and resolve an individual body such as Earth. The main-app reference is `Lookup::StarSystemLookupService`, which uses `GalaxyGame::Paths::STAR_SYSTEMS_PATH` and explicitly prefers `sol.json` for the Sol test system.
-- The Rails controller obtains the selected body's data and supplies it to the view through a stable, source-neutral payload. The view/JavaScript renders that payload; frontend code does not open files or implement JSON lookup.
-- Keep the data-provider boundary replaceable. The local JSON provider is temporary. A future provider may obtain the same logical body data from the main GalaxyGame application's API. Replacing the provider must not require rewriting the Planetary renderer, JavaScript presentation logic, or UI components.
-- Use actual fields present in the source data. Missing or unavailable values remain absent/unavailable; do not fill gaps with invented planetary or simulation values.
+**Data-source distinction:** `sol.json` is StarSim's system/body definition input. This prototype task only reads the requested body's existing definition data for display; it does not run StarSim, run a simulation, or build the Sol system. It is not a terrain-map source or live simulation-state feed. Terrain and dynamic simulation values remain separate data concerns and must not be fabricated from this static sample.
 
-**Data-source distinction:** `sol.json` initializes the Solar System and supplies system/body definition data. It is not the source of generated or persisted terrain maps, nor is it a live simulation-state feed. Terrain is a separate data concern; in the main game the authoritative terrain state is associated with the celestial body's Geosphere. Dynamic environmental and simulation values must come from an appropriate simulation/API source when available, not be inferred from the static system definition.
-
-This architecture establishes the prototype's local-data-to-future-API transition boundary. It does not establish that a production API or its endpoint contracts already exist.
+No production API endpoint or contract is established by this intent. The required future compatibility is the stable controller-to-frontend display payload, not a general-purpose provider framework.
 
 ### Orbital-scale map layers and geographic identification
 
