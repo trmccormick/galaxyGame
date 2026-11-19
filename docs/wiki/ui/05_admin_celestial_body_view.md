@@ -28,6 +28,13 @@ The view should make useful existing map, layer, sphere-data, geological, and in
 - AI Manager owns autonomous operational decisions. This view may expose relevant operational context, but it is not the AI Manager.
 - Do not assume unrestricted terrain editing, terraforming, simulation-speed control, or "god mode" controls belong here. Such authority requires a separate explicit design decision.
 
+ 
+### Data quality, observations, and refinement visibility — DIRECTION
+
+The Admin inspection workspace should make it possible to distinguish original/generated properties, values calculated from known inputs, survey observations, inferred estimates, and currently accepted body properties. Where the underlying data supports it, expose source/provenance, observation or calculation context, confidence/uncertainty, and unresolved conflicts. Do not present preliminary generated values as surveyed facts or hide conflicting evidence. The exact fields and presentation remain open until the data model and survey/calibration pipeline are inspected.
+
+The view displays and helps administrators inspect this information; it does not independently perform scientific calibration, rewrite the StarSim generation seed, or replace the responsible game service.
+
 See [Admin Dashboard and AI Manager](03_admin_and_ai_manager.md) for the wider Admin workspace boundaries and [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) for dated observations of existing screens.
 
 
