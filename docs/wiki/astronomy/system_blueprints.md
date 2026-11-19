@@ -125,6 +125,12 @@ When the naming model is tuned, preserve enough context to distinguish a body's 
 
 This section records intended behavior; it does **not** claim that the current generator, JSON format, or persisted model fully supports multilingual names and contextual aliases today. Verify the implementation and data model before treating those capabilities as complete.
 
+
+**Scientific grounding:** Prefer naming practices recognizable from real astronomy over arbitrary fictional rules. In particular, keep scientific designations distinct from proper/common names. A designation may be catalog- or survey-based and may combine letters and numbers; exoplanet designations commonly build on the host star's designation with a lowercase letter. That letter convention is generally tied to discovery order, not necessarily orbital order. A proper name can coexist with the scientific designation; it does not have to replace it. Real astronomy does not have one universal exoplanet naming convention, so GalaxyGame should not impose one rigid pattern on every generated system.
+
+For multilingual naming, retain names in their language of origin where appropriate and support transliteration or language-specific forms. Do not assume every language form is a literal translation: names may be inherited, culturally distinct, historical, or locally used. Keep the stable body identity and the relationship among its designations, proper names, and aliases explicit. Use the scientific designation as a reliable disambiguating reference, while allowing context-appropriate names to be displayed.
+
+This is a science-inspired design direction, not a claim that GalaxyGame must reproduce every IAU rule or approval process. The goal is credible, recognizable astronomical conventions with room for fictional systems, cultures, and naming histories.
 ---
 
 ### `stars` array
