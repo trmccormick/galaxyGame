@@ -51,6 +51,18 @@ Candidate content includes:
 - trajectories, travel distances, launch windows, and estimated travel times where supported by simulation data;
 - natural wormholes, AWS connections, portals, EM fields, and relevant space phenomena.
 
+### Craft operation and remote command model
+
+**ESTABLISHED INTENT — 2026-11-19**
+
+GalaxyGame craft are autonomous operational assets, not player-character avatars. Most craft operate through onboard automation. Players direct their craft remotely by assigning commands, objectives, destinations, or missions when a communication path is available; the player does not need to be physically aboard or represented by a pilot/character record. Remote command availability and data freshness must respect GalaxyGame's communications model rather than implying universal instant control.
+
+Craft automation and the AI Manager can continue authorized operations when a player is not connected or communication is unavailable. Loss of player communication does not imply that the craft simply stops or disappears from the operational model. The exact autonomy and authority of a particular craft depend on its capabilities and assigned operation.
+
+Craft may operate independently or be grouped for a particular task or operation. Do not assume every craft belongs to a permanent fleet or that a fleet is the required unit of control. In the UI, identify assets by their GalaxyGame ship/craft names and identities—not by EVE-style character or pilot names. Show current location, operational state, assigned objective, and communication/data age as distinct facts where the source data supports them.
+
+Player asset-management interactions and Admin/AI Manager operational oversight are related but distinct workflows. They may reuse generic selection, filtering, grouping, and status components, but should not be collapsed into one identical fleet-management screen.
+
 The view must distinguish inter-system wormhole network connections from in-system spatial relationships. EVE Dashboard's map interactions may inform pan/zoom, selection, routes, markers, and topology presentation, but its EVE-specific mechanics and inter-system map are not a substitute for a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
 
 ## Planetary context
