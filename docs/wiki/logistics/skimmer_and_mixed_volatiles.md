@@ -132,6 +132,9 @@ Do not make a tank's capacity fields the source of truth for cargo composition.
 - Preserve each captured batch's constituent masses. Do not replace its actual composition with a generic Venus mixture.
 - Keep source/batch identity where needed so materially different mixtures are not blindly merged.
 - Any `Item.metadata['composition']` representation should remain consistent with the item's total mass; it is a possible implementation shape, not a second source of truth.
+- **Initial batch composition (DIRECTION, owner, 2026-11-18):** a captured `mixed_volatiles` item starts from the source atmosphere's current proportions, with some variation. The amount of variation is OPEN. The mass removed from the source atmosphere must equal the mass the batch holds.
+- **One item for every producer (DIRECTION, owner, 2026-11-18):** the skimmer, the TEU and the PVE can all produce mixed volatiles. A single `mixed_volatiles` inventory item records each gas's amount in its loaded metadata, so anything that needs to store them uses the same item. A tank is only a capacity check.
+- **Onboard processing needs finer tracking (DIRECTION, owner, 2026-11-18):** products are tracked as their own inventory, for example O₂ filling the LOX tank. On Titan, methane could be extracted from the captured gases instead of being produced. Details OPEN.
 
 ---
 
