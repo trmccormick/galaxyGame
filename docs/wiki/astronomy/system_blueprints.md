@@ -61,6 +61,17 @@ When `ProceduralGenerator` is initialized with `use_accretion: true`, `generate_
 
 **OWNER-CONFIRMED DESIGN INTENT — evolving project understanding (2026-11-20).** GalaxyGame is unfinished and its system-generation design is still being explored and adjusted. This page records the current understanding reached while investigating JSON fixture defects; it is not a declaration that the overall StarSim architecture or data-directory layout is final.
 
+### Active-system lifecycle, archival, and reactivation
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-10-31; clarified 2026-11-20.** System existence in the game's retained data is distinct from being loaded into the active database and continuously processed by the simulation.
+
+- A system is kept active while it has an active player presence or an active connection through the artificial wormhole network or a live natural wormhole. Stabilization satellites can keep a natural wormhole live, so a system being harvested through that route remains accessible and active.
+- Once a system has no active player presence and no active wormhole-network connection—such as an explored, unsettled system whose natural wormhole has been shifted away—it can be exported to JSON and unloaded from the active database/simulation.
+- The export preserves the system's current state and relevant information to the practical extent possible. The purpose is to stop processing an inaccessible system while retaining enough state to restore it later.
+- If the system is reconnected or selected for settlement, its archived JSON can be loaded back into the database and active simulation can resume. Reloading the system record and establishing a current wormhole route are separate operations; an archived JSON export does not itself make the system reachable.
+
+This lifecycle is an intended performance/persistence behavior, not a claim that automatic unload/reload is fully implemented. The exact export schema, completeness guarantees, trigger evaluation, background-job behavior, and restoration/consistency checks remain to be verified and designed against the evolving code.
+
 ### Starting information is not a complete system
 
 A JSON file in the system-data tree is not, by itself, a complete or exhaustive playable system.
