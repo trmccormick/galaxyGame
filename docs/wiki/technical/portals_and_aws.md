@@ -71,11 +71,11 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 - Opening an inter-system AWS pair is a major infrastructure and network-expansion investment.
 - Eden reconnection is an example: early traffic is limited to the initial equipment and operations required to establish the connection and stabilize the Eden side ([Eden page](../player/eden_disconnect_and_emergent_history.md)).
 
-**Hammer Protocol and frontier-network expansion — OWNER-CONFIRMED STRATEGIC DIRECTION, 2026-11-20**
+**Hammer Protocol and frontier-network expansion — WORKING DESIGN DIRECTION — OWNER-PROPOSED LIKELY EXPANSION PATTERN, 2026-11-20**
 
 The intended expansion pattern is a repeating survey → evaluate → build AWS → reconfigure Sol's network → hammer/shift cycle. A natural wormhole provides temporary access to a candidate system; it is not necessarily the permanent route by which that system remains connected to Sol.
 
-1. **Natural access changes.** A natural wormhole may shift as part of its lifecycle, including when its mass limit is reached, or its exit may be deliberately shifted through the Hammer Protocol. A shift changes the natural exit/connection; it is not the same event as an uncontrolled snap.
+1. **Natural access changes.** A natural wormhole may shift as part of its lifecycle, potentially in response to reaching a mass limit, or its exit may be deliberately shifted through the Hammer Protocol. The precise relationship between mass-limit exhaustion, a natural shift, and an uncontrolled snap needs reconciliation with the natural-wormhole physics model; do not treat those events as interchangeable.
 2. **AI Manager announces survey missions.** When a newly accessible frontier becomes available, the AI Manager can offer survey missions to players. Players explore the system and return information about its celestial bodies, resources, EM field, and terraforming/settlement potential. A system is not automatically a prize merely because it was discovered.
 3. **Evaluate the prize system.** Survey results identify whether the system has unusually valuable resources, worthwhile terraforming targets, or other strategic value. The AI Manager evaluates the findings against Sol's needs, expansion costs, and the value of keeping the natural route open.
 4. **Select AWS placement.** For a valuable system, the AI Manager determines suitable location(s) for the new AWS infrastructure. Depending on the system's geometry and connection requirements, this may involve one station or two stations in the new system. Placement must consider gravitational/counterbalance geometry, EM stabilization, orbital movement, transit, construction, and resupply. The precise station/pair topology is still subject to the AWS design.
@@ -85,7 +85,7 @@ The intended expansion pattern is a repeating survey → evaluate → build AWS 
 
 The strategic payoff is that a temporary natural connection is used to discover and develop a valuable frontier, while a reconfigured artificial network connects that frontier to Sol's mature industrial and logistics base. Personnel, ships, equipment, construction materials, supplies, and later resource output can move through the AWS corridor. The process expands the network through successive discoveries and deliberate route reassignment rather than by assuming every discovered system receives a permanently additional Sol link.
 
-This is the expected expansion pattern, not a guarantee that every natural shift reveals a prize system or that every survey leads to AWS construction. The AI Manager makes those decisions from survey evidence, network priorities, available resources, and operating costs.
+This is the owner's likely expansion pattern, not yet a locked rule or a guarantee that every natural shift reveals a prize system or that every survey leads to AWS construction. The AI Manager makes those decisions from survey evidence, network priorities, available resources, and operating costs.
 
 The exact physical/operational mechanism for disconnecting and reassigning the Sol-side route, endpoint movement or replacement, downtime and traffic handling, commissioning, capacity, and WTC authorization remain OPEN. Do not assume one AWS station supports multiple simultaneous pairs unless the design establishes that.
 
