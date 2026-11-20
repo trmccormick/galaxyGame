@@ -57,6 +57,16 @@ When `ProceduralGenerator` is initialized with `use_accretion: true`, `generate_
 
 ---
 
+## System-map importance, replaceability, and Eden selection
+
+**OWNER-CONFIRMED DESIGN INTENT (2026-11-19):** Sol is the primary system map and the only system whose existing map/data has special preservation importance. Other generated systems are adjustable or replaceable. GalaxyGame can generate new systems dynamically, so an individual generated test-system JSON file or a particular early generated system is not an irreplaceable game asset. Do not spend disproportionate effort reconstructing or perfecting replaceable generated-system fixtures.
+
+**Eden is a role/selection, not a permanent file assignment.** The Eden system must offer better terraforming targets than Sol; that is the essential selection requirement. The current generated system identified as `AOL-732356` has been used as a working Eden candidate, but the game may use a different generated system if that candidate is unsuitable. The `AOL-732356` identifier remains the stable identity of that particular generated system if it is retained; selecting another system for Eden means using that system's own identity, not renaming an unrelated system identifier or treating the current candidate as mandatory.
+
+Generated systems may be tuned or replaced as needed. Their initial object inventories are not exhaustive: survey gameplay can discover and spawn additional objects into the active system/map. See [StarSim, Unit Simulation Boundaries & Protection Classes](../design/starsim_and_protection_classes.md) for the survey and evolving-world distinction.
+
+---
+
 ## 3. Seed Hash Structure
 
 `ProceduralGenerator#generate_system_seed` returns a Ruby hash with the following top-level keys. This is the intermediate format consumed by `fallback_build` and written to JSON — it is **not** the same as the persisted ActiveRecord model structure.
@@ -107,7 +117,7 @@ The hybrid generic path also includes `"moons"` as a key inside `"celestial_bodi
 
 ### Story-system naming exception: `AOL-732356`
 
-**OWNER-CONFIRMED:** The generated system with identifier `AOL-732356` currently has the working display name **Eden**. Eden is not a locked or final star-system name. The identifier `AOL-732356` is stable and must not be changed when the system's display name is revised; update names and display labels without changing this identifier or breaking references to it.
+**OWNER-CONFIRMED CURRENT WORKING LABEL:** The generated system with identifier `AOL-732356` has been used with the working display name **Eden**. Eden is not a locked or final star-system name or permanent assignment to this particular generated system. `AOL-732356` remains the stable identifier of that specific system if it is retained; changing its display name must not change that identifier or break references. However, the game may select a different generated system for the Eden role if it provides better terraforming targets than Sol.
 
 The working name is under review because the procedural generator also uses **Eden** as a planet name, creating possible system/body-name ambiguity, and **New Eden** is strongly associated with EVE Online. A replacement system name has not been selected. **Gaia** and **Aki Gaia** have been mentioned during discussion, but neither is confirmed as the final star-system name. Do not infer that either is the system name, and do not rename the JSON yet.
 
