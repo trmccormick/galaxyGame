@@ -134,6 +134,24 @@ The relevant design question is what scale supports the intended gameplay: meani
 
 No target, minimum, maximum, density, or required number of systems is established. Do not select an EVE-like count, generate systems merely to reach a large number, or treat the current set of generated examples as a target universe size. The appropriate scale should be evaluated against actual gameplay needs and the costs of generating, surveying, retaining, loading, and simulating systems. This is a design question, not a decision to constrain the universe to a small fixed count.
 
+
+### Mixed-source Local Bubble network scalability exercise
+
+**OWNER-CONFIRMED FUTURE TEST DIRECTION — 2026-11-20; scope and implementation OPEN**
+
+A controlled scalability exercise may combine two kinds of systems in one test network:
+
+- **Known Local Bubble systems:** Use the real-system seed data already available, retaining their known astronomical positions, identifiers, and constellation associations. The existing seed collection is limited and is not expected to contain 1,000 systems.
+- **Procedurally generated systems:** Generate a separate batch through StarSim and retain their generated provenance. They are ordinary test systems; this exercise does not require bespoke or unusually diverse worlds.
+
+StarSim should complete/populate the known-system seeds where information is missing, while keeping observed/source-supplied properties distinguishable from generated or estimated completion. The EVE Dashboard's existing constellation/system-location information is a relevant basis for displaying the known Local Bubble portion; confirm its actual data path and coverage before treating it as a complete 1,000-system visualization solution.
+
+The two groups can be combined into a modest initial test batch and later expanded. A future stress target may approach 1,000 systems, but that is a scalability benchmark—not a current gameplay requirement, a required seed-catalog size, or a commitment to populate 1,000 real Local Bubble stars. The purpose is to exercise system creation/completion, location-aware display, AWS deployment, network topology, and large-network management using both real seed inputs and procedural generation.
+
+The network should be deliberately connected rather than assigning exactly one AWS installation to every system. AWS deployment count and placement are determined by the topology and the applicable counterbalance/placement rules: some systems may need one installation, while junction or multi-link systems may require two or more. Use complete standard AWS installations; do not create bespoke station variants for this benchmark.
+
+For this controlled infrastructure test, EM resource availability/production restrictions may be bypassed so they do not prevent construction. This exception does **not** bypass AWS placement, counterbalance geometry, endpoint/pairing requirements, or network-connectivity validation. The exercise is a test harness, not normal gameplay economics or a claim that the full 1,000-system workflow is implemented.
+
 ---
 
 ## 3. Seed Hash Structure
