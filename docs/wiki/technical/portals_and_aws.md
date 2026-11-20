@@ -32,7 +32,9 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 **ESTABLISHED INTENT (owner, 2026-11-11)**
 
 - A portal uses some EM to open the rift. Fusion power and magnetic containment keep it open.
-- A portal is low-mass. It cannot transfer ships or large materials, and it cannot replace cyclers or mass drivers for delivering most bulk.
+- **Primary purpose — personnel movement and limited mass transfer:** portals provide rapid movement for players and the wider human population, while also allowing a bounded amount of physical cargo to pass between the paired locations. They are not personnel-only connections.
+- Portal capacity is limited: they may carry people, personal equipment, high-value components, emergency kits, small critical parts, and other permitted low-mass cargo. They do not transfer ships or serve as a route for bulk ores, structural materials, or planetary-scale volatiles. Exact payload limits and mass-capacity behavior remain OPEN.
+- Portals supplement rather than replace cyclers, freighters, and mass drivers for moving most industrial and bulk material.
 - **A portal pair connects two specific destinations.** The endpoints are deployed at the two locations the connection is intended to serve; a pair is not a general, freely addressable network gateway.
 
 **DIRECTION**
