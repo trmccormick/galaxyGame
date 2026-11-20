@@ -110,6 +110,17 @@ The current main-app data tree includes `data/json-data/star_systems/` and `data
 The current directory arrangement may not be the best long-term organization. Separating real astronomical reference data, incomplete seeds, authored baselines, and generated/completed outputs may eventually be useful, but **no directory migration or taxonomy is decided here**. First understand the generator, lookup/loading paths, provenance needs, and UI discovery behavior. Document the current arrangement accurately; do not treat it as a finalized architecture.
 
 
+
+### Galaxy-wide playable scale and system count
+
+**OPEN GAMEPLAY / WORLD-SCALE QUESTION — OWNER-RAISED 2026-11-20**
+
+The total number of star systems needed to create a satisfying GalaxyGame experience has not been decided. GalaxyGame should not assume that it needs thousands of systems simply because EVE Online uses a very large star-system universe or because some of its map and navigation concepts are useful references.
+
+The relevant design question is what scale supports the intended gameplay: meaningful exploration and discovery, strategically distinct destinations, resource and settlement opportunities, useful natural-wormhole network topology, and enough room for network expansion without creating large amounts of low-value or operationally inaccessible content. The quality, diversity, relationships, and accessibility of systems may matter more than raw count.
+
+No target, minimum, maximum, density, or required number of systems is established. Do not select an EVE-like count, generate systems merely to reach a large number, or treat the current set of generated examples as a target universe size. The appropriate scale should be evaluated against actual gameplay needs and the costs of generating, surveying, retaining, loading, and simulating systems. This is a design question, not a decision to constrain the universe to a small fixed count.
+
 ---
 
 ## 3. Seed Hash Structure
