@@ -129,7 +129,7 @@ The hybrid generic path also includes `"moons"` as a key inside `"celestial_bodi
 
 The wormhole network is not fixed by design and is separate from system seed data:
 
-- **Natural wormholes** can shift through their lifecycle, including when a mass limit is reached; the Hammer Protocol can also deliberately force a natural exit to shift. A shift changes the current exit/connection and is distinct from an uncontrolled snap.
+- **Natural wormholes** can shift through their lifecycle, potentially in response to reaching a mass limit; the Hammer Protocol can also deliberately force a natural exit to shift. A shift changes the current exit/connection and is distinct from an uncontrolled snap. The precise relationship between mass-limit exhaustion, shifting, and snapping remains to be reconciled in the natural-wormhole physics design.
 - A natural shift can create a new survey opportunity. The AI Manager announces survey missions, players explore the newly accessible system, and survey findings establish whether it is a valuable prize with strong resource and terraforming targets.
 - For a selected frontier, the AI Manager determines suitable AWS placement (potentially one or two stations in the new system) and coordinates construction while natural access remains open.
 - Once the frontier AWS endpoint is ready, an active Sol-side AWS route serving another system can be disconnected and reassigned to connect Sol to the new station. The displaced route can be retargeted elsewhere, reorganizing rather than simply accumulating fixed links.
@@ -137,7 +137,7 @@ The wormhole network is not fixed by design and is separate from system seed dat
 - **Artificial wormholes** can therefore be shut down and retargeted as part of deliberate network reconfiguration. System records and wormhole connection state remain distinct: a system may continue to exist in simulation/data while its former route is no longer active or accessible.
 - Any UI, route planner, or network overview must use current connection state when determining available routes. Historical/configured connections are not proof of current traversability.
 
-This is the intended strategic expansion pattern, not an automatic result of every natural shift or survey. The AI Manager evaluates survey evidence, resource/terraforming value, infrastructure and logistics costs, and network priorities. Exact persistence, timing, event handling, AWS placement/pairing, route-reassignment mechanics, and runtime implementation must still be checked in code as the wormhole systems evolve.
+This is the owner's likely strategic expansion pattern, not yet a locked rule or an automatic result of every natural shift or survey. The AI Manager evaluates survey evidence, resource/terraforming value, infrastructure and logistics costs, and network priorities. Exact persistence, timing, event handling, AWS placement/pairing, route-reassignment mechanics, and runtime implementation must still be checked in code as the wormhole systems evolve.
 
 ### `galaxy` block
 
