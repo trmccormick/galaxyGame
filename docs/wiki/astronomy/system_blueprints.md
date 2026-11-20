@@ -129,12 +129,15 @@ The hybrid generic path also includes `"moons"` as a key inside `"celestial_bodi
 
 The wormhole network is not fixed by design and is separate from system seed data:
 
-- **Natural wormholes** can shift over time. Their positions and the systems/locations they connect can change, so a natural route must not be treated as a permanent edge in a static network.
-- **Artificial wormholes** can be shut down and retargeted. Changing their endpoints changes the available routes and can reorganize network connectivity.
-- System records and wormhole connection state are distinct. A system may continue to exist in the simulation/data while its former route is no longer active or accessible.
+- **Natural wormholes** can shift through their lifecycle, including when a mass limit is reached; the Hammer Protocol can also deliberately force a natural exit to shift. A shift changes the current exit/connection and is distinct from an uncontrolled snap.
+- A natural shift can create a new survey opportunity. The AI Manager announces survey missions, players explore the newly accessible system, and survey findings establish whether it is a valuable prize with strong resource and terraforming targets.
+- For a selected frontier, the AI Manager determines suitable AWS placement (potentially one or two stations in the new system) and coordinates construction while natural access remains open.
+- Once the frontier AWS endpoint is ready, an active Sol-side AWS route serving another system can be disconnected and reassigned to connect Sol to the new station. The displaced route can be retargeted elsewhere, reorganizing rather than simply accumulating fixed links.
+- After the artificial route provides durable access to Sol's industrial network, operators can use the Hammer Protocol to shift the natural exit to a new location and begin another survey cycle.
+- **Artificial wormholes** can therefore be shut down and retargeted as part of deliberate network reconfiguration. System records and wormhole connection state remain distinct: a system may continue to exist in simulation/data while its former route is no longer active or accessible.
 - Any UI, route planner, or network overview must use current connection state when determining available routes. Historical/configured connections are not proof of current traversability.
 
-This records the intended behavior; exact persistence, timing, event handling, and current runtime implementation must still be checked in code as the wormhole systems evolve.
+This is the intended strategic expansion pattern, not an automatic result of every natural shift or survey. The AI Manager evaluates survey evidence, resource/terraforming value, infrastructure and logistics costs, and network priorities. Exact persistence, timing, event handling, AWS placement/pairing, route-reassignment mechanics, and runtime implementation must still be checked in code as the wormhole systems evolve.
 
 ### `galaxy` block
 
