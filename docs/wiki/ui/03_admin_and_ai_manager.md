@@ -265,6 +265,24 @@ The existing [Biosphere Simulation](../technical/biology/biosphere_simulation.md
 
 A focused review of the current code and active wiki pages did not establish a dedicated implementation for detecting or cataloguing past life/fossils, nor a complete survey-to-research-to-AI-network-retention workflow. Those remain OPEN and should be investigated before being described as implemented.
 
+### Player strategic feedback on network policy
+
+**OWNER-RECALLED DESIGN DIRECTION — 2026-11-20; interaction details OPEN**
+
+Players should have a way to provide strategic feedback or express preferences that the AI Manager can consider when making wormhole-network expansion and retention decisions. This is indirect influence, not direct player control of the shared network and not an instruction that the AI Manager must obey.
+
+Possible player-facing preference areas include:
+- expansion pace and appetite for opening additional systems versus consolidating existing network access;
+- how long to favor retaining natural wormhole connections for scouting, harvesting, and future opportunities;
+- preferences about adjusting/reorganizing network routes versus preserving established connections;
+- relative emphasis on exploration, settlement access, EM harvesting/market income, and reserving EM/resources for stabilization or infrastructure.
+
+These should be expressed as policy preferences, feedback, or recommendations at an appropriate player/corporate level—not as guaranteed commands to snap, shift, stabilize, or build a particular route. The AI Manager remains responsible for evaluating the shared network, physical conditions, safety, available resources, operating costs, competing priorities, and the consequences for other players. It may accept, defer, modify, or decline feedback and should be able to explain the relevant constraints and rationale where supported.
+
+The design must still determine who may submit feedback (individual player, corporation, colony, or another authorized group), whether preferences are global or scoped to a region/route, how conflicting player preferences are reconciled, how feedback is weighted against operational needs, and how the AI Manager communicates its response. These details remain OPEN; do not assume a voting system, binding referendum, or direct network-control permission.
+
+Player feedback, the AI Manager's evaluation, its resulting decision, and observed outcomes may provide useful learning evidence. This complements Admin escalation: players can express preferences and observations, while Admins can provide higher-level guidance when the AI Manager encounters uncertainty or an exceptional situation.
+
 ### Learning and oversight
 
 The Admin workspace should make objectives, candidate systems, resource forecasts, network assessments, selected strategies, decisions, alternatives where actually recorded, actions, outcomes, and training evidence inspectable. Operators need appropriate review and intervention controls, subject to actual authorization and service support.
