@@ -131,18 +131,21 @@ A natural exit can shift as part of the natural wormhole lifecycle. A snap is a 
 
 Hammer Protocol is part of the human expansion strategy using Sol as the current staging/scouting system. It is broader than simply forcing a snap and should not be described only as a controlled-closure mechanism.
 
-The strategic workflow is:
-1. Use Sol as the staging point for opening/exploiting a natural wormhole to a candidate system.
-2. Survey the newly accessible system: its celestial bodies, EM field, resources, and settlement potential.
-3. Treat a system discovered through this natural-wormhole scouting process as having a harvestable EM field.
-4. Harvest EM and other available resources while the natural connection remains open, subject to capacity, logistics, and risk.
-5. Decide whether to continue harvesting, invest in stabilization, establish an AWS connection, plan settlement, or complete the harvesting opportunity and hammer the natural exit to force a shift and begin scouting elsewhere.
+**OWNER-CONFIRMED FRONTIER-EXPANSION CYCLE — 2026-11-20**
 
-Discovery does not automatically require an AWS pair or settlement. The AI Manager may use the natural connection while it remains open and defer the AWS decision.
+The intended repeating pattern is:
 
-If the system is selected for settlement or continuing network integration, the likely strategy is to build an AWS pair while the natural wormhole is still open. This creates a Sol connection and a logistics corridor for people, equipment, construction materials, and supplies. The connection can use a stabilized natural wormhole or an artificial connection as appropriate. Whether and when a connection is later moved is a strategic network decision, not an automatic consequence of discovery.
+1. A natural wormhole shifts, either through its natural lifecycle (including reaching its mass limit) or through deliberate use of the Hammer Protocol. A shift changes the exit/connection; it is distinct from an uncontrolled snap.
+2. The AI Manager identifies the newly available survey opportunity and announces survey missions to players.
+3. Players explore the newly accessible system and return survey information about celestial bodies, resources, EM, and terraforming/settlement targets. The AI Manager evaluates whether the system is a strategically valuable “prize system”; discovery alone does not guarantee that it is.
+4. If the system is valuable, the AI Manager determines the best location for the required AWS infrastructure. Depending on the geometry and network plan, it may call for one station or two stations in the new system. Exact placement and pairing rules remain subject to the AWS design.
+5. The AI Manager can build/coordinate that infrastructure while the natural wormhole remains active, using the temporary natural connection for construction and deployment logistics.
+6. Once the frontier AWS endpoint is ready, an active Sol-side AWS route serving another system can be disconnected and reassigned to the new station, connecting Sol to the prize system through the artificial network. The displaced route can then be retargeted elsewhere, allowing the existing network to be reorganized rather than merely accumulating fixed links.
+7. With the prize system now connected through the artificial network, operators use the Hammer Protocol to force the natural exit to shift to a new location. That creates the next survey opportunity and begins the cycle again.
 
-The Hammer Protocol may include a deliberate final mass transit to force a natural exit to shift when the system is to be abandoned. This is a strategic option, not a mandatory step for every discovered system. Do not conflate the deliberate hammer/shift operation with an uncontrolled snap.
+This pattern uses natural wormholes as temporary discovery and construction access, while the artificial network carries the durable logistics connection to Sol. It links frontier resources and settlement opportunities to Sol's mature industrial capacity. The AI Manager's decisions should weigh survey evidence, resource and terraforming value, construction cost, route priorities, and the consequences of leaving or shifting the natural connection.
+
+The AI Manager may still choose to harvest, stabilize, or continue using a natural connection rather than immediately integrate every discovered system. This is a strategic expansion pattern, not a rule that every shift reveals a prize system or every survey results in AWS construction. Do not conflate a deliberate Hammer Protocol shift with an uncontrolled snap.
 
 ## 6. Known and unknown systems
 
