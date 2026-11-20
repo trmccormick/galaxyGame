@@ -134,13 +134,22 @@ EM resource availability/production restrictions may be bypassed for this contro
 
 The exercise should measure generation/completion and deployment time, AWS placement success, network connectivity/topology, and the game's ability to display and manage the resulting network. Actual implementation capability and benchmark procedure remain to be established; no claim is made that this test currently exists.
 
-## Institutional Control of the Network
+## Institutional Control, Ownership, and Operation of the Network
 
-**DIRECTION**
+**OWNER-CONFIRMED NETWORK ROLE; OWNERSHIP AND COMMERCIAL ARRANGEMENTS OPEN — 2026-11-20**
 
-The primary arterial wormhole / AWS network is managed by the **Wormhole Transit Consortium (WTC)**, the organization that developed the artificial wormhole technology. It builds, maintains, and manages the inter-system network and its core connections. The consortium's exact governance, regulatory powers, ownership model, and commercial rules remain OPEN.
+The **Wormhole Transit Consortium (WTC)** is responsible for maintaining and coordinating the artificial-wormhole and portal networks, including AWS, WS, and intra-system portal infrastructure. This network responsibility does **not** establish that the WTC owns those stations, portals, or facilities, or that it directly operates every individual facility.
 
-Players operate as contractors, specialists, private logistics firms, or later private pair operators within that framework — not as sole owners of the entire network. Exact ownership and toll rules remain OPEN.
+Use the relationship between aircraft, ships, airlines/shipping companies, airports, and seaports as the model:
+
+- **Vehicles and transport operators:** Player- and AI-operated spacecraft use the network; their owners/operators need not own the infrastructure they travel through.
+- **Infrastructure ownership:** Multiple independent entities may own portals, AWS, WS, or associated facilities. Ownership need not be centralized in the WTC.
+- **Facility operation:** An infrastructure owner may operate its own facility or contract another entity to operate it.
+- **Network coordination and maintenance:** The WTC maintains and coordinates network-level infrastructure and services. This role is distinct from ownership and local facility operation.
+
+A corporation could therefore own a portal, another entity could operate it, the WTC could maintain its network integration, and multiple independent transport operators could use it.
+
+The WTC's exact maintenance arrangements, service contracts, funding, ownership distribution, access rules, transit charges, revenue flows, and any regulatory authority remain **OPEN**. Do not infer centralized WTC ownership from its network-maintenance responsibility, or assume that the WTC has authority to set fees or funding policy. Players and corporations may participate as transport operators, contractors, specialists, infrastructure owners, or facility operators; the exact rights and commercial arrangements remain unresolved.
 
 ---
 
