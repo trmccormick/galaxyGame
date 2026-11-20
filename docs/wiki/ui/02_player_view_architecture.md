@@ -65,6 +65,22 @@ Player asset-management interactions and Admin/AI Manager operational oversight 
 
 The view must distinguish inter-system wormhole network connections from in-system spatial relationships. EVE Dashboard's map interactions may inform pan/zoom, selection, routes, markers, and topology presentation, but its EVE-specific mechanics and inter-system map are not a substitute for a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
 
+### Player feedback on wormhole-network strategy
+
+**OWNER-RECALLED DESIGN DIRECTION — 2026-11-20; interaction details OPEN**
+
+Players should have a way to provide feedback or express strategic preferences that the AI Manager can consider when managing the shared wormhole network. This is an indirect input into AI Manager policy and priorities, not direct control over natural wormholes or AWS infrastructure.
+
+Possible feedback options may cover:
+- favoring further network expansion or favoring consolidation of the existing network;
+- favoring longer retention of natural wormhole connections for scouting and harvesting, where operationally viable;
+- favoring preservation of existing routes or proposing network adjustments/reorganization;
+- expressing the relative importance of exploration, settlement access, EM harvesting and market income, or conserving resources for stabilization and infrastructure.
+
+These are preferences and recommendations, not binding commands or guarantees. AI Manager remains responsible for evaluating physical stability and counterbalance, player safety, network-wide effects, resources, costs, and competing priorities. It may follow, defer, modify, or decline a preference based on those conditions. Players should not be presented with controls that imply they can directly order a natural wormhole to snap/shift or force AWS construction.
+
+Who can submit feedback, how it is scoped (individual, corporation, colony, route, or wider network), how conflicting preferences are handled, and how the AI Manager reports its response remain OPEN. Do not assume a voting mechanism or that every player has equal authority over network policy.
+
 ## Planetary context
 
 **DIRECTION grounded in existing capability**
