@@ -33,11 +33,15 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 
 - A portal uses some EM to open the rift. Fusion power and magnetic containment keep it open.
 - A portal is low-mass. It cannot transfer ships or large materials, and it cannot replace cyclers or mass drivers for delivering most bulk.
+- **A portal pair connects two specific destinations.** The endpoints are deployed at the two locations the connection is intended to serve; a pair is not a general, freely addressable network gateway.
 
 **DIRECTION**
 
 - Standalone manufactured infrastructure. They do **not** require natural or artificial wormhole anchoring.
 - Built as **quantum-entangled pairs**. Both halves are manufactured together, then shipped and deployed. Unpaired units are non-functional. Loss of one half ends the pair.
+- **Location-to-location access — OWNER-CONFIRMED INTENT (2026-11-20):** each deployed pair provides rapid personnel access between its two host locations within the same star system. A settlement may establish a connection from its own base to another settlement or major facility, such as a large NPC base or an orbital station. The purpose is convenient movement for players and the wider human population between important inhabited locations.
+- A settlement can establish additional pairs to reach additional destinations. A major station or settlement can therefore host endpoints for multiple separate connections; each pair still represents its own specific link.
+- **Hosting and ownership — OWNER-CONFIRMED INTENT (2026-11-20):** a player settlement may own and deploy the portal infrastructure at its own base and arrange to place the paired endpoint at an NPC-owned station or settlement. The player can lease space or make another agreement with the NPC facility owner for that endpoint. Hosting an endpoint does not by itself transfer ownership of the portal hardware or the host facility; the host retains its station/settlement and premises, while portal ownership and operating rights follow the applicable authorization or agreement. The general intent is that the entity establishing/deploying an asset owns it unless WTC authorization or an agreement specifies otherwise.
 - Restricted to **low-mass** payloads for the arterial role: personnel, high-value components, emergency kits, small critical parts. Bulk ores, structural steel, and planetary-scale volatiles stay on freighters / cyclers / mass drivers.
 - **Energy model:**
   - **EM** is used primarily as an **ignition burst** to open the aperture.
@@ -138,18 +142,19 @@ The exercise should measure generation/completion and deployment time, AWS place
 
 **OWNER-CONFIRMED NETWORK ROLE; OWNERSHIP AND COMMERCIAL ARRANGEMENTS OPEN — 2026-11-20**
 
-The **Wormhole Transit Consortium (WTC)** is responsible for maintaining and coordinating the artificial-wormhole and portal networks, including AWS, WS, and intra-system portal infrastructure. This network responsibility does **not** establish that the WTC owns those stations, portals, or facilities, or that it directly operates every individual facility.
+The **Wormhole Transit Consortium (WTC)** is responsible for maintaining and coordinating the artificial-wormhole and portal networks, including AWS, WS, and intra-system portal infrastructure. This network responsibility does **not** automatically establish that the WTC owns every connected portal, station, or facility, or that it directly operates every individual facility. The WTC's role in authorizing and coordinating network connections is distinct from ownership of locally deployed portal hardware and the premises hosting it.
 
 Use the relationship between aircraft, ships, airlines/shipping companies, airports, and seaports as the model:
 
 - **Vehicles and transport operators:** Player- and AI-operated spacecraft use the network; their owners/operators need not own the infrastructure they travel through.
-- **Infrastructure ownership:** Multiple independent entities may own portals, AWS, WS, or associated facilities. Ownership need not be centralized in the WTC.
+- **Infrastructure ownership:** Multiple independent entities may own portals, AWS, WS, or associated facilities. Ownership need not be centralized in the WTC. The working default for locally established assets is ownership by the entity that establishes/deploys them, subject to WTC authorization and any agreement that assigns different rights.
+- **Portal hosting agreements:** A player settlement may install one endpoint at its own base and lease space at an NPC station or settlement for the paired endpoint. The NPC owner retains the host facility and premises; the portal owner and host establish the applicable lease, access, support, and operating arrangements.
 - **Facility operation:** An infrastructure owner may operate its own facility or contract another entity to operate it.
 - **Network coordination and maintenance:** The WTC maintains and coordinates network-level infrastructure and services. This role is distinct from ownership and local facility operation.
 
 A corporation could therefore own a portal, another entity could operate it, the WTC could maintain its network integration, and multiple independent transport operators could use it.
 
-The WTC's exact maintenance arrangements, service contracts, funding, ownership distribution, access rules, transit charges, revenue flows, and any regulatory authority remain **OPEN**. Do not infer centralized WTC ownership from its network-maintenance responsibility, or assume that the WTC has authority to set fees or funding policy. Players and corporations may participate as transport operators, contractors, specialists, infrastructure owners, or facility operators; the exact rights and commercial arrangements remain unresolved.
+The WTC's exact maintenance arrangements, service contracts, funding, ownership distribution, access rules, transit charges, revenue flows, and any regulatory authority remain **OPEN**. Do not infer centralized WTC ownership from its network-maintenance responsibility, or assume that the WTC has authority to set fees or funding policy. Players and corporations may participate as transport operators, contractors, specialists, infrastructure owners, or facility operators. The confirmed portal-hosting example establishes the intended player/NPC relationship at a high level; detailed lease terms, power and support responsibilities, access rights, maintenance liability, and any fees remain unresolved.
 
 ---
 
@@ -191,7 +196,9 @@ This is a focused source comparison, not a complete audit of all AWS, portal, or
 - Manufacturing recipes and facility requirements.
 - Industrial bleed rate tunability.
 - Inter-system portal-gate (Level 4b) scope, if any.
-- Player ownership / toll limits relative to the Wormhole Transit Consortium (WTC)-managed network.
+- Detailed WTC authorization and network-connection approval for privately established portal pairs.
+- Lease terms and service obligations when a player-owned portal endpoint is hosted at an NPC station or settlement; power, support, access, maintenance liability, and fees.
+- Whether any specific agreement changes the default ownership of portal hardware or grants operating rights to another entity.
 - Exact commissioning and operational criteria that must be satisfied before player arrival is enabled.
 - Portal mass limits and how the reset works. Never defined; the aperture is small, but no numbers are set.
 - Whether both halves ship on one mission or two, and whether one half can be installed at an existing station while the other goes to a new settlement.
