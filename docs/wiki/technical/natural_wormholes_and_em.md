@@ -83,6 +83,14 @@ A further review of the older network and expansion references found proposals f
 
 The same older references variously place Consortium formation immediately after the Snap, describe AWS development as a post-Snap LDC/AstroLift collaboration, and describe TerraGen as a post-Snap Development Corporation consortium. These chronology claims conflict with the owner-confirmed pre-existing Sol organizations and remain unadopted. Older technical documents also contain controlled-Snap/Hammer trigger mechanics and numerical EM, stability, maintenance, and mass values; those are not authority for the historical Eden Snap, whose timing remains an emergent outcome, or for current quantitative design.
 
+**OWNER-CONFIRMED WTC NETWORK ROLE; OWNERSHIP AND COMMERCIAL ARRANGEMENTS OPEN — 2026-11-20**
+
+The WTC is responsible for maintaining and coordinating the artificial-wormhole and portal networks, including AWS, WS, and intra-system portal infrastructure. This network responsibility does **not** establish that the WTC owns those stations, portals, or facilities, nor that it must directly operate every individual facility.
+
+Use the distinction between transport operators and transport infrastructure familiar from aviation and maritime shipping: spacecraft and their player/corporate operators use the network in the way aircraft and ships use airports and seaports; facilities may have separate owners and operators, while a network organization coordinates and maintains shared network services. Multiple independent entities may own portals and other network facilities. An owner may operate its own facility or arrange for another entity to operate it; the WTC's network maintenance role remains distinct from both ownership and local operation.
+
+The WTC's exact maintenance arrangements, service contracts, funding, ownership distribution, access rules, transit charges, revenue flows, and any regulatory authority remain **OPEN**. Do not infer centralized WTC ownership from its network-maintenance responsibility, and do not assign the WTC authority to set fees or funding policy unless separately established.
+
 
 The Snap and the resulting Sol-side research response are covered in [Eden Disconnect and Emergent History](../player/eden_disconnect_and_emergent_history.md). The WTC's artificial-wormhole technology, inter-system network role, and derived intra-system portal technology are covered in [Portals & AWS](portals_and_aws.md). The Snap is the catalyst for the later research and network development; it does not create the participating organizations or Terragen's pre-existing capabilities.
 
