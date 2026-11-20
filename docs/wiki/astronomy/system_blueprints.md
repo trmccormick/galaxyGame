@@ -2,8 +2,8 @@
 
 # System Blueprints & Procedural Generation Spec
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-01  
-> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
+> *Last Audited:* 2026-11-20  
+> *Audit Summary:* Design intent with a partial source audit. Current generation, seed-completion, and scouting behavior are distinguished below; this is not a full implementation audit.
 
 > **Scope:** Master design-by-contract specification for Galaxy Game's procedural star system generation engine. Grounded in `star_sim/system_generator_service.rb` and `star_sim/procedural_generator.rb` as reviewed during Phase 3. All field names, structures, and constants reflect actual source code — no invented fields.
 
@@ -151,6 +151,49 @@ The two groups can be combined into a modest initial test batch and later expand
 The network should be deliberately connected rather than assigning exactly one AWS installation to every system. AWS deployment count and placement are determined by the topology and the applicable counterbalance/placement rules: some systems may need one installation, while junction or multi-link systems may require two or more. Use complete standard AWS installations; do not create bespoke station variants for this benchmark.
 
 For this controlled infrastructure test, EM resource availability/production restrictions may be bypassed so they do not prevent construction. This exception does **not** bypass AWS placement, counterbalance geometry, endpoint/pairing requirements, or network-connectivity validation. The exercise is a test harness, not normal gameplay economics or a claim that the full 1,000-system workflow is implemented.
+
+---
+
+## Implementation cross-check — current source audit
+
+**SOURCE-VERIFIED PARTIAL AUDIT — 2026-11-20.** This section records the current behavior found in the main-app source. It takes precedence over historical implementation claims in frozen documents. It does not replace the owner-confirmed design direction above.
+
+### Seed lookup and generated outputs
+
+- `Lookup::StarSystemLookupService` loads JSON from both the curated `STAR_SYSTEMS_PATH` and `GENERATED_STAR_SYSTEMS_PATH`. Its lookup prefers curated records before generated records.
+- The lookup service therefore treats curated and generated JSON as distinct source classes; the presence of a JSON record does not mean it is a fully populated or currently active database system.
+- `scripts/local_bubble_expand.rb` is a batch runner that reads JSON seed files, calls the generic hybrid method, and writes timestamped outputs under `GENERATED_STAR_SYSTEMS_PATH`. It is an available development/processing script, not evidence that production scouting uses batch pre-generation.
+- The active source audit did not establish a completed archive/restore lifecycle or a fully implemented on-demand frontier-generation workflow. Those remain design intent/open implementation work.
+
+### Generic hybrid completion is currently narrow
+
+The current `StarSim::ProceduralGenerator#generate_hybrid_system_from_seed_generic` implementation:
+
+- Expects `celestial_bodies` to be an array when categorizing seed bodies.
+- Preserves recognized seed-body categories and adds the body-level `from_seed: true` marker.
+- Places unrecognized body types into the terrestrial-planet collection as a fallback.
+- Checks each star for an existing linked terrestrial planet and adds one if none is found, using a terraformable template when available or the procedural planet path otherwise.
+- Does **not** currently fill missing gas giants, ice giants, dwarf planets, asteroids, or additional terrestrial populations as a general completeness target.
+
+The body-level `from_seed` marker is useful but is not a complete per-property provenance model. It does not by itself distinguish observed values from estimated/generated values within a mixed or completed body. The mixed-source Local Bubble benchmark will need that distinction preserved or strengthened; do not assume this method already provides it.
+
+### Scouting integration is not yet the proposed on-demand completion flow
+
+Current `AIManager::WormholeScoutingService#execute_scouting_mission` creates a scouting wormhole, calls `load_system_data`, then deploys probes and analyzes the loaded data. `load_system_data` reads the named JSON file directly from the curated `data/json-data/star_systems` directory. The method does not currently call `StarSim::ProceduralGenerator` to complete the seed before probe deployment.
+
+Current `process_natural_discovery` validates the discovery event and updates the wormhole contract; it does not generate or complete the target system.
+
+Accordingly, the frozen `WORMHOLE_SCOUTING_INTEGRATION.md` proposal to add a `generate_complete_system_from_seed` workflow and populate all body categories is **not implemented in the inspected service**. Its proposed body-count targets and prize-evaluation changes are historical requirements/proposals, not current generator behavior or approved numerical rules. The owner-confirmed on-demand frontier direction remains valid design intent, but implementation must be reconciled with the current service and code before being described as operational.
+
+### Historical StarSim rule proposals not adopted as current rules
+
+The frozen `docs/architecture/logistics/STARSIM_GENERATION_RULES.md` proposes high-mass planetary anchors, a 5-AU natural-wormhole buffer, brown-dwarf hub preference, and dual-link topology. These are not established StarSim generation rules in the current wiki or by the source inspected for this audit. Do not import them as current constraints without owner confirmation and code verification.
+
+The structural maximum of three wormholes per system is present in current code/constants and is documented in the active wormhole material. That separate wormhole constraint does not validate the other frozen proposals or make wormholes part of the StarSim celestial-body seed.
+
+### Terrain-generation material belongs outside StarSim
+
+The frozen `docs/architecture/starsim/OVERVIEW.md` and `PROCEDURAL_INTENT.md` mix star-system generation with weathering, NASA elevation data, Civ4/FreeCiv terrain, and shoreline processing. Those terrain/map-generation topics belong with Map Studio and the relevant planetary simulation documentation, not this StarSim system-generation specification. The active wiki's StarSim/Map Studio boundary remains authoritative.
 
 ---
 
