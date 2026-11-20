@@ -72,6 +72,19 @@ When `ProceduralGenerator` is initialized with `use_accretion: true`, `generate_
 
 This lifecycle is an intended performance/persistence behavior, not a claim that automatic unload/reload is fully implemented. The exact export schema, completeness guarantees, trigger evaluation, background-job behavior, and restoration/consistency checks remain to be verified and designed against the evolving code.
 
+### On-demand frontier generation and a bounded active universe
+
+**OWNER-CONFIRMED DESIGN DIRECTION — 2026-11-20; implementation details OPEN.** GalaxyGame may create new star systems as exploration needs fresh destinations. Natural-wormhole discoveries can provide access to a genuinely unknown system, at which point StarSim can generate its starting system data and establish a new survey, exploration, and harvesting opportunity. This is distinct from reconnecting to a previously known system, which should restore its archived state rather than generate a replacement.
+
+This supports a persistent but dynamically expanding universe without requiring every possible system to be generated, loaded, or simulated at once:
+
+- Keep systems with active players, active network connections, or ongoing operational value in the active simulation.
+- Archive systems that no longer need continuous processing, preserving their state so they can be restored if a future natural-wormhole connection or other gameplay event makes them relevant again.
+- Generate new systems when a genuinely new frontier is revealed and gameplay calls for a destination, rather than pre-generating a vast inventory simply to reach a target count.
+- Treat the active system population and the universe's retained/possible system population as different quantities. New discoveries can refresh exploration and harvesting opportunities while archival limits unnecessary active-world bloat.
+
+This is a design opportunity, not a commitment to infinite generation, a fixed active-system cap, or automatic generation at every wormhole. The rules governing when a new system is generated, how novelty and quality are maintained, how system identity and history are preserved, and how generation is balanced against performance and gameplay remain OPEN. A natural wormhole may just as validly reconnect to a known or archived system.
+ 
 ### Starting information is not a complete system
 
 A JSON file in the system-data tree is not, by itself, a complete or exhaustive playable system.
