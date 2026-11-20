@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established dashboard separation; individual workspaces and layouts remain DIRECTION / OPEN  
-> **Last Updated:** 2026-11-14
+> **Last Updated:** 2026-11-20
 
 # Admin Dashboard and AI Manager
 
@@ -38,7 +38,35 @@ Map Studio is an Admin tool in the connected planetary-data pipeline. It support
 
 Map Studio and Digital Twin have different responsibilities: Map Studio concerns planetary data and geography preparation; Digital Twin concerns environmental projection, evaluation, and simulation-system tuning (see below).
 
-Map Studio is retained as an Admin capability. Exact Admin navigation, routes, and entry points are **not fully verified** in this wiki and remain part of the map/world-generation pipeline audit (see [Status and gaps](../status-and-gaps.md)).
+Map Studio is retained as an Admin capability. The legacy Rails 7 route and controller action set are source-verified: `GET /admin/map_studio` (index), `GET /admin/map_studio/generate`, `POST /admin/map_studio/generate_map`, `GET /admin/map_studio/browse`, `POST /admin/map_studio/apply_map/:id`, and `GET /admin/map_studio/analyze/:id`. Whether the current Admin navigation exposes every entry point is a separate UI check. See the code snapshot below and [Status and gaps](../status-and-gaps.md).
+
+### Map Studio — current Rails 7 implementation snapshot
+
+**SOURCE-VERIFIED PARTIAL AUDIT — 2026-11-20.** Inspected `Admin::MapStudioController`, the Admin routes, `AIManager::PlanetaryMapGenerator`, and `StarSim::AutomaticTerrainGenerator`. This is evidence of the legacy implementation, not approval of every current behavior as the final design.
+
+**Map Studio controller flow**
+
+1. The Map Studio index inventories source maps and previously generated map JSON files, reports generation statistics, and reads a planetary-map learning-status JSON file when present.
+2. The generation page selects a target celestial body and available source maps.
+3. The generation action processes selected FreeCiv `.sav` and Civ4 WorldBuilder files through `Import::FreecivMapProcessor` and `Import::Civ4MapProcessor`, then calls `AIManager::PlanetaryMapGenerator#generate_planetary_map`.
+4. The generated map is saved as a separate JSON artifact under `GalaxyGame::Paths::GENERATED_MAPS_PATH`, with metadata including target body, source-map references, and generation time.
+5. The browse/analyze actions inspect those generated artifacts. Applying a map is a separate action: it writes the generated terrain grid, dimensions, and biome counts to the selected body's `geosphere.terrain_map`, and records `applied_map` metadata and `map_source` in body properties.
+
+This means Map Studio first creates a reusable/prepared map artifact and only changes a body's stored terrain when the separate apply action is used. The controller comment describes map generation as independent of celestial bodies, but the actual workflow still uses a selected target body for generation parameters and later applies the result to a body.
+
+**Generation paths visible in current code**
+
+- When source maps are selected and successfully processed, `PlanetaryMapGenerator` combines source biome grids and available source elevation data into a new terrain grid. This is generation from processed reference inputs, not simply attaching the original game map as the playable body map.
+- When no source maps are supplied, the generator follows a pattern-based path. It attempts to load planet-specific elevation data; if unavailable, it constructs a body-specific landmass/elevation pattern from reference statistics, then derives barren biomes, resource locations, and strategic markers.
+- `StarSim::AutomaticTerrainGenerator` is a separate automatic path. It skips bodies that already have populated terrain data and bodies outside its supported planet/major-moon scope; it has special handling for Sol worlds and otherwise derives generation parameters from body properties before calling the planetary map generator and storing terrain on the geosphere.
+- The existence of these services does not prove that every newly created body automatically receives terrain. The invocation points and full end-to-end lifecycle still need verification.
+
+**Important boundaries and unresolved quality questions**
+
+- Map Studio's Admin responsibility is initial terrain/geographic preparation. StarSim's primary star-system generation, TerraSim's environmental evolution, and Digital Twin's projection/evaluation remain separate capabilities.
+- The legacy generator class is namespaced under `AIManager`, and the automatic terrain wrapper is namespaced under `StarSim`. Do not infer final service ownership or strategic decision authority from these historical class namespaces alone.
+- The older frozen `MAP_SYSTEM.md` and terrain architecture documents contain detailed grid sizes, service inventories, and layer behavior that are not all confirmed by this source pass. In particular, the current automatic generator's diameter-based grid calculation applies minimum and maximum bounds; do not copy older per-body grid-size tables as current guarantees.
+- The current Map Studio controller and generator are substantial existing work, but their output quality, source-data provenance, terrain/elevation semantics, and consistency with the owner-confirmed Map Studio intent still require review. No claim is made here that the full NASA/AI learning pipeline is complete.
 
 ### StarSim Generator
 
