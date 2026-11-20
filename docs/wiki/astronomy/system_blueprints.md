@@ -189,7 +189,7 @@ Accordingly, the frozen `WORMHOLE_SCOUTING_INTEGRATION.md` proposal to add a `ge
 
 The frozen `docs/architecture/logistics/STARSIM_GENERATION_RULES.md` proposes high-mass planetary anchors, a 5-AU natural-wormhole buffer, brown-dwarf hub preference, and dual-link topology. These are not established StarSim generation rules in the current wiki or by the source inspected for this audit. Do not import them as current constraints without owner confirmation and code verification.
 
-The structural maximum of three wormholes per system is present in current code/constants and is documented in the active wormhole material. That separate wormhole constraint does not validate the other frozen proposals or make wormholes part of the StarSim celestial-body seed.
+The current Rails code contains a fixed value of three in several wormhole-generation and registration checks. **This is an existing implementation constraint, not an approved design limit.** The owner has clarified that a per-system limit may be needed, but its value and governing rule remain OPEN. The value may have originated in the Sol counterbalance arrangement, where existing large bodies such as gas and ice giants could provide substantial counterbalance; that historical rationale is plausible but has not yet been verified. Do not generalize the current value to every system. Any eventual limit should be evaluated against the system's available mass distribution, counterbalance geometry, and network topology.
 
 ### Terrain-generation material belongs outside StarSim
 
