@@ -68,7 +68,7 @@ Keep these concepts distinct:
 
 The game should not treat every mismatch in early generated data as a defect that must be repaired before play. It should support an initially plausible world whose details can be improved through surveys as the system is explored.
 
-**ONGOING POPULATION DIRECTION:** The world need not remain limited to the objects present in the initial system-generation output or map. A spawning/population process may add new celestial objects later that were not represented on the initial map. These are additions to the evolving world, not automatically errors in the original generation data or objects that a survey merely uncovered. Keep initial system generation distinct from later spawning/population; ownership and detailed lifecycle behavior remain OPEN as described above.
+**SURVEY-DRIVEN DISCOVERY AND POPULATION DIRECTION:** The initial system-generation output and map are not an exhaustive census of every object that may exist in a system. During gameplay, surveys can discover additional celestial objects that were not represented in the initial data and cause those objects to be spawned/instantiated in the active system and map. Their absence from the initial JSON or map is not, by itself, a data defect or evidence that the system is invalid. These discoveries become part of the evolving world; they do not require reconstructing or retroactively completing the original generated file. The exact runtime service ownership and lifecycle implementation remain OPEN as described above.
 
 ---
 
