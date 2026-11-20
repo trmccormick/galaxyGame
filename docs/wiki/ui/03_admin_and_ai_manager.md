@@ -84,16 +84,24 @@ Which system owns each responsibility—and how StarSim, TerraSim, AI Manager, a
 
 ### Solar System Management and prepared systems
 
-Administrators need a way to export/unload a solar system to a JSON file and import/load a prepared or pre-tuned system. The spawning/creation path must be able to use the prepared system instead of invoking the StarSim procedural generator when that is the selected source.
+Administrators need a way to export/unload a solar system to a JSON file and import/load a prepared or pre-tuned system. This is also part of the intended runtime lifecycle for reducing simulation/database load: a system that no longer has an active player presence and is no longer connected through the artificial wormhole network or a live natural wormhole does not need to remain loaded and continuously processed.
+
+**System unload/reload lifecycle — OWNER-CONFIRMED DESIGN INTENT (2026-10-31; clarified 2026-11-20)**
+
+- A system remains active while it has an active player presence or an active connection through the wormhole network, including a live natural wormhole. A natural connection maintained by stabilization satellites therefore keeps the system accessible and available for harvesting; it is not eligible for routine unloading merely because it has not been permanently integrated through AWS.
+- When the system has no active player presence and no active natural or artificial wormhole connection—for example, an explored but unsettled system after its natural exit has been shifted away—the system can be exported to JSON and unloaded from the active database/simulation.
+- Export the system's current state and all relevant information that can practically be retained, so unloading does not discard the system's accumulated history/state.
+- If the system is later reconnected or selected for settlement, reload it from its saved JSON into the database and resume active simulation. Reconnection must use the current wormhole/network topology; the archived system record does not itself create an active route.
+- The export/unload capability is intended to reduce ongoing processing and persistence load. It is an Admin/dashboard operational capability and is not yet fully implemented.
 
 This requires clear workflows for:
-- exporting an existing system and its relevant data;
-- importing and validating a prepared system;
-- maintaining a library/catalog of prepared systems;
-- selecting procedural generation versus a prepared system for system creation/spawning;
-- previewing and validating the selected system before it enters the game.
+- exporting an existing active system's current state before unloading it;
+- importing/reloading an archived system and validating its reconstructed state;
+- maintaining a library/catalog of prepared systems and archived live-system exports, without confusing those two purposes;
+- selecting procedural generation versus a prepared/archived system for system creation or reactivation;
+- previewing and validating a system before it enters or re-enters the active simulation.
 
-The export/import workflow and the decision about which source the spawning path uses are related but distinct administrative operations.
+The runtime archive/reactivation lifecycle and the separate choice of prepared input versus procedural generation for a newly created system are related but distinct administrative operations.
 
 ### Blueprint Management
 
