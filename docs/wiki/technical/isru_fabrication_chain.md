@@ -54,6 +54,7 @@ Modularity is intentional — these are building blocks, not a fixed script:
 Depleted regolith from the PVE is **feedstock**, not waste — this holds in all operating modes:
 
 - Construction fill and 3-D printing substrate (see Section 2 below)
+- **Sulfur binder (DIRECTION):** Sulfur compounds released during TEU/PVE processing can be captured as a byproduct. Combined with depleted regolith this yields a low-energy, water-free binder for structural blocks and habitat shells (an alternative to pure sintering or imported polymers). Routine byproduct supply covers trickle demand; dedicated high-yield deposits (volcanic dark-mantle and polar cold traps) remain available when larger construction campaigns require more binder. Exact yields and deposit placement rules are OPEN.
 - Later heavy-metal extraction source
 
 No single combination is mandatory — the AI Manager selects TEU/PVE counts, placement, and capture mode based on survey results, power budget, and mission phase.
