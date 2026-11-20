@@ -58,11 +58,11 @@
 
 *Wormholes are the only FTL transit mechanism in Galaxy Game. They are **not** part of the celestial body seed hash; they are a separate `Wormhole` model with its own lifecycle.*
 
-> **Guardrail:** Terms "Ring Gate", "jump gate", and "jump point" must not appear in this document. Maximum wormholes per system: `MAX_WORMHOLES_PER_SYSTEM = 3`. All endpoint distances must fall between `SAFE_DISTANCE_FROM_STAR = 1.496e8 m` (1 AU) and `MAX_DISTANCE_FROM_STAR = 1.496e10 m` (100 AU). Endpoint positions within that range are tracked in local spatial grid units by the stabilizer subsystem — these are a separate coordinate space and must not be compared against macro meter values.
+> **Guardrail:** Terms "Ring Gate", "jump gate", and "jump point" must not appear in this document. A per-system wormhole limit may be required, but its value and governing rule are OPEN; do not treat the current code's legacy value of three as a universal design limit. Evaluate any eventual limit against available counterbalance mass, system geometry, and network topology. All endpoint distances must fall between `SAFE_DISTANCE_FROM_STAR = 1.496e8 m` (1 AU) and `MAX_DISTANCE_FROM_STAR = 1.496e10 m` (100 AU). Endpoint positions within that range are tracked in local spatial grid units by the stabilizer subsystem — these are a separate coordinate space and must not be compared against macro meter values.
 
 ### Active Wormholes
 
-*One entry per wormhole. Maximum 3 entries.*
+*One entry per wormhole. Repeat as needed; no design maximum is established.*
 
 #### Wormhole 1 — [Wormhole ID, e.g. "wh-alpha-vector-01"]
 
@@ -91,9 +91,9 @@
 
 *[Repeat entry structure above]*
 
-#### Wormhole 3 — [ID]
+#### Additional Wormholes
 
-*[Repeat entry structure above]*
+*[Repeat the entry structure above as needed. The per-system design limit remains OPEN.]*
 
 ### Wormhole History
 
@@ -288,7 +288,7 @@ This body has no qualifying large moon. Settlement follows the Asteroid Depot Pa
 
 *Issues that affect the system as a whole rather than a specific body.*
 
-- [ ] [e.g. "Wormhole pre-check against registered graph state not implemented — system could receive a 4th wormhole seed before UniverseRegistrationJob rejects it"]
+- [ ] [e.g. "Current code enforces a fixed wormhole count; reconcile this legacy implementation constraint with the still-open, counterbalance-dependent per-system design limit"]
 - [ ] [e.g. "Naming status still `scientific_catalog` — pending player settlement trigger to activate rename flow"]
 
 ---
