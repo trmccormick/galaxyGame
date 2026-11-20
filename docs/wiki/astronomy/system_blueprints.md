@@ -125,6 +125,17 @@ The hybrid generic path also includes `"moons"` as a key inside `"celestial_bodi
 
 **Wormholes are not part of the seed hash.** They are a separate system and are never generated or stored as part of system seed files.
 
+### Dynamic wormhole network — owner-confirmed design intent
+
+The wormhole network is not fixed by design and is separate from system seed data:
+
+- **Natural wormholes** can shift over time. Their positions and the systems/locations they connect can change, so a natural route must not be treated as a permanent edge in a static network.
+- **Artificial wormholes** can be shut down and retargeted. Changing their endpoints changes the available routes and can reorganize network connectivity.
+- System records and wormhole connection state are distinct. A system may continue to exist in the simulation/data while its former route is no longer active or accessible.
+- Any UI, route planner, or network overview must use current connection state when determining available routes. Historical/configured connections are not proof of current traversability.
+
+This records the intended behavior; exact persistence, timing, event handling, and current runtime implementation must still be checked in code as the wormhole systems evolve.
+
 ### `galaxy` block
 
 | Field | Type | Notes |
