@@ -12,6 +12,10 @@ This page is a concrete reference for the **Sol system** as it exists in Galaxy 
 
 All content is **DIRECTION** or **OPEN** unless marked otherwise. No quantitative orbital elements, masses, resource quantities, or station counts are invented here.
 
+### Completeness and StarSim boundary
+
+Sol is the only fixed, manually authored system baseline, but this reference and the underlying JSON fixtures are not an exhaustive inventory of the real or simulated Sol system. Not every object or property is known or represented. StarSim may add or generate further objects/details in Sol, and survey missions help bring additional discoveries and detail into the system over time. Keep the authored Sol baseline and its preservation importance distinct from a claim that its object catalog is complete. The broader, evolving model of incomplete starting information, StarSim completion, and survey-driven discovery is documented in [System Blueprints & Procedural Generation](system_blueprints.md).
+
 ## System Identity
 
 | Field | Value |
