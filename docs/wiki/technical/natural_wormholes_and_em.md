@@ -164,6 +164,49 @@ Unvisited systems in the local bubble remain unknown. Do not assume that they ha
 
 The export/unload and reload workflow is an intended Admin/dashboard performance capability and is not yet fully implemented. Exact serialization coverage, trigger conditions, consistency checks, and restoration behavior remain open for code review.
 
+
+
+### Networked discoveries, preservation, and assessment
+
+**OWNER-CONFIRMED STRATEGIC DESIGN DIRECTION — 2026-11-20**
+
+Natural wormhole generation and system generation are separate capabilities. A natural wormhole pair does not inherently create a new star system, and a destination need not be newly generated:
+
+- A natural connection may lead to a previously scouted system that is currently archived/inactive; that system should be reloaded from its retained JSON state rather than generated again.
+- It may lead to another already-known system, including one in the local bubble. The discovery is the connection, not the system itself.
+- It may lead from an accessible/known system to a genuinely unknown system, creating a new survey opportunity.
+- Natural wormhole pairs are not inherently Sol-originating; they may occur elsewhere in the galaxy. However, generating a pair between two completely unknown, isolated systems has no immediate operational or simulation value if neither endpoint can be reached by players or the AI Manager. Natural-pair generation for active gameplay should provide at least one reachable endpoint, or otherwise have a defined path by which the pair becomes reachable.
+
+A system may contain or be associated with multiple active natural wormhole connections. Each active natural-wormhole aperture is a distinct local EM harvesting opportunity. Thus, a system with two active natural wormholes can have two separate aperture locations from which EM is ejected and harvested. The value of a system can include its own resources, its position in the network, access to further systems, and the EM production opportunities at each active aperture.
+
+**Preserve first, assess second — OWNER-CONFIRMED OPERATIONAL DIRECTION, 2026-11-20**
+
+When a newly discovered natural connection may be valuable, the AI Manager need not immediately commit to permanent stations or decide to abandon it. A useful initial response is to stabilize and assess:
+
+1. Deploy stabilization satellites at both apertures as an early preservation measure, so the connection is less likely to shift while players and scouting craft are operating through it. This is an initial protective deployment, not a decision to build permanent stations at both ends.
+2. Send players on scouting missions to inspect both sides and gather the information needed to compare relative stability, local conditions, and counterbalance opportunities.
+3. Apply the counterbalance rules to determine which side is the better location for permanent station infrastructure. The intended strategy may be to build a Wormhole Station (WS) on the more suitable/stable side, then build an AWS there to connect that system to the main artificial network.
+4. Retain the stabilized natural connection after the AWS link is established when it remains valuable. The AWS provides access to the main network while the natural route remains available as a gateway for additional scouting into the next system.
+5. Continue harvesting and evaluating EM at each active aperture. Players may potentially harvest excess EM for sale on the market, but EM needed for stabilization, restoration, reserves, and planned infrastructure must be accounted for before treating any captured amount as surplus.
+
+This is an example strategy, not a mandatory construction sequence for every natural wormhole. Stabilize-and-assess can be the best decision when information is incomplete: it preserves options and buys time to gather evidence before a larger investment or an irreversible network decision.
+
+### AI Manager choices, learning, and escalation
+
+AI Manager should weigh the long-term value and cost of preserving each natural connection. Relevant considerations include exploration access and the value of systems beyond the connection; existing and potential AWS network routes; relative stability and counterbalance; aperture mass throughput and remaining capacity; EM ejection, capture, return, storage, and surplus; possible player market income from surplus EM; stabilization and station construction/operating costs; logistics and player safety; and competing network or settlement priorities.
+
+Available strategic responses include:
+- **Stabilize and assess:** preserve both apertures while players gather information and the AI Manager improves its assessment.
+- **Retain and operate:** continue using a natural route for exploration, harvesting, settlement logistics, or access to further systems.
+- **Integrate and retain:** connect a gateway system to the main network through AWS while keeping the natural connection stabilized for further scouting.
+- **Harvest surplus:** make EM genuinely surplus to stabilization and operational requirements available for player harvesting and potential market sale.
+- **Shift deliberately:** use the Hammer Protocol when the current connection no longer justifies retention or a better frontier opportunity warrants moving the natural exit.
+- **Allow natural degradation or failure:** remove stabilization when continued access is no longer worthwhile, with the resulting behavior governed by the physical model. A deliberate Hammer shift, natural shift, and uncontrolled snap must remain distinct outcomes.
+
+AI Manager should not assume that the highest immediate EM sale value or fastest AWS expansion is always the best choice. It should compare short-term income with the option value of preserving a route, future scouting access, multiple EM harvesting sites, and the risk/cost of losing the connection.
+
+When the situation is unfamiliar, evidence conflicts, the consequences are unusually large, or the AI Manager cannot confidently determine an appropriate next action, it should be able to request Admin guidance rather than invent certainty. An escalation should present the observed state, relevant evidence and uncertainty, available options, likely consequences/costs, and the AI Manager's provisional recommendation. Admin guidance and subsequent outcomes should be retained as learning/training evidence so the AI Manager can handle similar situations more independently later. This is intended behavior; the confidence model, escalation thresholds, decision-record schema, and learning implementation remain OPEN.
+
 ## 7. AI Manager responsibilities
 
 AI Manager must monitor:
