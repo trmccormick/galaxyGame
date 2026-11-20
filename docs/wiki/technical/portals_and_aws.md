@@ -83,13 +83,31 @@ AWS placement and pairing must consider gravitational/counterbalance geometry, E
 
 ---
 
-## Networks and Hubs
+## Networks, Hubs, and Frontier Route Reconfiguration
 
-**DIRECTION**
+**DIRECTION — OWNER-CONFIRMED EXPANSION INTENT**
 
-- Each portal pair is one specific connection. A hub holds several pairs, and travelers transfer between them. Any major settlement can become a hub.
+- Each AWS pair provides a specific inter-system connection. A hub can host multiple pairs, with travelers/assets transferring between connections. Any suitable major settlement or station complex may become a hub.
 - No fixed hub list or hard link cap is set. Earth/L1 → Mercury → Mars → Ceres → Jupiter → Saturn → Pluto is an example of one possible network, not required topology.
-- Other star systems can develop their own independent system-local portal networks.
+- Other star systems can develop their own independent system-local portal networks. Intra-system portals remain distinct from the full-scale AWS links that connect star systems.
+
+### Frontier integration by reassignment
+
+A key purpose of a reconfigurable AWS network is to let an established industrial system extend logistics into a newly discovered frontier without treating the original network layout as permanent.
+
+A representative expansion scenario:
+
+1. Sol scouts a previously unvisited/virgin system through a naturally shifting wormhole. Scouting and initial assessment can use the natural connection while it is available; discovery does not itself make the system permanently accessible.
+2. If the system is a worthwhile settlement or resource-extraction target, the network operator establishes the required infrastructure there, potentially including a new AWS station and its paired endpoint.
+3. The new frontier system is connected into Sol's existing artificial-wormhole network. An existing Sol-side artificial connection/route can be reassigned to serve the new system.
+4. The route displaced by that reassignment can in turn be retargeted to a different system. This allows the network to be reorganized as new systems become strategically important, rather than only adding permanent branches to an immutable topology.
+5. The resulting AWS corridor links the new frontier to an industrially developed system such as Sol, allowing personnel, ships, equipment, construction materials, and supplies to move much faster than relying on ordinary interstellar transit. It supports settlement and resource extraction by coupling frontier resources to mature industrial capacity.
+
+This is an example of intended network strategy, not a fixed mandatory sequence or a claim that every discovered system must receive an AWS. Natural access can remain useful while available; committing to AWS infrastructure is a strategic investment based on the value of settlement, extraction, and sustained logistics.
+
+The network must distinguish a system's existence/discovery from its current route accessibility. Reassignment changes the active route topology; it does not delete the system or imply that its former natural connection never existed.
+
+**Still OPEN:** the exact physical/operational procedure for reassigning an existing Sol-side AWS connection, whether a station endpoint is moved, shut down and recommissioned, or replaced by a newly built paired endpoint; transition downtime and traffic handling; commissioning requirements; capacity limits; and how the WTC schedules, authorizes, and records route changes. Do not infer that one AWS station can support multiple simultaneous pairs unless the actual design establishes that.
 
 ---
 
