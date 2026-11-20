@@ -219,6 +219,24 @@ For a discovered system, AI Manager may choose to:
 
 These are strategic alternatives, not automatic stages every system must pass through.
 
+### Natural wormhole preservation, network expansion, and decision oversight
+
+**OWNER-CONFIRMED STRATEGIC DESIGN DIRECTION — 2026-11-20; detailed mechanics OPEN**
+
+AI Manager must treat natural wormhole management as an ongoing strategic and economic decision, not a fixed sequence in which every discovery is either immediately converted to AWS or discarded. Sometimes the best first action is to stabilize both apertures and assess the opportunity before committing to permanent infrastructure.
+
+- A natural wormhole may connect an accessible system to a genuinely unknown system, to a previously scouted/archived system, or to another already-known system such as one in the local bubble. Discovering a connection does not necessarily mean discovering or generating a new system.
+- Natural wormhole pairs are not inherently Sol-originating. For operational generation, at least one endpoint should be reachable by players or the AI Manager; a pair between two completely unknown, isolated systems has no immediate gameplay/simulation value without a route to reach it.
+- A system with multiple active natural wormholes can have multiple distinct aperture locations for EM harvesting. The AI Manager must account for the EM and strategic value of each connection, not treat the system as having only one generic wormhole resource source.
+- On discovering a potentially valuable connection, an initial response may be to deploy stabilization satellites at both apertures to preserve the route while players are inside and scouting. This is a protective measure, not a commitment to permanent infrastructure at both ends.
+- Players scout both sides so the AI Manager can compare relative stability and counterbalance conditions. It may then select the more suitable side for a permanent WS station and AWS construction, connecting that system to the main artificial network while retaining the stabilized natural route for further scouting into the next system.
+- A retained natural connection can continue to provide access and EM harvesting opportunities even after an AWS route to its system is operational. AWS integration does not automatically make the natural route redundant.
+- Players may potentially harvest excess EM for market sale. The AI Manager must first account for EM needed for stabilization/return, operational reserves, and planned infrastructure; only genuine surplus should be treated as available for commercial harvesting.
+
+AI Manager should weigh route access, future exploration, resource and scientific value, per-aperture EM production, stabilization effectiveness, market income, AWS investment and operating costs, logistics, and the risk of a shift or snap. Its available responses include stabilize-and-assess, retain and operate, integrate through AWS while retaining the natural route, harvest surplus, deliberately shift through Hammer Protocol, or remove stabilization and allow natural degradation. These are alternatives, not mandatory steps. Deliberate Hammer shifts, natural shifts, and uncontrolled snaps remain distinct outcomes.
+
+When evidence is incomplete or conflicting, the AI Manager should be able to defer an irreversible decision, preserve the connection while gathering information, or request Admin guidance. An escalation should expose the observed state, evidence and uncertainty, available options, likely consequences/costs, and its provisional recommendation. Admin guidance and subsequent outcomes should become learning/training evidence. Confidence thresholds, escalation triggers, decision-record structure, and learning implementation remain OPEN; this records intended behavior, not a claim that it is implemented.
+
 ### Biological discovery and scientific network value
 
 **OPEN STRATEGIC DIRECTION — 2026-11-15; existing biology models present in code**
