@@ -55,7 +55,7 @@ WormholeManager.generate_cycle
 **What it orchestrates:**
 - Iterates eligible systems and rolls `WORMHOLE_GENERATION_CHANCE = 0.3` (30%) per system
 - Caps new wormholes at `MAX_NEW_WORMHOLES_PER_CYCLE = 5` globally per cycle
-- Enforces `MAX_WORMHOLES_PER_SYSTEM = 3` hard ceiling
+- Applies the current code's `MAX_WORMHOLES_PER_SYSTEM = 3` implementation check. This is a legacy fixed value, not an approved universal design limit; the owner has left the per-system limit and value OPEN pending counterbalance/mass-distribution and topology analysis.
 - Assigns destination type: `NEW_SYSTEM_PROBABILITY = 0.4` (40% intra-galaxy new system), `NEW_GALAXY_PROBABILITY = 0.2` (20% inter-galaxy)
 - Validates that generated wormhole endpoints satisfy spatial constraints:
   - Must be beyond `SAFE_DISTANCE_FROM_STAR = 1.496e8 m` (1 AU)
