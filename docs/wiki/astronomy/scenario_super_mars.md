@@ -72,7 +72,7 @@ With no moon, the player must construct a free-orbit station. Spatial constraint
 - Station must be placed beyond `SAFE_DISTANCE_FROM_STAR = 1.496e8 m` from the host star (already satisfied at 1.5 AU).
 - Any wormhole endpoint associated with this system must also respect these bounds.
 
-Wormhole generation for this system rolls at `WORMHOLE_GENERATION_CHANCE = 0.3` per eligible 24-hour cycle. The system may receive up to `MAX_WORMHOLES_PER_SYSTEM = 3`. Each wormhole must be supported by:
+Wormhole generation for this system rolls at `WORMHOLE_GENERATION_CHANCE = 0.3` per eligible 24-hour cycle. The current implementation uses `MAX_WORMHOLES_PER_SYSTEM = 3`, but that is not an approved universal design limit. The appropriate number for this system remains OPEN and should be evaluated against its actual counterbalance mass distribution and network topology. Each wormhole must be supported by:
 - `MIN_STABILIZERS_REQUIRED = 2` operational stabilizers
 - Each stabilizer at `MIN_STABILIZER_POWER ≥ 25`
 - Each stabilizer within `STABILIZER_EFFECTIVE_RANGE = 100.0` spatial units of the endpoint
