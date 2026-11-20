@@ -57,13 +57,47 @@ When `ProceduralGenerator` is initialized with `use_accretion: true`, `generate_
 
 ---
 
-## System-map importance, replaceability, and Eden selection
+## System starting information, StarSim completion, and ongoing discovery
 
-**OWNER-CONFIRMED DESIGN INTENT (2026-11-19):** Sol is the primary system map and the only system whose existing map/data has special preservation importance. Other generated systems are adjustable or replaceable. GalaxyGame can generate new systems dynamically, so an individual generated test-system JSON file or a particular early generated system is not an irreplaceable game asset. Do not spend disproportionate effort reconstructing or perfecting replaceable generated-system fixtures.
+**OWNER-CONFIRMED DESIGN INTENT — evolving project understanding (2026-11-20).** GalaxyGame is unfinished and its system-generation design is still being explored and adjusted. This page records the current understanding reached while investigating JSON fixture defects; it is not a declaration that the overall StarSim architecture or data-directory layout is final.
 
-**Eden is a role/selection, not a permanent file assignment.** The Eden system must offer better terraforming targets than Sol; that is the essential selection requirement. The current generated system identified as `AOL-732356` has been used as a working Eden candidate, but the game may use a different generated system if that candidate is unsuitable. The `AOL-732356` identifier remains the stable identity of that particular generated system if it is retained; selecting another system for Eden means using that system's own identity, not renaming an unrelated system identifier or treating the current candidate as mandatory.
+### Starting information is not a complete system
 
-Generated systems may be tuned or replaced as needed. Their initial object inventories are not exhaustive: survey gameplay can discover and spawn additional objects into the active system/map. See [StarSim, Unit Simulation Boundaries & Protection Classes](../design/starsim_and_protection_classes.md) for the survey and evolving-world distinction.
+A JSON file in the system-data tree is not, by itself, a complete or exhaustive playable system.
+
+- **Sol is the only fixed, manually authored system baseline.** Its data has special preservation importance, but it is still an incomplete representation of the real Sol system. Not every real object or property is known or modeled. StarSim may generate or add further objects/details in Sol too.
+- **Every other system begins as incomplete starting information.** This includes real astronomical systems with substantial known data, real systems with only a small amount of known data, and systems whose starting conditions are generated. The available information varies in quantity and confidence; none of these inputs should be treated as a finished playable inventory.
+- Real-system source data records what is currently known or supplied. It does not imply that all planets, moons, minor bodies, orbital details, or physical properties are known.
+
+### StarSim completion and population
+
+StarSim uses the available starting information to establish a playable system. It must retain and use known information appropriately while completing or generating additional system content. Initial completion does not make the resulting inventory exhaustive or permanently closed.
+
+This applies to Sol as well as every other system. A generated output is a snapshot/result of a generation or completion process, not a claim that every object in the real or simulated environment has been represented.
+
+### Survey missions, discovery, and additional detail
+
+Survey missions are part of how systems gain additional detail over time. Survey activity can help bring newly discovered objects and information into the represented/available system, including supporting the spawning or addition of further objects/details as exploration proceeds. The exact division between an object already existing in the simulation, its generation/spawning, its discovery, and when it becomes visible or known must be checked against the evolving mission and StarSim implementation; do not collapse those concepts into one assumed mechanic.
+
+Keep distinct:
+- **Simulated world state:** the objects and conditions currently represented in the simulation.
+- **Available starting information:** the known or supplied data used to initialize or complete a system.
+- **Discovered/recorded knowledge:** information obtained through surveys and made available to the relevant game actors.
+
+These categories may overlap, but they are not automatically identical. Surveying is not simply a UI operation that reveals a guaranteed complete pre-authored catalog.
+
+### Current data organization — observed, not finalized
+
+The current main-app data tree includes `data/json-data/star_systems/` and `data/json-data/generated_star_systems/`.
+
+- `star_systems/` currently contains Sol data and real-system source records of varying completeness. It is not a directory containing only complete playable systems. For non-Sol systems, these files are incomplete starting information for StarSim.
+- `generated_star_systems/` contains generated system outputs/fixtures, including hybrid completions and fully generated examples. These outputs are also not exhaustive inventories and may be replaced or regenerated.
+- Alpha Centauri illustrates a known-real-system input being completed by StarSim: `star_systems/alpha_centauri.json` is the known-data input; a generated hybrid output is a separate artifact.
+- Eden is a role/selection requirement, not a permanent assignment to one generated file. Its essential requirement is that the selected system provide better terraforming targets than Sol. The current `AOL-732356` instance has been a working candidate, but the generated instance may be replaced.
+- Other generated prototype examples, including FR-488530 and DJEW-716790, are replaceable test data, not permanent game-system identities.
+
+The current directory arrangement may not be the best long-term organization. Separating real astronomical reference data, incomplete seeds, authored baselines, and generated/completed outputs may eventually be useful, but **no directory migration or taxonomy is decided here**. First understand the generator, lookup/loading paths, provenance needs, and UI discovery behavior. Document the current arrangement accurately; do not treat it as a finalized architecture.
+
 
 ---
 
