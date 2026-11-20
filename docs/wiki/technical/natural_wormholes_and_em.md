@@ -153,6 +153,17 @@ A system discovered through an open natural wormhole and surveyed under the Hamm
 
 Unvisited systems in the local bubble remain unknown. Do not assume that they have a known, accessible, or harvestable EM field before discovery and survey. Do not assign resource or EM knowledge to a system merely because it is nearby in astronomical space.
 
+### Active-system lifecycle and JSON archival
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-10-31; clarified 2026-11-20.** A system's continued existence as retained game data does not require it to remain loaded and processed continuously.
+
+- A system with an active player presence or an active connection through the AWS network or a live natural wormhole remains active in the database/simulation. A natural wormhole kept open by stabilization satellites therefore maintains an active access path for ongoing harvesting.
+- When there is no active player presence and no active artificial-network or live natural-wormhole connection, the system can be exported to JSON and unloaded from the active database/simulation. An explored but unsettled system whose natural exit has been shifted away is a representative case.
+- The JSON export preserves the system's current state and relevant information to the practical extent possible. This avoids continuing to process an inaccessible system while retaining its state for future use.
+- If a route is later established or the system is selected for settlement, the archived JSON can be reloaded into the database and active simulation resumed. Restoring the system record is distinct from creating the wormhole connection that makes it reachable.
+
+The export/unload and reload workflow is an intended Admin/dashboard performance capability and is not yet fully implemented. Exact serialization coverage, trigger conditions, consistency checks, and restoration behavior remain open for code review.
+
 ## 7. AI Manager responsibilities
 
 AI Manager must monitor:
