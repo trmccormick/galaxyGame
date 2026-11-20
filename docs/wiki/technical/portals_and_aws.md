@@ -121,6 +121,19 @@ The network must distinguish a system's existence/discovery from its current rou
 
 ---
 
+
+## Controlled network scalability exercise
+
+**OWNER-CONFIRMED FUTURE TEST DIRECTION — 2026-11-20; implementation OPEN**
+
+A future stress exercise may build an artificial wormhole network across a mixed batch of known Local Bubble systems and StarSim-generated test systems. The initial batch can be modest; a larger run approaching 1,000 systems is a scalability benchmark, not a production system-count decision.
+
+Use complete standard AWS installations. Do not assume one AWS installation per system: the required number and placement depend on the network topology and the actual counterbalance/placement rules. Some systems may be simple endpoints with one installation, while junctions or systems supporting multiple links may require two or more. The test should create a connected network and validate each connection and its endpoint infrastructure.
+
+EM resource availability/production restrictions may be bypassed for this controlled test so they do not block construction. Do not bypass placement geometry, counterbalance requirements, AWS pairing/endpoint rules, or connectivity checks. This is not a change to normal game economics or the physical design.
+
+The exercise should measure generation/completion and deployment time, AWS placement success, network connectivity/topology, and the game's ability to display and manage the resulting network. Actual implementation capability and benchmark procedure remain to be established; no claim is made that this test currently exists.
+
 ## Institutional Control of the Network
 
 **DIRECTION**
