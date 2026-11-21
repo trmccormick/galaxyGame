@@ -15,16 +15,16 @@ related_docs:
 > *Last Audited:* 2026-11-01  
 > *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 
-This article documents the deterministic, sequential logistics tree required for space station construction during the Pre-Player Era.
+This article documents the physical construction dependencies for pre-player space infrastructure. The Sol bootstrap has an owner-confirmed depot/station order; beyond that foundation, the AI Manager evaluates local construction options rather than following one universal deterministic tree.
 
-In this era, humanity lacks pre-existing deep-space cyclers or heavy tugs. Station construction is treated as a **distinct physical engineering process** that precedes operational use—it is never an instant "spawn" or simple upgrade toggle. All orbital structures must bootstrap organically from Earth, Luna, and Venus.
+In this era, humanity lacks pre-existing deep-space cyclers or heavy tugs. Station construction is treated as a **distinct physical engineering process** that precedes operational use—it is never an instant "spawn" or simple upgrade toggle. All orbital structures must be physically assembled from available materials, equipment, and logistics support. The Sol bootstrap order is specified below; later systems adapt to their local conditions.
 
 ---
 
 ## 1. Core Engineering & Chemical Constraints
 
 ### The Earth Launch Bottleneck
-Ships departing Earth's gravity well face extreme mass penalties. To eliminate the need for outbound craft to carry Earth-ascent fuel overhead, early infrastructure prioritizes orbital fuel depots in Low Earth Orbit (LEO) and Earth L1.
+Ships departing Earth's gravity well face extreme mass penalties. The owner-confirmed Sol order establishes the L1 Depot first, then a second depot near LEO, before main station / shipyard infrastructure. This reduces the need for outbound craft to carry all Earth-ascent fuel overhead.
 
 ### The Venus-Luna Chemical Feedback Loop
 * **Luna Capabilities & Deficits:** Provides structural silicates, metals, and water ice ($\text{H}_2\text{O}$) in its Permanently Shadowed Regions (PSRs), but completely lacks carbon and nitrogen.
@@ -40,17 +40,17 @@ Ships departing Earth's gravity well face extreme mass penalties. To eliminate t
 ## 2. Four-Phase Industrial Expansion Tree
 
 ```
-[Earth/Luna/Venus Core] ───> [L1 Shipyards] ───> [Heavy Tugs] ───> [Mars/Belt Anchors] ───> [Active Cyclers]
+[Luna Foothold] ───> [L1 Depot] ───> [Near-LEO Depot] ───> [Main Station / Shipyard] ───> [Heavy Tugs / Cyclers] ───> [Mars / Belt Options]
 ```
 
 ### Phase 1: Sol Core & Luna Industrial Bootstrapping
 * **Heavy Lift Transports (HLTs):** Early starship-type craft carry out initial lifts from Earth to LEO/L1.
 * **Luna Surface Extraction:** Mining of structural metals and PSR ice processing.
 * **Venus Skimming Operations:** Specialized HLTs scoop atmospheric $\text{CO}_2$ and $\text{N}_2$.
-* **Depot Network Establishment:** Construction of fuel depots at LEO and Earth L1 using Lunar metals and synthesized Methalox.
+* **Depot sequence (owner-confirmed 2026-11-21):** Establish the L1 Depot first using Luna-sourced bulk output and Earth-sourced specialized/high-tech imports as needed; then establish the second depot near LEO for Earth-side launch, refueling, and staging.
 
-### Phase 2: Earth L1 Shipyards & Fleet Scaling
-* **L1 Industrial Hubs:** Pure orbital builds constructed using Luna-sourced materials and fueled by L1 depots.
+### Phase 2: Main Station / Shipyard Infrastructure & Fleet Scaling
+* **Main Station / Shipyard:** Main orbital industrial infrastructure is constructed after the L1 and near-LEO depots are established, using Luna-sourced bulk materials and Earth-sourced specialized/high-tech imports as needed.
 * **Capital Craft Fabrication:** L1 shipyards manufacture the first generation of **Heavy Tugs** (such as the Asteroid Relocation Tug variants) and deep-space **Cyclers**.
 
 ### Phase 3: Mars System Access & Industrial Options
