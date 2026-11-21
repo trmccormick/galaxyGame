@@ -128,6 +128,36 @@ Selecting a craft from a fleet should provide a path to inspect that craft in th
 
 This is a Player coordination interface, not the Admin or AI Manager oversight interface. The AI Manager and craft automation may continue authorized work subject to the communications and authority model; the Player Fleet Manager presents the player's view of the operation and does not imply unrestricted real-time control.
 
+
+
+#### Fleet itineraries, independent craft assignments, and asynchronous execution
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+A fleet operation is not just a shared destination or a route followed by every member together. It can contain a **planned sequence of activities and assignments** for different craft, at different locations, with different schedules. The player should be able to prepare this plan and send the fleet assignment without needing to remain present and watch each step occur. Craft automation / AI Manager continue authorized work within their capabilities and the available communication/command model.
+
+A fleet itinerary combines two related navigation layers:
+- **Inter-system wormhole route:** the ordered system-to-system journey and intended wormhole transitions.
+- **System-specific in-system itineraries:** the local waypoints, layovers, rendezvous points, and activities planned in each system. These local routes are not necessarily the same for every craft, and may branch into separate tasks before rejoining at a later rendezvous or departure point.
+
+A fleet may make operational layovers during transit. For example, after arriving in a system, some craft may proceed directly toward the next departure wormhole while harvesters visit an asteroid belt for light EM harvesting. A transport craft may independently travel to a planet, sell materials, purchase specified supplies needed by the fleet, and then return to a rendezvous. Other craft may remain at a construction site and continue work. These craft remain part of the same fleet operation because their assignments support its shared objective, not because they share a location or route.
+
+The player should be able to build an ordered activity plan that can include:
+- craft or craft-group assignment and role;
+- destination, local waypoint, and intended activity (such as harvesting, unloading, delivery, resupply, inspection, repair, construction support, market sale/purchase, waiting, or rendezvous);
+- activity order and, where needed, dependencies or conditions for proceeding;
+- expected duration or completion criteria where supported;
+- resource handling instructions, including what may be sold, what supplies may be purchased, and fleet needs or limits;
+- intended rendezvous location and planned departure/jump window.
+
+Craft may follow different local routes and schedules. A transport craft can leave for a planet and conduct market transactions while harvesters continue working elsewhere. A slower craft may proceed directly to a departure wormhole while other craft perform local activities, then meet it before the planned jump. The operation should show the expected arrival of the primary/lead craft, expected return or readiness of other participants, and whether they are projected to make the rendezvous. A planned jump time is an estimate/coordination target, not a guarantee that every craft will be ready or that a wormhole remains available.
+
+Because player communications and data updates can be delayed, the player may need to send an assignment in advance and receive status later. The UI must distinguish the player's last known information and its age from estimated future events and current craft-reported state. Do not imply continuous real-time observation or instant remote intervention. When communication is unavailable, craft and AI Manager may continue previously authorized tasks within their autonomy; new player instructions or changes cannot be assumed to arrive instantly.
+
+Fleet Manager should therefore present both the overall inter-system route and the selected system's local routes/activities, with the ability to inspect different craft assignments. Selecting a system along the wormhole route should expose that system's local itinerary; selecting a craft should reveal its own task sequence and route. The fleet view should make branching assignments, resource deliveries, dependencies, expected rendezvous, delays, and attention items understandable.
+
+This operational activity plan is distinct from a reusable preferred route. The Route Planner authors and saves navigation routes; Fleet Manager combines route segments with craft-specific activities, logistics, timing, and rendezvous into an assigned operation. A saved route can be reused by one or more craft, but does not itself prescribe harvesting, market transactions, purchases, or the full fleet work schedule.
+
 ### Player Route Planner
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
