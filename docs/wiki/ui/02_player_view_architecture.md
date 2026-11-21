@@ -158,6 +158,16 @@ Fleet Manager should therefore present both the overall inter-system route and t
 
 This operational activity plan is distinct from a reusable preferred route. The Route Planner authors and saves navigation routes; Fleet Manager combines route segments with craft-specific activities, logistics, timing, and rendezvous into an assigned operation. A saved route can be reused by one or more craft, but does not itself prescribe harvesting, market transactions, purchases, or the full fleet work schedule.
 
+#### Space Operations and Planetary Surface Operations
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+Space Fleet Manager is specifically for spacecraft-based Space Operations: asteroid and small-body harvesting, atmospheric gas harvesting by spacecraft/skimmers, orbital and asteroid construction/logistics, spacecraft transport, inter-system travel, and associated rendezvous and resupply. Atmospheric harvesting occurs in a planetary atmosphere but remains a spacecraft operation; it is not a surface activity.
+
+Planetary Surface Operations are a separate operating context and interface. They concern terrain-based activities, surface mining, settlements and facilities, surface vehicles/units, construction, and surface logistics. These activities should not be added to or visually subsumed by the Space Fleet Manager. Shared concepts such as assignments, ordered work, dependencies, resource transfers, autonomous execution, rendezvous, and delayed status may inform both interfaces, but the activity models and UI contexts remain distinct.
+
+The intended gameplay boundary and its open details are documented in [Space and Surface Operations](../player/space_and_surface_operations.md). The Player Surface context is already distinct from Space; a dedicated Surface Operations workspace remains a separate design task and is not part of the current Fleet Manager task.
+
 ### Player Route Planner
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
