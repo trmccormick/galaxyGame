@@ -5,7 +5,7 @@
 > *Audit Summary:* Reusable atmosphere extraction, proportional raw transfer, CO₂ processing, and craft exhaust code exists. The current skimmer path does not yet connect those pieces into a consistent craft-cargo-to-Luna return calculation. A boiloff implementation was not located in the code search; verify tank and transit processing before concluding it is absent.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-10  
+**Last Updated**: 2026-11-21  
 **Related**: [atmospheric_harvesting.md](../infrastructure/atmospheric_harvesting.md), [atmospheric_escape_and_recovery.md](../infrastructure/atmospheric_escape_and_recovery.md) (natural loss, retention, and optional recovery as resource paths), [terraforming_options.md](../infrastructure/terraforming_options.md), [isru_fabrication_chain.md](../technical/isru_fabrication_chain.md), Luna operations / TEU material
 
 This page records the intended Venus HLT harvesting and return setup, plus the shared mixed-volatiles inventory concept. It is a statement of intended behavior, not a claim that the current implementation is complete.
@@ -33,7 +33,7 @@ The HLT processes captured CO₂ using its installed processing capability:
 - O₂ is liquefied and retained as LOX for the craft's mission fuel requirements.
 - **During harvesting at Venus, CO handling is a configurable policy (DIRECTION, owner, 2026-11-18).** The Venus harvester data sets `gas_handling_policy` to store O₂ and N₂, store CO if its value is positive, and process CO₂. With no CO storage fitted, the CO byproduct is vented back into the Venus atmosphere. This slightly modifies the source atmosphere composition over time (mass-ledger effect).
 - If the craft has **no dedicated CO tank**, further CO₂ processing during the return leg to Luna pushes the CO byproduct into the mixed-volatiles inventory item (a tank only provides capacity).
-- This is CO₂ splitting for the craft's **LOX/fuel requirement**, **not CNT manufacture** and **not methane production**. CNT/structural-carbon production is a separate industrial CO₂-processing route using dedicated industrial equipment; see [Terraforming Options](../infrastructure/terraforming_options.md).
+- This is CO₂ splitting for the craft's **LOX/fuel requirement**, **not CNT manufacture** and **not methane production**. CNT/structural-carbon production is a separate industrial CO₂-processing route using dedicated industrial equipment; it is not Venus-specific. It can be established wherever suitable carbon feedstock and industrial capability are available, including Luna using imported CO₂; see [Terraforming Options](../infrastructure/terraforming_options.md).
 - The HLT must carry sufficient methane for its mission; methane production from Venusian CO₂ is a separate Luna industrial process using lunar-derived hydrogen.
 
 Tanks track capacity only. Actual gas identity, masses, and composition live in the inventory system (already established).
