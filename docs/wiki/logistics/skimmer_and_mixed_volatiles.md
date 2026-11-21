@@ -22,6 +22,12 @@ Use the current gas masses / proportions represented by the source atmosphere. D
 
 The amount captured is bounded by the craft's extraction throughput, time spent harvesting, available source gas, and available craft storage. Track the captured constituents by mass.
 
+
+### Venus industrial geography (DIRECTION)
+
+Venus's industrial role is determined by its location and planetary makeup, not by access to the planetary surface. Routine surface access and surface-based industry are not assumed to be practical. The intended pattern is to develop facilities in suitable atmospheric layers (including cloud cities / high-altitude platforms) and in orbit. Imported asteroids are brought into the Venusian industrial system for conversion into useful materials. The initial two stations are only the starting foothold, not a cap on the eventual network: additional cloud-city and orbital facilities can expand as industrial capacity and logistics grow. Exact counts, locations, asteroid sources, and conversion chains remain OPEN. See [Terraforming Options](../infrastructure/terraforming_options.md).
+
+
 ### 2. Onboard CO₂ processing (Mk1)
 
 **Mk1 harvesters have limited onboard processing.** They can perform bulk atmospheric scoop plus the basic reaction `2CO₂ → 2CO + O₂` (LOX). They **cannot selectively filter or separate most individual gases**. Full separation of the mixed inventory is deferred to Luna (or later Mk versions).
