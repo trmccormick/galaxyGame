@@ -91,6 +91,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|-------|
 | [StarSim architecture](design/starsim_and_protection_classes.md) | StarSim system generation, unit simulation boundaries, CelestialBody contracts, code reality, and implementation gaps |
+| [Gameplay Principles](design/gameplay_principles.md) | GalaxyGame identity and high-level principles for science-grounded, strategic, exploratory, long-horizon, and automated gameplay |
 
 ---
 
