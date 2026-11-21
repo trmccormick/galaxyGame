@@ -165,15 +165,31 @@ AI Manager is the autonomous terraforming operator. It uses environmental inform
 
 **OWNER-CONFIRMED DESIGN DIRECTION — 2026-11-21; detailed workflow and controls OPEN**
 
-Digital Twin is an Admin/developer workspace for creating an isolated duplicate of an existing celestial body's world state and running accelerated what-if experiments against that copy. The experiment must not alter the original/live world. A scenario may introduce or remove atmospheric gases, change other planetary conditions, or apply other specified interventions. TerraSim runs the environmental simulation on the duplicated state and calculates the resulting projected state over the selected simulation interval.
+Digital Twin creates an isolated duplicate of an existing celestial body's world state and supports accelerated what-if experiments against that copy. The experiment must not alter the original/live world. A scenario may introduce or remove atmospheric gases, change other planetary conditions, or apply other specified interventions. TerraSim runs the environmental simulation on the duplicated state and calculates the resulting projected state over the selected simulation interval.
 
-The Digital Twin is therefore both a working copy of an existing world and an environment for scenario-based projection. It is not a second environmental simulation engine: **TerraSim supplies the simulation code and calculates the environmental response; Digital Twin supplies the isolated scenario state, controls, comparisons, and results workspace.** The original body remains the baseline against which scenario inputs and projected outcomes can be compared.
+The Digital Twin is therefore both a working copy of an existing world and an environment for scenario-based projection. It is not a second environmental simulation engine: **TerraSim supplies the simulation code and calculates the environmental response; Digital Twin supplies the isolated scenario state and projection capabilities.** The original body remains the baseline against which scenario inputs and projected outcomes can be compared. Admin and AI Manager use these shared capabilities through different workflows and interfaces.
 
 #### Relationship to the Player Planetary view
 
 The Digital Twin workspace should look and feel related to the Player Planetary view, reusing its planetary visualization, layer presentation, and general visual language where appropriate. It is not simply the Player view with an Admin label. It should add more SimEarth-inspired scenario controls for setting up and adjusting what-if experiments, selecting the intervention inputs and simulation interval, running accelerated projections, and inspecting or comparing resulting states. The exact controls, panel arrangement, and degree of interactive manipulation have not been designed or approved yet.
 
 These controls specify scenario inputs and parameters; they do not provide arbitrary “god mode” or directly dictate the environmental outcome. TerraSim calculates the consequences within the modeled physical processes and constraints.
+
+#### Different workflows for Admin and AI Manager
+
+The two audiences must not be designed as though they use the same Digital Twin screen with different permissions. They use the same underlying scenario, projection, and result capabilities, but interact with them in fundamentally different ways.
+
+**Admin — visual, exploratory workflow**
+
+Admin works directly with the planetary presentation. The experience should be visual and interactive, building on the Player Planetary view's appearance and visualization layers, but adding the controls needed for scenario experimentation. Admin should be able to inspect the world, choose and adjust scenario interventions, set projection parameters, run accelerated what-if experiments, observe changes, and compare projected outcomes. This is the SimEarth-inspired laboratory experience. Its detailed controls and layout remain OPEN.
+
+**AI Manager — structured, programmatic workflow**
+
+AI Manager should not need to operate the visual Admin interface or imitate a human clicking through its controls. It should interact with Digital Twin through a structured, callable scenario/projection interface, conceptually closer to defining and running an RSpec test or Rake task. It supplies a baseline world and explicit scenario inputs, parameters, constraints, and requested outputs; invokes a projection; then receives structured results it can evaluate and compare.
+
+For example, an AI Manager evaluation could define several candidate atmospheric-import strategies as separate scenarios, request projections for each, and compare their environmental outcomes, resource requirements, estimated costs, execution times, and uncertainties. It should be able to run these evaluations repeatably and inspect machine-readable results as part of its planning and decision process. This is an architectural analogy for the interaction style, not a decision that the implementation must literally use RSpec, Rake, or a particular file format.
+
+The shared scenario/projection contract should support both workflows. Admin's visual controls should ultimately invoke the same underlying capabilities that AI Manager calls programmatically; the two paths should not grow separate simulation logic. Exact API/service boundaries, scenario schema, result format, orchestration, and validation approach remain OPEN.
 
 #### Projection, cost, and time estimates
 
