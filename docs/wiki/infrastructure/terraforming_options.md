@@ -35,7 +35,7 @@ A faster path whose primary purpose is **protection of population and infrastruc
 Raising ambient surface pressure reduces a set of environmental hazards (thermal extremes, dust mobility, suit/habitat differential stress, and related operational risk). Composition tuning, greenhouse optimization, and full climate/biosphere terraforming remain later optional stages.
 
 ### Pipeline
-1. Skimmers harvest raw Venusian atmosphere (primarily CO₂ + N₂ mix) in the upper benign layers.
+1. Skimmers harvest the **actual current Venusian atmospheric mixture** in the upper benign layers. Intake is proportional to the source atmosphere's current composition; it is not a CO₂/N₂-only or fixed-recipe collection step. CO₂ and N₂ may be important constituents, but the captured batch must retain the proportions represented by the atmosphere at extraction time. See [Skimmers & Mixed Volatiles](../logistics/skimmer_and_mixed_volatiles.md).
 2. Gas is processed only as far as needed for mass-driver launch (compression / liquefaction or dense packaging).
 3. Mass drivers fire the raw or minimally processed gas payloads toward Mars on alignment windows.
 4. Artificial magnetosphere (or L1 shield) must already be active so the injected gas is not stripped by solar wind. The magnetosphere is independent progressive infrastructure and does not require relocating Phobos or Deimos (see [artificial_magnetosphere.md](artificial_magnetosphere.md)).
@@ -50,6 +50,13 @@ Raising ambient surface pressure reduces a set of environmental hazards (thermal
 - Venus excess pressure still makes losses tolerable.
 
 This option lets a settlement reach useful protective pressure thresholds without committing to full terraforming.
+
+
+### Intake composition and implementation boundary
+
+**Owner-confirmed direction (2026-11-18):** atmospheric skimmers intake the source body's actual current gas mixture in proportion to its composition. This applies to Venus as well as other atmospheric sources; the mixture can change as extraction, processing, exhaust, venting, and other atmospheric changes alter the source. The raw intake must not be described as a fixed Venus recipe or as selective CO₂/N₂ collection. Selection and separation happen only in downstream processing where the installed equipment supports them.
+
+**Code cross-check (main branch, inspected 2026-11-21):** `TerraSim::AtmosphericTransferService#perform_raw_transfer` iterates the source atmosphere's gas records and extracts each in proportion to its recorded percentage. The same service also contains separate selective and processed modes. Its raw mode currently applies hard-coded source-name extraction limits (Venus: no percentage cap; Titan: 5%; other bodies: 20%), and writes the delivered gases directly into a target body's atmosphere at a default 98% transfer efficiency. That is existing implementation behavior, not confirmation that those limits or direct atmosphere-to-atmosphere delivery are the approved skimmer cargo workflow. The generic transfer boundary, extraction-limit policy, loss accounting, and craft mixed-volatiles cargo integration remain separate design/implementation questions; see [Skimmers & Mixed Volatiles](../logistics/skimmer_and_mixed_volatiles.md).
 
 ---
 
@@ -126,7 +133,7 @@ Venus cannot easily produce the heavy metals and structural materials needed for
 These trade time and lower CapEx for slower atmospheric gains. They may be chosen when protective pressure is not urgent or when capital is constrained.
 
 ### Gradual Venus Siphon
-Steady, low-intensity upper-atmosphere extraction without immediate mass-driver build-out. Venus slowly sheds pressure while feeding a manageable trickle of CO₂/N₂ into the inner-system network.
+Steady, low-intensity upper-atmosphere extraction without immediate mass-driver build-out. Venus slowly sheds pressure while feeding a manageable trickle of its **current mixed atmospheric composition** into the inner-system network. Constituents can be separated or processed downstream according to the receiving equipment and demand; do not treat the intake itself as selective CO₂/N₂ extraction.
 
 ### Titan Long-Lead
 - Primary volatiles: hydrocarbons (CH₄) and N₂.
