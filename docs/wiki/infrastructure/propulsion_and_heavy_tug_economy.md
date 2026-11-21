@@ -92,7 +92,7 @@ The Asteroid Relocation Tug supports two distinct operational modes:
 ### 3.1 Build Location
 
 - **L1 Earth-Moon Lagrange Shipyard** is the primary deep-space vessel construction nexus and the sole build site for Heavy Tugs and Mk2/Mk3 HLTs.
-- L1 shipyards are constructed using Luna-sourced raw materials (structural silicates, refined metals) and fueled by L1 fuel depots.
+- L1 shipyards are constructed using Luna-sourced bulk raw materials (structural silicates, refined metals) and specialized/high-tech imports from Earth as needed, with the L1 and near-LEO depots supporting the logistics chain.
 
 ### 3.2 Staging & Deployment
 
@@ -131,13 +131,13 @@ The Asteroid Relocation Tug supports two distinct operational modes:
 ### 4.3 Pre-Player Phase Gating
 
 ```
-Phase 1: Sol Core & Luna Bootstrapping
-  └─ HLT-Mk-I fleet (Earth/Luna built)
-  └─ Venus skimmers harvest CO₂/N₂
-  └─ LEO/L1 fuel depots established
+Sol bootstrap sequence (owner-confirmed 2026-11-21)
+  └─ Luna foothold and industrial output
+  └─ L1 Depot (Luna bulk materials + Earth specialized imports)
+  └─ Second depot near LEO
+  └─ Main station / shipyard infrastructure
 
-Phase 2: L1 Shipyards & Fleet Scaling
-  └─ L1 shipyard construction (Luna-sourced materials)
+Fleet scaling follows the required depot and shipyard dependencies.
   └─ Heavy Tugs manufactured ← propulsion economy begins here
   └─ Deep-space Cyclers manufactured
 
