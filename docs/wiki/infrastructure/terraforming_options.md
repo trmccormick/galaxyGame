@@ -5,7 +5,7 @@
 > *Audit Summary:* Raw atmospheric intake composition was cross-checked against the current `TerraSim::AtmosphericTransferService`; this does not verify the complete terraforming option set, economics, limits, or production cargo workflow.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-21 (CNT production location clarified)  
+**Last Updated**: 2026-11-21 (Venus CNT industrial advantage clarified)  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [modular_orbital_panel_swarms.md](modular_orbital_panel_swarms.md), settlement and logistics pages
 
 This page is the wiki home for planetary-scale atmosphere modification options. Multiple pathways exist. A fast raw-gas pressure rise is primarily a **protection** measure for population and infrastructure. Traditional terraforming (climate and biosphere goals) and refined composition control are separate, later choices. Softer longer-horizon approaches remain available.
@@ -64,7 +64,7 @@ This option lets a settlement reach useful protective pressure thresholds withou
 
 **Owner clarification (2026-11-21):** these are two different processes serving different operational goals. The skimmer's limited onboard CO₂ processing exists to fill its LOX tank for its own mission. Industrial CO₂ processing exists to make solid carbon/CNT feedstock. Do not merge these into one skimmer process or describe the skimmer as manufacturing CNTs.
 
-The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied and retained as LOX; CO is handled according to the craft's storage/venting configuration. The industrial route converts CO₂ into solid carbon for CNT production and produces oxygen as a co-product. Industrial processing takes place in dedicated industrial equipment, downstream of feedstock acquisition and transport. **It is not specific to Venus:** CNT production can be established wherever suitable carbon feedstock and industrial capability are available. For example, Luna can manufacture CNTs using imported CO₂. The viable location and economics depend on resource availability, imports, energy, equipment, and logistics—not on a Venus-only production rule.
+The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied and retained as LOX; CO is handled according to the craft's storage/venting configuration. The industrial route converts CO₂ into solid carbon for CNT production and produces oxygen as a co-product. Industrial processing takes place in dedicated industrial equipment, downstream of feedstock acquisition and transport. **It is not specific to Venus:** CNT production can be established wherever suitable carbon feedstock and industrial capability are available. For example, Luna can manufacture CNTs using imported CO₂. The viable location and economics depend on resource availability, imports, energy, equipment, and logistics—not on a Venus-only production rule. **Owner clarification (2026-11-21): Venus is nevertheless expected to become a CNT industrial powerhouse** because it combines abundant CO₂ feedstock with strong power availability. Other locations remain viable where supplied with suitable feedstock and industrial capacity; Luna is an example, not an assertion that every location has Venus's advantages.
 
 ## Refined Brute-Force Venus → Mars Method (O₂/N₂ + CNT Shells)
 
@@ -95,8 +95,8 @@ The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied
 
 ### Economic Characteristics
 
-- **Example-specific investment**: In this Venus-to-Mars configuration, some capital for liquefaction, freezing, CNT lines, and mass drivers may be placed at Venus to use its available CO₂ and volatile inventory. This is a supply-chain choice, not a universal requirement that CNT plants be located on Venus.
-- **Feedstock economics**: CO₂ abundance, acquisition cost, import cost, energy, plant capacity, and transport determine where CNT manufacture is practical. Do not assume zero-value feedstock or negligible losses merely because Venus has a large atmosphere.
+- **Venus industrial advantage**: Venus is expected to become a major CNT-production powerhouse because it combines abundant CO₂ feedstock with strong power availability. This makes substantial CNT industrial capacity on Venus a natural expectation, not merely an arbitrary plant-placement choice.
+- **Not an exclusive location**: CNT production is not restricted to Venus. Other locations can manufacture CNTs when they have suitable feedstock and industrial capability; for example, Luna can use imported CO₂. The relative economics depend on feedstock acquisition, power, plant capacity, and transport. Do not assume zero-value feedstock or negligible losses merely because Venus has a large atmosphere.
 - **Fuel still required**: Skimmers, platforms, and local transport need CH₄ or H₂.
 - **No expensive interplanetary propellant for the gas itself**: Electromagnetic launch replaces chemical rockets for the Venus→Mars leg.
 
@@ -120,7 +120,7 @@ Venus cannot easily produce the heavy metals and structural materials needed for
 
 ### Industrial CO₂ Processing — CNT / Structural Carbon & Greenhouse Gas Handling (DIRECTION)
 
-**Industrial framing:** dedicated industrial equipment can process available CO₂ feedstock into solid carbon for CNT / structural-carbon production, with useful gas products and possible export. This capability is location-independent in principle: Venus is one possible CO₂ source, while Luna can also support production when CO₂ is imported. The practical location follows feedstock availability and the wider industrial/logistics balance. This is distinct from the skimmer's limited onboard processing, whose operational purpose is to produce and retain LOX for the craft's own mission fuel cycle.
+**Industrial framing:** dedicated industrial equipment can process available CO₂ feedstock into solid carbon for CNT / structural-carbon production, with useful gas products and possible export. Venus is expected to become a CNT industrial powerhouse because of its abundant CO₂ feedstock and strong power availability. The capability is not exclusive to Venus: Luna can also support production when CO₂ is imported, and other locations are possible where feedstock and industrial capability exist. The practical location follows the resource and power advantages together with the wider logistics balance. This is distinct from the skimmer's limited onboard processing, whose operational purpose is to produce and retain LOX for the craft's own mission fuel cycle.
 
 **Keep the two CO₂ processes distinct:**
 
@@ -166,7 +166,7 @@ Continued reliance on Martian polar CO₂, subsurface ice, and industrial greenh
 
 **DIRECTION**
 
-The AI Manager evaluates pathways as capital projects against EAP, timeline pressure, feedstock availability, transport cost, and available industrial capacity. It should compare locating CNT plants near a CO₂ source with importing CO₂ to another industrial hub (for example, Luna):
+The AI Manager evaluates pathways as capital projects against EAP, timeline pressure, feedstock availability, power availability, transport cost, and available industrial capacity. Venus's combination of CO₂ feedstock and power makes it an expected major CNT-production hub. The AI Manager can still compare that strong Venus option with importing CO₂ to another industrial hub (for example, Luna) when local demand, logistics, or other constraints justify it:
 
 - Need rapid protective pressure, magnetosphere already online → favor raw-gas mass-driver transfer.
 - Need controlled O₂/N₂ composition for longer-term terraforming goals → favor refined CNT-shell pipeline.
