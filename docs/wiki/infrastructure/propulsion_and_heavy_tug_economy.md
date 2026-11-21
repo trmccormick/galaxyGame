@@ -36,7 +36,7 @@ The **HLT Mk1 is the only HLT design established for the initial fleet**. Mk2 an
 > **Cross-link:** For cycler network integration (Tier 3 transport), see **[Import Order & Cycler Models](../logistics/import_order_and_cycler_models.md)**.
 
 
-### Future HLT Configuration: Titan Atmospheric Harvesting (DIRECTION)
+### Titan Atmospheric Harvesting: Original Early Objective, Deferred by Mk1 Limitation (DIRECTION)
 
 Titan atmospheric harvesting was originally intended as an **early part of the industrial plan**, not merely a distant expansion objective. The initial concept was to use an HLT for Titan harvesting and bring useful atmospheric products back into the inner Solar System. The plan encountered a concrete craft limitation: **HLT Mk1 could not retain cryogenic cargo economically across the long outbound transit, extraction stay, and return journey**. The problem was cumulative boiloff, not a lack of interest in Titan's resources.
 
