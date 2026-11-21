@@ -95,6 +95,14 @@ Inspection should make it possible to evaluate completed and remaining work, res
 
 This is pre-player operator supervision, not a player-facing universe-speed control. The shared-universe clock and lifecycle distinction are defined in [Game Time and Simulation Loop](../engineering/game_time_and_simulation_loop.md).
 
+### Repeatable universe snapshots (DIRECTION)
+
+The legacy Sol buildout plan describes database snapshots as a way to preserve known Sol/Eden simulation states and resume testing from a selected point instead of repeating a long NPC-only buildout after every AI Manager change. Candidate snapshot classes include early Luna / pre-shipyard, shipyard online, core cycler loop with Mars hub forming, pre-Snap Eden at different maturity, post-Snap pre-reconnection, reconnection underway, and surveyed Eden outcomes.
+
+Snapshots may also provide candidate seeds for optional playable starting states. Their names, storage format, tooling, retention rules, and production use are not fixed by this design direction. A snapshot is a saved simulation state, not a scripted gameplay phase or a guarantee that every player starts at the same point.
+
+
+
 ### Development priorities
 
 The initial objective is to establish access: footholds, stations, and the essential equipment and infrastructure that make a location usable by people and players. Once access is established, the AI Manager can continue NPC settlement management and consider secondary development such as population capacity, additional services, industrial capacity, and suitable terraforming.
