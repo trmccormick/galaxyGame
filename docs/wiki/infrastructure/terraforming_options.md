@@ -156,7 +156,7 @@ Pure carbon or CNT feedstock export is allowed and useful; nothing restricts it.
 These trade time and lower CapEx for slower atmospheric gains. They may be chosen when protective pressure is not urgent or when capital is constrained.
 
 ### Gradual Venus Siphon
-Steady, low-intensity upper-atmosphere extraction without immediate mass-driver build-out. Venus slowly sheds pressure while feeding a manageable trickle of its **current mixed atmospheric composition** into the inner-system network. Constituents can be separated or processed downstream according to the receiving equipment and demand; do not treat the intake itself as selective CO₂/N₂ extraction.
+Steady, low-intensity upper-atmosphere extraction without immediate mass-driver build-out. Venus slowly sheds pressure while feeding a manageable trickle of its **current mixed atmospheric composition** into the inner-system network. Constituents can be separated or processed downstream according to the receiving equipment and demand; do not treat the intake itself as selective CO₂/N₂ extraction. Current Mk1 Venus HLT skimmers deliver mixed atmospheric cargo rather than selectively separated gases. More capable separation equipment may be incorporated into future craft purpose-built in space, but is not assumed for the adapted Mk1 fleet.
 
 ### Titan Long-Lead
 - Primary volatiles: hydrocarbons (CH₄) and N₂.
