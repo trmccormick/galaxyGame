@@ -26,19 +26,21 @@ The initial Cycler and Tug construction location is a deliberate infrastructure 
 
 ### 1.1 Heavy Lift Transport (HLT) Tiers
 
-The HLT is one of the three current ship classes and provides flexible transport capability. Three HLT Mk tiers are described in the current wiki baseline, with increasing range and thermal/cryogenic capability; Mk1 is Earth-produced, while later marks are associated with L1 construction.
+The **HLT Mk1 is the only HLT design established for the initial fleet**. Mk2 and Mk3 have been discussed as possible future marks, including in connection with the Titan mission concept below, but their designs and specifications are not yet established.
 
-| Tier | Primary Build Site | Operational Range | Thermal & Cryo Capabilities | Max Transit Time |
-|------|-------------------|-------------------|----------------------------|-----------------|
-| **Mk1 HLT** | Earth / Luna Surface | Earth ↔ Luna, Luna ↔ Venus | Passive thermal shielding only. Unmitigated cryogenic boil-off over extended durations. | < 180 days |
-| **Mk2 HLT** | L1 Shipyard | Inner System ↔ Mars / Main Belt | Active reliquefaction loops, multi-layer insulation (MLI), dynamic solar-shade orientation. | 1.5 years |
-| **Mk3 HLT** | L1 Shipyard / Mars Orbit | Mars ↔ Outer System (Saturn/Titan) | Heavy magnetic shielding, full closed-loop reliquefaction, micro-meteoroid armor, extended life support. | 3.5+ years |
+| Initial design | Primary Build Site | Established Role / Capability | Thermal & Cryogenic Boundary |
+|-----------------|-------------------|-------------------------------|------------------------------|
+| **HLT Mk1** | Earth-produced | Flexible early transport craft; individual ships are fitted/configured for their assigned role, including the initial Venus atmospheric-harvesting mission and local inner-system logistics. | Passive thermal protection; its cryogenic storage/boiloff performance is inadequate for the multi-year Titan harvesting mission. |
 
 > **Cross-link:** For the pre-player pipeline that gates HLT production behind the Venus-Luna Sabatier loop and L1 shipyard construction, see **[Pre-Player Era Logistics Pipeline](./pre_player_era_logistics_pipeline.md)**.  
 > **Cross-link:** For cycler network integration (Tier 3 transport), see **[Import Order & Cycler Models](../logistics/import_order_and_cycler_models.md)**.
 
 
 ### Future HLT Configuration: Titan Atmospheric Harvesting (DIRECTION)
+
+Titan atmospheric harvesting was originally intended as an **early part of the industrial plan**, not merely a distant expansion objective. The initial concept was to use an HLT for Titan harvesting and bring useful atmospheric products back into the inner Solar System. The plan encountered a concrete craft limitation: **HLT Mk1 could not retain cryogenic cargo economically across the long outbound transit, extraction stay, and return journey**. The problem was cumulative boiloff, not a lack of interest in Titan's resources.
+
+The early fleet therefore pivoted its immediate Luna resource strategy rather than making the initial settlement dependent on an unsuitable Mk1 long-haul mission. The Luna buildout was redirected to establish **permanently shadowed region (PSR) water-ice mining as the local source for its H₂ needs**. This is the near-term Luna supply path; it does not cancel the Titan harvesting objective. Titan remains an intended HLT-class mission once a suitable higher-capability craft and cryogenic cargo system can be developed.
 
 Titan harvesting is an established future mission concept for the HLT class, not a current Mk1 capability and not a separate ship class. The limiting problem identified in the earlier design work is **cryogenic boiloff over the long outbound, extraction, and return mission**. A Titan mission cannot be treated as an ordinary Mk1 Venus-style harvesting run with a longer route: volatile cargo and return propellant must remain usable across a multi-year transit.
 

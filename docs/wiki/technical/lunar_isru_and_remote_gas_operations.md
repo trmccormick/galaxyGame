@@ -44,6 +44,12 @@ The exact tank types, pressure limits, capacities, thermal behavior, transfer ra
 
 The older lunar flow identifies depleted or oxide-rich regolith as a potential feedstock for printed shells, beams, panels, construction fill, and other structural products. This is consistent with the current ISRU design direction that depleted regolith is a useful material stream rather than automatically waste. Actual acceptance depends on composition, processing, and the target fabrication blueprint.
 
+### PSR water-ice mining for lunar hydrogen supply (DIRECTION)
+
+The initial Luna buildout was pivoted toward **permanently shadowed region (PSR) water-ice mining** after the early Titan atmospheric-harvesting plan proved unsuitable for the HLT Mk1. Mk1's cryogenic boiloff over the long Titan-to-inner-System mission made that return route impractical with the initial craft. Rather than make early Luna operations depend on that mission, the near-term plan is to establish a local PSR ice-mining path to supply Luna's **H₂ needs**.
+
+This water-ice resource path is distinct from the TEU/PVE regolith-processing chain described above; it is not another name for that chain and should not be forced into its unresolved processing order. The intended resource is PSR water ice, with hydrogen recovered for Luna's industrial and fuel requirements. The detailed mining equipment, water handling and separation steps, production rates, storage, transport from PSR sites, and exact integration with the lunar fuel loop remain OPEN pending reconciliation with current unit data and blueprints. The PSR path is part of the initial Luna strategy, with deployment expected after humans occupy the initial base; it should not be treated as an already validated production system.
+
 ## 3. Planetary Umbilical Hub: Routing Concept
 
 An older Luna architecture describes the Planetary Umbilical Hub as a shared surface connection point for power, gas, and data. Surface units register their ports with the hub, and the hub routes transfers rather than requiring every unit to connect directly to every other unit.
