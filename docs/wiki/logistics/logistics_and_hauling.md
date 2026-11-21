@@ -40,7 +40,7 @@ Capture competing ideas here as the design flexes; do not bury them only in old 
 | Topic | Option A (example) | Option B (example) | Notes |
 |-------|--------------------|--------------------|--------|
 | Who flies the route | Player courier contracts first; NPC fallback | Mostly automated fleet with player overrides | Align with organizations / contract docs when refreshed |
-| Failure handling | Insurance + collateral (EVE-like) | Simpler loss + reputation only | Financial Engine / org docs may describe one leaning |
+| Failure handling | Insurance + collateral | Simpler loss + reputation only | Financial Engine / org docs may describe one leaning |
 | Portal / late-game FTL | See **[Portals & AWS](../technical/portals_and_aws.md)** for portal rules (mass limits, EM consumption, pairing constraints) and AWS inter-system networking. | — |
 | Coupling to AI Manager | AI posts market/logistics demand | AI uses internal allocation only | Resource-and-Market page notes market integration gaps |
 
@@ -64,6 +64,27 @@ There is a meaningful distinction between:
 Update this table when harvest or compare passes settle a choice; mark the current leaning in one sentence under the table.
 
 ---
+
+### DIRECTION — Logistics providers and player hauling contracts
+
+A logistics provider is the operational service through which an organization offers transport capability. The organization and its provider capability are related but distinct: an organization owns accounts and assets, while its provider profile describes the transport methods and service characteristics it can offer.
+
+The legacy logistics-provider design describes a possible player-facing economy in which:
+- NPC and player logistics providers can offer cargo transport services.
+- A player can inspect available courier/hauling work and the provider rates associated with it.
+- Players can compete for cargo work by offering a better rate or service.
+- Provider capabilities and reliability help distinguish services; price is also relevant.
+- Players earn GCC by carrying out logistics work, while NPC providers continue to cover routes and demand not served by players.
+
+This is a **DIRECTION**, not a finalized contract-market specification. The older provider-selection sketch prioritizes capability match, then reliability, with price as a tie-breaker. Route suitability, current workload, availability, and exact price formation remain OPEN. The legacy seeded-provider names, fee values, reliability ratings, and infrastructure-phase price tables are not adopted as current gameplay values.
+
+**Open details:**
+- Which provider capabilities and transport methods are visible to players.
+- How player-owned craft, organizations, and provider records relate.
+- Whether player bids compete directly with NPC provider rates or use a separate contract process.
+- How availability, route fit, reliability, price, and delivery performance affect selection.
+- Whether insurance, collateral, reputation, or other failure-handling rules are needed.
+- How commercial activity during autonomous transit relates to a ship's mission or contract.
 
 ## What this page is not
 
