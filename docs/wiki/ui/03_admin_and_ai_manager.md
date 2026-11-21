@@ -163,9 +163,56 @@ AI Manager is the autonomous terraforming operator. It uses environmental inform
 
 ### Digital Twin
 
-Digital Twin is an Admin/developer workspace for projecting, inspecting, evaluating, and tuning the environmental simulation and terraforming systems. It uses TerraSim for environmental projections; it is not itself the environmental calculation engine and is not the autonomous terraforming actor. It should support scenario projections and comparisons, examination of consequences over time, evaluation of AI Manager strategies/plans, and validation/tuning of TerraSim configuration and AI Manager capabilities. Where supported, Admins may adjust TerraSim model parameters and presets through an appropriate TerraSim configuration interface.
+**OWNER-CONFIRMED DESIGN DIRECTION — 2026-11-21; detailed workflow and controls OPEN**
 
-Digital Twin is not Map Studio or a world-generation system. It must not provide arbitrary “god mode” control or permit unrestricted rewriting of environmental outcomes; projections and interventions remain bounded by physical constraints, simulation rules, available resources, authorization, and consequences.
+Digital Twin is an Admin/developer workspace for creating an isolated duplicate of an existing celestial body's world state and running accelerated what-if experiments against that copy. The experiment must not alter the original/live world. A scenario may introduce or remove atmospheric gases, change other planetary conditions, or apply other specified interventions. TerraSim runs the environmental simulation on the duplicated state and calculates the resulting projected state over the selected simulation interval.
+
+The Digital Twin is therefore both a working copy of an existing world and an environment for scenario-based projection. It is not a second environmental simulation engine: **TerraSim supplies the simulation code and calculates the environmental response; Digital Twin supplies the isolated scenario state, controls, comparisons, and results workspace.** The original body remains the baseline against which scenario inputs and projected outcomes can be compared.
+
+#### Relationship to the Player Planetary view
+
+The Digital Twin workspace should look and feel related to the Player Planetary view, reusing its planetary visualization, layer presentation, and general visual language where appropriate. It is not simply the Player view with an Admin label. It should add more SimEarth-inspired scenario controls for setting up and adjusting what-if experiments, selecting the intervention inputs and simulation interval, running accelerated projections, and inspecting or comparing resulting states. The exact controls, panel arrangement, and degree of interactive manipulation have not been designed or approved yet.
+
+These controls specify scenario inputs and parameters; they do not provide arbitrary “god mode” or directly dictate the environmental outcome. TerraSim calculates the consequences within the modeled physical processes and constraints.
+
+#### Projection, cost, and time estimates
+
+Digital Twin projections should eventually help Admins and AI Manager compare not only environmental outcomes but also the practical implications of carrying out different interventions or plans. For a proposed intervention or combined strategy, the system should aim to provide:
+
+- **Environmental projections:** how the duplicated world and relevant planetary systems are expected to change over the selected simulated interval.
+- **Implementation cost estimates:** the estimated resources, materials, manufacturing, transport, infrastructure, and other applicable economic costs required to carry out the proposed work, to the extent supported by the game's economic and logistics systems.
+- **Implementation time estimates:** estimated time to acquire or produce required inputs, transport them, deploy/build the intervention, and complete the relevant operational work, as supported by production, logistics, and construction systems.
+- **Environmental response timeline:** how quickly the modeled planetary conditions respond and what intermediate and ending states are projected.
+
+Keep the time required to execute an intervention distinct from the accelerated simulation interval and the time over which its environmental effects develop. Likewise, TerraSim's environmental calculations should not be treated as the source of economic prices or delivery schedules: cost and execution-time estimates will need to draw on the appropriate economic, manufacturing, construction, and logistics capabilities. The exact breakdown, confidence/uncertainty presentation, and integration points remain OPEN.
+
+These estimates should be useful to both Admin and AI Manager. Admins need them to inspect and compare proposed scenarios; AI Manager should be able to use them alongside projected environmental outcomes when evaluating strategies, priorities, and operational plans. This is a desired capability, not a claim that the complete cost/time projection workflow currently exists.
+
+#### Responsibilities and boundaries
+
+Digital Twin should support scenario projections and comparisons, examination of consequences over time, evaluation of AI Manager strategies/plans, and validation/tuning of TerraSim configuration and AI Manager capabilities. Where supported, Admins may adjust TerraSim model parameters and presets through an appropriate configuration interface.
+
+- **Map Studio** prepares or generates initial geography and world data; it does not create or run the what-if experiment.
+- **Digital Twin** duplicates an existing world state, holds isolated scenario changes, and presents projections and comparisons.
+- **TerraSim** calculates environmental responses and projected states from the scenario state and inputs.
+- **Economic, manufacturing, construction, and logistics systems** provide the basis for implementation cost and execution-time estimates.
+- **AI Manager** evaluates options and plans using environmental outcomes together with cost, time, resources, and operational constraints.
+
+Interventions and projections remain bounded by physical constraints, simulation rules, available resources, authorization, and consequences. The Digital Twin is not a world-generation system, the environmental calculation engine, or the autonomous terraforming actor.
+
+#### Current implementation status — source-verified partial audit (2026-11-21)
+
+The legacy Rails 7 code contains scaffolding, but the inspected Digital Twin path is not an operational TerraSim-backed what-if system:
+
+- Admin::DigitalTwinsController has placeholder behavior: the index supplies an empty list; the show path can return hard-coded mock planetary data; creation makes a shallow isolated attribute copy; and the simulation tick currently returns the existing data rather than advancing a TerraSim projection.
+- The controller includes intervention names and some methods that directly alter mock/cache values. These are not evidence of physics-based simulation; many intervention methods are empty stubs.
+- app/services/digital_twin_service.rb contains placeholder methods that raise NotImplementedError, including cloning and running an accelerated simulation.
+- lib/services/digital_twin_service.rb is also a stub whose core methods raise NotImplementedError.
+- The inspected Digital Twin spec is marked as a placeholder. The old service comments describe a proposed 100:1 accelerated-time ratio and transient Redis storage, but those comments do not establish implemented behavior.
+
+Accordingly, do not describe the current code as already cloning complete sphere state, integrating interventions with TerraSim, running accelerated projections, comparing scenarios, or calculating cost/time estimates. The implementation needs a focused audit and design before those capabilities can be claimed.
+
+**Open design questions:** what constitutes a complete world snapshot and how it is isolated/versioned; how scenarios are branched and compared; which interventions and input units are supported; how accelerated simulation time is selected and related to game time; which environmental outputs and intermediate checkpoints are exposed; how cost and execution-time estimates are assembled from existing services; how uncertainty is communicated; and which controls belong in the Digital Twin workspace versus TerraSim configuration or AI Manager. Keep these open until the relevant existing models, services, and UI are reviewed.
 
 ### Spawning and resource generation — ownership OPEN
 
