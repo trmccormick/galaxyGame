@@ -150,3 +150,8 @@ Corrected the preceding mistaken attribution. The CO₂-to-LOX reaction (`2CO₂
 ## 2026-11-21 — Mk1 skimmer cargo separation boundary
 
 Clarified [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md), [Atmospheric Harvesting](infrastructure/atmospheric_harvesting.md), and [Terraforming Options](infrastructure/terraforming_options.md) after the owner's distinction between adapted Mk1 HLT skimmers and future purpose-built craft. Mk1 skimmers capture the actual mixed atmospheric composition and do not selectively separate or purify cargo gases onboard. Their limited onboard CO₂ processing is only to produce the LOX required for their own mission fuel cycle; it is not general gas separation. Mixed cargo is delivered for downstream processing. More capable separation/recovery equipment is a likely future capability for craft designed and built in space, not an assumed Mk1 or fixed Mk-tier feature. No application code or frozen source documents changed.
+
+
+## 2026-11-21 — HLT Mk1 harvester configuration terminology
+
+Clarified [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md): the initial Venus atmospheric harvesters are existing HLT Mk1 craft configured for the harvesting role. “Harvester” is a mission configuration/role, not a separate ship class or craft type. Capability statements (bulk mixed-atmosphere intake, limited onboard CO₂ processing for the craft's own LOX fuel, and no selective cargo-gas separation) apply to that HLT Mk1 configuration. No new craft class or fixed future Mk tier is implied.
