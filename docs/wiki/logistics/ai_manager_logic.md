@@ -107,12 +107,15 @@ The AI Manager evaluates all pending tasks through a three-tier priority loop:
 3. **Emergency backstops** — Eden Snap recovery, debris avoidance, structural collapse remediation.
 
 ### Tier 2 — Market Liquidity & Economic Stability
+
+> **OPEN RECONCILIATION — 2026-11-21:** This legacy target hierarchy says the AI Manager guarantees tight spreads and player profit. The current [AI Manager Economic Loops](ai_manager_economic_loops.md) direction says the AI Manager is non-competitive and should not dominate player markets, with an accepted 80%/90% EAP seed band. Whether any active liquidity-support behavior is compatible with that non-competitive role, and what it means operationally, remains to be reconciled. Do not treat a guaranteed spread, guaranteed player profit, or market-maker behavior as settled gameplay solely from this section.
+
 1. **Player-first order fulfillment** — player buy/sell orders get priority over all NPC activity. Players undercut NPCs → guaranteed profit.
 2. **Liquidity guarantee** — AI places counter-orders to maintain tight spreads (default ~0.5%) and prevent market stalls.
 3. **EAP enforcement** — prevents gouging by enforcing Earth Anchor Price ceilings; if player price exceeds EAP, AI ignores the order and imports from Earth instead.
 
 ### Tier 3 — Expansion & Construction (lowest)
-1. **Early Sol buildout** — Luna industry → LEO/L1 depots → L1 shipyard → tugs/cyclers → core stations (sequential). See `docs/gameplay/sol_core_buildup.md`.
+1. **Early Sol buildout** — current owner-confirmed order: Luna foothold → L1 Depot → second depot near LEO → main station / shipyard infrastructure. This supersedes older LEO-first or combined-depot sequencing in frozen references. See [Station Construction Options](../engineering/station_construction_options.md).
 2. **Terraforming demand fulfillment** — planetary program supply (gases, materials, hardware, fuel) under Development Corp GCC budgets.
 3. **Deep-space expansion** — wormhole stabilization, cycler route optimization, exoplanet corridor scouting.
 
