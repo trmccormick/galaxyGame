@@ -143,3 +143,15 @@ The following remain in progress and must not be invented by UI implementation:
 - Which shared planning concepts should be implemented as common domain services versus context-specific behavior.
 
 Resolve these details against current code and the relevant authoritative game wiki pages before treating them as implemented mechanics.
+
+## Related gameplay and interface references
+
+These pages provide more detailed domain intent for particular systems. This page defines the cross-context gameplay distinction and operational concepts; it does not replace their specialized rules.
+
+- [Logistics and hauling](../logistics/logistics_and_hauling.md) — transport and hauling intent.
+- [Atmospheric harvesting](../infrastructure/atmospheric_harvesting.md) — atmospheric extraction context and processing.
+- [Natural wormholes and EM](../technical/natural_wormholes_and_em.md) — natural wormhole behavior and EM.
+- [Interstellar communications](../engineering/interstellar_communications.md) — delayed communications and store-and-forward relay intent.
+- [AI Manager and autonomous coordinators](../services/ai_manager.md) — autonomous operations and coordinator responsibilities.
+- [Player View Architecture](../ui/02_player_view_architecture.md) — Player Space, Fleet Manager, Route Planner, Craft Tracking, and Surface interface boundaries.
+
