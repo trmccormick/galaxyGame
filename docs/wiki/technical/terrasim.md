@@ -107,7 +107,7 @@ When a new body type or environmental use case is addressed, evaluate the releva
 - **Map Studio:** prepares or generates **initial** terrain/geographic data for a body. That initial state can feed later environmental simulation; Map Studio is not TerraSim and does not perform ongoing environmental evolution.
 - **TerraSim:** calculates environmental states, coupled processes, natural evolution, projections, and consequences of modeled events or interventions.
 - **AI Manager:** selects and executes approved operational and terraforming strategies using available world state and projections.
-- **Digital Twin:** provides an Admin/developer workspace for inspecting, comparing, evaluating, and tuning simulations and strategies; it is not the simulation engine itself.
+- **Digital Twin:** creates an isolated duplicate of an existing celestial body's world state for accelerated what-if experiments, then uses TerraSim to calculate projected environmental outcomes. It provides the scenario inputs, comparison, and results workspace; it is not a separate simulation engine. Its intended Admin/AI Manager use also includes cost and execution-time projections assembled from the relevant economic, manufacturing, construction, and logistics systems. Detailed workflows and UI controls remain OPEN.
 
 TerraSim calculates environmental states, evolution, and consequences from the world state it is given; it does not autonomously choose terraforming objectives or perform operational actions.
 
