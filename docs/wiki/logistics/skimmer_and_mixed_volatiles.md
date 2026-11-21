@@ -1,7 +1,7 @@
 # Skimmers & Mixed Volatiles
 
 > **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
-> *Last Audited:* 2026-11-10  
+> *Last Audited:* 2026-11-21  
 > *Audit Summary:* Reusable atmosphere extraction, proportional raw transfer, CO₂ processing, and craft exhaust code exists. The current skimmer path does not yet connect those pieces into a consistent craft-cargo-to-Luna return calculation. A boiloff implementation was not located in the code search; verify tank and transit processing before concluding it is absent.
 
 **Status**: DIRECTION / OPEN  
@@ -33,7 +33,7 @@ The HLT processes captured CO₂ using its installed processing capability:
 - O₂ is liquefied and retained as LOX for the craft's mission fuel requirements.
 - **During harvesting at Venus, CO handling is a configurable policy (DIRECTION, owner, 2026-11-18).** The Venus harvester data sets `gas_handling_policy` to store O₂ and N₂, store CO if its value is positive, and process CO₂. With no CO storage fitted, the CO byproduct is vented back into the Venus atmosphere. This slightly modifies the source atmosphere composition over time (mass-ledger effect).
 - If the craft has **no dedicated CO tank**, further CO₂ processing during the return leg to Luna pushes the CO byproduct into the mixed-volatiles inventory item (a tank only provides capacity).
-- This is CO₂ splitting, **not methane production**.
+- This is CO₂ splitting for the craft's **LOX/fuel requirement**, **not CNT manufacture** and **not methane production**. CNT/structural-carbon production is a separate industrial CO₂-processing route using dedicated industrial equipment; see [Terraforming Options](../infrastructure/terraforming_options.md).
 - The HLT must carry sufficient methane for its mission; methane production from Venusian CO₂ is a separate Luna industrial process using lunar-derived hydrogen.
 
 Tanks track capacity only. Actual gas identity, masses, and composition live in the inventory system (already established).
