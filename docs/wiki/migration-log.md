@@ -110,3 +110,10 @@ Only the specific intake-composition contradiction was corrected in this pass. T
 Applied the owner's clarification to [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) and [Terraforming Options](infrastructure/terraforming_options.md). The HLT's limited onboard CO₂ reaction (`2CO₂ → 2CO + O₂`) exists to produce oxygen that is liquefied and retained in the craft's LOX tank for its own mission fuel cycle. It is not a CNT process. A separate industrial CO₂-processing operation converts CO₂ into solid carbon for CNT/structural-material manufacture, with O₂ as a co-product; that operation belongs to dedicated industrial equipment downstream of harvesting/transport.
 
 This resolves the apparent conflict: both descriptions are valid, but they refer to different equipment, process roles, and products. The skimmer page now explicitly excludes CNT manufacture from onboard processing, and the terraforming page describes the two routes separately. No application code or frozen source documents changed.
+
+
+## 2026-11-21 — CNT production is feedstock- and capability-dependent, not Venus-specific
+
+Corrected [Terraforming Options](infrastructure/terraforming_options.md) and [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) following the owner's clarification. Dedicated industrial CO₂ processing for solid carbon/CNT manufacture is not restricted to Venus. Venus is one possible source of CO₂, but CNT plants can operate at other locations where suitable carbon feedstock and industrial capability are available; Luna is an explicit example when CO₂ is imported. The location decision depends on resource availability, imports, energy, equipment, and logistics. The Venus-to-Mars CNT-shell pipeline is now framed as one supply-chain example rather than a Venus-only production rule.
+
+The skimmer's onboard `2CO₂ → 2CO + O₂` reaction remains a separate process for producing its own LOX. No application code or frozen source documents changed.
