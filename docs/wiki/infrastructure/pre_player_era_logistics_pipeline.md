@@ -4,7 +4,7 @@
 > *Last Audited:* 2026-11-03  
 > *Audit Summary:* Expanded specification covering autonomous trade corridors, bootstrapping mechanics for unstaffed resource nodes and extraction fleets, transit decay / delta-v expenditure equations, and depot warehousing. Code implementation pending or unverified as of audit baseline.
 
-In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy tugs. All expansion boots-strap organically from Earth, Luna, and Venus through a strict, deterministic dependency chain. This document specifies backend simulation systems: mass-balance equations, autonomous route scheduling, and transit logistics that operate prior to player intervention.
+In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy tugs. The Sol bootstrap follows the owner-confirmed dependency order below; expansion beyond the Sol foundation is option-driven and adapts to local bodies, resources, technology, and infrastructure. This document specifies backend simulation systems: mass-balance equations, autonomous route scheduling, and transit logistics that operate prior to player intervention.
 
 > **Cross-link:** For the downstream ISRU fabrication chain that consumes pre-player-deployed structural materials and propellant, see **[ISRU Fabrication Chain](../technical/isru_fabrication_chain.md)**.  
 > **Cross-link:** Atmospheric composition targets and extraction-rate ceilings are governed by **[Atmospheric Harvesting](atmospheric_harvesting.md)**, which constrains all Venusian-skim and Titan-atm-harvest yield equations used throughout this document.  
@@ -15,7 +15,7 @@ In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy t
 ## 1. Core Engineering Constraints
 
 * **Construction vs. Operation:** Building a station requires localized or imported mass, heavy equipment, and dedicated staging phases. Stations cannot be "spawned" or instantly toggled into existence.
-* **The Sol Launch Bottleneck:** Ships departing Earth's gravity well face extreme mass-penalty constraints. To eliminate the need for outbound craft to carry Earth-ascent fuel overhead, orbital fuel depots must be prioritized.
+* **The Sol Launch Bottleneck:** Ships departing Earth's gravity well face extreme mass-penalty constraints. The current Sol bootstrap establishes the L1 Depot first, then a second depot near LEO, before the main station / shipyard infrastructure. These depots reduce the need for outbound craft to carry all Earth-ascent fuel overhead.
 * **The Venus-Luna Chemical Feedback Loop:** 
   * Luna provides structural silicates, metals, and water ice ($\text{H}_2\text{O}$) in its Permanently Shadowed Regions (PSRs), but lacks carbon and nitrogen.
   * Venusian atmospheric skimming provides Carbon Dioxide ($\text{CO}_2$) and Nitrogen ($\text{N}_2$).
@@ -30,10 +30,10 @@ In the Pre-Player Era, humanity lacks pre-existing deep-space cyclers or heavy t
 * **Luna Surface Industry:** Primary mining and refining of structural materials and PSR water ice.
 * **Venus Skimmers:** Early HLT skimmer variants harvest atmospheric $\text{CO}_2$ and $\text{N}_2$.
 * **Fuel & Life Support Production:** Lunar refineries process imported Venusian volatiles and PSR ice into Methalox fuel and life-support gases.
-* **Depot Network:** Construction of LEO and Earth L1 fuel depots to service outbound HLT fleets.
+* **Depot sequence (owner-confirmed 2026-11-21):** First establish the L1 Depot using Luna-sourced bulk industrial output and Earth-sourced specialized/high-tech imports as needed; then establish the second depot near LEO to support Earth-side launch, refueling, and staging.
 
-### Phase 2: Earth L1 Shipyards & Fleet Scaling
-* **L1 Shipyard Construction:** Built as pure orbital installations using Luna-sourced raw materials and serviced by the L1 fuel depots.
+### Phase 2: Main Station / Shipyard Infrastructure & Fleet Scaling
+* **Main Station / Shipyard Construction:** Built as orbital installations using Luna-sourced bulk materials and specialized/high-tech imports from Earth as needed; the L1 Depot and near-LEO Depot provide the required fuel and staging support.
 * **Capital Craft Manufacturing:** L1 shipyards provide the industrial capacity to construct specialized **Heavy Tugs** and deep-space **Cyclers**.
 
 ### Phase 3: Mars System Access (options — not a single script)
