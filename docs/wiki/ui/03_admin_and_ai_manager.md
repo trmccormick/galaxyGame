@@ -73,6 +73,65 @@ The current code contains more than one map-analysis/generation experiment. They
 
 The repository therefore contains several pieces of experimental map analysis, pattern extraction, resource heuristics, and learning-data persistence, but this source pass does **not** establish a connected, reusable training pipeline that feeds learned geographical knowledge into Map Studio generation. The intended geographical learning/reconstruction capability remains a design goal; the current experiments are evidence to inspect and selectively reuse, not proof that the goal has been achieved.
 
+### Map Studio — desired capabilities and generation options
+
+**OWNER-CONFIRMED DESIGN DIRECTION — 2026-11-21; implementation and detailed ownership OPEN**
+
+Map Studio should ultimately support game-generated planetary geography and the identification of useful natural resources and settlement opportunities. The goal is not to require a person to hand-author a map for every celestial body, nor to manually specify every resource deposit or settlement location. As with StarSim's system generation, the game should be able to generate a plausible starting world from the information and constraints available for that body.
+
+The intended output is more than a colored terrain grid. It should establish an initial geographic/world dataset that can include terrain and elevation, relevant geological and hydrological characteristics, natural features, resource-deposit candidates, and candidate locations that may be useful for settlements or other operations. These outputs become part of the body's initial world state and are then available to the Geosphere, TerraSim, AI Manager, and other systems according to their responsibilities. Map Studio creates/prepares the initial state; it does not perform ongoing environmental evolution or decide to terraform the world.
+
+#### Generation approaches to support
+
+These are complementary approaches, not mutually exclusive competing designs. Which approach is appropriate depends on the target world and the quality of available information:
+
+1. **Reconstruction from real planetary data.** For known worlds, use available elevation, geology, imagery, and other observational or derived datasets to reconstruct a plausible initial geography. Preserve source provenance, resolution, coverage, assumptions, and uncertainty. For Earth, Mars, Luna, Venus, and other bodies with usable data, this should prefer relevant evidence over generic procedural assumptions.
+2. **Procedural generation from planetary characteristics.** For extrasolar, fictional, or poorly characterized worlds, generate plausible geography from the body's physical properties and available environmental constraints. This should be a normal game capability, not require a hand-authored map for every world. The relationship to StarSim is conceptual: StarSim generates systems and bodies; Map Studio generates their initial surface/geographic state.
+3. **Learning from human-designed maps and examples.** Civ4, FreeCiv, Arda, and other human-created maps can provide examples of possible landform arrangements, terrain transitions, resource/settlement patterns, and designed or terraformed landscapes. They are training/reference material for learning options and patterns—not authoritative planetary data, fixed templates that must be imported into live worlds, or proof that a pattern is geologically valid.
+4. **Hybrid generation and reconstruction.** Combine observational data, geological/physical constraints, procedural methods, and learned patterns where appropriate. A known world may use measured elevation as a strong constraint while learning or procedural methods help fill gaps; a fictional world may rely more heavily on procedural generation and learned examples. The selected method and its inputs should remain inspectable.
+
+The system should not assume there is one universally correct map. It may need to produce and compare multiple plausible alternatives when the available evidence or future scenario permits more than one reasonable result. Keep distinct: an observed or evidence-based natural baseline; a reconstructed or hypothesized past state; a proposed human-designed/terraformed state; and a state subsequently projected or evolved by TerraSim. Do not silently turn a designed map into a scientifically established natural baseline.
+
+#### Geological resources and natural-feature identification
+
+Map generation should be connected to identification of meaningful geological features and resource opportunities. Resource placement should not be limited to randomly assigning game-resource markers to terrain categories, nor should Civ4/FreeCiv bonus-resource locations be treated as geological truth.
+
+The desired capability is to infer or identify plausible deposits and useful natural features from the generated/reconstructed world data and its geological context. The exact resource types, evidence sources, confidence model, spatial resolution, and degree of geological detail remain OPEN and must be established from the intended simulation scope. A game-level resource representation may be needed, but it should retain a distinction between a real/inferred geological deposit and a gameplay abstraction or strategic opportunity.
+
+Natural features matter in their own right, not only as visual terrain. Examples relevant to settlement planning include lava tubes and skylights, caves or other subsurface voids, impact structures, volcanic features, sheltered terrain, and accessible deposits of water ice or other useful volatiles. Which features can be detected or generated depends on the available data and model capability; do not imply that every feature can be reliably identified from a coarse global map.
+
+#### Candidate settlement locations
+
+The game should identify and evaluate candidate locations for settlements rather than requiring players or developers to manually place every initial settlement opportunity. A candidate may be valuable because of a natural feature that provides shelter or reduces construction requirements, because of nearby resources, or because its terrain and access make operations practical.
+
+For example, the Mars settlement planning already uses a lava tube near the Marius Hills Skylight as a preferred natural shelter. The map/world-generation capability should be able to represent or identify such a feature and expose it as a candidate. It should not simply label an arbitrary lowland or resource-rich grid cell as an equivalent settlement site.
+
+Candidate evaluation may consider, as appropriate to the body and mission:
+- natural shelter and other useful geological features;
+- access to water ice, volatiles, minerals, and other required resources;
+- terrain, slope, elevation, hazards, and construction/access constraints;
+- power and energy opportunities;
+- local environmental conditions and exposure;
+- proximity and logistics relationships to other useful locations.
+
+The generated result should preserve candidate locations, the reasons they were selected, the supporting data, and uncertainty/confidence. Candidate identification is not the same as creating a settlement or committing to a site. The AI Manager should be able to consider candidates against its strategic objectives, mission requirements, available assets, logistics, and economics; TerraSim and other relevant simulation capabilities can help assess environmental and operational viability. The exact service boundary and degree of automation remain OPEN, but Map Studio must not silently become the settlement-construction manager.
+
+The Mars lava-tube example is a useful validation case: can the game represent or identify the Marius Hills Skylight/lava-tube area as a natural shelter opportunity, explain why it is useful, and make it available to settlement planning? The same capability should generalize to other natural features and worlds rather than hard-code the Mars example.
+
+#### Desired outputs and quality expectations
+
+The intended initial-world output should be capable of carrying, as supported by the model:
+- the initial terrain/elevation and related geographic layers;
+- geological context and natural-feature records;
+- inferred or known resource-deposit locations and attributes;
+- ranked or categorized candidate settlement/operations sites with supporting rationale;
+- source data, generation method, assumptions, provenance, and uncertainty;
+- quality/coverage information and any unresolved gaps.
+
+This is a capability direction, not a declaration that the current Geosphere schema already supports all these records. The existing model and data contracts must be inspected before deciding where each output belongs.
+
+**OPEN design questions:** how much of the process is deterministic versus stochastic; when to generate one result versus multiple alternatives; how learned examples influence procedural generation without overriding physical constraints; which natural features can be detected at global versus local/site resolution; how geological resource inference is represented; how candidate sites are scored and validated; and which service owns each calculation. Resolve these questions by evaluating existing experiments and model capabilities before selecting an architecture.
+
 **Important boundaries and unresolved quality questions**
 
 - Map Studio's Admin responsibility is initial terrain/geographic preparation. StarSim's primary star-system generation, TerraSim's environmental evolution, and Digital Twin's projection/evaluation remain separate capabilities.
