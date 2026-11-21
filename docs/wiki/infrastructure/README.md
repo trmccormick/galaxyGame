@@ -19,7 +19,7 @@ The **primary pre-player pipeline narrative** is:
 
 [`pre_player_era_logistics_pipeline.md`](./pre_player_era_logistics_pipeline.md)
 
-This page walks the full expansion tree: Sol Core → L1 Shipyards → Mars Moon Conversion → Belt Expansion, including the Venus-Luna Sabatier volatile loop and Heavy Tug propulsion economy. Read this first to understand how off-world industry bootstraps.
+This page walks the Sol bootstrap and later expansion options: Luna foothold → L1 Depot → second depot near LEO → main station / shipyard infrastructure → Mars and Belt options. It also covers the Venus-Luna Sabatier volatile loop and Heavy Tug propulsion economy. Beyond the required Sol dependencies, development is option-driven. Read this first to understand how off-world industry bootstraps.
 
 ### Supporting Pre-Player Docs (Linked References)
 
