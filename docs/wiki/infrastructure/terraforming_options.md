@@ -60,6 +60,12 @@ This option lets a settlement reach useful protective pressure thresholds withou
 
 ---
 
+## Separate Skimmer and Industrial CO₂ Processing Roles
+
+**Owner clarification (2026-11-21):** these are two different processes serving different operational goals. The skimmer's limited onboard CO₂ processing exists to fill its LOX tank for its own mission. Industrial CO₂ processing exists to make solid carbon/CNT feedstock. Do not merge these into one skimmer process or describe the skimmer as manufacturing CNTs.
+
+The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied and retained as LOX; CO is handled according to the craft's storage/venting configuration. The industrial route converts CO₂ into solid carbon for CNT production and produces oxygen as a co-product. Industrial processing takes place in dedicated industrial equipment, downstream of harvesting and transport.
+
 ## Refined Brute-Force Venus → Mars Method (O₂/N₂ + CNT Shells)
 
 **DIRECTION** — higher-processing, higher-control option that can support traditional terraforming goals.
@@ -114,9 +120,14 @@ Venus cannot easily produce the heavy metals and structural materials needed for
 
 ### Venus Industrial Processing — CO₂ Cracking & Greenhouse Gas Handling (DIRECTION)
 
-**Industrial framing:** the Venus route is primarily industrial (CNT / structural carbon production + O₂ and N₂ export), not a pure terraforming project. Pure carbon (or CNT feedstock) export is allowed and useful; nothing restricts it.
+**Industrial framing:** the Venus route is primarily industrial (CNT / structural carbon production), with useful gas products and possible export. It is distinct from the skimmer's limited onboard processing, whose operational purpose is to produce and retain LOX for the craft's own mission fuel cycle.
 
-**Core process:** native Venusian CO₂ is cracked to solid carbon (feedstock for CNT structural material) + O₂. This is primarily an **industrial** route (structural carbon / CNT production and O₂ + N₂ export). Pure carbon or CNT feedstock export is allowed and useful; nothing restricts it. The same process also supplies the refined O₂/N₂ → Mars pipeline.
+**Keep the two CO₂ processes distinct:**
+
+- **Skimmer onboard processing (Mk1):** the HLT takes in the current mixed atmosphere and processes only enough captured CO₂, within its onboard capability, to produce O₂ for liquefaction and storage in the craft's LOX tank. The reaction is `2CO₂ → 2CO + O₂`. This supports the skimmer's LOX/fuel requirement; it is not the CNT manufacturing process. CO handling follows the skimmer's configured storage/venting policy. See [Skimmers & Mixed Volatiles](../logistics/skimmer_and_mixed_volatiles.md).
+- **Industrial CO₂ processing:** a separate industrial plant or depot processes CO₂ feedstock to produce solid carbon for CNT manufacture, with O₂ as a co-product. This is the route for producing structural carbon/CNT material and supporting the industrial O₂/N₂ export pipeline. It is not performed by the Mk1 skimmer's onboard LOX-processing equipment.
+
+Pure carbon or CNT feedstock export is allowed and useful; nothing restricts it.
 
 **Greenhouse-gas handling:** Water produced by any H₂ + CO₂ reaction is a potent greenhouse gas. It must be removed from the Venusian atmosphere and stored in cold-shadow CNT tanks behind the L1 shade until surface temperature and pressure conditions later allow safe re-injection. This is a staging step, not an abandonment — greenhouse agents are retained for later Mars atmospheric use.
 
