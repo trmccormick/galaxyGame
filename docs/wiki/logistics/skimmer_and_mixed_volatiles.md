@@ -20,6 +20,8 @@ The HLT pulls in the **actual atmospheric mixture of the planet**. It does not s
 
 Use the current gas masses / proportions represented by the source atmosphere. Do not substitute a fixed Venus recipe or invent a separate assumed intake mixture. As harvesting and emissions change the source atmosphere, later intake uses the atmosphere's then-current composition.
 
+This includes trace constituents, not only the dominant CO₂ and N₂. Trace species may have useful industrial, chemical, or specialty-material applications and should remain represented in the captured batch when present in the modeled atmosphere. Downstream separation can recover them if suitable equipment and an economic use case exist. Do not assume a trace gas is unavailable simply because it is a small fraction, but do not assume every trace constituent is present in the game model or worth extracting. Actual species and masses come from the current source-atmosphere inventory.
+
 The amount captured is bounded by the craft's extraction throughput, time spent harvesting, available source gas, and available craft storage. Track the captured constituents by mass.
 
 
