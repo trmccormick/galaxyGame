@@ -187,8 +187,8 @@ The corridor is gated behind cycler operations: real terraforming programs do no
 
 The deterministic expansion sequence that bootstraps all Sol infrastructure:
 
-1. **Phase 1:** Sol Core & Luna Industrial Bootstrapping (HLTs, Luna surface extraction, Venus skimming, LEO/L1 depots)
-2. **Phase 2:** Earth L1 Shipyards & Fleet Scaling (L1 industrial hubs, capital craft fabrication)
+1. **Phase 1:** Luna foothold and industrial bootstrapping; establish the L1 Depot using Luna bulk output and Earth-sourced specialized imports.
+2. **Phase 2:** Establish the second depot near LEO, then build the main station / shipyard infrastructure and scale the fleet.
 3. **Phase 3:** Mars Moon Conversion & Slag Economy (tug deployment, Phobos/Deimos hollowing, slag propulsion)
 4. **Phase 4:** Belt Expansion & Asteroid Repositioning (belt operations, no-moon anchoring, cycler network lock)
 
