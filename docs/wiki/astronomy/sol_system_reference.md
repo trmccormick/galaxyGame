@@ -69,11 +69,11 @@ Luna is the first foothold location. The Venus-Luna chemical feedback loop is fo
 | Attribute | Value |
 |---|---|
 | **Type** | Terrestrial planet |
-| **Role in logistics loop** | Volatile and energy powerhouse: atmospheric volatile harvester, carbon-structure factory; primary source of O₂, N₂, CNTs, and CO₂ feedstock for Luna-based Sabatier methane synthesis |
-| **Key infrastructure** | High-altitude aerostat skimming stations; thermal/chemical cracking arrays; CNT shell manufacturing; orbital mass driver arrays |
+| **Role in logistics loop** | Atmospheric-gas and materials industrial powerhouse: major CO₂/N₂ feedstocks, O₂ and CO processing, trace-gas recovery, CNT/solid-carbon manufacture, and imported-asteroid conversion |
+| **Key infrastructure** | Cloud cities / high-altitude aerostat platforms; orbital stations and industrial facilities; atmospheric harvesting and separation plants; thermal/chemical processing; CNT/solid-carbon manufacture; imported-asteroid conversion and mass-driver logistics |
 | **Terraforming options** | Option A (Terraforming Reserve): managed N₂ exports against 1-bar buffer; Option B (Pure Industrial Powerhouse): uncapped N₂ and CO₂ skimming |
 
-Venus is the system's industrial powerhouse. Its atmosphere (~96% CO₂, ~3.5% N₂) is harvested at scale through high-altitude aerostat stations. The Venus-Luna chemical feedback loop closes early-game fuel production. Later, the Venus→Mars brute-force terraforming pipeline delivers engineered gas-pods via mass drivers across the ballistic corridor.
+Venus is the system's industrial powerhouse because of its location and planetary makeup, not because routine surface access is practical. Its atmosphere is dominated by CO₂ (~96%) and N₂ (~3.5%), but these major constituents are not the complete resource inventory: trace atmospheric species may also be recoverable and useful when their abundance, separation requirements, processing pathways, and market value justify extraction. Candidate trace resources should be assessed from the modeled atmospheric composition rather than assumed to be present at useful quantities. Atmospheric operations are supported by cloud cities / high-altitude platforms and an expandable orbital industrial network. Imported asteroids provide additional solid feedstock for conversion; the initial two stations are a starting foothold, not the final facility count. The Venus-Luna chemical feedback loop closes early-game fuel production. Later, the Venus→Mars brute-force terraforming pipeline can deliver engineered gas-pods via mass drivers across the ballistic corridor.
 
 ### Mars
 
