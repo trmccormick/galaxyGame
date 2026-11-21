@@ -128,6 +128,24 @@ Selecting a craft from a fleet should provide a path to inspect that craft in th
 
 This is a Player coordination interface, not the Admin or AI Manager oversight interface. The AI Manager and craft automation may continue authorized work subject to the communications and authority model; the Player Fleet Manager presents the player's view of the operation and does not imply unrestricted real-time control.
 
+### Player Route Planner
+
+**ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
+
+GalaxyGame should provide a distinct Player **Route Planner** where players can create, review, name, save, and reuse preferred travel routes. The supplied EVE Dashboard Chain Map is the initial visual and interaction reference for this capability. The intent is to port/adapt that existing Chain Map presentation and useful JavaScript into the Rails 8.1 UI prototype first, then adapt its assumptions and behavior to GalaxyGame. It is a starting point for the route-planning interface, not a commitment to EVE's wormhole-chain mechanics or data model.
+
+The Route Planner supports both routing scales:
+- **Inter-system / wormhole travel:** plan a journey through connected star systems and wormhole transitions, including chosen intermediate systems and preferred connections.
+- **In-system travel:** plan movement among relevant locations within a solar system, such as orbital infrastructure, celestial bodies, asteroids, settlements, harvesting sites, and other supported destinations.
+
+A journey may combine the two scales: an inter-system route to a destination system followed by an in-system route to a particular location. The interface should make the scale and transitions clear. The Chain Map's node-and-connection canvas, pan/zoom, node selection, connection editing/selection, route highlighting, and contextual detail panel are useful patterns to inspect and adapt. Do not assume its existing implementation already supports GalaxyGame's two routing scales; inspect the source and document what is actually reusable.
+
+Players should be able to save named preferred routes and later reopen or revise them. A saved route is a reusable plan, not a guarantee that every connection or condition remains available when a craft is assigned to it. Actual route execution and feasibility depend on current network/system conditions and craft capabilities; the prototype must not imply that a saved route overrides those conditions.
+
+Saved routes should be assignable to an individual spacecraft or used by a fleet operation when assigning participating craft. Fleet Manager remains responsible for presenting the operation and its distributed craft; Individual Craft Tracking remains responsible for showing one craft's assigned route and progress. Both may provide an entry point to choose or inspect a saved route, but neither replaces the Route Planner as the route-authoring workspace.
+
+For the initial UI prototype, focus on porting the Chain Map view and adapting its presentation to GalaxyGame's route-planning purpose. Clearly identified mock systems, connections, locations, routes, saved-route records, and assignment interactions are acceptable. The prototype need not implement authoritative pathfinding, route feasibility, live wormhole availability, navigation simulation, persistence, or actual command execution. Do not invent route availability or physics rules; leave those to the authoritative game systems.
+
 ### Player feedback on wormhole-network strategy
 
 **OWNER-RECALLED DESIGN DIRECTION — 2026-11-20; interaction details OPEN**
