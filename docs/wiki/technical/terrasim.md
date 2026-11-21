@@ -11,6 +11,8 @@ TerraSim is **not defined solely by terraforming**. It must be able to simulate 
 
 This page records design intent for future development and tuning. It does not assert that existing TerraSim functionality is missing or needs to be rebuilt. Existing models and services must be inspected and evaluated before proposing replacement or expansion.
 
+**Gameplay-oriented scope:** TerraSim is a simplified planetary environmental model informed by real-world science. Its required fidelity is the level needed to support meaningful terraforming and planetary management in GalaxyGame. It is not a complete planetary simulation, a high-fidelity scientific modeling platform, or a recreation of SimEarth. The model should represent important processes, matter and energy transfers, feedbacks, and response times well enough that interventions have plausible and understandable consequences. Scientific mechanisms inform the model; gameplay and operational relevance determine the necessary level of detail.
+
 **Legacy terminology clarification:** Some older architecture notes describe TerraSim primarily as a regression/weathering filter that starts from a StarSim-generated lush or terraformed heightmap and moves the world toward a barren baseline. That description is not the current canonical definition of TerraSim. Weathering and regression-related processes may be part of environmental evolution, but TerraSim's purpose is broader: simulate a world's natural state and evolution, model events and historical scenarios, and calculate the consequences of intentional interventions. Do not treat a proposed full regression filter as an existing capability or an immediate requirement.
 
 ## 1. Three distinct simulation uses
@@ -85,7 +87,9 @@ StarSim generates or supplies the celestial body and its initial world data. Ter
 
 Sphere models organize the detailed physical and environmental systems associated with a celestial body. The central CelestialBody record provides the common body identity and core properties; the sphere models hold their respective detailed data.
 
-TerraSim models processes and exchanges across those systems. A sphere's stored state and the rules governing its interaction with other spheres are related but distinct concerns.
+TerraSim models processes and exchanges across those systems. A sphere's stored state and the rules governing its interaction with other spheres are related but distinct concerns. Spheres are not independent simulation silos: processes can transfer matter and energy between them, and those transfers can produce consequential changes in multiple sphere states. TerraSim should represent the important exchanges and feedbacks rather than merely update each sphere independently and combine the results afterward.
+
+The level of detail is selective. Model the real-world mechanisms and relationships that materially affect planetary conditions, habitability, resource availability, and management decisions; use explicit approximations for less consequential or poorly characterized processes. This is a game-oriented model, not an attempt to reproduce every process in a real planetary system.
 
 Examples of coupled processes include:
 - atmosphere–hydrosphere exchanges, including evaporation, condensation, precipitation, and greenhouse effects;
@@ -126,11 +130,21 @@ Use the following questions to guide that evaluation:
 
 Existing capabilities may already satisfy some or much of this direction. This is a framework for future evaluation and tuning, not an instruction to rebuild working systems or expand every model immediately.
 
-## 7. Sphere-model reference
+## 7. Gameplay priorities and timescales
+
+TerraSim's simulation effort should reflect the conditions most relevant to terraforming and planetary management. Atmospheric and surface conditions have the highest practical priority because they directly affect habitability, protection, settlement suitability, and the results of interventions. Hydrological and biological processes should be represented where they materially influence those conditions and management outcomes.
+
+The Geosphere remains important primarily through its effects on the surface environment, other spheres, and resource availability. Relevant examples include volcanic/outgassing contributions to atmospheric composition; weathering, erosion, dissolution, and water-rock interactions affecting surface materials and hydrology; and soil/regolith composition affecting biosphere suitability and resource use. Detailed geological evolution for its own sake is a lower priority. Geosphere processes need enough fidelity to produce meaningful downstream effects, not comprehensive internal geological simulation.
+
+TerraSim must also respect the different timescales of processes. The time required to carry out an intervention is distinct from the onset and development of its environmental response, and both are distinct from the interval over which a simulation is advanced. Some operational, atmospheric, and surface effects may be relatively quick; mixing, water movement, ecological responses, and longer-term environmental trends may take longer. These are relative process behaviors, not fixed universal time bands or prescribed durations.
+
+Long simulation advances and projections should preserve meaningful rates, delays, dependencies, and accumulated effects. Avoid treating every process as instantaneous on each update, but also avoid unnecessary detail that prevents useful gameplay projections. Use plausible approximations and avoid false precision where the model or evidence does not justify it.
+
+## 8. Sphere-model reference
 
 Detailed sphere data ownership and the relationship between sphere state and TerraSim's cross-sphere processes are documented in [Celestial-Body Sphere Models & Environmental Interactions](sphere_models_and_interactions.md). That page also records a focused implementation snapshot and identifies where current service behavior is simplified or incomplete.
 
-## 8. Scope boundary
+## 9. Scope boundary
 
 The initial implementation and gameplay emphasis has been planetary terraforming, especially worlds such as Mars and Venus. That priority does not narrow TerraSim's underlying purpose to intentional world modification. Natural-state simulation, historical calibration, and event modeling are foundational capabilities and validation goals for the engine.
 
