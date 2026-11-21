@@ -159,6 +159,52 @@ The intended progression is:
 
 The goal is not to train the AI to select whichever historical profile has the highest score. It is to help it understand the available approaches, their assumptions, their trade-offs, and the conditions under which they may be useful.
 
+#### Task V2 / V2.1 development status and intended operating model
+
+The early Venus and Titan atmospheric-harvesting mission profiles were fully worked-out, repeatable mission designs. They were not abandoned when the V2 work began. Their operational patterns and mission-specific requirements were generalized into reusable task concepts, and new draft `tasks_v2` definitions were constructed from that work. The specific early profiles remain design evidence and examples; the direction is to express their reusable capabilities through the evolving task system rather than preserve each as a separate, fixed mission implementation.
+
+The intended system is **composable and objective-led**:
+
+- **Task definitions** describe reusable operational capabilities: what work can be performed, its objective and expected result, required equipment/craft capabilities and fittings, assets, materials, personnel and infrastructure, dependencies and environmental constraints, execution behavior, and success/failure conditions. The exact fields and supported behaviors are still being developed; this is the intended scope, not a claim that every draft task already captures or executes all of them.
+- **Mission plans** combine applicable tasks into an objective-driven plan, including the relationships and dependencies between the work.
+- **Registry / phase definitions** provide reusable operational groupings and connect mission-plan logic to task definitions.
+- **Profiles** supply context for a particular operating environment and runtime defaults, such as the target body's conditions and available parameters.
+- **AI Manager** evaluates the objective and actual conditions, chooses which capabilities are needed, determines suitable assets and fittings, and composes/adapts the work plan. Players should ultimately be able to use the same capability library when planning and directing their own operations.
+
+For example, an asteroid-mining objective may require prospecting, capture or positioning where applicable, mining deployment, processing, storage, and cargo transport. The planner should identify the applicable tasks, determine which available craft and assets can perform them, establish the required fittings and supporting resources, and sequence the work according to dependencies and conditions. The task library is therefore not a fixed catalog of complete missions for the AI Manager merely to select and replay. It is a reusable capability system from which missions can be constructed.
+
+The supplied V2.1 migration templates are **work in progress**, not a finalized or fully validated schema. They describe a proposed four-part organization: mission-plan blueprints, registry/phase definitions, environment/runtime profiles, and parameter-driven task units. The draft direction includes parameter interpolation, exclusive asset locking, Bus-Topology registration, and a LegacyPortAdapter bridge for compatibility with existing port-based execution. The migration notes identify corresponding engine and test-harness work that is still required. These capabilities must not be described as implemented or proven solely because they appear in templates. The early harvesting profiles are source material for this generalization; the templates and draft tasks are the current evolving representation.
+
+#### Rake buildout benchmark — intended end state
+
+The immediate practical objective is to build an integrated Rake-driven test harness that can **run and evaluate the Luna buildout as an operating system**, not just validate isolated mission files or demonstrate one-time construction. The Rake harness is a development/validation instrument and reference baseline. It should exercise the real application services, task execution, inventory/resource accounting, logistics, and settlement simulation wherever those are implemented; it should expose missing or stubbed behavior rather than silently treating simulated placeholders as production results.
+
+The integrated benchmark is intended to cover the connected operational chain:
+
+- establish the initial Luna foothold and deploy the required craft, equipment, cargo, and settlement infrastructure;
+- execute construction and local industrial/ISRU work, including the regolith-processing and manufacturing chain;
+- establish and operate the required power, storage, life-support, and resource-handling systems;
+- coordinate Earth-side imports and resupply against delivery timing, available transport, inventory, and available USD;
+- run the Venus atmospheric-gas harvesting and return supply chain, including the gases needed by the Luna operation;
+- operate and validate the fuel-production, storage, transfer, and consumption loops;
+- sustain the human population through ongoing operations, maintenance, and resupply; and
+- track costs, income, cash constraints, shortages, production, losses, and operational outcomes over elapsed simulation time.
+
+The benchmark should report measurable initial conditions, task/mission execution, resource and inventory changes, construction and production outputs, transport and timing results, import/purchase decisions, financial state, crew-survival conditions, failures, and final operating status. It should be repeatable enough to compare changes and to provide evidence about what works, what fails, and which task definitions or services need further development. The specific acceptance thresholds and scenario coverage remain to be defined as the harness is assembled.
+
+The three supplied Rake examples show pieces of this work, but they are **separate and incomplete experiments, not yet the integrated benchmark**:
+
+- `lunar_precursor_mission_validation.rake` checks selected bootstrap and interplanetary mission/profile/manifest structures, expected hardware and outputs, variance-based harvesting yields, and a modeled timeline. Its own comments distinguish modeled yield estimates from production calculations.
+- `lunar_base_with_isru_pipeline.rake` creates a Luna settlement, loads a precursor manifest, invokes the existing task engine, and exercises construction and an ISRU/manufacturing example. The supplied version contains explicitly labeled stubbed production/inventory behavior and auto-fulfills construction material requests for the simulation.
+- `luna_operations_simulation.rake` runs a daily-tick operations service against an already-deployed settlement and reports import decisions and tracked inventories. It depends on a prior deployment and does not itself construct or supply the complete operation.
+
+These scripts are useful starting evidence and should be reviewed for reusable logic, dependencies, and gaps; they should not simply be treated as one finished test by concatenating them. The intended work is to connect the necessary capabilities into a coherent, repeatable buildout-and-operations benchmark and progressively replace validation-only or stubbed paths with verified application behavior.
+
+**Relationship to AI Manager validation:** first use the Rake harness to establish and measure a viable reference operation. Then assess whether the AI Manager can independently select and compose the reusable tasks, determine assets and fittings, generate its own deployment/cargo plan, and sustain the same objective under the tested constraints—without invoking or replaying the Rake script. Later tests should vary conditions and introduce shortages or failures to evaluate adaptation. The Rake is the benchmark and evidence source; it is not the AI Manager's permanent operating logic.
+
+**Current status:** task V2/V2.1 definitions and templates remain under development; the early Venus/Titan profiles have been generalized into this task direction; the supplied Rake files cover separate portions of the Luna bootstrap, ISRU, and operations problem; and the integrated end-to-end Luna buildout benchmark remains to be built and validated.
+
+
 
 #### External world examples and world-generation learning
 
