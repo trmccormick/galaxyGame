@@ -5,7 +5,7 @@
 > *Audit Summary:* Raw atmospheric intake composition was cross-checked against the current `TerraSim::AtmosphericTransferService`; this does not verify the complete terraforming option set, economics, limits, or production cargo workflow.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-21 (raw atmospheric intake composition reconciled)  
+**Last Updated**: 2026-11-21 (CNT production location clarified)  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [modular_orbital_panel_swarms.md](modular_orbital_panel_swarms.md), settlement and logistics pages
 
 This page is the wiki home for planetary-scale atmosphere modification options. Multiple pathways exist. A fast raw-gas pressure rise is primarily a **protection** measure for population and infrastructure. Traditional terraforming (climate and biosphere goals) and refined composition control are separate, later choices. Softer longer-horizon approaches remain available.
@@ -64,11 +64,11 @@ This option lets a settlement reach useful protective pressure thresholds withou
 
 **Owner clarification (2026-11-21):** these are two different processes serving different operational goals. The skimmer's limited onboard CO₂ processing exists to fill its LOX tank for its own mission. Industrial CO₂ processing exists to make solid carbon/CNT feedstock. Do not merge these into one skimmer process or describe the skimmer as manufacturing CNTs.
 
-The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied and retained as LOX; CO is handled according to the craft's storage/venting configuration. The industrial route converts CO₂ into solid carbon for CNT production and produces oxygen as a co-product. Industrial processing takes place in dedicated industrial equipment, downstream of harvesting and transport.
+The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied and retained as LOX; CO is handled according to the craft's storage/venting configuration. The industrial route converts CO₂ into solid carbon for CNT production and produces oxygen as a co-product. Industrial processing takes place in dedicated industrial equipment, downstream of feedstock acquisition and transport. **It is not specific to Venus:** CNT production can be established wherever suitable carbon feedstock and industrial capability are available. For example, Luna can manufacture CNTs using imported CO₂. The viable location and economics depend on resource availability, imports, energy, equipment, and logistics—not on a Venus-only production rule.
 
 ## Refined Brute-Force Venus → Mars Method (O₂/N₂ + CNT Shells)
 
-**DIRECTION** — higher-processing, higher-control option that can support traditional terraforming goals.
+**DIRECTION** — higher-processing, higher-control option that can support traditional terraforming goals. This is one example of a supply chain that uses Venusian CO₂ as CNT feedstock; it does not establish Venus as the only place where CNTs can be manufactured.
 
 ### End-to-End Pipeline
 
@@ -95,8 +95,8 @@ The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied
 
 ### Economic Characteristics
 
-- **Venus-side cost dominance**: Heavy capital for liquefaction, freezing, CNT lines, and mass drivers is weighted toward Venus because of its structural need to shed excess pressure.
-- **Low marginal regret**: Venus overabundance means lost canisters carry near-zero economic penalty (“firehose” economics).
+- **Example-specific investment**: In this Venus-to-Mars configuration, some capital for liquefaction, freezing, CNT lines, and mass drivers may be placed at Venus to use its available CO₂ and volatile inventory. This is a supply-chain choice, not a universal requirement that CNT plants be located on Venus.
+- **Feedstock economics**: CO₂ abundance, acquisition cost, import cost, energy, plant capacity, and transport determine where CNT manufacture is practical. Do not assume zero-value feedstock or negligible losses merely because Venus has a large atmosphere.
 - **Fuel still required**: Skimmers, platforms, and local transport need CH₄ or H₂.
 - **No expensive interplanetary propellant for the gas itself**: Electromagnetic launch replaces chemical rockets for the Venus→Mars leg.
 
@@ -118,16 +118,16 @@ Venus cannot easily produce the heavy metals and structural materials needed for
 
 ---
 
-### Venus Industrial Processing — CO₂ Cracking & Greenhouse Gas Handling (DIRECTION)
+### Industrial CO₂ Processing — CNT / Structural Carbon & Greenhouse Gas Handling (DIRECTION)
 
-**Industrial framing:** the Venus route is primarily industrial (CNT / structural carbon production), with useful gas products and possible export. It is distinct from the skimmer's limited onboard processing, whose operational purpose is to produce and retain LOX for the craft's own mission fuel cycle.
+**Industrial framing:** dedicated industrial equipment can process available CO₂ feedstock into solid carbon for CNT / structural-carbon production, with useful gas products and possible export. This capability is location-independent in principle: Venus is one possible CO₂ source, while Luna can also support production when CO₂ is imported. The practical location follows feedstock availability and the wider industrial/logistics balance. This is distinct from the skimmer's limited onboard processing, whose operational purpose is to produce and retain LOX for the craft's own mission fuel cycle.
 
 **Keep the two CO₂ processes distinct:**
 
 - **Skimmer onboard processing (Mk1):** the HLT takes in the current mixed atmosphere and processes only enough captured CO₂, within its onboard capability, to produce O₂ for liquefaction and storage in the craft's LOX tank. The reaction is `2CO₂ → 2CO + O₂`. This supports the skimmer's LOX/fuel requirement; it is not the CNT manufacturing process. CO handling follows the skimmer's configured storage/venting policy. See [Skimmers & Mixed Volatiles](../logistics/skimmer_and_mixed_volatiles.md).
 - **Industrial CO₂ processing:** a separate industrial plant or depot processes CO₂ feedstock to produce solid carbon for CNT manufacture, with O₂ as a co-product. This is the route for producing structural carbon/CNT material and supporting the industrial O₂/N₂ export pipeline. It is not performed by the Mk1 skimmer's onboard LOX-processing equipment.
 
-Pure carbon or CNT feedstock export is allowed and useful; nothing restricts it.
+Pure carbon or CNT feedstock export is allowed and useful; nothing restricts it. The plant need not be located at the source of the CO₂: transporting CO₂ to an industrial site, including Luna, is a valid supply option when its costs and capacity make sense.
 
 **Greenhouse-gas handling:** Water produced by any H₂ + CO₂ reaction is a potent greenhouse gas. It must be removed from the Venusian atmosphere and stored in cold-shadow CNT tanks behind the L1 shade until surface temperature and pressure conditions later allow safe re-injection. This is a staging step, not an abandonment — greenhouse agents are retained for later Mars atmospheric use.
 
@@ -166,7 +166,7 @@ Continued reliance on Martian polar CO₂, subsurface ice, and industrial greenh
 
 **DIRECTION**
 
-The AI Manager evaluates pathways as capital projects against EAP, timeline pressure, and available industrial capacity:
+The AI Manager evaluates pathways as capital projects against EAP, timeline pressure, feedstock availability, transport cost, and available industrial capacity. It should compare locating CNT plants near a CO₂ source with importing CO₂ to another industrial hub (for example, Luna):
 
 - Need rapid protective pressure, magnetosphere already online → favor raw-gas mass-driver transfer.
 - Need controlled O₂/N₂ composition for longer-term terraforming goals → favor refined CNT-shell pipeline.
