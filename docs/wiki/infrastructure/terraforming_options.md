@@ -66,6 +66,18 @@ This option lets a settlement reach useful protective pressure thresholds withou
 
 The skimmer's `2CO₂ → 2CO + O₂` reaction produces oxygen that is liquefied and retained as LOX; CO is handled according to the craft's storage/venting configuration. The industrial route converts CO₂ into solid carbon for CNT production and produces oxygen as a co-product. Industrial processing takes place in dedicated industrial equipment, downstream of feedstock acquisition and transport. **It is not specific to Venus:** CNT production can be established wherever suitable carbon feedstock and industrial capability are available. For example, Luna can manufacture CNTs using imported CO₂. The viable location and economics depend on resource availability, imports, energy, equipment, and logistics—not on a Venus-only production rule. **Owner clarification (2026-11-21): Venus is expected to become a major atmospheric-gas and materials industrial powerhouse**, not merely a CNT production site. Its atmospheric composition provides abundant CO₂ and N₂ feedstocks and supports O₂ and CO processing/recovery, while strong solar-energy availability can power substantial industrial capacity. Expected outputs and activities include CNT/solid-carbon manufacture, O₂ production and handling, N₂ separation and supply, and CO₂ harvesting, processing, storage, and export. Other locations remain capable of selected production where supplied with suitable feedstock and industrial capacity; Luna is an example, not an assertion that every location has Venus's natural advantages.
 
+
+## Venus Industrial Geography and Development Pattern (DIRECTION)
+
+**Owner clarification (2026-11-21):** Venus's industrial role follows from its location and planetary makeup; it does not depend on making the planetary surface accessible. Routine surface access and surface-based industrial development are not assumed to be practical. The intended development pattern is atmospheric and orbital:
+
+- **Cloud cities / high-altitude platforms:** provide inhabited and operational facilities in suitable atmospheric layers, including places to service atmospheric harvesting and processing systems.
+- **Orbital infrastructure:** provides depots, industrial platforms, storage, transport interfaces, and larger-scale manufacturing and logistics capacity.
+- **Imported asteroid feedstock:** asteroids are brought into the Venusian industrial system for processing and conversion into useful materials and products. Venus's atmospheric feedstocks and solar-energy environment complement these imported solid-material resources.
+- **Distributed, expandable infrastructure:** the initial two stations are an establishment foothold, not a fixed limit or the complete industrial buildout. Further cloud-city and orbital facilities can be added as capacity, demand, and logistics justify them.
+
+Do not imply that Venus's industrial future requires surface mines, factories, or routine surface access. Its atmospheric resources, solar-energy availability, orbital facilities, cloud-city infrastructure, and imported asteroid material together support the expected industrial hub. Exact facility counts, locations, asteroid sources, conversion flows, and construction sequence remain OPEN.
+
 ## Refined Brute-Force Venus → Mars Method (O₂/N₂ + CNT Shells)
 
 **DIRECTION** — higher-processing, higher-control option that can support traditional terraforming goals. This is one example of a supply chain that uses Venusian CO₂ as CNT feedstock; it does not establish Venus as the only place where CNTs can be manufactured.
