@@ -40,6 +40,12 @@ Currency, ledgers, and market friction for off-world play.
 
 ---
 
+### DIRECTION — Player-facing currency boundary from the legacy dual-economy model
+
+The older dual-economy reference describes USD as the currency for NPC and institutional Earth-side procurement, while player-facing off-world transactions use GCC. It also states that players do not transact directly in USD. The current wiki already establishes the broad Earth-USD / off-world-GCC distinction and that players cannot use the NPC Virtual Ledger.
+
+The exact rule that players never transact directly in USD is retained here as **DIRECTION from the legacy source**, not promoted to a fully confirmed universal restriction. The supported player starting contexts and any future Earth-side player activity should be reconciled before treating this as a hard rule.
+
 ## Open options
 
 | Topic | Notes |
