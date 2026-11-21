@@ -51,7 +51,7 @@ The Sol star is the host for all playable bodies. Its G2V classification and ~4.
 | **Constraints** | Deep-well launch penalties phase out heavy raw material exports during Phase 1; Earth trade uses USD; shipping cost is real |
 | **Key infrastructure** | LEO depot, Earth L1 fuel depots, Earth L1 shipyard (planned, not implemented as of last audit) |
 
-Earth's gravity well creates the primary launch bottleneck. Early outbound craft cannot carry Earth-ascent fuel overhead efficiently, so orbital fuel depots at LEO and L1 are prioritized before any deep-space expansion.
+Earth's gravity well creates the primary launch bottleneck. Early outbound craft cannot carry Earth-ascent fuel overhead efficiently. The current owner-confirmed bootstrap order is Luna foothold → L1 Depot → second depot near LEO → main station / shipyard infrastructure; orbital depots reduce the launch and staging burden before deep-space expansion.
 
 ### Luna (Moon)
 
