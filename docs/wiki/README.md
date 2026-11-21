@@ -52,6 +52,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Eden disconnect & emergent history](player/eden_disconnect_and_emergent_history.md) | Snap event, post-isolation emergent states, system recovery protocols |
 | [Settlement ownership and governance](player/settlement_ownership_and_governance.md) | Distinction among Settlement, Colony, corporation, and player; ownership vs governance relationships |
 | [Optional discoveries & Easter eggs](player/easter_eggs_and_discoveries.md) | Optional mysteries, scientific milestones, historical artifacts, humorous events, and science-fiction-inspired discoveries |
+| [Space and Surface Operations](player/space_and_surface_operations.md) | Intended gameplay boundary between spacecraft-based space operations and planetary surface operations; craft autonomy, operational groups, routes, activities, and asynchronous execution |
 
 ---
 
