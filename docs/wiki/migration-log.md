@@ -103,3 +103,10 @@ Updated [Terraforming Options](infrastructure/terraforming_options.md) after com
 The current `TerraSim::AtmosphericTransferService#perform_raw_transfer` does proportional extraction from source atmosphere gas records. Its existing raw-transfer path also contains hard-coded source-name extraction limits (uncapped Venus, 5% Titan, 20% other bodies) and directly adds delivered gas to a target body's atmosphere at a default 98% efficiency. These are recorded as current implementation behavior, **not** approved production skimmer-cargo rules. Generic transfer ownership, extraction-limit policy, loss accounting, and integration with craft mixed-volatiles inventory remain unresolved and must not be inferred from this legacy TerraSim path.
 
 Only the specific intake-composition contradiction was corrected in this pass. The rest of the terraforming options page, including numerical/engineering assumptions, mass-driver logistics, atmospheric protection thresholds, and economic models, remains direction/open pending further source and code review. No application code or frozen source documents changed.
+
+
+## 2026-11-21 — Separate skimmer LOX processing from industrial CNT production
+
+Applied the owner's clarification to [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) and [Terraforming Options](infrastructure/terraforming_options.md). The HLT's limited onboard CO₂ reaction (`2CO₂ → 2CO + O₂`) exists to produce oxygen that is liquefied and retained in the craft's LOX tank for its own mission fuel cycle. It is not a CNT process. A separate industrial CO₂-processing operation converts CO₂ into solid carbon for CNT/structural-material manufacture, with O₂ as a co-product; that operation belongs to dedicated industrial equipment downstream of harvesting/transport.
+
+This resolves the apparent conflict: both descriptions are valid, but they refer to different equipment, process roles, and products. The skimmer page now explicitly excludes CNT manufacture from onboard processing, and the terraforming page describes the two routes separately. No application code or frozen source documents changed.
