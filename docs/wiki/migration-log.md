@@ -124,3 +124,10 @@ The skimmer's onboard `2CO₂ → 2CO + O₂` reaction remains a separate proces
 Refined [Terraforming Options](infrastructure/terraforming_options.md) and [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) after the owner's follow-up. CNT manufacture is not Venus-exclusive, but Venus is expected to become a major industrial powerhouse for CNT production because it combines abundant CO₂ feedstock with strong power availability. Luna and other locations can also manufacture CNTs when suitable feedstock and industrial capability are available; Luna using imported CO₂ is an explicit valid example. The earlier correction should therefore not be read as making Venus and Luna equally advantaged or diminishing Venus's expected industrial role.
 
 The skimmer's onboard CO₂-to-LOX process remains separate from dedicated industrial CNT production. No application code or frozen source documents changed.
+
+
+## 2026-11-21 — Venus's broader atmospheric-gas and materials industry
+
+Expanded [Terraforming Options](infrastructure/terraforming_options.md) and [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) after the owner's clarification. Venus's expected industrial role is broader than CNT production: its atmospheric composition provides CO₂ and N₂ feedstocks and supports O₂ and CO processing/recovery, while strong solar-energy availability can power substantial industry. The expected industrial profile includes CNT/solid-carbon manufacture; O₂ production and handling; N₂ separation and supply; and CO₂ harvesting, processing, storage, and export. CNTs remain a major output, but Venus should be represented as a broad atmospheric-gas and materials industrial hub, not merely a gas source for Mars.
+
+Other locations can still process gases or manufacture CNTs when supplied with appropriate feedstocks and industrial capability; Luna using imported CO₂ remains a valid example. This broader Venus advantage does not make production exclusive to Venus. No application code or frozen source documents changed.
