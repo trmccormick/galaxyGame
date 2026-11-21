@@ -91,7 +91,42 @@ The prototype may use clearly identified mock craft and route data. Interactions
 
 GalaxyGame craft are autonomous operational assets, not player-character avatars. Do not introduce EVE pilots, characters, fleet commanders, EVE terminology, combat, or EVE backend/game rules. Player Space asset interaction remains distinct from Admin/AI Manager operational oversight.
 
-Fleet creation, fleet organization, multi-craft coordination, authoritative route finding, navigation simulation, command execution, and production backend/API integration are separate capabilities or later work; they are not prerequisites for this initial individual-craft presentation.
+Fleet organization and multi-craft coordination belong in the separate Fleet Manager view described below; they are not part of this individual-craft presentation. Authoritative route finding, navigation simulation, command execution, and production backend/API integration are also outside this initial presentation task.
+
+### Fleet Manager and distributed fleet operations
+
+**ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
+
+GalaxyGame retains a Player **Fleet Manager** view, using the EVE Dashboard Fleet Manager as a layout and interaction reference. This is a fleet-level operational coordination workspace, distinct from the individual-craft tracking workspace above. Reuse and adapt useful existing EVE Dashboard layout and JavaScript where practical; do not reproduce EVE-specific fleet mechanics or assume the original fleet model is authoritative.
+
+A **fleet is an operational grouping of craft assigned to a shared objective or coordinated operation**. Fleet membership does not mean the craft are physically together, travelling in formation, or even located in the same solar system. Fleet members may be at different locations in one system or distributed across multiple systems, following independent routes and performing different tasks that contribute to the same operation. A craft may be assigned to an operation without being near the other participating craft. Do not make proximity, formation, or simultaneous travel a requirement for fleet membership.
+
+For example, a player may organize an asteroid-station construction fleet in which:
+- construction and assembly craft work at the asteroid;
+- separate harvesting craft operate elsewhere in the system collecting electromagnetic material (EM);
+- transport craft carry harvested EM and other supplies to the construction site;
+- support craft provide fuel, maintenance, replacement parts, or other services.
+
+These craft are one fleet because their assignments and resource movements support the shared station-construction objective, not because they occupy the same location. The same principle applies when a player has multiple fleets conducting separate operations in different systems.
+
+The Fleet Manager should retain the recognizable EVE-inspired fleet-management presentation while adapting its content to GalaxyGame. Its purpose is to let the player select and oversee fleets/operations, understand how distributed craft contribute, and identify work that needs attention. Relevant information includes:
+- the fleet/operation identity, objective, current status, and overall progress;
+- participating craft, their assigned roles/tasks, current locations, and operational states;
+- the geographic distribution of participating assets across relevant locations and systems;
+- planned or active movements between work sites;
+- material/resource flows and deliveries supporting the objective;
+- dependencies between tasks (for example, construction waiting on an EM delivery);
+- delays, shortages, failures, communication limitations, or other issues requiring attention.
+
+The view should make the shared objective and coordination relationships clear without implying that every detail is a live, authoritative simulation value. For the UI prototype, clearly identified mock fleet, craft, task, location, delivery, and progress data are acceptable. The first presentation pass should establish the screen and useful selection/overview interactions; backend persistence, real task orchestration, logistics simulation, authoritative route finding, and command execution are not prerequisites.
+
+Fleet Manager and Individual Craft Tracking are complementary views:
+- **Fleet Manager** organizes by shared operation/objective and shows the distributed work of its participating craft.
+- **Individual Craft Tracking** organizes around one selected spacecraft and shows its own status, position, and route.
+
+Selecting a craft from a fleet should provide a path to inspect that craft in the individual-craft tracking workspace. The Fleet Manager must not replace or absorb that workspace, and the individual-craft workspace must not be expanded into a fleet-management screen. Fleet membership and operation assignments should be represented as operational relationships, not as physical formations.
+
+This is a Player coordination interface, not the Admin or AI Manager oversight interface. The AI Manager and craft automation may continue authorized work subject to the communications and authority model; the Player Fleet Manager presents the player's view of the operation and does not imply unrestricted real-time control.
 
 ### Player feedback on wormhole-network strategy
 
