@@ -10,7 +10,7 @@ This page is the wiki home for the intended progression from early AI-built foot
 
 ## ESTABLISHED INTENT — Required Sol bootstrap, flexible expansion
 
-The initial Sol progression has two required milestones: establish the **Luna foothold**, then establish the **Earth–Moon L1 station and fuel depot**. These are foundational requirements for opening the wider system; they are not optional examples among interchangeable starting strategies.
+The initial Sol bootstrap has a required order: establish the **Luna foothold**, then the **L1 Depot**, then a **second depot near LEO**, and then the **main station / shipyard infrastructure**. Luna's industrial output supplies bulk construction materials; specialized and high-tech imports continue to come from Earth as needed. These are foundational dependencies, not optional examples among interchangeable starting strategies. This is the current owner-confirmed sequence (2026-11-21); older frozen deployment plans that put the LEO depot first are historical and do not override it.
 
 Beyond Earth, expansion is deliberately more flexible. The AI Manager should assess each destination and choose a viable development path based on local bodies and resources, available technology, fuel, logistics, and existing infrastructure. Do not impose a universal numbered phase sequence or require every system to reproduce the exact Sol construction recipe.
 
