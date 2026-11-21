@@ -57,7 +57,13 @@ Biosphere behavior depends on environmental conditions and can in turn affect at
 
 ## 3. TerraSim and cross-sphere interactions
 
-TerraSim is responsible for calculating how environmental systems interact and evolve. Examples include:
+TerraSim is responsible for calculating how environmental systems interact and evolve. Its purpose is to support meaningful terraforming and planetary-management gameplay through a **simplified, physically informed planetary model**. It is not intended to reproduce SimEarth or provide a complete, high-fidelity simulation of every planetary process.
+
+The spheres are separate owners of environmental state, not isolated simulation silos. TerraSim needs to represent the important transfers of matter and energy, and the feedbacks that materially affect planetary outcomes. A process in one sphere may change another sphere's state; those changes should be reflected coherently rather than treating each sphere as an independent update followed by a simple combination of results.
+
+The appropriate level of detail is determined by gameplay and operational relevance. Real-world mechanisms and relationships should inform the model where practical, with simplified approximations where necessary. Simplification must not mean arbitrary outcomes: assumptions, limitations, and uncertainty should remain visible.
+
+Examples include:
 
 | Interaction | Example processes |
 |---|---|
@@ -68,7 +74,7 @@ TerraSim is responsible for calculating how environmental systems interact and e
 | Biosphere ↔ Geosphere | Soil formation, nutrient cycling, and biological weathering |
 | Energy input ↔ multiple spheres | Stellar heating, internal heat, albedo, and coupled temperature response |
 
-The list is illustrative, not a claim that every interaction is fully implemented.
+The list is illustrative, not a claim that every interaction is fully implemented. The required depth of each interaction is not equal: prioritize processes according to their effects on atmospheric conditions, surface conditions, habitability, resource availability, and management decisions.
 
 Interaction rules must account for the body's physical nature and active configuration. They should not assume that every world is Earth-like or that all spheres participate in every process.
 
@@ -162,10 +168,28 @@ When the relevant simulation work is prioritized, evaluate:
 
 These are evaluation questions, not immediate implementation tasks.
 
-## 8. Scope boundary
+## 8. Scope boundary and modeling priorities
 
-The initial TerraSim development and gameplay emphasis has been planetary terraforming. The sphere models and their broader physical data are not limited to that use case.
+TerraSim's practical purpose is to support GalaxyGame's terraforming and planetary-management gameplay. It should model enough of a world's environmental behavior for interventions and management decisions to have plausible, understandable, and consequential outcomes. It is a simplified planetary model informed by real-world science—not a complete planetary simulation, a high-fidelity scientific platform, or a recreation of SimEarth.
 
-Natural-world simulation and reasonable forward projection are foundational TerraSim goals. Historical calibration against Earth, Mars, and Venus helps tune the shared models. More specialized non-terraforming worlds, including ice moons, can be addressed when their simulation requirements are prioritized.
+Simulation effort should be concentrated where it matters most to gameplay:
+
+1. **Atmospheric conditions:** composition, pressure, temperature, gas movement, accumulation, and loss. These strongly affect habitability, protection, and terraforming.
+2. **Surface conditions:** temperature, radiation exposure, water and ice distribution, soil/regolith properties, erosion, and environmental suitability for operations and settlements.
+3. **Hydrological and biological interactions:** model these to the extent that they materially affect surface conditions, atmospheric behavior, habitability, and planetary management.
+4. **Geosphere processes:** represent geological state, materials, and processes primarily to the extent that they influence the surface environment, other spheres, and resource availability. Detailed ongoing geological evolution is a lower priority unless a particular gameplay use case depends on it.
+
+The Geosphere is therefore important chiefly as a source of materials, surface properties, and processes that affect other spheres. Examples include outgassing and volcanic emissions affecting the atmosphere; weathering, erosion, and dissolution affecting surface materials and hydrology; and soil/regolith composition influencing biosphere suitability and resource use. Geological processes should be modeled deeply enough to produce the relevant consequences, not expanded for geological detail alone.
+
+### Timescale relevance
+
+TerraSim must account for the different response rates of environmental processes. Operational interventions and some atmospheric or surface changes may occur relatively quickly, while mixing, water movement, ecological response, and longer-term environmental trends may unfold over longer intervals. These are relative process characteristics, not a fixed set of universal simulation bands or prescribed durations.
+
+The model should distinguish:
+- the time required to perform an intervention or operational activity;
+- when an environmental response begins and how quickly it develops;
+- the interval over which the simulation is advanced.
+
+Fast-forwarding or projecting over long game intervals must preserve meaningful process rates, delays, dependencies, and accumulated effects. A change should not automatically produce an instantaneous global response simply because the simulation advances in a single update. Conversely, processes that materially affect gameplay should not be made so slow or detailed that their outcomes cannot be usefully evaluated. Avoid false precision; use plausible approximations appropriate to the game's time model.
 
 Preserve the existing modular sphere architecture, audit before redesigning, and extend the physical interactions deliberately rather than building replacement systems prematurely.
