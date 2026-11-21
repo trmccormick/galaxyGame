@@ -6,13 +6,27 @@
 
 This page consolidates all still-valid material about propulsion classes (HLT tiers, tug technology progression) and the heavy-tug economy that operates across the pre-player pipeline, station construction pipeline, Sol system reference, and related pages. It covers what is stated in live wiki sources; gaps are marked **OPEN**.
 
+## Current Ship-Class Set (DIRECTION)
+
+The current early-game design is intentionally limited to **three ship classes**:
+
+| Ship class | Primary role in the current setup | Initial construction approach |
+|---|---|---|
+| **HLT (Heavy Lift Transport)** | Flexible transport ships that can be fitted/configured for assigned operations, including cargo transport and the early Venus atmospheric-harvesting role. | Early HLT Mk1 ships are produced on Earth. Later marks may use more capable construction facilities as the industrial base develops. |
+| **Cycler** | Long-range/interplanetary transport infrastructure operating on established routes; may carry or rendezvous with HLT support craft. | First cyclers are constructed in orbit at the Earth–Moon L1 shipyard. |
+| **Tug** | Heavy-duty orbital construction, body capture, station-keeping, and (with appropriate later capability) asteroid/moon relocation. | First tugs are constructed in orbit at the Earth–Moon L1 shipyard. |
+
+These are the three ship classes in the current design baseline, not an exhaustive limit on every possible future vehicle concept. HLT is a ship class; Mk1, Mk2, Mk3, and later marks are successive versions within that class. Roles such as atmospheric harvester describe how an HLT is fitted and assigned, not an additional ship class. The initial Venus example is an Earth-produced HLT Mk1 fitted for harvesting. The same HLT class also supports cargo transport between Earth, Luna, and L1; later HLT marks may be used for that work without being required to share the Mk1 Venus-harvesting fit.
+
+The initial Cycler and Tug construction location is a deliberate infrastructure dependency: both are built in orbit at L1, rather than being early Earth-built ships. This assumes the L1 shipyard and its supporting industrial/logistics capacity have first been established. Exact production rates, fleet counts, and detailed build recipes remain OPEN.
+
 ---
 
 ## 1. Propulsion Classes
 
 ### 1.1 Heavy Lift Transport (HLT) Tiers
 
-The HLT fleet is the primary interplanetary transport until an L1 shipyard exists. Three Mk tiers are defined, each with increasing range, thermal/cryogenic capability, and build site.
+The HLT is one of the three current ship classes and provides flexible transport capability. Three HLT Mk tiers are described in the current wiki baseline, with increasing range and thermal/cryogenic capability; Mk1 is Earth-produced, while later marks are associated with L1 construction.
 
 | Tier | Primary Build Site | Operational Range | Thermal & Cryo Capabilities | Max Transit Time |
 |------|-------------------|-------------------|----------------------------|-----------------|
