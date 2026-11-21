@@ -115,13 +115,13 @@ These quantities are related but not interchangeable. Exact yield curves, captur
 
 **OWNER-CONFIRMED DESIGN INTENT — 2026-11-14**
 
-A natural wormhole is one paired occurrence with two connected apertures. The apertures are mechanically independent for mass accumulation and stabilization, but they are not separate, unrelated wormholes.
+A natural wormhole is one paired occurrence with two connected apertures. The apertures are mechanically independent for mass accumulation and stabilization, but they are not separate, unrelated wormholes. Each side's counterbalance-relevant properties and local conditions affect that side's stability and mass-transfer outcome; the two sides must therefore be evaluated separately rather than treated as physically interchangeable.
 
 - Each aperture maintains its own accumulated mass-transfer usage against its own mass limit.
 - Stabilization technology operates independently on each aperture.
 - The technology captures EM ejected into local space, contains and directs captured EM back toward the corresponding aperture, and pushes the EM back into that side.
 - Successful EM pushback restores/resets the accumulated mass-limit usage for that aperture. It does not reset the other aperture's counter.
-- The two apertures remain parts of the same paired wormhole occurrence throughout these independent operations.
+- The two apertures remain parts of the same paired wormhole occurrence throughout these independent operations. Counterbalance is also endpoint-sensitive: the relevant mass properties and arrangement on each side influence its own counterbalance state and therefore the side's ability to withstand accumulated transfer. The Sol–Eden asymmetry follows from this distinction: Jupiter's substantial mass provides the Sol-side counterbalance described above, while the less-stable Eden side reaches failure conditions. The Eden aperture snaps; the Sol aperture does not. This is not a single shared pair-wide counterbalance value or a rule that failure must occur symmetrically.
 
 In other words, stabilization is an active EM-return/recovery process, not merely a passive shield that prevents an aperture from shifting after it reaches its limit. The Eden/Sol historical asymmetry is consistent with this model: the Eden aperture was not effectively stabilized when it reached its relevant threshold and shifted/snapped, while the Sol aperture was stabilized and did not undergo the same event.
 
@@ -265,6 +265,7 @@ This is a focused source snapshot, not a complete audit of every wormhole-relate
 ## 9. Open questions
 
 - Numerical aperture size, sustaining-power requirements, and the relationship between aperture scale/power and mass throughput.
+- Exact counterbalance calculations for each endpoint, including which local mass properties and geometric arrangements contribute and how they affect the side-specific mass limit/stability outcome.
 - The numerical cumulative mass-limit value for each aperture, its units, and the quantitative accumulation/EM-restoration rules. The conceptual rule is established: EM pushback resets the accumulated usage for the aperture receiving it, independently of the paired aperture.
 - The initial Sol–Eden connection's required logistics endurance: enough aggregate throughput for several Eden settlements and construction of the wormhole station before the emergent historical Snap. Exact settlement count, cargo/build tonnage, and time window are not yet specified.
 - Quantitative relation between mass throughput and EM ejection.
