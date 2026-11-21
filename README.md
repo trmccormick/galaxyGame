@@ -5,24 +5,26 @@
 > `projects/galaxy_game/status.md`  
 > Current baseline is ~4764 examples / 143 failures. Always run specs with `unset DATABASE_URL && RAILS_ENV=test`.
 
-**A SimEarth-inspired space colonization game featuring realistic manufacturing chains, AI-driven mission planning, and player-driven economics.**
+**An original space-colonization and planetary simulation game featuring realistic manufacturing chains, AI-driven operations, and player-directed development and economics.**
 
 Build settlements across the solar system and beyond. Process raw regolith into manufactured goods. Manage complex supply chains. Make critical decisions about terraforming alien worlds. Guide humanity's expansion through wormhole networks into the unknown.
+
+**GalaxyGame has its own identity, gameplay, and simulation model.** It draws selectively on useful ideas from many games and applications, but it is not a recreation or combination of EVE Online, SimEarth, Civilization, SimCity, or any other existing title. References are inspiration for particular ideas—not specifications for GalaxyGame mechanics or player experience.
 
 ---
 
 ## 🎮 Game Vision
 
-### SimEarth Inspiration
+### Planetary Simulation and World Evolution
 - **Planetary Simulation**: Test terraforming scenarios with accelerated time (100-year projections in minutes)
 - **Admin Control**: Manual mission design teaching AI patterns for autonomous deployment
 - **Economic Projection**: Resource flow visualization showing GCC movement across solar system
 - **Emergent Complexity**: Simple controls creating realistic planetary evolution and economic outcomes
 
-### Eve Online Inspiration  
+### Player-Driven Economy and Logistics  
 - **Player-Driven Economy**: Contracts, insurance, logistics markets controlled by players
 - **Mission Generation**: Procedural missions with pattern learning and AI adaptation
-- **Corporation Mechanics**: Organizations, consortiums, reputation systems
+- **Organizations and Governance**: Player organizations, consortiums, and reputation systems
 
 ### Realistic Science
 Grounded in real physics, chemistry, and orbital mechanics while maintaining engaging gameplay.
