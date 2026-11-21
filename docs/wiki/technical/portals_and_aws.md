@@ -33,7 +33,7 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 
 - A portal uses some EM to open the rift. Fusion power and magnetic containment keep it open.
 - **Primary purpose — personnel movement and limited mass transfer:** portals provide rapid movement for players and the wider human population, while also allowing a bounded amount of physical cargo to pass between the paired locations. They are not personnel-only connections.
-- Portal capacity is limited: they may carry people, personal equipment, high-value components, emergency kits, small critical parts, and other permitted low-mass cargo. They do not transfer ships or serve as a route for bulk ores, structural materials, or planetary-scale volatiles. Exact payload limits and mass-capacity behavior remain OPEN.
+- A portal is a physical doorway through a small rift, not a selective transporter. People, objects, materials, gases, and liquids can pass through in either direction while it is open; the aperture constrains the dimensions of what can pass. Atmospheric exchange is therefore possible, and pressure, temperature, and composition differences can create environmental hazards. Portals can transfer materials, but their small scale and wormhole-physics mass limits constrain practical throughput. They are not a substitute for ships or bulk industrial freight infrastructure. Exact aperture dimensions and mass limits remain OPEN.
 - Portals supplement rather than replace cyclers, freighters, and mass drivers for moving most industrial and bulk material.
 - **A portal pair connects two specific destinations.** The endpoints are deployed at the two locations the connection is intended to serve; a pair is not a general, freely addressable network gateway.
 
@@ -57,9 +57,9 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
   - The firing side uses the most EM, at the opening. Portals also spend EM to reinforce the rift and reset mass limits, as wormhole stabilization does, because the stabilization technology is built into the portal. Fusion or electrical power runs the magnetic fields.
   - Once open, the rift stays open until either side closes it or can no longer maintain it (see the next point). This applies to portals and artificial wormholes. Natural wormholes follow their own lifecycle: the historical Eden Snap is an uncontrolled failure caused by accumulated mass throughput without stabilization; the Hammer Protocol may separately use a deliberate final transit to force an exit shift. Do not call the historical Snap a planned or controlled closure ([Hammer Protocol](natural_wormholes_and_em.md)).
   - **Both ends maintain the rift** (owner brainstorm, 2026-11-14; DIRECTION, not locked): each end supplies the power, and a small amount of EM, to keep its magnetic confinement field running. If either end cannot, the rift destabilizes and closes. How the failure closes the rift (a controlled pinch or something rougher), any grace window, and the amounts remain OPEN.
-  - Counterbalance rules do not apply: the technology is miniaturized and needs no anchor mass.
+  - **Shared wormhole physics — OWNER CLARIFICATION (2026-11-20):** portals are a smaller-scale implementation of the same rift technology and physical principles as full-scale wormholes, not a separate transport technology. Their smaller aperture and lower power budget limit them to intra-system connections. Mass transfer is expected to remain EM-bounded in a manner analogous to wormholes, with transfer accounted for at each endpoint/side. Do not assume the full-scale counterbalance implementation applies unchanged to portals; the precise scale-dependent counterbalance behavior remains OPEN.
 - **Environmental variants:**
-  - **Habitat-rated** — pressurized human spaces; pressure handshake before open; gas only as containerized freight.
+  - **Habitat-rated** — pressurized human spaces; pressure checks/controls may be needed before opening. The portal itself does not block gas flow: atmosphere can flow through the open aperture in either direction.
   - **Industrial / surface-rated** — ruggedized; may run with intentional atmospheric bleed (“garden hose”) for pressure-first protection; not a bulk terraforming pipeline.
   - **Vacuum-rated** — station exterior / near-vacuum pairs.
 - Structural mount must be serious (primary structure / keel-class). Not a light-hull bolt-on.
@@ -193,7 +193,7 @@ This is a focused source comparison, not a complete audit of all AWS, portal, or
 ## Open Questions
 
 - Exact Mark capacity tiers and numeric mass filters.
-- Amount of EM a portal consumes: opening burst, stabilization and mass-limit reset, and any residual rate while open (must stay minimal). This is the main portal number to design.
+- Portal EM model: opening/ignition cost, mass-transfer-related EM expenditure at each side, stabilization/reinforcement, capacity restoration/reset, and any ongoing operating cost. The relationship is expected to parallel full-scale wormhole physics, but equations and scale-specific behavior remain OPEN.
 - Fusion power draw by variant.
 - Manufacturing recipes and facility requirements.
 - Industrial bleed rate tunability.
@@ -202,7 +202,7 @@ This is a focused source comparison, not a complete audit of all AWS, portal, or
 - Lease terms and service obligations when a player-owned portal endpoint is hosted at an NPC station or settlement; power, support, access, maintenance liability, and fees.
 - Whether any specific agreement changes the default ownership of portal hardware or grants operating rights to another entity.
 - Exact commissioning and operational criteria that must be satisfied before player arrival is enabled.
-- Portal mass limits and how the reset works. Never defined; the aperture is small, but no numbers are set.
+- Portal aperture dimensions, per-side mass accounting, and the exact relationship between transferred mass and EM expenditure/capacity restoration. No numerical values or final equations are set.
 - Whether both halves ship on one mission or two, and whether one half can be installed at an existing station while the other goes to a new settlement.
 - Whether placing both halves activates the link or needs a separate commissioning step.
 - How destroyed endpoints are repaired, replaced or re-paired. Today, losing one half ends the pair.
