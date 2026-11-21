@@ -1,11 +1,11 @@
 # Terraforming Options
 
-> **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-10  
-> *Audit Summary:* Not yet verified against code. Only points marked ESTABLISHED INTENT were stated by the owner.
+> **Code Alignment Status:** `PARTIALLY VERIFIED`  
+> *Last Audited:* 2026-11-21  
+> *Audit Summary:* Raw atmospheric intake composition was cross-checked against the current `TerraSim::AtmosphericTransferService`; this does not verify the complete terraforming option set, economics, limits, or production cargo workflow.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-10 (station-construction cross-reference restored)  
+**Last Updated**: 2026-11-21 (raw atmospheric intake composition reconciled)  
 **Related**: [surface_habitat_options.md](surface_habitat_options.md), [power_options.md](power_options.md), [ai_manager_economic_loops.md](../logistics/ai_manager_economic_loops.md), [modular_orbital_panel_swarms.md](modular_orbital_panel_swarms.md), settlement and logistics pages
 
 This page is the wiki home for planetary-scale atmosphere modification options. Multiple pathways exist. A fast raw-gas pressure rise is primarily a **protection** measure for population and infrastructure. Traditional terraforming (climate and biosphere goals) and refined composition control are separate, later choices. Softer longer-horizon approaches remain available.
