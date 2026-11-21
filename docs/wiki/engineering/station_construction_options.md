@@ -26,7 +26,7 @@ Generated systems will not match Sol. Different moons, no moons, dry rock, ice, 
    - Imports from outside the system
 3. **Fuel is always a cost.** Any mass that must change orbit or leave a gravity well consumes propellant. Fuel availability and production rate are first-class inputs into every option. ISRU-first remains the default pressure. Do not assume ice or volatiles on a body until survey supports it.
 4. **Orbital presence first (default outside origin system).** Prefer establishing an orbital industrial node before heavy surface commitment when local conditions allow. Surface footholds are then fed from the orbital layer.
-5. **Required Sol bootstrap (ESTABLISHED).** Luna foothold, then Earth–Moon L1 station and fuel depot, are required milestones. They are not optional examples among interchangeable starting strategies.
+5. **Required Sol bootstrap (ESTABLISHED).** The current owner-confirmed order is Luna foothold → L1 Depot → second depot near LEO → main station / shipyard infrastructure. Luna supplies bulk industrial output; Earth remains the source for specialized and high-tech imports as needed. Older frozen plans that place the LEO depot before the Luna foothold or L1 Depot are historical, not the current sequence.
 6. **Reproduce the proven pattern where possible.** Luna → Earth–Moon L1 is the reference template at a given intensity (e.g. enough industry for a small ISS-scale crew and material to build the orbital station/depot). Other systems adapt the same logic to whatever low-gravity sources they actually have.
 7. **New foothold → NPC Development Corporation.** When the AI Manager establishes a new foothold settlement, it generally forms a new NPC Development Corporation on that world or celestial body to own and oversee the settlement’s development. Ownership is explicit from day one and remains distinct from any later Colony governance (see settlement ownership and governance).
 8. **Craft roles stay distinct.** Cyclers use various drives and can act as mobile construction bases. Asteroid relocation tugs carry the slag-engine / hollow-and-relocate loop. Mk-I supports in-place work only; it does not reposition Phobos, Deimos, or similar bodies.
@@ -39,7 +39,7 @@ Generated systems will not match Sol. Different moons, no moons, dry rock, ice, 
 Earth / L1 is the **required origin-system bootstrap**, not merely a preferred exception.
 
 - Humans begin on the surface of the home world. The first orbital presence must be built by leaving that surface.
-- **Required sequence (ESTABLISHED):** establish the **Luna foothold**, then establish the **Earth–Moon L1 station and fuel depot**. These open the wider system.
+- **Required sequence (ESTABLISHED; owner-confirmed 2026-11-21):** establish the **Luna foothold**, then the **L1 Depot**, then the **second depot near LEO**, and then the **main station / shipyard infrastructure**. Luna supplies bulk industrial output; specialized and high-tech imports continue to come from Earth as needed. These open the wider system.
 - **Only realistic construction path once Luna is available:** Luna sources and builds → feeds Earth–Moon L1.
 - Earth does not yet possess asteroid-moving tugs. Asteroid-relocation options therefore require the L1 presence to exist first (so tugs and supporting industry can be built and operated from L1).
 - Building large shipyards in LEO and lifting the bulk of mass from Earth is possible in principle but is not cost-effective once the Luna → L1 pattern is available. It is treated as an inferior option.
