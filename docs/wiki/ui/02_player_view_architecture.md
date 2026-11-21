@@ -71,15 +71,15 @@ The view must distinguish inter-system wormhole network connections from in-syst
 
 The initial Player Space workspace is an **individual craft tracking and route-planning view**, not a fleet-management screen. Adapt the useful layout and interaction patterns from the supplied EVE Dashboard Fleet Manager reference, but do not carry over its two-fleet presentation or EVE fleet assumptions.
 
-The workspace has three coordinated areas:
+The full application screen retains the persistent main-game navigation at the far left. Space does not replace, duplicate, or absorb that navigation. To its right, the Space workspace has three coordinated panes (making four vertical areas across the full screen):
 
-1. **Left — craft selection:** a selectable list of the player's individual spacecraft. Selecting a craft loads that craft into the workspace. This is not a fleet list; craft can operate independently. Grouping multiple craft into fleets or other operational groups is a separate capability and must not define or constrain this individual-craft view.
-2. **Center — two stacked maps, both visible at the same time:**
+1. **Left workspace pane — craft selection:** a selectable list of the player's individual spacecraft. Selecting a craft loads that craft into the workspace. This is not a fleet list; craft can operate independently. Grouping multiple craft into fleets or other operational groups is a separate capability and must not define or constrain this individual-craft view.
+2. **Center workspace pane — two stacked maps, both visible at the same time:**
    - **Wormhole Network map:** shows inter-system wormhole connections and the selected craft's planned route between systems, including the relevant system sequence and wormhole transitions.
    - **In-System Route map:** shows navigation within the relevant selected solar system, including the selected craft's position, destination, intermediate stops or waypoints, and planned local route.
    
    These are vertically stacked visualizations, not tabs, a toggle, or mutually exclusive map modes. They represent different spatial scales and must not be conflated. The in-system map is not a substitute for the wormhole network map, and the wormhole network map is not a substitute for solar-system navigation.
-3. **Right — selected craft information and route:** shows the selected craft's identity and supported operational details, including status, current position, destination, assigned objective/mission, condition, fuel or other relevant resources, cargo, and communication/data freshness where available. Show the planned route as an ordered sequence of stops/transitions as well as its map representation. Do not imply unavailable values or live updates.
+3. **Right workspace pane — selected craft information and route:** shows the selected craft's identity and supported operational details, including status, current position, destination, assigned objective/mission, condition, fuel or other relevant resources, cargo, and communication/data freshness where available. Show the planned route as an ordered sequence of stops/transitions as well as its map representation. Do not imply unavailable values or live updates.
 
 Both maps and the right-hand information/route panel are driven by the same selected craft. Changing craft selection updates all three areas coherently. The two maps remain independently navigable/interactive (for example, their own pan/zoom and selection behavior) while representing the same craft and its related route. The route shown should distinguish the inter-system portion from the in-system portion; exact cross-map selection behavior and route editing controls remain open for later review.
 
