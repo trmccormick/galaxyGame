@@ -61,6 +61,18 @@ This means Map Studio first creates a reusable/prepared map artifact and only ch
 - `StarSim::AutomaticTerrainGenerator` is a separate automatic path. It skips bodies that already have populated terrain data and bodies outside its supported planet/major-moon scope; it has special handling for Sol worlds and otherwise derives generation parameters from body properties before calling the planetary map generator and storing terrain on the geosphere.
 - The existence of these services does not prove that every newly created body automatically receives terrain. The invocation points and full end-to-end lifecycle still need verification.
 
+**Additional source-verified experimental paths — 2026-11-21**
+
+The current code contains more than one map-analysis/generation experiment. They must not be described as a single integrated learning pipeline:
+
+- **Map Studio / `PlanetaryMapGenerator`:** The selected-source path uses the first processed map as the base, scales its categorical biome grid to the target dimensions, and overlays subsequent sources cell-by-cell with a 70% replacement probability. Available source elevation values are copied at corresponding scaled cells. This is probabilistic map blending; the inspected method does not perform the intended geographical regression/reconstruction or demonstrate a trained model.
+- **Resource placement:** `ResourcePositioningService` is invoked after source-map combination. Its current rules are hard-coded terrain/elevation ranges, rarity percentages, and clustering factors, followed by random selection of suitable cells. Strategic markers are generated from simple body-name/terrain/elevation/resource heuristics. These are experimental heuristics, not geological deposit modeling or validated settlement-site analysis.
+- **Earth-specific experiment:** A separate Admin celestial-body workflow (`select_maps_for_analysis` / `generate_earth_map`) calls `AIManager::EarthMapGenerator`. That service processes FreeCiv/Civ4 maps, extracts terrain/elevation/strategic patterns, builds an Earth map, applies heuristic optimizations, and records learning data. Its code reads/writes an Earth-map learning JSON file and reads an Earth template JSON file. This is a distinct legacy/experimental path; it is not the Map Studio controller flow and must not be assumed to share its artifacts or training state.
+- **NASA DEM helper methods:** `PlanetaryMapGenerator` contains `add_nasa_dem_training_source` and `generate_with_nasa_training` methods. The inspected Map Studio controller does not call these methods. Their presence is not proof that NASA DEMs are incorporated into the selected-source learning workflow.
+- **Learning-status display:** The Map Studio index optionally reads `data/ai_learning/planetary_map_learning.json`. In the inspected controller, this is a status-display read; the generation action does not load that file or pass its contents to `PlanetaryMapGenerator`.
+
+The repository therefore contains several pieces of experimental map analysis, pattern extraction, resource heuristics, and learning-data persistence, but this source pass does **not** establish a connected, reusable training pipeline that feeds learned geographical knowledge into Map Studio generation. The intended geographical learning/reconstruction capability remains a design goal; the current experiments are evidence to inspect and selectively reuse, not proof that the goal has been achieved.
+
 **Important boundaries and unresolved quality questions**
 
 - Map Studio's Admin responsibility is initial terrain/geographic preparation. StarSim's primary star-system generation, TerraSim's environmental evolution, and Digital Twin's projection/evaluation remain separate capabilities.
