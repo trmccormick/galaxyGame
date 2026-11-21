@@ -117,3 +117,10 @@ This resolves the apparent conflict: both descriptions are valid, but they refer
 Corrected [Terraforming Options](infrastructure/terraforming_options.md) and [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) following the owner's clarification. Dedicated industrial CO₂ processing for solid carbon/CNT manufacture is not restricted to Venus. Venus is one possible source of CO₂, but CNT plants can operate at other locations where suitable carbon feedstock and industrial capability are available; Luna is an explicit example when CO₂ is imported. The location decision depends on resource availability, imports, energy, equipment, and logistics. The Venus-to-Mars CNT-shell pipeline is now framed as one supply-chain example rather than a Venus-only production rule.
 
 The skimmer's onboard `2CO₂ → 2CO + O₂` reaction remains a separate process for producing its own LOX. No application code or frozen source documents changed.
+
+
+## 2026-11-21 — Venus is the expected CNT industrial powerhouse, not the exclusive production location
+
+Refined [Terraforming Options](infrastructure/terraforming_options.md) and [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) after the owner's follow-up. CNT manufacture is not Venus-exclusive, but Venus is expected to become a major industrial powerhouse for CNT production because it combines abundant CO₂ feedstock with strong power availability. Luna and other locations can also manufacture CNTs when suitable feedstock and industrial capability are available; Luna using imported CO₂ is an explicit valid example. The earlier correction should therefore not be read as making Venus and Luna equally advantaged or diminishing Venus's expected industrial role.
+
+The skimmer's onboard CO₂-to-LOX process remains separate from dedicated industrial CNT production. No application code or frozen source documents changed.
