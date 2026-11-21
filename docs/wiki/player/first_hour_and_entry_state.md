@@ -1,5 +1,7 @@
 # First Hour and Entry State
 
+> **Related:** [Gameplay Principles](../design/gameplay_principles.md) — GalaxyGame identity and high-level design direction.
+
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-14  
 > *Audit Summary:* Player-arrival prerequisites updated from owner-confirmed wormhole technology lineage. This remains design intent and has not been verified against runtime player-entry code.
