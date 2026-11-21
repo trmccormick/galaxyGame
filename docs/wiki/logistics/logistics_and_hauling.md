@@ -1,4 +1,4 @@
-> **Wiki section:** Player · **Status:** structure fix — previous body was mis-filed financial/tax content (see Financial Engine); this page is a thin logistics stub pending compare-to-game and harvest
+> **Wiki section:** Player · **Status:** partial design-intent harvest — player hauling and provider direction are recorded; detailed contracts, provider behavior, and code alignment remain open
 
 # Logistics and Hauling
 > **Code Alignment Status:** `DESIGN INTENT`  
