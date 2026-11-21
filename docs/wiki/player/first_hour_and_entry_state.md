@@ -22,7 +22,7 @@ This page distills the 2026-11-04 owner and Gemini brainstorm into what a new pl
 - The starts aren't exclusive. A player can use portals for rapid movement between bases equipped with portal endpoints; not every base is assumed to have a portal.
 
 ### What the game is about
-- Surface play includes exploring, mining, and building and managing a settlement (like SimCity). Station play is a different level of the same game. Neither is about combat. It is closer to managing automated harvesters and logistics ships.
+- Surface play includes exploring, mining, and building and managing settlements. Station play is a distinct operational context within the same game. Neither is about combat. Gameplay includes managing and coordinating automated harvesters, surface assets, and logistics craft.
 - A player on a base has a **dashboard** to manage assets such as robotic harvesters and deployed ships, and to track things and their market listings.
 
 ### Distance and time
@@ -38,6 +38,19 @@ This page distills the 2026-11-04 owner and Gemini brainstorm into what a new pl
 - When a base starts up there may be no players. The base runs by itself, so a player enters whatever state it has reached.
 
 ---
+
+## DIRECTION — candidate first local activity loop
+
+The older Sol buildout reference describes a possible first-player learning loop at an open Development Corporation foothold:
+
+1. Receive basic equipment appropriate to the chosen location and its available services.
+2. Harvest a locally available resource.
+3. Process the harvested material using local facilities.
+4. Manufacture a basic item or product.
+5. Use the result to improve equipment or sell it through the local market.
+6. Expand into broader hauling, contracts, logistics, and other available activities as the location and shared universe develop.
+
+This is a candidate onboarding progression, not a locked tutorial script. Exact starter equipment, recipes, facility availability, and progression gates remain OPEN. A player's starting location does not imply responsibility for founding Sol, operating the NPC backbone, or directly controlling AI Manager terraforming programs.
 
 ## DIRECTION (not decided)
 
