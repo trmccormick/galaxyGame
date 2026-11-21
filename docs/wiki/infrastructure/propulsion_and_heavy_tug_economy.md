@@ -37,6 +37,28 @@ The HLT is one of the three current ship classes and provides flexible transport
 > **Cross-link:** For the pre-player pipeline that gates HLT production behind the Venus-Luna Sabatier loop and L1 shipyard construction, see **[Pre-Player Era Logistics Pipeline](./pre_player_era_logistics_pipeline.md)**.  
 > **Cross-link:** For cycler network integration (Tier 3 transport), see **[Import Order & Cycler Models](../logistics/import_order_and_cycler_models.md)**.
 
+
+### Future HLT Configuration: Titan Atmospheric Harvesting (DIRECTION)
+
+Titan harvesting is an established future mission concept for the HLT class, not a current Mk1 capability and not a separate ship class. The limiting problem identified in the earlier design work is **cryogenic boiloff over the long outbound, extraction, and return mission**. A Titan mission cannot be treated as an ordinary Mk1 Venus-style harvesting run with a longer route: volatile cargo and return propellant must remain usable across a multi-year transit.
+
+The discussed design direction is to develop a more capable HLT mark/configuration—previously discussed as a possible **Mk2 or Mk3 HLT**, with the cryogenic cargo system reaching **Mk3/Mk4 capability or better**—that can support Titan harvesting and delivery back into the inner-system logistics network. The exact HLT mark and equipment allocation are not yet a finalized craft specification.
+
+The September 2026 atmospheric-harvesting mission proposal records this Titan option as follows:
+
+- **Mission:** travel to Titan, collect its atmospheric mixture, recover methane for the return fuel requirement, and return the remaining mixed atmospheric cargo to a receiving facility.
+- **Transit constraint:** the proposal estimates approximately **1,388 days** for the Earth–Titan leg. Boiloff must be tracked during outbound transit, the extraction stay, and return transit; it is the cumulative loss over the complete mission that makes the Mk1/early cryogenic arrangement unsuitable.
+- **On-site work:** the proposal estimates **20–30 days** for extraction. The actual duration should emerge from atmospheric conditions, collection/processing throughput, and tank capacity rather than being treated as a guaranteed fixed duration.
+- **Return propellant concept:** the proposal specifies an **8,000 kg methane return-fuel tank** and an additional contingency reserve, with the amount and loading strategy dependent on departure location and the final mission design.
+- **Cryogenic cargo concept:** the proposal specifies **three Mk3-or-better cryogenic cargo tanks**, primarily for nitrogen-rich mixed atmospheric cargo. The cargo tanks' boiloff performance must be sufficient for the full return leg.
+- **Processing concept:** the proposal identifies methane recovery from Titan's atmosphere as a candidate way to obtain return propellant. The exact separation equipment, processing arrangement, and whether it is installed as a mission fit or integrated into a later HLT mark remain OPEN.
+
+This is a future HLT capability direction, not a claim that the initial Earth-produced HLT Mk1 already has these systems. It also does not establish that every later HLT mark carries Titan equipment. The ship class remains HLT; mark, mission role, and installed equipment determine the actual capability.
+
+**Design boundary:** the Titan concept addresses boiloff by improving cryogenic storage/thermal management and mission configuration. It must not be simplified to “more fuel” alone. The mission needs a viable volatile-storage solution across the complete mission duration, alongside adequate return propellant and contingency reserves.
+
+**OPEN / validation required:** exact HLT mark (Mk2 vs. Mk3); whether Mk3 or Mk4 cryogenic tanks are required for the full mission; actual boiloff rates and thermal-system performance; propulsion and transit-time assumptions; Titan atmospheric collection and methane-recovery throughput; return destination/routing; tank capacities beyond the proposal values; contingency-fuel amount and loading strategy; and whether the earlier proposal's numerical values remain suitable after the current mission model is reconciled. The proposal's figures are retained as design-study inputs, not validated game constants.
+
 ### 1.2 Tug Propulsion Technology Progression
 
 Asteroid relocation tugs and heavy tugs share a three-stage propulsion evolution:
