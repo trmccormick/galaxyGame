@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-19
+> **Last Updated:** 2026-11-21
 
 # Player View Architecture
 
@@ -64,6 +64,34 @@ Craft may operate independently or be grouped for a particular task or operation
 Player asset-management interactions and Admin/AI Manager operational oversight are related but distinct workflows. They may reuse generic selection, filtering, grouping, and status components, but should not be collapsed into one identical fleet-management screen.
 
 The view must distinguish inter-system wormhole network connections from in-system spatial relationships. EVE Dashboard's map interactions may inform pan/zoom, selection, routes, markers, and topology presentation, but its EVE-specific mechanics and inter-system map are not a substitute for a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
+
+### Individual craft tracking workspace and route views
+
+**ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
+
+The initial Player Space workspace is an **individual craft tracking and route-planning view**, not a fleet-management screen. Adapt the useful layout and interaction patterns from the supplied EVE Dashboard Fleet Manager reference, but do not carry over its two-fleet presentation or EVE fleet assumptions.
+
+The workspace has three coordinated areas:
+
+1. **Left — craft selection:** a selectable list of the player's individual spacecraft. Selecting a craft loads that craft into the workspace. This is not a fleet list; craft can operate independently. Grouping multiple craft into fleets or other operational groups is a separate capability and must not define or constrain this individual-craft view.
+2. **Center — two stacked maps, both visible at the same time:**
+   - **Wormhole Network map:** shows inter-system wormhole connections and the selected craft's planned route between systems, including the relevant system sequence and wormhole transitions.
+   - **In-System Route map:** shows navigation within the relevant selected solar system, including the selected craft's position, destination, intermediate stops or waypoints, and planned local route.
+   
+   These are vertically stacked visualizations, not tabs, a toggle, or mutually exclusive map modes. They represent different spatial scales and must not be conflated. The in-system map is not a substitute for the wormhole network map, and the wormhole network map is not a substitute for solar-system navigation.
+3. **Right — selected craft information and route:** shows the selected craft's identity and supported operational details, including status, current position, destination, assigned objective/mission, condition, fuel or other relevant resources, cargo, and communication/data freshness where available. Show the planned route as an ordered sequence of stops/transitions as well as its map representation. Do not imply unavailable values or live updates.
+
+Both maps and the right-hand information/route panel are driven by the same selected craft. Changing craft selection updates all three areas coherently. The two maps remain independently navigable/interactive (for example, their own pan/zoom and selection behavior) while representing the same craft and its related route. The route shown should distinguish the inter-system portion from the in-system portion; exact cross-map selection behavior and route editing controls remain open for later review.
+
+### Reuse and prototype implementation direction
+
+The EVE Dashboard screenshots and JavaScript are **source material for adaptation**, not a final specification and not a request for a wholesale port. Inspect the available EVE fleet/map JavaScript and reuse or adapt useful craft selection, map rendering, pan/zoom, marker selection, route display, and selected-object panel behavior. Adapt the code to GalaxyGame's domain and the two stacked map requirements; do not assume one EVE map module already implements both scales. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect and reuse where useful. The wormhole network map needs its own inter-system topology representation, potentially adapted from suitable EVE network/map JavaScript.
+
+The prototype may use clearly identified mock craft and route data. Interactions, route calculations, data refresh, and source integration do not all need to work in this first presentation pass. The immediate goal is to establish the screen, layout, selection behavior where practical, and both map areas so they can be reviewed and refined. Do not rewrite existing JavaScript wholesale merely because the first adaptation is incomplete; preserve useful code and document what was reused, adapted, stubbed, or deferred.
+
+GalaxyGame craft are autonomous operational assets, not player-character avatars. Do not introduce EVE pilots, characters, fleet commanders, EVE terminology, combat, or EVE backend/game rules. Player Space asset interaction remains distinct from Admin/AI Manager operational oversight.
+
+Fleet creation, fleet organization, multi-craft coordination, authoritative route finding, navigation simulation, command execution, and production backend/API integration are separate capabilities or later work; they are not prerequisites for this initial individual-craft presentation.
 
 ### Player feedback on wormhole-network strategy
 
