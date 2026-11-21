@@ -1,6 +1,6 @@
 # Galaxy Game Wiki
 
-A SimEarth-inspired space colonization game: settlements, industrial logistics, markets, and AI-driven expansion across the solar system and beyond.
+An original space-colonization and planetary simulation game: settlements, industrial logistics, markets, and AI-driven expansion across the solar system and beyond. It draws selectively on ideas from many games and applications without reproducing any one of them.
 
 This folder is the **live wiki** — the front door for players, contributors, and agents continuing work.
 
