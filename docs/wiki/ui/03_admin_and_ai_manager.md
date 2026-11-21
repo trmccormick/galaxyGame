@@ -186,6 +186,8 @@ Digital Twin projections should eventually help Admins and AI Manager compare no
 
 Keep the time required to execute an intervention distinct from the accelerated simulation interval and the time over which its environmental effects develop. Likewise, TerraSim's environmental calculations should not be treated as the source of economic prices or delivery schedules: cost and execution-time estimates will need to draw on the appropriate economic, manufacturing, construction, and logistics capabilities. The exact breakdown, confidence/uncertainty presentation, and integration points remain OPEN.
 
+Where practical, estimates should be inspectable at the level of individual interventions or work packages as well as rolled up for a combined plan. This lets Admin and AI Manager compare which parts drive cost or schedule, evaluate alternatives, and see how individual changes affect the overall estimate.
+
 These estimates should be useful to both Admin and AI Manager. Admins need them to inspect and compare proposed scenarios; AI Manager should be able to use them alongside projected environmental outcomes when evaluating strategies, priorities, and operational plans. This is a desired capability, not a claim that the complete cost/time projection workflow currently exists.
 
 #### Responsibilities and boundaries
