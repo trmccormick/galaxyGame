@@ -63,6 +63,7 @@ These topics now have a draft wiki home. The pages are first drafts from a brain
 | Natural wormhole physics, mass limits, EM harvest/reset | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | DIRECTION / OPEN |
 | Venus skimmer processing + mixed volatiles inventory model | [Skimmers & mixed volatiles](logistics/skimmer_and_mixed_volatiles.md) | DIRECTION |
 | Atmosphere modification / terraforming pathways (pressure-first protection, refined mass-driver, softer options) | [Terraforming options](infrastructure/terraforming_options.md) | DIRECTION / OPEN (unreviewed Gemini draft) |
+| Deposit plausibility (lazy survey spawn, science-grounded rules, stored_volatiles budget) | [Deposit Plausibility Rules](technical/deposit_plausibility_rules.md) | DIRECTION |
 
 ## Gaps with a draft home (2026-11-04; not yet resolved)
 
@@ -118,6 +119,7 @@ When you close a major gap or lock an option on a topic page, add a short dated 
 
 ### Recent doc updates
 
+- **2026-11-19** — Added [Deposit Plausibility Rules](technical/deposit_plausibility_rules.md) (lazy survey spawn, science-grounded principles, `stored_volatiles` budget). Sulfur binder option recorded on [ISRU Fabrication Chain](technical/isru_fabrication_chain.md); AI Manager stockpile priority for non-local critical items clarified on [AI Manager Economic Loops](logistics/ai_manager_economic_loops.md).
 - **2026-11-20** — Expanded StarSim system-data intent after reviewing generated-JSON defects: Sol is the only fixed authored baseline but remains incomplete; all other systems start from incomplete information; StarSim completion and ongoing survey-driven discovery/addition are distinct from an exhaustive inventory. Recorded the current `star_systems/` / `generated_star_systems/` roles as provisional, with future data-directory organization left OPEN.
 - **2026-11-18** — Recorded cryptomining satellite live-loop under-performance (power/battery state) as a known configuration issue needing review.
 - **2026-11-07** — Committed harvest `d7ce08fb`: portals/AWS energy model and variants; new [Natural wormholes & EM](technical/natural_wormholes_and_em.md); new [Skimmers & mixed volatiles](logistics/skimmer_and_mixed_volatiles.md); accepted 80/90 EAP NPC band; LEO vs L1 depot roles on resource/market logistics.
