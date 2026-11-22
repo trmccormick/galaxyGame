@@ -262,3 +262,10 @@ Extended the Player operating-location design in [Player View Architecture](ui/0
 
 This is a network-topology advantage, not instant communication. The actual route still determines information propagation, remote command delivery, and acknowledgment time, including destination-system routing, relay/carrier availability, and queues. An AWS-adjacent base does not make remote markets local or universally live. The choice introduces a strategic trade-off between settlement/industrial/logistical advantages and inter-system connectivity; no universally optimal base location is assumed.
 
+
+
+## 2026-11-21 — AWS operating-base discussion clarified as gameplay examples
+
+Revised [Interstellar Communications](engineering/interstellar_communications.md), [Player View Architecture](ui/02_player_view_architecture.md), and [Markets, EAP, and GCC/USD Peg](markets/markets_eap_and_peg.md) to clarify that AWS-adjacent, planetary, and mixed operating arrangements are illustrative gameplay options. A market- and fleet-oriented player might prefer an AWS-adjacent orbital base; a player focused on planetary industry might prefer a settlement or nearby facility; another player might combine both. These are examples players can evaluate and discover through play, not predefined roles, prescribed strategies, restrictions, or code requirements.
+
+Kept the underlying communications and market constraints distinct from those examples: actual network topology governs delivery, and remote marketplaces remain authoritative. No new mechanics, bonuses, or universally optimal base location are implied. No application code changed.
