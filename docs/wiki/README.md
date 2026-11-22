@@ -138,6 +138,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Celestial Body & Sphere Data Model](technical/celestial_body_and_sphere_data_model.md) | Established CelestialBody/sphere ownership, JSON-driven initialization, material inventories, and mass-accounting semantics |
 | [Celestial-Body Sphere Models & Environmental Interactions](technical/sphere_models_and_interactions.md) | Sphere data ownership, cross-sphere processes, different world types, and a code-inspection snapshot of current TerraSim behavior |
 | [Geosphere terrain data & initial surface state](technical/geosphere_terrain_and_initial_surface_data.md) | Existing terrain generation, Geosphere persistence, Earth layer-import path, and Surface View data assembly |
+| [Geosphere materials & stored volatile reservoirs](technical/geosphere_materials_and_volatile_reservoirs.md) | Layer inventories, JSON initialization, volatile reservoirs, ISRU reads, material transfers, and mass-accounting verification |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
 | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | Mass threshold, counterbalance, EM ejection/harvest/reset; natural vs AWS pairing |
