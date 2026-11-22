@@ -81,7 +81,6 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Sol System Reference](astronomy/sol_system_reference.md) | Concrete Sol system reference: bodies, roles, infrastructure milestones, wormhole context |
 | [Scenario: Super Mars](astronomy/scenario_super_mars.md) | Super-Mars test-bench scenario |
 | [System blueprints](astronomy/system_blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
-| [Celestial Body & Sphere Data Model](technical/celestial_body_and_sphere_data_model.md) | Established CelestialBody/sphere ownership, JSON-driven initialization, material inventories, and mass-accounting semantics |
 | [Celestial systems](astronomy/celestial_systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
 | [Starsim & Protection Classes](astronomy/starsim_and_protection_classes.md) | Astrophysics / PPC physics expansion for StarSim-generated systems and planetary protection class frameworks |
 
@@ -136,6 +135,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
 | [TerraSim — Environmental Simulation, Calibration & Evolution](technical/terrasim.md) | Natural-world simulation, historical calibration, environmental events, terraforming, and future tuning direction |
 | [Titan elevation data generation](technical/titan_elevation_data_generation.md) | Historical Titan topography-to-elevation processing, retained source/intermediate products, runtime rendering evidence, and unresolved provenance questions |
+| [Celestial Body & Sphere Data Model](technical/celestial_body_and_sphere_data_model.md) | Established CelestialBody/sphere ownership, JSON-driven initialization, material inventories, and mass-accounting semantics |
 | [Celestial-Body Sphere Models & Environmental Interactions](technical/sphere_models_and_interactions.md) | Sphere data ownership, cross-sphere processes, different world types, and a code-inspection snapshot of current TerraSim behavior |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
