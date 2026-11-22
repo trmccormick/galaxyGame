@@ -115,6 +115,38 @@ These are existing building blocks, not proof that the end-to-end HLT mission lo
 
 ---
 
+## Existing Craft Inventory and Storage Paths — Code Audit
+
+The existing data model provides a plausible place to hold a mixed-volatiles batch, but the storage/capacity paths are not yet consistent enough to treat as a working skimmer cargo implementation.
+
+### Craft inventory and composition metadata
+
+- `Craft::BaseCraft` has one polymorphic `Inventory` and exposes its `Item` records through `has_many :items, through: :inventory`. `Craft::Harvester` inherits this.
+- `Inventory#add_item(name, amount, owner, metadata)` creates or updates an `Item` record and accepts metadata. The default owner is the inventoryable's owner (or the inventoryable itself).
+- `Item.metadata` is already used elsewhere for material composition/provenance. Manufacturing code reads `metadata['composition']`, and specs exercise composition-bearing Items. A `mixed_volatiles` Item with constituent chemical formulas and their kg masses therefore fits an existing data shape; this is a candidate representation, not proof that the skimmer's cargo capacity and tanks are integrated.
+- The craft inventory is distinct from the craft's planetary-style `Atmosphere` association and from a plain `raw_cargo` hash. The current skimmer extraction/offload code does not bridge those representations.
+
+### Attached storage-unit behavior and mismatches
+
+- `Craft::BaseCraft` has attached `Units::BaseUnit` records. Each BaseUnit has its own Inventory, and storage capacity/type/current level are described in its `operational_data['storage']`.
+- `Units::BaseUnit#store_resource` is a concrete unit-level storage path: it checks material/storage compatibility and available capacity, writes an Item to the unit's own Inventory, then updates `resources['stored']` and `storage['current_level']`. `remove_resource` has a corresponding unit-level removal path.
+- `Inventory#add_item` does not use that unit-level method. For gas/liquid/fuel it finds a compatible attached unit and checks its available capacity, but then calls `store_in_inventory` on the inventory's own Item collection. The separate `store_in_specialized_unit` helper—which would update unit operational storage and create a craft-inventory Item—is not called by `add_item` in the inspected implementation. Consequently the Item record and the selected tank's current-level/resource records can diverge.
+- The general-storage check is also inconsistent: `Inventory#available_general_storage` selects units where `unit.storage_type == 'general'`, but `Units::BaseUnit#storage_type` returns `operational_data['subcategory']`, while storage compatibility reads `operational_data['storage']['type']`. A unit configured only with `storage.type = 'general'` may therefore be ignored by the general-capacity check. `Inventory#inventoryable_capacity` separately sums attached units' `storage.capacity`, but that does not repair the preceding `can_store?` gate.
+- `Craft::Harvester#can_store?` currently returns true whenever the craft has an Inventory; its comment explicitly leaves actual craft-size/storage-module capacity checking as TODO. Its regolith extraction path therefore does not establish usable physical cargo capacity.
+- Unit-level storage and craft-level inventory are separate records. `Units::BaseUnit#collect_materials` copies entries from `resources['stored']` into the craft Inventory and resets the stored hash/current level; the inspected method does not remove the source unit Inventory Items. Do not assume this collection path is a mass-safe move without reconciling both records.
+
+### Docking cargo transfer is not an established solution
+
+- `AIManager::UniversalDockingService#transfer_payload` calls `transfer_cargo`, but repository search found no production caller of `UniversalDockingService`.
+- `transfer_cargo` returns unless both inventories exist and `to.can_process_volatiles?` is true. No definition of `can_process_volatiles?` was found in the inspected repository; the method appears only in this guard.
+- If it proceeds, it removes each source Item and then adds an Item of the same name/amount to the destination, but it does not pass the source metadata. A batch's constituent composition and provenance would therefore be lost. It also does not check the destination `add_item` result or wrap the remove/add sequence in a transaction, so failed destination storage could lose the source item.
+- The existing `universal_docking_spec` tests docking compatibility only. Its payload-handover section explicitly contains no cargo, equipment, or personnel transfer tests. It does not validate this method.
+- The current skimmer handshake's Cycler offload is separate again: it reads skimmer Atmosphere Gas records and writes to Cycler `definition_data['cargo']`, not to the Cycler's Inventory/Items.
+
+**Audit conclusion:** Craft Inventory + Item metadata is the closest existing foundation for the intended mass-primary mixed-volatiles batch. Attached storage units provide capacity/type concepts, and BaseUnit has a unit-level store/remove implementation. But the Inventory, BaseUnit, Harvester, and docking-transfer methods are not yet one coherent, tested cargo lifecycle. Reuse should begin by reconciling these existing paths and their accounting, not by introducing another cargo ledger or inventory abstraction.
+
+---
+
 ## Capacity vs Inventory (ESTABLISHED DIRECTION)
 
 | Concern | Owner | Role |
