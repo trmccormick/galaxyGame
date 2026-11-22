@@ -39,6 +39,41 @@ Selection must not imply physical travel. The UI must distinguish the player's a
 
 Large collections should favor compact, comparable tables and lists over repeated oversized cards. Detail panes, contextual actions, and comparisons should appear when an item is selected.
 
+## Player account, distributed assets, and operating locality
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+The Player experience should provide a unified account and management view for the player's orders, assets, inventory holdings, balances, transactions, and activity across the game universe. The player should be able to keep track of and manage one coherent portfolio rather than maintaining unrelated accounts for every settlement or star system.
+
+This centralization is logical and managerial, not physical or instantaneous:
+- Assets and inventory remain at their actual settlements, stations, ships, or other locations.
+- Market orders remain associated with the settlement marketplace where they were placed.
+- Local services and markets remain authoritative for their own current state and execution.
+- The central Player interface aggregates the most recent information delivered to the player's current operating location.
+- Remote information can be delayed or incomplete, and remote instructions can remain in transit before reaching the location where they can execute.
+
+Most routine player activity is expected to take place within one primary star system, where local information and operations are more responsive. Players may establish additional operations or move assets to other systems and galaxies, but wider activity carries communications and logistics costs. The player can retain centralized oversight of those distributed holdings without receiving instantaneous updates or control.
+
+The Player interface should distinguish the player's **operating location** from the location of the asset, market, or system being inspected. Selecting a remote location to inspect does not move the player there or grant a live connection to it. Market scope and other cross-location views can offer Settlement, System, Galaxy, and Universe discovery scopes, but wider scopes show only information that has propagated to the player's operating location.
+
+### Communications as an experienced gameplay constraint
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+The Player should feel information propagation and command delivery delays during ordinary gameplay. Communications status is not merely decorative metadata. It affects when the player learns about remote events, when remote instructions can be executed, and when the player receives confirmation.
+
+The shared communications network routes information hop by hop through available local relays and physical carriers. Within a system, data moves through the available local network. Intra-system portals can shorten the physical carrier's journey between connected endpoints, but do not provide instant data transfer. Between systems, data-carrying craft travel through natural wormholes or operational AWS connections; receiving stations then route the data onward through the destination system's network. Additional systems add further routing and carrier legs. There is no universal real-time market feed or instantaneous universe-wide player control.
+
+For remote actions, the Player experience must distinguish:
+- the time for relevant information to reach the player;
+- the time for a command to reach its destination;
+- execution at the destination against its actual current state;
+- the time for acknowledgment to return.
+
+A command can be delivered and executed before its confirmation reaches the player. The player can continue other activities while communications are pending. Existing craft automation and AI Manager authority may continue previously authorized work during communication gaps; this does not make newly issued player commands instantaneous.
+
+The UI should present last-known state, source and receipt times, information age, pending communication status, and delivery/acknowledgment estimates where available. It must not silently replace stale information with live remote state. See [Interstellar Communications](../engineering/interstellar_communications.md) for the shared routing and delivery model.
+
 ## Space context
 
 **DIRECTION**
