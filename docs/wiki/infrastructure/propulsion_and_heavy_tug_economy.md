@@ -62,6 +62,16 @@ The Luna strategy is a separate local propellant-production path: PSR water-ice 
 
 The HLT remains the ship class; Titan and Venus harvesting are fully specified mission configurations/roles within that class. Exact production maturity, research unlock timing, and any remaining implementation alignment are separate questions from whether the craft and repeatable mission profiles were designed.
 
+### Docking-capable craft: attitude and proximity control (DIRECTION)
+
+Craft designed to dock with stations, depots, cyclers, or other spacecraft are expected to carry a dedicated low-thrust control-propulsion capability. This system provides attitude control and fine translational authority for rendezvous, approach, alignment, station-keeping, and final docking. It is distinct from the main propulsion system used for major trajectory and orbital maneuvers.
+
+This is an expected capability of docking-capable craft, not a claim that every existing blueprint already specifies its hardware. The current HLT Mk1 fit's exact control-thruster equipment, propellant, feed system, and performance remain to be verified against its blueprint and operational data.
+
+Compressed stored gases may serve as reaction mass where the installed control thrusters are designed to use them. CO recovered as a byproduct of CO₂ processing is one possible operational propellant/resource, alongside its potential value as delivered industrial feedstock. The craft's policy can retain CO for proximity maneuvers, place it in mixed-volatiles cargo for downstream processing, reserve dedicated capacity, or vent it. Do not assume CO compatibility for a control-thruster system until the installed system's propellant requirements are defined.
+
+> **OPEN:** Identify control-thruster equipment and propellant/feed specifications in each docking-capable craft blueprint; determine whether HLT Mk1 has this capability in its current fit or requires a later fit/upgrade. Establish thrust, impulse, storage-pressure, and propellant-consumption data before calculating docking reserves or CO savings.
+
 ### 1.2 Tug Propulsion Technology Progression
 
 Asteroid relocation tugs and heavy tugs share a three-stage propulsion evolution:
