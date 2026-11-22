@@ -1,11 +1,11 @@
 # Skimmers & Mixed Volatiles
 
 > **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
-> *Last Audited:* 2026-11-21  
+> *Last Audited:* 2026-11-22  
 > *Audit Summary:* Reusable atmosphere extraction, proportional raw transfer, CO₂ processing, and craft exhaust code exists. The current skimmer path does not yet connect those pieces into a consistent craft-cargo-to-Luna return calculation. A boiloff implementation was not located in the code search; verify tank and transit processing before concluding it is absent.
 
 **Status**: DIRECTION / OPEN  
-**Last Updated**: 2026-11-21  
+**Last Updated**: 2026-11-22  
 **Related**: [atmospheric_harvesting.md](../infrastructure/atmospheric_harvesting.md), [atmospheric_escape_and_recovery.md](../infrastructure/atmospheric_escape_and_recovery.md) (natural loss, retention, and optional recovery as resource paths), [terraforming_options.md](../infrastructure/terraforming_options.md), [isru_fabrication_chain.md](../technical/isru_fabrication_chain.md), Luna operations / TEU material
 
 This page records the intended Venus HLT harvesting and return setup, plus the shared mixed-volatiles inventory concept. It is a statement of intended behavior, not a claim that the current implementation is complete.
@@ -151,6 +151,30 @@ The two inspected lunar production paths also disagree about what a mixed-volati
 - The code search did not establish a production gas-separator job path that consumes this canonical batch and produces separated constituent Items. The historical/status note describing a 500 kg `mixed_volatiles` gas-separator input is not, by itself, proof of a live end-to-end code path.
 
 This reinforces the intended direction already recorded above: the skimmer, TEU, and PVE should converge on one mass-primary mixed-volatiles Item representation, with composition metadata consistent with its total amount. The current TEU paths are evidence of implementation divergence, not alternative approved representations.
+
+---
+
+### PVE / TEU unit-buffer extraction is not a constituent inventory
+
+The unit-level processing concern contains a second extraction path, separate from `Manufacturing::MaterialProcessingService` and `LunaOperationsSimulationService`:
+
+- `Units::HasProcessing#process_resources` requires `operational_data['processing_capabilities']['thermal_extraction']`, obtains the regolith input rate from the unit lookup data, consumes that amount through the unit's Inventory, then reads `celestial_body.geosphere.crust_composition['volatiles']`. It estimates each volatile from the crust percentage and configured efficiency.
+- Gas and liquid products are sent to `store_in_buffer('gas_buffer', volatile, amount)` or `store_in_buffer('water_buffer', volatile, amount)`. The method called `store_in_buffer` accepts the resource name and amount, but only increments the selected buffer's aggregate `current_level`; it does not store the resource name, constituent amount, or a composition map. The buffer therefore cannot later identify which gases make up its aggregate mass.
+- `thermal_extract_volatiles` is a separate TEU-specific method. It reads the unit lookup's `processing_capabilities.processes` entry named `volatile_extraction`, consumes regolith, calculates yields from the same `crust_composition['volatiles']`, and writes gases/liquids to `gas_storage` / `liquid_storage` buffers. It has the same limitation: `store_in_buffer` only increments an aggregate level and discards constituent identity.
+- Neither method visibly decrements the source Geosphere volatile composition or its material inventory, and neither transfers its outputs into a planetary Atmosphere. The consumed regolith is removed from the unit's own Inventory; the volatile yield is an estimate from composition percentages rather than a demonstrated extraction from a finite, depleted volatile reservoir.
+- `process_geosphere!` dispatches to these methods, but repository search found no production caller of `process_geosphere!`, `process_resources`, or `thermal_extract_volatiles`; direct visible calls were definitions/spec coverage. Treat these as callable model methods, not proof of an automatically operating PVE/TEU simulation loop.
+- `Units::BaseUnit#process_materials` is another generic route: it checks craft-inventory inputs, routes gas/liquid outputs to buffers and other outputs to `store_resource`, then consumes inputs. Its buffer writes use the same aggregate-only method. The generic `operate` path instead calculates outputs and sends them through `handle_outputs` / `store_resource`; it does not establish a gas-separator-specific separation algorithm.
+
+The unit buffer is consequently a capacity/level counter, not a constituent-resolved material store. It cannot serve as the intermediate mixed-volatiles batch described in the direction above without an existing downstream representation being connected and reconciled.
+
+### Gas-separator processing path not found in active code
+
+- Repository search found gas-separator identifiers in deployment/planning references and test doubles, but did not find an active gas-separator model, service, processing branch, or production call path that consumes mixed volatiles and emits separated gas Items.
+- The inspected `Manufacturing::MaterialProcessingService#complete_job` zero-amount output dispatch handles only `H2O`, `mixed_volatiles`, and `depleted_regolith`. It has no corresponding output branches for separator products such as `CO2`, `N2`, `O2`, or `CH4`.
+- A historical `CURRENT_STATUS.md` entry describes a gas-separator JSON definition with a 500 kg mixed-volatiles input and world-driven outputs. That is a historical/status statement, not evidence of an active operational-data file or executable processing path. Attempts to fetch the expected operational-data file locations did not resolve; the exact current lookup-data location remains unverified.
+- The existing `Units::BaseUnit#process_materials` and `operate` methods are generic resource-handling methods, not evidence of cryogenic fractional distillation. The inspected code contains no separator-specific constituent split, composition-based output calculation, or matching consumption of a mixed-volatiles batch.
+
+**Audit conclusion:** PVE/TEU extraction, constituent-preserving storage, and downstream gas separation are not connected as a validated chain. The existing unit buffer stores only aggregate levels; the manufacturing job path creates separate Items or a scalar label in other paths; and no active separator implementation was located. Keep the existing Craft/Settlement Inventory + Item metadata as the documented candidate batch representation, and reconcile the current unit buffers and job execution paths rather than introducing another inventory abstraction.
 
 ---
 
