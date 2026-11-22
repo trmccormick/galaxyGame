@@ -118,7 +118,7 @@ Call-site tracing did not find a production caller of GeosphereConcern#extract_v
 - MaterialTransferable#transfer_material decrements a source polymorphic Material record and dispatches to target.add_gas for an Atmosphere, target.add_liquid for a Hydrosphere, or a target Material record for other spheres. This is the generic path that explicitly recognizes an Atmosphere target.
 - Geosphere#transfer_material uses geological_materials.mass and creates/updates a target polymorphic Material record. It does not special-case an Atmosphere target to create a Gas record. The source representation and target inventory type therefore matter when choosing a transfer method.
 
-These methods are not interchangeable. A method that creates a generic Material row on an Atmosphere does not automatically populate the Atmosphere Gas association used by pressure, composition, and gas-management methods.
+These methods are not interchangeable. A method that creates a generic Material row on an Atmosphere does not automatically populate the Atmosphere Gas association used by pressure, composition, and gas-management methods. A repository-wide call-site search found no production invocations of the sphere-level transfer_material methods; the visible direct calls were in specs. The body-to-body AtmosphericTransferService has separate production callers, but that does not establish that the generic sphere-transfer APIs are part of the normal runtime material flow.
 
 ### Body-to-body atmospheric transfer
 
@@ -170,7 +170,7 @@ The Atmosphere service's own gas-loss updates bypass normal callbacks and percen
 4. Decide whether atmospheric-loss updates should refresh percentage/ppm immediately or whether consumers intentionally tolerate stale values until the next inventory operation.
 5. Trace all production callers of `PlanetUpdateService`, `TerraSim::Simulator`, and `AtmosphereConcern#trigger_simulation` to establish the actual cadence and avoid accidental double ticks.
 6. Validate the current heuristic loss rates against the separate design intent for Earth, Venus, and Mars; the current code does not model all known mechanisms or provide upper-atmosphere recovery.
-7. Trace all generic and specialized transfer call sites, including how the 2% raw-transfer difference is treated, before claiming full mass conservation.
+7. Establish production callers for the generic and specialized sphere transfer_material methods; repository search found definitions and spec calls but no production invocation. Separately trace how the 2% raw-transfer difference and processed-transfer remainders are represented before claiming full mass conservation.
 
 ## Related wiki pages
 
