@@ -388,3 +388,15 @@ Recorded mismatches preventing this from being treated as an operational cargo p
 - The existing skimmer Cycler offload still uses skimmer Atmosphere Gas records and Cycler `definition_data['cargo']`, not the craft Inventory/Item path.
 
 No new inventory abstraction was proposed. The documented direction is to reconcile and test these existing storage and transfer paths before wiring the skimmer's mixed-volatiles workflow through them. No application code or simulation data changed.
+
+
+### 2026-11-22 follow-up — mixed-volatiles producer and separator input alignment
+
+Traced `Manufacturing::MaterialProcessingService#complete_job`, `LunaOperationsSimulationService`, `AIManager::ISRUEvaluator`, and related inventory paths. Extended [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md).
+
+The two existing TEU production paths do not produce the same batch representation:
+- `MaterialProcessingService` handles a `mixed_volatiles` output by adding each non-H2O constituent as a separate Item; it does not create one mixed-volatiles batch with composition metadata. H2O is emitted separately. It reads Geosphere stored-volatiles proportions but does not deplete that reservoir in the inspected completion method.
+- `LunaOperationsSimulationService` produces a scalar Item named `Mixed Volatiles`, without constituent composition metadata. Its inventory helper truncates amounts with `to_i`, so the configured 0.05 kg per TEU cycle becomes zero for a single cycle.
+- The code search did not establish a production gas-separator processing path consuming a canonical mixed-volatiles Item. A historical/status description of the separator's 500 kg input is not proof of live runtime integration.
+
+The intended single mass-primary `mixed_volatiles` Item with constituent kg masses in metadata remains the target direction already recorded in this wiki page. Existing TEU outputs are divergent implementations, not separate accepted inventory formats. No code or simulation data changed.
