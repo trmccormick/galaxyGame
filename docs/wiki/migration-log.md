@@ -400,3 +400,14 @@ The two existing TEU production paths do not produce the same batch representati
 - The code search did not establish a production gas-separator processing path consuming a canonical mixed-volatiles Item. A historical/status description of the separator's 500 kg input is not proof of live runtime integration.
 
 The intended single mass-primary `mixed_volatiles` Item with constituent kg masses in metadata remains the target direction already recorded in this wiki page. Existing TEU outputs are divergent implementations, not separate accepted inventory formats. No code or simulation data changed.
+
+
+### 2026-11-22 follow-up — PVE/TEU unit buffers and gas-separator processing
+
+Traced `Units::HasProcessing`, `Units::BaseUnit#process_materials`, `store_in_buffer`, `operate`, `Manufacturing::MaterialProcessingService#complete_job`, and repository references to gas-separator units.
+
+Recorded that the PVE/TEU unit-level extraction methods estimate volatile yields from `geosphere.crust_composition['volatiles']` after consuming regolith from the unit Inventory, then write gas/liquid output to named buffers. The shared `store_in_buffer` method only increments aggregate buffer `current_level`; it discards the supplied constituent name and amount. These methods do not visibly deplete the Geosphere volatile composition/material inventory or transfer outputs to planetary Atmosphere. Repository search found no production caller of `process_geosphere!`, `process_resources`, or `thermal_extract_volatiles`.
+
+Also recorded that generic `BaseUnit#process_materials` routes gas/liquid outputs to the same aggregate-only buffers, while `operate` uses a generic output/store path. No active gas-separator-specific model, service, processing branch, or production call path was found. The inspected material-processing job's world-driven output dispatch has no separator-product branches for CO2/N2/O2/CH4. Historical status documentation describing a 500 kg separator input was retained as historical context, not implementation evidence; expected operational-data file locations could not be resolved in this check.
+
+Updated [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) with these implementation boundaries. No application code, operational data, or retired reference documents changed.
