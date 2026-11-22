@@ -72,7 +72,7 @@ A separate `GeosphereConcern#extract_volatiles` method reads `crust_composition[
 
 Call-site tracing found no production caller of GeosphereConcern#extract_volatiles in the inspected repository search; its direct callers were specs. The production Units::HasProcessing#thermal_extract_volatiles method is separate: it reads the same crust_composition['volatiles'] percentages, consumes regolith through the unit inventory path, and stores estimated gas/liquid outputs in unit buffers. It does not call extract_volatiles, decrement the Geosphere volatile percentages/material record, or add the outputs to the planetary Atmosphere. The two methods must not be described as a single connected extraction pipeline.
 
-Also distinguish Geosphere#transfer_material from MaterialTransferable#transfer_material: the former creates a generic target Material record even when the target is an Atmosphere; the latter explicitly calls target.add_gas for an Atmosphere target. A generic Material row is not the Atmosphere Gas inventory.
+Also distinguish Geosphere#transfer_material from MaterialTransferable#transfer_material: the former creates a generic target Material record even when the target is an Atmosphere; the latter explicitly calls target.add_gas for an Atmosphere target. A generic Material row is not the Atmosphere Gas inventory. A repository call-site search found no production invocations of these sphere-level transfer_material methods; visible direct invocations were in specs. The body-to-body AtmosphericTransferService is a separate, production-used path and should not be conflated with generic sphere material transfer.
 
 ## 4. Resource assessment and ISRU reads
 
