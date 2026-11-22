@@ -101,7 +101,13 @@ Hydrosphere evaporation/precipitation and Biosphere gas exchange also add or rem
 
 ## Execution paths and duplicate-update caution
 
-The primary `TerraSim::Simulator#update_spheres` path invokes the Atmosphere service once per sphere update. A separate `PlanetUpdateService` also has a `process_atmosphere` method that constructs and runs `AtmosphereSimulationService`. The Atmosphere concern contains a private `trigger_simulation` helper as well. The presence of these entry points does not prove they all run in the same normal tick; callers and orchestration need to be traced before assuming a single global cadence or claiming duplicate execution.
+There are two concrete orchestration paths in the application:
+- `TerraSim::Simulator#update_spheres` invokes Atmosphere, Geosphere, Hydrosphere, and Biosphere services in sequence, then invokes the Biosphere–Geosphere interface when both spheres exist.
+- `Game#process_planets` iterates bodies and calls `PlanetUpdateService#run`; its detailed and progressive step paths also invoke the sphere services in sequence and then process sphere interfaces.
+
+Separately, `CelestialBodies::CelestialBody` has a `before_save :run_terra_sim` callback when `simulation_relevant_changes?` is true. That callback calls `TerraSim::Simulator#calc_current`. The Atmosphere concern also defines a private `trigger_simulation` helper, but the inspected search did not establish a production caller for it.
+
+These are real, distinct entry points, but their complete runtime overlap and cadence depend on callers and conditions. In particular, do not assume `PlanetUpdateService` and the CelestialBody callback always run together, or that a body update always causes a full sphere tick. The current code has no single demonstrated global cadence contract.
 
 The Atmosphere service's own gas-loss updates bypass normal callbacks and percentage recalculation, while ordinary gas additions/removals use the concern methods. This distinction matters when following a simulation tick into later consumers of percentage values.
 
