@@ -328,3 +328,14 @@ Documented the existing Biosphere ownership model, biome and life-form records, 
 Recorded implementation boundaries and review items: the SystemBuilder whitelist does not instantiate generator-provided species lists or relational biome rows; model callback ecology and the explicit TerraSim service are separate pathways; both can affect atmosphere; N2-fixation and soil-improvement contributions are aggregated but not applied in the inspected atmospheric update; carrying capacity is calculated but not applied; and soil health is updated heuristically without a demonstrated geological material transfer.
 
 Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. Consulted retired biology architecture and developer notes as harvest sources only; none were modified. No application code or simulation data changed.
+
+
+## 2026-11-22 — Atmosphere gas inventories and evolution
+
+Added [Atmosphere Gas Inventories & Evolution](technical/atmosphere_gas_inventories_and_evolution.md) after inspecting the planetary Atmosphere model and concern, Gas material model, StarSim JSON initialization, TerraSim atmosphere simulation and transfer services, and the simulator/update-service entry points.
+
+Documented the distinction between planetary Atmosphere and the separate enclosed/artificial Atmosphere model; Gas-record mass inventory and retained composition hash; JSON initialization from an explicitly supplied total atmospheric mass; add/remove behavior; pressure and gas-mixture calculations; simplified greenhouse and solar-wind loss; and the separate sphere and body-to-body transfer paths.
+
+Recorded implementation caveats: composition hash is not visibly synchronized by ordinary gas additions/removals; the default mass fallback expects a different composition shape than the JSON normalization path; pressure helpers use inconsistent conversion assumptions; atmospheric loss bypasses normal percentage/ppm recalculation and does not scale by the accepted days argument; raw transfer leaves the efficiency difference unassigned; and multiple Atmosphere simulation entry points require caller/cadence verification. Compared active loss code with the separate atmospheric escape design intent without treating proposed mechanisms as implemented.
+
+Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. No application code, simulation data, or retired reference documents changed.
