@@ -137,17 +137,20 @@ Atmosphere–Biosphere gas exchange is internal to the same celestial body. It c
 
 ## 6. Biosphere–Geosphere coupling
 
-`TerraSim::Simulator#update_spheres` invokes `BiosphereGeosphereInterfaceService` when both Biosphere and Geosphere are present.
+`TerraSim::BiosphereGeosphereInterfaceService#simulate` is the only dedicated Biosphere–Geosphere interface service found. It requires both sphere objects, then calculates:
+- regolith contribution = `geosphere.weathering_rate × 0.5`;
+- biological contribution = `biosphere.biodiversity_index × 50`;
+- new soil health = `50 + regolith contribution + biological contribution`.
 
-The current service calculates:
+It writes the result through `Biosphere#update_soil_health`. This is a heuristic soil-health score update, not a material exchange. It does not consume Geosphere regolith, move mineral mass, create soil inventory, transfer biomass, or update nutrient stocks. The biological input is the aggregate biodiversity index, not a sum of measured organism biomass or soil contributions.
 
-- a regolith contribution equal to half the Geosphere weathering rate;
-- a biological contribution equal to Biosphere biodiversity index multiplied by 50;
-- a new soil-health value equal to a fixed base of 50 plus those two contributions.
+The service is invoked from two different orchestration paths:
+- root `PlanetUpdateService#process_sphere_interfaces`, after all four sphere services in detailed/progressive planet updates;
+- `TerraSim::Simulator#update_spheres`, after Atmosphere, Geosphere, Hydrosphere, and Biosphere services.
 
-It writes the result through `Biosphere#update_soil_health`. This is an implemented coupling point, but it is a heuristic soil-health score. It does not currently demonstrate a transfer of geological material into a measured soil inventory, nutrient mass balance, or biological weathering transaction.
+The CelestialBody before-save callback calls the TerraSim simulator path when simulation-relevant body/sphere changes occur. The root PlanetUpdateService is called by `Game#process_planets` methods, but the active `GameService#advance_by_days` implementation does not call its own `process_planets` method. The repository also defines `Game` in both model and service files, so the job's resolved game-loop implementation needs runtime verification. See the orchestration discussion in [Atmosphere Gas Inventories & Evolution](atmosphere_gas_inventories_and_evolution.md).
 
-The Biosphere also has soil-quality fields and life-form soil-improvement rates. The inspected TerraSim atmospheric-effect aggregation collects the soil contribution but does not apply it in the Atmosphere update path. Do not infer a completed soil-material transfer from those fields or rates.
+The same interface service may therefore be reached through more than one update route, but the code inspection does not establish that both routes execute in every normal tick. Its output is a persisted soil-health attribute, not an independent inventory whose mass should be added to Geosphere or Biosphere totals.
 
 ## 7. Material and biomass accounting
 
