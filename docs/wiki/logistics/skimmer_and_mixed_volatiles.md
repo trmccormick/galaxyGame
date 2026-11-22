@@ -59,6 +59,14 @@ Goal arrival state at Luna for a successful Mk1 run: full LOX tank + mixed gas c
 
 The quantity processed is determined by available captured CO₂, processing throughput, energy, and the LOX required for the mission. Do not assume all captured CO₂ is processed.
 
+### Docking, rendezvous, and proximity-control propulsion (DIRECTION)
+
+Craft designed and equipped for docking with stations, depots, cyclers, or other spacecraft are expected to have a dedicated low-thrust control-propulsion capability. This is an ordinary part of a docking-capable spacecraft's operational equipment, even where the main propulsion system is used for interplanetary or major orbital maneuvers.
+
+The control-thruster system supports attitude control and fine translational maneuvers for rendezvous, approach, alignment, station-keeping, and final docking. It is distinct from the craft's main propulsion system. Do not assume the current HLT Mk1 fit already includes a separately identified control-thruster package; its exact hardware, propellant feed, and performance remain to be reconciled with the craft blueprint and operational data.
+
+Compressed gases retained from onboard processing may be useful reaction mass for compatible control thrusters. CO produced by the HLT's CO₂ processing is therefore not automatically waste: depending on the installed thruster system and mission policy, it may be retained for proximity operations, mixed into the cargo batch for Luna processing, stored in a dedicated allocation, or vented when there is no operational reason to keep it. CO use is conditional on thruster/propellant compatibility and available pressure, storage, and feed arrangements; it is not a claim that every HLT engine can consume CO.
+
 ### 3. Exhaust returned to the source atmosphere
 
 Propellant consumed by the craft produces exhaust gases. Those emissions are added back to the atmosphere of the body where the craft is operating. The gas species and masses follow the propellant actually consumed and its exhaust chemistry.
