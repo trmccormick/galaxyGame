@@ -70,6 +70,8 @@ StarSim's `create_geosphere` loader normalizes the JSON `stored_volatiles` struc
 
 The geosphere also supplies the solid-body surface-composition accessor through its crust composition. It is not merely a terrain-map container.
 
+Its `terrain_map` stores the initial terrain/geographic dataset used by map and surface-view workflows, alongside (not instead of) its geological structure and material inventories. StarSim's automatic terrain generator persists the generated dataset to this field. See [Geosphere Terrain Data & Initial Surface State](geosphere_terrain_and_initial_surface_data.md) for the generation hierarchy, the separate Earth layer-import path, the Surface View adapter, and open provenance checks.
+
 ### Biosphere
 
 The biosphere record stores ecological and habitability-related state, including biodiversity, habitability ratio, vegetation, biome distribution, and soil-related properties. It relates to biomes through `PlanetBiome`, and to life-form records through `Biology::LifeForm`. It also has a polymorphic material association.
