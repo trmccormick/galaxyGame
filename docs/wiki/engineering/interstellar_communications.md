@@ -86,13 +86,11 @@ The service should provide at least:
 
 A command's delivery time, the time needed for the target to execute it, and the return time for confirmation are separate intervals. A command may execute well before its origin learns that it succeeded.
 
-### AWS locations as player operating hubs
+### Gameplay example: operating near an AWS
 
-**ESTABLISHED INTENT — 2026-11-21**
+A player who prioritizes inter-system trade, market activity, and managing robot fleets might choose to establish an operating base at or near an AWS / WH station. Its network position could provide a comparatively quick connection to a neighboring system, making an orbital facility an attractive home base for that style of play.
 
-A player may deliberately establish their primary operating base at or near an AWS because of its network position and the faster connection it can provide to a neighboring star system. An AWS is therefore potentially both communications infrastructure and a strategically valuable place from which to operate. A player's operating location need not be a planetary settlement; an orbital facility or station associated with an AWS/WH connection may serve as the player's home base.
-
-The advantage is relative to the available network topology: an AWS-connected location may provide a shorter or more direct route to another system, reducing information propagation, command delivery, and acknowledgment time for traffic using that route. It does not eliminate routing through the destination system, local relays, carrier availability, queueing, or other delivery constraints. The actual route and delay must still be calculated from the network state.
+This is an illustrative gameplay option, not a required player role, a prescribed strategy, or a separate communications rule. Any connectivity advantage depends on the actual network topology and route availability. The underlying communications constraints still apply: destination-system routing, local relays, carrier availability, queueing, and other delivery conditions are not bypassed.
 
 ### Gameplay consequence: information and action latency
 
