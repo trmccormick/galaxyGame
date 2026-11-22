@@ -140,6 +140,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Geosphere terrain data & initial surface state](technical/geosphere_terrain_and_initial_surface_data.md) | Existing terrain generation, Geosphere persistence, Earth layer-import path, and Surface View data assembly |
 | [Geosphere materials & stored volatile reservoirs](technical/geosphere_materials_and_volatile_reservoirs.md) | Layer inventories, JSON initialization, volatile reservoirs, ISRU reads, material transfers, and mass-accounting verification |
 | [Hydrosphere water inventories & cross-sphere cycling](technical/hydrosphere_water_inventories_and_cycle.md) | Existing water-body and liquid inventories, initialization paths, atmosphere exchange, terrain coverage, and mass/unit verification |
+| [Biosphere ecology & cross-sphere interactions](technical/biosphere_ecology_and_cross_sphere_interactions.md) | Biosphere records, StarSim generation/persistence, life-form and biome simulation, atmospheric effects, soil coupling, and callback/tick verification |
 | [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
 | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | Mass threshold, counterbalance, EM ejection/harvest/reset; natural vs AWS pairing |
