@@ -70,6 +70,10 @@ The last method is a reservoir-depletion calculation. In the inspected implement
 
 A separate `GeosphereConcern#extract_volatiles` method reads `crust_composition['volatiles']`, calculates release based on temperature increase, calls `atmosphere.add_gas`, updates the composition percentage, and creates/updates a polymorphic material record. This is a different data path from `stored_volatiles`; do not assume it consumes the location-based reservoir hash.
 
+Call-site tracing found no production caller of GeosphereConcern#extract_volatiles in the inspected repository search; its direct callers were specs. The production Units::HasProcessing#thermal_extract_volatiles method is separate: it reads the same crust_composition['volatiles'] percentages, consumes regolith through the unit inventory path, and stores estimated gas/liquid outputs in unit buffers. It does not call extract_volatiles, decrement the Geosphere volatile percentages/material record, or add the outputs to the planetary Atmosphere. The two methods must not be described as a single connected extraction pipeline.
+
+Also distinguish Geosphere#transfer_material from MaterialTransferable#transfer_material: the former creates a generic target Material record even when the target is an Atmosphere; the latter explicitly calls target.add_gas for an Atmosphere target. A generic Material row is not the Atmosphere Gas inventory.
+
 ## 4. Resource assessment and ISRU reads
 
 `AIManager::ISRUEvaluator` reads three live inputs for a settlement's celestial body:
