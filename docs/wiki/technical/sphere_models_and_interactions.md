@@ -37,7 +37,7 @@ The following describes the current model organization, not a claim that every p
 
 Stores atmospheric conditions such as pressure and temperature, temperature-related data, dust properties, and associated gas records. Gas composition and mass are represented through associated material records.
 
-TerraSim processes can use atmospheric composition, pressure, temperature, stellar input, and atmospheric retention/loss when evaluating climate and exchanges with other systems.
+TerraSim processes can use atmospheric composition, pressure, temperature, stellar input, and atmospheric retention/loss when evaluating climate and exchanges with other systems. The planetary Atmosphere's per-gas mass inventory, initialization, pressure derivation, greenhouse/loss service, and distinct gas-transfer paths are documented in [Atmosphere Gas Inventories & Evolution](atmosphere_gas_inventories_and_evolution.md).
 
 ### Hydrosphere
 
