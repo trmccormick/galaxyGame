@@ -159,6 +159,52 @@ The intended progression is:
 
 The goal is not to train the AI to select whichever historical profile has the highest score. It is to help it understand the available approaches, their assumptions, their trade-offs, and the conditions under which they may be useful.
 
+#### Multiple profiles, shared objectives, and evolving designs (OWNER-CONFIRMED, 2026-11-21)
+
+Mission profiles are **in-game experimental strategies for pursuing shared strategic objectives**. They are not alternative definitions of what the game is trying to accomplish, and they are not a closed menu of strategies from which the AI Manager must choose forever.
+
+The current Sol infrastructure objectives remain established: develop the Luna industrial and habitation foundation, build the Earth–Moon L1 Depot first, build the separate near-LEO Depot second, and proceed to the main station and shipyards afterward. The objectives and their required order do not become optional because the development team is testing different ways to achieve them. The profiles vary the implementation, supply chain, transport architecture, investment timing, and operational plan.
+
+Luna is the first shared benchmark for comparing those approaches. Candidate profiles can include, but are not limited to:
+
+- **Earth-supported Luna:** use available HLT Mk1 transport to establish the base, importing resources and equipment that Luna cannot yet produce; omit remote harvesting for this baseline.
+- **Venus-supported Luna:** establish the base and operate reusable Venus atmospheric harvesting. The returning craft delivers the actual current atmospheric mixture for local separation and use.
+- **Hybrid supply:** import immediate or economical requirements while developing local production and remote harvesting as demand and capability justify them.
+- **Mk1-first, remote harvesting later:** use Mk1 HLT and Earth imports to establish Luna before committing to remote harvesting operations.
+- **Earth orbital shipyard first:** establish orbital manufacturing infrastructure and build a dedicated harvesting craft before or alongside the Luna expansion. This is a valid architecture to test, not an established preferred build order.
+- **More capable HLT before remote harvesting:** investigate whether designing and building a later HLT mark before remote operations improves mission economics or expands practical destinations. A Mk2 HLT is a proposed option only; its design, specifications, capabilities, development cost, and operating cost have not been established.
+- **Multi-destination harvesting:** evaluate Venus, Titan, or combined remote operations when the actual craft, propulsion, cryogenic retention, fuel, transit, and servicing capabilities make them feasible. Titan was an early option, but the initial Mk1 harvesting configuration could not support the long-duration Titan return mission because of its cryogenic-retention/boiloff limitation. That historical constraint is not a permanent judgment about Titan or later-generation craft.
+
+These are examples for profile design, not an exhaustive list or a commitment to implement every variant immediately. A profile may be added, changed, combined with another, or retired as in-game capabilities and evidence develop. Initial spacecraft and infrastructure designs are likewise evolutionary starting points, not permanent specifications.
+
+#### Supply alternatives and the preferred Luna resource pathway
+
+Earth imports remain a legitimate supply option. A profile may import any required item that Luna cannot produce locally, including nitrogen for habitat pressurization. Venus harvesting is therefore **not a mandatory source of lunar nitrogen**. An Earth-supported profile can omit the Venus harvester entirely and should be measured as a real alternative, including the recurring launch and delivery burden.
+
+The owner's preferred strategic pathway is to use reusable Venus harvesting as part of a longer-term Luna resource economy. The harvester is serviced and repaired at Luna between missions, repeats its collection mission, and produces most of its own LOX through its onboard CO₂ processing. Methane and repairs remain important replenishment requirements; actual consumption, losses, servicing demand, and production must be measured rather than assumed away. Venus intake is the source atmosphere's actual current mixture, not a selective N₂/CO₂-only collection. Its value therefore includes multiple gas constituents and downstream industrial opportunities, not only the immediate nitrogen requirement.
+
+For this preferred pathway, Venus-derived N₂ supports completion of the intended habitat pressurization, while CO₂ becomes a feedstock for later lunar methane production. PSR water-ice mining supplies the water-derived hydrogen needed for that methane chain. PSR mining is intended to begin with the first human crew on Luna, after the Venus harvester has returned and habitat pressurization has been completed. This timing is specific to the preferred Venus-supported sequence; it must not be imposed on an Earth-import profile that supplies nitrogen by another route. See [Lunar ISRU and Remote Gas Operations](../technical/lunar_isru_and_remote_gas_operations.md).
+
+The longer-term rationale is that Luna can progressively reduce Earth fuel imports, supply fuel to L1 and then LEO, and reduce the amount of propellant that must be lifted from Earth's surface for onward logistics. This is the preferred strategic hypothesis, not a measured economic result or a predeclared winner. Its advantage must be established through in-game outcomes.
+
+#### Comparing profile outcomes
+
+Profiles should be run under documented and comparable initial conditions where a fair comparison is possible. Preserve the profile/design version, starting state, target objectives, available technologies and assets, selected tasks, task dependencies and concurrency, cargo manifests, and AI decisions. Record at least:
+
+- initial investment and establishment cost;
+- recurring operating, maintenance, repair, and replacement costs;
+- Earth-imported mass, launch count, delivery cost, launch-window constraints, and transport utilization;
+- remote mission duration, throughput, delivered constituent masses, fuel consumption, LOX produced/used, boiloff, and turnaround time;
+- local extraction, processing, manufacturing, and fuel-production outputs;
+- shortages, inventory levels, crew-survival effects, failures, delays, and recovery;
+- cash flow, available USD, and affordability of purchases;
+- completion time and cumulative cost at common milestones, including Luna operations, L1, LEO, and later station/shipyard expansion.
+
+The simulation has not yet established numeric costs or a break-even point for these strategies. Do not declare the Venus route, Earth imports, an orbital shipyard, a future HLT mark, or Titan harvesting economically superior before comparable runs provide evidence. Retain successful, partially successful, unsuccessful, and unevaluated results with their conditions and evaluation status; a failed or unsuitable run is still useful evidence about constraints.
+
+The AI Manager should learn from both the proposed profile and what actually happened when it was executed. It must be able to select, adapt, combine, or reject known approaches according to current metrics and strategic needs, and to compose a new approach that was not one of the original profiles. A missing or unimplemented capability must be exposed as a development gap; the AI Manager must not be credited with executing an operation the game does not yet support.
+
+
 #### Task V2 / V2.1 development status and intended operating model
 
 The early Venus and Titan atmospheric-harvesting mission profiles were fully worked-out, repeatable mission designs. They were not abandoned when the V2 work began. Their operational patterns and mission-specific requirements were generalized into reusable task concepts, and new draft `tasks_v2` definitions were constructed from that work. The specific early profiles remain design evidence and examples; the direction is to express their reusable capabilities through the evolving task system rather than preserve each as a separate, fixed mission implementation.
