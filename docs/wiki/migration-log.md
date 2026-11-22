@@ -317,3 +317,14 @@ Documented the separate aggregate, regional water-body, composition, phase-state
 Recorded code-level verification points: procedural hydrosphere seeding adds estimated atmospheric H2O mass to estimated hydrosphere mass; regional volume sums are written to the aggregate field named/validated as mass; liquid removal and transfer methods do not visibly synchronize every regional/aggregate representation; TerraSim's ice-melting path removes ice-cap volume but does not add the remaining meltwater to surface-water regions; and the model callback's concern cycle is distinct from the explicit TerraSim service. These are factual observations/open data-contract questions, not proposals for a parallel inventory.
 
 Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. Consulted the legacy hydrosphere architecture and completed spec-fix notes as harvest sources only; neither was modified. No application code or simulation data changed.
+
+
+## 2026-11-21 — Biosphere ecology and cross-sphere interactions
+
+Added [Biosphere Ecology & Cross-Sphere Interactions](technical/biosphere_ecology_and_cross_sphere_interactions.md) after inspecting the Biosphere model and concern, Biology life-form models, PlanetBiome, StarSim BiosphereGeneratorService and SystemBuilder, TerraSim BiosphereSimulationService, BiosphereGeosphereInterfaceService, and Simulator.
+
+Documented the existing Biosphere ownership model, biome and life-form records, biomass derivation, procedural generation and filtered persistence, model-level habitability/biodiversity behavior, ecosystem/population/food-web/biome simulation, atmospheric exchange, and the Geosphere soil-health interface. Distinguished generator output lists from actual LifeForm and PlanetBiome records and kept Biosphere material associations distinct from biomass and ecological state.
+
+Recorded implementation boundaries and review items: the SystemBuilder whitelist does not instantiate generator-provided species lists or relational biome rows; model callback ecology and the explicit TerraSim service are separate pathways; both can affect atmosphere; N2-fixation and soil-improvement contributions are aggregated but not applied in the inspected atmospheric update; carrying capacity is calculated but not applied; and soil health is updated heuristically without a demonstrated geological material transfer.
+
+Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. Consulted retired biology architecture and developer notes as harvest sources only; none were modified. No application code or simulation data changed.
