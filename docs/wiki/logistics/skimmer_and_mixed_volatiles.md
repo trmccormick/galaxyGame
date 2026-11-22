@@ -135,6 +135,19 @@ The existing data model provides a plausible place to hold a mixed-volatiles bat
 - `Craft::Harvester#can_store?` currently returns true whenever the craft has an Inventory; its comment explicitly leaves actual craft-size/storage-module capacity checking as TODO. Its regolith extraction path therefore does not establish usable physical cargo capacity.
 - Unit-level storage and craft-level inventory are separate records. `Units::BaseUnit#collect_materials` copies entries from `resources['stored']` into the craft Inventory and resets the stored hash/current level; the inspected method does not remove the source unit Inventory Items. Do not assume this collection path is a mass-safe move without reconciling both records.
 
+### Existing ISRU producers do not yet share the intended batch representation
+
+The two inspected lunar production paths also disagree about what a mixed-volatiles output is:
+
+- `Manufacturing::MaterialProcessingService#complete_job` handles a declared `mixed_volatiles` output by iterating the Geosphere's stored-volatile composition and adding each non-H2O compound as its own Inventory Item (for example, separate CO2/N2 Items). It does not create one `mixed_volatiles` Item with constituent masses in metadata. H2O is handled by a separate output branch, so it is not part of that mixed output. The service derives fractions from stored_volatiles but does not decrement the Geosphere reservoir in this method; see [Geosphere Materials & Stored Volatile Reservoirs](../technical/geosphere_materials_and_volatile_reservoirs.md).
+- `LunaOperationsSimulationService` has a separate TEU estimate: it calculates a scalar mixed-volatiles output and records it under the display name `Mixed Volatiles`. Its `apply_production` helper calls `amount.to_i`, so fractional kg outputs are truncated before being added to Inventory. At the documented 0.05 kg per TEU cycle, a single-cycle output becomes zero. This path does not attach constituent composition metadata.
+- The two outputs are not interchangeable: one creates individual chemical Items without a single batch record; the other creates a scalar display-name Item with no composition and integer-truncated quantity. Neither inspected path demonstrates the intended canonical `mixed_volatiles` batch whose metadata holds each constituent's mass.
+- The code search did not establish a production gas-separator job path that consumes this canonical batch and produces separated constituent Items. The historical/status note describing a 500 kg `mixed_volatiles` gas-separator input is not, by itself, proof of a live end-to-end code path.
+
+This reinforces the intended direction already recorded above: the skimmer, TEU, and PVE should converge on one mass-primary mixed-volatiles Item representation, with composition metadata consistent with its total amount. The current TEU paths are evidence of implementation divergence, not alternative approved representations.
+
+---
+
 ### Docking cargo transfer is not an established solution
 
 - `AIManager::UniversalDockingService#transfer_payload` calls `transfer_cargo`, but repository search found no production caller of `UniversalDockingService`.
