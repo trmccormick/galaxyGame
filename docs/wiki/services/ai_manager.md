@@ -142,6 +142,42 @@ A future integration may use V2 profiles and tasks as better-described examples 
 
 The current extractor inspected above still scans the legacy `MISSIONS_PATH` directory and looks for profile/manifest pairs there; it does not demonstrate ingestion of the `missions_v2` structure. The V2 task engine is a separate execution foundation. Connecting V2 mission/task definitions to Rake settlement experiments, learning records, and independent AI-generated manifests remains future work. This is an implementation boundary, not evidence that V2 has already contributed training data.
 
+#### Current V2 codebase wiring — source inspection (2026-11-21)
+
+The V2 data layout, executor, Luna integration test, and Rake harness must be described separately. The presence of V2 path constants and JSON examples does not mean the full template architecture is currently connected end to end.
+
+**Data locations and path resolution**
+
+- `game_data_paths.rb` defines both the older `MISSIONS_PATH` / `TASKS_V2_PATH` locations and the newer `MISSIONS_V2_PATH` family, including constants for profiles, phases, mission plans, tasks, registry, and manifests.
+- The checked-in `missions_v2` directory currently contains `profiles/precursor_mission_profile_v1.json` and two task examples: `task_venus_harvest_arrival_v2.json` and `task_titan_harvest_arrival_v2.json`. The declared V2 phase, mission-plan, manifest, and registry locations have no corresponding files in that directory at this revision.
+- `TaskExecutionEngineV2#load_task_library` reads `GalaxyGame::Paths::TASKS_V2_PATH`, which points to the older `missions/tasks_v2` location, rather than `MISSIONS_V2_TASKS_PATH`. That older directory is absent from the current repository tree. Consequently, the current generic loader does not discover the two task examples stored under `missions_v2/tasks`.
+- The engine's `load_phase_tasks` helper also resolves phase and task files under the older `MISSIONS_PATH`. The current `plan_tasks` implementation records phase metadata from a manifest's inline `phases` array; it does not itself resolve a V2 `mission_plan_ref`, phase registry, phase files, or task references.
+
+**What the current Luna Rake does**
+
+`luna_mission:execute` contains a separate, mission-specific loading and orchestration path. It can look for a V2 profile and mission plan, and it checks the V2 phase directory before falling back to older mission paths. It also hardcodes an execution order for four Luna phase IDs. This is useful integration/test scaffolding, but it is not evidence that the generic V2 engine currently owns or dynamically composes that workflow.
+
+There are additional path and data mismatches in this harness: the task-based inventory pre-seeding helper joins each `task_ref` against the older `MISSIONS_PATH`, even when the profile/phase reference is intended to be V2. The Rake's expected Luna profile and manifest filenames are not present in the current `missions_v2` tree. The checked-in `precursor_mission_profile_v1.json` is a different example, with its own inline phase list and a Venus arrival task reference. These inconsistencies should be reconciled before treating the Rake as proof of a working, general V2 data pipeline.
+
+**Execution and verification boundaries**
+
+- `TaskExecutionEngineV2` has a real effect-dispatch implementation for a set of actions, and its environment loader reads the target celestial body and delegates capability discovery to `PrecursorCapabilityService`. This supports the intended world-aware direction.
+- The engine is still a prototype. Its generic planning path is not yet the full mission-plan/phase/task-reference composition described by the templates. Some effect handlers and fallback behavior require separate validation; an unknown effect action currently returns success from the dispatcher rather than proving the requested effect occurred.
+- The Luna integration spec verifies database-derived Luna capabilities, that an older Luna profile produces three expected phase keys, and a material-processing service call. It does not prove that the checked-in `missions_v2` profile and task examples are loaded and executed through the V2 directory structure.
+- The dedicated V2 engine spec primarily exercises resource-import helper behavior and selected effect behavior. A passing unit spec should not be interpreted as end-to-end validation of mission-plan loading, task discovery, task composition, or AI learning.
+
+**Other documentation found**
+
+The codebase contains more than Rake examples, but the sources have different authority and maturity:
+
+- This canonical AI Manager wiki page records the owner-confirmed objective-led, reusable-task intent and the distinction between examples, execution evidence, and future AI learning.
+- `docs/planning/AI-MANAGER—LUNA-BEHAVIOR-GOALS.md` describes the intended Luna decision behavior and the goal of using the V2 task library as the single sequencing source. It is a planning/behavior document, not proof that all of that behavior is implemented.
+- `docs/architecture/ai_manager/FOOTHOLD_PLANNER_ARCHITECTURE.md` describes a thin implemented planner skeleton. It explicitly says its v2-style task sequences are hardcoded vocabulary references, not lookups from the JSON task/phase registry.
+- `docs/architecture/systems/PORT_CONNECTION_SYSTEM.md` and `docs/architecture/adrs/ADR-001-Bridge-Bus-Topology.md` describe the separate asset connection/legacy-port migration. They contain differing adapter names and status descriptions; neither document by itself establishes that the V2 mission/task templates are integrated with that asset-topology work.
+- Completed agent tasks, the Luna MVP blocker checklist, and session handoffs preserve implementation history and test observations. They are useful historical evidence, but dated completion labels and earlier file counts must not override the current tree and code.
+
+**Current conclusion:** the repository contains the beginnings of the intended V2 model, a real but prototype task-effect executor, separate mission/profile examples, and mission-specific Rake integration. It does not yet contain a verified, unified path from the supplied templates and examples through generic task discovery, mission-plan/phase resolution, flexible task composition, execution evidence, and AI Manager learning. Keep the intended architecture documented as intent; describe the current implementation as partial and identify the wiring gaps above rather than silently treating the templates as a completed schema or the Rake as the architecture.
+
 #### How to interpret the training material
 
 Mission profiles are **options and examples**, not approved recipes. They can be supplied to the AI Manager as early training material before their effectiveness is known. A profile can illustrate a possible deployment approach, equipment combination, sequence, or set of assumptions. It remains useful as an example even if it has not been run, proves only partially effective, or fails under the conditions tested.
