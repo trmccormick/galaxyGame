@@ -88,16 +88,57 @@ This is evidence of an existing atmospheric-loss mechanism, but it is not a vali
 
 ## Cross-sphere and body-to-body transfer paths
 
-Several distinct paths touch atmospheric gas:
+Several distinct mechanisms touch atmospheric gas. They do not share one transfer implementation.
 
-- `Atmosphere#transfer_material` removes a named gas from the planetary Atmosphere and creates a generic polymorphic `Material` record on the target sphere inside a transaction. It does not create a target `Gas` record, so this is a generic material transfer, not a direct Atmosphere-to-Atmosphere gas transfer.
-- `MaterialTransferable` and `CelestialBodies::Material` contain other sphere-transfer behavior, including special handling when the target is an Atmosphere. Those methods should be traced at their call sites; they are not interchangeable with `Atmosphere#transfer_material`.
-- `TerraSim::AtmosphericTransferService` implements body-to-body raw, selective, and processed transfer modes. Raw transfer extracts source gases proportionally using current gas percentages, bounded by capacity and source-specific extraction limits (Titan 5%, Venus unlimited by that percentage rule, other bodies 20%). It removes the extracted mass from the source and adds the delivered fraction to the target Atmosphere. Default delivery efficiency is 98%; the undelivered remainder is not returned to the source or assigned to another inventory in this method.
-- Selective transfer applies per-gas limits and the same default efficiency. Processed transfer is a separate CO₂/N₂ pathway with its own extraction caps and product handling.
+### Same-body Hydrosphere exchange
 
-The transfer service is under TerraSim, and the code includes source-specific rules that do not match the uncapped/5%/20% figures in every design document. Treat actual runtime code and the exact selected transfer mode as authoritative when describing current behavior. Do not infer that the atmospheric escape/recovery design page's suggested recovery or technology behavior is already implemented.
+TerraSim::HydrosphereSimulationService performs the active H2O cycle: evaporation reduces ocean/lake/river regional values and calls Atmosphere#add_gas('H2O', amount); precipitation calls remove_gas('H2O', amount) and distributes the returned amount into those regions 70/20/10. Its ice-melting path also adds some H2O to Atmosphere, but the remaining meltwater is not visibly added to surface-water regions. See [Hydrosphere Water Inventories & Cross-Sphere Cycling](hydrosphere_water_inventories_and_cycle.md).
 
-Hydrosphere evaporation/precipitation and Biosphere gas exchange also add or remove atmospheric H₂O, O₂, CO₂, and other constituents through their own services. Their actual behavior and limitations are documented in [Hydrosphere Water Inventories & Cross-Sphere Cycling](hydrosphere_water_inventories_and_cycle.md) and [Biosphere Ecology & Cross-Sphere Interactions](biosphere_ecology_and_cross_sphere_interactions.md). Geosphere volatile release has separate paths; stored volatile reservoir accounting is documented in [Geosphere Materials & Stored Volatile Reservoirs](geosphere_materials_and_volatile_reservoirs.md).
+A separate TerraSim::AtmosphereHydrosphereInterfaceService is called by PlanetUpdateService#process_sphere_interfaces, after its sphere updates. It calculates a humidity value and stores it in Atmosphere.temperature_data. Its gas-exchange method only calculates/logs prospective CO2 and O2 transfers; the actual Hydrosphere absorb/release calls are comments, so it does not currently transfer those gases. It looks up atmospheric vapor by the name Water, while the active Hydrosphere service uses H2O; because Gas names are normalized to chemical formulas, this lookup can miss the active vapor record. The interface service is not called by TerraSim::Simulator#update_spheres.
+
+The Hydrosphere model concern has another evaporation/precipitation implementation, invoked by its after_update callback. It changes the Hydrosphere aggregate scalar and Atmosphere gas inventory, but is distinct from the TerraSim regional-volume cycle. See the Hydrosphere page for callback and representation caveats.
+
+### Same-body Biosphere exchange
+
+Two separate Biosphere paths modify Atmosphere:
+- BiosphereConcern#respond_to_atmospheric_changes estimates CO2 absorption and O2 production from gas percentages and biodiversity, converts the percentage changes to mass, then calls remove_gas('CO2') and add_gas('O2').
+- BiosphereSimulationService#influence_atmosphere derives O2/CO2/CH4 changes from populated LifeForm contributions (or fallback rates), computes target masses for O2, CO2, CH4, N2, and Ar from the current total atmospheric mass, then applies gas-record mass deltas with add_gas/remove_gas.
+
+The service collects N2-fixation and soil-improvement contributions but does not apply them in this atmospheric update. Its gas conversion is a simplified percentage-to-mass adjustment, not a complete chemical/elemental balance. The Biosphere model's after_update callback also runs its concern simulation unless simulation_running is set, so callback-driven exchange is distinct from the explicit TerraSim service. See [Biosphere Ecology & Cross-Sphere Interactions](biosphere_ecology_and_cross_sphere_interactions.md).
+
+### Same-body Geosphere volatile release and processing
+
+GeosphereConcern#extract_volatiles reads crust_composition['volatiles'], calculates a temperature-dependent release, calls Atmosphere#add_gas, reduces the corresponding crust-composition percentage, and updates a polymorphic Material record. It does not visibly reduce total_crust_mass, so the release is not demonstrated as a fully mass-balanced layer-to-atmosphere transfer.
+
+Call-site tracing did not find a production caller of GeosphereConcern#extract_volatiles; the inspected direct callers were specs. The production HasProcessing#thermal_extract_volatiles path is separate: it reads the same crust volatile percentages, consumes settlement/unit regolith, and stores estimated volatile outputs in unit buffers. It does not call GeosphereConcern#extract_volatiles, decrement the Geosphere volatile composition, or add the outputs to the planetary Atmosphere. Do not treat the two methods as one connected extraction pipeline. See [Geosphere Materials & Stored Volatile Reservoirs](geosphere_materials_and_volatile_reservoirs.md).
+
+### Generic sphere transfer methods
+
+- Atmosphere#transfer_material removes a named gas and creates a generic polymorphic Material record on the target sphere. It does not create a target Gas record, so it is not a direct Atmosphere-to-Atmosphere transfer.
+- MaterialTransferable#transfer_material decrements a source polymorphic Material record and dispatches to target.add_gas for an Atmosphere, target.add_liquid for a Hydrosphere, or a target Material record for other spheres. This is the generic path that explicitly recognizes an Atmosphere target.
+- Geosphere#transfer_material uses geological_materials.mass and creates/updates a target polymorphic Material record. It does not special-case an Atmosphere target to create a Gas record. The source representation and target inventory type therefore matter when choosing a transfer method.
+
+These methods are not interchangeable. A method that creates a generic Material row on an Atmosphere does not automatically populate the Atmosphere Gas association used by pressure, composition, and gas-management methods.
+
+### Body-to-body atmospheric transfer
+
+TerraSim::AtmosphericTransferService has production call sites in TerraformingProject#process_atm_transfer and the Venus-Mars pipeline Rake task. It supports three modes:
+
+- **Raw:** extracts a capacity-limited amount proportionally across source gas percentages. The source cap is 5% for Titan, unlimited by percentage for Venus, and 20% for other bodies. It removes the extracted mass and adds 98% by default to the target; the difference is not returned or assigned.
+- **Selective:** applies the same source-specific caps per gas and delivers the requested gases at the configured/default 98% efficiency.
+- **Processed:** extracts CO2 and N2, each capped at 0.5% of its source-gas mass per call. It applies a simplified CO2 -> CO + 1/2 O2 mass ratio (16/44 O2 and 28/44 CO) at default 95% processing efficiency, returns CO to the source, and delivers O2 and N2 to the target at default 98% transport efficiency. Conversion and transport remainders are not assigned to a modeled byproduct/loss inventory in this service.
+
+After transfer, the service recalculates source and target pressures from their atmospheric masses. These are inter-body transfers, not same-body sphere exchanges. The active code and actual selected mode take precedence over older design-page limits or descriptions.
+
+AtmosphericTransferService also contains a separate perform_transfer helper with a hardcoded 98% delivery factor; the inspected primary mode dispatcher uses the three methods above. Do not assume this helper is the path used by every caller.
+
+## Mass-accounting interpretation
+
+- Gas-record masses are the per-species Atmosphere inventory used by normal gas-management and transfer services.
+- Same-body evaporation/precipitation and Biosphere gas exchange are intended as internal body exchanges, but their counterpart sphere representations and callbacks must also be updated for strict conservation.
+- Geosphere volatile release currently reduces composition percentage and a polymorphic Material amount but does not visibly reduce aggregate crust mass.
+- Generic Material transfer and Gas-record transfer are different operations. A target Atmosphere needs a Gas record for its atmospheric pressure/composition calculations.
+- Body-to-body transfer removes mass from the source and adds delivered mass to the target; conversion/transport differences are unassigned in the inspected service.
 
 ## Execution paths and duplicate-update caution
 
