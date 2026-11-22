@@ -51,6 +51,8 @@ Stores geological composition and material inventories across crust, mantle, and
 
 The geosphere is not merely a terrain image. It represents the body's solid interior and geological materials as well as surface/geological state.
 
+Its persisted `terrain_map` is the body's initial terrain/geographic dataset used by mapping and surface-view consumers. The generation, source-selection, persistence, and presentation paths are documented in [Geosphere Terrain Data & Initial Surface State](geosphere_terrain_and_initial_surface_data.md). This map is distinct from geological material inventories and from TerraSim's ongoing environmental evolution.
+
 ### Biosphere
 
 Stores biological and ecological state, including biome relationships, life forms, biodiversity, and habitability-related values. Biomes are associated with a body through the biosphere's regional biome relationships.
