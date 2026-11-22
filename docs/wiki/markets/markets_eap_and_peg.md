@@ -263,13 +263,11 @@ Remote transactions are asynchronous. A player can submit an instruction from th
 
 The same model applies to remote order creation, modification, cancellation, and other market actions. The exact action authorization, stale-command policy, transaction protocol, and whether any action types can be delegated to local automation remain OPEN; do not assume remote actions are instant.
 
-### Operating location may be an AWS hub
+### Gameplay example: an AWS-adjacent market and fleet operation
 
-**ESTABLISHED INTENT — 2026-11-21**
+A player who enjoys market activity, inter-system trading, and coordinating robot or other space-based fleets might choose to operate from an orbital facility near an AWS / WH station. Depending on the network topology, this location could offer a convenient connection to a neighboring system.
 
-The player's operating location, from which centralized orders and asset management are conducted, need not be a planetary settlement. A player may base operations at or near an AWS / WH station to take advantage of a comparatively quick network connection to a neighboring star system. This can improve the delivery times for remote market information, transaction instructions, and acknowledgments along routes that use that connection.
-
-The AWS location does not turn remote markets into local markets or make their listings live. The destination settlement marketplace remains authoritative, and all information and actions remain subject to the complete route, including destination-system routing, available relays/carriers, and queueing. Market scope is still based on Settlement, System, Galaxy, and Universe discovery; operating-base selection affects the routes and resulting delay, not the meaning of those scopes.
+This is an example of a possible player strategy, not a market rule or a prescribed operating model. It does not turn remote markets into local markets or make their listings live. The destination settlement marketplace remains authoritative, and information and actions remain subject to the complete route, including destination-system routing, available relays/carriers, and queueing. Market scope remains Settlement, System, Galaxy, and Universe; a player's choice of base does not change what those scopes mean.
 
 ### Central player account, distributed markets, and physical assets
 
