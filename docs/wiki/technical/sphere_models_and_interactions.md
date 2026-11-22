@@ -57,7 +57,7 @@ Its persisted `terrain_map` is the body's initial terrain/geographic dataset use
 
 Stores biological and ecological state, including biome relationships, life forms, biodiversity, and habitability-related values. Biomes are associated with a body through the biosphere's regional biome relationships.
 
-Biosphere behavior depends on environmental conditions and can in turn affect atmospheric composition, soil, and other environmental state. Detailed ecosystem behavior and terraforming-specific gates should not be treated as universal requirements for every celestial body.
+Biosphere behavior depends on environmental conditions and can in turn affect atmospheric composition, soil, and other environmental state. Detailed ecosystem behavior and terraforming-specific gates should not be treated as universal requirements for every celestial body. Its model records, generation/persistence boundaries, life-form and biome simulation, atmospheric pathways, and Geosphere soil coupling are documented in [Biosphere Ecology & Cross-Sphere Interactions](biosphere_ecology_and_cross_sphere_interactions.md).
 
 ## 3. TerraSim and cross-sphere interactions
 
