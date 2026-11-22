@@ -288,3 +288,10 @@ Added [Geosphere Terrain Data & Initial Surface State](technical/geosphere_terra
 Documented the active source hierarchy and fallback behavior, the separate Earth layer-import path, and the distinction between terrain generation and Surface View payload assembly. Recorded the fixed 100 × 100 unit-grid behavior and empty NASA resource/marker helper outputs as implementation details for later focused verification, not as a reason to replace the terrain architecture. Linked the reference from the sphere-model page, the CelestialBody/sphere data-model page, and the wiki index.
 
 Harvested relevant information from retired terrain-generation references without updating them. Preserved the existing Titan elevation provenance page and its open questions. No application code, terrain datasets, or retired reference documents changed.
+
+
+## 2026-11-21 — Map Studio terrain application path verified against controller
+
+Extended [Geosphere Terrain Data & Initial Surface State](technical/geosphere_terrain_and_initial_surface_data.md) after inspecting `Admin::MapStudioController` directly. Confirmed the separate workflow: Map Studio generates and saves a reusable JSON artifact, then an explicit apply action writes terrain grid, dimensions, and biome counts to the selected body's `geosphere.terrain_map`, while recording applied-artifact metadata in body properties.
+
+Recorded an important behavior for owner review: the apply method replaces the current terrain-map hash with this smaller payload rather than merging it with any existing elevation, resource, quality, or generation-metadata fields. The artifact metadata is not copied into the new terrain-map hash by that method. This is documented as an implementation fact and an open question about intended replacement/provenance semantics, not presumed to be a defect. The broader Map Studio audit already lives in [Admin Dashboard and AI Manager](ui/03_admin_and_ai_manager.md). No application code or terrain data changed.
