@@ -140,15 +140,33 @@ AtmosphericTransferService also contains a separate perform_transfer helper with
 - Generic Material transfer and Gas-record transfer are different operations. A target Atmosphere needs a Gas record for its atmospheric pressure/composition calculations.
 - Body-to-body transfer removes mass from the source and adds delivered mass to the target; conversion/transport differences are unassigned in the inspected service.
 
-## Execution paths and duplicate-update caution
+## Sphere interfaces, orchestration, and game-loop entry points
 
-There are two concrete orchestration paths in the application:
-- `TerraSim::Simulator#update_spheres` invokes Atmosphere, Geosphere, Hydrosphere, and Biosphere services in sequence, then invokes the Biosphere–Geosphere interface when both spheres exist.
-- `Game#process_planets` iterates bodies and calls `PlanetUpdateService#run`; its detailed and progressive step paths also invoke the sphere services in sequence and then process sphere interfaces.
+The repository contains multiple sphere-update implementations. Their presence in code does not mean all are invoked by the same game tick.
 
-Separately, `CelestialBodies::CelestialBody` has a `before_save :run_terra_sim` callback when `simulation_relevant_changes?` is true. That callback calls `TerraSim::Simulator#calc_current`. The Atmosphere concern also defines a private `trigger_simulation` helper, but the inspected search did not establish a production caller for it.
+### Root PlanetUpdateService path
 
-These are real, distinct entry points, but their complete runtime overlap and cadence depend on callers and conditions. In particular, do not assume `PlanetUpdateService` and the CelestialBody callback always run together, or that a body update always causes a full sphere tick. The current code has no single demonstrated global cadence contract.
+The root `PlanetUpdateService#run` (not the namespaced `TerraSim::PlanetUpdateService`) processes Atmosphere, Geosphere, Hydrosphere, and Biosphere in sequence. Its detailed and progressive steps then call `process_sphere_interfaces`, which runs:
+- `TerraSim::AtmosphereHydrosphereInterfaceService` when both spheres exist;
+- `TerraSim::BiosphereGeosphereInterfaceService` when both spheres exist.
+
+The model-level `Game#process_planets` method calls this root service. The separate `GameService#process_planets` method also calls it.
+
+However, `GameService#advance_by_days(days, update_planets: false)` does not call `process_planets`, and the `update_planets` argument is not read in the inspected method. The job `GameSimulationJob#perform` instantiates `Game` and calls `advance_by_days`; it does not directly call the root `PlanetUpdateService`. The source tree defines `class Game` in both `app/models/game.rb` and `app/services/game_service.rb`, so the exact method implementation resolved by the job's constant/load path must be verified in the running Rails application rather than inferred from either file alone.
+
+### CelestialBody callback / TerraSim path
+
+`CelestialBodies::CelestialBody` has a conditional `before_save :run_terra_sim` callback. When atmosphere, hydrosphere, or geosphere is changed (or body mass/albedo changes), it calls `TerraSim::Simulator#calc_current`. That simulator processes Atmosphere, Geosphere, Hydrosphere, and Biosphere, then runs only the Biosphere–Geosphere interface. It does not run the Atmosphere–Hydrosphere interface.
+
+`GameSimulationJob` also contains an optional 10% chance per job run to choose one idle body and call `TerraSim::Simulator#calc_current(1)`. This is an explicit occasional idle-body update, not evidence that all bodies receive a TerraSim tick every game day.
+
+### Other update services and unresolved integration
+
+- `TerraSim::PlanetUpdateService#update` is a third, distinct service. It expects both Atmosphere and Hydrosphere, calls older-style `update_gases`, `update_pressure`, `update_volumes`, evaporation/precipitation, and a terraforming-cycle path. Repository search found no production caller of this namespaced service.
+- `GameSimulation` is another class that explicitly iterates celestial bodies and calls `TerraSim::Simulator`; repository search did not establish a production caller.
+- `TerraformingConcern#process_terraforming_cycle` is called only by the namespaced `TerraSim::PlanetUpdateService` in the inspected search. The concern's `has_many :terraforming_projects` association is commented out in the concern itself, and the concern was not found included by the CelestialBody model. Therefore the atmospheric-transfer project cycle is not demonstrated as connected to the active `GameSimulationJob` path. The separate Rake pipeline and direct project cycle are distinct execution routes.
+
+The exact production cadence and overlap remain unresolved until the Rails constant/load behavior, job orchestration, and actual game-loop entry points are verified together. Do not treat a method definition or an optional update branch as proof of a regular planetary simulation tick.
 
 The Atmosphere service's own gas-loss updates bypass normal callbacks and percentage recalculation, while ordinary gas additions/removals use the concern methods. This distinction matters when following a simulation tick into later consumers of percentage values.
 
