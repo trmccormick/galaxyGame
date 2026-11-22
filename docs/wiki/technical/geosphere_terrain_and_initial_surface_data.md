@@ -50,6 +50,22 @@ The code's use of FreeCiv/Civ4 should be described precisely: these maps can sup
 
 This is distinct from the active `AutomaticTerrainGenerator#generate_earth_terrain` path, which tries NASA elevation data and otherwise falls back to the general AI/procedural generator. Although `AutomaticTerrainGenerator` defines an `earth_processor` accessor, the inspected Earth generation method does not call it. Do not assume the MapLayerService/EarthMapProcessor output is what gets persisted to `geosphere.terrain_map`; that connection was not established by this inspection.
 
+### Map Studio's explicit generate/apply workflow
+
+The existing `Admin::MapStudioController` provides a separate, user-directed path:
+
+1. The generation page selects a target celestial body and available source maps.
+2. `generate_map` processes selected FreeCiv/Civ4 files and calls `AIManager::PlanetaryMapGenerator#generate_planetary_map`.
+3. `save_generated_map` writes a reusable JSON artifact under `GalaxyGame::Paths::GENERATED_MAPS_PATH`, including target-body and source-map metadata.
+4. Browse/analyze actions inspect those artifacts.
+5. `apply_map` is a separate action. It reads the selected artifact and calls `apply_map_to_celestial_body`, which writes the terrain grid, width, height, and biome counts to `geosphere.terrain_map`. It records the artifact metadata in `celestial_body.properties['applied_map']` and sets `map_source` to `ai_generated`.
+
+This confirms that Map Studio can explicitly update the Geosphere's persisted initial terrain. The saved artifact and the body's applied terrain are separate records/states: generating a map does not by itself apply it to a body.
+
+**Important implementation detail:** the apply method assigns a new `terrain_map` hash containing `grid`, `width`, `height`, and `biome_counts`; it does not merge those fields into the previous terrain hash. The artifact's metadata is stored on `CelestialBody.properties`, not copied into the new `terrain_map` payload by this method. Whether replacing a richer automatically generated terrain map is the intended apply behavior, and whether source/provenance metadata should also be represented with the applied terrain, remain verification/design questions.
+
+The current Map Studio controller flow and its broader limitations are also recorded in [Admin Dashboard and AI Manager](../ui/03_admin_and_ai_manager.md).
+
 ## 3. Stored terrain versus surface-view payload
 
 The current Admin Surface action reads `@celestial_body.geosphere&.terrain_map` and passes it to `TerrainDataBuilder#build`.
@@ -88,7 +104,7 @@ Map Studio's initial-data role and TerraSim's ongoing-evolution role are complem
 
 ### Questions to retain for future code review
 
-1. Trace the live Map Studio controller/service path and identify which operations create or update `geosphere.terrain_map`, rather than inferring that from the tool's established design responsibility.
+1. Confirm the intended semantics when Map Studio applies a generated map over an existing, potentially richer `terrain_map`; the current controller replaces the hash with a smaller grid/dimensions/biome-count payload.
 2. Trace each consumer of `terrain_map` and distinguish the persisted map, generated layer payloads, and surface-rendering payloads.
 3. Verify which source files are actually present and selected for each Sol body in the active runtime. The existence of a lookup method or historical task note is not proof that a file is available in every environment.
 4. Review the fixed 100 × 100 unit-grid dimensions against actual terrain-map dimensions and the Surface View coordinate contract.
