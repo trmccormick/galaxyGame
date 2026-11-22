@@ -30,6 +30,23 @@ The RH-400 complete concept sheet below is the primary visual reference for the 
 
 The RH-400 sheet is not merely a catalog render or an isolated illustration. It expresses the major categories of visual representation sought for GalaxyGame objects. It should be used as the principal example when developing and evaluating the Visual Bible, visual definitions, generation prompts, and asset-generation workflow.
 
+## Catalog-page presentation concept: RH-400 dual view
+
+**EARLY UI CONCEPT — 2026-11-21**
+
+The RH-400 dual-view image below records an early idea for how an individual object could be presented on its Catalog page.
+
+![RH-400 catalog dual-view presentation concept](../images/rh400_catalog_dual_view_concept.png)
+
+*Concept: a clean, product-style presentation of the same RH-400 from complementary front three-quarter and rear three-quarter angles. The paired views make the vehicle's overall form and equipment easier to examine, including features that are hidden from one angle. The plain background keeps attention on the object.*
+
+This is a Catalog presentation concept, not the complete visual asset package described above. It illustrates one possible way to present an object's primary catalog imagery; it does not establish a finalized page layout, mandatory number of views, or fixed rendering standard. The final Catalog experience may provide additional views and links into the object's Blueprint, technical illustrations, component breakdown, and other coordinated representations.
+
+The dual-view concept and the comprehensive RH-400 asset sheet serve different purposes:
+
+- **Dual-view Catalog concept:** how a single object might be visually introduced and examined in the Catalog.
+- **Comprehensive visual asset reference:** the wider set of coordinated representations that may be generated and reused across Catalog, Blueprint, inventory, Surface, Settlement, and other game interfaces.
+
 ## Blueprint-driven visual generation
 
 **ESTABLISHED DIRECTION — 2026-11-21**
