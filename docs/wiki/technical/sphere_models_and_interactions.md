@@ -2,7 +2,7 @@
 
 > **Status:** SPHERE DATA MODEL IMPLEMENTED — TerraSim process interactions are partially implemented and remain subject to tuning and evaluation  
 > **Last Audited:** 2026-11-21  
-> **Code inspection:** `main`, 2026-11-14 (service and spec files listed in the implementation snapshot)
+> **Code inspection:** TerraSim service/spec snapshot on `main`, 2026-11-14; sphere-model reference audit on `main`, 2026-11-21
 
 ## Purpose
 
