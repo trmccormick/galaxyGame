@@ -360,3 +360,14 @@ Traced root `PlanetUpdateService`, `TerraSim::Simulator`, the namespaced `TerraS
 Clarified that root `PlanetUpdateService` runs both Atmosphere–Hydrosphere and Biosphere–Geosphere interfaces, while `TerraSim::Simulator` runs only Biosphere–Geosphere. The latter is a heuristic soil-health score calculation, not a regolith/nutrient/biomass transfer. The namespaced TerraSim PlanetUpdateService is a separate legacy-style path and no production caller was found.
 
 Recorded a game-loop integration gap for verification: `GameService#advance_by_days` does not invoke its own `process_planets` method despite exposing an `update_planets` argument; `GameSimulationJob` calls `Game#advance_by_days` and only separately simulates one randomly selected idle body with a 10% chance. Both `app/models/game.rb` and `app/services/game_service.rb` define `class Game`, so the job's resolved method implementation requires runtime verification. `GameSimulation` has an explicit celestial-body loop but no production caller was found. The terraforming project cycle is attached only to the namespaced TerraSim PlanetUpdateService in the inspected search, while the concern's association is commented out and was not found included by CelestialBody. These are documented as integration questions, not assumed runtime behavior.
+
+
+### 2026-11-22 follow-up — Venus skimmer extraction-to-cargo path
+
+Re-traced `AIManager::AtmosphericExtractionService`, `AIManager::SkimmerCyclerHandshakeService`, `Resource::AtmosphericHarvester`, `Craft::Harvester`, and the associated extraction/docking specs. Updated [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) with the verified code boundary.
+
+The AI Manager extraction call transfers gas directly from the source body's planetary Atmosphere to the default Luna planetary Atmosphere; it does not fill the skimmer. The subsequent Cycler offload reads the skimmer's own Atmosphere, so those steps do not share an inventory in the inspected implementation. A separate handshake path expects `skimmer.raw_cargo`, while the offload method writes `cycler.definition_data['cargo']`; no model accessor/attribute for `raw_cargo` was found in the repository search.
+
+The extraction specs assert the source/target body transfer; docking specs independently seed the skimmer Atmosphere. They do not exercise an end-to-end extraction-to-cargo handoff. The Resource helper is namespaced as `Resource::AtmosphericHarvester`, but `Craft::Harvester` instantiates unqualified `AtmosphericHarvester`; no top-level alias or production caller for the namespaced helper was found. Its expected storage/resource methods and the harvester's gas-amount parameter also do not align cleanly with the inspected Craft::Harvester API. Kept these as integration gaps, not proposed new architecture.
+
+No code or simulation data changed.
