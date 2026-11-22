@@ -109,7 +109,7 @@ GalaxyGame uses domain-specific material records and polymorphic material associ
 The principal ownership pattern is:
 
 - Atmosphere: gas records with mass-based composition.
-- Hydrosphere: liquid-material records and associated material records, alongside aggregate hydrosphere state.
+- Hydrosphere: liquid-material records and associated material records, alongside aggregate hydrosphere state. Its aggregate, regional, composition, phase, and liquid-material representations and their relationships are detailed in [Hydrosphere Water Inventories & Cross-Sphere Cycling](hydrosphere_water_inventories_and_cycle.md).
 - Geosphere: geological materials associated with crust/mantle/core layers and stored volatile reservoirs.
 - Biosphere: associated materials, biome relationships, and life-form records.
 - CelestialBody: body-level materials used by broader material-management and game systems.
