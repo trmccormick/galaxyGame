@@ -244,6 +244,42 @@ expires_at = created_at + 24.hours  # status becomes 'expired' when current time
 
 ---
 
+## Player market access, scope, and communications delay
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+The Player Market workspace should use the supplied Python EVE Dashboard market-listing presentation as a structural reference, adapted to GalaxyGame's own economy and visual identity. Its order filters are independent of its geographic scope filters. The order filter set includes **Active**, **All**, **Buy**, and **Sell**. The geographic scope selector should support:
+
+- **Settlement** — the selected/current settlement's local marketplace.
+- **System** — markets in the current star system.
+- **Galaxy** — markets across the selected/current galaxy.
+- **Universe** — markets across all galaxies in the game universe.
+
+Selecting a wider scope requests a broader view of information; it does not grant instant or complete knowledge of every market. Marketplaces are settlement-based and local. A listing or market update from another location becomes visible to the player only after its information has propagated through the communications network to the player's operating location. Results at wider scopes may therefore be delayed, incomplete, or absent where no usable route has delivered the information. Different rows in one view may reflect different source-update and receipt times.
+
+The UI should distinguish the market's source state from the player's received information. Where supported, show the source settlement, source/update time, received time, information age, and delivery/communications status. Do not silently query or expose authoritative current remote market state to make a remote listing appear live. A player may see an opportunity that has already changed or disappeared at its source.
+
+Remote transactions are asynchronous. A player can submit an instruction from their current operating location, but it must travel through the available network to the settlement marketplace that owns the order or transaction. The destination market validates and processes it against its actual state when the instruction arrives. The player then waits for the result to travel back through the network. The order may have filled, expired, been cancelled, or changed before the request arrives; the request may succeed, fail, or partially execute. Local transactions at the player's current settlement do not incur interstellar delivery delay.
+
+The same model applies to remote order creation, modification, cancellation, and other market actions. The exact action authorization, stale-command policy, transaction protocol, and whether any action types can be delegated to local automation remain OPEN; do not assume remote actions are instant.
+
+### Central player account, distributed markets, and physical assets
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+The player's ownership and economic records should be manageable through a unified player account/dashboard. The player should not need a separate unrelated account for each settlement or star system. Orders, assets, inventory holdings, balances, transactions, and activity should be discoverable and organized centrally even when they are distributed across many physical locations.
+
+This centralized management view is not a centralized, universally synchronized market. Each order belongs to the marketplace/location where it was placed; each physical asset and inventory remains at its actual location; each local marketplace remains authoritative for its own current state and transaction execution. The player's central view aggregates the latest information that has reached the player's operating location. Remote records may be stale or awaiting delivery, and remote instructions may be in transit. Centralized ownership/management must not imply instant access, instant transfer, or instant remote control.
+
+Most routine player economic activity is expected to concentrate in one primary star system, where local market information and operations are more responsive. Players may also establish operations or move assets into other systems, with occasional wider interstellar activity. The central account preserves a coherent overview of the player's orders and assets across those locations while the communications model continues to govern what the player currently knows and what remote actions have actually reached their destinations.
+
+Market discovery, transaction execution, and physical logistics remain distinct:
+- Discovery determines which market information has reached the player.
+- Execution occurs at the authoritative settlement marketplace after the instruction arrives.
+- Physical goods still require logistics to move from the source location to the intended destination.
+
+The broader market scope selector is therefore an information/discovery scope, not a promise of universal liquidity, instant order matching, or automatic goods delivery.
+
 ## 5. Autonomous Construction Manager (ACM) — Pre-Player Bootstrapping
 
 ### VERIFIED — ACM Architecture
