@@ -263,6 +263,14 @@ Remote transactions are asynchronous. A player can submit an instruction from th
 
 The same model applies to remote order creation, modification, cancellation, and other market actions. The exact action authorization, stale-command policy, transaction protocol, and whether any action types can be delegated to local automation remain OPEN; do not assume remote actions are instant.
 
+### Operating location may be an AWS hub
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+The player's operating location, from which centralized orders and asset management are conducted, need not be a planetary settlement. A player may base operations at or near an AWS / WH station to take advantage of a comparatively quick network connection to a neighboring star system. This can improve the delivery times for remote market information, transaction instructions, and acknowledgments along routes that use that connection.
+
+The AWS location does not turn remote markets into local markets or make their listings live. The destination settlement marketplace remains authoritative, and all information and actions remain subject to the complete route, including destination-system routing, available relays/carriers, and queueing. Market scope is still based on Settlement, System, Galaxy, and Universe discovery; operating-base selection affects the routes and resulting delay, not the meaning of those scopes.
+
 ### Central player account, distributed markets, and physical assets
 
 **ESTABLISHED INTENT — 2026-11-21**
