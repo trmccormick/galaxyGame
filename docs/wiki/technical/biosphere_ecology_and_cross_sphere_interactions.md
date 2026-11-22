@@ -123,6 +123,10 @@ There is more than one implementation path that can change atmospheric compositi
 
 This is a separate simplified carbon-cycle path from `BiosphereSimulationService#influence_atmosphere`.
 
+The model's after_update callback invokes its concern simulation unless simulation_running is set. That means this callback path is separate from the explicit TerraSim service and can affect the same atmospheric gas records when both are triggered in an update workflow. The exact normal-tick overlap remains caller-dependent.
+
+The concern path performs two sequential gas operations using mass values calculated from the same pre-operation total atmospheric mass. The service path derives target masses from a current total, then applies per-gas deltas through methods that recalculate total mass after each operation. Neither path models photosynthetic stoichiometry or a complete elemental budget; they are simplified gas-inventory adjustments. The service's N2-fixation and soil-improvement outputs remain collected but unused by this Atmosphere update.
+
 ### TerraSim BiosphereSimulationService
 
 The TerraSim service aggregates each populated life form's `atmospheric_contribution`, scales the O2/CO2/CH4 effects by `time_skipped`, and then updates Atmosphere gas records. It also applies a vegetation factor based on the count of PlanetBiome rows.
