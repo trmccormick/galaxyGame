@@ -295,3 +295,14 @@ Harvested relevant information from retired terrain-generation references withou
 Extended [Geosphere Terrain Data & Initial Surface State](technical/geosphere_terrain_and_initial_surface_data.md) after inspecting `Admin::MapStudioController` directly. Confirmed the separate workflow: Map Studio generates and saves a reusable JSON artifact, then an explicit apply action writes terrain grid, dimensions, and biome counts to the selected body's `geosphere.terrain_map`, while recording applied-artifact metadata in body properties.
 
 Recorded an important behavior for owner review: the apply method replaces the current terrain-map hash with this smaller payload rather than merging it with any existing elevation, resource, quality, or generation-metadata fields. The artifact metadata is not copied into the new terrain-map hash by that method. This is documented as an implementation fact and an open question about intended replacement/provenance semantics, not presumed to be a defect. The broader Map Studio audit already lives in [Admin Dashboard and AI Manager](ui/03_admin_and_ai_manager.md). No application code or terrain data changed.
+
+
+## 2026-11-21 — Geosphere material inventories and stored volatiles
+
+Added [Geosphere Materials & Stored Volatile Reservoirs](technical/geosphere_materials_and_volatile_reservoirs.md) after inspecting the StarSim Geosphere JSON loader, Geosphere and GeosphereConcern methods, polymorphic material transfer concern, GeologicalMaterial model, AI Manager ISRU evaluator, and Manufacturing material-processing job service.
+
+Documented the established layer composition/mass model, derived polymorphic Material records, separate GeologicalMaterial records, and location-keyed stored-volatiles inventory. Clarified that stored volatiles are geological reservoirs rather than atmospheric inventory, and that the legacy data-conventions reference is a harvest source only.
+
+Recorded verified implementation boundaries requiring caller tracing: the volatile-release calculator depletes stored reservoirs and returns amounts without performing an atmospheric transfer itself; a separate crust-composition volatile method does add gas to Atmosphere; the current ISRU evaluator reads/estimates availability; and the inspected material-processing completion path derives output fractions from stored_volatiles without decrementing those reservoirs. Also documented distinct transfer/removal methods that operate on different material representations and do not, by themselves, establish a single verified mass-conserving transaction path.
+
+Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. No application code, data, or retired reference documents changed.
