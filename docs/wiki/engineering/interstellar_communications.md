@@ -86,6 +86,14 @@ The service should provide at least:
 
 A command's delivery time, the time needed for the target to execute it, and the return time for confirmation are separate intervals. A command may execute well before its origin learns that it succeeded.
 
+### AWS locations as player operating hubs
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+A player may deliberately establish their primary operating base at or near an AWS because of its network position and the faster connection it can provide to a neighboring star system. An AWS is therefore potentially both communications infrastructure and a strategically valuable place from which to operate. A player's operating location need not be a planetary settlement; an orbital facility or station associated with an AWS/WH connection may serve as the player's home base.
+
+The advantage is relative to the available network topology: an AWS-connected location may provide a shorter or more direct route to another system, reducing information propagation, command delivery, and acknowledgment time for traffic using that route. It does not eliminate routing through the destination system, local relays, carrier availability, queueing, or other delivery constraints. The actual route and delay must still be calculated from the network state.
+
 ### Gameplay consequence: information and action latency
 
 **ESTABLISHED INTENT — 2026-11-21**
