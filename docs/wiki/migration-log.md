@@ -306,3 +306,14 @@ Documented the established layer composition/mass model, derived polymorphic Mat
 Recorded verified implementation boundaries requiring caller tracing: the volatile-release calculator depletes stored reservoirs and returns amounts without performing an atmospheric transfer itself; a separate crust-composition volatile method does add gas to Atmosphere; the current ISRU evaluator reads/estimates availability; and the inspected material-processing completion path derives output fractions from stored_volatiles without decrementing those reservoirs. Also documented distinct transfer/removal methods that operate on different material representations and do not, by themselves, establish a single verified mass-conserving transaction path.
 
 Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. No application code, data, or retired reference documents changed.
+
+
+## 2026-11-21 — Hydrosphere inventories and cross-sphere water cycling
+
+Added [Hydrosphere Water Inventories & Cross-Sphere Cycling](technical/hydrosphere_water_inventories_and_cycle.md) after inspecting the JSON-driven SystemBuilder path, procedural HydrosphereGeneratorService, Hydrosphere model and concern, TerraSim hydrosphere simulation, Simulator call path, and terrain HydrosphereVolumeService.
+
+Documented the separate aggregate, regional water-body, composition, phase-state, liquid-material, and polymorphic material representations; the procedural seeding path; and the existing evaporation/precipitation exchange with Atmosphere. Distinguished terrain-map water_coverage/water_volume from the physical Hydrosphere inventory and documented the legacy aliases.
+
+Recorded code-level verification points: procedural hydrosphere seeding adds estimated atmospheric H2O mass to estimated hydrosphere mass; regional volume sums are written to the aggregate field named/validated as mass; liquid removal and transfer methods do not visibly synchronize every regional/aggregate representation; TerraSim's ice-melting path removes ice-cap volume but does not add the remaining meltwater to surface-water regions; and the model callback's concern cycle is distinct from the explicit TerraSim service. These are factual observations/open data-contract questions, not proposals for a parallel inventory.
+
+Linked the new reference from the sphere-model page, CelestialBody/sphere data-model page, and wiki index. Consulted the legacy hydrosphere architecture and completed spec-fix notes as harvest sources only; neither was modified. No application code or simulation data changed.
