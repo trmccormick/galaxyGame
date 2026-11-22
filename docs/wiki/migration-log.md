@@ -371,3 +371,20 @@ The AI Manager extraction call transfers gas directly from the source body's pla
 The extraction specs assert the source/target body transfer; docking specs independently seed the skimmer Atmosphere. They do not exercise an end-to-end extraction-to-cargo handoff. The Resource helper is namespaced as `Resource::AtmosphericHarvester`, but `Craft::Harvester` instantiates unqualified `AtmosphericHarvester`; no top-level alias or production caller for the namespaced helper was found. Its expected storage/resource methods and the harvester's gas-amount parameter also do not align cleanly with the inspected Craft::Harvester API. Kept these as integration gaps, not proposed new architecture.
 
 No code or simulation data changed.
+
+
+### 2026-11-22 follow-up — craft inventory, storage units, and docking cargo transfer
+
+Traced `Craft::BaseCraft`, `Craft::Harvester`, `Inventory`, `Item`, `Units::BaseUnit`, `AIManager::UniversalDockingService`, and its spec. Updated [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md).
+
+Confirmed that craft already have a polymorphic Inventory and Item records support metadata; manufacturing code already reads composition metadata. This is the closest existing representation for the intended mass-primary mixed-volatiles batch. Attached BaseUnits provide storage capacity/type concepts and have a unit-level `store_resource` / `remove_resource` path.
+
+Recorded mismatches preventing this from being treated as an operational cargo pipeline:
+- `Inventory#add_item` checks attached specialized storage capacity but writes through the craft Inventory's `store_in_inventory`, not the specialized unit's storage records; the existing `store_in_specialized_unit` helper is not called.
+- General capacity lookup uses `BaseUnit#storage_type` (subcategory) while compatibility uses `operational_data['storage']['type']`.
+- `Craft::Harvester#can_store?` currently assumes unlimited capacity.
+- Unit-level storage and craft-level Inventory are separate; collection path requires reconciliation to avoid duplicate representations.
+- `UniversalDockingService#transfer_cargo` has no production caller found, calls an undefined-in-repository `can_process_volatiles?` guard, omits Item metadata, ignores destination add failure, and has no transactional remove/add. Its spec tests docking only, not payload transfer.
+- The existing skimmer Cycler offload still uses skimmer Atmosphere Gas records and Cycler `definition_data['cargo']`, not the craft Inventory/Item path.
+
+No new inventory abstraction was proposed. The documented direction is to reconcile and test these existing storage and transfer paths before wiring the skimmer's mixed-volatiles workflow through them. No application code or simulation data changed.
