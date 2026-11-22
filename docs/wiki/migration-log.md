@@ -254,3 +254,11 @@ Added the Player Market's independent order filters (Active, All, Buy, Sell) and
 Expanded communications intent to make information propagation and command/acknowledgment delays an experienced gameplay constraint. Routing is hop-by-hop through local relay networks and physical data carriers; intra-system portals and inter-system wormhole/AWS connections shorten carrier journeys but do not create instant or FTL messaging. Information delay, command delivery, destination execution, and acknowledgment return remain separate intervals. Player UI must show last-known information and pending communications without silently substituting live remote state. Existing autonomy may continue authorized work during communication gaps.
 
 No numerical latency values, routing algorithm, stale-command expiration rules, transaction protocol, or UI layout were invented; these remain engineering/design details to define. No application code or frozen/retired reference documents changed.
+
+
+## 2026-11-21 — AWS as a strategic Player operating base
+
+Extended the Player operating-location design in [Player View Architecture](ui/02_player_view_architecture.md), [Interstellar Communications](engineering/interstellar_communications.md), and [Markets, EAP, and GCC/USD Peg](markets/markets_eap_and_peg.md): a player may choose to establish their central operation at or near an AWS / WH station to gain a comparatively quick connection to a neighboring star system. The primary operating base need not be a planetary settlement; a suitable orbital facility can serve as the central management location.
+
+This is a network-topology advantage, not instant communication. The actual route still determines information propagation, remote command delivery, and acknowledgment time, including destination-system routing, relay/carrier availability, and queues. An AWS-adjacent base does not make remote markets local or universally live. The choice introduces a strategic trade-off between settlement/industrial/logistical advantages and inter-system connectivity; no universally optimal base location is assumed.
+
