@@ -46,6 +46,8 @@ For JSON initialization, `StarSim::SystemBuilderService#create_atmosphere` accep
 
 The provided total atmospheric mass is therefore an intentional input to initialization; it is not inferred solely from the percentages. Composition percentages describe the relative shares of that total.
 
+Runtime gas additions/removals update the Gas-record masses, aggregate atmospheric mass, and record percentages. The retained composition hash is not visibly synchronized by those ordinary operations. Pressure is derived from mass, gravity, and body surface area, but helper methods currently use differing pressure conversion assumptions. The simplified TerraSim greenhouse and solar-wind-loss behavior, including its bypass of normal percentage recalculation, is documented in [Atmosphere Gas Inventories & Evolution](atmosphere_gas_inventories_and_evolution.md).
+
 ### Hydrosphere
 
 The hydrosphere record stores liquid-system state, including composition, state distribution, temperature, pressure, total liquid/water mass, and the `water_bodies` structure. The model exposes generic liquid-body accessors for oceans, lakes, rivers, ice caps, and subsurface reservoirs, with a groundwater compatibility alias.
