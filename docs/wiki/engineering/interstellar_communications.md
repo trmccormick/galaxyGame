@@ -2,7 +2,7 @@
 title: Interstellar Communications
 category: Engineering
 status: DESIGN INTENT — owner-confirmed; not yet implemented
-last_updated: 2026-11-09
+last_updated: 2026-11-21
 ---
 
 # Interstellar Communications
@@ -85,6 +85,28 @@ The service should provide at least:
 2. Estimated time for an acknowledgment to return to the origin, when it can be estimated.
 
 A command's delivery time, the time needed for the target to execute it, and the return time for confirmation are separate intervals. A command may execute well before its origin learns that it succeeded.
+
+### Gameplay consequence: information and action latency
+
+**ESTABLISHED INTENT — 2026-11-21**
+
+Communications delay is an intentional gameplay constraint, not merely a technical detail or a timestamp displayed for realism. Players should experience the time required for information to reach them and for their instructions to reach remote systems. The player can operate remotely, but cannot act instantaneously at a distant location.
+
+The network uses hop-by-hop routing and store-and-forward delivery. Within a star system, information moves through available local communications links and relay nodes. A portal can shorten the physical journey of a data-carrying courier between connected locations; it does not transmit the packet instantly through the portal. At an inter-system boundary, a suitable craft/carrier transports queued data through a natural wormhole or operational AWS connection. A receiving WS/AWS or other capable node ingests the data into that system's network, where it is routed onward through local relays and available carriers. The process repeats across additional systems until the packet reaches its destination. This is analogous to packets moving through successive network nodes, with physical carrier legs where the topology requires them; it is not a globally synchronized network or FTL communication.
+
+The route and estimated delivery time depend on the actual connected topology and its state, not simply straight-line distance or a fixed delay assigned to a pair of systems. Available links, relay nodes, portal/wormhole connections, carrier schedules and destinations, queueing, capacity, outages, and changing positions can all affect the route. The service should estimate delivery using the feasible route at dispatch and update the estimate when material route changes occur.
+
+For an actionable remote instruction, keep these intervals distinct:
+1. **Information propagation:** an event or market update travels from its source to the player's operating location.
+2. **Command delivery:** the player's instruction travels from the operating location to the system or service authorized to execute it.
+3. **Execution:** the destination processes the instruction against its actual current state.
+4. **Acknowledgment propagation:** the result travels back to the player.
+
+The destination is authoritative. A player may act on information that was already stale when received; the destination must validate against its current state when the instruction arrives. An instruction may execute before the player receives confirmation. A player should be able to continue other gameplay while updates, commands, and acknowledgments are in transit; pending communications are asynchronous work, not a reason to freeze the entire interface.
+
+The player-facing experience should expose useful consequences of delay: last received/source time, information age, source location, pending update or command state, estimated delivery/return time when available, and confirmed execution outcome. Do not silently substitute current remote state for the information actually delivered to the player. The exact presentation and stale-command/expiry policies remain OPEN.
+
+This principle applies consistently to market listings and transactions, asset and craft status, remote asset-management instructions, fleet operations, manufacturing or settlement instructions, and other messages. These systems should use the shared communications delivery model rather than implementing independent delay rules.
 
 ### Packet retention and acknowledgment
 
