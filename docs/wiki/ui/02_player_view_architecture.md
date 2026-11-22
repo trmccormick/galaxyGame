@@ -56,15 +56,15 @@ Most routine player activity is expected to take place within one primary star s
 
 The Player interface should distinguish the player's **operating location** from the location of the asset, market, or system being inspected. Selecting a remote location to inspect does not move the player there or grant a live connection to it. Market scope and other cross-location views can offer Settlement, System, Galaxy, and Universe discovery scopes, but wider scopes show only information that has propagated to the player's operating location.
 
-### Operating base selection and AWS strategic hubs
+### Possible operating strategies (gameplay examples)
 
-**ESTABLISHED INTENT — 2026-11-21**
+Where a player chooses to concentrate their operations is an open-ended gameplay decision. The following are examples of approaches a player might discover useful; they are not prescribed roles, mutually exclusive paths, required strategies, or mechanics that the game assigns to players.
 
-The player's primary operating location is a strategic choice, not necessarily a planetary settlement. A player may establish their central operation at or near an AWS / WH station because its position in the portal and wormhole network provides a comparatively quick connection to a neighboring star system. An orbital station or other suitable facility can therefore serve as the player's operating base and central point for managing their distributed portfolio.
+- A player especially interested in markets, inter-system trade, and managing robot or space-based fleets might choose an operating base near an AWS / WH station. Its network position could make nearby inter-system activity more convenient.
+- A player more interested in planetary settlements, resource extraction, manufacturing, and local logistics might prefer to operate from a settlement or a nearby orbital facility.
+- A player pursuing both kinds of activity might maintain a mixture of planetary and orbital operations while managing their distributed holdings through the centralized Player account.
 
-The location of that base affects the communications routes available to the player. A well-connected AWS location may reduce the time for information to arrive from, and commands or acknowledgments to travel to, a neighboring system. The benefit is determined by actual network topology and route availability; it does not grant instantaneous access or bypass routing within the destination system. A player based at an AWS still experiences information age, queued delivery, command transit, and return acknowledgment delays.
-
-This creates a meaningful trade-off when choosing where to concentrate operations: a planetary or settlement base may offer local economic, industrial, or logistical advantages, while an AWS-adjacent base may offer stronger inter-system connectivity. The design should not assume one universally optimal home location.
+These examples do not establish a universally best location or play style. The communications network still determines what information and commands can reach each location and how long delivery takes. Players can experiment with different arrangements and decide what best supports the activities they enjoy.
 
 ### Communications as an experienced gameplay constraint
 
