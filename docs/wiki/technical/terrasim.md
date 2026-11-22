@@ -142,7 +142,7 @@ Long simulation advances and projections should preserve meaningful rates, delay
 
 ## 8. Sphere-model reference
 
-Detailed sphere data ownership and the relationship between sphere state and TerraSim's cross-sphere processes are documented in [Celestial-Body Sphere Models & Environmental Interactions](sphere_models_and_interactions.md). That page also records a focused implementation snapshot and identifies where current service behavior is simplified or incomplete.
+The established sphere record structure, JSON initialization, and material inventories are documented in [Celestial Body & Sphere Data Model](celestial_body_and_sphere_data_model.md). The relationship between sphere state and TerraSim's cross-sphere processes is documented in [Celestial-Body Sphere Models & Environmental Interactions](sphere_models_and_interactions.md). That page also records a focused implementation snapshot and identifies where current service behavior is simplified or incomplete.
 
 ## 9. Scope boundary
 
