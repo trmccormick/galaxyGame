@@ -351,3 +351,12 @@ Confirmed body-to-body AtmosphericTransferService callers in TerraformingProject
 
 
 Follow-up call-site search found no production invocations of the sphere-level transfer_material APIs; direct visible calls were spec examples. This remains an implementation/call-graph verification item rather than evidence that the methods are unused in every possible dynamic path.
+
+
+### 2026-11-22 follow-up — sphere interface orchestration and game-loop wiring
+
+Traced root `PlanetUpdateService`, `TerraSim::Simulator`, the namespaced `TerraSim::PlanetUpdateService`, `Game` model/service definitions, `GameSimulationJob`, `GameSimulation`, and the terraforming-cycle concern.
+
+Clarified that root `PlanetUpdateService` runs both Atmosphere–Hydrosphere and Biosphere–Geosphere interfaces, while `TerraSim::Simulator` runs only Biosphere–Geosphere. The latter is a heuristic soil-health score calculation, not a regolith/nutrient/biomass transfer. The namespaced TerraSim PlanetUpdateService is a separate legacy-style path and no production caller was found.
+
+Recorded a game-loop integration gap for verification: `GameService#advance_by_days` does not invoke its own `process_planets` method despite exposing an `update_planets` argument; `GameSimulationJob` calls `Game#advance_by_days` and only separately simulates one randomly selected idle body with a 10% chance. Both `app/models/game.rb` and `app/services/game_service.rb` define `class Game`, so the job's resolved method implementation requires runtime verification. `GameSimulation` has an explicit celestial-body loop but no production caller was found. The terraforming project cycle is attached only to the namespaced TerraSim PlanetUpdateService in the inspected search, while the concern's association is commented out and was not found included by CelestialBody. These are documented as integration questions, not assumed runtime behavior.
