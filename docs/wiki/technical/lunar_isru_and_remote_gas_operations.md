@@ -21,6 +21,33 @@ Luna is the first complete operational benchmark for the settlement simulation a
 
 The Rake-driven Luna operation is a reference baseline for validating outcomes. It is not the AI Manager's permanent operating script. The AI Manager must ultimately plan and manage the operation independently, including under changed conditions.
 
+### Luna buildout as a multi-profile experiment
+
+Luna is a required strategic infrastructure objective and the first integrated settlement benchmark, but its initial design, supply chain, and buildout profile are not fixed. Multiple in-game profiles should pursue the same Luna outcome using different viable combinations of Earth imports, local ISRU, remote harvesting, spacecraft, manufacturing locations, and investment timing. Those profiles are experimental approaches—not competing definitions of the strategic objective and not a closed list of what the AI Manager may do.
+
+The owner's preferred long-term pathway is a Luna-first industrial and fuel economy that reduces dependence on lifting fuel and other mass from Earth. It is a strategic preference and a hypothesis to evaluate, not a result already established by simulation. Earth-supported and hybrid profiles remain valid comparisons. An Earth-supported profile may import any requirement Luna cannot yet produce, including N₂, and omit the Venus harvester. Its cost must include recurring Earth launch and delivery requirements, not just the initial base construction.
+
+Other candidate in-game approaches include using Mk1 HLT and imports to establish Luna before remote harvesting; investing in an Earth-orbital shipyard and building a dedicated harvesting craft before heading to Luna; or investigating a more capable HLT before remote operations. The Mk2 HLT is only a proposed design direction at this point—there is no established Mk2 specification, capability set, or cost estimate. Titan was an early harvesting option, but the initial Mk1 harvester could not support the long-duration mission and cryogenic retention requirements. This is a limitation of that early craft/configuration, not a permanent exclusion of Titan from later strategies.
+
+### Preferred Venus–Luna resource sequence (owner-confirmed direction)
+
+When testing the preferred Venus-supported pathway, preserve these dependencies without turning the whole operation into an unnecessarily serial script:
+
+1. Establish dependable initial RTG power and communications.
+2. Prepare landing pads and tank-farm/storage infrastructure while early lunar ISRU proceeds; these workstreams can overlap where their actual dependencies permit.
+3. Begin regolith processing early. It accumulates O₂ for habitat reserves and begins I-beam production. I-beams support elevated solar-panel mounting arrays so panels are raised off the lunar surface. The Solar Expansion Rig is a separate HLT-mounted component; do not conflate it with the I-beam-supported elevated arrays.
+4. Scout and prepare the lava-tube site before the Venus harvester arrives. Habitat placement may begin before the Venus return, but completion of the intended pressurized habitat requires an adequate N₂ supply.
+5. Return the Venus harvester with its actual captured atmospheric mixture. Separate N₂ for habitat pressurization and retain CO₂ for further processing and industrial use. Venus harvesting is not a targeted N₂/CO₂ intake; the returned composition follows the source atmosphere at the time of collection.
+6. Complete habitat pressurization and establish the first human crew. Begin PSR water-ice mining with that first crew, after the Venus return and habitat pressurization.
+7. Use hydrogen recovered from PSR-derived water together with Venus-derived CO₂ as feedstocks for lunar methane production. Regolith/PVE and other suitable local processes supply O₂/LOX as supported by their actual equipment and yields.
+
+The exact task graph, concurrency, quantities, production rates, and operational timing must be determined and validated through the simulation. The sequence above records dependencies and intended timing; it is not a mandate to serialize independent work into rigid phases.
+
+The reusable Venus harvester is an operating asset: it returns to Luna for unloading, inspection, repair, and turnaround before repeating its mission. Its onboard CO₂ processing produces most of its own LOX; methane replenishment and repairs remain requirements. The economics must include the initial craft and deployment investment, mission methane, actual LOX balance, maintenance/repair parts, turnaround time, useful delivered gas mass, and Earth imports avoided over repeated missions.
+
+Luna's intended downstream role is larger than supplying its own settlement. Local methane and LOX production can support the harvester fleet and provide fuel to the L1 Depot first, then the near-LEO Depot, reducing the propellant that must be launched from Earth's surface for onward transport. The L1 and LEO depots are fixed strategic objectives in that order; the profile experiments compare ways to establish and supply them, not whether to build them.
+
+
 ## 2. Surface ISRU: Extraction, Buffering, and Separation
 
 The older lunar ISRU references describe a useful functional chain:
