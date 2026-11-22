@@ -15,6 +15,7 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 | [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Player/Admin dashboard separation, Admin workspaces, AI Manager responsibilities, Map Studio, and Digital Twin workflows |
 | [Current UI state and known issues](04_current_ui_state_and_known_issues.md) | Dated observations of the running main UI, visual inconsistencies, working views, and known rendering issues |
 | [Admin Celestial Body View](05_admin_celestial_body_view.md) | Intended Admin body-inspection workspace, legacy Rails 7 route/page facts, porting direction, and lifecycle issue under investigation |
+| [Catalog, Blueprint & Visual Asset Architecture](06_catalog_blueprint_and_visual_assets.md) | Player Catalog and Blueprint experience, blueprint-driven visual generation, the RH-400 complete asset sheet as the primary visual target, and deployed-unit operational inspection |
 
 The [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) page records observed behavior and defects separately from design intent. The review principle is to preserve, complete, and standardize useful existing application views—not discard unfinished work and start over. Celestial Body View (currently labeled Planetary View in the legacy app), Surface, Map Studio, Monitor entry/navigation, resource, and infrastructure views are candidates for prototype review and porting. Port them toward the approved experience rather than copying legacy layouts and labels unchanged.
 
