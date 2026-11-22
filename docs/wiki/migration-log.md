@@ -279,3 +279,12 @@ Added [Celestial Body & Sphere Data Model](technical/celestial_body_and_sphere_d
 Clarified the status of [Celestial-Body Sphere Models & Environmental Interactions](technical/sphere_models_and_interactions.md): the sphere data model itself is implemented; the PARTIALLY IMPLEMENTED status applies to TerraSim's process coverage and cross-sphere interactions, not to missing sphere architecture. Linked the new reference from the TerraSim page and the main wiki index.
 
 Recorded the body-mass semantic question without changing code or assuming a defect: `CelestialBody#calculate_total_mass` currently adds the body-level `mass` attribute to atmosphere, hydrosphere, and geosphere mass values. The intended meaning of `mass` relative to the sphere breakdown must be verified against JSON conventions, callers, and tests before treating that calculated result as authoritative. Also distinguished established model/inventory mechanisms from call-path verification and physical tuning questions. No application code or retired reference documents changed.
+
+
+## 2026-11-21 — Geosphere terrain and initial surface-data documentation
+
+Added [Geosphere Terrain Data & Initial Surface State](technical/geosphere_terrain_and_initial_surface_data.md) after inspecting StarSim's automatic terrain-generation call path, Geosphere persistence, NASA elevation loading, EarthMapProcessor/MapLayerService, and the Admin Surface/TerrainDataBuilder path. Clarified that `geosphere.terrain_map` is the existing persisted initial terrain/geographic dataset, distinct from the Geosphere's geological material inventories and from TerraSim's ongoing environmental evolution.
+
+Documented the active source hierarchy and fallback behavior, the separate Earth layer-import path, and the distinction between terrain generation and Surface View payload assembly. Recorded the fixed 100 × 100 unit-grid behavior and empty NASA resource/marker helper outputs as implementation details for later focused verification, not as a reason to replace the terrain architecture. Linked the reference from the sphere-model page, the CelestialBody/sphere data-model page, and the wiki index.
+
+Harvested relevant information from retired terrain-generation references without updating them. Preserved the existing Titan elevation provenance page and its open questions. No application code, terrain datasets, or retired reference documents changed.
