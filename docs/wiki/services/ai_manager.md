@@ -341,6 +341,34 @@ These gaps should be reviewed against the owner-confirmed intent before implemen
 
 ---
 
+
+## Mission execution records and operational observability
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-23; implementation remains to be audited/built**
+
+Mission execution must produce inspectable evidence of what the system actually did. This supports both live supervision of normal AI Manager operations and retrospective evaluation of development/test runs. The UI's scrolling terminal-style activity log is a presentation of this execution history; the current static mockup is not evidence that event capture, persistence, or live delivery already exists.
+
+The operational record should distinguish at least:
+- mission/run identity, objective, target/scope, start/end, and final status;
+- task identity, provenance, dependencies, start/completion times, status, and outcome;
+- significant AI Manager decisions and their recorded rationale/evidence, without fabricating reasoning that was not captured;
+- domain events and resulting changes, including assets/structures created or commissioned, inventory and stockpile deltas, volatile production/consumption/transfers and storage levels, GCC flows, logistics/shipment events, financial effects, maintenance, warnings, and failures;
+- links to the authoritative resulting world state and, where available, intermediate checkpoints or time-series measurements.
+
+Task-completion events are important append points for the chronological scrolling activity log. Other significant events may also be recorded as they occur. Concurrent tasks report independently; the history must preserve actual event timestamps/order and task/run context rather than impose a false sequential mission narrative. Current mission/task status is a separate projection of the latest state and should not be reconstructed only by reading the log.
+
+The same underlying records should support:
+1. live activity/status views during normal gameplay operation; and
+2. historical inspection of completed or interrupted development/test runs, including runs that use accelerated simulation time, deliberate time jumps, direct task/service execution, or other test orchestration.
+
+Test harnesses may intentionally bypass the normal game loop or scheduler to exercise an end-to-end capability without waiting for ordinary elapsed game time. That is legitimate development infrastructure. Such runs should reuse the same domain services/capabilities wherever possible and capture the resulting execution evidence and authoritative world-state changes. They do not define the production operating loop. Normal production integration must still be verified independently: simulation-time checks/events, AI Manager decisions, task dispatch, asynchronous execution, state reconciliation, and subsequent evaluation.
+
+For a Luna end-to-end run, inspection should make it possible to determine not merely whether the mission completed, but what was built, what remains operational, what was produced and consumed, what was imported or transferred, what was stockpiled, how volatile storage changed, how GCC flowed, what the operation cost/earned, and where failures or unexpected behavior occurred. The final result and intermediate history should be available for comparison against expected outcomes and prior runs.
+
+Exact event schemas, retention policy, streaming mechanism, checkpoint cadence, and API contracts remain OPEN. Do not assume every domain already emits suitable events or that one generic log message is a substitute for authoritative inventory, storage, asset, or ledger records. Preserve provenance and references to the relevant domain records; keep source-verified implementation separate from this target design.
+
+---
+
 ## 2. Core Service Inventory (Source-Verified; Runtime Maturity Varies)
 
 The active codebase has **92 service files** in `galaxy_game/app/services/ai_manager/`. Below are the authoritative classes organized by responsibility.
