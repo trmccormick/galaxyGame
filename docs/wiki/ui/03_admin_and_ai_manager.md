@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established dashboard separation; individual workspaces and layouts remain DIRECTION / OPEN  
-> **Last Updated:** 2026-11-20
+> **Last Updated:** 2026-11-23
 
 # Admin Dashboard and AI Manager
 
@@ -319,7 +319,25 @@ Additional areas to consider include resource/content catalogs, economy configur
 
 AI Manager is not limited to mission selection and asset deployment. It is the autonomous operations, logistics, network-expansion, and strategic resource-management system supervised through the Admin Dashboard.
 
+
+
+### Shared AI Manager, different sources of direction
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-23; player interface is future scope**
+
+There is one AI Manager system, not separate NPC and player automation implementations. The AI Manager completely manages NPC operations under game-level objectives and NPC operating policies. Players will use the same underlying AI Manager capabilities to direct and automate operations for their own assets. The difference is who supplies the direction, which assets are in scope, and what authority the AI Manager has been given—not a different task engine or a second AI.
+
+- **NPCs:** the AI Manager receives the governing objectives and policies for NPC-controlled assets and autonomously plans, assigns, coordinates, and executes their work.
+- **Player-owned assets:** the player supplies objectives, standing policies, priorities, and individual instructions. The same AI Manager capabilities turn those inputs into tasks and plans and manage authorized execution for the player's assets.
+- **Admin:** the Admin workspace provides system-wide supervision and appropriate configuration/oversight. It is not the player-facing asset-management interface, and Admins should not need to manually create every NPC task.
+
+Keep the inputs distinct: an **objective** describes the outcome to pursue; a **standing policy** defines persistent rules and limits for repeated decisions; an **individual instruction** requests a particular action; and a **condition or trigger** (for example, a shortage or maintenance need) may cause the AI Manager to generate work under the applicable objectives and policies. Tasks, plans, decisions, and executions are shared concepts across NPC and player operations. Their records should preserve the source/provenance of the work and the applicable asset scope and authority, so operators can tell why a task exists, whose direction governs it, and what the AI Manager was authorized to do.
+
+The future Player AI Manager should therefore be a player-scoped control surface over shared capabilities, limited to the player's assets and the automation/decisions the player may delegate. It is not a separate AI implementation and should not expose Admin-only or game-level authority. The current prototype remains focused on the Admin AI Manager workspace; this shared-system model is an architectural constraint, not authorization to implement the Player interface now.
+
 ### Mission and operations management
+
+Task and work-order presentation should make task provenance inspectable. Depending on the scenario, work may originate from an objective, a standing policy, an individual instruction, a detected condition/trigger (such as a shortage or maintenance need), or a higher-level AI Manager decision. Preserve the distinction between the source of direction, the asset scope, and the authority under which the task is planned and executed. Do not imply that every task was manually entered by an Admin.
 
 - mission objectives, selection, planning, constraints, and priorities;
 - asset, craft, fleet, rover, settlement, and infrastructure deployment;
