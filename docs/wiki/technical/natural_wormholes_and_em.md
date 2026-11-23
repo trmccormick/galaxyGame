@@ -110,18 +110,20 @@ The current design exploration is to calculate EM ejection from mass throughput 
 
 This is a candidate relationship, not an approved equation or implementation specification. The modifier would be lower for a more stable aperture and higher for a more unstable aperture. Illustrative discussion values included a low modifier around 1.1 for a well-counterbalanced Sol-side aperture and higher values (for example, 2–4) for a more unstable aperture. These are examples only; they are not calibrated values, limits, or requirements.
 
-For this discussion, the contemplated 0–10 scale describes **instability**, not remaining mass capacity or EM reserve:
-- 0 represents complete stability. The B'Joran DS9 Easter egg is the explicit special case: both apertures have zero instability, require no EM, and eject no EM. See [Optional Discoveries & Easter Eggs](../player/easter_eggs_and_discoveries.md).
-- Increasing instability raises the instability-dependent EM ejection modifier.
-- Ordinary natural wormholes still have mass-throughput-related EM behavior; whether any baseline EM is ejected at zero instability, apart from the B'Joran exception, remains OPEN.
+For this discussion, the contemplated 0–10 scale describes **instability**, not remaining mass capacity or EM reserve. The value has two distinct influences over an aperture's operating history:
 
-The mass-transfer limit is a separate, related aperture metric. It is not the 0–10 instability scale and is not itself an EM reserve. Each aperture accumulates its own transferred mass against its own limit. Counterbalance is expected to influence both the aperture's instability and its mass-transfer limit, but the exact relationship is not yet defined.
+- **Initial instability is set primarily by counterbalance.** The quality of the gravitational counterbalance establishes the aperture's starting instability: better counterbalance means a lower initial value; poorer counterbalance means a higher initial value. Counterbalance is the primary determinant of this starting condition, not necessarily the only physical influence.
+- **Instability then increases as the aperture is loaded.** As mass passes through, the aperture accumulates transferred mass against its own mass-transfer limit. As the remaining capacity gets smaller and the aperture approaches that limit, its instability rises. Thus counterbalance establishes the starting point, while accumulated traffic and proximity to the limit drive subsequent deterioration.
+- **Zero is not an ordinary natural-wormhole operating value.** An ordinary natural aperture may be exceptionally well counterbalanced and begin at very low instability, but it does not reach zero. The B'Joran DS9 Easter egg is the explicit exception: both apertures have zero instability, require no EM, and eject no EM. See [Optional Discoveries & Easter Eggs](../player/easter_eggs_and_discoveries.md).
+- Increasing current instability raises the instability-dependent EM ejection modifier. Ordinary natural wormholes retain mass-throughput-related EM behavior; the exact baseline and combined yield relationship remain OPEN.
+
+The mass-transfer limit is a separate, related aperture metric. It is not the 0–10 instability scale and is not itself an EM reserve. Each aperture accumulates its own transferred mass against its own limit. Counterbalance is expected to influence both the initial instability and the aperture's mass-transfer limit. Accumulated throughput then changes current instability as the aperture approaches that limit. Exact functions, curves, and thresholds remain OPEN.
 
 Captured EM returned to an aperture through WS technology restores that aperture's accumulated mass-transfer capacity. The amount of EM ejected, the amount required for recovery, and the surplus available for other uses must be modeled separately. The intended wider EM economy must leave sufficient usable EM to support AWS and portal technology; it cannot assume that all ejected EM is consumed by aperture recovery. Natural wormholes are the EM-generating source in the current transportation architecture, so the gross yield, per-aperture recovery requirement, capture/return losses, and net EM available to AWS and portals must be balanced together.
 
 Each end of a natural pair has its own instability, counterbalance conditions, mass limit, accumulated throughput, and recovery state. A good Sol-side counterbalance does not set the Eden-side state; each aperture is evaluated independently.
 
-The modifier curve, whether instability acts purely as a multiplier or combines with another contribution, baseline yield, counterbalance effects, mass-limit relationship, recovery ratio, and net-surplus economics all remain OPEN. Do not select a multiplier, one-to-one conversion, or quantitative formula from these examples.
+The modifier curve, the exact initial-instability calculation from counterbalance, the curve by which accumulated throughput raises instability near the mass limit, whether instability acts purely as a multiplier or combines with another contribution, baseline yield, mass-limit relationship, recovery ratio, and net-surplus economics all remain OPEN. Do not select a multiplier, one-to-one conversion, or quantitative formula from these examples.
 
 Distinguish the following quantities in simulation and AI Manager displays:
 1. **EM ejected/locally available** — released by the wormhole.
@@ -293,7 +295,7 @@ This is a focused source snapshot, not a complete audit of every wormhole-relate
 - The numerical cumulative mass-limit value for each aperture, its units, and the quantitative accumulation/EM-restoration rules. The conceptual rule is established: EM pushback resets the accumulated usage for the aperture receiving it, independently of the paired aperture.
 - The initial Sol–Eden connection's required logistics endurance: enough aggregate throughput for several Eden settlements and construction of the wormhole station before the emergent historical Snap. Exact settlement count, cargo/build tonnage, and time window are not yet specified.
 - The candidate mass-throughput × instability-dependent EM ejection relationship, including whether instability is a multiplier or one contribution to a combined calculation; the 0–10 instability scale and illustrative modifiers are not finalized.
-- How counterbalance changes each aperture's instability and mass-transfer limit, and whether those values change dynamically.
+- How counterbalance quantitatively sets each aperture's initial instability and mass-transfer limit; how accumulated throughput raises current instability as remaining capacity falls; and the shape/thresholds of those relationships.
 - How much of each aperture's gross EM ejection must be returned to restore mass-transfer capacity, and how much can remain as net supply for AWS and portal technology.
 - Quantitative relation between mass throughput and EM ejection.
 - Relative stability calculation and the influence of mass placement/orbital geometry.
