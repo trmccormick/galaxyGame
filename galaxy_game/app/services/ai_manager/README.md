@@ -73,6 +73,6 @@ This review is planning and architecture work. It does not authorize a backend r
 
 - [Canonical AI Manager wiki](../../../../docs/wiki/services/ai_manager.md) — current intent, code-alignment notes, Luna benchmark, mission/task boundaries, and known gaps.
 - [Luna behavior goals](../../../../docs/planning/AI-MANAGER%E2%80%94-LUNA-BEHAVIOR-GOALS.md) — intended Luna decision behavior and operator observability; planning guidance, not proof of implementation.
-- [Multi-System Resource Coordination task](../../../../docs/../agent-tasks/projects/galaxyGame/tasks/backlog/ai-manager/2026-06-07-MEDIUM-FEATURE-MULTI-SYSTEM-RESOURCE-COORDINATION.md) — historical statement of later network-scale coordination intent. This task is deferred and must be reassessed against the current architecture before it is revived.
+- **Multi-System Resource Coordination task** in the separate agent-tasks repository — historical statement of later network-scale coordination intent. This task is deferred and must be reassessed against the current architecture before it is revived.
 
 When these references conflict, do not silently choose one: record the conflict, verify code for implementation claims, and use the current owner-confirmed wiki for design intent.
