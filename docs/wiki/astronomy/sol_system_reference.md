@@ -148,7 +148,7 @@ Placement must consider several competing constraints:
 - ship travel time, transfer opportunities, fuel, construction and maintenance logistics;
 - the desire to keep AWS infrastructure outside the inner system/habitable zone rather than placing it among inner terrestrial planets.
 
-Farther-out placement can increase ship travel and resupply times; actual travel depends on orbital positions, trajectories, propulsion, and launch windows, not distance alone. The mass of the AWS stations themselves should not be assumed to provide planetary-scale gravitational counterbalance; any such effect must be supported by the game's established fictional wormhole/EM mechanics.
+Farther-out placement can increase ship travel and resupply times; actual travel depends on orbital positions, trajectories, propulsion, and launch windows, not distance alone. The physical mass of an AWS station is not the source of planetary-scale counterbalance. Rather, opening an artificial wormhole at an appropriately opposing location creates an artificial gravitational anchor through the artificial rift itself. That artificial anchor can counterbalance a natural wormhole when the geometry is suitable. Jupiter remains an example of natural counterbalance supplied by a massive body; an appropriately placed artificial rift is the corresponding artificial mechanism.
 
 Planet Nine is hypothetical and is not part of the current Sol placement baseline. Other moons or small bodies may be evaluated later, but no additional anchor is established here.
 
