@@ -2,13 +2,15 @@
 
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-22  
-> *Audit Summary:* Owner design intent reviewed against the current `Wormhole` model, related discovery/expansion/consortium services, migration, and model specs. Existing code contains basic per-endpoint mass-limit, stability, traversal, and endpoint-shift mechanics, but does not implement the full natural-wormhole/EM/Snap model described here.
+> *Audit Summary:* Owner design intent reviewed against the `Wormhole` model/specs, maintenance and shift jobs, EM harvesting service, and selected AI Manager/service/event integrations. Existing code contains basic mass-limit, stability, traversal, endpoint-shift, and generic EM-harvesting pieces, but these do not form the intended natural-wormhole physics, EM recovery, and AI Manager operating loop. This was a focused review, not an exhaustive audit of every wormhole-related class or call path.
 
 **Status:** DIRECTION / OPEN  
-**Last Updated:** 2026-11-14  
+**Last Updated:** 2026-11-22  
 **Related:** [Portals & AWS](portals_and_aws.md), [Sol System Reference](../astronomy/sol_system_reference.md), [Eden disconnect and emergent history](../player/eden_disconnect_and_emergent_history.md)
 
 This page is the wiki home for natural wormhole behavior, relative stability, mass throughput and limits, EM ejection and harvesting, EM stabilization, shifting/snapping, and the Hammer Protocol.
+
+This is an evolving design record, not a claim that the complete physical model or technology stack is already specified or implemented. The early concepts already establish the direction of an interconnected system; continued review is intended to refine the relationships, identify missing engineering details, and guide implementation. Preserve owner-confirmed intent while marking working hypotheses and unresolved mechanics explicitly. An incomplete early implementation does not, by itself, invalidate the design direction.
 
 ## 1. Natural wormholes are not permanently stable
 
@@ -120,6 +122,10 @@ For this discussion, the contemplated 0–10 scale describes **instability**, no
 The mass-transfer limit is a separate, related aperture metric. It is not the 0–10 instability scale and is not itself an EM reserve. Each aperture accumulates its own transferred mass against its own limit. Counterbalance is expected to influence both the initial instability and the aperture's mass-transfer limit. Accumulated throughput then changes current instability as the aperture approaches that limit. Exact functions, curves, and thresholds remain OPEN.
 
 Captured EM returned to an aperture through WS technology restores that aperture's accumulated mass-transfer capacity. The amount of EM ejected, the amount required for recovery, and the surplus available for other uses must be modeled separately. The intended wider EM economy must leave sufficient usable EM to support AWS and portal technology; it cannot assume that all ejected EM is consumed by aperture recovery. Natural wormholes are the EM-generating source in the current transportation architecture, so the gross yield, per-aperture recovery requirement, capture/return losses, and net EM available to AWS and portals must be balanced together.
+
+**RECOVERY EFFECT ON INSTABILITY — OPEN DESIGN QUESTION, 2026-11-22**
+
+Because accumulated throughput raises current instability as an aperture approaches its mass-transfer limit, restoring some of that consumed capacity may also reduce the load-driven portion of current instability. This is a relationship to investigate, not a finalized rule. If recovery does reduce instability, it should not automatically erase the counterbalance-dependent initial condition: the aperture's starting/baseline instability remains associated with its gravitational counterbalance, while any recoverable load-driven increase is a separate part of its evolving state. The amount, timing, and functional relationship between restored capacity and reduced instability remain OPEN. Do not implement a full reset to the initial value or assume a one-to-one recovery relationship without further design and validation.
 
 Each end of a natural pair has its own instability, counterbalance conditions, mass limit, accumulated throughput, and recovery state. A good Sol-side counterbalance does not set the Eden-side state; each aperture is evaluated independently.
 
