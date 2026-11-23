@@ -341,9 +341,11 @@ These gaps should be reviewed against the owner-confirmed intent before implemen
 
 ---
 
-## 2. Core Service Architecture (Verified Code)
+## 2. Core Service Inventory (Source-Verified; Runtime Maturity Varies)
 
 The active codebase has **92 service files** in `galaxy_game/app/services/ai_manager/`. Below are the authoritative classes organized by responsibility.
+
+> **Verification boundary (2026-11-23):** The 🟢 marker in this inventory confirms that a source class/file is present; it does not certify a production call site or a working end-to-end workflow. A focused audit found that network-scale coordination and several supporting inventory, acquisition, logistics, transport, and ledger paths remain scaffolding or partial implementations. See §2.13 and §3.2–3.5.
 
 ### 2.1 Top-Level Manager
 
@@ -491,7 +493,23 @@ AIManager::Manager (275 lines)
 
 ---
 
-## 3. Autonomous Coordinator Responsibilities (Verified)
+### 2.13 Network-scale coordination maturity (source audit 2026-11-23)
+
+The current source does **not** satisfy the multi-settlement/multi-system coordination contract yet:
+
+- **Runtime entry point:** `Manager` accepts an optional `SystemOrchestrator` and calls it when supplied, but no production construction/injection of `SystemOrchestrator` was found in the tracked application. The references found were the integration spec and a manual test script.
+- **System state and allocation:** `SettlementManager` still supplies mock resource quantities and a default energy request; `SystemState` is in-memory and contains placeholder economic/logistics metrics. `ResourceAllocator` does not move or reserve inventory, and its reopened class definition overrides the older initializer while the legacy spec still uses the old keyword signature. `PriorityArbitrator` relies on hardcoded resource limits.
+- **Logistics scheduling:** `LogisticsCoordinator` uses hardcoded route capacities, durations, and cost estimates. Its settlement-manager lookup returns `nil`, its combined/split transfer hashes do not match the scheduler's expected single-resource shape, and its reservation helper is only a logging stub. It is not connected to the wormhole route planner or a persistent contract lifecycle.
+- **Per-settlement acquisition:** The current acquisition paths are fragmented. `StateAnalyzer` does not return several state keys expected by `StrategySelector`; existing specs stub those keys. The resource-request loop checks that inventory already meets the request before ordering acquisition. The pre-player tree method exists in `EscalationService` but is not wired into its shortage entry point; its inventory query does not match the actual `Inventory`/`Item` model. `ResourceFulfillmentService` calls a `MaterialRequestService.request_materials` method that is not present in current source.
+- **Inventory reservations:** Settlement inventory is an `Inventory` record with associated `Item` rows. No authoritative reservation model/API was found; `SettlementManager#reserve_resources` is not a reservation implementation.
+- **Wormhole and transport inputs:** `Mission::TransitEngine` deliberately handles intra-system transit and rejects cross-system routes. `WormholeNavigator` queries fields that do not match the current `Wormhole` model. `WormholeCoordinator` has prototype routing with fixed cost/time estimates and is not integrated into logistics. Current route-cost helpers do not provide a usable wormhole-aware delivery estimate.
+- **Contracts and finance:** Multiple contract/fulfillment paths coexist, but no verified end-to-end provider reservation → cargo movement → arrival → settlement/payment flow was found. The virtual-ledger service records entries; it does not itself settle balances or move goods.
+
+The current design direction remains: system-wide coordination sits **above** reliable per-settlement acquisition and transport. It must consume those decisions and capabilities rather than create a parallel acquisition system. The 2026-11-23 source audit and detailed file evidence are recorded in [the multi-system resource coordination research report](https://github.com/trmccormick/agent-tasks/blob/main/projects/galaxyGame/summaries/2026-11-23-ARCHITECTURE-MULTI-SYSTEM-RESOURCE-COORDINATION.md).
+
+---
+
+## 3. Autonomous Coordinator Responsibilities (Source Presence Verified; Behavior Varies)
 
 ### 3.1 Manager → ServiceCoordinator (Per-Settlement Mission Dispatch)
 
@@ -510,23 +528,19 @@ service_coordinator.start_mission(mission_data)
 
 ### 3.2 SystemOrchestrator (Inter-Settlement Coordination)
 
-🟢 **Verified in code:** Registers settlements, updates system-wide state, analyzes inter-settlement dependencies, then delegates to `ResourceAllocator`, `PriorityArbitrator`, and `LogisticsCoordinator`.
+🟡 **Class and method structure present; operational coordination not verified.** `Manager` invokes `orchestrate_system` only when an orchestrator is injected. No production construction/injection was found in the tracked application. The current `SettlementManager` data is mocked; allocation execution only logs; and `LogisticsCoordinator` cannot currently schedule a real transfer. See §2.13.
 
 ### 3.3 StrategySelector (Autonomous Decision-Making)
 
-🟢 **Verified in code:** Each tick:
-1. `StateAnalyzer.analyze_state(settlement)` — inventory, production capacity, survival status
-2. `generate_mission_options` — builds candidate actions from available unit types
-3. `MissionScorer.score_mission_options` — scores by strategic value
-4. Returns highest-scored action with type: `:wait`, `:construct`, `:produce`, `:scout`, etc.
+🟡 **Source path present; state contract is inconsistent.** `StateAnalyzer` currently returns inventory, surface storage, power availability, and cost analysis. `StrategySelector` expects additional keys such as `resource_needs`, `scouting_opportunities`, `expansion_readiness`, and capability scores; the existing StrategySelector specs stub those keys rather than obtaining them from the real analyzer. The decision path therefore needs reconciliation before it is treated as a reliable autonomous loop.
 
 ### 3.4 PriorityArbitrator (Priority Conflicts)
 
-🟢 **Verified in code:** Priority levels are numeric: Critical(4), High(3), Medium(2), Low(1). When conflicts arise, it groups requests by resource and resolves highest-priority wins. Crisis escalation sets `resolution_deadline` to +1 hour.
+🟡 **Class present; policy execution is partial.** Priority levels and grouping exist, but resource limits are hardcoded, the grant check is not used by the main arbitration path, and the allocator is not backed by authoritative inventory or reservations.
 
 ### 3.5 LogisticsCoordinator (Transfer Scheduling)
 
-🟢 **Verified in code:** Groups transfers by route → optimizes each route → schedules with transport capacity constraints. Tracks transfer lifecycle: status, progress, estimated_completion per transfer.
+🟡 **Class present; real scheduling is not operational.** Route capacities, durations, and costs are hardcoded; `find_settlement_manager` returns `nil`; combined transfer shapes do not match the scheduler's expected fields; and reservations are not persisted. No wormhole-aware route or contract-delivery integration is present.
 
 ### 3.6 MarketStabilizationService (NPC Market Making)
 
