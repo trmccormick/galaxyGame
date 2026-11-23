@@ -453,3 +453,14 @@ Clarified [Natural Wormholes & EM](technical/natural_wormholes_and_em.md) from o
 - An ordinary natural aperture may start very close to zero but never has zero instability. Zero is reserved for the B'Joran Easter egg, whose two apertures are permanently stable and have no EM requirement or ejection.
 
 The initial-value calculation, load-to-instability curve, thresholds, and quantitative relationship to EM ejection remain OPEN. No application code or numerical values changed.
+
+
+### 2026-11-22 follow-up — natural-wormhole design maturity and recovery question
+
+Completed a focused follow-up to [Natural Wormholes & EM](technical/natural_wormholes_and_em.md), preserving the distinction between the established early design direction and the engineering relationships that remain unfinished.
+
+Clarified that the wiki is an evolving design record intended to carry owner-confirmed intent into further engineering refinement; it does not imply that the complete physical model or technology stack already exists. Updated the page's audit summary to reflect the focused review of the `Wormhole` model/specs, maintenance and shift jobs, EM harvesting service, and selected AI Manager/service/event integrations. The review found existing pieces but did not establish a connected natural-wormhole physics, EM-recovery, and AI Manager operating loop. It is explicitly not represented as an exhaustive audit of every wormhole-related class or call path.
+
+Recorded one additional open design question: returning captured EM restores an aperture's accumulated mass-transfer capacity and may also reduce the load-driven component of current instability. If so, recovery should be evaluated separately from the counterbalance-dependent initial/baseline instability; no automatic reset to baseline or one-to-one recovery relationship is established. The relationship, timing, and quantitative behavior remain OPEN.
+
+No application code, simulation data, or frozen legacy source documents changed.
