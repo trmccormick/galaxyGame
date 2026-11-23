@@ -21,6 +21,27 @@ Luna is the first complete operational benchmark for the settlement simulation a
 
 The Rake-driven Luna operation is a reference baseline for validating outcomes. It is not the AI Manager's permanent operating script. The AI Manager must ultimately plan and manage the operation independently, including under changed conditions.
 
+
+### Earth–Luna infrastructure objective and operating model
+
+**OWNER-CONFIRMED STRATEGIC REQUIREMENT — 2026-11-23**
+
+The initial Earth–Luna buildout is a connected industrial, logistics, and spacecraft-construction system. It is not a standalone lunar settlement exercise, and lunar self-sufficiency is not the final objective. The required strategic progression is:
+
+1. **Luna industrial base:** establish and continually expand the settlement's ability to harvest resources, process feedstocks, fabricate materials and components, maintain equipment, support its crew, and produce useful propellant. Earth imports remain necessary where local capability is not yet available or economical.
+2. **Earth–Moon L1 Depot:** build the first depot using Luna-produced materials and propellant together with high-technology equipment and components imported from Earth. It supports lunar and onward logistics.
+3. **Near-LEO Depot:** build the distinct Earth-side depot second. It supports refueling, cargo transfer/offload, and reducing the cost of launching onward cargo and propellant from Earth's surface.
+4. **Orbital shipyards:** establish shipbuilding and spacecraft-support capacity after the two depot capabilities are in place.
+5. **Mars expansion:** proceed to the next major expansion objective after this Earth–Luna industrial and orbital infrastructure has been established.
+
+This order is a locked strategic dependency, not a fixed sequence of every individual task. Luna harvesting, fabrication, construction, maintenance, Venus harvesting, transport, resupply, and fuel production are expected to overlap whenever their actual dependencies, available assets, and resource constraints permit. The AI Manager must maintain existing operations while building the throughput and infrastructure needed for the next objective. It must not wait for an entire broad mission to finish before scheduling unrelated productive work.
+
+The AI Manager's normal operating loop belongs in gameplay. Simulation-time checks and event/condition evaluations identify when time-dependent work becomes due; the AI Manager evaluates the world and determines what work should happen; Sidekiq executes eligible asynchronous tasks concurrently; results and changed game state return to the AI Manager for continued evaluation. A launch-window check or elapsed production interval, for example, need not itself become a background job. Sidekiq is for delegated work, not a replacement for simulation-time processing or AI decision-making.
+
+Rake scripts and integration tests are development/validation instruments. They can establish test conditions, exercise services, and record benchmark outcomes, but they are not the in-game operating mechanism and must not hardcode the strategic progression as the AI Manager's only execution recipe. The AI Manager should learn and compose available capabilities to pursue these fixed objectives under changing conditions.
+
+The L1 and near-LEO depots are separate required milestones with distinct roles; references that combine them, reverse their order, or place shipyards before the second depot are stale relative to this owner-confirmed progression. The exact build plans, task combinations, concurrency, costs, yields, and schedules remain matters for simulation and operational evaluation.
+
 ### Luna buildout as a multi-profile experiment
 
 Luna is a required strategic infrastructure objective and the first integrated settlement benchmark, but its initial design, supply chain, and buildout profile are not fixed. Multiple in-game profiles should pursue the same Luna outcome using different viable combinations of Earth imports, local ISRU, remote harvesting, spacecraft, manufacturing locations, and investment timing. Those profiles are experimental approaches—not competing definitions of the strategic objective and not a closed list of what the AI Manager may do.
