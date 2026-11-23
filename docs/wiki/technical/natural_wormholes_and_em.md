@@ -1,7 +1,7 @@
 # Natural Wormholes & Exotic Matter (EM)
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Audited:* 2026-11-14  
+> *Last Audited:* 2026-11-22  
 > *Audit Summary:* Owner design intent reviewed against the current `Wormhole` model, related discovery/expansion/consortium services, migration, and model specs. Existing code contains basic per-endpoint mass-limit, stability, traversal, and endpoint-shift mechanics, but does not implement the full natural-wormhole/EM/Snap model described here.
 
 **Status:** DIRECTION / OPEN  
@@ -102,6 +102,27 @@ Natural wormholes produce excess EM in local space through their behavior:
 - Greater mass pushed through increases the amount of EM ejected.
 - Ejected EM can be captured by suitable harvesting/containment equipment; ordinary mining equipment should not be assumed sufficient.
 
+**WORKING MODEL — OWNER DISCUSSION, 2026-11-22; NOT FINALIZED**
+
+The current design exploration is to calculate EM ejection from mass throughput adjusted by the aperture's current instability. A conceptual expression is:
+
+`EM ejected = mass transferred × instability-dependent modifier`
+
+This is a candidate relationship, not an approved equation or implementation specification. The modifier would be lower for a more stable aperture and higher for a more unstable aperture. Illustrative discussion values included a low modifier around 1.1 for a well-counterbalanced Sol-side aperture and higher values (for example, 2–4) for a more unstable aperture. These are examples only; they are not calibrated values, limits, or requirements.
+
+For this discussion, the contemplated 0–10 scale describes **instability**, not remaining mass capacity or EM reserve:
+- 0 represents complete stability. The B'Joran DS9 Easter egg is the explicit special case: both apertures have zero instability, require no EM, and eject no EM. See [Optional Discoveries & Easter Eggs](../player/easter_eggs_and_discoveries.md).
+- Increasing instability raises the instability-dependent EM ejection modifier.
+- Ordinary natural wormholes still have mass-throughput-related EM behavior; whether any baseline EM is ejected at zero instability, apart from the B'Joran exception, remains OPEN.
+
+The mass-transfer limit is a separate, related aperture metric. It is not the 0–10 instability scale and is not itself an EM reserve. Each aperture accumulates its own transferred mass against its own limit. Counterbalance is expected to influence both the aperture's instability and its mass-transfer limit, but the exact relationship is not yet defined.
+
+Captured EM returned to an aperture through WS technology restores that aperture's accumulated mass-transfer capacity. The amount of EM ejected, the amount required for recovery, and the surplus available for other uses must be modeled separately. The intended wider EM economy must leave sufficient usable EM to support AWS and portal technology; it cannot assume that all ejected EM is consumed by aperture recovery. Natural wormholes are the EM-generating source in the current transportation architecture, so the gross yield, per-aperture recovery requirement, capture/return losses, and net EM available to AWS and portals must be balanced together.
+
+Each end of a natural pair has its own instability, counterbalance conditions, mass limit, accumulated throughput, and recovery state. A good Sol-side counterbalance does not set the Eden-side state; each aperture is evaluated independently.
+
+The modifier curve, whether instability acts purely as a multiplier or combines with another contribution, baseline yield, counterbalance effects, mass-limit relationship, recovery ratio, and net-surplus economics all remain OPEN. Do not select a multiplier, one-to-one conversion, or quantitative formula from these examples.
+
 Distinguish the following quantities in simulation and AI Manager displays:
 1. **EM ejected/locally available** — released by the wormhole.
 2. **EM captured/harvested** — actually collected by equipment.
@@ -125,7 +146,9 @@ A natural wormhole is one paired occurrence with two connected apertures. The ap
 
 In other words, stabilization is an active EM-return/recovery process, not merely a passive shield that prevents an aperture from shifting after it reaches its limit. The Eden/Sol historical asymmetry is consistent with this model: the Eden aperture was not effectively stabilized when it reached its relevant threshold and shifted/snapped, while the Sol aperture was stabilized and did not undergo the same event.
 
-This creates a feedback loop: transit through each aperture contributes to EM ejection and consumes that side's available mass-limit capacity; EM captured and returned to that aperture restores its capacity and improves its relative stability.
+This creates a per-aperture feedback loop: transit contributes to EM ejection and consumes that side's accumulated mass-transfer capacity; EM captured and returned to that same aperture restores its capacity. The two apertures' counters and recovery operations remain independent.
+
+Counterbalance is expected to affect both current instability and the mass-transfer limit, but these remain separate metrics. Improving counterbalance can therefore reduce the instability-dependent EM ejection modifier while also improving the aperture's mass-transfer endurance. This can reduce the amount of EM that must be returned for recovery and increase the net EM available to the wider network. The precise effects and whether/how the mass limit changes dynamically remain OPEN.
 
 The exact numerical mass limit is **not yet determined**. The equations governing EM production, capture and return efficiency, the exact reset/restore operation, required station/satellite arrangement, buffer capacity, power demand, and operating thresholds also remain OPEN. Do not imply that stabilization makes a natural wormhole permanently stable or invulnerable.
 
@@ -241,15 +264,16 @@ Its objective is to balance sustainable expansion, resource access, network valu
 
 The following observations are from the current application source. They describe existing code, not confirmation that the model matches the established design intent.
 
-- `Wormhole` stores two connected solar systems, a `natural` flag, a stability enum, a mass limit, separate `mass_transferred_a` / `mass_transferred_b` counters, and per-endpoint stabilized flags.
+- `Wormhole` stores two connected solar systems, a `natural` flag, a three-value stability enum (`unstable`, `stabilizing`, `stable`), one shared `mass_limit` value, separate `mass_transferred_a` / `mass_transferred_b` counters, and per-endpoint stabilized flags.
 - Traversal is allowed only when the wormhole is marked stable, is traversable, has the configured minimum number of operational stabilizers, and the requested transit mass fits within the remaining counter for that endpoint.
-- When an endpoint is not marked stabilized and its transferred-mass counter reaches the mass limit, the model randomizes that endpoint's coordinates and resets that endpoint's counter. A stabilized endpoint does not shift or reset through this path. This is the current code path, not the complete intended stabilization mechanic: the inspected model has no EM pushback process that independently restores the stabilized aperture's accumulated mass-limit usage.
+- When an endpoint is not marked stabilized and its transferred-mass counter reaches the shared mass limit, the model randomizes that endpoint's coordinates and resets that endpoint's counter. A stabilized endpoint does not shift or reset through this path. This is the current code path, not the intended EM recovery mechanic.
 - The model can find deployed craft named `Wormhole Stabilization Satellite` near either endpoint and combines these with directly assigned stabilizers when checking operational stabilizer count.
+- The model has no continuous 0–10 instability metric, no stability-dependent EM yield calculation, no mass-throughput EM production, no local EM capture/storage, and no EM reinjection process. It also does not calculate endpoint-specific gravitational counterbalance or dynamically derive separate aperture mass limits.
 - The model specs exercise associations, validation, endpoint creation, stabilizer lookup, travel gating, and endpoint shifting/reset. Some tests stub travel-safety or satellite behavior; these tests do not validate wormhole physics.
 
 **Important gaps against established intent**
 
-The inspected `Wormhole` model does not currently calculate a time-dependent or historical cumulative mass-throughput/stabilization-deficit process. It does not calculate EM ejection, local EM fields, capture/harvesting, storage, EM return, or the owner-confirmed per-aperture mass-limit restoration resulting from returned EM. The model's two directional counters and stabilized flags represent part of the intended data shape, but do not implement the full independent EM recovery loop for each aperture within one paired occurrence. It does not calculate gravitational counterbalance from Jupiter or other bodies, and it does not connect AI Manager decisions to the Eden Snap's physical timing/outcome. The current endpoint-shift implementation is not, by itself, the full historical Eden Snap.
+The inspected `Wormhole` model is an existing foundational model, but it does not currently calculate a time-dependent or historical cumulative mass-throughput/stabilization-deficit process. It does not calculate EM ejection, local EM fields, capture/harvesting, storage, EM return, or the owner-confirmed per-aperture mass-limit restoration resulting from returned EM. Its three-value stability enum is not the contemplated continuous 0–10 instability measure. Its single `mass_limit` field is shared by both directions even though the design intent requires independently evaluated aperture limits and counters. The model's two directional counters and stabilized flags represent part of the intended data shape, but do not implement the full independent EM recovery loop for each aperture within one paired occurrence. It does not calculate gravitational counterbalance from Jupiter or other bodies, and it does not connect AI Manager decisions to the Eden Snap's physical timing/outcome. The current endpoint-shift implementation is not, by itself, the full historical Eden Snap.
 
 Related source paths inspected:
 - `galaxy_game/app/models/wormhole.rb`
@@ -268,6 +292,9 @@ This is a focused source snapshot, not a complete audit of every wormhole-relate
 - Exact counterbalance calculations for each endpoint, including which local mass properties and geometric arrangements contribute and how they affect the side-specific mass limit/stability outcome.
 - The numerical cumulative mass-limit value for each aperture, its units, and the quantitative accumulation/EM-restoration rules. The conceptual rule is established: EM pushback resets the accumulated usage for the aperture receiving it, independently of the paired aperture.
 - The initial Sol–Eden connection's required logistics endurance: enough aggregate throughput for several Eden settlements and construction of the wormhole station before the emergent historical Snap. Exact settlement count, cargo/build tonnage, and time window are not yet specified.
+- The candidate mass-throughput × instability-dependent EM ejection relationship, including whether instability is a multiplier or one contribution to a combined calculation; the 0–10 instability scale and illustrative modifiers are not finalized.
+- How counterbalance changes each aperture's instability and mass-transfer limit, and whether those values change dynamically.
+- How much of each aperture's gross EM ejection must be returned to restore mass-transfer capacity, and how much can remain as net supply for AWS and portal technology.
 - Quantitative relation between mass throughput and EM ejection.
 - Relative stability calculation and the influence of mass placement/orbital geometry.
 - EM capture efficiency, storage/buffer limits, return efficiency, and stabilization power demand.
