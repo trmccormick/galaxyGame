@@ -69,7 +69,7 @@ The inspected `resource_allocator.rb` also contains two definitions of `AIManage
 Source: `galaxy_game/app/services/logistics/contract_service.rb`
 
 - `create_internal_transfer(from_settlement, to_settlement, material, quantity, transport_method = :orbital_transfer)` validates the settlement pair and checks the source inventory's current stored quantity.
-- It attempts a player-visible contract path first, then falls back to a direct NPC contract when that path returns no contract.
+- It attempts a player-visible contract path first, then falls back to a direct NPC contract when that path returns no contract. The helper rescues **all** `StandardError` exceptions and returns `nil`, so a player-contract creation failure is treated like an unavailable player offer and can silently proceed to NPC fallback; the task must test and make this failure boundary explicit.
 - The fallback contract records source, destination, material, quantity, transport method, status, scheduled time, arrival time, and provider.
 - The current delivery-time calculation is simplified: same celestial body versus different celestial bodies, with a small fixed set of transport-method durations.
 - Transfer execution removes material from the source inventory and adds it to the destination inventory.
@@ -85,6 +85,7 @@ This is a concrete execution candidate and its player-first intent matters. Howe
 
 Relevant source:
 - `galaxy_game/app/services/logistics/contract_service.rb`
+- `galaxy_game/app/services/logistics/player_contract_service.rb`
 - `galaxy_game/app/services/logistics/internal_transfer_service.rb`
 - `galaxy_game/app/services/logistics/import_request_generator.rb`
 - `galaxy_game/app/services/logistics/transport_cost_service.rb`
@@ -160,6 +161,7 @@ Execution belongs to the existing verified owner selected during investigation. 
 The following are confirmed from source inspection at the evidence baseline above; they are not claims about later uninspected commits:
 
 - The current AI Manager network classes contain mock resource state, hard-coded needs, simplified cost and route values, log-only reservation/allocation behavior, and in-memory transfer tracking.
+- The older `docs/architecture/ai_manager/IMPLEMENTATION_STATUS.md` (last updated 2026-01-20) labels the SystemOrchestrator phase 'fully implemented'. That broad status is not a reliable description of the current network resource behavior inspected here; the current service source contains the mock/stub boundaries listed above. Treat the older status statement as stale until reconciled, rather than allowing it to override source evidence.
 - The system orchestration path is optional at the Manager constructor and is not proof that every settlement is registered or that all systems are covered.
 - The pairwise transfer discovery does not establish physical route reachability.
 - A production-grade cross-system transport cost/capacity interface was not verified.
