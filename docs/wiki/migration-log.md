@@ -441,3 +441,15 @@ Recorded the current, explicitly unfinished design exploration:
 Reviewed `galaxy_game/app/models/wormhole.rb`, `galaxy_game/spec/models/wormhole_spec.rb`, and the schema. The existing model is a foundation: it has a three-state stability enum, one shared `mass_limit`, separate directional transferred-mass counters, per-endpoint stabilized flags, traversal gating, and endpoint shifting/reset behavior. It does not yet implement the continuous instability scale, endpoint-specific counterbalance or mass limits, EM ejection, capture/storage, or EM reinjection/recovery. The model specs exercise structural and traversal behavior, not the full physical/EM model. This is a focused source review, not a complete audit of every wormhole-related service or integration.
 
 No application code, model, schema, Easter egg configuration, or frozen legacy source documents changed. The natural-wormhole and portal EM equations, numeric values, recovery ratio, and final operating economics remain OPEN.
+
+
+### 2026-11-22 clarification — initial counterbalance and load-driven instability
+
+Clarified [Natural Wormholes & EM](technical/natural_wormholes_and_em.md) from owner discussion:
+
+- Counterbalance primarily establishes each ordinary natural aperture's **initial instability**. Better counterbalance gives a lower starting value; poorer counterbalance gives a higher one.
+- As mass passes through, accumulated throughput consumes that aperture's independent mass-transfer capacity. Current instability then increases as the aperture approaches its limit.
+- Counterbalance therefore sets the starting condition; subsequent traffic/load drives instability upward. These are distinct influences on the same evolving instability value.
+- An ordinary natural aperture may start very close to zero but never has zero instability. Zero is reserved for the B'Joran Easter egg, whose two apertures are permanently stable and have no EM requirement or ejection.
+
+The initial-value calculation, load-to-instability curve, thresholds, and quantitative relationship to EM ejection remain OPEN. No application code or numerical values changed.
