@@ -129,7 +129,7 @@ This creates a feedback loop: transit through each aperture contributes to EM ej
 
 The exact numerical mass limit is **not yet determined**. The equations governing EM production, capture and return efficiency, the exact reset/restore operation, required station/satellite arrangement, buffer capacity, power demand, and operating thresholds also remain OPEN. Do not imply that stabilization makes a natural wormhole permanently stable or invulnerable.
 
-An AWS can contribute artificial counterbalance through the artificial rift it opens, as described in [Portals & AWS](portals_and_aws.md). The artificial rift itself creates the opposing gravitational anchor when opened at a suitable location relative to the natural aperture; the AWS station's physical mass is not the anchor. This is distinct from natural counterbalance supplied by a suitable massive body. The exact geometry, equations, thresholds, and quantitative effects remain OPEN.
+An AWS can contribute artificial counterbalance through the artificial rift it opens, as described in [Portals & AWS](portals_and_aws.md). The artificial rift itself creates the opposing gravitational anchor when opened at a suitable location relative to the natural aperture; the AWS station's physical mass is not the anchor. This is distinct from natural counterbalance supplied by a suitable massive body. Better counterbalance reduces aperture instability and the associated stabilization burden and EM drain/loss, although it does not remove the separate EM costs of opening or closing a connection or eliminate all stabilization requirements. The exact geometry, equations, thresholds, and quantitative effects remain OPEN.
 
 ## 5. Shifting, snapping, and the Hammer Protocol
 
