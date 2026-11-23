@@ -26,6 +26,33 @@ The **AI Manager** is the game's automated economy and logistics governor. Its r
 
 **Boundary note:** The AI Manager does **not** generate celestial or terrain data — that is StarSim's role. It reads game state (settlement inventories, market order queues, colony populations) and issues high-level work orders to existing services.
 
+
+
+### Shared autonomous-management system and control model
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-23; implementation and player-facing scope remain subject to existing capability and authority boundaries**
+
+The AI Manager is one shared autonomous-management system. It completely manages NPC operations: it receives the governing objectives and policies for NPC-controlled assets, evaluates the game state, generates and prioritizes work, plans and coordinates operations, and executes those operations through the appropriate domain services. NPCs are not managed by a separate, simpler automation system.
+
+Players use the same underlying AI Manager capabilities to direct and automate operations for their own assets. The player does not replace the AI Manager or introduce a second implementation. The player supplies the objectives, priorities, standing policies, and individual instructions governing player-owned assets; the shared AI Manager turns that direction into tasks and plans and carries out authorized work. The player's automation scope is limited to the assets and capabilities available to that player, and to the decisions the player is permitted to delegate. The AI Manager remains responsible for the actual autonomous task planning and execution.
+
+The distinction between NPC and player operation is therefore the **source of direction, asset scope, and authority to act**, not a different AI system:
+
+- **NPC operation:** the AI Manager operates NPC-controlled assets under game-level objectives, NPC policies, and simulation/economic rules. It has the operational authority needed to manage those NPCs autonomously.
+- **Player operation:** the same AI Manager operates the player's assets under player-defined objectives, policies, and instructions, constrained by ownership, game rules, available capabilities, and the player's delegated authority. The player may retain approval requirements for selected decisions or exceptions.
+- **Admin oversight:** Admins supervise the system and may configure or adjust appropriate game-level objectives, constraints, and operational settings. The Admin workspace is not the player control surface and does not imply that Admins must manually direct every NPC task.
+
+Keep these inputs distinct because they have different lifetimes and meanings:
+
+- **Objective:** an outcome or goal the AI Manager should pursue.
+- **Standing policy:** persistent rules, priorities, thresholds, reserves, and boundaries that govern repeated decisions.
+- **Individual instruction:** a specific requested action or assignment.
+- **Condition or trigger:** a detected game-state circumstance—such as a shortage, maintenance need, or changed operating condition—that may cause the AI Manager to create or revise work under the applicable objectives and policies.
+
+Tasks, plans, decisions, and executions are shared operational concepts. A task record should retain its provenance: the objective, standing policy, individual instruction, condition/trigger, or higher-level AI Manager decision that caused it. The model should also retain the applicable operating scope and authority so that the same task lifecycle can serve NPC and player-owned operations without conflating who directed the work or what the AI was authorized to do. Exact schemas and service boundaries remain implementation questions; do not create duplicate NPC/player task engines.
+
+The future player-facing AI Manager is a player-scoped interface to this shared system, not a reduced copy of the Admin workspace. It exposes the capabilities appropriate to managing the player's own assets and the policies/permissions the player can set. This does not grant players direct control over terraforming objectives or other game-level responsibilities that remain outside player authority.
+
 ## 1.1 Wormhole network, EM economy, and strategic expansion
 
 **TARGET DESIGN INTENT — OWNER-CLARIFIED 2026-11-13; NOT A CLAIM OF IMPLEMENTED BEHAVIOR**
