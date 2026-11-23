@@ -144,7 +144,7 @@ The following safety checks execute as **hard pre-conditions BEFORE any Tier 1/2
 
 1. **Class-0 sanctuary hard blocks** — No construction, ISRU extraction, or infrastructure within protected zones. Absolute prohibition; no priority tier can override.
 2. **Class-1/2 environmental caps** — Automated harvesting cannot exceed regulated atmospheric density thresholds or body-specific extraction limits (e.g., Titan's 5% volatile cap). These caps are enforced by planetary protection governance rules as design intent; runtime enforcement is tracked separately.
-3. **Structural dependency chains** — Infrastructure dependencies must be respected: establish the Luna industrial foundation, then the L1 Depot, then the separate near-LEO Depot, then orbital shipyard infrastructure before the Mars expansion objective. These are strategic dependencies, not a requirement to serialize independent construction, harvesting, fabrication, logistics, and maintenance work. Earlier phases not yet complete → task blocked.
+3. **Structural dependency chains** — Infrastructure dependencies must be respected: establish the Luna industrial foundation, then the L1 Depot, then the separate near-LEO Depot, then orbital shipyard infrastructure before the Mars expansion objective. These are strategic dependencies, not a requirement to serialize independent construction, harvesting, fabrication, logistics, and maintenance work. A task is blocked only when its own required prerequisite is unmet.
 
 These safety gates **short-circuit** the Tier 1 (Survival), Tier 2 (Liquidity), and Tier 3 (Expansion) evaluation loops entirely. A task that fails any pre-condition never reaches priority scoring.
 
