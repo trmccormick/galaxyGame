@@ -153,3 +153,25 @@ Before implementation, inspect the current main-game source and data files again
 - Exact API endpoints and response projections, after shared resource and authorization requirements are mapped.
 
 These are implementation and schema questions; they do not reopen the established task/template/profile separation, template-first creation, shared AI Manager, or survey-before-unknown-site workflow.
+
+
+## 10. Prototype UI mapping and current checkpoint
+
+**PROTOTYPE DESIGN / IMPLEMENTATION NOTE — 2026-11-23**
+
+The UI prototype should express the workflows above as navigable workspaces, not create one page per task file or treat task definitions as executable mission plans.
+
+Current Admin AI Manager prototype destinations include:
+
+- **Operations overview:** selected-system context, work requiring attention, current objectives, and links into operational work.
+- **Task Workbench:** task queue, task detail/provenance, proposed plan review, and execution/activity inspection. These are replaceable mock fixtures and do not dispatch assets or alter simulation state.
+- **Decision Log:** decision rationale, source, authority, outcome, and linked task context.
+- **Mission Monitor / run detail:** operational runs and history, kept distinct from reusable definitions.
+- **Shared Task Library:** reusable task catalog and task inspection.
+- **Mission Library:** reusable mission/template examples and their task references.
+
+The Task Library now has a navigable task-detail route in the prototype. That detail view exposes capability, category, dependencies, source, maturity, and the distinction between a reusable definition and a configured execution. It is read-only fixture presentation, not the planned JSON editor.
+
+The next design/implementation work is to build the Admin authoring workflow around the existing source formats: task definition inspection/editing, mission-template assembly from existing task references, validation, preview/diff, and version/provenance handling. Keep that authoring workflow separate from live/recent mission-run monitoring. The custom structured/raw JSON editor and its validation remain planned; do not imply they are implemented by the current detail view.
+
+The legacy AI Manager performance, planner, and patterns screens remain in the prototype inventory but contain placeholder/mock presentation and controls. Do not label fixture values as live performance or claim that inert controls perform real simulation actions. Reconcile these pages against the established operational workspace requirements before deciding whether to retain, reshape, or retire them.
