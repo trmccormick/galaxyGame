@@ -464,3 +464,21 @@ Clarified that the wiki is an evolving design record intended to carry owner-con
 Recorded one additional open design question: returning captured EM restores an aperture's accumulated mass-transfer capacity and may also reduce the load-driven component of current instability. If so, recovery should be evaluated separately from the counterbalance-dependent initial/baseline instability; no automatic reset to baseline or one-to-one recovery relationship is established. The relationship, timing, and quantitative behavior remain OPEN.
 
 No application code, simulation data, or frozen legacy source documents changed.
+
+
+### 2026-11-23 — Mission profiles, task libraries, and shared Admin/Player mission workflows
+
+Added [Mission Profiles, Templates, Tasks, and Execution](ui/07_mission_profiles_tasks_and_execution.md) as the canonical design record for the mission-authoring discussion.
+
+Recorded the owner-confirmed distinctions and workflow:
+- Reusable task definitions are shared library building blocks; Admin maintains them and mission profiles reference them rather than duplicating them.
+- Admin maintains shared mission templates and retains operational mission-run oversight. Player creates personal reusable profiles by loading the available template catalog, naming a new profile, copying selected template material, and adapting it with references to existing task files.
+- Missions describe repeatable operational flows; the shared AI Manager determines and adapts actual task plans under the relevant objectives, asset scope, and delegated authority.
+- Admin and Player share underlying game views and domain resources where they inspect the same objects/operations. Admin has broader visibility, diagnostics, global scope, and additional authorized controls, plus genuinely Admin-only workspaces.
+- A custom JavaScript JSON editor is the intended reusable authoring component, with structured and raw JSON editing, validation, preview, and preservation of existing formats.
+- Surface mission setup selects a celestial body and a known site; an unknown/insufficiently characterized site requires a survey prerequisite. Survey characterizes persistent discoveries/deposits but does not create material; extraction debits authoritative geological inventory.
+- Operational mission monitoring, planner, decisions, patterns, performance, and task workbench views remain distinct from library authoring.
+
+Updated [Admin Dashboard and AI Manager](ui/03_admin_and_ai_manager.md) and the UI section index. The design is owner-confirmed; the custom editor, full authoring workflow, API integration, and V2 loader integration are not claimed to be implemented. Existing V2 path/loader discrepancies remain explicit implementation-audit items.
+
+No application code, runtime data, or legacy/frozen source documents changed.
