@@ -135,7 +135,7 @@ The prototype may use fixture data to design and test these workflows. A screen 
 
 The repository contains legacy mission-profile and task work, a missions_v2 path family, mission/task JSON examples, and an older placeholder Mission Profile Builder controller. The existing Admin AI Manager mission, planner, decisions, patterns, and performance views are operational-oversight foundations, not a complete shared template/task authoring system.
 
-The current wiki service audit records a material V2 path/loader discrepancy: the V2 task examples are under missions_v2/tasks, while the inspected TaskExecutionEngineV2#load_task_library resolves the older missions/tasks_v2 path; the inspected V2 planner also does not establish complete resolution of all proposed phase/mission-plan references. Do not describe the V2 library as fully integrated or assume every task file is currently discovered by the generic loader.
+The two V2 directories have distinct roles and must not be conflated: `data/json-data/missions_v2/` contains a limited set of Luna missions and task definitions assembled for the current testing setup; `missions/tasks_v2/` contains the broader task library in draft form. The inspected `TaskExecutionEngineV2#load_task_library` resolves `missions/tasks_v2`, so that path is consistent with loading the broader draft task library; it is not evidence that the Luna test fixtures under `data/json-data/missions_v2/` are misplaced or obsolete. The implementation audit must separately establish how the Luna test mission data is loaded and exercised, how draft task definitions are promoted/validated for use, and whether the V2 planner resolves all proposed phase/mission-plan references. Do not describe the full draft library as production-ready or assume every draft task is already integrated and executable.
 
 The prototype's Admin Task Library, Mission Library, Player My Missions, Player detail/form, and operational oversight screens are UI foundations/fixtures. The Player form is not yet a persisted mission-profile editor. A complete custom JSON editor, template-copy workflow, task selection, target discovery, validation, persistence, and API integration remain to be implemented and reviewed.
 
@@ -143,7 +143,7 @@ Before implementation, inspect the current main-game source and data files again
 
 ## 9. Open implementation details
 
-- Exact canonical template directories and the relationship between legacy mission templates, mission profiles, and missions_v2.
+- Exact canonical template directories and the relationship between legacy mission templates, mission profiles, the Luna test fixtures under `data/json-data/missions_v2/`, and the broader draft task library under `missions/tasks_v2`.
 - The actual schemas and version/compatibility rules for templates, profiles, phases, tasks, and mission runs.
 - Whether and how multiple templates can contribute to one profile under the existing formats.
 - The location/site identity and survey-result contracts used by the mission/task data.
