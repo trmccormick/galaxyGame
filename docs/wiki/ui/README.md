@@ -16,6 +16,7 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 | [Current UI state and known issues](04_current_ui_state_and_known_issues.md) | Dated observations of the running main UI, visual inconsistencies, working views, and known rendering issues |
 | [Admin Celestial Body View](05_admin_celestial_body_view.md) | Intended Admin body-inspection workspace, legacy Rails 7 route/page facts, porting direction, and lifecycle issue under investigation |
 | [Catalog, Blueprint & Visual Asset Architecture](06_catalog_blueprint_and_visual_assets.md) | Player Catalog and Blueprint experience, blueprint-driven visual generation, the RH-400 complete asset sheet as the primary visual target, and deployed-unit operational inspection |
+| [Mission profiles, templates, tasks & execution](07_mission_profiles_tasks_and_execution.md) | Shared task/template libraries, template-first Player profile creation, custom JSON editing, location and survey prerequisites, operational mission oversight, and shared API boundaries |
 
 The [Current UI State and Known Issues](04_current_ui_state_and_known_issues.md) page records observed behavior and defects separately from design intent. The review principle is to preserve, complete, and standardize useful existing application views—not discard unfinished work and start over. Celestial Body View (currently labeled Planetary View in the legacy app), Surface, Map Studio, Monitor entry/navigation, resource, and infrastructure views are candidates for prototype review and porting. Port them toward the approved experience rather than copying legacy layouts and labels unchanged.
 
@@ -126,6 +127,7 @@ This research and reuse practice is intended to help GalaxyGame make informed ch
 ## Change History
 
 - **2026-11-23** — Clarified that NPC and player-directed autonomous operations use one shared AI Manager; recorded the distinct sources of direction, asset scope, delegated authority, and task provenance in the AI Manager design and Admin UI documentation.
+- **2026-11-23** — Added [Mission Profiles, Templates, Tasks, and Execution](07_mission_profiles_tasks_and_execution.md): shared Admin/Player views, Admin-managed task/template libraries, template-first Player profile cloning, custom JSON editing, task reuse by reference, body/site selection, survey prerequisites, and operational mission oversight.
 
 - **2026-11-04** — Created the UI & Experience section as the home for Galaxy Game interface design intent.
 - **2026-11-11** — Expanded the architecture to document dashboard responsibilities, system/body workspaces, Admin/AI Manager direction, dated current-state issues, and preservation/completion of existing views.
