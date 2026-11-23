@@ -50,7 +50,7 @@ Planetary protection protocols, environmental governance frameworks, and ecologi
 
 ## Life Support & Waste Recycling
 
-→ [\`life_support_systems_and_waste_recycling.md\`](./life_support_systems_and_waste_recycling.md)
+→ [`life_support_systems_and_waste_recycling.md`](./life_support_systems_and_waste_recycling.md)
 
 Unit-based habitat life support, settlement waste and water recovery, existing processing-unit designs, integrated habitat HVAC assumptions, and facility scaling.
 
