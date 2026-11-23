@@ -414,3 +414,14 @@ Recorded that the PVE/TEU unit-level extraction methods estimate volatile yields
 Also recorded that generic `BaseUnit#process_materials` routes gas/liquid outputs to the same aggregate-only buffers, while `operate` uses a generic output/store path. No active gas-separator-specific model, service, processing branch, or production call path was found. The inspected material-processing job's world-driven output dispatch has no separator-product branches for CO2/N2/O2/CH4. Historical status documentation describing a 500 kg separator input was retained as historical context, not implementation evidence; expected operational-data file locations could not be resolved in this check.
 
 Updated [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) with these implementation boundaries. No application code, operational data, or retired reference documents changed.
+
+
+### 2026-11-22 — Worldhouse and settlement gameplay intent
+
+Harvested relevant design intent from the frozen Worldhouse structural, environmental-volume, and Terraforming Seed reference documents and reconciled it with the current wiki and owner discussion.
+
+Created [Worldhouses and Engineered Environments](infrastructure/worldhouses.md) as the wiki home for configurable Worldhouse enclosures and their settlement gameplay. Recorded Worldhouses as flexible environmental volumes rather than fixed human-rated habitat types; the relationship between Worldhouses, Terraforming Seeds, paraterraforming, and planetary terraforming; nested atmospheric containment and recovery; incremental local construction and industrial development; persistent settlement operation; and player/AI Manager use of robots and delayed remote communications.
+
+Updated [Settlement Infrastructure](infrastructure/settlement_infrastructure.md), [Terraforming Seeds](technical/biology/terraforming_seeds.md), and [Player View Architecture](ui/02_player_view_architecture.md) to link and align their respective responsibilities with this intent. The rigid Seed-versus-Worldhouse comparison and the background-only player-interaction framing were not retained as authoritative direction.
+
+The older architecture documents remain frozen harvest sources and were not changed. No application code, simulation data, or implementation tasks were changed. The new page records design intent; environmental simulation, gas recovery, persistent automation, and remote robot operations still require implementation verification.
