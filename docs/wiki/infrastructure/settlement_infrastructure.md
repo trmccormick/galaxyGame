@@ -42,6 +42,8 @@ A **Settlement** is the core administrative, economic, and population unit in Ga
 - **Artificial:** space stations, depots, worldhouses.
 - Both attach to a settlement through its structures.
 
+**Related design intent:** [Worldhouses and Engineered Environments](worldhouses.md) describes Worldhouses as configurable environmental enclosures and records the player-directed settlement gameplay they can support. A Worldhouse is a structure/environmental asset; the Settlement remains the administrative, economic, and population unit. The player may use a Worldhouse for a home base, industry, research, resource operations, biological experiments, or several purposes together.
+
 ### Orbital Settlements
 
 An orbital settlement (e.g., the L1 Gateway) is **one settlement containing several peer structures**, for example a shipyard/repair structure and a cargo/refueling structure. It is not a single station object.
