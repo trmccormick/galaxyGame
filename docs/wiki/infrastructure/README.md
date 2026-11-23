@@ -48,6 +48,14 @@ Planetary protection protocols, environmental governance frameworks, and ecologi
 
 ---
 
+## Worldhouses & Engineered Environments
+
+→ [`worldhouses.md`](./worldhouses.md)
+
+Configurable enclosures around natural features and the persistent settlement gameplay they support: home bases, resource harvesting, environmental and biological experiments, local industry, progressive upgrades, robotic operations, and remote support for space missions.
+
+---
+
 ## Surface Habitats & Power
 
 → [`surface_habitat_options.md`](./surface_habitat_options.md)  
