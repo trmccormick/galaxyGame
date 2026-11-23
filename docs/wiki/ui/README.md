@@ -12,7 +12,7 @@ The wiki is the design authority. The `galaxy-game-ui` repository is an implemen
 |------|---------|
 | [Branding and entry experience](01_branding_and_entry_experience.md) | Shared branding, landing page, and sign-in experience |
 | [Player view architecture](02_player_view_architecture.md) | Three primary Player views, the separate Space context, and navigation boundaries |
-| [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Player/Admin dashboard separation, Admin workspaces, AI Manager responsibilities, Map Studio, and Digital Twin workflows |
+| [Admin and AI Manager interfaces](03_admin_and_ai_manager.md) | Player/Admin dashboard separation, Admin workspaces, the shared NPC/player AI Manager operating model, Map Studio, and Digital Twin workflows |
 | [Current UI state and known issues](04_current_ui_state_and_known_issues.md) | Dated observations of the running main UI, visual inconsistencies, working views, and known rendering issues |
 | [Admin Celestial Body View](05_admin_celestial_body_view.md) | Intended Admin body-inspection workspace, legacy Rails 7 route/page facts, porting direction, and lifecycle issue under investigation |
 | [Catalog, Blueprint & Visual Asset Architecture](06_catalog_blueprint_and_visual_assets.md) | Player Catalog and Blueprint experience, blueprint-driven visual generation, the RH-400 complete asset sheet as the primary visual target, and deployed-unit operational inspection |
@@ -124,6 +124,8 @@ This research and reuse practice is intended to help GalaxyGame make informed ch
 **Placeholder tables and estimates in this wiki are NOT valid data sources for live UI display.** Wiki tables, mass balances, and power budgets serve as design documentation and architectural reference only. Any wiki table marked `[PROPOSED / PLACEHOLDER]` must be replaced with code-grounded or `operational_data`-sourced values before being rendered to players.
 
 ## Change History
+
+- **2026-11-23** — Clarified that NPC and player-directed autonomous operations use one shared AI Manager; recorded the distinct sources of direction, asset scope, delegated authority, and task provenance in the AI Manager design and Admin UI documentation.
 
 - **2026-11-04** — Created the UI & Experience section as the home for Galaxy Game interface design intent.
 - **2026-11-11** — Expanded the architecture to document dashboard responsibilities, system/body workspaces, Admin/AI Manager direction, dated current-state issues, and preservation/completion of existing views.
