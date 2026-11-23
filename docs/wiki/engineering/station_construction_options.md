@@ -97,6 +97,9 @@ One coherent early path mirrors early Luna at similar intensity: enough industry
 7. **Surface-first**  
    Usually scores poorly against orbital-first default; only when orbital options are blocked or clearly worse.
 
+8. **Orbital ring / spinning habitat (advanced, OPEN)**  
+   Large equatorial orbital ring or spinning habitat providing Earth-normal (~1g) living volume and tethered surface access while planetary terraforming is incomplete. Staging, shipyard, and industrial roles possible. Requires high industrial capacity, structural mass, and power; scored only when tech and materials allow. Not part of the early lean path.
+
 Magnetosphere / L1 shield construction remains **independent** of moon relocation or moon-as-station choices (see [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md)). High-throughput atmospheric injection cares that a shield is active; it does not require Phobos or Deimos to be moved.
 
 ### Mars L1 infrastructure sub-options (DIRECTION / OPEN)
@@ -159,5 +162,6 @@ The same first-principles scoring travels outside Sol. Different systems will pr
 - Thresholds at which the AI Manager prefers small-body relocation (tug) over lean cycler + outpost or pure orbital assemble.
 - Parameterization of the same options for moonless vs moon-rich targets beyond Sol.
 - Numeric propellant seed sizes and cycler multi-trip cadence for the lean Mars path (remain OPEN; do not invent).
+- Whether an orbital-ring / spinning-habitat class is ever promoted beyond OPEN for Mars or other low-g worlds, and what capacity thresholds the AI Manager would use.
 
 All numerical values remain **OPEN** unless marked ESTABLISHED INTENT elsewhere.
