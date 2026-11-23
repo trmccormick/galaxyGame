@@ -400,6 +400,18 @@ A Settlement is a physical place where people live or work. It may be a mining o
 
 Settlement management includes structures/facilities, population, services, utilities, construction, production, inventories, logistics, and development. Structures are individual buildings, stations, modules, or facilities within a settlement.
 
+**ESTABLISHED SETTLEMENT GAMEPLAY INTENT — 2026-11-22**
+
+Settlement is persistent, player-directed gameplay, not simply a screen for managing a completed habitat. A player may want only a home base and some local resource harvesting, may experiment with environmental conditions or basic life, or may develop a much larger Worldhouse, industrial center, or city. These purposes can coexist and change over time.
+
+The player develops the settlement incrementally as GCC, resources, local industry, and technology permit. A Worldhouse or other enclosure may begin with limited capabilities; the player can add environmental controls, gas processing and recovery, thermal systems, buildings, production, research, and other equipment as desired. Pressure and gas composition are separate choices where supported; a pressurized environment is not necessarily breathable.
+
+The settlement continues operating while the player pursues space-based missions or works elsewhere. Robots may be directly controlled, assigned to support a project or mission, or left on autonomous tasks under local automation and AI Manager supervision. The player should be able to monitor conditions, review work, set priorities, and issue remote instructions subject to GalaxyGame's communications delays and availability. Local automation and AI Manager operations may continue when direct remote communication is unavailable.
+
+The intended gameplay loop is **design, build, operate, observe, learn, modify, and expand**. The Settlement interface should support those activities at the scale and complexity of the particular place; it should not require every player to become a settlement architect or pursue terraforming.
+
+See [Worldhouses and Engineered Environments](../infrastructure/worldhouses.md) for the related environmental-enclosure, nested-atmosphere, local-industry, and remote-operations intent.
+
 **EARLY EXPLORATION — NPC settlement connections and outside development (2026-11-13; not finalized gameplay)**
 
 The following ideas were discussed as possibilities for how players and corporations might establish an operating presence alongside an autonomous NPC settlement. They are recorded to preserve the discussion, not as approved mechanics or implementation requirements:
