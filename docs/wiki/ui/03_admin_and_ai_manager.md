@@ -385,6 +385,29 @@ The UI should expose actual decision and execution records. It must not fabricat
 
 **Craft operations — established intent (2026-11-19):** Craft are autonomous assets, not pilot/character avatars. Players may issue remote commands or assign objectives when communications permit; onboard automation and the AI Manager continue authorized operations when the player is unavailable or out of communication range. Admin/AI Manager screens supervise deployments, assignments, decisions, and execution rather than presenting direct piloting controls. Craft are identified by ship/craft names. They may operate independently or be grouped for a specific task/operation; do not assume every craft belongs to a permanent fleet. Keep requested objectives, current craft state, and confirmed execution outcomes distinct.
 
+
+### Mission status, activity stream, and completed-run inspection
+
+**OWNER-CONFIRMED UI DESIGN INTENT — 2026-11-23; data/event integration not yet implemented**
+
+The AI Manager workspace should let an operator quickly understand the current state of missions and inspect what happened during a mission. This is an operational workbench, not merely a mission launcher or a collection of static status cards.
+
+**Mission status** should provide a concise overview of active, pending, completed, blocked, and failed missions, with useful progress and current-state information. Opening a mission should show its objectives, associated tasks, dependencies, task states, blockers, and relevant outcomes. Status answers **where the mission stands now**.
+
+**Chronological scrolling activity log** is an intentional part of the AI Manager presentation. The existing terminal-style view is a static visual example of this intended presentation, not a working live log. In the completed design, the log is populated from actual execution/activity records. It scrolls as significant events occur and new entries are appended in chronological order—especially when tasks complete—rather than printing fabricated progress or continuously generating placeholder output.
+
+Entries should identify the time, event type/source, mission or task context, and concise result. Relevant events include task start/completion/failure/deferment, AI Manager decisions where recorded, construction and commissioning, production and extraction, shipment/transfer/arrival, inventory and volatile-storage changes, GCC generation/consumption/transfers, maintenance outcomes, and significant warnings or blockers. Independent tasks may report as they complete, so concurrent work appears in the order events actually occur. The log explains **what happened**; it complements rather than replaces current mission/task status.
+
+**Completed mission and test-run inspection** must remain available after execution ends. An operator should be able to open a completed mission/run and review its chronological activity history, task outcomes, created structures/assets, final inventories and stockpiles, volatile quantities and storage, material/resource flows, GCC flows, production/consumption, logistics, costs and financial results, and relevant failures or deviations. Where supported by recorded data, inspection should include intermediate checkpoints and changes over the run, not only a final success flag or final snapshot.
+
+The same underlying execution/activity records should support both:
+- normal AI Manager operation, where the log reflects events as they happen and mission status reflects current state; and
+- development/test runs, including accelerated time, deliberate time jumps, direct service/task invocation, or other test orchestration used to reach and validate an end-to-end mission outcome.
+
+Development/test orchestration is allowed to bypass normal scheduling when that is the purpose of the test. It must exercise the real domain capabilities and preserve enough execution evidence and resulting state for inspection. It is not a second production scheduler, and test-only shortcuts must not be mistaken for missing normal game-loop behavior. Conversely, the existence of a test runner does not prove that normal gameplay dispatch and feedback are connected.
+
+Keep mission status, chronological activity history, and final/intermediate world-state inspection as related but distinct views. Do not treat the existing static terminal mockup as proof that event capture, persistence, live updates, or historical run inspection is implemented. Those integrations remain future work and must use authoritative task, mission, inventory, storage, asset, and economic data rather than invented UI values.
+
 ### Wormhole network management
 
 AI Manager monitors and coordinates the evolving natural-wormhole and AWS network:
