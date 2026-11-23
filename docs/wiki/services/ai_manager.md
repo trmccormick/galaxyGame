@@ -643,12 +643,16 @@ The `MarketStabilizationService` implicitly enforces player-first by providing N
 
 ## 8. Jobs Layer (Background Operations)
 
+**OWNER-CONFIRMED ARCHITECTURAL INTENT — 2026-11-23:** Sidekiq is part of the intended in-game execution architecture for delegated work that should run asynchronously and concurrently. The AI Manager decides what work is appropriate, evaluates dependencies and priorities, and dispatches eligible work; Sidekiq executes jobs. Job completion, failure, partial results, and resulting state changes must be reconciled into the continuing AI Manager/game simulation loop.
+
+Not every operation should become a Sidekiq job. Lightweight simulation-time checks and event/condition evaluations—such as launch-window checks, elapsed production intervals, arrival/maintenance due checks—belong in simulation/game-loop processing where appropriate. A check can cause the AI Manager to schedule substantive work, but the check itself need not be a background job.
+
 | Job | Queue | Verified behavior |
 |-----|-------|-------------------|
 | `SafetyNetLogisticsJob` | default | Checks for unfilled buy orders → triggers AstroLift logistics contract from Earth Base if provider exists |
 | `LocationOperationsCoordinatorJob` | coordination | Sidekiq job queuing per-location and inter-location operations; re-schedules itself hourly |
 
-> **⚠️ OPEN — needs owner confirmation:** Are there additional Sidekiq jobs for AI Manager scheduling (e.g., periodic market stabilization, priority recalculation)? Current code only shows these two.
+**Implementation audit remains OPEN:** The table above records jobs verified in the source inspection represented by this page; it is not a claim that these are the only jobs in the repository or that the complete game-loop → AI decision → Sidekiq dispatch → result-reconciliation cycle is wired end to end. Inventory relevant jobs, queues, scheduling triggers, retry/failure behavior, idempotency, task/mission state transitions, and feedback into authoritative game state before making runtime-completeness claims. The architectural role of Sidekiq is resolved; the remaining question is how completely the existing implementation realizes it.
 
 ---
 
