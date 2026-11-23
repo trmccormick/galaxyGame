@@ -27,7 +27,7 @@ Incomplete early generated data is not a reason to block a system from being ava
 | **Logistics orchestration** | Routes freight, schedules transfers between settlements via `LogisticsCoordinator`. Dispatches harvesters & construction tugs through `TaskExecutionEngine`. | 🟢 Active — `logistics_coordinator.rb`, `task_execution_engine.rb` (92-line service directory) |
 | **Market stabilization** | NPC buyer/producer/importer of last resort; guarantees liquidity for essential items. No formal "EAP ceiling" enforcement in code. | 🟢 Partial — `market_stabilization_service.rb` implements essential-item guarantees but **not** the EAP-price-ceiling mechanism described in legacy docs |
 | **Strategic planning** | Evaluates settlement state, scores mission options via `StrategySelector → StateAnalyzer + MissionScorer`, and executes via `ServiceCoordinator`. | 🟢 Active — `strategy_selector.rb`, `state_analyzer.rb`, `mission_scorer.rb` |
-| **Inter-settlement orchestration** | Manages the settlement network: priority arbitration, resource allocation, logistics scheduling. | 🟢 Active — `system_orchestrator.rb` (registers settlements, coordinates them) |
+| **Inter-settlement orchestration** | Provides the existing orchestration scaffold for settlement registration, priority arbitration, resource allocation, dependency analysis, and transfer scheduling. | 🟡 Present but not operationally validated — `system_orchestrator.rb`, `resource_allocator.rb`, `settlement_manager.rb`, `logistics_coordinator.rb`; mock state, placeholder calculations, log-only reservations, and in-memory schedules remain. See [Multi-Settlement Resource Coordination](./multi_settlement_resource_coordination.md). |
 | **Terraforming coordination** | Phase detection & orbital depot management for planetary programs. | 🔵 Partial intent — `terraforming_manager.rb` has skeleton `determine_terraforming_phase()` with an unresolved TODO |
 | **Expansion & wormhole** | Foothold placement, wormhole scouting/placement, multi-wormhole event handling. | 🟢 Active — `expansion_service.rb`, `foothold_planner.rb`, `wormhole_*` series (3 files) |
 
@@ -370,18 +370,20 @@ AIManager::Manager (275 lines)
 
 ### 2.3 System-Wide Coordination
 
+**Important status distinction:** the classes below establish an orchestration structure, not a verified operational network logistics capability. The current source includes mock settlement resource/health values, hard-coded requests and route parameters, log-only allocation/reservation methods, and in-memory transfer records. Cross-system route reachability and delivered-cost integration are not established. See [Multi-Settlement Resource Coordination](./multi_settlement_resource_coordination.md) for the source-grounded boundary, policy, safety requirements, and required scenarios.
+
 | Class | Responsibility | Verified? |
 |-------|----------------|-----------|
-| `SystemOrchestrator` | Inter-settlement coordination, priority arbitration, logistics scheduling | 🟢 Yes |
+| `SystemOrchestrator` | Orchestration call sequence and settlement registration exist; source/surplus/deficit inputs and cross-system route feasibility are not production-verified | 🟡 Scaffold present; see [Multi-Settlement Resource Coordination](./multi_settlement_resource_coordination.md) |
 | `ServiceOrchestrator` | Service state tracking (active/idle per service), coordinated operations | 🟢 Yes |
-| `PriorityArbitrator` | Critical(4) / High(3) / Medium(2) / Low(1) priority levels; crisis escalation/de-escalation | 🟢 Yes |
-| `ResourceAllocator` | Resource distribution across settlements | 🟢 Yes |
+| `PriorityArbitrator` | Priority sorting/arbitration and crisis tracking methods exist; end-to-end allocation safety is not established by class presence | 🟡 Source structure present; runtime/network behavior requires validation |
+| `ResourceAllocator` | Candidate resource gap/surplus matching and aggregate allocation methods exist; current inputs and transport-cost logic include hard-coded/mock values | 🟡 Scaffold present; not production-verified |
 
 ### 2.4 Logistics & Transport
 
 | Class | Responsibility | Verified? |
 |-------|----------------|-----------|
-| `LogisticsCoordinator` | Inter-settlement transfer scheduling, capacity management, route optimization | 🟢 Yes |
+| `LogisticsCoordinator` | Transfer grouping, simplified capacity handling, and in-memory scheduling exist; current route/capacity/time values are hard-coded and reservations are log-only | 🟡 Scaffold present; not a persisted cross-system cargo execution path |
 | `SkimmerCyclerHandshakeService` | Skimmer-cycler interface | 🟢 Yes |
 | `TransitFeeService` | Transit fee calculation | 🟢 Yes |
 | `UniversalDockingService` | Docking coordination across locations | 🟢 Yes |
