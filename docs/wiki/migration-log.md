@@ -424,3 +424,20 @@ Clarified the owner-confirmed distinction across [Natural Wormholes & EM](techni
 The wormhole itself is the source of the gravitational disturbance that creates the counterbalance problem. Counterbalance is a property of the physical gravitational configuration: a suitable natural mass arrangement can provide it, or an appropriately positioned artificial rift can create an artificial gravitational anchor. The artificial rift—not the AWS station's mass—provides the artificial counterbalance.
 
 Defined the infrastructure roles explicitly: a WS houses and operates natural-wormhole stabilization and EM-recovery technology; an AWS houses and operates the technology to open and maintain an artificial wormhole connection. Neither station's physical mass creates the counterbalance effect. This is a clarification of established wormhole physics and station intent, not a change to quantitative mechanics or network topology. Exact geometry, equations, thresholds, and quantitative effects remain OPEN. No application code or retired reference documents changed.
+
+
+## 2026-11-22 — Natural-wormhole EM yield and per-aperture recovery working model
+
+Updated [Natural Wormholes & EM](technical/natural_wormholes_and_em.md) and [Portals & AWS](technical/portals_and_aws.md) from owner discussion and a focused review of the existing `Wormhole` model and its specs.
+
+Recorded the current, explicitly unfinished design exploration:
+- The contemplated 0–10 scale describes **instability**, not mass capacity or EM reserve; zero means completely stable.
+- EM ejection may be calculated from mass throughput adjusted by a current-instability modifier. Illustrative discussion values (about 1.1 for a well-counterbalanced Sol-side aperture and 2–4 for more unstable examples) are not calibrated values or approved requirements. Whether instability is purely a multiplier or part of a combined calculation remains OPEN.
+- Each aperture has independent instability, counterbalance conditions, mass-transfer limit, accumulated throughput, and EM-recovery state. The two ends of a pair must not share one stability or mass-limit state.
+- Counterbalance is expected to affect both instability and mass-transfer capacity, but the quantitative relationship remains OPEN.
+- Captured EM returned by WS technology restores the corresponding aperture's accumulated mass-transfer capacity. Gross ejection, recovery requirement, capture/return losses, and net EM available to AWS and portal technology must be accounted for separately. Natural wormholes are the EM-generating source in the current transportation architecture, so the system must leave a sustainable usable supply for AWS and portals.
+- The B'Joran DS9 Easter egg remains the explicit exception: both ends have zero instability, no EM requirement, and no EM ejection. The existing Easter egg wiki entry remains the authority for that exception; its unfinished generation/configuration system is not treated as complete implementation.
+
+Reviewed `galaxy_game/app/models/wormhole.rb`, `galaxy_game/spec/models/wormhole_spec.rb`, and the schema. The existing model is a foundation: it has a three-state stability enum, one shared `mass_limit`, separate directional transferred-mass counters, per-endpoint stabilized flags, traversal gating, and endpoint shifting/reset behavior. It does not yet implement the continuous instability scale, endpoint-specific counterbalance or mass limits, EM ejection, capture/storage, or EM reinjection/recovery. The model specs exercise structural and traversal behavior, not the full physical/EM model. This is a focused source review, not a complete audit of every wormhole-related service or integration.
+
+No application code, model, schema, Easter egg configuration, or frozen legacy source documents changed. The natural-wormhole and portal EM equations, numeric values, recovery ratio, and final operating economics remain OPEN.
