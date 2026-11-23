@@ -482,3 +482,15 @@ Recorded the owner-confirmed distinctions and workflow:
 Updated [Admin Dashboard and AI Manager](ui/03_admin_and_ai_manager.md) and the UI section index. The design is owner-confirmed; the custom editor, full authoring workflow, API integration, and V2 loader integration are not claimed to be implemented. Existing V2 path/loader discrepancies remain explicit implementation-audit items.
 
 No application code, runtime data, or legacy/frozen source documents changed.
+
+
+### 2026-11-23 clarification — V2 Luna test fixtures versus draft task library
+
+Corrected the V2 directory interpretation in [Mission Profiles, Templates, Tasks, and Execution](ui/07_mission_profiles_tasks_and_execution.md) and [AI Manager & Autonomous Coordinators](services/ai_manager.md), based on owner clarification:
+
+- `data/json-data/missions_v2/` contains only the limited Luna missions and task definitions assembled for the current testing setup.
+- `missions/tasks_v2/` contains the broader built task library, which remains draft material.
+- The inspected `TaskExecutionEngineV2#load_task_library` resolving `missions/tasks_v2` is consistent with the broader draft library location. It is not, by itself, a path mismatch or evidence that the Luna test fixtures are misplaced.
+- Keep the two data sets distinct by purpose and maturity. Follow-up source review should establish how the Luna test definitions are loaded and exercised, and what validation/promotion is required before draft task definitions are treated as ready for general use.
+
+This supersedes the earlier wording that described the two paths as a V2 path/loader discrepancy. It does not claim that all draft tasks are production-ready or that the full task library is already integrated into executable mission flows. No application code or runtime data changed.
