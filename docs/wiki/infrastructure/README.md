@@ -2,7 +2,7 @@
 title: Infrastructure — Master Table of Contents
 category: Infrastructure
 status: Active Index
-last_updated: 2026-11-07
+last_updated: 2026-11-22
 ---
 
 # Infrastructure
@@ -45,6 +45,14 @@ Extraction economics, Earth atmosphere baseline, and Venusian-analog harvesting 
 → [`planetary_protection_environmental_governance.md`](./planetary_protection_environmental_governance.md)
 
 Planetary protection protocols, environmental governance frameworks, and ecological compliance rules for colonization activities across celestial bodies. Governs Class-0 sanctuaries and atmospheric caps.
+
+---
+
+## Life Support & Waste Recycling
+
+→ [\`life_support_systems_and_waste_recycling.md\`](./life_support_systems_and_waste_recycling.md)
+
+Unit-based habitat life support, settlement waste and water recovery, existing processing-unit designs, integrated habitat HVAC assumptions, and facility scaling.
 
 ---
 
