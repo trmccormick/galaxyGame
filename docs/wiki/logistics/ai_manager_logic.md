@@ -53,6 +53,34 @@ Tasks, plans, decisions, and executions are shared operational concepts. A task 
 
 The future player-facing AI Manager is a player-scoped interface to this shared system, not a reduced copy of the Admin workspace. It exposes the capabilities appropriate to managing the player's own assets and the policies/permissions the player can set. This does not grant players direct control over terraforming objectives or other game-level responsibilities that remain outside player authority.
 
+
+### In-game operating model: game time, AI decisions, and concurrent work
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-23; runtime integration remains to be verified**
+
+The AI Manager is intended to operate continuously as part of normal game simulation, not as a Rake-driven mission sequence. The game loop advances simulation time and provides opportunities to evaluate time- and state-dependent conditions. The AI Manager observes the resulting world state, evaluates objectives, policies, priorities, dependencies, and available capabilities, and decides what work should be created, changed, deferred, or stopped.
+
+Not every operation requires a background job. Some are lightweight simulation-time checks or event/condition evaluations: for example, checking whether a launch window has opened, a transit or production interval has elapsed, a shipment is due, or maintenance has become necessary. These checks belong with simulation-time/game-loop processing where appropriate. When a check or decision requires substantive asynchronous work, the AI Manager can schedule it through the background-job system.
+
+Sidekiq is part of the intended execution architecture for running independent mission/task work concurrently. It is an execution mechanism, not the decision-maker: the AI Manager determines what work is appropriate and how it relates to objectives and dependencies; jobs perform delegated work; task/mission status and resulting world changes must feed back into subsequent AI Manager evaluations. Work that is genuinely dependent must respect its prerequisites, while independent work should not be serialized merely because it belongs to the same strategic objective.
+
+The intended operating cycle is therefore:
+
+1. Advance simulation time and process relevant time-based checks/events.
+2. Observe authoritative game state and active work, including job/task/mission outcomes.
+3. Evaluate objectives, standing policies, current conditions, resource availability, dependencies, priorities, and constraints.
+4. Create or revise plans and tasks; identify which work can proceed concurrently and which work must wait for prerequisites.
+5. Dispatch eligible asynchronous work through the job system and let appropriate domain services perform it.
+6. Reconcile completion, failure, partial results, resource consumption, and changed conditions into game state; reevaluate and adapt on subsequent cycles.
+
+This is a continuous feedback loop, not a single mission runner that completes one mission before considering another. Multiple missions and tasks may remain active together—for example, Luna construction and expansion, local harvesting, material processing/fabrication, Venus atmospheric harvesting and return logistics, resupply, maintenance, and fuel production. Their resource flows and dependencies must be coordinated while independent work proceeds in parallel.
+
+A mission is a useful grouping of related work, not necessarily an exclusive execution slot or the whole operational plan. Reusable task/capability definitions describe what operations can be performed, their prerequisites, effects, requirements, constraints, and outcomes. Plans and mission examples demonstrate possible combinations. The AI Manager must select, combine, sequence, and adapt capabilities to current conditions and objectives; examples and Rake scripts must not become mandatory hardcoded recipes.
+
+**Rake tasks and integration tests are development and validation tools.** They may establish controlled initial conditions, exercise services, run repeatable experiments, and capture evidence. They are not the normal in-game scheduler, the authoritative operating loop, or a substitute for autonomous decision-making. Passing a Rake or integration test does not by itself prove that the game-loop/AI Manager/Sidekiq feedback cycle works end to end.
+
+Implementation status must be reported separately for simulation-time checks, AI decision evaluation, task/mission persistence and lifecycle, Sidekiq dispatch, concurrent execution, dependency handling, and result reconciliation. The presence of a job class, orchestrator, or test does not prove that the complete loop is wired into normal gameplay.
+
 ## 1.1 Wormhole network, EM economy, and strategic expansion
 
 **TARGET DESIGN INTENT — OWNER-CLARIFIED 2026-11-13; NOT A CLAIM OF IMPLEMENTED BEHAVIOR**
@@ -116,7 +144,7 @@ The following safety checks execute as **hard pre-conditions BEFORE any Tier 1/2
 
 1. **Class-0 sanctuary hard blocks** — No construction, ISRU extraction, or infrastructure within protected zones. Absolute prohibition; no priority tier can override.
 2. **Class-1/2 environmental caps** — Automated harvesting cannot exceed regulated atmospheric density thresholds or body-specific extraction limits (e.g., Titan's 5% volatile cap). These caps are enforced by planetary protection governance rules as design intent; runtime enforcement is tracked separately.
-3. **Structural dependency chains** — Every station construction must pass sequential phases (Luna industrial bootstrapping → L1 shipyards → deep-space deployment) before AWS/WS deployment. Earlier phases not yet complete → task blocked.
+3. **Structural dependency chains** — Infrastructure dependencies must be respected: establish the Luna industrial foundation, then the L1 Depot, then the separate near-LEO Depot, then orbital shipyard infrastructure before the Mars expansion objective. These are strategic dependencies, not a requirement to serialize independent construction, harvesting, fabrication, logistics, and maintenance work. Earlier phases not yet complete → task blocked.
 
 These safety gates **short-circuit** the Tier 1 (Survival), Tier 2 (Liquidity), and Tier 3 (Expansion) evaluation loops entirely. A task that fails any pre-condition never reaches priority scoring.
 
@@ -129,7 +157,7 @@ These safety gates **short-circuit** the Tier 1 (Survival), Tier 2 (Liquidity), 
 The AI Manager evaluates all pending tasks through a three-tier priority loop:
 
 ### Tier 1 — Survival & Resupply (highest)
-1. **Life support maintenance** — oxygen, water, food, energy delivery to any colony below metabolic thresholds. This is the hard ceiling; no other task runs until life-support emergencies are resolved.
+1. **Life support maintenance** — oxygen, water, food, energy delivery to any colony below metabolic thresholds. This is the highest-priority class of work. The AI Manager must protect life support and allocate the resources/assets needed to resolve emergencies; unrelated work may continue concurrently when it does not compromise safety, scarce resources, or emergency response.
 2. **Critical atmospheric pressure** — prevent habitat depressurization or CO₂ poisoning across all colonies.
 3. **Emergency backstops** — Eden Snap recovery, debris avoidance, structural collapse remediation.
 
@@ -142,7 +170,7 @@ The AI Manager evaluates all pending tasks through a three-tier priority loop:
 3. **EAP enforcement** — prevents gouging by enforcing Earth Anchor Price ceilings; if player price exceeds EAP, AI ignores the order and imports from Earth instead.
 
 ### Tier 3 — Expansion & Construction (lowest)
-1. **Early Sol buildout** — current owner-confirmed order: Luna foothold → L1 Depot → second depot near LEO → main station / shipyard infrastructure. This supersedes older LEO-first or combined-depot sequencing in frozen references. See [Station Construction Options](../engineering/station_construction_options.md).
+1. **Early Sol buildout** — current owner-confirmed required progression: Luna industrial base → Earth–Moon L1 Depot → separate near-LEO Depot → orbital shipyards → Mars expansion. The two depots have distinct logistics roles; both precede shipyards and the Mars expansion objective. This supersedes older LEO-first or combined-depot sequencing in frozen references. See [Station Construction Options](../engineering/station_construction_options.md).
 2. **Terraforming demand fulfillment** — planetary program supply (gases, materials, hardware, fuel) under Development Corp GCC budgets.
 3. **Deep-space expansion** — wormhole stabilization, cycler route optimization, exoplanet corridor scouting.
 
