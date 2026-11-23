@@ -3,18 +3,20 @@
 
 # Admin Dashboard and AI Manager
 
-This page records the responsibilities of the Admin Dashboard and its dedicated workspaces. It complements [Player View Architecture](02_player_view_architecture.md). Player and Admin dashboards are different products for different audiences; their screens, navigation, information density, permissions, and actions must not be conflated.
+This page records the responsibilities of the Admin Dashboard and its dedicated workspaces. It complements [Player View Architecture](02_player_view_architecture.md). Player and Admin serve different audiences and permission scopes, but they are not duplicate applications: many game-object and operational views are shared, with Admin receiving broader visibility, diagnostics, and authorized controls. See [Mission Profiles, Templates, Tasks, and Execution](07_mission_profiles_tasks_and_execution.md) for the detailed shared mission/task model.
 
 ## 1. Player Dashboard versus Admin Dashboard
 
 **ESTABLISHED INTENT — 2026-11-13**
 
 - **Player Dashboard:** supports people and organizations participating in the shared universe. It provides three primary Player views—Planetary, Surface, and Settlement—plus the separate Space context.
-- **Admin Dashboard:** supports administrators operating the web application and managing the simulation, world generation, data, configuration, users, and operational systems.
+- **Admin Dashboard:** supports administrators operating the application and managing the simulation, world generation, data, configuration, users, and operational systems.
 
-The Admin Dashboard is not a player dashboard with extra permissions. It has its own home/overview, navigation, workspaces, monitoring, and administrative workflows.
+The dashboards have distinct entry points, navigation, audience context, and authority. However, many views that inspect or operate the same game resources should be shared rather than duplicated. An Admin may open the same underlying Planetary, Surface, settlement, asset, mission, or execution view available to a Player, with broader/global scope, additional diagnostics and telemetry, and extra controls where authorized. The Player receives the ownership- and permission-scoped presentation. Shared views rely on the same domain resources and game logic.
 
-AI Manager is a major dedicated workspace within the Admin Dashboard. It has a distinct operational purpose and may have its own navigation and page layouts; it is not a Player view or a separate player-facing dashboard.
+Admin also has genuinely administrative-only workspaces, including shared Task and Mission Template Library management, global operational monitoring, configuration, diagnostics, and application administration. Those do not need Player duplicates.
+
+AI Manager is a major workspace within Admin for system-wide supervision and shared-library administration. Players use the same underlying AI Manager capabilities through a Player-scoped control surface for their own objectives, policies, missions, and assets. It is one autonomous-management system, not separate NPC and Player implementations.
 
 Use the shared dark charcoal/navy and cyan design language across the product. Cyan is the primary interaction accent; green is for success/healthy/operational state; amber for warnings; red for errors or critical conditions. Keep typography compact and readable, with clear hierarchy and adequate spacing. Do not force every Admin tool into one generic card dashboard.
 
@@ -334,6 +336,22 @@ There is one AI Manager system, not separate NPC and player automation implement
 Keep the inputs distinct: an **objective** describes the outcome to pursue; a **standing policy** defines persistent rules and limits for repeated decisions; an **individual instruction** requests a particular action; and a **condition or trigger** (for example, a shortage or maintenance need) may cause the AI Manager to generate work under the applicable objectives and policies. Tasks, plans, decisions, and executions are shared concepts across NPC and player operations. Their records should preserve the source/provenance of the work and the applicable asset scope and authority, so operators can tell why a task exists, whose direction governs it, and what the AI Manager was authorized to do.
 
 The future Player AI Manager should therefore be a player-scoped control surface over shared capabilities, limited to the player's assets and the automation/decisions the player may delegate. It is not a separate AI implementation and should not expose Admin-only or game-level authority. The current prototype remains focused on the Admin AI Manager workspace; this shared-system model is an architectural constraint, not authorization to implement the Player interface now.
+
+### Mission, task, and profile authoring
+
+**ESTABLISHED INTENT — OWNER-CONFIRMED 2026-11-23**
+
+Admin maintains the shared Task Library and predefined Mission Template Library. Admin can author, edit, validate, test, and maintain reusable task definitions and mission templates/profiles. Players do not edit shared task definitions or administer the shared template catalog; they create their own reusable mission profiles by loading available templates, naming a new profile, copying selected template material, and selecting references to existing task files.
+
+Mission profiles describe repeatable operational objectives and guidance. The AI Manager selects, sequences, combines, and adapts the referenced tasks to actual conditions and delegated authority. A profile is not a rigid task checklist or a deployed execution. Keep reusable task definitions, mission templates, Player-owned profiles, and configured mission runs distinct.
+
+The authoring UI should use a custom JavaScript JSON editor integrated with the existing Rails/Stimulus interface. Provide structured editing for common fields and task relationships as well as direct raw JSON editing, with both modes synchronized against the same document. Validate syntax, schema, task references, compatibility, dependencies, and target/location requirements where authoritative contracts exist. Preserve existing JSON formats and versioning; do not introduce a parallel data model or duplicate task definitions.
+
+Player profile creation is template-first: load the available template catalog, let the Player choose a new profile name and starting template material, copy that material into an independently editable Player profile, then allow adaptation and task selection from the existing shared Task Library. The original templates and task definitions remain unchanged.
+
+For surface missions, select the celestial body first, then a known/characterized surface site. If the target is unknown or insufficiently characterized, the profile/run must support a prerequisite survey mission. Survey results can establish persistent discoveries for follow-on operations; a survey characterizes a deposit but does not create its material, and subsequent extraction must debit authoritative geological inventory. Other mission environments require target selectors appropriate to orbital, station, route, settlement, or system operations.
+
+See [Mission Profiles, Templates, Tasks, and Execution](07_mission_profiles_tasks_and_execution.md) for the full authoring, target-selection, survey dependency, and API design.
 
 ### Mission and operations management
 
