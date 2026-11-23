@@ -7,7 +7,7 @@
 **Last Updated**: 2026-11-14  
 **Related**: [natural_wormholes_and_em.md](natural_wormholes_and_em.md), [eden_disconnect_and_emergent_history.md](../player/eden_disconnect_and_emergent_history.md), [terraforming_options.md](../infrastructure/terraforming_options.md), logistics pages
 
-This page is the wiki home for **intra-system portals** and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, the Snap, and Exotic Matter (EM) harvesting live on [Natural Wormholes & EM](natural_wormholes_and_em.md).
+This page is the wiki home for **intra-system portals**, **Wormhole Stations (WS)**, and **Artificial Wormhole Stations (AWS)**. Natural wormhole physics, mass limits, the Snap, counterbalance, and Exotic Matter (EM) behavior live on [Natural Wormholes & EM](natural_wormholes_and_em.md). WS and AWS are station/infrastructure roles defined by the technologies they house and operate; neither station's physical mass creates wormhole counterbalance.
 
 ## Technology lineage and player-arrival prerequisite
 
@@ -62,15 +62,22 @@ Portals and AWS do not replace cyclers, freighters, or mass-driver bulk pipeline
 - Structural mount must be serious (primary structure / keel-class). Not a light-hull bolt-on.
 - **Research lineage — ESTABLISHED INTENT:** Full-scale artificial wormhole technology is developed through aggressive post-Snap research and is used to open the artificial Sol–Eden connection. Miniaturization of that technology produces intra-system portals as an offshoot. Exact research stages, technology levels, prerequisites, and timing remain OPEN. Older technology-tree level labels are not authoritative until reconciled with this sequence.
 
+### Wormhole Stations (WS)
+**ESTABLISHED TECHNOLOGY ROLE — OWNER CLARIFICATION, 2026-11-22**
+
+A WS is a station that houses and operates the technology used to stabilize a natural wormhole and recover its ejected Exotic Matter (EM). Its stabilization equipment captures ejected EM and returns it to the corresponding natural aperture, restoring that aperture's mass-transfer capacity as described in [Natural Wormholes & EM](natural_wormholes_and_em.md). The WS is the platform for this technology; its physical mass does not create counterbalance or solve the wormhole's gravitational disturbance.
+
 ### Artificial Wormhole Stations (AWS)
 **DIRECTION / OPEN**
 
+An AWS is a station that houses and operates the technology used to open and maintain an artificial wormhole connection. It is infrastructure for the artificial-wormhole technology, not the source of the gravitational counterbalance.
+
 - Full-scale inter-system (and large-scale) infrastructure.
-- Built in pairs. One station initiates the rift; the paired station locks on and stabilizes it.
+- Built in pairs. One station initiates the rift; the paired station locks on and maintains the artificial connection.
 - Once open, the artificial rift remains open until either station closes it or can no longer maintain it. Natural wormholes follow their own lifecycle and may shift or snap; see [Natural Wormholes & EM](natural_wormholes_and_em.md).
 - Can move personnel and heavier cargo (exact mass envelope still OPEN).
 - High capital, power, and EM cost to establish and maintain.
-- **Artificial counterbalance through the second rift — ESTABLISHED DESIGN INTENT:** Counterbalance is a gravitational stabilization effect, not a property supplied by the physical mass of the AWS station. A natural wormhole is naturally counterbalanced by a suitable surrounding mass configuration. When an AWS pair opens an artificial wormhole at an appropriately opposing location relative to a natural aperture, the newly opened artificial rift itself creates an artificial gravitational anchor. The natural and artificial rifts then provide the opposing-anchor arrangement that counterbalances the natural wormhole. Effective counterbalance reduces the natural aperture's instability and therefore reduces the stabilization burden and associated EM drain/loss; it does not make opening or closing a connection free, nor does it eliminate all EM requirements. This is an inherent consequence of opening and positioning the second rift, not a separate AWS feature, module, or stabilization procedure. The AWS pair still supplies the infrastructure to initiate, lock onto, and maintain its artificial connection. A suitable natural mass body (for example, a gas giant) can instead provide natural counterbalance; the AI Manager evaluates the actual local geometry and stability on each side. Exact equations, thresholds, and quantitative performance remain OPEN.
+- **Wormhole gravitational disturbance and counterbalance — ESTABLISHED DESIGN INTENT, clarified 2026-11-22:** The wormhole itself is the source of the gravitational disturbance that creates the counterbalance problem. Counterbalance is a physical effect of the gravitational configuration, not a property supplied by a station. A suitable natural mass arrangement can provide natural counterbalance. Alternatively, when an artificial wormhole is opened at an appropriately opposing location relative to a natural aperture, the artificial rift itself creates the artificial gravitational anchor; the natural and artificial rifts then provide the opposing-anchor arrangement. The AWS is simply the station housing and operating the technology that opens and maintains that artificial connection. Its physical mass is not the anchor, and artificial counterbalance is not a separate AWS module or station procedure. Effective counterbalance reduces the natural aperture's instability and associated stabilization burden and EM drain/loss; it does not make opening or closing a connection free or eliminate all EM requirements. A WS similarly houses and operates natural-wormhole stabilization and EM-recovery technology; it does not create counterbalance through its mass. The AI Manager evaluates the actual geometry and stability at each relevant aperture. Exact equations, thresholds, and quantitative performance remain OPEN.
 - Opening an inter-system AWS pair is a major infrastructure and network-expansion investment.
 - Eden reconnection is an example: early traffic is limited to the initial equipment and operations required to establish the connection and stabilize the Eden side ([Eden page](../player/eden_disconnect_and_emergent_history.md)).
 
