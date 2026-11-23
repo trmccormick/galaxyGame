@@ -415,3 +415,12 @@ Recorded that the PVE/TEU unit-level extraction methods estimate volatile yields
 Also recorded that generic `BaseUnit#process_materials` routes gas/liquid outputs to the same aggregate-only buffers, while `operate` uses a generic output/store path. No active gas-separator-specific model, service, processing branch, or production call path was found. The inspected material-processing job's world-driven output dispatch has no separator-product branches for CO2/N2/O2/CH4. Historical status documentation describing a 500 kg separator input was retained as historical context, not implementation evidence; expected operational-data file locations could not be resolved in this check.
 
 Updated [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) with these implementation boundaries. No application code, operational data, or retired reference documents changed.
+
+
+## 2026-11-22 — Wormhole gravitational physics and WS/AWS station roles
+
+Clarified the owner-confirmed distinction across [Natural Wormholes & EM](technical/natural_wormholes_and_em.md), [Portals & AWS](technical/portals_and_aws.md), and the [Sol System Reference](astronomy/sol_system_reference.md).
+
+The wormhole itself is the source of the gravitational disturbance that creates the counterbalance problem. Counterbalance is a property of the physical gravitational configuration: a suitable natural mass arrangement can provide it, or an appropriately positioned artificial rift can create an artificial gravitational anchor. The artificial rift—not the AWS station's mass—provides the artificial counterbalance.
+
+Defined the infrastructure roles explicitly: a WS houses and operates natural-wormhole stabilization and EM-recovery technology; an AWS houses and operates the technology to open and maintain an artificial wormhole connection. Neither station's physical mass creates the counterbalance effect. This is a clarification of established wormhole physics and station intent, not a change to quantitative mechanics or network topology. Exact geometry, equations, thresholds, and quantitative effects remain OPEN. No application code or retired reference documents changed.
