@@ -103,6 +103,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Atmospheric escape, retention & recovery](infrastructure/atmospheric_escape_and_recovery.md) | Natural atmospheric loss as resource depletion; technology options for retention and orbital recovery |
 | [Power options](infrastructure/power_options.md) | Power generation and distribution across phases (surface, orbital, and deep-space) |
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
+| [Worldhouses and engineered environments](infrastructure/worldhouses.md) | Configurable enclosures, persistent settlement gameplay, environmental experiments, local industry, and remote operations |
 | [Surface habitat options](infrastructure/surface_habitat_options.md) | Surface habitat thought exercise: dome pressurization, oxygen setup, power gate |
 | [Station construction options](engineering/station_construction_options.md) | Options for station build pipelines |
 | [Interstellar communications](engineering/interstellar_communications.md) | Light-speed EM plus store-and-forward relays and physical carriers; portals and wormholes shorten carrier routes, not signal travel time. **Resolved:** historical FTL-communications discrepancy documented. |
@@ -142,7 +143,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Hydrosphere water inventories & cross-sphere cycling](technical/hydrosphere_water_inventories_and_cycle.md) | Existing water-body and liquid inventories, initialization paths, atmosphere exchange, terrain coverage, and mass/unit verification |
 | [Atmosphere gas inventories & evolution](technical/atmosphere_gas_inventories_and_evolution.md) | Planetary gas records, JSON initialization, pressure/mass calculations, TerraSim greenhouse and loss behavior, transfers, and unit/accounting gaps |
 | [Biosphere ecology & cross-sphere interactions](technical/biosphere_ecology_and_cross_sphere_interactions.md) | Biosphere records, StarSim generation/persistence, life-form and biome simulation, atmospheric effects, soil coupling, and callback/tick verification |
-| [Terraforming seeds](technical/biology/terraforming_seeds.md) | Terraforming seed design |
+| [Terraforming seeds](technical/biology/terraforming_seeds.md) | Biological deployment and terraforming purposes; a Seed is not a fixed structure type |
 | [Portals & AWS](technical/portals_and_aws.md) | Intra-system portals (EM ignition / fusion maintain, environmental variants); Artificial Wormhole Stations; institutional network control |
 | [Natural wormholes & EM](technical/natural_wormholes_and_em.md) | Mass threshold, counterbalance, EM ejection/harvest/reset; natural vs AWS pairing |
 | [EM numeric design questions](technical/em_numeric_design_questions.md) | Collected numeric OPEN questions (yield curves, stockpile caps, portal ignition cost, AWS draw, Snap yields); no values invented |
