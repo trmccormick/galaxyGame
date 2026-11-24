@@ -8,7 +8,7 @@
 
 This document defines the backend astrophysics subsystems governing stellar environment effects, orbital dynamics under prolonged radiation pressure, magnetic shielding physics, and the Planetary Protection Class (PPC) framework for biological contamination risk management across all procedurally generated solar systems. All content is target design intent; no runtime enforcement currently exists in code.
 
-**Cross-link:** For StarSim procedural system generation and CelestialBody model contracts, see **[StarSim Procedural Generation](../design/starsim_and_protection_classes.md)**.
+**Role:** Astrophysics and Planetary Protection Class (PPC) expansion for StarSim-generated systems — stellar radiation, flares, wind erosion, shielding, and protection-class frameworks. This is NOT the canonical StarSim generation/code-reality page. For system generation, loading paths, and CelestialBody contracts, see [StarSim architecture](../design/starsim_and_protection_classes.md).
 
 **Sphere and simulation relationship:** StarSim supplies generated celestial bodies and their initial data; sphere data ownership and TerraSim's environmental interactions are defined in [Celestial-Body Sphere Models & Environmental Interactions](../technical/sphere_models_and_interactions.md) and [TerraSim — Environmental Simulation](../technical/terrasim.md).
 **Cross-link:** For ISRU fabrication chain feedstock qualification and CNT composite production, see **[ISRU Fabrication Chain](../technical/isru_fabrication_chain.md)**.

@@ -82,7 +82,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | [Scenario: Super Mars](astronomy/scenario_super_mars.md) | Super-Mars test-bench scenario |
 | [System blueprints](astronomy/system_blueprints.md) | Documents **StarSim**: procedural system generation and loading JSON systems to initialize that part of the game (not manufacturing unit/structure blueprints) |
 | [Celestial systems](astronomy/celestial_systems.md) | Per-system documentation **template** (fill per system; not a Sol dump by itself) |
-| [Starsim & Protection Classes](astronomy/starsim_and_protection_classes.md) | Astrophysics / PPC physics expansion for StarSim-generated systems and planetary protection class frameworks |
+| [Starsim & Protection Classes](astronomy/starsim_and_protection_classes.md) | Astrophysics / PPC physics expansion only — not the StarSim generation entry. Generation and code reality: [StarSim architecture](design/starsim_and_protection_classes.md). |
 
 ---
 
@@ -90,7 +90,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 
 | Page | Notes |
 |------|-------|
-| [StarSim architecture](design/starsim_and_protection_classes.md) | StarSim system generation, unit simulation boundaries, CelestialBody contracts, code reality, and implementation gaps |
+| [StarSim architecture](design/starsim_and_protection_classes.md) | Canonical StarSim generation, unit boundaries, CelestialBody contracts, code reality. PPC/radiation detail: [Starsim & Protection Classes](astronomy/starsim_and_protection_classes.md). |
 | [Gameplay Principles](design/gameplay_principles.md) | GalaxyGame identity and high-level principles for science-grounded, strategic, exploratory, long-horizon, and automated gameplay |
 
 ---
