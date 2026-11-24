@@ -576,3 +576,10 @@ The existing curated real-system seed library is the starting selection for the 
 The derived fixture preserves source/seed distance differences rather than silently overwriting seed values. The nearby-star source does not state its coordinate epoch, so constellation matches are marked provisional. Generated systems remain eligible for unknown/no constellation assignment. The fixture is prototype presentation data, not a new authoritative game data model.
 
 Only the separate `galaxy-game-ui` prototype received application-code and fixture changes. No main-app StarSim code, curated system seed, database schema, or generated system data changed. The long-term main-application catalog/persistence model remains OPEN.
+
+
+### 2026-11-24 — Craft-centered Space workspace context
+
+Updated [Player View Architecture](ui/02_player_view_architecture.md) to make the selected craft's reported current system the active context for the complete Space workspace. The System View, Galaxy View, Wormhole Network emphasis, and craft inspector must remain synchronized. Current location, destination, and planned route are distinct; unknown current or galactic position must remain unavailable rather than being inferred or carried over from a previous selection. The Sol constellation chart is observer-specific and must not be shown as the sky from another system.
+
+The corresponding UI prototype implementation and its test follow-up are tracked in agent-tasks/projects/galaxy-game-ui/NEEDS_REVIEW.md item 21. Prototype code changes were made only in galaxy-game-ui; no main-app runtime code, simulation state, or data model changed.
