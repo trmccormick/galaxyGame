@@ -555,3 +555,14 @@ Expanded [Propulsion Classes & Heavy-Tug Economy](infrastructure/propulsion_and_
 - Exact research nodes, Technology Level assignments, facility prerequisites, and unlock order remain OPEN. No specific tier or research node was invented.
 
 This records the intended direction; the actual technology-tree JSON and blueprint gates have not yet been audited or changed. The existing distinction between settlement-wide Technology Level and per-blueprint Mk generation remains relevant. No application code, technology JSON, or blueprints changed.
+
+
+### 2026-11-24 — StarSim celestial motion and game-clock-driven spatial updates
+
+Updated [StarSim architecture](design/starsim_and_protection_classes.md) and [Game Time and Simulation Loop](engineering/game_time_and_simulation_loop.md) with owner-confirmed future intent for ongoing celestial movement.
+
+Recorded that StarSim must eventually advance the positions of stars, planets, moons, and other orbiting celestial objects as game time passes. The intended direction is background processing during available/idle processing capacity, using the elapsed interval from the authoritative game clock. Updated positions belong in active `Location::SpatialLocation` state and must use each system's declared spatial context/reference frame; the original generated seed remains the historical initial configuration.
+
+Also clarified that multiple-star systems require movement consistent with their actual hierarchy, that UI polling/rendering must not calculate or own authoritative positions, and that delayed work or pre-Snap time jumps must be reflected in the resulting positions. The API should expose the latest authoritative positions and frame metadata for Space views and other consumers.
+
+The background-job framework, scheduling cadence, batching strategy, orbital fidelity, and numerical approach remain OPEN. This records future design intent; it does not claim that current StarSim code already advances celestial positions. No application code, simulation data, or generated system seeds changed.
