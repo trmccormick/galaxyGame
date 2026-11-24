@@ -583,3 +583,14 @@ Only the separate `galaxy-game-ui` prototype received application-code and fixtu
 Updated [Player View Architecture](ui/02_player_view_architecture.md) to make the selected craft's reported current system the active context for the complete Space workspace. The System View, Galaxy View, Wormhole Network emphasis, and craft inspector must remain synchronized. Current location, destination, and planned route are distinct; unknown current or galactic position must remain unavailable rather than being inferred or carried over from a previous selection. The Sol constellation chart is observer-specific and must not be shown as the sky from another system.
 
 The corresponding UI prototype implementation and its test follow-up are tracked in agent-tasks/projects/galaxy-game-ui/NEEDS_REVIEW.md item 21. Prototype code changes were made only in galaxy-game-ui; no main-app runtime code, simulation state, or data model changed.
+
+
+### 2026-11-24 — Per-system neighborhood recentering and star-centered System View
+
+Expanded [Player View Architecture](ui/02_player_view_architecture.md) to clarify that each focused system has its own physical neighborhood map. Where systems share a sourced Cartesian reference frame, local positions can be derived by subtracting the focused system's position vector; this does not require a global galactic coordinate for the focused system. If no common-frame or dedicated local positions exist, the neighborhood remains unavailable rather than borrowing Sol's map or inventing coordinates.
+
+The UI prototype now loads neighborhood data according to the focused system. Sol retains its sourced nearby-star catalog; a selected real system represented in that same catalog receives a derived local neighborhood. Aki Gaia is not represented in the Sol astrometry catalog and has no dedicated local-neighborhood data, so its neighborhood correctly remains unavailable.
+
+The Aki Gaia System View fixture now supplies a display position for its primary star, and the renderer centers the display layout on that star. When orbital elements are absent, it draws clearly schematic guide rings from display positions; moons use their declared parent body as the ring center. Sourced orbital elements remain the basis for physical parent-centered orbital paths. The fixture does not claim canonical Aki Gaia orbital elements, semi-major axes, or periods.
+
+Only the separate `galaxy-game-ui` prototype, its fixtures, and UI documentation changed. No main-app runtime, StarSim generation, system seed, simulation state, or authoritative orbital data changed. Browser/runtime and Rails tests remain pending.
