@@ -267,3 +267,20 @@ Orbital positions must evolve with game time. The appropriate element/ephemeris 
 ---
 
 *This page is a living reference. Mark anything not clearly stated as OPEN. Do not invent orbital elements, masses, resource quantities, or station counts.*
+
+
+## Game-start astronomical snapshot and missing-position fallback — ESTABLISHED INTENT (owner, 2026-11-24)
+
+A new Sol game should initialize from the real Solar System state for the real-world date/time at which the universe is created. Use authoritative ephemerides for the Sun, planets, and moons wherever available, including the source epoch, coordinate frame, origin, units, and precision. The recorded game-start epoch is the baseline from which accelerated game time advances; live astronomical feeds do not continuously overwrite an active universe.
+
+Where a valid current position is not available, use the best available orbital information rather than inventing unrelated coordinates:
+
+- If the body's orbital elements and phase/epoch are known, calculate its position at the game-start epoch.
+- If the orbit is known but its phase is unavailable, select a reproducible random mean anomaly and calculate a position on that orbit.
+- If only orbital distance is known, use that distance to establish the orbital scale and an explicitly marked circular-orbit approximation unless better eccentricity/orientation data exists. Infer a period from the central mass where possible; do not invent a period when the required dynamics are unavailable.
+- For a moon, use its distance and orbit around its parent planet, then transform the resulting relative position into the system coordinate frame. Do not treat a moon's distance from its planet as a distance from the Sun.
+- If neither a valid ephemeris/coordinate nor sufficient orbital/parent information exists, leave the position unavailable.
+
+Known Sol data always takes precedence over random initialization. Every derived or generated fallback records its method, source inputs, epoch, and random seed so the starting snapshot can be reproduced. The common StarSim policy and provenance requirements are defined in [StarSim architecture](../design/starsim_and_protection_classes.md).
+
+This is initialization intent, not a claim that the current StarSim importer computes ephemerides or that runtime position advancement is implemented.
