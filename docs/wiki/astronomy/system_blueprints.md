@@ -141,7 +141,7 @@ No target, minimum, maximum, density, or required number of systems is establish
 
 A controlled scalability exercise may combine two kinds of systems in one test network:
 
-- **Known Local Bubble systems:** Use the real-system seed data already available, retaining their known astronomical positions, identifiers, and constellation associations. The existing seed collection is limited and is not expected to contain 1,000 systems.
+- **Known Local Bubble systems:** Use the existing real-system seed identities and the astronomical properties actually present in those files. The seed collection is limited and is expected to expand; do not assume every seed already contains right ascension, declination, a complete spatial position, or a constellation association. Where those fields are absent, a separate, provenance-tracked astronomical reference catalog may augment the UI/test dataset without silently changing the original seed values. The seed collection is not expected to contain 1,000 systems.
 - **Procedurally generated systems:** Generate a separate batch through StarSim and retain their generated provenance. They are ordinary test systems; this exercise does not require bespoke or unusually diverse worlds.
 
 StarSim should complete/populate the known-system seeds where information is missing, while keeping observed/source-supplied properties distinguishable from generated or estimated completion. The EVE Dashboard's existing constellation/system-location information is a relevant basis for displaying the known Local Bubble portion; confirm its actual data path and coverage before treating it as a complete 1,000-system visualization solution.
