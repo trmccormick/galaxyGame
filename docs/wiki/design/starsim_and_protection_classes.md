@@ -49,6 +49,24 @@ TerraSim is responsible for calculating environmental conditions and their evolu
 
 Unit-level simulation operates within the generated and evolving world via tick-driven entities. Units read relevant celestial/environmental properties for their operations, but do not directly rewrite the StarSim seed or independently take ownership of planetary environmental evolution. The exact service/model interfaces between StarSim, TerraSim, and other systems require code-level validation.
 
+### Ongoing celestial motion and spatial-position updates — ESTABLISHED INTENT (owner, 2026-11-24)
+
+StarSim must eventually do more than generate a system's initial arrangement. Stars, planets, moons, and other orbiting celestial objects move as simulation time advances; their positions must not remain fixed at their generation-time values.
+
+- **Generation remains the baseline:** StarSim's original generated seed/output records the initial system configuration and orbital data. Runtime movement must not rewrite that historical generation record.
+- **Runtime position advancement:** StarSim is responsible for calculating updated celestial positions from the elapsed **game-clock time** and the system's orbital/dynamical data. This includes stellar motion in multiple-star systems as well as planetary and other satellite/orbital motion around their appropriate parent bodies.
+- **Background processing:** The intended direction is a background job/process that performs these updates when simulation processing capacity is available, including idle time. Position calculation must not depend on a page load, API poll, or browser animation. The exact job framework, scheduling cadence, batching, and update frequency remain implementation decisions.
+- **Game-time intervals:** Each update must account for the actual game-time interval since the last successfully applied position update. It must use the authoritative game clock, not treat wall-clock elapsed time as the simulation timeline. Delayed work and deliberate pre-Snap time advancement must not leave positions permanently stale or cause an interval to be applied twice.
+- **Authoritative spatial state:** Calculated positions update each object's active `Location::SpatialLocation` coordinates (X/Y/Z) in the appropriate spatial context/reference frame. The original generation seed remains historical input; `SpatialLocation` represents the evolving current position.
+- **System-specific reference frames:** The active coordinate frame and origin must be explicit for each system. A primary-star origin is appropriate where defined; a barycenter or other origin is appropriate for systems whose architecture requires it. Consumers must not assume every system is heliocentric or that every multi-star system uses the same origin convention.
+- **Hierarchical systems:** Position calculations must respect the system's actual stellar and orbital hierarchy. For example, a multiple-star system cannot be modeled accurately by treating every star as independently stationary while only moving its planets. The available orbital data may be incomplete, so missing elements must remain unresolved rather than being replaced with invented positions or dynamics.
+
+The API should expose the latest authoritative spatial positions and their coordinate-frame/context metadata. Space views and other consumers render those positions; JavaScript may interpolate visually between updates, but it must not become a competing orbital simulator or source of authoritative coordinates.
+
+**Implementation status:** This is future design intent, not a claim that StarSim currently advances celestial positions. Current generation establishes initial objects and orbital data; ongoing position calculation/update behavior remains to be implemented and validated. The required fidelity and numerical integration approach remain OPEN.
+
+---
+
 ### Generated-world plausibility, survey calibration, and ongoing spawning
 
 **DESIGN DIRECTION:** A generated system should make reasonable physical and astronomical sense when it is created. If its initial state is implausible enough that the world does not make sense, the generator or the generated data may need adjustment before the system is used. This is a plausibility threshold, not a requirement that every generated value be complete, precise, or mutually consistent.
