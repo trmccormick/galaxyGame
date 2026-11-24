@@ -67,6 +67,31 @@ The API should expose the latest authoritative spatial positions and their coord
 
 ---
 
+### Initial-state construction from known reality — ESTABLISHED INTENT (owner, 2026-11-24)
+
+A new GalaxyGame universe should begin from a dated, evidence-based snapshot of the real world wherever reliable starting information exists. The default start date is the real-world current date/time when the game is created (recorded explicitly as the simulation epoch). The game then advances from that fixed snapshot on its accelerated shared game clock. External real-world feeds are initialization sources, not a continuing authority that silently changes an active universe.
+
+**Source and derivation priority:**
+
+1. Use authoritative, date-appropriate observations, catalogs, ephemerides, and other known data when available. Preserve the source, retrieval/validity date, epoch, units, reference frame, precision, and any transformation applied.
+2. Derive missing values from known physical constraints and source data. Keep derived values distinguishable from directly observed/published values.
+3. Generate only the information that remains unavailable. Generated values must satisfy the system's physical and hierarchical constraints, and their method and random seed must be retained so the initial state can be reproduced.
+
+**Celestial starting positions:**
+
+- For Sol, use real ephemeris data for the game-creation epoch wherever available. Do not replace known planetary, lunar, or stellar positions with randomized phases.
+- If valid Cartesian coordinates/current ephemeris positions are unavailable but a body's orbit is known, initialize a position on that valid orbit. For a planet, use its orbit around the appropriate star or system reference; for a moon, use its orbit around its parent planet (or other declared parent).
+- If orbital elements include a phase/epoch, calculate the position for the game-start epoch from those elements. If the phase is genuinely unknown, select a random **mean anomaly** within the valid orbit, using a recorded seed. Convert that phase through the orbital model rather than choosing an arbitrary Cartesian point or sampling true anomaly uniformly; this produces a time-consistent starting phase.
+- If only orbital distance is known, use that distance as the orbital radius/scale and choose a starting phase within a valid orbit. A circular orbit may be used as an explicitly marked approximation when eccentricity/orientation are unavailable. Use a known central mass and Keplerian inference where possible to establish the period needed for subsequent motion; otherwise retain the missing dynamics as unresolved rather than inventing a period.
+- Position a moon relative to its parent body's initialized position, then transform into the system's declared coordinate frame. Do not place moons independently around the star.
+- If neither valid coordinates nor enough orbital-distance/parent information exists, leave the position unavailable. Do not fabricate a location merely to populate X/Y/Z.
+
+This initialization establishes the first active spatial state; subsequent StarSim movement advances it from the same epoch using authoritative game time, as described above. The immutable source/generated seed and the active calculated `Location::SpatialLocation` state remain distinct.
+
+**Snapshot provenance:** retain the game-start timestamp, source identifiers and versions, source epochs, coordinate conventions, observed/derived/generated classification, approximation notes, and random seed/phase for generated values. A later source-data refresh must not silently rewrite a running universe's initial conditions.
+
+The same policy applies beyond astronomy: initialize from known reality, derive where constrained data permits, generate only where necessary, and preserve provenance. Domain-specific starting data (including markets and economic indicators) is documented by its owning system.
+
 ### Generated-world plausibility, survey calibration, and ongoing spawning
 
 **DESIGN DIRECTION:** A generated system should make reasonable physical and astronomical sense when it is created. If its initial state is implausible enough that the world does not make sense, the generator or the generated data may need adjustment before the system is used. This is a plausibility threshold, not a requirement that every generated value be complete, precise, or mutually consistent.
