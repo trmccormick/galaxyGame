@@ -594,3 +594,12 @@ The UI prototype now loads neighborhood data according to the focused system. So
 The Aki Gaia System View fixture now supplies a display position for its primary star, and the renderer centers the display layout on that star. When orbital elements are absent, it draws clearly schematic guide rings from display positions; moons use their declared parent body as the ring center. Sourced orbital elements remain the basis for physical parent-centered orbital paths. The fixture does not claim canonical Aki Gaia orbital elements, semi-major axes, or periods.
 
 Only the separate `galaxy-game-ui` prototype, its fixtures, and UI documentation changed. No main-app runtime, StarSim generation, system seed, simulation state, or authoritative orbital data changed. Browser/runtime and Rails tests remain pending.
+
+
+### 2026-11-24 — Stellar-class colors for Galaxy and Wormhole Network nodes
+
+Updated [Player View Architecture](ui/02_player_view_architecture.md) with the shared visual rule: system-node fill represents the documented spectral class of the designated primary/display star in both Galaxy View and Wormhole Network. Selection halos, route overlays, and wormhole connectivity remain separate visual signals. Unknown classifications remain neutral gray; multiple-star systems require an explicit display component.
+
+The separate `galaxy-game-ui` prototype now has a shared spectral-class color mapper and matching legends in both views. Sol's system record now explicitly identifies its observed G2V primary star. Other network systems and the nearby-system catalog currently lack classification data, so they remain neutral rather than receiving guessed colors. Aki Gaia remains unclassified until its generated-star data supplies a spectral class.
+
+No main-app runtime, StarSim generator, stellar catalog, or authoritative simulation data was changed. JavaScript syntax and fixture JSON were checked; browser rendering and Rails tests remain pending.
