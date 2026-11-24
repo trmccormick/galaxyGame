@@ -1,5 +1,5 @@
 > **Status: DESIGN INTENT** — owner-confirmed gameplay direction; detailed mechanics and implementation remain in progress  
-> **Last Updated:** 2026-11-21
+> **Last Updated:** 2026-11-24
 
 # Space and Surface Operations
 
@@ -76,11 +76,15 @@ Shared concepts do not make the two operating contexts interchangeable. Space Op
 
 **ESTABLISHED INTENT — 2026-11-21**
 
-A fleet is an optional operational grouping of spacecraft assigned to a shared objective or coordinated operation. Fleet membership is an operational relationship, not a claim that craft are physically together, travel in formation, follow the same route, or remain in one system.
+An **operation** is the broad operational context for one or more craft carrying out an objective or mission. An operation may be coordinated as a **fleet**, or it may be carried out by one or more independently dispatched craft without creating a fleet. The UI must make both forms first-class; a craft must never need to be placed in a one-craft fleet merely to be assigned, monitored, or tracked.
 
-Participating craft may work at different locations and perform different activities while contributing to the same objective. A construction operation, for example, may include craft assembling infrastructure at an asteroid, harvesters collecting EM elsewhere, transport craft delivering harvested material and supplies, and support craft providing fuel or maintenance.
+A **fleet** is an optional operational grouping of spacecraft assigned to a shared objective or coordinated operation. Fleet membership is an operational relationship, not a claim that craft are physically together, travel in formation, follow the same route, or remain in one system. Fleet members may be distributed across locations and systems, perform different tasks, and follow different in-system itineraries while contributing to the shared objective.
 
-Not every craft must belong to a permanent fleet. Individual craft can operate independently or be associated with an operation for a particular purpose. Fleet grouping must not become a prerequisite for assigning or tracking an individual craft.
+An independent craft operation is appropriate when one spacecraft is dispatched to perform an autonomous mission. For example, a robotic Venus atmospheric harvester may operate on a recurring Luna–Venus cycle: depart Luna, travel to Venus, harvest atmospheric gases, return to Luna, unload and service as required, then repeat according to its authorized plan. It is tracked as an independently dispatched craft/operation; it does not require a fleet wrapper. This example illustrates the organizational distinction and does not establish the detailed harvesting, cargo, fuel, or scheduling mechanics.
+
+A coordinated construction/logistics operation, by contrast, may use a fleet grouping containing craft assembling infrastructure at an asteroid, harvesters collecting EM elsewhere, transport craft delivering harvested material and supplies, and support craft providing fuel or maintenance. The grouping communicates their shared objective and coordination relationships, not physical proximity or a common route.
+
+A craft may be assigned directly to an independent operation or associated with a fleet for a particular purpose. The UI should expose fleet groupings and independent dispatched craft/operations in the same operations workspace without conflating them. Fleet membership must not become a prerequisite for assigning or tracking an individual craft. How fleets and operation assignments are persisted, created, modified, or dissolved remains OPEN.
 
 The same high-level concept of grouping and coordinating assets may apply to surface operations, but surface units and their tasks belong to the separate surface operating context. Do not assume spacecraft fleet rules automatically define surface-unit organization.
 
@@ -133,7 +137,7 @@ Player asset-management workflows remain distinct from Admin and AI Manager over
 The following remain in progress and must not be invented by UI implementation:
 
 - Exact activity definitions, lifecycle states, capability requirements, and completion rules.
-- How operational groups are created, assigned, modified, and dissolved.
+- How operations and fleet groupings are created, assigned, modified, and dissolved; how craft move between independent assignments and fleet membership.
 - Detailed task dependency and conditional-execution semantics.
 - How resource sale, purchase, transfer, reservation, and supply limits are specified and resolved.
 - How rendezvous readiness, missed rendezvous, and departure windows are evaluated.
