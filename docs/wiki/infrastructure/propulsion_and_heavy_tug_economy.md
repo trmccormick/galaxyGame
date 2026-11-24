@@ -26,6 +26,22 @@ Current Venus and Titan HLT harvesting configurations remain valid defined missi
 
 The initial Cycler and Tug construction location is a deliberate infrastructure dependency: both are built in orbit at L1, rather than being early Earth-built ships. This assumes the L1 shipyard and its supporting industrial/logistics capacity have first been established. Exact production rates, fleet counts, and detailed build recipes remain OPEN.
 
+### Technology-tree implications: early settlement fleet versus later spacecraft industry
+
+The HLT, Cycler, and Tug are the **initial spacecraft families for early settlement and infrastructure development**, not the complete intended spacecraft roster and not an end-state technology ceiling. Their early availability supports the first settlement options and the industrial/logistics capabilities needed to expand beyond them.
+
+Technology progression must represent both:
+
+1. **Advancement within established families** — successive HLT Mk designs that retain the HLT's atmospheric-entry and landing requirements; and later improvements/capabilities within Tug and Cycler families.
+2. **Emergence of additional spacecraft families** — research and manufacturing capabilities that enable purpose-built space-only craft, including dedicated carriers and specialized harvesting craft, along with other future designs as they are established.
+
+The technology tree must not imply that all later spacecraft are merely Mk upgrades of HLT, Tug, or Cycler, or that these three families exhaust the design space. New families represent new engineering architectures and operational capabilities, not simply higher Mk numbers.
+
+Unlocks should reflect the capabilities and industrial prerequisites needed to design, construct, and operate each family. In particular, advanced orbital/space manufacturing enables large craft that do not need atmospheric entry or landing systems; these craft can be substantially larger and optimized for space operations. The location where a vehicle is manufactured does not, by itself, determine its design family: an HLT manufactured in space remains a surface-capable HLT.
+
+**OPEN — exact technology mapping:** The research nodes, technology levels, manufacturing-facility requirements, prerequisites, and unlock order for dedicated carriers, specialized harvesters, and other future spacecraft have not been specified. Do not assign them to particular Technology Levels or research nodes until the technology tree is reviewed and those dependencies are designed. The existing distinction between settlement-wide Technology Level and per-blueprint Mk generation must be preserved; a new spacecraft family is not synonymous with a new Mk generation.
+
+
 ---
 
 ## 1. Propulsion Classes
