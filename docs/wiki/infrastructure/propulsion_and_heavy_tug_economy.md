@@ -8,15 +8,21 @@ This page consolidates all still-valid material about propulsion classes (HLT ti
 
 ## Current Ship-Class Set (DIRECTION)
 
-The current early-game design is intentionally limited to **three ship classes**:
+The current general-purpose spacecraft families defined for the early design baseline are **HLT, Cycler, and Tug**. This is the current established set, not an exhaustive limit on future spacecraft families.
 
-| Ship class | Primary role in the current setup | Initial construction approach |
+| Ship class | Design heritage and operating environment | Current role / construction direction |
 |---|---|---|
-| **HLT (Heavy Lift Transport)** | Flexible transport ships that can be fitted/configured for assigned operations, including cargo transport and the early Venus atmospheric-harvesting role. | Early HLT Mk1 ships are produced on Earth. Later marks may use more capable construction facilities as the industrial base develops. |
-| **Cycler** | Long-range/interplanetary transport infrastructure operating on established routes; may carry or rendezvous with HLT support craft. | First cyclers are constructed in orbit at the Earth–Moon L1 shipyard. |
-| **Tug** | Heavy-duty orbital construction, body capture, station-keeping, and (with appropriate later capability) asteroid/moon relocation. | First tugs are constructed in orbit at the Earth–Moon L1 shipyard. |
+| **HLT (Heavy Lift Transport)** | Surface-capable transport design originating in Earth cargo-lift requirements. Its design retains atmospheric entry and landing capability, including in later Mk versions. | Earth-to-orbit cargo lift and surface logistics, with adaptations for other transport and mission roles. The design is also useful for Mars surface operations. It may be manufactured away from Earth without changing its underlying design heritage. |
+| **Cycler** | Space-only craft; does not need atmospheric entry or landing capability. | Long-range/interplanetary transportation on established routes. It can temporarily provide carrier services by transporting equipment and smaller craft. Initial cyclers are constructed in orbit at the Earth–Moon L1 shipyard. |
+| **Tug** | Space-only craft; designed for orbital work rather than surface landing. | Heavy-duty orbital construction, body capture, station-keeping, and (with appropriate later capability) asteroid/moon relocation. Initial tugs are constructed in orbit at the Earth–Moon L1 shipyard. |
 
-These are the three ship classes in the current design baseline, not an exhaustive limit on every possible future vehicle concept. HLT is a ship class; Mk1, Mk2, Mk3, and later marks are successive versions within that class. Roles such as atmospheric harvester describe how an HLT is fitted and assigned, not an additional ship class. The initial Venus example is an Earth-produced HLT Mk1 fitted for harvesting. The same HLT class also supports cargo transport between Earth, Luna, and L1; later HLT marks may be used for that work without being required to share the Mk1 Venus-harvesting fit.
+**Design heritage is not the same as manufacturing location.** An HLT built at an orbital or planetary shipyard remains an HLT whose architecture retains atmospheric-entry and landing requirements. Conversely, space-built craft that never land can omit those systems and devote their mass, volume, structure, and equipment to space operations. The tug and cycler are examples of this space-only design approach.
+
+The HLT Mk1 is the initial established design. Mk2, Mk3, and later marks are successive versions within the HLT family; later marks continue to retain the HLT's surface-entry and landing design requirement. They can improve range, cryogenic handling, shielding, payload, and other capabilities without becoming equivalent to a purpose-built space-only craft.
+
+Future space-only families are planned but not yet fully designed. These include dedicated **carriers** and different specialized **harvesters** intended for space construction and operation. They can be substantially larger than surface-capable HLTs because they do not have to accommodate Earth/Mars atmospheric entry and landing. A cycler may temporarily fulfill a carrier role until a dedicated carrier is designed and available; carrier is therefore a capability/operational role, not a permanent reclassification of the cycler.
+
+Current Venus and Titan HLT harvesting configurations remain valid defined mission configurations in the present design material. They do not establish that all future harvesting craft must be HLTs, nor do they preclude dedicated space-built harvesting families. The distinction between an HLT configured for an existing mission and a future purpose-built space-only harvester must be maintained.
 
 The initial Cycler and Tug construction location is a deliberate infrastructure dependency: both are built in orbit at L1, rather than being early Earth-built ships. This assumes the L1 shipyard and its supporting industrial/logistics capacity have first been established. Exact production rates, fleet counts, and detailed build recipes remain OPEN.
 
@@ -60,7 +66,7 @@ The Luna strategy is a separate local propellant-production path: PSR water-ice 
 
 **Source reconciliation / OPEN:** the uploaded craft data lists four multipurpose cryogenic tanks for each configuration, while both mission summaries describe five MP-CSTs and approximately 50,000 kg of additional fuel/LOX storage. The Venus phase file deploys three gas separators plus two CO₂ splitters, while the Venus recommended fit lists the two CO₂ splitters but not the three gas separators. The Titan craft data's Mk2 tank identifier conflicts with its Mk3 cooling/boiloff note. Mission-profile files also reference legacy manifest/task-list filenames that do not exactly match all uploaded versioned files. Preserve these differences for source reconciliation rather than silently selecting one value. Other quantities in the summaries (fuel loads, payload estimates, transit assumptions) are design inputs, not automatically validated game constants.
 
-The HLT remains the ship class; Titan and Venus harvesting are fully specified mission configurations/roles within that class. Exact production maturity, research unlock timing, and any remaining implementation alignment are separate questions from whether the craft and repeatable mission profiles were designed.
+The currently documented Titan and Venus harvesting craft are HLT configurations with defined mission profiles. This reflects the established early mission designs; it does not make HLT the universal architecture for atmospheric or resource harvesting. Future space-only harvesting craft are a planned separate family, with their own size and design assumptions. Their detailed classes, configurations, and specifications remain OPEN.
 
 ### Docking-capable craft: attitude and proximity control (DIRECTION)
 
