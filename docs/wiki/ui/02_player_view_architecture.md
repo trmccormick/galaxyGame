@@ -148,6 +148,14 @@ Candidate content includes:
 - trajectories, travel distances, launch windows, and estimated travel times where supported by simulation data;
 - natural wormholes, AWS connections, portals, EM fields, and relevant space phenomena.
 
+### Celestial current positions and uninitialized spatial records — ESTABLISHED UI INTENT (owner, 2026-11-24)
+
+The System View renders authoritative current celestial positions from StarSim's active spatial state and its declared coordinate-frame metadata. It does not calculate orbital positions in the browser. Supplied orbital elements may be rendered as orbit geometry, but an orbit path is not a current body position or an ephemeris.
+
+A `Location::SpatialLocation` record is not automatically a valid current position. The current main-app body callback creates `(0,0,0)` placeholders before StarSim has calculated a position, and the current model does not expose a validity marker. The API must eventually expose explicit position validity (or equivalent source/status metadata). The UI must ignore unmarked all-zero placeholders; a genuine object at the coordinate origin is accepted only when explicitly marked valid. Missing positions remain unavailable rather than being inferred from an orbit path or a map layout.
+
+When current coordinates are unavailable, the UI may show clearly labeled orbital geometry from supplied elements. It must not invent a current phase. Initialization fallback for new universes—known ephemerides first, then orbit-constrained randomized phase when unknown—is defined in [StarSim architecture](../design/starsim_and_protection_classes.md).
+
 ### Craft operation and remote command model
 
 **ESTABLISHED INTENT — 2026-11-19**
