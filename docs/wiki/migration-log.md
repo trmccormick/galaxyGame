@@ -541,3 +541,17 @@ Updated [Propulsion Classes & Heavy-Tug Economy](infrastructure/propulsion_and_h
 - Existing Venus and Titan HLT harvesting configurations remain valid defined mission configurations; they do not imply that all future harvesters must be HLTs.
 
 This clarification corrects the overly broad implication that harvesting roles are only HLT configurations and that the three currently defined families exhaust future spacecraft design. No application code, blueprints, simulation mechanics, or spacecraft specifications were changed.
+
+
+### 2026-11-24 — Technology progression must expand beyond the initial spacecraft families
+
+Expanded [Propulsion Classes & Heavy-Tug Economy](infrastructure/propulsion_and_heavy_tug_economy.md) to make the technology-tree implication explicit:
+
+- HLT, Cycler, and Tug are the initial spacecraft families supporting early settlement options and infrastructure development. They are not the complete intended spacecraft roster or an end-state ceiling.
+- Technology progression must cover both Mk/capability advancement within existing families and the later introduction of entirely new spacecraft families.
+- Later HLT Mk versions retain the HLT's atmospheric-entry and landing design requirements; manufacturing an HLT in space does not turn it into a space-only design.
+- Space-only carriers, specialized harvesters, and other future spacecraft require new engineering architectures enabled by appropriate research and space-manufacturing capabilities. They are not simply higher Mk versions of the initial three families.
+- The technology tree must express the industrial and technical prerequisites for designing, constructing, and operating new families, including the ability to build large craft that do not need atmospheric entry or landing systems.
+- Exact research nodes, Technology Level assignments, facility prerequisites, and unlock order remain OPEN. No specific tier or research node was invented.
+
+This records the intended direction; the actual technology-tree JSON and blueprint gates have not yet been audited or changed. The existing distinction between settlement-wide Technology Level and per-blueprint Mk generation remains relevant. No application code, technology JSON, or blueprints changed.
