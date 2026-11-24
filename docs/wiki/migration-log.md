@@ -603,3 +603,6 @@ Updated [Player View Architecture](ui/02_player_view_architecture.md) with the s
 The separate `galaxy-game-ui` prototype now has a shared spectral-class color mapper and matching legends in both views. Sol's system record now explicitly identifies its observed G2V primary star. Other network systems and the nearby-system catalog currently lack classification data, so they remain neutral rather than receiving guessed colors. Aki Gaia remains unclassified until its generated-star data supplies a spectral class.
 
 No main-app runtime, StarSim generator, stellar catalog, or authoritative simulation data was changed. JavaScript syntax and fixture JSON were checked; browser rendering and Rails tests remain pending.
+
+
+The Wormhole Network renderer also retains its former access distinction as a separate outer node ring (baseline, natural access, or dashed not-connected state); stellar classification remains the node fill. The natural-wormhole edge remains independently visible. This avoids losing access information when the fill is reassigned to star type.
