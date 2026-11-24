@@ -86,7 +86,44 @@ The UI should present last-known state, source and receipt times, information ag
 
 ## Space context
 
+**ESTABLISHED SPACE VIEW ARCHITECTURE — 2026-11-24**
+
+Space remains one Player context, with three coordinated but independent ways to understand astronomical space and operations:
+
+1. **Galaxy View** — a selected-system-centered spatial neighborhood. For Sol, the initial view focuses on the Sun's nearby stellar neighborhood and uses known real-system positions. It may show larger Milky Way context as the player zooms out. Local Bubble information belongs to this physical spatial view.
+2. **Wormhole Network** — a system-connectivity graph. It represents natural wormholes and operational network connections, not astronomical positions or galaxy membership. A wormhole may connect systems in different galaxies; remote endpoints remain visible regardless of the selected Galaxy View context.
+3. **System View** — the selected star system's local spatial context: stars, celestial bodies, stations, facilities, spacecraft, orbits, and trajectories where supported by available data.
+
+These are coordinated views, not three separate game worlds or a hierarchy of physical containment. Selecting a system synchronizes the selected-system context across views, but the views retain their own spatial meanings and data. Galaxy View must not filter or remove remote Wormhole Network endpoints.
+
+### Astronomical geography and constellation context
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-24**
+
+Keep the following concepts distinct:
+
+- **Astronomical geography:** the real 3D positions of star systems in the Milky Way or another galaxy.
+- **Physical astronomical regions:** structures such as the Local Bubble, represented as spatial regions when supported by suitable source data.
+- **Constellations:** the 88 IAU-defined areas of the apparent sky, bounded in celestial coordinates. They are observational sky regions, not physical 3D groupings of stars.
+- **Wormhole connectivity:** a travel/network graph independent of physical distance, constellation, and galaxy membership.
+
+For Sol, the constellation context is an angular sky projection as observed from Sol. It is a separate layer/view from the physical Local Bubble neighborhood. Do not draw IAU constellation boundaries as if they were 3D walls or Local Bubble borders. A star system's constellation is determined by its apparent direction from the observing system, not by its 3D proximity to another star.
+
+### Real-system catalog and incomplete astronomical data
+
+The existing curated real-system seed collection is the starting selection for Sol's nearby-system view. It is intentionally limited and is expected to expand. A real-system seed is incomplete starting information for StarSim, not a requirement that the system have a complete planetary inventory.
+
+The UI may join those seed identities to a separate derived astronomical catalog containing right ascension, declination, distance, derived Cartesian positions, constellation boundary geometry, and source/provenance metadata. This derived UI fixture is not authoritative simulation state and does not establish a final main-application data model.
+
+Use only source-supported positions. A system with a known position can be plotted even when its constellation assignment is unavailable. A known system with no usable position can remain in a catalog/list but must not be assigned an invented map location. If the source coordinate epoch, reference frame, or precision is incomplete, preserve that limitation and avoid presenting the resulting placement or constellation match as more precise than the source supports.
+
+Constellation membership is optional. A known real system may have a known, provisional, or unknown assignment depending on available astrometry. Procedurally generated systems may have no real-world constellation association; `none` or `unknown` is valid and must not be treated as an error. Do not infer constellation membership from a wormhole, selected galaxy, or local spatial proximity.
+
+A future main-application catalog may represent IAU constellation names, abbreviations, official boundary geometry, coordinate metadata, and physical astronomical regions such as the Local Bubble. How that information is persisted or related to system records remains OPEN. Do not assume a database table, JSON catalog, or a required constellation field on every system until that model is reviewed.
+
 **DIRECTION**
+
+
 
 Space is the system-wide operational view. It should represent the selected solar system and the physical relationships among bodies, ships, stations, and other orbital infrastructure.
 
