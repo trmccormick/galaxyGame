@@ -606,3 +606,16 @@ No main-app runtime, StarSim generator, stellar catalog, or authoritative simula
 
 
 The Wormhole Network renderer also retains its former access distinction as a separate outer node ring (baseline, natural access, or dashed not-connected state); stellar classification remains the node fill. The natural-wormhole edge remains independently visible. This avoids losing access information when the fill is reassigned to star type.
+
+
+### 2026-11-24 — Evidence-based new-universe starting snapshot
+
+Updated [StarSim architecture](design/starsim_and_protection_classes.md), [Sol System Reference](astronomy/sol_system_reference.md), and [Markets, EAP, and GCC/USD Peg](markets/markets_eap_and_peg.md) with the owner-confirmed initialization policy.
+
+A new universe starts from a dated snapshot using the real-world current date/time at game creation. Sol should use known ephemerides and other authoritative astronomical information wherever available; the accelerated game clock then advances the universe from that fixed baseline. Missing information is derived from known constraints where possible and generated only when necessary, with source, epoch, assumptions, and provenance retained.
+
+For celestial bodies without valid current coordinates, the fallback is an orbit-constrained starting position: use the body's orbit around its appropriate star/system reference, or a moon's orbit around its parent planet. If phase is unknown, choose a reproducible random mean anomaly and calculate a position on the valid orbit. If only orbital distance is known, use it as the orbital scale and mark any circular-orbit approximation; infer period from central mass where possible. Do not invent coordinates or orbital periods when the required information is absent. Known Sol positions always take precedence over random phases.
+
+Applied the same initialization principle to economic/market conditions: use dated real-world market and economic data where it can be meaningfully mapped, otherwise derive or generate a constrained baseline and preserve provenance. External feeds establish the initial snapshot; they do not continuously overwrite the running game.
+
+This records design intent only. No ephemeris ingestion, random-orbit initialization, market-data import, schema, or runtime simulation code changed.
