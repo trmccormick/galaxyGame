@@ -820,3 +820,41 @@ Start with: **[Market & AI Bootstrapping](../logistics/market_and_ai_bootstrappi
 ---
 
 *Harvested from 6 wiki pages (all under `docs/wiki/logistics/`) + ~35 legacy architecture docs (`docs/architecture/ai_manager/`, `docs/architecture/services/ai_manager/`) + direct code inspection of 92 service files.*
+
+## 2026-11-23 — Luna task execution: persisted game objects versus operational behavior
+
+A focused source inspection of `luna_mission:execute` and `AIManager::TaskExecutionEngineV2` establishes that the Luna Rake is more than a report-only mock, but it does not yet demonstrate a fully operating settlement. The Rake invokes task effect handlers against Rails models; some handlers persist real records and state, while others only log intended work and return success.
+
+### What the current runner really does
+
+- The Rake resolves its four named Luna phases and follows each phase's `task_ref` entries to the selected task JSON files. It is a mission-specific execution harness; its explicit order is `power_comms`, `isru_deployment`, `gas_processing`, and `robot_logistics`.
+- It creates or locates a Luna settlement and associated location, seeds inventory records from the manifest (and may create a HeavyLander record and cargo inventory in the launch-staging branch), then invokes `TaskExecutionEngineV2#execute_task` for each referenced task.
+- `deploy_unit` consumes a matching settlement inventory item and creates persisted `Units::BaseUnit` records with blueprint-derived or fallback operational data.
+- `connect_units`, `register_to_bus`, `set_unit_state`, `set_settlement_state`, and deployment-stage advancement persist selected topology or state data to unit/settlement records.
+
+These are real database side effects. They establish that the task runner can create game objects and record some relationships/state; they do not establish that those objects are being operated by the ordinary simulation loop.
+
+### Known execution gaps in the inspected V2 effect dispatcher
+
+- `construct_structure` is explicitly unimplemented; it logs the requested structure and returns success.
+- `transfer_resource` logs a transfer/configuration but does not move inventory or create a functioning transfer process.
+- `manufacture` logs the output and quantity but does not invoke production or add manufactured inventory.
+- `check_unit_state` logs a successful verification without checking the unit. The Rake has a separate post-execution verifier for some known actions, but its fallback labels unsupported actions as unverified; an unverified-only result is currently considered passed.
+- Unknown effect actions are skipped and return success. This can make unsupported task effects appear successful.
+- Some effect handlers return success when the settlement is absent, rather than failing the task.
+- Deployment-stage advancement persists stage metadata, but that metadata alone does not prove that the physical operation represented by the stage occurred.
+- The Rake's launch-staging branch creates a HeavyLander and cargo records and copies cargo into settlement inventory. This harness path does not, by itself, prove that an actual launch, transit, arrival, or cargo offload was simulated.
+- The Rake pre-seeding helper that derives deployable inventory from task effects resolves task references through the older `MISSIONS_PATH`; this needs to be reconciled with the V2 task-ref convention before relying on it as a general inventory derivation mechanism.
+
+### Correct interpretation
+
+The current Luna Rake is a **database-backed integration harness**: it exercises selected task definitions, creates persisted settlement/unit/inventory records, and checks selected resulting state. It is not yet evidence of a complete physical/logistical simulation or sustained settlement operation. In particular, creating a deployed unit record is distinct from having the normal game loop recognize, schedule, and operate that unit.
+
+The AI Manager's intended responsibility is broader than selecting task names. It must be able to plan, execute, and verify complete operations through the game's authoritative domain services. A task should only be reported successful when its requested outcome is reflected in authoritative game state. Unsupported effects, skipped work, log-only placeholders, and unverifiable outcomes must not silently count as success.
+
+### Required implementation direction
+
+The follow-on AI Manager work is tracked in `agent-tasks/projects/galaxyGame/tasks/backlog/ai-manager/2026-11-23-HIGH-FEATURE-AI-MANAGER-END-TO-END-TASK-EXECUTION.md`. The task is to inventory the effects used by the Luna-selected task set, connect each supported operation to existing authoritative game services/models, implement or explicitly reject unsupported effects, and add persistence-backed verification and targeted tests. The Luna Rake remains the benchmark harness and must not become the permanent hardcoded AI operating script.
+
+This audit is limited to the inspected Rake and V2 executor paths. It does not claim that no other game services already implement the missing operations; the implementation task must locate and reuse those services before adding new logic.
+
