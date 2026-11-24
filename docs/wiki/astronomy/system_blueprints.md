@@ -154,6 +154,30 @@ For this controlled infrastructure test, EM resource availability/production res
 
 ---
 
+## Real-system astronomical reference data and the Sol neighborhood UI
+
+**OWNER-CONFIRMED UI / CATALOG DIRECTION — 2026-11-24**
+
+The curated `data/json-data/star_systems/` collection already contains a deliberately selected set of real nearby star-system seeds. This is an initial library, not a complete census; expanding the real-system library is planned. The existing seed files remain incomplete starting information for StarSim and should not be treated as complete playable systems.
+
+For the Sol-centered Player Galaxy View, the separate `galaxy-game-ui` prototype may build a derived astronomical reference fixture by joining those existing seed identities to published astrometric data and IAU constellation boundary geometry. This UI fixture is a presentation input, not a change to StarSim's seed schema or authoritative game state.
+
+The derived reference data may include:
+- source identity and the matching curated seed filename/identifier;
+- right ascension and declination, including their stated epoch/reference frame when available;
+- distance/parallax and its source;
+- Cartesian spatial coordinates derived from the astrometric inputs, with an explicitly documented coordinate convention;
+- optional IAU constellation association and the boundary geometry used to derive/display it;
+- source attribution, precision/epoch limitations, and differences between published values and values already present in the seed.
+
+Do not silently overwrite source seed values when a reference catalog differs. Retain both values with provenance or record the discrepancy for review. Do not invent coordinates for systems whose source records lack them. Do not require a complete planetary inventory to display a known star system in the astronomical neighborhood.
+
+Constellation membership is a sky-direction relationship, not a physical 3D region. It may be absent or unknown for generated systems and for real systems with insufficient astrometry. The Local Bubble is a separate physical-region concept; its boundary must not be inferred from constellation boundaries or from the extent of the current seed list.
+
+The UI fixture may be reorganized or replaced as the prototype evolves. The long-term application representation of astronomical reference catalogs, constellation boundaries, coordinate epochs, physical regions, and links from systems to those records remains OPEN. No main-app seed schema, database schema, or StarSim generation behavior is changed by this UI work.
+
+---
+
 ## Implementation cross-check — current source audit
 
 **SOURCE-VERIFIED PARTIAL AUDIT — 2026-11-20.** This section records the current behavior found in the main-app source. It takes precedence over historical implementation claims in frozen documents. It does not replace the owner-confirmed design direction above.
