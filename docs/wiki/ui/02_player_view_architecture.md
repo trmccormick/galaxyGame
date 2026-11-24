@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-21
+> **Last Updated:** 2026-11-24
 
 # Player View Architecture
 
@@ -108,13 +108,13 @@ Craft may operate independently or be grouped for a particular task or operation
 
 Player asset-management interactions and Admin/AI Manager operational oversight are related but distinct workflows. They may reuse generic selection, filtering, grouping, and status components, but should not be collapsed into one identical fleet-management screen.
 
-The view must distinguish inter-system wormhole network connections from in-system spatial relationships. EVE Dashboard's map interactions may inform pan/zoom, selection, routes, markers, and topology presentation, but its EVE-specific mechanics and inter-system map are not a substitute for a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
+The view must distinguish inter-system wormhole network connections from in-system spatial relationships. The supplied Pixel Nexus application screenshots and JavaScript may inform pan/zoom, selection, routes, markers, and topology presentation. Pixel Nexus is the user's friend's Python application for connecting to an API; it is not EVE Online. Its map topology and application-specific domain assumptions are not a substitute for GalaxyGame's wormhole network or a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
 
 ### Individual craft tracking workspace and route views
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
 
-The initial Player Space workspace is an **individual craft tracking and route-planning view**, not a fleet-management screen. Adapt the useful layout and interaction patterns from the supplied EVE Dashboard Fleet Manager reference, but do not carry over its two-fleet presentation or EVE fleet assumptions.
+The initial Player Space workspace is an **individual craft tracking and route-planning view**, not a fleet-management screen. Adapt useful layout and interaction patterns from the supplied Pixel Nexus Fleet Manager reference, but do not carry over its specific fleet presentation or application-domain assumptions.
 
 The full application screen retains the persistent main-game navigation at the far left. Space does not replace, duplicate, or absorb that navigation. To its right, the Space workspace has three coordinated panes (making four vertical areas across the full screen):
 
@@ -130,7 +130,7 @@ Both maps and the right-hand information/route panel are driven by the same sele
 
 ### Reuse and prototype implementation direction
 
-The EVE Dashboard screenshots and JavaScript are **source material for adaptation**, not a final specification and not a request for a wholesale port. Inspect the available EVE fleet/map JavaScript and reuse or adapt useful craft selection, map rendering, pan/zoom, marker selection, route display, and selected-object panel behavior. Adapt the code to GalaxyGame's domain and the two stacked map requirements; do not assume one EVE map module already implements both scales. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect and reuse where useful. The wormhole network map needs its own inter-system topology representation, potentially adapted from suitable EVE network/map JavaScript.
+The supplied Pixel Nexus screenshots and JavaScript are **source material for adaptation**, not a final specification and not a request for a wholesale port. Inspect the forked Pixel Nexus fleet/map JavaScript and reuse or adapt useful craft selection, map rendering, pan/zoom, marker selection, route display, and selected-object panel behavior. Adapt the code to GalaxyGame's domain and the two stacked map requirements; do not assume one Pixel Nexus map module already implements both scales. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect and reuse where useful. The wormhole network map needs its own inter-system topology representation, potentially adapted from suitable EVE network/map JavaScript.
 
 The prototype may use clearly identified mock craft and route data. Interactions, route calculations, data refresh, and source integration do not all need to work in this first presentation pass. The immediate goal is to establish the screen, layout, selection behavior where practical, and both map areas so they can be reviewed and refined. Do not rewrite existing JavaScript wholesale merely because the first adaptation is incomplete; preserve useful code and document what was reused, adapted, stubbed, or deferred.
 
@@ -142,9 +142,13 @@ Fleet organization and multi-craft coordination belong in the separate Fleet Man
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
 
-GalaxyGame retains a Player **Fleet Manager** view, using the EVE Dashboard Fleet Manager as a layout and interaction reference. This is a fleet-level operational coordination workspace, distinct from the individual-craft tracking workspace above. Reuse and adapt useful existing EVE Dashboard layout and JavaScript where practical; do not reproduce EVE-specific fleet mechanics or assume the original fleet model is authoritative.
+GalaxyGame retains a Player **Fleet Manager** view, using the Pixel Nexus Fleet Manager as a layout and interaction reference. This is an operational coordination workspace, distinct from the individual-craft tracking workspace above. The reference is the user's friend's Python application used for an API connection, not EVE Online. Reuse and adapt useful layout and JavaScript where practical; do not reproduce Pixel Nexus-specific domain assumptions or treat its data model as authoritative for GalaxyGame.
 
-A **fleet is an operational grouping of craft assigned to a shared objective or coordinated operation**. Fleet membership does not mean the craft are physically together, travelling in formation, or even located in the same solar system. Fleet members may be at different locations in one system or distributed across multiple systems, following independent routes and performing different tasks that contribute to the same operation. A craft may be assigned to an operation without being near the other participating craft. Do not make proximity, formation, or simultaneous travel a requirement for fleet membership.
+An **operation** is the broad assignment context for one or more spacecraft. It may be coordinated as a fleet, or carried out by independently dispatched craft without a fleet grouping. A **fleet is an optional operational grouping of craft assigned to a shared objective or coordinated operation**. Fleet membership does not mean the craft are physically together, travelling in formation, or even located in the same solar system. Fleet members may be at different locations in one system or distributed across multiple systems, following independent routes and performing different tasks that contribute to the shared objective. Do not make proximity, formation, or simultaneous travel a requirement for fleet membership.
+
+An independent craft operation is equally first-class. A single autonomous craft may be dispatched on a recurring mission and tracked directly without being wrapped in a one-craft fleet. For example, a robotic Venus atmospheric harvester may repeatedly travel from Luna to Venus, harvest atmospheric gases, return to Luna, unload and receive servicing as required, then repeat under its authorized plan. This is an organizational and UI example, not a specification of harvesting, cargo, fuel, or scheduling mechanics.
+
+The Fleet Manager workspace should show optional fleet groupings and independently dispatched craft/operations together, without conflating them. Selecting a fleet focuses on its shared objective and distributed participating craft; selecting an independent operation focuses on its assigned craft, mission, route, and status. Fleet membership is not a prerequisite for assigning or tracking a craft. Persistence and lifecycle details for operations, fleet groupings, and assignments remain OPEN.
 
 For example, a player may organize an asteroid-station construction fleet in which:
 - construction and assembly craft work at the asteroid;
@@ -154,9 +158,9 @@ For example, a player may organize an asteroid-station construction fleet in whi
 
 These craft are one fleet because their assignments and resource movements support the shared station-construction objective, not because they occupy the same location. The same principle applies when a player has multiple fleets conducting separate operations in different systems.
 
-The Fleet Manager should retain the recognizable EVE-inspired fleet-management presentation while adapting its content to GalaxyGame. Its purpose is to let the player select and oversee fleets/operations, understand how distributed craft contribute, and identify work that needs attention. Relevant information includes:
-- the fleet/operation identity, objective, current status, and overall progress;
-- participating craft, their assigned roles/tasks, current locations, and operational states;
+The Fleet Manager should retain the useful layout and interaction patterns of the Pixel Nexus reference while adapting its content to GalaxyGame. The reference's selected character (Neon Red) and character/pilot identity model are not GalaxyGame domain concepts; GalaxyGame spacecraft are autonomous assets, not player-character avatars. Do not import character portraits, pilot identities, or character-based command assumptions. The workspace lets the player oversee coordinated fleet operations and independent craft assignments, understand how distributed craft contribute, and identify work that needs attention. Relevant information includes:
+- the selected fleet or independent operation identity, objective/mission, current status, and overall progress;
+- participating craft for a fleet, or the assigned craft for an independent operation, with their roles/tasks, current locations, and operational states;
 - the geographic distribution of participating assets across relevant locations and systems;
 - planned or active movements between work sites;
 - material/resource flows and deliveries supporting the objective;
@@ -165,9 +169,9 @@ The Fleet Manager should retain the recognizable EVE-inspired fleet-management p
 
 The view should make the shared objective and coordination relationships clear without implying that every detail is a live, authoritative simulation value. For the UI prototype, clearly identified mock fleet, craft, task, location, delivery, and progress data are acceptable. The first presentation pass should establish the screen and useful selection/overview interactions; backend persistence, real task orchestration, logistics simulation, authoritative route finding, and command execution are not prerequisites.
 
-Fleet Manager and Individual Craft Tracking are complementary views:
-- **Fleet Manager** organizes by shared operation/objective and shows the distributed work of its participating craft.
-- **Individual Craft Tracking** organizes around one selected spacecraft and shows its own status, position, and route.
+Fleet Manager and Individual Craft Tracking are complementary workspaces:
+- **Fleet Manager** organizes by shared operation/objective, shows distributed fleet members, and lists independent dispatched craft/operations without requiring artificial one-craft fleets.
+- **Individual Craft Tracking** organizes around one selected spacecraft and shows its own status, position, and route, whether it belongs to a fleet or is independently assigned.
 
 Selecting a craft from a fleet should provide a path to inspect that craft in the individual-craft tracking workspace. The Fleet Manager must not replace or absorb that workspace, and the individual-craft workspace must not be expanded into a fleet-management screen. Fleet membership and operation assignments should be represented as operational relationships, not as physical formations.
 
@@ -217,7 +221,7 @@ The intended gameplay boundary and its open details are documented in [Space and
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
 
-GalaxyGame should provide a distinct Player **Route Planner** where players can create, review, name, save, and reuse preferred travel routes. The supplied EVE Dashboard Chain Map is the initial visual and interaction reference for this capability. The intent is to port/adapt that existing Chain Map presentation and useful JavaScript into the Rails 8.1 UI prototype first, then adapt its assumptions and behavior to GalaxyGame. It is a starting point for the route-planning interface, not a commitment to EVE's wormhole-chain mechanics or data model.
+GalaxyGame should provide a distinct Player **Route Planner** where players can create, review, name, save, and reuse preferred travel routes. The supplied Pixel Nexus Chain Map is the initial visual and interaction reference for this capability. The intent is to adapt its Chain Map presentation and useful JavaScript into the Rails 8.1 UI prototype, then adapt its assumptions and behavior to GalaxyGame. It is a starting point for the route-planning interface, not a commitment to Pixel Nexus's network mechanics or data model.
 
 The Route Planner supports both routing scales:
 - **Inter-system / wormhole travel:** plan a journey through connected star systems and wormhole transitions, including chosen intermediate systems and preferred connections.
