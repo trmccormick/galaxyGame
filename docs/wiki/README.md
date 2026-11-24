@@ -132,6 +132,7 @@ Agent and implementer reference for **continuing work** — status, conventions,
 | [Precursor mission deployment](technical/precursor_mission_deployment.md) | Initial precursor missions and deployment |
 | [Precursor discoveries & research opportunities](technical/precursor_discoveries_and_research_opportunities.md) | Possible research value of unusual discoveries; technology-tree audit required before any new research paths are considered |
 | [ISRU fabrication chain](technical/isru_fabrication_chain.md) | In-situ resource utilization fabrication pipelines |
+| [Deposit plausibility rules](technical/deposit_plausibility_rules.md) | Lazy survey spawn, science-grounded deposit principles, stored_volatiles budget (DIRECTION) |
 | [Biology — overview](technical/biology/README.md) | Biology subfolder: biosphere simulation, terraforming seeds |
 | [Biosphere simulation](technical/biology/biosphere_simulation.md) | Biosphere simulation design |
 | [TerraSim — Environmental Simulation, Calibration & Evolution](technical/terrasim.md) | Natural-world simulation, historical calibration, environmental events, terraforming, and future tuning direction |
