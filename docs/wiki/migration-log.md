@@ -526,3 +526,18 @@ Updated [Space and Surface Operations](player/space_and_surface_operations.md) a
 Clarified the Player Fleet Manager design against the supplied Pixel Nexus reference: Pixel Nexus is the user's friend's Python application used for an API connection, not EVE Online. Its layout and interaction patterns may be adapted, but its character/pilot identity model (including the selected character Neon Red) is not GalaxyGame domain behavior. GalaxyGame craft remain autonomous assets. The workspace should present optional fleet groupings and independent dispatched craft/operations together; Individual Craft Tracking remains a separate craft-centric workspace.
 
 No game-domain code, persistence model, or simulation mechanics changed in this wiki update. Fleet/operation persistence and assignment lifecycle remain OPEN.
+
+
+
+### 2026-11-24 — Surface-capable HLT versus space-only spacecraft design
+
+Updated [Propulsion Classes & Heavy-Tug Economy](infrastructure/propulsion_and_heavy_tug_economy.md) to record the owner-confirmed distinction between surface-capable transports and space-only craft.
+
+- HLT design heritage comes from Earth-based cargo-lift needs. Its architecture retains atmospheric-entry and landing capability in later Mk versions, making it useful for Earth and Mars surface logistics as well as adapted transportation and mission roles.
+- HLT manufacturing location is not a design constraint: an HLT may be manufactured at an orbital or planetary shipyard and still retain its surface-capable design.
+- Cyclers and tugs are space-only craft designed without the need to land. Their designs can devote more mass, volume, and structure to space operations.
+- Future dedicated carriers and specialized harvesting craft are planned as separate space-only spacecraft families. They may be substantially larger because they do not need atmospheric-entry and landing systems; detailed designs and specifications remain OPEN.
+- A cycler may temporarily provide carrier services until a dedicated carrier is designed. Carrier is a capability/operational role in this interim use, not a permanent reclassification of the cycler.
+- Existing Venus and Titan HLT harvesting configurations remain valid defined mission configurations; they do not imply that all future harvesters must be HLTs.
+
+This clarification corrects the overly broad implication that harvesting roles are only HLT configurations and that the three currently defined families exhaust future spacecraft design. No application code, blueprints, simulation mechanics, or spacecraft specifications were changed.
