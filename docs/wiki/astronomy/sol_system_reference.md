@@ -222,9 +222,19 @@ The exact calendar date and detailed readiness criteria remain OPEN; the infrast
 
 ---
 
+## Orbital geometry and time-dependent positions
+
+**ESTABLISHED DIRECTION — 2026-11-24; quantitative data and implementation remain OPEN**
+
+Sol is the fixed real-system baseline and should ultimately have physically meaningful orbital geometry populated from authoritative astronomical sources. Do not use illustrative map positions, display spacing, or schematic rings as substitutes for orbital elements or ephemerides. Each sourced data set must identify its epoch, reference frame, units, central body, and provenance; uncertainty and missing information must remain explicit.
+
+The same orbital-data model and calculation/rendering path must support procedurally generated systems. Their orbital architectures should be generated coherently using scientifically informed real-world examples and observed system characteristics, with procedural provenance clearly distinguished from observed or derived data. The model must support both star-centered planetary orbits and parent-centered moon orbits.
+
+Orbital positions must evolve with game time. The appropriate element/ephemeris representation, epoch handling, coordinate conventions, approximation limits, perturbation treatment, and authoritative simulation interface remain OPEN and require research and validation. The UI should visualize authoritative game orbital data; it must not establish a competing orbital model.
+
 ## Open Questions
 
-- Exact orbital elements (semi-major axes, eccentricities, inclinations) for all bodies
+- Exact sourced orbital elements/ephemerides, epochs, reference frames, and validated time-propagation approach for all modeled bodies
 - Star mass, radius, luminosity, temperature values
 - Habitable zone boundaries in AU
 - Precise post-reconnection state of Eden (Ghost / Remnant / Expanding bands are possible outcomes)
