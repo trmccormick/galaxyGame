@@ -566,3 +566,13 @@ Recorded that StarSim must eventually advance the positions of stars, planets, m
 Also clarified that multiple-star systems require movement consistent with their actual hierarchy, that UI polling/rendering must not calculate or own authoritative positions, and that delayed work or pre-Snap time jumps must be reflected in the resulting positions. The API should expose the latest authoritative positions and frame metadata for Space views and other consumers.
 
 The background-job framework, scheduling cadence, batching strategy, orbital fidelity, and numerical approach remain OPEN. This records future design intent; it does not claim that current StarSim code already advances celestial positions. No application code, simulation data, or generated system seeds changed.
+
+### 2026-11-24 — Sol neighborhood astronomy and constellation context
+
+Updated [Player View Architecture](ui/02_player_view_architecture.md) and [System Blueprints & Procedural Generation](astronomy/system_blueprints.md) to clarify the three coordinated Space views: Galaxy View, Wormhole Network, and System View. Recorded the distinction between astronomical 3D geography, physical regions such as the Local Bubble, IAU constellation sky areas, and wormhole connectivity.
+
+The existing curated real-system seed library is the starting selection for the Sol neighborhood UI and is expected to expand. The UI prototype now has a derived catalog fixture joining 31 existing seed identities to nearby-star right ascension, declination, and distance data, with derived equatorial Cartesian positions and relevant IAU constellation boundary geometry. The UI renders a spatial neighborhood projection separately from the constellation sky chart. The Local Bubble is identified as a physical-region context, but no unsupported boundary geometry is drawn.
+
+The derived fixture preserves source/seed distance differences rather than silently overwriting seed values. The nearby-star source does not state its coordinate epoch, so constellation matches are marked provisional. Generated systems remain eligible for unknown/no constellation assignment. The fixture is prototype presentation data, not a new authoritative game data model.
+
+Only the separate `galaxy-game-ui` prototype received application-code and fixture changes. No main-app StarSim code, curated system seed, database schema, or generated system data changed. The long-term main-application catalog/persistence model remains OPEN.
