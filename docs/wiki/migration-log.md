@@ -498,3 +498,22 @@ Corrected the V2 directory interpretation in [Mission Profiles, Templates, Tasks
 - Keep the two data sets distinct by purpose and maturity. Follow-up source review should establish how the Luna test definitions are loaded and exercised, and what validation/promotion is required before draft task definitions are treated as ready for general use.
 
 This supersedes the earlier wording that described the two paths as a V2 path/loader discrepancy. It does not claim that all draft tasks are production-ready or that the full task library is already integrated into executable mission flows. No application code or runtime data changed.
+
+### 2026-11-23 — AI Manager task execution reality audit and implementation task
+
+Updated [AI Manager & Autonomous Coordinators](services/ai_manager.md) with a source-backed audit of the Luna Rake and `TaskExecutionEngineV2`.
+
+Recorded the distinction between persisted game objects/state and completed operational behavior:
+- The Luna runner creates/updates real settlement, location, inventory, HeavyLander, and deployed-unit records in selected paths; connection, bus-registration, unit-state, settlement-state, and deployment-stage metadata are also persisted.
+- The current executor still contains log-only construction, resource-transfer, and manufacturing handlers; a check-state handler that does not check; unknown actions and some missing-context paths that return success; and verification behavior that can treat unverified effects as passed.
+- The launch-staging branch creates records and copies cargo into settlement inventory, but does not itself prove launch/transit/arrival/offload.
+- Deployed unit records do not by themselves prove that units participate in the normal operational/tick simulation.
+- The Rake remains a mission-specific integration harness and benchmark, not the AI Manager's permanent operating script or proof of sustained settlement operation.
+
+Created the focused AI Manager backlog task:
+`agent-tasks/projects/galaxyGame/tasks/backlog/ai-manager/2026-11-23-HIGH-FEATURE-AI-MANAGER-END-TO-END-TASK-EXECUTION.md`
+
+The task requires an effect-by-effect audit of the exact Luna-selected task set, reuse of authoritative game services, truthful execution/verification semantics, operational-loop validation, and targeted tests. It explicitly excludes migrating the broader draft task library and requires a synthesis/review gate before implementation.
+
+No application code, tests, schema, runtime data, or mission JSON fixtures changed.
+
