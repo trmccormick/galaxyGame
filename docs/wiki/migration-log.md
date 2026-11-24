@@ -517,3 +517,12 @@ The task requires an effect-by-effect audit of the exact Luna-selected task set,
 
 No application code, tests, schema, runtime data, or mission JSON fixtures changed.
 
+
+
+### 2026-11-24 — Player Space operations and optional fleet groupings
+
+Updated [Space and Surface Operations](player/space_and_surface_operations.md) and [Player View Architecture](ui/02_player_view_architecture.md) to clarify that an operation is the broad assignment context, while a fleet is an optional grouping of spacecraft working toward a shared objective. Independently dispatched craft and their autonomous missions remain first-class operations and do not need artificial one-craft fleets. Added the robotic Luna–Venus atmospheric-harvester cycle as an illustrative independent-operation example, without asserting unverified cargo, fuel, harvesting, or scheduling mechanics.
+
+Clarified the Player Fleet Manager design against the supplied Pixel Nexus reference: Pixel Nexus is the user's friend's Python application used for an API connection, not EVE Online. Its layout and interaction patterns may be adapted, but its character/pilot identity model (including the selected character Neon Red) is not GalaxyGame domain behavior. GalaxyGame craft remain autonomous assets. The workspace should present optional fleet groupings and independent dispatched craft/operations together; Individual Craft Tracking remains a separate craft-centric workspace.
+
+No game-domain code, persistence model, or simulation mechanics changed in this wiki update. Fleet/operation persistence and assignment lifecycle remain OPEN.
