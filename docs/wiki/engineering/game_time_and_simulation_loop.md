@@ -49,6 +49,18 @@ Both regimes must preserve a coherent authoritative game-time timeline and coord
 
 This describes behavior, not a required Rails class, job framework, database schema, or scheduling implementation. Those choices should follow code inspection and testing.
 
+### StarSim celestial-position processing
+
+StarSim's future orbital-position updates are one of the systems coordinated by the shared game clock:
+
+- A background job/process should calculate celestial position changes using the game-time interval that has elapsed since the previous successful update.
+- The intended scheduling direction is to perform this work when background processing capacity is available, including idle time. Processing cadence is independent of the rate at which game time advances.
+- A worker may batch or skip intermediate calculations when appropriate, but the resulting positions must correspond to the current authoritative game time. Time jumps and delayed workers must be accounted for.
+- The job updates active `SpatialLocation` values; it does not rewrite the original StarSim generation seed.
+- UI polling and rendering must remain read-only with respect to the game clock and orbital state.
+
+The job framework, cadence, batching strategy, and required orbital fidelity remain OPEN implementation decisions. See [StarSim architecture](../design/starsim_and_protection_classes.md) for the celestial-motion and spatial-position intent.
+
 ### Keep game-time rate separate from processing cadence
 
 The game-time speed determines how quickly simulated time advances relative to real elapsed time. The processing cadence determines how often the application checks for and processes accumulated work.
@@ -145,3 +157,4 @@ These observations indicate a mismatch between clock updates and simulation proc
 | [Interstellar Communications](interstellar_communications.md) | Command and response ETAs use the shared game-time basis |
 | [AI Manager](../services/ai_manager.md) | Autonomous operations and scheduled decisions depend on simulation advancement |
 | [Logistics and hauling](../logistics/logistics_and_hauling.md) | Transport and delivery progress depend on game time |
+| [StarSim architecture](../design/starsim_and_protection_classes.md) | Celestial positions advance from elapsed game time and update authoritative SpatialLocation state |
