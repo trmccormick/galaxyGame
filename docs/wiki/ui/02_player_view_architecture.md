@@ -106,7 +106,7 @@ Galaxy View and Wormhole Network use the same primary-star color language for sy
 - L/T/Y brown dwarfs: muted brown-violet; white dwarfs: pale blue-white.
 - Unknown or unclassified: neutral gray. Never infer a star class from a system name, generated-system label, or visual appearance.
 - The system record must carry the classification and its provenance (for example, observed or procedurally generated). A generated star without an assigned classification remains unknown until the generator supplies one.
-- Selection remains a separate cyan outer halo. A craft route remains a separate gold dashed overlay. Wormhole connectivity remains represented by edges and their state; it must not recolor the stellar node fill.
+- Selection remains a separate cyan outer halo. A craft route remains a separate gold dashed overlay. Wormhole connectivity remains represented by edges, while access/baseline state uses a separate node ring; neither may recolor the stellar node fill.
 - Multiple-star systems require an explicit designated display/primary component before assigning a single node color. Do not silently choose or blend component classes.
 
 The palette is a compact UI classification key, not a claim that the displayed colors reproduce the star's exact perceived color. Both views must show a consistent legend.
