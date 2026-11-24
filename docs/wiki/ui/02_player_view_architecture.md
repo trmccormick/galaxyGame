@@ -96,6 +96,21 @@ Space remains one Player context, with three coordinated but independent ways to
 
 These are coordinated views, not three separate game worlds or a hierarchy of physical containment. Selecting a system synchronizes the selected-system context across views, but the views retain their own spatial meanings and data. Galaxy View must not filter or remove remote Wormhole Network endpoints.
 
+### Stellar classification in system-node colors
+
+**OWNER-CONFIRMED UI DIRECTION — 2026-11-24**
+
+Galaxy View and Wormhole Network use the same primary-star color language for system nodes. Node fill communicates the documented spectral class of the system's designated primary/display star; it does not communicate wormhole access, connection state, ownership, selection, or route status.
+
+- O/B: blue; A: cool white; F: pale yellow-white; G: golden yellow; K: orange; M: red/coral.
+- L/T/Y brown dwarfs: muted brown-violet; white dwarfs: pale blue-white.
+- Unknown or unclassified: neutral gray. Never infer a star class from a system name, generated-system label, or visual appearance.
+- The system record must carry the classification and its provenance (for example, observed or procedurally generated). A generated star without an assigned classification remains unknown until the generator supplies one.
+- Selection remains a separate cyan outer halo. A craft route remains a separate gold dashed overlay. Wormhole connectivity remains represented by edges and their state; it must not recolor the stellar node fill.
+- Multiple-star systems require an explicit designated display/primary component before assigning a single node color. Do not silently choose or blend component classes.
+
+The palette is a compact UI classification key, not a claim that the displayed colors reproduce the star's exact perceived color. Both views must show a consistent legend.
+
 ### Astronomical geography and constellation context
 
 **OWNER-CONFIRMED DESIGN INTENT — 2026-11-24**
