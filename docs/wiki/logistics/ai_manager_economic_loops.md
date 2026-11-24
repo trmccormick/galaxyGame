@@ -78,6 +78,13 @@ Non-profit Development Corporations (LDC and regional DCs) and certain trusted l
 - Player-facing market orders **always** require liquid GCC. The ledger is never used for player transactions.
 - Accumulated ledger debt influences AI Manager decision-making once thresholds are crossed (see Austerity below).
 
+**Clarifications (owner, 2026-11-23):**
+- The Virtual Ledger is **inter-NPC credit / clearing**, not a second player currency. Player-facing markets and mission payouts always require **liquid GCC**.
+- Purpose: keep non-profit Development Corps and trusted logistics entities able to move critical goods and services when liquid GCC is uneven, so bases do not die for lack of cash on an internal transfer.
+- Example: LDC (mint) can ship equipment or fuel to a new settlement or to AstroLift on ledger credit; AstroLift can run transport on credit; when AstroLift (or the new base) is paid in real GCC for work, ledger obligations are reduced/cleared and remaining GCC stays liquid.
+- High ledger debt should push a base toward austerity and GCC-earning activity, not unlimited bailout. Exact thresholds and clearing rules remain OPEN.
+- Implementation is present but **untested in full gameplay loops**; treat runtime behavior as verify-against-code until playtested.
+
 **OPEN**
 - Exact schema, clearing cycles, and amortization rules.
 - Which for-profit logistics corps are granted ledger access and under what conditions.

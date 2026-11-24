@@ -21,7 +21,7 @@ The **AI Manager** is the game's automated economy and logistics governor. Its r
 | Domain | What it does | Where to verify intent |
 |--------|-------------|----------------------|
 | **Logistics orchestration** | Routes freight, schedules cyclers, dispatches harvesters & construction tugs across Sol bodies. | `galaxy_game/app/services/ai_manager/task_execution_engine.rb`, `services/ai_manager/logistics_coordinator.rb` |
-| **Market balancing** | Acts as an active market maker — places counter-orders to guarantee liquidity, enforces EAP (Earth Anchor Price) ceilings, fills gaps when no player order exists. | `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`, `services/market/npc_price_calculator.rb`, `services/ai_manager/market_stabilization_service.rb` |
+| **Market balancing** | Non-competitive market participant: enforces EAP ceilings, posts demand-driven buy/sell orders when liquid GCC and buffers require it, uses the 80/90 EAP band when market history is thin. Does not guarantee tight spreads or player profit. See Tier 2 and [AI Manager Economic Loops](ai_manager_economic_loops.md). | `docs/architecture/ai_manager/AI_MANAGER_ROLE.md`, `services/market/npc_price_calculator.rb`, `services/ai_manager/market_stabilization_service.rb` |
 | **Automated fleet / construction actions** | Assigns and prioritizes AI-managed fleets for early Sol buildout, terraforming demand fulfillment, and emergency backstops (critical shortages, Eden Snap events). | `docs/architecture/ai_manager/AI_MANAGER_ORCHESTRATOR_SPEC.md`, `services/ai_manager/emergency_mission_service.rb`, `galaxy_game/app/services/manufacturing/construction/access_point_installation_service.rb` |
 
 **Boundary note:** The AI Manager does **not** generate celestial or terrain data — that is StarSim's role. It reads game state (settlement inventories, market order queues, colony populations) and issues high-level work orders to existing services.
@@ -177,8 +177,6 @@ The AI Manager evaluates all pending tasks through a three-tier priority loop:
 3. **Demand-driven participation** — Post buy/sell orders from stockpile and mission needs when liquid GCC allows. Prefer that players do the work (missions, haul, production). Without liquid GCC the AI cannot fund paid missions or payouts and falls back to self-reliance / austerity / internal harvest.
 4. **Player-first means priority, not guaranteed margin** — When capital is scarce, prefer filling or funding player-relevant work over discretionary NPC expansion. This does not guarantee players a fixed arb profit against the AI.
 5. **Later / thicker markets** — Once local trade history exists (including post-Eden reconnection NPC–NPC activity), prefer observed prices inside the EAP ceiling; keep 80/90 as a thin-book fallback.
-
-Remove or demote any remaining Tier 2 wording that states a duty to maintain tight spreads, act as continuous market maker, or guarantee player profit. Leave Tier 1 and Tier 3 unchanged.
 
 ### Tier 3 — Expansion & Construction (lowest)
 1. **Early Sol buildout** — current owner-confirmed required progression: Luna industrial base → Earth–Moon L1 Depot → separate near-LEO Depot → orbital shipyards → Mars expansion. The two depots have distinct logistics roles; both precede shipyards and the Mars expansion objective. This supersedes older LEO-first or combined-depot sequencing in frozen references. See [Station Construction Options](../engineering/station_construction_options.md).
