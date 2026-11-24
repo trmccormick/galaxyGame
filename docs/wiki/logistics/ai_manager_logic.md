@@ -170,11 +170,15 @@ The AI Manager evaluates all pending tasks through a three-tier priority loop:
 
 ### Tier 2 — Market Liquidity & Economic Stability
 
-> **OPEN RECONCILIATION — 2026-11-21:** This legacy target hierarchy says the AI Manager guarantees tight spreads and player profit. The current [AI Manager Economic Loops](ai_manager_economic_loops.md) direction says the AI Manager is non-competitive and should not dominate player markets, with an accepted 80%/90% EAP seed band. Whether any active liquidity-support behavior is compatible with that non-competitive role, and what it means operationally, remains to be reconciled. Do not treat a guaranteed spread, guaranteed player profit, or market-maker behavior as settled gameplay solely from this section.
+**ESTABLISHED DIRECTION (owner, 2026-11-23):** The AI Manager is a non-competitive survival and logistics actor, not a full-time market maker with a duty to defend tight spreads or guarantee player profit. Reconcile any older "liquidity guarantee / ~0.5% spread / guaranteed player profit" language to this section.
 
-1. **Player-first order fulfillment** — player buy/sell orders get priority over all NPC activity. Players undercut NPCs → guaranteed profit.
-2. **Liquidity guarantee** — AI places counter-orders to maintain tight spreads (default ~0.5%) and prevent market stalls.
-3. **EAP enforcement** — prevents gouging by enforcing Earth Anchor Price ceilings; if player price exceeds EAP, AI ignores the order and imports from Earth instead.
+1. **EAP ceiling** — EAP = Earth reference price + transport cost to this location (+ refining only where applicable). Under normal conditions the AI does not pay above EAP (anti-gouge). Earth reference prefers real processing, storage, and transport costs.
+2. **Thin / no market history** — Use the bootstrap NPC band: buy at ~80% EAP, sell excess at ~90% EAP. This is a starting point and anti-gouge rule, not a permanent tight spread.
+3. **Demand-driven participation** — Post buy/sell orders from stockpile and mission needs when liquid GCC allows. Prefer that players do the work (missions, haul, production). Without liquid GCC the AI cannot fund paid missions or payouts and falls back to self-reliance / austerity / internal harvest.
+4. **Player-first means priority, not guaranteed margin** — When capital is scarce, prefer filling or funding player-relevant work over discretionary NPC expansion. This does not guarantee players a fixed arb profit against the AI.
+5. **Later / thicker markets** — Once local trade history exists (including post-Eden reconnection NPC–NPC activity), prefer observed prices inside the EAP ceiling; keep 80/90 as a thin-book fallback.
+
+Remove or demote any remaining Tier 2 wording that states a duty to maintain tight spreads, act as continuous market maker, or guarantee player profit. Leave Tier 1 and Tier 3 unchanged.
 
 ### Tier 3 — Expansion & Construction (lowest)
 1. **Early Sol buildout** — current owner-confirmed required progression: Luna industrial base → Earth–Moon L1 Depot → separate near-LEO Depot → orbital shipyards → Mars expansion. The two depots have distinct logistics roles; both precede shipyards and the Mars expansion objective. This supersedes older LEO-first or combined-depot sequencing in frozen references. See [Station Construction Options](../engineering/station_construction_options.md).

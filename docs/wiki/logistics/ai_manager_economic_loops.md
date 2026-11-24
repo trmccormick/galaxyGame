@@ -55,6 +55,12 @@ When the settlement has excess inventory it is willing to sell, and when it has 
 
 This 80/90 band is the accepted bootstrap seed (Luna and similar early hubs). It creates a 10% spread for player/NPC arbitrage while keeping the AI Manager's hard ceiling at full EAP.
 
+**Clarifications (owner, 2026-11-23):**
+- EAP is the local import-equivalent ceiling (Earth reference + transport; refining only if applicable). Earth-side references should reflect real processing, storage, and transport costs (e.g. atmospheric N₂/O₂ are not free at the point of industrial use).
+- The 80/90 band is for thin or missing market history and to prevent player gouging of NPCs. It is not a permanent market-making spread and not a guaranteed player arb.
+- The AI may post affordable, demand-driven buy orders and thereby inject GCC to players; it prefers players to do the work. Paid missions require liquid GCC — without it, no payout missions.
+- After markets have real history (including post-Eden reconnection), prefer observed prices inside EAP; retain 80/90 as a thin-book fallback.
+
 The AI Manager will **not** pay above EAP under normal conditions. Emergency override remains the only exception (see markets EAP page and escalation ladder).
 
 Buy orders remain **demand-driven**. The AI Manager only posts a buy order for the quantity needed to reach its target stockpile buffer. Once the buffer is met the order is removed or reduced to daily consumption.
