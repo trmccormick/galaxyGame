@@ -619,3 +619,12 @@ For celestial bodies without valid current coordinates, the fallback is an orbit
 Applied the same initialization principle to economic/market conditions: use dated real-world market and economic data where it can be meaningfully mapped, otherwise derive or generate a constrained baseline and preserve provenance. External feeds establish the initial snapshot; they do not continuously overwrite the running game.
 
 This records design intent only. No ephemeris ingestion, random-orbit initialization, market-data import, schema, or runtime simulation code changed.
+
+
+### 2026-11-24 — Explicit validity for celestial spatial positions
+
+Extended [StarSim architecture](design/starsim_and_protection_classes.md) and [Player View Architecture](ui/02_player_view_architecture.md) to record that a `SpatialLocation` record or finite coordinate values alone do not establish a valid current celestial position. The current body callback creates zero-coordinate placeholders, while the current model has no validity marker. The future runtime/API contract must expose explicit validity or equivalent source/status metadata, including a way to identify a genuine valid object at the coordinate origin.
+
+The Player Space prototype now ignores all-zero `spatial_location` coordinates unless the location or containing object explicitly supplies `position_valid: true` or `spatial_position_valid: true`. This prevents uninitialized StarSim placeholders from appearing as current positions while preserving explicitly valid origin coordinates. The renderer continues to distinguish supplied orbital geometry from current positions and does not calculate ephemerides.
+
+The JavaScript source passed a syntax check. Browser rendering and Rails tests remain pending. No main-app model, database schema, API serializer, or StarSim runtime behavior changed.
