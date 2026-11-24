@@ -165,6 +165,16 @@ The full application screen retains the persistent main-game navigation at the f
 
 Both maps and the right-hand information/route panel are driven by the same selected craft. Changing craft selection updates all three areas coherently. The two maps remain independently navigable/interactive (for example, their own pan/zoom and selection behavior) while representing the same craft and its related route. The route shown should distinguish the inter-system portion from the in-system portion; exact cross-map selection behavior and route editing controls remain open for later review.
 
+**Craft-centered context and unavailable location data — ESTABLISHED UI INTENT (2026-11-24)**
+
+The selected craft's reported current system is the active context for the entire Space workspace. Changing craft selection must update the System View, Galaxy View, Wormhole Network emphasis, system summary, and selected-craft information together. A separate system dropdown must not compete with this craft-centered focus; the current craft and system should remain visible as workspace context.
+
+Current location, destination, and planned route are distinct. The UI must use the craft's reported current system for its physical context and must not substitute its destination or a route endpoint. If the current system is unknown, do not infer it from either.
+
+Galaxy View requires a sourced galactic position for the focused system. If that position is unavailable, show an explicit unavailable state rather than leaving the Sol neighborhood map visible as though it represented the craft's system. Constellation boundaries are observer-specific: the Sol sky chart is valid only as the sky observed from Sol; another selected system requires its own observer-specific sky data or an unavailable state.
+
+System View must load only the selected system's own spatial and astronomical data. If no celestial-body or facility positions are available, show that limitation; do not retain objects from the previously selected system or plot a craft using an unrelated/general display coordinate as though it were a sourced local position. Wormhole Network may continue to show the broader network while emphasizing the selected system and the craft's route, because network connectivity is not physical galactic position.
+
 ### Reuse and prototype implementation direction
 
 The supplied Pixel Nexus screenshots and JavaScript are **source material for adaptation**, not a final specification and not a request for a wholesale port. Inspect the forked Pixel Nexus fleet/map JavaScript and reuse or adapt useful craft selection, map rendering, pan/zoom, marker selection, route display, and selected-object panel behavior. Adapt the code to GalaxyGame's domain and the two stacked map requirements; do not assume one Pixel Nexus map module already implements both scales. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect and reuse where useful. The wormhole network map needs its own inter-system topology representation, potentially adapted from suitable EVE network/map JavaScript.
