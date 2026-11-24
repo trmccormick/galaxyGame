@@ -465,6 +465,20 @@ All legacy pages remain for backward-link compatibility. This page is the new ca
 
 ---
 
+## Initial market and economic snapshot — ESTABLISHED INTENT (owner, 2026-11-24)
+
+A new universe should begin with a dated economic baseline representing the real-world conditions at game creation wherever useful, available, and meaningfully mappable to GalaxyGame's economic model. This follows the same initialization principle as Sol's astronomical snapshot: start from known reality, derive where the inputs support it, and generate only where information is unavailable.
+
+- Use date-appropriate published market prices, commodity benchmarks, currency/FX rates, energy prices, and other relevant economic indicators where they provide a defensible starting input.
+- Record source/provider, observation or publication timestamp, currency, units, market/region, instrument or commodity definition, and any transformations or normalization.
+- Do not assume a real-world quoted commodity maps one-to-one to a GalaxyGame resource. Preserve the source value and document the conversion, proxy, or modeled relationship used to establish an in-game baseline.
+- Where direct market data is unavailable or unsuitable, derive a starting value from related known costs, supply/demand constraints, production costs, or comparable goods. Mark the result as derived.
+- Where neither direct nor defensible derived data exists, generate a plausible initial value within the game's economic constraints and record the method/seed.
+- Once the universe is initialized, its markets evolve through GalaxyGame's economy and simulation clock. The external real-world market is not a live feed that continuously resets in-game prices.
+- Preserve the original initialization snapshot and provenance so economic behavior can be calibrated against a known baseline and the same starting universe can be reproduced.
+
+The current GCC/USD bootstrap peg and EAP rules remain governed by this page's existing sections. This starting-snapshot policy does not silently change those established mechanics or invent new price values; exact data providers, mappings, coverage, and refresh policy for new-game initialization remain implementation details to validate.
+
 ## Architecture Cross-References
 
 > *For deep architectural specs that govern market behavior:*
