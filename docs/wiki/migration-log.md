@@ -641,3 +641,12 @@ Updated [Player View Architecture](ui/02_player_view_architecture.md) and [Space
 - The AI Manager and craft automation manage execution. A one-time instruction need not require the player to author a complete replacement mission; the AI Manager evaluates feasibility and either resolves it into executable actions or reports why it cannot comply. Remote commands remain subject to delivery, acceptance, execution, and acknowledgment delays.
 - EVE Dashboard is the user's friend's Python application that communicates with the EVE Online API. The reference under consideration is its JavaScript only, including `fleet_map.js` and `chain.js`; its Python/API integration and EVE Online rules/data are not GalaxyGame dependencies. Adapt useful JavaScript interactions to GalaxyGame's own data and travel model.
 - UI controls and presentation for destination changes, cancellation, single instructions, and revised missions remain open for discussion. No UI implementation or main-app runtime code changed.
+
+
+### 2026-11-24 — Unmapped wormhole destinations and flexible star/system generation
+
+Updated [Space and Surface Operations](player/space_and_surface_operations.md) to record the owner's clarification that wormhole reach is independent of astronomical mapping and catalog completeness. A wormhole may connect to any game-world location, including an unmapped system or an endpoint that must be generated; missing library data does not make a destination invalid or unreachable.
+
+Recorded that GalaxyGame may generate a playable planetary system around a real catalog star whose planets are unknown, matching the generated system to the real star's catalog identity and preserving provenance for observed versus generated properties. The game may also generate additional fictional stars and systems when no real catalog identity is available or intended. Mapping/survey missions can populate a radius around an operating location (for example, an Eden-based survey radius in light-years), but mapping is not a prerequisite for wormhole connectivity.
+
+The physical astronomy map and wormhole network remain separate: systems without usable real coordinates may be omitted from physical plotting while still existing as catalog/discovery entries or wormhole endpoints. This is design documentation only; no runtime, catalog, generator, or UI code changed.
