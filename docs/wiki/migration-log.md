@@ -710,3 +710,14 @@ Updated [System Blueprints & Procedural Generation](astronomy/system_blueprints.
 Recorded the general in-place refinement capability: Admin may review system JSON or saved world records, correct values directly, or arrange follow-up survey missions; player survey findings may also update authoritative saved values. Refinement applies to stars, planets, moons, and other objects, preserves existing bodies and stable identities/relationships, and does not remove planets or regenerate the system merely because values need adjustment. Generated, observed, inferred, and admin-adjusted information should remain distinguishable; the exact provenance/history schema remains OPEN.
 
 This is owner-confirmed design intent, not a claim that all Admin editing, survey-triggered updates, provenance tracking, or generator improvements are implemented. No API task scope, API client, matching algorithm, schema, generated system, application code, or runtime behavior changed. The astronomy API tasks being reviewed separately are unaffected.
+
+
+### 2026-11-25 — HLT bootstrap role and evolving Venus gas logistics
+
+Updated [Propulsion Classes & Heavy-Tug Economy](infrastructure/propulsion_and_heavy_tug_economy.md) with the owner-confirmed distinction between early HLT Mk1 logistics and later specialized gas transportation.
+
+Recorded that HLT Mk1 is the initial available craft and is sufficient to bootstrap Luna; its long, surface-capable hull is inefficient for long-haul bulk-gas transport but remains useful for local transfers, including Venus atmospheric operations to a Venus Depot. The Venus harvesting assignment is continuous and repeating, while its operating base changes with infrastructure: initial Earth construction/deployment, Luna turnaround for early sorties, L1 Depot after it becomes available, and local Venus Depot docking/offload once Venus infrastructure exists. The harvester's gas delivery beyond its local depot is a separate logistics mission.
+
+Recorded the intended later logistics pattern: a specialized gas tanker loads at a depot, docks with a cycler for interplanetary transit, undocks during destination approach, and completes local delivery to the receiving depot. L1 is the first planned shipyard for larger deep-space craft; capable Mars and Venus shipyards can later construct and service them. The precise relationship between a future tanker and later HLT marks (variant versus separate space-only craft family), shipyard capability gates, and detailed craft specifications remain OPEN.
+
+This is owner-confirmed design intent, not a claim that later tanker designs, shipyard unlocks, docking events, or mission execution are implemented. No blueprints, technology tree, simulation code, or runtime behavior changed.
