@@ -217,3 +217,14 @@ This is a focused source comparison, not a complete audit of all AWS, portal, or
 - How many portal pairs a settlement or hub can host. No hard cap is set; numeric limits are OPEN.
 
 All numerical values remain **OPEN**.
+## EM supply requirements and WTC replenishment — ESTABLISHED DIRECTION / OPEN QUANTITIES
+
+**Owner clarification — 2026-11-25**
+
+AWS stations and portals are consumers of harvested EM; they do not create the natural EM resource. Natural wormholes generate EM, and systems that previously hosted a natural wormhole can retain finite, harvestable EM fields after the connection is gone. Players and AI Manager-operated harvesters can both collect from these fields.
+
+Early harvesting should allow stations to build EM stockpiles for network establishment and operation. The WTC coordinates AWS supply and replenishment. The AI Manager should use its own harvesting operations where local EM is available and use existing market/procurement or import paths when local fields and reserves cannot meet demand. This supply model should not require players to perform most of the harvesting.
+
+The amount of EM required by stations and portals, the split between establishment/ignition and ongoing operation, replenishment thresholds, stockpile targets, and allocation rules remain OPEN. Do not assign quantities or imply that the full EM consumption model is implemented.
+
+For EM valuation and procurement, see [Markets, EAP, and GCC/USD Peg](../markets/markets_eap_and_peg.md). EM has no Earth reference price and therefore no EAP; initial AI Manager valuation needs either defensible real-world comparisons or a simplified modeled cost estimate, with a later transition to appropriate system- or settlement-level market-history averages once sufficient transactions exist.
