@@ -64,6 +64,24 @@ end
 
 ---
 
+
+## Currency Architecture Scope
+
+GCC and USD are the **initial operating currencies**, not the complete set of currencies the architecture is intended to accommodate.
+
+The existing model provides several general foundations:
+
+- Financial::Currency supports an optional polymorphic issuer, a currency symbol, precision, and a system-currency flag.
+- Financial::Account associates an accountable entity with a particular currency. An entity can therefore hold separate balances in multiple currencies.
+- Transactions are associated with a currency, and exchange-rate records identify a from-currency and to-currency pair.
+- Bonds can be denominated in a currency, allowing obligations to remain distinct from the currency an entity happens to hold.
+
+This is the foundation for adding Earth currencies such as EUR and GBP, as well as currencies issued by a corporation, consortium, settlement, world, or system-level authority. The authority and policy for a currency are specific to that currency. GCC's LDC issuance rules do not automatically apply to other issuers.
+
+**Important distinction:** these general model capabilities do not mean every current economic service already handles arbitrary currencies. Market execution, purchasing, settlement, AI Manager economic scoring, and some pricing paths still contain GCC/USD assumptions. Those are integration gaps to address when broader currency use is activated, not evidence that a new currency model is required.
+
+See [Currency Creation and Local Monetary Operations](./08-currency-creation-and-local-monetary-operations.md) for when local currency creation may be useful and how it relates to liquidity, real-world exchange-rate references, and AI Manager decisions.
+
 ## 3. USD = GCC Scope
 
 ### Current Peg: Bootstrap Anchor Only
@@ -466,9 +484,9 @@ Galaxy Game uses a multi-currency economy. Per-currency policy defines governanc
 | GCC | Primary space-side numeraire | LDC (Luna Development Corporation) | Centralized, LDC-controlled |
 | USD | Earth-side import/export anchor | System (pre-defined) | Fixed, system-managed |
 
-### Future Currency Categories (Deferred)
+### Additional Currency Categories (Not Yet Initial Runtime)
 
-Additional currencies may use different governance models:
+Additional currencies may be introduced when the simulation needs them. Their governance can follow different models:
 - System-managed
 - Corporate
 - Regional
@@ -485,8 +503,8 @@ The following are recorded as canonical design decisions, not inferred source be
 
 1. Galaxy is a multi-currency economy.
 2. GCC and USD are the initial supported currencies.
-3. Additional Earth currencies may be added when required.
-4. Future off-Earth currencies may use different governance models (listed above).
+3. Additional Earth currencies (for example EUR and GBP) may be added when required; their real-world exchange rates can provide reference and calibration data.
+4. Off-Earth currencies may be created by authorized local institutions or AI-managed authorities when economically justified, and may coexist with GCC, USD, and other currencies.
 5. Governance, issuance authority, issuer eligibility, recipient routing, supply rules, audit rules, and exchange behavior are defined per currency policy; they are not implied by account existence, compute hardware, or craft type.
 6. GCC is centrally managed, crypto-inspired, nonphysical virtual-ledger currency with eight-decimal precision.
 7. During initial launch and Luna bootstrap, 1 GCC = 1 USD.
@@ -517,3 +535,17 @@ The following are recorded as canonical design decisions, not inferred source be
 ## Change History
 
 - **2026-09-15**: Added Section 9 — Currency Governance Models (settled design decisions, multi-currency architecture, GCC issuance vs physical extraction boundary) per Phase 4 wiki construction (Phase 4).
+
+## Exchange-Rate Reference Data
+
+Real-world exchange rates are useful reference data for Earth currencies. They can help calibrate initial exchange relationships, validate conversion behavior, and provide historical movement for economic tuning. This includes USD, EUR, GBP, and other national currencies when those currencies are represented in the game.
+
+Real-world rates are a **reference and calibration input**, not a permanent constraint on the game economy:
+
+- Preserve the source, quoted currency pair, rate convention, observation/effective time, and retrieval time for imported reference data.
+- Historical observations are useful for testing volatility and conversion behavior; a current quote should not silently rewrite historical transactions.
+- Game administrators may tune or override rates for simulation balance.
+- Fictional/local currencies can begin with a reference relationship to GCC, USD, or another currency, then evolve according to their own economic conditions.
+- A settlement's currency does not have to track an Earth currency indefinitely, particularly when it becomes economically independent.
+
+**Implementation status:** the current Financial::ExchangeRate model stores directed currency-pair rates, but ExchangeRate.get_rate returns 1.0 when no record exists. The current in-memory Financial::ExchangeRateService also defaults missing rates to 1.0. These fallbacks are unsafe as a general multi-currency valuation policy: an unknown pair must not be treated as parity when additional currencies are activated. No verified external FX ingestion/provenance workflow was found in the reviewed code. Real-world data integration and explicit missing-rate handling remain future integration work.
