@@ -1,7 +1,7 @@
 # Economy Documentation Hub
 
 **Status**: Canonical entry point for all economy/financial documentation  
-**Last Updated**: 2026-09-11  
+**Last Updated**: 2026-11-25  
 **Related**: All pages under `economy/`
 
 ---
@@ -12,9 +12,9 @@ The Galaxy Game economy is a **multi-currency-capable, NPC-first system**. GCC a
 
 | Layer | Currency | Role | Controlled By |
 |-------|----------|------|---------------|
-| Space-side | **GCC** (Galactic Construction Credit) | Primary numeraire; all space pricing | LDC (sole mint authority) |
-| Earth-side | **USD** (US Dollar) | Import/export anchor; spot prices | System (pre-defined) |
-| NPC accounting | **Virtual Ledger** | Inter-NPC debt/credit without GCC transfer | NPCs with overdraft permission |
+| Initial space-side | **GCC** (Galactic Construction Credit) | Initial space-economy numeraire | LDC (GCC-specific mint authority) |
+| Initial Earth-side | **USD** (US Dollar) | Initial import/export anchor; Earth spot-price reference | System (pre-defined) |
+| NPC accounting | **Virtual Ledger** | Per-currency account/credit relationships and deferred settlement | Entities with applicable overdraft/credit authority |
 
 ### Core Design Principles
 
@@ -32,7 +32,8 @@ The Galaxy Game economy is a **multi-currency-capable, NPC-first system**. GCC a
 - **[01-overview-and-design.md](./01-overview-and-design.md)** — System architecture, key models/services, economic flow diagram, configuration sources
 
 ### Currencies & Accounts
-- **[02-currencies-and-accounts.md](./02-currencies-and-accounts.md)** — Currency model, account model, GCC/USD peg phases, stability measures, numeraire rules
+- **[02-currencies-and-accounts.md](./02-currencies-and-accounts.md)** — Currency/account model, initial GCC/USD bootstrap, governance, exchange-rate references
+- **[08-currency-creation-and-local-monetary-operations.md](./08-currency-creation-and-local-monetary-operations.md)** — Additional Earth and local currencies, issuer authority, liquidity, AI Manager decisions, and FX reference data
 
 ### Market & Pricing
 - **[03-market-and-pricing.md](./03-market-and-pricing.md)** — Price discovery lifecycle, EAP calculation, ISRU pricing, market operations, GCC coupling status
@@ -58,7 +59,7 @@ The Galaxy Game economy is a **multi-currency-capable, NPC-first system**. GCC a
 | `Financial::Currency` | `app/models/financial/currency.rb` | Currency definition (symbol, issuer, precision) |
 | `Financial::Account` | `app/models/financial/account.rb` | Entity currency accounts with overdraft support |
 | `Financial::Transaction` | `app/models/financial/transaction.rb` | Audit trail for all fund movements |
-| `Financial::ExchangeRate` | `app/models/financial/exchange_rate.rb` | Currency pair rates (USD↔GCC) |
+| `Financial::ExchangeRate` | `app/models/financial/exchange_rate.rb` | Directed currency-pair rates (currently used primarily for USD↔GCC) |
 | `Financial::Bond` | `app/models/financial/bond.rb` | Debt instruments between entities |
 | `LaunchPaymentService` | `app/services/launch_payment_service.rb` | Construction + launch cost payment processing |
 | `Market::NpcPriceCalculator` | `app/services/market/npc_price_calculator.rb` | NPC buy/sell order pricing |
