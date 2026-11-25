@@ -158,6 +158,19 @@ A `Location::SpatialLocation` record is not automatically a valid current positi
 
 Initialization fallback for new universes—known ephemerides first, then orbit-constrained randomized phase when unknown—is defined in [StarSim architecture](../design/starsim_and_protection_classes.md).
 
+### System View body and star rendering — ESTABLISHED VISUAL DIRECTION
+
+The System View should retain the richer visual language of the original `SystemRenderer`, not reduce every celestial body to an identical dot.
+
+- Planet body fill uses the body's documented category, with terrestrial color further differentiated by surface temperature: hot terrestrial orange, temperate terrestrial blue, and cold terrestrial gray.
+- Gas giants use amber/orange; ice giants blue; super-Earths teal; ocean planets deep blue; dwarf planets neutral gray. Unknown or unsupported body categories remain neutral rather than being guessed.
+- The prototype's source adapter may expose category through normalized `body_category`, `category`, `classification`, `type`, or its source grouping (`source_category`, including plural group names such as `terrestrial_planets`). The renderer must interpret those presentation fields without rewriting source records.
+- Body size should use supplied radius or mass when available, within sensible display limits; use a modest neutral marker when physical size data is absent. Moons remain visually distinct and parent-relative.
+- Stars retain their spectral-class color and a restrained glow. Atmospheric presence may use a separate subtle halo. Selection, hover, facilities, and craft status remain overlays and must not replace the body's classification color.
+- Orbital paths remain visually distinct from body markers and should not overwhelm the system view. Labels should remain legible and decluttered.
+
+This is a visual encoding of supplied classifications and measurements, not a substitute for the authoritative physical model.
+
 ### Craft operation and remote command model
 
 **ESTABLISHED INTENT — 2026-11-19**
