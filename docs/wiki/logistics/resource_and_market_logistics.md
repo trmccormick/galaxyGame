@@ -26,7 +26,7 @@
 
 Galaxy Game operates with two currency systems during the bootstrap phase:
 
-**USD (United States Dollars):** Used exclusively by Earth-side corporations and for Earth-origin imports at the Earth interface — exchange/settlement via Luna and L1 for imports/exports. Beyond that interface, USD does not circulate. Terrestrial entities do not hold or trade in GCC. Earth-side corporate contracts, import invoices, and transportation costs are denominated in USD.
+**USD (United States Dollars):** In the initial Sol/Luna bootstrap economy, USD is the Earth-side reference currency for Earth-origin imports, Earth-side corporate contracts, import invoices, and transportation costs; exchange/settlement is routed through the Luna/L1 interface. This describes the initial operating arrangement, not a permanent architectural restriction on USD circulation or on the use of other Earth currencies (such as EUR/GBP) in later economic networks. Terrestrial entities do not use GCC in the initial arrangement; GCC's LDC issuance and circulation policy is specific to the space-side bootstrap.
 
 **GCC (Galactic Crypto Currency):** The off-world ledger-native digital settlement currency. USDC-like at birth — 1:1 USD-referenced for bootstrap calibration so common material and blueprint data can embed present-day real-world values without fantasy pricing scales. All player accounts, colony budgets, courier contracts, and market orders are denominated in GCC.
 
