@@ -659,3 +659,11 @@ Clarified that the generation routes are options rather than mandatory categorie
 
 Also recorded that targeted astronomical API data can help StarSim matching and mapping without requiring bulk catalog ingestion. No catalog provider, ingestion volume, matching algorithm, schema, runtime behavior, or UI implementation was selected or changed. No application code, system seeds, generated outputs, or simulation data changed.
 
+### 2026-11-24 — Main-game SIMBAD and NASA Exoplanet Archive integrations
+
+Expanded [System Blueprints & Procedural Generation](astronomy/system_blueprints.md) to explicitly record the intended built-in main-game integrations with SIMBAD and the NASA Exoplanet Archive. These are reusable, source-aware data capabilities for StarSim and mapping/navigation, not merely external research references or a one-time import.
+
+Recorded their complementary roles: SIMBAD for astronomical identity, cross-identifications, classifications, astrometry, and available object measurements; NASA Exoplanet Archive for confirmed exoplanet and host-star/system parameters. Use targeted lookups and modest relevant data rather than bulk catalog ingestion. Preserve source identifiers, coordinate context, uncertainty, and provenance; keep observed data separate from generated/spawned content and player discovery state. Retained/cached information and existing generation paths must remain usable when remote services are unavailable. Missing catalog entries are not proof that stars or planets do not exist.
+
+The exact API client architecture, mirror/fallback policy, queries, refresh cadence, cache/storage design, and normalization schema remain OPEN. No application code, API clients, catalog imports, or runtime behavior changed.
+
