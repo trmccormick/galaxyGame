@@ -1,7 +1,7 @@
 # Currencies & Accounts
 
 **Status**: Canonical  
-**Last Updated**: 2026-09-14  
+**Last Updated**: 2026-11-25  
 **Supersedes**: `CURRENCY_AND_EXCHANGE.md`, `financial_system.md`, `LEDGERS.md`  
 **Derived from**: `CURRENCIES_AND_ACCOUNTS.md` (primary), `CURRENCY_AND_EXCHANGE.md`, `financial_system.md`, `LEDGERS.md`
 
@@ -214,7 +214,7 @@ From `docs/GUARDRAILS.md` §8:
 ## Three-Pillar Audience Guide
 
 ### For Players 🎮
-- **You have two currencies**: GCC (space-side, primary) and USD (Earth-side, for imports)
+- **Initial operating currencies**: GCC (space-side, primary) and USD (Earth-side, for imports); additional currencies are supported by the intended architecture but not fully integrated into current market paths
 - **Early game peg is 1:1** — your GCC earnings equal USD value at launch
 - **GCC may appreciate over time** — as space economy grows, GCC could become more valuable than USD
 - **Players cannot overdraft** — if you run out of GCC/USD, you must earn more before spending
@@ -232,7 +232,7 @@ From `docs/GUARDRAILS.md` §8:
 ### For Developers 🔧
 - **Currency model**: `Financial::Currency` — symbol (2-5 uppercase chars), precision (0-8 decimals), issuer polymorphic
 - **Account model**: `Financial::Account` — polymorphic accountable, per-currency, optimistic locking via `lock_version`
-- **Exchange rate service**: `Financial::ExchangeRateService.convert(amount, from, to)` handles all currency conversions
+- **Exchange-rate service**: conversion helpers exist, but current paths are incomplete for arbitrary currencies; missing pairs currently fall back to 1:1 and must not be treated as valid rates
 - **Peg phases**:
   - Phase 1: Hard peg (1.0) at launch
   - Phase 2: Soft peg ±10% based on GCC supply/demand
