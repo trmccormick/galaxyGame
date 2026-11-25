@@ -128,17 +128,25 @@ This keeps maintenance, resource recovery, and panel replacement inside the exis
 
 ---
 
-## Placement Model for Spatial Fields and Structural Swarms (DIRECTION)
+## Generic Spatial Field Model (OWNER-CONFIRMED DESIGN INTENT; IMPLEMENTATION PENDING)
 
-Open design idea, not a decision. The panel design and swarm concept above are ESTABLISHED INTENT; this placement model is not. The owner wants structural swarms, EM-harvestable clouds and easter-egg style fields to be placeable in the system (owner, 2026-11-16). A shared placement approach is being considered so each does not need its own spatial handling. The simulation does not yet implement fields or swarms.
+The owner confirmed a deliberately small, generic model for spatially anchored fields. The model is intended to support structural swarms and arrays (including Venus solar shades and Mars reflectors), EM-harvestable clouds, Easter-egg phenomena, and other future spatial collections or effects without requiring a separate spatial model for each use case.
 
-### Candidate shared placement data (DIRECTION, under discussion)
+The conceptual record has only three core elements:
 
-- **Origin:** where the field is anchored: on or above a celestial body, or at a free point in space.
-- **Extent / field size:** the volume the field covers.
-- **Type:** determines behaviour.
+- **Name:** identifies the field.
+- **Spatial location:** one spatial anchor for the field.
+- **Metadata:** holds the field-specific description and changing state.
 
-Whether these are the right fields, and whether a shared base model is the right approach, is undecided. The octagonal CNT panel swarm already records its spatial location and panel counts (see above) and could be the first user of the approach. EM-harvestable clouds and easter-egg fields could use it too.
+Metadata is intentionally flexible and can include the field type, component blueprint references, component types and properties, quantities/configurations, and other domain-specific information. For engineered swarms, metadata can identify the generic component blueprints used to define the actual panel or other component types. The spatial-field model itself does not need to encode every component property as a first-class field.
+
+### Dynamic extent and aggregate condition
+
+The field's area or volume is part of its metadata and is dynamic: it can expand, contract, or otherwise change as the represented swarm or phenomenon changes. The metadata may distinguish the configured physical extent from the effective/operational extent where that distinction matters (for example, a reflector swarm may still occupy its full deployed area while damage reduces its effective reflective coverage).
+
+The model is intended to support aggregate simulation rather than requiring every underlying component to be represented as an independently simulated entity. For example, a solar flare can update a swarm's aggregate condition: the proportion or quantity of units damaged, the amount/severity of damage, and the proportion requiring repair, preparation, or replacement. The simulation need not retain an individual damage record for every panel when aggregate state is sufficient for gameplay and system behavior.
+
+This is a generic design intent, not a finalized metadata schema or claim of existing implementation. The exact metadata structure, blueprint-reference contract, spatial geometry representation, aggregate damage calculations, and update rules remain OPEN. The simulation does not yet implement this spatial-field model.
 
 ### Existing location models (verified against code at galaxyGame `67dfa40`, 2026-11-16)
 
@@ -158,13 +166,13 @@ Whether these share one placement approach or each type defines its own is OPEN 
 
 ### Open (do not invent)
 
-- Whether a shared base model is wanted at all, and what it would be called.
-- Where field extent is stored, and whether it belongs on the location models or on the field or swarm itself.
-- How a Lagrange-point origin is represented.
-- Other data raised in discussion and not evaluated: intensity or density profile, tags, lifecycle, ownership or control.
-- Exact data schemas, fall-off curves, yields and interaction rules for any field or swarm.
-- Interaction rules between co-located fields (overlap, stacking, conflict).
-- Blueprint schemas for defining new field types or swarm configurations.
+- Final metadata schema and validation rules for each field type.
+- The exact blueprint-reference contract for generic components and configurations.
+- How a Lagrange-point or other free-space anchor is represented by the existing location models.
+- Optional metadata such as intensity or density profiles, tags, lifecycle, ownership or control, where a use case requires them.
+- Exact spatial geometry representation, field-shape changes, fall-off curves, yields and interaction rules.
+- Aggregate damage, repair, preparation and replacement calculations, including when percentages versus absolute quantities are appropriate.
+- Interaction rules between overlapping or co-located fields (overlap, stacking, conflict).
 
 ---
 
