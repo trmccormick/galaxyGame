@@ -57,6 +57,24 @@ When `ProceduralGenerator` is initialized with `use_accretion: true`, `generate_
 
 ---
 
+### Seed completion versus generation from scratch; real-star matching
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-24**
+
+StarSim has distinct ways to establish a playable system. Do not conflate them:
+
+- **Complete an existing system seed:** Start from whatever information is available for a system—such as a curated real-system record—and use the completion/hybrid path to preserve and build on that information. The seed may be rich or sparse; completion does not imply an exhaustive inventory.
+- **Generate a system from scratch:** Use the fully procedural path when the game needs a system without attempting to complete an existing system seed. This remains a valid option; it is not required when a suitable real astronomical anchor is available.
+- **Associate a from-scratch generated system with a real star:** When the available real information identifies a star but provides little or no planetary-system information, GalaxyGame may select a suitable cataloged star and generate a planetary system around that real star. The real star supplies its identity and known astronomical position; StarSim generates the unknown system content. This is not the same as claiming that the generated planets or architecture are observed.
+
+In the broad sense, every system remains incomplete and may contain generated or later-spawned content. The distinction above is about the generation route: completing an existing seed versus generating a system without completing a seed. A real-star match can anchor the latter without turning it into seed completion.
+
+Matching should use the available stellar constraints. Spectral type may be the only known property, but when available, mass, luminosity, temperature, metallicity, age, multiplicity, and other relevant measurements can improve candidate selection. Matching criteria and confidence thresholds remain OPEN; do not imply that spectral type alone uniquely identifies a suitable star.
+
+Preserve the real catalog identity, identifiers, measured position, coordinate frame/epoch, source, and provenance. Keep generated planetary properties distinguishable from observed stellar properties. A candidate match is an association used to anchor a playable system, not evidence that the generated planetary system exists in astronomical observations. Do not invent a real position when no suitable real star is selected or no usable astrometry exists.
+
+These routes are options, not mandatory categories or a fixed progression. A system with extensive real data may still need completion; a sparsely described real star may anchor a from-scratch generated system; and a fully generated fictional star/system remains available when appropriate. Survey and simulation activity can continue to add or spawn objects after initial creation.
+
 ## System starting information, StarSim completion, and ongoing discovery
 
 **OWNER-CONFIRMED DESIGN INTENT — evolving project understanding (2026-11-20).** GalaxyGame is unfinished and its system-generation design is still being explored and adjusted. This page records the current understanding reached while investigating JSON fixture defects; it is not a declaration that the overall StarSim architecture or data-directory layout is final.
