@@ -8,7 +8,7 @@
 
 ## System Architecture
 
-The Galaxy Game economy is a **dual-currency, NPC-first system** with three monetary layers:
+The Galaxy Game economy is a **multi-currency-capable, NPC-first system**. GCC and USD are the initial operating currencies; the financial model is not limited to those two currencies. The current implementation still has GCC/USD-specific paths, documented separately from the broader currency foundation.
 
 | Layer | Currency | Role | Controlled By |
 |-------|----------|------|---------------|
