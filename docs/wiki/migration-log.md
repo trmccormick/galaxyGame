@@ -629,3 +629,15 @@ Extended [StarSim architecture](design/starsim_and_protection_classes.md) and [P
 The Player Space prototype now ignores all-zero `spatial_location` coordinates unless the location or containing object explicitly supplies `position_valid: true` or `spatial_position_valid: true`. This prevents uninitialized StarSim placeholders from appearing as current positions while preserving explicitly valid origin coordinates. The renderer continues to distinguish supplied orbital geometry from current positions and does not calculate ephemerides.
 
 The JavaScript source passed a syntax check. Browser rendering and Rails tests remain pending. No main-app model, database schema, API serializer, or StarSim runtime behavior changed.
+
+
+### 2026-11-24 — Space View navigation scope and player-directed mission changes
+
+Updated [Player View Architecture](ui/02_player_view_architecture.md) and [Space and Surface Operations](player/space_and_surface_operations.md) with the clarified Player Space intent:
+
+- Space View is a navigation interface only, not a general space-operations dashboard or a direct piloting interface. The player does not steer craft.
+- Galaxy View supplies physical stellar-neighborhood context; Wormhole Network is for inter-system navigation through natural wormholes and operational connections; System View retains the top-down solar-system map for in-system navigation. The two route layers are related but use distinct spatial/travel models.
+- Players select destinations and start missions whose plans contain programmed destinations and activities. While a mission is underway, players may cancel it, issue a single high-level instruction (for example, dock at the closest suitable orbital settlement or stop at the nearest suitable settlement to refuel), or provide a revised mission. Rerouting is conditional on available fuel and other applicable feasibility constraints.
+- The AI Manager and craft automation manage execution. A one-time instruction need not require the player to author a complete replacement mission; the AI Manager evaluates feasibility and either resolves it into executable actions or reports why it cannot comply. Remote commands remain subject to delivery, acceptance, execution, and acknowledgment delays.
+- EVE Dashboard is the user's friend's Python application that communicates with the EVE Online API. The reference under consideration is its JavaScript only, including `fleet_map.js` and `chain.js`; its Python/API integration and EVE Online rules/data are not GalaxyGame dependencies. Adapt useful JavaScript interactions to GalaxyGame's own data and travel model.
+- UI controls and presentation for destination changes, cancellation, single instructions, and revised missions remain open for discussion. No UI implementation or main-app runtime code changed.
