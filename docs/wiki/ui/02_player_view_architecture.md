@@ -23,7 +23,7 @@ The Player Dashboard has exactly three primary views: Planetary, Surface, and Se
 
 These three primary views are distinct interaction contexts, not nested menus or merely camera zoom levels. Navigation may move between related views, but each has its own purpose and information hierarchy.
 
-**Space is separate from the three primary views.** It remains a Player context for system-wide spatial awareness and operations, but is not counted among Planetary, Surface, and Settlement. Do not replace Settlement with Space or add Galaxy as another Player view.
+**Space is a separate Player navigation context.** It is not counted among Planetary, Surface, and Settlement, and it is not a general operations dashboard or a piloting interface. Do not replace Settlement with Space or add Galaxy as another primary Player view.
 
 ## Navigation and selection workspaces
 
@@ -88,13 +88,13 @@ The UI should present last-known state, source and receipt times, information ag
 
 **ESTABLISHED SPACE VIEW ARCHITECTURE — 2026-11-24**
 
-Space remains one Player context, with three coordinated but independent ways to understand astronomical space and operations:
+Space remains one Player navigation context, with three coordinated but independent map views:
 
-1. **Galaxy View** — a selected-system-centered spatial neighborhood. For Sol, the initial view focuses on the Sun's nearby stellar neighborhood and uses known real-system positions. It may show larger Milky Way context as the player zooms out. Local Bubble information belongs to this physical spatial view.
-2. **Wormhole Network** — a system-connectivity graph. It represents natural wormholes and operational network connections, not astronomical positions or galaxy membership. A wormhole may connect systems in different galaxies; remote endpoints remain visible regardless of the selected Galaxy View context.
-3. **System View** — the selected star system's local spatial context: stars, celestial bodies, stations, facilities, spacecraft, orbits, and trajectories where supported by available data.
+1. **Galaxy View** — a selected-system-centered physical neighborhood map. For Sol, the initial view focuses on the Sun's nearby stellar neighborhood and uses known real-system positions. It may show larger Milky Way context as the player zooms out. Local Bubble information belongs to this physical spatial view. It provides geographic context for navigation; it is not a wormhole route map.
+2. **Wormhole Network** — the inter-system navigation map. It represents natural wormholes and operational network connections, not astronomical positions or galaxy membership. A wormhole may connect systems in different galaxies; remote endpoints remain visible regardless of the selected Galaxy View context. Its interaction direction may adapt useful JavaScript map and waypoint-navigation patterns from EVE Dashboard, while using GalaxyGame's own network and travel rules.
+3. **System View** — the selected star system's top-down spatial map for in-system navigation. It shows the star system's celestial layout and, where supported, craft locations, destinations, intermediate stops, and planned local routes. It is distinct from the inter-system wormhole route.
 
-These are coordinated views, not three separate game worlds or a hierarchy of physical containment. Selecting a system synchronizes the selected-system context across views, but the views retain their own spatial meanings and data. Galaxy View must not filter or remove remote Wormhole Network endpoints.
+These are coordinated navigation maps, not three separate game worlds or a hierarchy of physical containment. Selecting a craft synchronizes its reported current-system context across the maps, while each map retains its own spatial meaning and data. Galaxy View must not filter or remove remote Wormhole Network endpoints.
 
 ### Stellar classification in system-node colors
 
@@ -136,17 +136,11 @@ Constellation membership is optional. A known real system may have a known, prov
 
 A future main-application catalog may represent IAU constellation names, abbreviations, official boundary geometry, coordinate metadata, and physical astronomical regions such as the Local Bubble. How that information is persisted or related to system records remains OPEN. Do not assume a database table, JSON catalog, or a required constellation field on every system until that model is reviewed.
 
-**DIRECTION**
+**ESTABLISHED NAVIGATION INTENT — 2026-11-24**
 
+Space View is for navigation. It helps the player understand where a selected craft is, where it is intended to go, and the route or itinerary it is following. Its maps provide spatial context for choosing destinations and reviewing planned or reported travel. Space View is not a general operations dashboard, a spacecraft-piloting interface, or a place to directly steer or maneuver craft. Do not expand its scope into unrelated space-system management without discussing that change with the owner.
 
-
-Space is the system-wide operational view. It should represent the selected solar system and the physical relationships among bodies, ships, stations, and other orbital infrastructure.
-
-Candidate content includes:
-- ships at current locations, in transit, or assigned to destinations and missions;
-- orbital settlements and infrastructure, including L1 depots, orbital stations, shipyards, wormhole stations, and industrial platforms;
-- trajectories, travel distances, launch windows, and estimated travel times where supported by simulation data;
-- natural wormholes, AWS connections, portals, EM fields, and relevant space phenomena.
+The top-down System View remains the spatial view for navigation within a star system. The Wormhole Network is the separate view for navigation between star systems. Both may represent ordered destinations and route progress, but they use different spatial and travel models. Galaxy View supplies physical astronomical neighborhood context and must not be confused with either route model.
 
 ### Celestial current positions and uninitialized spatial records — ESTABLISHED UI INTENT (owner, 2026-11-24)
 
@@ -177,21 +171,23 @@ At the system overview scale, moons are hidden by default. Their parent-relative
 
 **ESTABLISHED INTENT — 2026-11-19**
 
-GalaxyGame craft are autonomous operational assets, not player-character avatars. Most craft operate through onboard automation. Players direct their craft remotely by assigning commands, objectives, destinations, or missions when a communication path is available; the player does not need to be physically aboard or represented by a pilot/character record. Remote command availability and data freshness must respect GalaxyGame's communications model rather than implying universal instant control.
+GalaxyGame craft are autonomous operational assets, not player-character avatars. The player does not pilot or directly steer craft. The player directs them by assigning destinations, issuing high-level instructions, or starting missions whose plans contain programmed destinations and activities. Craft automation and the AI Manager manage execution within the craft's capabilities and assigned authority.
 
-Craft automation and the AI Manager can continue authorized operations when a player is not connected or communication is unavailable. Loss of player communication does not imply that the craft simply stops or disappears from the operational model. The exact autonomy and authority of a particular craft depend on its capabilities and assigned operation.
+Players may change orders while a mission is underway. They may cancel a mission, issue a single instruction, or provide a revised mission plan. Examples include rerouting to a location when the craft has sufficient fuel and the route is otherwise feasible, docking at the closest suitable orbital settlement, or stopping at a nearby settlement to refuel before continuing. A single instruction need not require the player to manually author a complete replacement mission: the AI Manager can evaluate the instruction and determine an executable response. If it cannot comply, it should report the constraint and avoid pretending the requested action was completed.
+
+These are player-issued instructions, not direct flight controls. The AI Manager and craft automation determine how to carry them out. New instructions, cancellations, and revised plans are subject to the communications model: a remote command is not effective merely because the player issued it, and delivery, acceptance, execution, and acknowledgment may occur at different times. Until a new instruction reaches the craft and is accepted, previously authorized behavior may continue according to the craft's autonomy and current mission.
 
 Craft may operate independently or be grouped for a particular task or operation. Do not assume every craft belongs to a permanent fleet or that a fleet is the required unit of control. In the UI, identify assets by their GalaxyGame ship/craft names and identities—not by EVE-style character or pilot names. Show current location, operational state, assigned objective, and communication/data age as distinct facts where the source data supports them.
 
 Player asset-management interactions and Admin/AI Manager operational oversight are related but distinct workflows. They may reuse generic selection, filtering, grouping, and status components, but should not be collapsed into one identical fleet-management screen.
 
-The view must distinguish inter-system wormhole network connections from in-system spatial relationships. The supplied Pixel Nexus application screenshots and JavaScript may inform pan/zoom, selection, routes, markers, and topology presentation. Pixel Nexus is the user's friend's Python application for connecting to an API; it is not EVE Online. Its map topology and application-specific domain assumptions are not a substitute for GalaxyGame's wormhole network or a literal solar-system view. Existing GalaxyGame `system_renderer.js` is an early baseline to inspect, not a finalized design.
+The navigation views must distinguish inter-system wormhole connections from in-system spatial relationships. EVE Dashboard is the user's friend's Python application that communicates with the EVE Online API. The JavaScript from that application is the reference material under consideration; its Python/API integration and EVE Online data/game rules are not being adopted. Useful map, pan/zoom, selection, waypoint, route, marker, and topology interactions may be adapted to GalaxyGame's own data and travel rules. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect, not a finalized navigation design.
 
 ### Individual craft tracking workspace and route views
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
 
-The initial Player Space workspace is an **individual craft tracking and route-planning view**, not a fleet-management screen. Adapt useful layout and interaction patterns from the supplied Pixel Nexus Fleet Manager reference, but do not carry over its specific fleet presentation or application-domain assumptions.
+The initial Player Space workspace is an **individual craft tracking and route-planning view**, not a fleet-management screen. Adapt useful layout and interaction patterns from the supplied EVE Dashboard Fleet Manager reference, but do not carry over its specific fleet presentation or application-domain assumptions.
 
 The full application screen retains the persistent main-game navigation at the far left. Space does not replace, duplicate, or absorb that navigation. To its right, the Space workspace has three coordinated panes (making four vertical areas across the full screen):
 
@@ -217,19 +213,19 @@ System View must load only the selected system's own spatial and astronomical da
 
 ### Reuse and prototype implementation direction
 
-The supplied Pixel Nexus screenshots and JavaScript are **source material for adaptation**, not a final specification and not a request for a wholesale port. Inspect the forked Pixel Nexus fleet/map JavaScript and reuse or adapt useful craft selection, map rendering, pan/zoom, marker selection, route display, and selected-object panel behavior. Adapt the code to GalaxyGame's domain and the two stacked map requirements; do not assume one Pixel Nexus map module already implements both scales. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect and reuse where useful. The wormhole network map needs its own inter-system topology representation, potentially adapted from suitable EVE network/map JavaScript.
+The EVE Dashboard JavaScript is source material for adaptation, not a final specification or a request for a wholesale port. The candidate JavaScript includes `fleet_map.js` and `chain.js`; inspect and reuse or adapt their relevant map rendering, pan/zoom, selection, route/waypoint, marker, and connected-network interactions where useful. The work under consideration is JavaScript only. Do not bring over the Python application's API integration, EVE Online data model, terminology, or gameplay rules. Adapt the code to GalaxyGame's own data and travel rules. Do not assume one reference module already implements both the inter-system wormhole map and the in-system solar-system map. Existing GalaxyGame `system_renderer.js` is an in-system rendering baseline to inspect and reuse where useful.
 
 The prototype may use clearly identified mock craft and route data. Interactions, route calculations, data refresh, and source integration do not all need to work in this first presentation pass. The immediate goal is to establish the screen, layout, selection behavior where practical, and both map areas so they can be reviewed and refined. Do not rewrite existing JavaScript wholesale merely because the first adaptation is incomplete; preserve useful code and document what was reused, adapted, stubbed, or deferred.
 
 GalaxyGame craft are autonomous operational assets, not player-character avatars. Do not introduce EVE pilots, characters, fleet commanders, EVE terminology, combat, or EVE backend/game rules. Player Space asset interaction remains distinct from Admin/AI Manager operational oversight.
 
-Fleet organization and multi-craft coordination belong in the separate Fleet Manager view described below; they are not part of this individual-craft presentation. Authoritative route finding, navigation simulation, command execution, and production backend/API integration are also outside this initial presentation task.
+Fleet organization and multi-craft coordination belong in the separate Fleet Manager view described below; they are not part of this individual-craft navigation context. The player-facing navigation interface may expose destination changes, mission cancellation, and high-level instructions, but the exact controls, placement, confirmation flow, and presentation of revised mission plans remain OPEN for discussion. Authoritative route finding, navigation simulation, command execution, and production backend/API integration are not specified by this UI-intent section.
 
 ### Fleet Manager and distributed fleet operations
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
 
-GalaxyGame retains a Player **Fleet Manager** view, using the Pixel Nexus Fleet Manager as a layout and interaction reference. This is an operational coordination workspace, distinct from the individual-craft tracking workspace above. The reference is the user's friend's Python application used for an API connection, not EVE Online. Reuse and adapt useful layout and JavaScript where practical; do not reproduce Pixel Nexus-specific domain assumptions or treat its data model as authoritative for GalaxyGame.
+GalaxyGame retains a Player **Fleet Manager** view, using the EVE Dashboard Fleet Manager as a layout and interaction reference. This is an operational coordination workspace, distinct from the individual-craft tracking workspace above. The reference is the user's friend's Python application used for an API connection, not EVE Online. Reuse and adapt useful layout and JavaScript where practical; do not reproduce EVE Dashboard-specific domain assumptions or treat its data model as authoritative for GalaxyGame.
 
 An **operation** is the broad assignment context for one or more spacecraft. It may be coordinated as a fleet, or carried out by independently dispatched craft without a fleet grouping. A **fleet is an optional operational grouping of craft assigned to a shared objective or coordinated operation**. Fleet membership does not mean the craft are physically together, travelling in formation, or even located in the same solar system. Fleet members may be at different locations in one system or distributed across multiple systems, following independent routes and performing different tasks that contribute to the shared objective. Do not make proximity, formation, or simultaneous travel a requirement for fleet membership.
 
@@ -245,7 +241,7 @@ For example, a player may organize an asteroid-station construction fleet in whi
 
 These craft are one fleet because their assignments and resource movements support the shared station-construction objective, not because they occupy the same location. The same principle applies when a player has multiple fleets conducting separate operations in different systems.
 
-The Fleet Manager should retain the useful layout and interaction patterns of the Pixel Nexus reference while adapting its content to GalaxyGame. The reference's selected character (Neon Red) and character/pilot identity model are not GalaxyGame domain concepts; GalaxyGame spacecraft are autonomous assets, not player-character avatars. Do not import character portraits, pilot identities, or character-based command assumptions. The workspace lets the player oversee coordinated fleet operations and independent craft assignments, understand how distributed craft contribute, and identify work that needs attention. Relevant information includes:
+The Fleet Manager should retain the useful layout and interaction patterns of the EVE Dashboard reference while adapting its content to GalaxyGame. The reference's selected character (Neon Red) and character/pilot identity model are not GalaxyGame domain concepts; GalaxyGame spacecraft are autonomous assets, not player-character avatars. Do not import character portraits, pilot identities, or character-based command assumptions. The workspace lets the player oversee coordinated fleet operations and independent craft assignments, understand how distributed craft contribute, and identify work that needs attention. Relevant information includes:
 - the selected fleet or independent operation identity, objective/mission, current status, and overall progress;
 - participating craft for a fleet, or the assigned craft for an independent operation, with their roles/tasks, current locations, and operational states;
 - the geographic distribution of participating assets across relevant locations and systems;
@@ -308,7 +304,7 @@ The intended gameplay boundary and its open details are documented in [Space and
 
 **ESTABLISHED PLAYER SPACE VIEW DIRECTION — 2026-11-21**
 
-GalaxyGame should provide a distinct Player **Route Planner** where players can create, review, name, save, and reuse preferred travel routes. The supplied Pixel Nexus Chain Map is the initial visual and interaction reference for this capability. The intent is to adapt its Chain Map presentation and useful JavaScript into the Rails 8.1 UI prototype, then adapt its assumptions and behavior to GalaxyGame. It is a starting point for the route-planning interface, not a commitment to Pixel Nexus's network mechanics or data model.
+GalaxyGame should provide a distinct Player **Route Planner** where players can create, review, name, save, and reuse preferred travel routes. The supplied EVE Dashboard Chain Map is the initial visual and interaction reference for this capability. The intent is to adapt its Chain Map presentation and useful JavaScript into the Rails 8.1 UI prototype, then adapt its assumptions and behavior to GalaxyGame. It is a starting point for the route-planning interface, not a commitment to EVE Dashboard's network mechanics or data model.
 
 The Route Planner supports both routing scales:
 - **Inter-system / wormhole travel:** plan a journey through connected star systems and wormhole transitions, including chosen intermediate systems and preferred connections.
@@ -585,6 +581,7 @@ See [Admin and AI Manager Interfaces](03_admin_and_ai_manager.md).
 
 - Final layouts and navigation placement for each context.
 - Exact Space map scales and relationship between in-system and inter-system maps.
+- How destination selection, mission cancellation, single instructions, and revised mission plans should be presented in the Space UI; these interaction options require owner discussion before UI changes.
 - Planetary layer availability by body and data source.
 - Surface tileset/rendering repair and the best source-resolution pipeline.
 - Detailed Settlement workflows and the distinction between planetary and orbital settlement variants.
