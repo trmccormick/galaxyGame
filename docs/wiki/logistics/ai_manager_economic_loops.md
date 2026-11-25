@@ -49,7 +49,7 @@ When the settlement has excess inventory it is willing to sell, and when it has 
 
 | Action                          | Price relative to EAP | Notes |
 |---------------------------------|------------------------|--------|
-| NPC **buys** from players       | **80 % of EAP**        | Guaranteed floor for early player sales. NPC buy at 80% EAP is intended to put GCC in players' hands while not paying full import-equivalent and risking settlement bankruptcy. |
+| NPC **buys** from players       | **80 % of EAP**        | Thin-market default buy price. Puts some GCC in player hands without paying full import-equivalent or risking settlement bankruptcy. Not a permanent guaranteed floor. |
 | NPC **sells** excess to players | **90 % of EAP**        | Discount vs full import cost |
 | Hard ceiling                    | **100 % of EAP**       | Above this the AI imports or self-supplies under normal conditions |
 
