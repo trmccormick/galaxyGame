@@ -44,7 +44,7 @@ Map Studio is retained as an Admin capability. The legacy Rails 7 route and cont
 
 ### Map Studio — current Rails 7 implementation snapshot
 
-**SOURCE-VERIFIED PARTIAL AUDIT — 2026-11-20.** Inspected `Admin::MapStudioController`, the Admin routes, `AIManager::PlanetaryMapGenerator`, and `StarSim::AutomaticTerrainGenerator`. This is evidence of the legacy implementation, not approval of every current behavior as the final design.
+**SOURCE-VERIFIED PARTIAL AUDIT — 2026-11-20.** Inspected `Admin::Map StudioController`, the Admin routes, `AIManager::PlanetaryMapGenerator`, and `StarSim::AutomaticTerrainGenerator`. This is evidence of the legacy implementation, not approval of every current behavior as the final design.
 
 **Map Studio controller flow**
 
@@ -155,6 +155,7 @@ This is a capability direction, not a declaration that the current Geosphere sch
 **Important boundaries and unresolved quality questions**
 
 - Map Studio's Admin responsibility is initial terrain/geographic preparation. StarSim's primary star-system generation, TerraSim's environmental evolution, and Digital Twin's projection/evaluation remain separate capabilities.
+- **Player surface settlement view (DIRECTION; early name "TerrainForge"):** A SimCity-style 2.5D isometric / orthographic surface grid for local settlement construction — structure placement, power/utility links, ISRU units, pads, and local stockpiles. Resources and products on this grid feed depots, skimmers, and surface-to-orbit logistics. Distinct from Admin **Map Studio**, which prepares planetary geography, terrain, and resource/settlement *candidates*. Map Studio builds the underlying world data; the settlement view is the player-facing construction layer on top of it. Detailed UX, tile architecture, and implementation path remain OPEN.
 - The legacy generator class is namespaced under `AIManager`, and the automatic terrain wrapper is namespaced under `StarSim`. Do not infer final service ownership or strategic decision authority from these historical class namespaces alone.
 - The older frozen `MAP_SYSTEM.md` and terrain architecture documents contain detailed grid sizes, service inventories, and layer behavior that are not all confirmed by this source pass. In particular, the current automatic generator's diameter-based grid calculation applies minimum and maximum bounds; do not copy older per-body grid-size tables as current guarantees.
 - The current Map Studio controller and generator are substantial existing work, but their output quality, source-data provenance, terrain/elevation semantics, and consistency with the owner-confirmed Map Studio intent still require review. No claim is made here that the full NASA/AI learning pipeline is complete.
