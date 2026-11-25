@@ -316,3 +316,18 @@ This is a focused source snapshot, not a complete audit of every wormhole-relate
 - Which AI Manager actions and Sol corporate research/operations influence the timing and modeled consequences of the Snap.
 
 All numerical values and unverified implementation details remain OPEN.
+## EM fields as a finite local resource and economic supply — ESTABLISHED DIRECTION / OPEN MODEL
+
+**Owner clarification — 2026-11-25**
+
+Natural wormholes are the source of Exotic Matter (EM). A system that had a natural wormhole can retain an EM field that is available for harvesting even after the natural connection has snapped. The residual field is a finite resource: harvesting depletes it, and when it has been exhausted the system no longer has that natural-wormhole-derived EM source. The detailed field persistence, yield, quantity, depletion behavior, and simulation model remain under design and have not been implemented as a complete model.
+
+Both players and AI Manager-operated harvesters can collect EM from these fields. The resource is not reserved for the AI Manager. A system can therefore be economically useful after its natural wormhole has disappeared, even if no permanent settlement or network connection was established there.
+
+EM is needed by AWS stations and portals. Local harvesting and station stockpiles should support local network infrastructure where possible. The WTC coordinates AWS supply and replenishment; if local harvesting and reserves cannot meet requirements, the AI Manager must be able to consider market procurement or imports under the existing economic rules. Harvested EM is not inherently destined for Sol.
+
+The EM field's finite resource inventory must be distinguished from the natural aperture's instantaneous EM ejection and instability indicators. Aperture behavior and the residual system field are related parts of the broader design, but their exact accounting relationship, accumulation, persistence, and depletion mechanics remain OPEN. Do not treat the qualitative EM field around an aperture as a direct countdown or a direct measure of remaining mass capacity.
+
+For the initial EM cost/reference price, the market design has two research paths: defensible real-world comparisons where useful, or a simplified estimate from measurable operating costs where no suitable comparison exists. Once sufficient actual transactions exist, the AI Manager should be able to use market-history averages at an appropriate system or settlement location. See [Markets, EAP, and GCC/USD Peg](../markets/markets_eap_and_peg.md) and [AI Manager Economic Loops](../logistics/ai_manager_economic_loops.md). No EAP applies to EM because there is no Earth reference price.
+
+The field simulation, EM quantities and ejection yields, harvester performance, station/portal consumption, stockpile targets, valuation method, and market-history sufficiency rules remain OPEN. See [EM Numeric Design Questions](em_numeric_design_questions.md) for unresolved physical and infrastructure quantities.
