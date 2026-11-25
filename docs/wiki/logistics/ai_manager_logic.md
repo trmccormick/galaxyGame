@@ -10,7 +10,7 @@ This document is the single canonical wiki entry for AI Manager intent, priority
 
 > **Cross-link:** For how terraforming demand is financed and contracted through the AI Manager (GCC budgets, Seed vs. Brute-Force contracts, Mars-Buyer/Venus-Supplier loop), see **[Terraforming Economic Integration](./terraforming_economic_integration.md)**.
 
-**Related:** For the AI Manager's economic behavior — debt-driven austerity modes, Virtual Ledger clearing between Development Corps, NPC buy/sell bands (80/90%), and stockpile buffer targets — see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
+**Related:** The cross-system operating model connecting infrastructure condition, maintenance and material requirements, industrial operations, missions and ships, markets, and player activity is documented in the [Operational and Economic Feedback Loop](../design/operational_and_economic_feedback_loop.md). For detailed AI Manager economic behavior — debt-driven austerity modes, Virtual Ledger clearing between Development Corps, NPC buy/sell bands (80/90%), and stockpile buffer targets — see **[AI Manager Economic Loops](./ai_manager_economic_loops.md)**.
 
 ---
 
