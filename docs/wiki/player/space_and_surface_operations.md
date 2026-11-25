@@ -17,11 +17,13 @@ References are evaluated at the level of the particular idea they demonstrate: a
 
 **ESTABLISHED INTENT — 2026-11-19; reaffirmed 2026-11-21**
 
-Spacecraft are autonomous operational assets, not player-character avatars. Players assign objectives, destinations, missions, or activity plans remotely when a communication path is available; the player does not need to be aboard or represented by a pilot/character record.
+Spacecraft are autonomous operational assets, not player-character avatars. The player does not pilot or directly steer craft. Players assign destinations, start missions whose plans contain programmed destinations and activities, and may change orders while a mission is underway. The player does not need to be aboard or represented by a pilot/character record.
 
-Craft automation and the AI Manager may continue previously authorized work when the player is away or communication is unavailable, subject to the craft's capabilities and assigned authority. A lost or delayed communication path does not automatically stop an already authorized operation. New instructions and changes cannot be assumed to arrive instantly.
+The player may cancel a mission, issue a single high-level instruction, or provide a revised mission. Examples include rerouting to a location if fuel and other applicable constraints permit, docking at the closest suitable orbital settlement, or stopping at the nearest suitable settlement to refuel. A single instruction should not require the player to manually construct a complete replacement mission. The AI Manager evaluates the instruction against the craft's capabilities, available fuel, route feasibility, and available destination services, then manages execution or reports why it cannot comply. Exact instruction vocabulary and resolution rules remain OPEN.
 
-The UI must distinguish a command or assignment being issued from its receipt, acceptance, execution, and reported completion. It must also distinguish current craft-reported state from the player's last-known information and its age, and from projected future events.
+Craft automation and the AI Manager may continue previously authorized work when the player is away or communication is unavailable, subject to the craft's capabilities and assigned authority. A lost or delayed communication path does not automatically stop an already authorized operation. A newly issued cancellation, instruction, or revised mission is not effective at a remote craft until it can be delivered and acted upon.
+
+The UI and operational model must distinguish a command being issued from its delivery, receipt, acceptance, execution, and reported completion. They must also distinguish current craft-reported state from the player's last-known information and its age, and from projected future events.
 
 ## Space-based operations
 
@@ -102,6 +104,8 @@ A fleet operation can combine an inter-system route with different in-system iti
 
 A reusable preferred route is a navigation plan; it is not by itself a complete fleet work schedule, a guarantee that a connection remains available, or confirmation that a craft can execute it. Activity order, resource handling, dependencies, timing, and rendezvous are part of the operational plan.
 
+The player may set or change a destination/route independently of authoring a complete mission, or may revise the remaining mission plan. A one-time instruction such as "dock at the closest orbital settlement" or "stop at the nearest suitable settlement and refuel" expresses an outcome for the AI Manager to resolve into feasible actions. A reroute is conditional on available fuel and the other applicable travel constraints. The exact feasibility rules and command-resolution behavior remain OPEN; this page does not prescribe route-selection algorithms or UI controls.
+
 A planned arrival or departure time is an estimate or coordination target, not a guarantee. Actual feasibility and execution depend on game rules and current conditions that remain to be defined or verified.
 
 ## Asynchronous execution and communications
@@ -123,7 +127,7 @@ The exact communication protocol, command lifecycle, autonomy limits, and report
 
 **ESTABLISHED INTERFACE DIRECTION — 2026-11-21**
 
-- **Space context:** system-wide awareness and spacecraft-based operations.
+- **Space context:** navigation only—showing craft locations, destinations, inter-system wormhole routes, and in-system itineraries. It is not a general operations dashboard or direct piloting interface.
 - **Player Fleet Manager:** coordinates spacecraft assigned to a shared space operation, including distributed activities, local itineraries, resource movements, and rendezvous.
 - **Player Route Planner:** creates, names, saves, and reuses preferred navigation routes; it does not author the full activity schedule.
 - **Individual Craft Tracking:** follows one spacecraft, its assigned route, status, and reported progress; it is not the fleet-planning or route-authoring workspace.
@@ -142,6 +146,7 @@ The following remain in progress and must not be invented by UI implementation:
 - How resource sale, purchase, transfer, reservation, and supply limits are specified and resolved.
 - How rendezvous readiness, missed rendezvous, and departure windows are evaluated.
 - Exact route availability, pathfinding, travel-time, fuel, and feasibility rules.
+- How single high-level instructions are translated into executable actions, how the AI Manager reports infeasible requests, and which constraints govern mission cancellation or rerouting.
 - Craft autonomy limits, command authority, communications routing, and reporting cadence.
 - The detailed Surface Operations interface and how surface-unit groupings map to underlying game systems.
 - Which shared planning concepts should be implemented as common domain services versus context-specific behavior.
