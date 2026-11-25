@@ -202,3 +202,38 @@ If this composition is incorrect, the conflict should be resolved explicitly rat
 - Stockpile buffer targets and the precise 80/90 numbers need confirmation before code work.
 
 All items not explicitly marked ESTABLISHED remain **DIRECTION** or **OPEN** until accepted.
+---
+
+## EM supply, stockpiles, and location-aware procurement — ESTABLISHED DIRECTION / OPEN DESIGN
+
+**Owner clarification — 2026-11-25**
+
+EM is an operational supply requirement for AWS infrastructure and portals. The WTC coordinates AWS supply so stations can maintain the EM stock they need. Expected station demand should become reasonably predictable once station establishment and operating requirements are quantified. Early harvesting should build station reserves ahead of or during network buildout.
+
+The AI Manager should not rely on players to perform most EM harvesting. It can deploy its own EM harvesters to collect from natural-wormhole-derived fields and supply stations locally. Players remain free to harvest the same fields and sell EM through the normal player market. Player harvesting therefore contributes to supply but is not a prerequisite for AI Manager operations.
+
+When local field supply and station stockpiles cannot meet demand, the AI Manager can use the established economic/procurement paths, including market orders and imports, subject to the existing market rules and its authority/budget constraints. EM does not use EAP because there is no Earth reference price for it.
+
+### Initial cost estimate and market-history transition
+
+The AI Manager needs a usable initial EM cost/reference estimate before meaningful EM market history exists. Two research paths are open:
+
+1. Compare EM with relevant real-world materials, equipment, services, or other economic analogues where comparisons are defensible.
+2. Develop a simplified modeled cost estimate from measurable operating inputs where no useful Earth price comparison exists. Candidate inputs include harvesting time, equipment investment/depreciation, maintenance, fuel, transport, handling, and storage.
+
+No analogue, weighting, formula, or initial value is selected. Once sufficient actual supply-and-demand transactions exist, the AI Manager should use a market-history average as its reference. The reference may need to be specific to a system or settlement because local availability, demand, transport, and market access can differ. History windows, minimum sample requirements, geographic aggregation, and thin-market fallbacks remain OPEN.
+
+This is an AI Manager decision aid, not a player price control. Players set their own listing prices. The AI Manager's own bids, offers, and procurement decisions must follow the existing NPC market design; inspect that implementation before specifying EM behavior. Do not assume an AI Manager reference price forces player listings to that value.
+
+### Stockpile and replenishment gaps
+
+The following quantities and policies remain OPEN:
+- EM required to establish and maintain AWS connections and support stations.
+- Portal ignition and operating consumption.
+- Initial station stockpile targets and replenishment thresholds.
+- Local field yield, finite available inventory, depletion, and harvesting rates.
+- WTC coordination and allocation when multiple stations or consumers need EM.
+- Procurement escalation when local harvesting and reserves are insufficient.
+- Whether and how location-specific market history is selected for a system or settlement.
+
+No EM-specific supply model, station consumption model, WTC replenishment implementation, or pricing algorithm is claimed to exist.
