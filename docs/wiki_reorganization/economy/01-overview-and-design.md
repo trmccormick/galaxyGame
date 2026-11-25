@@ -8,13 +8,13 @@
 
 ## System Architecture
 
-The Galaxy Game economy is a **dual-currency, NPC-first system** with three monetary layers:
+The Galaxy Game economy is a **multi-currency-capable, NPC-first system**. GCC and USD are the initial operating currencies; the financial model is not limited to those two currencies. The current implementation still has GCC/USD-specific paths, documented separately from the broader currency foundation.
 
 | Layer | Currency | Role | Controlled By |
 |-------|----------|------|---------------|
-| Space-side | **GCC** (Galactic Construction Credit) | Primary numeraire; all space pricing | LDC (sole mint authority) |
-| Earth-side | **USD** (US Dollar) | Import/export anchor; spot prices | System (pre-defined) |
-| NPC accounting | **Virtual Ledger** | Inter-NPC debt/credit without GCC transfer | NPCs with overdraft permission |
+| Initial space-side | **GCC** (Galactic Construction Credit) | Initial space-economy numeraire | LDC (GCC-specific mint authority) |
+| Initial Earth-side | **USD** (US Dollar) | Initial import/export anchor; Earth spot-price reference | System (pre-defined) |
+| NPC accounting | **Virtual Ledger** | Per-currency account/credit relationships and deferred settlement | Entities with applicable overdraft/credit authority |
 
 ### Core Design Principles
 
@@ -22,7 +22,7 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 2. **NPC-first economy** — NPC-to-NPC interactions drive market formation; players participate in an already-living economy
 3. **Earth anchor pricing** — all space prices derive from Earth spot prices + transport costs (delta-V); transport is never free
 4. **Price discovery lifecycle** — prices start at EAP and decrease as infrastructure matures, creating a dynamic economy
-5. **Virtual ledger for simulation depth** — NPCs trade on credit without depleting player-accessible GCC pools
+5. **Virtual ledger for simulation depth** — NPCs can record credit/deferred-settlement relationships without treating every obligation as an immediate GCC transfer
 
 ---
 
@@ -33,7 +33,7 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 | `Financial::Currency` | `app/models/financial/currency.rb` | Currency definition (symbol, issuer, precision) |
 | `Financial::Account` | `app/models/financial/account.rb` | Entity currency accounts with overdraft support |
 | `Financial::Transaction` | `app/models/financial/transaction.rb` | Audit trail for all fund movements |
-| `Financial::ExchangeRate` | `app/models/financial/exchange_rate.rb` | Currency pair rates (USD↔GCC) |
+| `Financial::ExchangeRate` | `app/models/financial/exchange_rate.rb` | Currency-pair rates (currently used primarily for USD↔GCC) |
 | `Financial::Bond` | `app/models/financial/bond.rb` | Debt instruments between entities |
 | `LaunchPaymentService` | `app/services/launch_payment_service.rb` | Construction + launch cost payment processing |
 | `Market::NpcPriceCalculator` | `app/services/market/npc_price_calculator.rb` | NPC buy/sell order pricing |
@@ -96,13 +96,13 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 - **GCC is your primary currency** — earn it via mining contracts, material sales, and NPC work orders
 - **EAP is your price ceiling** — if a resource costs more than EAP, NPCs will always import from Earth instead
 - **Infrastructure maturity = lower prices** — as AI Manager builds ISRU pipelines, local production drops below EAP
-- **GCC/USD peg affects your earnings** — early game (1:1), mid game (±10% float), late game (market-driven)
+- **Initial GCC/USD peg affects early-game pricing** — 1:1 is the bootstrap reference, not a rule for every currency or a permanent valuation guarantee
 - **Launch costs scale with mass** — every unit/module/rig adds to total mass × cost_per_kg
 
 ### For Administrators ⚙️
 - **GCC emission schedule**: 250M pre-seeded + 1M GCC/cycle daily from LDC mining satellites
 - **LDC stabilization reserves**: 25% of total GCC supply must be held as reserves
-- **System-wide liquidity floor**: minimum 10% of all currencies in liquid reserves
+- **System-wide liquidity floor**: a documented guardrail for liquid reserves; do not assume all currencies or reserves are interchangeable
 - **NPC overdraft limit**: 50% of asset value (prevents debt spirals)
 - **Player debt ceiling**: 200% of net worth (prevents insolvency)
 - **Interest rate floor**: 2% annual (discourages excessive borrowing)
@@ -113,7 +113,7 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 - **EAP formula**: `EAP = (Earth spot price × refining factor) + transport cost to destination`
 - **Transport rates** (from economic_parameters.yml): bulk=$100/kg, manufactured=$150/kg, high_tech=$200/kg
 - **NPC pricing**: Cost-based (sell_markup=1.05, buy_discount=0.75) and Market-based (sell_markup=1.03, buy_discount=0.77)
-- **GCC has no material entry** — it enters circulation only through LDC minting and pre-seeding
+- **GCC has no material entry** — it enters circulation only under its LDC-specific issuance policy and pre-seeding
 
 ---
 
@@ -151,3 +151,8 @@ The Galaxy Game economy is a **dual-currency, NPC-first system** with three mone
 - **Reserve Threshold:** Maintain minimum 10,000 EM in expansion budget
 - **Reallocation Trigger:** When budget < 10,000 EM, reduce maintenance on low-priority links
 - **Harvesting Priority:** Focus EM extraction on links with highest STE ratios
+
+
+## Currency Scope Note
+
+GCC and USD are the initial operating currencies, not an architectural ceiling. The currency, account, transaction, exchange-rate, and bond concepts are intended to accommodate additional Earth currencies and independently governed local currencies. See [Currency Creation and Local Monetary Operations](./08-currency-creation-and-local-monetary-operations.md) for the design and current implementation boundaries.
