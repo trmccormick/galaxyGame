@@ -108,6 +108,25 @@ The player may set or change a destination/route independently of authoring a co
 
 A planned arrival or departure time is an estimate or coordination target, not a guarantee. Actual feasibility and execution depend on game rules and current conditions that remain to be defined or verified.
 
+**ESTABLISHED INTERFACE DIRECTION — 2026-11-25**
+
+The Player Space workspace is a coordinated navigation and travel-display tool, not a set of general-purpose maps that attempt to display every object at once. Selecting an active fleet, operation, or individual craft establishes the navigation context for all map panes and the right-hand information pane. Each pane must respond to that same selected asset and distinguish its current position from its planned route and destination.
+
+The navigation panes have complementary scopes:
+
+- **Galaxy View:** physical astronomical neighborhood and the selected craft's current system/position at galactic scale, where sourced coordinates are available.
+- **Wormhole Network:** inter-system connectivity and the craft's ordered system route through configured wormhole connections. Do not invent a connection or treat physical proximity as wormhole connectivity.
+- **System View:** star-centered overview for following the craft's ordered in-system itinerary, including planetary, orbital-facility, depot, and other mission stops. Show completed, current, and upcoming stops distinctly.
+- **Planetary System View:** a separate, closer view of the selected craft's current planetary context, showing the relevant planet, its moons in parent-centered relationships, local facilities, and the craft's reported position where available. It is not a second copy of the star-centered System View.
+
+When a mission route exists, the maps show the route's ordered stops at the appropriate spatial scales and separately mark the craft's current reported position and active leg/stop. An in-system mission can have several stops while its inter-system route contains only one system; the absence of a wormhole transition does not make the System View route empty. Route connectors between stop locations are itinerary visualization, not a calculated physical trajectory unless time-dependent trajectory data is explicitly supplied.
+
+When no route is assigned, each applicable pane still shows the craft's reported current position. It must not invent a destination, route, coordinate, or planetary position. Where a current position or neighborhood cannot be established from supplied data, show that the information is unavailable rather than substituting a default or stale location.
+
+The route is sourced from the selected craft's current mission/itinerary, not hardcoded into the JavaScript. The same persistent mission assignment may produce different active itineraries as depots, shipyards, and other infrastructure become available. The interface follows the current itinerary and actual craft state; it does not assume that an original deployment route remains the permanent recurring route.
+
+For coupled transportation, the selected asset's own mission remains distinct. A specialized gas tanker may load at a depot, dock with a cycler for shared transit, undock during destination approach, and complete a separate local delivery. The tanker and cycler therefore have related route events but remain separate craft with separate current positions and mission state.
+
 ## Wormhole reach, unmapped destinations, and system generation
 
 **OWNER-CONFIRMED GAMEPLAY CLARIFICATION — 2026-11-24**
