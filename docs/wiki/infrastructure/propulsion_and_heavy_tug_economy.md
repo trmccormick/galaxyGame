@@ -18,7 +18,7 @@ The current general-purpose spacecraft families defined for the early design bas
 
 **Design heritage is not the same as manufacturing location.** An HLT built at an orbital or planetary shipyard remains an HLT whose architecture retains atmospheric-entry and landing requirements. Conversely, space-built craft that never land can omit those systems and devote their mass, volume, structure, and equipment to space operations. The tug and cycler are examples of this space-only design approach.
 
-The HLT Mk1 is the initial established design. Mk2, Mk3, and later marks are successive versions within the HLT family; later marks continue to retain the HLT's surface-entry and landing design requirement. They can improve range, cryogenic handling, shielding, payload, and other capabilities without becoming equivalent to a purpose-built space-only craft.
+The HLT Mk1 is the initial established design. Newer HLT marks are planned as successive versions within the HLT family; their detailed designs and specifications remain OPEN. Later marks are expected to retain the HLT's surface-entry and landing design requirement while improving range, cryogenic handling, shielding, payload, and other capabilities. They do not become equivalent to a purpose-built space-only craft.
 
 Future space-only families are planned but not yet fully designed. These include dedicated **carriers** and different specialized **harvesters** intended for space construction and operation. They can be substantially larger than surface-capable HLTs because they do not have to accommodate Earth/Mars atmospheric entry and landing. A cycler may temporarily fulfill a carrier role until a dedicated carrier is designed and available; carrier is therefore a capability/operational role, not a permanent reclassification of the cycler.
 
@@ -48,7 +48,7 @@ Unlocks should reflect the capabilities and industrial prerequisites needed to d
 
 ### 1.1 Heavy Lift Transport (HLT) Tiers
 
-The **HLT Mk1 is the only HLT design established for the initial fleet**. Mk2 and Mk3 have been discussed as possible future marks, including in connection with the Titan mission concept below, but their designs and specifications are not yet established.
+The **HLT Mk1 is the only HLT design established for the initial fleet**. Newer HLT marks are planned, including improvements relevant to extended-range and specialized logistics work, but their designs and specifications are not yet established.
 
 | Initial design | Primary Build Site | Established Role / Capability | Thermal & Cryogenic Boundary |
 |-----------------|-------------------|-------------------------------|------------------------------|
