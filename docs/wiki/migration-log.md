@@ -688,3 +688,17 @@ Recorded that EM has no Earth reference price and no EAP. Two initial valuation 
 Added review gaps for market-history sufficiency, geographic aggregation, thin-market fallback, measurable cost inputs, field depletion/ejection, station and portal consumption, stockpile targets, WTC replenishment, and local versus market/import procurement. Existing NPC pricing behavior and fee rules must be reviewed before specifying EM-specific behavior.
 
 This records design intent and open questions only. No EM quantities, pricing formulas, market rules, simulation model, schema, or application code were changed.
+
+### 2026-11-25 — Catalog-informed StarSim routing and uncharted generated regions
+
+Updated [System Blueprints & Procedural Generation](astronomy/system_blueprints.md) to clarify how optional real-star matching and the astronomy services inform StarSim's generation choice:
+
+- When cataloged planetary information is available, retrieve the host-star and planet data and use the hybrid generation/completion path.
+- When a real star is identified but no planetary information is available in the queried catalog, it may optionally anchor a from-scratch generated planetary system. An empty catalog result is not evidence that the star has no planets.
+- When no suitable real star, usable catalog/astrometric data, or desired anchor exists, retain JSON-seed and pure procedural generation as valid paths and final fallback.
+- A generated universe or uncharted region with no known real-world anchors or constellation data remains valid. Future local-bubble generation and later optional catalog pairing are possibilities, not prerequisites. Player-created constellation naming remains outside this work.
+
+Added Eden / Aki Gaia as a future validation example: investigate whether its verified generated stellar properties can be matched to a suitable Milky Way star/neighborhood; route known planetary data to hybrid generation, no known planetary data to optional real-star-anchored generation, and leave it unanchored if no defensible match exists. This does not authorize forced matching, renaming, or treating generated planets as observed.
+
+This is wiki design intent / future direction only. No API client, matching algorithm, confidence threshold, schema, generated system, application code, or runtime behavior changed.
+
