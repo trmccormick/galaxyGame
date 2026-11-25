@@ -702,3 +702,11 @@ Added Eden / Aki Gaia as a future validation example: investigate whether its ve
 
 This is wiki design intent / future direction only. No API client, matching algorithm, confidence threshold, schema, generated system, application code, or runtime behavior changed.
 
+
+### 2026-11-25 — Game-first StarSim plausibility and in-place world refinement
+
+Updated [System Blueprints & Procedural Generation](astronomy/system_blueprints.md) with the owner-confirmed principle that StarSim generates plausible, interesting, playable starting worlds rather than exhaustive or scientifically certified datasets. Real astronomical catalog data is useful enrichment when available, and future improvements to scientific knowledge, templates, algorithms, and catalog integration may improve generation without requiring existing systems to be regenerated.
+
+Recorded the general in-place refinement capability: Admin may review system JSON or saved world records, correct values directly, or arrange follow-up survey missions; player survey findings may also update authoritative saved values. Refinement applies to stars, planets, moons, and other objects, preserves existing bodies and stable identities/relationships, and does not remove planets or regenerate the system merely because values need adjustment. Generated, observed, inferred, and admin-adjusted information should remain distinguishable; the exact provenance/history schema remains OPEN.
+
+This is owner-confirmed design intent, not a claim that all Admin editing, survey-triggered updates, provenance tracking, or generator improvements are implemented. No API task scope, API client, matching algorithm, schema, generated system, application code, or runtime behavior changed. The astronomy API tasks being reviewed separately are unaffected.
