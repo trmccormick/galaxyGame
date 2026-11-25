@@ -75,6 +75,31 @@ Preserve the real catalog identity, identifiers, measured position, coordinate f
 
 These routes are options, not mandatory categories or a fixed progression. A system with extensive real data may still need completion; a sparsely described real star may anchor a from-scratch generated system; and a fully generated fictional star/system remains available when appropriate. Survey and simulation activity can continue to add or spawn objects after initial creation.
 
+
+### Main-game astronomical data integrations: SIMBAD and NASA Exoplanet Archive
+
+**OWNER-CONFIRMED DIRECTION — 2026-11-24**
+
+GalaxyGame should have built-in, reusable integrations with two public astronomical data services. These are intended capabilities of the main game, not merely external research references or a one-time manual import. They should make targeted source data available to StarSim and the mapping/navigation systems when useful.
+
+1. **SIMBAD** — use for astronomical object identity and cross-identification: catalog identifiers and aliases, object classifications, coordinates/astrometry, and available stellar or other object measurements. This is especially useful for finding real stellar anchors, validating identities, and obtaining sourced positions for Galaxy View. SIMBAD is a literature-linked object database, not a complete census of all stars; do not treat absence from SIMBAD as proof that an object does not exist.
+2. **NASA Exoplanet Archive** — use for confirmed exoplanet discoveries and their host-star/system and planet parameters. This can supply known planetary-system information for seed completion, constrain StarSim, and help distinguish systems with observed planets from systems whose planetary architecture must be generated. The archive's confirmed-planet tables are not exhaustive inventories of every planet in a system; a missing planet record is not proof that no other planets exist.
+
+**Intended main-game uses**
+- StarSim can look up a real star, evaluate candidate matches using its known stellar characteristics, and use its real identity and astrometry as an anchor for a system generated from scratch when no useful planetary seed exists.
+- StarSim can enrich and complete an existing real-system seed using known host-star and confirmed-planet information while generating only the unknown content needed for a playable system.
+- Galaxy View and related mapping can use sourced astronomical identities and positions without requiring a complete planetary-system record.
+- System View and survey/discovery mechanics can keep observed catalog information distinct from generated or spawned content and from what the player has discovered.
+
+**Integration scope and data handling**
+- Build these as reusable main-game integrations/services so StarSim and mapping can use the same normalized, source-aware records; do not implement separate ad hoc API calls in each consumer.
+- Use targeted lookups and modest, relevant datasets rather than attempting to ingest either service's entire catalog. Data availability should guide generation and mapping, not become a prerequisite for creating or exploring a system.
+- Retain source identifiers, aliases, source service, retrieval/measurement context, coordinate reference frame and epoch where available, uncertainties, and provenance. Keep observed values separate from generated values; do not overwrite generated simulation history when new catalog information is later found.
+- Treat remote service availability as an enrichment opportunity, not a hard dependency for loading or simulating systems. Cached/retained data and the existing generation paths must remain usable when a service is unavailable.
+- Respect each service's published access guidance and design conservative request behavior, caching, and failure handling.
+
+The service endpoints and query protocols reviewed as suitable starting points are SIMBAD TAP (/simbad/sim-tap/sync, with listed mirrors) and NASA Exoplanet Archive TAP (/TAP/sync). The exact mirror/fallback policy, query set, refresh cadence, cache/storage design, normalization schema, and implementation boundaries remain OPEN. This direction does not authorize bulk ingestion or commit to a specific API client architecture.
+
 ## System starting information, StarSim completion, and ongoing discovery
 
 **OWNER-CONFIRMED DESIGN INTENT — evolving project understanding (2026-11-20).** GalaxyGame is unfinished and its system-generation design is still being explored and adjusted. This page records the current understanding reached while investigating JSON fixture defects; it is not a declaration that the overall StarSim architecture or data-directory layout is final.
