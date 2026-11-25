@@ -489,3 +489,56 @@ The current GCC/USD bootstrap peg and EAP rules remain governed by this page's e
 | Economic config loading pattern | [Data-Driven Systems](../../developer/DATA_DRIVEN_SYSTEMS.md) — YAML/Rails config patterns for economic parameters |
 | Blueprint cost schema | [Blueprint Cost Schema Guide](../../developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) — material → price mapping contract |
 | Market condition persistence | [Financial Engine Component Hints](../logistics/financial_engine.md) — ledger/account model details |
+---
+
+## EM valuation and AI Manager reference pricing — ESTABLISHED DIRECTION / OPEN DESIGN
+
+**Owner clarification — 2026-11-25**
+
+Exotic Matter (EM) is a special resource for market valuation because there is no directly applicable Earth reference price. EM has no Earth market equivalent from which to calculate an Earth Anchor Price (EAP). Do not invent an EAP for EM or treat the absence of an Earth acquisition price as meaning that EM has no economic cost or value.
+
+The intended approach has two paths to investigate for establishing an initial AI Manager cost/reference price:
+
+1. **Real-world price comparisons:** Research whether real-world materials, services, energy-storage/transfer systems, specialized equipment, or other economically relevant analogues can provide useful comparison points. These are research inputs only; no analogue or conversion formula has been selected.
+2. **A modeled cost estimate:** Develop a defensible initial cost estimate for EM where no useful direct price comparison exists. Candidate measurable inputs include harvesting time and labor/operating time, harvester equipment construction and depreciation, maintenance, fuel, transport by mass and route, handling, and storage. Which costs belong in a resource cost floor or AI Manager estimate remains OPEN.
+
+These are alternative or potentially complementary research paths, not approved pricing formulas. Transport cost by mass can be estimated, but transport alone does not establish the value of the resource.
+
+### Transition to market-history pricing
+
+The initial estimate is a bootstrap aid for AI Manager decisions, not a permanent administered player price. As real transactions establish supply-and-demand history, the AI Manager should be able to use an average price derived from that history.
+
+The reference must be usable at the relevant economic location:
+- A system-level reference may be useful where the system has a meaningful shared market history.
+- A settlement-specific reference may be more appropriate where local supply, demand, access, and inventory differ.
+- The appropriate geographic aggregation, history window, minimum transaction volume, treatment of outliers, and fallback when history is thin remain OPEN.
+
+The existing NPC pricing design already distinguishes cost-based bootstrap pricing from market-history-based pricing when a market average is available. Review and reuse that established behavior where appropriate; do not assume the current implementation already supports every desired EM or system-level case. The current market specification describes settlement-oriented history and a default recent-history window. Any broader system/location resolution must be checked against code before being claimed as implemented.
+
+### Player pricing remains independent
+
+Players set their own listing prices. An AI Manager reference price or modeled cost estimate is not a forced player price, price ceiling, or guaranteed sale price. Players may account for their own harvesting and operating costs, choose their own asking prices, and accept the market risk.
+
+A resource that is free to acquire at the source can still carry real operating costs. For EM harvesting, potentially measurable costs include time, equipment investment and wear, maintenance, fuel, transport, handling, and storage. Listing and storage charges also matter: market inventory occupies station or settlement capacity while it remains available for sale. Existing listing-fee, storage-fee, and market rules must be reviewed before specifying how these charges apply; do not invent new fees here.
+
+AI Manager pricing and procurement are distinct from player price-setting. Review the current NPC calculator, order lifecycle, buy/sell behavior, stockpile policy, and procurement paths before refining its EM-specific behavior. The AI Manager may harvest locally, draw on stockpiles, use established internal supply/transfer paths, or procure through markets and imports when local supply is insufficient. It should not depend on players performing most of the harvesting.
+
+### EM supply context
+
+Natural wormholes generate EM. A system that had a natural wormhole can retain a harvestable EM field after the natural connection is gone; harvesting depletes that finite field. Players and AI Manager harvesters may both collect it. EM is needed locally by AWS infrastructure and portals, so harvested EM does not necessarily travel back to Sol. The WTC coordinates AWS supply and replenishment; when local harvesting and stockpiles cannot meet demand, procurement may require market orders or imports.
+
+No EM field simulation, resource quantities, station/portal consumption rates, ejection yields, cost formula, or EM-specific pricing behavior is claimed to be implemented by this documentation.
+
+### OPEN review questions
+
+- Which real-world analogues, if any, provide useful evidence for an initial EM value?
+- What simplified cost-estimation method should be used when no useful analogue exists?
+- Which operating costs belong in the estimate, and how should equipment cost and service life be represented?
+- How should the initial reference be established before EM has meaningful market history?
+- What constitutes sufficient transaction volume and history quality to transition to market-derived averages?
+- Should the AI Manager use settlement-specific, system-level, or fallback broader market averages in each circumstance?
+- How should local scarcity, depleted fields, competing harvesters, transport, storage, and market access affect the AI Manager's procurement decision?
+- Which existing listing, storage, handling, and transaction fees apply to player-held EM inventory?
+- How should the AI Manager's reference price inform its own bids/offers without constraining player-set prices?
+
+This is an owner-confirmed direction for further design and review. It is not a finalized EM pricing algorithm or an implementation claim.
