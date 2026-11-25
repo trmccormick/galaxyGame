@@ -108,6 +108,24 @@ The player may set or change a destination/route independently of authoring a co
 
 A planned arrival or departure time is an estimate or coordination target, not a guarantee. Actual feasibility and execution depend on game rules and current conditions that remain to be defined or verified.
 
+## Wormhole reach, unmapped destinations, and system generation
+
+**OWNER-CONFIRMED GAMEPLAY CLARIFICATION — 2026-11-24**
+
+Wormhole connectivity is not constrained by the currently mapped astronomical catalog, the Local Bubble, physical distance, or whether a destination system already has a complete record in the game library. A wormhole can lead to any location in the game universe. An unmapped or unrecorded destination is not an invalid destination and must not be treated as unreachable merely because GalaxyGame has not cataloged it yet.
+
+This is a game, and its universe is intentionally flexible. Wormhole endpoints may connect already-known systems, real catalog stars that have not yet been mapped by the player, or systems that GalaxyGame generates when needed. A destination can be revealed or instantiated through discovery, travel, scouting, or other game processes. The navigation model must not require every endpoint to exist in a prebuilt Local Bubble fixture or static system list before a route can be represented.
+
+Likewise, GalaxyGame may generate additional nearby stars and systems even when no corresponding real-world catalog record is available in its local data library. Where a real catalog star is selected as the anchor, retain and match its catalog identity and known astronomical properties, then generate a plausible planetary system if observational planetary data is absent or incomplete. Where no real catalog identity is available or intended, the game may generate the star and system. Generated planetary architecture is game content, not a claim that those planets have been observationally confirmed.
+
+A generated system that corresponds to an identifiable real star must be matched to that star's catalog identity rather than represented as a duplicate fictional star. Incomplete real-world data is not a reason to discard a real star or prevent it from becoming a playable system. Preserve provenance so observed stellar facts remain distinguishable from procedurally generated game properties.
+
+The physical astronomy map and the wormhole network remain separate representations. Galaxy View may show only systems with usable physical positions; a system without known coordinates may remain available through a catalog, discovery result, or network endpoint without receiving invented astronomical coordinates. The Wormhole Network may show or resolve a connection to that system independently of its physical map placement. Display-only graph layout coordinates must never be mistaken for real astronomical positions.
+
+Mapping and survey missions can expand a civilization's known astronomical neighborhood. For example, a mapping satellite or survey craft deployed in Eden may be assigned a radius in light-years; the game can populate that region from available real star catalogs, match existing system records, and generate playable systems around catalog stars that lack known planetary data. It may also generate additional game stars where catalog coverage is unavailable or where the game needs them. Mapping is a gameplay path for acquiring and improving knowledge, not a prerequisite for a wormhole to exist or connect to an unmapped destination.
+
+These rules establish flexible game-world behavior, not a requirement to simulate every real star or to limit generation to a specific catalog, radius, or mission type. Detailed discovery, survey, generation, and wormhole mechanics remain subject to their respective game systems.
+
 ## Asynchronous execution and communications
 
 **ESTABLISHED INTENT — 2026-11-21**
