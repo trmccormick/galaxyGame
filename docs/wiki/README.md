@@ -91,7 +91,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 | Page | Notes |
 |------|-------|
 | [StarSim architecture](design/starsim_and_protection_classes.md) | Canonical StarSim generation, unit boundaries, CelestialBody contracts, code reality. PPC/radiation detail: [Starsim & Protection Classes](astronomy/starsim_and_protection_classes.md). |
-| [Gameplay Principles](design/gameplay_principles.md) | GalaxyGame identity and high-level principles for science-grounded, strategic, exploratory, long-horizon, and automated gameplay |
+| [Gameplay Principles](design/gameplay_principles.md) | GalaxyGame identity and high-level principles for science-grounded, strategic, exploratory, long-horizon, and automated gameplay |\n| [Operational and economic feedback loop](design/operational_and_economic_feedback_loop.md) | Cross-system model connecting infrastructure requirements, AI Manager coordination, missions and ships, industrial production, markets, and player activity |
 
 ---
 
