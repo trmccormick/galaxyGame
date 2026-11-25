@@ -118,6 +118,27 @@ GalaxyGame should have built-in, reusable integrations with two public astronomi
 
 The service endpoints and query protocols reviewed as suitable starting points are SIMBAD TAP (/simbad/sim-tap/sync, with listed mirrors) and NASA Exoplanet Archive TAP (/TAP/sync). The exact mirror/fallback policy, query set, refresh cadence, cache/storage design, normalization schema, and implementation boundaries remain OPEN. This direction does not authorize bulk ingestion or commit to a specific API client architecture.
 
+### Game-first plausibility, catalog enrichment, and in-place world refinement
+
+**OWNER-CONFIRMED DESIGN INTENT — 2026-11-25**
+
+StarSim exists to create plausible, interesting, playable star systems and worlds. GalaxyGame is a game, not a scientific certification exercise: an imperfect generated value is not automatically a defect that must block play. The generator's purpose is to provide useful starting worlds, interesting planetary/map opportunities, and enough coherent information to support gameplay. It does not have to produce exhaustive scientific datasets or know every property of every body at initial generation.
+
+Use real astronomical catalog data when it is available and useful. Catalog observations can provide stronger starting values, identify real stars and known planets, and help constrain or improve generated systems. Missing catalog information remains unknown; it is not evidence that an object or planet does not exist. Real data is an enrichment and grounding opportunity, not a requirement for every generated system.
+
+StarSim should also improve over time. Better scientific knowledge, templates, generation algorithms, constraints, and catalog integrations may make future output more accurate and plausible. Improvements to the generator are welcome, but they do not imply that every existing system must be regenerated whenever the generator changes.
+
+**Existing generated systems are expected to remain adjustable in place.** An administrator reviewing a system JSON or its saved world records may identify implausible, inconsistent, incomplete, or otherwise undesirable values. The administrator can correct saved values directly or arrange follow-up in-game survey missions to investigate and refine them. Player survey missions may likewise produce evidence that updates authoritative saved values for the relevant world or other object. This is a general capability, not an Eden-only exception.
+
+The intended refinement behavior is:
+- Update the relevant properties of an existing star, planet, moon, or other object without regenerating the system.
+- Preserve existing celestial bodies, stable identifiers, parent/child relationships, and references. A value correction is not a reason to remove a planet or replace the system.
+- Allow discoveries to fill previously unknown information and allow better evidence to refine earlier generated or inferred estimates.
+- Keep the origin and confidence/context of information understandable: generated starting values, catalog observations, player survey observations, derived/inferred values, and deliberate administrative adjustments should not be silently conflated. The exact provenance/history schema remains OPEN.
+- Treat survey missions as gameplay activities that can trigger updates to the saved world state when their results warrant it; do not require a full system regeneration to apply a finding.
+
+The game need not simulate every uncertainty or demand perfect agreement with real astronomy. Favor coherent, plausible worlds and meaningful gameplay. Where a mismatch matters, it can be addressed through improved generation, catalog enrichment, administrative review, or in-game discovery and refinement. These are complementary ways to improve the same persistent game world.
+
 ## System starting information, StarSim completion, and ongoing discovery
 
 **OWNER-CONFIRMED DESIGN INTENT — evolving project understanding (2026-11-20).** GalaxyGame is unfinished and its system-generation design is still being explored and adjusted. This page records the current understanding reached while investigating JSON fixture defects; it is not a declaration that the overall StarSim architecture or data-directory layout is final.
