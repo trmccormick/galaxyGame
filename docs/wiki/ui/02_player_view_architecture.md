@@ -171,6 +171,8 @@ The System View should retain the richer visual language of the original `System
 
 This is a visual encoding of supplied classifications and measurements, not a substitute for the authoritative physical model.
 
+At the system overview scale, moons are hidden by default. Their parent-relative orbital distances are much smaller than planetary separations and plotting them beside planets makes the system layout misleading. A close zoom into a host world may reveal its moons only when a valid parent relationship and parent-relative orbit are available; unknown-parent moons remain hidden. The overview scale and its fit calculation must exclude moons so their coordinates cannot push planets apart or distort the system framing. The object/line legend and body-classification legend must occupy separate, non-overlapping rows.
+
 ### Craft operation and remote command model
 
 **ESTABLISHED INTENT — 2026-11-19**
