@@ -668,3 +668,12 @@ Recorded their complementary roles: SIMBAD for astronomical identity, cross-iden
 
 The exact API client architecture, mirror/fallback policy, queries, refresh cadence, cache/storage design, and normalization schema remain OPEN. No application code, API clients, catalog imports, or runtime behavior changed.
 
+
+
+### 2026-11-25 — Interconnected operational and economic feedback model
+
+Created [Operational and Economic Feedback Loop](design/operational_and_economic_feedback_loop.md) as a cross-system design-intent page clarifying how infrastructure condition and strategic objectives create operational requirements; how the AI Manager coordinates materials, production, missions, ships, maintenance, construction, procurement, and imports; and how those activities affect market supply, demand, pricing, and player opportunities.
+
+The page connects generic spatial fields and aggregate infrastructure condition to maintenance/expansion requirements without assuming a finalized field schema or fixed mission recipe. It records the industrial dependency chain from raw-material harvesting through processing and fabrication to construction, repair, and replacement; the need to track mobile ships and their in-system movement; and the role of actual inventories, productive capacity, trade, and imports in economic decisions. Player and NPC activity participate in the same evolving economy, while existing authority, currency, market, and internal-transfer rules remain governed by their subsystem specifications.
+
+Added navigation and cross-links from the wiki index, AI Manager logic, and AI Manager economic-loops page. This is owner-confirmed design clarification, not a claim that the complete end-to-end workflow is implemented. Exact schemas, scheduling, market coupling, movement integration, and execution/reconciliation details remain OPEN. No application code, database schema, blueprints, or simulation behavior changed.
