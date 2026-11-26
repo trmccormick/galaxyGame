@@ -770,3 +770,10 @@ Clarified that robotic construction continues sealing and developing the larger 
 
 Crew complement, task division, mining equipment package, shift model, duration, and detailed construction/occupancy safety dependencies remain OPEN. This records owner-confirmed planning intent only; no frozen documents, code, blueprints, or runtime behavior changed.
 
+### 2026-11-26 — Geological Worldhouse preference across worlds
+
+Updated [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to establish the general design preference: where suitable natural geology exists, enclose and adapt that geological volume rather than defaulting to an entirely artificial pressure vessel. This applies across worlds and to suitable features such as lava tubes, caverns, craters, valleys, and canyons; suitability and engineering constraints still govern each site.
+
+Clarified that enclosure, habitation, and atmospheric establishment are distinct capabilities. Sealing a volume does not provide the gases needed to pressurize or condition it. Inflatable or other independently life-supported habitats can provide the earlier habitation step while the larger geological Worldhouse is constructed and atmospheric resources are accumulated and processed. This is a general deployment option, not a Luna-only rule or universal construction requirement.
+
+This records owner-confirmed design intent. It does not resolve every historical sequence or detailed engineering specification, and it does not change frozen documents, code, blueprints, or runtime behavior.
