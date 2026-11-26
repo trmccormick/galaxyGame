@@ -777,3 +777,9 @@ Updated [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to es
 Clarified that enclosure, habitation, and atmospheric establishment are distinct capabilities. Sealing a volume does not provide the gases needed to pressurize or condition it. Inflatable or other independently life-supported habitats can provide the earlier habitation step while the larger geological Worldhouse is constructed and atmospheric resources are accumulated and processed. This is a general deployment option, not a Luna-only rule or universal construction requirement.
 
 This records owner-confirmed design intent. It does not resolve every historical sequence or detailed engineering specification, and it does not change frozen documents, code, blueprints, or runtime behavior.
+
+### 2026-11-26 — Worldhouse as an enclosed site containing ordinary structures
+
+Clarified [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) and [Terraforming Seeds](technical/biology/terraforming_seeds.md): a Worldhouse is the larger enclosed geological area or environmental volume, not one giant building. The intended development is to enclose a suitable area and construct ordinary buildings and facilities inside it, such as habitation buildings, laboratories, factories, warehouses, greenhouses, and utilities. The enclosure provides the broader environmental boundary; individual buildings provide their own functions and need independent pressure vessels, sealed envelopes, or additional environmental controls only where their purpose requires them.
+
+This complements the established incremental-development model: independently life-supported inflatable habitats can support initial occupants while the geological enclosure is constructed and its atmosphere is established. It is owner-confirmed design intent, not an implementation claim. No frozen documents, code, blueprints, or runtime behavior changed.
