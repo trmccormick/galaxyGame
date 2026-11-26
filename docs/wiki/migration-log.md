@@ -838,3 +838,10 @@ Added a Martian example: a MOXIE-like processor can use captured Martian CO2 to 
 Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to clarify that a MOXIE-like CO₂ processor produces both O₂ and CO. Oxygen is a feedstock for subsequent atmosphere conditioning; CO is a separate coproduct that may be captured for compatible downstream industrial processes, stored, or vented through a controlled path when the receiving environment can accept it. CO must not be casually released into occupied breathable Worldhouse space.
 
 Linked this handling model to the existing [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) design, which already records the Venus HLT's CO₂-splitting reaction and its alternative CO destinations: return to the Venus atmosphere by venting, retention in mixed-volatiles cargo, or optional dedicated storage. The shared principle is coproduct routing and mass accounting; the Venus HLT's specific onboard fuel-support fit is not imposed on Worldhouse processors. No code, blueprints, frozen documents, or runtime behavior changed.
+
+
+### 2026-11-26 — Continuous local-atmosphere feed during Worldhouse conditioning
+
+Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to clarify that reaching the initial target pressure and passing seal-integrity verification is the gate to composition conditioning, not the end of local-atmosphere intake. For a Martian Worldhouse, intake/compression equipment can continue drawing additional local atmosphere as feedstock while connected processing, supplementary-gas supply, mixing/circulation, and pressure-management functions progressively adjust the mixture and maintain target pressure.
+
+Documented these as multiple connected functional units attached to a Worldhouse or structure, without fixing an equipment count, physical layout, or blueprint; functions may be combined. A MOXIE-like processor's feed pressure is regulated to its own requirements. No code, blueprints, frozen documents, or runtime behavior changed.
