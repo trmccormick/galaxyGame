@@ -2,7 +2,7 @@
 title: Infrastructure — Master Table of Contents
 category: Infrastructure
 status: Active Index
-last_updated: 2026-11-22
+last_updated: 2026-11-26
 ---
 
 # Infrastructure
@@ -57,6 +57,11 @@ Related engineering and biological controls are documented in [Contamination & B
 Unit-based habitat life support, settlement waste and water recovery, existing processing-unit designs, integrated habitat HVAC assumptions, and facility scaling.
 
 ---
+
+## Worldhouse Engineering
+
+→ [`worldhouse_engineering.md`](./worldhouse_engineering.md)  
+Worldhouse forms, geological enclosure, in-situ construction, incremental occupancy, and the separate atmospheric establishment and conditioning program.
 
 ## Surface Habitats & Power
 
