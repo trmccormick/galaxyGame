@@ -81,6 +81,62 @@ Life-support capacity grows by adding units, not by introducing a new bespoke si
 
 A facility is the structure and operational arrangement that houses the equipment. The units provide the processing capabilities. The player or AI Manager manages capacity, power, maintenance, and resource routing; routine internal appliance operation does not become a separate micromanagement task.
 
+## Atmospheric Life Support and Gas-Balance Management
+
+**Established design intent — general life-support capability (2026-11-26)**
+
+Atmospheric management is a general life-support function, not a Worldhouse-specific feature. Any life-support installation must maintain the atmosphere required by the environment and its occupants or biological processes. This applies at different scales, including crewed spacecraft, orbital stations, submarines, surface habitats, settlement facilities, greenhouses, biological incubation spaces, and enclosed ecosystems. The target atmosphere and required capabilities depend on the installation's purpose; not every installation needs the same equipment or degree of recycling.
+
+The system must account for the combined gas sources and sinks operating in its environment, including:
+
+- Human and animal respiration, which consumes oxygen and produces carbon dioxide.
+- Photosynthesis, which consumes carbon dioxide and produces oxygen when light and biological activity support it.
+- Plant respiration, microbial activity, soil processes, decomposition, and other biological exchanges, which can consume or release gases in different proportions.
+- Industrial processing, gas generation, scrubbers, chemical reactions, and other equipment that consume, produce, capture, or transform gases.
+- Leakage, venting, external intake, material interactions, and other exchanges with the surrounding environment.
+
+The presence of plants or other photosynthetic organisms does not guarantee a stable breathable atmosphere. Biological and chemical activity can shift oxygen and carbon-dioxide levels in unexpected directions; the system must respond to the actual net balance rather than assume a fixed biological contribution.
+
+### Required functional capabilities
+
+A life-support system's functional scope may include:
+
+- Monitoring atmospheric composition, pressure, and relevant environmental conditions.
+- Circulating atmosphere through treatment and processing equipment.
+- Removing excess carbon dioxide and other contaminants.
+- Supplying or generating oxygen and other required gases.
+- Adding or removing controlled gases as their concentrations move away from target ranges. For example, excess oxygen may need to be captured or removed, while carbon dioxide may need to be replenished when photosynthesis or other processes reduce it below its target.
+- Recovering useful gases and routing them to compatible consumers, processing, storage, or controlled exhaust.
+- Maintaining gas inventories and reserve capacity where the installation requires storage.
+- Coordinating gas additions and removals with total pressure and the desired atmospheric mixture.
+- Providing appropriate backup or emergency capabilities when normal equipment is unavailable.
+
+These are functional responsibilities, not a requirement for a separate machine for every operation. Capabilities may be combined in equipment units or distributed among connected units. Storage, regeneration, consumables, venting, and resupply strategies can differ substantially between a short-duration spacecraft, a submarine, a long-duration station, and a large biological enclosure.
+
+### Real-world engineering precedents
+
+These systems illustrate different operating strategies and should be treated as references, not as a checklist of machinery to reproduce:
+
+| Precedent | Useful design lesson |
+|---|---|
+| **International Space Station (ISS)** | Oxygen generation, carbon-dioxide removal and reduction, water recovery, contaminant control, and monitoring are distinct but coordinated functions. The system is not perfectly closed and still relies on external supplies. |
+| **Crewed spacecraft** | Limited mass, volume, power, and mission duration drive compact systems, stored gas supplies, regenerable or replaceable scrubbers, and carefully chosen venting or resupply strategies. |
+| **Submarines** | Long-duration occupied environments require continuous atmosphere monitoring, oxygen supply, CO₂ removal, contaminant control, and emergency fallback provisions. |
+| **Biosphere 2** | Large ecosystems have complex biological and chemical gas exchanges. Soil microbes and material interactions can upset atmospheric balances; vegetation alone does not guarantee stable oxygen and CO₂ levels. |
+
+### GalaxyGame gameplay abstraction
+
+GalaxyGame should represent the meaningful system-level consequences without simulating every valve, filter element, chemical reaction, or control loop. The gameplay model should focus on:
+
+- Required atmospheric targets and acceptable operating ranges.
+- Net gas production and consumption from occupants, biological systems, and installed equipment.
+- Processing and replenishment capacity, including power and maintenance requirements.
+- Gas inventory, useful byproducts, storage limits, and resupply or external-feedstock dependencies where relevant.
+- Whether the system can respond quickly enough to changing demand, biological activity, equipment failure, or leakage.
+- Environmental status and consequences when the system cannot maintain required conditions.
+
+The player or AI Manager should make meaningful decisions about capacity, equipment selection, power, maintenance, resource routing, reserves, and system reliability. Routine internal operation of individual appliances should normally be handled by the simulation. Different installations can use different simplified equipment configurations while sharing these underlying life-support principles.
+
 ## Simulation Boundary
 
 The intended level of detail is a simplified but connected engineering and resource simulation. Track the consequences that matter to settlement operation: resource inputs and outputs, power, capacity, efficiency, maintenance, and useful byproducts. Do not simulate every internal component or environmental-control variable when its effects can be represented by the habitat or unit's overall operating balance.
