@@ -46,6 +46,8 @@ Extraction economics, Earth atmosphere baseline, and Venusian-analog harvesting 
 
 Planetary protection protocols, environmental governance frameworks, and ecological compliance rules for colonization activities across celestial bodies. Governs Class-0 sanctuaries and atmospheric caps.
 
+Related engineering and biological controls are documented in [Contamination & Biosafety](./contamination_and_biosafety.md), which covers screening, containment, residual risk, Seeds, Bio-Nurseries, and Worldhouses without duplicating the broader governance policy.
+
 ---
 
 ## Life Support & Waste Recycling
