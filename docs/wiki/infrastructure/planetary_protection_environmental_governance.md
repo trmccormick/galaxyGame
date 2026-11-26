@@ -6,6 +6,8 @@
 > **STATUS: DESIGN INTENT ONLY — TARGET DESIGN INTENT**
 > This document specifies target gameplay mechanics, regulatory rules, and architectural integration hooks for StarSim, `NpcPriceCalculator`, and `AutonomousConstructionManager`. Governance caps (extraction rate limits, sanctuary blocks, quarantine requirements), policy toggles, and contamination frameworks described herein are **TARGET DESIGN INTENT ONLY** — they represent the intended simulation law and are NOT currently implemented in the codebase.
 
+For the focused engineering and biological treatment of screening, containment, residual contamination risk, Seeds, Bio-Nurseries, and Worldhouses, see [Contamination & Biosafety](./contamination_and_biosafety.md). This page remains the broader planetary policy and governance authority.
+
 ## 1. Overview & Policy Directives
 The **Planetary Protection and Environmental Governance Framework** establishes physically grounded rules governing resource extraction, contamination management, and terraforming across Sol and procedural star systems within StarSim.
 
