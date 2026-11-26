@@ -485,9 +485,9 @@ The current GCC/USD bootstrap peg and EAP rules remain governed by this page's e
 
 | Topic | Deep Spec |
 |-------|-----------|
-| NPC pricing internals & EAP enforcement | [AI Manager Role Spec](../../architecture/ai_manager/AI_MANAGER_ROLE.md) — player-first economy layer, EAP ceiling rules |
-| Economic config loading pattern | [Data-Driven Systems](../../developer/DATA_DRIVEN_SYSTEMS.md) — YAML/Rails config patterns for economic parameters |
-| Blueprint cost schema | [Blueprint Cost Schema Guide](../../developer/BLUEPRINT_COST_SCHEMA_GUIDE.md) — material → price mapping contract |
+| NPC pricing internals & EAP enforcement | `docs/architecture/ai_manager/AI_MANAGER_ROLE.md` — player-first economy layer, EAP ceiling rules |
+| Economic config loading pattern | `docs/developer/DATA_DRIVEN_SYSTEMS.md` — YAML/Rails config patterns for economic parameters |
+| Blueprint cost schema | `docs/developer/BLUEPRINT_COST_SCHEMA_GUIDE.md` — material → price mapping contract |
 | Market condition persistence | [Financial Engine Component Hints](../logistics/financial_engine.md) — ledger/account model details |
 ---
 

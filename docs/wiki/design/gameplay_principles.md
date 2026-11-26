@@ -1,5 +1,9 @@
 # Gameplay Principles
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* High-level design principles harvested from legacy references; cross-checked against current gameplay direction without code verification.
+
 > **Wiki section:** Design & Architecture · **Status:** DIRECTION — harvested from legacy design reference and reconciled with current owner direction  
 > **Last Updated:** 2026-11-21
 
@@ -80,4 +84,4 @@ The principles above are high-level direction. They do not independently establi
 - Universal automation authority or instantaneous remote control.
 - The detailed simulation fidelity required for every planetary or astronomical process.
 
-Those details remain governed by the current topic pages, owner-confirmed decisions, and code review. Older documents may contain proposals or assumptions that are not adopted; consult the [Migration Log](../migration-log.md) for source-by-source disposition.
+Those details remain governed by the current topic pages, owner-confirmed decisions, and code review. Older documents may contain proposals or assumptions that are not adopted; consult the [Migration Log](../migration_log.md) for source-by-source disposition.

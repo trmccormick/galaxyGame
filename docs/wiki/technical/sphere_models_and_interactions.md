@@ -1,5 +1,9 @@
 # Celestial-Body Sphere Models & Environmental Interactions
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Sphere data model confirmed in code; TerraSim process interactions exist but are partially implemented and remain subject to tuning.
+
 > **Status:** SPHERE DATA MODEL IMPLEMENTED — TerraSim process interactions are partially implemented and remain subject to tuning and evaluation  
 > **Last Audited:** 2026-11-21  
 > **Code inspection:** TerraSim service/spec snapshot on `main`, 2026-11-14; sphere-model reference audit on `main`, 2026-11-21

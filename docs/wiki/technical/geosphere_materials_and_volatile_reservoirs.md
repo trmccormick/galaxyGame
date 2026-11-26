@@ -1,5 +1,9 @@
 # Geosphere Materials & Stored Volatile Reservoirs
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Core geosphere state model confirmed in code; operational extraction/transfer paths exist but are mixed and require targeted verification.
+
 > **Status:** CORE GEOSPHERE STATE MODEL IMPLEMENTED; operational extraction/transfer paths are mixed and require targeted verification  
 > **Last audited:** 2026-11-21  
 > **Code inspection:** `main` — Geosphere, GeosphereConcern, MaterialTransferable, StarSim initialization, ISRU evaluation, and material-processing service

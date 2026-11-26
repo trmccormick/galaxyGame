@@ -12,7 +12,7 @@ This page is the wiki home for the state of the Eden system after the Snap / dis
 
 The state of Eden when players first reach it is **not pre-scripted**. It emerges from the same AI Manager survival loops that run everywhere else, applied under the physical conditions created by the Snap.
 
-**Eden system selection (owner-confirmed, 2026-11-19):** Eden is the system selected for the expansion/terraforming opportunity, not a permanent commitment to one particular generated-system file. Its essential requirement is that it offer better terraforming targets than Sol. The currently used generated candidate (`AOL-732356`) may be adjusted or replaced by another dynamically generated system if a better candidate is needed. Sol remains the primary map whose existing data has special preservation importance; other generated systems are replaceable. See [System Blueprints & Procedural Generation](../astronomy/system_blueprints.md#system-map-importance-replaceability-and-eden-selection).
+**Eden system selection (owner-confirmed, 2026-11-19):** Eden is the system selected for the expansion/terraforming opportunity, not a permanent commitment to one particular generated-system file. Its essential requirement is that it offer better terraforming targets than Sol. The currently used generated candidate (`AOL-732356`) may be adjusted or replaced by another dynamically generated system if a better candidate is needed. Sol remains the primary map whose existing data has special preservation importance; other generated systems are replaceable. See [System Blueprints & Procedural Generation](../astronomy/system_blueprints.md).
 
 ---
 

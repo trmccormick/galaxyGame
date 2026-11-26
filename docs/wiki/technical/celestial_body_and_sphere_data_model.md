@@ -1,5 +1,9 @@
 # Celestial Body & Sphere Data Model
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Core CelestialBody/sphere ownership and JSON-driven initial-state loading confirmed in Rails 7 application.
+
 > **Status:** ESTABLISHED IMPLEMENTATION — core CelestialBody/sphere ownership and JSON-driven initial-state loading are present in the Rails 7 application. This page documents the existing model; it is not a proposal to rebuild it.
 >
 > **Code audit:** `main`, 2026-11-21

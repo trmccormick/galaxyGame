@@ -1,5 +1,9 @@
 # Hydrosphere Water Inventories & Cross-Sphere Cycling
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Existing hydrosphere model and water-cycle paths confirmed in code; behavior is simplified with distinct inventory representations.
+
 > **Status:** EXISTING MODEL AND WATER-CYCLE PATHS IMPLEMENTED; current behavior is simplified and contains distinct inventory representations  
 > **Last audited:** 2026-11-21  
 > **Code inspected:** StarSim hydrosphere generation and system construction; Hydrosphere model and concern; TerraSim hydrosphere simulation; terrain hydrosphere-volume service

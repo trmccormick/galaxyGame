@@ -1,6 +1,6 @@
 # Terraforming Options
 
-> **Code Alignment Status:** `PARTIALLY VERIFIED`  
+> **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-21  
 > *Audit Summary:* Raw atmospheric intake composition was cross-checked against the current `TerraSim::AtmosphericTransferService`; this does not verify the complete terraforming option set, economics, limits, or production cargo workflow.
 

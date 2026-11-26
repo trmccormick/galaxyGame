@@ -386,7 +386,7 @@ The term "Epstein Drive" has been removed from all active documentation to preve
 | [Unit & manufacturing blueprints](../engineering/unit_and_manufacturing_blueprints.md) | Unit tick-level execution — the micro-simulation that operates within the StarSim-generated canvas |
 | [Scenario: Super-Mars](../astronomy/scenario_super_mars.md) | Stress-test scenario exercising moonless colonization, asteroid interception, orbital staging |
 | [Planetary Protection & Environmental Governance](../infrastructure/planetary_protection_environmental_governance.md) | Complete protection class hierarchy (TARGET DESIGN INTENT — no runtime enforcement exists) |
-| [Status and gaps](../status-and-gaps.md) | Tracks wiki coverage posture; this page fills the StarSim/protection gap |
+| [Status and gaps](../status_and_gaps.md) | Tracks wiki coverage posture; this page fills the StarSim/protection gap |
 
 ---
 

@@ -40,7 +40,7 @@ Map Studio is an Admin tool in the connected planetary-data pipeline. It support
 
 Map Studio and Digital Twin have different responsibilities: Map Studio concerns planetary data and geography preparation; Digital Twin concerns environmental projection, evaluation, and simulation-system tuning (see below).
 
-Map Studio is retained as an Admin capability. The legacy Rails 7 route and controller action set are source-verified: `GET /admin/map_studio` (index), `GET /admin/map_studio/generate`, `POST /admin/map_studio/generate_map`, `GET /admin/map_studio/browse`, `POST /admin/map_studio/apply_map/:id`, and `GET /admin/map_studio/analyze/:id`. Whether the current Admin navigation exposes every entry point is a separate UI check. See the code snapshot below and [Status and gaps](../status-and-gaps.md).
+Map Studio is retained as an Admin capability. The legacy Rails 7 route and controller action set are source-verified: `GET /admin/map_studio` (index), `GET /admin/map_studio/generate`, `POST /admin/map_studio/generate_map`, `GET /admin/map_studio/browse`, `POST /admin/map_studio/apply_map/:id`, and `GET /admin/map_studio/analyze/:id`. Whether the current Admin navigation exposes every entry point is a separate UI check. See the code snapshot below and [Status and gaps](../status_and_gaps.md).
 
 ### Map Studio — current Rails 7 implementation snapshot
 

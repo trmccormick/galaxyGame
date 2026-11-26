@@ -2,7 +2,8 @@
 
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Updated:* 2026-11-22  
-> *Page role:* Owner-confirmed design intent for habitat life support, settlement waste processing, and the unit-based resource flows connecting them. Blueprint examples are not, by themselves, proof that every operational connection is implemented.
+> *Last Audited:* 2026-11-22
+> *Audit Summary:* Page role and design intent confirmed by owner; operational connections between units, cargo, and blueprints remain to be verified in code.
 
 ## Established Intent — Unit-Based Simulation (2026-11-22)
 

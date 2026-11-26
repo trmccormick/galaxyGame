@@ -448,7 +448,7 @@ The `mission_manifest` defines initial deployment state:
 | [Station construction options](./station_construction_options.md) | Station-level assembly pipeline; consumes blueprints as input modules |
 | [System blueprints (astronomy)](../astronomy/system_blueprints.md) | StarSim initialization - distinct from constructible-unit schemas documented here |
 | [AI Manager logic](../logistics/ai_manager_logic.md) | AI scheduling consumes blueprint yields and dependency DAGs to drive production decisions |
-| [Status and gaps](../status-and-gaps.md) | Tracks wiki coverage posture; this page fills the unit/blueprint gap |
+| [Status and gaps](../status_and_gaps.md) | Tracks wiki coverage posture; this page fills the unit/blueprint gap |
 | [ISRU fabrication chain](../technical/isru_fabrication_chain.md) | Downstream ISRU material processing feeds into manufacturing pipelines |
 
 ---

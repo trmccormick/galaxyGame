@@ -1,4 +1,4 @@
-> **Wiki section:** Technical · **Status:** needs review against current game (failure counts in body may be stale — see status-and-gaps.md)
+> **Wiki section:** Technical · **Status:** needs review against current game (failure counts in body may be stale — see status_and_gaps.md)
 
 # System Commands
 
@@ -16,7 +16,7 @@ All simulation-driving commands are subject to the project's contribution guardr
 
 - **No blind `git add .`** before or after running simulation commands that alter seed/state data.
 - Console outputs that reveal new constant drift or unexpected state transitions **must be documented** in this wiki before committing.
-- If a command exposes a regression against the current failure baseline, note it on [Status and gaps](../status-and-gaps.md) — do not paper over it with a seed reset only.
+- If a command exposes a regression against the current failure baseline, note it on [Status and gaps](../status_and_gaps.md) — do not paper over it with a seed reset only.
 
 ---
 

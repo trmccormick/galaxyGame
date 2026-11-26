@@ -73,7 +73,7 @@ Galaxy Game is a long-term **settlement, logistics, and expansion simulation** â
 
 1. **Solar / System View:** Renders configured celestial bodies and basic navigation framework.
 2. **Body Inspection:** View mass, atmosphere, and surface parameters once seeded.
-3. **Simulated Loops:** Advanced industry, multi-tier logistics, financial engines, and AI Manager automation are actively being wired into the client. Consult topic guides under [`player/`](../README.md#player) and [`development/`](../README.md#development) for documented specs vs. active UI state.
+3. **Simulated Loops:** Advanced industry, multi-tier logistics, financial engines, and AI Manager automation are actively being wired into the client. Consult topic guides under [`player/`](../README.md#player) and [`development/`](../README.md) for documented specs vs. active UI state.
 
 ---
 

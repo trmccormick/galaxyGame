@@ -1,5 +1,9 @@
 # Titan Elevation Data Generation
 
+> **Code Alignment Status:** `PARTIALLY IMPLEMENTED`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Pipeline for Titan elevation data partially confirmed; retained intermediate files exist.
+
 **Status: PARTIALLY IMPLEMENTED**  
 **Scope:** Historical construction and current availability of Titan's elevation data. This page records the known pipeline and evidence without treating retained intermediate files as disposable or declaring an untraced variant canonical.
 

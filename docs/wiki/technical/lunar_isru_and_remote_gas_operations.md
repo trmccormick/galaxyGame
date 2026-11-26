@@ -1,5 +1,9 @@
 # Lunar ISRU and Remote Gas Operations
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Design intent confirmed for lunar ISRU workflows; not all described operational connections verified in code.
+
 > **Status:** Consolidated design intent with historical-source reconciliation. This page harvests operational details from older Luna ISRU and base-establishment references. It does not claim that every described workflow is implemented.
 >
 > **Scope:** Surface volatile extraction, gas buffering and separation, infrastructure routing, remote atmospheric-gas deliveries, and the operational decisions needed to sustain the Luna base.

@@ -1,6 +1,10 @@
 # TerraSim — Environmental Simulation, Calibration & Evolution
 
-> **Status:** DESIGN INTENT — foundational direction for future evaluation and tuning  
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Foundational direction for evaluation and tuning confirmed by owner.
+
+> **Status:** DESIGN INTENT — foundational direction for future evaluation and tuning
 > **Last Updated:** 2026-11-14
 
 ## Purpose

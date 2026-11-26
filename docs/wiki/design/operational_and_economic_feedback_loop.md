@@ -1,5 +1,9 @@
 # GalaxyGame Operational and Economic Feedback Loop
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Cross-system operating model confirmed by owner; detailed subsystem rules remain subject to individual code verification.
+
 > **Status:** OWNER-CONFIRMED DESIGN INTENT — cross-system operating model; implementation and detailed subsystem rules remain subject to their individual verification status.
 >
 > This page explains how the simulation's infrastructure, AI Manager, missions, ships, industrial operations, markets, and players affect one another. It is an architectural orientation page, not a replacement for the detailed subsystem specifications.

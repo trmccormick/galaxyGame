@@ -107,7 +107,7 @@ The retired developer documents are harvest sources, not current design authorit
 
 Other retired UI documents contain proposed terraforming controls, time controls, and layouts that have not been established as current intent. Do not carry those proposals into the future Celestial Body View without owner review. Preserve the conflict as historical context; do not silently reinterpret the old three-panel description as the approved future layout.
 
-The retired developer documents remain untouched. Harvest and conflict status are tracked in [Migration Log](../migration-log.md).
+The retired developer documents remain untouched. Harvest and conflict status are tracked in [Migration Log](../migration_log.md).
 
 ## 6. Open design questions
 

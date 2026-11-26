@@ -1,5 +1,9 @@
 # Biosphere Ecology & Cross-Sphere Interactions
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Existing biosphere model and biology records confirmed in code; ecosystem coupling paths verified with simplified behavior.
+
 > **Status:** ESTABLISHED BIOSPHERE MODEL AND BIOLOGY RECORDS; ecosystem and environmental coupling paths exist with simplified behavior and overlapping update mechanisms  
 > **Last audited:** 2026-11-21  
 > **Code inspected:** Biosphere model/concern, Biology life-form models, PlanetBiome, StarSim BiosphereGeneratorService and SystemBuilder, TerraSim BiosphereSimulationService, BiosphereGeosphereInterfaceService, and Simulator

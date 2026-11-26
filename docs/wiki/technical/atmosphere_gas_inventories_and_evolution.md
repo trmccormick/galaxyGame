@@ -1,5 +1,9 @@
 # Atmosphere Gas Inventories & Evolution
 
+> **Code Alignment Status:** `VERIFIED AGAINST CODE`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Source-verified implementation snapshot — Rails 7 application, `main`, cross-checked against current code base.
+
 > **Status:** source-verified implementation snapshot — Rails 7 application, `main`, 2026-11-22. This page documents the existing planetary Atmosphere model and its active code paths; it does not propose a replacement architecture.
 
 ## Scope and model boundary

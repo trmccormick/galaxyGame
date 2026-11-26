@@ -6,7 +6,7 @@
 
 **Status**: DIRECTION  
 **Last Updated**: 2026-11-19  
-**Related**: [TerraSim](terrasim.md), [StarSim and Protection Classes](../design/starsim_and_protection_classes.md), survey / system-property calibration notes in [status-and-gaps.md](../status-and-gaps.md)
+**Related**: [TerraSim](terrasim.md), [StarSim and Protection Classes](../design/starsim_and_protection_classes.md), survey / system-property calibration notes in [status_and_gaps.md](../status_and_gaps.md)
 
 This page records the intended rules for when and where mineral, ice, and volatile deposits can appear. Deposits are evaluated lazily when a survey action is performed; they are never pre-seeded across an entire body.
 
