@@ -25,47 +25,43 @@ The Stage 1–5 table below is historical/candidate design, not a required progr
 
 ---
 
-## 1. Seed and Worldhouse Roles
+## 1. Structure, Use, and Terraforming-Seed Programs
 
-Terraforming Seeds and Worldhouses are related biological and structural capabilities, not mutually exclusive structure categories. They can share construction technology, including structural shells, power generation, environmental controls, and life-support systems.
+A **Worldhouse is a physical structure**: an engineered, pressurized environmental volume built around or within a suitable geological feature. A **terraforming seed is a planned biological use or program**, not a competing structure type. It describes what people intend to do with suitable infrastructure and biological systems to contribute to a world's biosphere.
 
-**ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself be used as a terraforming seed. A Worldhouse is not limited to human habitation, and it should not be documented as categorically separate from biological terraforming. Its role depends on its configuration and intended use.
+**ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself be used as a terraforming seed. It can also be mixed use. Human habitation, biological research, incubation, contained ecosystem development, and a terraforming-seed program are compatible purposes when the structure's design, internal organization, resources, and operating controls support them.
 
-### Role Distinctions
+### Keep the Design Layers Distinct
 
-| Capability | Description |
-|-----------|-------------|
-| **Terraforming Seed function** | A biological deployment/development purpose: incubating, adapting, preparing, or using organisms for an intended contribution to a world's biosphere. |
-| **Worldhouse structure** | An engineered, pressurized environmental structure built around or within a suitable geological feature. |
-| **Worldhouse used as a Seed** | A Worldhouse configured to support biological incubation, contained development, or another deliberate terraforming-seed purpose. |
-| **Human-habitation Worldhouse** | A Worldhouse configured primarily to support people and any contained biological environment needed for that habitat. It is not automatically a terraforming project. |
+| Layer | What it describes | Examples |
+|---|---|---|
+| **Structure** | The physical asset that is constructed. | Worldhouse, another suitable enclosed facility, or a collection of facilities. |
+| **Use / mission purpose** | What the structure or facility is intended to do. | Human habitation, research, biological incubation, ecosystem development, terraforming-seed program. |
+| **Biological program** | The organisms and processes being hosted, studied, adapted, or prepared. | Simple-life work, adaptation, incubation, ecological development. |
+| **Internal organization** | How the structure supports multiple uses safely and practically. | Shared utilities, dedicated zones, environmental separation, containment boundaries, independent controls where needed. |
+| **Planetary interaction** | Whether contained activity is deliberately connected to the external environment. | Continued containment, controlled exchange, or an intentional release operation. |
 
-A Worldhouse may support human habitation, contained biological development, a seed function, or multiple roles over time. Not every Worldhouse must be a Seed, and not every Seed must be a Worldhouse.
+These layers should not be collapsed into a single Seed/Worldhouse choice. A Worldhouse may be human-habitation only, biology-focused, or mixed use. A Seed program may use a Worldhouse, a Bio-Nursery hosted within one, another suitable structure, or multiple facilities. Not every Worldhouse has a terraforming-seed purpose, and a seed program does not inherently require a Worldhouse.
+
+### Mixed-Use Worldhouses
+
+Mixed use is an ordinary supported design possibility, not an exception or separate Worldhouse subtype. One Worldhouse may combine habitation, research, biological incubation, contained ecosystem development, and seed-program work.
+
+Those functions may share structural systems, power, environmental processing, and life-support infrastructure. Where their requirements differ, the internal design may need distinct zones, environmental conditions, access rules, containment boundaries, or dedicated systems. The exact zoning model and engineering requirements remain to be established; do not assume that every function needs a fully independent life-support plant or that all functions can safely share one undivided volume.
+
+A Worldhouse's role should therefore be described by its configured uses and internal organization, rather than by assigning it one exclusive label such as "habitat" or "Seed."
 
 ### Containment and Planetary Effects
 
 A sealed Worldhouse creates a local environment. Organisms and biological processes inside it do not automatically alter the external planetary atmosphere or open biosphere. The contained environment and the planetary biosphere must remain distinct in the model.
 
-A Worldhouse used as a terraforming seed may prepare organisms or biological systems for an intended later interaction with the external environment. Any deliberate release or external coupling is a separate operation with its own environmental and biosafety considerations. The fact that a Worldhouse can serve as a Seed does not imply that all Worldhouses release organisms or directly modify planetary spheres.
+A seed program hosted in a Worldhouse may incubate, adapt, research, or prepare organisms for a possible later interaction with the external environment. Any deliberate release or external coupling is a separate operation with its own environmental and biosafety considerations. Mixed use does not itself imply release, and human occupancy does not automatically make a Worldhouse a terraforming project.
 
-### Shared Construction and Biological Infrastructure
+### Bio-Nurseries and Shared Infrastructure
 
-| Component or capability | Seed function | Worldhouse |
-|--------------------------|---------------|------------|
-| Structural shell / enclosure | May use a small or purpose-built enclosure. | Provides the pressurized structural environment. |
-| Power generation | Sized to the facility and biological operation. | Sized to structural, environmental, and habitat demands. |
-| Life support / environmental control | Supports organisms and personnel as required by the design. | Supports its intended internal environment and occupants. |
-| Incubation and adaptation | May be provided directly or through a Bio-Nursery. | May host or support biological incubation and adaptation when configured for that role. |
-| Containment and release controls | Depend on payload and intended deployment path. | Depend on contained organisms, facility role, and any intended external release pathway. |
+A Bio-Nursery describes a biological incubation/adaptation capability and may be implemented as a standalone facility or hosted within a suitable larger structure, including a mixed-use Worldhouse. It is not automatically a separate structure class or a mandatory component of every seed program.
 
-The exact equipment packages, cost differences, and facility boundaries are not established by this conceptual relationship.
-
-### When to Use Each Role
-
-- Use a Seed function when biological development or deployment is intended to contribute to the destination's biosphere.
-- Use a Worldhouse when a pressurized local environment is needed around a suitable geological feature.
-- Use a Worldhouse as a Seed when its configuration and operating purpose include biological incubation, adaptation, preparation, or another deliberate terraforming role.
-- A Worldhouse used only for human habitation or contained ecology does not automatically become a planetary terraforming project.
+Structural shell, power, environmental control, life support, and containment are infrastructure capabilities that may be shared or separated according to the actual uses and risks. The exact equipment packages, zoning, facility taxonomy, costs, and boundaries remain unresolved.
 
 For contamination and containment principles, see [Contamination & Biosafety](../../infrastructure/contamination_and_biosafety.md). For the structural and environmental boundary of Worldhouses, retain the distinction between local enclosed conditions and planetary-scale sphere changes.
 
@@ -103,9 +99,9 @@ Environmental stepping means the organism experiences incremental local conditio
 
 ---
 
-## 3. Bio-Nursery Dome Categories
+## 3. Bio-Nursery Facility Concepts
 
-Bio-Nursery Domes are the **physical infrastructure** where Seed payloads are incubated and adapted before release. Each category is optimized for a specific planetary environment.
+The following dome categories are historical/candidate physical-facility concepts for incubation and adaptation. They are possible infrastructure used by a seed program, not definitions of what a Seed is. A Bio-Nursery capability may be standalone or hosted within a suitable mixed-use Worldhouse. The specific facility form and environmental separation depend on the program and are not finalized.
 
 ### Category Definitions
 
@@ -130,7 +126,7 @@ The Digital Twin evaluates which dome type to construct based on:
 
 ### Top-Down Pipeline (Human-Directed)
 
-The AI Manager **directly designs** organisms by specifying target traits:
+The AI Manager or a human-directed biological program **directly designs** organisms by specifying target traits:
 
 ```ruby
 # Example: engineer a custom organism for Mars conditions
@@ -173,7 +169,7 @@ deployment = biosphere.deploy_life_form(cyano, initial_coverage: 5.0)
 
 ### Pipeline Choice in Digital Twin Projections
 
-The AI Manager evaluates which pipeline to use for each Seed stage:
+The biological program evaluates which pipeline to use for each selected stage or activity:
 
 | Criterion | Top-Down Preferred | Bottom-Up Preferred |
 |-----------|-------------------|---------------------|
@@ -213,7 +209,7 @@ rank_score *= (1 - residual_risk.contamination_weight)
 rank_score *= confidence
 ```
 
-The AI Manager posts market orders for the **highest-ranked project** — whether that is a Terraforming Seed, Worldhouse, atmospheric intervention, or orbital asset.
+The AI Manager posts market orders for the **highest-ranked project** — whether that is a biological program and its required infrastructure, a Worldhouse with one or more uses, an atmospheric intervention, or an orbital asset.
 
 ---
 
