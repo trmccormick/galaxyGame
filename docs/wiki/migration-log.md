@@ -831,3 +831,10 @@ For sites with effectively no ambient atmosphere, such as Luna, test/commissioni
 Clarified [Worldhouse Engineering](infrastructure/worldhouse_engineering.md): atmospheric composition tuning begins only after the enclosure has reached its intended operating pressure and passed seal-integrity verification. Pressure buildup and seal verification are a distinct commissioning operation; composition tuning must not begin before acceptance.
 
 Added a Martian example: a MOXIE-like processor can use captured Martian CO2 to produce oxygen as a feedstock for subsequent atmosphere conditioning. Oxygen production alone does not establish a breathable atmosphere; the full gas composition must be corrected while maintaining target pressure. This is an illustrative processing capability, not a finalized machine specification or an implementation claim. No code, blueprints, frozen documents, or runtime behavior changed.
+
+
+### 2026-11-26 — CO coproduct routing shared across atmospheric processing
+
+Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to clarify that a MOXIE-like CO₂ processor produces both O₂ and CO. Oxygen is a feedstock for subsequent atmosphere conditioning; CO is a separate coproduct that may be captured for compatible downstream industrial processes, stored, or vented through a controlled path when the receiving environment can accept it. CO must not be casually released into occupied breathable Worldhouse space.
+
+Linked this handling model to the existing [Skimmers & Mixed Volatiles](logistics/skimmer_and_mixed_volatiles.md) design, which already records the Venus HLT's CO₂-splitting reaction and its alternative CO destinations: return to the Venus atmosphere by venting, retention in mixed-volatiles cargo, or optional dedicated storage. The shared principle is coproduct routing and mass accounting; the Venus HLT's specific onboard fuel-support fit is not imposed on Worldhouse processors. No code, blueprints, frozen documents, or runtime behavior changed.
