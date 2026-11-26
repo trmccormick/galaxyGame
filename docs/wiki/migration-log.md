@@ -874,3 +874,12 @@ The real-world examples are design references, not a requirement to simulate eac
 ### 2026-11-26 — Atmospheric composition represented as gas inventory
 
 Expanded [Life-Support Systems & Waste Recycling](infrastructure/life_support_systems_and_waste_recycling.md) with the owner-confirmed gameplay abstraction: gas composition in a craft, habitat, station, structure, or other enclosed environment is represented as its associated gas inventory. Crew, greenhouses, processors, scrubbers, and other equipment change that inventory through ordinary unit inputs and outputs, with power, capacity, efficiency, and maintenance handled by the existing unit model. Added illustrative resource-flow examples and clarified that transfers between an environment and storage must not double-count gas. Atmospheric composition and operating limits are evaluated from the resulting inventory; no separate detailed atmospheric-chemistry simulation is required for routine resource accounting. No code, blueprints, frozen documents, or runtime behavior changed.
+
+
+### 2026-11-26 — Settlement-level thermal management and useful waste-heat recovery
+
+Created [Settlement Thermal Management](infrastructure/settlement_thermal_management.md) to record the owner-confirmed distinction between unit-level thermal flows and settlement-level thermal infrastructure. Units describe heat generated or required as part of their operating inputs, outputs, and constraints; structures have local heating/cooling needs; the settlement coordinates recovery, distribution, heat pumps, thermal storage, and rejection of surplus heat. Waste heat may be used to warm habitats, greenhouses, or suitable industrial processes when temperature, location, timing, and capacity permit. Heat pumps consume power to move heat from a lower to a higher temperature, and thermal storage buffers supply and demand over time.
+
+The page also records that existing references to waste_heat, heat_generation_kw, thermal_load_max, and radiator capacity do not by themselves prove a coherent active thermal simulation. Their use in current code and data needs an audit before deciding what to retain, consolidate, or remove. Exact thermal units, transfer/network rules, storage design, heat-pump performance, and rejection calculations remain open. Added navigation and cross-links from Infrastructure, Settlement Infrastructure, and Life-Support Systems.
+
+This is owner-confirmed design intent and an audit requirement only. No code, blueprints, or runtime behavior changed.
