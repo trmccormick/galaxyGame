@@ -16,7 +16,7 @@ The central `CelestialBody` is the common identity and physical/orbital referenc
 
 Sphere models describe the state and properties of their respective systems. TerraSim models the processes, exchanges, and evolution that connect those systems. These are related responsibilities, but they are not interchangeable.
 
-See [TerraSim — Environmental Simulation, Calibration & Evolution](../terrasim.md) for the overall simulation purpose, reference-world calibration, and scope.
+See [TerraSim — Environmental Simulation, Calibration & Evolution](./terrasim.md) for the overall simulation purpose, reference-world calibration, and scope.
 
 For the implementation reference covering CelestialBody ownership, sphere-specific data, JSON initialization, material inventories, and mass-accounting semantics, see [Celestial Body & Sphere Data Model](celestial_body_and_sphere_data_model.md). The core sphere records and their initial-state representation are established architecture; the partial status below applies to environmental process coverage and coupling, not to the existence of the sphere model.
 

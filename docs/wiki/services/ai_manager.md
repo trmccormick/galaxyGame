@@ -31,7 +31,7 @@ Incomplete early generated data is not a reason to block a system from being ava
 | **Terraforming coordination** | Phase detection & orbital depot management for planetary programs. | 🔵 Partial intent — `terraforming_manager.rb` has skeleton `determine_terraforming_phase()` with an unresolved TODO |
 | **Expansion & wormhole** | Foothold placement, wormhole scouting/placement, multi-wormhole event handling. | 🟢 Active — `expansion_service.rb`, `foothold_planner.rb`, `wormhole_*` series (3 files) |
 
-> **Cross-link:** For early Sol build order and terraforming priority (what the AI Manager serves), see **[Sol Core Buildup](../../gameplay/sol_core_buildup.md)** and **[Terraforming](../../gameplay/terraforming.md)**.
+> **Cross-link:** For early Sol build order and terraforming priority (what the AI Manager serves), see **Sol Core Buildup** (`docs/gameplay/sol_core_buildup.md`) and **Terraforming** (`docs/gameplay/terraforming.md`).
 > 
 > **Cross-link:** For life-support, Seed vs. Brute-Force pathways, and residual biological risk: **[Biological Terraforming Seeds](../technical/biology/terraforming_seeds.md)**.
 

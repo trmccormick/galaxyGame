@@ -63,7 +63,7 @@ If developing outside Docker:
    bin/rails server
    ```
 
-*For complete step-by-step local tooling details, see [Developer Setup Guide](../../developer/setup.md).*
+*For complete step-by-step local tooling details, see `docs/developer/setup.md`.*
 
 ---
 
@@ -168,5 +168,5 @@ When a player relocates, they have multiple options for handling their assets. T
 
 * **[Wiki Index Page](../README.md):** Main entry point for `player/`, `development/`, and `technical/` documentation.
 * **[Player Roles & Alignment](player_roles_and_alignment.md):** Faction alignment, player scopes, and operational roles.
-* **[Developer Setup](../../developer/setup.md):** Deep-dive into local Ruby, PostgreSQL, RuboCop, and testing environments.
+* **Developer Setup** (`docs/developer/setup.md`): Deep-dive into local Ruby, PostgreSQL, RuboCop, and testing environments.
 * **Active Project Status:** Check `agent-tasks: projects/galaxy_game/status.md`.
