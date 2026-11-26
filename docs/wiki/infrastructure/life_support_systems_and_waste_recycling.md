@@ -71,6 +71,8 @@ Excess moisture collected by habitat HVAC is treated as clean condensate and ret
 
 GalaxyGame does not need to track habitat humidity as a separate simulation variable or model the internal operation of HVAC appliances. Habitat environmental control is represented at the level needed for crew survival, power demand, maintenance, and overall resource balances. Humidity remains relevant to planetary/environmental simulation where it has meaningful effects on climate, clouds, precipitation, or hydrology; that is a different simulation scale.
 
+Habitat heating can also benefit from settlement-level recovery and distribution of useful waste heat. Unit-level thermal outputs and local structure heating requirements feed that wider infrastructure; the settlement coordinates heat pumps, storage, distribution, and rejection. See [Settlement Thermal Management](settlement_thermal_management.md).
+
 ## Facility Growth and Settlement Scaling
 
 Life-support capacity grows by adding units, not by introducing a new bespoke simulation layer:
