@@ -16,7 +16,7 @@
 | [Biosphere Simulation](./biosphere_simulation.md) | Intended biosphere behavior and proposed simulation architecture (not a source-verified implementation inventory). |
 | [TerraSim — Environmental Simulation](../terrasim.md) | Natural-world simulation, historical calibration, environmental events, terraforming, and future tuning direction. |
 | [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md) | **Source-verified** sphere data ownership, couplings, and current service behavior across body types. |
-| [Terraforming Seeds](./terraforming_seeds.md) | Seed vs Worldhouse concepts; **candidate** staged lifecycle (not an inevitable full-terraform track); Bio-Nursery and adaptation pipeline design. Owner direction for initial simple-life Mars use is on that page. |
+| [Terraforming Seeds](./terraforming_seeds.md) | Terraforming seed as a biological program/use rather than a structure class; Worldhouses may be mixed use and host seed programs; **candidate** lifecycle and Bio-Nursery concepts. |
 | [Contamination & Biosafety](../../infrastructure/contamination_and_biosafety.md) | Biological contamination, containment, residual risk, and biosafety relationships for Seeds, Bio-Nurseries, and Worldhouses. |
 
 ## Cross-Links
