@@ -124,6 +124,34 @@ These systems illustrate different operating strategies and should be treated as
 | **Submarines** | Long-duration occupied environments require continuous atmosphere monitoring, oxygen supply, CO₂ removal, contaminant control, and emergency fallback provisions. |
 | **Biosphere 2** | Large ecosystems have complex biological and chemical gas exchanges. Soil microbes and material interactions can upset atmospheric balances; vegetation alone does not guarantee stable oxygen and CO₂ levels. |
 
+### Atmospheric composition as inventory and unit resource flows
+
+**Established design intent — simplified resource model (2026-11-26)**
+
+The composition of the atmosphere held by a craft, habitat, station, structure, or other enclosed environment is represented through its gas inventory. Track the quantities of the relevant gases as inventory items associated with that environment. Atmospheric changes occur through ordinary resource transactions against that inventory; do not create a separate detailed atmospheric-chemistry simulation merely to account for routine consumption and production.
+
+Equipment and biological processes use the same unit-based operational model as other GalaxyGame systems:
+
+- **Inputs:** inventory resources consumed or processed.
+- **Outputs:** inventory resources produced, including useful coproducts.
+- **Power:** energy required to operate.
+- **Capacity and efficiency:** processing or exchange rate and effectiveness.
+- **Maintenance:** labor, replacement parts, and operating costs.
+
+Examples:
+
+| Activity or unit | Input | Output / inventory effect |
+|---|---|---|
+| Crew respiration | O₂ | CO₂ |
+| Greenhouse photosynthesis | CO₂, water, light/energy as represented by its operating model | O₂, biomass |
+| CO₂ processor | CO₂, power | O₂ and CO (for a MOXIE-like process) |
+| CO₂ scrubber | CO₂ from the environment's gas inventory | Captured CO₂ routed to storage, processing, or another defined destination |
+| Oxygen generator | Water, power | O₂ and any other process coproducts defined for that unit |
+
+These examples describe resource-flow patterns, not mandatory blueprints or fixed chemistry for every unit. Use each unit's defined inputs, outputs, power, capacity, and efficiency. Where a process transfers a gas from an environment into a storage inventory, that transfer must be represented consistently so the same gas is not counted in both places.
+
+The atmosphere is therefore not a special, disconnected resource pool: it is the gas inventory associated with the craft or structure. Equipment and biological activity change that inventory through their input/output flows. The resulting gas quantities can be checked against the environment's required composition and operating limits. Pressure or habitability consequences should be derived at the level needed for gameplay, without simulating every molecular interaction or internal control mechanism.
+
 ### GalaxyGame gameplay abstraction
 
 GalaxyGame should represent the meaningful system-level consequences without simulating every valve, filter element, chemical reaction, or control loop. The gameplay model should focus on:
