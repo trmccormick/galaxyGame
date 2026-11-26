@@ -35,7 +35,7 @@ A **human-rated Worldhouse** can combine human habitation with research, biologi
 
 ### Worldhouse Forms and Incremental Settlement Development
 
-A sealed lava tube is one Worldhouse form and is particularly relevant to initial settlement establishment. It uses a naturally sheltered geological void rather than requiring construction of a large enclosure over an open landscape. The tube's openings and other relevant pathways are sealed to create a controlled environmental volume.
+A sealed lava tube is one Worldhouse form and is particularly relevant to initial settlement establishment. It uses a naturally sheltered geological void rather than requiring construction of a large enclosure over an open landscape. The tube's openings and other relevant pathways are sealed to create a controlled environmental volume. For the structural enclosure, incremental construction, and atmospheric-development model, see [Worldhouse Engineering](../../infrastructure/worldhouse_engineering.md).
 
 This does not require the entire lava tube to be fully built out or its atmosphere to be conditioned to the final target before settlement activity can begin. A habitation module can be placed inside the tube to provide an initially occupied, independently life-supported living space while construction, sealing, fit-out, and expansion of the wider Worldhouse continue. The module is an early settlement asset within the larger site, not proof that the whole tube is already a human-rated environment.
 
