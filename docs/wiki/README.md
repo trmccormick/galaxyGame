@@ -28,6 +28,7 @@ This folder is the **live wiki** — the front door for players, contributors, a
 | [**player/**](player/) | Orientation, getting started, player roles, discoveries, and optional world flavor |
 | [**infrastructure/**](infrastructure/README.md) | Pre-player logistics architecture, atmospheric harvesting, and planetary protection |
 | [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) | Geological enclosures, incremental construction and occupancy, atmospheric establishment and conditioning |
+| [Settlement Thermal Management](infrastructure/settlement_thermal_management.md) | Settlement-level heat recovery, distribution, heat pumps, thermal storage, and heat rejection |
 | [**engineering/**](engineering/) | Station construction, expansion protocols, and post-snap reconnection |
 | [**technical/**](technical/) | System commands, ISRU fabrication, precursor missions and research possibilities, biology & terraforming, and ballistic corridors |
 | [**ui/**](ui/) | Interface design intent, visual identity, and reviewed user experiences |
