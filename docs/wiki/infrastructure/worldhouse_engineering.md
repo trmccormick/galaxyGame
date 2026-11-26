@@ -116,6 +116,8 @@ Only after the enclosure has reached its intended operating pressure and passed 
 
 For a Martian Worldhouse, a MOXIE-like atmospheric processor is one possible post-verification component. It can process captured Martian CO₂ to produce oxygen, providing an oxygen feedstock for the later atmosphere-conditioning program. Oxygen production alone does not make the enclosure breathable: the overall gas mixture must still be brought to its intended composition, with pressure maintained at the target operating level. This is an example of a suitable processing capability, not a commitment to a particular machine design or a claim that MOXIE hardware is already implemented in the game.
 
+The CO produced by this reaction is a separate coproduct stream, not oxygen and not automatically waste. It may be captured for compatible downstream industrial processes, stored for later use, or vented through a controlled path when there is no useful demand and the receiving environment can accept it. In a human-use Worldhouse, do not release CO into occupied breathable space; route it to storage, processing, or a controlled exhaust destination. The same basic CO₂-splitting reaction and coproduct-handling choices are already part of the Venus HLT harvester design: its CO can be vented to the Venus atmosphere, retained in mixed-volatiles cargo, or stored in an optional dedicated capacity. See [Skimmers & Mixed Volatiles](../logistics/skimmer_and_mixed_volatiles.md). The Venus craft's specific onboard fuel-support configuration is not a requirement for a Worldhouse processor.
+
 The enclosure is not human-ready while its local planetary gas mix remains unsuitable.
 
 ## Atmospheric Establishment Is a Separate Program
