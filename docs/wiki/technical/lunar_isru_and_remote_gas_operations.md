@@ -42,6 +42,18 @@ Rake scripts and integration tests are development/validation instruments. They 
 
 The L1 and near-LEO depots are separate required milestones with distinct roles; references that combine them, reverse their order, or place shipyards before the second depot are stale relative to this owner-confirmed progression. The exact build plans, task combinations, concurrency, costs, yields, and schedules remain matters for simulation and operational evaluation.
 
+### Initial crew-supported settlement and robotic lava-tube development
+
+**OWNER-CONFIRMED INITIAL DEPLOYMENT INTENT — 2026-11-26**
+
+The initial Luna deployment is planned to establish enough occupied surface capability to support an ISS-scale crew, using multiple inflatable habitation modules and the necessary surface equipment. This is a bootstrap settlement package, not a requirement to finish and pressurize the entire lava tube before people arrive.
+
+The crew is required for the planned initial permanently shadowed region (PSR) water-ice mining activity. Under this operating plan, the crew establishes and supports the mining operation at the lunar site; do not silently replace this with an assumed fully robotic initial mining operation. The exact division of work between crew and machines, crew complement, shift model, mining equipment package, and duration remain open.
+
+In parallel, robotic construction continues work on the lava-tube Worldhouse: sealing and progressively developing the larger protected geological volume while the crew occupies the initial habitat modules and conducts the planned surface operations. The inflatable modules and their life-support capability provide the initial occupied settlement; the developing lava tube is the larger environmental structure. These are related but distinct deployment and completion milestones.
+
+The crew's initial occupancy therefore does not depend on completion of the whole Worldhouse. Conversely, the existence of an occupied habitat does not mean the tube has been fully sealed, brought to its target pressure, or composition-conditioned. Robotic construction/sealing and the crew-supported PSR mining operation proceed as parallel workstreams, subject to their actual logistical and safety dependencies.
+
 ### Luna buildout as a multi-profile experiment
 
 Luna is a required strategic infrastructure objective and the first integrated settlement benchmark, but its initial design, supply chain, and buildout profile are not fixed. Multiple in-game profiles should pursue the same Luna outcome using different viable combinations of Earth imports, local ISRU, remote harvesting, spacecraft, manufacturing locations, and investment timing. Those profiles are experimental approaches—not competing definitions of the strategic objective and not a closed list of what the AI Manager may do.
