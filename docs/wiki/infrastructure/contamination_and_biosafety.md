@@ -93,6 +93,14 @@ A human-rated Worldhouse may combine habitation, research, biological incubation
 
 A Worldhouse does not automatically alter the planetary atmosphere or open planetary biosphere merely because it contains life or hosts a seed program. Biological activity inside a sealed structure remains local unless a designed and authorized connection or release pathway makes it affect the external environment. The transition from contained activity to external release or planetary interaction requires its own decision and risk assessment.
 
+### Worldhouse Construction and Occupancy Context
+
+A sealed lava tube is one Worldhouse form and is a practical candidate for an initial settlement location. A habitation module may be installed inside the tube and provide its own life support while the larger site is progressively sealed, fitted out, and expanded. The presence of an occupied module does not mean the entire tube has reached its final atmospheric profile or that all construction is complete.
+
+Construction and sealing establish the environmental boundary. Raising the pressure of the enclosed volume above the local natural atmosphere and conditioning its gas composition are separate follow-on operations. A large enclosed valley follows the same conceptual sequence at a much larger construction scale. In either case, atmospheric establishment can be incremental and must be planned as an operating program rather than assumed to occur automatically when the structure is sealed.
+
+Where biological work is conducted in an occupied or partially completed Worldhouse, containment boundaries and environmental separation must account for the actual arrangement of the habitation module, construction activity, and biological operations. Exact requirements remain open; do not assume that the entire structure shares one atmosphere or that all zones have independent life-support systems.
+
 ### Bio-Nurseries and Shared Infrastructure
 
 Bio-Nursery describes a biological incubation/adaptation capability. It may be a standalone facility or hosted within a larger suitable structure, including a mixed-use Worldhouse; it is not necessarily a separate structure class. Exact facility taxonomy, equipment packages, zoning, and construction boundaries remain **OPEN**.
