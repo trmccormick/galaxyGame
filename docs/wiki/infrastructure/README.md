@@ -56,6 +56,12 @@ Related engineering and biological controls are documented in [Contamination & B
 
 Unit-based habitat life support, settlement waste and water recovery, existing processing-unit designs, integrated habitat HVAC assumptions, and facility scaling.
 
+## Settlement Thermal Management
+
+→ [`settlement_thermal_management.md`](./settlement_thermal_management.md)
+
+Settlement-level recovery, distribution, heat pumps, thermal storage, heat rejection, and the open audit of existing thermal tracking.
+
 ---
 
 ## Worldhouse Engineering
