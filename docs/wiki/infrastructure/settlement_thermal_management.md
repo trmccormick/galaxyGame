@@ -28,6 +28,16 @@ Waste heat is not automatically a resource that must be discarded. Where its tem
 
 This follows the common unit-model principle used for material and energy flows. It does not require a bespoke thermal simulation for every machine, habitat, or appliance.
 
+## Terminology
+
+- **Waste heat:** Thermal energy produced as an unavoidable by-product of a unit's primary operation, with no immediate use in that unit's function.
+- **Useful heat:** Thermal energy captured, routed, or retained because it serves a settlement-level thermal requirement.
+- **Heat rejection:** The act of dumping thermal energy to the environment (ground, atmosphere, vacuum) when it is no longer useful.
+- **Settlement thermal management:** The aggregation and routing of useful heat across a settlement so that surplus from one process can offset demand in another.
+- **Thermal network:** A conceptual abstraction for how useful heat moves between structures; GalaxyGame models this through the unit-model interface rather than an explicit pipe or duct graph.
+
+The following fields are legacy / audit targets only. They record what code currently stores and what must still be audited against design intent: `waste_heat`, `waste_heat_kw`, `heat_generation_kw`, `thermal_load_max`, `radiator_capacity_kw`.
+
 ## Separation of Responsibilities
 
 | Level | Responsibility |
