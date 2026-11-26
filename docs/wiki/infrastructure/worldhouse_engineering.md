@@ -15,6 +15,8 @@ A **Worldhouse** is an engineered, sealed environmental structure built around o
 
 A Worldhouse is defined by its enclosure and environmental-control capability, not by a mandatory breathable atmosphere, a particular biome, or one exclusive use. Its target atmospheric profile is selected according to the work it is intended to support. Enclosure, habitation, and atmospheric establishment are distinct capabilities: sealing a volume does not mean the gases needed to pressurize or condition it are available.
 
+The Worldhouse is the enclosed site or environmental volume, not one giant building. The intent is to enclose a suitable geological area and construct ordinary settlement and operational structures within it. These may include habitation buildings, laboratories, factories, warehouses, greenhouses, utility buildings, and other facilities. The Worldhouse supplies the broader environmental boundary; the buildings inside it provide their own functions. Individual buildings do not all need to be independent pressure vessels or sealed habitats. Building-level environmental controls or containment are added where a particular use requires them.
+
 A sealed lava tube is one Worldhouse configuration. Sealing the openings and controlling access to a natural underground void can establish a Worldhouse without constructing a roof over the entire landscape. An enclosed valley is another configuration, but requires a much larger engineered boundary around an open geological feature.
 
 A Worldhouse is not itself planetary terraforming. Conditions inside the enclosure remain local unless a deliberate external connection or release operation is separately undertaken.
@@ -31,7 +33,7 @@ Lava tubes are particularly relevant to initial settlement locations because a h
 
 ### Enclosed Valley or Canyon
 
-A valley or canyon Worldhouse creates a much larger environmental boundary around an open landscape. Its perimeter, structural supports, roof or covering system, access points, and seals must collectively contain the intended internal environment.
+A valley or canyon Worldhouse creates a much larger environmental boundary around an open landscape. Its perimeter, structural supports, roof or covering system, access points, and seals must collectively contain the intended internal environment. Once the area is enclosed, ordinary buildings and settlement infrastructure can be constructed within the protected volume; the entire enclosed landscape is not itself one building.
 
 A valley does not become pressurized merely because its enclosure has been constructed. At closure, its internal atmosphere begins from the conditions present in the enclosed volume, subject to the construction and sealing process. On Mars, that may mean starting with the thin local atmosphere. Raising pressure above the natural Martian level and tuning the composition are separate operations that may take substantial additional time and resources.
 
@@ -47,7 +49,7 @@ Keep these concepts distinct when describing or planning a Worldhouse:
 | **Structure and enclosure** | The engineered supports, panels, barriers, seals, controlled openings, and related construction. |
 | **Environmental boundary** | The local volume whose pressure, temperature, and gas composition can be managed. |
 | **Atmospheric profile** | The selected operating conditions for the intended use; human-breathable conditions are optional, not inherent. |
-| **Use and internal organization** | Habitation, industrial work, research, biological incubation, contained ecosystem development, or compatible combinations of these. |
+| **Internal structures and uses** | Ordinary buildings and facilities placed within the enclosure, supporting habitation, industrial work, research, biological incubation, contained ecosystem development, or compatible combinations. |
 | **External coupling** | Any deliberate exchange with, or release into, the surrounding planetary environment. This is separate from ordinary internal operation. |
 
 A terraforming-seed program is a possible biological use of suitable infrastructure, not a competing structure type. A Bio-Nursery is an incubation/adaptation capability that may be hosted within a Worldhouse or provided separately. See [Terraforming Seeds](../technical/biology/terraforming_seeds.md) and [Contamination & Biosafety](./contamination_and_biosafety.md).
@@ -67,7 +69,7 @@ The source material describes structural, transparent, solar-integrated, and rug
 
 A candidate construction sequence is **support/bracing → panel installation → sealing → enclosure validation**. It is a useful organizing model, not a claim that every Worldhouse follows one identical sequence or that every construction step must finish across the entire site before any local occupation can begin.
 
-Construction may be carried out incrementally. Inflatable habitats or other independently life-supported modules are a practical early habitation step on worlds where establishing a large enclosed volume and supplying its atmosphere would take longer. Occupants can live in these starter habitats while robotic equipment continues structural work, sealing, and expansion around or near them. The exact boundaries between occupied space and active construction areas must be designed for the actual deployment. This is a general deployment option, not a Luna-only rule or a requirement that every Worldhouse be built around an occupied starter habitat.
+Construction may be carried out incrementally. Inflatable habitats or other independently life-supported modules are a practical early habitation step on worlds where establishing a large enclosed volume and supplying its atmosphere would take longer. Occupants can live in these starter habitats while robotic equipment continues structural work, sealing, and expansion around or near them. Once the larger area is enclosed and its environment is established to the required operating conditions, ordinary buildings and facilities can be built and operated inside it. Those structures are not presumed to be individually pressurized shells; their internal environmental systems depend on their purpose and on the conditions maintained by the Worldhouse. The exact boundaries between occupied space and active construction areas must be designed for the actual deployment. This is a general deployment option, not a Luna-only rule or a requirement that every Worldhouse be built around an occupied starter habitat.
 
 ## Atmospheric Establishment Is a Separate Program
 
