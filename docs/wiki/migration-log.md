@@ -824,3 +824,10 @@ This general construction principle also applies to facilities and equipment exp
 Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) with the owner-confirmed pressure-first sequence for sites that have a natural atmosphere. Use the local planetary atmosphere as-is to raise the sealed enclosure to its selected operating/test pressure; do not require a human-breathable mix for this step. For a Worldhouse intended for human use, establish and verify the intended human-rated operating pressure even while the gas composition remains unsuitable for people. Verify that the enclosure holds that pressure, then tune the gas composition toward the human-breathable target as a separate subsequent operation. The enclosure is not human-ready until the composition and other required environmental conditions are suitable.
 
 For sites with effectively no ambient atmosphere, such as Luna, test/commissioning gas must come from stored, produced, or imported supplies. This is owner-confirmed design intent; exact pressure specifications, capture/compression capacity, and test procedures remain engineering details. No code, frozen documents, blueprints, or runtime behavior changed.
+
+
+### 2026-11-26 — Composition tuning begins only after seal verification
+
+Clarified [Worldhouse Engineering](infrastructure/worldhouse_engineering.md): atmospheric composition tuning begins only after the enclosure has reached its intended operating pressure and passed seal-integrity verification. Pressure buildup and seal verification are a distinct commissioning operation; composition tuning must not begin before acceptance.
+
+Added a Martian example: a MOXIE-like processor can use captured Martian CO2 to produce oxygen as a feedstock for subsequent atmosphere conditioning. Oxygen production alone does not establish a breathable atmosphere; the full gas composition must be corrected while maintaining target pressure. This is an illustrative processing capability, not a finalized machine specification or an implementation claim. No code, blueprints, frozen documents, or runtime behavior changed.
