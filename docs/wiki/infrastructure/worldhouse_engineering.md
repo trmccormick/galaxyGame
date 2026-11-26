@@ -100,6 +100,18 @@ A candidate construction sequence is **support/bracing â†’ panel installation â†
 
 Construction may be carried out incrementally. Inflatable habitats or other independently life-supported modules are a practical early habitation step on worlds where establishing a large enclosed volume and supplying its atmosphere would take longer. Occupants can live in these starter habitats while robotic equipment continues structural work, sealing, and expansion around or near them. Once the larger area is enclosed and its environment is established to the required operating conditions, ordinary buildings and facilities can be built and operated inside it. Those structures are not presumed to be individually pressurized shells; their internal environmental systems depend on their purpose and on the conditions maintained by the Worldhouse. The exact boundaries between occupied space and active construction areas must be designed for the actual deployment. This is a general deployment option, not a Luna-only rule or a requirement that every Worldhouse be built around an occupied starter habitat.
 
+## Starting Environment During Construction and Seal Testing
+
+Construction begins under the **initial local planetary environmental conditions** at the site. The starting environment is not presumed to be vacuum, and it is not presumed to be habitable. The geological feature and exposed work area have the atmosphere and environmental conditions naturally present there; construction methods, equipment, materials, and work procedures must account for those conditions.
+
+When the enclosure is sealed, it retains the atmosphere present within the enclosed volume at that point, subject to gas exchanges and leakage that occur during construction and sealing. Sealing establishes the environmental boundary; it does not itself pressurize the volume or supply a different gas mixture.
+
+Where the planet or moon has an atmosphere, that local atmosphere can also provide gas for post-sealing pressure and seal-integrity testing. For example, after a Martian valley is sealed, operators can capture, compress, and pump additional Martian atmospheric gas into the enclosure to raise its pressure for testing. The test does not require importing a human-breathable mixture: the purpose at this stage is to test the enclosure under a suitable pressure condition. Gas availability, capture/compression equipment, test pressure, and the suitability of the local gas for the test remain engineering and operational considerations.
+
+A location with effectively no atmosphere, such as a lunar lava tube, has no useful ambient planetary gas source for this purpose; test gas must instead be supplied from stored, produced, or imported inventory. The same general principle applies to other construction and facilities: account for the local environment during construction, and use local atmospheric gas as a potential test resource where it is available and suitable.
+
+Seal testing is distinct from final atmospheric establishment. After integrity testing and acceptance, the enclosure can proceed to the separate atmospheric-conditioning program for its intended operating profile.
+
 ## Atmospheric Establishment Is a Separate Program
 
 Construction and sealing create the environmental boundary. They do not, by themselves, establish the final pressure or gas composition.
