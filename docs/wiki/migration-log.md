@@ -817,3 +817,10 @@ Construction takes place under the site's initial local planetary conditions; th
 Where an atmosphere exists, local planetary gas can be captured/compressed and added after sealing to raise enclosure pressure for seal-integrity testing. This test gas need not be human-breathable; its purpose is to establish a suitable test pressure. A lunar site with effectively no ambient atmosphere must obtain test gas from stored, produced, or imported supplies. Integrity testing remains distinct from the subsequent atmospheric-conditioning program.
 
 This general construction principle also applies to facilities and equipment exposed to local planetary conditions. It is owner-confirmed design intent; gas capture/compression capability, test pressures, and detailed procedures remain engineering matters. No code, frozen documents, blueprints, or runtime behavior changed.
+
+
+### 2026-11-26 — Pressure-first Worldhouse seal testing with local atmospheric gas
+
+Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) with the owner-confirmed pressure-first sequence for sites that have a natural atmosphere. Use the local planetary atmosphere as-is to raise the sealed enclosure to its selected operating/test pressure; do not require a human-breathable mix for this step. For a Worldhouse intended for human use, establish and verify the intended human-rated operating pressure even while the gas composition remains unsuitable for people. Verify that the enclosure holds that pressure, then tune the gas composition toward the human-breathable target as a separate subsequent operation. The enclosure is not human-ready until the composition and other required environmental conditions are suitable.
+
+For sites with effectively no ambient atmosphere, such as Luna, test/commissioning gas must come from stored, produced, or imported supplies. This is owner-confirmed design intent; exact pressure specifications, capture/compression capacity, and test procedures remain engineering details. No code, frozen documents, blueprints, or runtime behavior changed.
