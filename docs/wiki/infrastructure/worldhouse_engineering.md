@@ -11,9 +11,9 @@ last_updated: 2026-11-26
 
 ## Purpose and Core Definition
 
-A **Worldhouse** is an engineered, sealed environmental structure built around or within a suitable natural geological feature. It establishes a local environmental boundary without inherently changing the surrounding planet or moon.
+A **Worldhouse** is an engineered, sealed environmental structure built around or within a suitable natural geological feature. Where suitable geology exists, adapting and enclosing that natural volume is the preferred approach over constructing an entirely artificial pressure vessel. The geological host can provide shelter and part of the physical boundary, reducing the amount of structure that must be built; suitability, structural condition, geometry, and engineering demands determine whether a particular feature is practical. This preference applies across worlds, not only to lunar lava tubes. A Worldhouse establishes a local environmental boundary without inherently changing the surrounding planet or moon.
 
-A Worldhouse is defined by its enclosure and environmental-control capability, not by a mandatory breathable atmosphere, a particular biome, or one exclusive use. Its target atmospheric profile is selected according to the work it is intended to support.
+A Worldhouse is defined by its enclosure and environmental-control capability, not by a mandatory breathable atmosphere, a particular biome, or one exclusive use. Its target atmospheric profile is selected according to the work it is intended to support. Enclosure, habitation, and atmospheric establishment are distinct capabilities: sealing a volume does not mean the gases needed to pressurize or condition it are available.
 
 A sealed lava tube is one Worldhouse configuration. Sealing the openings and controlling access to a natural underground void can establish a Worldhouse without constructing a roof over the entire landscape. An enclosed valley is another configuration, but requires a much larger engineered boundary around an open geological feature.
 
@@ -23,7 +23,7 @@ A Worldhouse is not itself planetary terraforming. Conditions inside the enclosu
 
 ### Sealed Lava Tube
 
-A lava tube provides a naturally sheltered geological volume. Its skylights, entrances, access points, and other openings can be sealed or converted into controlled access points. Structural reinforcement and covering work establish the environmental boundary.
+A lava tube provides a naturally sheltered geological volume. Its skylights, entrances, access points, and other openings can be sealed or converted into controlled access points. Structural reinforcement and covering work establish the environmental boundary. The same general preference for using suitable natural geological volumes applies to other worlds and to other forms such as caverns, craters, valleys, and canyons.
 
 Lava tubes are particularly relevant to initial settlement locations because a habitation module can be placed inside the tube while the larger Worldhouse is still being developed. The module provides its own life support and an initially occupied space; it does not imply that the entire tube is sealed, pressurized, or conditioned to a human-rated atmosphere.
 
@@ -67,7 +67,7 @@ The source material describes structural, transparent, solar-integrated, and rug
 
 A candidate construction sequence is **support/bracing → panel installation → sealing → enclosure validation**. It is a useful organizing model, not a claim that every Worldhouse follows one identical sequence or that every construction step must finish across the entire site before any local occupation can begin.
 
-Construction may be carried out incrementally. Robotic equipment can continue structural work, sealing, and expansion while a separately life-supported habitation module is occupied within a suitable part of the site. The exact boundaries between occupied space and active construction areas must be designed for the actual deployment.
+Construction may be carried out incrementally. Inflatable habitats or other independently life-supported modules are a practical early habitation step on worlds where establishing a large enclosed volume and supplying its atmosphere would take longer. Occupants can live in these starter habitats while robotic equipment continues structural work, sealing, and expansion around or near them. The exact boundaries between occupied space and active construction areas must be designed for the actual deployment. This is a general deployment option, not a Luna-only rule or a requirement that every Worldhouse be built around an occupied starter habitat.
 
 ## Atmospheric Establishment Is a Separate Program
 
