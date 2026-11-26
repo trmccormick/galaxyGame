@@ -31,6 +31,8 @@ A **Settlement** is the core administrative, economic, and population unit in Ga
 > **Related:** For how settlements evolve across game phases — first foothold requirements, expansion gates, and tier progression — see **[Settlement Progression & Footholds](../player/settlement_progression_and_footholds.md)**.
 >
 > **Related:** For surface / near-surface habitat options that complement ground-plan settlement infrastructure (a thought exercise on dome habitats) — see **[Surface Habitat Options](./surface_habitat_options.md)**.
+>
+> **Related:** For settlement-level coordination of useful heat, heat pumps, thermal storage, and heat rejection, see **[Settlement Thermal Management](./settlement_thermal_management.md)**.
 | Separation of concerns | Settlements are administrative entities, not structures. They contain, or are hosted within, one or more structures. |
 | Structures as assets | Structures (natural or artificial) are physical assets that provide shelter, storage, or operational capacity to a settlement. |
 | Blueprint-driven expansion | Artificial structures are built from blueprints and added to a settlement as it grows. |
