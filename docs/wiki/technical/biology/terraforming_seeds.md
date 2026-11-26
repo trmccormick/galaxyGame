@@ -33,6 +33,16 @@ A **Worldhouse is a physical structure**: an engineered, pressurized environment
 
 A **human-rated Worldhouse** can combine human habitation with research, biological incubation, contained ecosystem development, and seed-program activities when its design and internal organization support them. A **non-human-rated Worldhouse** may instead use an industrial, experimental, biological, or other target atmosphere. It may be dedicated to one purpose or combine only purposes compatible with that atmosphere. Mixed use is therefore conditional on the selected environment; it does not imply that every function can coexist in one undivided volume.
 
+### Worldhouse Forms and Incremental Settlement Development
+
+A sealed lava tube is one Worldhouse form and is particularly relevant to initial settlement establishment. It uses a naturally sheltered geological void rather than requiring construction of a large enclosure over an open landscape. The tube's openings and other relevant pathways are sealed to create a controlled environmental volume.
+
+This does not require the entire lava tube to be fully built out or its atmosphere to be conditioned to the final target before settlement activity can begin. A habitation module can be placed inside the tube to provide an initially occupied, independently life-supported living space while construction, sealing, fit-out, and expansion of the wider Worldhouse continue. The module is an early settlement asset within the larger site, not proof that the whole tube is already a human-rated environment.
+
+The same structure-versus-atmosphere distinction applies: sealing the tube establishes the environmental boundary, while raising its pressure above the natural local atmosphere and tuning its composition are subsequent operating programs. The required target depends on the intended use. The larger enclosed volume may be conditioned incrementally; do not assume that sealing immediately produces a habitable atmosphere.
+
+A large enclosed valley is another Worldhouse form, but its perimeter and overhead pressure boundary make it a substantially larger construction undertaking. Once sealed, it likewise begins with the atmosphere present at closure (approximately the local natural conditions, subject to construction and sealing operations); atmospheric pressurization and conditioning are separate follow-on work.
+
 ### Keep the Design Layers Distinct
 
 | Layer | What it describes | Examples |
