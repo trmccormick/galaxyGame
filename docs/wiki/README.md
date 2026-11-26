@@ -101,6 +101,7 @@ Orientation and game-facing systems (what the game is trying to be, and how it p
 |------|--------|
 | [Atmospheric harvesting](infrastructure/atmospheric_harvesting.md) | Gas / atmosphere harvesting |
 | [Atmospheric escape, retention & recovery](infrastructure/atmospheric_escape_and_recovery.md) | Natural atmospheric loss as resource depletion; technology options for retention and orbital recovery |
+| [Contamination & biosafety](infrastructure/contamination_and_biosafety.md) | Biological contamination risk, containment engineering, biosafety practices, and the relationship to planetary protection |
 | [Power options](infrastructure/power_options.md) | Power generation and distribution across phases (surface, orbital, and deep-space) |
 | [Settlement infrastructure](infrastructure/settlement_infrastructure.md) | Settlement and structure design intent, with a code-verified note and open items |
 | [Surface habitat options](infrastructure/surface_habitat_options.md) | Surface habitat thought exercise: dome pressurization, oxygen setup, power gate |
