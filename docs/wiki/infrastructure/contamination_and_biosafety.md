@@ -87,9 +87,9 @@ A seed program may use one structure or several facilities. It may be hosted wit
 
 ### Worldhouses
 
-A Worldhouse is a physical, engineered, pressurized environmental structure built around or within a suitable geological feature. **ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself host or serve a terraforming-seed program, and it can be mixed use.
+A Worldhouse is a physical, engineered, sealed environmental structure built around or within a suitable geological feature. Its atmosphere is selected for its intended operating environment; a human-breathable atmosphere is not mandatory. **ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can host a terraforming-seed program and can be mixed use, but mixed use depends on compatibility with its selected atmospheric profile and operating conditions.
 
-A single Worldhouse may support human habitation, research, biological incubation, contained ecosystem development, and seed-program activities in combination. These uses may share infrastructure where appropriate and may require distinct internal zones, environmental conditions, containment boundaries, or dedicated systems where their requirements differ. The exact zoning and engineering model remain **OPEN**.
+A human-rated Worldhouse may combine habitation, research, biological incubation, contained ecosystem development, and seed-program activities. A non-human-rated Worldhouse may combine compatible industrial, biological, experimental, or other purposes, or remain dedicated to one purpose. Different functions may require distinct internal zones, environmental conditions, containment boundaries, or dedicated systems. The exact zoning and engineering model remain **OPEN**.
 
 A Worldhouse does not automatically alter the planetary atmosphere or open planetary biosphere merely because it contains life or hosts a seed program. Biological activity inside a sealed structure remains local unless a designed and authorized connection or release pathway makes it affect the external environment. The transition from contained activity to external release or planetary interaction requires its own decision and risk assessment.
 
