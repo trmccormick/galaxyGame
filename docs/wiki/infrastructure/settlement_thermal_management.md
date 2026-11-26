@@ -99,6 +99,26 @@ The intended gameplay is settlement infrastructure management rather than applia
 
 Ordinary habitat HVAC remains an integrated structure capability, as described in [Life-Support Systems & Waste Recycling](life_support_systems_and_waste_recycling.md). The settlement thermal network can supply useful heat to those structures; this does not require separate player-managed HVAC appliances in every habitat.
 
+## Harvested Reference Notes
+
+Summaries drawn from frozen design references; they reflect proposals and author intent, not current owner-confirmed implementation or code state.
+
+### ECLSS thermal loop concept (`docs/design/ECLSS_SYSTEM_ARCHITECTURE.md`)
+The reference proposes a dedicated Power & Thermal Loop in which electronics, lighting, and metabolic activity generate excess heat that is carried by thermal coolant through a radiator grid. Undersized or damaged radiators allow internal temperatures to rise ([PROPOSED / PLACEHOLDER]). The document ties the thermal loop to other ECLSS cycles (water, atmosphere, food) and models cascading failures where increased power consumption raises waste-heat production, which stresses radiators and further degrades life-support performance. A game-parameters table in that reference lists `radiator_capacity_kw` and `current_heat_load_kw` as node-state fields ([PROPOSED / PLACEHOLDER]). These numeric constants are design artifacts; they do not establish an active code contract.
+
+### Habitat thermal dissipation contrast (`docs/design/HABITATION_NODE_ARCHITECTURE.md`)
+The Habitation Node reference contrasts burial and surface deployment for thermal management: a buried Luna-surface base has low thermal-cycling risk because regolith acts as insulation and heat sinks, whereas open-lattice orbital depots and deep-space cyclers require external radiator wings exposed to direct solar deltas. The table in that document also lists `Sintered Regolith Shield Panels` as a locally manufactured surface panel that insulates against radiation and extreme thermal swings ([PROPOSED / PLACEHOLDER]). These are architectural comparison notes; no transfer formulas or radiator sizing rules are derived from them.
+
+### OPEN gaps vs current owner intent
+Both references leave the following explicitly open:
+
+- **Thermal loop integration:** Whether the ECLSS power/thermal cascade should be implemented as a DAG network or via sequential procedural checks (ECLSS_SYSTEM_ARCHITECTURE.md).
+- **Radiator sizing and capacity model:** No formula ties `radiator_capacity_kw` to heat_load, environmental context, or panel slots.
+- **Buried-vs-surface trade-offs:** The habitation node thermal-dissipation contrast is descriptive only; it does not define concrete gameplay mechanics for regolith-insulation bonuses or surface-radiator penalties.
+- **Fire / contamination spreading:** How localized toxic-gas spikes propagate through module ducting remains unresolved (ECLSS_SYSTEM_ARCHITECTURE.md).
+
+These gaps remain OPEN in the current wiki page and its source references. No implementation change is authorized by harvested notes until owner intent is recorded on this page.
+
 ## Existing Tracking and Open Audit
 
 Some existing sources and data contain thermal concepts, including waste_heat, waste_heat_kw, heat_generation_kw, thermal_load_max, and radiator-capacity examples. Their presence in isolated configuration, test, or historical design files does not establish a coherent, active thermal simulation or settlement-wide heat network.
