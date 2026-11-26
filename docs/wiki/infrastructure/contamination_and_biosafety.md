@@ -11,6 +11,9 @@ GalaxyGame needs to represent the possibility that biological material can be ca
 This page covers the engineering and biological side of that problem:
 
 - screening biological material, equipment, payloads, and relevant cargo before deployment or transfer;
+
+**Related wiki pages:** [Planetary Protection & Environmental Governance](./planetary_protection_environmental_governance.md) defines the broader policy framework; [Terraforming Seeds](../technical/biology/terraforming_seeds.md) covers biological deployment concepts; [Biosphere Simulation](../technical/biology/biosphere_simulation.md) covers biosphere behavior and proposed simulation architecture.
+
 - containment during transport, incubation, research, and habitat operation;
 - monitoring and assessment after contact with a destination environment;
 - reducing, recording, and communicating residual contamination risk;
