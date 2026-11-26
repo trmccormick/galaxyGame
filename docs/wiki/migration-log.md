@@ -806,3 +806,14 @@ Extended the [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) 
 Recorded the existing shared ideal-gas calculations and the structure-level connection to settlement gas inventory and structure gas storage. Also documented concrete implementation/tuning review points: structure pressurization currently calculates pressure from oxygen and nitrogen while the shared default mix includes argon; reported gas use/composition should be checked against the combined gas store; settlement inventory sourcing is visible but corresponding inventory deduction is not shown in the inspected service; a generic 100 m³ fallback volume and human-life-support sealing gate should not be treated as universal Worldhouse assumptions. The crater-dome model demonstrates nested structure atmosphere updates, but that dome-specific workflow is not proof of equivalent Worldhouse integration.
 
 These are development findings and likely tuning/integration candidates, not owner-approved code changes or reasons to revise established Worldhouse design intent. The Worldhouse feature-suitability/conversion mismatch remains a likely implementation alignment item because the intended feature support is already stated in the model's own validation list. No code, frozen documents, blueprints, or runtime behavior were changed.
+
+
+### 2026-11-26 — Local planetary atmosphere as construction and seal-test starting condition
+
+Updated [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) with the owner-confirmed environmental starting condition for construction and post-sealing integrity tests.
+
+Construction takes place under the site's initial local planetary conditions; the starting atmosphere is neither assumed to be vacuum nor assumed to be habitable. Once sealed, the enclosure retains the atmosphere present at closure, subject to leakage and exchanges during construction. Sealing creates the environmental boundary but does not pressurize or condition it.
+
+Where an atmosphere exists, local planetary gas can be captured/compressed and added after sealing to raise enclosure pressure for seal-integrity testing. This test gas need not be human-breathable; its purpose is to establish a suitable test pressure. A lunar site with effectively no ambient atmosphere must obtain test gas from stored, produced, or imported supplies. Integrity testing remains distinct from the subsequent atmospheric-conditioning program.
+
+This general construction principle also applies to facilities and equipment exposed to local planetary conditions. It is owner-confirmed design intent; gas capture/compression capability, test pressures, and detailed procedures remain engineering matters. No code, frozen documents, blueprints, or runtime behavior changed.
