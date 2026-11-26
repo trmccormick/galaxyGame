@@ -761,3 +761,11 @@ Clarified the lifecycle distinction between constructing/sealing the environment
 
 The occupied module does not imply that the entire tube is complete or human-rated. Internal zoning, construction/occupancy interfaces, and detailed atmospheric-processing requirements remain open. This is design-intent documentation only; no frozen documents, code, blueprints, or runtime behavior changed.
 
+### 2026-11-26 — Initial Luna crew support and robotic lava-tube construction
+
+Updated [Lunar ISRU and Remote Gas Operations](technical/lunar_isru_and_remote_gas_operations.md) with the owner-confirmed initial deployment model: multiple inflatable habitation modules and supporting surface equipment establish an occupied settlement capable of supporting an ISS-scale crew. The crew is present for the planned initial PSR water-ice mining activity; the initial mining operation must not be silently reinterpreted as fully robotic.
+
+Clarified that robotic construction continues sealing and developing the larger lava-tube Worldhouse in parallel with crew occupancy and mining operations. The inflatable modules provide the initial occupied habitat, while the lava tube is a separate, progressively developed environmental structure. Initial crew occupancy does not require completion, full sealing, target pressurization, or atmospheric conditioning of the entire tube.
+
+Crew complement, task division, mining equipment package, shift model, duration, and detailed construction/occupancy safety dependencies remain OPEN. This records owner-confirmed planning intent only; no frozen documents, code, blueprints, or runtime behavior changed.
+
