@@ -25,41 +25,49 @@ The Stage 1–5 table below is historical/candidate design, not a required progr
 
 ---
 
-## 1. Core Distinctions — Seed vs Worldhouse
+## 1. Seed and Worldhouse Roles
 
-Both Terraforming Seeds and Worldhouses share **construction technology** (shell structure, power generation, life-support systems) but serve fundamentally different purposes and cost tiers.
+Terraforming Seeds and Worldhouses are related biological and structural capabilities, not mutually exclusive structure categories. They can share construction technology, including structural shells, power generation, environmental controls, and life-support systems.
 
-### Comparison Table
+**ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself be used as a terraforming seed. A Worldhouse is not limited to human habitation, and it should not be documented as categorically separate from biological terraforming. Its role depends on its configuration and intended use.
 
-| Attribute | Terraforming Seed | Worldhouse |
-|-----------|-------------------|------------|
-| **Purpose** | Active surface inoculation — adapt basic life and gradually affect the planetary biosphere. | High-control human-rated habitat — support desired life under local gravity. |
-| **Primary effect on planet** | Changes planetary baseline (atmosphere, soil, temperature) over time. | Does not primarily change the planetary baseline; operates within existing conditions. |
-| **Cost tier** | Cheaper than even a small Worldhouse. Lowest-cost terraforming entry point. | High-cost construction project for human settlement or complex biosphere containment. |
-| **Size** | Small construction project footprint; minimal shell volume. | Larger engineered habitat with full environmental control. |
-| **Gravity adaptation** | Respects local gravity (no artificial gravity assumed); operates within gravity constraints. | Respects local gravity; adapted for human-rated operations under same constraint. |
-| **Surface access** | Designed to eventually release/adapt organisms into the open biosphere. | Sealed habitat; life remains contained within dome. |
-| **Deployment speed** | Faster construction due to smaller scale and shared payload systems. | Longer construction timeline due to full environmental control requirements. |
-| **Player interaction** | Background-facing; visible via AI Manager market orders and settlement options. | Background-facing; visible via AI Manager market orders. |
-| **Biosphere integration** | Actively contributes terraforming effects each simulation step (O₂ production, soil improvement). | Passive from planetary perspective; contains life but does not modify biosphere directly. |
+### Role Distinctions
 
-### Shared Construction Components
+| Capability | Description |
+|-----------|-------------|
+| **Terraforming Seed function** | A biological deployment/development purpose: incubating, adapting, preparing, or using organisms for an intended contribution to a world's biosphere. |
+| **Worldhouse structure** | An engineered, pressurized environmental structure built around or within a suitable geological feature. |
+| **Worldhouse used as a Seed** | A Worldhouse configured to support biological incubation, contained development, or another deliberate terraforming-seed purpose. |
+| **Human-habitation Worldhouse** | A Worldhouse configured primarily to support people and any contained biological environment needed for that habitat. It is not automatically a terraforming project. |
 
-Both structures use overlapping infrastructure:
+A Worldhouse may support human habitation, contained biological development, a seed function, or multiple roles over time. Not every Worldhouse must be a Seed, and not every Seed must be a Worldhouse.
 
-| Component | Seed Use | Worldhouse Use |
-|-----------|----------|----------------|
-| Structural shell panels | Yes — smaller variant. | Yes — full-scale. |
-| Power generation array | Yes — scaled down. | Yes — full capacity for human-rated systems. |
-| Life-support modules | Yes — basic (atmosphere recirculation, minimal habitat). | Yes — full life support for crew and complex biosphere. |
-| Thermal regulation system | Yes — simpler variant. | Yes — precise temperature control required. |
+### Containment and Planetary Effects
 
-### When to Use Each
+A sealed Worldhouse creates a local environment. Organisms and biological processes inside it do not automatically alter the external planetary atmosphere or open biosphere. The contained environment and the planetary biosphere must remain distinct in the model.
 
-- **Choose a Terraforming Seed** when gradual biological contribution to atmospheric or soil change is appropriate, or budget constraints favor a lower-cost entry point. The proposed liquid-water/Phase 4 gate is unresolved and is not a universal prerequisite for all simple-life applications; see [Biosphere Simulation §1](./biosphere_simulation.md#1-proposed-liquid-water-gate--unresolved-design-proposal).
-- **Choose a Worldhouse** when: human-rated containment habitat is needed, complex life must be protected from harsh local conditions, or planetary baseline cannot yet support open biosphere deployment.
+A Worldhouse used as a terraforming seed may prepare organisms or biological systems for an intended later interaction with the external environment. Any deliberate release or external coupling is a separate operation with its own environmental and biosafety considerations. The fact that a Worldhouse can serve as a Seed does not imply that all Worldhouses release organisms or directly modify planetary spheres.
 
----
+### Shared Construction and Biological Infrastructure
+
+| Component or capability | Seed function | Worldhouse |
+|--------------------------|---------------|------------|
+| Structural shell / enclosure | May use a small or purpose-built enclosure. | Provides the pressurized structural environment. |
+| Power generation | Sized to the facility and biological operation. | Sized to structural, environmental, and habitat demands. |
+| Life support / environmental control | Supports organisms and personnel as required by the design. | Supports its intended internal environment and occupants. |
+| Incubation and adaptation | May be provided directly or through a Bio-Nursery. | May host or support biological incubation and adaptation when configured for that role. |
+| Containment and release controls | Depend on payload and intended deployment path. | Depend on contained organisms, facility role, and any intended external release pathway. |
+
+The exact equipment packages, cost differences, and facility boundaries are not established by this conceptual relationship.
+
+### When to Use Each Role
+
+- Use a Seed function when biological development or deployment is intended to contribute to the destination's biosphere.
+- Use a Worldhouse when a pressurized local environment is needed around a suitable geological feature.
+- Use a Worldhouse as a Seed when its configuration and operating purpose include biological incubation, adaptation, preparation, or another deliberate terraforming role.
+- A Worldhouse used only for human habitation or contained ecology does not automatically become a planetary terraforming project.
+
+For contamination and containment principles, see [Contamination & Biosafety](../../infrastructure/contamination_and_biosafety.md). For the structural and environmental boundary of Worldhouses, retain the distinction between local enclosed conditions and planetary-scale sphere changes.
 
 ## 2. Staged Progression — Seed Payload Lifecycle
 
