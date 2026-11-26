@@ -7,6 +7,10 @@ last_updated: 2026-11-26
 
 # Settlement Thermal Management
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Owner-confirmed direction for thermal management; existing thermal fields and mechanics not yet audited in code.
+
 > **Page role:** Owner-confirmed direction for managing useful heat across a settlement. This is a settlement-level infrastructure concern, not a requirement for every unit to operate its own thermal network. Existing thermal fields and mechanics have not yet been fully audited; this page does not claim an implemented thermal-management system.
 
 ## Core Principle

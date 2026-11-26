@@ -7,6 +7,10 @@ last_updated: 2026-11-26
 
 # Worldhouse Engineering
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Owner-confirmed design intent for structure, enclosure, and atmospheric development; operational details not yet verified in code.
+
 > **Status: DESIGN INTENT.** This page consolidates Worldhouse structure, enclosure, incremental construction, and atmospheric-development intent. It is not a code-verification report. Historical engineering details are retained only where they remain compatible with current owner-confirmed direction; unresolved specifications are identified below.
 
 ## Existing Code Alignment (Repository Inspection)

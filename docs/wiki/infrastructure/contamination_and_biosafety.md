@@ -1,7 +1,9 @@
 # Contamination & Biosafety
 
 > **Code Alignment Status:** `DESIGN INTENT`  
-> *Last Updated:* 2026-11-26  
+> *Last Audited:* 2026-11-26
+> *Audit Summary:* Design intent for biological contamination and biosafety confirmed by owner; governance framework, risk calculations, and operational controls not yet verified in code.
+
 > *Page role:* Consolidates biological-contamination risk, biosafety practices, containment engineering, and their relationship to planetary protection. This page records design intent and source distinctions; it does not claim that the governance framework, risk calculations, or operational controls are implemented.
 
 ## Purpose and Scope
