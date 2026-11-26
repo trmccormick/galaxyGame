@@ -783,3 +783,10 @@ This records owner-confirmed design intent. It does not resolve every historical
 Clarified [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) and [Terraforming Seeds](technical/biology/terraforming_seeds.md): a Worldhouse is the larger enclosed geological area or environmental volume, not one giant building. The intended development is to enclose a suitable area and construct ordinary buildings and facilities inside it, such as habitation buildings, laboratories, factories, warehouses, greenhouses, and utilities. The enclosure provides the broader environmental boundary; individual buildings provide their own functions and need independent pressure vessels, sealed envelopes, or additional environmental controls only where their purpose requires them.
 
 This complements the established incremental-development model: independently life-supported inflatable habitats can support initial occupants while the geological enclosure is constructed and its atmosphere is established. It is owner-confirmed design intent, not an implementation claim. No frozen documents, code, blueprints, or runtime behavior changed.
+
+
+### 2026-11-26 — Individual structure progress within a developing Worldhouse
+
+Updated [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to make explicit that each internal structure remains an individual physical asset in the existing structure model. Its construction and development progress is tracked separately from the Worldhouse enclosure's construction, sealing, atmospheric conditioning, and overall readiness. A Worldhouse may therefore contain completed and operational structures, structures still under construction, and planned structures at the same time, even while the wider environment is not yet human-rated.
+
+This is owner-confirmed design intent about how the existing structure model relates to Worldhouse development. It does not assert unverified implementation details about exact progress fields or status transitions, and does not change frozen documents, code, blueprints, or runtime behavior.
