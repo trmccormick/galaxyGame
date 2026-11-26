@@ -845,3 +845,8 @@ Linked this handling model to the existing [Skimmers & Mixed Volatiles](logistic
 Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to clarify that reaching the initial target pressure and passing seal-integrity verification is the gate to composition conditioning, not the end of local-atmosphere intake. For a Martian Worldhouse, intake/compression equipment can continue drawing additional local atmosphere as feedstock while connected processing, supplementary-gas supply, mixing/circulation, and pressure-management functions progressively adjust the mixture and maintain target pressure.
 
 Documented these as multiple connected functional units attached to a Worldhouse or structure, without fixing an equipment count, physical layout, or blueprint; functions may be combined. A MOXIE-like processor's feed pressure is regulated to its own requirements. No code, blueprints, frozen documents, or runtime behavior changed.
+
+
+### 2026-11-26 — Worldhouse gas tank farm and buffer storage
+
+Expanded [Worldhouse Engineering](infrastructure/worldhouse_engineering.md) to include an attached gas tank farm supporting continuous atmospheric intake and conditioning. The farm buffers captured feed gases, processed products, supplementary gases, and useful coproducts when production/acquisition exceeds immediate demand, and supplies them when demand exceeds current throughput. Gas identity and quantity remain individually tracked, subject to storage capacity and compatibility; the farm is not one undifferentiated gas volume. Tank count, arrangement, pressure/temperature regimes, and hardware remain open. No code, blueprints, frozen documents, or runtime behavior changed.
