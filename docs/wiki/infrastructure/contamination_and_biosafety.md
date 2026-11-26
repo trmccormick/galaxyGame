@@ -87,7 +87,7 @@ A seed program may use one structure or several facilities. It may be hosted wit
 
 ### Worldhouses
 
-A Worldhouse is a physical, engineered, sealed environmental structure built around or within a suitable geological feature. Its atmosphere is selected for its intended operating environment; a human-breathable atmosphere is not mandatory. **ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can host a terraforming-seed program and can be mixed use, but mixed use depends on compatibility with its selected atmospheric profile and operating conditions.
+A Worldhouse is a physical, engineered, sealed environmental structure built around or within a suitable geological feature. See [Worldhouse Engineering](./worldhouse_engineering.md) for the enclosure and atmospheric-development model. Its atmosphere is selected for its intended operating environment; a human-breathable atmosphere is not mandatory. **ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can host a terraforming-seed program and can be mixed use, but mixed use depends on compatibility with its selected atmospheric profile and operating conditions.
 
 A human-rated Worldhouse may combine habitation, research, biological incubation, contained ecosystem development, and seed-program activities. A non-human-rated Worldhouse may combine compatible industrial, biological, experimental, or other purposes, or remain dedicated to one purpose. Different functions may require distinct internal zones, environmental conditions, containment boundaries, or dedicated systems. The exact zoning and engineering model remain **OPEN**.
 
