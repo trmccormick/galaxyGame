@@ -112,7 +112,11 @@ The pressure target is determined by the intended operating class. If the Worldh
 
 A location with effectively no atmosphere, such as a lunar lava tube, has no useful ambient planetary gas source for this purpose; test gas must instead be supplied from stored, produced, or imported inventory. The same general principle applies to other construction and facilities: account for the local environment during construction, and use local atmospheric gas as a potential test resource where it is available and suitable.
 
-Once the enclosure has reached and passed integrity testing at its intended operating pressure, atmospheric composition tuning follows as a separate operation. For a human-rated Worldhouse, this means correcting the gas mixture toward the human-breathable target after the pressure has been established and verified. The enclosure is not human-ready while the local planetary gas mix remains unsuitable.
+Only after the enclosure has reached its intended operating pressure and passed seal-integrity verification does atmospheric composition tuning begin. Pressure buildup and integrity verification are a distinct commissioning operation; do not start the composition-tuning program before the seals are verified.
+
+For a Martian Worldhouse, a MOXIE-like atmospheric processor is one possible post-verification component. It can process captured Martian CO₂ to produce oxygen, providing an oxygen feedstock for the later atmosphere-conditioning program. Oxygen production alone does not make the enclosure breathable: the overall gas mixture must still be brought to its intended composition, with pressure maintained at the target operating level. This is an example of a suitable processing capability, not a commitment to a particular machine design or a claim that MOXIE hardware is already implemented in the game.
+
+The enclosure is not human-ready while its local planetary gas mix remains unsuitable.
 
 ## Atmospheric Establishment Is a Separate Program
 
