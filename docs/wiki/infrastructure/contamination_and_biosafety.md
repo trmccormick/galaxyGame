@@ -79,34 +79,25 @@ Historical source material mentions thermal treatment, radiation treatment, seal
 
 Biological facilities can serve different purposes while sharing structural, power, environmental-control, and life-support technologies.
 
-### Terraforming Seeds
+### Terraforming-Seed Programs
 
-A Seed is a biological deployment and development approach. It may support incubation, adaptation, and preparation of organisms for a possible later introduction into the open biosphere. The historical staged Seed lifecycle is a candidate design, not a mandatory progression. Initial simple-life use on Mars is an established planning direction and does not require completion of every historical stage.
+A terraforming seed is a planned biological use or program, not a structure class. It may support incubation, adaptation, research, and preparation of organisms for a possible later introduction into the open biosphere. The historical staged Seed lifecycle is a candidate design, not a mandatory progression. Initial simple-life use on Mars is an established planning direction and does not require completion of every historical stage.
 
-Containment and biosafety are relevant both before release and during any period in which organisms are being grown or adapted. A release decision must consider destination protection and residual uncertainty; exact release criteria remain **OPEN**.
+A seed program may use one structure or several facilities. It may be hosted within a Worldhouse, including one that also supports human habitation and other uses. Containment and biosafety are relevant both before release and during any period in which organisms are being grown or adapted. A release decision must consider destination protection and residual uncertainty; exact release criteria remain **OPEN**.
 
 ### Worldhouses
 
-**ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself be used as a terraforming seed. It is not limited to being a human habitat, and it need not be treated as a separate alternative to biological terraforming.
+A Worldhouse is a physical, engineered, pressurized environmental structure built around or within a suitable geological feature. **ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself host or serve a terraforming-seed program, and it can be mixed use.
 
-A Worldhouse is an engineered, pressurized environmental structure built around or within a suitable geological feature. Its configuration and purpose determine how it is used. It may support human habitation, contained biological development, a biological seed function, or more than one of these roles over time.
+A single Worldhouse may support human habitation, research, biological incubation, contained ecosystem development, and seed-program activities in combination. These uses may share infrastructure where appropriate and may require distinct internal zones, environmental conditions, containment boundaries, or dedicated systems where their requirements differ. The exact zoning and engineering model remain **OPEN**.
 
-A Worldhouse does not automatically alter the planetary atmosphere or open planetary biosphere merely because it contains life. Biological activity inside a sealed structure remains local unless a designed and authorized connection or release pathway makes it affect the external environment. This preserves the distinction between a contained ecosystem and planetary-scale biosphere change.
-
-Accordingly:
-
-- a human-habitation Worldhouse is not automatically a terraforming seed;
-- a Worldhouse configured to incubate, develop, or prepare organisms for a terraforming purpose can serve as one;
-- a Worldhouse may provide a controlled environment before any organisms are intentionally introduced to the open biosphere;
-- the transition from contained activity to external release or planetary interaction requires its own decision and risk assessment.
-
-This clarifies the role relationship; it does not establish new Worldhouse construction mechanics, release hardware, or implemented biosphere coupling.
+A Worldhouse does not automatically alter the planetary atmosphere or open planetary biosphere merely because it contains life or hosts a seed program. Biological activity inside a sealed structure remains local unless a designed and authorized connection or release pathway makes it affect the external environment. The transition from contained activity to external release or planetary interaction requires its own decision and risk assessment.
 
 ### Bio-Nurseries and Shared Infrastructure
 
-Bio-Nursery concepts describe physical facilities for incubating and adapting Seed payloads. They may be standalone facilities or capabilities hosted within a larger suitable structure, including a Worldhouse. Exact facility taxonomy, equipment packages, and construction boundaries remain **OPEN**.
+Bio-Nursery describes a biological incubation/adaptation capability. It may be a standalone facility or hosted within a larger suitable structure, including a mixed-use Worldhouse; it is not necessarily a separate structure class. Exact facility taxonomy, equipment packages, zoning, and construction boundaries remain **OPEN**.
 
-Shared construction technology does not make every structure biologically equivalent. A structure's actual purpose, contained organisms, operating conditions, and release pathways determine its biosafety needs.
+Shared construction technology does not make every structure biologically equivalent. The actual uses, internal organization, contained organisms, operating conditions, and release pathways determine a facility's biosafety needs.
 
 ## Planetary Protection and Governance Relationship
 
