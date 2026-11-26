@@ -17,6 +17,7 @@
 | [TerraSim — Environmental Simulation](../terrasim.md) | Natural-world simulation, historical calibration, environmental events, terraforming, and future tuning direction. |
 | [Celestial-Body Sphere Models & Environmental Interactions](../sphere_models_and_interactions.md) | **Source-verified** sphere data ownership, couplings, and current service behavior across body types. |
 | [Terraforming Seeds](./terraforming_seeds.md) | Seed vs Worldhouse concepts; **candidate** staged lifecycle (not an inevitable full-terraform track); Bio-Nursery and adaptation pipeline design. Owner direction for initial simple-life Mars use is on that page. |
+| [Contamination & Biosafety](../../infrastructure/contamination_and_biosafety.md) | Biological contamination, containment, residual risk, and biosafety relationships for Seeds, Bio-Nurseries, and Worldhouses. |
 
 ## Cross-Links
 
