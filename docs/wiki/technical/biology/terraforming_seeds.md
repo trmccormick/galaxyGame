@@ -29,7 +29,9 @@ The Stage 1–5 table below is historical/candidate design, not a required progr
 
 A **Worldhouse is a physical structure**: an engineered, pressurized environmental volume built around or within a suitable geological feature. A **terraforming seed is a planned biological use or program**, not a competing structure type. It describes what people intend to do with suitable infrastructure and biological systems to contribute to a world's biosphere.
 
-**ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself be used as a terraforming seed. It can also be mixed use. Human habitation, biological research, incubation, contained ecosystem development, and a terraforming-seed program are compatible purposes when the structure's design, internal organization, resources, and operating controls support them.
+**ESTABLISHED INTENT — 2026-11-26:** A Worldhouse can itself host or serve a terraforming-seed program and can be mixed use. However, human habitation is not an inherent Worldhouse requirement. A Worldhouse is a sealed environmental volume whose atmospheric composition is selected for its intended operating environment.
+
+A **human-rated Worldhouse** can combine human habitation with research, biological incubation, contained ecosystem development, and seed-program activities when its design and internal organization support them. A **non-human-rated Worldhouse** may instead use an industrial, experimental, biological, or other target atmosphere. It may be dedicated to one purpose or combine only purposes compatible with that atmosphere. Mixed use is therefore conditional on the selected environment; it does not imply that every function can coexist in one undivided volume.
 
 ### Keep the Design Layers Distinct
 
@@ -41,15 +43,17 @@ A **Worldhouse is a physical structure**: an engineered, pressurized environment
 | **Internal organization** | How the structure supports multiple uses safely and practically. | Shared utilities, dedicated zones, environmental separation, containment boundaries, independent controls where needed. |
 | **Planetary interaction** | Whether contained activity is deliberately connected to the external environment. | Continued containment, controlled exchange, or an intentional release operation. |
 
-These layers should not be collapsed into a single Seed/Worldhouse choice. A Worldhouse may be human-habitation only, biology-focused, or mixed use. A Seed program may use a Worldhouse, a Bio-Nursery hosted within one, another suitable structure, or multiple facilities. Not every Worldhouse has a terraforming-seed purpose, and a seed program does not inherently require a Worldhouse.
+These layers should not be collapsed into a single Seed/Worldhouse choice. A Worldhouse may be human-rated, non-human-rated, or configured for another target environment; it may be dedicated to one purpose or mixed use. A Seed program may use a Worldhouse, a Bio-Nursery hosted within one, another suitable structure, or multiple facilities. Not every Worldhouse has a terraforming-seed purpose, and a seed program does not inherently require a Worldhouse.
 
-### Mixed-Use Worldhouses
+### Atmospheric Profile and Mixed-Use Worldhouses
 
-Mixed use is an ordinary supported design possibility, not an exception or separate Worldhouse subtype. One Worldhouse may combine habitation, research, biological incubation, contained ecosystem development, and seed-program work.
+Atmospheric composition is a selected operating profile, not an intrinsic property of a Worldhouse. The structure is defined by its sealed environmental volume; the target atmosphere is chosen according to its intended uses. A human-rated atmosphere is one possible profile, not the default.
 
-Those functions may share structural systems, power, environmental processing, and life-support infrastructure. Where their requirements differ, the internal design may need distinct zones, environmental conditions, access rules, containment boundaries, or dedicated systems. The exact zoning model and engineering requirements remain to be established; do not assume that every function needs a fully independent life-support plant or that all functions can safely share one undivided volume.
+Mixed use is an ordinary supported design possibility, not an exception or separate Worldhouse subtype. A human-rated Worldhouse may combine habitation, research, biological incubation, contained ecosystem development, and seed-program work. A non-human-rated Worldhouse may also be mixed use, but only among purposes compatible with its selected atmosphere and operating conditions; it may instead be dedicated to a single industrial, biological, experimental, or other purpose.
 
-A Worldhouse's role should therefore be described by its configured uses and internal organization, rather than by assigning it one exclusive label such as "habitat" or "Seed."
+Functions may share structural systems, power, and environmental processing where appropriate. Where their requirements differ, the internal design may need distinct zones, environmental conditions, access rules, containment boundaries, or dedicated systems. The exact zoning model and engineering requirements remain to be established. Do not assume every function needs a fully independent life-support plant, or that all functions can safely share one undivided volume.
+
+A Worldhouse's role should therefore be described by its target environmental profile, configured uses, and internal organization—not by assigning it one exclusive label such as "habitat" or "Seed."
 
 ### Containment and Planetary Effects
 
