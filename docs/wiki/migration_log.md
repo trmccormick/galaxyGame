@@ -883,3 +883,16 @@ Created [Settlement Thermal Management](infrastructure/settlement_thermal_manage
 The page also records that existing references to waste_heat, heat_generation_kw, thermal_load_max, and radiator capacity do not by themselves prove a coherent active thermal simulation. Their use in current code and data needs an audit before deciding what to retain, consolidate, or remove. Exact thermal units, transfer/network rules, storage design, heat-pump performance, and rejection calculations remain open. Added navigation and cross-links from Infrastructure, Settlement Infrastructure, and Life-Support Systems.
 
 This is owner-confirmed design intent and an audit requirement only. No code, blueprints, or runtime behavior changed.
+
+
+### 2026-11-26 — Settlement thermal management terminology and harvested reference notes
+
+Expanded [Settlement Thermal Management](infrastructure/settlement_thermal_management.md) with a **Terminology** section defining waste heat, useful heat, heat rejection, settlement thermal management, and thermal network; noted that code fields `waste_heat`, `waste_heat_kw`, `heat_generation_kw`, `thermal_load_max`, and `radiator_capacity_kw` are legacy/audit targets only.
+
+Harvested ECLSS thermal loop ideas from frozen references — coolant/radiator grid / heat load vs radiator capacity concept (`ECLSS_SYSTEM_ARCHITECTURE.md`), buried-vs-surface thermal dissipation contrast (`HABITATION_NODE_ARCHITECTURE.md`) — and tagged as proposed/placeholder. No code changes; no claim that any referenced design implements these concepts.
+
+Replaced prose inventory with a representative-field table listing example config/data paths for each thermal field and flagged them all as `unknown` or `no` for active runtime presence. Added summary sentence: many data/config occurrences; no confirmed coherent runtime thermal service loop; all fields remain audit targets. No full-repo completeness claimed.
+
+Added cross-link sentences to two heat-rejection pages pointing at [Settlement Thermal Management](infrastructure/settlement_thermal_management.md): `isru_fabrication_chain.md` (thermal rejection methodology) and `atmospheric_harvesting.md` (thermal rejection budget). No retitle or bulk terminology changes.
+
+No code, blueprints, or runtime behavior changed.
