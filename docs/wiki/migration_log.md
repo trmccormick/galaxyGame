@@ -896,3 +896,13 @@ Replaced prose inventory with a representative-field table listing example confi
 Added cross-link sentences to two heat-rejection pages pointing at [Settlement Thermal Management](infrastructure/settlement_thermal_management.md): `isru_fabrication_chain.md` (thermal rejection methodology) and `atmospheric_harvesting.md` (thermal rejection budget). No retitle or bulk terminology changes.
 
 No code, blueprints, or runtime behavior changed.
+
+### 2026-11-27 — Lightweight waste-heat reuse and settlement management authority
+
+Expanded [Settlement Thermal Management](infrastructure/settlement_thermal_management.md) with the owner-confirmed lightweight infrastructure model. A reusable Heat Storage and Recovery Unit accepts suitable waste heat for later recovery, while compatible processes may also use waste heat directly. Recovered heat can offset energy that a process or habitat would otherwise spend supplying heat, subject to temperature compatibility, availability, transfer limits, and system efficiency. Storage is finite and loses energy over time; engineered rock mass may be used where appropriately coupled to heat-transfer equipment, but rock and lava tubes are not free or unlimited thermal batteries. Surplus heat may be rejected through radiators or, where an atmosphere makes it practical, air-cooled systems.
+
+Clarified that this is a supporting settlement-infrastructure capability, not a core gameplay subsystem or a detailed thermal simulation. The simulation should expose meaningful capacity, recovery, loss, power, and rejection consequences without tracking every temperature, valve, or cooling loop. The Player or AI Manager makes base-level infrastructure and priority decisions; routine equipment operation remains automatic.
+
+Updated [Player View Architecture](ui/02_player_view_architecture.md) and [Admin and AI Manager Interfaces](ui/03_admin_and_ai_manager.md) to place detailed base infrastructure management in the Player Settlement context and make ownership/authority explicit: players manage their own bases and assets; Admin manages NPC bases and simulation/world systems, not player bases. Developer patch-development and technical-debugging tools remain separate from the Admin Dashboard. Existing shared AI Manager capabilities remain one system with NPC- and Player-scoped authority.
+
+These are owner-confirmed design decisions, not implementation claims. Existing thermal-field/runtime alignment remains an open audit; no code, blueprints, or frozen source documents were changed.
