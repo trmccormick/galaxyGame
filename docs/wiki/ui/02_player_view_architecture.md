@@ -1,5 +1,5 @@
 > **Wiki section:** UI & Experience · **Status:** Established intent for view boundaries and navigation principles; detailed layouts remain DIRECTION or OPEN  
-> **Last Updated:** 2026-11-24
+> **Last Updated:** 2026-11-27
 
 # Player View Architecture
 
@@ -490,7 +490,8 @@ It should support:
 - mines, extraction and industrial development;
 - infrastructure and transportation networks;
 - moving units, exploration, and surface operations;
-- inspection of locations and settlement markers.
+- inspection of locations and settlement markers;
+- selection of surface installations and structures where the surface representation exposes them. Selecting a structure should open its reusable structure-detail experience; it does not turn Surface into the detailed equipment-management view.
 
 Existing Surface implementation is partial. Earth has shown a coarse terrain/biome grid and cursor inspection of tile, biome, and elevation, but tile loading/status problems were visible. Mars showed a blank map and JavaScript initialization/tile-loading symptoms. Other worlds have reportedly worked previously and require individual checks. Do not assume all bodies share one failure cause.
 
@@ -498,11 +499,40 @@ Existing Surface implementation is partial. Earth has shown a coarse terrain/bio
 
 **DIRECTION**
 
-Settlement is the detailed management view for an individual inhabited or developed place. It is SimCity-inspired, but GalaxyGame's settlement model and rules are authoritative.
+Settlement is the detailed management view for an individual inhabited or developed place. It is SimCity-inspired, but GalaxyGame's settlement model and rules are authoritative. The detailed management of a base's buildings, utilities, production, inventories, logistics, and infrastructure belongs in this Settlement context. It may be presented as panels within the view or as related infrastructure pages reached from it; the exact layout remains OPEN. The Surface view provides the wider geographic and civilization-level context and a way to select a settlement, while the Settlement view handles that place's detailed management.
 
 A Settlement is a physical place where people live or work. It may be a mining outpost, research outpost, industrial settlement, town, city, or another form. A Colony is a government-like entity overseeing multiple settlements; ownership and governance are separate. A player or corporation may own a settlement while it is governed by a Colony.
 
 Settlement management includes structures/facilities, population, services, utilities, construction, production, inventories, logistics, and development. Structures are individual buildings, stations, modules, or facilities within a settlement.
+
+### Shared structure and installed-equipment drill-down
+
+**ESTABLISHED UI / ENGINEERING DIRECTION — 2026-11-27**
+
+A structure is an independently inspectable container for an engineered installation and its installed equipment. It is not synonymous with the settlement that contains it. A space station, surface building, factory, agricultural dome, or facility installed within a lava-tube settlement should use the same underlying structure-detail and equipment drill-down experience. The surrounding location supplies environmental context; it does not require a different equipment hierarchy or a separate set of screens.
+
+From a selected structure, the player should be able to:
+- Inspect the structure's own identity, dimensions/capacity, condition, and operational state.
+- See the units, modules, rigs, and other equipment installed in that structure, then select an item to inspect its own properties.
+- Read an aggregate engineering summary for that structure, calculated from the equipment installed within it. Relevant information includes installed mass, electrical demand, heat generated or required, environmental requirements, and installed support capacity where those values are defined by the underlying data.
+- Drill down from the structure summary into the installed equipment that contributes to those totals.
+
+**Keep the aggregation levels distinct:**
+1. **Equipment detail** describes an individual installed unit, module, rig, or component.
+2. **Structure detail** aggregates the equipment belonging to that one structure. For example, an agricultural dome reports the combined requirements and capabilities of the equipment installed inside that dome.
+3. **Settlement overview** separately aggregates the requirements and available capacity of the settlement's structures, units, vehicles, and shared infrastructure. It is not the structure readout enlarged or relabeled.
+
+The same equipment must not be counted twice when structure results are rolled up into settlement totals. Shared settlement infrastructure should remain distinguishable from equipment installed inside an individual structure. A structure may draw power, receive heating/cooling, or use other services supplied by shared infrastructure without owning or containing that infrastructure itself.
+
+Surface and Settlement provide different entry points and scopes, not different structure models. Surface supplies the geographic/civilization-level context for locating and selecting surface installations and settlements. Settlement provides detailed management of the selected settlement and its contained structures. Selecting a structure from either context should lead to the same structure-detail information hierarchy. The same pattern also applies to orbital settlements and stations.
+
+A structure's environmental requirements depend on its intended function. Human habitability is not an automatic requirement for every structure: an agricultural environment, robotic factory, laboratory, and crew habitat may have different atmospheric, temperature, and other operating requirements. The detail experience should expose the requirements defined for that structure and its installed equipment rather than assume every enclosed volume is a human habitat.
+
+The precise screen layout, navigation treatment, and availability of each engineering metric remain subject to the relevant UI and data research. This direction establishes the reusable hierarchy and separation of responsibility; it does not claim that every aggregate or thermal calculation is already implemented.
+
+**OWNER-CONFIRMED AUTHORITY BOUNDARY — 2026-11-27**
+
+Players manage their own bases and settlements, not NPC settlements. Where a player-owned business or asset is permitted to operate at an NPC foothold, the player manages only that business and those assets within the rights granted; this does not confer authority over the NPC settlement, its population, shared infrastructure, or AI operations. A player's ability to select or view a location does not by itself grant management authority.
 
 **EARLY EXPLORATION — NPC settlement connections and outside development (2026-11-13; not finalized gameplay)**
 

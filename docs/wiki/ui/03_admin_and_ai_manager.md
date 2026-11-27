@@ -1,9 +1,9 @@
 > **Wiki section:** UI & Experience · **Status:** Established dashboard separation; individual workspaces and layouts remain DIRECTION / OPEN  
-> **Last Updated:** 2026-11-23
+> **Last Updated:** 2026-11-27
 
 # Admin Dashboard and AI Manager
 
-This page records the responsibilities of the Admin Dashboard and its dedicated workspaces. It complements [Player View Architecture](02_player_view_architecture.md). Player and Admin serve different audiences and permission scopes, but they are not duplicate applications: many game-object and operational views are shared, with Admin receiving broader visibility, diagnostics, and authorized controls. See [Mission Profiles, Templates, Tasks, and Execution](07_mission_profiles_tasks_and_execution.md) for the detailed shared mission/task model.
+This page records the responsibilities of the Admin Dashboard and its dedicated workspaces. It complements [Player View Architecture](02_player_view_architecture.md). Player and Admin serve different audiences and authority scopes; shared game-domain models and presentation patterns do not imply shared management rights. Admin manages NPC-controlled bases and simulation/world operations. Players manage their own bases and assets. Developer tools for patch development and technical debugging are separate from the Admin Dashboard. See [Mission Profiles, Templates, Tasks, and Execution](07_mission_profiles_tasks_and_execution.md) for the detailed shared mission/task model.
 
 ## 1. Player Dashboard versus Admin Dashboard
 
@@ -12,7 +12,13 @@ This page records the responsibilities of the Admin Dashboard and its dedicated 
 - **Player Dashboard:** supports people and organizations participating in the shared universe. It provides three primary Player views—Planetary, Surface, and Settlement—plus the separate Space context.
 - **Admin Dashboard:** supports administrators operating the application and managing the simulation, world generation, data, configuration, users, and operational systems.
 
-The dashboards have distinct entry points, navigation, audience context, and authority. However, many views that inspect or operate the same game resources should be shared rather than duplicated. An Admin may open the same underlying Planetary, Surface, settlement, asset, mission, or execution view available to a Player, with broader/global scope, additional diagnostics and telemetry, and extra controls where authorized. The Player receives the ownership- and permission-scoped presentation. Shared views rely on the same domain resources and game logic.
+The dashboards have distinct entry points, navigation, audience context, and authority. They may reuse domain models, data services, and visual patterns, but their management targets are not interchangeable:
+
+- **Player:** manages the bases and settlements the player owns, along with the player's own assets and businesses. Player settlement controls are scoped to those holdings.
+- **Admin:** has authority to inspect, configure, and adjust NPC-controlled bases and other simulation/world systems within the Admin role. Admin settlement-management tools are for NPC bases, not player-owned bases; routine Admin workflows have no reason to inspect or adjust a player's base.
+- **Developer:** patch-development and technical debugging tools are separate developer tooling, not an additional Admin permission level or a reason to expose player bases in the Admin interface.
+
+A player may be allowed to operate a business or owned assets at an NPC foothold, but that does not give the player control of the NPC settlement or its shared infrastructure. Conversely, Admin authority over NPC bases does not imply operational authority over player bases.
 
 Admin also has genuinely administrative-only workspaces, including shared Task and Mission Template Library management, global operational monitoring, configuration, diagnostics, and application administration. Those do not need Player duplicates.
 
@@ -350,7 +356,7 @@ There is one AI Manager system, not separate NPC and player automation implement
 
 - **NPCs:** the AI Manager receives the governing objectives and policies for NPC-controlled assets and autonomously plans, assigns, coordinates, and executes their work.
 - **Player-owned assets:** the player supplies objectives, standing policies, priorities, and individual instructions. The same AI Manager capabilities turn those inputs into tasks and plans and manage authorized execution for the player's assets.
-- **Admin:** the Admin workspace provides system-wide supervision and appropriate configuration/oversight. It is not the player-facing asset-management interface, and Admins should not need to manually create every NPC task.
+- **Admin:** the Admin workspace supervises NPC-controlled operations and provides appropriate configuration/oversight of NPC bases and game-level systems. It is not the player-facing asset-management interface and does not manage player-owned bases; Admins should not need to manually create every NPC task.
 
 Keep the inputs distinct: an **objective** describes the outcome to pursue; a **standing policy** defines persistent rules and limits for repeated decisions; an **individual instruction** requests a particular action; and a **condition or trigger** (for example, a shortage or maintenance need) may cause the AI Manager to generate work under the applicable objectives and policies. Tasks, plans, decisions, and executions are shared concepts across NPC and player operations. Their records should preserve the source/provenance of the work and the applicable asset scope and authority, so operators can tell why a task exists, whose direction governs it, and what the AI Manager was authorized to do.
 
