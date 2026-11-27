@@ -119,10 +119,18 @@ Both references leave the following explicitly open:
 
 These gaps remain OPEN in the current wiki page and its source references. No implementation change is authorized by harvested notes until owner intent is recorded on this page.
 
-## Existing Tracking and Open Audit
+## Existing Tracking and Thermal Field Inventory
 
-Some existing sources and data contain thermal concepts, including waste_heat, waste_heat_kw, heat_generation_kw, thermal_load_max, and radiator-capacity examples. Their presence in isolated configuration, test, or historical design files does not establish a coherent, active thermal simulation or settlement-wide heat network.
+Some existing sources and data contain thermal concepts, including waste_heat, waste_heat_kw, heat_generation_kw, thermal_load_max, and radiator-capacity examples. The table below conservatively catalogs where each field currently appears. A conservative inventory of known occurrences across the repository is provided below. Their presence in isolated configuration or historical design files does not establish a coherent, active thermal simulation or settlement-wide heat network.
 
-Before extending or retaining those mechanics, audit where these fields are loaded, consumed, calculated, transferred, and persisted in current code and data. Determine whether they are active, duplicated, inconsistent, arbitrary placeholders, or remnants of older designs. Redundant or unsupported tracking may need to be consolidated or removed rather than expanded into a second thermal subsystem.
+| Field | Example locations (path) | Appears active? (yes/no/unknown) | Notes |
+|---|---|---|---|
+| `waste_heat_kw` | `galaxy_game/app/data/operational/natural_wormhole_anchor_mk1h_data.json` | no | Config data file only; not loaded by any runtime service. Also appears in `ECLSS_SYSTEM_ARCHITECTURE.md` as a proposed game parameter (`radiator_capacity_kw`, `current_heat_load_kw`). |
+| `waste_heat` | `galaxy_game/config/units/storage.yml` (lines 21, 71) | unknown | Configuration data; runtime consumption not verified. May describe per-unit heat generation in arbitrary units. |
+| `heat_generation_kw` | `galaxy_game/tools/transform_component.rb` (line 379) | no | Tool script only (not a Rails service or model). Appears as a static example value (`1.0`). |
+| `thermal_load_max` | *(not found in rb/json/yml)* | unknown | Referenced on this wiki page and frozen design docs, but no occurrence found in code or config files searched so far. May exist only as prose intent. |
+| `radiator_capacity_kw` / `current_heat_load_kw` | `ECLSS_SYSTEM_ARCHITECTURE.md` (proposed game parameters table) | no | Proposed schema fields in a frozen design reference; not found in active Rails config or data files. |
+
+No runtime service (`galaxy_game/app/services/`) was found loading, computing, or transferring any of these thermal fields. Before extending or retaining those mechanics, audit where these fields are loaded, consumed, calculated, transferred, and persisted in current code and data. Determine whether they are active, duplicated, inconsistent, arbitrary placeholders, or remnants of older designs. Redundant or unsupported tracking may need to be consolidated or removed rather than expanded into a second thermal subsystem.
 
 The owner has not yet selected which existing thermal fields or mechanics should remain. Exact heat units, temperature representation, transfer rules, network topology, storage model, heat-pump performance, and radiator/rejection calculations remain OPEN. No implementation change is authorized by this design-intent entry.
