@@ -92,6 +92,71 @@ Not all heat can be recovered or stored. Surplus heat must be rejected through a
 
 Heat rejection remains necessary even when a settlement has heat recovery and storage. The goal is not to eliminate waste heat but to make useful use of it when practical and safely reject the remainder. The game need not model every cooling method or its detailed control loop.
 
+## Luna Lava-Tube Application: Marius Hills
+
+The initial Luna settlement near the Marius Hills Skylight is a useful reference case for this infrastructure. The settlement is established in a lava-tube environment, so locally available rock can provide a substantial thermal-storage medium. The design uses an engineered portion of that rock mass as storage; it does not assume that the entire lava tube is a ready-made thermal battery or that its natural temperature is known, uniform, or automatically suitable.
+
+### Functional arrangement
+
+The settlement uses a reusable **Heat Storage and Recovery Unit** (HSRU) as the principal interface between surplus thermal output and later useful-heat demand. The HSRU is an infrastructure unit, not a new class of core gameplay simulation.
+
+Its functional responsibilities are:
+
+1. **Accept suitable waste heat.** Receive thermal output from connected sources when its temperature and delivery conditions are compatible with the storage installation. Potential sources include the SMR-500 and industrial processing equipment; actual usable output must be established from their operating data rather than assumed from their nameplate power.
+2. **Charge thermal storage.** Transfer accepted energy through heat exchangers and an appropriate thermal-transfer medium into an engineered rock-mass installation or another suitable storage medium.
+3. **Retain and report stored energy.** Track usable stored thermal energy against finite capacity, including standing losses over time and limits on the temperature range from which energy can be recovered.
+4. **Recover and deliver heat.** When a connected consumer requests heat, withdraw energy at a bounded recovery rate and deliver it through the settlement's heat-transfer/distribution equipment.
+5. **Report constraints and disposition.** Expose available input capacity, stored energy, recoverable output, losses, power demand for supporting equipment, and any surplus that must be rejected.
+
+The HSRU may be implemented as one blueprint with associated storage and transfer components, or as a small group of cooperating units. The functional boundary matters more than fixing the physical packaging now.
+
+### Associated settlement equipment
+
+| Equipment / capability | Role |
+|---|---|
+| Heat exchangers / collection interfaces | Capture suitable heat from reactors and industrial processes without requiring those processes to manage the settlement network themselves |
+| Rock-mass thermal storage installation | Provides the engineered storage volume and thermal coupling to local geology |
+| Transfer and distribution equipment | Moves heat between sources, storage, and consumers within capacity and compatibility limits |
+| Heat pump (where needed) | Raises the useful delivery temperature of low-grade heat, consuming electrical power in the process |
+| Radiators | Reject surplus heat to space or another suitable external sink |
+| Air-cooled rejection (where practical) | Provides an alternative rejection path on worlds with a usable atmosphere |
+
+These are functional capabilities, not a requirement to model every pipe, valve, coolant circuit, or controller. Some functions may be combined in a blueprint where that is appropriate.
+
+### Settlement heat-flow decisions
+
+The settlement-level system needs only a small set of meaningful operating choices:
+
+- **Use directly:** Route available waste heat to a compatible process or structure when demand exists and transfer conditions permit.
+- **Store:** Charge the HSRU when suitable heat is available beyond immediate demand and storage has room.
+- **Recover:** Discharge stored energy when useful-heat demand exceeds directly available supply.
+- **Upgrade:** Use a heat pump only when the higher delivery temperature justifies its electrical cost.
+- **Reject:** Send heat that cannot be used or stored to an available rejection system. Storage must not be treated as a reason to suppress necessary heat rejection indefinitely.
+
+The settlement AI Manager can prioritize compatible consumers and balance immediate use, storage, recovery, and rejection against demand, capacity, losses, power, and infrastructure availability. Routine equipment operation remains automatic. The player makes settlement-level infrastructure, capacity, and priority decisions rather than operating individual thermal controls.
+
+### Example: supporting the initial Luna base
+
+The SMR-500 and operating industrial units may produce thermal output that is not needed by their own processes. The settlement can route suitable portions of that output to the HSRU. Recovered heat can then support habitat heating and other compatible demands, reducing the electrical energy that would otherwise be required by local heating equipment. Some industrial or chemical processes may also accept heat directly as an input, avoiding the storage round trip.
+
+The system does not guarantee that all reactor or industrial heat is recoverable. Temperature grade, timing, location, transfer capacity, storage state, and consumer requirements determine what can be used. If demand is absent, storage is full, or the heat is incompatible, the remaining surplus is rejected through radiators or another suitable cooling path.
+
+The lava-tube rock is therefore an engineered thermal buffer that can improve settlement energy efficiency. It is not a free heat source, an unlimited sink, or a perfect insulator. Stored energy bleeds away, and charging, recovery, heat-pump operation, and distribution may themselves consume power.
+
+### Lightweight simulation representation
+
+The gameplay model can represent this system through aggregate unit and settlement values rather than spatial temperature simulation. Candidate values include:
+
+- thermal input available and accepted over a simulation interval;
+- storage capacity and current stored energy;
+- standing loss rate;
+- maximum charge and recovery rates;
+- usable recovery efficiency and delivery limits;
+- heat-pump power requirement when used;
+- direct-use demand and heat rejected.
+
+Exact units, temperature-grade representation, efficiency equations, blueprint boundaries, and runtime integration remain subject to the existing thermal implementation audit. This section records owner-confirmed design direction and an illustrative Luna application; it does not claim that the HSRU or supporting equipment is already implemented.
+
 ## Gameplay Boundary
 
 Thermal management is a supporting settlement-infrastructure capability, not a core gameplay loop. The intended level of detail is deliberately lightweight. Meaningful decisions may include:
