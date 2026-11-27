@@ -126,7 +126,7 @@ Some existing sources and data contain thermal concepts, including waste_heat, w
 | Field | Example locations (path) | Appears active? (yes/no/unknown) | Notes |
 |---|---|---|---|
 | `waste_heat_kw` | `galaxy_game/app/data/operational/natural_wormhole_anchor_mk1h_data.json` | no | Config data file only; not loaded by any runtime service. Also appears in `ECLSS_SYSTEM_ARCHITECTURE.md` as a proposed game parameter (`radiator_capacity_kw`, `current_heat_load_kw`). |
-| `waste_heat` | `galaxy_game/config/units/storage.yml` (lines 21, 71) | unknown | Configuration data; runtime consumption not verified. May describe per-unit heat generation in arbitrary units. |
+| `waste_heat` | `galaxy_game/config/units/storage.yml` (lines 21, 71), `galaxy_game/config/units/production.yml` (line 96) | unknown | Configuration data; runtime consumption not verified. May describe per-unit heat generation in arbitrary units. |
 | `heat_generation_kw` | `galaxy_game/tools/transform_component.rb` (line 379) | no | Tool script only (not a Rails service or model). Appears as a static example value (`1.0`). |
 | `thermal_load_max` | *(not found in rb/json/yml)* | unknown | Referenced on this wiki page and frozen design docs, but no occurrence found in code or config files searched so far. May exist only as prose intent. |
 | `radiator_capacity_kw` / `current_heat_load_kw` | `ECLSS_SYSTEM_ARCHITECTURE.md` (proposed game parameters table) | no | Proposed schema fields in a frozen design reference; not found in active Rails config or data files. |
