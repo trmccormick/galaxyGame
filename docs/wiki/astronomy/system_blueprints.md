@@ -653,3 +653,5 @@ Terraformable planets receive preferential orbital placement via `generate_optim
 ---
 
 *Last verified against: `star_sim/system_generator_service.rb`, `star_sim/procedural_generator.rb`, `spec/factories/celestial_bodies.rb` — Phase 3 (Integration & Restoration)*
+
+*See also: [Shared Services Integration Boundaries](./shared_services_integration_boundaries.md)*
