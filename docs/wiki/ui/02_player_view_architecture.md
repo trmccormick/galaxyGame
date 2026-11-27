@@ -498,11 +498,15 @@ Existing Surface implementation is partial. Earth has shown a coarse terrain/bio
 
 **DIRECTION**
 
-Settlement is the detailed management view for an individual inhabited or developed place. It is SimCity-inspired, but GalaxyGame's settlement model and rules are authoritative.
+Settlement is the detailed management view for an individual inhabited or developed place. It is SimCity-inspired, but GalaxyGame's settlement model and rules are authoritative. The detailed management of a base's buildings, utilities, production, inventories, logistics, and infrastructure belongs in this Settlement context. It may be presented as panels within the view or as related infrastructure pages reached from it; the exact layout remains OPEN. The Surface view provides the wider geographic and civilization-level context and a way to select a settlement, while the Settlement view handles that place's detailed management.
 
 A Settlement is a physical place where people live or work. It may be a mining outpost, research outpost, industrial settlement, town, city, or another form. A Colony is a government-like entity overseeing multiple settlements; ownership and governance are separate. A player or corporation may own a settlement while it is governed by a Colony.
 
 Settlement management includes structures/facilities, population, services, utilities, construction, production, inventories, logistics, and development. Structures are individual buildings, stations, modules, or facilities within a settlement.
+
+**OWNER-CONFIRMED AUTHORITY BOUNDARY — 2026-11-27**
+
+Players manage their own bases and settlements, not NPC settlements. Where a player-owned business or asset is permitted to operate at an NPC foothold, the player manages only that business and those assets within the rights granted; this does not confer authority over the NPC settlement, its population, shared infrastructure, or AI operations. A player's ability to select or view a location does not by itself grant management authority.
 
 **EARLY EXPLORATION — NPC settlement connections and outside development (2026-11-13; not finalized gameplay)**
 
