@@ -201,6 +201,8 @@ Each fabrication tier has a cumulative power draw that includes both the fabrica
 
 **Thermal rejection methodology:** All power not converted to mechanical or electromagnetic work within the fabricator becomes waste heat. The standard thermal rejection ratio is **80%** of total draw, handled by radiator panels or loop-heat-pipe networks vented to space. For planet-bound units, heat may be dissipated into the local regolith via thermosyphon arrays.
 
+Settlement-level coordination of useful heat recovery and distribution among fabrication chains is covered on [Settlement Thermal Management](../infrastructure/settlement_thermal_management.md).
+
 ### CNT Fabricator — Per-Tier Power and Thermal Profile
 
 CNT fabricators consume more power due to plasma arc CO₂ splitting and catalyst activation chemistry.

@@ -276,6 +276,8 @@ Each compression stage dumps heat equal to the work input minus the enthalpy cha
 
 For Titan-class gas processing at cryogenic temperatures (~94 K surface), thermal rejection is trivially easy — the ambient acts as a heat sink. Rejection can be passive radiative; no active cooling required.
 
+Settlement-level coordination of useful heat among harvesting and processing chains is covered on [Settlement Thermal Management](../infrastructure/settlement_thermal_management.md).
+
 ### Pressure-Dependent Power Consumption Models
 
 Power draw for the full compression train scales non-linearly with throughput. All numerical values below are **[PROPOSED / PLACEHOLDER]** engineering estimates from compressor power modeling, not game constants:
