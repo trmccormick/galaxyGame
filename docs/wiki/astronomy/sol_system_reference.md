@@ -6,7 +6,7 @@
 
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-11  
-> *Audit Summary:* Corrected Venus methane production claim (Venus provides CO₂ feedstock; CH₄ synthesized on Luna via Sabatier). Corrected Mk1 tug Phobos/Deimos repositioning claim: Mk1 can convert in place using the Mk1 slag-engine approach with station-keeping only; cannot physically reposition either moon. Fixed three broken wiki links to resolve to docs/ paths. Preserved all other content as consistent with established design intent.
+> *Audit Summary:* Corrected Venus methane production claim (Venus provides CO₂ feedstock; CH₄ synthesized on Luna via Sabatier). Updated the Phobos/Deimos orbital-engineering options on 2026-11-27: direct-mounted slag drives may gradually adjust or stabilize moon orbits; Mk1 tug cannot relocate either whole moon, while later tug generations may be evaluated separately. Fixed three broken wiki links to resolve to docs/ paths. Preserved all other content as consistent with established design intent.
 
 This page is a concrete reference for the **Sol system** as it exists in Galaxy Game — bodies, roles, infrastructure milestones, and wormhole context. It is **not** the procedural template (that lives on [Celestial Systems Template](celestial_systems.md)); use that page to create per-system docs for procedurally generated systems.
 
@@ -94,7 +94,7 @@ Mars becomes solvent through hub economics: branch and core volume pass through 
 | **Role in logistics loop** | Raw material extraction: Ceres for water-ice and hydration-salts; 16 Psyche for nickel-iron ore; broader belt for structural materials |
 | **Key infrastructure** | Belt capture barges; heavy tug operations (Phase 4); asteroid relocation tugs |
 
-The Main Belt is the system's raw material source. Heavy tugs manufactured at L1 deploy to the belt in Phase 3, capturing and routing raw asteroids. Phobos/Deimos can be converted in place using the Mk1 slag-engine approach, with the drives providing station-keeping capability only. The Mk1 cannot physically reposition either moon; larger-body relocation requires a later tug class or an alternative capture-to-anchor approach.
+The Main Belt is the system's raw material source. Heavy tugs manufactured at L1 deploy to the belt for asteroid capture and relocation within their class capabilities; the Mk1 can move suitable smaller asteroids, including a potential belt-asteroid station shell for Venus, but cannot relocate Phobos or Deimos as whole moons. Phobos/Deimos orbital engineering is a separate long-term option: install slag drives directly on either moon and use waste slag as reaction mass to gradually raise, reshape, or stabilize its orbit. A later Mk2/Mk3 tug may also make whole-moon relocation possible. These are distinct options for the AI Manager to evaluate, not a fixed sequence or a claim that the Mk1 tug performs the moon-mounted work.
 
 ### Titan (moon of Saturn)
 
