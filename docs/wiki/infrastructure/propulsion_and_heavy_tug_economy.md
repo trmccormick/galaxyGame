@@ -2,7 +2,7 @@
 
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-12  
-> *Audit Summary:* Propulsion class tiers and heavy-tug economy consolidated from live wiki sources. Mk-I in-place conversion vs. later tug class relocation capability clarified: Mk-I supports in-place conversion and station-keeping only; a later heavy tug class enables capture and repositioning. Code implementation pending or unverified as of audit baseline.
+> *Owner clarification updated:* 2026-11-27. Mk1 tug relocation is limited by target-body scale: it can relocate suitable smaller asteroids but cannot relocate Phobos or Deimos as whole moons. Direct-mounted slag drives on those moons are a separate orbital-engineering option, not the Mk1 tug's station-keeping mode. A later Mk2/Mk3 tug may be evaluated for whole-moon relocation. Code implementation remains pending or unverified as of the audit baseline.
 
 This page consolidates all still-valid material about propulsion classes (HLT tiers, tug technology progression) and the heavy-tug economy that operates across the pre-player pipeline, station construction pipeline, Sol system reference, and related pages. It covers what is stated in live wiki sources; gaps are marked **OPEN**.
 
@@ -102,16 +102,23 @@ Compressed stored gases may serve as reaction mass where the installed control t
 
 ### 1.2 Tug Propulsion Technology Progression
 
-Asteroid relocation tugs and heavy tugs share a three-stage propulsion evolution:
+The asteroid relocation tug is a modular propulsion platform. The current design notes describe an intended technology progression:
 
-| Stage | Propulsion Type | Capabilities | Transit Impact | Cost Impact |
-|-------|----------------|--------------|---------------|-------------|
-| **Phase 1** | Nuclear Thermal | Reliable for inner solar system operations; xenon fuel canisters, nuclear fuel rods | Base transit times (30–180 days departure, 50–500 days towing) | Base cost |
-| **Phase 2** | Fusion Drive | 2× faster transit, better fuel efficiency; helium-3 fuel | −50% transit time; +100% fuel efficiency | −30% mission cost |
-| **Phase 3** | Continuous Fusion | Constant thrust, 4× faster transit, extended range to Oort cloud / interstellar precursor | −80% transit time; +300% fuel efficiency | −60% mission cost |
+| Progression | Propulsion design | Role / status |
+|---|---|---|
+| **Initial** | Nuclear Thermal Rocket (NTR) | Initial propulsion baseline; modular NTR engines provide a high-thrust maneuver option. |
+| **Advanced** | Direct Fusion Drive | Later, more efficient propulsion option as the technology becomes available. |
+| **Ultimate** | Continuous Fusion Drive | Advanced continuous-thrust option for later operations and expanded capability. |
 
-> **OPEN:** Exact technology unlock conditions (which pre-player phase gates each propulsion tier).  
-> **OPEN:** Specific thrust figures, Isp values, and dry/wet mass ratios for each tug class.
+The tug design also identifies **massive slag engines** for asteroid-relocation work. Its modular ports are intended to support more than one propulsion type and hybrid/mixed configurations as technology advances. Design notes identify compatible equipment options including nuclear and fusion reactors, Continuous Fusion Drive, VASIMR and ion engines, a ramjet collector, and xenon and methane tanks. This is a compatibility/options inventory, not evidence that all units are installed or operated simultaneously; exact unit identifiers and specific configurations still require blueprint verification.
+
+Keep the engineering roles distinct: a reactor or other power source supplies energy; a propulsion device converts energy and expelled mass into thrust; xenon, methane, and processed slag are propellant/reaction-mass inventories where compatible. A fuel or reaction-mass tank is not itself an engine, and slag is not an energy source. Direct-fusion propulsion and a fusion reactor powering an electric thruster are also different configurations.
+
+The progression does not establish exact Mk1/Mk2/Mk3 equipment fits or a one-to-one mapping between tug mark and propulsion technology. The initial Mk1 tug can relocate suitable smaller asteroids but cannot relocate Phobos or Deimos as whole moons. Later Mk2/Mk3 designs may expand that capability; no mass threshold or performance is established here.
+
+> **OPEN:** Exact technology unlock conditions and research prerequisites for each propulsion option.  
+> **OPEN:** Which compatible units are installed in each actual tug fit, and which combinations are supported simultaneously.  
+> **OPEN:** Specific thrust, Isp, power, propellant-consumption, delta-v, and dry/wet-mass figures.
 
 ---
 
@@ -123,7 +130,9 @@ Heavy tugs (specifically the **Asteroid Relocation Tug** class) are manufactured
 
 | Mission | Description | Phase |
 |---------|-------------|-------|
-| **Phobos/Deimos Relocation** | Capture and reposition Mars' moons (requires a later heavy tug class); Mk-I tugs support only in-place conversion for depot/station construction without relocation | Phase 3 |
+| **Smaller-asteroid relocation** | Capture and relocate suitable smaller asteroids within the tug's capability; the Mk1 can support this scale of relocation, including a possible belt-asteroid shell/foundation for Venus stations | Phase 3–4 |
+| **Phobos/Deimos orbital engineering** | Separate long-term option: install slag drives directly on either moon and use waste slag as reaction mass for gradual orbital adjustment or stabilization; not a tug relocation mission | Long-term option |
+| **Later-generation whole-moon relocation** | A future Mk2/Mk3 tug or later capability may physically relocate Phobos or Deimos; exact feasibility and thresholds remain OPEN | Long-term option |
 | **Belt Capture** | Move into the Asteroid Belt to capture raw asteroids (Ceres, 16 Psyche-class bodies) | Phase 4 |
 | **No-Moon Anchoring** | Reposition asteroids into orbit around moonless bodies (Venus, Eden, System B) as physical structural anchors for AWS/WS stations | Phase 4 |
 | **Post-Snap Recovery** | Transit through stabilized portals to Eden's legacy anchor site; haul EM-loaded legacy WS to exit coordinates | Post-Snap |
@@ -134,12 +143,24 @@ A defining feature of the heavy-tug economy:
 
 - When a celestial body is converted via Rule B hollowing, **30%** becomes structural hull/decks/framing and **70%** becomes inert slag.
 - The waste slag is processed into reaction mass propellant (`slag_fuel_id`) via onboard slag engines.
-- This enables **self-sustaining long-haul transit** without requiring Earth/Luna fuel imports.
-- Slag serves as reaction mass for tug station-keeping and orbit positioning.
+- The processed slag is reaction mass, not an energy source. The installed propulsion system and its power source are still required to produce thrust.
+- On the tug, slag engines support the tug's own asteroid-relocation and orbital-positioning operations. This is distinct from mounting separate slag drives directly on Phobos or Deimos.
 
 > **Cross-link:** For the full Rule B hollowing mechanics (mass ratios, structural disqualifiers), see **[Pre-Player Era Logistics Station Construction Pipeline](./pre_player_era_logistics_station_construction_pipeline.md)**.
 
-### 2.3 Tug Operational States
+### 2.3 Phobos/Deimos-mounted slag propulsion — separate orbital-engineering option
+
+**DIRECTION — owner clarification, 2026-11-27**
+
+Rather than relocating Phobos or Deimos with the Mk1 tug, one long-term option is to install slag drives directly on the moons. The drives would use waste slag as reaction mass and apply thrust gradually over extended periods to raise, reshape, or stabilize the moon's orbit as appropriate.
+
+This is a separate installation and operating concept from the slag engines mounted on an asteroid relocation tug. It is not limited by the Mk1 tug's inability to tow or relocate a whole moon, and it is not merely a station-keeping-only claim. The direction and duration of thrust determine the resulting orbital change; no specific orbit, maneuver profile, thrust level, timeline, slag throughput, or achievable stabilization is established.
+
+The drives still require an energy source and supporting installation/maintenance capability. The AI Manager may eventually compare this option with leaving a moon in its current orbit or using a more capable later-generation tug to relocate it. The existence of this option does not make it the mandatory strategy.
+
+> **OPEN:** Power source and propulsion configuration; installation and maintenance logistics; slag processing, storage, and feed rates; thrust-vector control; orbital targets and maneuver validation.
+
+### 2.4 Tug Operational States
 
 | State | Power Draw | Fuel Consumption | Speed / Range |
 |-------|-----------|-----------------|---------------|
@@ -153,7 +174,7 @@ A defining feature of the heavy-tug economy:
 > **OPEN:** Whether these operational states apply to all tug classes or only the Asteroid Relocation Tug specifically.  
 > **OPEN:** Surface propulsion mode details (installs `asteroid_propulsion_module` units on surface for targets > 10¹⁰ kg) — needs integration into this page.
 
-### 2.4 Dual-Operation Modes
+### 2.5 Dual-Operation Modes
 
 The Asteroid Relocation Tug supports two distinct operational modes:
 
@@ -177,7 +198,7 @@ The Asteroid Relocation Tug supports two distinct operational modes:
 |------|----------|--------|
 | **Build** | Earth L1 Shipyard | Capital craft fabrication (Heavy Tugs + Cyclers) |
 | **Propellant fill** | L1 Fuel Depot | Methalox loading from Venus-Luna Sabatier loop |
-| **Deploy to Mars** | Mars system | Phase 3: tug operations begin; Phobos/Deimos capture |
+| **Deploy to Mars** | Mars system | Tug operations begin; assess in-place moon work and direct-mounted orbital-engineering options separately from smaller-body relocation |
 | **Deploy to Belt** | Main Belt | Phase 4: belt capture and no-moon anchoring |
 
 > **Cross-link:** For L1 depot as the Venus-Titan-Luna logistics triangle hub, see **[Import Order & Cycler Models](../logistics/import_order_and_cycler_models.md)**.
@@ -218,9 +239,11 @@ Fleet scaling follows the required depot and shipyard dependencies.
   └─ Heavy Tugs manufactured ← propulsion economy begins here
   └─ Deep-space Cyclers manufactured
 
-Phase 3: Mars Moon Conversion
+Phase 3: Mars-system foothold and orbital infrastructure
   └─ Heavy tugs deploy to Mars system
-  └─ Phobos/Deimos hollowing + slag propulsion economy active
+  └─ In-place moon development and smaller-body tug operations are evaluated separately
+  └─ Direct-mounted Phobos/Deimos slag drives may be selected for gradual orbital adjustment or stabilization
+  └─ Whole-moon relocation is not a Mk1 capability; a later tug generation may be evaluated separately
   └─ HLT-Mk-II fleet (L1 built) operational
 
 Phase 4: Belt Expansion & Asteroid Repositioning
@@ -235,13 +258,15 @@ Phase 4: Belt Expansion & Asteroid Repositioning
 
 | # | Item | Source Notes |
 |---|------|-------------|
-| **OPEN-1** | Exact Mk1/Mk2/Mk3 mass thresholds for tug classes | Mk1 constraint mentioned: Phobos/Deimos can be converted in place under Mk1; larger bodies require later tug class or capture-to-anchor. No numeric thresholds stated. |
+| **OPEN-1** | Exact Mk1/Mk2/Mk3 mass thresholds for tug classes | Mk1 can relocate suitable smaller asteroids but cannot relocate Phobos or Deimos as whole moons. Later Mk2/Mk3 whole-moon relocation remains a possible option; numeric thresholds are not established. |
 | **OPEN-2** | Thrust figures, Isp, delta-v budgets per tug class | Delta-v formula present in pre-player pipeline but all values are **[PROPOSED / PLACEHOLDER]** and not game-validated. |
 | **OPEN-3** | Fleet counts (how many HLTs, how many heavy tugs) | No fleet count numbers stated anywhere in wiki sources. |
 | **OPEN-4** | Cost per tug class (GCC) | Mission cost tables exist in frozen docs but are not yet wiki-validated. |
 | **OPEN-5** | Propulsion technology unlock conditions | Phase 1→2→3 progression described qualitatively; no explicit pre-player phase gates for propulsion tiers. |
 | **OPEN-6** | Heavy Tug radiation exposure model values | Starsim page has **[PROPOSED / PLACEHOLDER]** survival probabilities (~10% unshielded, ~35% Al hull) for 100–500 day transit — not game-validated. |
 | **OPEN-7** | Surface propulsion mode integration | `asteroid_propulsion_module` units for > 10¹⁰ kg targets described in tug guide but not yet integrated into wiki narrative. |
+| **OPEN-9** | Hybrid tug propulsion and compatible-unit configurations | Modular port compatibility is described, but exact installed fits, supported combinations, and power/propellant interfaces remain to be verified. |
+| **OPEN-10** | Phobos/Deimos-mounted slag-drive implementation | This is a long-term orbital-engineering option; power, installation, slag handling, thrust-vector control, and achievable orbital changes remain OPEN. |
 | **OPEN-8** | Cycler repeat periods and corridor parameters | Pre-player pipeline has a corridor table with **[PROPOSED / PLACEHOLDER]** repeat periods (73 h, 584 h, 26 mo, etc.) — not game-validated. |
 
 ### Resolved: Epstein Drive Purge
