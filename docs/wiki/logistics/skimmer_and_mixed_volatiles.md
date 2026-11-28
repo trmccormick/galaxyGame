@@ -12,6 +12,16 @@ This page records the intended Venus HLT harvesting and return setup, plus the s
 
 ---
 
+## Early Luna volatile supply — initial test profile (DIRECTION — owner, 2026-11-27)
+
+For the **initial test / bootstrap profile**, early Luna CH₄ and N₂ are supplied by **Earth imports**. Luna continues to supply **local LOX** from ISRU where available.
+
+**Venus HLT Mk1 and Titan atmospheric harvesting are not on the early critical path.** They are deferred until local infrastructure and craft support exist. A later HLT Mk2+ (or equivalent) fit with updated units/equipment may make a Venus→Luna offload / process / refuel loop viable again; that remains a scored option, not the opening requirement.
+
+Early Luna does **not** require a full Venus-skimmer receive → process → complete-refuel plant on the critical path. That capability is a later option.
+
+---
+
 ## Venus HLT Harvesting and Return (DIRECTION)
 
 ### 1. Bulk atmospheric intake
@@ -107,6 +117,8 @@ The craft can unload, transfer fuel, be inspected and serviced, and prepare for 
 The AI Manager calculates the expected and actual Luna return manifest from current atmospheric composition, extraction amount and duration, installed processing throughput, mission fuel consumption, exhaust, storage capacity, elapsed transit time, and applicable boiloff/transfer losses.
 
 It compares the resulting inventory with Luna's habitat, life-support, industrial, reserve, and next-mission needs. If returned nitrogen or other gases are insufficient, it can select another harvesting run, Earth imports, or another available supply route. These are alternatives; the required outcome is adequate supply, not a fixed mission script.
+
+**Early test profile scoring note:** For the initial test / bootstrap profile (see above), Earth import is the preferred CH₄/N₂ path. Venus and Titan atmospheric harvesting as well as full skimmer turnaround at Luna are later alternatives the AI Manager may score when missions/tasks and supporting infrastructure allow. Do not present Venus runs as required for early Luna N₂/CH₄.
 
 ---
 

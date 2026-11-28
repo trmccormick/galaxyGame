@@ -18,7 +18,7 @@ Luna is the first complete operational benchmark for the settlement simulation a
 
 - Surface construction, power, life support, storage, maintenance, and production.
 - Earth-side procurement and resupply, including shipment timing and available USD.
-- Remote atmospheric harvesting and delivery, including Venus-derived gas supplies.
+- Remote atmospheric harvesting and delivery, including Venus-derived gas supplies (deferred for the initial test profile; scored as a later option).
 - Fuel production, storage, consumption, and transport loops.
 - Crew survival and continuity during delays, equipment failures, and shortages.
 - Revenue and available cash sufficient to pay for purchases; the AI Manager must not assume unlimited funds.
@@ -66,7 +66,20 @@ The owner's preferred long-term pathway is a Luna-first industrial and fuel econ
 
 Other candidate in-game approaches include using Mk1 HLT and imports to establish Luna before remote harvesting; investing in an Earth-orbital shipyard and building a dedicated harvesting craft before heading to Luna; or investigating a more capable HLT before remote operations. The Mk2 HLT is only a proposed design direction at this point—there is no established Mk2 specification, capability set, or cost estimate. Titan was an early harvesting option, but the initial Mk1 harvester could not support the long-duration mission and cryogenic retention requirements. This is a limitation of that early craft/configuration, not a permanent exclusion of Titan from later strategies.
 
-### Preferred Venus–Luna resource sequence (owner-confirmed direction)
+### Initial test profile — Earth-supported volatiles (DIRECTION — owner, 2026-11-27)
+
+- **Strategic objective unchanged:** build Luna industrial capacity to establish and supply the depots (Earth–Moon L1, then near-LEO) and support onward expansion. How volatiles and storage are supplied is scored from available options and missions/tasks.
+- **Early CH₄ and N₂:** Earth imports (e.g. cargo landers delivering tank loads into the lava-tube internal tank farm; later bulk via tanker-class craft when that option exists).
+- **Early LOX:** Luna local ISRU preferred.
+- **Local methane generators:** optional secondary — e.g. nighttime emergency power; products (CO₂, water) may feed greenhouse/storage; limited daytime methane make may support a thin loop but does **not** replace Earth CH₄ for the initial profile.
+- **Venus HLT Mk1 / Titan harvesters:** deferred for the initial profile. HLT Mk2+ (updated units/equipment) may restore a viable Venus→Luna skimmer loop later; AI Manager may score that when infrastructure and missions allow.
+- **PSR water-ice mining:** not required on the early critical path solely to feed methane synthesis if CH₄ is imported. Retain as a later option for local water/H₂/fuel independence. Crew vs robotic division remains OPEN.
+- **Tank farms (options, not a mandated layout):**
+  - Lava-tube **internal** tank farm expands as lander (and later tanker) N₂/CH₄ are moved inside.
+  - **Surface** tank farm accepts tanker offload; holds LOX for refueling and typically methane as well.
+  - Storage hardware options include multi-purpose cryogenic tanks (Mk1–Mk3; Mk1 suited to Earth-built shipping and internal farm; higher marks for longer-haul/lower boil-off), inflatable cryo tanks with 3D-printed regolith shells, inflatable pressure tanks with shells, and inflatable gas storage buffers. Exact mix is chosen by plan/mission scoring, not fixed by this page.
+
+### Alternate / later profile — Venus–Luna resource sequence (owner-confirmed direction)
 
 When testing the preferred Venus-supported pathway, preserve these dependencies without turning the whole operation into an unnecessarily serial script:
 
