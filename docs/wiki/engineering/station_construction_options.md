@@ -29,8 +29,9 @@ Generated systems will not match Sol. Different moons, no moons, dry rock, ice, 
 5. **Required Sol bootstrap (ESTABLISHED).** The current owner-confirmed order is Luna foothold → L1 Depot → second depot near LEO → main station / shipyard infrastructure. Luna supplies bulk industrial output; Earth remains the source for specialized and high-tech imports as needed. Older frozen plans that place the LEO depot before the Luna foothold or L1 Depot are historical, not the current sequence.
 6. **Reproduce the proven pattern where possible.** Luna → Earth–Moon L1 is the reference template at a given intensity (e.g. enough industry for a small ISS-scale crew and material to build the orbital station/depot). Other systems adapt the same logic to whatever low-gravity sources they actually have.
 7. **New foothold → NPC Development Corporation.** When the AI Manager establishes a new foothold settlement, it generally forms a new NPC Development Corporation on that world or celestial body to own and oversee the settlement’s development. Ownership is explicit from day one and remains distinct from any later Colony governance (see settlement ownership and governance).
-8. **Craft roles stay distinct.** Cyclers use various drives and can act as mobile construction bases. Asteroid relocation tugs carry the slag-engine / hollow-and-relocate loop. Mk-I supports in-place work only; it does not reposition Phobos, Deimos, or similar bodies.
+8. **Craft roles and scale limits stay distinct.** Cyclers use various drives and can act as mobile construction bases. The asteroid relocation tug is a separate space-only platform with its own propulsion options and size-dependent relocation capabilities. Mk1 can relocate suitable smaller asteroids, but it cannot relocate Phobos or Deimos as whole moons. That is a Mk1 capability limit, not a permanent prohibition on a later Mk2/Mk3 tug class.
 9. Early controlled-Sol runs and missions_v2 / profile rake testing exercise the option set; they do not lock a single sequence beyond the required Sol bootstrap.
+10. **Moon-mounted orbital engineering is separate from tug relocation.** Slag drives installed directly on Phobos or Deimos are a possible long-horizon option for gradually raising, reshaping, or stabilizing a moon's orbit using waste slag as reaction mass. This is distinct from the tug's own propulsion and relocation mission. The AI Manager may compare this approach with later-generation tug relocation if and when that capability exists.
 
 ---
 
@@ -70,7 +71,7 @@ One coherent early path mirrors early Luna at similar intensity: enough industry
 7. **Mars surface** comes later, after orbital/moon presence and material feed are underway.
 8. Second moon, second cycler, heavier industry = optional expansions once the refuel loop works.
 
-**Out of scope for this early path:** embedded slag drives on the moons, fusion inside the moons, moon-as-station/depot, and any relocation. Those are later options.
+**Out of scope for this early path:** embedded slag drives on the moons, moon-as-station/depot, and whole-moon relocation. These remain separate long-term options. Direct-mounted slag drives are one possible orbital-engineering approach, not a required step in the early lean path.
 
 **Dry moon:** structural feedstock may still be valid early; propellant stays imported (or from another known source) until a deliberate later path (e.g. fusion-tier industry + slag on a tug-class hollow program, or Mars surface volatiles) is chosen. Fusion itself has material needs; do not collapse “dry ⇒ slag drives” into one step.
 
@@ -86,18 +87,21 @@ One coherent early path mirrors early Luna at similar intensity: enough industry
    Hollow and fit out a moon as station/depot in natural orbit (still no relocation under Mk-I). Different intent from lean mining outpost; more mass and time.
 
 4. **Small-asteroid capture → hollow → station**  
-   Requires an asteroid relocation tug (slag-engine loop is native to that craft when hollowing). Capture, move into useful orbit/L1, hollow, fit-out. Strong when tug class and a suitable body exist; not the opening move under Mk-I-only constraints.
+   Requires an asteroid relocation tug. The Mk1 tug can relocate suitable smaller asteroids; for example, a suitable belt asteroid may be moved to Venus and converted into a station shell or structural foundation. The slag-engine / hollowing loop belongs to the tug's own relocation operations. Do not infer that Mk1 can relocate Phobos or Deimos.
 
-5. **Later repositioning of worked moons**  
-   With Mk2+ (or later tug/cycler capability), already-worked bodies may be moved if that scores better. Early path does not depend on this.
+5. **Direct-mounted slag drives on Phobos/Deimos**  
+   Install propulsion directly on a moon and use waste slag as reaction mass to make gradual orbital adjustments over time, potentially raising, reshaping, or stabilizing its orbit. This is a separate orbital-engineering option, not the Mk1 tug relocating the moon. Required power, installation logistics, slag throughput, thrust direction, and achievable orbital changes remain OPEN.
 
-6. **Two-moon / multi-cycler expansion**  
+6. **Later-generation whole-moon relocation**  
+   A more capable Mk2/Mk3 tug or later technology may make physical relocation of Phobos or Deimos possible. This remains a future option; exact class capability, mass thresholds, and mission economics are OPEN. The Mk1 limitation does not rule it out.
+
+7. **Two-moon / multi-cycler expansion**  
    After one outpost + depot loop is healthy, open the second moon and/or add cyclers as capacity allows.
 
-7. **Surface-first**  
+8. **Surface-first**  
    Usually scores poorly against orbital-first default; only when orbital options are blocked or clearly worse.
 
-8. **Orbital ring / spinning habitat (advanced, OPEN)**  
+9. **Orbital ring / spinning habitat (advanced, OPEN)**  
    Large equatorial orbital ring or spinning habitat providing Earth-normal (~1g) living volume and tethered surface access while planetary terraforming is incomplete. Staging, shipyard, and industrial roles possible. Requires high industrial capacity, structural mass, and power; scored only when tech and materials allow. Not part of the early lean path.
 
 Magnetosphere / L1 shield construction remains **independent** of moon relocation or moon-as-station choices (see [artificial_magnetosphere.md](../infrastructure/artificial_magnetosphere.md)). High-throughput atmospheric injection cares that a shield is active; it does not require Phobos or Deimos to be moved.
@@ -116,7 +120,7 @@ Magnetosphere / L1 shield construction remains **independent** of moon relocatio
 Venus also follows the default **orbital-first** pattern. It has no useful native large moons in the Phobos/Deimos class, so options collapse to:
 
 1. **Local orbital / small-body relocation + hollow + fit-out**  
-   Bring a suitable small body (tug class required for relocation), convert it, and use it as structural core or platform for depot and station.
+   Bring a suitable small body (tug class required for relocation), convert it, and use it as structural core or platform for depot and station. The Mk1 tug's viable relocation scope includes suitable smaller asteroids; a Venus station shell is one example. This does not imply Mk1 can relocate a major moon.
 
 2. **Pure orbital assemble / module import**  
    Build from delivered modules when no suitable body is available or tug capacity is lacking.
@@ -134,7 +138,8 @@ Venus also follows the default **orbital-first** pattern. It has no useful nativ
 |-------|------------------------------|
 | **Cycler** | Interplanetary delivery; mobile construction base; various drives (not slag-only). Configs (e.g. Mars Constructor) carry mining/construction gear and can transfer units to depot/station. |
 | **HLT / Mk-I support craft** | Move equipment from cycler to surface or small body; **in-place work only** — does not reposition Phobos/Deimos-class bodies. |
-| **Asteroid relocation tug** | Capture, relocate, hollow; **slag engines** use hollowing waste as reaction mass; hybrid propulsion possible. Later/heavier option when that class exists. |
+| **Asteroid relocation tug** | Capture and relocate suitable bodies within its class limits; Mk1 can move smaller asteroids but not Phobos/Deimos. Its own slag engines can use hollowing waste as reaction mass; hybrid propulsion is possible. Later marks may expand relocation capability. |
+| **Phobos/Deimos-mounted drives** | Separate long-horizon orbital-engineering option: installed directly on a moon to use waste slag as reaction mass for gradual orbital adjustment or stabilization. Not a tug relocation operation. |
 | **Depot / station** | Permanent nodes; receive transferred gear; depot especially important for cycler refueling once seeded. |
 
 ---
@@ -146,7 +151,8 @@ When choosing among options the AI Manager weighs at least:
 - Survey results (ice/volatiles vs dry rock; structural feedstock)
 - Available local orbital mass vs surface mass
 - Fuel production rate, storage, and whether the depot is seeded
-- Current craft class (cycler only vs tug available)
+- Current craft class and specific available tug mark (cycler only, Mk1, or later class)
+- Current settlement/system Technology Level, researched unlocks, and available blueprint Mk generations
 - Existing industrial nodes (can they feed an L1-style assembly pattern?)
 - Timeline pressure and CapEx
 - Whether a magnetosphere or other progressive infrastructure is also being scored in the same window
