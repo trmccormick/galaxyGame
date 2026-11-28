@@ -2,6 +2,7 @@
 
 > **Code Alignment Status:** `DESIGN INTENT`  
 > *Last Audited:* 2026-11-12  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
 > *Owner clarification updated:* 2026-11-27. Mk1 tug relocation is limited by target-body scale: it can relocate suitable smaller asteroids but cannot relocate Phobos or Deimos as whole moons. Direct-mounted slag drives on those moons are a separate orbital-engineering option, not the Mk1 tug's station-keeping mode. A later Mk2/Mk3 tug may be evaluated for whole-moon relocation. Code implementation remains pending or unverified as of the audit baseline.
 
 This page consolidates all still-valid material about propulsion classes (HLT tiers, tug technology progression) and the heavy-tug economy that operates across the pre-player pipeline, station construction pipeline, Sol system reference, and related pages. It covers what is stated in live wiki sources; gaps are marked **OPEN**.

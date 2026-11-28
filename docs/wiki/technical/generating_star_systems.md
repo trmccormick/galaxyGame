@@ -1,5 +1,9 @@
 # Generating Star Systems
 
+> **Code Alignment Status:** `DESIGN INTENT`
+> *Last Audited:* 2026-11-27
+> *Audit Summary:* Rake task exists; generator service body not yet audited.
+
 ## Overview
 
 The game includes a rake task to programmatically generate new star systems outside of automatic spawning (e.g., when wormholes open). Generated systems are saved as JSON files in `data/json-data/generated_star_systems/` for use by the game engine.
@@ -206,9 +210,9 @@ All parameters must be positive integers:
 
 ## Related Documentation
 
-- [StarSim Architecture](/docs/architecture/starsim/OVERVIEW.md)
-- [Procedural Generation](/docs/architecture/starsim/PROCEDURAL_INTENT.md)
-- [Celestial Bodies](/docs/architecture/starsim/celestial_bodies.md)
+- **StarSim Architecture** — `docs/architecture/starsim/OVERVIEW.md`
+- **Procedural Generation** — `docs/architecture/starsim/PROCEDURAL_INTENT.md`
+- **Celestial Bodies** — `docs/architecture/starsim/celestial_bodies.md`
 
 ---
 

@@ -1,5 +1,9 @@
 # Astronomy Shared Services — Integration Boundaries
 
+> **Code Alignment Status:** `DESIGN INTENT`  
+> *Last Audited:* 2026-11-27  
+> *Audit Summary:* Design intent specification. Code implementation pending or unverified as of audit baseline.
+
 > **Wiki section:** Development · **Status:** current  
 > **Created:** 2026-11-26  
 > **Precedence:** This doc supplements `system_blueprints.md`. Owner-confirmed sections in that file take precedence.
