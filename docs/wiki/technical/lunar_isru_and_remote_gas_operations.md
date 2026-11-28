@@ -18,7 +18,7 @@ Luna is the first complete operational benchmark for the settlement simulation a
 
 - Surface construction, power, life support, storage, maintenance, and production.
 - Earth-side procurement and resupply, including shipment timing and available USD.
-- Remote atmospheric harvesting and delivery, including Venus-derived gas supplies (deferred for the initial test profile; scored as a later option).
+- Remote atmospheric harvesting and delivery (Venus/Titan-derived gas) as a **later scored option** for the initial test profile; early CH₄/N₂ prefer Earth imports (see Initial test profile below and [Skimmers & mixed volatiles](../logistics/skimmer_and_mixed_volatiles.md)).
 - Fuel production, storage, consumption, and transport loops.
 - Crew survival and continuity during delays, equipment failures, and shortages.
 - Revenue and available cash sufficient to pay for purchases; the AI Manager must not assume unlimited funds.
@@ -52,11 +52,11 @@ The L1 and near-LEO depots are separate required milestones with distinct roles;
 
 The initial Luna deployment is planned to establish enough occupied surface capability to support an ISS-scale crew, using multiple inflatable habitation modules and the necessary surface equipment. This is a bootstrap settlement package, not a requirement to finish and pressurize the entire lava tube before people arrive.
 
-The crew is required for the planned initial permanently shadowed region (PSR) water-ice mining activity. Under this operating plan, the crew establishes and supports the mining operation at the lunar site; do not silently replace this with an assumed fully robotic initial mining operation. The exact division of work between crew and machines, crew complement, shift model, mining equipment package, and duration remain open.
+The crew is one possible way to support the planned initial permanently shadowed region (PSR) water-ice mining activity. Under this operating plan, the crew establishes and supports the mining operation at the lunar site; PSR mining can alternatively be pursued by robotic means once infrastructure permits — crew vs robotic for PSR mining remains OPEN.
 
 In parallel, robotic construction continues work on the lava-tube Worldhouse: sealing and progressively developing the larger protected geological volume while the crew occupies the initial habitat modules and conducts the planned surface operations. The inflatable modules and their life-support capability provide the initial occupied settlement; the developing lava tube is the larger environmental structure. These are related but distinct deployment and completion milestones.
 
-The crew's initial occupancy therefore does not depend on completion of the whole Worldhouse. Conversely, the existence of an occupied habitat does not mean the tube has been fully sealed, brought to its target pressure, or composition-conditioned. Robotic construction/sealing and the crew-supported PSR mining operation proceed as parallel workstreams, subject to their actual logistical and safety dependencies.
+The crew's initial occupancy therefore does not depend on completion of the whole Worldhouse. Conversely, the existence of an occupied habitat does not mean the tube has been fully sealed, brought to its target pressure, or composition-conditioned. Robotic construction/sealing and PSR mining proceed as parallel workstreams, subject to their actual logistical and safety dependencies; PSR mining is not a prerequisite for initial occupancy.
 
 ### Luna buildout as a multi-profile experiment
 
@@ -127,7 +127,7 @@ The initial Luna buildout was pivoted toward **permanently shadowed region (PSR)
 
 This water-ice resource path is distinct from the TEU/PVE regolith-processing chain described above; it is not another name for that chain and should not be forced into its unresolved processing order. The intended resource is PSR water ice, with hydrogen recovered for Luna's industrial and fuel requirements. The detailed mining equipment, water handling and separation steps, production rates, storage, transport from PSR sites, and exact integration with the lunar fuel loop remain OPEN pending reconciliation with current unit data and blueprints.
 
-The fuel-loop rationale is specifically to combine this water-derived H₂ with CO₂ available to Luna, enabling local methane production for HLT engine propellant. This lunar production path is distinct from the Titan mission's proposed simple onboard gas separator, which would recover methane/ethane from Titan's atmosphere; the Titan craft would carry additional O₂ because the separator does not supply the matching oxidizer. The early simulation must validate and tune the lunar chain—including water extraction and processing, hydrogen availability, CO₂ supply and conditioning, methane synthesis, oxygen/oxidizer handling, storage, transfer, consumption, and losses—so that the resulting production rate and inventories can sustain the intended craft operations. This is a target for simulation validation, not a claim that the current equipment chain already closes the loop at adequate rates. The PSR path is part of the initial Luna strategy, with deployment expected after humans occupy the initial base; it should not be treated as an already validated production system.
+The fuel-loop rationale is specifically to combine this water-derived H₂ with CO₂ available to Luna, enabling local methane production for HLT engine propellant. This lunar production path is distinct from the Titan mission's proposed simple onboard gas separator, which would recover methane/ethane from Titan's atmosphere; the Titan craft would carry additional O₂ because the separator does not supply the matching oxidizer. When CH₄ is Earth-imported for the initial test profile, PSR water-ice mining is not on the early critical path solely to feed methane synthesis; it remains a later option for local water/H₂/fuel independence and possible methane synthesis from local components. This should be evaluated through simulation rather than treated as an established production requirement.
 
 ## 3. Planetary Umbilical Hub: Routing Concept
 
@@ -156,7 +156,7 @@ For Luna operations, this means:
 - Do not assume a skimmer can produce a gas that its equipment and source atmosphere cannot provide.
 - Do not assume atmospheric harvesting is a substitute for the surface ISRU chain; the two supply paths provide different feedstocks and capabilities.
 
-The current operational benchmark specifically includes Venus atmospheric gas harvesting and its integration with Luna's fuel and supply loops. Craft fuel requirements, payload configuration, turnaround, and return logistics must follow the current craft designs and mission requirements—not the older mission profile's simplified fuel-exchange assumptions.
+The current operational benchmark includes Venus atmospheric gas harvesting and its integration with Luna's fuel and supply loops as a design concept; for the initial test profile, Venus harvesting is deferred and full integration is a later scored option. Craft fuel requirements, payload configuration, turnaround, and return logistics must follow the current craft designs and mission requirements—not the older mission profile's simplified fuel-exchange assumptions.
 
 ### Docking, unloading, and turnaround
 
